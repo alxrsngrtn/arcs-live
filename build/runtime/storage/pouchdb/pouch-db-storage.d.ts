@@ -1,10 +1,10 @@
-import { StorageBase } from '../storage-provider-base.js';
-import { PouchDbKey } from './pouch-db-key.js';
+import { PouchDB } from '../../../platform/pouchdb-web.js';
 import { Id } from '../../id.js';
 import { Type } from '../../type.js';
+import { StorageBase } from '../storage-provider-base.js';
 import { PouchDbCollection } from './pouch-db-collection.js';
+import { PouchDbKey } from './pouch-db-key.js';
 import { PouchDbStorageProvider } from './pouch-db-storage-provider.js';
-import { PouchDB } from '../../../platform/pouchdb-web.js';
 export declare class PouchDbStorage extends StorageBase {
     /**
      * A map of the key location to the actual provider.

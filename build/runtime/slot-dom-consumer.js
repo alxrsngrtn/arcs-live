@@ -7,11 +7,11 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
+import IconStyles from '../../modalities/dom/components/icons.css.js';
+import { Template } from '../../modalities/dom/components/xen/xen-template.js';
 import { assert } from '../platform/assert-web.js';
 import { SlotConsumer } from './slot-consumer.js';
 import { ProvidedSlotContext } from './slot-context.js';
-import { Template } from '../../modalities/dom/components/xen/xen-template.js';
-import IconStyles from '../../modalities/dom/components/icons.css.js';
 const templateByName = new Map();
 export class SlotDomConsumer extends SlotConsumer {
     constructor(arc, consumeConn, containerKind) {

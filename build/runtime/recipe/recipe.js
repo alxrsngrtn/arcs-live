@@ -6,14 +6,14 @@
 // http://polymer.github.io/PATENTS.txt
 import { assert } from '../../platform/assert-web.js';
 import { digest } from '../../platform/digest-web.js';
+import { Modality } from '../modality.js';
+import { InterfaceType } from '../type.js';
 import { ConnectionConstraint } from './connection-constraint.js';
+import { Handle } from './handle.js';
 import { Particle } from './particle.js';
 import { Search } from './search.js';
 import { Slot } from './slot.js';
-import { Handle } from './handle.js';
 import { compareComparables } from './util.js';
-import { InterfaceType } from '../type.js';
-import { Modality } from '../modality.js';
 export class Recipe {
     constructor(name = undefined) {
         this._requires = [];

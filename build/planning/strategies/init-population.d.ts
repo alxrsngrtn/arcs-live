@@ -1,7 +1,7 @@
-import { Descendant } from '../../runtime/recipe/walker.js';
-import { Strategy } from '../strategizer.js';
 import { Arc } from '../../runtime/arc.js';
+import { Descendant } from '../../runtime/recipe/walker.js';
 import { RecipeIndex } from '../recipe-index.js';
+import { Strategy } from '../strategizer.js';
 export declare class InitPopulation extends Strategy {
     _contextual: boolean;
     _recipeIndex: RecipeIndex;

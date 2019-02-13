@@ -1,5 +1,5 @@
-import { Type } from '../type.js';
 import { Id } from '../id.js';
+import { Type } from '../type.js';
 import { KeyBase } from './key-base.js';
 declare type Callback = (v: {
     [index: string]: any;

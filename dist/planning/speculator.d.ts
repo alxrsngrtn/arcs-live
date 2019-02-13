@@ -8,8 +8,8 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { Arc } from '../runtime/arc.js';
-import { PlanningResult } from './plan/planning-result.js';
 import { Recipe } from '../runtime/recipe/recipe.js';
+import { PlanningResult } from './plan/planning-result.js';
 import { Suggestion } from './plan/suggestion.js';
 export declare class Speculator {
     private suggestionByHash;

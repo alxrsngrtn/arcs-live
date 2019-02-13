@@ -7,9 +7,9 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-import { SlotConsumer } from './slot-consumer.js';
 import { Arc } from './arc.js';
 import { SlotConnection } from './recipe/slot-connection.js';
+import { SlotConsumer } from './slot-consumer.js';
 export declare class SlotDomConsumer extends SlotConsumer {
     private readonly _observer;
     constructor(arc: Arc, consumeConn?: SlotConnection, containerKind?: string);

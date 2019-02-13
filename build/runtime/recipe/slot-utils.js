@@ -4,8 +4,8 @@
 // Code distributed by Google as part of this project is also
 // subject to an additional IP rights grant found at
 // http://polymer.github.io/PATENTS.txt
-import { RequireSection } from './recipe.js';
 import { assert } from '../../platform/assert-web.js';
+import { RequireSection } from './recipe.js';
 export class SlotUtils {
     // Helper methods.
     static getClonedSlot(recipe, selectedSlot) {

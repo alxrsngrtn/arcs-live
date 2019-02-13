@@ -8,14 +8,14 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { Arc } from '../../runtime/arc.js';
-import { Description } from '../../runtime/description.js';
 import { DescriptionFormatter } from '../../runtime/description-formatter.js';
+import { Description } from '../../runtime/description.js';
+import { Loader } from '../../runtime/loader.js';
 import { Manifest } from '../../runtime/manifest.js';
 import { Modality } from '../../runtime/modality.js';
 import { Recipe } from '../../runtime/recipe/recipe.js';
-import { Relevance } from '../../runtime/relevance.js';
 import { Search } from '../../runtime/recipe/search.js';
-import { Loader } from '../../runtime/loader.js';
+import { Relevance } from '../../runtime/relevance.js';
 /**
  * options for the fromLiteral() method.
  */

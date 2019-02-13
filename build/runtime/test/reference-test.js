@@ -8,11 +8,11 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { assert } from '../../platform/chai-web.js';
+import { Arc } from '../arc.js';
 import { Manifest } from '../manifest.js';
 import { StubLoader } from '../testing/stub-loader.js';
-import { EntityType, ReferenceType } from '../type.js';
-import { Arc } from '../arc.js';
 import { assertSingletonWillChangeTo } from '../testing/test-util.js';
+import { EntityType, ReferenceType } from '../type.js';
 describe('references', () => {
     it('can parse & validate a recipe containing references', async () => {
         const manifest = await Manifest.parse(`

@@ -7,9 +7,9 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-import { Type } from './type.js';
 import { EntityClass } from './entity.js';
 import { ParticleExecutionContext } from './particle-execution-context.js';
+import { Type } from './type.js';
 export declare class Schema {
     readonly names: string[];
     readonly fields: {

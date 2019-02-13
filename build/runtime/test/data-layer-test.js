@@ -9,11 +9,11 @@
  */
 import { assert } from '../../platform/chai-web.js';
 import { Arc } from '../arc.js';
-import { FakeSlotComposer } from '../testing/fake-slot-composer.js';
+import { handleFor } from '../handle.js';
 import { Loader } from '../loader.js';
 import { Schema } from '../schema.js';
+import { FakeSlotComposer } from '../testing/fake-slot-composer.js';
 import { EntityType } from '../type.js';
-import { handleFor } from '../handle.js';
 describe('entity', async () => {
     it('can be created, stored, and restored', async () => {
         const schema = new Schema(['TestSchema'], { value: 'Text' });

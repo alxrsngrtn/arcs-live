@@ -8,16 +8,16 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { assert } from '../platform/assert-web.js';
-import { Type, EntityType, TypeVariable, CollectionType, InterfaceType, RelationType, ArcType } from './type.js';
+import { ArcDebugHandler } from './debug/arc-debug-handler.js';
+import { FakePecFactory } from './fake-pec-factory.js';
+import { Id } from './id.js';
+import { Manifest, StorageStub } from './manifest.js';
 import { ParticleExecutionHost } from './particle-execution-host.js';
 import { Handle } from './recipe/handle.js';
 import { Recipe } from './recipe/recipe.js';
-import { Manifest, StorageStub } from './manifest.js';
 import { compareComparables } from './recipe/util.js';
-import { FakePecFactory } from './fake-pec-factory.js';
 import { StorageProviderFactory } from './storage/storage-provider-factory.js';
-import { Id } from './id.js';
-import { ArcDebugHandler } from './debug/arc-debug-handler.js';
+import { ArcType, CollectionType, EntityType, InterfaceType, RelationType, Type, TypeVariable } from './type.js';
 export class Arc {
     constructor({ id, context, pecFactory, slotComposer, loader, storageKey, storageProviderFactory, speculative, innerArc, stub, listenerClasses }) {
         this._activeRecipe = new Recipe();

@@ -1,7 +1,7 @@
-import { CrdtCollectionModel } from '../crdt-collection-model.js';
 import { assert } from '../../../platform/assert-web.js';
-import { PouchDbStorageProvider } from './pouch-db-storage-provider.js';
+import { CrdtCollectionModel } from '../crdt-collection-model.js';
 import { ChangeEvent } from '../storage-provider-base.js';
+import { PouchDbStorageProvider } from './pouch-db-storage-provider.js';
 export class PouchDbCollection extends PouchDbStorageProvider {
     /**
      * Create a new PouchDbCollection.

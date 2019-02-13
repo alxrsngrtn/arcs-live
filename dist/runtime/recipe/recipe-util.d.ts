@@ -1,8 +1,8 @@
-import { Recipe } from './recipe.js';
-import { Particle } from './particle.js';
-import { Handle } from './handle.js';
-import { HandleConnection } from './handle-connection.js';
 import { ParticleSpec } from '../particle-spec.js';
+import { HandleConnection } from './handle-connection.js';
+import { Handle } from './handle.js';
+import { Particle } from './particle.js';
+import { Recipe } from './recipe.js';
 declare class Shape {
     recipe: Recipe;
     particles: {

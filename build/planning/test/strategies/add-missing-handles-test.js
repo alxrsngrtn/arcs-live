@@ -7,10 +7,10 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-import { Manifest } from '../../../runtime/manifest.js';
-import { StrategyTestHelper } from './strategy-test-helper.js';
-import { AddMissingHandles } from '../../strategies/add-missing-handles.js';
 import { assert } from '../../../platform/chai-web.js';
+import { Manifest } from '../../../runtime/manifest.js';
+import { AddMissingHandles } from '../../strategies/add-missing-handles.js';
+import { StrategyTestHelper } from './strategy-test-helper.js';
 async function runStrategy(manifestStr) {
     const manifest = await Manifest.parse(manifestStr);
     const recipes = manifest.recipes;

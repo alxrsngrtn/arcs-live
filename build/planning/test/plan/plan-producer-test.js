@@ -9,9 +9,9 @@
  */
 import { assert } from '../../../platform/chai-web.js';
 import { Arc } from '../../../runtime/arc.js';
-import { FakeSlotComposer } from '../../../runtime/testing/fake-slot-composer.js';
 import { Loader } from '../../../runtime/loader.js';
 import { Manifest } from '../../../runtime/manifest.js';
+import { FakeSlotComposer } from '../../../runtime/testing/fake-slot-composer.js';
 import { TestHelper } from '../../../runtime/testing/test-helper.js';
 import { PlanProducer } from '../../plan/plan-producer.js';
 import { Planificator } from '../../plan/planificator.js';

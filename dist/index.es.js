@@ -1,20 +1,20 @@
 import assert$1 from 'assert';
 import crypto$1 from 'crypto';
+import MersenneTwister from 'mersenne-twister';
+import atob from 'atob';
+import btoa$1 from 'btoa';
 import firebase from 'firebase/app';
 import 'firebase/database';
 import 'firebase/storage';
-import atob from 'atob';
-import btoa$1 from 'btoa';
 import PouchDB from 'pouchdb';
 import PouchDbMemory from 'pouchdb-adapter-memory';
 import PouchDbDebug from 'pouchdb-debug';
-import MersenneTwister from 'mersenne-twister';
 import idb from 'idb';
 import rs from 'jsrsasign';
 import WebSocket from 'ws';
+import fetch from 'node-fetch';
 import fs from 'fs';
 import vm from 'vm';
-import fetch from 'node-fetch';
 import os from 'os';
 
 // Copyright (c) 2017 Google Inc. All rights reserved.
@@ -62,267 +62,353 @@ Modality.domTouch = new Modality([Modality.Name.DomTouch]);
 Modality.voice = new Modality([Modality.Name.Voice]);
 Modality.vr = new Modality([Modality.Name.Vr]);
 
-// Copyright (c) 2017 Google Inc. All rights reserved.
-class TypeChecker {
-    // resolve a list of handleConnection types against a handle
-    // base type. This is the core type resolution mechanism, but should only
-    // be used when types can actually be associated with each other / constrained.
-    //
-    // By design this function is called exactly once per handle in a recipe during
-    // normalization, and should provide the same final answers regardless of the
-    // ordering of handles within that recipe
-    //
-    // NOTE: you probably don't want to call this function, if you think you
-    // do, talk to shans@.
-    static processTypeList(baseType, list) {
-        const newBaseType = TypeVariable.make('', null, null);
-        if (baseType) {
-            newBaseType.variable.resolution = baseType;
-        }
-        baseType = newBaseType;
-        const concreteTypes = [];
-        // baseType might be a variable (and is definitely a variable if no baseType was available).
-        // Some of the list might contain variables too.
-        // First attempt to merge all the variables into the baseType
-        //
-        // If the baseType is a variable then this results in a single place to manipulate the constraints
-        // of all the other connected variables at the same time.
-        for (const item of list) {
-            if (item.type.resolvedType().hasVariable) {
-                baseType = TypeChecker._tryMergeTypeVariable(baseType, item.type);
-                if (baseType == null) {
-                    return null;
-                }
-            }
-            else {
-                concreteTypes.push(item);
-            }
-        }
-        for (const item of concreteTypes) {
-            if (!TypeChecker._tryMergeConstraints(baseType, item)) {
-                return null;
-            }
-        }
-        const getResolution = candidate => {
-            if (!(candidate instanceof TypeVariable)) {
-                return candidate;
-            }
-            if (candidate.canReadSubset == null || candidate.canWriteSuperset == null) {
-                return candidate;
-            }
-            if (candidate.canReadSubset.isMoreSpecificThan(candidate.canWriteSuperset)) {
-                if (candidate.canWriteSuperset.isMoreSpecificThan(candidate.canReadSubset)) {
-                    candidate.variable.resolution = candidate.canReadSubset;
-                }
-                return candidate;
-            }
-            return null;
-        };
-        const candidate = baseType.resolvedType();
-        if (candidate instanceof CollectionType) {
-            const resolution = getResolution(candidate.collectionType);
-            return (resolution !== null) ? resolution.collectionOf() : null;
-        }
-        if (candidate instanceof BigCollectionType) {
-            const resolution = getResolution(candidate.bigCollectionType);
-            return (resolution !== null) ? resolution.bigCollectionOf() : null;
-        }
-        return getResolution(candidate);
+/**
+ * @license
+ * Copyright (c) 2017 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+function _fromLiteral(member) {
+    if (!!member && !(member instanceof Type) && typeof member === 'object') {
+        return Type.fromLiteral(member);
     }
-    static _tryMergeTypeVariable(base, onto) {
-        const [primitiveBase, primitiveOnto] = Type.unwrapPair(base.resolvedType(), onto.resolvedType());
-        if (primitiveBase instanceof TypeVariable) {
-            if (primitiveOnto instanceof TypeVariable) {
-                // base, onto both variables.
-                const result = primitiveBase.variable.maybeMergeConstraints(primitiveOnto.variable);
-                if (result === false) {
-                    return null;
-                }
-                primitiveOnto.variable.resolution = primitiveBase;
-            }
-            else {
-                // base variable, onto not.
-                if (!primitiveBase.variable.isValidResolutionCandidate(primitiveOnto).result) {
-                    return null;
-                }
-                primitiveBase.variable.resolution = primitiveOnto;
-            }
-            return base;
-        }
-        else if (primitiveOnto instanceof TypeVariable) {
-            // onto variable, base not.
-            if (!primitiveOnto.variable.isValidResolutionCandidate(primitiveBase).result) {
-                return null;
-            }
-            primitiveOnto.variable.resolution = primitiveBase;
-            return onto;
-        }
-        else if (primitiveBase instanceof InterfaceType && primitiveOnto instanceof InterfaceType) {
-            const result = primitiveBase.interfaceInfo.tryMergeTypeVariablesWith(primitiveOnto.interfaceInfo);
-            if (result == null) {
-                return null;
-            }
-            return new InterfaceType(result);
-        }
-        else if ((primitiveBase.isTypeContainer() && primitiveBase.hasVariable)
-            || (primitiveOnto.isTypeContainer() && primitiveOnto.hasVariable)) {
-            // Cannot merge [~a] with a type that is not a variable and not a collection.
-            return null;
-        }
-        throw new Error('tryMergeTypeVariable shouldn\'t be called on two types without any type variables');
+    return member;
+}
+function _toLiteral(member) {
+    if (!!member && member.toLiteral) {
+        return member.toLiteral();
     }
-    static _tryMergeConstraints(handleType, { type, direction }) {
-        let [primitiveHandleType, primitiveConnectionType] = Type.unwrapPair(handleType.resolvedType(), type.resolvedType());
-        if (primitiveHandleType instanceof TypeVariable) {
-            while (primitiveConnectionType.isTypeContainer()) {
-                if (primitiveHandleType.variable.resolution != null
-                    || primitiveHandleType.variable.canReadSubset != null
-                    || primitiveHandleType.variable.canWriteSuperset != null) {
-                    // Resolved and/or constrained variables can only represent Entities, not sets.
-                    return false;
-                }
-                // If this is an undifferentiated variable then we need to create structure to match against. That's
-                // allowed because this variable could represent anything, and it needs to represent this structure
-                // in order for type resolution to succeed.
-                const newVar = TypeVariable.make('a', null, null);
-                if (primitiveConnectionType instanceof CollectionType) {
-                    primitiveHandleType.variable.resolution = new CollectionType(newVar);
-                }
-                else if (primitiveConnectionType instanceof BigCollectionType) {
-                    primitiveHandleType.variable.resolution = new BigCollectionType(newVar);
-                }
-                else {
-                    primitiveHandleType.variable.resolution = new ReferenceType(newVar);
-                }
-                const unwrap = Type.unwrapPair(primitiveHandleType.resolvedType(), primitiveConnectionType);
-                [primitiveHandleType, primitiveConnectionType] = unwrap;
-            }
-            if (direction === 'out' || direction === 'inout' || direction === '`provide') {
-                // the canReadSubset of the handle represents the maximal type that can be read from the
-                // handle, so we need to intersect out any type that is more specific than the maximal type
-                // that could be written.
-                if (!primitiveHandleType.variable.maybeMergeCanReadSubset(primitiveConnectionType.canWriteSuperset)) {
-                    return false;
-                }
-            }
-            if (direction === 'in' || direction === 'inout' || direction === '`consume') {
-                // the canWriteSuperset of the handle represents the maximum lower-bound type that is read from the handle,
-                // so we need to union it with the type that wants to be read here.
-                if (!primitiveHandleType.variable.maybeMergeCanWriteSuperset(primitiveConnectionType.canReadSubset)) {
-                    return false;
+    return member;
+}
+const handleFields = ['type', 'name', 'direction'];
+const slotFields = ['name', 'direction', 'isRequired', 'isSet'];
+class InterfaceInfo {
+    constructor(name, handles, slots) {
+        assert$1(name);
+        assert$1(handles !== undefined);
+        assert$1(slots !== undefined);
+        this.name = name;
+        this.handles = handles;
+        this.slots = slots;
+        this.typeVars = [];
+        for (const handle of handles) {
+            for (const field of handleFields) {
+                if (InterfaceInfo.isTypeVar(handle[field])) {
+                    this.typeVars.push({ object: handle, field });
                 }
             }
         }
-        else {
-            if (primitiveConnectionType.tag !== primitiveHandleType.tag) {
+        for (const slot of slots) {
+            for (const field of slotFields) {
+                if (InterfaceInfo.isTypeVar(slot[field])) {
+                    this.typeVars.push({ object: slot, field });
+                }
+            }
+        }
+    }
+    toPrettyString() {
+        return 'InterfaceInfo';
+    }
+    mergeTypeVariablesByName(variableMap) {
+        this.typeVars.map(({ object, field }) => object[field] = object[field].mergeTypeVariablesByName(variableMap));
+    }
+    get canReadSubset() {
+        return this._cloneAndUpdate(typeVar => typeVar.canReadSubset);
+    }
+    get canWriteSuperset() {
+        return this._cloneAndUpdate(typeVar => typeVar.canWriteSuperset);
+    }
+    isMoreSpecificThan(other) {
+        if (this.handles.length !== other.handles.length ||
+            this.slots.length !== other.slots.length) {
+            return false;
+        }
+        // TODO: should probably confirm that handles and slots actually match.
+        for (let i = 0; i < this.typeVars.length; i++) {
+            const thisTypeVar = this.typeVars[i];
+            const otherTypeVar = other.typeVars[i];
+            if (!thisTypeVar.object[thisTypeVar.field].isMoreSpecificThan(otherTypeVar.object[otherTypeVar.field])) {
                 return false;
-            }
-            if (direction === 'out' || direction === 'inout') {
-                if (!TypeChecker._writeConstraintsApply(primitiveHandleType, primitiveConnectionType)) {
-                    return false;
-                }
-            }
-            if (direction === 'in' || direction === 'inout') {
-                if (!TypeChecker._readConstraintsApply(primitiveHandleType, primitiveConnectionType)) {
-                    return false;
-                }
             }
         }
         return true;
     }
-    static _writeConstraintsApply(handleType, connectionType) {
-        // this connection wants to write to this handle. If the written type is
-        // more specific than the canReadSubset then it isn't violating the maximal type
-        // that can be read.
-        const writtenType = connectionType.canWriteSuperset;
-        if (writtenType == null || handleType.canReadSubset == null) {
-            return true;
-        }
-        if (writtenType.isMoreSpecificThan(handleType.canReadSubset)) {
-            return true;
-        }
-        return false;
-    }
-    static _readConstraintsApply(handleType, connectionType) {
-        // this connection wants to read from this handle. If the read type
-        // is less specific than the canWriteSuperset, then it isn't violating
-        // the maximum lower-bound read type.
-        const readType = connectionType.canReadSubset;
-        if (readType == null || handleType.canWriteSuperset == null) {
-            return true;
-        }
-        if (handleType.canWriteSuperset.isMoreSpecificThan(readType)) {
-            return true;
-        }
-        return false;
-    }
-    // Compare two types to see if they could be potentially resolved (in the absence of other
-    // information). This is used as a filter when selecting compatible handles or checking
-    // validity of recipes. This function returning true never implies that full type resolution
-    // will succeed, but if the function returns false for a pair of types that are associated
-    // then type resolution is guaranteed to fail.
-    //
-    // left, right: {type, direction, connection}
-    static compareTypes(left, right) {
-        const resolvedLeft = left.type.resolvedType();
-        const resolvedRight = right.type.resolvedType();
-        const [leftType, rightType] = Type.unwrapPair(resolvedLeft, resolvedRight);
-        // a variable is compatible with a set only if it is unconstrained.
-        if (leftType instanceof TypeVariable && rightType.isTypeContainer()) {
-            return !(leftType.variable.canReadSubset || leftType.variable.canWriteSuperset);
-        }
-        if (rightType instanceof TypeVariable && leftType.isTypeContainer()) {
-            return !(rightType.variable.canReadSubset || rightType.variable.canWriteSuperset);
-        }
-        if (leftType instanceof TypeVariable || rightType instanceof TypeVariable) {
-            // TODO: everything should use this, eventually. Need to implement the
-            // right functionality in Interfaces first, though.
-            return Type.canMergeConstraints(leftType, rightType);
-        }
-        if ((leftType === undefined) !== (rightType === undefined)) {
-            return false;
-        }
-        if (leftType === rightType) {
-            return true;
-        }
-        if (leftType.tag !== rightType.tag) {
-            return false;
-        }
-        if (leftType instanceof SlotType) {
-            return true;
-        }
-        // TODO: we need a generic way to evaluate type compatibility
-        //       interfaces + entities + etc
-        if (leftType instanceof InterfaceType && rightType instanceof InterfaceType) {
-            if (leftType.interfaceInfo.equals(rightType.interfaceInfo)) {
+    _applyExistenceTypeTest(test) {
+        for (const typeRef of this.typeVars) {
+            if (test(typeRef.object[typeRef.field])) {
                 return true;
             }
         }
-        if (!(leftType instanceof EntityType) || !(rightType instanceof EntityType)) {
-            return false;
-        }
-        const leftIsSub = leftType.entitySchema.isMoreSpecificThan(rightType.entitySchema);
-        const leftIsSuper = rightType.entitySchema.isMoreSpecificThan(leftType.entitySchema);
-        if (leftIsSuper && leftIsSub) {
-            return true;
-        }
-        if (!leftIsSuper && !leftIsSub) {
-            return false;
-        }
-        const [superclass, subclass] = leftIsSuper ? [left, right] : [right, left];
-        // treat handle types as if they were 'inout' connections. Note that this
-        // guarantees that the handle's type will be preserved, and that the fact
-        // that the type comes from a handle rather than a connection will also
-        // be preserved.
-        const superDirection = superclass.direction || (superclass.connection ? superclass.connection.direction : 'inout');
-        const subDirection = subclass.direction || (subclass.connection ? subclass.connection.direction : 'inout');
-        if (superDirection === 'in') {
-            return true;
-        }
-        if (subDirection === 'out') {
-            return true;
-        }
         return false;
+    }
+    _handlesToManifestString() {
+        return this.handles
+            .map(handle => {
+            const type = handle.type.resolvedType();
+            return `  ${handle.direction ? handle.direction + ' ' : ''}${type.toString()} ${handle.name ? handle.name : '*'}`;
+        }).join('\n');
+    }
+    _slotsToManifestString() {
+        // TODO deal with isRequired
+        return this.slots
+            .map(slot => `  ${slot.direction} ${slot.isSet ? 'set of ' : ''}${slot.name ? slot.name + ' ' : ''}`)
+            .join('\n');
+    }
+    // TODO: Include name as a property of the interface and normalize this to just toString()
+    toString() {
+        return `interface ${this.name}
+${this._handlesToManifestString()}
+${this._slotsToManifestString()}
+`;
+    }
+    static fromLiteral(data) {
+        const handles = data.handles.map(handle => ({ type: _fromLiteral(handle.type), name: _fromLiteral(handle.name), direction: _fromLiteral(handle.direction) }));
+        const slots = data.slots.map(slot => ({ name: _fromLiteral(slot.name), direction: _fromLiteral(slot.direction), isRequired: _fromLiteral(slot.isRequired), isSet: _fromLiteral(slot.isSet) }));
+        return new InterfaceInfo(data.name, handles, slots);
+    }
+    toLiteral() {
+        const handles = this.handles.map(handle => ({ type: _toLiteral(handle.type), name: _toLiteral(handle.name), direction: _toLiteral(handle.direction) }));
+        const slots = this.slots.map(slot => ({ name: _toLiteral(slot.name), direction: _toLiteral(slot.direction), isRequired: _toLiteral(slot.isRequired), isSet: _toLiteral(slot.isSet) }));
+        return { name: this.name, handles, slots };
+    }
+    clone(variableMap) {
+        const handles = this.handles.map(({ name, direction, type }) => ({ name, direction, type: type ? type.clone(variableMap) : undefined }));
+        const slots = this.slots.map(({ name, direction, isRequired, isSet }) => ({ name, direction, isRequired, isSet }));
+        return new InterfaceInfo(this.name, handles, slots);
+    }
+    cloneWithResolutions(variableMap) {
+        return this._cloneWithResolutions(variableMap);
+    }
+    _cloneWithResolutions(variableMap) {
+        const handles = this.handles.map(({ name, direction, type }) => ({ name, direction, type: type ? type._cloneWithResolutions(variableMap) : undefined }));
+        const slots = this.slots.map(({ name, direction, isRequired, isSet }) => ({ name, direction, isRequired, isSet }));
+        return new InterfaceInfo(this.name, handles, slots);
+    }
+    canEnsureResolved() {
+        for (const typeVar of this.typeVars) {
+            if (!typeVar.object[typeVar.field].canEnsureResolved()) {
+                return false;
+            }
+        }
+        return true;
+    }
+    maybeEnsureResolved() {
+        for (const typeVar of this.typeVars) {
+            let variable = typeVar.object[typeVar.field];
+            variable = variable.clone(new Map());
+            if (!variable.maybeEnsureResolved())
+                return false;
+        }
+        for (const typeVar of this.typeVars) {
+            typeVar.object[typeVar.field].maybeEnsureResolved();
+        }
+        return true;
+    }
+    tryMergeTypeVariablesWith(other) {
+        // Type variable enabled slot matching will Just Work when we
+        // unify slots and handles.
+        if (!this._equalItems(other.slots, this.slots, this._equalSlot)) {
+            return null;
+        }
+        if (other.handles.length !== this.handles.length) {
+            return null;
+        }
+        const handles = new Set(this.handles);
+        const otherHandles = new Set(other.handles);
+        const handleMap = new Map();
+        let sizeCheck = handles.size;
+        while (handles.size > 0) {
+            const handleMatches = [...handles.values()].map(handle => ({ handle, match: [...otherHandles.values()].filter(otherHandle => this._equalHandle(handle, otherHandle)) }));
+            for (const handleMatch of handleMatches) {
+                // no match!
+                if (handleMatch.match.length === 0) {
+                    return null;
+                }
+                if (handleMatch.match.length === 1) {
+                    handleMap.set(handleMatch.handle, handleMatch.match[0]);
+                    otherHandles.delete(handleMatch.match[0]);
+                    handles.delete(handleMatch.handle);
+                }
+            }
+            // no progress!
+            if (handles.size === sizeCheck) {
+                return null;
+            }
+            sizeCheck = handles.size;
+        }
+        const handleList = [];
+        for (const handle of this.handles) {
+            const otherHandle = handleMap.get(handle);
+            let resultType;
+            if (handle.type.hasVariable || otherHandle.type.hasVariable) {
+                resultType = TypeChecker._tryMergeTypeVariable(handle.type, otherHandle.type);
+                if (!resultType) {
+                    return null;
+                }
+            }
+            else {
+                resultType = handle.type || otherHandle.type;
+            }
+            handleList.push({ name: handle.name || otherHandle.name, direction: handle.direction || otherHandle.direction, type: resultType });
+        }
+        const slots = this.slots.map(({ name, direction, isRequired, isSet }) => ({ name, direction, isRequired, isSet }));
+        return new InterfaceInfo(this.name, handleList, slots);
+    }
+    resolvedType() {
+        return this._cloneAndUpdate(typeVar => typeVar.resolvedType());
+    }
+    equals(other) {
+        if (this.handles.length !== other.handles.length) {
+            return false;
+        }
+        // TODO: this isn't quite right as it doesn't deal with duplicates properly
+        if (!this._equalItems(other.handles, this.handles, this._equalHandle)) {
+            return false;
+        }
+        if (!this._equalItems(other.slots, this.slots, this._equalSlot)) {
+            return false;
+        }
+        return true;
+    }
+    _equalHandle(handle, otherHandle) {
+        return handle.name === otherHandle.name && handle.direction === otherHandle.direction && handle.type.equals(otherHandle.type);
+    }
+    _equalSlot(slot, otherSlot) {
+        return slot.name === otherSlot.name && slot.direction === otherSlot.direction && slot.isRequired === otherSlot.isRequired && slot.isSet === otherSlot.isSet;
+    }
+    _equalItems(otherItems, items, compareItem) {
+        for (const otherItem of otherItems) {
+            let exists = false;
+            for (const item of items) {
+                if (compareItem(item, otherItem)) {
+                    exists = true;
+                    break;
+                }
+            }
+            if (!exists) {
+                return false;
+            }
+        }
+        return true;
+    }
+    _cloneAndUpdate(update) {
+        const copy = this.clone(new Map());
+        copy.typeVars.forEach(typeVar => InterfaceInfo._updateTypeVar(typeVar, update));
+        return copy;
+    }
+    static _updateTypeVar(typeVar, update) {
+        typeVar.object[typeVar.field] = update(typeVar.object[typeVar.field]);
+    }
+    static isTypeVar(reference) {
+        return (reference instanceof Type) && reference.hasProperty(r => r instanceof TypeVariable);
+    }
+    static mustMatch(reference) {
+        return !(reference == undefined || InterfaceInfo.isTypeVar(reference));
+    }
+    static handlesMatch(interfaceHandle, particleHandle) {
+        if (InterfaceInfo.mustMatch(interfaceHandle.name) &&
+            interfaceHandle.name !== particleHandle.name) {
+            return false;
+        }
+        // TODO: direction subsetting?
+        if (InterfaceInfo.mustMatch(interfaceHandle.direction) &&
+            interfaceHandle.direction !== particleHandle.direction) {
+            return false;
+        }
+        if (interfaceHandle.type == undefined) {
+            return true;
+        }
+        const [left, right] = Type.unwrapPair(interfaceHandle.type, particleHandle.type);
+        if (left instanceof TypeVariable) {
+            return [{ var: left, value: right, direction: interfaceHandle.direction }];
+        }
+        else {
+            return left.equals(right);
+        }
+    }
+    static slotsMatch(interfaceSlot, particleSlot) {
+        if (InterfaceInfo.mustMatch(interfaceSlot.name) &&
+            interfaceSlot.name !== particleSlot.name) {
+            return false;
+        }
+        if (InterfaceInfo.mustMatch(interfaceSlot.direction) &&
+            interfaceSlot.direction !== particleSlot.direction) {
+            return false;
+        }
+        if (InterfaceInfo.mustMatch(interfaceSlot.isRequired) &&
+            interfaceSlot.isRequired !== particleSlot.isRequired) {
+            return false;
+        }
+        if (InterfaceInfo.mustMatch(interfaceSlot.isSet) &&
+            interfaceSlot.isSet !== particleSlot.isSet) {
+            return false;
+        }
+        return true;
+    }
+    particleMatches(particleSpec) {
+        const interfaceInfo = this.cloneWithResolutions(new Map());
+        return interfaceInfo.restrictType(particleSpec) !== false;
+    }
+    restrictType(particleSpec) {
+        return this._restrictThis(particleSpec);
+    }
+    _restrictThis(particleSpec) {
+        const handleMatches = this.handles.map(h => particleSpec.connections.map(c => ({ match: c, result: InterfaceInfo.handlesMatch(h, c) }))
+            .filter(a => a.result !== false));
+        const particleSlots = [];
+        particleSpec.slots.forEach(consumedSlot => {
+            particleSlots.push({ name: consumedSlot.name, direction: 'consume', isRequired: consumedSlot.isRequired, isSet: consumedSlot.isSet });
+            consumedSlot.providedSlots.forEach(providedSlot => {
+                particleSlots.push({ name: providedSlot.name, direction: 'provide', isRequired: false, isSet: providedSlot.isSet });
+            });
+        });
+        let slotMatches = this.slots.map(slot => particleSlots.filter(particleSlot => InterfaceInfo.slotsMatch(slot, particleSlot)));
+        slotMatches = slotMatches.map(matchList => matchList.map(slot => ({ match: slot, result: true })));
+        // TODO: this probably doesn't deal with multiple match options.
+        function choose(list, exclusions) {
+            if (list.length === 0) {
+                return [];
+            }
+            const thisLevel = list.pop();
+            for (const connection of thisLevel) {
+                if (exclusions.includes(connection.match)) {
+                    continue;
+                }
+                const newExclusions = exclusions.slice();
+                newExclusions.push(connection.match);
+                const constraints = choose(list, newExclusions);
+                if (constraints !== false) {
+                    return connection.result.length ? constraints.concat(connection.result) : constraints;
+                }
+            }
+            return false;
+        }
+        const handleOptions = choose(handleMatches, []);
+        const slotOptions = choose(slotMatches, []);
+        if (handleOptions === false || slotOptions === false) {
+            return false;
+        }
+        for (const constraint of handleOptions) {
+            if (!constraint.var.variable.resolution) {
+                constraint.var.variable.resolution = constraint.value;
+            }
+            else if (constraint.var.variable.resolution instanceof TypeVariable) {
+                // TODO(shans): revisit how this should be done,
+                // consider reusing tryMergeTypeVariablesWith(other).
+                if (!TypeChecker.processTypeList(constraint.var, [{
+                        type: constraint.value, direction: constraint.direction
+                    }]))
+                    return false;
+            }
+            else {
+                if (!constraint.var.variable.resolution.equals(constraint.value))
+                    return false;
+            }
+        }
+        return true;
     }
 }
 
@@ -1216,6 +1302,54 @@ class Schema {
 }
 
 // @license
+// Copyright (c) 2017 Google Inc. All rights reserved.
+// This code may only be used under the BSD style license found at
+// http://polymer.github.io/LICENSE.txt
+// Code distributed by Google as part of this project is also
+// subject to an additional IP rights grant found at
+// http://polymer.github.io/PATENTS.txt
+class SlotInfo {
+    constructor(formFactor, handle) {
+        this.formFactor = formFactor;
+        this.handle = handle;
+    }
+    toLiteral() {
+        return this;
+    }
+    static fromLiteral(data) {
+        return new SlotInfo(data.formFactor, data.handle);
+    }
+}
+
+// @license
+// Copyright (c) 2018 Google Inc. All rights reserved.
+// This code may only be used under the BSD style license found at
+// http://polymer.github.io/LICENSE.txt
+// Code distributed by Google as part of this project is also
+// subject to an additional IP rights grant found at
+// http://polymer.github.io/PATENTS.txt
+// Equivalent to an Entity with Schema { serialization Text }
+class ArcInfo {
+    constructor(arcId, serialization) {
+        this.id = arcId.toString();
+        // TODO: remove the import-removal hack when import statements no longer appear
+        // in serialized manifests, or deal with them correctly if they end up staying
+        this.serialization = serialization.replace(/\bimport .*\n/g, '');
+    }
+    // Retrieves the serialized string from a stored instance of ArcInfo.
+    static extractSerialization(data) {
+        return data.serialization.replace(/\bimport .*\n/g, '');
+    }
+}
+class ArcHandle {
+    constructor(storageKey, type, tags) {
+        this.storageKey = storageKey;
+        this.type = type;
+        this.tags = tags;
+    }
+}
+
+// @license
 class TypeVariableInfo {
     constructor(name, canWriteSuperset, canReadSubset) {
         this.name = name;
@@ -1391,404 +1525,6 @@ class TypeVariableInfo {
     }
     isResolved() {
         return (this._resolution && this._resolution.isResolved());
-    }
-}
-
-/**
- * @license
- * Copyright (c) 2017 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-function _fromLiteral(member) {
-    if (!!member && !(member instanceof Type) && typeof member === 'object') {
-        return Type.fromLiteral(member);
-    }
-    return member;
-}
-function _toLiteral(member) {
-    if (!!member && member.toLiteral) {
-        return member.toLiteral();
-    }
-    return member;
-}
-const handleFields = ['type', 'name', 'direction'];
-const slotFields = ['name', 'direction', 'isRequired', 'isSet'];
-class InterfaceInfo {
-    constructor(name, handles, slots) {
-        assert$1(name);
-        assert$1(handles !== undefined);
-        assert$1(slots !== undefined);
-        this.name = name;
-        this.handles = handles;
-        this.slots = slots;
-        this.typeVars = [];
-        for (const handle of handles) {
-            for (const field of handleFields) {
-                if (InterfaceInfo.isTypeVar(handle[field])) {
-                    this.typeVars.push({ object: handle, field });
-                }
-            }
-        }
-        for (const slot of slots) {
-            for (const field of slotFields) {
-                if (InterfaceInfo.isTypeVar(slot[field])) {
-                    this.typeVars.push({ object: slot, field });
-                }
-            }
-        }
-    }
-    toPrettyString() {
-        return 'InterfaceInfo';
-    }
-    mergeTypeVariablesByName(variableMap) {
-        this.typeVars.map(({ object, field }) => object[field] = object[field].mergeTypeVariablesByName(variableMap));
-    }
-    get canReadSubset() {
-        return this._cloneAndUpdate(typeVar => typeVar.canReadSubset);
-    }
-    get canWriteSuperset() {
-        return this._cloneAndUpdate(typeVar => typeVar.canWriteSuperset);
-    }
-    isMoreSpecificThan(other) {
-        if (this.handles.length !== other.handles.length ||
-            this.slots.length !== other.slots.length) {
-            return false;
-        }
-        // TODO: should probably confirm that handles and slots actually match.
-        for (let i = 0; i < this.typeVars.length; i++) {
-            const thisTypeVar = this.typeVars[i];
-            const otherTypeVar = other.typeVars[i];
-            if (!thisTypeVar.object[thisTypeVar.field].isMoreSpecificThan(otherTypeVar.object[otherTypeVar.field])) {
-                return false;
-            }
-        }
-        return true;
-    }
-    _applyExistenceTypeTest(test) {
-        for (const typeRef of this.typeVars) {
-            if (test(typeRef.object[typeRef.field])) {
-                return true;
-            }
-        }
-        return false;
-    }
-    _handlesToManifestString() {
-        return this.handles
-            .map(handle => {
-            const type = handle.type.resolvedType();
-            return `  ${handle.direction ? handle.direction + ' ' : ''}${type.toString()} ${handle.name ? handle.name : '*'}`;
-        }).join('\n');
-    }
-    _slotsToManifestString() {
-        // TODO deal with isRequired
-        return this.slots
-            .map(slot => `  ${slot.direction} ${slot.isSet ? 'set of ' : ''}${slot.name ? slot.name + ' ' : ''}`)
-            .join('\n');
-    }
-    // TODO: Include name as a property of the interface and normalize this to just toString()
-    toString() {
-        return `interface ${this.name}
-${this._handlesToManifestString()}
-${this._slotsToManifestString()}
-`;
-    }
-    static fromLiteral(data) {
-        const handles = data.handles.map(handle => ({ type: _fromLiteral(handle.type), name: _fromLiteral(handle.name), direction: _fromLiteral(handle.direction) }));
-        const slots = data.slots.map(slot => ({ name: _fromLiteral(slot.name), direction: _fromLiteral(slot.direction), isRequired: _fromLiteral(slot.isRequired), isSet: _fromLiteral(slot.isSet) }));
-        return new InterfaceInfo(data.name, handles, slots);
-    }
-    toLiteral() {
-        const handles = this.handles.map(handle => ({ type: _toLiteral(handle.type), name: _toLiteral(handle.name), direction: _toLiteral(handle.direction) }));
-        const slots = this.slots.map(slot => ({ name: _toLiteral(slot.name), direction: _toLiteral(slot.direction), isRequired: _toLiteral(slot.isRequired), isSet: _toLiteral(slot.isSet) }));
-        return { name: this.name, handles, slots };
-    }
-    clone(variableMap) {
-        const handles = this.handles.map(({ name, direction, type }) => ({ name, direction, type: type ? type.clone(variableMap) : undefined }));
-        const slots = this.slots.map(({ name, direction, isRequired, isSet }) => ({ name, direction, isRequired, isSet }));
-        return new InterfaceInfo(this.name, handles, slots);
-    }
-    cloneWithResolutions(variableMap) {
-        return this._cloneWithResolutions(variableMap);
-    }
-    _cloneWithResolutions(variableMap) {
-        const handles = this.handles.map(({ name, direction, type }) => ({ name, direction, type: type ? type._cloneWithResolutions(variableMap) : undefined }));
-        const slots = this.slots.map(({ name, direction, isRequired, isSet }) => ({ name, direction, isRequired, isSet }));
-        return new InterfaceInfo(this.name, handles, slots);
-    }
-    canEnsureResolved() {
-        for (const typeVar of this.typeVars) {
-            if (!typeVar.object[typeVar.field].canEnsureResolved()) {
-                return false;
-            }
-        }
-        return true;
-    }
-    maybeEnsureResolved() {
-        for (const typeVar of this.typeVars) {
-            let variable = typeVar.object[typeVar.field];
-            variable = variable.clone(new Map());
-            if (!variable.maybeEnsureResolved())
-                return false;
-        }
-        for (const typeVar of this.typeVars) {
-            typeVar.object[typeVar.field].maybeEnsureResolved();
-        }
-        return true;
-    }
-    tryMergeTypeVariablesWith(other) {
-        // Type variable enabled slot matching will Just Work when we
-        // unify slots and handles.
-        if (!this._equalItems(other.slots, this.slots, this._equalSlot)) {
-            return null;
-        }
-        if (other.handles.length !== this.handles.length) {
-            return null;
-        }
-        const handles = new Set(this.handles);
-        const otherHandles = new Set(other.handles);
-        const handleMap = new Map();
-        let sizeCheck = handles.size;
-        while (handles.size > 0) {
-            const handleMatches = [...handles.values()].map(handle => ({ handle, match: [...otherHandles.values()].filter(otherHandle => this._equalHandle(handle, otherHandle)) }));
-            for (const handleMatch of handleMatches) {
-                // no match!
-                if (handleMatch.match.length === 0) {
-                    return null;
-                }
-                if (handleMatch.match.length === 1) {
-                    handleMap.set(handleMatch.handle, handleMatch.match[0]);
-                    otherHandles.delete(handleMatch.match[0]);
-                    handles.delete(handleMatch.handle);
-                }
-            }
-            // no progress!
-            if (handles.size === sizeCheck) {
-                return null;
-            }
-            sizeCheck = handles.size;
-        }
-        const handleList = [];
-        for (const handle of this.handles) {
-            const otherHandle = handleMap.get(handle);
-            let resultType;
-            if (handle.type.hasVariable || otherHandle.type.hasVariable) {
-                resultType = TypeChecker._tryMergeTypeVariable(handle.type, otherHandle.type);
-                if (!resultType) {
-                    return null;
-                }
-            }
-            else {
-                resultType = handle.type || otherHandle.type;
-            }
-            handleList.push({ name: handle.name || otherHandle.name, direction: handle.direction || otherHandle.direction, type: resultType });
-        }
-        const slots = this.slots.map(({ name, direction, isRequired, isSet }) => ({ name, direction, isRequired, isSet }));
-        return new InterfaceInfo(this.name, handleList, slots);
-    }
-    resolvedType() {
-        return this._cloneAndUpdate(typeVar => typeVar.resolvedType());
-    }
-    equals(other) {
-        if (this.handles.length !== other.handles.length) {
-            return false;
-        }
-        // TODO: this isn't quite right as it doesn't deal with duplicates properly
-        if (!this._equalItems(other.handles, this.handles, this._equalHandle)) {
-            return false;
-        }
-        if (!this._equalItems(other.slots, this.slots, this._equalSlot)) {
-            return false;
-        }
-        return true;
-    }
-    _equalHandle(handle, otherHandle) {
-        return handle.name === otherHandle.name && handle.direction === otherHandle.direction && handle.type.equals(otherHandle.type);
-    }
-    _equalSlot(slot, otherSlot) {
-        return slot.name === otherSlot.name && slot.direction === otherSlot.direction && slot.isRequired === otherSlot.isRequired && slot.isSet === otherSlot.isSet;
-    }
-    _equalItems(otherItems, items, compareItem) {
-        for (const otherItem of otherItems) {
-            let exists = false;
-            for (const item of items) {
-                if (compareItem(item, otherItem)) {
-                    exists = true;
-                    break;
-                }
-            }
-            if (!exists) {
-                return false;
-            }
-        }
-        return true;
-    }
-    _cloneAndUpdate(update) {
-        const copy = this.clone(new Map());
-        copy.typeVars.forEach(typeVar => InterfaceInfo._updateTypeVar(typeVar, update));
-        return copy;
-    }
-    static _updateTypeVar(typeVar, update) {
-        typeVar.object[typeVar.field] = update(typeVar.object[typeVar.field]);
-    }
-    static isTypeVar(reference) {
-        return (reference instanceof Type) && reference.hasProperty(r => r instanceof TypeVariable);
-    }
-    static mustMatch(reference) {
-        return !(reference == undefined || InterfaceInfo.isTypeVar(reference));
-    }
-    static handlesMatch(interfaceHandle, particleHandle) {
-        if (InterfaceInfo.mustMatch(interfaceHandle.name) &&
-            interfaceHandle.name !== particleHandle.name) {
-            return false;
-        }
-        // TODO: direction subsetting?
-        if (InterfaceInfo.mustMatch(interfaceHandle.direction) &&
-            interfaceHandle.direction !== particleHandle.direction) {
-            return false;
-        }
-        if (interfaceHandle.type == undefined) {
-            return true;
-        }
-        const [left, right] = Type.unwrapPair(interfaceHandle.type, particleHandle.type);
-        if (left instanceof TypeVariable) {
-            return [{ var: left, value: right, direction: interfaceHandle.direction }];
-        }
-        else {
-            return left.equals(right);
-        }
-    }
-    static slotsMatch(interfaceSlot, particleSlot) {
-        if (InterfaceInfo.mustMatch(interfaceSlot.name) &&
-            interfaceSlot.name !== particleSlot.name) {
-            return false;
-        }
-        if (InterfaceInfo.mustMatch(interfaceSlot.direction) &&
-            interfaceSlot.direction !== particleSlot.direction) {
-            return false;
-        }
-        if (InterfaceInfo.mustMatch(interfaceSlot.isRequired) &&
-            interfaceSlot.isRequired !== particleSlot.isRequired) {
-            return false;
-        }
-        if (InterfaceInfo.mustMatch(interfaceSlot.isSet) &&
-            interfaceSlot.isSet !== particleSlot.isSet) {
-            return false;
-        }
-        return true;
-    }
-    particleMatches(particleSpec) {
-        const interfaceInfo = this.cloneWithResolutions(new Map());
-        return interfaceInfo.restrictType(particleSpec) !== false;
-    }
-    restrictType(particleSpec) {
-        return this._restrictThis(particleSpec);
-    }
-    _restrictThis(particleSpec) {
-        const handleMatches = this.handles.map(h => particleSpec.connections.map(c => ({ match: c, result: InterfaceInfo.handlesMatch(h, c) }))
-            .filter(a => a.result !== false));
-        const particleSlots = [];
-        particleSpec.slots.forEach(consumedSlot => {
-            particleSlots.push({ name: consumedSlot.name, direction: 'consume', isRequired: consumedSlot.isRequired, isSet: consumedSlot.isSet });
-            consumedSlot.providedSlots.forEach(providedSlot => {
-                particleSlots.push({ name: providedSlot.name, direction: 'provide', isRequired: false, isSet: providedSlot.isSet });
-            });
-        });
-        let slotMatches = this.slots.map(slot => particleSlots.filter(particleSlot => InterfaceInfo.slotsMatch(slot, particleSlot)));
-        slotMatches = slotMatches.map(matchList => matchList.map(slot => ({ match: slot, result: true })));
-        // TODO: this probably doesn't deal with multiple match options.
-        function choose(list, exclusions) {
-            if (list.length === 0) {
-                return [];
-            }
-            const thisLevel = list.pop();
-            for (const connection of thisLevel) {
-                if (exclusions.includes(connection.match)) {
-                    continue;
-                }
-                const newExclusions = exclusions.slice();
-                newExclusions.push(connection.match);
-                const constraints = choose(list, newExclusions);
-                if (constraints !== false) {
-                    return connection.result.length ? constraints.concat(connection.result) : constraints;
-                }
-            }
-            return false;
-        }
-        const handleOptions = choose(handleMatches, []);
-        const slotOptions = choose(slotMatches, []);
-        if (handleOptions === false || slotOptions === false) {
-            return false;
-        }
-        for (const constraint of handleOptions) {
-            if (!constraint.var.variable.resolution) {
-                constraint.var.variable.resolution = constraint.value;
-            }
-            else if (constraint.var.variable.resolution instanceof TypeVariable) {
-                // TODO(shans): revisit how this should be done,
-                // consider reusing tryMergeTypeVariablesWith(other).
-                if (!TypeChecker.processTypeList(constraint.var, [{
-                        type: constraint.value, direction: constraint.direction
-                    }]))
-                    return false;
-            }
-            else {
-                if (!constraint.var.variable.resolution.equals(constraint.value))
-                    return false;
-            }
-        }
-        return true;
-    }
-}
-
-// @license
-// Copyright (c) 2017 Google Inc. All rights reserved.
-// This code may only be used under the BSD style license found at
-// http://polymer.github.io/LICENSE.txt
-// Code distributed by Google as part of this project is also
-// subject to an additional IP rights grant found at
-// http://polymer.github.io/PATENTS.txt
-class SlotInfo {
-    constructor(formFactor, handle) {
-        this.formFactor = formFactor;
-        this.handle = handle;
-    }
-    toLiteral() {
-        return this;
-    }
-    static fromLiteral(data) {
-        return new SlotInfo(data.formFactor, data.handle);
-    }
-}
-
-// @license
-// Copyright (c) 2018 Google Inc. All rights reserved.
-// This code may only be used under the BSD style license found at
-// http://polymer.github.io/LICENSE.txt
-// Code distributed by Google as part of this project is also
-// subject to an additional IP rights grant found at
-// http://polymer.github.io/PATENTS.txt
-// Equivalent to an Entity with Schema { serialization Text }
-class ArcInfo {
-    constructor(arcId, serialization) {
-        this.id = arcId.toString();
-        // TODO: remove the import-removal hack when import statements no longer appear
-        // in serialized manifests, or deal with them correctly if they end up staying
-        this.serialization = serialization.replace(/\bimport .*\n/g, '');
-    }
-    // Retrieves the serialized string from a stored instance of ArcInfo.
-    static extractSerialization(data) {
-        return data.serialization.replace(/\bimport .*\n/g, '');
-    }
-}
-class ArcHandle {
-    constructor(storageKey, type, tags) {
-        this.storageKey = storageKey;
-        this.type = type;
-        this.tags = tags;
     }
 }
 
@@ -2400,6 +2136,270 @@ class HandleType extends Type {
     }
     toLiteral() {
         return { tag: this.tag };
+    }
+}
+
+// Copyright (c) 2017 Google Inc. All rights reserved.
+class TypeChecker {
+    // resolve a list of handleConnection types against a handle
+    // base type. This is the core type resolution mechanism, but should only
+    // be used when types can actually be associated with each other / constrained.
+    //
+    // By design this function is called exactly once per handle in a recipe during
+    // normalization, and should provide the same final answers regardless of the
+    // ordering of handles within that recipe
+    //
+    // NOTE: you probably don't want to call this function, if you think you
+    // do, talk to shans@.
+    static processTypeList(baseType, list) {
+        const newBaseType = TypeVariable.make('', null, null);
+        if (baseType) {
+            newBaseType.variable.resolution = baseType;
+        }
+        baseType = newBaseType;
+        const concreteTypes = [];
+        // baseType might be a variable (and is definitely a variable if no baseType was available).
+        // Some of the list might contain variables too.
+        // First attempt to merge all the variables into the baseType
+        //
+        // If the baseType is a variable then this results in a single place to manipulate the constraints
+        // of all the other connected variables at the same time.
+        for (const item of list) {
+            if (item.type.resolvedType().hasVariable) {
+                baseType = TypeChecker._tryMergeTypeVariable(baseType, item.type);
+                if (baseType == null) {
+                    return null;
+                }
+            }
+            else {
+                concreteTypes.push(item);
+            }
+        }
+        for (const item of concreteTypes) {
+            if (!TypeChecker._tryMergeConstraints(baseType, item)) {
+                return null;
+            }
+        }
+        const getResolution = candidate => {
+            if (!(candidate instanceof TypeVariable)) {
+                return candidate;
+            }
+            if (candidate.canReadSubset == null || candidate.canWriteSuperset == null) {
+                return candidate;
+            }
+            if (candidate.canReadSubset.isMoreSpecificThan(candidate.canWriteSuperset)) {
+                if (candidate.canWriteSuperset.isMoreSpecificThan(candidate.canReadSubset)) {
+                    candidate.variable.resolution = candidate.canReadSubset;
+                }
+                return candidate;
+            }
+            return null;
+        };
+        const candidate = baseType.resolvedType();
+        if (candidate instanceof CollectionType) {
+            const resolution = getResolution(candidate.collectionType);
+            return (resolution !== null) ? resolution.collectionOf() : null;
+        }
+        if (candidate instanceof BigCollectionType) {
+            const resolution = getResolution(candidate.bigCollectionType);
+            return (resolution !== null) ? resolution.bigCollectionOf() : null;
+        }
+        return getResolution(candidate);
+    }
+    static _tryMergeTypeVariable(base, onto) {
+        const [primitiveBase, primitiveOnto] = Type.unwrapPair(base.resolvedType(), onto.resolvedType());
+        if (primitiveBase instanceof TypeVariable) {
+            if (primitiveOnto instanceof TypeVariable) {
+                // base, onto both variables.
+                const result = primitiveBase.variable.maybeMergeConstraints(primitiveOnto.variable);
+                if (result === false) {
+                    return null;
+                }
+                primitiveOnto.variable.resolution = primitiveBase;
+            }
+            else {
+                // base variable, onto not.
+                if (!primitiveBase.variable.isValidResolutionCandidate(primitiveOnto).result) {
+                    return null;
+                }
+                primitiveBase.variable.resolution = primitiveOnto;
+            }
+            return base;
+        }
+        else if (primitiveOnto instanceof TypeVariable) {
+            // onto variable, base not.
+            if (!primitiveOnto.variable.isValidResolutionCandidate(primitiveBase).result) {
+                return null;
+            }
+            primitiveOnto.variable.resolution = primitiveBase;
+            return onto;
+        }
+        else if (primitiveBase instanceof InterfaceType && primitiveOnto instanceof InterfaceType) {
+            const result = primitiveBase.interfaceInfo.tryMergeTypeVariablesWith(primitiveOnto.interfaceInfo);
+            if (result == null) {
+                return null;
+            }
+            return new InterfaceType(result);
+        }
+        else if ((primitiveBase.isTypeContainer() && primitiveBase.hasVariable)
+            || (primitiveOnto.isTypeContainer() && primitiveOnto.hasVariable)) {
+            // Cannot merge [~a] with a type that is not a variable and not a collection.
+            return null;
+        }
+        throw new Error('tryMergeTypeVariable shouldn\'t be called on two types without any type variables');
+    }
+    static _tryMergeConstraints(handleType, { type, direction }) {
+        let [primitiveHandleType, primitiveConnectionType] = Type.unwrapPair(handleType.resolvedType(), type.resolvedType());
+        if (primitiveHandleType instanceof TypeVariable) {
+            while (primitiveConnectionType.isTypeContainer()) {
+                if (primitiveHandleType.variable.resolution != null
+                    || primitiveHandleType.variable.canReadSubset != null
+                    || primitiveHandleType.variable.canWriteSuperset != null) {
+                    // Resolved and/or constrained variables can only represent Entities, not sets.
+                    return false;
+                }
+                // If this is an undifferentiated variable then we need to create structure to match against. That's
+                // allowed because this variable could represent anything, and it needs to represent this structure
+                // in order for type resolution to succeed.
+                const newVar = TypeVariable.make('a', null, null);
+                if (primitiveConnectionType instanceof CollectionType) {
+                    primitiveHandleType.variable.resolution = new CollectionType(newVar);
+                }
+                else if (primitiveConnectionType instanceof BigCollectionType) {
+                    primitiveHandleType.variable.resolution = new BigCollectionType(newVar);
+                }
+                else {
+                    primitiveHandleType.variable.resolution = new ReferenceType(newVar);
+                }
+                const unwrap = Type.unwrapPair(primitiveHandleType.resolvedType(), primitiveConnectionType);
+                [primitiveHandleType, primitiveConnectionType] = unwrap;
+            }
+            if (direction === 'out' || direction === 'inout' || direction === '`provide') {
+                // the canReadSubset of the handle represents the maximal type that can be read from the
+                // handle, so we need to intersect out any type that is more specific than the maximal type
+                // that could be written.
+                if (!primitiveHandleType.variable.maybeMergeCanReadSubset(primitiveConnectionType.canWriteSuperset)) {
+                    return false;
+                }
+            }
+            if (direction === 'in' || direction === 'inout' || direction === '`consume') {
+                // the canWriteSuperset of the handle represents the maximum lower-bound type that is read from the handle,
+                // so we need to union it with the type that wants to be read here.
+                if (!primitiveHandleType.variable.maybeMergeCanWriteSuperset(primitiveConnectionType.canReadSubset)) {
+                    return false;
+                }
+            }
+        }
+        else {
+            if (primitiveConnectionType.tag !== primitiveHandleType.tag) {
+                return false;
+            }
+            if (direction === 'out' || direction === 'inout') {
+                if (!TypeChecker._writeConstraintsApply(primitiveHandleType, primitiveConnectionType)) {
+                    return false;
+                }
+            }
+            if (direction === 'in' || direction === 'inout') {
+                if (!TypeChecker._readConstraintsApply(primitiveHandleType, primitiveConnectionType)) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+    static _writeConstraintsApply(handleType, connectionType) {
+        // this connection wants to write to this handle. If the written type is
+        // more specific than the canReadSubset then it isn't violating the maximal type
+        // that can be read.
+        const writtenType = connectionType.canWriteSuperset;
+        if (writtenType == null || handleType.canReadSubset == null) {
+            return true;
+        }
+        if (writtenType.isMoreSpecificThan(handleType.canReadSubset)) {
+            return true;
+        }
+        return false;
+    }
+    static _readConstraintsApply(handleType, connectionType) {
+        // this connection wants to read from this handle. If the read type
+        // is less specific than the canWriteSuperset, then it isn't violating
+        // the maximum lower-bound read type.
+        const readType = connectionType.canReadSubset;
+        if (readType == null || handleType.canWriteSuperset == null) {
+            return true;
+        }
+        if (handleType.canWriteSuperset.isMoreSpecificThan(readType)) {
+            return true;
+        }
+        return false;
+    }
+    // Compare two types to see if they could be potentially resolved (in the absence of other
+    // information). This is used as a filter when selecting compatible handles or checking
+    // validity of recipes. This function returning true never implies that full type resolution
+    // will succeed, but if the function returns false for a pair of types that are associated
+    // then type resolution is guaranteed to fail.
+    //
+    // left, right: {type, direction, connection}
+    static compareTypes(left, right) {
+        const resolvedLeft = left.type.resolvedType();
+        const resolvedRight = right.type.resolvedType();
+        const [leftType, rightType] = Type.unwrapPair(resolvedLeft, resolvedRight);
+        // a variable is compatible with a set only if it is unconstrained.
+        if (leftType instanceof TypeVariable && rightType.isTypeContainer()) {
+            return !(leftType.variable.canReadSubset || leftType.variable.canWriteSuperset);
+        }
+        if (rightType instanceof TypeVariable && leftType.isTypeContainer()) {
+            return !(rightType.variable.canReadSubset || rightType.variable.canWriteSuperset);
+        }
+        if (leftType instanceof TypeVariable || rightType instanceof TypeVariable) {
+            // TODO: everything should use this, eventually. Need to implement the
+            // right functionality in Interfaces first, though.
+            return Type.canMergeConstraints(leftType, rightType);
+        }
+        if ((leftType === undefined) !== (rightType === undefined)) {
+            return false;
+        }
+        if (leftType === rightType) {
+            return true;
+        }
+        if (leftType.tag !== rightType.tag) {
+            return false;
+        }
+        if (leftType instanceof SlotType) {
+            return true;
+        }
+        // TODO: we need a generic way to evaluate type compatibility
+        //       interfaces + entities + etc
+        if (leftType instanceof InterfaceType && rightType instanceof InterfaceType) {
+            if (leftType.interfaceInfo.equals(rightType.interfaceInfo)) {
+                return true;
+            }
+        }
+        if (!(leftType instanceof EntityType) || !(rightType instanceof EntityType)) {
+            return false;
+        }
+        const leftIsSub = leftType.entitySchema.isMoreSpecificThan(rightType.entitySchema);
+        const leftIsSuper = rightType.entitySchema.isMoreSpecificThan(leftType.entitySchema);
+        if (leftIsSuper && leftIsSub) {
+            return true;
+        }
+        if (!leftIsSuper && !leftIsSub) {
+            return false;
+        }
+        const [superclass, subclass] = leftIsSuper ? [left, right] : [right, left];
+        // treat handle types as if they were 'inout' connections. Note that this
+        // guarantees that the handle's type will be preserved, and that the fact
+        // that the type comes from a handle rather than a connection will also
+        // be preserved.
+        const superDirection = superclass.direction || (superclass.connection ? superclass.connection.direction : 'inout');
+        const subDirection = subclass.direction || (subclass.connection ? subclass.connection.direction : 'inout');
+        if (superDirection === 'in') {
+            return true;
+        }
+        if (subDirection === 'out') {
+            return true;
+        }
+        return false;
     }
 }
 
@@ -3210,14 +3210,6 @@ class Description {
     }
 }
 Description.defaultDescription = 'i\'m feeling lucky';
-
-// Copyright (c) 2017 Google Inc. All rights reserved.
-
-async function digest(str) {
-  const sha = crypto$1.createHash('sha1');
-  sha.update(str);
-  return Promise.resolve().then(() => sha.digest('hex'));
-}
 
 const parser = /*
  * Generated by PEG.js 0.10.0.
@@ -11584,6 +11576,139 @@ const parser = /*
 })();
 
 // Copyright (c) 2017 Google Inc. All rights reserved.
+
+async function digest(str) {
+  const sha = crypto$1.createHash('sha1');
+  sha.update(str);
+  return Promise.resolve().then(() => sha.digest('hex'));
+}
+
+/**
+ * @license
+ * Copyright (c) 2018 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+class RNG {
+}
+/**
+ * A basic random number generator using Math.random();
+ */
+class MathRandomRNG extends RNG {
+    next() {
+        return Math.random();
+    }
+}
+/**
+ * Provides a deterministic Random Number Generator for Tests
+ */
+class SeededRNG extends RNG {
+    constructor() {
+        super(...arguments);
+        this.generator = new MersenneTwister(7);
+    }
+    next() {
+        return this.generator.random();
+    }
+}
+// Singleton Pattern
+let random = new MathRandomRNG();
+class Random {
+    static next() {
+        return random.next();
+    }
+    // TODO: remove test code and allow for injectable implementations.
+    static seedForTests() {
+        random = new SeededRNG();
+    }
+}
+
+/**
+ * @license
+ * Copyright (c) 2017 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+class Id {
+    constructor(currentSession, components = []) {
+        this.nextIdComponent = 0;
+        this.components = [];
+        this.session = currentSession;
+        this.currentSession = currentSession;
+        this.components = components;
+    }
+    static newSessionId() {
+        const session = Math.floor(Random.next() * Math.pow(2, 50)) + '';
+        return new Id(session);
+    }
+    /**
+     * When used in the following way:
+     *   const id = Id.newSessionId().fromString(stringId);
+     *
+     * The resulting id will receive a newly generated session id in the currentSession field,
+     * while maintaining an original session from the string representation in the session field.
+     */
+    fromString(str) {
+        const newId = new Id(this.currentSession);
+        let components = str.split(':');
+        if (components[0][0] === '!') {
+            newId.session = components[0].slice(1);
+            components = components.slice(1);
+        }
+        newId.components.push(...components);
+        return newId;
+    }
+    toString() {
+        return `!${this.session}:${this.components.join(':')}`;
+    }
+    // Only use this for testing!
+    toStringWithoutSessionForTesting() {
+        return this.components.join(':');
+    }
+    createId(component = '') {
+        const id = new Id(this.currentSession, this.components.slice());
+        id.components.push(component + this.nextIdComponent++);
+        return id;
+    }
+    equal(id) {
+        if (id.session !== this.session || id.components.length !== this.components.length) {
+            return false;
+        }
+        for (let i = 0; i < id.components.length; i++) {
+            if (id.components[i] !== this.components[i]) {
+                return false;
+            }
+        }
+        return true;
+    }
+}
+
+/**
+ * @license
+ * Copyright (c) 2017 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+class ManifestMeta {
+    constructor() {
+        this.storageKey = null;
+        this.name = null;
+    }
+    apply(items) {
+        items.forEach(item => { this[item.key] = item.value; });
+    }
+}
+
+// Copyright (c) 2017 Google Inc. All rights reserved.
 function compareNulls(o1, o2) {
     if (o1 === o2)
         return 0;
@@ -11750,159 +11875,266 @@ class ConnectionConstraint {
 }
 
 // Copyright (c) 2017 Google Inc. All rights reserved.
-class SlotConnection {
-    constructor(name, particle) {
-        this._targetSlot = undefined;
-        this._providedSlots = {};
+class Handle$1 {
+    constructor(recipe) {
+        this._id = null;
+        this._localName = undefined;
         this._tags = [];
-        assert$1(particle);
-        assert$1(particle.recipe);
-        assert$1(name);
-        this._recipe = particle.recipe;
-        this._particle = particle;
-        this._name = name;
+        this._type = undefined;
+        this._fate = null;
+        // TODO: replace originalFate and originalId with more generic mechanism for tracking
+        // how and from what the recipe was generated.
+        this._originalFate = null;
+        this._originalId = null;
+        this._connections = [];
+        this._mappedType = undefined;
+        this._storageKey = undefined;
+        this._pattern = undefined;
+        // Value assigned in the immediate mode, E.g. hostedParticle = ShowProduct
+        // Currently only supports ParticleSpec.
+        this._immediateValue = undefined;
+        assert$1(recipe);
+        this._recipe = recipe;
     }
-    remove() {
-        this._particle.removeSlotConnection(this);
-    }
-    get recipe() { return this._recipe; }
-    get particle() { return this._particle; }
-    get name() { return this._name; }
-    getQualifiedName() { return `${this.particle.name}::${this.name}`; }
-    get targetSlot() { return this._targetSlot; }
-    set targetSlot(targetSlot) { this._targetSlot = targetSlot; }
-    get providedSlots() { return this._providedSlots; }
-    get tags() { return this._tags; }
-    set tags(tags) { this._tags = tags; }
-    getSlotSpec() {
-        return this.particle.spec && this.particle.spec.getSlotSpec(this.name);
-    }
-    connectToSlot(targetSlot) {
-        assert$1(targetSlot);
-        assert$1(!this.targetSlot);
-        assert$1(this.recipe instanceof RequireSection || this.recipe === targetSlot.recipe, 'Cannot connect to slot from different recipe');
-        this._targetSlot = targetSlot;
-        targetSlot.consumeConnections.push(this);
-    }
-    disconnectFromSlot() {
-        if (this._targetSlot) {
-            this._targetSlot.removeConsumeConnection(this);
-            this._targetSlot = undefined;
+    _copyInto(recipe) {
+        let handle = undefined;
+        if (this._id !== null && ['map', 'use', 'copy'].includes(this.fate)) {
+            handle = recipe.findHandle(this._id);
         }
-    }
-    _clone(particle, cloneMap) {
-        if (cloneMap.has(this)) {
-            return cloneMap.get(this);
+        if (handle == undefined) {
+            handle = recipe.newHandle();
+            handle._id = this._id;
+            handle._tags = [...this._tags];
+            handle._type = this._type ? Type.fromLiteral(this._type.toLiteral()) : undefined;
+            handle._fate = this._fate;
+            handle._originalFate = this._originalFate;
+            handle._originalId = this._originalId;
+            handle._mappedType = this._mappedType;
+            handle._storageKey = this._storageKey;
+            handle._immediateValue = this._immediateValue;
+            // the connections are re-established when Particles clone their
+            // attached HandleConnection objects.
+            handle._connections = [];
+            handle._pattern = this._pattern;
         }
-        const slotConnection = particle.addSlotConnectionAsCopy(this.name);
-        slotConnection.tags = this.tags;
-        cloneMap.set(this, slotConnection);
-        return slotConnection;
+        return handle;
     }
-    _normalize() {
-        const normalizedSlots = {};
-        for (const key of (Object.keys(this._providedSlots).sort())) {
-            normalizedSlots[key] = this._providedSlots[key];
+    // Merges `this` recipe handle into `handle`
+    mergeInto(handle) {
+        assert$1(this.recipe === handle.recipe, 'Cannot merge handles from different recipes.');
+        while (this.connections.length > 0) {
+            const [connection] = this.connections;
+            connection.disconnectHandle();
+            connection.connectToHandle(handle);
         }
-        this._providedSlots = normalizedSlots;
+        handle._immediateValue = this._immediateValue;
+        handle.tags = handle.tags.concat(this.tags);
+        handle.recipe.removeHandle(this);
+        handle.fate = this._mergedFate([this.fate, handle.fate]);
+    }
+    _mergedFate(fates) {
+        assert$1(fates.length > 0, `Cannot merge empty fates list`);
+        // Merging handles only used in coalesce-recipe strategy, which is only done for use/create/? fates.
+        assert$1(!fates.includes('map') && !fates.includes('copy'), `Merging map/copy not supported yet`);
+        // If all fates were `use` keep their fate, otherwise set to `create`.
+        return fates.every(fate => fate === 'use') ? 'use' : 'create';
+    }
+    _startNormalize() {
+        this._localName = null;
+        this._tags.sort();
+        // TODO: type?
+    }
+    _finishNormalize() {
+        for (const connection of this._connections) {
+            assert$1(Object.isFrozen(connection), `Handle connection '${connection.name}' is not frozen.`);
+        }
+        this._connections.sort(compareComparables);
         Object.freeze(this);
     }
     _compareTo(other) {
         let cmp;
-        if ((cmp = compareStrings(this.name, other.name)) !== 0)
+        if ((cmp = compareStrings(this._id, other._id)) !== 0)
             return cmp;
-        if ((cmp = compareComparables(this._targetSlot, other._targetSlot)) !== 0)
+        if ((cmp = compareStrings(this._localName, other._localName)) !== 0)
             return cmp;
-        if ((cmp = compareComparables(this._particle, other._particle)) !== 0)
+        if ((cmp = compareArrays(this._tags, other._tags, compareStrings)) !== 0)
+            return cmp;
+        // TODO: type?
+        if ((cmp = compareStrings(this.fate, other.fate)) !== 0)
+            return cmp;
+        if ((cmp = compareStrings(this._immediateValue && this._immediateValue.toString() || '', other._immediateValue && other._immediateValue.toString() || '')) !== 0)
             return cmp;
         return 0;
     }
+    // a resolved Handle has either an id or create=true
+    get fate() { return this._fate || '?'; }
+    set fate(fate) {
+        if (this._originalFate == null) {
+            this._originalFate = this._fate;
+        }
+        this._fate = fate;
+    }
+    get originalFate() { return this._originalFate || '?'; }
+    get originalId() { return this._originalId; }
+    get recipe() { return this._recipe; }
+    get tags() { return this._tags; } // only tags owned by the handle
+    set tags(tags) { this._tags = tags; }
+    get type() { return this._type; } // nullable
+    get id() { return this._id; }
+    set id(id) {
+        if (!this._originalId) {
+            this._originalId = this._id;
+        }
+        this._id = id;
+    }
+    mapToStorage(storage) {
+        if (!storage) {
+            throw new Error(`Cannot map to undefined storage`);
+        }
+        this._id = storage.id;
+        this._originalId = storage.originalId;
+        this._type = undefined;
+        this._mappedType = storage.type;
+        this._storageKey = storage.storageKey;
+    }
+    get localName() { return this._localName; }
+    set localName(name) { this._localName = name; }
+    get connections() { return this._connections; } // HandleConnection*
+    get storageKey() { return this._storageKey; }
+    set storageKey(key) { this._storageKey = key; }
+    get pattern() { return this._pattern; }
+    set pattern(pattern) { this._pattern = pattern; }
+    get mappedType() { return this._mappedType; }
+    set mappedType(mappedType) { this._mappedType = mappedType; }
+    get immediateValue() { return this._immediateValue; }
+    set immediateValue(value) { this._immediateValue = value; }
+    static effectiveType(handleType, connections) {
+        const variableMap = new Map();
+        // It's OK to use _cloneWithResolutions here as for the purpose of this test, the handle set + handleType
+        // contain the full set of type variable information that needs to be maintained across the clone.
+        const typeSet = connections.filter(connection => connection.type != null).map(connection => ({ type: connection.type._cloneWithResolutions(variableMap), direction: connection.direction }));
+        return TypeChecker.processTypeList(handleType ? handleType._cloneWithResolutions(variableMap) : null, typeSet);
+    }
+    static resolveEffectiveType(handleType, connections) {
+        const typeSet = connections.filter(connection => connection.type != null).map(connection => ({ type: connection.type, direction: connection.direction }));
+        return TypeChecker.processTypeList(handleType, typeSet);
+    }
     _isValid(options) {
-        if (this._targetSlot && this._targetSlot.sourceConnection &&
-            this._targetSlot !== this._targetSlot.sourceConnection.providedSlots[this._targetSlot.name]) {
-            if (options && options.errors) {
-                options.errors.set(this, `Invalid target slot '${this._targetSlot.name}' for slot connection '${this.name}' of particle ${this.particle.name}`);
+        const tags = new Set();
+        for (const connection of this._connections) {
+            // A remote handle cannot be connected to an output param.
+            if (this.fate === 'map' && ['out', 'inout'].includes(connection.direction)) {
+                if (options && options.errors) {
+                    options.errors.set(this, `Invalid fate '${this.fate}' for handle '${this}'; it is used for '${connection.direction}' ${connection.getQualifiedName()} connection`);
+                }
+                return false;
             }
-            return false;
+            connection.tags.forEach(tag => tags.add(tag));
         }
-        // TODO: add more checks.
-        return true;
+        const type = Handle$1.resolveEffectiveType(this._mappedType, this._connections);
+        if (type) {
+            this._type = type;
+            this._tags.forEach(tag => tags.add(tag));
+            this._tags = [...tags];
+            return true;
+        }
+        if (options && options.errors) {
+            // TODO: pass options to TypeChecker.processTypeList for better error.
+            options.errors.set(this, `Type validations failed for handle '${this}'`);
+        }
+        return false;
     }
-    isResolved(options) {
+    isResolved(options = undefined) {
         assert$1(Object.isFrozen(this));
-        if (!this.name) {
-            if (options) {
-                options.details = 'missing name';
+        let resolved = true;
+        if (this.type) {
+            let mustBeResolved = true;
+            if (this.fate === 'create' || this.fate === '`slot') {
+                mustBeResolved = false;
             }
-            return false;
-        }
-        if (!this.particle) {
-            if (options) {
-                options.details = 'missing particle';
-            }
-            return false;
-        }
-        if (this.getSlotSpec().isRequired) {
-            if (!this.targetSlot || !(this.targetSlot.id || this.targetSlot.sourceConnection.isConnected())) {
-                // The required connection has no target slot
-                // or its target slot it not resolved (has no ID or source connection).
+            if ((mustBeResolved && !this.type.isResolved()) || !this.type.canEnsureResolved()) {
                 if (options) {
-                    options.details = 'missing target-slot';
+                    options.details.push('unresolved type');
                 }
-                return false;
+                resolved = false;
             }
         }
-        if (!this.targetSlot) {
-            return true;
+        else {
+            if (options) {
+                options.details.push('missing type');
+            }
+            resolved = false;
         }
-        return this.getSlotSpec().providedSlots.every(providedSlot => {
-            if (providedSlot.isRequired && this.providedSlots[providedSlot.name].consumeConnections.length === 0) {
+        switch (this.fate) {
+            case '?': {
                 if (options) {
-                    options.details = 'missing consuming slot';
+                    options.details.push('missing fate');
                 }
-                return false;
+                resolved = false;
+                break;
             }
-            return true;
-        });
-    }
-    isConnectedToInternalSlot() {
-        return this.targetSlot && (!!this.targetSlot.sourceConnection);
-    }
-    isConnectedToRemoteSlot() {
-        return this.targetSlot && (!!this.targetSlot.id);
-    }
-    isConnected() {
-        return this.isConnectedToInternalSlot() || this.isConnectedToRemoteSlot();
+            case 'copy':
+            case 'map':
+            case 'use': {
+                if (options && this.id === null) {
+                    options.details.push('missing id');
+                }
+                resolved = resolved && (this.id !== null);
+                break;
+            }
+            case '`slot':
+            case 'create':
+                break;
+            default: {
+                if (options) {
+                    options.details.push(`invalid fate ${this.fate}`);
+                }
+                throw new Error(`Unexpected fate: ${this.fate}`);
+            }
+        }
+        return resolved;
     }
     toString(nameMap, options) {
-        const consumeRes = [];
-        consumeRes.push('consume');
-        consumeRes.push(`${this.name}`);
-        if (this.targetSlot) {
-            consumeRes.push(`as ${(nameMap && nameMap.get(this.targetSlot)) ||
-                this.targetSlot.localName}`);
+        if (this._immediateValue) {
+            // Immediate Value handles are only rendered inline with particle connections.
+            // E.g. hostedParticle = ShowProduct
+            return undefined;
         }
-        if (options && options.showUnresolved) {
-            if (!this.isResolved(options)) {
-                consumeRes.push(`// unresolved slot-connection: ${options.details}`);
-            }
-        }
+        options = options || {};
+        // TODO: type? maybe output in a comment
         const result = [];
-        result.push(consumeRes.join(' '));
-        Object.keys(this.providedSlots).forEach(psName => {
-            const providedSlot = this.providedSlots[psName];
-            const provideRes = [];
-            provideRes.push('  provide');
-            // Only assert that there's a spec for this provided slot if there's a spec for
-            // the consumed slot .. otherwise this is just a constraint.
-            if (this.getSlotSpec()) {
-                const providedSlotSpec = this.getSlotSpec().getProvidedSlotSpec(psName);
-                assert$1(providedSlotSpec, `Cannot find providedSlotSpec for ${psName}`);
+        result.push(this.fate);
+        if (this.id) {
+            result.push(`'${this.id}'`);
+        }
+        result.push(...this.tags.map(a => `#${a}`));
+        result.push(`as ${(nameMap && nameMap.get(this)) || this.localName}`);
+        if (this.type) {
+            result.push('//');
+            if (this.type.isResolved()) {
+                result.push(this.type.resolvedType().toString({ hideFields: options.hideFields == undefined ? true : options.hideFields }));
             }
-            provideRes.push(`${psName} as ${(nameMap && nameMap.get(providedSlot)) || providedSlot}`);
-            result.push(provideRes.join(' '));
-        });
-        return result.join('\n');
+            else {
+                // TODO: include the unresolved constraints in toString (ie in the hash).
+                result.push(this.type.toString());
+                if (options.showUnresolved && this.type.canEnsureResolved()) {
+                    const type = Type.fromLiteral(this.type.toLiteral());
+                    type.maybeEnsureResolved();
+                    result.push('//');
+                    result.push(type.resolvedType().toString({ hideFields: options.hideFields == undefined ? true : options.hideFields }));
+                }
+            }
+        }
+        if (options.showUnresolved) {
+            const unresolvedOptions = { details: [] };
+            if (!this.isResolved(unresolvedOptions)) {
+                result.push(` // unresolved handle: ${unresolvedOptions.details.join(', ')}`);
+            }
+        }
+        return result.join(' ');
+    }
+    findConnectionByDirection(dir) {
+        return this._connections.find(conn => conn.direction === dir);
     }
 }
 
@@ -12115,6 +12347,163 @@ class HandleConnection {
                 this.handle.type.equals(specConn.type) &&
                 !this.particle.getConnectionByName(specConn.name).handle;
         });
+    }
+}
+
+// Copyright (c) 2017 Google Inc. All rights reserved.
+class SlotConnection {
+    constructor(name, particle) {
+        this._targetSlot = undefined;
+        this._providedSlots = {};
+        this._tags = [];
+        assert$1(particle);
+        assert$1(particle.recipe);
+        assert$1(name);
+        this._recipe = particle.recipe;
+        this._particle = particle;
+        this._name = name;
+    }
+    remove() {
+        this._particle.removeSlotConnection(this);
+    }
+    get recipe() { return this._recipe; }
+    get particle() { return this._particle; }
+    get name() { return this._name; }
+    getQualifiedName() { return `${this.particle.name}::${this.name}`; }
+    get targetSlot() { return this._targetSlot; }
+    set targetSlot(targetSlot) { this._targetSlot = targetSlot; }
+    get providedSlots() { return this._providedSlots; }
+    get tags() { return this._tags; }
+    set tags(tags) { this._tags = tags; }
+    getSlotSpec() {
+        return this.particle.spec && this.particle.spec.getSlotSpec(this.name);
+    }
+    connectToSlot(targetSlot) {
+        assert$1(targetSlot);
+        assert$1(!this.targetSlot);
+        assert$1(this.recipe instanceof RequireSection || this.recipe === targetSlot.recipe, 'Cannot connect to slot from different recipe');
+        this._targetSlot = targetSlot;
+        targetSlot.consumeConnections.push(this);
+    }
+    disconnectFromSlot() {
+        if (this._targetSlot) {
+            this._targetSlot.removeConsumeConnection(this);
+            this._targetSlot = undefined;
+        }
+    }
+    _clone(particle, cloneMap) {
+        if (cloneMap.has(this)) {
+            return cloneMap.get(this);
+        }
+        const slotConnection = particle.addSlotConnectionAsCopy(this.name);
+        slotConnection.tags = this.tags;
+        cloneMap.set(this, slotConnection);
+        return slotConnection;
+    }
+    _normalize() {
+        const normalizedSlots = {};
+        for (const key of (Object.keys(this._providedSlots).sort())) {
+            normalizedSlots[key] = this._providedSlots[key];
+        }
+        this._providedSlots = normalizedSlots;
+        Object.freeze(this);
+    }
+    _compareTo(other) {
+        let cmp;
+        if ((cmp = compareStrings(this.name, other.name)) !== 0)
+            return cmp;
+        if ((cmp = compareComparables(this._targetSlot, other._targetSlot)) !== 0)
+            return cmp;
+        if ((cmp = compareComparables(this._particle, other._particle)) !== 0)
+            return cmp;
+        return 0;
+    }
+    _isValid(options) {
+        if (this._targetSlot && this._targetSlot.sourceConnection &&
+            this._targetSlot !== this._targetSlot.sourceConnection.providedSlots[this._targetSlot.name]) {
+            if (options && options.errors) {
+                options.errors.set(this, `Invalid target slot '${this._targetSlot.name}' for slot connection '${this.name}' of particle ${this.particle.name}`);
+            }
+            return false;
+        }
+        // TODO: add more checks.
+        return true;
+    }
+    isResolved(options) {
+        assert$1(Object.isFrozen(this));
+        if (!this.name) {
+            if (options) {
+                options.details = 'missing name';
+            }
+            return false;
+        }
+        if (!this.particle) {
+            if (options) {
+                options.details = 'missing particle';
+            }
+            return false;
+        }
+        if (this.getSlotSpec().isRequired) {
+            if (!this.targetSlot || !(this.targetSlot.id || this.targetSlot.sourceConnection.isConnected())) {
+                // The required connection has no target slot
+                // or its target slot it not resolved (has no ID or source connection).
+                if (options) {
+                    options.details = 'missing target-slot';
+                }
+                return false;
+            }
+        }
+        if (!this.targetSlot) {
+            return true;
+        }
+        return this.getSlotSpec().providedSlots.every(providedSlot => {
+            if (providedSlot.isRequired && this.providedSlots[providedSlot.name].consumeConnections.length === 0) {
+                if (options) {
+                    options.details = 'missing consuming slot';
+                }
+                return false;
+            }
+            return true;
+        });
+    }
+    isConnectedToInternalSlot() {
+        return this.targetSlot && (!!this.targetSlot.sourceConnection);
+    }
+    isConnectedToRemoteSlot() {
+        return this.targetSlot && (!!this.targetSlot.id);
+    }
+    isConnected() {
+        return this.isConnectedToInternalSlot() || this.isConnectedToRemoteSlot();
+    }
+    toString(nameMap, options) {
+        const consumeRes = [];
+        consumeRes.push('consume');
+        consumeRes.push(`${this.name}`);
+        if (this.targetSlot) {
+            consumeRes.push(`as ${(nameMap && nameMap.get(this.targetSlot)) ||
+                this.targetSlot.localName}`);
+        }
+        if (options && options.showUnresolved) {
+            if (!this.isResolved(options)) {
+                consumeRes.push(`// unresolved slot-connection: ${options.details}`);
+            }
+        }
+        const result = [];
+        result.push(consumeRes.join(' '));
+        Object.keys(this.providedSlots).forEach(psName => {
+            const providedSlot = this.providedSlots[psName];
+            const provideRes = [];
+            provideRes.push('  provide');
+            // Only assert that there's a spec for this provided slot if there's a spec for
+            // the consumed slot .. otherwise this is just a constraint.
+            if (this.getSlotSpec()) {
+                const providedSlotSpec = this.getSlotSpec().getProvidedSlotSpec(psName);
+                assert$1(providedSlotSpec, `Cannot find providedSlotSpec for ${psName}`);
+            }
+            provideRes.push(`${psName} as ${(nameMap && nameMap.get(providedSlot)) || providedSlot}`);
+            result.push(provideRes.join(' '));
+        });
+        return result.join('\n');
     }
 }
 
@@ -12649,270 +13038,6 @@ class Slot {
             return result.join(' ');
         }
         return '';
-    }
-}
-
-// Copyright (c) 2017 Google Inc. All rights reserved.
-class Handle$1 {
-    constructor(recipe) {
-        this._id = null;
-        this._localName = undefined;
-        this._tags = [];
-        this._type = undefined;
-        this._fate = null;
-        // TODO: replace originalFate and originalId with more generic mechanism for tracking
-        // how and from what the recipe was generated.
-        this._originalFate = null;
-        this._originalId = null;
-        this._connections = [];
-        this._mappedType = undefined;
-        this._storageKey = undefined;
-        this._pattern = undefined;
-        // Value assigned in the immediate mode, E.g. hostedParticle = ShowProduct
-        // Currently only supports ParticleSpec.
-        this._immediateValue = undefined;
-        assert$1(recipe);
-        this._recipe = recipe;
-    }
-    _copyInto(recipe) {
-        let handle = undefined;
-        if (this._id !== null && ['map', 'use', 'copy'].includes(this.fate)) {
-            handle = recipe.findHandle(this._id);
-        }
-        if (handle == undefined) {
-            handle = recipe.newHandle();
-            handle._id = this._id;
-            handle._tags = [...this._tags];
-            handle._type = this._type ? Type.fromLiteral(this._type.toLiteral()) : undefined;
-            handle._fate = this._fate;
-            handle._originalFate = this._originalFate;
-            handle._originalId = this._originalId;
-            handle._mappedType = this._mappedType;
-            handle._storageKey = this._storageKey;
-            handle._immediateValue = this._immediateValue;
-            // the connections are re-established when Particles clone their
-            // attached HandleConnection objects.
-            handle._connections = [];
-            handle._pattern = this._pattern;
-        }
-        return handle;
-    }
-    // Merges `this` recipe handle into `handle`
-    mergeInto(handle) {
-        assert$1(this.recipe === handle.recipe, 'Cannot merge handles from different recipes.');
-        while (this.connections.length > 0) {
-            const [connection] = this.connections;
-            connection.disconnectHandle();
-            connection.connectToHandle(handle);
-        }
-        handle._immediateValue = this._immediateValue;
-        handle.tags = handle.tags.concat(this.tags);
-        handle.recipe.removeHandle(this);
-        handle.fate = this._mergedFate([this.fate, handle.fate]);
-    }
-    _mergedFate(fates) {
-        assert$1(fates.length > 0, `Cannot merge empty fates list`);
-        // Merging handles only used in coalesce-recipe strategy, which is only done for use/create/? fates.
-        assert$1(!fates.includes('map') && !fates.includes('copy'), `Merging map/copy not supported yet`);
-        // If all fates were `use` keep their fate, otherwise set to `create`.
-        return fates.every(fate => fate === 'use') ? 'use' : 'create';
-    }
-    _startNormalize() {
-        this._localName = null;
-        this._tags.sort();
-        // TODO: type?
-    }
-    _finishNormalize() {
-        for (const connection of this._connections) {
-            assert$1(Object.isFrozen(connection), `Handle connection '${connection.name}' is not frozen.`);
-        }
-        this._connections.sort(compareComparables);
-        Object.freeze(this);
-    }
-    _compareTo(other) {
-        let cmp;
-        if ((cmp = compareStrings(this._id, other._id)) !== 0)
-            return cmp;
-        if ((cmp = compareStrings(this._localName, other._localName)) !== 0)
-            return cmp;
-        if ((cmp = compareArrays(this._tags, other._tags, compareStrings)) !== 0)
-            return cmp;
-        // TODO: type?
-        if ((cmp = compareStrings(this.fate, other.fate)) !== 0)
-            return cmp;
-        if ((cmp = compareStrings(this._immediateValue && this._immediateValue.toString() || '', other._immediateValue && other._immediateValue.toString() || '')) !== 0)
-            return cmp;
-        return 0;
-    }
-    // a resolved Handle has either an id or create=true
-    get fate() { return this._fate || '?'; }
-    set fate(fate) {
-        if (this._originalFate == null) {
-            this._originalFate = this._fate;
-        }
-        this._fate = fate;
-    }
-    get originalFate() { return this._originalFate || '?'; }
-    get originalId() { return this._originalId; }
-    get recipe() { return this._recipe; }
-    get tags() { return this._tags; } // only tags owned by the handle
-    set tags(tags) { this._tags = tags; }
-    get type() { return this._type; } // nullable
-    get id() { return this._id; }
-    set id(id) {
-        if (!this._originalId) {
-            this._originalId = this._id;
-        }
-        this._id = id;
-    }
-    mapToStorage(storage) {
-        if (!storage) {
-            throw new Error(`Cannot map to undefined storage`);
-        }
-        this._id = storage.id;
-        this._originalId = storage.originalId;
-        this._type = undefined;
-        this._mappedType = storage.type;
-        this._storageKey = storage.storageKey;
-    }
-    get localName() { return this._localName; }
-    set localName(name) { this._localName = name; }
-    get connections() { return this._connections; } // HandleConnection*
-    get storageKey() { return this._storageKey; }
-    set storageKey(key) { this._storageKey = key; }
-    get pattern() { return this._pattern; }
-    set pattern(pattern) { this._pattern = pattern; }
-    get mappedType() { return this._mappedType; }
-    set mappedType(mappedType) { this._mappedType = mappedType; }
-    get immediateValue() { return this._immediateValue; }
-    set immediateValue(value) { this._immediateValue = value; }
-    static effectiveType(handleType, connections) {
-        const variableMap = new Map();
-        // It's OK to use _cloneWithResolutions here as for the purpose of this test, the handle set + handleType
-        // contain the full set of type variable information that needs to be maintained across the clone.
-        const typeSet = connections.filter(connection => connection.type != null).map(connection => ({ type: connection.type._cloneWithResolutions(variableMap), direction: connection.direction }));
-        return TypeChecker.processTypeList(handleType ? handleType._cloneWithResolutions(variableMap) : null, typeSet);
-    }
-    static resolveEffectiveType(handleType, connections) {
-        const typeSet = connections.filter(connection => connection.type != null).map(connection => ({ type: connection.type, direction: connection.direction }));
-        return TypeChecker.processTypeList(handleType, typeSet);
-    }
-    _isValid(options) {
-        const tags = new Set();
-        for (const connection of this._connections) {
-            // A remote handle cannot be connected to an output param.
-            if (this.fate === 'map' && ['out', 'inout'].includes(connection.direction)) {
-                if (options && options.errors) {
-                    options.errors.set(this, `Invalid fate '${this.fate}' for handle '${this}'; it is used for '${connection.direction}' ${connection.getQualifiedName()} connection`);
-                }
-                return false;
-            }
-            connection.tags.forEach(tag => tags.add(tag));
-        }
-        const type = Handle$1.resolveEffectiveType(this._mappedType, this._connections);
-        if (type) {
-            this._type = type;
-            this._tags.forEach(tag => tags.add(tag));
-            this._tags = [...tags];
-            return true;
-        }
-        if (options && options.errors) {
-            // TODO: pass options to TypeChecker.processTypeList for better error.
-            options.errors.set(this, `Type validations failed for handle '${this}'`);
-        }
-        return false;
-    }
-    isResolved(options = undefined) {
-        assert$1(Object.isFrozen(this));
-        let resolved = true;
-        if (this.type) {
-            let mustBeResolved = true;
-            if (this.fate === 'create' || this.fate === '`slot') {
-                mustBeResolved = false;
-            }
-            if ((mustBeResolved && !this.type.isResolved()) || !this.type.canEnsureResolved()) {
-                if (options) {
-                    options.details.push('unresolved type');
-                }
-                resolved = false;
-            }
-        }
-        else {
-            if (options) {
-                options.details.push('missing type');
-            }
-            resolved = false;
-        }
-        switch (this.fate) {
-            case '?': {
-                if (options) {
-                    options.details.push('missing fate');
-                }
-                resolved = false;
-                break;
-            }
-            case 'copy':
-            case 'map':
-            case 'use': {
-                if (options && this.id === null) {
-                    options.details.push('missing id');
-                }
-                resolved = resolved && (this.id !== null);
-                break;
-            }
-            case '`slot':
-            case 'create':
-                break;
-            default: {
-                if (options) {
-                    options.details.push(`invalid fate ${this.fate}`);
-                }
-                throw new Error(`Unexpected fate: ${this.fate}`);
-            }
-        }
-        return resolved;
-    }
-    toString(nameMap, options) {
-        if (this._immediateValue) {
-            // Immediate Value handles are only rendered inline with particle connections.
-            // E.g. hostedParticle = ShowProduct
-            return undefined;
-        }
-        options = options || {};
-        // TODO: type? maybe output in a comment
-        const result = [];
-        result.push(this.fate);
-        if (this.id) {
-            result.push(`'${this.id}'`);
-        }
-        result.push(...this.tags.map(a => `#${a}`));
-        result.push(`as ${(nameMap && nameMap.get(this)) || this.localName}`);
-        if (this.type) {
-            result.push('//');
-            if (this.type.isResolved()) {
-                result.push(this.type.resolvedType().toString({ hideFields: options.hideFields == undefined ? true : options.hideFields }));
-            }
-            else {
-                // TODO: include the unresolved constraints in toString (ie in the hash).
-                result.push(this.type.toString());
-                if (options.showUnresolved && this.type.canEnsureResolved()) {
-                    const type = Type.fromLiteral(this.type.toLiteral());
-                    type.maybeEnsureResolved();
-                    result.push('//');
-                    result.push(type.resolvedType().toString({ hideFields: options.hideFields == undefined ? true : options.hideFields }));
-                }
-            }
-        }
-        if (options.showUnresolved) {
-            const unresolvedOptions = { details: [] };
-            if (!this.isResolved(unresolvedOptions)) {
-                result.push(` // unresolved handle: ${unresolvedOptions.details.join(', ')}`);
-            }
-        }
-        return result.join(' ');
-    }
-    findConnectionByDirection(dir) {
-        return this._connections.find(conn => conn.direction === dir);
     }
 }
 
@@ -13547,6 +13672,543 @@ class RequireSection extends Recipe {
     }
 }
 
+// Copyright (c) 2017 Google Inc. All rights reserved.
+class Shape {
+    constructor(recipe, particles, handles, hcs) {
+        this.recipe = recipe;
+        this.particles = particles;
+        this.handles = handles;
+        this.reverse = new Map();
+        for (const p of Object.keys(particles)) {
+            this.reverse.set(particles[p], p);
+        }
+        for (const h of handles.keys()) {
+            this.reverse.set(handles.get(h), h);
+        }
+        for (const hc of Object.keys(hcs)) {
+            this.reverse.set(hcs[hc], hc);
+        }
+    }
+}
+class RecipeUtil {
+    static makeShape(particles, handles, map, recipe) {
+        recipe = recipe || new Recipe();
+        const pMap = {};
+        const hMap = new Map();
+        const hcMap = {};
+        particles.forEach(particle => pMap[particle] = recipe.newParticle(particle));
+        handles.forEach(handle => hMap.set(handle, recipe.newHandle()));
+        Object.keys(map).forEach(key => {
+            Object.keys(map[key]).forEach(name => {
+                let handle = map[key][name];
+                let direction = '=';
+                let tags = [];
+                if (handle.handle) {
+                    // NOTE: for now, '=' on the shape means "accept anything". This is going
+                    // to change when we redo capabilities; for now it's modeled by mapping '=' to
+                    // '=' rather than to 'inout'.
+                    direction = { '->': 'out', '<-': 'in', '=': '=' }[handle.direction];
+                    tags = handle.tags || [];
+                    handle = handle.handle;
+                }
+                if (handle.localName) {
+                    hMap.get(handle).localName = handle.localName;
+                }
+                const connection = pMap[key].addConnectionName(name);
+                connection.direction = direction;
+                hMap.get(handle).tags = tags;
+                connection.connectToHandle(hMap.get(handle));
+                hcMap[key + ':' + name] = pMap[key].connections[name];
+            });
+        });
+        return new Shape(recipe, pMap, hMap, hcMap);
+    }
+    static recipeToShape(recipe) {
+        const particles = {};
+        let id = 0;
+        recipe.particles.forEach(particle => particles[particle.name] = particle);
+        const handles = new Map();
+        recipe.handles.forEach(handle => handles.set('h' + id++, handle));
+        const hcs = {};
+        recipe.handleConnections.forEach(hc => hcs[hc.particle.name + ':' + hc.name] = hc);
+        return new Shape(recipe, particles, handles, hcs);
+    }
+    static find(recipe, shape) {
+        function _buildNewHCMatches(recipe, shapeHC, match, outputList) {
+            const { forward, reverse, score } = match;
+            let matchFound = false;
+            for (const recipeHC of recipe.handleConnections) {
+                // TODO are there situations where multiple handleConnections should
+                // be allowed to point to the same one in the recipe?
+                if (reverse.has(recipeHC)) {
+                    continue;
+                }
+                // TODO support unnamed shape particles.
+                if (recipeHC.particle.name !== shapeHC.particle.name) {
+                    continue;
+                }
+                if (shapeHC.name && shapeHC.name !== recipeHC.name) {
+                    continue;
+                }
+                const acceptedDirections = { 'in': ['in', 'inout'], 'out': ['out', 'inout'], '=': ['in', 'out', 'inout'], 'inout': ['inout'], 'host': ['host'] };
+                if (recipeHC.direction) {
+                    if (!acceptedDirections[shapeHC.direction].includes(recipeHC.direction)) {
+                        continue;
+                    }
+                }
+                if (shapeHC.handle && recipeHC.handle && shapeHC.handle.localName &&
+                    shapeHC.handle.localName !== recipeHC.handle.localName) {
+                    continue;
+                }
+                // recipeHC is a candidate for shapeHC. shapeHC references a
+                // particle, so recipeHC must reference the matching particle,
+                // or a particle that isn't yet mapped from shape.
+                if (reverse.has(recipeHC.particle)) {
+                    if (reverse.get(recipeHC.particle) !== shapeHC.particle) {
+                        continue;
+                    }
+                }
+                else if (forward.has(shapeHC.particle)) {
+                    // we've already mapped the particle referenced by shapeHC
+                    // and it doesn't match recipeHC's particle as recipeHC's
+                    // particle isn't mapped
+                    continue;
+                }
+                // shapeHC doesn't necessarily reference a handle, but if it does
+                // then recipeHC needs to reference the matching handle, or one
+                // that isn't yet mapped, or no handle yet.
+                if (shapeHC.handle && recipeHC.handle) {
+                    if (reverse.has(recipeHC.handle)) {
+                        if (reverse.get(recipeHC.handle) !== shapeHC.handle) {
+                            continue;
+                        }
+                    }
+                    else if (forward.has(shapeHC.handle) && forward.get(shapeHC.handle) !== null) {
+                        continue;
+                    }
+                    // Check whether shapeHC and recipeHC reference the same handle.
+                    if (shapeHC.handle.fate !== 'create' || (recipeHC.handle.fate !== 'create' && recipeHC.handle.originalFate !== 'create')) {
+                        if (Boolean(shapeHC.handle.immediateValue) !== Boolean(recipeHC.handle.immediateValue)) {
+                            continue; // One is an immediate value handle and the other is not.
+                        }
+                        if (recipeHC.handle.immediateValue) {
+                            if (!recipeHC.handle.immediateValue.equals(shapeHC.handle.immediateValue)) {
+                                continue; // Immediate values are different.
+                            }
+                        }
+                        else {
+                            // Note: the id of a handle with 'copy' fate changes during recipe instantiation, hence comparing to original id too.
+                            // Skip the check if handles have 'create' fate (their ids are arbitrary).
+                            if (shapeHC.handle.id !== recipeHC.handle.id && shapeHC.handle.id !== recipeHC.handle.originalId) {
+                                continue; // This is a different handle.
+                            }
+                        }
+                    }
+                }
+                // clone forward and reverse mappings and establish new components.
+                const newMatch = { forward: new Map(forward), reverse: new Map(reverse), score };
+                assert$1(!newMatch.reverse.has(recipeHC.particle) || newMatch.reverse.get(recipeHC.particle) === shapeHC.particle);
+                assert$1(!newMatch.forward.has(shapeHC.particle) || newMatch.forward.get(shapeHC.particle) === recipeHC.particle);
+                newMatch.forward.set(shapeHC.particle, recipeHC.particle);
+                newMatch.reverse.set(recipeHC.particle, shapeHC.particle);
+                if (shapeHC.handle) {
+                    if (!recipeHC.handle) {
+                        if (!newMatch.forward.has(shapeHC.handle)) {
+                            newMatch.forward.set(shapeHC.handle, null);
+                            newMatch.score -= 2;
+                        }
+                    }
+                    else {
+                        newMatch.forward.set(shapeHC.handle, recipeHC.handle);
+                        newMatch.reverse.set(recipeHC.handle, shapeHC.handle);
+                    }
+                }
+                newMatch.forward.set(shapeHC, recipeHC);
+                newMatch.reverse.set(recipeHC, shapeHC);
+                outputList.push(newMatch);
+                matchFound = true;
+            }
+            if (matchFound === false) {
+                // Non-null particle in the `forward` map means that some of the particle
+                // handle connections were successful matches, but some couldn't be matched.
+                // It means that this match in invalid.
+                if (match.forward.get(shapeHC.particle)) {
+                    return;
+                }
+                // The current handle connection from the shape doesn't match anything
+                // in the recipe. Find (or create) a particle for it.
+                const newMatches = [];
+                _buildNewParticleMatches(recipe, shapeHC.particle, match, newMatches);
+                newMatches.forEach(newMatch => {
+                    // the shape references a handle, might also need to create a recipe
+                    // handle for it (if there isn't already one from a previous match).
+                    if (shapeHC.handle && !newMatch.forward.has(shapeHC.handle)) {
+                        newMatch.forward.set(shapeHC.handle, null);
+                        newMatch.score -= 2;
+                    }
+                    newMatch.forward.set(shapeHC, null);
+                    newMatch.score -= 1;
+                    outputList.push(newMatch);
+                });
+            }
+        }
+        function _buildNewParticleMatches(recipe, shapeParticle, match, newMatches) {
+            const { forward, reverse, score } = match;
+            let matchFound = false;
+            for (const recipeParticle of recipe.particles) {
+                if (reverse.has(recipeParticle)) {
+                    continue;
+                }
+                if (recipeParticle.name !== shapeParticle.name) {
+                    continue;
+                }
+                let handleNamesMatch = true;
+                for (const connectionName of Object.keys(recipeParticle.connections)) {
+                    const recipeConnection = recipeParticle.connections[connectionName];
+                    if (!recipeConnection.handle) {
+                        continue;
+                    }
+                    const shapeConnection = shapeParticle.connections[connectionName];
+                    if (shapeConnection && shapeConnection.handle && shapeConnection.handle.localName && shapeConnection.handle.localName !== recipeConnection.handle.localName) {
+                        handleNamesMatch = false;
+                        break;
+                    }
+                }
+                if (!handleNamesMatch) {
+                    continue;
+                }
+                const newMatch = { forward: new Map(forward), reverse: new Map(reverse), score };
+                assert$1(!newMatch.forward.has(shapeParticle) || newMatch.forward.get(shapeParticle) === recipeParticle);
+                assert$1(!newMatch.reverse.has(recipeParticle) || newMatch.reverse.get(recipeParticle) === shapeParticle);
+                newMatch.forward.set(shapeParticle, recipeParticle);
+                newMatch.reverse.set(recipeParticle, shapeParticle);
+                newMatches.push(newMatch);
+                matchFound = true;
+            }
+            if (matchFound === false) {
+                const newMatch = { forward: new Map(), reverse: new Map(), score: 0 };
+                forward.forEach((value, key) => {
+                    assert$1(!newMatch.forward.has(key) || newMatch.forward.get(key) === value);
+                    newMatch.forward.set(key, value);
+                });
+                reverse.forEach((value, key) => {
+                    assert$1(!newMatch.reverse.has(key) || newMatch.reverse.get(key) === value);
+                    newMatch.reverse.set(key, value);
+                });
+                if (!newMatch.forward.has(shapeParticle)) {
+                    newMatch.forward.set(shapeParticle, null);
+                    newMatch.score = match.score - 1;
+                }
+                newMatches.push(newMatch);
+            }
+        }
+        function _assignHandlesToEmptyPosition(match, emptyHandles, nullHandles) {
+            if (emptyHandles.length === 1) {
+                const matches = [];
+                const { forward, reverse, score } = match;
+                for (const nullHandle of nullHandles) {
+                    let tagsMatch = true;
+                    for (const tag of nullHandle.tags) {
+                        if (!emptyHandles[0].tags.includes(tag)) {
+                            tagsMatch = false;
+                            break;
+                        }
+                    }
+                    if (!tagsMatch) {
+                        continue;
+                    }
+                    const newMatch = { forward: new Map(forward), reverse: new Map(reverse), score: score + 1 };
+                    newMatch.forward.set(nullHandle, emptyHandles[0]);
+                    newMatch.reverse.set(emptyHandles[0], nullHandle);
+                    matches.push(newMatch);
+                }
+                return matches;
+            }
+            const thisHandle = emptyHandles.pop();
+            const matches = _assignHandlesToEmptyPosition(match, emptyHandles, nullHandles);
+            let newMatches = [];
+            for (const match of matches) {
+                const nullHandles = [...shape.handles.values()].filter(handle => match.forward.get(handle) === null);
+                if (nullHandles.length > 0) {
+                    newMatches = newMatches.concat(_assignHandlesToEmptyPosition(match, [thisHandle], nullHandles));
+                }
+                else {
+                    newMatches.concat(match);
+                }
+            }
+            return newMatches;
+        }
+        // Particles and Handles are initially stored by a forward map from
+        // shape component to recipe component.
+        // Handle connections, particles and handles are also stored by a reverse map
+        // from recipe component to shape component.
+        // Start with a single, empty match
+        let matches = [{ forward: new Map(), reverse: new Map(), score: 0 }];
+        for (const shapeHC of shape.recipe.handleConnections) {
+            const newMatches = [];
+            for (const match of matches) {
+                // collect matching handle connections into a new matches list
+                _buildNewHCMatches(recipe, shapeHC, match, newMatches);
+            }
+            matches = newMatches;
+        }
+        for (const shapeParticle of shape.recipe.particles) {
+            if (Object.keys(shapeParticle.connections).length > 0) {
+                continue;
+            }
+            if (shapeParticle.unnamedConnections.length > 0) {
+                continue;
+            }
+            const newMatches = [];
+            for (const match of matches) {
+                _buildNewParticleMatches(recipe, shapeParticle, match, newMatches);
+            }
+            matches = newMatches;
+        }
+        const emptyHandles = recipe.handles.filter(handle => handle.connections.length === 0);
+        if (emptyHandles.length > 0) {
+            let newMatches = [];
+            for (const match of matches) {
+                const nullHandles = [...shape.handles.values()].filter(handle => match.forward.get(handle) === null);
+                if (nullHandles.length > 0) {
+                    newMatches = newMatches.concat(_assignHandlesToEmptyPosition(match, emptyHandles, nullHandles));
+                }
+                else {
+                    newMatches.concat(match);
+                }
+            }
+            matches = newMatches;
+        }
+        return matches.map(({ forward, score }) => {
+            const match = {};
+            forward.forEach((value, key) => match[shape.reverse.get(key)] = value);
+            return { match, score };
+        });
+    }
+    static constructImmediateValueHandle(connection, particleSpec, id) {
+        assert$1(connection.type instanceof InterfaceType);
+        if (!(connection.type instanceof InterfaceType) ||
+            !connection.type.interfaceInfo.restrictType(particleSpec)) {
+            // Type of the connection does not match the ParticleSpec.
+            return null;
+        }
+        // The connection type may have type variables:
+        // E.g. if connection shape requires `in ~a *`
+        //      and particle has `in Entity input`
+        //      then type system has to ensure ~a is at least Entity.
+        // The type of a handle hosting the particle literal has to be
+        // concrete, so we concretize connection type with maybeEnsureResolved().
+        const handleType = connection.type.clone(new Map());
+        handleType.maybeEnsureResolved();
+        const handle = connection.recipe.newHandle();
+        handle.id = id;
+        handle.mappedType = handleType;
+        handle.fate = 'copy';
+        handle.immediateValue = particleSpec;
+        return handle;
+    }
+    static directionCounts(handle) {
+        const counts = { in: 0, out: 0, inout: 0, unknown: 0 };
+        for (const connection of handle.connections) {
+            let direction = connection.direction;
+            if (counts[direction] === undefined) {
+                direction = 'unknown';
+            }
+            counts[direction]++;
+        }
+        counts.in += counts.inout;
+        counts.out += counts.inout;
+        return counts;
+    }
+    // Returns true if `otherRecipe` matches the shape of recipe.
+    static matchesRecipe(recipe, otherRecipe) {
+        const shape = RecipeUtil.recipeToShape(otherRecipe);
+        const result = RecipeUtil.find(recipe, shape);
+        return result.some(r => r.score === 0);
+    }
+}
+
+// Copyright (c) 2018 Google Inc. All rights reserved.
+
+// Copyright (c) 2017 Google Inc. All rights reserved.
+
+// @license
+/**
+ * Returns the set delta between two lists based on direct object comparison.
+ */
+function setDiff(from, to) {
+    const result = { add: [], remove: [] };
+    const items = new Set([...from, ...to]);
+    const fromSet = new Set(from);
+    const toSet = new Set(to);
+    for (const item of items) {
+        if (fromSet.has(item)) {
+            if (toSet.has(item)) {
+                continue;
+            }
+            result.remove.push(item);
+            continue;
+        }
+        assert$1(toSet.has(item));
+        result.add.push(item);
+    }
+    return result;
+}
+/**
+ * Returns the set delta between two lists based on custom object comparison.
+ * `keyFn` takes type T and returns the value by which items should be compared.
+ */
+function setDiffCustom(from, to, keyFn) {
+    const result = { add: [], remove: [] };
+    const items = new Map();
+    const fromSet = new Map();
+    const toSet = new Map();
+    for (const item of from) {
+        const key = keyFn(item);
+        items.set(key, item);
+        fromSet.set(key, item);
+    }
+    for (const item of to) {
+        const key = keyFn(item);
+        items.set(key, item);
+        toSet.set(key, item);
+    }
+    for (const [key, item] of items) {
+        if (fromSet.has(key)) {
+            if (toSet.has(key)) {
+                continue;
+            }
+            result.remove.push(item);
+            continue;
+        }
+        assert$1(toSet.has(key));
+        result.add.push(item);
+    }
+    return result;
+}
+
+// @license
+class CrdtCollectionModel {
+    constructor(model = undefined) {
+        // id => {value, Set[keys]}
+        this.items = new Map();
+        if (model) {
+            for (let { id, value, keys } of model) {
+                if (!keys) {
+                    keys = [];
+                }
+                this.items.set(id, { value, keys: new Set(keys) });
+            }
+        }
+    }
+    /**
+     * Adds membership, `keys`, of `value` indexed by `id` to this collection.
+     * Returns whether the change is effective (`id` is new to the collection,
+     * or `value` is different to the value previously stored).
+     */
+    add(id, value, keys) {
+        // Ensure that keys is actually an array, not a single string.
+        // TODO(shans): remove this when all callers are implemented in typeScript.
+        assert$1(keys.length > 0 && typeof keys === 'object', 'add requires a list of keys');
+        let item = this.items.get(id);
+        let effective = false;
+        if (!item) {
+            item = { value, keys: new Set(keys) };
+            this.items.set(id, item);
+            effective = true;
+        }
+        else {
+            let newKeys = false;
+            for (const key of keys) {
+                if (!item.keys.has(key)) {
+                    newKeys = true;
+                }
+                item.keys.add(key);
+            }
+            if (!this._equals(item.value, value)) {
+                assert$1(newKeys, 'cannot add without new keys. incoming=' + keys.join(',') + ' existing=' + [...item.keys].join(','));
+                item.value = value;
+                effective = true;
+            }
+        }
+        return effective;
+    }
+    _equals(value1, value2) {
+        if (Boolean(value1) !== Boolean(value2)) {
+            return false;
+        }
+        if (!value1) {
+            return true;
+        }
+        const type1 = typeof (value1);
+        if (type1 !== typeof (value2)) {
+            return false;
+        }
+        if (type1 === 'object') {
+            const keys = Object.keys(value1);
+            if (keys.length !== Object.keys(value2).length) {
+                return false;
+            }
+            return keys.every(key => this._equals(value1[key], value2[key]));
+        }
+        return JSON.stringify(value1) === JSON.stringify(value2);
+    }
+    /**
+     * Removes the membership, `keys`, of the value indexed by `id` from this collection.
+     * Returns whether the change is effective (the value is no longer present
+     * in the collection because all of the keys have been removed).
+     */
+    remove(id, keys) {
+        const item = this.items.get(id);
+        if (!item) {
+            return false;
+        }
+        for (const key of keys) {
+            item.keys.delete(key);
+        }
+        const effective = item.keys.size === 0;
+        if (effective) {
+            this.items.delete(id);
+        }
+        return effective;
+    }
+    // [{id, value, keys: []}]
+    toLiteral() {
+        const result = [];
+        for (const [id, { value, keys }] of this.items.entries()) {
+            result.push({ id, value, keys: [...keys] });
+        }
+        return result;
+    }
+    toList() {
+        return [...this.items.values()].map(item => item.value);
+    }
+    has(id) {
+        return this.items.has(id);
+    }
+    getKeys(id) {
+        const item = this.items.get(id);
+        return item ? [...item.keys] : [];
+    }
+    getValue(id) {
+        const item = this.items.get(id);
+        return item ? item.value : null;
+    }
+    get size() {
+        return this.items.size;
+    }
+}
+
+// @
+// Copyright (c) 2017 Google Inc. All rights reserved.
+// This code may only be used under the BSD style license found at
+// http://polymer.github.io/LICENSE.txt
+// Code distributed by Google as part of this project is also
+// subject to an additional IP rights grant found at
+// http://polymer.github.io/PATENTS.txt
+class KeyBase {
+}
+
 /*
   Copyright 2015 Google Inc. All Rights Reserved.
   Licensed under the Apache License, Version 2.0 (the "License");
@@ -13978,699 +14640,6 @@ class StorageProviderBase {
     modelForSynchronization() {
         return this.toLiteral();
     }
-}
-
-// @
-// Copyright (c) 2017 Google Inc. All rights reserved.
-// This code may only be used under the BSD style license found at
-// http://polymer.github.io/LICENSE.txt
-// Code distributed by Google as part of this project is also
-// subject to an additional IP rights grant found at
-// http://polymer.github.io/PATENTS.txt
-class KeyBase {
-}
-
-// @license
-class CrdtCollectionModel {
-    constructor(model = undefined) {
-        // id => {value, Set[keys]}
-        this.items = new Map();
-        if (model) {
-            for (let { id, value, keys } of model) {
-                if (!keys) {
-                    keys = [];
-                }
-                this.items.set(id, { value, keys: new Set(keys) });
-            }
-        }
-    }
-    /**
-     * Adds membership, `keys`, of `value` indexed by `id` to this collection.
-     * Returns whether the change is effective (`id` is new to the collection,
-     * or `value` is different to the value previously stored).
-     */
-    add(id, value, keys) {
-        // Ensure that keys is actually an array, not a single string.
-        // TODO(shans): remove this when all callers are implemented in typeScript.
-        assert$1(keys.length > 0 && typeof keys === 'object', 'add requires a list of keys');
-        let item = this.items.get(id);
-        let effective = false;
-        if (!item) {
-            item = { value, keys: new Set(keys) };
-            this.items.set(id, item);
-            effective = true;
-        }
-        else {
-            let newKeys = false;
-            for (const key of keys) {
-                if (!item.keys.has(key)) {
-                    newKeys = true;
-                }
-                item.keys.add(key);
-            }
-            if (!this._equals(item.value, value)) {
-                assert$1(newKeys, 'cannot add without new keys. incoming=' + keys.join(',') + ' existing=' + [...item.keys].join(','));
-                item.value = value;
-                effective = true;
-            }
-        }
-        return effective;
-    }
-    _equals(value1, value2) {
-        if (Boolean(value1) !== Boolean(value2)) {
-            return false;
-        }
-        if (!value1) {
-            return true;
-        }
-        const type1 = typeof (value1);
-        if (type1 !== typeof (value2)) {
-            return false;
-        }
-        if (type1 === 'object') {
-            const keys = Object.keys(value1);
-            if (keys.length !== Object.keys(value2).length) {
-                return false;
-            }
-            return keys.every(key => this._equals(value1[key], value2[key]));
-        }
-        return JSON.stringify(value1) === JSON.stringify(value2);
-    }
-    /**
-     * Removes the membership, `keys`, of the value indexed by `id` from this collection.
-     * Returns whether the change is effective (the value is no longer present
-     * in the collection because all of the keys have been removed).
-     */
-    remove(id, keys) {
-        const item = this.items.get(id);
-        if (!item) {
-            return false;
-        }
-        for (const key of keys) {
-            item.keys.delete(key);
-        }
-        const effective = item.keys.size === 0;
-        if (effective) {
-            this.items.delete(id);
-        }
-        return effective;
-    }
-    // [{id, value, keys: []}]
-    toLiteral() {
-        const result = [];
-        for (const [id, { value, keys }] of this.items.entries()) {
-            result.push({ id, value, keys: [...keys] });
-        }
-        return result;
-    }
-    toList() {
-        return [...this.items.values()].map(item => item.value);
-    }
-    has(id) {
-        return this.items.has(id);
-    }
-    getKeys(id) {
-        const item = this.items.get(id);
-        return item ? [...item.keys] : [];
-    }
-    getValue(id) {
-        const item = this.items.get(id);
-        return item ? item.value : null;
-    }
-    get size() {
-        return this.items.size;
-    }
-}
-
-// @
-class VolatileKey extends KeyBase {
-    constructor(key) {
-        super();
-        let parts = key.split('://');
-        this.protocol = parts[0];
-        assert$1(this.protocol === 'volatile', `can't construct volatile key for protocol ${this.protocol} (input key ${key})`);
-        parts = parts[1] ? parts.slice(1).join('://').split('^^') : [];
-        this.arcId = parts[0];
-        this.location = parts[1];
-        assert$1(this.toString() === key, `Expected ${key}, but got ${this.toString()} volatile key base.`);
-    }
-    base() { return 'volatile'; }
-    get arcId() { return this._arcId; }
-    set arcId(arcId) { this._arcId = arcId; }
-    childKeyForHandle(id) {
-        return new VolatileKey('volatile');
-    }
-    childKeyForArcInfo() {
-        return new VolatileKey(`${this.protocol}://${this.arcId}^^arc-info`);
-    }
-    childKeyForSuggestions(userId, arcId) {
-        return new VolatileKey(`${this.protocol}://${this.arcId}^^${userId}/suggestions/${arcId}`);
-    }
-    childKeyForSearch(userId) {
-        return new VolatileKey(`${this.protocol}://${this.arcId}^^${userId}/search`);
-    }
-    toString() {
-        if (this.location !== undefined && this.arcId !== undefined) {
-            return `${this.protocol}://${this.arcId}^^${this.location}`;
-        }
-        if (this.arcId !== undefined) {
-            return `${this.protocol}://${this.arcId}`;
-        }
-        return `${this.protocol}`;
-    }
-}
-// tslint:disable-next-line: variable-name
-const __storageCache = {};
-class VolatileStorage extends StorageBase {
-    constructor(arcId) {
-        super(arcId);
-        this._memoryMap = {};
-        this._typeMap = {};
-        this.localIDBase = 0;
-        this.typePromiseMap = {};
-        // TODO(shans): re-add this assert once we have a runtime object to put it on.
-        // assert(__storageCache[this._arc.id] == undefined, `${this._arc.id} already exists in local storage cache`);
-        __storageCache[this.arcId.toString()] = this;
-    }
-    async construct(id, type, keyFragment) {
-        const provider = await this._construct(id, type, keyFragment);
-        if (type instanceof ReferenceType || type instanceof BigCollectionType) {
-            return provider;
-        }
-        if (type.isTypeContainer() && type.getContainedType() instanceof ReferenceType) {
-            return provider;
-        }
-        provider.enableReferenceMode();
-        return provider;
-    }
-    async _construct(id, type, keyFragment) {
-        const key = new VolatileKey(keyFragment);
-        if (key.arcId === undefined) {
-            key.arcId = this.arcId.toString();
-        }
-        if (key.location === undefined) {
-            key.location = 'volatile-' + this.localIDBase++;
-        }
-        // TODO(shanestephens): should pass in factory, not 'this' here.
-        const provider = VolatileStorageProvider.newProvider(type, this, undefined, id, key.toString());
-        if (this._memoryMap[key.toString()] !== undefined) {
-            return null;
-        }
-        this._memoryMap[key.toString()] = provider;
-        return provider;
-    }
-    async connect(id, type, key) {
-        const imKey = new VolatileKey(key);
-        if (imKey.arcId !== this.arcId.toString()) {
-            if (__storageCache[imKey.arcId] == undefined) {
-                return null;
-            }
-            return __storageCache[imKey.arcId].connect(id, type, key);
-        }
-        if (this._memoryMap[key] === undefined) {
-            return null;
-        }
-        // TODO assert types match?
-        return this._memoryMap[key];
-    }
-    baseStorageKey(type) {
-        const key = new VolatileKey('volatile');
-        key.arcId = this.arcId.toString();
-        key.location = 'volatile-' + type.toString();
-        return key.toString();
-    }
-    async baseStorageFor(type, key) {
-        if (this._typeMap[key]) {
-            return this._typeMap[key];
-        }
-        if (this.typePromiseMap[key]) {
-            return this.typePromiseMap[key];
-        }
-        const storagePromise = this._construct(type.toString(), type.collectionOf(), key);
-        this.typePromiseMap[key] = storagePromise;
-        const storage = await storagePromise;
-        assert$1(storage, `could not construct baseStorage for key ${key}`);
-        this._typeMap[key] = storage;
-        return storage;
-    }
-    parseStringAsKey(s) {
-        const key = new VolatileKey(s);
-        if (key.arcId === undefined) {
-            key.arcId = this.arcId.toString();
-        }
-        return key;
-    }
-}
-class VolatileStorageProvider extends StorageProviderBase {
-    constructor() {
-        super(...arguments);
-        this.backingStore = null;
-        this.pendingBackingStore = null;
-    }
-    static newProvider(type, storageEngine, name, id, key) {
-        if (type instanceof CollectionType) {
-            return new VolatileCollection(type, storageEngine, name, id, key);
-        }
-        if (type instanceof BigCollectionType) {
-            return new VolatileBigCollection(type, storageEngine, name, id, key);
-        }
-        return new VolatileVariable(type, storageEngine, name, id, key);
-    }
-    // A consequence of awaiting this function is that this.backingStore
-    // is guaranteed to exist once the await completes. This is because
-    // if backingStore doesn't yet exist, the assignment in the then()
-    // is guaranteed to execute before anything awaiting this function.
-    async ensureBackingStore() {
-        if (this.backingStore) {
-            return this.backingStore;
-        }
-        if (!this.pendingBackingStore) {
-            const key = this.storageEngine.baseStorageKey(this.backingType());
-            this.pendingBackingStore = this.storageEngine.baseStorageFor(this.backingType(), key);
-            this.pendingBackingStore.then(backingStore => this.backingStore = backingStore);
-        }
-        return this.pendingBackingStore;
-    }
-}
-class VolatileCollection extends VolatileStorageProvider {
-    constructor(type, storageEngine, name, id, key) {
-        super(type, name, id, key);
-        this._model = new CrdtCollectionModel();
-        this.storageEngine = storageEngine;
-        assert$1(this.version !== null);
-    }
-    backingType() {
-        return this.type.primitiveType();
-    }
-    clone() {
-        const handle = new VolatileCollection(this.type, this.storageEngine, this.name, this.id, null);
-        handle.cloneFrom(this);
-        return handle;
-    }
-    async cloneFrom(handle) {
-        this.referenceMode = handle.referenceMode;
-        const literal = await handle.toLiteral();
-        if (this.referenceMode && literal.model.length > 0) {
-            await Promise.all([this.ensureBackingStore(), handle.ensureBackingStore()]);
-            literal.model = literal.model.map(({ id, value }) => ({ id, value: { id: value.id, storageKey: this.backingStore.storageKey } }));
-            const underlying = await handle.backingStore.getMultiple(literal.model.map(({ id }) => id));
-            await this.backingStore.storeMultiple(underlying, [this.storageKey]);
-        }
-        this.fromLiteral(literal);
-    }
-    async modelForSynchronization() {
-        const model = await this._toList();
-        return { version: this.version, model };
-    }
-    // Returns {version, model: [{id, value, keys: []}]}
-    toLiteral() {
-        return { version: this.version, model: this._model.toLiteral() };
-    }
-    fromLiteral({ version, model }) {
-        this.version = version;
-        this._model = new CrdtCollectionModel(model);
-    }
-    async _toList() {
-        if (this.referenceMode) {
-            const items = this.toLiteral().model;
-            if (items.length === 0) {
-                return [];
-            }
-            const refSet = new Set();
-            items.forEach(item => refSet.add(item.value.storageKey));
-            assert$1(refSet.size === 1, `multiple storageKeys in reference set of collection not yet supported.`);
-            const ref = refSet.values().next().value;
-            await this.ensureBackingStore();
-            const ids = items.map(item => item.value.id);
-            const results = await this.backingStore.getMultiple(ids);
-            const output = [];
-            for (let i = 0; i < results.length; i++) {
-                output.push({ id: ids[i], value: results[i], keys: items[i].keys });
-            }
-            return output;
-        }
-        return this.toLiteral().model;
-    }
-    async toList() {
-        return (await this._toList()).map(item => item.value);
-    }
-    async getMultiple(ids) {
-        assert$1(!this.referenceMode, "getMultiple not implemented for referenceMode stores");
-        return ids.map(id => this._model.getValue(id));
-    }
-    async storeMultiple(values, keys, originatorId = null) {
-        assert$1(!this.referenceMode, "storeMultiple not implemented for referenceMode stores");
-        values.map(value => this._model.add(value.id, value, keys));
-        this.version++;
-    }
-    async get(id) {
-        if (this.referenceMode) {
-            const ref = this._model.getValue(id);
-            if (ref == null) {
-                return null;
-            }
-            await this.ensureBackingStore();
-            const result = await this.backingStore.get(ref.id);
-            return result;
-        }
-        return this._model.getValue(id);
-    }
-    traceInfo() {
-        return { items: this._model.size };
-    }
-    async store(value, keys, originatorId = null) {
-        assert$1(keys != null && keys.length > 0, 'keys required');
-        const trace = Tracing.start({ cat: 'handle', name: 'VolatileCollection::store', args: { name: this.name } });
-        const item = { value, keys, effective: undefined };
-        if (this.referenceMode) {
-            const referredType = this.type.primitiveType();
-            const storageKey = this.backingStore ? this.backingStore.storageKey : this.storageEngine.baseStorageKey(referredType);
-            // It's important to store locally first, as the upstream consumers
-            // are set up to assume all writes are processed (at least locally) synchronously.
-            item.effective = this._model.add(value.id, { id: value.id, storageKey }, keys);
-            await this.ensureBackingStore();
-            await this.backingStore.store(value, keys);
-        }
-        else {
-            item.effective = this._model.add(value.id, value, keys);
-        }
-        this.version++;
-        await trace.wait(this._fire('change', new ChangeEvent({ add: [item], version: this.version, originatorId })));
-        trace.end({ args: { value } });
-    }
-    async removeMultiple(items, originatorId = null) {
-        if (items.length === 0) {
-            items = this._model.toList().map(item => ({ id: item.id, keys: [] }));
-        }
-        items.forEach(item => {
-            if (item.keys.length === 0) {
-                item.keys = this._model.getKeys(item.id);
-            }
-            item.value = this._model.getValue(item.id);
-            if (item.value !== null) {
-                item.effective = this._model.remove(item.id, item.keys);
-            }
-        });
-        this.version++;
-        this._fire('change', new ChangeEvent({ remove: items, version: this.version, originatorId }));
-    }
-    async remove(id, keys = [], originatorId = null) {
-        const trace = Tracing.start({ cat: 'handle', name: 'VolatileCollection::remove', args: { name: this.name } });
-        if (keys.length === 0) {
-            keys = this._model.getKeys(id);
-        }
-        const value = this._model.getValue(id);
-        if (value !== null) {
-            const effective = this._model.remove(id, keys);
-            this.version++;
-            await trace.wait(this._fire('change', new ChangeEvent({ remove: [{ value, keys, effective }], version: this.version, originatorId })));
-        }
-        trace.end({ args: { entity: value } });
-    }
-    clearItemsForTesting() {
-        this._model = new CrdtCollectionModel();
-    }
-}
-class VolatileVariable extends VolatileStorageProvider {
-    constructor(type, storageEngine, name, id, key) {
-        super(type, name, id, key);
-        this.localKeyId = 0;
-        this.storageEngine = storageEngine;
-        this._stored = null;
-        this.backingStore = null;
-    }
-    backingType() {
-        return this.type;
-    }
-    clone() {
-        const variable = new VolatileVariable(this.type, this.storageEngine, this.name, this.id, null);
-        variable.cloneFrom(this);
-        return variable;
-    }
-    async cloneFrom(handle) {
-        this.referenceMode = handle.referenceMode;
-        // TODO(shans): if the handle has local modifications then cloning can fail because
-        // underlying backingStore data isn't yet available to be read. However, checking the
-        // localModified flag and calling persistChanges is really not the correct way to
-        // mitigate this problem - instead, the model provided by await handle.toLiteral() should
-        // remove local modifications that haven't been persisted.
-        if (handle.referenceMode && handle.localModified) {
-            await handle._persistChanges();
-        }
-        const literal = await handle.toLiteral();
-        if (this.referenceMode && literal.model.length > 0) {
-            await Promise.all([this.ensureBackingStore(), handle.ensureBackingStore()]);
-            literal.model = literal.model.map(({ id, value }) => ({ id, value: { id: value.id, storageKey: this.backingStore.storageKey } }));
-            const underlying = await handle.backingStore.getMultiple(literal.model.map(({ id }) => id));
-            await this.backingStore.storeMultiple(underlying, [this.storageKey]);
-        }
-        await this.fromLiteral(literal);
-    }
-    async modelForSynchronization() {
-        if (this.referenceMode && this._stored !== null) {
-            const value = this._stored;
-            await this.ensureBackingStore();
-            const result = await this.backingStore.get(value.id);
-            return {
-                version: this.version,
-                model: [{ id: value.id, value: result }]
-            };
-        }
-        return super.modelForSynchronization();
-    }
-    // Returns {version, model: [{id, value}]}
-    async toLiteral() {
-        const value = this._stored;
-        const model = (value != null) ? [{ id: value.id, value }] : [];
-        return { version: this.version, model };
-    }
-    fromLiteral({ version, model }) {
-        const value = model.length === 0 ? null : model[0].value;
-        if (this.referenceMode && value && value.rawData) {
-            assert$1(false, `shouldn't have rawData ${JSON.stringify(value.rawData)} here`);
-        }
-        assert$1(value !== undefined);
-        this._stored = value;
-        this.version = version;
-    }
-    traceInfo() {
-        return { stored: this._stored !== null };
-    }
-    async get() {
-        if (this.referenceMode && this._stored) {
-            const value = this._stored;
-            await this.ensureBackingStore();
-            const result = await this.backingStore.get(value.id);
-            return result;
-        }
-        return this._stored;
-    }
-    async set(value, originatorId = null, barrier = null) {
-        assert$1(value !== undefined);
-        if (this.referenceMode && value) {
-            // Even if this value is identical to the previously written one,
-            // we can't suppress an event here because we don't actually have
-            // the previous value for comparison (that's down in the backing store).
-            // TODO(shans): should we fetch and compare in the case of the ids matching?
-            const referredType = this.type;
-            const storageKey = this.backingStore ? this.backingStore.storageKey : this.storageEngine.baseStorageKey(referredType);
-            // It's important to store locally first, as the upstream consumers
-            // are set up to assume all writes are processed (at least locally) synchronously.
-            this._stored = { id: value.id, storageKey };
-            await this.ensureBackingStore();
-            // TODO(shans): mutating the storageKey here to provide unique keys is
-            // a hack that can be removed once entity mutation is distinct from collection
-            // updates. Once entity mutation exists, it shouldn't ever be possible to write
-            // different values with the same id.
-            await this.backingStore.store(value, [this.storageKey + this.localKeyId++]);
-        }
-        else {
-            // If there's a barrier set, then the originating storage-proxy is expecting
-            // a result so we cannot suppress the event here.
-            if (JSON.stringify(this._stored) === JSON.stringify(value) &&
-                barrier == null) {
-                return;
-            }
-            this._stored = value;
-        }
-        this.version++;
-        const data = this.referenceMode ? value : this._stored;
-        await this._fire('change', new ChangeEvent({ data, version: this.version, originatorId, barrier }));
-    }
-    async clear(originatorId = null, barrier = null) {
-        await this.set(null, originatorId, barrier);
-    }
-}
-// Volatile version of the BigCollection API; primarily for testing.
-class VolatileCursor {
-    constructor(version, data, pageSize, forward) {
-        this.version = version;
-        this.pageSize = pageSize;
-        const copy = [...data];
-        copy.sort((a, b) => a.index - b.index);
-        this.data = copy.map(v => v.value);
-        if (!forward) {
-            this.data.reverse();
-        }
-    }
-    async next() {
-        if (this.data.length === 0) {
-            return { done: true };
-        }
-        return { value: this.data.splice(0, this.pageSize), done: false };
-    }
-    close() {
-        this.data = [];
-    }
-}
-class VolatileBigCollection extends VolatileStorageProvider {
-    constructor(type, storageEngine, name, id, key) {
-        super(type, name, id, key);
-        this.items = new Map();
-        this.cursors = new Map();
-        this.cursorIndex = 0;
-    }
-    enableReferenceMode() {
-        assert$1(false, 'referenceMode is not supported for BigCollection');
-    }
-    backingType() {
-        return this.type.primitiveType();
-    }
-    async get(id) {
-        const data = this.items.get(id);
-        return (data !== undefined) ? data.value : null;
-    }
-    async store(value, keys, originatorId) {
-        assert$1(keys != null && keys.length > 0, 'keys required');
-        this.version++;
-        if (!this.items.has(value.id)) {
-            this.items.set(value.id, { index: null, value: null, keys: {} });
-        }
-        const data = this.items.get(value.id);
-        data.index = this.version;
-        data.value = value;
-        keys.forEach(k => data.keys[k] = this.version);
-    }
-    async remove(id, keys, originatorId) {
-        this.version++;
-        this.items.delete(id);
-    }
-    async stream(pageSize, forward = true) {
-        assert$1(!isNaN(pageSize) && pageSize > 0);
-        this.cursorIndex++;
-        const cursor = new VolatileCursor(this.version, this.items.values(), pageSize, forward);
-        this.cursors.set(this.cursorIndex, cursor);
-        return this.cursorIndex;
-    }
-    async cursorNext(cursorId) {
-        const cursor = this.cursors.get(cursorId);
-        if (!cursor) {
-            return { done: true };
-        }
-        const data = await cursor.next();
-        if (data.done) {
-            this.cursors.delete(cursorId);
-        }
-        return data;
-    }
-    cursorClose(cursorId) {
-        const cursor = this.cursors.get(cursorId);
-        if (cursor) {
-            this.cursors.delete(cursorId);
-            cursor.close();
-        }
-    }
-    cursorVersion(cursorId) {
-        const cursor = this.cursors.get(cursorId);
-        return cursor ? cursor.version : null;
-    }
-    async cloneFrom(handle) {
-        // TODO: clone from non-volatile versions
-        if (handle.items) {
-            this.fromLiteral(handle.toLiteral());
-        }
-    }
-    // Returns {version, model: [{id, index, value, keys: []}]}
-    toLiteral() {
-        const model = [];
-        for (const [id, { index, value, keys }] of this.items.entries()) {
-            model.push({ id, index, value, keys: Object.keys(keys) });
-        }
-        return { version: this.version, model };
-    }
-    fromLiteral({ version, model }) {
-        this.version = version;
-        this.items.clear();
-        for (const { id, index, value, keys } of model) {
-            const adjustedKeys = {};
-            for (const k of keys) {
-                adjustedKeys[k] = index;
-            }
-            this.items.set(id, { index, value, keys: adjustedKeys });
-        }
-    }
-    clearItemsForTesting() {
-        this.items.clear();
-    }
-}
-
-// Copyright (c) 2018 Google Inc. All rights reserved.
-
-// Copyright (c) 2017 Google Inc. All rights reserved.
-
-// @license
-/**
- * Returns the set delta between two lists based on direct object comparison.
- */
-function setDiff(from, to) {
-    const result = { add: [], remove: [] };
-    const items = new Set([...from, ...to]);
-    const fromSet = new Set(from);
-    const toSet = new Set(to);
-    for (const item of items) {
-        if (fromSet.has(item)) {
-            if (toSet.has(item)) {
-                continue;
-            }
-            result.remove.push(item);
-            continue;
-        }
-        assert$1(toSet.has(item));
-        result.add.push(item);
-    }
-    return result;
-}
-/**
- * Returns the set delta between two lists based on custom object comparison.
- * `keyFn` takes type T and returns the value by which items should be compared.
- */
-function setDiffCustom(from, to, keyFn) {
-    const result = { add: [], remove: [] };
-    const items = new Map();
-    const fromSet = new Map();
-    const toSet = new Map();
-    for (const item of from) {
-        const key = keyFn(item);
-        items.set(key, item);
-        fromSet.set(key, item);
-    }
-    for (const item of to) {
-        const key = keyFn(item);
-        items.set(key, item);
-        toSet.set(key, item);
-    }
-    for (const [key, item] of items) {
-        if (fromSet.has(key)) {
-            if (toSet.has(key)) {
-                continue;
-            }
-            result.remove.push(item);
-            continue;
-        }
-        assert$1(toSet.has(key));
-        result.add.push(item);
-    }
-    return result;
 }
 
 // @license
@@ -16037,6 +16006,54 @@ class PouchDbStorageProvider extends StorageProviderBase {
     }
 }
 
+// TODO(lindner): update to operate like the firebase version
+class PouchDbBigCollection extends PouchDbStorageProvider {
+    constructor(type, storageEngine, name, id, key) {
+        super(type, storageEngine, name, id, key);
+    }
+    backingType() {
+        return this.type.primitiveType();
+    }
+    async get(id) {
+        throw new Error('NotImplemented');
+    }
+    async store(value, keys, originatorId) {
+        assert$1(keys != null && keys.length > 0, 'keys required');
+        throw new Error('NotImplemented');
+    }
+    async remove(id, keys, originatorId) {
+        throw new Error('NotImplemented');
+    }
+    async stream(pageSize, forward = true) {
+        throw new Error('NotImplemented');
+    }
+    async cursorNext(cursorId) {
+        throw new Error('NotImplemented');
+    }
+    cursorClose(cursorId) {
+        throw new Error('NotImplemented');
+    }
+    cursorVersion(cursorId) {
+        throw new Error('NotImplemented');
+    }
+    toLiteral() {
+        throw new Error('NotImplemented');
+    }
+    cloneFrom() {
+        throw new Error('NotImplemented');
+    }
+    clearItemsForTesting() {
+        throw new Error('NotImplemented');
+    }
+    /**
+     * Triggered when the storage key has been modified.  For now we
+     * just refetch.  This is fast since the data is synced locally.
+     */
+    onRemoteStateSynced(doc) {
+        throw new Error('NotImplemented');
+    }
+}
+
 class PouchDbCollection extends PouchDbStorageProvider {
     /**
      * Create a new PouchDbCollection.
@@ -16387,54 +16404,6 @@ class PouchDbCollection extends PouchDbStorageProvider {
         }
         this._model = new CrdtCollectionModel();
         this._rev = undefined;
-    }
-}
-
-// TODO(lindner): update to operate like the firebase version
-class PouchDbBigCollection extends PouchDbStorageProvider {
-    constructor(type, storageEngine, name, id, key) {
-        super(type, storageEngine, name, id, key);
-    }
-    backingType() {
-        return this.type.primitiveType();
-    }
-    async get(id) {
-        throw new Error('NotImplemented');
-    }
-    async store(value, keys, originatorId) {
-        assert$1(keys != null && keys.length > 0, 'keys required');
-        throw new Error('NotImplemented');
-    }
-    async remove(id, keys, originatorId) {
-        throw new Error('NotImplemented');
-    }
-    async stream(pageSize, forward = true) {
-        throw new Error('NotImplemented');
-    }
-    async cursorNext(cursorId) {
-        throw new Error('NotImplemented');
-    }
-    cursorClose(cursorId) {
-        throw new Error('NotImplemented');
-    }
-    cursorVersion(cursorId) {
-        throw new Error('NotImplemented');
-    }
-    toLiteral() {
-        throw new Error('NotImplemented');
-    }
-    cloneFrom() {
-        throw new Error('NotImplemented');
-    }
-    clearItemsForTesting() {
-        throw new Error('NotImplemented');
-    }
-    /**
-     * Triggered when the storage key has been modified.  For now we
-     * just refetch.  This is fast since the data is synced locally.
-     */
-    onRemoteStateSynced(doc) {
-        throw new Error('NotImplemented');
     }
 }
 
@@ -17167,6 +17136,518 @@ class SyntheticCollection extends StorageProviderBase {
 }
 
 // @
+class VolatileKey extends KeyBase {
+    constructor(key) {
+        super();
+        let parts = key.split('://');
+        this.protocol = parts[0];
+        assert$1(this.protocol === 'volatile', `can't construct volatile key for protocol ${this.protocol} (input key ${key})`);
+        parts = parts[1] ? parts.slice(1).join('://').split('^^') : [];
+        this.arcId = parts[0];
+        this.location = parts[1];
+        assert$1(this.toString() === key, `Expected ${key}, but got ${this.toString()} volatile key base.`);
+    }
+    base() { return 'volatile'; }
+    get arcId() { return this._arcId; }
+    set arcId(arcId) { this._arcId = arcId; }
+    childKeyForHandle(id) {
+        return new VolatileKey('volatile');
+    }
+    childKeyForArcInfo() {
+        return new VolatileKey(`${this.protocol}://${this.arcId}^^arc-info`);
+    }
+    childKeyForSuggestions(userId, arcId) {
+        return new VolatileKey(`${this.protocol}://${this.arcId}^^${userId}/suggestions/${arcId}`);
+    }
+    childKeyForSearch(userId) {
+        return new VolatileKey(`${this.protocol}://${this.arcId}^^${userId}/search`);
+    }
+    toString() {
+        if (this.location !== undefined && this.arcId !== undefined) {
+            return `${this.protocol}://${this.arcId}^^${this.location}`;
+        }
+        if (this.arcId !== undefined) {
+            return `${this.protocol}://${this.arcId}`;
+        }
+        return `${this.protocol}`;
+    }
+}
+// tslint:disable-next-line: variable-name
+const __storageCache = {};
+class VolatileStorage extends StorageBase {
+    constructor(arcId) {
+        super(arcId);
+        this._memoryMap = {};
+        this._typeMap = {};
+        this.localIDBase = 0;
+        this.typePromiseMap = {};
+        // TODO(shans): re-add this assert once we have a runtime object to put it on.
+        // assert(__storageCache[this._arc.id] == undefined, `${this._arc.id} already exists in local storage cache`);
+        __storageCache[this.arcId.toString()] = this;
+    }
+    async construct(id, type, keyFragment) {
+        const provider = await this._construct(id, type, keyFragment);
+        if (type instanceof ReferenceType || type instanceof BigCollectionType) {
+            return provider;
+        }
+        if (type.isTypeContainer() && type.getContainedType() instanceof ReferenceType) {
+            return provider;
+        }
+        provider.enableReferenceMode();
+        return provider;
+    }
+    async _construct(id, type, keyFragment) {
+        const key = new VolatileKey(keyFragment);
+        if (key.arcId === undefined) {
+            key.arcId = this.arcId.toString();
+        }
+        if (key.location === undefined) {
+            key.location = 'volatile-' + this.localIDBase++;
+        }
+        // TODO(shanestephens): should pass in factory, not 'this' here.
+        const provider = VolatileStorageProvider.newProvider(type, this, undefined, id, key.toString());
+        if (this._memoryMap[key.toString()] !== undefined) {
+            return null;
+        }
+        this._memoryMap[key.toString()] = provider;
+        return provider;
+    }
+    async connect(id, type, key) {
+        const imKey = new VolatileKey(key);
+        if (imKey.arcId !== this.arcId.toString()) {
+            if (__storageCache[imKey.arcId] == undefined) {
+                return null;
+            }
+            return __storageCache[imKey.arcId].connect(id, type, key);
+        }
+        if (this._memoryMap[key] === undefined) {
+            return null;
+        }
+        // TODO assert types match?
+        return this._memoryMap[key];
+    }
+    baseStorageKey(type) {
+        const key = new VolatileKey('volatile');
+        key.arcId = this.arcId.toString();
+        key.location = 'volatile-' + type.toString();
+        return key.toString();
+    }
+    async baseStorageFor(type, key) {
+        if (this._typeMap[key]) {
+            return this._typeMap[key];
+        }
+        if (this.typePromiseMap[key]) {
+            return this.typePromiseMap[key];
+        }
+        const storagePromise = this._construct(type.toString(), type.collectionOf(), key);
+        this.typePromiseMap[key] = storagePromise;
+        const storage = await storagePromise;
+        assert$1(storage, `could not construct baseStorage for key ${key}`);
+        this._typeMap[key] = storage;
+        return storage;
+    }
+    parseStringAsKey(s) {
+        const key = new VolatileKey(s);
+        if (key.arcId === undefined) {
+            key.arcId = this.arcId.toString();
+        }
+        return key;
+    }
+}
+class VolatileStorageProvider extends StorageProviderBase {
+    constructor() {
+        super(...arguments);
+        this.backingStore = null;
+        this.pendingBackingStore = null;
+    }
+    static newProvider(type, storageEngine, name, id, key) {
+        if (type instanceof CollectionType) {
+            return new VolatileCollection(type, storageEngine, name, id, key);
+        }
+        if (type instanceof BigCollectionType) {
+            return new VolatileBigCollection(type, storageEngine, name, id, key);
+        }
+        return new VolatileVariable(type, storageEngine, name, id, key);
+    }
+    // A consequence of awaiting this function is that this.backingStore
+    // is guaranteed to exist once the await completes. This is because
+    // if backingStore doesn't yet exist, the assignment in the then()
+    // is guaranteed to execute before anything awaiting this function.
+    async ensureBackingStore() {
+        if (this.backingStore) {
+            return this.backingStore;
+        }
+        if (!this.pendingBackingStore) {
+            const key = this.storageEngine.baseStorageKey(this.backingType());
+            this.pendingBackingStore = this.storageEngine.baseStorageFor(this.backingType(), key);
+            this.pendingBackingStore.then(backingStore => this.backingStore = backingStore);
+        }
+        return this.pendingBackingStore;
+    }
+}
+class VolatileCollection extends VolatileStorageProvider {
+    constructor(type, storageEngine, name, id, key) {
+        super(type, name, id, key);
+        this._model = new CrdtCollectionModel();
+        this.storageEngine = storageEngine;
+        assert$1(this.version !== null);
+    }
+    backingType() {
+        return this.type.primitiveType();
+    }
+    clone() {
+        const handle = new VolatileCollection(this.type, this.storageEngine, this.name, this.id, null);
+        handle.cloneFrom(this);
+        return handle;
+    }
+    async cloneFrom(handle) {
+        this.referenceMode = handle.referenceMode;
+        const literal = await handle.toLiteral();
+        if (this.referenceMode && literal.model.length > 0) {
+            await Promise.all([this.ensureBackingStore(), handle.ensureBackingStore()]);
+            literal.model = literal.model.map(({ id, value }) => ({ id, value: { id: value.id, storageKey: this.backingStore.storageKey } }));
+            const underlying = await handle.backingStore.getMultiple(literal.model.map(({ id }) => id));
+            await this.backingStore.storeMultiple(underlying, [this.storageKey]);
+        }
+        this.fromLiteral(literal);
+    }
+    async modelForSynchronization() {
+        const model = await this._toList();
+        return { version: this.version, model };
+    }
+    // Returns {version, model: [{id, value, keys: []}]}
+    toLiteral() {
+        return { version: this.version, model: this._model.toLiteral() };
+    }
+    fromLiteral({ version, model }) {
+        this.version = version;
+        this._model = new CrdtCollectionModel(model);
+    }
+    async _toList() {
+        if (this.referenceMode) {
+            const items = this.toLiteral().model;
+            if (items.length === 0) {
+                return [];
+            }
+            const refSet = new Set();
+            items.forEach(item => refSet.add(item.value.storageKey));
+            assert$1(refSet.size === 1, `multiple storageKeys in reference set of collection not yet supported.`);
+            const ref = refSet.values().next().value;
+            await this.ensureBackingStore();
+            const ids = items.map(item => item.value.id);
+            const results = await this.backingStore.getMultiple(ids);
+            const output = [];
+            for (let i = 0; i < results.length; i++) {
+                output.push({ id: ids[i], value: results[i], keys: items[i].keys });
+            }
+            return output;
+        }
+        return this.toLiteral().model;
+    }
+    async toList() {
+        return (await this._toList()).map(item => item.value);
+    }
+    async getMultiple(ids) {
+        assert$1(!this.referenceMode, "getMultiple not implemented for referenceMode stores");
+        return ids.map(id => this._model.getValue(id));
+    }
+    async storeMultiple(values, keys, originatorId = null) {
+        assert$1(!this.referenceMode, "storeMultiple not implemented for referenceMode stores");
+        values.map(value => this._model.add(value.id, value, keys));
+        this.version++;
+    }
+    async get(id) {
+        if (this.referenceMode) {
+            const ref = this._model.getValue(id);
+            if (ref == null) {
+                return null;
+            }
+            await this.ensureBackingStore();
+            const result = await this.backingStore.get(ref.id);
+            return result;
+        }
+        return this._model.getValue(id);
+    }
+    traceInfo() {
+        return { items: this._model.size };
+    }
+    async store(value, keys, originatorId = null) {
+        assert$1(keys != null && keys.length > 0, 'keys required');
+        const trace = Tracing.start({ cat: 'handle', name: 'VolatileCollection::store', args: { name: this.name } });
+        const item = { value, keys, effective: undefined };
+        if (this.referenceMode) {
+            const referredType = this.type.primitiveType();
+            const storageKey = this.backingStore ? this.backingStore.storageKey : this.storageEngine.baseStorageKey(referredType);
+            // It's important to store locally first, as the upstream consumers
+            // are set up to assume all writes are processed (at least locally) synchronously.
+            item.effective = this._model.add(value.id, { id: value.id, storageKey }, keys);
+            await this.ensureBackingStore();
+            await this.backingStore.store(value, keys);
+        }
+        else {
+            item.effective = this._model.add(value.id, value, keys);
+        }
+        this.version++;
+        await trace.wait(this._fire('change', new ChangeEvent({ add: [item], version: this.version, originatorId })));
+        trace.end({ args: { value } });
+    }
+    async removeMultiple(items, originatorId = null) {
+        if (items.length === 0) {
+            items = this._model.toList().map(item => ({ id: item.id, keys: [] }));
+        }
+        items.forEach(item => {
+            if (item.keys.length === 0) {
+                item.keys = this._model.getKeys(item.id);
+            }
+            item.value = this._model.getValue(item.id);
+            if (item.value !== null) {
+                item.effective = this._model.remove(item.id, item.keys);
+            }
+        });
+        this.version++;
+        this._fire('change', new ChangeEvent({ remove: items, version: this.version, originatorId }));
+    }
+    async remove(id, keys = [], originatorId = null) {
+        const trace = Tracing.start({ cat: 'handle', name: 'VolatileCollection::remove', args: { name: this.name } });
+        if (keys.length === 0) {
+            keys = this._model.getKeys(id);
+        }
+        const value = this._model.getValue(id);
+        if (value !== null) {
+            const effective = this._model.remove(id, keys);
+            this.version++;
+            await trace.wait(this._fire('change', new ChangeEvent({ remove: [{ value, keys, effective }], version: this.version, originatorId })));
+        }
+        trace.end({ args: { entity: value } });
+    }
+    clearItemsForTesting() {
+        this._model = new CrdtCollectionModel();
+    }
+}
+class VolatileVariable extends VolatileStorageProvider {
+    constructor(type, storageEngine, name, id, key) {
+        super(type, name, id, key);
+        this.localKeyId = 0;
+        this.storageEngine = storageEngine;
+        this._stored = null;
+        this.backingStore = null;
+    }
+    backingType() {
+        return this.type;
+    }
+    clone() {
+        const variable = new VolatileVariable(this.type, this.storageEngine, this.name, this.id, null);
+        variable.cloneFrom(this);
+        return variable;
+    }
+    async cloneFrom(handle) {
+        this.referenceMode = handle.referenceMode;
+        // TODO(shans): if the handle has local modifications then cloning can fail because
+        // underlying backingStore data isn't yet available to be read. However, checking the
+        // localModified flag and calling persistChanges is really not the correct way to
+        // mitigate this problem - instead, the model provided by await handle.toLiteral() should
+        // remove local modifications that haven't been persisted.
+        if (handle.referenceMode && handle.localModified) {
+            await handle._persistChanges();
+        }
+        const literal = await handle.toLiteral();
+        if (this.referenceMode && literal.model.length > 0) {
+            await Promise.all([this.ensureBackingStore(), handle.ensureBackingStore()]);
+            literal.model = literal.model.map(({ id, value }) => ({ id, value: { id: value.id, storageKey: this.backingStore.storageKey } }));
+            const underlying = await handle.backingStore.getMultiple(literal.model.map(({ id }) => id));
+            await this.backingStore.storeMultiple(underlying, [this.storageKey]);
+        }
+        await this.fromLiteral(literal);
+    }
+    async modelForSynchronization() {
+        if (this.referenceMode && this._stored !== null) {
+            const value = this._stored;
+            await this.ensureBackingStore();
+            const result = await this.backingStore.get(value.id);
+            return {
+                version: this.version,
+                model: [{ id: value.id, value: result }]
+            };
+        }
+        return super.modelForSynchronization();
+    }
+    // Returns {version, model: [{id, value}]}
+    async toLiteral() {
+        const value = this._stored;
+        const model = (value != null) ? [{ id: value.id, value }] : [];
+        return { version: this.version, model };
+    }
+    fromLiteral({ version, model }) {
+        const value = model.length === 0 ? null : model[0].value;
+        if (this.referenceMode && value && value.rawData) {
+            assert$1(false, `shouldn't have rawData ${JSON.stringify(value.rawData)} here`);
+        }
+        assert$1(value !== undefined);
+        this._stored = value;
+        this.version = version;
+    }
+    traceInfo() {
+        return { stored: this._stored !== null };
+    }
+    async get() {
+        if (this.referenceMode && this._stored) {
+            const value = this._stored;
+            await this.ensureBackingStore();
+            const result = await this.backingStore.get(value.id);
+            return result;
+        }
+        return this._stored;
+    }
+    async set(value, originatorId = null, barrier = null) {
+        assert$1(value !== undefined);
+        if (this.referenceMode && value) {
+            // Even if this value is identical to the previously written one,
+            // we can't suppress an event here because we don't actually have
+            // the previous value for comparison (that's down in the backing store).
+            // TODO(shans): should we fetch and compare in the case of the ids matching?
+            const referredType = this.type;
+            const storageKey = this.backingStore ? this.backingStore.storageKey : this.storageEngine.baseStorageKey(referredType);
+            // It's important to store locally first, as the upstream consumers
+            // are set up to assume all writes are processed (at least locally) synchronously.
+            this._stored = { id: value.id, storageKey };
+            await this.ensureBackingStore();
+            // TODO(shans): mutating the storageKey here to provide unique keys is
+            // a hack that can be removed once entity mutation is distinct from collection
+            // updates. Once entity mutation exists, it shouldn't ever be possible to write
+            // different values with the same id.
+            await this.backingStore.store(value, [this.storageKey + this.localKeyId++]);
+        }
+        else {
+            // If there's a barrier set, then the originating storage-proxy is expecting
+            // a result so we cannot suppress the event here.
+            if (JSON.stringify(this._stored) === JSON.stringify(value) &&
+                barrier == null) {
+                return;
+            }
+            this._stored = value;
+        }
+        this.version++;
+        const data = this.referenceMode ? value : this._stored;
+        await this._fire('change', new ChangeEvent({ data, version: this.version, originatorId, barrier }));
+    }
+    async clear(originatorId = null, barrier = null) {
+        await this.set(null, originatorId, barrier);
+    }
+}
+// Volatile version of the BigCollection API; primarily for testing.
+class VolatileCursor {
+    constructor(version, data, pageSize, forward) {
+        this.version = version;
+        this.pageSize = pageSize;
+        const copy = [...data];
+        copy.sort((a, b) => a.index - b.index);
+        this.data = copy.map(v => v.value);
+        if (!forward) {
+            this.data.reverse();
+        }
+    }
+    async next() {
+        if (this.data.length === 0) {
+            return { done: true };
+        }
+        return { value: this.data.splice(0, this.pageSize), done: false };
+    }
+    close() {
+        this.data = [];
+    }
+}
+class VolatileBigCollection extends VolatileStorageProvider {
+    constructor(type, storageEngine, name, id, key) {
+        super(type, name, id, key);
+        this.items = new Map();
+        this.cursors = new Map();
+        this.cursorIndex = 0;
+    }
+    enableReferenceMode() {
+        assert$1(false, 'referenceMode is not supported for BigCollection');
+    }
+    backingType() {
+        return this.type.primitiveType();
+    }
+    async get(id) {
+        const data = this.items.get(id);
+        return (data !== undefined) ? data.value : null;
+    }
+    async store(value, keys, originatorId) {
+        assert$1(keys != null && keys.length > 0, 'keys required');
+        this.version++;
+        if (!this.items.has(value.id)) {
+            this.items.set(value.id, { index: null, value: null, keys: {} });
+        }
+        const data = this.items.get(value.id);
+        data.index = this.version;
+        data.value = value;
+        keys.forEach(k => data.keys[k] = this.version);
+    }
+    async remove(id, keys, originatorId) {
+        this.version++;
+        this.items.delete(id);
+    }
+    async stream(pageSize, forward = true) {
+        assert$1(!isNaN(pageSize) && pageSize > 0);
+        this.cursorIndex++;
+        const cursor = new VolatileCursor(this.version, this.items.values(), pageSize, forward);
+        this.cursors.set(this.cursorIndex, cursor);
+        return this.cursorIndex;
+    }
+    async cursorNext(cursorId) {
+        const cursor = this.cursors.get(cursorId);
+        if (!cursor) {
+            return { done: true };
+        }
+        const data = await cursor.next();
+        if (data.done) {
+            this.cursors.delete(cursorId);
+        }
+        return data;
+    }
+    cursorClose(cursorId) {
+        const cursor = this.cursors.get(cursorId);
+        if (cursor) {
+            this.cursors.delete(cursorId);
+            cursor.close();
+        }
+    }
+    cursorVersion(cursorId) {
+        const cursor = this.cursors.get(cursorId);
+        return cursor ? cursor.version : null;
+    }
+    async cloneFrom(handle) {
+        // TODO: clone from non-volatile versions
+        if (handle.items) {
+            this.fromLiteral(handle.toLiteral());
+        }
+    }
+    // Returns {version, model: [{id, index, value, keys: []}]}
+    toLiteral() {
+        const model = [];
+        for (const [id, { index, value, keys }] of this.items.entries()) {
+            model.push({ id, index, value, keys: Object.keys(keys) });
+        }
+        return { version: this.version, model };
+    }
+    fromLiteral({ version, model }) {
+        this.version = version;
+        this.items.clear();
+        for (const { id, index, value, keys } of model) {
+            const adjustedKeys = {};
+            for (const k of keys) {
+                adjustedKeys[k] = index;
+            }
+            this.items.set(id, { index, value, keys: adjustedKeys });
+        }
+    }
+    clearItemsForTesting() {
+        this.items.clear();
+    }
+}
+
+// @
 class StorageProviderFactory {
     constructor(arcId) {
         this.arcId = arcId;
@@ -17223,487 +17704,6 @@ class StorageProviderFactory {
     // For testing
     shutdown() {
         Object.values(this._storageInstances).map(item => item.storage.shutdown());
-    }
-}
-
-/**
- * @license
- * Copyright (c) 2017 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-class ManifestMeta {
-    constructor() {
-        this.storageKey = null;
-        this.name = null;
-    }
-    apply(items) {
-        items.forEach(item => { this[item.key] = item.value; });
-    }
-}
-
-/**
- * @license
- * Copyright (c) 2018 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-class RNG {
-}
-/**
- * A basic random number generator using Math.random();
- */
-class MathRandomRNG extends RNG {
-    next() {
-        return Math.random();
-    }
-}
-/**
- * Provides a deterministic Random Number Generator for Tests
- */
-class SeededRNG extends RNG {
-    constructor() {
-        super(...arguments);
-        this.generator = new MersenneTwister(7);
-    }
-    next() {
-        return this.generator.random();
-    }
-}
-// Singleton Pattern
-let random = new MathRandomRNG();
-class Random {
-    static next() {
-        return random.next();
-    }
-    // TODO: remove test code and allow for injectable implementations.
-    static seedForTests() {
-        random = new SeededRNG();
-    }
-}
-
-/**
- * @license
- * Copyright (c) 2017 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-class Id {
-    constructor(currentSession, components = []) {
-        this.nextIdComponent = 0;
-        this.components = [];
-        this.session = currentSession;
-        this.currentSession = currentSession;
-        this.components = components;
-    }
-    static newSessionId() {
-        const session = Math.floor(Random.next() * Math.pow(2, 50)) + '';
-        return new Id(session);
-    }
-    /**
-     * When used in the following way:
-     *   const id = Id.newSessionId().fromString(stringId);
-     *
-     * The resulting id will receive a newly generated session id in the currentSession field,
-     * while maintaining an original session from the string representation in the session field.
-     */
-    fromString(str) {
-        const newId = new Id(this.currentSession);
-        let components = str.split(':');
-        if (components[0][0] === '!') {
-            newId.session = components[0].slice(1);
-            components = components.slice(1);
-        }
-        newId.components.push(...components);
-        return newId;
-    }
-    toString() {
-        return `!${this.session}:${this.components.join(':')}`;
-    }
-    // Only use this for testing!
-    toStringWithoutSessionForTesting() {
-        return this.components.join(':');
-    }
-    createId(component = '') {
-        const id = new Id(this.currentSession, this.components.slice());
-        id.components.push(component + this.nextIdComponent++);
-        return id;
-    }
-    equal(id) {
-        if (id.session !== this.session || id.components.length !== this.components.length) {
-            return false;
-        }
-        for (let i = 0; i < id.components.length; i++) {
-            if (id.components[i] !== this.components[i]) {
-                return false;
-            }
-        }
-        return true;
-    }
-}
-
-// Copyright (c) 2017 Google Inc. All rights reserved.
-class Shape {
-    constructor(recipe, particles, handles, hcs) {
-        this.recipe = recipe;
-        this.particles = particles;
-        this.handles = handles;
-        this.reverse = new Map();
-        for (const p of Object.keys(particles)) {
-            this.reverse.set(particles[p], p);
-        }
-        for (const h of handles.keys()) {
-            this.reverse.set(handles.get(h), h);
-        }
-        for (const hc of Object.keys(hcs)) {
-            this.reverse.set(hcs[hc], hc);
-        }
-    }
-}
-class RecipeUtil {
-    static makeShape(particles, handles, map, recipe) {
-        recipe = recipe || new Recipe();
-        const pMap = {};
-        const hMap = new Map();
-        const hcMap = {};
-        particles.forEach(particle => pMap[particle] = recipe.newParticle(particle));
-        handles.forEach(handle => hMap.set(handle, recipe.newHandle()));
-        Object.keys(map).forEach(key => {
-            Object.keys(map[key]).forEach(name => {
-                let handle = map[key][name];
-                let direction = '=';
-                let tags = [];
-                if (handle.handle) {
-                    // NOTE: for now, '=' on the shape means "accept anything". This is going
-                    // to change when we redo capabilities; for now it's modeled by mapping '=' to
-                    // '=' rather than to 'inout'.
-                    direction = { '->': 'out', '<-': 'in', '=': '=' }[handle.direction];
-                    tags = handle.tags || [];
-                    handle = handle.handle;
-                }
-                if (handle.localName) {
-                    hMap.get(handle).localName = handle.localName;
-                }
-                const connection = pMap[key].addConnectionName(name);
-                connection.direction = direction;
-                hMap.get(handle).tags = tags;
-                connection.connectToHandle(hMap.get(handle));
-                hcMap[key + ':' + name] = pMap[key].connections[name];
-            });
-        });
-        return new Shape(recipe, pMap, hMap, hcMap);
-    }
-    static recipeToShape(recipe) {
-        const particles = {};
-        let id = 0;
-        recipe.particles.forEach(particle => particles[particle.name] = particle);
-        const handles = new Map();
-        recipe.handles.forEach(handle => handles.set('h' + id++, handle));
-        const hcs = {};
-        recipe.handleConnections.forEach(hc => hcs[hc.particle.name + ':' + hc.name] = hc);
-        return new Shape(recipe, particles, handles, hcs);
-    }
-    static find(recipe, shape) {
-        function _buildNewHCMatches(recipe, shapeHC, match, outputList) {
-            const { forward, reverse, score } = match;
-            let matchFound = false;
-            for (const recipeHC of recipe.handleConnections) {
-                // TODO are there situations where multiple handleConnections should
-                // be allowed to point to the same one in the recipe?
-                if (reverse.has(recipeHC)) {
-                    continue;
-                }
-                // TODO support unnamed shape particles.
-                if (recipeHC.particle.name !== shapeHC.particle.name) {
-                    continue;
-                }
-                if (shapeHC.name && shapeHC.name !== recipeHC.name) {
-                    continue;
-                }
-                const acceptedDirections = { 'in': ['in', 'inout'], 'out': ['out', 'inout'], '=': ['in', 'out', 'inout'], 'inout': ['inout'], 'host': ['host'] };
-                if (recipeHC.direction) {
-                    if (!acceptedDirections[shapeHC.direction].includes(recipeHC.direction)) {
-                        continue;
-                    }
-                }
-                if (shapeHC.handle && recipeHC.handle && shapeHC.handle.localName &&
-                    shapeHC.handle.localName !== recipeHC.handle.localName) {
-                    continue;
-                }
-                // recipeHC is a candidate for shapeHC. shapeHC references a
-                // particle, so recipeHC must reference the matching particle,
-                // or a particle that isn't yet mapped from shape.
-                if (reverse.has(recipeHC.particle)) {
-                    if (reverse.get(recipeHC.particle) !== shapeHC.particle) {
-                        continue;
-                    }
-                }
-                else if (forward.has(shapeHC.particle)) {
-                    // we've already mapped the particle referenced by shapeHC
-                    // and it doesn't match recipeHC's particle as recipeHC's
-                    // particle isn't mapped
-                    continue;
-                }
-                // shapeHC doesn't necessarily reference a handle, but if it does
-                // then recipeHC needs to reference the matching handle, or one
-                // that isn't yet mapped, or no handle yet.
-                if (shapeHC.handle && recipeHC.handle) {
-                    if (reverse.has(recipeHC.handle)) {
-                        if (reverse.get(recipeHC.handle) !== shapeHC.handle) {
-                            continue;
-                        }
-                    }
-                    else if (forward.has(shapeHC.handle) && forward.get(shapeHC.handle) !== null) {
-                        continue;
-                    }
-                    // Check whether shapeHC and recipeHC reference the same handle.
-                    if (shapeHC.handle.fate !== 'create' || (recipeHC.handle.fate !== 'create' && recipeHC.handle.originalFate !== 'create')) {
-                        if (Boolean(shapeHC.handle.immediateValue) !== Boolean(recipeHC.handle.immediateValue)) {
-                            continue; // One is an immediate value handle and the other is not.
-                        }
-                        if (recipeHC.handle.immediateValue) {
-                            if (!recipeHC.handle.immediateValue.equals(shapeHC.handle.immediateValue)) {
-                                continue; // Immediate values are different.
-                            }
-                        }
-                        else {
-                            // Note: the id of a handle with 'copy' fate changes during recipe instantiation, hence comparing to original id too.
-                            // Skip the check if handles have 'create' fate (their ids are arbitrary).
-                            if (shapeHC.handle.id !== recipeHC.handle.id && shapeHC.handle.id !== recipeHC.handle.originalId) {
-                                continue; // This is a different handle.
-                            }
-                        }
-                    }
-                }
-                // clone forward and reverse mappings and establish new components.
-                const newMatch = { forward: new Map(forward), reverse: new Map(reverse), score };
-                assert$1(!newMatch.reverse.has(recipeHC.particle) || newMatch.reverse.get(recipeHC.particle) === shapeHC.particle);
-                assert$1(!newMatch.forward.has(shapeHC.particle) || newMatch.forward.get(shapeHC.particle) === recipeHC.particle);
-                newMatch.forward.set(shapeHC.particle, recipeHC.particle);
-                newMatch.reverse.set(recipeHC.particle, shapeHC.particle);
-                if (shapeHC.handle) {
-                    if (!recipeHC.handle) {
-                        if (!newMatch.forward.has(shapeHC.handle)) {
-                            newMatch.forward.set(shapeHC.handle, null);
-                            newMatch.score -= 2;
-                        }
-                    }
-                    else {
-                        newMatch.forward.set(shapeHC.handle, recipeHC.handle);
-                        newMatch.reverse.set(recipeHC.handle, shapeHC.handle);
-                    }
-                }
-                newMatch.forward.set(shapeHC, recipeHC);
-                newMatch.reverse.set(recipeHC, shapeHC);
-                outputList.push(newMatch);
-                matchFound = true;
-            }
-            if (matchFound === false) {
-                // Non-null particle in the `forward` map means that some of the particle
-                // handle connections were successful matches, but some couldn't be matched.
-                // It means that this match in invalid.
-                if (match.forward.get(shapeHC.particle)) {
-                    return;
-                }
-                // The current handle connection from the shape doesn't match anything
-                // in the recipe. Find (or create) a particle for it.
-                const newMatches = [];
-                _buildNewParticleMatches(recipe, shapeHC.particle, match, newMatches);
-                newMatches.forEach(newMatch => {
-                    // the shape references a handle, might also need to create a recipe
-                    // handle for it (if there isn't already one from a previous match).
-                    if (shapeHC.handle && !newMatch.forward.has(shapeHC.handle)) {
-                        newMatch.forward.set(shapeHC.handle, null);
-                        newMatch.score -= 2;
-                    }
-                    newMatch.forward.set(shapeHC, null);
-                    newMatch.score -= 1;
-                    outputList.push(newMatch);
-                });
-            }
-        }
-        function _buildNewParticleMatches(recipe, shapeParticle, match, newMatches) {
-            const { forward, reverse, score } = match;
-            let matchFound = false;
-            for (const recipeParticle of recipe.particles) {
-                if (reverse.has(recipeParticle)) {
-                    continue;
-                }
-                if (recipeParticle.name !== shapeParticle.name) {
-                    continue;
-                }
-                let handleNamesMatch = true;
-                for (const connectionName of Object.keys(recipeParticle.connections)) {
-                    const recipeConnection = recipeParticle.connections[connectionName];
-                    if (!recipeConnection.handle) {
-                        continue;
-                    }
-                    const shapeConnection = shapeParticle.connections[connectionName];
-                    if (shapeConnection && shapeConnection.handle && shapeConnection.handle.localName && shapeConnection.handle.localName !== recipeConnection.handle.localName) {
-                        handleNamesMatch = false;
-                        break;
-                    }
-                }
-                if (!handleNamesMatch) {
-                    continue;
-                }
-                const newMatch = { forward: new Map(forward), reverse: new Map(reverse), score };
-                assert$1(!newMatch.forward.has(shapeParticle) || newMatch.forward.get(shapeParticle) === recipeParticle);
-                assert$1(!newMatch.reverse.has(recipeParticle) || newMatch.reverse.get(recipeParticle) === shapeParticle);
-                newMatch.forward.set(shapeParticle, recipeParticle);
-                newMatch.reverse.set(recipeParticle, shapeParticle);
-                newMatches.push(newMatch);
-                matchFound = true;
-            }
-            if (matchFound === false) {
-                const newMatch = { forward: new Map(), reverse: new Map(), score: 0 };
-                forward.forEach((value, key) => {
-                    assert$1(!newMatch.forward.has(key) || newMatch.forward.get(key) === value);
-                    newMatch.forward.set(key, value);
-                });
-                reverse.forEach((value, key) => {
-                    assert$1(!newMatch.reverse.has(key) || newMatch.reverse.get(key) === value);
-                    newMatch.reverse.set(key, value);
-                });
-                if (!newMatch.forward.has(shapeParticle)) {
-                    newMatch.forward.set(shapeParticle, null);
-                    newMatch.score = match.score - 1;
-                }
-                newMatches.push(newMatch);
-            }
-        }
-        function _assignHandlesToEmptyPosition(match, emptyHandles, nullHandles) {
-            if (emptyHandles.length === 1) {
-                const matches = [];
-                const { forward, reverse, score } = match;
-                for (const nullHandle of nullHandles) {
-                    let tagsMatch = true;
-                    for (const tag of nullHandle.tags) {
-                        if (!emptyHandles[0].tags.includes(tag)) {
-                            tagsMatch = false;
-                            break;
-                        }
-                    }
-                    if (!tagsMatch) {
-                        continue;
-                    }
-                    const newMatch = { forward: new Map(forward), reverse: new Map(reverse), score: score + 1 };
-                    newMatch.forward.set(nullHandle, emptyHandles[0]);
-                    newMatch.reverse.set(emptyHandles[0], nullHandle);
-                    matches.push(newMatch);
-                }
-                return matches;
-            }
-            const thisHandle = emptyHandles.pop();
-            const matches = _assignHandlesToEmptyPosition(match, emptyHandles, nullHandles);
-            let newMatches = [];
-            for (const match of matches) {
-                const nullHandles = [...shape.handles.values()].filter(handle => match.forward.get(handle) === null);
-                if (nullHandles.length > 0) {
-                    newMatches = newMatches.concat(_assignHandlesToEmptyPosition(match, [thisHandle], nullHandles));
-                }
-                else {
-                    newMatches.concat(match);
-                }
-            }
-            return newMatches;
-        }
-        // Particles and Handles are initially stored by a forward map from
-        // shape component to recipe component.
-        // Handle connections, particles and handles are also stored by a reverse map
-        // from recipe component to shape component.
-        // Start with a single, empty match
-        let matches = [{ forward: new Map(), reverse: new Map(), score: 0 }];
-        for (const shapeHC of shape.recipe.handleConnections) {
-            const newMatches = [];
-            for (const match of matches) {
-                // collect matching handle connections into a new matches list
-                _buildNewHCMatches(recipe, shapeHC, match, newMatches);
-            }
-            matches = newMatches;
-        }
-        for (const shapeParticle of shape.recipe.particles) {
-            if (Object.keys(shapeParticle.connections).length > 0) {
-                continue;
-            }
-            if (shapeParticle.unnamedConnections.length > 0) {
-                continue;
-            }
-            const newMatches = [];
-            for (const match of matches) {
-                _buildNewParticleMatches(recipe, shapeParticle, match, newMatches);
-            }
-            matches = newMatches;
-        }
-        const emptyHandles = recipe.handles.filter(handle => handle.connections.length === 0);
-        if (emptyHandles.length > 0) {
-            let newMatches = [];
-            for (const match of matches) {
-                const nullHandles = [...shape.handles.values()].filter(handle => match.forward.get(handle) === null);
-                if (nullHandles.length > 0) {
-                    newMatches = newMatches.concat(_assignHandlesToEmptyPosition(match, emptyHandles, nullHandles));
-                }
-                else {
-                    newMatches.concat(match);
-                }
-            }
-            matches = newMatches;
-        }
-        return matches.map(({ forward, score }) => {
-            const match = {};
-            forward.forEach((value, key) => match[shape.reverse.get(key)] = value);
-            return { match, score };
-        });
-    }
-    static constructImmediateValueHandle(connection, particleSpec, id) {
-        assert$1(connection.type instanceof InterfaceType);
-        if (!(connection.type instanceof InterfaceType) ||
-            !connection.type.interfaceInfo.restrictType(particleSpec)) {
-            // Type of the connection does not match the ParticleSpec.
-            return null;
-        }
-        // The connection type may have type variables:
-        // E.g. if connection shape requires `in ~a *`
-        //      and particle has `in Entity input`
-        //      then type system has to ensure ~a is at least Entity.
-        // The type of a handle hosting the particle literal has to be
-        // concrete, so we concretize connection type with maybeEnsureResolved().
-        const handleType = connection.type.clone(new Map());
-        handleType.maybeEnsureResolved();
-        const handle = connection.recipe.newHandle();
-        handle.id = id;
-        handle.mappedType = handleType;
-        handle.fate = 'copy';
-        handle.immediateValue = particleSpec;
-        return handle;
-    }
-    static directionCounts(handle) {
-        const counts = { in: 0, out: 0, inout: 0, unknown: 0 };
-        for (const connection of handle.connections) {
-            let direction = connection.direction;
-            if (counts[direction] === undefined) {
-                direction = 'unknown';
-            }
-            counts[direction]++;
-        }
-        counts.in += counts.inout;
-        counts.out += counts.inout;
-        return counts;
-    }
-    // Returns true if `otherRecipe` matches the shape of recipe.
-    static matchesRecipe(recipe, otherRecipe) {
-        const shape = RecipeUtil.recipeToShape(otherRecipe);
-        const result = RecipeUtil.find(recipe, shape);
-        return result.some(r => r.score === 0);
     }
 }
 
@@ -18863,6 +18863,25 @@ class Runtime {
     }
 }
 
+/**
+ * Implementation of KeyStorage using a Map, used for testing only.
+ */
+class WebCryptoMemoryKeyStorage {
+    constructor() {
+        this.storageMap = new Map();
+    }
+    find(keyFingerPrint) {
+        return Promise.resolve(this.storageMap.get(keyFingerPrint));
+    }
+    async write(keyFingerprint, key) {
+        this.storageMap.set(keyFingerprint, key);
+        return Promise.resolve(keyFingerprint);
+    }
+    static getInstance() {
+        return new WebCryptoMemoryKeyStorage();
+    }
+}
+
 // ISC License (ISC)
 //
 // Copyright 2017 Rhett Robinson
@@ -19317,25 +19336,6 @@ class WebCryptoKeyIndexedDBStorage {
 }
 
 /**
- * Implementation of KeyStorage using a Map, used for testing only.
- */
-class WebCryptoMemoryKeyStorage {
-    constructor() {
-        this.storageMap = new Map();
-    }
-    find(keyFingerPrint) {
-        return Promise.resolve(this.storageMap.get(keyFingerPrint));
-    }
-    async write(keyFingerprint, key) {
-        this.storageMap.set(keyFingerprint, key);
-        return Promise.resolve(keyFingerprint);
-    }
-    static getInstance() {
-        return new WebCryptoMemoryKeyStorage();
-    }
-}
-
-/**
  * @license
  * Copyright (c) 2018 Google Inc. All rights reserved.
  * This code may only be used under the BSD style license found at
@@ -19360,65 +19360,6 @@ class KeyManager {
 var commonjsGlobal = typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
 
 commonjsGlobal.debugLevel = 2;
-
-// Copyright (c) 2018 Google Inc. All rights reserved.
-// This code may only be used under the BSD style license found at
-// http://polymer.github.io/LICENSE.txt
-// Code distributed by Google as part of this project is also
-// subject to an additional IP rights grant found at
-// http://polymer.github.io/PATENTS.txt
-
-// This is only relevant in the web devtools.
-const mapStackTrace = () => {};
-
-/**
- * @license
- * Copyright (c) 2018 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-class OuterPortAttachment {
-    constructor(arc, devtoolsChannel) {
-        this.arcDevtoolsChannel = devtoolsChannel.forArc(arc);
-    }
-    handlePecMessage(name, pecMsgBody, pecMsgCount, stackString) {
-        const stack = this._extractStackFrames(stackString);
-        this.arcDevtoolsChannel.send({
-            messageType: 'PecLog',
-            messageBody: { name, pecMsgBody, pecMsgCount, timestamp: Date.now(), stack },
-        });
-    }
-    _extractStackFrames(stackString) {
-        const stack = [];
-        if (!stackString)
-            return stack;
-        // File refs should appear only in stack traces generated by tests run with
-        // --explore set.
-        if (stackString.includes('(file:///')) {
-            // The slice discards the 'Error' text and the the stack frame
-            // corresponding to the API channel function, which is already being
-            // displayed in the log entry.
-            for (const frameString of stackString.split('\n    at ').slice(2)) {
-                let match = frameString.match(/^(.*) \((.*)\)$/);
-                if (match === null) {
-                    match = { 1: '<unknown>', 2: frameString };
-                }
-                let location = match[2].replace(/:[0-9]+$/, '');
-                if (location.startsWith('file')) {
-                    // 'file:///<path>/arcs.*/runtime/file.js:84'
-                    // -> location: 'runtime/file.js:150'
-                    location = location.replace(/^.*\/arcs[^/]*\//, '');
-                }
-                stack.push({ method: match[1], location, target: null, targetClass: 'noLink' });
-            }
-            return stack;
-        }
-        return stack;
-    }
-}
 
 /**
  * @license
@@ -19499,6 +19440,61 @@ class ArcDevtoolsChannel {
 }
 class ArcDebugListener {
     constructor(arc, channel) { }
+}
+
+/**
+ * @license
+ * Copyright (c) 2018 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+class ArcStoresFetcher extends ArcDebugListener {
+    constructor(arc, arcDevtoolsChannel) {
+        super(arc, arcDevtoolsChannel);
+        this.arc = arc;
+        arcDevtoolsChannel.listen('fetch-stores', async () => arcDevtoolsChannel.send({
+            messageType: 'fetch-stores-result',
+            messageBody: await this._listStores()
+        }));
+    }
+    async _listStores() {
+        const find = manifest => {
+            let tags = [...manifest.storeTags];
+            if (manifest.imports) {
+                manifest.imports.forEach(imp => tags = tags.concat(find(imp)));
+            }
+            return tags;
+        };
+        return {
+            arcStores: await this._digestStores(this.arc.storeTags),
+            contextStores: await this._digestStores(find(this.arc.context))
+        };
+    }
+    async _digestStores(stores) {
+        const result = [];
+        for (const [store, tags] of stores) {
+            let value = `(don't know how to dereference)`;
+            if (store.toList) {
+                value = await store.toList();
+            }
+            else if (store.get) {
+                value = await store.get();
+            }
+            result.push({
+                name: store.name,
+                tags: tags ? [...tags] : [],
+                id: store.id,
+                storage: store.storageKey,
+                type: store.type,
+                description: store.description,
+                value
+            });
+        }
+        return result;
+    }
 }
 
 /**
@@ -19608,6 +19604,1417 @@ class DevtoolsConnection {
     static ensure() {
         if (!channel)
             channel = new DevtoolsChannel();
+    }
+}
+
+/**
+ * @license
+ * Copyright (c) 2018 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+let streamingToDevtools = false;
+function enableTracingAdapter(devtoolsChannel) {
+    if (!streamingToDevtools) {
+        if (!Tracing.enabled)
+            Tracing.enable();
+        devtoolsChannel.send({
+            messageType: 'trace-time-sync',
+            messageBody: {
+                traceTime: Tracing.now(),
+                localTime: Date.now()
+            }
+        });
+        Tracing.stream(trace => devtoolsChannel.send({
+            messageType: 'trace',
+            messageBody: trace
+        }), trace => trace.ov // Overview events only.
+        );
+        streamingToDevtools = true;
+    }
+}
+
+/**
+ * @license
+ * Copyright (c) 2018 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+// Arc-independent handlers for devtools logic.
+DevtoolsConnection.onceConnected.then(devtoolsChannel => {
+    enableTracingAdapter(devtoolsChannel);
+});
+class ArcDebugHandler {
+    constructor(arc, listenerClasses) {
+        this.arcDevtoolsChannel = null;
+        if (arc.isStub)
+            return;
+        const connectedOnInstantiate = DevtoolsConnection.isConnected;
+        DevtoolsConnection.onceConnected.then(devtoolsChannel => {
+            if (!connectedOnInstantiate) {
+                devtoolsChannel.send({
+                    messageType: 'warning',
+                    messageBody: 'pre-existing-arc'
+                });
+            }
+            this.arcDevtoolsChannel = devtoolsChannel.forArc(arc);
+            if (!!listenerClasses) { // undefined => false
+                // TODO: This should just be a foreach, as there is no need to keep
+                // the results.
+                const listeners = listenerClasses.map(l => {
+                    ArcDevtoolsChannel.instantiateListener(l, arc, this.arcDevtoolsChannel);
+                });
+            }
+            this.arcDevtoolsChannel.send({
+                messageType: 'arc-available',
+                messageBody: {
+                    speculative: arc.isSpeculative
+                }
+            });
+        });
+    }
+    recipeInstantiated({ particles }) {
+        if (!this.arcDevtoolsChannel)
+            return;
+        const truncate = ({ id, name }) => ({ id, name });
+        const slotConnections = [];
+        particles.forEach(p => Object.values(p.consumedSlotConnections).forEach(cs => {
+            if (cs.targetSlot) {
+                slotConnections.push({
+                    particleId: cs.particle.id,
+                    consumed: truncate(cs.targetSlot),
+                    provided: Object.values(cs.providedSlots).map(slot => truncate(slot)),
+                });
+            }
+        }));
+        this.arcDevtoolsChannel.send({
+            messageType: 'recipe-instantiated',
+            messageBody: { slotConnections }
+        });
+    }
+}
+// TODO: This should move to the core interface file when it exists. 
+const defaultCoreDebugListeners = [
+    ArcStoresFetcher
+];
+
+// Copyright (c) 2017 Google Inc. All rights reserved.
+
+// Copyright (c) 2017 Google Inc. All rights reserved.
+
+// Copyright (c) 2017 Google Inc. All rights reserved.
+
+/**
+ * @license
+ * Copyright (c) 2017 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+const supportedTypes = ['Text', 'URL', 'Number', 'Boolean'];
+class JsonldToManifest {
+    static convert(jsonld, theClass = undefined) {
+        const obj = JSON.parse(jsonld);
+        const classes = {};
+        const properties = {};
+        if (!obj['@graph']) {
+            obj['@graph'] = [obj];
+        }
+        for (const item of obj['@graph']) {
+            if (item['@type'] === 'rdf:Property') {
+                properties[item['@id']] = item;
+            }
+            else if (item['@type'] === 'rdfs:Class') {
+                classes[item['@id']] = item;
+                item['subclasses'] = [];
+                item['superclass'] = null;
+            }
+        }
+        for (const clazz of Object.values(classes)) {
+            if (clazz['rdfs:subClassOf'] !== undefined) {
+                if (clazz['rdfs:subClassOf'].length == undefined) {
+                    clazz['rdfs:subClassOf'] = [clazz['rdfs:subClassOf']];
+                }
+                for (const subClass of clazz['rdfs:subClassOf']) {
+                    const superclass = subClass['@id'];
+                    if (clazz['superclass'] == undefined) {
+                        clazz['superclass'] = [];
+                    }
+                    if (classes[superclass]) {
+                        classes[superclass].subclasses.push(clazz);
+                        clazz['superclass'].push(classes[superclass]);
+                    }
+                    else {
+                        clazz['superclass'].push({ '@id': superclass });
+                    }
+                }
+            }
+        }
+        for (const clazz of Object.values(classes)) {
+            if (clazz['subclasses'].length === 0 && theClass == undefined) {
+                theClass = clazz;
+            }
+        }
+        const relevantProperties = [];
+        for (const property of Object.values(properties)) {
+            let domains = property['schema:domainIncludes'];
+            if (!domains) {
+                domains = { '@id': theClass['@id'] };
+            }
+            if (!domains.length) {
+                domains = [domains];
+            }
+            domains = domains.map(a => a['@id']);
+            if (domains.includes(theClass['@id'])) {
+                const name = property['@id'].split(':')[1];
+                let type = property['schema:rangeIncludes'];
+                if (!type) {
+                    console.log(property);
+                }
+                if (!type.length) {
+                    type = [type];
+                }
+                type = type.map(a => a['@id'].split(':')[1]);
+                type = type.filter(type => supportedTypes.includes(type));
+                if (type.length > 0) {
+                    relevantProperties.push({ name, type });
+                }
+            }
+        }
+        const className = theClass['@id'].split(':')[1];
+        const superNames = theClass && theClass.superclass ? theClass.superclass.map(a => a['@id'].split(':')[1]) : [];
+        let s = '';
+        for (const superName of superNames) {
+            s += `import 'https://schema.org/${superName}'\n\n`;
+        }
+        s += `schema ${className}`;
+        if (superNames.length > 0) {
+            s += ` extends ${superNames.join(', ')}`;
+        }
+        if (relevantProperties.length > 0) {
+            for (const property of relevantProperties) {
+                let type;
+                if (property.type.length > 1) {
+                    type = '(' + property.type.join(' or ') + ')';
+                }
+                else {
+                    type = property.type[0];
+                }
+                s += `\n  ${type} ${property.name}`;
+            }
+        }
+        s += '\n';
+        return s;
+    }
+}
+
+/**
+ * @license
+ * Copyright (c) 2017 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+
+const nob = () => Object.create(null);
+
+const debounce = (key, action, delay) => {
+  if (key) {
+    clearTimeout(key);
+  }
+  if (action && delay) {
+    return setTimeout(action, delay);
+  }
+};
+
+const XenStateMixin = Base => class extends Base {
+  constructor() {
+    super();
+    this._pendingProps = nob();
+    this._props = this._getInitialProps() || nob();
+    this._lastProps = nob();
+    this._state = this._getInitialState() || nob();
+    this._lastState = nob();
+  }
+  _getInitialProps() {
+  }
+  _getInitialState() {
+  }
+  _getProperty(name) {
+    return this._pendingProps[name] || this._props[name];
+  }
+  _setProperty(name, value) {
+    // dirty checking opportunity
+    if (this._validator || this._wouldChangeProp(name, value)) {
+      this._pendingProps[name] = value;
+      this._invalidateProps();
+    }
+  }
+  _wouldChangeValue(map, name, value) {
+    // TODO(sjmiles): fundamental dirty-checking issue here. Can be overridden to change
+    // behavior, but the default implementation will use strict reference checking.
+    // To modify structured values one must create a new Object with the new values.
+    // See `_setImmutableState`.
+    return (map[name] !== value);
+    // TODO(sjmiles): an example of dirty-checking that instead simply punts on structured data
+    //return (typeof value === 'object') || (map[name] !== value);
+  }
+  _wouldChangeProp(name, value) {
+    return this._wouldChangeValue(this._props, name, value);
+  }
+  _wouldChangeState(name, value) {
+    return this._wouldChangeValue(this._state, name, value);
+  }
+  _setProps(props) {
+    // TODO(sjmiles): should be a replace instead of a merge?
+    Object.assign(this._pendingProps, props);
+    this._invalidateProps();
+  }
+  _invalidateProps() {
+    this._propsInvalid = true;
+    this._invalidate();
+  }
+  _setImmutableState(name, value) {
+    if (typeof name === 'object') {
+      console.warn('Xen:: _setImmutableState takes name and value args for a single property, dictionaries not supported.');
+      value = Object.values(name)[0];
+      name = Object.names(name)[0];
+    }
+    if (typeof value === 'object') {
+      value = Object.assign(Object.create(null), value);
+    }
+    this._state[name] = value;
+    this._invalidate();
+  }
+  _setState(object) {
+    let dirty = false;
+    const state = this._state;
+    for (const property in object) {
+      const value = object[property];
+      if (this._wouldChangeState(property, value)) {
+        dirty = true;
+        state[property] = value;
+      }
+    }
+    if (dirty) {
+      this._invalidate();
+      return true;
+    }
+  }
+  // TODO(sjmiles): deprecated
+  _setIfDirty(object) {
+    return this._setState(object);
+  }
+  _async(fn) {
+    return Promise.resolve().then(fn.bind(this));
+    //return setTimeout(fn.bind(this), 10);
+  }
+  _invalidate() {
+    if (!this._validator) {
+      this._validator = this._async(this._validate);
+    }
+  }
+  _getStateArgs() {
+    return [this._props, this._state, this._lastProps, this._lastState];
+  }
+  _validate() {
+    const stateArgs = this._getStateArgs();
+    // try..catch to ensure we nullify `validator` before return
+    try {
+      // TODO(sjmiles): should be a replace instead of a merge
+      Object.assign(this._props, this._pendingProps);
+      if (this._propsInvalid) {
+        // TODO(sjmiles): should/can have different timing from rendering?
+        this._willReceiveProps(...stateArgs);
+        this._propsInvalid = false;
+      }
+      if (this._shouldUpdate(...stateArgs)) {
+        // TODO(sjmiles): consider throttling update to rAF
+        this._ensureMount();
+        this._doUpdate(...stateArgs);
+      }
+    } catch (x) {
+      console.error(x);
+    }
+    // nullify validator _after_ methods so state changes don't reschedule validation
+    this._validator = null;
+    // save the old props and state
+    this._lastProps = Object.assign(nob(), this._props);
+    this._lastState = Object.assign(nob(), this._state);
+  }
+  _doUpdate(...stateArgs) {
+    this._update(...stateArgs);
+    this._didUpdate(...stateArgs);
+  }
+  _ensureMount() {
+  }
+  _willReceiveProps() {
+  }
+  _shouldUpdate() {
+    return true;
+  }
+  _update() {
+  }
+  _didUpdate() {
+  }
+  _debounce(key, func, delay) {
+    key = `_debounce_${key}`;
+    this._state[key] = debounce(this._state[key], func, delay != null ? delay : 16);
+  }
+};
+
+/**
+ * @license
+ * Copyright (c) 2017 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+/**
+ * A basic particle. For particles that provide UI, you may like to
+ * instead use DOMParticle.
+ */
+class Particle$1 {
+    constructor(capabilities) {
+        this.relevances = [];
+        this._idle = Promise.resolve();
+        this._busy = 0;
+        // Only used by a Slotlet class in particle-execution-context
+        // tslint:disable-next-line: no-any
+        this.slotByName = new Map();
+        // Typescript only sees this.constructor as a Function type.
+        // TODO(shans): move spec off the constructor
+        this.spec = this.constructor['spec'];
+        if (this.spec.inputs.length === 0) {
+            this.extraData = true;
+        }
+        this.capabilities = capabilities || {};
+    }
+    /**
+     * This method is invoked with a handle for each store this particle
+     * is registered to interact with, once those handles are ready for
+     * interaction. Override the method to register for events from
+     * the handles.
+     *
+     * @param handles a map from handle names to store handles.
+     */
+    setHandles(handles) {
+    }
+    /**
+     * This method is deprecated. Use setHandles instead.
+     */
+    setViews(views) {
+    }
+    /**
+     * Called for handles that are configured with both keepSynced and notifySync, when they are
+     * updated with the full model of their data. This will occur once after setHandles() and any time
+     * thereafter if the handle is resynchronized.
+     *
+     * @param handle The Handle instance that was updated.
+     * @param model For Variable-backed Handles, the Entity data or null if the Variable is not set.
+     *        For Collection-backed Handles, the Array of Entities, which may be empty.
+     */
+    onHandleSync(handle, model) {
+    }
+    /**
+     * Called for handles that are configued with notifyUpdate, when change events are received from
+     * the backing store. For handles also configured with keepSynced these events will be correctly
+     * ordered, with some potential skips if a desync occurs. For handles not configured with
+     * keepSynced, all change events will be passed through as they are received.
+     *
+     * @param handle The Handle instance that was updated.
+     * @param update An object containing one of the following fields:
+     *  - data: The full Entity for a Variable-backed Handle.
+     *  - added: An Array of Entities added to a Collection-backed Handle.
+     *  - removed: An Array of Entities removed from a Collection-backed Handle.
+     */
+    // tslint:disable-next-line: no-any
+    onHandleUpdate(handle, update) {
+    }
+    /**
+     * Called for handles that are configured with both keepSynced and notifyDesync, when they are
+     * detected as being out-of-date against the backing store. For Variables, the event that triggers
+     * this will also resync the data and thus this call may usually be ignored. For Collections, the
+     * underlying proxy will automatically request a full copy of the stored data to resynchronize.
+     * onHandleSync will be invoked when that is received.
+     *
+     * @param handle The Handle instance that was desynchronized.
+     */
+    onHandleDesync(handle) {
+    }
+    constructInnerArc() {
+        if (!this.capabilities.constructInnerArc) {
+            throw new Error('This particle is not allowed to construct inner arcs');
+        }
+        return this.capabilities.constructInnerArc(this);
+    }
+    get busy() {
+        return this._busy > 0;
+    }
+    get idle() {
+        return this._idle;
+    }
+    set relevance(r) {
+        this.relevances.push(r);
+    }
+    startBusy() {
+        if (this._busy === 0) {
+            this._idle = new Promise(resolve => this._idleResolver = resolve);
+        }
+        this._busy++;
+    }
+    doneBusy() {
+        this._busy--;
+        if (this._busy === 0) {
+            this._idleResolver();
+        }
+    }
+    inputs() {
+        return this.spec.inputs;
+    }
+    outputs() {
+        return this.spec.outputs;
+    }
+    /**
+     * Returns the slot with provided name.
+     */
+    getSlot(name) {
+        return this.slotByName.get(name);
+    }
+    static buildManifest(strings, ...bits) {
+        const output = [];
+        for (let i = 0; i < bits.length; i++) {
+            const str = strings[i];
+            const indent = / *$/.exec(str)[0];
+            let bitStr;
+            if (typeof bits[i] === 'string') {
+                bitStr = bits[i];
+            }
+            else {
+                bitStr = bits[i].toManifestString();
+            }
+            bitStr = bitStr.replace(/(\n)/g, '$1' + indent);
+            output.push(str);
+            output.push(bitStr);
+        }
+        if (strings.length > bits.length) {
+            output.push(strings[strings.length - 1]);
+        }
+        return output.join('');
+    }
+    setParticleDescription(pattern) {
+        return this.setDescriptionPattern('pattern', pattern);
+    }
+    setDescriptionPattern(connectionName, pattern) {
+        const descriptions = this.handles.get('descriptions');
+        if (descriptions) {
+            // Typescript can't infer the type here and fails with TS2351
+            // tslint:disable-next-line: no-any
+            const entityClass = descriptions.entityClass;
+            if (descriptions instanceof Collection || descriptions instanceof BigCollection) {
+                descriptions.store(new entityClass({ key: connectionName, value: pattern }, this.spec.name + '-' + connectionName));
+            }
+            return true;
+        }
+        throw new Error('A particle needs a description handle to set a decription pattern');
+    }
+    // abstract
+    renderSlot(slotName, contentTypes) { }
+    renderHostedSlot(slotName, hostedSlotId, content) { }
+    fireEvent(slotName, event) { }
+}
+
+/**
+ * @license
+ * Copyright (c) 2017 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+/**
+ * Particle that interoperates with DOM.
+ */
+class DomParticleBase extends Particle$1 {
+    constructor() {
+        super();
+    }
+    /**
+     * Override to return a String defining primary markup.
+     */
+    get template() {
+        return '';
+    }
+    /**
+     * Override to return a String defining primary markup for the given slot name.
+     */
+    getTemplate(slotName) {
+        // TODO: only supports a single template for now. add multiple templates support.
+        return this.template;
+    }
+    /**
+     * Override to return a String defining the name of the template for the given slot name.
+     */
+    getTemplateName(slotName) {
+        // TODO: only supports a single template for now. add multiple templates support.
+        return `default`;
+    }
+    /**
+     * Override to return false if the Particle won't use it's slot.
+     */
+    shouldRender(stateArgs) {
+        return true;
+    }
+    /**
+     * Override to return a dictionary to map into the template.
+     */
+    render(stateArgs) {
+        return {};
+    }
+    renderSlot(slotName, contentTypes) {
+        const stateArgs = this._getStateArgs();
+        const slot = this.getSlot(slotName);
+        if (!slot) {
+            return; // didn't receive StartRender.
+        }
+        // Set this to support multiple slots consumed by a particle, without needing
+        // to pass slotName to particle's render method, where it useless in most cases.
+        this.currentSlotName = slotName;
+        contentTypes.forEach(ct => slot.requestedContentTypes.add(ct));
+        // TODO(sjmiles): redundant, same answer for every slot
+        if (this.shouldRender(...stateArgs)) {
+            const content = {};
+            if (slot.requestedContentTypes.has('template')) {
+                content.template = this.getTemplate(slot.slotName);
+            }
+            if (slot.requestedContentTypes.has('model')) {
+                content.model = this.render(...stateArgs);
+            }
+            content.templateName = this.getTemplateName(slot.slotName);
+            // Backwards-compatibility and convenience code:
+            //  - Rewrites slotid="slotName" to slotid$="{{$slotName}}" in templates.
+            //  - Enhances the model with `$slotName` fields.
+            if (slot.providedSlots.size > 0) {
+                if (content.template) {
+                    if (typeof content.template === 'string') {
+                        content.template = this.slotNamesToModelReferences(slot, content.template);
+                    }
+                    else {
+                        content.template = Object.entries(content.template).reduce((templateDictionary, [templateName, templateValue]) => {
+                            templateDictionary[templateName] = this.slotNamesToModelReferences(slot, templateValue);
+                            return templateDictionary;
+                        }, {});
+                    }
+                }
+                if (content.model) {
+                    const slotIDs = {};
+                    slot.providedSlots.forEach((slotId, slotName) => slotIDs[`$${slotName}`] = slotId);
+                    content.model = this.enhanceModelWithSlotIDs(content.model, slotIDs);
+                }
+            }
+            slot.render(content);
+        }
+        else if (slot.isRendered) {
+            // Send empty object, to clear rendered slot contents.
+            slot.render({});
+        }
+        this.currentSlotName = undefined;
+    }
+    slotNamesToModelReferences(slot, template) {
+        slot.providedSlots.forEach((slotId, slotName) => {
+            // TODO: This is a simple string replacement right now,
+            // ensuring that 'slotid' is an attribute on an HTML element would be an improvement.
+            template = template.replace(new RegExp(`slotid=\"${slotName}\"`, 'gi'), `slotid$="{{$${slotName}}}"`);
+        });
+        return template;
+    }
+    // We put slot IDs at the top-level of the model as well as in models for sub-templates.
+    // This is temporary and should go away when we move from sub-IDs to [(Entity, Slot)] constructs.
+    enhanceModelWithSlotIDs(model = {}, slotIDs, topLevel = true) {
+        if (topLevel) {
+            model = Object.assign({}, slotIDs, model);
+        }
+        if (model.hasOwnProperty('$template') && model.hasOwnProperty('models') && Array.isArray(model['models'])) {
+            model['models'] = model['models'].map(m => this.enhanceModelWithSlotIDs(m, slotIDs));
+        }
+        for (const [key, value] of Object.entries(model)) {
+            if (!!value && typeof value === 'object') {
+                model[key] = this.enhanceModelWithSlotIDs(value, slotIDs, false);
+            }
+        }
+        return model;
+    }
+    _getStateArgs() {
+        return [];
+    }
+    forceRenderTemplate(slotName) {
+        this.slotByName.forEach((slot, name) => {
+            if (!slotName || (name === slotName)) {
+                slot.requestedContentTypes.add('template');
+            }
+        });
+    }
+    fireEvent(slotName, { handler, data }) {
+        if (this[handler]) {
+            this[handler]({ data });
+        }
+    }
+    setParticleDescription(pattern) {
+        if (typeof pattern === 'string') {
+            return super.setParticleDescription(pattern);
+        }
+        assert$1(!!pattern.template && !!pattern.model, 'Description pattern must either be string or have template and model');
+        super.setDescriptionPattern('_template_', pattern.template);
+        super.setDescriptionPattern('_model_', JSON.stringify(pattern.model));
+        return undefined;
+    }
+    /**
+     * Remove all entities from named handle.
+     */
+    async clearHandle(handleName) {
+        const handle = this.handles.get(handleName);
+        if (handle instanceof Variable || handle instanceof Collection) {
+            handle.clear();
+        }
+        else {
+            throw new Error('Variable/Collection required');
+        }
+    }
+    /**
+     * Merge entities from Array into named handle.
+     */
+    async mergeEntitiesToHandle(handleName, entities) {
+        const idMap = {};
+        const handle = this.handles.get(handleName);
+        if (handle instanceof Collection) {
+            const handleEntities = await handle.toList();
+            handleEntities.forEach(entity => idMap[entity.id] = entity);
+            for (const entity of entities) {
+                if (!idMap[entity.id]) {
+                    handle.store(entity);
+                }
+            }
+        }
+        else {
+            throw new Error('Collection required');
+        }
+    }
+    /**
+     * Append entities from Array to named handle.
+     */
+    async appendEntitiesToHandle(handleName, entities) {
+        const handle = this.handles.get(handleName);
+        if (handle) {
+            if (handle instanceof Collection || handle instanceof BigCollection) {
+                Promise.all(entities.map(entity => handle.store(entity)));
+            }
+            else {
+                throw new Error('Collection required');
+            }
+        }
+    }
+    /**
+     * Create an entity from each rawData, and append to named handle.
+     */
+    async appendRawDataToHandle(handleName, rawDataArray) {
+        const handle = this.handles.get(handleName);
+        if (handle && handle.entityClass) {
+            if (handle instanceof Collection || handle instanceof BigCollection) {
+                // Typescript can't infer the type here and fails with TS2351
+                // tslint:disable-next-line: no-any
+                const entityClass = handle.entityClass;
+                Promise.all(rawDataArray.map(raw => handle.store(new entityClass(raw))));
+            }
+            else {
+                throw new Error('Collection required');
+            }
+        }
+    }
+    /**
+     * Modify value of named handle. A new entity is created
+     * from `rawData` (`new [EntityClass](rawData)`).
+     */
+    updateVariable(handleName, rawData) {
+        const handle = this.handles.get(handleName);
+        if (handle && handle.entityClass) {
+            if (handle instanceof Variable) {
+                // Typescript can't infer the type here and fails with TS2351
+                // tslint:disable-next-line: no-any
+                const entityClass = handle.entityClass;
+                const entity = new entityClass(rawData);
+                handle.set(entity);
+                return entity;
+            }
+            else {
+                throw new Error('Variable required');
+            }
+        }
+        return undefined;
+    }
+    /**
+     * Modify or insert `entity` into named handle.
+     * Modification is done by removing the old entity and reinserting the new one.
+     */
+    async updateSet(handleName, entity) {
+        // Set the entity into the right place in the set. If we find it
+        // already present replace it, otherwise, add it.
+        // TODO(dstockwell): Replace this with happy entity mutation approach.
+        const handle = this.handles.get(handleName);
+        if (handle) {
+            if (handle instanceof Collection || handle instanceof BigCollection) {
+                await handle.remove(entity);
+                await handle.store(entity);
+            }
+            else {
+                throw new Error('Collection required');
+            }
+        }
+    }
+    /**
+     * Returns array of Entities found in BOXED data `box` that are owned by `userid`
+     */
+    boxQuery(box, userid) {
+        return box.filter(item => userid === item.getUserID().split('|')[0]);
+    }
+}
+
+/**
+ * @license
+ * Copyright (c) 2017 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+
+/** @class DomParticle
+ * Particle that interoperates with DOM and uses a simple state system
+ * to handle updates.
+ */
+class DomParticle extends XenStateMixin(DomParticleBase) {
+  constructor() {
+    super();
+    // alias properties to remove `_`
+    this.state = this._state;
+    this.props = this._props;
+  }
+  /** @method willReceiveProps(props, state, oldProps, oldState)
+   * Override if necessary, to do things when props change.
+   */
+  willReceiveProps() {
+  }
+  /** @method update(props, state, oldProps, oldState)
+   * Override if necessary, to modify superclass config.
+   */
+  update() {
+  }
+  /** @method shouldRender(props, state, oldProps, oldState)
+   * Override to return false if the Particle won't use
+   * it's slot.
+   */
+  shouldRender() {
+    return true;
+  }
+  /** @method render(props, state, oldProps, oldState)
+   * Override to return a dictionary to map into the template.
+   */
+  render() {
+    return {};
+  }
+  /** @method setState(state)
+   * Copy values from `state` into the particle's internal state,
+   * triggering an update cycle unless currently updating.
+   */
+  setState(state) {
+    return this._setState(state);
+  }
+  // TODO(sjmiles): deprecated, just use setState
+  setIfDirty(state) {
+    console.warn('DomParticle: `setIfDirty` is deprecated, please use `setState` instead');
+    return this._setState(state);
+  }
+  /** @method configureHandles(handles)
+   * This is called once during particle setup. Override to control sync and update
+   * configuration on specific handles (via their configure() method).
+   * `handles` is a map from names to handle instances.
+   */
+  configureHandles(handles) {
+    // Example: handles.get('foo').configure({keepSynced: false});
+  }
+  /** @method get config()
+   * Override if necessary, to modify superclass config.
+   */
+  get config() {
+    // TODO(sjmiles): getter that does work is a bad idea, this is temporary
+    return {
+      handleNames: this.spec.inputs.map(i => i.name),
+      // TODO(mmandlis): this.spec needs to be replaced with a particle-spec loaded from
+      // .manifest files, instead of .ptcl ones.
+      slotNames: [...this.spec.slots.values()].map(s => s.name)
+    };
+  }
+  // affordances for aliasing methods to remove `_`
+  _willReceiveProps(...args) {
+    this.willReceiveProps(...args);
+  }
+  _update(...args) {
+    this.update(...args);
+    if (this.shouldRender(...args)) { // TODO: should shouldRender be slot specific?
+      this.relevance = 1; // TODO: improve relevance signal.
+    }
+    this.config.slotNames.forEach(s => this.renderSlot(s, ['model']));
+  }
+  //
+  // deprecated
+  get _views() {
+    console.warn(`Particle ${this.spec.name} uses deprecated _views getter.`);
+    return this.handles;
+  }
+  async setViews(views) {
+    console.warn(`Particle ${this.spec.name} uses deprecated setViews method.`);
+    return this.setHandles(views);
+  }
+  // end deprecated
+  //
+  async setHandles(handles) {
+    this.configureHandles(handles);
+    this.handles = handles;
+    this._handlesToSync = new Set();
+    for (const name of this.config.handleNames) {
+      const handle = handles.get(name);
+      if (handle && handle.options.keepSynced && handle.options.notifySync) {
+        this._handlesToSync.add(name);
+      }
+    }
+    // make sure we invalidate once, even if there are no incoming handles
+    setTimeout(() => !this._hasProps && this._invalidate(), 200);
+    //this._invalidate();
+  }
+  async onHandleSync(handle, model) {
+    this._handlesToSync.delete(handle.name);
+    if (this._handlesToSync.size == 0) {
+      await this._handlesToProps();
+    }
+  }
+  async onHandleUpdate(handle, update) {
+    // TODO(sjmiles): debounce handles updates
+    const work = () => {
+      //console.warn(handle, update);
+      this._handlesToProps();
+    };
+    this._debounce('handleUpdateDebounce', work, 300);
+  }
+  async _handlesToProps() {
+    const config = this.config;
+    // acquire (async) list data from handles; BigCollections map to the handle itself
+    const data = await Promise.all(
+      config.handleNames
+      .map(name => this.handles.get(name))
+      .map(handle => {
+        if (handle.toList) return handle.toList();
+        if (handle.get) return handle.get();
+        return handle;
+      })
+    );
+    // convert handle data (array) into props (dictionary)
+    const props = Object.create(null);
+    config.handleNames.forEach((name, i) => {
+      props[name] = data[i];
+    });
+    this._hasProps = true;
+    this._setProps(props);
+  }
+  fireEvent(slotName, {handler, data}) {
+    if (this[handler]) {
+      // TODO(sjmiles): remove `this._state` parameter
+      this[handler]({data}, this._state);
+    }
+  }
+  _debounce(key, func, delay) {
+    const subkey = `_debounce_${key}`;
+    if (!this._state[subkey]) {
+      this.startBusy();
+    }
+    const idleThenFunc = () => {
+      this.doneBusy();
+      func();
+      this._state[subkey] = null;
+    };
+    super._debounce(key, idleThenFunc, delay);
+  }
+}
+
+/**
+ * @license
+ * Copyright (c) 2017 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+
+/** @class TransformationDomParticle
+ * Particle that does transformation stuff with DOM.
+ */
+class TransformationDomParticle extends DomParticle {
+  getTemplate(slotName) {
+    // TODO: add support for multiple slots.
+    return this._state.template;
+  }
+  getTemplateName(slotName) {
+    // TODO: add support for multiple slots.
+    return this._state.templateName;
+  }
+  render(props, state) {
+    return state.renderModel;
+  }
+  shouldRender(props, state) {
+    return Boolean((state.template || state.templateName) && state.renderModel);
+  }
+
+  renderHostedSlot(slotName, hostedSlotId, content) {
+    this.combineHostedTemplate(slotName, hostedSlotId, content);
+    this.combineHostedModel(slotName, hostedSlotId, content);
+  }
+
+  // abstract
+  combineHostedTemplate(slotName, hostedSlotId, content) {}
+  combineHostedModel(slotName, hostedSlotId, content) {}
+
+  // Helper methods that may be reused in transformation particles to combine hosted content.
+  static propsToItems(propsValues) {
+    return propsValues ? propsValues.map(({rawData, id}) => Object.assign({}, rawData, {subId: id})) : [];
+  }
+}
+
+/**
+ * @license
+ * Copyright (c) 2017 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+
+class MultiplexerDomParticle extends TransformationDomParticle {
+  constructor() {
+    super();
+    this._itemSubIdByHostedSlotId = new Map();
+    this._connByHostedConn = new Map();
+  }
+
+  async _mapParticleConnections(
+      listHandleName,
+      particleHandleName,
+      hostedParticle,
+      handles,
+      arc) {
+    const otherMappedHandles = [];
+    const otherConnections = [];
+    let index = 2;
+    const skipConnectionNames = [listHandleName, particleHandleName];
+    for (const [connectionName, otherHandle] of handles) {
+      if (skipConnectionNames.includes(connectionName)) {
+        continue;
+      }
+      // TODO(wkorman): For items with embedded recipes we may need a map
+      // (perhaps id to index) to make sure we don't map a handle into the inner
+      // arc multiple times unnecessarily.
+      otherMappedHandles.push(
+          `use '${await arc.mapHandle(otherHandle._proxy)}' as v${index}`);
+      const hostedOtherConnection = hostedParticle.connections.find(
+          conn => conn.isCompatibleType(otherHandle.type));
+      if (hostedOtherConnection) {
+        otherConnections.push(`${hostedOtherConnection.name} = v${index++}`);
+        // TODO(wkorman): For items with embedded recipes where we may have a
+        // different particle rendering each item, we need to track
+        // |connByHostedConn| keyed on the particle type.
+        this._connByHostedConn.set(hostedOtherConnection.name, connectionName);
+      }
+    }
+    return [otherMappedHandles, otherConnections];
+  }
+
+  async setHandles(handles) {
+    this.handleIds = {};
+    const arc = await this.constructInnerArc();
+    const listHandleName = 'list';
+    const particleHandleName = 'hostedParticle';
+    const particleHandle = handles.get(particleHandleName);
+    let hostedParticle = null;
+    let otherMappedHandles = [];
+    let otherConnections = [];
+    if (particleHandle) {
+      hostedParticle = await particleHandle.get();
+      if (hostedParticle) {
+        [otherMappedHandles, otherConnections] =
+            await this._mapParticleConnections(
+                listHandleName, particleHandleName, hostedParticle, handles, arc);
+      }
+    }
+    this.setState({
+      arc,
+      type: handles.get(listHandleName).type,
+      hostedParticle,
+      otherMappedHandles,
+      otherConnections
+    });
+
+    super.setHandles(handles);
+  }
+
+  async willReceiveProps(
+      {list},
+      {arc, type, hostedParticle, otherMappedHandles, otherConnections}) {
+    if (list.length > 0) {
+      this.relevance = 0.1;
+    }
+
+    for (const [index, item] of this.getListEntries(list)) {
+      let resolvedHostedParticle = hostedParticle;
+      if (this.handleIds[item.id]) {
+        const itemHandle = await this.handleIds[item.id];
+        itemHandle.set(item);
+        continue;
+      }
+
+      const itemHandlePromise =
+          arc.createHandle(type.primitiveType(), 'item' + index);
+      this.handleIds[item.id] = itemHandlePromise;
+
+      const itemHandle = await itemHandlePromise;
+
+      if (!resolvedHostedParticle) {
+        // If we're muxing on behalf of an item with an embedded recipe, the
+        // hosted particle should be retrievable from the item itself. Else we
+        // just skip this item.
+        if (!item.renderParticleSpec) {
+          continue;
+        }
+        resolvedHostedParticle =
+            ParticleSpec.fromLiteral(JSON.parse(item.renderParticleSpec));
+        // Re-map compatible handles and compute the connections specific
+        // to this item's render particle.
+        const listHandleName = 'list';
+        const particleHandleName = 'renderParticle';
+        [otherMappedHandles, otherConnections] =
+            await this._mapParticleConnections(
+                listHandleName,
+                particleHandleName,
+                resolvedHostedParticle,
+                this.handles,
+                arc);
+      }
+      const hostedSlotName = [...resolvedHostedParticle.slots.keys()][0];
+      const slotName = [...this.spec.slots.values()][0].name;
+      const slotId = await arc.createSlot(this, slotName, itemHandle._id);
+
+      if (!slotId) {
+        continue;
+      }
+
+      this._itemSubIdByHostedSlotId.set(slotId, item.id);
+
+      try {
+        const recipe = this.constructInnerRecipe(
+          resolvedHostedParticle,
+          item,
+          itemHandle,
+          {name: hostedSlotName, id: slotId},
+          {connections: otherConnections, handles: otherMappedHandles}
+        );
+        await arc.loadRecipe(recipe, this);
+        itemHandle.set(item);
+      } catch (e) {
+        console.log(e);
+      }
+    }
+  }
+
+  combineHostedModel(slotName, hostedSlotId, content) {
+    const subId = this._itemSubIdByHostedSlotId.get(hostedSlotId);
+    if (!subId) {
+      return;
+    }
+    const items = this._state.renderModel ? this._state.renderModel.items : [];
+    const listIndex = items.findIndex(item => item.subId == subId);
+    const item = Object.assign({}, content.model, {subId});
+    if (listIndex >= 0 && listIndex < items.length) {
+      items[listIndex] = item;
+    } else {
+      items.push(item);
+    }
+    this._setState({renderModel: {items}});
+  }
+
+  combineHostedTemplate(slotName, hostedSlotId, content) {
+    const subId = this._itemSubIdByHostedSlotId.get(hostedSlotId);
+    if (!subId) {
+      return;
+    }
+    assert$1(content.templateName, `Template name is missing for slot '${slotName}' (hosted slot ID: '${hostedSlotId}')`);
+    this._setState({templateName: Object.assign(this._state.templateName || {}, {[subId]: `${content.templateName}`})});
+
+    if (content.template) {
+      let template = content.template;
+      // Append subid$={{subid}} attribute to all provided slots, to make it usable for the transformation particle.
+      template = template.replace(new RegExp('slotid="[a-z]+"', 'gi'), '$& subid$="{{subId}}"');
+
+      // Replace hosted particle connection in template with the corresponding particle connection names.
+      // TODO: make this generic!
+      this._connByHostedConn.forEach((conn, hostedConn) => {
+        template = template.replace(
+            new RegExp(`{{${hostedConn}.description}}`, 'g'),
+            `{{${conn}.description}}`);
+      });
+      this._setState({template: Object.assign(this._state.template || {}, {[content.templateName]: template})});
+
+      this.forceRenderTemplate();
+    }
+  }
+
+  // Abstract methods below.
+
+  // Called to produce a full interpolated recipe for loading into an inner
+  // arc for each item. Subclasses should override this method as by default
+  // it does nothing and so no recipe will be returned and content will not
+  // be loaded successfully into the inner arc.
+  constructInnerRecipe(hostedParticle, item, itemHandle, slot, other) {}
+
+  // Called with the list of items and by default returns the direct result of
+  // `Array.entries()`. Subclasses can override this method to alter the item
+  // order or otherwise permute the items as desired before their slots are
+  // created and contents are rendered.
+  getListEntries(list) {
+    return list.entries();
+  }
+}
+
+/**
+ * @license
+ * Copyright (c) 2017 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+const html = (strings, ...values) => (strings[0] + values.map((v, i) => v + strings[i + 1]).join('')).trim();
+class Loader {
+    path(fileName) {
+        const path = fileName.replace(/[/][^/]+$/, '/');
+        return path;
+    }
+    join(prefix, path) {
+        if (/^https?:\/\//.test(path)) {
+            return path;
+        }
+        // TODO: replace this with something that isn't hacky
+        if (path[0] === '/' || path[1] === ':') {
+            return path;
+        }
+        prefix = this.path(prefix);
+        path = this.normalizeDots(`${prefix}${path}`);
+        return path;
+    }
+    // convert `././foo/bar/../baz` to `./foo/baz`
+    normalizeDots(path) {
+        // only unix slashes
+        path = path.replace(/\\/g, '/');
+        // remove './'
+        path = path.replace(/\/\.\//g, '/');
+        // remove 'foo/..'
+        const norm = s => s.replace(/(?:^|\/)[^./]*\/\.\./g, '');
+        for (let n = norm(path); n !== path; path = n, n = norm(path))
+            ;
+        return path;
+    }
+    loadResource(file) {
+        if (/^https?:\/\//.test(file)) {
+            return this._loadURL(file);
+        }
+        return this._loadFile(file);
+    }
+    _loadFile(file) {
+        return new Promise((resolve, reject) => {
+            fs.readFile(file, (err, data) => {
+                if (err) {
+                    reject(err);
+                }
+                else {
+                    resolve(data.toString('utf-8'));
+                }
+            });
+        });
+    }
+    _loadURL(url) {
+        if (/\/\/schema.org\//.test(url)) {
+            if (url.endsWith('/Thing')) {
+                return fetch('https://schema.org/Product.jsonld').then(res => res.text()).then(data => JsonldToManifest.convert(data, { '@id': 'schema:Thing' }));
+            }
+            return fetch(url + '.jsonld').then(res => res.text()).then(data => JsonldToManifest.convert(data));
+        }
+        return fetch(url).then(res => res.text());
+    }
+    async loadParticleClass(spec) {
+        const clazz = await this.requireParticle(spec.implFile);
+        clazz.spec = spec;
+        return clazz;
+    }
+    async requireParticle(fileName) {
+        if (fileName === null)
+            fileName = '';
+        const src = await this.loadResource(fileName);
+        // Note. This is not real isolation.
+        const script = new vm.Script(src, { filename: fileName, displayErrors: true });
+        const result = [];
+        const self = {
+            defineParticle(particleWrapper) {
+                result.push(particleWrapper);
+            },
+            console,
+            fetch,
+            setTimeout,
+            importScripts: s => null //console.log(`(skipping browser-space import for [${s}])`)
+        };
+        script.runInNewContext(self, { filename: fileName, displayErrors: true });
+        assert$1(result.length > 0 && typeof result[0] === 'function', `Error while instantiating particle implementation from ${fileName}`);
+        return this.unwrapParticle(result[0]);
+    }
+    setParticleExecutionContext(pec) {
+        this.pec = pec;
+    }
+    unwrapParticle(particleWrapper) {
+        assert$1(this.pec);
+        return particleWrapper({ Particle: Particle$1, DomParticle, TransformationDomParticle, MultiplexerDomParticle, Reference: Reference.newClientReference(this.pec), html });
+    }
+}
+
+/**
+ * @license
+ * Copyright (c) 2017 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+class MessagePort {
+    constructor(channel, id, other) {
+        this._channel = channel;
+        this._id = id;
+        this._other = other;
+        this._onmessage = undefined;
+    }
+    // TODO appears to be {messageType, messageBody}
+    postMessage(message) {
+        this._channel._post(this._other, message);
+    }
+    set onmessage(f) {
+        this._onmessage = f;
+    }
+    close() {
+        this.postMessage = () => { };
+    }
+}
+class MessageEvent {
+    constructor(message) {
+        this.data = message;
+    }
+}
+class MessageChannel {
+    constructor() {
+        this.port1 = new MessagePort(this, 0, 1);
+        this.port2 = new MessagePort(this, 1, 0);
+        this._ports = [this.port1, this.port2];
+    }
+    async _post(id, message) {
+        message = JSON.parse(JSON.stringify(message));
+        if (this._ports[id]._onmessage) {
+            try {
+                // Yield so that we deliver the message asynchronously.
+                await 0;
+                await this._ports[id]._onmessage(new MessageEvent(message));
+            }
+            catch (e) {
+                console.error('Exception in particle code\n', e);
+            }
+        }
+    }
+}
+
+// Copyright (c) 2018 Google Inc. All rights reserved.
+// This code may only be used under the BSD style license found at
+// http://polymer.github.io/LICENSE.txt
+// Code distributed by Google as part of this project is also
+// subject to an additional IP rights grant found at
+// http://polymer.github.io/PATENTS.txt
+
+// This is only relevant in the web devtools.
+const mapStackTrace = () => {};
+
+/**
+ * @license
+ * Copyright (c) 2018 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+class OuterPortAttachment {
+    constructor(arc, devtoolsChannel) {
+        this.arcDevtoolsChannel = devtoolsChannel.forArc(arc);
+    }
+    handlePecMessage(name, pecMsgBody, pecMsgCount, stackString) {
+        const stack = this._extractStackFrames(stackString);
+        this.arcDevtoolsChannel.send({
+            messageType: 'PecLog',
+            messageBody: { name, pecMsgBody, pecMsgCount, timestamp: Date.now(), stack },
+        });
+    }
+    _extractStackFrames(stackString) {
+        const stack = [];
+        if (!stackString)
+            return stack;
+        // File refs should appear only in stack traces generated by tests run with
+        // --explore set.
+        if (stackString.includes('(file:///')) {
+            // The slice discards the 'Error' text and the the stack frame
+            // corresponding to the API channel function, which is already being
+            // displayed in the log entry.
+            for (const frameString of stackString.split('\n    at ').slice(2)) {
+                let match = frameString.match(/^(.*) \((.*)\)$/);
+                if (match === null) {
+                    match = { 1: '<unknown>', 2: frameString };
+                }
+                let location = match[2].replace(/:[0-9]+$/, '');
+                if (location.startsWith('file')) {
+                    // 'file:///<path>/arcs.*/runtime/file.js:84'
+                    // -> location: 'runtime/file.js:150'
+                    location = location.replace(/^.*\/arcs[^/]*\//, '');
+                }
+                stack.push({ method: match[1], location, target: null, targetClass: 'noLink' });
+            }
+            return stack;
+        }
+        return stack;
     }
 }
 
@@ -20112,807 +21519,6 @@ __decorate([
 PECInnerPort = __decorate([
     AutoConstruct(PECOuterPort)
 ], PECInnerPort);
-
-// Copyright (c) 2017 Google Inc. All rights reserved.
-/**
- * Walkers traverse an object, calling methods based on the
- * features encountered on that object. For example, a RecipeWalker
- * takes a list of recipes and calls methods when:
- *  - a new recipe is encountered
- *  - a handle is found inside a recipe
- *  - a particle is found inside a recipe
- *  - etc..
- *
- * Each of these methods can return a list of updates:
- *   [(recipe, encountered_thing) => new_recipe]
- *
- * The walker then does something with the updates depending on the
- * tactic selected.
- *
- * If the tactic is "Permuted", then an output will be generated
- * for every combination of 1 element drawn from each update list.
- * For example, if 3 methods return [a,b], [c,d,e], and [f] respectively
- * then "Permuted" will cause 6 outputs to be generated: [acf, adf, aef, bcf, bdf, bef]
- *
- * If the tactic is "Independent", an output will be generated for each
- * update, regardless of the list the update is in. For example,
- * if 3 methods return [a,b], [c,d,e], and [f] respectively,
- * then "Independent" will cause 6 outputs to be generated: [a,b,c,d,e,f]
- */
-var WalkerTactic;
-(function (WalkerTactic) {
-    WalkerTactic["Permuted"] = "permuted";
-    WalkerTactic["Independent"] = "independent";
-})(WalkerTactic || (WalkerTactic = {}));
-/**
- * An Action generates the list of Descendants by walking the object with a
- * Walker.
- */
-class Action {
-    constructor(arc, args) {
-        this._arc = arc;
-        this._args = args;
-    }
-    get arc() {
-        return this._arc;
-    }
-    getResults(inputParams) {
-        return inputParams.generated;
-    }
-    async generate(inputParams) {
-        return [];
-    }
-}
-class Walker {
-    constructor(tactic) {
-        this.descendants = [];
-        assert$1(tactic);
-        this.tactic = tactic;
-    }
-    onAction(action) {
-        this.currentAction = action;
-    }
-    onResult(result) {
-        this.currentResult = result;
-    }
-    onResultDone() {
-        this.currentResult = undefined;
-    }
-    onActionDone() {
-        this.currentAction = undefined;
-    }
-    static walk(results, walker, action) {
-        walker.onAction(action);
-        results.forEach(result => {
-            walker.onResult(result);
-            walker.onResultDone();
-        });
-        walker.onActionDone();
-        return walker.descendants;
-    }
-    _runUpdateList(start, updateList) {
-        const updated = [];
-        if (updateList.length) {
-            switch (this.tactic) {
-                case WalkerTactic.Permuted: {
-                    let permutations = [[]];
-                    updateList.forEach(({ continuation, context }) => {
-                        const newResults = [];
-                        if (typeof continuation === 'function') {
-                            continuation = [continuation];
-                        }
-                        continuation.forEach(f => {
-                            permutations.forEach(p => {
-                                const newP = p.slice();
-                                newP.push({ f, context });
-                                newResults.push(newP);
-                            });
-                        });
-                        permutations = newResults;
-                    });
-                    for (let permutation of permutations) {
-                        const cloneMap = new Map();
-                        const newResult = start.clone(cloneMap);
-                        let score = 0;
-                        permutation = permutation.filter(p => p.f !== null);
-                        if (permutation.length === 0) {
-                            continue;
-                        }
-                        permutation.forEach(({ f, context }) => {
-                            if (context) {
-                                score = f(newResult, ...context.map(c => cloneMap.get(c) || c));
-                            }
-                            else {
-                                score = f(newResult);
-                            }
-                        });
-                        updated.push({ result: newResult, score });
-                    }
-                    break;
-                }
-                case WalkerTactic.Independent:
-                    updateList.forEach(({ continuation, context }) => {
-                        if (typeof continuation === 'function') {
-                            continuation = [continuation];
-                        }
-                        let score = 0;
-                        continuation.forEach(f => {
-                            if (f == null) {
-                                f = () => 0;
-                            }
-                            const cloneMap = new Map();
-                            const newResult = start.clone(cloneMap);
-                            if (context) {
-                                score = f(newResult, ...context.map(c => cloneMap.get(c) || c));
-                            }
-                            else {
-                                score = f(newResult);
-                            }
-                            updated.push({ result: newResult, score });
-                        });
-                    });
-                    break;
-                default:
-                    throw new Error(`${this.tactic} not supported`);
-            }
-        }
-        // commit phase - output results.
-        for (const newResult of updated) {
-            const result = this.createDescendant(newResult.result, newResult.score);
-        }
-    }
-    createWalkerDescendant(item, score, hash, valid) {
-        assert$1(this.currentResult, 'no current result');
-        assert$1(this.currentAction, 'no current action');
-        if (this.currentResult.score) {
-            score += this.currentResult.score;
-        }
-        this.descendants.push({
-            result: item,
-            score,
-            derivation: [{ parent: this.currentResult, strategy: this.currentAction }],
-            hash,
-            valid,
-        });
-    }
-    isEmptyResult(result) {
-        if (!result) {
-            return true;
-        }
-        if (result.constructor === Array && result.length <= 0) {
-            return true;
-        }
-        assert$1(typeof result === 'function' || result.length);
-        return false;
-    }
-}
-// tslint:disable-next-line: variable-name
-Walker.Permuted = WalkerTactic.Permuted;
-// tslint:disable-next-line: variable-name
-Walker.Independent = WalkerTactic.Independent;
-
-// Copyright (c) 2017 Google Inc. All rights reserved.
-class RecipeWalker extends Walker {
-    onResult(result) {
-        super.onResult(result);
-        const recipe = result.result;
-        const updateList = [];
-        // update phase - walk through recipe and call onRecipe,
-        // onHandle, etc.
-        // TODO overriding the argument with a local variable is very confusing.
-        if (this.onRecipe) {
-            result = this.onRecipe(recipe, result);
-            if (!this.isEmptyResult(result)) {
-                updateList.push({ continuation: result });
-            }
-        }
-        if (this.onParticle) {
-            for (const particle of recipe.particles) {
-                const context = [particle];
-                const result = this.onParticle(recipe, ...context);
-                if (!this.isEmptyResult(result)) {
-                    updateList.push({ continuation: result, context });
-                }
-            }
-        }
-        if (this.onHandleConnection) {
-            for (const handleConnection of recipe.handleConnections) {
-                const context = [handleConnection];
-                const result = this.onHandleConnection(recipe, ...context);
-                if (!this.isEmptyResult(result)) {
-                    updateList.push({ continuation: result, context });
-                }
-            }
-        }
-        if (this.onHandle) {
-            for (const handle of recipe.handles) {
-                const context = [handle];
-                const result = this.onHandle(recipe, ...context);
-                if (!this.isEmptyResult(result)) {
-                    updateList.push({ continuation: result, context });
-                }
-            }
-        }
-        if (this.onPotentialSlotConnection) {
-            for (const particle of recipe.particles) {
-                for (const [name, slotSpec] of particle.getSlotSpecs()) {
-                    if (particle.getSlotConnectionByName(name))
-                        continue;
-                    const context = [particle, slotSpec];
-                    const result = this.onPotentialSlotConnection(recipe, ...context);
-                    if (!this.isEmptyResult(result)) {
-                        updateList.push({ continuation: result, context });
-                    }
-                }
-            }
-        }
-        if (this.onSlotConnection) {
-            for (const slotConnection of recipe.slotConnections) {
-                const context = [slotConnection];
-                const result = this.onSlotConnection(recipe, ...context);
-                if (!this.isEmptyResult(result)) {
-                    updateList.push({ continuation: result, context });
-                }
-            }
-        }
-        if (this.onSlot) {
-            for (const slot of recipe.slots) {
-                const context = [slot];
-                const result = this.onSlot(recipe, ...context);
-                if (!this.isEmptyResult(result)) {
-                    updateList.push({ continuation: result, context });
-                }
-            }
-        }
-        if (this.onObligation) {
-            for (const obligation of recipe.obligations) {
-                const context = [obligation];
-                const result = this.onObligation(recipe, ...context);
-                if (!this.isEmptyResult(result)) {
-                    updateList.push({ continuation: result, context });
-                }
-            }
-        }
-        if (this.onRequiredParticle) {
-            for (const require of recipe.requires) {
-                for (const particle of require.particles) {
-                    const context = [particle];
-                    const result = this.onRequiredParticle(recipe, ...context);
-                    if (!this.isEmptyResult(result)) {
-                        updateList.push({ continuation: result, context });
-                    }
-                }
-            }
-        }
-        this._runUpdateList(recipe, updateList);
-    }
-    createDescendant(recipe, score) {
-        const valid = recipe.normalize();
-        const hash = valid ? recipe.digest() : null;
-        super.createWalkerDescendant(recipe, score, hash, valid);
-    }
-}
-
-// Copyright (c) 2019 Google Inc. All rights reserved.
-class SlotUtils {
-    // Helper methods.
-    static getClonedSlot(recipe, selectedSlot) {
-        let clonedSlot = recipe.updateToClone({ selectedSlot }).selectedSlot;
-        if (!clonedSlot) {
-            if (selectedSlot.id) {
-                clonedSlot = recipe.findSlotByID(selectedSlot.id);
-            }
-            if (clonedSlot == undefined) {
-                if (recipe instanceof RequireSection) {
-                    clonedSlot = recipe.parent.newSlot(selectedSlot.name);
-                }
-                else {
-                    clonedSlot = recipe.newSlot(selectedSlot.name);
-                }
-                clonedSlot.id = selectedSlot.id;
-            }
-        }
-        return clonedSlot;
-    }
-    // Connect the given slot connection to the selectedSlot, create the slot, if needed.
-    static connectSlotConnection(slotConnection, selectedSlot) {
-        const recipe = slotConnection.recipe;
-        if (!slotConnection.targetSlot) {
-            const clonedSlot = SlotUtils.getClonedSlot(recipe, selectedSlot);
-            slotConnection.connectToSlot(clonedSlot);
-        }
-        assert$1(!selectedSlot.id || !slotConnection.targetSlot.id || (selectedSlot.id === slotConnection.targetSlot.id), `Cannot override slot id '${slotConnection.targetSlot.id}' with '${selectedSlot.id}'`);
-        slotConnection.targetSlot.id = selectedSlot.id || slotConnection.targetSlot.id;
-        // TODO: need to concat to existing tags and dedup?
-        slotConnection.targetSlot.tags = [...selectedSlot.tags];
-    }
-    // Returns all possible slot candidates, sorted by "quality"
-    static findAllSlotCandidates(particle, slotSpec, arc) {
-        const slotConn = particle.getSlotConnectionByName(slotSpec.name);
-        return {
-            // Note: during manfiest parsing, target slot is only set in slot connection, if the slot exists in the recipe.
-            // If this slot is internal to the recipe, it has the sourceConnection set to the providing connection
-            // (and hence the consuming connection is considered connected already). Otherwise, this may only be a remote slot.
-            local: !slotConn || !slotConn.targetSlot ? SlotUtils._findSlotCandidates(particle, slotSpec, particle.recipe.slots) : [],
-            remote: SlotUtils._findSlotCandidates(particle, slotSpec, arc.pec.slotComposer.getAvailableContexts())
-        };
-    }
-    // Returns the given slot candidates, sorted by "quality".
-    static _findSlotCandidates(particle, slotSpec, slots) {
-        const possibleSlots = slots.filter(s => this.slotMatches(particle, slotSpec, s));
-        possibleSlots.sort((slot1, slot2) => {
-            // TODO: implement.
-            return slot1.name < slot2.name;
-        });
-        return possibleSlots;
-    }
-    // Returns true, if the given slot is a viable candidate for the slotConnection.
-    static slotMatches(particle, slotSpec, slot) {
-        if (!SlotUtils.specMatch(slotSpec, slot.spec)) {
-            return false;
-        }
-        const potentialSlotConn = particle.getSlotConnectionBySpec(slotSpec);
-        if (!SlotUtils.tagsOrNameMatch(slotSpec, slot.spec, potentialSlotConn, slot)) {
-            return false;
-        }
-        // Match handles of the provided slot with the slot-connection particle's handles.
-        if (!SlotUtils.handlesMatch(particle, slot)) {
-            return false;
-        }
-        return true;
-    }
-    static specMatch(slotSpec, providedSlotSpec) {
-        return slotSpec && // if there's no slotSpec, this is just a slot constraint on a verb
-            providedSlotSpec &&
-            slotSpec.isSet === providedSlotSpec.isSet;
-    }
-    // Returns true, if the providing slot handle restrictions are satisfied by the consuming slot connection.
-    // TODO: should we move some of this logic to the recipe? Or type matching?
-    static handlesMatch(particle, slot) {
-        if (slot.handles.length === 0) {
-            return true; // slot is not limited to specific handles
-        }
-        return !!Object.values(particle.connections).find(handleConn => {
-            return slot.handles.includes(handleConn.handle) ||
-                (handleConn.handle && handleConn.handle.id && slot.handles.map(sh => sh.id).includes(handleConn.handle.id));
-        });
-    }
-    static tagsOrNameMatch(consumeSlotSpec, provideSlotSpec, consumeSlotConn = undefined, provideSlot = undefined) {
-        const consumeTags = [].concat(consumeSlotSpec.tags || [], consumeSlotConn ? consumeSlotConn.tags : [], consumeSlotConn && consumeSlotConn.targetSlot ? consumeSlotConn.targetSlot.tags : []);
-        const provideTags = [].concat(provideSlotSpec.tags || [], provideSlot ? provideSlot.tags : [], provideSlot ? provideSlot.name : (provideSlotSpec.name ? provideSlotSpec.name : []));
-        if (consumeTags.length > 0 && consumeTags.some(t => provideTags.includes(t))) {
-            return true;
-        }
-        return consumeSlotSpec.name === (provideSlot ? provideSlot.name : provideSlotSpec.name);
-    }
-    static replaceOldSlot(recipe, oldSlot, newSlot) {
-        if (oldSlot && (!oldSlot.id || oldSlot.id !== newSlot.id)) {
-            if (oldSlot.sourceConnection !== undefined) {
-                if (newSlot.sourceConnection === undefined)
-                    return false;
-                const clonedSlot = SlotUtils.getClonedSlot(oldSlot.sourceConnection.recipe, newSlot);
-                oldSlot.sourceConnection.providedSlots[oldSlot.name] = clonedSlot;
-                clonedSlot.sourceConnection = oldSlot.sourceConnection;
-            }
-            while (oldSlot.consumeConnections.length > 0) {
-                const conn = oldSlot.consumeConnections[0];
-                conn.disconnectFromSlot();
-                SlotUtils.connectSlotConnection(conn, newSlot);
-            }
-        }
-        return true;
-    }
-}
-
-// Copyright (c) 2018 Google Inc. All rights reserved.
-class ResolveWalker extends RecipeWalker {
-    constructor(tactic, arc) {
-        super(tactic);
-        this.arc = arc;
-    }
-    onHandle(recipe, handle) {
-        const arc = this.arc;
-        if (handle.connections.length === 0 ||
-            (handle.id && handle.storageKey) || (!handle.type) ||
-            (!handle.fate)) {
-            return undefined;
-        }
-        let mappable;
-        if (!handle.id) {
-            // Handle doesn't have an ID, finding by type and tags.
-            const counts = RecipeUtil.directionCounts(handle);
-            switch (handle.fate) {
-                case 'use':
-                    mappable = arc.findStoresByType(handle.type, { tags: handle.tags, subtype: counts.out === 0 });
-                    break;
-                case 'map':
-                case 'copy':
-                    mappable = arc.context.findStoreByType(handle.type, { tags: handle.tags, subtype: true });
-                    break;
-                case 'create':
-                case '?':
-                    mappable = [];
-                    break;
-                default:
-                    throw new Error(`unexpected fate ${handle.fate}`);
-            }
-        }
-        else if (!handle.storageKey) {
-            // Handle specified by the ID, but not yet mapped to storage.
-            let storeById;
-            switch (handle.fate) {
-                case 'use':
-                    storeById = arc.findStoreById(handle.id);
-                    break;
-                case 'map':
-                case 'copy':
-                    storeById = arc.context.findStoreById(handle.id);
-                    break;
-                case 'create':
-                case '?':
-                    break;
-                default:
-                    throw new Error(`unexpected fate ${handle.fate}`);
-            }
-            mappable = storeById ? [storeById] : [];
-        }
-        mappable = mappable.filter(incomingHandle => {
-            for (const existingHandle of recipe.handles) {
-                if (incomingHandle.id === existingHandle.id &&
-                    existingHandle !== handle) {
-                    return false;
-                }
-            }
-            return true;
-        });
-        if (mappable.length === 1) {
-            return (recipe, handle) => {
-                handle.mapToStorage(mappable[0]);
-            };
-        }
-        return undefined;
-    }
-    onSlotConnection(recipe, slotConnection) {
-        const arc = this.arc;
-        if (slotConnection.isConnected()) {
-            return undefined;
-        }
-        const slotSpec = slotConnection.getSlotSpec();
-        const particle = slotConnection.particle;
-        const { local, remote } = SlotUtils.findAllSlotCandidates(particle, slotSpec, arc);
-        const allSlots = [...local, ...remote];
-        // SlotUtils handles a multi-slot case.
-        if (allSlots.length !== 1) {
-            return undefined;
-        }
-        const selectedSlot = allSlots[0];
-        return (recipe, slotConnection) => {
-            SlotUtils.connectSlotConnection(slotConnection, selectedSlot);
-            return 1;
-        };
-    }
-    onPotentialSlotConnection(recipe, particle, slotSpec) {
-        const arc = this.arc;
-        const { local, remote } = SlotUtils.findAllSlotCandidates(particle, slotSpec, arc);
-        const allSlots = [...local, ...remote];
-        // SlotUtils handles a multi-slot case.
-        if (allSlots.length !== 1) {
-            return undefined;
-        }
-        const selectedSlot = allSlots[0];
-        return (recipe, particle, slotSpec) => {
-            const newSlotConnection = particle.addSlotConnection(slotSpec.name);
-            SlotUtils.connectSlotConnection(newSlotConnection, selectedSlot);
-            return 1;
-        };
-    }
-    // TODO(lindner): add typeof checks here and figure out where handle is coming from.
-    onObligation(recipe, obligation) {
-        const fromParticle = obligation.from.instance;
-        const toParticle = obligation.to.instance;
-        for (const fromConnection of Object.values(fromParticle.connections)) {
-            for (const toConnection of Object.values(toParticle.connections)) {
-                // @ts-ignore
-                if (fromConnection.handle && fromConnection.handle === toConnection.handle) {
-                    return (recipe, obligation) => {
-                        recipe.removeObligation(obligation);
-                        return 1;
-                    };
-                }
-            }
-        }
-        return undefined;
-    }
-}
-class ResolveRecipeAction extends Action {
-    async generate(inputParams) {
-        return ResolveWalker.walk(this.getResults(inputParams), new ResolveWalker(ResolveWalker.Permuted, this.arc), this);
-    }
-}
-// Provides basic recipe resolution for recipes against a particular arc.
-class RecipeResolver {
-    constructor(arc) {
-        this.resolver = new ResolveRecipeAction(arc);
-    }
-    // Attempts to run basic resolution on the given recipe. Returns a new
-    // instance of the recipe normalized and resolved if possible. Returns null if
-    // normalization or attempting to resolve slot connection fails.
-    async resolve(recipe) {
-        recipe = recipe.clone();
-        const options = { errors: new Map() };
-        if (!recipe.normalize(options)) {
-            console.warn(`could not normalize a recipe: ${[...options.errors.values()].join('\n')}.\n${recipe.toString()}`);
-            return null;
-        }
-        const result = await this.resolver.generate({ generated: [{ result: recipe, score: 1 }], terminal: [] });
-        return (result.length === 0) ? null : result[0].result;
-    }
-}
-
-/**
- * @license
- * Copyright (c) 2018 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-const systemHandlers = [];
-function reportSystemException(exception, methodName, particle) {
-    for (const handler of systemHandlers) {
-        handler(exception, methodName, particle);
-    }
-}
-function registerSystemExceptionHandler(handler) {
-    if (!systemHandlers.includes(handler)) {
-        systemHandlers.push(handler);
-    }
-}
-registerSystemExceptionHandler((exception, methodName, particle) => {
-    console.log(methodName, particle);
-    throw exception;
-});
-
-/**
- * @license
- * Copyright (c) 2017 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-class ParticleExecutionHost {
-    constructor(port, slotComposer, arc) {
-        this.nextIdentifier = 0;
-        this.idleVersion = 0;
-        this.close = () => {
-            port.close();
-            this._apiPort.close();
-        };
-        this.arc = arc;
-        this.slotComposer = slotComposer;
-        const pec = this;
-        this._apiPort = new class extends PECOuterPort {
-            onRender(particle, slotName, content) {
-                if (pec.slotComposer) {
-                    pec.slotComposer.renderSlot(particle, slotName, content);
-                }
-            }
-            onInitializeProxy(handle, callback) {
-                const target = {};
-                handle.on('change', data => this.SimpleCallback(callback, data), target);
-            }
-            async onSynchronizeProxy(handle, callback) {
-                const data = await handle.modelForSynchronization();
-                this.SimpleCallback(callback, data);
-            }
-            async onHandleGet(handle, callback) {
-                // TODO(shans): fix typing once we have types for Singleton/Collection/etc
-                // tslint:disable-next-line: no-any
-                const data = await handle.get();
-                this.SimpleCallback(callback, data);
-            }
-            async onHandleToList(handle, callback) {
-                // TODO(shans): fix typing once we have types for Singleton/Collection/etc
-                // tslint:disable-next-line: no-any
-                this.SimpleCallback(callback, await handle.toList());
-            }
-            onHandleSet(handle, data, particleId, barrier) {
-                // TODO(shans): fix typing once we have types for Singleton/Collection/etc
-                // tslint:disable-next-line: no-any
-                handle.set(data, particleId, barrier);
-            }
-            onHandleClear(handle, particleId, barrier) {
-                // TODO(shans): fix typing once we have types for Singleton/Collection/etc
-                // tslint:disable-next-line: no-any
-                handle.clear(particleId, barrier);
-            }
-            async onHandleStore(handle, callback, data, particleId) {
-                // TODO(shans): fix typing once we have types for Singleton/Collection/etc
-                // tslint:disable-next-line: no-any
-                await handle.store(data.value, data.keys, particleId);
-                this.SimpleCallback(callback, {});
-            }
-            async onHandleRemove(handle, callback, data, particleId) {
-                // TODO(shans): fix typing once we have types for Singleton/Collection/etc
-                // tslint:disable-next-line: no-any
-                await handle.remove(data.id, data.keys, particleId);
-                this.SimpleCallback(callback, {});
-            }
-            async onHandleRemoveMultiple(handle, callback, data, particleId) {
-                // TODO(shans): fix typing once we have types for Singleton/Collection/etc
-                // tslint:disable-next-line: no-any
-                await handle.removeMultiple(data, particleId);
-                this.SimpleCallback(callback, {});
-            }
-            async onHandleStream(handle, callback, pageSize, forward) {
-                // TODO(shans): fix typing once we have types for Singleton/Collection/etc
-                // tslint:disable-next-line: no-any
-                this.SimpleCallback(callback, await handle.stream(pageSize, forward));
-            }
-            async onStreamCursorNext(handle, callback, cursorId) {
-                // TODO(shans): fix typing once we have types for Singleton/Collection/etc
-                // tslint:disable-next-line: no-any
-                this.SimpleCallback(callback, await handle.cursorNext(cursorId));
-            }
-            onStreamCursorClose(handle, cursorId) {
-                // TODO(shans): fix typing once we have types for Singleton/Collection/etc
-                // tslint:disable-next-line: no-any
-                handle.cursorClose(cursorId);
-            }
-            onIdle(version, relevance) {
-                if (version === pec.idleVersion) {
-                    pec.idlePromise = undefined;
-                    pec.idleResolve(relevance);
-                }
-            }
-            async onGetBackingStore(callback, storageKey, type) {
-                if (!storageKey) {
-                    storageKey = pec.arc.storageProviderFactory.baseStorageKey(type, pec.arc.storageKey || 'volatile');
-                }
-                const store = await pec.arc.storageProviderFactory.baseStorageFor(type, storageKey);
-                // TODO(shans): THIS IS NOT SAFE!
-                //
-                // Without an auditor on the runtime side that inspects what is being fetched from
-                // this store, particles with a reference can access any data of that reference's type.
-                this.GetBackingStoreCallback(store, callback, type.collectionOf(), type.toString(), store.id, storageKey);
-            }
-            onConstructInnerArc(callback, particle) {
-                const arc = pec.arc.createInnerArc(particle);
-                this.ConstructArcCallback(callback, arc);
-            }
-            async onArcCreateHandle(callback, arc, type, name) {
-                // At the moment, inner arcs are not persisted like their containers, but are instead
-                // recreated when an arc is deserialized. As a consequence of this, dynamically
-                // created handles for inner arcs must always be volatile to prevent storage
-                // in firebase.
-                const store = await arc.createStore(type, name, null, [], 'volatile');
-                // Store belongs to the inner arc, but the transformation particle,
-                // which itself is in the outer arc gets access to it.
-                this.CreateHandleCallback(store, callback, type, name, store.id);
-            }
-            onArcMapHandle(callback, arc, handle) {
-                assert$1(pec.arc.findStoreById(handle.id), `Cannot map nonexistent handle ${handle.id}`);
-                // TODO: create hosted handles map with specially generated ids instead of returning the real ones?
-                this.MapHandleCallback({}, callback, handle.id);
-            }
-            onArcCreateSlot(callback, arc, transformationParticle, transformationSlotName, handleId) {
-                let hostedSlotId;
-                if (pec.slotComposer) {
-                    hostedSlotId = pec.slotComposer.createHostedSlot(arc, transformationParticle, transformationSlotName, handleId);
-                }
-                this.CreateSlotCallback({}, callback, hostedSlotId);
-            }
-            async onArcLoadRecipe(arc, recipe, callback) {
-                const manifest = await Manifest.parse(recipe, { loader: arc.loader, fileName: '' });
-                const successResponse = {
-                    providedSlotIds: {}
-                };
-                let error = undefined;
-                // TODO(wkorman): Consider reporting an error or at least warning if
-                // there's more than one recipe since currently we silently ignore them.
-                let recipe0 = manifest.recipes[0];
-                if (recipe0) {
-                    for (const slot of recipe0.slots) {
-                        slot.id = slot.id || `slotid-${arc.generateID()}`;
-                        if (slot.sourceConnection) {
-                            const particlelocalName = slot.sourceConnection.particle.localName;
-                            if (particlelocalName) {
-                                successResponse.providedSlotIds[`${particlelocalName}.${slot.name}`] = slot.id;
-                            }
-                        }
-                    }
-                    const missingHandles = [];
-                    for (const handle of recipe0.handles) {
-                        const fromHandle = pec.arc.findStoreById(handle.id) || manifest.findStoreById(handle.id);
-                        if (!fromHandle) {
-                            missingHandles.push(handle);
-                            continue;
-                        }
-                        handle.mapToStorage(fromHandle);
-                    }
-                    if (missingHandles.length > 0) {
-                        let recipeToResolve = recipe0;
-                        // We're resolving both against the inner and the outer arc.
-                        for (const resolver of [new RecipeResolver(arc /* inner */), new RecipeResolver(pec.arc /* outer */)]) {
-                            recipeToResolve = await resolver.resolve(recipeToResolve) || recipeToResolve;
-                        }
-                        if (recipeToResolve === recipe0) {
-                            error = `Recipe couldn't load due to missing handles [recipe=${recipe0}, missingHandles=${missingHandles.join('\n')}].`;
-                        }
-                        else {
-                            recipe0 = recipeToResolve;
-                        }
-                    }
-                    if (!error) {
-                        const options = { errors: new Map() };
-                        // If we had missing handles but we made it here, then we ran recipe
-                        // resolution which will have already normalized the recipe.
-                        if ((missingHandles.length > 0) || recipe0.normalize(options)) {
-                            if (recipe0.isResolved()) {
-                                // TODO: pass tags through too, and reconcile with similar logic
-                                // in Arc.deserialize.
-                                manifest.stores.forEach(store => pec.arc._registerStore(store, []));
-                                arc.instantiate(recipe0);
-                            }
-                            else {
-                                error = `Recipe is not resolvable:\n${recipe0.toString({ showUnresolved: true })}`;
-                            }
-                        }
-                        else {
-                            error = `Recipe ${recipe0} could not be normalized:\n${[...options.errors.values()].join('\n')}`;
-                        }
-                    }
-                }
-                else {
-                    error = 'No recipe defined';
-                }
-                this.SimpleCallback(callback, error ? { error } : successResponse);
-            }
-            onRaiseSystemException(exception, methodName, particleId) {
-                const particle = pec.arc.particleHandleMaps.get(particleId).spec.name;
-                reportSystemException(exception, methodName, particle);
-            }
-        }(port, arc);
-    }
-    stop() {
-        this._apiPort.Stop();
-    }
-    get idle() {
-        if (this.idlePromise == undefined) {
-            this.idlePromise = new Promise((resolve, reject) => {
-                this.idleResolve = resolve;
-            });
-        }
-        this.idleVersion = this.nextIdentifier;
-        this._apiPort.AwaitIdle(this.nextIdentifier++);
-        return this.idlePromise;
-    }
-    get messageCount() {
-        return this._apiPort.messageCount;
-    }
-    sendEvent(particle, slotName, event) {
-        this._apiPort.UIEvent(particle, slotName, event);
-    }
-    instantiate(particle, spec, handles) {
-        handles.forEach(handle => {
-            this._apiPort.DefineHandle(handle, handle.type.resolvedType(), handle.name);
-        });
-        this._apiPort.InstantiateParticle(particle, particle.id, spec, handles);
-        return particle;
-    }
-    startRender({ particle, slotName, providedSlots, contentTypes }) {
-        this._apiPort.StartRender(particle, slotName, providedSlots, contentTypes);
-    }
-    stopRender({ particle, slotName }) {
-        this._apiPort.StopRender(particle, slotName);
-    }
-    innerArcRender(transformationParticle, transformationSlotName, hostedSlotId, content) {
-        this._apiPort.InnerArcRender(transformationParticle, transformationSlotName, hostedSlotId, content);
-    }
-}
 
 /**
  * @license
@@ -21701,1261 +22307,6 @@ class ParticleExecutionContext {
 
 /**
  * @license
- * Copyright (c) 2017 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-class MessagePort {
-    constructor(channel, id, other) {
-        this._channel = channel;
-        this._id = id;
-        this._other = other;
-        this._onmessage = undefined;
-    }
-    // TODO appears to be {messageType, messageBody}
-    postMessage(message) {
-        this._channel._post(this._other, message);
-    }
-    set onmessage(f) {
-        this._onmessage = f;
-    }
-    close() {
-        this.postMessage = () => { };
-    }
-}
-class MessageEvent {
-    constructor(message) {
-        this.data = message;
-    }
-}
-class MessageChannel {
-    constructor() {
-        this.port1 = new MessagePort(this, 0, 1);
-        this.port2 = new MessagePort(this, 1, 0);
-        this._ports = [this.port1, this.port2];
-    }
-    async _post(id, message) {
-        message = JSON.parse(JSON.stringify(message));
-        if (this._ports[id]._onmessage) {
-            try {
-                // Yield so that we deliver the message asynchronously.
-                await 0;
-                await this._ports[id]._onmessage(new MessageEvent(message));
-            }
-            catch (e) {
-                console.error('Exception in particle code\n', e);
-            }
-        }
-    }
-}
-
-// Copyright (c) 2017 Google Inc. All rights reserved.
-
-// Copyright (c) 2017 Google Inc. All rights reserved.
-
-// Copyright (c) 2017 Google Inc. All rights reserved.
-
-/**
- * @license
- * Copyright (c) 2017 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-/**
- * A basic particle. For particles that provide UI, you may like to
- * instead use DOMParticle.
- */
-class Particle$1 {
-    constructor(capabilities) {
-        this.relevances = [];
-        this._idle = Promise.resolve();
-        this._busy = 0;
-        // Only used by a Slotlet class in particle-execution-context
-        // tslint:disable-next-line: no-any
-        this.slotByName = new Map();
-        // Typescript only sees this.constructor as a Function type.
-        // TODO(shans): move spec off the constructor
-        this.spec = this.constructor['spec'];
-        if (this.spec.inputs.length === 0) {
-            this.extraData = true;
-        }
-        this.capabilities = capabilities || {};
-    }
-    /**
-     * This method is invoked with a handle for each store this particle
-     * is registered to interact with, once those handles are ready for
-     * interaction. Override the method to register for events from
-     * the handles.
-     *
-     * @param handles a map from handle names to store handles.
-     */
-    setHandles(handles) {
-    }
-    /**
-     * This method is deprecated. Use setHandles instead.
-     */
-    setViews(views) {
-    }
-    /**
-     * Called for handles that are configured with both keepSynced and notifySync, when they are
-     * updated with the full model of their data. This will occur once after setHandles() and any time
-     * thereafter if the handle is resynchronized.
-     *
-     * @param handle The Handle instance that was updated.
-     * @param model For Variable-backed Handles, the Entity data or null if the Variable is not set.
-     *        For Collection-backed Handles, the Array of Entities, which may be empty.
-     */
-    onHandleSync(handle, model) {
-    }
-    /**
-     * Called for handles that are configued with notifyUpdate, when change events are received from
-     * the backing store. For handles also configured with keepSynced these events will be correctly
-     * ordered, with some potential skips if a desync occurs. For handles not configured with
-     * keepSynced, all change events will be passed through as they are received.
-     *
-     * @param handle The Handle instance that was updated.
-     * @param update An object containing one of the following fields:
-     *  - data: The full Entity for a Variable-backed Handle.
-     *  - added: An Array of Entities added to a Collection-backed Handle.
-     *  - removed: An Array of Entities removed from a Collection-backed Handle.
-     */
-    // tslint:disable-next-line: no-any
-    onHandleUpdate(handle, update) {
-    }
-    /**
-     * Called for handles that are configured with both keepSynced and notifyDesync, when they are
-     * detected as being out-of-date against the backing store. For Variables, the event that triggers
-     * this will also resync the data and thus this call may usually be ignored. For Collections, the
-     * underlying proxy will automatically request a full copy of the stored data to resynchronize.
-     * onHandleSync will be invoked when that is received.
-     *
-     * @param handle The Handle instance that was desynchronized.
-     */
-    onHandleDesync(handle) {
-    }
-    constructInnerArc() {
-        if (!this.capabilities.constructInnerArc) {
-            throw new Error('This particle is not allowed to construct inner arcs');
-        }
-        return this.capabilities.constructInnerArc(this);
-    }
-    get busy() {
-        return this._busy > 0;
-    }
-    get idle() {
-        return this._idle;
-    }
-    set relevance(r) {
-        this.relevances.push(r);
-    }
-    startBusy() {
-        if (this._busy === 0) {
-            this._idle = new Promise(resolve => this._idleResolver = resolve);
-        }
-        this._busy++;
-    }
-    doneBusy() {
-        this._busy--;
-        if (this._busy === 0) {
-            this._idleResolver();
-        }
-    }
-    inputs() {
-        return this.spec.inputs;
-    }
-    outputs() {
-        return this.spec.outputs;
-    }
-    /**
-     * Returns the slot with provided name.
-     */
-    getSlot(name) {
-        return this.slotByName.get(name);
-    }
-    static buildManifest(strings, ...bits) {
-        const output = [];
-        for (let i = 0; i < bits.length; i++) {
-            const str = strings[i];
-            const indent = / *$/.exec(str)[0];
-            let bitStr;
-            if (typeof bits[i] === 'string') {
-                bitStr = bits[i];
-            }
-            else {
-                bitStr = bits[i].toManifestString();
-            }
-            bitStr = bitStr.replace(/(\n)/g, '$1' + indent);
-            output.push(str);
-            output.push(bitStr);
-        }
-        if (strings.length > bits.length) {
-            output.push(strings[strings.length - 1]);
-        }
-        return output.join('');
-    }
-    setParticleDescription(pattern) {
-        return this.setDescriptionPattern('pattern', pattern);
-    }
-    setDescriptionPattern(connectionName, pattern) {
-        const descriptions = this.handles.get('descriptions');
-        if (descriptions) {
-            // Typescript can't infer the type here and fails with TS2351
-            // tslint:disable-next-line: no-any
-            const entityClass = descriptions.entityClass;
-            if (descriptions instanceof Collection || descriptions instanceof BigCollection) {
-                descriptions.store(new entityClass({ key: connectionName, value: pattern }, this.spec.name + '-' + connectionName));
-            }
-            return true;
-        }
-        throw new Error('A particle needs a description handle to set a decription pattern');
-    }
-    // abstract
-    renderSlot(slotName, contentTypes) { }
-    renderHostedSlot(slotName, hostedSlotId, content) { }
-    fireEvent(slotName, event) { }
-}
-
-/**
- * @license
- * Copyright (c) 2017 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-
-const nob = () => Object.create(null);
-
-const debounce = (key, action, delay) => {
-  if (key) {
-    clearTimeout(key);
-  }
-  if (action && delay) {
-    return setTimeout(action, delay);
-  }
-};
-
-const XenStateMixin = Base => class extends Base {
-  constructor() {
-    super();
-    this._pendingProps = nob();
-    this._props = this._getInitialProps() || nob();
-    this._lastProps = nob();
-    this._state = this._getInitialState() || nob();
-    this._lastState = nob();
-  }
-  _getInitialProps() {
-  }
-  _getInitialState() {
-  }
-  _getProperty(name) {
-    return this._pendingProps[name] || this._props[name];
-  }
-  _setProperty(name, value) {
-    // dirty checking opportunity
-    if (this._validator || this._wouldChangeProp(name, value)) {
-      this._pendingProps[name] = value;
-      this._invalidateProps();
-    }
-  }
-  _wouldChangeValue(map, name, value) {
-    // TODO(sjmiles): fundamental dirty-checking issue here. Can be overridden to change
-    // behavior, but the default implementation will use strict reference checking.
-    // To modify structured values one must create a new Object with the new values.
-    // See `_setImmutableState`.
-    return (map[name] !== value);
-    // TODO(sjmiles): an example of dirty-checking that instead simply punts on structured data
-    //return (typeof value === 'object') || (map[name] !== value);
-  }
-  _wouldChangeProp(name, value) {
-    return this._wouldChangeValue(this._props, name, value);
-  }
-  _wouldChangeState(name, value) {
-    return this._wouldChangeValue(this._state, name, value);
-  }
-  _setProps(props) {
-    // TODO(sjmiles): should be a replace instead of a merge?
-    Object.assign(this._pendingProps, props);
-    this._invalidateProps();
-  }
-  _invalidateProps() {
-    this._propsInvalid = true;
-    this._invalidate();
-  }
-  _setImmutableState(name, value) {
-    if (typeof name === 'object') {
-      console.warn('Xen:: _setImmutableState takes name and value args for a single property, dictionaries not supported.');
-      value = Object.values(name)[0];
-      name = Object.names(name)[0];
-    }
-    if (typeof value === 'object') {
-      value = Object.assign(Object.create(null), value);
-    }
-    this._state[name] = value;
-    this._invalidate();
-  }
-  _setState(object) {
-    let dirty = false;
-    const state = this._state;
-    for (const property in object) {
-      const value = object[property];
-      if (this._wouldChangeState(property, value)) {
-        dirty = true;
-        state[property] = value;
-      }
-    }
-    if (dirty) {
-      this._invalidate();
-      return true;
-    }
-  }
-  // TODO(sjmiles): deprecated
-  _setIfDirty(object) {
-    return this._setState(object);
-  }
-  _async(fn) {
-    return Promise.resolve().then(fn.bind(this));
-    //return setTimeout(fn.bind(this), 10);
-  }
-  _invalidate() {
-    if (!this._validator) {
-      this._validator = this._async(this._validate);
-    }
-  }
-  _getStateArgs() {
-    return [this._props, this._state, this._lastProps, this._lastState];
-  }
-  _validate() {
-    const stateArgs = this._getStateArgs();
-    // try..catch to ensure we nullify `validator` before return
-    try {
-      // TODO(sjmiles): should be a replace instead of a merge
-      Object.assign(this._props, this._pendingProps);
-      if (this._propsInvalid) {
-        // TODO(sjmiles): should/can have different timing from rendering?
-        this._willReceiveProps(...stateArgs);
-        this._propsInvalid = false;
-      }
-      if (this._shouldUpdate(...stateArgs)) {
-        // TODO(sjmiles): consider throttling update to rAF
-        this._ensureMount();
-        this._doUpdate(...stateArgs);
-      }
-    } catch (x) {
-      console.error(x);
-    }
-    // nullify validator _after_ methods so state changes don't reschedule validation
-    this._validator = null;
-    // save the old props and state
-    this._lastProps = Object.assign(nob(), this._props);
-    this._lastState = Object.assign(nob(), this._state);
-  }
-  _doUpdate(...stateArgs) {
-    this._update(...stateArgs);
-    this._didUpdate(...stateArgs);
-  }
-  _ensureMount() {
-  }
-  _willReceiveProps() {
-  }
-  _shouldUpdate() {
-    return true;
-  }
-  _update() {
-  }
-  _didUpdate() {
-  }
-  _debounce(key, func, delay) {
-    key = `_debounce_${key}`;
-    this._state[key] = debounce(this._state[key], func, delay != null ? delay : 16);
-  }
-};
-
-/**
- * @license
- * Copyright (c) 2017 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-/**
- * Particle that interoperates with DOM.
- */
-class DomParticleBase extends Particle$1 {
-    constructor() {
-        super();
-    }
-    /**
-     * Override to return a String defining primary markup.
-     */
-    get template() {
-        return '';
-    }
-    /**
-     * Override to return a String defining primary markup for the given slot name.
-     */
-    getTemplate(slotName) {
-        // TODO: only supports a single template for now. add multiple templates support.
-        return this.template;
-    }
-    /**
-     * Override to return a String defining the name of the template for the given slot name.
-     */
-    getTemplateName(slotName) {
-        // TODO: only supports a single template for now. add multiple templates support.
-        return `default`;
-    }
-    /**
-     * Override to return false if the Particle won't use it's slot.
-     */
-    shouldRender(stateArgs) {
-        return true;
-    }
-    /**
-     * Override to return a dictionary to map into the template.
-     */
-    render(stateArgs) {
-        return {};
-    }
-    renderSlot(slotName, contentTypes) {
-        const stateArgs = this._getStateArgs();
-        const slot = this.getSlot(slotName);
-        if (!slot) {
-            return; // didn't receive StartRender.
-        }
-        // Set this to support multiple slots consumed by a particle, without needing
-        // to pass slotName to particle's render method, where it useless in most cases.
-        this.currentSlotName = slotName;
-        contentTypes.forEach(ct => slot.requestedContentTypes.add(ct));
-        // TODO(sjmiles): redundant, same answer for every slot
-        if (this.shouldRender(...stateArgs)) {
-            const content = {};
-            if (slot.requestedContentTypes.has('template')) {
-                content.template = this.getTemplate(slot.slotName);
-            }
-            if (slot.requestedContentTypes.has('model')) {
-                content.model = this.render(...stateArgs);
-            }
-            content.templateName = this.getTemplateName(slot.slotName);
-            // Backwards-compatibility and convenience code:
-            //  - Rewrites slotid="slotName" to slotid$="{{$slotName}}" in templates.
-            //  - Enhances the model with `$slotName` fields.
-            if (slot.providedSlots.size > 0) {
-                if (content.template) {
-                    if (typeof content.template === 'string') {
-                        content.template = this.slotNamesToModelReferences(slot, content.template);
-                    }
-                    else {
-                        content.template = Object.entries(content.template).reduce((templateDictionary, [templateName, templateValue]) => {
-                            templateDictionary[templateName] = this.slotNamesToModelReferences(slot, templateValue);
-                            return templateDictionary;
-                        }, {});
-                    }
-                }
-                if (content.model) {
-                    const slotIDs = {};
-                    slot.providedSlots.forEach((slotId, slotName) => slotIDs[`$${slotName}`] = slotId);
-                    content.model = this.enhanceModelWithSlotIDs(content.model, slotIDs);
-                }
-            }
-            slot.render(content);
-        }
-        else if (slot.isRendered) {
-            // Send empty object, to clear rendered slot contents.
-            slot.render({});
-        }
-        this.currentSlotName = undefined;
-    }
-    slotNamesToModelReferences(slot, template) {
-        slot.providedSlots.forEach((slotId, slotName) => {
-            // TODO: This is a simple string replacement right now,
-            // ensuring that 'slotid' is an attribute on an HTML element would be an improvement.
-            template = template.replace(new RegExp(`slotid=\"${slotName}\"`, 'gi'), `slotid$="{{$${slotName}}}"`);
-        });
-        return template;
-    }
-    // We put slot IDs at the top-level of the model as well as in models for sub-templates.
-    // This is temporary and should go away when we move from sub-IDs to [(Entity, Slot)] constructs.
-    enhanceModelWithSlotIDs(model = {}, slotIDs, topLevel = true) {
-        if (topLevel) {
-            model = Object.assign({}, slotIDs, model);
-        }
-        if (model.hasOwnProperty('$template') && model.hasOwnProperty('models') && Array.isArray(model['models'])) {
-            model['models'] = model['models'].map(m => this.enhanceModelWithSlotIDs(m, slotIDs));
-        }
-        for (const [key, value] of Object.entries(model)) {
-            if (!!value && typeof value === 'object') {
-                model[key] = this.enhanceModelWithSlotIDs(value, slotIDs, false);
-            }
-        }
-        return model;
-    }
-    _getStateArgs() {
-        return [];
-    }
-    forceRenderTemplate(slotName) {
-        this.slotByName.forEach((slot, name) => {
-            if (!slotName || (name === slotName)) {
-                slot.requestedContentTypes.add('template');
-            }
-        });
-    }
-    fireEvent(slotName, { handler, data }) {
-        if (this[handler]) {
-            this[handler]({ data });
-        }
-    }
-    setParticleDescription(pattern) {
-        if (typeof pattern === 'string') {
-            return super.setParticleDescription(pattern);
-        }
-        assert$1(!!pattern.template && !!pattern.model, 'Description pattern must either be string or have template and model');
-        super.setDescriptionPattern('_template_', pattern.template);
-        super.setDescriptionPattern('_model_', JSON.stringify(pattern.model));
-        return undefined;
-    }
-    /**
-     * Remove all entities from named handle.
-     */
-    async clearHandle(handleName) {
-        const handle = this.handles.get(handleName);
-        if (handle instanceof Variable || handle instanceof Collection) {
-            handle.clear();
-        }
-        else {
-            throw new Error('Variable/Collection required');
-        }
-    }
-    /**
-     * Merge entities from Array into named handle.
-     */
-    async mergeEntitiesToHandle(handleName, entities) {
-        const idMap = {};
-        const handle = this.handles.get(handleName);
-        if (handle instanceof Collection) {
-            const handleEntities = await handle.toList();
-            handleEntities.forEach(entity => idMap[entity.id] = entity);
-            for (const entity of entities) {
-                if (!idMap[entity.id]) {
-                    handle.store(entity);
-                }
-            }
-        }
-        else {
-            throw new Error('Collection required');
-        }
-    }
-    /**
-     * Append entities from Array to named handle.
-     */
-    async appendEntitiesToHandle(handleName, entities) {
-        const handle = this.handles.get(handleName);
-        if (handle) {
-            if (handle instanceof Collection || handle instanceof BigCollection) {
-                Promise.all(entities.map(entity => handle.store(entity)));
-            }
-            else {
-                throw new Error('Collection required');
-            }
-        }
-    }
-    /**
-     * Create an entity from each rawData, and append to named handle.
-     */
-    async appendRawDataToHandle(handleName, rawDataArray) {
-        const handle = this.handles.get(handleName);
-        if (handle && handle.entityClass) {
-            if (handle instanceof Collection || handle instanceof BigCollection) {
-                // Typescript can't infer the type here and fails with TS2351
-                // tslint:disable-next-line: no-any
-                const entityClass = handle.entityClass;
-                Promise.all(rawDataArray.map(raw => handle.store(new entityClass(raw))));
-            }
-            else {
-                throw new Error('Collection required');
-            }
-        }
-    }
-    /**
-     * Modify value of named handle. A new entity is created
-     * from `rawData` (`new [EntityClass](rawData)`).
-     */
-    updateVariable(handleName, rawData) {
-        const handle = this.handles.get(handleName);
-        if (handle && handle.entityClass) {
-            if (handle instanceof Variable) {
-                // Typescript can't infer the type here and fails with TS2351
-                // tslint:disable-next-line: no-any
-                const entityClass = handle.entityClass;
-                const entity = new entityClass(rawData);
-                handle.set(entity);
-                return entity;
-            }
-            else {
-                throw new Error('Variable required');
-            }
-        }
-        return undefined;
-    }
-    /**
-     * Modify or insert `entity` into named handle.
-     * Modification is done by removing the old entity and reinserting the new one.
-     */
-    async updateSet(handleName, entity) {
-        // Set the entity into the right place in the set. If we find it
-        // already present replace it, otherwise, add it.
-        // TODO(dstockwell): Replace this with happy entity mutation approach.
-        const handle = this.handles.get(handleName);
-        if (handle) {
-            if (handle instanceof Collection || handle instanceof BigCollection) {
-                await handle.remove(entity);
-                await handle.store(entity);
-            }
-            else {
-                throw new Error('Collection required');
-            }
-        }
-    }
-    /**
-     * Returns array of Entities found in BOXED data `box` that are owned by `userid`
-     */
-    boxQuery(box, userid) {
-        return box.filter(item => userid === item.getUserID().split('|')[0]);
-    }
-}
-
-/**
- * @license
- * Copyright (c) 2017 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-
-/** @class DomParticle
- * Particle that interoperates with DOM and uses a simple state system
- * to handle updates.
- */
-class DomParticle extends XenStateMixin(DomParticleBase) {
-  constructor() {
-    super();
-    // alias properties to remove `_`
-    this.state = this._state;
-    this.props = this._props;
-  }
-  /** @method willReceiveProps(props, state, oldProps, oldState)
-   * Override if necessary, to do things when props change.
-   */
-  willReceiveProps() {
-  }
-  /** @method update(props, state, oldProps, oldState)
-   * Override if necessary, to modify superclass config.
-   */
-  update() {
-  }
-  /** @method shouldRender(props, state, oldProps, oldState)
-   * Override to return false if the Particle won't use
-   * it's slot.
-   */
-  shouldRender() {
-    return true;
-  }
-  /** @method render(props, state, oldProps, oldState)
-   * Override to return a dictionary to map into the template.
-   */
-  render() {
-    return {};
-  }
-  /** @method setState(state)
-   * Copy values from `state` into the particle's internal state,
-   * triggering an update cycle unless currently updating.
-   */
-  setState(state) {
-    return this._setState(state);
-  }
-  // TODO(sjmiles): deprecated, just use setState
-  setIfDirty(state) {
-    console.warn('DomParticle: `setIfDirty` is deprecated, please use `setState` instead');
-    return this._setState(state);
-  }
-  /** @method configureHandles(handles)
-   * This is called once during particle setup. Override to control sync and update
-   * configuration on specific handles (via their configure() method).
-   * `handles` is a map from names to handle instances.
-   */
-  configureHandles(handles) {
-    // Example: handles.get('foo').configure({keepSynced: false});
-  }
-  /** @method get config()
-   * Override if necessary, to modify superclass config.
-   */
-  get config() {
-    // TODO(sjmiles): getter that does work is a bad idea, this is temporary
-    return {
-      handleNames: this.spec.inputs.map(i => i.name),
-      // TODO(mmandlis): this.spec needs to be replaced with a particle-spec loaded from
-      // .manifest files, instead of .ptcl ones.
-      slotNames: [...this.spec.slots.values()].map(s => s.name)
-    };
-  }
-  // affordances for aliasing methods to remove `_`
-  _willReceiveProps(...args) {
-    this.willReceiveProps(...args);
-  }
-  _update(...args) {
-    this.update(...args);
-    if (this.shouldRender(...args)) { // TODO: should shouldRender be slot specific?
-      this.relevance = 1; // TODO: improve relevance signal.
-    }
-    this.config.slotNames.forEach(s => this.renderSlot(s, ['model']));
-  }
-  //
-  // deprecated
-  get _views() {
-    console.warn(`Particle ${this.spec.name} uses deprecated _views getter.`);
-    return this.handles;
-  }
-  async setViews(views) {
-    console.warn(`Particle ${this.spec.name} uses deprecated setViews method.`);
-    return this.setHandles(views);
-  }
-  // end deprecated
-  //
-  async setHandles(handles) {
-    this.configureHandles(handles);
-    this.handles = handles;
-    this._handlesToSync = new Set();
-    for (const name of this.config.handleNames) {
-      const handle = handles.get(name);
-      if (handle && handle.options.keepSynced && handle.options.notifySync) {
-        this._handlesToSync.add(name);
-      }
-    }
-    // make sure we invalidate once, even if there are no incoming handles
-    setTimeout(() => !this._hasProps && this._invalidate(), 200);
-    //this._invalidate();
-  }
-  async onHandleSync(handle, model) {
-    this._handlesToSync.delete(handle.name);
-    if (this._handlesToSync.size == 0) {
-      await this._handlesToProps();
-    }
-  }
-  async onHandleUpdate(handle, update) {
-    // TODO(sjmiles): debounce handles updates
-    const work = () => {
-      //console.warn(handle, update);
-      this._handlesToProps();
-    };
-    this._debounce('handleUpdateDebounce', work, 300);
-  }
-  async _handlesToProps() {
-    const config = this.config;
-    // acquire (async) list data from handles; BigCollections map to the handle itself
-    const data = await Promise.all(
-      config.handleNames
-      .map(name => this.handles.get(name))
-      .map(handle => {
-        if (handle.toList) return handle.toList();
-        if (handle.get) return handle.get();
-        return handle;
-      })
-    );
-    // convert handle data (array) into props (dictionary)
-    const props = Object.create(null);
-    config.handleNames.forEach((name, i) => {
-      props[name] = data[i];
-    });
-    this._hasProps = true;
-    this._setProps(props);
-  }
-  fireEvent(slotName, {handler, data}) {
-    if (this[handler]) {
-      // TODO(sjmiles): remove `this._state` parameter
-      this[handler]({data}, this._state);
-    }
-  }
-  _debounce(key, func, delay) {
-    const subkey = `_debounce_${key}`;
-    if (!this._state[subkey]) {
-      this.startBusy();
-    }
-    const idleThenFunc = () => {
-      this.doneBusy();
-      func();
-      this._state[subkey] = null;
-    };
-    super._debounce(key, idleThenFunc, delay);
-  }
-}
-
-/**
- * @license
- * Copyright (c) 2017 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-
-/** @class TransformationDomParticle
- * Particle that does transformation stuff with DOM.
- */
-class TransformationDomParticle extends DomParticle {
-  getTemplate(slotName) {
-    // TODO: add support for multiple slots.
-    return this._state.template;
-  }
-  getTemplateName(slotName) {
-    // TODO: add support for multiple slots.
-    return this._state.templateName;
-  }
-  render(props, state) {
-    return state.renderModel;
-  }
-  shouldRender(props, state) {
-    return Boolean((state.template || state.templateName) && state.renderModel);
-  }
-
-  renderHostedSlot(slotName, hostedSlotId, content) {
-    this.combineHostedTemplate(slotName, hostedSlotId, content);
-    this.combineHostedModel(slotName, hostedSlotId, content);
-  }
-
-  // abstract
-  combineHostedTemplate(slotName, hostedSlotId, content) {}
-  combineHostedModel(slotName, hostedSlotId, content) {}
-
-  // Helper methods that may be reused in transformation particles to combine hosted content.
-  static propsToItems(propsValues) {
-    return propsValues ? propsValues.map(({rawData, id}) => Object.assign({}, rawData, {subId: id})) : [];
-  }
-}
-
-/**
- * @license
- * Copyright (c) 2017 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-
-class MultiplexerDomParticle extends TransformationDomParticle {
-  constructor() {
-    super();
-    this._itemSubIdByHostedSlotId = new Map();
-    this._connByHostedConn = new Map();
-  }
-
-  async _mapParticleConnections(
-      listHandleName,
-      particleHandleName,
-      hostedParticle,
-      handles,
-      arc) {
-    const otherMappedHandles = [];
-    const otherConnections = [];
-    let index = 2;
-    const skipConnectionNames = [listHandleName, particleHandleName];
-    for (const [connectionName, otherHandle] of handles) {
-      if (skipConnectionNames.includes(connectionName)) {
-        continue;
-      }
-      // TODO(wkorman): For items with embedded recipes we may need a map
-      // (perhaps id to index) to make sure we don't map a handle into the inner
-      // arc multiple times unnecessarily.
-      otherMappedHandles.push(
-          `use '${await arc.mapHandle(otherHandle._proxy)}' as v${index}`);
-      const hostedOtherConnection = hostedParticle.connections.find(
-          conn => conn.isCompatibleType(otherHandle.type));
-      if (hostedOtherConnection) {
-        otherConnections.push(`${hostedOtherConnection.name} = v${index++}`);
-        // TODO(wkorman): For items with embedded recipes where we may have a
-        // different particle rendering each item, we need to track
-        // |connByHostedConn| keyed on the particle type.
-        this._connByHostedConn.set(hostedOtherConnection.name, connectionName);
-      }
-    }
-    return [otherMappedHandles, otherConnections];
-  }
-
-  async setHandles(handles) {
-    this.handleIds = {};
-    const arc = await this.constructInnerArc();
-    const listHandleName = 'list';
-    const particleHandleName = 'hostedParticle';
-    const particleHandle = handles.get(particleHandleName);
-    let hostedParticle = null;
-    let otherMappedHandles = [];
-    let otherConnections = [];
-    if (particleHandle) {
-      hostedParticle = await particleHandle.get();
-      if (hostedParticle) {
-        [otherMappedHandles, otherConnections] =
-            await this._mapParticleConnections(
-                listHandleName, particleHandleName, hostedParticle, handles, arc);
-      }
-    }
-    this.setState({
-      arc,
-      type: handles.get(listHandleName).type,
-      hostedParticle,
-      otherMappedHandles,
-      otherConnections
-    });
-
-    super.setHandles(handles);
-  }
-
-  async willReceiveProps(
-      {list},
-      {arc, type, hostedParticle, otherMappedHandles, otherConnections}) {
-    if (list.length > 0) {
-      this.relevance = 0.1;
-    }
-
-    for (const [index, item] of this.getListEntries(list)) {
-      let resolvedHostedParticle = hostedParticle;
-      if (this.handleIds[item.id]) {
-        const itemHandle = await this.handleIds[item.id];
-        itemHandle.set(item);
-        continue;
-      }
-
-      const itemHandlePromise =
-          arc.createHandle(type.primitiveType(), 'item' + index);
-      this.handleIds[item.id] = itemHandlePromise;
-
-      const itemHandle = await itemHandlePromise;
-
-      if (!resolvedHostedParticle) {
-        // If we're muxing on behalf of an item with an embedded recipe, the
-        // hosted particle should be retrievable from the item itself. Else we
-        // just skip this item.
-        if (!item.renderParticleSpec) {
-          continue;
-        }
-        resolvedHostedParticle =
-            ParticleSpec.fromLiteral(JSON.parse(item.renderParticleSpec));
-        // Re-map compatible handles and compute the connections specific
-        // to this item's render particle.
-        const listHandleName = 'list';
-        const particleHandleName = 'renderParticle';
-        [otherMappedHandles, otherConnections] =
-            await this._mapParticleConnections(
-                listHandleName,
-                particleHandleName,
-                resolvedHostedParticle,
-                this.handles,
-                arc);
-      }
-      const hostedSlotName = [...resolvedHostedParticle.slots.keys()][0];
-      const slotName = [...this.spec.slots.values()][0].name;
-      const slotId = await arc.createSlot(this, slotName, itemHandle._id);
-
-      if (!slotId) {
-        continue;
-      }
-
-      this._itemSubIdByHostedSlotId.set(slotId, item.id);
-
-      try {
-        const recipe = this.constructInnerRecipe(
-          resolvedHostedParticle,
-          item,
-          itemHandle,
-          {name: hostedSlotName, id: slotId},
-          {connections: otherConnections, handles: otherMappedHandles}
-        );
-        await arc.loadRecipe(recipe, this);
-        itemHandle.set(item);
-      } catch (e) {
-        console.log(e);
-      }
-    }
-  }
-
-  combineHostedModel(slotName, hostedSlotId, content) {
-    const subId = this._itemSubIdByHostedSlotId.get(hostedSlotId);
-    if (!subId) {
-      return;
-    }
-    const items = this._state.renderModel ? this._state.renderModel.items : [];
-    const listIndex = items.findIndex(item => item.subId == subId);
-    const item = Object.assign({}, content.model, {subId});
-    if (listIndex >= 0 && listIndex < items.length) {
-      items[listIndex] = item;
-    } else {
-      items.push(item);
-    }
-    this._setState({renderModel: {items}});
-  }
-
-  combineHostedTemplate(slotName, hostedSlotId, content) {
-    const subId = this._itemSubIdByHostedSlotId.get(hostedSlotId);
-    if (!subId) {
-      return;
-    }
-    assert$1(content.templateName, `Template name is missing for slot '${slotName}' (hosted slot ID: '${hostedSlotId}')`);
-    this._setState({templateName: Object.assign(this._state.templateName || {}, {[subId]: `${content.templateName}`})});
-
-    if (content.template) {
-      let template = content.template;
-      // Append subid$={{subid}} attribute to all provided slots, to make it usable for the transformation particle.
-      template = template.replace(new RegExp('slotid="[a-z]+"', 'gi'), '$& subid$="{{subId}}"');
-
-      // Replace hosted particle connection in template with the corresponding particle connection names.
-      // TODO: make this generic!
-      this._connByHostedConn.forEach((conn, hostedConn) => {
-        template = template.replace(
-            new RegExp(`{{${hostedConn}.description}}`, 'g'),
-            `{{${conn}.description}}`);
-      });
-      this._setState({template: Object.assign(this._state.template || {}, {[content.templateName]: template})});
-
-      this.forceRenderTemplate();
-    }
-  }
-
-  // Abstract methods below.
-
-  // Called to produce a full interpolated recipe for loading into an inner
-  // arc for each item. Subclasses should override this method as by default
-  // it does nothing and so no recipe will be returned and content will not
-  // be loaded successfully into the inner arc.
-  constructInnerRecipe(hostedParticle, item, itemHandle, slot, other) {}
-
-  // Called with the list of items and by default returns the direct result of
-  // `Array.entries()`. Subclasses can override this method to alter the item
-  // order or otherwise permute the items as desired before their slots are
-  // created and contents are rendered.
-  getListEntries(list) {
-    return list.entries();
-  }
-}
-
-/**
- * @license
- * Copyright (c) 2017 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-const supportedTypes = ['Text', 'URL', 'Number', 'Boolean'];
-class JsonldToManifest {
-    static convert(jsonld, theClass = undefined) {
-        const obj = JSON.parse(jsonld);
-        const classes = {};
-        const properties = {};
-        if (!obj['@graph']) {
-            obj['@graph'] = [obj];
-        }
-        for (const item of obj['@graph']) {
-            if (item['@type'] === 'rdf:Property') {
-                properties[item['@id']] = item;
-            }
-            else if (item['@type'] === 'rdfs:Class') {
-                classes[item['@id']] = item;
-                item['subclasses'] = [];
-                item['superclass'] = null;
-            }
-        }
-        for (const clazz of Object.values(classes)) {
-            if (clazz['rdfs:subClassOf'] !== undefined) {
-                if (clazz['rdfs:subClassOf'].length == undefined) {
-                    clazz['rdfs:subClassOf'] = [clazz['rdfs:subClassOf']];
-                }
-                for (const subClass of clazz['rdfs:subClassOf']) {
-                    const superclass = subClass['@id'];
-                    if (clazz['superclass'] == undefined) {
-                        clazz['superclass'] = [];
-                    }
-                    if (classes[superclass]) {
-                        classes[superclass].subclasses.push(clazz);
-                        clazz['superclass'].push(classes[superclass]);
-                    }
-                    else {
-                        clazz['superclass'].push({ '@id': superclass });
-                    }
-                }
-            }
-        }
-        for (const clazz of Object.values(classes)) {
-            if (clazz['subclasses'].length === 0 && theClass == undefined) {
-                theClass = clazz;
-            }
-        }
-        const relevantProperties = [];
-        for (const property of Object.values(properties)) {
-            let domains = property['schema:domainIncludes'];
-            if (!domains) {
-                domains = { '@id': theClass['@id'] };
-            }
-            if (!domains.length) {
-                domains = [domains];
-            }
-            domains = domains.map(a => a['@id']);
-            if (domains.includes(theClass['@id'])) {
-                const name = property['@id'].split(':')[1];
-                let type = property['schema:rangeIncludes'];
-                if (!type) {
-                    console.log(property);
-                }
-                if (!type.length) {
-                    type = [type];
-                }
-                type = type.map(a => a['@id'].split(':')[1]);
-                type = type.filter(type => supportedTypes.includes(type));
-                if (type.length > 0) {
-                    relevantProperties.push({ name, type });
-                }
-            }
-        }
-        const className = theClass['@id'].split(':')[1];
-        const superNames = theClass && theClass.superclass ? theClass.superclass.map(a => a['@id'].split(':')[1]) : [];
-        let s = '';
-        for (const superName of superNames) {
-            s += `import 'https://schema.org/${superName}'\n\n`;
-        }
-        s += `schema ${className}`;
-        if (superNames.length > 0) {
-            s += ` extends ${superNames.join(', ')}`;
-        }
-        if (relevantProperties.length > 0) {
-            for (const property of relevantProperties) {
-                let type;
-                if (property.type.length > 1) {
-                    type = '(' + property.type.join(' or ') + ')';
-                }
-                else {
-                    type = property.type[0];
-                }
-                s += `\n  ${type} ${property.name}`;
-            }
-        }
-        s += '\n';
-        return s;
-    }
-}
-
-/**
- * @license
- * Copyright (c) 2017 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-const html = (strings, ...values) => (strings[0] + values.map((v, i) => v + strings[i + 1]).join('')).trim();
-class Loader {
-    path(fileName) {
-        const path = fileName.replace(/[/][^/]+$/, '/');
-        return path;
-    }
-    join(prefix, path) {
-        if (/^https?:\/\//.test(path)) {
-            return path;
-        }
-        // TODO: replace this with something that isn't hacky
-        if (path[0] === '/' || path[1] === ':') {
-            return path;
-        }
-        prefix = this.path(prefix);
-        path = this.normalizeDots(`${prefix}${path}`);
-        return path;
-    }
-    // convert `././foo/bar/../baz` to `./foo/baz`
-    normalizeDots(path) {
-        // only unix slashes
-        path = path.replace(/\\/g, '/');
-        // remove './'
-        path = path.replace(/\/\.\//g, '/');
-        // remove 'foo/..'
-        const norm = s => s.replace(/(?:^|\/)[^./]*\/\.\./g, '');
-        for (let n = norm(path); n !== path; path = n, n = norm(path))
-            ;
-        return path;
-    }
-    loadResource(file) {
-        if (/^https?:\/\//.test(file)) {
-            return this._loadURL(file);
-        }
-        return this._loadFile(file);
-    }
-    _loadFile(file) {
-        return new Promise((resolve, reject) => {
-            fs.readFile(file, (err, data) => {
-                if (err) {
-                    reject(err);
-                }
-                else {
-                    resolve(data.toString('utf-8'));
-                }
-            });
-        });
-    }
-    _loadURL(url) {
-        if (/\/\/schema.org\//.test(url)) {
-            if (url.endsWith('/Thing')) {
-                return fetch('https://schema.org/Product.jsonld').then(res => res.text()).then(data => JsonldToManifest.convert(data, { '@id': 'schema:Thing' }));
-            }
-            return fetch(url + '.jsonld').then(res => res.text()).then(data => JsonldToManifest.convert(data));
-        }
-        return fetch(url).then(res => res.text());
-    }
-    async loadParticleClass(spec) {
-        const clazz = await this.requireParticle(spec.implFile);
-        clazz.spec = spec;
-        return clazz;
-    }
-    async requireParticle(fileName) {
-        if (fileName === null)
-            fileName = '';
-        const src = await this.loadResource(fileName);
-        // Note. This is not real isolation.
-        const script = new vm.Script(src, { filename: fileName, displayErrors: true });
-        const result = [];
-        const self = {
-            defineParticle(particleWrapper) {
-                result.push(particleWrapper);
-            },
-            console,
-            fetch,
-            setTimeout,
-            importScripts: s => null //console.log(`(skipping browser-space import for [${s}])`)
-        };
-        script.runInNewContext(self, { filename: fileName, displayErrors: true });
-        assert$1(result.length > 0 && typeof result[0] === 'function', `Error while instantiating particle implementation from ${fileName}`);
-        return this.unwrapParticle(result[0]);
-    }
-    setParticleExecutionContext(pec) {
-        this.pec = pec;
-    }
-    unwrapParticle(particleWrapper) {
-        assert$1(this.pec);
-        return particleWrapper({ Particle: Particle$1, DomParticle, TransformationDomParticle, MultiplexerDomParticle, Reference: Reference.newClientReference(this.pec), html });
-    }
-}
-
-/**
- * @license
  * Copyright (c) 2018 Google Inc. All rights reserved.
  * This code may only be used under the BSD style license found at
  * http://polymer.github.io/LICENSE.txt
@@ -23021,148 +22372,797 @@ function FakePecFactory(loader) {
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-let streamingToDevtools = false;
-function enableTracingAdapter(devtoolsChannel) {
-    if (!streamingToDevtools) {
-        if (!Tracing.enabled)
-            Tracing.enable();
-        devtoolsChannel.send({
-            messageType: 'trace-time-sync',
-            messageBody: {
-                traceTime: Tracing.now(),
-                localTime: Date.now()
-            }
+const systemHandlers = [];
+function reportSystemException(exception, methodName, particle) {
+    for (const handler of systemHandlers) {
+        handler(exception, methodName, particle);
+    }
+}
+function registerSystemExceptionHandler(handler) {
+    if (!systemHandlers.includes(handler)) {
+        systemHandlers.push(handler);
+    }
+}
+registerSystemExceptionHandler((exception, methodName, particle) => {
+    console.log(methodName, particle);
+    throw exception;
+});
+
+// Copyright (c) 2017 Google Inc. All rights reserved.
+/**
+ * Walkers traverse an object, calling methods based on the
+ * features encountered on that object. For example, a RecipeWalker
+ * takes a list of recipes and calls methods when:
+ *  - a new recipe is encountered
+ *  - a handle is found inside a recipe
+ *  - a particle is found inside a recipe
+ *  - etc..
+ *
+ * Each of these methods can return a list of updates:
+ *   [(recipe, encountered_thing) => new_recipe]
+ *
+ * The walker then does something with the updates depending on the
+ * tactic selected.
+ *
+ * If the tactic is "Permuted", then an output will be generated
+ * for every combination of 1 element drawn from each update list.
+ * For example, if 3 methods return [a,b], [c,d,e], and [f] respectively
+ * then "Permuted" will cause 6 outputs to be generated: [acf, adf, aef, bcf, bdf, bef]
+ *
+ * If the tactic is "Independent", an output will be generated for each
+ * update, regardless of the list the update is in. For example,
+ * if 3 methods return [a,b], [c,d,e], and [f] respectively,
+ * then "Independent" will cause 6 outputs to be generated: [a,b,c,d,e,f]
+ */
+var WalkerTactic;
+(function (WalkerTactic) {
+    WalkerTactic["Permuted"] = "permuted";
+    WalkerTactic["Independent"] = "independent";
+})(WalkerTactic || (WalkerTactic = {}));
+/**
+ * An Action generates the list of Descendants by walking the object with a
+ * Walker.
+ */
+class Action {
+    constructor(arc, args) {
+        this._arc = arc;
+        this._args = args;
+    }
+    get arc() {
+        return this._arc;
+    }
+    getResults(inputParams) {
+        return inputParams.generated;
+    }
+    async generate(inputParams) {
+        return [];
+    }
+}
+class Walker {
+    constructor(tactic) {
+        this.descendants = [];
+        assert$1(tactic);
+        this.tactic = tactic;
+    }
+    onAction(action) {
+        this.currentAction = action;
+    }
+    onResult(result) {
+        this.currentResult = result;
+    }
+    onResultDone() {
+        this.currentResult = undefined;
+    }
+    onActionDone() {
+        this.currentAction = undefined;
+    }
+    static walk(results, walker, action) {
+        walker.onAction(action);
+        results.forEach(result => {
+            walker.onResult(result);
+            walker.onResultDone();
         });
-        Tracing.stream(trace => devtoolsChannel.send({
-            messageType: 'trace',
-            messageBody: trace
-        }), trace => trace.ov // Overview events only.
-        );
-        streamingToDevtools = true;
+        walker.onActionDone();
+        return walker.descendants;
+    }
+    _runUpdateList(start, updateList) {
+        const updated = [];
+        if (updateList.length) {
+            switch (this.tactic) {
+                case WalkerTactic.Permuted: {
+                    let permutations = [[]];
+                    updateList.forEach(({ continuation, context }) => {
+                        const newResults = [];
+                        if (typeof continuation === 'function') {
+                            continuation = [continuation];
+                        }
+                        continuation.forEach(f => {
+                            permutations.forEach(p => {
+                                const newP = p.slice();
+                                newP.push({ f, context });
+                                newResults.push(newP);
+                            });
+                        });
+                        permutations = newResults;
+                    });
+                    for (let permutation of permutations) {
+                        const cloneMap = new Map();
+                        const newResult = start.clone(cloneMap);
+                        let score = 0;
+                        permutation = permutation.filter(p => p.f !== null);
+                        if (permutation.length === 0) {
+                            continue;
+                        }
+                        permutation.forEach(({ f, context }) => {
+                            if (context) {
+                                score = f(newResult, ...context.map(c => cloneMap.get(c) || c));
+                            }
+                            else {
+                                score = f(newResult);
+                            }
+                        });
+                        updated.push({ result: newResult, score });
+                    }
+                    break;
+                }
+                case WalkerTactic.Independent:
+                    updateList.forEach(({ continuation, context }) => {
+                        if (typeof continuation === 'function') {
+                            continuation = [continuation];
+                        }
+                        let score = 0;
+                        continuation.forEach(f => {
+                            if (f == null) {
+                                f = () => 0;
+                            }
+                            const cloneMap = new Map();
+                            const newResult = start.clone(cloneMap);
+                            if (context) {
+                                score = f(newResult, ...context.map(c => cloneMap.get(c) || c));
+                            }
+                            else {
+                                score = f(newResult);
+                            }
+                            updated.push({ result: newResult, score });
+                        });
+                    });
+                    break;
+                default:
+                    throw new Error(`${this.tactic} not supported`);
+            }
+        }
+        // commit phase - output results.
+        for (const newResult of updated) {
+            const result = this.createDescendant(newResult.result, newResult.score);
+        }
+    }
+    createWalkerDescendant(item, score, hash, valid) {
+        assert$1(this.currentResult, 'no current result');
+        assert$1(this.currentAction, 'no current action');
+        if (this.currentResult.score) {
+            score += this.currentResult.score;
+        }
+        this.descendants.push({
+            result: item,
+            score,
+            derivation: [{ parent: this.currentResult, strategy: this.currentAction }],
+            hash,
+            valid,
+        });
+    }
+    isEmptyResult(result) {
+        if (!result) {
+            return true;
+        }
+        if (result.constructor === Array && result.length <= 0) {
+            return true;
+        }
+        assert$1(typeof result === 'function' || result.length);
+        return false;
+    }
+}
+// tslint:disable-next-line: variable-name
+Walker.Permuted = WalkerTactic.Permuted;
+// tslint:disable-next-line: variable-name
+Walker.Independent = WalkerTactic.Independent;
+
+// Copyright (c) 2017 Google Inc. All rights reserved.
+class RecipeWalker extends Walker {
+    onResult(result) {
+        super.onResult(result);
+        const recipe = result.result;
+        const updateList = [];
+        // update phase - walk through recipe and call onRecipe,
+        // onHandle, etc.
+        // TODO overriding the argument with a local variable is very confusing.
+        if (this.onRecipe) {
+            result = this.onRecipe(recipe, result);
+            if (!this.isEmptyResult(result)) {
+                updateList.push({ continuation: result });
+            }
+        }
+        if (this.onParticle) {
+            for (const particle of recipe.particles) {
+                const context = [particle];
+                const result = this.onParticle(recipe, ...context);
+                if (!this.isEmptyResult(result)) {
+                    updateList.push({ continuation: result, context });
+                }
+            }
+        }
+        if (this.onHandleConnection) {
+            for (const handleConnection of recipe.handleConnections) {
+                const context = [handleConnection];
+                const result = this.onHandleConnection(recipe, ...context);
+                if (!this.isEmptyResult(result)) {
+                    updateList.push({ continuation: result, context });
+                }
+            }
+        }
+        if (this.onHandle) {
+            for (const handle of recipe.handles) {
+                const context = [handle];
+                const result = this.onHandle(recipe, ...context);
+                if (!this.isEmptyResult(result)) {
+                    updateList.push({ continuation: result, context });
+                }
+            }
+        }
+        if (this.onPotentialSlotConnection) {
+            for (const particle of recipe.particles) {
+                for (const [name, slotSpec] of particle.getSlotSpecs()) {
+                    if (particle.getSlotConnectionByName(name))
+                        continue;
+                    const context = [particle, slotSpec];
+                    const result = this.onPotentialSlotConnection(recipe, ...context);
+                    if (!this.isEmptyResult(result)) {
+                        updateList.push({ continuation: result, context });
+                    }
+                }
+            }
+        }
+        if (this.onSlotConnection) {
+            for (const slotConnection of recipe.slotConnections) {
+                const context = [slotConnection];
+                const result = this.onSlotConnection(recipe, ...context);
+                if (!this.isEmptyResult(result)) {
+                    updateList.push({ continuation: result, context });
+                }
+            }
+        }
+        if (this.onSlot) {
+            for (const slot of recipe.slots) {
+                const context = [slot];
+                const result = this.onSlot(recipe, ...context);
+                if (!this.isEmptyResult(result)) {
+                    updateList.push({ continuation: result, context });
+                }
+            }
+        }
+        if (this.onObligation) {
+            for (const obligation of recipe.obligations) {
+                const context = [obligation];
+                const result = this.onObligation(recipe, ...context);
+                if (!this.isEmptyResult(result)) {
+                    updateList.push({ continuation: result, context });
+                }
+            }
+        }
+        if (this.onRequiredParticle) {
+            for (const require of recipe.requires) {
+                for (const particle of require.particles) {
+                    const context = [particle];
+                    const result = this.onRequiredParticle(recipe, ...context);
+                    if (!this.isEmptyResult(result)) {
+                        updateList.push({ continuation: result, context });
+                    }
+                }
+            }
+        }
+        this._runUpdateList(recipe, updateList);
+    }
+    createDescendant(recipe, score) {
+        const valid = recipe.normalize();
+        const hash = valid ? recipe.digest() : null;
+        super.createWalkerDescendant(recipe, score, hash, valid);
+    }
+}
+
+// Copyright (c) 2019 Google Inc. All rights reserved.
+class SlotUtils {
+    // Helper methods.
+    static getClonedSlot(recipe, selectedSlot) {
+        let clonedSlot = recipe.updateToClone({ selectedSlot }).selectedSlot;
+        if (!clonedSlot) {
+            if (selectedSlot.id) {
+                clonedSlot = recipe.findSlotByID(selectedSlot.id);
+            }
+            if (clonedSlot == undefined) {
+                if (recipe instanceof RequireSection) {
+                    clonedSlot = recipe.parent.newSlot(selectedSlot.name);
+                }
+                else {
+                    clonedSlot = recipe.newSlot(selectedSlot.name);
+                }
+                clonedSlot.id = selectedSlot.id;
+            }
+        }
+        return clonedSlot;
+    }
+    // Connect the given slot connection to the selectedSlot, create the slot, if needed.
+    static connectSlotConnection(slotConnection, selectedSlot) {
+        const recipe = slotConnection.recipe;
+        if (!slotConnection.targetSlot) {
+            const clonedSlot = SlotUtils.getClonedSlot(recipe, selectedSlot);
+            slotConnection.connectToSlot(clonedSlot);
+        }
+        assert$1(!selectedSlot.id || !slotConnection.targetSlot.id || (selectedSlot.id === slotConnection.targetSlot.id), `Cannot override slot id '${slotConnection.targetSlot.id}' with '${selectedSlot.id}'`);
+        slotConnection.targetSlot.id = selectedSlot.id || slotConnection.targetSlot.id;
+        // TODO: need to concat to existing tags and dedup?
+        slotConnection.targetSlot.tags = [...selectedSlot.tags];
+    }
+    // Returns all possible slot candidates, sorted by "quality"
+    static findAllSlotCandidates(particle, slotSpec, arc) {
+        const slotConn = particle.getSlotConnectionByName(slotSpec.name);
+        return {
+            // Note: during manfiest parsing, target slot is only set in slot connection, if the slot exists in the recipe.
+            // If this slot is internal to the recipe, it has the sourceConnection set to the providing connection
+            // (and hence the consuming connection is considered connected already). Otherwise, this may only be a remote slot.
+            local: !slotConn || !slotConn.targetSlot ? SlotUtils._findSlotCandidates(particle, slotSpec, particle.recipe.slots) : [],
+            remote: SlotUtils._findSlotCandidates(particle, slotSpec, arc.pec.slotComposer.getAvailableContexts())
+        };
+    }
+    // Returns the given slot candidates, sorted by "quality".
+    static _findSlotCandidates(particle, slotSpec, slots) {
+        const possibleSlots = slots.filter(s => this.slotMatches(particle, slotSpec, s));
+        possibleSlots.sort((slot1, slot2) => {
+            // TODO: implement.
+            return slot1.name < slot2.name;
+        });
+        return possibleSlots;
+    }
+    // Returns true, if the given slot is a viable candidate for the slotConnection.
+    static slotMatches(particle, slotSpec, slot) {
+        if (!SlotUtils.specMatch(slotSpec, slot.spec)) {
+            return false;
+        }
+        const potentialSlotConn = particle.getSlotConnectionBySpec(slotSpec);
+        if (!SlotUtils.tagsOrNameMatch(slotSpec, slot.spec, potentialSlotConn, slot)) {
+            return false;
+        }
+        // Match handles of the provided slot with the slot-connection particle's handles.
+        if (!SlotUtils.handlesMatch(particle, slot)) {
+            return false;
+        }
+        return true;
+    }
+    static specMatch(slotSpec, providedSlotSpec) {
+        return slotSpec && // if there's no slotSpec, this is just a slot constraint on a verb
+            providedSlotSpec &&
+            slotSpec.isSet === providedSlotSpec.isSet;
+    }
+    // Returns true, if the providing slot handle restrictions are satisfied by the consuming slot connection.
+    // TODO: should we move some of this logic to the recipe? Or type matching?
+    static handlesMatch(particle, slot) {
+        if (slot.handles.length === 0) {
+            return true; // slot is not limited to specific handles
+        }
+        return !!Object.values(particle.connections).find(handleConn => {
+            return slot.handles.includes(handleConn.handle) ||
+                (handleConn.handle && handleConn.handle.id && slot.handles.map(sh => sh.id).includes(handleConn.handle.id));
+        });
+    }
+    static tagsOrNameMatch(consumeSlotSpec, provideSlotSpec, consumeSlotConn = undefined, provideSlot = undefined) {
+        const consumeTags = [].concat(consumeSlotSpec.tags || [], consumeSlotConn ? consumeSlotConn.tags : [], consumeSlotConn && consumeSlotConn.targetSlot ? consumeSlotConn.targetSlot.tags : []);
+        const provideTags = [].concat(provideSlotSpec.tags || [], provideSlot ? provideSlot.tags : [], provideSlot ? provideSlot.name : (provideSlotSpec.name ? provideSlotSpec.name : []));
+        if (consumeTags.length > 0 && consumeTags.some(t => provideTags.includes(t))) {
+            return true;
+        }
+        return consumeSlotSpec.name === (provideSlot ? provideSlot.name : provideSlotSpec.name);
+    }
+    static replaceOldSlot(recipe, oldSlot, newSlot) {
+        if (oldSlot && (!oldSlot.id || oldSlot.id !== newSlot.id)) {
+            if (oldSlot.sourceConnection !== undefined) {
+                if (newSlot.sourceConnection === undefined)
+                    return false;
+                const clonedSlot = SlotUtils.getClonedSlot(oldSlot.sourceConnection.recipe, newSlot);
+                oldSlot.sourceConnection.providedSlots[oldSlot.name] = clonedSlot;
+                clonedSlot.sourceConnection = oldSlot.sourceConnection;
+            }
+            while (oldSlot.consumeConnections.length > 0) {
+                const conn = oldSlot.consumeConnections[0];
+                conn.disconnectFromSlot();
+                SlotUtils.connectSlotConnection(conn, newSlot);
+            }
+        }
+        return true;
+    }
+}
+
+// Copyright (c) 2018 Google Inc. All rights reserved.
+class ResolveWalker extends RecipeWalker {
+    constructor(tactic, arc) {
+        super(tactic);
+        this.arc = arc;
+    }
+    onHandle(recipe, handle) {
+        const arc = this.arc;
+        if (handle.connections.length === 0 ||
+            (handle.id && handle.storageKey) || (!handle.type) ||
+            (!handle.fate)) {
+            return undefined;
+        }
+        let mappable;
+        if (!handle.id) {
+            // Handle doesn't have an ID, finding by type and tags.
+            const counts = RecipeUtil.directionCounts(handle);
+            switch (handle.fate) {
+                case 'use':
+                    mappable = arc.findStoresByType(handle.type, { tags: handle.tags, subtype: counts.out === 0 });
+                    break;
+                case 'map':
+                case 'copy':
+                    mappable = arc.context.findStoreByType(handle.type, { tags: handle.tags, subtype: true });
+                    break;
+                case 'create':
+                case '?':
+                    mappable = [];
+                    break;
+                default:
+                    throw new Error(`unexpected fate ${handle.fate}`);
+            }
+        }
+        else if (!handle.storageKey) {
+            // Handle specified by the ID, but not yet mapped to storage.
+            let storeById;
+            switch (handle.fate) {
+                case 'use':
+                    storeById = arc.findStoreById(handle.id);
+                    break;
+                case 'map':
+                case 'copy':
+                    storeById = arc.context.findStoreById(handle.id);
+                    break;
+                case 'create':
+                case '?':
+                    break;
+                default:
+                    throw new Error(`unexpected fate ${handle.fate}`);
+            }
+            mappable = storeById ? [storeById] : [];
+        }
+        mappable = mappable.filter(incomingHandle => {
+            for (const existingHandle of recipe.handles) {
+                if (incomingHandle.id === existingHandle.id &&
+                    existingHandle !== handle) {
+                    return false;
+                }
+            }
+            return true;
+        });
+        if (mappable.length === 1) {
+            return (recipe, handle) => {
+                handle.mapToStorage(mappable[0]);
+            };
+        }
+        return undefined;
+    }
+    onSlotConnection(recipe, slotConnection) {
+        const arc = this.arc;
+        if (slotConnection.isConnected()) {
+            return undefined;
+        }
+        const slotSpec = slotConnection.getSlotSpec();
+        const particle = slotConnection.particle;
+        const { local, remote } = SlotUtils.findAllSlotCandidates(particle, slotSpec, arc);
+        const allSlots = [...local, ...remote];
+        // SlotUtils handles a multi-slot case.
+        if (allSlots.length !== 1) {
+            return undefined;
+        }
+        const selectedSlot = allSlots[0];
+        return (recipe, slotConnection) => {
+            SlotUtils.connectSlotConnection(slotConnection, selectedSlot);
+            return 1;
+        };
+    }
+    onPotentialSlotConnection(recipe, particle, slotSpec) {
+        const arc = this.arc;
+        const { local, remote } = SlotUtils.findAllSlotCandidates(particle, slotSpec, arc);
+        const allSlots = [...local, ...remote];
+        // SlotUtils handles a multi-slot case.
+        if (allSlots.length !== 1) {
+            return undefined;
+        }
+        const selectedSlot = allSlots[0];
+        return (recipe, particle, slotSpec) => {
+            const newSlotConnection = particle.addSlotConnection(slotSpec.name);
+            SlotUtils.connectSlotConnection(newSlotConnection, selectedSlot);
+            return 1;
+        };
+    }
+    // TODO(lindner): add typeof checks here and figure out where handle is coming from.
+    onObligation(recipe, obligation) {
+        const fromParticle = obligation.from.instance;
+        const toParticle = obligation.to.instance;
+        for (const fromConnection of Object.values(fromParticle.connections)) {
+            for (const toConnection of Object.values(toParticle.connections)) {
+                // @ts-ignore
+                if (fromConnection.handle && fromConnection.handle === toConnection.handle) {
+                    return (recipe, obligation) => {
+                        recipe.removeObligation(obligation);
+                        return 1;
+                    };
+                }
+            }
+        }
+        return undefined;
+    }
+}
+class ResolveRecipeAction extends Action {
+    async generate(inputParams) {
+        return ResolveWalker.walk(this.getResults(inputParams), new ResolveWalker(ResolveWalker.Permuted, this.arc), this);
+    }
+}
+// Provides basic recipe resolution for recipes against a particular arc.
+class RecipeResolver {
+    constructor(arc) {
+        this.resolver = new ResolveRecipeAction(arc);
+    }
+    // Attempts to run basic resolution on the given recipe. Returns a new
+    // instance of the recipe normalized and resolved if possible. Returns null if
+    // normalization or attempting to resolve slot connection fails.
+    async resolve(recipe) {
+        recipe = recipe.clone();
+        const options = { errors: new Map() };
+        if (!recipe.normalize(options)) {
+            console.warn(`could not normalize a recipe: ${[...options.errors.values()].join('\n')}.\n${recipe.toString()}`);
+            return null;
+        }
+        const result = await this.resolver.generate({ generated: [{ result: recipe, score: 1 }], terminal: [] });
+        return (result.length === 0) ? null : result[0].result;
     }
 }
 
 /**
  * @license
- * Copyright (c) 2018 Google Inc. All rights reserved.
+ * Copyright (c) 2017 Google Inc. All rights reserved.
  * This code may only be used under the BSD style license found at
  * http://polymer.github.io/LICENSE.txt
  * Code distributed by Google as part of this project is also
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-class ArcStoresFetcher extends ArcDebugListener {
-    constructor(arc, arcDevtoolsChannel) {
-        super(arc, arcDevtoolsChannel);
+class ParticleExecutionHost {
+    constructor(port, slotComposer, arc) {
+        this.nextIdentifier = 0;
+        this.idleVersion = 0;
+        this.close = () => {
+            port.close();
+            this._apiPort.close();
+        };
         this.arc = arc;
-        arcDevtoolsChannel.listen('fetch-stores', async () => arcDevtoolsChannel.send({
-            messageType: 'fetch-stores-result',
-            messageBody: await this._listStores()
-        }));
+        this.slotComposer = slotComposer;
+        const pec = this;
+        this._apiPort = new class extends PECOuterPort {
+            onRender(particle, slotName, content) {
+                if (pec.slotComposer) {
+                    pec.slotComposer.renderSlot(particle, slotName, content);
+                }
+            }
+            onInitializeProxy(handle, callback) {
+                const target = {};
+                handle.on('change', data => this.SimpleCallback(callback, data), target);
+            }
+            async onSynchronizeProxy(handle, callback) {
+                const data = await handle.modelForSynchronization();
+                this.SimpleCallback(callback, data);
+            }
+            async onHandleGet(handle, callback) {
+                // TODO(shans): fix typing once we have types for Singleton/Collection/etc
+                // tslint:disable-next-line: no-any
+                const data = await handle.get();
+                this.SimpleCallback(callback, data);
+            }
+            async onHandleToList(handle, callback) {
+                // TODO(shans): fix typing once we have types for Singleton/Collection/etc
+                // tslint:disable-next-line: no-any
+                this.SimpleCallback(callback, await handle.toList());
+            }
+            onHandleSet(handle, data, particleId, barrier) {
+                // TODO(shans): fix typing once we have types for Singleton/Collection/etc
+                // tslint:disable-next-line: no-any
+                handle.set(data, particleId, barrier);
+            }
+            onHandleClear(handle, particleId, barrier) {
+                // TODO(shans): fix typing once we have types for Singleton/Collection/etc
+                // tslint:disable-next-line: no-any
+                handle.clear(particleId, barrier);
+            }
+            async onHandleStore(handle, callback, data, particleId) {
+                // TODO(shans): fix typing once we have types for Singleton/Collection/etc
+                // tslint:disable-next-line: no-any
+                await handle.store(data.value, data.keys, particleId);
+                this.SimpleCallback(callback, {});
+            }
+            async onHandleRemove(handle, callback, data, particleId) {
+                // TODO(shans): fix typing once we have types for Singleton/Collection/etc
+                // tslint:disable-next-line: no-any
+                await handle.remove(data.id, data.keys, particleId);
+                this.SimpleCallback(callback, {});
+            }
+            async onHandleRemoveMultiple(handle, callback, data, particleId) {
+                // TODO(shans): fix typing once we have types for Singleton/Collection/etc
+                // tslint:disable-next-line: no-any
+                await handle.removeMultiple(data, particleId);
+                this.SimpleCallback(callback, {});
+            }
+            async onHandleStream(handle, callback, pageSize, forward) {
+                // TODO(shans): fix typing once we have types for Singleton/Collection/etc
+                // tslint:disable-next-line: no-any
+                this.SimpleCallback(callback, await handle.stream(pageSize, forward));
+            }
+            async onStreamCursorNext(handle, callback, cursorId) {
+                // TODO(shans): fix typing once we have types for Singleton/Collection/etc
+                // tslint:disable-next-line: no-any
+                this.SimpleCallback(callback, await handle.cursorNext(cursorId));
+            }
+            onStreamCursorClose(handle, cursorId) {
+                // TODO(shans): fix typing once we have types for Singleton/Collection/etc
+                // tslint:disable-next-line: no-any
+                handle.cursorClose(cursorId);
+            }
+            onIdle(version, relevance) {
+                if (version === pec.idleVersion) {
+                    pec.idlePromise = undefined;
+                    pec.idleResolve(relevance);
+                }
+            }
+            async onGetBackingStore(callback, storageKey, type) {
+                if (!storageKey) {
+                    storageKey = pec.arc.storageProviderFactory.baseStorageKey(type, pec.arc.storageKey || 'volatile');
+                }
+                const store = await pec.arc.storageProviderFactory.baseStorageFor(type, storageKey);
+                // TODO(shans): THIS IS NOT SAFE!
+                //
+                // Without an auditor on the runtime side that inspects what is being fetched from
+                // this store, particles with a reference can access any data of that reference's type.
+                this.GetBackingStoreCallback(store, callback, type.collectionOf(), type.toString(), store.id, storageKey);
+            }
+            onConstructInnerArc(callback, particle) {
+                const arc = pec.arc.createInnerArc(particle);
+                this.ConstructArcCallback(callback, arc);
+            }
+            async onArcCreateHandle(callback, arc, type, name) {
+                // At the moment, inner arcs are not persisted like their containers, but are instead
+                // recreated when an arc is deserialized. As a consequence of this, dynamically
+                // created handles for inner arcs must always be volatile to prevent storage
+                // in firebase.
+                const store = await arc.createStore(type, name, null, [], 'volatile');
+                // Store belongs to the inner arc, but the transformation particle,
+                // which itself is in the outer arc gets access to it.
+                this.CreateHandleCallback(store, callback, type, name, store.id);
+            }
+            onArcMapHandle(callback, arc, handle) {
+                assert$1(pec.arc.findStoreById(handle.id), `Cannot map nonexistent handle ${handle.id}`);
+                // TODO: create hosted handles map with specially generated ids instead of returning the real ones?
+                this.MapHandleCallback({}, callback, handle.id);
+            }
+            onArcCreateSlot(callback, arc, transformationParticle, transformationSlotName, handleId) {
+                let hostedSlotId;
+                if (pec.slotComposer) {
+                    hostedSlotId = pec.slotComposer.createHostedSlot(arc, transformationParticle, transformationSlotName, handleId);
+                }
+                this.CreateSlotCallback({}, callback, hostedSlotId);
+            }
+            async onArcLoadRecipe(arc, recipe, callback) {
+                const manifest = await Manifest.parse(recipe, { loader: arc.loader, fileName: '' });
+                const successResponse = {
+                    providedSlotIds: {}
+                };
+                let error = undefined;
+                // TODO(wkorman): Consider reporting an error or at least warning if
+                // there's more than one recipe since currently we silently ignore them.
+                let recipe0 = manifest.recipes[0];
+                if (recipe0) {
+                    for (const slot of recipe0.slots) {
+                        slot.id = slot.id || `slotid-${arc.generateID()}`;
+                        if (slot.sourceConnection) {
+                            const particlelocalName = slot.sourceConnection.particle.localName;
+                            if (particlelocalName) {
+                                successResponse.providedSlotIds[`${particlelocalName}.${slot.name}`] = slot.id;
+                            }
+                        }
+                    }
+                    const missingHandles = [];
+                    for (const handle of recipe0.handles) {
+                        const fromHandle = pec.arc.findStoreById(handle.id) || manifest.findStoreById(handle.id);
+                        if (!fromHandle) {
+                            missingHandles.push(handle);
+                            continue;
+                        }
+                        handle.mapToStorage(fromHandle);
+                    }
+                    if (missingHandles.length > 0) {
+                        let recipeToResolve = recipe0;
+                        // We're resolving both against the inner and the outer arc.
+                        for (const resolver of [new RecipeResolver(arc /* inner */), new RecipeResolver(pec.arc /* outer */)]) {
+                            recipeToResolve = await resolver.resolve(recipeToResolve) || recipeToResolve;
+                        }
+                        if (recipeToResolve === recipe0) {
+                            error = `Recipe couldn't load due to missing handles [recipe=${recipe0}, missingHandles=${missingHandles.join('\n')}].`;
+                        }
+                        else {
+                            recipe0 = recipeToResolve;
+                        }
+                    }
+                    if (!error) {
+                        const options = { errors: new Map() };
+                        // If we had missing handles but we made it here, then we ran recipe
+                        // resolution which will have already normalized the recipe.
+                        if ((missingHandles.length > 0) || recipe0.normalize(options)) {
+                            if (recipe0.isResolved()) {
+                                // TODO: pass tags through too, and reconcile with similar logic
+                                // in Arc.deserialize.
+                                manifest.stores.forEach(store => pec.arc._registerStore(store, []));
+                                arc.instantiate(recipe0);
+                            }
+                            else {
+                                error = `Recipe is not resolvable:\n${recipe0.toString({ showUnresolved: true })}`;
+                            }
+                        }
+                        else {
+                            error = `Recipe ${recipe0} could not be normalized:\n${[...options.errors.values()].join('\n')}`;
+                        }
+                    }
+                }
+                else {
+                    error = 'No recipe defined';
+                }
+                this.SimpleCallback(callback, error ? { error } : successResponse);
+            }
+            onRaiseSystemException(exception, methodName, particleId) {
+                const particle = pec.arc.particleHandleMaps.get(particleId).spec.name;
+                reportSystemException(exception, methodName, particle);
+            }
+        }(port, arc);
     }
-    async _listStores() {
-        const find = manifest => {
-            let tags = [...manifest.storeTags];
-            if (manifest.imports) {
-                manifest.imports.forEach(imp => tags = tags.concat(find(imp)));
-            }
-            return tags;
-        };
-        return {
-            arcStores: await this._digestStores(this.arc.storeTags),
-            contextStores: await this._digestStores(find(this.arc.context))
-        };
+    stop() {
+        this._apiPort.Stop();
     }
-    async _digestStores(stores) {
-        const result = [];
-        for (const [store, tags] of stores) {
-            let value = `(don't know how to dereference)`;
-            if (store.toList) {
-                value = await store.toList();
-            }
-            else if (store.get) {
-                value = await store.get();
-            }
-            result.push({
-                name: store.name,
-                tags: tags ? [...tags] : [],
-                id: store.id,
-                storage: store.storageKey,
-                type: store.type,
-                description: store.description,
-                value
+    get idle() {
+        if (this.idlePromise == undefined) {
+            this.idlePromise = new Promise((resolve, reject) => {
+                this.idleResolve = resolve;
             });
         }
-        return result;
+        this.idleVersion = this.nextIdentifier;
+        this._apiPort.AwaitIdle(this.nextIdentifier++);
+        return this.idlePromise;
+    }
+    get messageCount() {
+        return this._apiPort.messageCount;
+    }
+    sendEvent(particle, slotName, event) {
+        this._apiPort.UIEvent(particle, slotName, event);
+    }
+    instantiate(particle, spec, handles) {
+        handles.forEach(handle => {
+            this._apiPort.DefineHandle(handle, handle.type.resolvedType(), handle.name);
+        });
+        this._apiPort.InstantiateParticle(particle, particle.id, spec, handles);
+        return particle;
+    }
+    startRender({ particle, slotName, providedSlots, contentTypes }) {
+        this._apiPort.StartRender(particle, slotName, providedSlots, contentTypes);
+    }
+    stopRender({ particle, slotName }) {
+        this._apiPort.StopRender(particle, slotName);
+    }
+    innerArcRender(transformationParticle, transformationSlotName, hostedSlotId, content) {
+        this._apiPort.InnerArcRender(transformationParticle, transformationSlotName, hostedSlotId, content);
     }
 }
-
-/**
- * @license
- * Copyright (c) 2018 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-// Arc-independent handlers for devtools logic.
-DevtoolsConnection.onceConnected.then(devtoolsChannel => {
-    enableTracingAdapter(devtoolsChannel);
-});
-class ArcDebugHandler {
-    constructor(arc, listenerClasses) {
-        this.arcDevtoolsChannel = null;
-        if (arc.isStub)
-            return;
-        const connectedOnInstantiate = DevtoolsConnection.isConnected;
-        DevtoolsConnection.onceConnected.then(devtoolsChannel => {
-            if (!connectedOnInstantiate) {
-                devtoolsChannel.send({
-                    messageType: 'warning',
-                    messageBody: 'pre-existing-arc'
-                });
-            }
-            this.arcDevtoolsChannel = devtoolsChannel.forArc(arc);
-            if (!!listenerClasses) { // undefined => false
-                // TODO: This should just be a foreach, as there is no need to keep
-                // the results.
-                const listeners = listenerClasses.map(l => {
-                    ArcDevtoolsChannel.instantiateListener(l, arc, this.arcDevtoolsChannel);
-                });
-            }
-            this.arcDevtoolsChannel.send({
-                messageType: 'arc-available',
-                messageBody: {
-                    speculative: arc.isSpeculative
-                }
-            });
-        });
-    }
-    recipeInstantiated({ particles }) {
-        if (!this.arcDevtoolsChannel)
-            return;
-        const truncate = ({ id, name }) => ({ id, name });
-        const slotConnections = [];
-        particles.forEach(p => Object.values(p.consumedSlotConnections).forEach(cs => {
-            if (cs.targetSlot) {
-                slotConnections.push({
-                    particleId: cs.particle.id,
-                    consumed: truncate(cs.targetSlot),
-                    provided: Object.values(cs.providedSlots).map(slot => truncate(slot)),
-                });
-            }
-        }));
-        this.arcDevtoolsChannel.send({
-            messageType: 'recipe-instantiated',
-            messageBody: { slotConnections }
-        });
-    }
-}
-// TODO: This should move to the core interface file when it exists. 
-const defaultCoreDebugListeners = [
-    ArcStoresFetcher
-];
 
 /**
  * @license
@@ -23864,6 +23864,579 @@ function now$1() {
   return time[0] * 1000 + time[1] / 1000000;
 }
 
+// Copyright (c) 2018 Google Inc. All rights reserved.
+
+// Provides access to device hardware resource metrics for a node process.
+class DeviceInfo {
+  // Returns the number of logical cores.
+  static hardwareConcurrency() {
+    return os.cpus().length;
+  }
+  // Returns the device memory in gigabytes.
+  static deviceMemory() {
+    // Convert bytes to gigabytes.
+    return os.totalmem() / Math.pow(1024, 3);
+  }
+}
+
+/**
+ * @license
+ * Copyright (c) 2018 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+class StrategyExplorerAdapter {
+    static processGenerations(generations, devtoolsChannel, options = {}) {
+        if (devtoolsChannel) {
+            devtoolsChannel.send({
+                messageType: 'generations',
+                messageBody: { results: generations, options },
+            });
+        }
+    }
+}
+
+// Copyright (c) 2018 Google Inc. All rights reserved.
+// This code may only be used under the BSD style license found at
+// http://polymer.github.io/LICENSE.txt
+// Code distributed by Google as part of this project is also
+// subject to an additional IP rights grant found at
+// http://polymer.github.io/PATENTS.txt
+
+// TODO(wkorman): Incorporate debug levels. Consider outputting
+// preamble in the specified color via ANSI escape codes. Consider
+// sharing with similar log factory logic in `xen.js`. See `log-web.js`.
+const _logFactory = (preamble, color, log='log') => {
+  return console[log].bind(console, `(${preamble})`);
+};
+
+const factory = global.debugLevel < 1 ? () => () => {} : _logFactory;
+
+const logFactory = (...args) => factory(...args);
+
+/**
+ * @license
+ * Copyright (c) 2018 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+class Suggestion {
+    constructor(plan, hash, rank, versionByStore) {
+        // TODO: update Description class to be serializable.
+        this.descriptionByModality = {};
+        this.versionByStore = {};
+        // List of search resolved token groups, this suggestion corresponds to.
+        this.searchGroups = [];
+        assert$1(plan, `plan cannot be null`);
+        assert$1(hash, `hash cannot be null`);
+        this.plan = plan;
+        this.planString = this.plan.toString();
+        this.hash = hash;
+        this.rank = rank;
+        this.versionByStore = versionByStore;
+        // TODO(mmandlis): backward compatility for existing suggestions that include undefined
+        // versions. Code can be deleted, after we upgrade above 0_6 or wipe out the storage.
+        for (const store in this.versionByStore) {
+            if (this.versionByStore[store] === undefined) {
+                delete this.versionByStore[store];
+            }
+        }
+    }
+    static create(plan, hash, relevance) {
+        assert$1(plan, `plan cannot be null`);
+        assert$1(hash, `hash cannot be null`);
+        assert$1(relevance, `relevance cannot be null`);
+        const suggestion = new Suggestion(plan, hash, relevance.calcRelevanceScore(), relevance.versionByStore);
+        suggestion.setSearch(plan.search);
+        return suggestion;
+    }
+    get descriptionText() {
+        return this.getDescription('text');
+    }
+    getDescription(modality) {
+        assert$1(this.descriptionByModality[modality], `No description for modality '${modality}'`);
+        return this.descriptionByModality[modality];
+    }
+    setDescription(description, modality, descriptionFormatter = DescriptionFormatter) {
+        this.descriptionByModality['text'] = description.getRecipeSuggestion();
+        for (const planModality of this.plan.modality.names) {
+            if (modality.names.includes(planModality)) {
+                this.descriptionByModality[planModality] =
+                    description.getRecipeSuggestion(descriptionFormatter);
+            }
+        }
+    }
+    isEquivalent(other) {
+        return (this.hash === other.hash) && (this.descriptionText === other.descriptionText);
+    }
+    isEqual(other) {
+        return this.isEquivalent(other) &&
+            this.rank === other.rank &&
+            this._isSameSearch(other) &&
+            this._isSameDescription(other) &&
+            this._isSameVersions(other);
+    }
+    _isSameSearch(other) {
+        return this.searchGroups.length === other.searchGroups.length &&
+            this.searchGroups.every(search => other.hasSearchGroup(search));
+    }
+    _isSameDescription(other) {
+        return Object.keys(this.descriptionByModality).length === Object.keys(other.descriptionByModality).length &&
+            Object.keys(this.descriptionByModality).every(key => JSON.stringify(this.descriptionByModality[key]) === JSON.stringify(other.descriptionByModality[key]));
+    }
+    _isSameVersions(other) {
+        const storeIds = Object.keys(this.versionByStore);
+        return storeIds.length === Object.keys(other.versionByStore).length &&
+            storeIds.every(id => this.versionByStore[id] === other.versionByStore[id]);
+    }
+    static compare(s1, s2) {
+        return s2.rank - s1.rank;
+    }
+    hasSearch(search) {
+        return this.hasSearchGroup(search.split(' '));
+    }
+    hasSearchGroup(tokens) {
+        return this.searchGroups.some(group => tokens.every(token => group.includes(token)));
+    }
+    setSearch(search) {
+        this.searchGroups = [];
+        if (search) {
+            this._addSearch(search.resolvedTokens);
+        }
+    }
+    mergeSearch(suggestion) {
+        let updated = false;
+        if (suggestion.searchGroups.length === 0) {
+            this._addSearch(['']);
+        }
+        for (const other of suggestion.searchGroups) {
+            if (this._addSearch(other)) {
+                if (this.searchGroups.length === 1) {
+                    this.searchGroups.push(['']);
+                }
+                updated = true;
+            }
+        }
+        this.searchGroups.sort();
+        return updated;
+    }
+    _addSearch(searchGroup) {
+        const equivalentGroup = (group, otherGroup) => {
+            return group.length === otherGroup.length &&
+                group.every(token => otherGroup.includes(token));
+        };
+        if (!this.searchGroups.find(group => equivalentGroup(group, searchGroup))) {
+            this.searchGroups.push(searchGroup);
+            return true;
+        }
+        return false;
+    }
+    toLiteral() {
+        return {
+            plan: this.planString,
+            hash: this.hash,
+            rank: this.rank,
+            // Needs to JSON.strigify because store IDs may contain invalid FB key symbols.
+            versionByStore: JSON.stringify(this.versionByStore),
+            searchGroups: this.searchGroups,
+            descriptionByModality: this.descriptionByModality
+        };
+    }
+    static async fromLiteral({ plan, hash, rank, versionByStore, searchGroups, descriptionByModality }, { context, loader }) {
+        const manifest = await Manifest.parse(plan, { loader, context, fileName: '' });
+        assert$1(manifest.recipes.length === 1);
+        const recipe = manifest.recipes[0];
+        assert$1(recipe.normalize({}), `can't normalize deserialized suggestion: ${plan}`);
+        const suggestion = new Suggestion(recipe, hash, rank, JSON.parse(versionByStore || '{}'));
+        suggestion.searchGroups = searchGroups || [];
+        suggestion.descriptionByModality = descriptionByModality;
+        return suggestion;
+    }
+    async instantiate(arc) {
+        // For now shell is responsible for creating and setting the new arc.
+        assert$1(arc, `Cannot instantiate suggestion without and arc`);
+        const plan = await this.getResolvedPlan(arc);
+        assert$1(plan && plan.isResolved(), `can't resolve plan: ${this.plan.toString({ showUnresolved: true })}`);
+        return arc.instantiate(plan);
+    }
+    async getResolvedPlan(arc) {
+        if (this.plan.isResolved()) {
+            return this.plan;
+        }
+        // TODO(mmandlis): Is this still needed? Find out why and fix.
+        const recipeResolver = new RecipeResolver(arc);
+        return recipeResolver.resolve(this.plan);
+    }
+}
+
+/**
+ * @license
+ * Copyright (c) 2018 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+const error = logFactory('PlanningResult', '#ff0090', 'error');
+class PlanningResult {
+    constructor(envOptions, store) {
+        this.suggestions = [];
+        this.lastUpdated = new Date(null);
+        this.generations = [];
+        this.contextual = true;
+        this.changeCallbacks = [];
+        this.envOptions = envOptions;
+        assert$1(envOptions.context, `context cannot be null`);
+        assert$1(envOptions.loader, `loader cannot be null`);
+        this.store = store;
+        if (this.store) {
+            this.storeCallback = () => this.load();
+            this.store.on('change', this.storeCallback, this);
+        }
+    }
+    registerChangeCallback(callback) {
+        this.changeCallbacks.push(callback);
+    }
+    onChanged() {
+        for (const callback of this.changeCallbacks) {
+            callback();
+        }
+    }
+    async load() {
+        const value = await this.store.get() || {};
+        if (value.suggestions) {
+            if (await this.fromLiteral(value)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    async flush() {
+        try {
+            await this.store.set(this.toLiteral());
+        }
+        catch (e) {
+            error('Failed storing suggestions: ', e);
+            throw e;
+        }
+    }
+    async clear() {
+        return this.store.clear();
+    }
+    dispose() {
+        this.changeCallbacks = [];
+        this.store.off('change', this.storeCallback);
+        this.store.dispose();
+    }
+    static formatSerializableGenerations(generations) {
+        // Make a copy of everything and assign IDs to recipes.
+        const idMap = new Map(); // Recipe -> ID
+        let lastID = 0;
+        const assignIdAndCopy = recipe => {
+            idMap.set(recipe, lastID);
+            const { result, score, derivation, description, hash, valid, active, irrelevant } = recipe;
+            const resultString = result.toString({ showUnresolved: true, showInvalid: false, details: '' });
+            const resolved = result.isResolved();
+            return { result: resultString, resolved, score, derivation, description, hash, valid, active, irrelevant, id: lastID++ };
+        };
+        generations = generations.map(pop => ({
+            record: pop.record,
+            generated: pop.generated.map(assignIdAndCopy)
+        }));
+        // Change recipes in derivation to IDs and compute resolved stats.
+        return generations.map(pop => {
+            const population = pop.generated;
+            const record = pop.record;
+            // Adding those here to reuse recipe resolution computation.
+            record.resolvedDerivations = 0;
+            record.resolvedDerivationsByStrategy = {};
+            for (const item of population) {
+                item.derivation = item.derivation.map(derivItem => {
+                    let parent;
+                    let strategy;
+                    if (derivItem.parent) {
+                        parent = idMap.get(derivItem.parent);
+                    }
+                    if (derivItem.strategy) {
+                        strategy = derivItem.strategy.constructor.name;
+                    }
+                    return { parent, strategy };
+                });
+                if (item.resolved) {
+                    record.resolvedDerivations++;
+                    const strategy = item.derivation[0].strategy;
+                    if (record.resolvedDerivationsByStrategy[strategy] === undefined) {
+                        record.resolvedDerivationsByStrategy[strategy] = 0;
+                    }
+                    record.resolvedDerivationsByStrategy[strategy]++;
+                }
+            }
+            const populationMap = {};
+            for (const item of population) {
+                if (populationMap[item.derivation[0].strategy] == undefined) {
+                    populationMap[item.derivation[0].strategy] = [];
+                }
+                populationMap[item.derivation[0].strategy].push(item);
+            }
+            const result = { population: [], record };
+            for (const strategy of Object.keys(populationMap)) {
+                result.population.push({ strategy, recipes: populationMap[strategy] });
+            }
+            return result;
+        });
+    }
+    _set({ suggestions, lastUpdated = new Date(), generations = [], contextual = true }) {
+        this.suggestions = suggestions;
+        this.generations = generations;
+        this.lastUpdated = lastUpdated;
+        this.contextual = contextual;
+        this.onChanged();
+    }
+    merge({ suggestions, lastUpdated = new Date(), generations = [], contextual = true }, arc) {
+        const newSuggestions = [];
+        const removeIndexes = [];
+        const arcVersionByStore = arc.getVersionByStore({ includeArc: true, includeContext: true });
+        for (const newSuggestion of suggestions) {
+            const index = this.suggestions.findIndex(suggestion => suggestion.isEquivalent(newSuggestion));
+            if (index >= 0) {
+                if (this.suggestions[index].isEqual(newSuggestion)) {
+                    continue; // skip suggestion, if identical to an existing one.
+                }
+                const outdatedStores = Object.keys(newSuggestion.versionByStore).filter(storeId => {
+                    const currentVersion = this.suggestions[index].versionByStore[storeId];
+                    return currentVersion === undefined || newSuggestion.versionByStore[storeId] < currentVersion;
+                });
+                if (outdatedStores.length > 0) {
+                    console.warn(`New suggestions has older store versions:\n ${outdatedStores.map(id => `${id}: ${this.suggestions[index].versionByStore[id]} -> ${newSuggestion.versionByStore[id]}`).join(';')}`);
+                    // Note: This happens due to #2638. Revisit, when fixed.
+                    // assert(false);
+                }
+                removeIndexes.push(index);
+                newSuggestion.mergeSearch(this.suggestions[index]);
+            }
+            if (this._isUpToDate(newSuggestion, arcVersionByStore)) {
+                newSuggestions.push(newSuggestion);
+            }
+        }
+        // Keep suggestions (1) not marked for remove (2) up-to-date with the arcs store versions and
+        // (3) not in active recipe.
+        const jointSuggestions = this.suggestions.filter((suggestion, index) => {
+            return !removeIndexes.some(removeIndex => removeIndex === index) &&
+                this._isUpToDate(suggestion, arcVersionByStore) &&
+                !RecipeUtil.matchesRecipe(arc.activeRecipe, suggestion.plan);
+        });
+        if (jointSuggestions.length === this.suggestions.length && newSuggestions.length === 0) {
+            return false;
+        }
+        jointSuggestions.push(...newSuggestions);
+        this._set({ suggestions: jointSuggestions, generations: this.generations.concat(...generations), lastUpdated, contextual: contextual && this.contextual });
+        return true;
+    }
+    _isUpToDate(suggestion, versionByStore) {
+        for (const handle of suggestion.plan.handles) {
+            const arcVersion = versionByStore[handle.id] || 0;
+            const relevanceVersion = suggestion.versionByStore[handle.id] || 0;
+            if (relevanceVersion < arcVersion) {
+                return false;
+            }
+        }
+        return true;
+    }
+    isEquivalent(suggestions) {
+        return PlanningResult.isEquivalent(this.suggestions, suggestions);
+    }
+    static isEquivalent(oldSuggestions, newSuggestions) {
+        assert$1(newSuggestions, `New suggestions cannot be null.`);
+        return oldSuggestions &&
+            oldSuggestions.length === newSuggestions.length &&
+            oldSuggestions.every(suggestion => newSuggestions.find(newSuggestion => suggestion.isEquivalent(newSuggestion)));
+    }
+    async fromLiteral({ suggestions, generations, lastUpdated, contextual }) {
+        const deserializedSuggestions = [];
+        for (const suggestion of suggestions) {
+            deserializedSuggestions.push(await Suggestion.fromLiteral(suggestion, this.envOptions));
+        }
+        if (this.isEquivalent(deserializedSuggestions)) {
+            return false;
+        }
+        this._set({
+            suggestions: deserializedSuggestions,
+            generations: JSON.parse(generations || '[]'),
+            lastUpdated: new Date(lastUpdated),
+            contextual
+        });
+        return true;
+    }
+    toLiteral() {
+        return {
+            suggestions: this.suggestions.map(suggestion => suggestion.toLiteral()),
+            generations: JSON.stringify(this.generations),
+            lastUpdated: this.lastUpdated.toString(),
+            contextual: this.contextual
+        };
+    }
+}
+
+class Relevance {
+    constructor() {
+        // stores a copy of arc.getVersionByStore
+        this.versionByStore = {};
+        // public for testing
+        this.relevanceMap = new Map();
+    }
+    static create(arc, recipe) {
+        const relevance = new Relevance();
+        const versionByStore = arc.getVersionByStore({ includeArc: true, includeContext: true });
+        recipe.handles.forEach(handle => {
+            if (handle.id && versionByStore[handle.id] !== undefined) {
+                relevance.versionByStore[handle.id] = versionByStore[handle.id];
+            }
+        });
+        return relevance;
+    }
+    apply(relevance) {
+        for (const key of relevance.keys()) {
+            if (this.relevanceMap.has(key)) {
+                this.relevanceMap.set(key, this.relevanceMap.get(key).concat(relevance.get(key)));
+            }
+            else {
+                this.relevanceMap.set(key, relevance.get(key));
+            }
+        }
+    }
+    calcRelevanceScore() {
+        let relevance = 1;
+        let hasNegative = false;
+        for (const rList of this.relevanceMap.values()) {
+            const particleRelevance = Relevance.particleRelevance(rList);
+            if (particleRelevance < 0) {
+                hasNegative = true;
+            }
+            relevance *= Math.abs(particleRelevance);
+        }
+        return relevance * (hasNegative ? -1 : 1);
+    }
+    // Returns false, if at least one of the particles relevance lists ends with a negative score.
+    isRelevant(plan) {
+        const hasUi = plan.particles.some(p => Object.keys(p.consumedSlotConnections).length > 0);
+        let rendersUi = false;
+        for (const [particle, rList] of this.relevanceMap) {
+            if (rList[rList.length - 1] < 0) {
+                continue;
+            }
+            else if (Object.keys(particle.consumedSlotConnections).length) {
+                rendersUi = true;
+                break;
+            }
+        }
+        // If the recipe has UI rendering particles, at least one of the particles must render UI.
+        return hasUi === rendersUi;
+    }
+    static scaleRelevance(relevance) {
+        if (relevance == undefined) {
+            relevance = 5;
+        }
+        relevance = Math.max(-1, Math.min(relevance, 10));
+        // TODO: might want to make this geometric or something instead;
+        return relevance / 5;
+    }
+    static particleRelevance(relevanceList) {
+        let relevance = 1;
+        let hasNegative = false;
+        relevanceList.forEach(r => {
+            const scaledRelevance = Relevance.scaleRelevance(r);
+            if (scaledRelevance < 0) {
+                hasNegative = true;
+            }
+            relevance *= Math.abs(scaledRelevance);
+        });
+        return relevance * (hasNegative ? -1 : 1);
+    }
+    calcParticleRelevance(particle) {
+        if (this.relevanceMap.has(particle)) {
+            return Relevance.particleRelevance(this.relevanceMap.get(particle));
+        }
+        return -1;
+    }
+}
+
+/**
+ * @license
+ * Copyright (c) 2017 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+class Speculator {
+    constructor(planningResult) {
+        this.suggestionByHash = {};
+        this.speculativeArcs = [];
+        if (planningResult) {
+            for (const suggestion of planningResult.suggestions) {
+                this.suggestionByHash[suggestion.hash] = suggestion;
+            }
+        }
+    }
+    async speculate(arc, plan, hash) {
+        assert$1(plan.isResolved(), `Cannot speculate on an unresolved plan: ${plan.toString({ showUnresolved: true })}`);
+        let suggestion = this.suggestionByHash[hash];
+        if (suggestion) {
+            const arcVersionByStoreId = arc.getVersionByStore({ includeArc: true, includeContext: true });
+            if (plan.handles.every(handle => arcVersionByStoreId[handle.id] === suggestion.versionByStore[handle.id])) {
+                return suggestion;
+            }
+        }
+        const speculativeArc = await arc.cloneForSpeculativeExecution();
+        this.speculativeArcs.push(speculativeArc);
+        const relevance = Relevance.create(arc, plan);
+        await speculativeArc.instantiate(plan);
+        await this.awaitCompletion(relevance, speculativeArc);
+        if (!relevance.isRelevant(plan)) {
+            return null;
+        }
+        const description = await Description.create(speculativeArc, relevance);
+        suggestion = Suggestion.create(plan, hash, relevance);
+        suggestion.setDescription(description, arc.modality, arc.pec.slotComposer ? arc.pec.slotComposer.modalityHandler.descriptionFormatter : undefined);
+        this.suggestionByHash[hash] = suggestion;
+        // TODO: Find a better way to associate arcs with descriptions.
+        //       Ideally, a way that works also for non-speculative arcs.
+        if (DevtoolsConnection.isConnected) {
+            DevtoolsConnection.get().forArc(speculativeArc).send({
+                messageType: 'arc-description',
+                messageBody: suggestion.descriptionText
+            });
+        }
+        return suggestion;
+    }
+    async awaitCompletion(relevance, speculativeArc) {
+        const messageCount = speculativeArc.pec.messageCount;
+        relevance.apply(await speculativeArc.pec.idle);
+        // We expect two messages here, one requesting the idle status, and one answering it.
+        if (speculativeArc.pec.messageCount !== messageCount + 2) {
+            return this.awaitCompletion(relevance, speculativeArc);
+        }
+        else {
+            speculativeArc.dispose();
+            this.speculativeArcs.splice(this.speculativeArcs.indexOf(speculativeArc, 1));
+            return relevance;
+        }
+    }
+    dispose() {
+        for (const arc of this.speculativeArcs) {
+            arc.dispose();
+        }
+    }
+}
+
 // Copyright (c) 2017 Google Inc. All rights reserved.
 class Strategizer {
     constructor(strategies, evaluators, ruleset) {
@@ -24154,6 +24727,356 @@ class Ruleset {
 Ruleset.Builder = RulesetBuilder;
 
 // Copyright (c) 2017 Google Inc. All rights reserved.
+class AddMissingHandles extends Strategy {
+    // TODO: move generation to use an async generator.
+    async generate(inputParams) {
+        return StrategizerWalker.over(this.getResults(inputParams), new class extends StrategizerWalker {
+            onRecipe(recipe) {
+                // Don't add use handles while there are outstanding constraints
+                if (recipe.connectionConstraints.length > 0) {
+                    return undefined;
+                }
+                // Don't add use handles to a recipe with free handles
+                if (recipe.getFreeHandles().length > 0) {
+                    return undefined;
+                }
+                // TODO: "description" handles are always created, and in the future they need to be "optional" (blocked by optional handles
+                // not being properly supported in arc instantiation). For now just hardcode skiping them.
+                const disconnectedConnections = recipe.getDisconnectedConnections();
+                if (disconnectedConnections.length === 0) {
+                    return undefined;
+                }
+                return recipe => {
+                    disconnectedConnections.forEach(hc => {
+                        const clonedHC = recipe.updateToClone({ hc }).hc;
+                        const handle = recipe.newHandle();
+                        handle.fate = '?';
+                        clonedHC.connectToHandle(handle);
+                    });
+                    return 0;
+                };
+            }
+        }(StrategizerWalker.Permuted), this);
+    }
+}
+
+// Copyright (c) 2017 Google Inc. All rights reserved.
+class AssignHandles extends Strategy {
+    async generate(inputParams) {
+        const self = this;
+        return StrategizerWalker.over(this.getResults(inputParams), new class extends StrategizerWalker {
+            onHandle(recipe, handle) {
+                if (!['?', 'use', 'copy', 'map'].includes(handle.fate)) {
+                    return undefined;
+                }
+                if (handle.connections.length === 0) {
+                    return undefined;
+                }
+                if (handle.id) {
+                    return undefined;
+                }
+                if (!handle.type) {
+                    return undefined;
+                }
+                // TODO: using the connection to retrieve type information is wrong.
+                // Once validation of recipes generates type information on the handle
+                // we should switch to using that instead.
+                const counts = RecipeUtil.directionCounts(handle);
+                if (counts.unknown > 0) {
+                    return undefined;
+                }
+                const score = this._getScore(counts, handle.tags);
+                if (counts.out > 0 && handle.fate === 'map') {
+                    return undefined;
+                }
+                const stores = self.getMappableStores(handle.fate, handle.type, handle.tags, counts);
+                if (handle.fate !== '?' && stores.size < 2) {
+                    // These handles are mapped by resolve-recipe strategy.
+                    return undefined;
+                }
+                const responses = [...stores.keys()].map(store => ((recipe, clonedHandle) => {
+                    assert$1(store.id);
+                    if (recipe.findHandleByID(store.id)) {
+                        // TODO: Why don't we link the handle connections to the existingHandle?
+                        return 0;
+                    }
+                    clonedHandle.mapToStorage(store);
+                    if (clonedHandle.fate === '?') {
+                        clonedHandle.fate = stores.get(store);
+                    }
+                    else {
+                        assert$1(clonedHandle.fate, stores.get(store));
+                    }
+                    return score;
+                }));
+                return responses;
+            }
+            _getScore(counts, tags) {
+                let score = -1;
+                if (counts.in === 0 || counts.out === 0) {
+                    if (counts.out === 0) {
+                        score = 1;
+                    }
+                    else {
+                        score = 0;
+                    }
+                }
+                // TODO: Why is score negative, where there are both - in and out?
+                if (tags.length > 0) {
+                    score += 4;
+                }
+                return score;
+            }
+        }(StrategizerWalker.Permuted), this);
+    }
+    getMappableStores(fate, type, tags, counts) {
+        const stores = new Map();
+        if (fate === 'use' || fate === '?') {
+            const subtype = counts.out === 0;
+            // TODO: arc.findStoresByType doesn't use `subtype`. Shall it be removed?
+            this.arc.findStoresByType(type, { tags, subtype }).forEach(store => stores.set(store, 'use'));
+        }
+        if (fate === 'map' || fate === 'copy' || fate === '?') {
+            this.arc.context.findStoreByType(type, { tags, subtype: true }).forEach(store => stores.set(store, fate === '?' ? (counts.out > 0 ? 'copy' : 'map') : fate));
+        }
+        return stores;
+    }
+}
+
+// Copyright (c) 2018 Google Inc. All rights reserved.
+// This strategy coalesces unresolved terminal recipes (i.e. those that cannot
+// be modified by any strategy apart from this one) by finding unresolved
+// use/? handle and finding a matching create/? handle in another recipe and
+// merging those.
+class CoalesceRecipes extends Strategy {
+    constructor(arc, { recipeIndex }) {
+        super(arc);
+        this.recipeIndex = recipeIndex;
+    }
+    getResults(inputParams) {
+        // Coalescing for terminal recipes that are either unresolved recipes or have no UI.
+        return inputParams.terminal.filter(result => !result.result.isResolved() || result.result.slots.length === 0);
+    }
+    async generate(inputParams) {
+        const arc = this.arc;
+        const index = this.recipeIndex;
+        await index.ready;
+        return StrategizerWalker.over(this.getResults(inputParams), new class extends StrategizerWalker {
+            onPotentialSlotConnection(recipe, particle, slotSpec) {
+                const results = [];
+                // TODO: It is possible that provided-slot wasn't matched due to different handles, but actually
+                // these handles are coalescable? Add support for this.
+                for (const providedSlot of index.findProvidedSlot(particle, slotSpec)) {
+                    // Don't grow recipes above 10 particles, otherwise we might never stop.
+                    if (recipe.particles.length + providedSlot.recipe.particles.length > 10)
+                        continue;
+                    if (RecipeUtil.matchesRecipe(arc.activeRecipe, providedSlot.recipe)) {
+                        // skip candidate recipe, if matches the shape of the arc's active recipe
+                        continue;
+                    }
+                    results.push((recipe, particle, slotSpec) => {
+                        const otherToHandle = index.findCoalescableHandles(recipe, providedSlot.recipe);
+                        const { cloneMap } = providedSlot.recipe.mergeInto(recipe);
+                        const mergedSlot = cloneMap.get(providedSlot);
+                        const newSlotConnection = particle.addSlotConnection(slotSpec.name);
+                        newSlotConnection.connectToSlot(mergedSlot);
+                        this._connectOtherHandles(otherToHandle, cloneMap, false);
+                        // Clear verbs and recipe name after coalescing two recipes.
+                        recipe.verbs.splice(0);
+                        recipe.name = null;
+                        return 1;
+                    });
+                }
+                if (results.length > 0) {
+                    return results;
+                }
+                return undefined;
+            }
+            // Find a provided slot for unfulfilled consume connection.
+            onSlotConnection(recipe, slotConnection) {
+                if (slotConnection.isResolved()) {
+                    return undefined;
+                }
+                if (!slotConnection.name || !slotConnection.particle) {
+                    return undefined;
+                }
+                if (slotConnection.targetSlot) {
+                    return undefined;
+                }
+                // TODO: also support a consume slot connection that is NOT required,
+                // but no other connections are resolved.
+                const results = [];
+                // TODO: It is possible that provided-slot wasn't matched due to different handles, but actually
+                // these handles are coalescable? Add support for this.
+                for (const providedSlot of index.findProvidedSlot(slotConnection.particle, slotConnection.spec)) {
+                    // Don't grow recipes above 10 particles, otherwise we might never stop.
+                    if (recipe.particles.length + providedSlot.recipe.particles.length > 10)
+                        continue;
+                    if (RecipeUtil.matchesRecipe(arc.activeRecipe, providedSlot.recipe)) {
+                        // skip candidate recipe, if matches the shape of the arc's active recipe
+                        continue;
+                    }
+                    if (RecipeUtil.matchesRecipe(recipe, providedSlot.recipe)) {
+                        // skip candidate recipe, if matches the shape of the currently explored recipe
+                        continue;
+                    }
+                    results.push((recipe, slotConnection) => {
+                        const otherToHandle = index.findCoalescableHandles(recipe, providedSlot.recipe);
+                        const { cloneMap } = providedSlot.recipe.mergeInto(slotConnection.recipe);
+                        const mergedSlot = cloneMap.get(providedSlot);
+                        slotConnection.connectToSlot(mergedSlot);
+                        this._connectOtherHandles(otherToHandle, cloneMap, false);
+                        // Clear verbs and recipe name after coalescing two recipes.
+                        recipe.verbs.splice(0);
+                        recipe.name = null;
+                        return 1;
+                    });
+                }
+                if (results.length > 0) {
+                    return results;
+                }
+                return undefined;
+            }
+            onSlot(recipe, slot) {
+                // Find slots that according to their provided-spec must be consumed, but have no consume connection.
+                if (slot.consumeConnections.length > 0) {
+                    return undefined; // slot has consume connections.
+                }
+                if (!slot.sourceConnection || !slot.spec.isRequired) {
+                    return undefined; // either a remote slot (no source connection), or a not required one.
+                }
+                const results = [];
+                for (const { recipeParticle, slotSpec, matchingHandles } of index.findConsumeSlotConnectionMatch(slot.sourceConnection.particle, slot.spec)) {
+                    // Don't grow recipes above 10 particles, otherwise we might never stop.
+                    if (recipe.particles.length + recipeParticle.recipe.particles.length > 10)
+                        continue;
+                    if (RecipeUtil.matchesRecipe(arc.activeRecipe, recipeParticle.recipe)) {
+                        // skip candidate recipe, if matches the shape of the arc's active recipe
+                        continue;
+                    }
+                    if (RecipeUtil.matchesRecipe(recipe, recipeParticle.recipe)) {
+                        // skip candidate recipe, if matches the shape of the currently explored recipe
+                        continue;
+                    }
+                    results.push((recipe, slot) => {
+                        // Find other handles that may be merged, as recipes are being coalesced.
+                        const otherToHandle = index.findCoalescableHandles(recipe, recipeParticle.recipe, new Set(slot.handleConnections.map(hc => hc.handle).concat(matchingHandles.map(({ handle, matchingConn }) => matchingConn.handle))));
+                        const { cloneMap } = recipeParticle.recipe.mergeInto(slot.recipe);
+                        const slotConn = recipeParticle.getSlotConnectionByName(slot.name);
+                        let mergedSlotConn = cloneMap.get(slotConn);
+                        if (!mergedSlotConn) {
+                            const clonedParticle = cloneMap.get(recipeParticle);
+                            mergedSlotConn = clonedParticle.addSlotConnection(slotSpec.name);
+                        }
+                        mergedSlotConn.connectToSlot(slot);
+                        for (const { handle, matchingConn } of matchingHandles) {
+                            // matchingConn in the mergedSlotConnection's recipe should be connected to `handle` in the slot's recipe.
+                            const mergedMatchingConn = cloneMap.get(matchingConn);
+                            const disconnectedHandle = mergedMatchingConn.handle;
+                            const clonedHandle = slot.findHandleByID(handle.id);
+                            if (disconnectedHandle === clonedHandle) {
+                                continue; // this handle was already reconnected
+                            }
+                            while (disconnectedHandle.connections.length > 0) {
+                                const conn = disconnectedHandle.connections[0];
+                                conn.disconnectHandle();
+                                conn.connectToHandle(clonedHandle);
+                            }
+                            recipe.removeHandle(disconnectedHandle);
+                        }
+                        this._connectOtherHandles(otherToHandle, cloneMap, false);
+                        // Clear verbs and recipe name after coalescing two recipes.
+                        recipe.verbs.splice(0);
+                        recipe.name = null;
+                        // TODO: Merge description/patterns of both recipes.
+                        // TODO: Unify common code in slot and handle recipe coalescing.
+                        return 1;
+                    });
+                }
+                if (results.length > 0) {
+                    return results;
+                }
+                return undefined;
+            }
+            onHandle(recipe, handle) {
+                if (!index.coalescableFates.includes(handle.fate)
+                    || handle.id
+                    || handle.connections.length === 0
+                    || handle.name === 'descriptions')
+                    return undefined;
+                const results = [];
+                for (const otherHandle of index.findHandleMatch(handle, index.coalescableFates)) {
+                    // Don't grow recipes above 10 particles, otherwise we might never stop.
+                    if (recipe.particles.length + otherHandle.recipe.particles.length > 10)
+                        continue;
+                    // This is a poor man's proxy for the other handle being an output of a recipe.
+                    if (otherHandle.findConnectionByDirection('in'))
+                        continue;
+                    // We ignore type variables not constrained for reading, otherwise
+                    // generic recipes would apply - which we currently don't want here.
+                    if (otherHandle.type.hasVariable) {
+                        let resolved = otherHandle.type.resolvedType();
+                        // TODO: getContainedType returns non-null for references ... is that correct here?
+                        resolved = resolved.getContainedType() || resolved;
+                        if (resolved instanceof TypeVariable && !resolved.canReadSubset)
+                            continue;
+                    }
+                    if (RecipeUtil.matchesRecipe(arc.activeRecipe, otherHandle.recipe)) {
+                        // skip candidate recipe, if matches the shape of the arc's active recipe
+                        continue;
+                    }
+                    if (RecipeUtil.matchesRecipe(recipe, otherHandle.recipe)) {
+                        // skip candidate recipe, if matches the shape of the currently explored recipe
+                        continue;
+                    }
+                    results.push((recipe, handle) => {
+                        // Find other handles in the original recipe that could be coalesced with handles in otherHandle's recipe.
+                        const otherToHandle = index.findCoalescableHandles(recipe, otherHandle.recipe, new Set([handle, otherHandle]));
+                        const { cloneMap } = otherHandle.recipe.mergeInto(handle.recipe);
+                        // Connect the handle that the recipes are being coalesced on.
+                        cloneMap.get(otherHandle).mergeInto(handle);
+                        // Connect all other connectable handles.
+                        this._connectOtherHandles(otherToHandle, cloneMap, true);
+                        // Clear verbs and recipe name after coalescing two recipes.
+                        recipe.verbs.splice(0);
+                        recipe.name = null;
+                        // TODO: Merge description/patterns of both recipes.
+                        return 1;
+                    });
+                }
+                return results;
+            }
+            _connectOtherHandles(otherToHandle, cloneMap, verifyTypes) {
+                otherToHandle.forEach((otherHandle, handle) => {
+                    const otherHandleClone = cloneMap.get(otherHandle);
+                    // For coalescing that was triggered by handle coalescing (vs slot or slot connection)
+                    // once the main handle (one that triggered coalescing) was coalesced, types may have changed.
+                    // Need to verify all the type information for the "other" coalescable handles is still valid.
+                    // TODO(mmandlis): This is relying on only ever considering a single "other" handles to coalesce,
+                    // so the handle either is still a valid match or not.
+                    // In order to do it right for multiple handles, we need to try ALL handles,
+                    // then fallback to all valid N-1 combinations, then N-2 etc.
+                    if (verifyTypes) {
+                        if (!this._reverifyHandleTypes(handle, otherHandleClone)) {
+                            return;
+                        }
+                    }
+                    otherHandleClone.mergeInto(handle);
+                });
+            }
+            // Returns true, if both handles have types that can be coalesced.
+            _reverifyHandleTypes(handle, otherHandle) {
+                assert$1(handle.recipe === otherHandle.recipe);
+                const cloneMap = new Map();
+                const recipeClone = handle.recipe.clone(cloneMap);
+                recipeClone.normalize();
+                return Handle$1.effectiveType(cloneMap.get(handle).type, [...cloneMap.get(handle).connections, ...cloneMap.get(otherHandle).connections]);
+            }
+        }(StrategizerWalker.Independent), this);
+    }
+}
+
+// Copyright (c) 2017 Google Inc. All rights reserved.
 class ConvertConstraintsToConnections extends Strategy {
     async generate(inputParams) {
         const arcModality = this.arc.modality;
@@ -24357,85 +25280,215 @@ class ConvertConstraintsToConnections extends Strategy {
 }
 
 // Copyright (c) 2017 Google Inc. All rights reserved.
-class AssignHandles extends Strategy {
+class CreateDescriptionHandle extends Strategy {
     async generate(inputParams) {
-        const self = this;
         return StrategizerWalker.over(this.getResults(inputParams), new class extends StrategizerWalker {
-            onHandle(recipe, handle) {
-                if (!['?', 'use', 'copy', 'map'].includes(handle.fate)) {
+            onHandleConnection(recipe, handleConnection) {
+                if (handleConnection.handle) {
                     return undefined;
                 }
-                if (handle.connections.length === 0) {
+                if (handleConnection.name !== 'descriptions') {
                     return undefined;
                 }
-                if (handle.id) {
-                    return undefined;
-                }
-                if (!handle.type) {
-                    return undefined;
-                }
-                // TODO: using the connection to retrieve type information is wrong.
-                // Once validation of recipes generates type information on the handle
-                // we should switch to using that instead.
-                const counts = RecipeUtil.directionCounts(handle);
-                if (counts.unknown > 0) {
-                    return undefined;
-                }
-                const score = this._getScore(counts, handle.tags);
-                if (counts.out > 0 && handle.fate === 'map') {
-                    return undefined;
-                }
-                const stores = self.getMappableStores(handle.fate, handle.type, handle.tags, counts);
-                if (handle.fate !== '?' && stores.size < 2) {
-                    // These handles are mapped by resolve-recipe strategy.
-                    return undefined;
-                }
-                const responses = [...stores.keys()].map(store => ((recipe, clonedHandle) => {
-                    assert$1(store.id);
-                    if (recipe.findHandleByID(store.id)) {
-                        // TODO: Why don't we link the handle connections to the existingHandle?
-                        return 0;
-                    }
-                    clonedHandle.mapToStorage(store);
-                    if (clonedHandle.fate === '?') {
-                        clonedHandle.fate = stores.get(store);
-                    }
-                    else {
-                        assert$1(clonedHandle.fate, stores.get(store));
-                    }
-                    return score;
-                }));
-                return responses;
-            }
-            _getScore(counts, tags) {
-                let score = -1;
-                if (counts.in === 0 || counts.out === 0) {
-                    if (counts.out === 0) {
-                        score = 1;
-                    }
-                    else {
-                        score = 0;
-                    }
-                }
-                // TODO: Why is score negative, where there are both - in and out?
-                if (tags.length > 0) {
-                    score += 4;
-                }
-                return score;
+                return (recipe, handleConnection) => {
+                    const handle = recipe.newHandle();
+                    handle.fate = 'create';
+                    handleConnection.connectToHandle(handle);
+                    return 1;
+                };
             }
         }(StrategizerWalker.Permuted), this);
     }
-    getMappableStores(fate, type, tags, counts) {
-        const stores = new Map();
-        if (fate === 'use' || fate === '?') {
-            const subtype = counts.out === 0;
-            // TODO: arc.findStoresByType doesn't use `subtype`. Shall it be removed?
-            this.arc.findStoresByType(type, { tags, subtype }).forEach(store => stores.set(store, 'use'));
-        }
-        if (fate === 'map' || fate === 'copy' || fate === '?') {
-            this.arc.context.findStoreByType(type, { tags, subtype: true }).forEach(store => stores.set(store, fate === '?' ? (counts.out > 0 ? 'copy' : 'map') : fate));
-        }
-        return stores;
+}
+
+// Copyright (c) 2017 Google Inc. All rights reserved.
+class CreateHandleGroup extends Strategy {
+    async generate(inputParams) {
+        return StrategizerWalker.over(this.getResults(inputParams), new class extends StrategizerWalker {
+            onRecipe(recipe, result) {
+                // Resolve constraints before assuming connections are free.
+                if (recipe.connectionConstraints.length > 0)
+                    return undefined;
+                const freeConnections = recipe.getFreeConnections();
+                let maximalGroup = null;
+                for (const writer of freeConnections.filter(hc => hc.isOutput)) {
+                    const compatibleConnections = [writer];
+                    let effectiveType = Handle$1.effectiveType(null, compatibleConnections);
+                    let typeCandidate = null;
+                    const involvedParticles = new Set([writer.particle]);
+                    let foundSomeReader = false;
+                    for (const reader of freeConnections.filter(hc => hc.isInput)) {
+                        if (!involvedParticles.has(reader.particle) &&
+                            (typeCandidate = Handle$1.effectiveType(effectiveType, [reader])) !== null) {
+                            compatibleConnections.push(reader);
+                            involvedParticles.add(reader.particle);
+                            effectiveType = typeCandidate;
+                            foundSomeReader = true;
+                        }
+                    }
+                    // Only make a 'create' group for a writer->reader case.
+                    if (!foundSomeReader)
+                        continue;
+                    for (const otherWriter of freeConnections.filter(hc => hc.isOutput)) {
+                        if (!involvedParticles.has(otherWriter.particle) &&
+                            (typeCandidate = Handle$1.effectiveType(effectiveType, [otherWriter])) !== null) {
+                            compatibleConnections.push(otherWriter);
+                            involvedParticles.add(otherWriter.particle);
+                            effectiveType = typeCandidate;
+                        }
+                    }
+                    if (!maximalGroup || compatibleConnections.length > maximalGroup.length) {
+                        maximalGroup = compatibleConnections;
+                    }
+                }
+                if (maximalGroup) {
+                    return recipe => {
+                        const newHandle = recipe.newHandle();
+                        newHandle.fate = 'create';
+                        for (const conn of maximalGroup) {
+                            const cloneConn = recipe.updateToClone({ conn }).conn;
+                            cloneConn.connectToHandle(newHandle);
+                        }
+                    };
+                }
+                return undefined;
+            }
+        }(StrategizerWalker.Independent), this);
+    }
+}
+
+// Copyright (c) 2018 Google Inc. All rights reserved.
+class FindHostedParticle extends Strategy {
+    async generate(inputParams) {
+        const arc = this.arc;
+        return StrategizerWalker.over(this.getResults(inputParams), new class extends StrategizerWalker {
+            onHandleConnection(recipe, connection) {
+                if (connection.direction !== 'host' || connection.handle)
+                    return undefined;
+                assert$1(connection.type instanceof InterfaceType);
+                const iface = connection.type;
+                const results = [];
+                for (const particle of arc.context.allParticles) {
+                    // This is what interfaceInfo.particleMatches() does, but we also do
+                    // canEnsureResolved at the end:
+                    const ifaceClone = iface.interfaceInfo.cloneWithResolutions(new Map());
+                    // If particle doesn't match the requested interface.
+                    if (ifaceClone.restrictType(particle) === false)
+                        continue;
+                    // If we still have unresolvable interface after matching a particle.
+                    // This can happen if both interface and particle have type variables.
+                    // TODO: What to do here? We need concrete type for the particle spec
+                    //       handle, but we don't have one.
+                    if (!ifaceClone.canEnsureResolved())
+                        continue;
+                    results.push((recipe, hc) => {
+                        const handle = RecipeUtil.constructImmediateValueHandle(hc, particle, arc.generateID());
+                        assert$1(handle); // Type matching should have been ensure by the checks above;
+                        hc.connectToHandle(handle);
+                    });
+                }
+                return results;
+            }
+        }(StrategizerWalker.Permuted), this);
+    }
+}
+
+// Copyright (c) 2017 Google Inc. All rights reserved.
+class GroupHandleConnections extends Strategy {
+    constructor(arc, args) {
+        super(arc, args);
+        this._walker = new class extends StrategizerWalker {
+            onRecipe(recipe, result) {
+                // Only apply this strategy if ALL handle connections are named and have types.
+                if (recipe.getUnnamedUntypedConnections()) {
+                    return undefined;
+                }
+                // Find all unique types used in the recipe that have unbound handle connections.
+                const types = new Set();
+                recipe.getFreeConnections().forEach(hc => {
+                    if (!Array.from(types).find(t => t.equals(hc.type))) {
+                        types.add(hc.type);
+                    }
+                });
+                const groupsByType = new Map();
+                types.forEach(type => {
+                    // Find the particle with the largest number of unbound connections of the same type.
+                    const countConnectionsByType = (connections) => Object.values(connections).filter(conn => {
+                        return !conn.isOptional && !conn.handle && type.equals(conn.type);
+                    }).length;
+                    const sortedParticles = [...recipe.particles].sort((p1, p2) => {
+                        return countConnectionsByType(p2.connections) - countConnectionsByType(p1.connections);
+                    }).filter(p => countConnectionsByType(p.connections) > 0);
+                    assert$1(sortedParticles.length > 0);
+                    // Handle connections of the same particle cannot be bound to the same handle. Iterate on handle connections of the particle
+                    // with the most connections of the given type, and group each of them with same typed handle connections of other particles.
+                    const particleWithMostConnectionsOfType = sortedParticles[0];
+                    const groups = new Map();
+                    let allTypeHandleConnections = recipe.getTypeHandleConnections(type, particleWithMostConnectionsOfType);
+                    let iteration = 0;
+                    while (allTypeHandleConnections.length > 0) {
+                        Object.values(particleWithMostConnectionsOfType.connections).forEach(handleConnection => {
+                            if (!type.equals(handleConnection.type)) {
+                                return;
+                            }
+                            if (!groups.has(handleConnection)) {
+                                groups.set(handleConnection, []);
+                            }
+                            const group = groups.get(handleConnection);
+                            // filter all connections where this particle is already in a group.
+                            const possibleConnections = allTypeHandleConnections.filter(c => !group.find(gc => gc.particle === c.particle));
+                            let selectedConn = possibleConnections.find(c => handleConnection.isInput !== c.isInput || handleConnection.isOutput !== c.isOutput);
+                            // TODO: consider tags.
+                            // TODO: Slots handle restrictions should also be accounted for when grouping.
+                            if (!selectedConn) {
+                                if (possibleConnections.length === 0 || iteration === 0) {
+                                    // During first iteration only bind opposite direction connections ("in" with "out" and vice versa)
+                                    // to ensure each group has both direction connections as much as possible.
+                                    return;
+                                }
+                                selectedConn = possibleConnections[0];
+                            }
+                            group.push(selectedConn);
+                            allTypeHandleConnections = allTypeHandleConnections.filter(c => c !== selectedConn);
+                        });
+                        iteration++;
+                    }
+                    // Remove groups where no connections were bound together.
+                    groups.forEach((otherConns, conn) => {
+                        if (otherConns.length === 0) {
+                            groups.delete(conn);
+                        }
+                        else {
+                            otherConns.push(conn);
+                        }
+                    });
+                    if (groups.size !== 0) {
+                        groupsByType.set(type, groups);
+                    }
+                });
+                if (groupsByType.size > 0) {
+                    return recipe => {
+                        groupsByType.forEach((groups, type) => {
+                            groups.forEach(group => {
+                                const recipeHandle = recipe.newHandle();
+                                group.forEach(conn => {
+                                    const cloneConn = recipe.updateToClone({ conn }).conn;
+                                    cloneConn.connectToHandle(recipeHandle);
+                                });
+                            });
+                        });
+                        // TODO: score!
+                    };
+                }
+                return undefined;
+            }
+        }(StrategizerWalker.Permuted);
+    }
+    get walker() {
+        return this._walker;
+    }
+    async generate(inputParams) {
+        return StrategizerWalker.over(this.getResults(inputParams), this.walker, this);
     }
 }
 
@@ -24482,6 +25535,30 @@ class InitPopulation extends Strategy {
             recipe,
             score: 1 - recipe.getParticlesByImplFile(this._loadedParticles).length
         }));
+    }
+}
+
+// Copyright (c) 2017 Google Inc. All rights reserved.
+class InitSearch extends Strategy {
+    constructor(arc, { search }) {
+        super(arc, { search });
+        this._search = search;
+    }
+    async generate({ generation }) {
+        if (this._search == null || generation !== 0) {
+            return [];
+        }
+        const recipe = new Recipe();
+        recipe.setSearchPhrase(this._search);
+        assert$1(recipe.normalize());
+        assert$1(!recipe.isResolved());
+        return [{
+                result: recipe,
+                score: 0,
+                derivation: [{ strategy: this, parent: undefined }],
+                hash: recipe.digest(),
+                valid: true
+            }];
     }
 }
 
@@ -24534,6 +25611,31 @@ class MapSlots extends Strategy {
                     SlotUtils.connectSlotConnection(slotConnection, slot);
                     return 1;
                 }));
+            }
+        }(StrategizerWalker.Permuted), this);
+    }
+}
+
+// Copyright (c) 2017 Google Inc. All rights reserved.
+/*
+ * Match free handles (i.e. handles that aren't connected to any connections)
+ * to connections.
+ */
+class MatchFreeHandlesToConnections extends Strategy {
+    async generate(inputParams) {
+        return StrategizerWalker.over(this.getResults(inputParams), new class extends StrategizerWalker {
+            onHandle(recipe, handle) {
+                if (handle.connections.length > 0) {
+                    return;
+                }
+                const matchingConnections = recipe.getDisconnectedConnections();
+                return matchingConnections.map(connection => {
+                    return (recipe, handle) => {
+                        const newConnection = recipe.updateToClone({ connection }).connection;
+                        newConnection.connectToHandle(handle);
+                        return 1;
+                    };
+                });
             }
         }(StrategizerWalker.Permuted), this);
     }
@@ -24785,82 +25887,34 @@ class MatchRecipeByVerb extends Strategy {
 }
 
 // Copyright (c) 2017 Google Inc. All rights reserved.
-class AddMissingHandles extends Strategy {
-    // TODO: move generation to use an async generator.
-    async generate(inputParams) {
-        return StrategizerWalker.over(this.getResults(inputParams), new class extends StrategizerWalker {
-            onRecipe(recipe) {
-                // Don't add use handles while there are outstanding constraints
-                if (recipe.connectionConstraints.length > 0) {
-                    return undefined;
-                }
-                // Don't add use handles to a recipe with free handles
-                if (recipe.getFreeHandles().length > 0) {
-                    return undefined;
-                }
-                // TODO: "description" handles are always created, and in the future they need to be "optional" (blocked by optional handles
-                // not being properly supported in arc instantiation). For now just hardcode skiping them.
-                const disconnectedConnections = recipe.getDisconnectedConnections();
-                if (disconnectedConnections.length === 0) {
-                    return undefined;
-                }
-                return recipe => {
-                    disconnectedConnections.forEach(hc => {
-                        const clonedHC = recipe.updateToClone({ hc }).hc;
-                        const handle = recipe.newHandle();
-                        handle.fate = '?';
-                        clonedHC.connectToHandle(handle);
-                    });
-                    return 0;
-                };
-            }
-        }(StrategizerWalker.Permuted), this);
-    }
-}
-
-// Copyright (c) 2017 Google Inc. All rights reserved.
-class CreateDescriptionHandle extends Strategy {
+class NameUnnamedConnections extends Strategy {
     async generate(inputParams) {
         return StrategizerWalker.over(this.getResults(inputParams), new class extends StrategizerWalker {
             onHandleConnection(recipe, handleConnection) {
-                if (handleConnection.handle) {
-                    return undefined;
+                if (handleConnection.name) {
+                    // it is already named.
+                    return;
                 }
-                if (handleConnection.name !== 'descriptions') {
-                    return undefined;
+                if (!handleConnection.particle.spec) {
+                    // the particle doesn't have spec yet.
+                    return;
                 }
-                return (recipe, handleConnection) => {
-                    const handle = recipe.newHandle();
-                    handle.fate = 'create';
-                    handleConnection.connectToHandle(handle);
-                    return 1;
-                };
+                const possibleSpecConns = handleConnection.findSpecsForUnnamedHandles();
+                return possibleSpecConns.map(specConn => {
+                    return (recipe, handleConnection) => {
+                        handleConnection.particle.nameConnection(handleConnection, specConn.name);
+                        return 1;
+                    };
+                });
             }
         }(StrategizerWalker.Permuted), this);
     }
 }
 
-// Copyright (c) 2017 Google Inc. All rights reserved.
-class InitSearch extends Strategy {
-    constructor(arc, { search }) {
-        super(arc, { search });
-        this._search = search;
-    }
-    async generate({ generation }) {
-        if (this._search == null || generation !== 0) {
-            return [];
-        }
-        const recipe = new Recipe();
-        recipe.setSearchPhrase(this._search);
-        assert$1(recipe.normalize());
-        assert$1(!recipe.isResolved());
-        return [{
-                result: recipe,
-                score: 0,
-                derivation: [{ strategy: this, parent: undefined }],
-                hash: recipe.digest(),
-                valid: true
-            }];
+// Copyright (c) 2018 Google Inc. All rights reserved.
+class ResolveRecipe extends Strategy {
+    async generate(inputParams) {
+        return StrategizerWalker.over(this.getResults(inputParams), new ResolveWalker(ResolveWalker.Permuted, this.arc), this);
     }
 }
 
@@ -24974,137 +26028,6 @@ class SearchTokensToParticles extends Strategy {
     }
 }
 
-// Copyright (c) 2017 Google Inc. All rights reserved.
-class GroupHandleConnections extends Strategy {
-    constructor(arc, args) {
-        super(arc, args);
-        this._walker = new class extends StrategizerWalker {
-            onRecipe(recipe, result) {
-                // Only apply this strategy if ALL handle connections are named and have types.
-                if (recipe.getUnnamedUntypedConnections()) {
-                    return undefined;
-                }
-                // Find all unique types used in the recipe that have unbound handle connections.
-                const types = new Set();
-                recipe.getFreeConnections().forEach(hc => {
-                    if (!Array.from(types).find(t => t.equals(hc.type))) {
-                        types.add(hc.type);
-                    }
-                });
-                const groupsByType = new Map();
-                types.forEach(type => {
-                    // Find the particle with the largest number of unbound connections of the same type.
-                    const countConnectionsByType = (connections) => Object.values(connections).filter(conn => {
-                        return !conn.isOptional && !conn.handle && type.equals(conn.type);
-                    }).length;
-                    const sortedParticles = [...recipe.particles].sort((p1, p2) => {
-                        return countConnectionsByType(p2.connections) - countConnectionsByType(p1.connections);
-                    }).filter(p => countConnectionsByType(p.connections) > 0);
-                    assert$1(sortedParticles.length > 0);
-                    // Handle connections of the same particle cannot be bound to the same handle. Iterate on handle connections of the particle
-                    // with the most connections of the given type, and group each of them with same typed handle connections of other particles.
-                    const particleWithMostConnectionsOfType = sortedParticles[0];
-                    const groups = new Map();
-                    let allTypeHandleConnections = recipe.getTypeHandleConnections(type, particleWithMostConnectionsOfType);
-                    let iteration = 0;
-                    while (allTypeHandleConnections.length > 0) {
-                        Object.values(particleWithMostConnectionsOfType.connections).forEach(handleConnection => {
-                            if (!type.equals(handleConnection.type)) {
-                                return;
-                            }
-                            if (!groups.has(handleConnection)) {
-                                groups.set(handleConnection, []);
-                            }
-                            const group = groups.get(handleConnection);
-                            // filter all connections where this particle is already in a group.
-                            const possibleConnections = allTypeHandleConnections.filter(c => !group.find(gc => gc.particle === c.particle));
-                            let selectedConn = possibleConnections.find(c => handleConnection.isInput !== c.isInput || handleConnection.isOutput !== c.isOutput);
-                            // TODO: consider tags.
-                            // TODO: Slots handle restrictions should also be accounted for when grouping.
-                            if (!selectedConn) {
-                                if (possibleConnections.length === 0 || iteration === 0) {
-                                    // During first iteration only bind opposite direction connections ("in" with "out" and vice versa)
-                                    // to ensure each group has both direction connections as much as possible.
-                                    return;
-                                }
-                                selectedConn = possibleConnections[0];
-                            }
-                            group.push(selectedConn);
-                            allTypeHandleConnections = allTypeHandleConnections.filter(c => c !== selectedConn);
-                        });
-                        iteration++;
-                    }
-                    // Remove groups where no connections were bound together.
-                    groups.forEach((otherConns, conn) => {
-                        if (otherConns.length === 0) {
-                            groups.delete(conn);
-                        }
-                        else {
-                            otherConns.push(conn);
-                        }
-                    });
-                    if (groups.size !== 0) {
-                        groupsByType.set(type, groups);
-                    }
-                });
-                if (groupsByType.size > 0) {
-                    return recipe => {
-                        groupsByType.forEach((groups, type) => {
-                            groups.forEach(group => {
-                                const recipeHandle = recipe.newHandle();
-                                group.forEach(conn => {
-                                    const cloneConn = recipe.updateToClone({ conn }).conn;
-                                    cloneConn.connectToHandle(recipeHandle);
-                                });
-                            });
-                        });
-                        // TODO: score!
-                    };
-                }
-                return undefined;
-            }
-        }(StrategizerWalker.Permuted);
-    }
-    get walker() {
-        return this._walker;
-    }
-    async generate(inputParams) {
-        return StrategizerWalker.over(this.getResults(inputParams), this.walker, this);
-    }
-}
-
-// Copyright (c) 2017 Google Inc. All rights reserved.
-/*
- * Match free handles (i.e. handles that aren't connected to any connections)
- * to connections.
- */
-class MatchFreeHandlesToConnections extends Strategy {
-    async generate(inputParams) {
-        return StrategizerWalker.over(this.getResults(inputParams), new class extends StrategizerWalker {
-            onHandle(recipe, handle) {
-                if (handle.connections.length > 0) {
-                    return;
-                }
-                const matchingConnections = recipe.getDisconnectedConnections();
-                return matchingConnections.map(connection => {
-                    return (recipe, handle) => {
-                        const newConnection = recipe.updateToClone({ connection }).connection;
-                        newConnection.connectToHandle(handle);
-                        return 1;
-                    };
-                });
-            }
-        }(StrategizerWalker.Permuted), this);
-    }
-}
-
-// Copyright (c) 2018 Google Inc. All rights reserved.
-class ResolveRecipe extends Strategy {
-    async generate(inputParams) {
-        return StrategizerWalker.over(this.getResults(inputParams), new ResolveWalker(ResolveWalker.Permuted, this.arc), this);
-    }
-}
-
 // Copyright (c) 2018 Google Inc. All rights reserved.
 // tslint:disable-next-line: variable-name
 const Empty = new Ruleset.Builder().build();
@@ -25122,46 +26045,6 @@ const ExperimentalPhased = new Ruleset.Builder().order([
 ], MapSlots, CreateDescriptionHandle, ResolveRecipe).build();
 // tslint:disable-next-line: variable-name
 const ExperimentalLinear = new Ruleset.Builder().order(InitPopulation, InitSearch, SearchTokensToParticles, MatchRecipeByVerb, MatchParticleByVerb, ConvertConstraintsToConnections, GroupHandleConnections, MatchFreeHandlesToConnections, AddMissingHandles, AssignHandles, MapSlots, CreateDescriptionHandle, ResolveRecipe).build();
-
-// Copyright (c) 2018 Google Inc. All rights reserved.
-
-// Provides access to device hardware resource metrics for a node process.
-class DeviceInfo {
-  // Returns the number of logical cores.
-  static hardwareConcurrency() {
-    return os.cpus().length;
-  }
-  // Returns the device memory in gigabytes.
-  static deviceMemory() {
-    // Convert bytes to gigabytes.
-    return os.totalmem() / Math.pow(1024, 3);
-  }
-}
-
-// Copyright (c) 2017 Google Inc. All rights reserved.
-class NameUnnamedConnections extends Strategy {
-    async generate(inputParams) {
-        return StrategizerWalker.over(this.getResults(inputParams), new class extends StrategizerWalker {
-            onHandleConnection(recipe, handleConnection) {
-                if (handleConnection.name) {
-                    // it is already named.
-                    return;
-                }
-                if (!handleConnection.particle.spec) {
-                    // the particle doesn't have spec yet.
-                    return;
-                }
-                const possibleSpecConns = handleConnection.findSpecsForUnnamedHandles();
-                return possibleSpecConns.map(specConn => {
-                    return (recipe, handleConnection) => {
-                        handleConnection.particle.nameConnection(handleConnection, specConn.name);
-                        return 1;
-                    };
-                });
-            }
-        }(StrategizerWalker.Permuted), this);
-    }
-}
 
 // Copyright (c) 2017 Google Inc. All rights reserved.
 class SearchTokensToHandles extends Strategy {
@@ -25204,889 +26087,6 @@ class SearchTokensToHandles extends Strategy {
                 });
             }
         }(StrategizerWalker.Permuted), this);
-    }
-}
-
-// Copyright (c) 2017 Google Inc. All rights reserved.
-class CreateHandleGroup extends Strategy {
-    async generate(inputParams) {
-        return StrategizerWalker.over(this.getResults(inputParams), new class extends StrategizerWalker {
-            onRecipe(recipe, result) {
-                // Resolve constraints before assuming connections are free.
-                if (recipe.connectionConstraints.length > 0)
-                    return undefined;
-                const freeConnections = recipe.getFreeConnections();
-                let maximalGroup = null;
-                for (const writer of freeConnections.filter(hc => hc.isOutput)) {
-                    const compatibleConnections = [writer];
-                    let effectiveType = Handle$1.effectiveType(null, compatibleConnections);
-                    let typeCandidate = null;
-                    const involvedParticles = new Set([writer.particle]);
-                    let foundSomeReader = false;
-                    for (const reader of freeConnections.filter(hc => hc.isInput)) {
-                        if (!involvedParticles.has(reader.particle) &&
-                            (typeCandidate = Handle$1.effectiveType(effectiveType, [reader])) !== null) {
-                            compatibleConnections.push(reader);
-                            involvedParticles.add(reader.particle);
-                            effectiveType = typeCandidate;
-                            foundSomeReader = true;
-                        }
-                    }
-                    // Only make a 'create' group for a writer->reader case.
-                    if (!foundSomeReader)
-                        continue;
-                    for (const otherWriter of freeConnections.filter(hc => hc.isOutput)) {
-                        if (!involvedParticles.has(otherWriter.particle) &&
-                            (typeCandidate = Handle$1.effectiveType(effectiveType, [otherWriter])) !== null) {
-                            compatibleConnections.push(otherWriter);
-                            involvedParticles.add(otherWriter.particle);
-                            effectiveType = typeCandidate;
-                        }
-                    }
-                    if (!maximalGroup || compatibleConnections.length > maximalGroup.length) {
-                        maximalGroup = compatibleConnections;
-                    }
-                }
-                if (maximalGroup) {
-                    return recipe => {
-                        const newHandle = recipe.newHandle();
-                        newHandle.fate = 'create';
-                        for (const conn of maximalGroup) {
-                            const cloneConn = recipe.updateToClone({ conn }).conn;
-                            cloneConn.connectToHandle(newHandle);
-                        }
-                    };
-                }
-                return undefined;
-            }
-        }(StrategizerWalker.Independent), this);
-    }
-}
-
-// Copyright (c) 2018 Google Inc. All rights reserved.
-class FindHostedParticle extends Strategy {
-    async generate(inputParams) {
-        const arc = this.arc;
-        return StrategizerWalker.over(this.getResults(inputParams), new class extends StrategizerWalker {
-            onHandleConnection(recipe, connection) {
-                if (connection.direction !== 'host' || connection.handle)
-                    return undefined;
-                assert$1(connection.type instanceof InterfaceType);
-                const iface = connection.type;
-                const results = [];
-                for (const particle of arc.context.allParticles) {
-                    // This is what interfaceInfo.particleMatches() does, but we also do
-                    // canEnsureResolved at the end:
-                    const ifaceClone = iface.interfaceInfo.cloneWithResolutions(new Map());
-                    // If particle doesn't match the requested interface.
-                    if (ifaceClone.restrictType(particle) === false)
-                        continue;
-                    // If we still have unresolvable interface after matching a particle.
-                    // This can happen if both interface and particle have type variables.
-                    // TODO: What to do here? We need concrete type for the particle spec
-                    //       handle, but we don't have one.
-                    if (!ifaceClone.canEnsureResolved())
-                        continue;
-                    results.push((recipe, hc) => {
-                        const handle = RecipeUtil.constructImmediateValueHandle(hc, particle, arc.generateID());
-                        assert$1(handle); // Type matching should have been ensure by the checks above;
-                        hc.connectToHandle(handle);
-                    });
-                }
-                return results;
-            }
-        }(StrategizerWalker.Permuted), this);
-    }
-}
-
-// Copyright (c) 2018 Google Inc. All rights reserved.
-// This strategy coalesces unresolved terminal recipes (i.e. those that cannot
-// be modified by any strategy apart from this one) by finding unresolved
-// use/? handle and finding a matching create/? handle in another recipe and
-// merging those.
-class CoalesceRecipes extends Strategy {
-    constructor(arc, { recipeIndex }) {
-        super(arc);
-        this.recipeIndex = recipeIndex;
-    }
-    getResults(inputParams) {
-        // Coalescing for terminal recipes that are either unresolved recipes or have no UI.
-        return inputParams.terminal.filter(result => !result.result.isResolved() || result.result.slots.length === 0);
-    }
-    async generate(inputParams) {
-        const arc = this.arc;
-        const index = this.recipeIndex;
-        await index.ready;
-        return StrategizerWalker.over(this.getResults(inputParams), new class extends StrategizerWalker {
-            onPotentialSlotConnection(recipe, particle, slotSpec) {
-                const results = [];
-                // TODO: It is possible that provided-slot wasn't matched due to different handles, but actually
-                // these handles are coalescable? Add support for this.
-                for (const providedSlot of index.findProvidedSlot(particle, slotSpec)) {
-                    // Don't grow recipes above 10 particles, otherwise we might never stop.
-                    if (recipe.particles.length + providedSlot.recipe.particles.length > 10)
-                        continue;
-                    if (RecipeUtil.matchesRecipe(arc.activeRecipe, providedSlot.recipe)) {
-                        // skip candidate recipe, if matches the shape of the arc's active recipe
-                        continue;
-                    }
-                    results.push((recipe, particle, slotSpec) => {
-                        const otherToHandle = index.findCoalescableHandles(recipe, providedSlot.recipe);
-                        const { cloneMap } = providedSlot.recipe.mergeInto(recipe);
-                        const mergedSlot = cloneMap.get(providedSlot);
-                        const newSlotConnection = particle.addSlotConnection(slotSpec.name);
-                        newSlotConnection.connectToSlot(mergedSlot);
-                        this._connectOtherHandles(otherToHandle, cloneMap, false);
-                        // Clear verbs and recipe name after coalescing two recipes.
-                        recipe.verbs.splice(0);
-                        recipe.name = null;
-                        return 1;
-                    });
-                }
-                if (results.length > 0) {
-                    return results;
-                }
-                return undefined;
-            }
-            // Find a provided slot for unfulfilled consume connection.
-            onSlotConnection(recipe, slotConnection) {
-                if (slotConnection.isResolved()) {
-                    return undefined;
-                }
-                if (!slotConnection.name || !slotConnection.particle) {
-                    return undefined;
-                }
-                if (slotConnection.targetSlot) {
-                    return undefined;
-                }
-                // TODO: also support a consume slot connection that is NOT required,
-                // but no other connections are resolved.
-                const results = [];
-                // TODO: It is possible that provided-slot wasn't matched due to different handles, but actually
-                // these handles are coalescable? Add support for this.
-                for (const providedSlot of index.findProvidedSlot(slotConnection.particle, slotConnection.spec)) {
-                    // Don't grow recipes above 10 particles, otherwise we might never stop.
-                    if (recipe.particles.length + providedSlot.recipe.particles.length > 10)
-                        continue;
-                    if (RecipeUtil.matchesRecipe(arc.activeRecipe, providedSlot.recipe)) {
-                        // skip candidate recipe, if matches the shape of the arc's active recipe
-                        continue;
-                    }
-                    if (RecipeUtil.matchesRecipe(recipe, providedSlot.recipe)) {
-                        // skip candidate recipe, if matches the shape of the currently explored recipe
-                        continue;
-                    }
-                    results.push((recipe, slotConnection) => {
-                        const otherToHandle = index.findCoalescableHandles(recipe, providedSlot.recipe);
-                        const { cloneMap } = providedSlot.recipe.mergeInto(slotConnection.recipe);
-                        const mergedSlot = cloneMap.get(providedSlot);
-                        slotConnection.connectToSlot(mergedSlot);
-                        this._connectOtherHandles(otherToHandle, cloneMap, false);
-                        // Clear verbs and recipe name after coalescing two recipes.
-                        recipe.verbs.splice(0);
-                        recipe.name = null;
-                        return 1;
-                    });
-                }
-                if (results.length > 0) {
-                    return results;
-                }
-                return undefined;
-            }
-            onSlot(recipe, slot) {
-                // Find slots that according to their provided-spec must be consumed, but have no consume connection.
-                if (slot.consumeConnections.length > 0) {
-                    return undefined; // slot has consume connections.
-                }
-                if (!slot.sourceConnection || !slot.spec.isRequired) {
-                    return undefined; // either a remote slot (no source connection), or a not required one.
-                }
-                const results = [];
-                for (const { recipeParticle, slotSpec, matchingHandles } of index.findConsumeSlotConnectionMatch(slot.sourceConnection.particle, slot.spec)) {
-                    // Don't grow recipes above 10 particles, otherwise we might never stop.
-                    if (recipe.particles.length + recipeParticle.recipe.particles.length > 10)
-                        continue;
-                    if (RecipeUtil.matchesRecipe(arc.activeRecipe, recipeParticle.recipe)) {
-                        // skip candidate recipe, if matches the shape of the arc's active recipe
-                        continue;
-                    }
-                    if (RecipeUtil.matchesRecipe(recipe, recipeParticle.recipe)) {
-                        // skip candidate recipe, if matches the shape of the currently explored recipe
-                        continue;
-                    }
-                    results.push((recipe, slot) => {
-                        // Find other handles that may be merged, as recipes are being coalesced.
-                        const otherToHandle = index.findCoalescableHandles(recipe, recipeParticle.recipe, new Set(slot.handleConnections.map(hc => hc.handle).concat(matchingHandles.map(({ handle, matchingConn }) => matchingConn.handle))));
-                        const { cloneMap } = recipeParticle.recipe.mergeInto(slot.recipe);
-                        const slotConn = recipeParticle.getSlotConnectionByName(slot.name);
-                        let mergedSlotConn = cloneMap.get(slotConn);
-                        if (!mergedSlotConn) {
-                            const clonedParticle = cloneMap.get(recipeParticle);
-                            mergedSlotConn = clonedParticle.addSlotConnection(slotSpec.name);
-                        }
-                        mergedSlotConn.connectToSlot(slot);
-                        for (const { handle, matchingConn } of matchingHandles) {
-                            // matchingConn in the mergedSlotConnection's recipe should be connected to `handle` in the slot's recipe.
-                            const mergedMatchingConn = cloneMap.get(matchingConn);
-                            const disconnectedHandle = mergedMatchingConn.handle;
-                            const clonedHandle = slot.findHandleByID(handle.id);
-                            if (disconnectedHandle === clonedHandle) {
-                                continue; // this handle was already reconnected
-                            }
-                            while (disconnectedHandle.connections.length > 0) {
-                                const conn = disconnectedHandle.connections[0];
-                                conn.disconnectHandle();
-                                conn.connectToHandle(clonedHandle);
-                            }
-                            recipe.removeHandle(disconnectedHandle);
-                        }
-                        this._connectOtherHandles(otherToHandle, cloneMap, false);
-                        // Clear verbs and recipe name after coalescing two recipes.
-                        recipe.verbs.splice(0);
-                        recipe.name = null;
-                        // TODO: Merge description/patterns of both recipes.
-                        // TODO: Unify common code in slot and handle recipe coalescing.
-                        return 1;
-                    });
-                }
-                if (results.length > 0) {
-                    return results;
-                }
-                return undefined;
-            }
-            onHandle(recipe, handle) {
-                if (!index.coalescableFates.includes(handle.fate)
-                    || handle.id
-                    || handle.connections.length === 0
-                    || handle.name === 'descriptions')
-                    return undefined;
-                const results = [];
-                for (const otherHandle of index.findHandleMatch(handle, index.coalescableFates)) {
-                    // Don't grow recipes above 10 particles, otherwise we might never stop.
-                    if (recipe.particles.length + otherHandle.recipe.particles.length > 10)
-                        continue;
-                    // This is a poor man's proxy for the other handle being an output of a recipe.
-                    if (otherHandle.findConnectionByDirection('in'))
-                        continue;
-                    // We ignore type variables not constrained for reading, otherwise
-                    // generic recipes would apply - which we currently don't want here.
-                    if (otherHandle.type.hasVariable) {
-                        let resolved = otherHandle.type.resolvedType();
-                        // TODO: getContainedType returns non-null for references ... is that correct here?
-                        resolved = resolved.getContainedType() || resolved;
-                        if (resolved instanceof TypeVariable && !resolved.canReadSubset)
-                            continue;
-                    }
-                    if (RecipeUtil.matchesRecipe(arc.activeRecipe, otherHandle.recipe)) {
-                        // skip candidate recipe, if matches the shape of the arc's active recipe
-                        continue;
-                    }
-                    if (RecipeUtil.matchesRecipe(recipe, otherHandle.recipe)) {
-                        // skip candidate recipe, if matches the shape of the currently explored recipe
-                        continue;
-                    }
-                    results.push((recipe, handle) => {
-                        // Find other handles in the original recipe that could be coalesced with handles in otherHandle's recipe.
-                        const otherToHandle = index.findCoalescableHandles(recipe, otherHandle.recipe, new Set([handle, otherHandle]));
-                        const { cloneMap } = otherHandle.recipe.mergeInto(handle.recipe);
-                        // Connect the handle that the recipes are being coalesced on.
-                        cloneMap.get(otherHandle).mergeInto(handle);
-                        // Connect all other connectable handles.
-                        this._connectOtherHandles(otherToHandle, cloneMap, true);
-                        // Clear verbs and recipe name after coalescing two recipes.
-                        recipe.verbs.splice(0);
-                        recipe.name = null;
-                        // TODO: Merge description/patterns of both recipes.
-                        return 1;
-                    });
-                }
-                return results;
-            }
-            _connectOtherHandles(otherToHandle, cloneMap, verifyTypes) {
-                otherToHandle.forEach((otherHandle, handle) => {
-                    const otherHandleClone = cloneMap.get(otherHandle);
-                    // For coalescing that was triggered by handle coalescing (vs slot or slot connection)
-                    // once the main handle (one that triggered coalescing) was coalesced, types may have changed.
-                    // Need to verify all the type information for the "other" coalescable handles is still valid.
-                    // TODO(mmandlis): This is relying on only ever considering a single "other" handles to coalesce,
-                    // so the handle either is still a valid match or not.
-                    // In order to do it right for multiple handles, we need to try ALL handles,
-                    // then fallback to all valid N-1 combinations, then N-2 etc.
-                    if (verifyTypes) {
-                        if (!this._reverifyHandleTypes(handle, otherHandleClone)) {
-                            return;
-                        }
-                    }
-                    otherHandleClone.mergeInto(handle);
-                });
-            }
-            // Returns true, if both handles have types that can be coalesced.
-            _reverifyHandleTypes(handle, otherHandle) {
-                assert$1(handle.recipe === otherHandle.recipe);
-                const cloneMap = new Map();
-                const recipeClone = handle.recipe.clone(cloneMap);
-                recipeClone.normalize();
-                return Handle$1.effectiveType(cloneMap.get(handle).type, [...cloneMap.get(handle).connections, ...cloneMap.get(otherHandle).connections]);
-            }
-        }(StrategizerWalker.Independent), this);
-    }
-}
-
-class Relevance {
-    constructor() {
-        // stores a copy of arc.getVersionByStore
-        this.versionByStore = {};
-        // public for testing
-        this.relevanceMap = new Map();
-    }
-    static create(arc, recipe) {
-        const relevance = new Relevance();
-        const versionByStore = arc.getVersionByStore({ includeArc: true, includeContext: true });
-        recipe.handles.forEach(handle => {
-            if (handle.id && versionByStore[handle.id] !== undefined) {
-                relevance.versionByStore[handle.id] = versionByStore[handle.id];
-            }
-        });
-        return relevance;
-    }
-    apply(relevance) {
-        for (const key of relevance.keys()) {
-            if (this.relevanceMap.has(key)) {
-                this.relevanceMap.set(key, this.relevanceMap.get(key).concat(relevance.get(key)));
-            }
-            else {
-                this.relevanceMap.set(key, relevance.get(key));
-            }
-        }
-    }
-    calcRelevanceScore() {
-        let relevance = 1;
-        let hasNegative = false;
-        for (const rList of this.relevanceMap.values()) {
-            const particleRelevance = Relevance.particleRelevance(rList);
-            if (particleRelevance < 0) {
-                hasNegative = true;
-            }
-            relevance *= Math.abs(particleRelevance);
-        }
-        return relevance * (hasNegative ? -1 : 1);
-    }
-    // Returns false, if at least one of the particles relevance lists ends with a negative score.
-    isRelevant(plan) {
-        const hasUi = plan.particles.some(p => Object.keys(p.consumedSlotConnections).length > 0);
-        let rendersUi = false;
-        for (const [particle, rList] of this.relevanceMap) {
-            if (rList[rList.length - 1] < 0) {
-                continue;
-            }
-            else if (Object.keys(particle.consumedSlotConnections).length) {
-                rendersUi = true;
-                break;
-            }
-        }
-        // If the recipe has UI rendering particles, at least one of the particles must render UI.
-        return hasUi === rendersUi;
-    }
-    static scaleRelevance(relevance) {
-        if (relevance == undefined) {
-            relevance = 5;
-        }
-        relevance = Math.max(-1, Math.min(relevance, 10));
-        // TODO: might want to make this geometric or something instead;
-        return relevance / 5;
-    }
-    static particleRelevance(relevanceList) {
-        let relevance = 1;
-        let hasNegative = false;
-        relevanceList.forEach(r => {
-            const scaledRelevance = Relevance.scaleRelevance(r);
-            if (scaledRelevance < 0) {
-                hasNegative = true;
-            }
-            relevance *= Math.abs(scaledRelevance);
-        });
-        return relevance * (hasNegative ? -1 : 1);
-    }
-    calcParticleRelevance(particle) {
-        if (this.relevanceMap.has(particle)) {
-            return Relevance.particleRelevance(this.relevanceMap.get(particle));
-        }
-        return -1;
-    }
-}
-
-/**
- * @license
- * Copyright (c) 2018 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-class Suggestion {
-    constructor(plan, hash, rank, versionByStore) {
-        // TODO: update Description class to be serializable.
-        this.descriptionByModality = {};
-        this.versionByStore = {};
-        // List of search resolved token groups, this suggestion corresponds to.
-        this.searchGroups = [];
-        assert$1(plan, `plan cannot be null`);
-        assert$1(hash, `hash cannot be null`);
-        this.plan = plan;
-        this.planString = this.plan.toString();
-        this.hash = hash;
-        this.rank = rank;
-        this.versionByStore = versionByStore;
-        // TODO(mmandlis): backward compatility for existing suggestions that include undefined
-        // versions. Code can be deleted, after we upgrade above 0_6 or wipe out the storage.
-        for (const store in this.versionByStore) {
-            if (this.versionByStore[store] === undefined) {
-                delete this.versionByStore[store];
-            }
-        }
-    }
-    static create(plan, hash, relevance) {
-        assert$1(plan, `plan cannot be null`);
-        assert$1(hash, `hash cannot be null`);
-        assert$1(relevance, `relevance cannot be null`);
-        const suggestion = new Suggestion(plan, hash, relevance.calcRelevanceScore(), relevance.versionByStore);
-        suggestion.setSearch(plan.search);
-        return suggestion;
-    }
-    get descriptionText() {
-        return this.getDescription('text');
-    }
-    getDescription(modality) {
-        assert$1(this.descriptionByModality[modality], `No description for modality '${modality}'`);
-        return this.descriptionByModality[modality];
-    }
-    setDescription(description, modality, descriptionFormatter = DescriptionFormatter) {
-        this.descriptionByModality['text'] = description.getRecipeSuggestion();
-        for (const planModality of this.plan.modality.names) {
-            if (modality.names.includes(planModality)) {
-                this.descriptionByModality[planModality] =
-                    description.getRecipeSuggestion(descriptionFormatter);
-            }
-        }
-    }
-    isEquivalent(other) {
-        return (this.hash === other.hash) && (this.descriptionText === other.descriptionText);
-    }
-    isEqual(other) {
-        return this.isEquivalent(other) &&
-            this.rank === other.rank &&
-            this._isSameSearch(other) &&
-            this._isSameDescription(other) &&
-            this._isSameVersions(other);
-    }
-    _isSameSearch(other) {
-        return this.searchGroups.length === other.searchGroups.length &&
-            this.searchGroups.every(search => other.hasSearchGroup(search));
-    }
-    _isSameDescription(other) {
-        return Object.keys(this.descriptionByModality).length === Object.keys(other.descriptionByModality).length &&
-            Object.keys(this.descriptionByModality).every(key => JSON.stringify(this.descriptionByModality[key]) === JSON.stringify(other.descriptionByModality[key]));
-    }
-    _isSameVersions(other) {
-        const storeIds = Object.keys(this.versionByStore);
-        return storeIds.length === Object.keys(other.versionByStore).length &&
-            storeIds.every(id => this.versionByStore[id] === other.versionByStore[id]);
-    }
-    static compare(s1, s2) {
-        return s2.rank - s1.rank;
-    }
-    hasSearch(search) {
-        return this.hasSearchGroup(search.split(' '));
-    }
-    hasSearchGroup(tokens) {
-        return this.searchGroups.some(group => tokens.every(token => group.includes(token)));
-    }
-    setSearch(search) {
-        this.searchGroups = [];
-        if (search) {
-            this._addSearch(search.resolvedTokens);
-        }
-    }
-    mergeSearch(suggestion) {
-        let updated = false;
-        if (suggestion.searchGroups.length === 0) {
-            this._addSearch(['']);
-        }
-        for (const other of suggestion.searchGroups) {
-            if (this._addSearch(other)) {
-                if (this.searchGroups.length === 1) {
-                    this.searchGroups.push(['']);
-                }
-                updated = true;
-            }
-        }
-        this.searchGroups.sort();
-        return updated;
-    }
-    _addSearch(searchGroup) {
-        const equivalentGroup = (group, otherGroup) => {
-            return group.length === otherGroup.length &&
-                group.every(token => otherGroup.includes(token));
-        };
-        if (!this.searchGroups.find(group => equivalentGroup(group, searchGroup))) {
-            this.searchGroups.push(searchGroup);
-            return true;
-        }
-        return false;
-    }
-    toLiteral() {
-        return {
-            plan: this.planString,
-            hash: this.hash,
-            rank: this.rank,
-            // Needs to JSON.strigify because store IDs may contain invalid FB key symbols.
-            versionByStore: JSON.stringify(this.versionByStore),
-            searchGroups: this.searchGroups,
-            descriptionByModality: this.descriptionByModality
-        };
-    }
-    static async fromLiteral({ plan, hash, rank, versionByStore, searchGroups, descriptionByModality }, { context, loader }) {
-        const manifest = await Manifest.parse(plan, { loader, context, fileName: '' });
-        assert$1(manifest.recipes.length === 1);
-        const recipe = manifest.recipes[0];
-        assert$1(recipe.normalize({}), `can't normalize deserialized suggestion: ${plan}`);
-        const suggestion = new Suggestion(recipe, hash, rank, JSON.parse(versionByStore || '{}'));
-        suggestion.searchGroups = searchGroups || [];
-        suggestion.descriptionByModality = descriptionByModality;
-        return suggestion;
-    }
-    async instantiate(arc) {
-        // For now shell is responsible for creating and setting the new arc.
-        assert$1(arc, `Cannot instantiate suggestion without and arc`);
-        const plan = await this.getResolvedPlan(arc);
-        assert$1(plan && plan.isResolved(), `can't resolve plan: ${this.plan.toString({ showUnresolved: true })}`);
-        return arc.instantiate(plan);
-    }
-    async getResolvedPlan(arc) {
-        if (this.plan.isResolved()) {
-            return this.plan;
-        }
-        // TODO(mmandlis): Is this still needed? Find out why and fix.
-        const recipeResolver = new RecipeResolver(arc);
-        return recipeResolver.resolve(this.plan);
-    }
-}
-
-/**
- * @license
- * Copyright (c) 2017 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-class Speculator {
-    constructor(planningResult) {
-        this.suggestionByHash = {};
-        this.speculativeArcs = [];
-        if (planningResult) {
-            for (const suggestion of planningResult.suggestions) {
-                this.suggestionByHash[suggestion.hash] = suggestion;
-            }
-        }
-    }
-    async speculate(arc, plan, hash) {
-        assert$1(plan.isResolved(), `Cannot speculate on an unresolved plan: ${plan.toString({ showUnresolved: true })}`);
-        let suggestion = this.suggestionByHash[hash];
-        if (suggestion) {
-            const arcVersionByStoreId = arc.getVersionByStore({ includeArc: true, includeContext: true });
-            if (plan.handles.every(handle => arcVersionByStoreId[handle.id] === suggestion.versionByStore[handle.id])) {
-                return suggestion;
-            }
-        }
-        const speculativeArc = await arc.cloneForSpeculativeExecution();
-        this.speculativeArcs.push(speculativeArc);
-        const relevance = Relevance.create(arc, plan);
-        await speculativeArc.instantiate(plan);
-        await this.awaitCompletion(relevance, speculativeArc);
-        if (!relevance.isRelevant(plan)) {
-            return null;
-        }
-        const description = await Description.create(speculativeArc, relevance);
-        suggestion = Suggestion.create(plan, hash, relevance);
-        suggestion.setDescription(description, arc.modality, arc.pec.slotComposer ? arc.pec.slotComposer.modalityHandler.descriptionFormatter : undefined);
-        this.suggestionByHash[hash] = suggestion;
-        // TODO: Find a better way to associate arcs with descriptions.
-        //       Ideally, a way that works also for non-speculative arcs.
-        if (DevtoolsConnection.isConnected) {
-            DevtoolsConnection.get().forArc(speculativeArc).send({
-                messageType: 'arc-description',
-                messageBody: suggestion.descriptionText
-            });
-        }
-        return suggestion;
-    }
-    async awaitCompletion(relevance, speculativeArc) {
-        const messageCount = speculativeArc.pec.messageCount;
-        relevance.apply(await speculativeArc.pec.idle);
-        // We expect two messages here, one requesting the idle status, and one answering it.
-        if (speculativeArc.pec.messageCount !== messageCount + 2) {
-            return this.awaitCompletion(relevance, speculativeArc);
-        }
-        else {
-            speculativeArc.dispose();
-            this.speculativeArcs.splice(this.speculativeArcs.indexOf(speculativeArc, 1));
-            return relevance;
-        }
-    }
-    dispose() {
-        for (const arc of this.speculativeArcs) {
-            arc.dispose();
-        }
-    }
-}
-
-/**
- * @license
- * Copyright (c) 2018 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-class StrategyExplorerAdapter {
-    static processGenerations(generations, devtoolsChannel, options = {}) {
-        if (devtoolsChannel) {
-            devtoolsChannel.send({
-                messageType: 'generations',
-                messageBody: { results: generations, options },
-            });
-        }
-    }
-}
-
-// Copyright (c) 2018 Google Inc. All rights reserved.
-// This code may only be used under the BSD style license found at
-// http://polymer.github.io/LICENSE.txt
-// Code distributed by Google as part of this project is also
-// subject to an additional IP rights grant found at
-// http://polymer.github.io/PATENTS.txt
-
-// TODO(wkorman): Incorporate debug levels. Consider outputting
-// preamble in the specified color via ANSI escape codes. Consider
-// sharing with similar log factory logic in `xen.js`. See `log-web.js`.
-const _logFactory = (preamble, color, log='log') => {
-  return console[log].bind(console, `(${preamble})`);
-};
-
-const factory = global.debugLevel < 1 ? () => () => {} : _logFactory;
-
-const logFactory = (...args) => factory(...args);
-
-/**
- * @license
- * Copyright (c) 2018 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-const error = logFactory('PlanningResult', '#ff0090', 'error');
-class PlanningResult {
-    constructor(envOptions, store) {
-        this.suggestions = [];
-        this.lastUpdated = new Date(null);
-        this.generations = [];
-        this.contextual = true;
-        this.changeCallbacks = [];
-        this.envOptions = envOptions;
-        assert$1(envOptions.context, `context cannot be null`);
-        assert$1(envOptions.loader, `loader cannot be null`);
-        this.store = store;
-        if (this.store) {
-            this.storeCallback = () => this.load();
-            this.store.on('change', this.storeCallback, this);
-        }
-    }
-    registerChangeCallback(callback) {
-        this.changeCallbacks.push(callback);
-    }
-    onChanged() {
-        for (const callback of this.changeCallbacks) {
-            callback();
-        }
-    }
-    async load() {
-        const value = await this.store.get() || {};
-        if (value.suggestions) {
-            if (await this.fromLiteral(value)) {
-                return true;
-            }
-        }
-        return false;
-    }
-    async flush() {
-        try {
-            await this.store.set(this.toLiteral());
-        }
-        catch (e) {
-            error('Failed storing suggestions: ', e);
-            throw e;
-        }
-    }
-    async clear() {
-        return this.store.clear();
-    }
-    dispose() {
-        this.changeCallbacks = [];
-        this.store.off('change', this.storeCallback);
-        this.store.dispose();
-    }
-    static formatSerializableGenerations(generations) {
-        // Make a copy of everything and assign IDs to recipes.
-        const idMap = new Map(); // Recipe -> ID
-        let lastID = 0;
-        const assignIdAndCopy = recipe => {
-            idMap.set(recipe, lastID);
-            const { result, score, derivation, description, hash, valid, active, irrelevant } = recipe;
-            const resultString = result.toString({ showUnresolved: true, showInvalid: false, details: '' });
-            const resolved = result.isResolved();
-            return { result: resultString, resolved, score, derivation, description, hash, valid, active, irrelevant, id: lastID++ };
-        };
-        generations = generations.map(pop => ({
-            record: pop.record,
-            generated: pop.generated.map(assignIdAndCopy)
-        }));
-        // Change recipes in derivation to IDs and compute resolved stats.
-        return generations.map(pop => {
-            const population = pop.generated;
-            const record = pop.record;
-            // Adding those here to reuse recipe resolution computation.
-            record.resolvedDerivations = 0;
-            record.resolvedDerivationsByStrategy = {};
-            for (const item of population) {
-                item.derivation = item.derivation.map(derivItem => {
-                    let parent;
-                    let strategy;
-                    if (derivItem.parent) {
-                        parent = idMap.get(derivItem.parent);
-                    }
-                    if (derivItem.strategy) {
-                        strategy = derivItem.strategy.constructor.name;
-                    }
-                    return { parent, strategy };
-                });
-                if (item.resolved) {
-                    record.resolvedDerivations++;
-                    const strategy = item.derivation[0].strategy;
-                    if (record.resolvedDerivationsByStrategy[strategy] === undefined) {
-                        record.resolvedDerivationsByStrategy[strategy] = 0;
-                    }
-                    record.resolvedDerivationsByStrategy[strategy]++;
-                }
-            }
-            const populationMap = {};
-            for (const item of population) {
-                if (populationMap[item.derivation[0].strategy] == undefined) {
-                    populationMap[item.derivation[0].strategy] = [];
-                }
-                populationMap[item.derivation[0].strategy].push(item);
-            }
-            const result = { population: [], record };
-            for (const strategy of Object.keys(populationMap)) {
-                result.population.push({ strategy, recipes: populationMap[strategy] });
-            }
-            return result;
-        });
-    }
-    _set({ suggestions, lastUpdated = new Date(), generations = [], contextual = true }) {
-        this.suggestions = suggestions;
-        this.generations = generations;
-        this.lastUpdated = lastUpdated;
-        this.contextual = contextual;
-        this.onChanged();
-    }
-    merge({ suggestions, lastUpdated = new Date(), generations = [], contextual = true }, arc) {
-        const newSuggestions = [];
-        const removeIndexes = [];
-        const arcVersionByStore = arc.getVersionByStore({ includeArc: true, includeContext: true });
-        for (const newSuggestion of suggestions) {
-            const index = this.suggestions.findIndex(suggestion => suggestion.isEquivalent(newSuggestion));
-            if (index >= 0) {
-                if (this.suggestions[index].isEqual(newSuggestion)) {
-                    continue; // skip suggestion, if identical to an existing one.
-                }
-                const outdatedStores = Object.keys(newSuggestion.versionByStore).filter(storeId => {
-                    const currentVersion = this.suggestions[index].versionByStore[storeId];
-                    return currentVersion === undefined || newSuggestion.versionByStore[storeId] < currentVersion;
-                });
-                if (outdatedStores.length > 0) {
-                    console.warn(`New suggestions has older store versions:\n ${outdatedStores.map(id => `${id}: ${this.suggestions[index].versionByStore[id]} -> ${newSuggestion.versionByStore[id]}`).join(';')}`);
-                    // Note: This happens due to #2638. Revisit, when fixed.
-                    // assert(false);
-                }
-                removeIndexes.push(index);
-                newSuggestion.mergeSearch(this.suggestions[index]);
-            }
-            if (this._isUpToDate(newSuggestion, arcVersionByStore)) {
-                newSuggestions.push(newSuggestion);
-            }
-        }
-        // Keep suggestions (1) not marked for remove (2) up-to-date with the arcs store versions and
-        // (3) not in active recipe.
-        const jointSuggestions = this.suggestions.filter((suggestion, index) => {
-            return !removeIndexes.some(removeIndex => removeIndex === index) &&
-                this._isUpToDate(suggestion, arcVersionByStore) &&
-                !RecipeUtil.matchesRecipe(arc.activeRecipe, suggestion.plan);
-        });
-        if (jointSuggestions.length === this.suggestions.length && newSuggestions.length === 0) {
-            return false;
-        }
-        jointSuggestions.push(...newSuggestions);
-        this._set({ suggestions: jointSuggestions, generations: this.generations.concat(...generations), lastUpdated, contextual: contextual && this.contextual });
-        return true;
-    }
-    _isUpToDate(suggestion, versionByStore) {
-        for (const handle of suggestion.plan.handles) {
-            const arcVersion = versionByStore[handle.id] || 0;
-            const relevanceVersion = suggestion.versionByStore[handle.id] || 0;
-            if (relevanceVersion < arcVersion) {
-                return false;
-            }
-        }
-        return true;
-    }
-    isEquivalent(suggestions) {
-        return PlanningResult.isEquivalent(this.suggestions, suggestions);
-    }
-    static isEquivalent(oldSuggestions, newSuggestions) {
-        assert$1(newSuggestions, `New suggestions cannot be null.`);
-        return oldSuggestions &&
-            oldSuggestions.length === newSuggestions.length &&
-            oldSuggestions.every(suggestion => newSuggestions.find(newSuggestion => suggestion.isEquivalent(newSuggestion)));
-    }
-    async fromLiteral({ suggestions, generations, lastUpdated, contextual }) {
-        const deserializedSuggestions = [];
-        for (const suggestion of suggestions) {
-            deserializedSuggestions.push(await Suggestion.fromLiteral(suggestion, this.envOptions));
-        }
-        if (this.isEquivalent(deserializedSuggestions)) {
-            return false;
-        }
-        this._set({
-            suggestions: deserializedSuggestions,
-            generations: JSON.parse(generations || '[]'),
-            lastUpdated: new Date(lastUpdated),
-            contextual
-        });
-        return true;
-    }
-    toLiteral() {
-        return {
-            suggestions: this.suggestions.map(suggestion => suggestion.toLiteral()),
-            generations: JSON.stringify(this.generations),
-            lastUpdated: this.lastUpdated.toString(),
-            contextual: this.contextual
-        };
     }
 }
 
@@ -26547,169 +26547,236 @@ class SlotComposer {
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-class SlotConsumer {
-    constructor(arc, consumeConn, containerKind) {
-        this.directlyProvidedSlotContexts = [];
-        this.hostedSlotContexts = [];
-        // Contains `container` and other modality specific rendering information
-        // (eg for `dom`: model, template for dom renderer) by sub id. Key is `undefined` for singleton slot.
-        this._renderingBySubId = new Map();
-        this.innerContainerBySlotId = {};
-        this.arc = arc;
-        this._consumeConn = consumeConn;
-        this.containerKind = containerKind;
+class DescriptionDomFormatter extends DescriptionFormatter {
+    constructor() {
+        super(...arguments);
+        this.nextID = 0;
     }
-    get consumeConn() { return this._consumeConn; }
-    getRendering(subId) { return this._renderingBySubId.get(subId); }
-    get renderings() { return [...this._renderingBySubId.entries()]; }
-    addRenderingBySubId(subId, rendering) {
-        this._renderingBySubId.set(subId, rendering);
+    _isSelectedDescription(desc) {
+        return super._isSelectedDescription(desc) || (!!desc.template && !!desc.model);
     }
-    addHostedSlotContexts(context) {
-        context.containerAvailable = Boolean(this.slotContext.containerAvailable);
-        this.hostedSlotContexts.push(context);
-    }
-    get allProvidedSlotContexts() {
-        return [...this.generateProvidedContexts()];
-    }
-    findProvidedContext(predicate) {
-        return this.generateProvidedContexts(predicate).next().value;
-    }
-    *generateProvidedContexts(predicate = (_) => true) {
-        for (const context of this.directlyProvidedSlotContexts) {
-            if (predicate(context))
-                yield context;
-        }
-        for (const hostedContext of this.hostedSlotContexts) {
-            for (const hostedConsumer of hostedContext.slotConsumers) {
-                yield* hostedConsumer.generateProvidedContexts(predicate);
+    _combineSelectedDescriptions(selectedDescriptions, options) {
+        const suggestionByParticleDesc = new Map();
+        for (const particleDesc of selectedDescriptions) {
+            if (this.seenParticles.has(particleDesc._particle)) {
+                continue;
             }
-        }
-    }
-    onContainerUpdate(newContainer, originalContainer) {
-        assert$1(this.slotContext instanceof ProvidedSlotContext, 'Container can only be updated in non-hosted context');
-        const context = this.slotContext;
-        if (Boolean(newContainer) !== Boolean(originalContainer)) {
-            if (newContainer) {
-                this.startRender();
-            }
-            else {
-                this.stopRender();
-            }
-        }
-        this.hostedSlotContexts.forEach(ctx => ctx.containerAvailable = Boolean(newContainer));
-        if (newContainer !== originalContainer) {
-            const contextContainerBySubId = new Map();
-            if (context && context.spec.isSet) {
-                Object.keys(context.container || {}).forEach(subId => contextContainerBySubId.set(subId, context.container[subId]));
-            }
-            else {
-                contextContainerBySubId.set(undefined, context.container);
-            }
-            for (const [subId, container] of contextContainerBySubId) {
-                if (!this._renderingBySubId.has(subId)) {
-                    this._renderingBySubId.set(subId, {});
-                }
-                const rendering = this.getRendering(subId);
-                if (!rendering.container || !this.isSameContainer(rendering.container, container)) {
-                    if (rendering.container) {
-                        // The rendering already had a container, but it's changed. The original container needs to be cleared.
-                        this.clearContainer(rendering);
+            let { template, model } = this._retrieveTemplateAndModel(particleDesc, suggestionByParticleDesc.size, options || {});
+            const success = Object.keys(model).map(tokenKey => {
+                const tokens = this._initSubTokens(model[tokenKey], particleDesc);
+                return tokens.map(token => {
+                    const tokenValue = this.tokenToString(token);
+                    if (tokenValue == undefined) {
+                        return false;
                     }
-                    rendering.container = this.createNewContainer(container, subId);
-                }
-            }
-            for (const [subId, rendering] of this.renderings) {
-                if (!contextContainerBySubId.has(subId)) {
-                    this.deleteContainer(rendering.container);
-                    this._renderingBySubId.delete(subId);
-                }
-            }
-        }
-    }
-    createProvidedContexts() {
-        return this.consumeConn.getSlotSpec().providedSlots.map(spec => new ProvidedSlotContext(this.consumeConn.providedSlots[spec.name].id, spec.name, /* tags=*/ [], /* container= */ null, spec, this));
-    }
-    updateProvidedContexts() {
-        this.allProvidedSlotContexts.forEach(providedContext => {
-            providedContext.container = providedContext.sourceSlotConsumer.getInnerContainer(providedContext.id);
-        });
-    }
-    startRender() {
-        if (this.consumeConn && this.startRenderCallback) {
-            this.startRenderCallback({
-                particle: this.consumeConn.particle,
-                slotName: this.consumeConn.name,
-                providedSlots: new Map(this.allProvidedSlotContexts.map(context => [context.name, context.id])),
-                contentTypes: this.constructRenderRequest()
+                    else if (tokenValue && tokenValue.template && tokenValue.model) {
+                        // Dom token.
+                        template = template.replace(`{{${tokenKey}}}`, tokenValue.template);
+                        delete model[tokenKey];
+                        model = Object.assign({}, model, tokenValue.model);
+                    }
+                    else { // Text token.
+                        // Replace tokenKey, in case multiple selected suggestions use the same key.
+                        const newTokenKey = `${tokenKey}${++this.nextID}`;
+                        template = template.replace(`{{${tokenKey}}}`, `{{${newTokenKey}}}`);
+                        delete model[tokenKey];
+                        model[newTokenKey] = tokenValue;
+                    }
+                    return true;
+                }).every(t => !!t);
             });
+            if (success.every(s => !!s)) {
+                suggestionByParticleDesc.set(particleDesc, { template, model });
+            }
         }
-    }
-    stopRender() {
-        if (this.consumeConn && this.stopRenderCallback) {
-            this.stopRenderCallback({ particle: this.consumeConn.particle, slotName: this.consumeConn.name });
-        }
-    }
-    setContent(content, handler, description) {
-        if (content && Object.keys(content).length > 0 && description) {
-            content.descriptions = this.populateHandleDescriptions(description);
-        }
-        this.eventHandler = handler;
-        for (const [subId, rendering] of this.renderings) {
-            this.setContainerContent(rendering, this.formatContent(content, subId), subId);
-        }
-    }
-    populateHandleDescriptions(description) {
-        if (!this.consumeConn)
-            return null;
-        const descriptions = {};
-        Object.values(this.consumeConn.particle.connections).map(handleConn => {
-            if (handleConn.handle) {
-                descriptions[`${handleConn.name}.description`] =
-                    description.getHandleDescription(handleConn.handle).toString();
+        // Populate suggestions list while maintaining original particles order.
+        const suggestions = [];
+        selectedDescriptions.forEach(desc => {
+            if (suggestionByParticleDesc.has(desc)) {
+                suggestions.push(suggestionByParticleDesc.get(desc));
             }
         });
-        return descriptions;
-    }
-    getInnerContainer(slotId) {
-        return this.innerContainerBySlotId[slotId];
-    }
-    _initInnerSlotContainer(slotId, subId, container) {
-        if (subId) {
-            if (!this.innerContainerBySlotId[slotId]) {
-                this.innerContainerBySlotId[slotId] = {};
+        if (suggestions.length > 0) {
+            const result = this._joinDescriptions(suggestions);
+            if (!options || !options.skipFormatting) {
+                result.template += '.';
             }
-            assert$1(!this.innerContainerBySlotId[slotId][subId], `Multiple ${slotId}:${subId} inner slots cannot be provided`);
-            this.innerContainerBySlotId[slotId][subId] = container;
-        }
-        else {
-            this.innerContainerBySlotId[slotId] = container;
+            return result;
         }
     }
-    _clearInnerSlotContainers(subIds) {
-        subIds.forEach(subId => {
-            if (subId) {
-                Object.values(this.innerContainerBySlotId).forEach(inner => delete inner[subId]);
+    _retrieveTemplateAndModel(particleDesc, index, options) {
+        if (particleDesc['_template_'] && particleDesc['_model_']) {
+            return {
+                template: particleDesc['_template_'],
+                model: JSON.parse(particleDesc['_model_'])
+            };
+        }
+        assert$1(particleDesc.pattern, 'Description must contain template and model, or pattern');
+        let template = '';
+        const model = {};
+        const tokens = this._initTokens(particleDesc.pattern, particleDesc);
+        tokens.forEach((token, i) => {
+            if (token.text) {
+                template = template.concat(`${(index === 0 && i === 0 && !options.skipFormatting) ? token.text[0].toUpperCase() + token.text.slice(1) : token.text}`);
             }
-            else {
-                this.innerContainerBySlotId = {};
+            else { // handle or slot handle.
+                const sanitizedFullName = token.fullName.replace(/[.{}_$]/g, '');
+                let attribute = '';
+                // TODO(mmandlis): capitalize the data in the model instead.
+                if (i === 0 && !options.skipFormatting) {
+                    // Capitalize the first letter in the token.
+                    template = template.concat(`<style>
+            [firstletter]::first-letter { text-transform: capitalize; }
+            [firstletter] {display: inline-block}
+            </style>`);
+                    attribute = ' firstletter';
+                }
+                template = template.concat(`<span${attribute}>{{${sanitizedFullName}}}</span>`);
+                model[sanitizedFullName] = token.fullName;
             }
         });
+        return { template, model };
     }
-    isSameContainer(container, contextContainer) {
-        return (!container && !contextContainer) || (container === contextContainer);
+    _capitalizeAndPunctuate(sentence) {
+        if (typeof sentence === 'string') {
+            return { template: super._capitalizeAndPunctuate(sentence), model: {} };
+        }
+        // Capitalize the first element in the DOM template.
+        const tokens = sentence.template.match(/<[a-zA-Z0-9]+>{{([a-zA-Z0-9]*)}}<\/[a-zA-Z0-9]+>/);
+        if (tokens && tokens.length > 1 && sentence.model[tokens[1]]) {
+            const modelToken = sentence.model[tokens[1]];
+            if (modelToken.length > 0) {
+                sentence.model[tokens[1]] = `${modelToken[0].toUpperCase()}${modelToken.substr(1)}`;
+            }
+        }
+        sentence.template += '.';
+        return sentence;
     }
-    // abstract
-    constructRenderRequest() { return []; }
-    dispose() { }
-    createNewContainer(contextContainer, subId) { return null; }
-    deleteContainer(container) { }
-    clearContainer(rendering) { }
-    setContainerContent(rendering, content, subId) { }
-    formatContent(content, subId) { return null; }
-    formatHostedContent(content) { return null; }
-    static clear(container) { }
+    _joinDescriptions(descs) {
+        // If all tokens are strings, just join them.
+        if (descs.every(desc => typeof desc === 'string')) {
+            return super._joinDescriptions(descs);
+        }
+        const result = { template: '', model: {} };
+        const count = descs.length;
+        descs.forEach((desc, i) => {
+            if (typeof desc === 'string') {
+                desc = { template: desc, model: {} };
+            }
+            result.template += desc.template;
+            result.model = Object.assign({}, result.model, desc.model);
+            let delim;
+            if (i < count - 2) {
+                delim = ', ';
+            }
+            else if (i === count - 2) {
+                delim = ['', '', ' and ', ', and '][Math.min(3, count)];
+            }
+            if (delim) {
+                result.template += delim;
+            }
+        });
+        return result;
+    }
+    _joinTokens(tokens) {
+        // If all tokens are strings, just join them.
+        if (tokens.every(token => typeof token === 'string')) {
+            return super._joinTokens(tokens);
+        }
+        tokens = tokens.map(token => {
+            if (typeof token !== 'object') {
+                return {
+                    template: `<span>{{text${++this.nextID}}}</span>`,
+                    model: { [`text${this.nextID}`]: token }
+                };
+            }
+            return token;
+        });
+        const nonEmptyTokens = tokens.filter(token => token && !!token.template && !!token.model);
+        return {
+            template: nonEmptyTokens.map(token => token.template).join(''),
+            model: nonEmptyTokens.map(token => token.model).reduce((prev, curr) => (Object.assign({}, prev, curr)), {})
+        };
+    }
+    _combineDescriptionAndValue(token, description, storeValue) {
+        if (!!description.template && !!description.model) {
+            return {
+                template: `${description.template} (${storeValue.template})`,
+                model: Object.assign({}, description.model, storeValue.model)
+            };
+        }
+        const descKey = `${token.handleName}Description${++this.nextID}`;
+        return {
+            template: `<span>{{${descKey}}}</span> (${storeValue.template})`,
+            model: Object.assign({ [descKey]: description }, storeValue.model)
+        };
+    }
+    _formatEntityProperty(handleName, properties, value) {
+        const key = `${handleName}${properties.join('')}Value${++this.nextID}`;
+        return {
+            template: `<b>{{${key}}}</b>`,
+            model: { [`${key}`]: value }
+        };
+    }
+    _formatCollection(handleName, values) {
+        const handleKey = `${handleName}${++this.nextID}`;
+        if (values[0].rawData.name) {
+            if (values.length > 2) {
+                return {
+                    template: `<b>{{${handleKey}FirstName}}</b> plus <b>{{${handleKey}OtherCount}}</b> other items`,
+                    model: { [`${handleKey}FirstName`]: values[0].rawData.name, [`${handleKey}OtherCount`]: values.length - 1 }
+                };
+            }
+            return {
+                template: values.map((v, i) => `<b>{{${handleKey}${i}}}</b>`).join(', '),
+                model: Object.assign({}, ...values.map((v, i) => ({ [`${handleKey}${i}`]: v.rawData.name })))
+            };
+        }
+        return {
+            template: `<b>{{${handleKey}Length}}</b> items`,
+            model: { [`${handleKey}Length`]: values.length }
+        };
+    }
+    _formatBigCollection(handleName, firstValue) {
+        return {
+            template: `collection of items like {{${handleName}FirstName}}`,
+            model: { [`${handleName}FirstName`]: firstValue.rawData.name }
+        };
+    }
+    _formatSingleton(handleName, value) {
+        const formattedValue = super._formatSingleton(handleName, value);
+        if (formattedValue) {
+            return {
+                template: `<b>{{${handleName}Var}}</b>`,
+                model: { [`${handleName}Var`]: formattedValue }
+            };
+        }
+        return undefined;
+    }
 }
+
+var IconStyles = `
+  icon {
+    font-family: "Material Icons";
+    font-size: 24px;
+    font-style: normal;
+    -webkit-font-feature-settings: "liga";
+    -webkit-font-smoothing: antialiased;
+    cursor: pointer;
+    user-select: none;
+    flex-shrink: 0;
+    /* partial FOUC prevention */
+    display: inline-block;
+    width: 24px;
+    height: 24px;
+    overflow: hidden;
+  }
+  icon[hidden] {
+    /* required because of display rule above,
+    display rule required for overflow: hidden */
+    display: none;
+  }
+`;
 
 /*
 @license
@@ -27106,28 +27173,178 @@ const Template = {
   stamp
 };
 
-var IconStyles = `
-  icon {
-    font-family: "Material Icons";
-    font-size: 24px;
-    font-style: normal;
-    -webkit-font-feature-settings: "liga";
-    -webkit-font-smoothing: antialiased;
-    cursor: pointer;
-    user-select: none;
-    flex-shrink: 0;
-    /* partial FOUC prevention */
-    display: inline-block;
-    width: 24px;
-    height: 24px;
-    overflow: hidden;
-  }
-  icon[hidden] {
-    /* required because of display rule above,
-    display rule required for overflow: hidden */
-    display: none;
-  }
-`;
+/**
+ * @license
+ * Copyright (c) 2017 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+class SlotConsumer {
+    constructor(arc, consumeConn, containerKind) {
+        this.directlyProvidedSlotContexts = [];
+        this.hostedSlotContexts = [];
+        // Contains `container` and other modality specific rendering information
+        // (eg for `dom`: model, template for dom renderer) by sub id. Key is `undefined` for singleton slot.
+        this._renderingBySubId = new Map();
+        this.innerContainerBySlotId = {};
+        this.arc = arc;
+        this._consumeConn = consumeConn;
+        this.containerKind = containerKind;
+    }
+    get consumeConn() { return this._consumeConn; }
+    getRendering(subId) { return this._renderingBySubId.get(subId); }
+    get renderings() { return [...this._renderingBySubId.entries()]; }
+    addRenderingBySubId(subId, rendering) {
+        this._renderingBySubId.set(subId, rendering);
+    }
+    addHostedSlotContexts(context) {
+        context.containerAvailable = Boolean(this.slotContext.containerAvailable);
+        this.hostedSlotContexts.push(context);
+    }
+    get allProvidedSlotContexts() {
+        return [...this.generateProvidedContexts()];
+    }
+    findProvidedContext(predicate) {
+        return this.generateProvidedContexts(predicate).next().value;
+    }
+    *generateProvidedContexts(predicate = (_) => true) {
+        for (const context of this.directlyProvidedSlotContexts) {
+            if (predicate(context))
+                yield context;
+        }
+        for (const hostedContext of this.hostedSlotContexts) {
+            for (const hostedConsumer of hostedContext.slotConsumers) {
+                yield* hostedConsumer.generateProvidedContexts(predicate);
+            }
+        }
+    }
+    onContainerUpdate(newContainer, originalContainer) {
+        assert$1(this.slotContext instanceof ProvidedSlotContext, 'Container can only be updated in non-hosted context');
+        const context = this.slotContext;
+        if (Boolean(newContainer) !== Boolean(originalContainer)) {
+            if (newContainer) {
+                this.startRender();
+            }
+            else {
+                this.stopRender();
+            }
+        }
+        this.hostedSlotContexts.forEach(ctx => ctx.containerAvailable = Boolean(newContainer));
+        if (newContainer !== originalContainer) {
+            const contextContainerBySubId = new Map();
+            if (context && context.spec.isSet) {
+                Object.keys(context.container || {}).forEach(subId => contextContainerBySubId.set(subId, context.container[subId]));
+            }
+            else {
+                contextContainerBySubId.set(undefined, context.container);
+            }
+            for (const [subId, container] of contextContainerBySubId) {
+                if (!this._renderingBySubId.has(subId)) {
+                    this._renderingBySubId.set(subId, {});
+                }
+                const rendering = this.getRendering(subId);
+                if (!rendering.container || !this.isSameContainer(rendering.container, container)) {
+                    if (rendering.container) {
+                        // The rendering already had a container, but it's changed. The original container needs to be cleared.
+                        this.clearContainer(rendering);
+                    }
+                    rendering.container = this.createNewContainer(container, subId);
+                }
+            }
+            for (const [subId, rendering] of this.renderings) {
+                if (!contextContainerBySubId.has(subId)) {
+                    this.deleteContainer(rendering.container);
+                    this._renderingBySubId.delete(subId);
+                }
+            }
+        }
+    }
+    createProvidedContexts() {
+        return this.consumeConn.getSlotSpec().providedSlots.map(spec => new ProvidedSlotContext(this.consumeConn.providedSlots[spec.name].id, spec.name, /* tags=*/ [], /* container= */ null, spec, this));
+    }
+    updateProvidedContexts() {
+        this.allProvidedSlotContexts.forEach(providedContext => {
+            providedContext.container = providedContext.sourceSlotConsumer.getInnerContainer(providedContext.id);
+        });
+    }
+    startRender() {
+        if (this.consumeConn && this.startRenderCallback) {
+            this.startRenderCallback({
+                particle: this.consumeConn.particle,
+                slotName: this.consumeConn.name,
+                providedSlots: new Map(this.allProvidedSlotContexts.map(context => [context.name, context.id])),
+                contentTypes: this.constructRenderRequest()
+            });
+        }
+    }
+    stopRender() {
+        if (this.consumeConn && this.stopRenderCallback) {
+            this.stopRenderCallback({ particle: this.consumeConn.particle, slotName: this.consumeConn.name });
+        }
+    }
+    setContent(content, handler, description) {
+        if (content && Object.keys(content).length > 0 && description) {
+            content.descriptions = this.populateHandleDescriptions(description);
+        }
+        this.eventHandler = handler;
+        for (const [subId, rendering] of this.renderings) {
+            this.setContainerContent(rendering, this.formatContent(content, subId), subId);
+        }
+    }
+    populateHandleDescriptions(description) {
+        if (!this.consumeConn)
+            return null;
+        const descriptions = {};
+        Object.values(this.consumeConn.particle.connections).map(handleConn => {
+            if (handleConn.handle) {
+                descriptions[`${handleConn.name}.description`] =
+                    description.getHandleDescription(handleConn.handle).toString();
+            }
+        });
+        return descriptions;
+    }
+    getInnerContainer(slotId) {
+        return this.innerContainerBySlotId[slotId];
+    }
+    _initInnerSlotContainer(slotId, subId, container) {
+        if (subId) {
+            if (!this.innerContainerBySlotId[slotId]) {
+                this.innerContainerBySlotId[slotId] = {};
+            }
+            assert$1(!this.innerContainerBySlotId[slotId][subId], `Multiple ${slotId}:${subId} inner slots cannot be provided`);
+            this.innerContainerBySlotId[slotId][subId] = container;
+        }
+        else {
+            this.innerContainerBySlotId[slotId] = container;
+        }
+    }
+    _clearInnerSlotContainers(subIds) {
+        subIds.forEach(subId => {
+            if (subId) {
+                Object.values(this.innerContainerBySlotId).forEach(inner => delete inner[subId]);
+            }
+            else {
+                this.innerContainerBySlotId = {};
+            }
+        });
+    }
+    isSameContainer(container, contextContainer) {
+        return (!container && !contextContainer) || (container === contextContainer);
+    }
+    // abstract
+    constructRenderRequest() { return []; }
+    dispose() { }
+    createNewContainer(contextContainer, subId) { return null; }
+    deleteContainer(container) { }
+    clearContainer(rendering) { }
+    setContainerContent(rendering, content, subId) { }
+    formatContent(content, subId) { return null; }
+    formatHostedContent(content) { return null; }
+    static clear(container) { }
+}
 
 /**
  * @license
@@ -27430,54 +27647,6 @@ class SlotDomConsumer extends SlotConsumer {
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-class SuggestDomConsumer extends SlotDomConsumer {
-    constructor(arc, containerKind, suggestion, suggestionContent, eventHandler) {
-        super(arc, /* consumeConn= */ null, containerKind);
-        this._suggestion = suggestion;
-        this._suggestionContent = suggestionContent;
-        this._eventHandler = eventHandler;
-    }
-    get suggestion() {
-        return this._suggestion;
-    }
-    get templatePrefix() {
-        return 'suggest';
-    }
-    formatContent(content) {
-        return {
-            template: `<suggestion-element inline key="{{hash}}" on-click="">${content.template}</suggestion-element>`,
-            templateName: 'suggestion',
-            model: Object.assign({ hash: this.suggestion.hash }, content.model)
-        };
-    }
-    onContainerUpdate(container, originalContainer) {
-        super.onContainerUpdate(container, originalContainer);
-        if (container) {
-            this.setContent(this._suggestionContent, this._eventHandler);
-        }
-    }
-    static render(arc, container, plan, content) {
-        const suggestionContainer = Object.assign(document.createElement('suggestion-element'), { plan });
-        container.appendChild(suggestionContainer, container.firstElementChild);
-        const rendering = { container: suggestionContainer, model: content.model };
-        const consumer = new SlotDomConsumer(arc);
-        consumer.addRenderingBySubId(undefined, rendering);
-        consumer.eventHandler = (() => { });
-        consumer._stampTemplate(rendering, consumer.createTemplateElement(content.template));
-        consumer._onUpdate(rendering);
-        return consumer;
-    }
-}
-
-/**
- * @license
- * Copyright (c) 2018 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
 class MockSlotDomConsumer extends SlotDomConsumer {
     constructor(arc, consumeConn) {
         super(arc, consumeConn);
@@ -27534,6 +27703,65 @@ class MockSlotDomConsumer extends SlotDomConsumer {
     _stampTemplate(template) { }
     _initMutationObserver() { return null; }
     _observe() { }
+}
+
+class ModalityHandler {
+    constructor(slotConsumerClass, descriptionFormatter) {
+        this.slotConsumerClass = slotConsumerClass;
+        this.descriptionFormatter = descriptionFormatter;
+    }
+    static createHeadlessHandler() {
+        return new ModalityHandler(MockSlotDomConsumer);
+    }
+}
+ModalityHandler.domHandler = new ModalityHandler(SlotDomConsumer, DescriptionDomFormatter);
+
+/**
+ * @license
+ * Copyright (c) 2018 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+class SuggestDomConsumer extends SlotDomConsumer {
+    constructor(arc, containerKind, suggestion, suggestionContent, eventHandler) {
+        super(arc, /* consumeConn= */ null, containerKind);
+        this._suggestion = suggestion;
+        this._suggestionContent = suggestionContent;
+        this._eventHandler = eventHandler;
+    }
+    get suggestion() {
+        return this._suggestion;
+    }
+    get templatePrefix() {
+        return 'suggest';
+    }
+    formatContent(content) {
+        return {
+            template: `<suggestion-element inline key="{{hash}}" on-click="">${content.template}</suggestion-element>`,
+            templateName: 'suggestion',
+            model: Object.assign({ hash: this.suggestion.hash }, content.model)
+        };
+    }
+    onContainerUpdate(container, originalContainer) {
+        super.onContainerUpdate(container, originalContainer);
+        if (container) {
+            this.setContent(this._suggestionContent, this._eventHandler);
+        }
+    }
+    static render(arc, container, plan, content) {
+        const suggestionContainer = Object.assign(document.createElement('suggestion-element'), { plan });
+        container.appendChild(suggestionContainer, container.firstElementChild);
+        const rendering = { container: suggestionContainer, model: content.model };
+        const consumer = new SlotDomConsumer(arc);
+        consumer.addRenderingBySubId(undefined, rendering);
+        consumer.eventHandler = (() => { });
+        consumer._stampTemplate(rendering, consumer.createTemplateElement(content.template));
+        consumer._onUpdate(rendering);
+        return consumer;
+    }
 }
 
 /**
@@ -27620,234 +27848,6 @@ class MockSuggestDomConsumer extends SuggestDomConsumer {
     _initMutationObserver() { return null; }
     _observe() { }
 }
-
-/**
- * @license
- * Copyright (c) 2017 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-class DescriptionDomFormatter extends DescriptionFormatter {
-    constructor() {
-        super(...arguments);
-        this.nextID = 0;
-    }
-    _isSelectedDescription(desc) {
-        return super._isSelectedDescription(desc) || (!!desc.template && !!desc.model);
-    }
-    _combineSelectedDescriptions(selectedDescriptions, options) {
-        const suggestionByParticleDesc = new Map();
-        for (const particleDesc of selectedDescriptions) {
-            if (this.seenParticles.has(particleDesc._particle)) {
-                continue;
-            }
-            let { template, model } = this._retrieveTemplateAndModel(particleDesc, suggestionByParticleDesc.size, options || {});
-            const success = Object.keys(model).map(tokenKey => {
-                const tokens = this._initSubTokens(model[tokenKey], particleDesc);
-                return tokens.map(token => {
-                    const tokenValue = this.tokenToString(token);
-                    if (tokenValue == undefined) {
-                        return false;
-                    }
-                    else if (tokenValue && tokenValue.template && tokenValue.model) {
-                        // Dom token.
-                        template = template.replace(`{{${tokenKey}}}`, tokenValue.template);
-                        delete model[tokenKey];
-                        model = Object.assign({}, model, tokenValue.model);
-                    }
-                    else { // Text token.
-                        // Replace tokenKey, in case multiple selected suggestions use the same key.
-                        const newTokenKey = `${tokenKey}${++this.nextID}`;
-                        template = template.replace(`{{${tokenKey}}}`, `{{${newTokenKey}}}`);
-                        delete model[tokenKey];
-                        model[newTokenKey] = tokenValue;
-                    }
-                    return true;
-                }).every(t => !!t);
-            });
-            if (success.every(s => !!s)) {
-                suggestionByParticleDesc.set(particleDesc, { template, model });
-            }
-        }
-        // Populate suggestions list while maintaining original particles order.
-        const suggestions = [];
-        selectedDescriptions.forEach(desc => {
-            if (suggestionByParticleDesc.has(desc)) {
-                suggestions.push(suggestionByParticleDesc.get(desc));
-            }
-        });
-        if (suggestions.length > 0) {
-            const result = this._joinDescriptions(suggestions);
-            if (!options || !options.skipFormatting) {
-                result.template += '.';
-            }
-            return result;
-        }
-    }
-    _retrieveTemplateAndModel(particleDesc, index, options) {
-        if (particleDesc['_template_'] && particleDesc['_model_']) {
-            return {
-                template: particleDesc['_template_'],
-                model: JSON.parse(particleDesc['_model_'])
-            };
-        }
-        assert$1(particleDesc.pattern, 'Description must contain template and model, or pattern');
-        let template = '';
-        const model = {};
-        const tokens = this._initTokens(particleDesc.pattern, particleDesc);
-        tokens.forEach((token, i) => {
-            if (token.text) {
-                template = template.concat(`${(index === 0 && i === 0 && !options.skipFormatting) ? token.text[0].toUpperCase() + token.text.slice(1) : token.text}`);
-            }
-            else { // handle or slot handle.
-                const sanitizedFullName = token.fullName.replace(/[.{}_$]/g, '');
-                let attribute = '';
-                // TODO(mmandlis): capitalize the data in the model instead.
-                if (i === 0 && !options.skipFormatting) {
-                    // Capitalize the first letter in the token.
-                    template = template.concat(`<style>
-            [firstletter]::first-letter { text-transform: capitalize; }
-            [firstletter] {display: inline-block}
-            </style>`);
-                    attribute = ' firstletter';
-                }
-                template = template.concat(`<span${attribute}>{{${sanitizedFullName}}}</span>`);
-                model[sanitizedFullName] = token.fullName;
-            }
-        });
-        return { template, model };
-    }
-    _capitalizeAndPunctuate(sentence) {
-        if (typeof sentence === 'string') {
-            return { template: super._capitalizeAndPunctuate(sentence), model: {} };
-        }
-        // Capitalize the first element in the DOM template.
-        const tokens = sentence.template.match(/<[a-zA-Z0-9]+>{{([a-zA-Z0-9]*)}}<\/[a-zA-Z0-9]+>/);
-        if (tokens && tokens.length > 1 && sentence.model[tokens[1]]) {
-            const modelToken = sentence.model[tokens[1]];
-            if (modelToken.length > 0) {
-                sentence.model[tokens[1]] = `${modelToken[0].toUpperCase()}${modelToken.substr(1)}`;
-            }
-        }
-        sentence.template += '.';
-        return sentence;
-    }
-    _joinDescriptions(descs) {
-        // If all tokens are strings, just join them.
-        if (descs.every(desc => typeof desc === 'string')) {
-            return super._joinDescriptions(descs);
-        }
-        const result = { template: '', model: {} };
-        const count = descs.length;
-        descs.forEach((desc, i) => {
-            if (typeof desc === 'string') {
-                desc = { template: desc, model: {} };
-            }
-            result.template += desc.template;
-            result.model = Object.assign({}, result.model, desc.model);
-            let delim;
-            if (i < count - 2) {
-                delim = ', ';
-            }
-            else if (i === count - 2) {
-                delim = ['', '', ' and ', ', and '][Math.min(3, count)];
-            }
-            if (delim) {
-                result.template += delim;
-            }
-        });
-        return result;
-    }
-    _joinTokens(tokens) {
-        // If all tokens are strings, just join them.
-        if (tokens.every(token => typeof token === 'string')) {
-            return super._joinTokens(tokens);
-        }
-        tokens = tokens.map(token => {
-            if (typeof token !== 'object') {
-                return {
-                    template: `<span>{{text${++this.nextID}}}</span>`,
-                    model: { [`text${this.nextID}`]: token }
-                };
-            }
-            return token;
-        });
-        const nonEmptyTokens = tokens.filter(token => token && !!token.template && !!token.model);
-        return {
-            template: nonEmptyTokens.map(token => token.template).join(''),
-            model: nonEmptyTokens.map(token => token.model).reduce((prev, curr) => (Object.assign({}, prev, curr)), {})
-        };
-    }
-    _combineDescriptionAndValue(token, description, storeValue) {
-        if (!!description.template && !!description.model) {
-            return {
-                template: `${description.template} (${storeValue.template})`,
-                model: Object.assign({}, description.model, storeValue.model)
-            };
-        }
-        const descKey = `${token.handleName}Description${++this.nextID}`;
-        return {
-            template: `<span>{{${descKey}}}</span> (${storeValue.template})`,
-            model: Object.assign({ [descKey]: description }, storeValue.model)
-        };
-    }
-    _formatEntityProperty(handleName, properties, value) {
-        const key = `${handleName}${properties.join('')}Value${++this.nextID}`;
-        return {
-            template: `<b>{{${key}}}</b>`,
-            model: { [`${key}`]: value }
-        };
-    }
-    _formatCollection(handleName, values) {
-        const handleKey = `${handleName}${++this.nextID}`;
-        if (values[0].rawData.name) {
-            if (values.length > 2) {
-                return {
-                    template: `<b>{{${handleKey}FirstName}}</b> plus <b>{{${handleKey}OtherCount}}</b> other items`,
-                    model: { [`${handleKey}FirstName`]: values[0].rawData.name, [`${handleKey}OtherCount`]: values.length - 1 }
-                };
-            }
-            return {
-                template: values.map((v, i) => `<b>{{${handleKey}${i}}}</b>`).join(', '),
-                model: Object.assign({}, ...values.map((v, i) => ({ [`${handleKey}${i}`]: v.rawData.name })))
-            };
-        }
-        return {
-            template: `<b>{{${handleKey}Length}}</b> items`,
-            model: { [`${handleKey}Length`]: values.length }
-        };
-    }
-    _formatBigCollection(handleName, firstValue) {
-        return {
-            template: `collection of items like {{${handleName}FirstName}}`,
-            model: { [`${handleName}FirstName`]: firstValue.rawData.name }
-        };
-    }
-    _formatSingleton(handleName, value) {
-        const formattedValue = super._formatSingleton(handleName, value);
-        if (formattedValue) {
-            return {
-                template: `<b>{{${handleName}Var}}</b>`,
-                model: { [`${handleName}Var`]: formattedValue }
-            };
-        }
-        return undefined;
-    }
-}
-
-class ModalityHandler {
-    constructor(slotConsumerClass, descriptionFormatter) {
-        this.slotConsumerClass = slotConsumerClass;
-        this.descriptionFormatter = descriptionFormatter;
-    }
-    static createHeadlessHandler() {
-        return new ModalityHandler(MockSlotDomConsumer);
-    }
-}
-ModalityHandler.domHandler = new ModalityHandler(SlotDomConsumer, DescriptionDomFormatter);
 
 /**
  * @license
@@ -29210,82 +29210,6 @@ class UserContext {
   // }
 }
 
-class SuggestionComposer {
-    constructor(arc, slotComposer) {
-        this._suggestions = [];
-        // used in tests
-        this._suggestConsumers = [];
-        this._container = slotComposer.findContainerByName('suggestions');
-        this._slotComposer = slotComposer;
-        this.arc = arc;
-    }
-    get modalityHandler() { return this._slotComposer.modalityHandler; }
-    clear() {
-        if (this._container) {
-            this.modalityHandler.slotConsumerClass.clear(this._container);
-        }
-        this._suggestConsumers.forEach(consumer => consumer.dispose());
-        this._suggestConsumers.length = 0;
-    }
-    setSuggestions(suggestions) {
-        this.clear();
-        this._suggestions = suggestions.sort(Suggestion.compare);
-        for (const suggestion of this._suggestions) {
-            // TODO(mmandlis): use modality-appropriate description.
-            const suggestionContent = { template: suggestion.descriptionText };
-            if (!suggestionContent) {
-                throw new Error('No suggestion content available');
-            }
-            if (this._container) {
-                this.modalityHandler.suggestionConsumerClass.render(this.arc, this._container, suggestion, suggestionContent);
-            }
-            this._addInlineSuggestion(suggestion, suggestionContent);
-        }
-    }
-    _addInlineSuggestion(suggestion, suggestionContent) {
-        const remoteSlots = suggestion.plan.slots.filter(s => !!s.id);
-        if (remoteSlots.length !== 1) {
-            return;
-        }
-        const remoteSlot = remoteSlots[0];
-        const context = this._slotComposer.findContextById(remoteSlot.id);
-        if (!context) {
-            throw new Error('Missing context for ' + remoteSlot.id);
-        }
-        if (context.spec.isSet) {
-            // TODO: Inline suggestion in a set slot is not supported yet. Implement!
-            return;
-        }
-        // Don't put suggestions in context that either (1) is a root context, (2) doesn't have
-        // an actual container or (3) is not restricted to specific handles.
-        if (!context.sourceSlotConsumer) {
-            return;
-        }
-        if (context.spec.handles.length === 0) {
-            return;
-        }
-        const handleIds = context.spec.handles.map(handleName => context.sourceSlotConsumer.consumeConn.particle.connections[handleName].handle.id);
-        if (!handleIds.find(handleId => suggestion.plan.handles.find(handle => handle.id === handleId))) {
-            // the suggestion doesn't use any of the handles that the context is restricted to.
-            return;
-        }
-        const suggestConsumer = new this.modalityHandler.suggestionConsumerClass(this.arc, this._slotComposer.containerKind, suggestion, suggestionContent, (eventlet) => {
-            const suggestion = this._suggestions.find(s => s.hash === eventlet.data.key);
-            suggestConsumer.dispose();
-            if (suggestion) {
-                const index = this._suggestConsumers.findIndex(consumer => consumer === suggestConsumer);
-                if (index < 0) {
-                    throw new Error('cannot find suggest slot context');
-                }
-                this._suggestConsumers.splice(index, 1);
-                suggestion.instantiate(this.arc);
-            }
-        });
-        context.addSlotConsumer(suggestConsumer);
-        this._suggestConsumers.push(suggestConsumer);
-    }
-}
-
 /**
  * @license
  * Copyright (c) 2018 Google Inc. All rights reserved.
@@ -29456,6 +29380,15 @@ class PlanProducer {
     }
 }
 
+/**
+ * @license
+ * Copyright (c) 2019 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
 class PlanningExplorerAdapter {
     static updatePlanningResults(result, metadata, devtoolsChannel) {
         if (devtoolsChannel) {
@@ -29508,6 +29441,82 @@ class PlanningExplorerAdapter {
                 await planificator.loadSuggestions();
             });
         }
+    }
+}
+
+class SuggestionComposer {
+    constructor(arc, slotComposer) {
+        this._suggestions = [];
+        // used in tests
+        this._suggestConsumers = [];
+        this._container = slotComposer.findContainerByName('suggestions');
+        this._slotComposer = slotComposer;
+        this.arc = arc;
+    }
+    get modalityHandler() { return this._slotComposer.modalityHandler; }
+    clear() {
+        if (this._container) {
+            this.modalityHandler.slotConsumerClass.clear(this._container);
+        }
+        this._suggestConsumers.forEach(consumer => consumer.dispose());
+        this._suggestConsumers.length = 0;
+    }
+    setSuggestions(suggestions) {
+        this.clear();
+        this._suggestions = suggestions.sort(Suggestion.compare);
+        for (const suggestion of this._suggestions) {
+            // TODO(mmandlis): use modality-appropriate description.
+            const suggestionContent = { template: suggestion.descriptionText };
+            if (!suggestionContent) {
+                throw new Error('No suggestion content available');
+            }
+            if (this._container) {
+                this.modalityHandler.suggestionConsumerClass.render(this.arc, this._container, suggestion, suggestionContent);
+            }
+            this._addInlineSuggestion(suggestion, suggestionContent);
+        }
+    }
+    _addInlineSuggestion(suggestion, suggestionContent) {
+        const remoteSlots = suggestion.plan.slots.filter(s => !!s.id);
+        if (remoteSlots.length !== 1) {
+            return;
+        }
+        const remoteSlot = remoteSlots[0];
+        const context = this._slotComposer.findContextById(remoteSlot.id);
+        if (!context) {
+            throw new Error('Missing context for ' + remoteSlot.id);
+        }
+        if (context.spec.isSet) {
+            // TODO: Inline suggestion in a set slot is not supported yet. Implement!
+            return;
+        }
+        // Don't put suggestions in context that either (1) is a root context, (2) doesn't have
+        // an actual container or (3) is not restricted to specific handles.
+        if (!context.sourceSlotConsumer) {
+            return;
+        }
+        if (context.spec.handles.length === 0) {
+            return;
+        }
+        const handleIds = context.spec.handles.map(handleName => context.sourceSlotConsumer.consumeConn.particle.connections[handleName].handle.id);
+        if (!handleIds.find(handleId => suggestion.plan.handles.find(handle => handle.id === handleId))) {
+            // the suggestion doesn't use any of the handles that the context is restricted to.
+            return;
+        }
+        const suggestConsumer = new this.modalityHandler.suggestionConsumerClass(this.arc, this._slotComposer.containerKind, suggestion, suggestionContent, (eventlet) => {
+            const suggestion = this._suggestions.find(s => s.hash === eventlet.data.key);
+            suggestConsumer.dispose();
+            if (suggestion) {
+                const index = this._suggestConsumers.findIndex(consumer => consumer === suggestConsumer);
+                if (index < 0) {
+                    throw new Error('cannot find suggest slot context');
+                }
+                this._suggestConsumers.splice(index, 1);
+                suggestion.instantiate(this.arc);
+            }
+        });
+        context.addSlotConsumer(suggestConsumer);
+        this._suggestConsumers.push(suggestConsumer);
     }
 }
 

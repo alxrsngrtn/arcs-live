@@ -1,5 +1,5 @@
-import { Strategy } from '../strategizer.js';
 import { Arc } from '../../runtime/arc.js';
+import { Strategy } from '../strategizer.js';
 export declare class SearchTokensToParticles extends Strategy {
     private readonly _walker;
     constructor(arc: Arc, options: any);

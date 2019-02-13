@@ -7,11 +7,11 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-import { handleFor } from './handle.js';
 import { assert } from '../platform/assert-web.js';
 import { PECInnerPort } from './api-channel.js';
-import { StorageProxy, StorageProxyScheduler } from './storage-proxy.js';
+import { handleFor } from './handle.js';
 import { Id } from './id.js';
+import { StorageProxy, StorageProxyScheduler } from './storage-proxy.js';
 export class ParticleExecutionContext {
     constructor(port, idBase, loader) {
         this.particles = [];

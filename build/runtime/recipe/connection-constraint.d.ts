@@ -1,7 +1,7 @@
-import { Comparable } from './util.js';
 import { ParticleSpec } from '../particle-spec.js';
-import { Handle } from './handle.js';
 import { Direction } from './handle-connection.js';
+import { Handle } from './handle.js';
+import { Comparable } from './util.js';
 export declare abstract class EndPoint implements Comparable {
     abstract _compareTo(other: any): number;
     abstract _clone(cloneMap?: any): any;

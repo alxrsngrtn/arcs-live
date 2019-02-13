@@ -7,17 +7,17 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-import { ParticleSpec } from './particle-spec.js';
-import { Type } from './type.js';
+import { Arc } from './arc.js';
 import { OuterPortAttachment } from './debug/outer-port-attachment.js';
 import { Handle } from './handle.js';
+import { ParticleSpec } from './particle-spec.js';
 import { Particle } from './particle.js';
-import * as recipeParticle from './recipe/particle.js';
 import * as recipeHandle from './recipe/handle.js';
-import { Arc } from './arc.js';
-import { StorageProviderBase } from './storage/storage-provider-base.js';
+import * as recipeParticle from './recipe/particle.js';
 import { StorageProxy } from './storage-proxy.js';
 import { SerializedModelEntry } from './storage/crdt-collection-model.js';
+import { StorageProviderBase } from './storage/storage-provider-base.js';
+import { Type } from './type.js';
 declare class ThingMapper {
     _prefix: string;
     _nextIdentifier: number;

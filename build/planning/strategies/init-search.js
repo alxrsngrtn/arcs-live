@@ -4,9 +4,9 @@
 // Code distributed by Google as part of this project is also
 // subject to an additional IP rights grant found at
 // http://polymer.github.io/PATENTS.txt
-import { Strategy } from '../strategizer.js';
-import { Recipe } from '../../runtime/recipe/recipe.js';
 import { assert } from '../../platform/assert-web.js';
+import { Recipe } from '../../runtime/recipe/recipe.js';
+import { Strategy } from '../strategizer.js';
 export class InitSearch extends Strategy {
     constructor(arc, { search }) {
         super(arc, { search });

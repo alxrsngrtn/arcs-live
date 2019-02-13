@@ -5,10 +5,10 @@
 // Code distributed by Google as part of this project is also
 // subject to an additional IP rights grant found at
 // http://polymer.github.io/PATENTS.txt
-import { VolatileStorage } from './volatile-storage.js';
 import { FirebaseStorage } from './firebase-storage.js';
 import { PouchDbStorage } from './pouchdb/pouch-db-storage.js';
 import { SyntheticStorage } from './synthetic-storage.js';
+import { VolatileStorage } from './volatile-storage.js';
 export class StorageProviderFactory {
     constructor(arcId) {
         this.arcId = arcId;

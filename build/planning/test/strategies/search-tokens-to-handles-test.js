@@ -7,11 +7,11 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-import { Manifest } from '../../../runtime/manifest.js';
-import { StrategyTestHelper } from './strategy-test-helper.js';
-import { SearchTokensToHandles } from '../../strategies/search-tokens-to-handles.js';
 import { assert } from '../../../platform/chai-web.js';
 import { Loader } from '../../../runtime/loader.js';
+import { Manifest } from '../../../runtime/manifest.js';
+import { SearchTokensToHandles } from '../../strategies/search-tokens-to-handles.js';
+import { StrategyTestHelper } from './strategy-test-helper.js';
 describe('SearchTokensToHandles', () => {
     it('finds local handle by tags', async () => {
         const manifest = (await Manifest.parse(`

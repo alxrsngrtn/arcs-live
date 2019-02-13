@@ -6,12 +6,12 @@
 // subject to an additional IP rights grant found at
 // http://polymer.github.io/PATENTS.txt
 import { assert } from '../../platform/assert-web.js';
-import { StorageBase, StorageProviderBase, ChangeEvent } from './storage-provider-base.js';
-import { KeyBase } from './key-base.js';
-import { ArcType, HandleType } from '../type.js';
-import { ArcInfo, ArcHandle } from '../synthetic-types.js';
 import { Manifest } from '../manifest.js';
+import { ArcHandle, ArcInfo } from '../synthetic-types.js';
+import { ArcType, HandleType } from '../type.js';
 import { setDiffCustom } from '../util.js';
+import { KeyBase } from './key-base.js';
+import { ChangeEvent, StorageBase, StorageProviderBase } from './storage-provider-base.js';
 var Scope;
 (function (Scope) {
     Scope[Scope["arc"] = 1] = "arc"; // target must be a storage key for an ArcInfo Variable

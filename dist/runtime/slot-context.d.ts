@@ -7,10 +7,10 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-import { SlotConsumer } from './slot-consumer.js';
+import { Description } from './description.js';
 import { ProvidedSlotSpec } from './particle-spec.js';
 import { Handle } from './recipe/handle.js';
-import { Description } from './description.js';
+import { SlotConsumer } from './slot-consumer.js';
 /**
  * Represents a single slot in the rendering system.
  */

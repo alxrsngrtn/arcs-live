@@ -8,9 +8,9 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { assert } from '../platform/assert-web.js';
-import { CrdtCollectionModel } from './storage/crdt-collection-model.js';
-import { CollectionType, BigCollectionType } from './type.js';
 import { mapStackTrace } from '../platform/sourcemapped-stacktrace-web.js';
+import { CrdtCollectionModel } from './storage/crdt-collection-model.js';
+import { BigCollectionType, CollectionType } from './type.js';
 var SyncState;
 (function (SyncState) {
     SyncState[SyncState["none"] = 0] = "none";

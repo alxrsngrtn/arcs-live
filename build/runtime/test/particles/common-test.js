@@ -8,8 +8,8 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { assert } from '../../../platform/chai-web.js';
-import { TestHelper } from '../../testing/test-helper.js';
 import { Manifest } from '../../manifest.js';
+import { TestHelper } from '../../testing/test-helper.js';
 describe('common particles test', () => {
     it('resolves after cloning', async () => {
         const manifest = await Manifest.parse(`

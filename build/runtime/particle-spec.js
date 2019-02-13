@@ -9,8 +9,8 @@
  */
 import { assert } from '../platform/assert-web.js';
 import { Modality } from './modality.js';
-import { Type, InterfaceType } from './type.js';
 import { TypeChecker } from './recipe/type-checker.js';
+import { InterfaceType, Type } from './type.js';
 function asType(t) {
     return (t instanceof Type) ? t : Type.fromLiteral(t);
 }

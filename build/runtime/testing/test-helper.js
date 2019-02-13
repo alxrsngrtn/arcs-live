@@ -7,14 +7,14 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
+import { Planner } from '../../planning/planner.js';
+import { RecipeIndex } from '../../planning/recipe-index.js';
 import { assert } from '../../platform/chai-web.js';
 import { Arc } from '../arc.js';
-import { InterfaceType } from '../type.js';
 import { Loader } from '../loader.js';
 import { Manifest } from '../manifest.js';
 import { MockSlotComposer } from '../testing/mock-slot-composer.js';
-import { Planner } from '../../planning/planner.js';
-import { RecipeIndex } from '../../planning/recipe-index.js';
+import { InterfaceType } from '../type.js';
 /**
  * Helper class to recipe instantiation and replanning.
  * Usage example:

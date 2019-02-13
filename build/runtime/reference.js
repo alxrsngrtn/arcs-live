@@ -7,8 +7,8 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { assert } from '../platform/assert-web.js';
-import { ReferenceType } from './type.js';
 import { handleFor } from './handle.js';
+import { ReferenceType } from './type.js';
 var ReferenceMode;
 (function (ReferenceMode) {
     ReferenceMode[ReferenceMode["Unstored"] = 0] = "Unstored";

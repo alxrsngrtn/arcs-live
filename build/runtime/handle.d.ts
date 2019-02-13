@@ -6,8 +6,8 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-import { StorageProxy, CollectionProxy, VariableProxy, BigCollectionProxy } from './storage-proxy.js';
 import { Particle } from './particle.js';
+import { BigCollectionProxy, CollectionProxy, StorageProxy, VariableProxy } from './storage-proxy.js';
 export interface HandleOptions {
     keepSynced: boolean;
     notifySync: boolean;

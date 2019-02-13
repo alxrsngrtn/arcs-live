@@ -8,11 +8,11 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { Arc } from '../../runtime/arc.js';
-import { Descendant } from '../../runtime/recipe/walker.js';
-import { Strategy, StrategyDerived } from '../strategizer.js';
+import { ArcDebugListener, ArcDebugListenerDerived, ArcDevtoolsChannel } from '../../runtime/debug/abstract-devtools-channel.js';
 import { Manifest } from '../../runtime/manifest.js';
 import { Recipe } from '../../runtime/recipe/recipe.js';
-import { ArcDevtoolsChannel, ArcDebugListener, ArcDebugListenerDerived } from '../../runtime/debug/abstract-devtools-channel.js';
+import { Descendant } from '../../runtime/recipe/walker.js';
+import { Strategy, StrategyDerived } from '../strategizer.js';
 export declare class ArcPlannerInvoker extends ArcDebugListener {
     private arc;
     private recipeIndex;

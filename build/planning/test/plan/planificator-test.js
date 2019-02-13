@@ -9,11 +9,11 @@
  */
 import { assert } from '../../../platform/chai-web.js';
 import { Arc } from '../../../runtime/arc.js';
-import { FakeSlotComposer } from '../../../runtime/testing/fake-slot-composer.js';
 import { Loader } from '../../../runtime/loader.js';
+import { FakeSlotComposer } from '../../../runtime/testing/fake-slot-composer.js';
+import { TestHelper } from '../../../runtime/testing/test-helper.js';
 import { Planificator } from '../../plan/planificator.js';
 import { PlanningResult } from '../../plan/planning-result.js';
-import { TestHelper } from '../../../runtime/testing/test-helper.js';
 describe('planificator', () => {
     it('constructs suggestion and search storage keys for fb arc', async () => {
         const helper = await TestHelper.create({ storageKey: 'firebase://arcs-storage.firebaseio.com/AIzaSyBme42moeI-2k8WgXh-6YK_wYyjEXo4Oz8/0_6_0/testuser--LT97ssVNw_ttCZtjlMT' });

@@ -9,7 +9,7 @@
  */
 import { assert } from '../platform/assert-web.js';
 import { DescriptionFormatter } from './description-formatter.js';
-import { CollectionType, BigCollectionType, EntityType, InterfaceType } from './type.js';
+import { BigCollectionType, CollectionType, EntityType, InterfaceType } from './type.js';
 export class Description {
     constructor(particleDescriptions = [], storeDescById = {}, arcRecipeName, 
     // TODO(mmandlis): replace Particle[] with serializable json objects.

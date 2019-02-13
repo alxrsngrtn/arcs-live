@@ -7,8 +7,8 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-import { Loader } from '../loader.js';
 import { assert } from '../../platform/chai-web.js';
+import { Loader } from '../loader.js';
 import { Manifest } from '../manifest.js';
 describe('loader', () => {
     it('correctly loads Thing as a dependency', async () => {

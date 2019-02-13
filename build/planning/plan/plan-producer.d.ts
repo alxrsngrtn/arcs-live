@@ -8,13 +8,13 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { Arc } from '../../runtime/arc.js';
+import { ArcDevtoolsChannel } from '../../runtime/debug/abstract-devtools-channel.js';
+import { VariableStorageProvider } from '../../runtime/storage/storage-provider-base.js';
 import { Planner } from '../planner.js';
-import { PlanningResult } from './planning-result.js';
 import { RecipeIndex } from '../recipe-index.js';
 import { Speculator } from '../speculator.js';
+import { PlanningResult } from './planning-result.js';
 import { Suggestion } from './suggestion.js';
-import { VariableStorageProvider } from '../../runtime/storage/storage-provider-base.js';
-import { ArcDevtoolsChannel } from '../../runtime/debug/abstract-devtools-channel.js';
 export declare enum Trigger {
     Init = "init",
     Search = "search",

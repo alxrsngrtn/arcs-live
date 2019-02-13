@@ -8,9 +8,9 @@
 import { assert } from '../../platform/chai-web.js';
 import { Id } from '../id.js';
 import { StorageProviderFactory } from '../storage/storage-provider-factory.js';
-import { ArcType } from '../type.js';
 import { resetVolatileStorageForTesting } from '../storage/volatile-storage.js';
 import { assertThrowsAsync } from '../testing/test-util.js';
+import { ArcType } from '../type.js';
 describe('synthetic storage ', () => {
     before(() => {
         // TODO: perhaps we should do this after the test, and use a unique path for each run instead?

@@ -7,22 +7,22 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-import { Type } from './type.js';
-import { ParticleExecutionHost } from './particle-execution-host.js';
-import { Handle } from './recipe/handle.js';
-import { Recipe } from './recipe/recipe.js';
-import { Manifest } from './manifest.js';
-import { StorageProviderFactory } from './storage/storage-provider-factory.js';
+import { PECInnerPort } from './api-channel.js';
+import { ArcDebugListenerDerived } from './debug/abstract-devtools-channel.js';
 import { Id } from './id.js';
 import { Loader } from './loader.js';
-import { StorageProviderBase } from './storage/storage-provider-base.js';
+import { Manifest } from './manifest.js';
+import { Modality } from './modality.js';
+import { ParticleExecutionHost } from './particle-execution-host.js';
 import { ParticleSpec } from './particle-spec.js';
-import { PECInnerPort } from './api-channel.js';
+import { Handle } from './recipe/handle.js';
 import { Particle } from './recipe/particle.js';
+import { Recipe } from './recipe/recipe.js';
 import { Slot } from './recipe/slot.js';
 import { SlotComposer } from './slot-composer.js';
-import { Modality } from './modality.js';
-import { ArcDebugListenerDerived } from './debug/abstract-devtools-channel.js';
+import { StorageProviderBase } from './storage/storage-provider-base.js';
+import { StorageProviderFactory } from './storage/storage-provider-factory.js';
+import { Type } from './type.js';
 declare type ArcOptions = {
     id: string;
     context: Manifest;

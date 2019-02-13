@@ -17,10 +17,10 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
 import { assert } from '../platform/assert-web.js';
+import { DevtoolsConnection } from './debug/devtools-connection.js';
+import { OuterPortAttachment } from './debug/outer-port-attachment.js';
 import { ParticleSpec } from './particle-spec.js';
 import { Type } from './type.js';
-import { OuterPortAttachment } from './debug/outer-port-attachment.js';
-import { DevtoolsConnection } from './debug/devtools-connection.js';
 var MappingType;
 (function (MappingType) {
     MappingType[MappingType["Mapped"] = 0] = "Mapped";

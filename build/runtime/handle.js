@@ -6,11 +6,11 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-import { Reference } from './reference.js';
-import { Symbols } from './symbols.js';
 import { assert } from '../platform/assert-web.js';
 import { ParticleSpec } from './particle-spec.js';
-import { EntityType, CollectionType, BigCollectionType, InterfaceType, ReferenceType } from './type.js';
+import { Reference } from './reference.js';
+import { Symbols } from './symbols.js';
+import { BigCollectionType, CollectionType, EntityType, InterfaceType, ReferenceType } from './type.js';
 // TODO: This won't be needed once runtime is transferred between contexts.
 function cloneData(data) {
     return data;

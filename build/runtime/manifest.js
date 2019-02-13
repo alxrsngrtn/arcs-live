@@ -7,22 +7,22 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
+import { parser } from '../../build/runtime/manifest-parser.js';
 import { assert } from '../platform/assert-web.js';
 import { digest } from '../platform/digest-web.js';
-import { parser } from '../../build/runtime/manifest-parser.js';
-import { Recipe, RequireSection } from './recipe/recipe.js';
-import { Handle } from './recipe/handle.js';
-import { ParticleSpec } from './particle-spec.js';
-import { Schema } from './schema.js';
-import { Search } from './recipe/search.js';
-import { InterfaceInfo } from './interface-info.js';
-import { Type, EntityType, TypeVariable, CollectionType, BigCollectionType, ReferenceType, InterfaceType, SlotType } from './type.js';
-import { compareComparables } from './recipe/util.js';
-import { StorageProviderFactory } from './storage/storage-provider-factory.js';
-import { ManifestMeta } from './manifest-meta.js';
-import { ParticleEndPoint, HandleEndPoint, TagEndPoint } from './recipe/connection-constraint.js';
 import { Id } from './id.js';
+import { InterfaceInfo } from './interface-info.js';
+import { ManifestMeta } from './manifest-meta.js';
+import { ParticleSpec } from './particle-spec.js';
+import { HandleEndPoint, ParticleEndPoint, TagEndPoint } from './recipe/connection-constraint.js';
+import { Handle } from './recipe/handle.js';
 import { RecipeUtil } from './recipe/recipe-util.js';
+import { Recipe, RequireSection } from './recipe/recipe.js';
+import { Search } from './recipe/search.js';
+import { compareComparables } from './recipe/util.js';
+import { Schema } from './schema.js';
+import { StorageProviderFactory } from './storage/storage-provider-factory.js';
+import { BigCollectionType, CollectionType, EntityType, InterfaceType, ReferenceType, SlotType, Type, TypeVariable } from './type.js';
 class ManifestError extends Error {
     constructor(location, message) {
         super(message);

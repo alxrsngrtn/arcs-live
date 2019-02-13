@@ -1,8 +1,8 @@
-import { BigCollectionStorageProvider, CollectionStorageProvider, StorageBase, StorageProviderBase, VariableStorageProvider } from './storage-provider-base.js';
-import { KeyBase } from './key-base.js';
-import { CrdtCollectionModel } from './crdt-collection-model.js';
 import { Id } from '../id.js';
 import { Type } from '../type.js';
+import { CrdtCollectionModel } from './crdt-collection-model.js';
+import { KeyBase } from './key-base.js';
+import { BigCollectionStorageProvider, CollectionStorageProvider, StorageBase, StorageProviderBase, VariableStorageProvider } from './storage-provider-base.js';
 export declare function resetVolatileStorageForTesting(): void;
 declare class VolatileKey extends KeyBase {
     _arcId: string;

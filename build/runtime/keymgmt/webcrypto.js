@@ -8,8 +8,8 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import idb from 'idb';
-import { decode, encode } from './base64';
 import rs from 'jsrsasign';
+import { decode, encode } from './base64';
 const DEVICE_KEY_ALGORITHM = 'RSA-OAEP';
 const X509_CERTIFICATE_ALGORITHM = "RSA-OAEP";
 const X509_CERTIFICATE_HASH_ALGORITHM = "SHA-1";

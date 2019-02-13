@@ -7,14 +7,14 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-import { DeploymentStatus } from "../containers";
 import { Core_v1Api, Extensions_v1beta1Api, ExtensionsV1beta1DeploymentSpec, KubeConfig, V1beta1HTTPIngressPath, V1beta1HTTPIngressRuleValue, V1beta1Ingress, V1beta1IngressBackend, V1beta1IngressRule, V1beta1IngressSpec, V1Container, V1ContainerPort, V1EnvVar, V1GCEPersistentDiskVolumeSource, V1ObjectMeta, V1PersistentVolume, V1PersistentVolumeSpec, V1PodSpec, V1PodTemplateSpec, V1Service, V1ServicePort, V1ServiceSpec, V1Volume, V1VolumeMount } from "@kubernetes/client-node";
-import { ARCS_KEY_PREFIX, arcsKeyFor, DISK_MOUNT_PATH, ON_DISK_DB, VM_URL_PREFIX } from "../utils";
-import { ARCS_DOCKER_IMAGE, ARCS_INGRESS_PREFIX, CONTAINER_PORT, EXTERNAL_PORT, K18S_NAMESPACE } from "./k18s-constants";
+import { ExtensionsV1beta1Deployment } from "../../../node_modules/@kubernetes/client-node/dist/api";
+import { CloudManager } from "../cloud";
+import { DeploymentStatus } from "../containers";
 import { GCE_PERSISTENT_DISK_TYPE } from "../gcp/gcp-constants";
 import { DEFAULT_GCP_DISK_SIZE } from "../gcp/gcpdisk";
-import { CloudManager } from "../cloud";
-import { ExtensionsV1beta1Deployment } from "../../../node_modules/@kubernetes/client-node/dist/api";
+import { ARCS_KEY_PREFIX, arcsKeyFor, DISK_MOUNT_PATH, ON_DISK_DB, VM_URL_PREFIX } from "../utils";
+import { ARCS_DOCKER_IMAGE, ARCS_INGRESS_PREFIX, CONTAINER_PORT, EXTERNAL_PORT, K18S_NAMESPACE } from "./k18s-constants";
 const USE_PREFIX_MAPPING = true;
 /**
  * An implementation of the Container interface that uses Kubernetes for

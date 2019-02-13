@@ -7,12 +7,12 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-import { RecipeIndex } from '../recipe-index.js';
-import { Loader } from '../../runtime/loader.js';
-import { Arc } from '../../runtime/arc.js';
 import { assert } from '../../platform/chai-web.js';
+import { Arc } from '../../runtime/arc.js';
+import { Loader } from '../../runtime/loader.js';
 import { MockSlotComposer } from '../../runtime/testing/mock-slot-composer.js';
 import { TestHelper } from '../../runtime/testing/test-helper.js';
+import { RecipeIndex } from '../recipe-index.js';
 describe('RecipeIndex', () => {
     async function createIndex(manifestContent) {
         const manifest = (await TestHelper.parseManifest(manifestContent, new Loader()));

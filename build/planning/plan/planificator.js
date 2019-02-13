@@ -8,12 +8,12 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { assert } from '../../platform/assert-web.js';
+import { EntityType } from '../../runtime/type.js';
+import { PlanningExplorerAdapter } from '../debug/planning-explorer-adapter.js';
 import { PlanConsumer } from './plan-consumer.js';
 import { PlanProducer, Trigger } from './plan-producer.js';
 import { PlanningResult } from './planning-result.js';
 import { ReplanQueue } from './replan-queue.js';
-import { EntityType } from '../../runtime/type.js';
-import { PlanningExplorerAdapter } from '../debug/planning-explorer-adapter.js';
 export class Planificator {
     constructor(arc, userid, result, searchStore, onlyConsumer = false, debug = false) {
         this.search = null;

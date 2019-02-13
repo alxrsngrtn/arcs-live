@@ -1,9 +1,9 @@
-import { Schema } from './schema.js';
-import { TypeVariableInfo } from './type-variable-info.js';
+import { Id } from './id.js';
 import { InterfaceInfo } from './interface-info.js';
+import { Schema } from './schema.js';
 import { SlotInfo } from './slot-info.js';
 import { ArcInfo } from './synthetic-types.js';
-import { Id } from './id.js';
+import { TypeVariableInfo } from './type-variable-info.js';
 export declare type TypeLiteral = {
     tag: string;
     data?: any;

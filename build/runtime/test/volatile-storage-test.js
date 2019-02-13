@@ -7,13 +7,13 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-import { StorageProviderFactory } from '../storage/storage-provider-factory.js';
+import { assert } from '../../platform/chai-web.js';
 import { Arc } from '../arc.js';
 import { Loader } from '../loader.js';
 import { Manifest } from '../manifest.js';
-import { EntityType, ReferenceType } from '../type.js';
-import { assert } from '../../platform/chai-web.js';
+import { StorageProviderFactory } from '../storage/storage-provider-factory.js';
 import { resetVolatileStorageForTesting } from '../storage/volatile-storage.js';
+import { EntityType, ReferenceType } from '../type.js';
 // Resolves when the two stores are synchronzied with each other:
 // * same version
 // * no pending changes

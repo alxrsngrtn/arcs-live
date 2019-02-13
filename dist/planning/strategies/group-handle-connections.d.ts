@@ -1,5 +1,5 @@
-import { StrategizerWalker, Strategy } from '../strategizer.js';
 import { Arc } from '../../runtime/arc.js';
+import { StrategizerWalker, Strategy } from '../strategizer.js';
 export declare class GroupHandleConnections extends Strategy {
     _walker: StrategizerWalker;
     constructor(arc?: Arc, args?: any);

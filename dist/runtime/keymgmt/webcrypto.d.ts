@@ -7,9 +7,9 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
+import { ObjectStore } from 'idb';
 import { DeviceKey, Key, PublicKey, RecoveryKey, WrappedKey } from "./keys";
 import { KeyGenerator, KeyStorage } from "./manager";
-import { ObjectStore } from 'idb';
 /**
  * Implementation of KeyGenerator using WebCrypto interface.
  */

@@ -7,7 +7,7 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-import { DescriptionFormatter, CombinedDescriptionsOptions, ParticleDescription } from './description-formatter.js';
+import { CombinedDescriptionsOptions, DescriptionFormatter, ParticleDescription } from './description-formatter.js';
 export declare class DescriptionDomFormatter extends DescriptionFormatter {
     private nextID;
     _isSelectedDescription(desc: any): boolean;

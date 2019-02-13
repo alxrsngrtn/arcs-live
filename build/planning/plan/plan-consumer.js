@@ -8,11 +8,11 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { assert } from '../../platform/assert-web.js';
-import { PlanningResult } from './planning-result.js';
-import { SuggestionComposer } from '../suggestion-composer.js';
 import { DevtoolsConnection } from '../../runtime/debug/devtools-connection.js';
-import { StrategyExplorerAdapter } from '../debug/strategy-explorer-adapter.js';
 import { PlanningExplorerAdapter } from '../debug/planning-explorer-adapter.js';
+import { StrategyExplorerAdapter } from '../debug/strategy-explorer-adapter.js';
+import { SuggestionComposer } from '../suggestion-composer.js';
+import { PlanningResult } from './planning-result.js';
 export class PlanConsumer {
     constructor(arc, result) {
         // Callback is triggered when planning results have changed.

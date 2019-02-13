@@ -8,8 +8,8 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { Arc } from './arc.js';
-import { SlotComposer } from './slot-composer.js';
 import { Particle } from './recipe/particle.js';
+import { SlotComposer } from './slot-composer.js';
 export declare class ParticleExecutionHost {
     private _apiPort;
     close: () => void;

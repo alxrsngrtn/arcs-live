@@ -1,5 +1,5 @@
-import { Type } from './type.js';
 import { Id } from './id.js';
+import { Type } from './type.js';
 export declare class ArcInfo {
     readonly id: string;
     readonly serialization: string;

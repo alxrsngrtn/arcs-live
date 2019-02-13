@@ -1,8 +1,17 @@
-import Compute from '@google-cloud/compute';
-import { ARCS_NODE_LABEL, arcsKeyFor, waitForGcp } from "../utils";
+/**
+ * @license
+ * Copyright (c) 2018 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
 import common from "@google-cloud/common";
-import { GCE_PERSISTENT_DISK_TYPE, GCP_ZONE } from "./gcp-constants";
+import Compute from '@google-cloud/compute';
 import { CloudManager } from "../cloud";
+import { ARCS_NODE_LABEL, arcsKeyFor, waitForGcp } from "../utils";
+import { GCE_PERSISTENT_DISK_TYPE, GCP_ZONE } from "./gcp-constants";
 /**
  * Represents disk storage provisioned on a cloud provider.
  */

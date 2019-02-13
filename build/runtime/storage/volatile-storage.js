@@ -7,10 +7,10 @@
 // http://polymer.github.io/PATENTS.txt
 import { assert } from '../../platform/assert-web.js';
 import { Tracing } from '../../tracelib/trace.js';
-import { StorageBase, StorageProviderBase, ChangeEvent } from './storage-provider-base.js';
-import { KeyBase } from './key-base.js';
+import { BigCollectionType, CollectionType, ReferenceType } from '../type.js';
 import { CrdtCollectionModel } from './crdt-collection-model.js';
-import { CollectionType, BigCollectionType, ReferenceType } from '../type.js';
+import { KeyBase } from './key-base.js';
+import { ChangeEvent, StorageBase, StorageProviderBase } from './storage-provider-base.js';
 export function resetVolatileStorageForTesting() {
     for (const key of Object.keys(__storageCache)) {
         __storageCache[key]._memoryMap = {};

@@ -7,9 +7,9 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
+import { HandleConnection } from './recipe/handle-connection.js';
 import { Handle } from './recipe/handle.js';
 import { Particle } from './recipe/particle.js';
-import { HandleConnection } from './recipe/handle-connection.js';
 export declare type ParticleDescription = {
     _particle: Particle;
     pattern?: string;

@@ -5,12 +5,12 @@
 // Code distributed by Google as part of this project is also
 // subject to an additional IP rights grant found at
 // http://polymer.github.io/PATENTS.txt
-import { Schema } from './schema.js';
-import { TypeVariableInfo } from './type-variable-info.js';
 import { InterfaceInfo } from './interface-info.js';
-import { SlotInfo } from './slot-info.js';
 import { TypeChecker } from './recipe/type-checker.js';
+import { Schema } from './schema.js';
+import { SlotInfo } from './slot-info.js';
 import { ArcInfo } from './synthetic-types.js';
+import { TypeVariableInfo } from './type-variable-info.js';
 export class Type {
     constructor(tag) {
         this.tag = tag;

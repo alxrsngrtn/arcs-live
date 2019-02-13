@@ -7,9 +7,9 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
+import { Core_v1Api, Extensions_v1beta1Api } from "@kubernetes/client-node";
 import { Container, ContainerManager } from "../containers";
 import { Disk } from "../disks";
-import { Core_v1Api, Extensions_v1beta1Api } from "@kubernetes/client-node";
 export declare class K18sContainerManager implements ContainerManager {
     k8sApi: Core_v1Api;
     k8sBetaApi: Extensions_v1beta1Api;

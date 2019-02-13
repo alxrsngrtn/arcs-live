@@ -4,9 +4,9 @@
 // Code distributed by Google as part of this project is also
 // subject to an additional IP rights grant found at
 // http://polymer.github.io/PATENTS.txt
-import { Recipe } from './recipe.js';
 import { assert } from '../../platform/assert-web.js';
 import { InterfaceType } from '../type.js';
+import { Recipe } from './recipe.js';
 class Shape {
     constructor(recipe, particles, handles, hcs) {
         this.recipe = recipe;

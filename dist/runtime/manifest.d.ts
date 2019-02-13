@@ -7,15 +7,15 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-import { Recipe } from './recipe/recipe.js';
-import { ParticleSpec } from './particle-spec.js';
-import { Schema } from './schema.js';
+import { Id } from './id.js';
 import { InterfaceInfo } from './interface-info.js';
-import { Type, EntityType, InterfaceType } from './type.js';
+import { ManifestMeta } from './manifest-meta.js';
+import { ParticleSpec } from './particle-spec.js';
+import { Recipe } from './recipe/recipe.js';
+import { Schema } from './schema.js';
 import { StorageProviderBase } from './storage/storage-provider-base.js';
 import { StorageProviderFactory } from './storage/storage-provider-factory.js';
-import { ManifestMeta } from './manifest-meta.js';
-import { Id } from './id.js';
+import { EntityType, InterfaceType, Type } from './type.js';
 export declare class StorageStub {
     type: Type;
     id: string;

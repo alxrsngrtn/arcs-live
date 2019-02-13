@@ -11,10 +11,10 @@
 // tslint:disable: variable-name
 // tslint:disable: no-unused-expression
 import { assert } from '../../platform/chai-web.js';
-import { StubLoader } from '../testing/stub-loader.js';
 import { Manifest } from '../manifest.js';
 import { Reference } from '../reference.js';
 import { Schema } from '../schema.js';
+import { StubLoader } from '../testing/stub-loader.js';
 import { EntityType, ReferenceType } from '../type.js';
 describe('schema', () => {
     // Avoid initialising non-POD variables globally, since they would be constructed even when

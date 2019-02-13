@@ -8,10 +8,10 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { assert } from '../platform/assert-web.js';
-import { Type, EntityType, ReferenceType } from './type.js';
-import { TypeChecker } from './recipe/type-checker.js';
 import { Entity } from './entity.js';
+import { TypeChecker } from './recipe/type-checker.js';
 import { Reference } from './reference.js';
+import { EntityType, ReferenceType, Type } from './type.js';
 export class Schema {
     // tslint:disable-next-line: no-any
     constructor(names, fields, description) {

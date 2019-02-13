@@ -1,6 +1,6 @@
 import { assert } from '../../../platform/assert-web.js';
-import { PouchDbStorageProvider } from './pouch-db-storage-provider.js';
 import { ChangeEvent } from '../storage-provider-base.js';
+import { PouchDbStorageProvider } from './pouch-db-storage-provider.js';
 /**
  * The PouchDB-based implementation of a Variable.
  */

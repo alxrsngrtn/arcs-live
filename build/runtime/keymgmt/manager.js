@@ -7,8 +7,8 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-import { WebCryptoKeyGenerator, WebCryptoKeyIndexedDBStorage, } from "./webcrypto";
 import { WebCryptoMemoryKeyStorage } from "./testing/cryptotestutils";
+import { WebCryptoKeyGenerator, WebCryptoKeyIndexedDBStorage, } from "./webcrypto";
 export class KeyManager {
     static getGenerator() {
         return WebCryptoKeyGenerator.getInstance();

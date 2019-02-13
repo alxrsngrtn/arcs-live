@@ -1,11 +1,11 @@
+import { Modality } from '../modality.js';
 import { ConnectionConstraint } from './connection-constraint.js';
+import { HandleConnection } from './handle-connection.js';
+import { Handle } from './handle.js';
 import { Particle } from './particle.js';
 import { Search } from './search.js';
-import { Slot } from './slot.js';
 import { SlotConnection } from './slot-connection.js';
-import { Handle } from './handle.js';
-import { HandleConnection } from './handle-connection.js';
-import { Modality } from '../modality.js';
+import { Slot } from './slot.js';
 export declare class Recipe {
     private _requires;
     private _particles;

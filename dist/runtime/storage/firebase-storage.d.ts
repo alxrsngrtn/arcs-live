@@ -1,8 +1,8 @@
-import { StorageBase, StorageProviderBase, BigCollectionStorageProvider, CollectionStorageProvider, VariableStorageProvider } from './storage-provider-base.js';
 import { firebase } from '../../platform/firebase-web.js';
-import { KeyBase } from './key-base.js';
 import { Id } from '../id.js';
 import { Type } from '../type.js';
+import { KeyBase } from './key-base.js';
+import { BigCollectionStorageProvider, CollectionStorageProvider, StorageBase, StorageProviderBase, VariableStorageProvider } from './storage-provider-base.js';
 export declare function resetStorageForTesting(key: any): Promise<void>;
 declare class FirebaseKey extends KeyBase {
     databaseUrl?: string;

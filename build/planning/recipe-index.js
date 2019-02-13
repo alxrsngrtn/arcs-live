@@ -7,25 +7,25 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-import { Manifest } from '../runtime/manifest.js';
-import { Arc } from '../runtime/arc.js';
-import { SlotComposer } from '../runtime/slot-composer.js';
 import { Strategizer, Strategy } from '../planning/strategizer.js';
-import { StrategyExplorerAdapter } from './debug/strategy-explorer-adapter.js';
-import { Tracing } from '../tracelib/trace.js';
-import { ConvertConstraintsToConnections } from './strategies/convert-constraints-to-connections.js';
-import { MatchFreeHandlesToConnections } from './strategies/match-free-handles-to-connections.js';
-import { ResolveRecipe } from './strategies/resolve-recipe.js';
-import { CreateHandleGroup } from './strategies/create-handle-group.js';
-import { AddMissingHandles } from './strategies/add-missing-handles.js';
-import * as Rulesets from './strategies/rulesets.js';
-import { SlotUtils } from '../runtime/recipe/slot-utils.js';
-import { DevtoolsConnection } from '../runtime/debug/devtools-connection.js';
-import { RecipeUtil } from '../runtime/recipe/recipe-util.js';
-import { Handle } from '../runtime/recipe/handle.js';
 import { assert } from '../platform/assert-web.js';
+import { Arc } from '../runtime/arc.js';
+import { DevtoolsConnection } from '../runtime/debug/devtools-connection.js';
+import { Manifest } from '../runtime/manifest.js';
+import { Handle } from '../runtime/recipe/handle.js';
+import { RecipeUtil } from '../runtime/recipe/recipe-util.js';
+import { SlotUtils } from '../runtime/recipe/slot-utils.js';
+import { SlotComposer } from '../runtime/slot-composer.js';
+import { Tracing } from '../tracelib/trace.js';
+import { StrategyExplorerAdapter } from './debug/strategy-explorer-adapter.js';
 import { PlanningResult } from './plan/planning-result.js';
 import { PlanningModalityHandler } from './planning-modality-handler.js';
+import { AddMissingHandles } from './strategies/add-missing-handles.js';
+import { ConvertConstraintsToConnections } from './strategies/convert-constraints-to-connections.js';
+import { CreateHandleGroup } from './strategies/create-handle-group.js';
+import { MatchFreeHandlesToConnections } from './strategies/match-free-handles-to-connections.js';
+import { ResolveRecipe } from './strategies/resolve-recipe.js';
+import * as Rulesets from './strategies/rulesets.js';
 class RelevantContextRecipes extends Strategy {
     constructor(context, modality) {
         super();

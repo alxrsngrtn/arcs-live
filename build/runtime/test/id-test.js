@@ -7,9 +7,9 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
+import { assert } from '../../platform/assert-web.js';
 import { Id } from '../id.js';
 import { Random } from '../random.js';
-import { assert } from '../../platform/assert-web.js';
 describe('Id', () => {
     it('parses id from string representation', async () => {
         Random.seedForTests();

@@ -8,10 +8,10 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { assert } from '../../platform/chai-web.js';
-import { EntityType, TypeVariable, SlotType } from '../type.js';
-import { TypeChecker } from '../recipe/type-checker.js';
 import { Manifest } from '../manifest.js';
 import { Handle } from '../recipe/handle.js';
+import { TypeChecker } from '../recipe/type-checker.js';
+import { EntityType, SlotType, TypeVariable } from '../type.js';
 describe('TypeChecker', () => {
     it('resolves a trio of in [~a], out [~b], in [Product]', async () => {
         const a = TypeVariable.make('a').collectionOf();

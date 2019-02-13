@@ -7,11 +7,11 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
+import { Suggestion } from '../../planning/plan/suggestion.js';
+import { RecipeIndex } from '../../planning/recipe-index.js';
 import { Loader } from '../loader.js';
 import { Manifest } from '../manifest.js';
 import { MockSlotComposer } from '../testing/mock-slot-composer.js';
-import { RecipeIndex } from '../../planning/recipe-index.js';
-import { Suggestion } from '../../planning/plan/suggestion.js';
 declare type TestHelperOptions = {
     slotComposerStrict?: boolean;
     slotComposer?: MockSlotComposer;

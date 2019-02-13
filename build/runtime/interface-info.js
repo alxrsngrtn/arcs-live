@@ -8,8 +8,8 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { assert } from '../platform/assert-web.js';
-import { Type, TypeVariable } from './type.js';
 import { TypeChecker } from './recipe/type-checker.js';
+import { Type, TypeVariable } from './type.js';
 function _fromLiteral(member) {
     if (!!member && !(member instanceof Type) && typeof member === 'object') {
         return Type.fromLiteral(member);

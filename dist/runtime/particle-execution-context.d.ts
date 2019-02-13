@@ -8,8 +8,8 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { Handle } from './handle.js';
-import { StorageProxy } from './storage-proxy.js';
 import { Loader } from './loader.js';
+import { StorageProxy } from './storage-proxy.js';
 export declare class ParticleExecutionContext {
     private apiPort;
     private particles;

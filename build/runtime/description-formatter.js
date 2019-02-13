@@ -9,7 +9,7 @@
  */
 import { assert } from '../platform/assert-web.js';
 import { ParticleSpec } from './particle-spec.js';
-import { CollectionType, BigCollectionType, InterfaceType } from './type.js';
+import { BigCollectionType, CollectionType, InterfaceType } from './type.js';
 export class DescriptionFormatter {
     constructor(particleDescriptions = [], storeDescById = {}) {
         this.particleDescriptions = particleDescriptions;

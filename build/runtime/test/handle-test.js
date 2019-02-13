@@ -8,15 +8,15 @@
  * http://polymer.github.io/PATENTS.txt
  */
 'use strict';
-import { Arc } from '../arc.js';
 import { assert } from '../../platform/chai-web.js';
+import { Arc } from '../arc.js';
 import { handleFor } from '../handle.js';
-import { EntityType, InterfaceType } from '../type.js';
-import { Manifest } from '../manifest.js';
 import { Loader } from '../loader.js';
+import { Manifest } from '../manifest.js';
 import { Schema } from '../schema.js';
-import { assertThrowsAsync } from '../testing/test-util.js';
 import { FakeSlotComposer } from '../testing/fake-slot-composer.js';
+import { assertThrowsAsync } from '../testing/test-util.js';
+import { EntityType, InterfaceType } from '../type.js';
 describe('Handle', () => {
     // Avoid initialising non-POD variables globally, since they would be constructed even when
     // these tests are not going to be executed (i.e. another test file uses 'only').

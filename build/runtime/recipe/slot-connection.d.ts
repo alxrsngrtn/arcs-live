@@ -1,6 +1,6 @@
-import { Recipe } from './recipe.js';
-import { Particle } from './particle.js';
 import { SlotSpec } from '../particle-spec.js';
+import { Particle } from './particle.js';
+import { Recipe } from './recipe.js';
 import { Slot } from './slot.js';
 export declare class SlotConnection {
     private readonly _recipe;

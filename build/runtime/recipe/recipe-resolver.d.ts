@@ -1,10 +1,10 @@
-import { Action } from '../recipe/walker.js';
+import { SlotSpec } from '../particle-spec.js';
+import { Handle } from '../recipe/handle';
+import { Particle } from '../recipe/particle.js';
 import { RecipeWalker } from '../recipe/recipe-walker.js';
 import { Recipe } from '../recipe/recipe.js';
-import { Handle } from '../recipe/handle';
 import { SlotConnection } from '../recipe/slot-connection.js';
-import { Particle } from '../recipe/particle.js';
-import { SlotSpec } from '../particle-spec.js';
+import { Action } from '../recipe/walker.js';
 export declare class ResolveWalker extends RecipeWalker {
     private arc;
     constructor(tactic: any, arc: any);

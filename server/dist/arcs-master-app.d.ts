@@ -1,5 +1,5 @@
-import { AppBase } from "./app-base";
 import { NextFunction, Request, Response } from "express";
+import { AppBase } from "./app-base";
 /**
  * A server for managing a collection of pouchdbapp VMs, including creating and deploying new ones,
  * locating existing deployments, and shutting down existing deployments.

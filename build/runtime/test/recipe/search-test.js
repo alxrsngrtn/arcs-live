@@ -7,9 +7,9 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-import { Search } from '../../recipe/search.js';
-import { Recipe } from '../../recipe/recipe.js';
 import { assert } from '../../../platform/chai-web.js';
+import { Recipe } from '../../recipe/recipe.js';
+import { Search } from '../../recipe/search.js';
 describe('Recipe Search', () => {
     const createAndVerifyResolved = (search) => {
         assert.isTrue(search.isValid());

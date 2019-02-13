@@ -7,12 +7,12 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-import { Modality } from './modality.js';
-import { ModalityHandler } from './modality-handler.js';
 import { Arc } from './arc.js';
-import { SlotContext, ProvidedSlotContext } from './slot-context.js';
-import { SlotConsumer } from './slot-consumer.js';
+import { ModalityHandler } from './modality-handler.js';
+import { Modality } from './modality.js';
 import { Particle } from './recipe/particle.js';
+import { SlotConsumer } from './slot-consumer.js';
+import { ProvidedSlotContext, SlotContext } from './slot-context.js';
 export declare type SlotComposerOptions = {
     modalityName?: string;
     modalityHandler?: ModalityHandler;

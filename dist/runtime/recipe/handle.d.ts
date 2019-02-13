@@ -1,7 +1,7 @@
-import { Type } from '../type.js';
-import { Recipe } from './recipe.js';
-import { HandleConnection } from './handle-connection.js';
 import { ParticleSpec } from '../particle-spec.js';
+import { Type } from '../type.js';
+import { HandleConnection } from './handle-connection.js';
+import { Recipe } from './recipe.js';
 declare type Fate = 'use' | 'create' | 'map' | 'copy' | '?' | '`slot';
 export declare class Handle {
     private readonly _recipe;

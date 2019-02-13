@@ -8,9 +8,9 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { assert } from '../../platform/chai-web.js';
-import { SuggestionComposer } from '../suggestion-composer.js';
 import { MockSlotComposer } from '../../runtime/testing/mock-slot-composer.js';
 import { TestHelper } from '../../runtime/testing/test-helper.js';
+import { SuggestionComposer } from '../suggestion-composer.js';
 class TestSuggestionComposer extends SuggestionComposer {
     get suggestConsumers() {
         return this._suggestConsumers;

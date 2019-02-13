@@ -9,9 +9,9 @@
  */
 import { assert } from '../platform/assert-web.js';
 import { PECOuterPort } from './api-channel.js';
+import { reportSystemException } from './arc-exceptions.js';
 import { Manifest } from './manifest.js';
 import { RecipeResolver } from './recipe/recipe-resolver.js';
-import { reportSystemException } from './arc-exceptions.js';
 export class ParticleExecutionHost {
     constructor(port, slotComposer, arc) {
         this.nextIdentifier = 0;

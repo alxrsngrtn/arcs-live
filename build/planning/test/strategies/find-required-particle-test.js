@@ -8,11 +8,11 @@
  * http://polymer.github.io/PATENTS.txt
  */
 'use strict';
-import { Manifest } from '../../../runtime/manifest.js';
-import { StrategyTestHelper } from './strategy-test-helper.js';
 import { assert } from '../../../platform/chai-web.js';
-import { FindRequiredParticle } from '../../strategies/find-required-particle.js';
+import { Manifest } from '../../../runtime/manifest.js';
 import { StubLoader } from '../../../runtime/testing/stub-loader.js';
+import { FindRequiredParticle } from '../../strategies/find-required-particle.js';
+import { StrategyTestHelper } from './strategy-test-helper.js';
 describe('FindRequiredParticles', () => {
     it('find single required particle that provides a slot', async () => {
         const loader = new StubLoader({

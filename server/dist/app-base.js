@@ -5,10 +5,10 @@
 // Code distributed by Google as part of this project is also
 // subject to an additional IP rights grant found at
 // http://polymer.github.io/PATENTS.txt
+import { Runtime } from 'arcs';
 import bodyParser from 'body-parser';
 import express from 'express';
 import logger from 'morgan';
-import { Runtime } from 'arcs';
 /**
  * Centralized base class that configures and ExpressJS server.
  * Adds static content, and api methods for Arcs. See pouchdbapp and arcsmasterapp

@@ -8,11 +8,11 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { assert } from '../../platform/chai-web.js';
-import * as util from '../testing/test-util.js';
+import { Random } from '../random.js';
+import { MockSlotComposer } from '../testing/mock-slot-composer.js';
 import { StubLoader } from '../testing/stub-loader.js';
 import { TestHelper } from '../testing/test-helper.js';
-import { MockSlotComposer } from '../testing/mock-slot-composer.js';
-import { Random } from '../random.js';
+import * as util from '../testing/test-util.js';
 async function loadFilesIntoNewArc(fileMap) {
     const testHelper = await TestHelper.create({
         manifestString: fileMap.manifest,

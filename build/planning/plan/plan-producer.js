@@ -8,15 +8,15 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { assert } from '../../platform/assert-web.js';
-import { InitSearch } from '../strategies/init-search.js';
-import { logFactory } from '../../platform/log-web.js';
 import { now } from '../../platform/date-web.js';
-import { Planner } from '../planner.js';
-import { PlanningResult } from './planning-result.js';
-import { RecipeIndex } from '../recipe-index.js';
-import { Speculator } from '../speculator.js';
+import { logFactory } from '../../platform/log-web.js';
 import { DevtoolsConnection } from '../../runtime/debug/devtools-connection.js';
 import { PlanningExplorerAdapter } from '../debug/planning-explorer-adapter.js';
+import { Planner } from '../planner.js';
+import { RecipeIndex } from '../recipe-index.js';
+import { Speculator } from '../speculator.js';
+import { InitSearch } from '../strategies/init-search.js';
+import { PlanningResult } from './planning-result.js';
 const defaultTimeoutMs = 5000;
 const log = logFactory('PlanProducer', '#ff0090', 'log');
 const error = logFactory('PlanProducer', '#ff0090', 'error');

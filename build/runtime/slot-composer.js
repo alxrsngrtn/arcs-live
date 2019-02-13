@@ -8,9 +8,9 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { assert } from '../platform/assert-web.js';
-import { Modality } from './modality.js';
-import { ProvidedSlotContext, HostedSlotContext } from './slot-context.js';
 import { Description } from './description.js';
+import { Modality } from './modality.js';
+import { HostedSlotContext, ProvidedSlotContext } from './slot-context.js';
 export class SlotComposer {
     /**
      * |options| must contain:

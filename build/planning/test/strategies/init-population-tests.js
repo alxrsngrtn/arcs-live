@@ -8,12 +8,12 @@
  * http://polymer.github.io/PATENTS.txt
  */
 'use strict';
+import { assert } from '../../../platform/chai-web.js';
 import { Arc } from '../../../runtime/arc.js';
 import { Manifest } from '../../../runtime/manifest.js';
+import { StubLoader } from '../../../runtime/testing/stub-loader.js';
 import { InitPopulation } from '../../strategies/init-population.js';
 import { StrategyTestHelper } from './strategy-test-helper.js';
-import { StubLoader } from '../../../runtime/testing/stub-loader.js';
-import { assert } from '../../../platform/chai-web.js';
 describe('InitPopulation', async () => {
     it('penalizes resolution of particles that already exist in the arc', async () => {
         const manifest = await Manifest.parse(`

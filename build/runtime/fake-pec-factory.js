@@ -5,9 +5,9 @@
 // Code distributed by Google as part of this project is also
 // subject to an additional IP rights grant found at
 // http://polymer.github.io/PATENTS.txt
-import { ParticleExecutionContext } from './particle-execution-context.js';
-import { MessageChannel } from './message-channel.js';
 import { Loader } from './loader.js';
+import { MessageChannel } from './message-channel.js';
+import { ParticleExecutionContext } from './particle-execution-context.js';
 import { StubLoader } from './testing/stub-loader.js';
 // TODO: Make this generic so that it can also be used in-browser, or add a
 // separate in-process browser pec-factory.

@@ -4,11 +4,11 @@
 // Code distributed by Google as part of this project is also
 // subject to an additional IP rights grant found at
 // http://polymer.github.io/PATENTS.txt
-import { StrategizerWalker, Strategy } from '../strategizer.js';
-import { RecipeUtil } from '../../runtime/recipe/recipe-util.js';
-import { Handle } from '../../runtime/recipe/handle.js';
-import { TypeVariable } from '../../runtime/type.js';
 import { assert } from '../../platform/assert-web.js';
+import { Handle } from '../../runtime/recipe/handle.js';
+import { RecipeUtil } from '../../runtime/recipe/recipe-util.js';
+import { TypeVariable } from '../../runtime/type.js';
+import { StrategizerWalker, Strategy } from '../strategizer.js';
 // This strategy coalesces unresolved terminal recipes (i.e. those that cannot
 // be modified by any strategy apart from this one) by finding unresolved
 // use/? handle and finding a matching create/? handle in another recipe and

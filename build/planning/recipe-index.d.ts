@@ -8,12 +8,12 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { Arc } from '../runtime/arc.js';
+import { ProvidedSlotSpec, SlotSpec } from '../runtime/particle-spec.js';
+import { HandleConnection } from '../runtime/recipe/handle-connection.js';
+import { Handle } from '../runtime/recipe/handle.js';
+import { Particle } from '../runtime/recipe/particle.js';
 import { Recipe } from '../runtime/recipe/recipe.js';
 import { Slot } from '../runtime/recipe/slot.js';
-import { Handle } from '../runtime/recipe/handle.js';
-import { ProvidedSlotSpec, SlotSpec } from '../runtime/particle-spec.js';
-import { Particle } from '../runtime/recipe/particle.js';
-import { HandleConnection } from '../runtime/recipe/handle-connection.js';
 declare type ConsumeSlotConnectionMatch = {
     recipeParticle: Particle;
     slotSpec: SlotSpec;

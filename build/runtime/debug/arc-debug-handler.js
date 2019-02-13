@@ -7,10 +7,10 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-import { enableTracingAdapter } from './tracing-adapter.js';
 import { ArcDevtoolsChannel } from '../../runtime/debug/abstract-devtools-channel.js';
-import { DevtoolsConnection } from './devtools-connection.js';
 import { ArcStoresFetcher } from './arc-stores-fetcher.js';
+import { DevtoolsConnection } from './devtools-connection.js';
+import { enableTracingAdapter } from './tracing-adapter.js';
 // Arc-independent handlers for devtools logic.
 DevtoolsConnection.onceConnected.then(devtoolsChannel => {
     enableTracingAdapter(devtoolsChannel);

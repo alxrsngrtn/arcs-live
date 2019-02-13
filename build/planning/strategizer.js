@@ -5,8 +5,8 @@
 // subject to an additional IP rights grant found at
 // http://polymer.github.io/PATENTS.txt
 import { assert } from '../platform/assert-web.js';
-import { Action } from '../runtime/recipe/walker.js';
 import { RecipeWalker } from '../runtime/recipe/recipe-walker.js';
+import { Action } from '../runtime/recipe/walker.js';
 export class Strategizer {
     constructor(strategies, evaluators, ruleset) {
         this._generation = 0;

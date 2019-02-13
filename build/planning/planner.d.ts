@@ -1,7 +1,7 @@
 import { Arc } from '../runtime/arc.js';
-import { Strategizer, StrategyDerived } from './strategizer.js';
-import { Speculator } from './speculator.js';
 import { Suggestion } from './plan/suggestion.js';
+import { Speculator } from './speculator.js';
+import { Strategizer, StrategyDerived } from './strategizer.js';
 export declare class Planner {
     private _arc;
     strategizer: Strategizer;

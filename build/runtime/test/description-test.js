@@ -9,8 +9,8 @@
  */
 import { assert } from '../../platform/chai-web.js';
 import { Arc } from '../arc.js';
-import { Description } from '../description.js';
 import { DescriptionDomFormatter } from '../description-dom-formatter.js';
+import { Description } from '../description.js';
 import { handleFor } from '../handle.js';
 import { Loader } from '../loader.js';
 import { Manifest } from '../manifest.js';

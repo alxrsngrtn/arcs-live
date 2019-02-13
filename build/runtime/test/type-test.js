@@ -6,9 +6,9 @@
 // subject to an additional IP rights grant found at
 // http://polymer.github.io/PATENTS.txt
 import { assert } from '../../platform/chai-web.js';
-import { Type, EntityType, TypeVariable, CollectionType, BigCollectionType, RelationType, InterfaceType, SlotType, ReferenceType, ArcType, HandleType } from '../type.js';
-import { TypeVariableInfo } from '../type-variable-info.js';
 import { Manifest } from '../manifest.js';
+import { TypeVariableInfo } from '../type-variable-info.js';
+import { ArcType, BigCollectionType, CollectionType, EntityType, HandleType, InterfaceType, ReferenceType, RelationType, SlotType, Type, TypeVariable } from '../type.js';
 // For reference, this is a list of all the types and their contained data:
 //   EntityType        : Schema
 //   TypeVariable      : TypeVariableInfo

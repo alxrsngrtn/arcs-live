@@ -7,9 +7,9 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-import { Direction } from './recipe/handle-connection.js';
 import { Modality } from './modality.js';
-import { Type, TypeLiteral, InterfaceType } from './type.js';
+import { Direction } from './recipe/handle-connection.js';
+import { InterfaceType, Type, TypeLiteral } from './type.js';
 declare type SerializedConnectionSpec = {
     direction: Direction;
     name: string;

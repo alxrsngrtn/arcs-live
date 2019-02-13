@@ -7,11 +7,11 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-import { StrategizerWalker, Strategy, Ruleset } from '../../strategizer.js';
+import { assert } from '../../../platform/chai-web.js';
 import { Manifest } from '../../../runtime/manifest.js';
 import { Planner } from '../../planner.js';
+import { Ruleset, StrategizerWalker, Strategy } from '../../strategizer.js';
 import { StrategyTestHelper } from './strategy-test-helper.js';
-import { assert } from '../../../platform/chai-web.js';
 class InitPopulation extends Strategy {
     constructor(arc) {
         super();

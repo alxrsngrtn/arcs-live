@@ -1,5 +1,5 @@
-import { PouchDbStorageProvider } from './pouch-db-storage-provider.js';
 import { assert } from '../../../platform/assert-web.js';
+import { PouchDbStorageProvider } from './pouch-db-storage-provider.js';
 // TODO(lindner): update to operate like the firebase version
 export class PouchDbBigCollection extends PouchDbStorageProvider {
     constructor(type, storageEngine, name, id, key) {

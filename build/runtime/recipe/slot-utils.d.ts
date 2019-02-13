@@ -1,7 +1,7 @@
+import { ProvidedSlotSpec, SlotSpec } from '../particle-spec.js';
+import { Particle } from './particle.js';
 import { Recipe } from './recipe.js';
 import { SlotConnection } from './slot-connection.js';
-import { Particle } from './particle.js';
-import { SlotSpec, ProvidedSlotSpec } from '../particle-spec.js';
 import { Slot } from './slot.js';
 export declare class SlotUtils {
     static getClonedSlot(recipe: any, selectedSlot: any): any;

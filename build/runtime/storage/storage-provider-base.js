@@ -7,7 +7,7 @@
 // http://polymer.github.io/PATENTS.txt
 import { assert } from '../../platform/assert-web.js';
 import { Tracing } from '../../tracelib/trace.js';
-import { compareStrings, compareNumbers } from '../recipe/util.js';
+import { compareNumbers, compareStrings } from '../recipe/util.js';
 var EventKind;
 (function (EventKind) {
     EventKind["change"] = "Change";

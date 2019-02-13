@@ -5,10 +5,10 @@
 // Code distributed by Google as part of this project is also
 // subject to an additional IP rights grant found at
 // http://polymer.github.io/PATENTS.txt
+import { PlannerShellInterface } from 'arcs';
+import PouchDbServer from 'express-pouchdb';
 import PouchDB from 'pouchdb';
 import PouchDbAdapterMemory from 'pouchdb-adapter-memory';
-import PouchDbServer from 'express-pouchdb';
-import { PlannerShellInterface } from 'arcs';
 import { AppBase } from './app-base';
 import { ON_DISK_DB, VM_URL_PREFIX } from "./deployment/utils";
 /**

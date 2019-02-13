@@ -8,8 +8,8 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { Arc } from '../../runtime/arc.js';
-import { Suggestion, EnvOptions } from './suggestion.js';
 import { VariableStorageProvider } from '../../runtime/storage/storage-provider-base.js';
+import { EnvOptions, Suggestion } from './suggestion.js';
 export declare type PlanningResultOptions = {
     suggestions: Suggestion[];
     lastUpdated?: Date;

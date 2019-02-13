@@ -5,9 +5,9 @@
 // subject to an additional IP rights grant found at
 // http://polymer.github.io/PATENTS.txt
 import { assert } from '../../platform/assert-web.js';
-import { compareStrings, compareArrays, compareComparables } from './util.js';
-import { TypeChecker } from './type-checker.js';
 import { Type } from '../type.js';
+import { TypeChecker } from './type-checker.js';
+import { compareArrays, compareComparables, compareStrings } from './util.js';
 export class Handle {
     constructor(recipe) {
         this._id = null;

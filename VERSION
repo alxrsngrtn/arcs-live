@@ -1,7 +1,8 @@
-commit b5d93eaebcee308727cc31021cced4ffce780f45
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Tue Feb 12 14:59:07 2019 -0800
+commit c9c6912ffdf6e2a5a2c220ce6442955a119b744b
+Author: Paul Lindner <lindner@inuus.com>
+Date:   Tue Feb 12 16:31:17 2019 -0800
 
-    stop the web worker before disposing the arc (#2686)
+    Enable sorted-imports for arcs (#2687)
     
-    and dispose speculative arcs (instead of stopping)
+    - Reduces merge conflicts
+    - Can automatically sort/fix with ./tools/sigh lint --fix

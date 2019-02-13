@@ -1,6 +1,6 @@
 import { Arc } from '../runtime/arc.js';
-import { Action, Descendant } from '../runtime/recipe/walker.js';
 import { RecipeWalker } from '../runtime/recipe/recipe-walker.js';
+import { Action, Descendant } from '../runtime/recipe/walker.js';
 export declare class Strategizer {
     _strategies: Strategy[];
     _evaluators: Strategy[];

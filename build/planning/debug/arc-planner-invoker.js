@@ -7,13 +7,13 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
+import { ArcDebugListener } from '../../runtime/debug/abstract-devtools-channel.js';
+import { Manifest } from '../../runtime/manifest.js';
 import { Planner } from '../planner.js';
 import { RecipeIndex } from '../recipe-index.js';
 import { CoalesceRecipes } from '../strategies/coalesce-recipes.js';
-import { Strategizer, Strategy } from '../strategizer.js';
 import * as Rulesets from '../strategies/rulesets.js';
-import { Manifest } from '../../runtime/manifest.js';
-import { ArcDebugListener } from '../../runtime/debug/abstract-devtools-channel.js';
+import { Strategizer, Strategy } from '../strategizer.js';
 class InitialRecipe extends Strategy {
     constructor(recipe) {
         super();

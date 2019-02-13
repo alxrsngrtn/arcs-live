@@ -7,11 +7,11 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-import { Manifest } from '../manifest.js';
 import { parser } from '../../../build/runtime/manifest-parser.js';
 import { assert } from '../../platform/chai-web.js';
 import { fs } from '../../platform/fs-web.js';
 import { path } from '../../platform/path-web.js';
+import { Manifest } from '../manifest.js';
 async function assertRecipeParses(input, result) {
     // Strip common leading whitespace.
     //result = result.replace(new Regex(`()^|\n)${result.match(/^ */)[0]}`), '$1'),

@@ -8,11 +8,11 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { assert } from '../../../platform/chai-web.js';
-import { PlanningResult } from '../../plan/planning-result.js';
-import { Relevance } from '../../../runtime/relevance.js';
 import { Search } from '../../../runtime/recipe/search.js';
-import { Suggestion } from '../../plan/suggestion.js';
+import { Relevance } from '../../../runtime/relevance.js';
 import { TestHelper } from '../../../runtime/testing/test-helper.js';
+import { PlanningResult } from '../../plan/planning-result.js';
+import { Suggestion } from '../../plan/suggestion.js';
 describe('planning result', () => {
     async function testResultSerialization(manifestFilename) {
         const helper = await TestHelper.createAndPlan({ manifestFilename });

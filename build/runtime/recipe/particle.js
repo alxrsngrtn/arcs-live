@@ -5,10 +5,10 @@
 // subject to an additional IP rights grant found at
 // http://polymer.github.io/PATENTS.txt
 import { assert } from '../../platform/assert-web.js';
-import { SlotConnection } from './slot-connection.js';
 import { HandleConnection } from './handle-connection.js';
-import { compareComparables, compareStrings, compareArrays } from './util.js';
 import { RequireSection } from './recipe.js';
+import { SlotConnection } from './slot-connection.js';
+import { compareArrays, compareComparables, compareStrings } from './util.js';
 export class Particle {
     constructor(recipe, name) {
         this._id = undefined;

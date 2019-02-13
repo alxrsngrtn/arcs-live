@@ -1,6 +1,6 @@
-import { SlotConnection } from './slot-connection.js';
-import { Recipe } from './recipe.js';
 import { HandleConnection } from './handle-connection.js';
+import { Recipe } from './recipe.js';
+import { SlotConnection } from './slot-connection.js';
 export declare class Slot {
     private readonly _recipe;
     private _id;

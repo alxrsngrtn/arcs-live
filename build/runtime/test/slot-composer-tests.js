@@ -7,14 +7,14 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-import { Arc } from '../arc.js';
-import { assert } from '../../platform/chai-web.js';
-import { MockSlotComposer } from '../testing/mock-slot-composer.js';
-import { ProvidedSlotContext, HostedSlotContext } from '../slot-context.js';
-import { Loader } from '../loader.js';
 import { Planner } from '../../planning/planner.js';
-import { Random } from '../random.js';
 import { StrategyTestHelper } from '../../planning/test/strategies/strategy-test-helper.js';
+import { assert } from '../../platform/chai-web.js';
+import { Arc } from '../arc.js';
+import { Loader } from '../loader.js';
+import { Random } from '../random.js';
+import { HostedSlotContext, ProvidedSlotContext } from '../slot-context.js';
+import { MockSlotComposer } from '../testing/mock-slot-composer.js';
 import { StubLoader } from '../testing/stub-loader.js';
 import { TestHelper } from '../testing/test-helper.js';
 async function initSlotComposer(recipeStr) {

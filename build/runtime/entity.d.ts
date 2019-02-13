@@ -1,5 +1,5 @@
-import { Type } from './type.js';
 import { Schema } from './schema.js';
+import { Type } from './type.js';
 /**
  * Regular interface for Entities.
  */

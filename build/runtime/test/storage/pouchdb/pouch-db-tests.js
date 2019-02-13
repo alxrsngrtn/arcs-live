@@ -7,14 +7,14 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-import { StorageProviderFactory } from '../../../storage/storage-provider-factory.js';
-import { PouchDbStorage } from '../../../storage/pouchdb/pouch-db-storage.js';
+import { assert } from '../../../../platform/chai-web.js';
 import { Arc } from '../../../arc.js';
 import { Loader } from '../../../loader.js';
 import { Manifest } from '../../../manifest.js';
-import { EntityType, ReferenceType } from '../../../type.js';
-import { assert } from '../../../../platform/chai-web.js';
+import { PouchDbStorage } from '../../../storage/pouchdb/pouch-db-storage.js';
+import { StorageProviderFactory } from '../../../storage/storage-provider-factory.js';
 import { CallbackTracker } from '../../../testing/callback-tracker.js';
+import { EntityType, ReferenceType } from '../../../type.js';
 const testUrl = 'pouchdb://memory/user-test';
 // TODO(lindner): run tests for remote and local variants
 const testUrlReplicated = 'pouchdb://memory/user-test';

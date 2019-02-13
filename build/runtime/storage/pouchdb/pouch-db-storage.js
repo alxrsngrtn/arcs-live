@@ -6,13 +6,13 @@
 // subject to an additional IP rights grant found at
 // http://polymer.github.io/PATENTS.txt
 import { assert } from '../../../platform/assert-web.js';
+import { PouchDB, PouchDbDebug, PouchDbMemory } from '../../../platform/pouchdb-web.js';
+import { BigCollectionType, CollectionType, ReferenceType } from '../../type.js';
 import { StorageBase } from '../storage-provider-base.js';
-import { PouchDbKey } from './pouch-db-key.js';
-import { CollectionType, BigCollectionType, ReferenceType } from '../../type.js';
-import { PouchDbCollection } from './pouch-db-collection.js';
 import { PouchDbBigCollection } from './pouch-db-big-collection.js';
+import { PouchDbCollection } from './pouch-db-collection.js';
+import { PouchDbKey } from './pouch-db-key.js';
 import { PouchDbVariable } from './pouch-db-variable.js';
-import { PouchDB, PouchDbMemory, PouchDbDebug } from '../../../platform/pouchdb-web.js';
 PouchDB.plugin(PouchDbDebug);
 PouchDB.debug.disable();
 export class PouchDbStorage extends StorageBase {

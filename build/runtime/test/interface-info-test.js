@@ -9,9 +9,9 @@
  */
 import { assert } from '../../platform/chai-web.js';
 import { InterfaceInfo } from '../interface-info.js';
-import { EntityType, TypeVariable, InterfaceType } from '../type.js';
 import { Manifest } from '../manifest.js';
 import { TypeChecker } from '../recipe/type-checker.js';
+import { EntityType, InterfaceType, TypeVariable } from '../type.js';
 describe('interface', () => {
     it('finds type variable references in handles', () => {
         const iface = new InterfaceInfo('Test', [{ type: TypeVariable.make('a') }], []);

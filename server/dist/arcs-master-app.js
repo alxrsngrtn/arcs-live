@@ -5,12 +5,12 @@
 // Code distributed by Google as part of this project is also
 // subject to an additional IP rights grant found at
 // http://polymer.github.io/PATENTS.txt
+import cors from "cors";
+import express from "express";
+import fetch from 'node-fetch';
 import { AppBase } from "./app-base";
 import { CloudManager } from "./deployment/cloud";
 import { DeploymentStatus } from "./deployment/containers";
-import express from "express";
-import cors from "cors";
-import fetch from 'node-fetch';
 /**
  * A server for managing a collection of pouchdbapp VMs, including creating and deploying new ones,
  * locating existing deployments, and shutting down existing deployments.

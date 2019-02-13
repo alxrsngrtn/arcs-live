@@ -5,7 +5,7 @@
 // subject to an additional IP rights grant found at
 // http://polymer.github.io/PATENTS.txt
 import { assert } from '../../platform/assert-web.js';
-import { compareComparables, compareStrings, compareArrays } from './util.js';
+import { compareArrays, compareComparables, compareStrings } from './util.js';
 export class HandleConnection {
     constructor(name, particle) {
         this._tags = [];
