@@ -1,5 +1,5 @@
-commit 9cdfca5e86c0da46e1ffa8c00a1360d5af5e1a9c
-Author: Paul Lindner <lindner@inuus.com>
-Date:   Tue Feb 12 17:08:34 2019 -0800
+commit 5c3c37760c4e018335f20647cc6e68392a239834
+Author: Scott J. Miles <sjmiles@google.com>
+Date:   Tue Feb 12 17:28:24 2019 -0800
 
-    Run webdriver tests for pouch and firebase (#2685)
+    .nojekyll so arcs-live can serve from node_modules (#2688)
