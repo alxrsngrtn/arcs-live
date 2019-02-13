@@ -1,12 +1,19 @@
 /// BareSpecifier=diff/lib/convert/xml
-/*istanbul ignore start*/'use strict';
+/*istanbul ignore start*/
+"use strict";
 
-exports.__esModule = true;
-exports. /*istanbul ignore end*/convertChangesToXML = convertChangesToXML;
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.convertChangesToXML = convertChangesToXML;
+
+/*istanbul ignore end*/
 function convertChangesToXML(changes) {
   var ret = [];
+
   for (var i = 0; i < changes.length; i++) {
     var change = changes[i];
+
     if (change.added) {
       ret.push('<ins>');
     } else if (change.removed) {
@@ -21,6 +28,7 @@ function convertChangesToXML(changes) {
       ret.push('</del>');
     }
   }
+
   return ret.join('');
 }
 
@@ -30,6 +38,5 @@ function escapeHTML(s) {
   n = n.replace(/</g, '&lt;');
   n = n.replace(/>/g, '&gt;');
   n = n.replace(/"/g, '&quot;');
-
   return n;
 }

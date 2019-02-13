@@ -8,8 +8,8 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { parser } from '../../../build/runtime/manifest-parser.js';
-const parse = parser.parse;
 import { assert } from '../../platform/chai-web.js';
+const parse = parser.parse;
 describe('manifest parser', () => {
     it('parses an empy manifest', () => {
         parse('');

@@ -148,7 +148,7 @@ $ npm run <span class="hljs-keyword">test</span>-<span class="hljs-keyword">with
 				<p>To run a specific Selenium test using Mocha&#39;s &#39;grep&#39; capability:</p>
 				<ul>
 					<li>In one terminal: <code>npm start</code></li>
-					<li>In another: <code>npm run test-wdio -- --mochaOpts.grep &#39;regex&#39;</code></li>
+					<li>In another: <code>npm run test-wdio-shells -- --mochaOpts.grep &#39;regex&#39;</code></li>
 				</ul>
 				<h3 id="debugging-tests">Debugging tests</h3>
 				<p>If you see errors like</p>
@@ -168,7 +168,7 @@ chrome
 				<p>To activate a sane set of helpful debugging flags, there&#39;s a <code>wdio-debug</code>
 					command line argument that you can pass in. This will run Chrome in a
 				non-headless fashion, and will increase timeouts.</p>
-				<p>Through npm: <code>npm run test-wdio --wdio-debug=true</code> (or <code>npm test
+				<p>Through npm: <code>npm run test-wdio-shells --wdio-debug=true</code> (or <code>npm test
 --wdio-debug=true</code>).  Directly through wdio: <code>node_modules/.bin/wdio
 --wdio-debug=true shell/test/wdio.conf.js</code>.</p>
 				<p>Webdriver takes screenshots of failures, which are saved to the

@@ -1,16 +1,22 @@
 /// BareSpecifier=diff/lib/convert/dmp
-/*istanbul ignore start*/"use strict";
+/*istanbul ignore start*/
+"use strict";
 
-exports.__esModule = true;
-exports. /*istanbul ignore end*/convertChangesToDMP = convertChangesToDMP;
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.convertChangesToDMP = convertChangesToDMP;
+
+/*istanbul ignore end*/
 // See: http://code.google.com/p/google-diff-match-patch/wiki/API
 function convertChangesToDMP(changes) {
   var ret = [],
-      change = /*istanbul ignore start*/void 0 /*istanbul ignore end*/
-  ,
-      operation = /*istanbul ignore start*/void 0 /*istanbul ignore end*/;
+      change,
+      operation;
+
   for (var i = 0; i < changes.length; i++) {
     change = changes[i];
+
     if (change.added) {
       operation = 1;
     } else if (change.removed) {
@@ -21,5 +27,6 @@ function convertChangesToDMP(changes) {
 
     ret.push([operation, change.value]);
   }
+
   return ret;
 }

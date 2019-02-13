@@ -1,22 +1,33 @@
 /// BareSpecifier=diff/lib/diff/word
-/*istanbul ignore start*/'use strict';
+/*istanbul ignore start*/
+"use strict";
 
-exports.__esModule = true;
-exports.wordDiff = undefined;
-exports. /*istanbul ignore end*/diffWords = diffWords;
-/*istanbul ignore start*/exports. /*istanbul ignore end*/diffWordsWithSpace = diffWordsWithSpace;
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.diffWords = diffWords;
+exports.diffWordsWithSpace = diffWordsWithSpace;
+exports.wordDiff = void 0;
 
-var /*istanbul ignore start*/_base = require('./base') /*istanbul ignore end*/;
+/*istanbul ignore end*/
+var
+/*istanbul ignore start*/
+_base = _interopRequireDefault(require("./base"))
+/*istanbul ignore end*/
+;
 
-/*istanbul ignore start*/var _base2 = _interopRequireDefault(_base);
-
-/*istanbul ignore end*/var /*istanbul ignore start*/_params = require('../util/params') /*istanbul ignore end*/;
+var
+/*istanbul ignore start*/
+_params = require("../util/params")
+/*istanbul ignore end*/
+;
 
 /*istanbul ignore start*/function _interopRequireDefault(obj) {
-  return obj && obj.__esModule ? obj : { 'default': obj };
+  return obj && obj.__esModule ? obj : { default: obj };
 }
 
-/*istanbul ignore end*/ // Based on https://en.wikipedia.org/wiki/Latin_script_in_Unicode
+/*istanbul ignore end*/
+// Based on https://en.wikipedia.org/wiki/Latin_script_in_Unicode
 //
 // Ranges and exceptions:
 // Latin-1 Supplement, 0080–00FF
@@ -35,21 +46,33 @@ var /*istanbul ignore start*/_base = require('./base') /*istanbul ignore end*/;
 //  - U+02DD  ˝ &#733;  Double Acute Accent
 // Latin Extended Additional, 1E00–1EFF
 var extendedWordChars = /^[A-Za-z\xC0-\u02C6\u02C8-\u02D7\u02DE-\u02FF\u1E00-\u1EFF]+$/;
-
 var reWhitespace = /\S/;
+var wordDiff = new
+/*istanbul ignore start*/
+_base
+/*istanbul ignore end*/
+.
+/*istanbul ignore start*/
+default
+/*istanbul ignore end*/
+();
 
-var wordDiff = /*istanbul ignore start*/exports. /*istanbul ignore end*/wordDiff = new /*istanbul ignore start*/_base2['default'] /*istanbul ignore end*/();
+/*istanbul ignore start*/
+exports.wordDiff = wordDiff;
+
+/*istanbul ignore end*/
 wordDiff.equals = function (left, right) {
   if (this.options.ignoreCase) {
     left = left.toLowerCase();
     right = right.toLowerCase();
   }
+
   return left === right || this.options.ignoreWhitespace && !reWhitespace.test(left) && !reWhitespace.test(right);
 };
-wordDiff.tokenize = function (value) {
-  var tokens = value.split(/(\s+|\b)/);
 
-  // Join the boundary splits that we do not consider to be boundaries. This is primarily the extended Latin character set.
+wordDiff.tokenize = function (value) {
+  var tokens = value.split(/(\s+|[()[\]{}'"]|\b)/); // Join the boundary splits that we do not consider to be boundaries. This is primarily the extended Latin character set.
+
   for (var i = 0; i < tokens.length - 1; i++) {
     // If we have an empty string in the next field and we have only word chars before and after, merge
     if (!tokens[i + 1] && tokens[i + 2] && extendedWordChars.test(tokens[i]) && extendedWordChars.test(tokens[i + 2])) {
@@ -63,7 +86,21 @@ wordDiff.tokenize = function (value) {
 };
 
 function diffWords(oldStr, newStr, options) {
-  options = /*istanbul ignore start*/(0, _params.generateOptions /*istanbul ignore end*/)(options, { ignoreWhitespace: true });
+  options =
+  /*istanbul ignore start*/
+  (0,
+  /*istanbul ignore end*/
+
+  /*istanbul ignore start*/
+  _params
+  /*istanbul ignore end*/
+  .
+  /*istanbul ignore start*/
+  generateOptions
+  /*istanbul ignore end*/
+  )(options, {
+    ignoreWhitespace: true
+  });
   return wordDiff.diff(oldStr, newStr, options);
 }
 

@@ -1,19 +1,39 @@
 /// BareSpecifier=diff/lib/diff/sentence
-/*istanbul ignore start*/'use strict';
+/*istanbul ignore start*/
+"use strict";
 
-exports.__esModule = true;
-exports.sentenceDiff = undefined;
-exports. /*istanbul ignore end*/diffSentences = diffSentences;
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.diffSentences = diffSentences;
+exports.sentenceDiff = void 0;
 
-var /*istanbul ignore start*/_base = require('./base') /*istanbul ignore end*/;
+/*istanbul ignore end*/
+var
+/*istanbul ignore start*/
+_base = _interopRequireDefault(require("./base"))
+/*istanbul ignore end*/
+;
 
-/*istanbul ignore start*/var _base2 = _interopRequireDefault(_base);
-
-function _interopRequireDefault(obj) {
-  return obj && obj.__esModule ? obj : { 'default': obj };
+/*istanbul ignore start*/function _interopRequireDefault(obj) {
+  return obj && obj.__esModule ? obj : { default: obj };
 }
 
-/*istanbul ignore end*/var sentenceDiff = /*istanbul ignore start*/exports. /*istanbul ignore end*/sentenceDiff = new /*istanbul ignore start*/_base2['default'] /*istanbul ignore end*/();
+/*istanbul ignore end*/
+var sentenceDiff = new
+/*istanbul ignore start*/
+_base
+/*istanbul ignore end*/
+.
+/*istanbul ignore start*/
+default
+/*istanbul ignore end*/
+();
+
+/*istanbul ignore start*/
+exports.sentenceDiff = sentenceDiff;
+
+/*istanbul ignore end*/
 sentenceDiff.tokenize = function (value) {
   return value.split(/(\S.+?[.!?])(?=\s+|$)/);
 };

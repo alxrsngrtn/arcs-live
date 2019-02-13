@@ -1,25 +1,51 @@
 /// BareSpecifier=diff/lib/patch/apply
-/*istanbul ignore start*/'use strict';
+/*istanbul ignore start*/
+"use strict";
 
-exports.__esModule = true;
-exports. /*istanbul ignore end*/applyPatch = applyPatch;
-/*istanbul ignore start*/exports. /*istanbul ignore end*/applyPatches = applyPatches;
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.applyPatch = applyPatch;
+exports.applyPatches = applyPatches;
 
-var /*istanbul ignore start*/_parse = require('./parse') /*istanbul ignore end*/;
+/*istanbul ignore end*/
+var
+/*istanbul ignore start*/
+_parse = require("./parse")
+/*istanbul ignore end*/
+;
 
-var /*istanbul ignore start*/_distanceIterator = require('../util/distance-iterator') /*istanbul ignore end*/;
+var
+/*istanbul ignore start*/
+_distanceIterator = _interopRequireDefault(require("../util/distance-iterator"))
+/*istanbul ignore end*/
+;
 
-/*istanbul ignore start*/var _distanceIterator2 = _interopRequireDefault(_distanceIterator);
-
-function _interopRequireDefault(obj) {
-  return obj && obj.__esModule ? obj : { 'default': obj };
+/*istanbul ignore start*/function _interopRequireDefault(obj) {
+  return obj && obj.__esModule ? obj : { default: obj };
 }
 
-/*istanbul ignore end*/function applyPatch(source, uniDiff) {
-  /*istanbul ignore start*/var /*istanbul ignore end*/options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+/*istanbul ignore end*/
+function applyPatch(source, uniDiff) {
+  /*istanbul ignore start*/
+  var
+  /*istanbul ignore end*/
+  options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
 
   if (typeof uniDiff === 'string') {
-    uniDiff = /*istanbul ignore start*/(0, _parse.parsePatch /*istanbul ignore end*/)(uniDiff);
+    uniDiff =
+    /*istanbul ignore start*/
+    (0,
+    /*istanbul ignore end*/
+
+    /*istanbul ignore start*/
+    _parse
+    /*istanbul ignore end*/
+    .
+    /*istanbul ignore start*/
+    parsePatch
+    /*istanbul ignore end*/
+    )(uniDiff);
   }
 
   if (Array.isArray(uniDiff)) {
@@ -28,27 +54,30 @@ function _interopRequireDefault(obj) {
     }
 
     uniDiff = uniDiff[0];
-  }
+  } // Apply the diff to the input
 
-  // Apply the diff to the input
+
   var lines = source.split(/\r\n|[\n\v\f\r\x85]/),
       delimiters = source.match(/\r\n|[\n\v\f\r\x85]/g) || [],
       hunks = uniDiff.hunks,
-      compareLine = options.compareLine || function (lineNumber, line, operation, patchContent) /*istanbul ignore start*/{
-    return (/*istanbul ignore end*/line === patchContent
+      compareLine = options.compareLine || function (lineNumber, line, operation, patchContent)
+  /*istanbul ignore start*/
+  {
+    return (
+      /*istanbul ignore end*/
+      line === patchContent
     );
   },
       errorCount = 0,
       fuzzFactor = options.fuzzFactor || 0,
       minLine = 0,
       offset = 0,
-      removeEOFNL = /*istanbul ignore start*/void 0 /*istanbul ignore end*/
-  ,
-      addEOFNL = /*istanbul ignore start*/void 0 /*istanbul ignore end*/;
-
+      removeEOFNL,
+      addEOFNL;
   /**
    * Checks if the hunk exactly fits on the provided location
    */
+
   function hunkFits(hunk, toPos) {
     for (var j = 0; j < hunk.lines.length; j++) {
       var line = hunk.lines[j],
@@ -64,21 +93,33 @@ function _interopRequireDefault(obj) {
             return false;
           }
         }
+
         toPos++;
       }
     }
 
     return true;
-  }
+  } // Search best fit offsets for each hunk based on the previous ones
 
-  // Search best fit offsets for each hunk based on the previous ones
+
   for (var i = 0; i < hunks.length; i++) {
     var hunk = hunks[i],
         maxLine = lines.length - hunk.oldLines,
         localOffset = 0,
         toPos = offset + hunk.oldStart - 1;
+    var iterator =
+    /*istanbul ignore start*/
+    (0,
+    /*istanbul ignore end*/
 
-    var iterator = /*istanbul ignore start*/(0, _distanceIterator2['default'] /*istanbul ignore end*/)(toPos, minLine, maxLine);
+    /*istanbul ignore start*/
+    _distanceIterator
+    /*istanbul ignore end*/
+    .
+    /*istanbul ignore start*/
+    default
+    /*istanbul ignore end*/
+    )(toPos, minLine, maxLine);
 
     for (; localOffset !== undefined; localOffset = iterator()) {
       if (hunkFits(hunk, toPos + localOffset)) {
@@ -89,18 +130,20 @@ function _interopRequireDefault(obj) {
 
     if (localOffset === undefined) {
       return false;
-    }
-
-    // Set lower text limit to end of the current hunk, so next ones don't try
+    } // Set lower text limit to end of the current hunk, so next ones don't try
     // to fit over already patched text
-    minLine = hunk.offset + hunk.oldStart + hunk.oldLines;
-  }
 
-  // Apply patch hunks
+
+    minLine = hunk.offset + hunk.oldStart + hunk.oldLines;
+  } // Apply patch hunks
+
+
   var diffOffset = 0;
+
   for (var _i = 0; _i < hunks.length; _i++) {
     var _hunk = hunks[_i],
         _toPos = _hunk.oldStart + _hunk.offset + diffOffset - 1;
+
     diffOffset += _hunk.newLines - _hunk.oldLines;
 
     if (_toPos < 0) {
@@ -126,6 +169,7 @@ function _interopRequireDefault(obj) {
         _toPos++;
       } else if (operation === '\\') {
         var previousOperation = _hunk.lines[j - 1] ? _hunk.lines[j - 1][0] : null;
+
         if (previousOperation === '+') {
           removeEOFNL = true;
         } else if (previousOperation === '-') {
@@ -133,9 +177,9 @@ function _interopRequireDefault(obj) {
         }
       }
     }
-  }
+  } // Handle EOFNL insertion/removal
 
-  // Handle EOFNL insertion/removal
+
   if (removeEOFNL) {
     while (!lines[lines.length - 1]) {
       lines.pop();
@@ -145,21 +189,37 @@ function _interopRequireDefault(obj) {
     lines.push('');
     delimiters.push('\n');
   }
+
   for (var _k = 0; _k < lines.length - 1; _k++) {
     lines[_k] = lines[_k] + delimiters[_k];
   }
-  return lines.join('');
-}
 
-// Wrapper that supports multiple file patches via callbacks.
+  return lines.join('');
+} // Wrapper that supports multiple file patches via callbacks.
+
+
 function applyPatches(uniDiff, options) {
   if (typeof uniDiff === 'string') {
-    uniDiff = /*istanbul ignore start*/(0, _parse.parsePatch /*istanbul ignore end*/)(uniDiff);
+    uniDiff =
+    /*istanbul ignore start*/
+    (0,
+    /*istanbul ignore end*/
+
+    /*istanbul ignore start*/
+    _parse
+    /*istanbul ignore end*/
+    .
+    /*istanbul ignore start*/
+    parsePatch
+    /*istanbul ignore end*/
+    )(uniDiff);
   }
 
   var currentIndex = 0;
+
   function processIndex() {
     var index = uniDiff[currentIndex++];
+
     if (!index) {
       return options.complete();
     }
@@ -179,5 +239,6 @@ function applyPatches(uniDiff, options) {
       });
     });
   }
+
   processIndex();
 }

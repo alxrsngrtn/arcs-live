@@ -1,28 +1,58 @@
 /// BareSpecifier=diff/lib/patch/merge
-/*istanbul ignore start*/'use strict';
+/*istanbul ignore start*/
+"use strict";
 
-exports.__esModule = true;
-exports. /*istanbul ignore end*/calcLineCount = calcLineCount;
-/*istanbul ignore start*/exports. /*istanbul ignore end*/merge = merge;
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.calcLineCount = calcLineCount;
+exports.merge = merge;
 
-var /*istanbul ignore start*/_create = require('./create') /*istanbul ignore end*/;
+/*istanbul ignore end*/
+var
+/*istanbul ignore start*/
+_create = require("./create")
+/*istanbul ignore end*/
+;
 
-var /*istanbul ignore start*/_parse = require('./parse') /*istanbul ignore end*/;
+var
+/*istanbul ignore start*/
+_parse = require("./parse")
+/*istanbul ignore end*/
+;
 
-var /*istanbul ignore start*/_array = require('../util/array') /*istanbul ignore end*/;
+var
+/*istanbul ignore start*/
+_array = require("../util/array")
+/*istanbul ignore end*/
+;
 
 /*istanbul ignore start*/function _toConsumableArray(arr) {
+  return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread();
+}
+
+function _nonIterableSpread() {
+  throw new TypeError("Invalid attempt to spread non-iterable instance");
+}
+
+function _iterableToArray(iter) {
+  if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter);
+}
+
+function _arrayWithoutHoles(arr) {
   if (Array.isArray(arr)) {
-    for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) {
+    for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) {
       arr2[i] = arr[i];
     }return arr2;
-  } else {
-    return Array.from(arr);
   }
 }
 
-/*istanbul ignore end*/function calcLineCount(hunk) {
-  /*istanbul ignore start*/var _calcOldNewLineCount = /*istanbul ignore end*/calcOldNewLineCount(hunk.lines),
+/*istanbul ignore end*/
+function calcLineCount(hunk) {
+  /*istanbul ignore start*/
+  var _calcOldNewLineCount =
+  /*istanbul ignore end*/
+  calcOldNewLineCount(hunk.lines),
       oldLines = _calcOldNewLineCount.oldLines,
       newLines = _calcOldNewLineCount.newLines;
 
@@ -42,12 +72,10 @@ var /*istanbul ignore start*/_array = require('../util/array') /*istanbul ignore
 function merge(mine, theirs, base) {
   mine = loadPatch(mine, base);
   theirs = loadPatch(theirs, base);
-
-  var ret = {};
-
-  // For index we just let it pass through as it doesn't have any necessary meaning.
+  var ret = {}; // For index we just let it pass through as it doesn't have any necessary meaning.
   // Leaving sanity checks on this to the API consumer that may know more about the
   // meaning in their own context.
+
   if (mine.index || theirs.index) {
     ret.index = mine.index || theirs.index;
   }
@@ -75,15 +103,18 @@ function merge(mine, theirs, base) {
   }
 
   ret.hunks = [];
-
   var mineIndex = 0,
       theirsIndex = 0,
       mineOffset = 0,
       theirsOffset = 0;
 
   while (mineIndex < mine.hunks.length || theirsIndex < theirs.hunks.length) {
-    var mineCurrent = mine.hunks[mineIndex] || { oldStart: Infinity },
-        theirsCurrent = theirs.hunks[theirsIndex] || { oldStart: Infinity };
+    var mineCurrent = mine.hunks[mineIndex] || {
+      oldStart: Infinity
+    },
+        theirsCurrent = theirs.hunks[theirsIndex] || {
+      oldStart: Infinity
+    };
 
     if (hunkBefore(mineCurrent, theirsCurrent)) {
       // This patch does not overlap with any of the others, yay.
@@ -107,7 +138,6 @@ function merge(mine, theirs, base) {
       mergeLines(mergedHunk, mineCurrent.oldStart, mineCurrent.lines, theirsCurrent.oldStart, theirsCurrent.lines);
       theirsIndex++;
       mineIndex++;
-
       ret.hunks.push(mergedHunk);
     }
   }
@@ -118,14 +148,39 @@ function merge(mine, theirs, base) {
 function loadPatch(param, base) {
   if (typeof param === 'string') {
     if (/^@@/m.test(param) || /^Index:/m.test(param)) {
-      return (/*istanbul ignore start*/(0, _parse.parsePatch /*istanbul ignore end*/)(param)[0]
+      return (
+        /*istanbul ignore start*/
+        (0,
+        /*istanbul ignore end*/
+
+        /*istanbul ignore start*/
+        _parse
+        /*istanbul ignore end*/
+        .
+        /*istanbul ignore start*/
+        parsePatch
+        /*istanbul ignore end*/
+        )(param)[0]
       );
     }
 
     if (!base) {
       throw new Error('Must provide a base reference or pass in a patch');
     }
-    return (/*istanbul ignore start*/(0, _create.structuredPatch /*istanbul ignore end*/)(undefined, undefined, base, param)
+
+    return (
+      /*istanbul ignore start*/
+      (0,
+      /*istanbul ignore end*/
+
+      /*istanbul ignore start*/
+      _create
+      /*istanbul ignore end*/
+      .
+      /*istanbul ignore start*/
+      structuredPatch
+      /*istanbul ignore end*/
+      )(undefined, undefined, base, param)
     );
   }
 
@@ -141,7 +196,10 @@ function selectField(index, mine, theirs) {
     return mine;
   } else {
     index.conflict = true;
-    return { mine: mine, theirs: theirs };
+    return {
+      mine: mine,
+      theirs: theirs
+    };
   }
 }
 
@@ -151,8 +209,10 @@ function hunkBefore(test, check) {
 
 function cloneHunk(hunk, offset) {
   return {
-    oldStart: hunk.oldStart, oldLines: hunk.oldLines,
-    newStart: hunk.newStart + offset, newLines: hunk.newLines,
+    oldStart: hunk.oldStart,
+    oldLines: hunk.oldLines,
+    newStart: hunk.newStart + offset,
+    newLines: hunk.newLines,
     lines: hunk.lines
   };
 }
@@ -160,14 +220,20 @@ function cloneHunk(hunk, offset) {
 function mergeLines(hunk, mineOffset, mineLines, theirOffset, theirLines) {
   // This will generally result in a conflicted hunk, but there are cases where the context
   // is the only overlap where we can successfully merge the content here.
-  var mine = { offset: mineOffset, lines: mineLines, index: 0 },
-      their = { offset: theirOffset, lines: theirLines, index: 0 };
+  var mine = {
+    offset: mineOffset,
+    lines: mineLines,
+    index: 0
+  },
+      their = {
+    offset: theirOffset,
+    lines: theirLines,
+    index: 0
+  }; // Handle any leading content
 
-  // Handle any leading content
   insertLeading(hunk, mine, their);
-  insertLeading(hunk, their, mine);
+  insertLeading(hunk, their, mine); // Now in the overlap content. Scan through and select the best changes from each.
 
-  // Now in the overlap content. Scan through and select the best changes from each.
   while (mine.index < mine.lines.length && their.index < their.lines.length) {
     var mineCurrent = mine.lines[mine.index],
         theirCurrent = their.lines[their.index];
@@ -176,15 +242,51 @@ function mergeLines(hunk, mineOffset, mineLines, theirOffset, theirLines) {
       // Both modified ...
       mutualChange(hunk, mine, their);
     } else if (mineCurrent[0] === '+' && theirCurrent[0] === ' ') {
-      /*istanbul ignore start*/var _hunk$lines;
+      /*istanbul ignore start*/
+      var _hunk$lines;
 
-      /*istanbul ignore end*/ // Mine inserted
-      /*istanbul ignore start*/(_hunk$lines = /*istanbul ignore end*/hunk.lines).push. /*istanbul ignore start*/apply /*istanbul ignore end*/( /*istanbul ignore start*/_hunk$lines /*istanbul ignore end*/, /*istanbul ignore start*/_toConsumableArray( /*istanbul ignore end*/collectChange(mine)));
+      /*istanbul ignore end*/
+      // Mine inserted
+
+      /*istanbul ignore start*/
+      (_hunk$lines =
+      /*istanbul ignore end*/
+      hunk.lines).push.
+      /*istanbul ignore start*/
+      apply
+      /*istanbul ignore end*/
+      (
+      /*istanbul ignore start*/
+      _hunk$lines
+      /*istanbul ignore end*/
+
+      , /*istanbul ignore start*/
+      _toConsumableArray(
+      /*istanbul ignore end*/
+      collectChange(mine)));
     } else if (theirCurrent[0] === '+' && mineCurrent[0] === ' ') {
-      /*istanbul ignore start*/var _hunk$lines2;
+      /*istanbul ignore start*/
+      var _hunk$lines2;
 
-      /*istanbul ignore end*/ // Theirs inserted
-      /*istanbul ignore start*/(_hunk$lines2 = /*istanbul ignore end*/hunk.lines).push. /*istanbul ignore start*/apply /*istanbul ignore end*/( /*istanbul ignore start*/_hunk$lines2 /*istanbul ignore end*/, /*istanbul ignore start*/_toConsumableArray( /*istanbul ignore end*/collectChange(their)));
+      /*istanbul ignore end*/
+      // Theirs inserted
+
+      /*istanbul ignore start*/
+      (_hunk$lines2 =
+      /*istanbul ignore end*/
+      hunk.lines).push.
+      /*istanbul ignore start*/
+      apply
+      /*istanbul ignore end*/
+      (
+      /*istanbul ignore start*/
+      _hunk$lines2
+      /*istanbul ignore end*/
+
+      , /*istanbul ignore start*/
+      _toConsumableArray(
+      /*istanbul ignore end*/
+      collectChange(their)));
     } else if (mineCurrent[0] === '-' && theirCurrent[0] === ' ') {
       // Mine removed or edited
       removal(hunk, mine, their);
@@ -200,12 +302,11 @@ function mergeLines(hunk, mineOffset, mineLines, theirOffset, theirLines) {
       // Context mismatch
       conflict(hunk, collectChange(mine), collectChange(their));
     }
-  }
+  } // Now push anything that may be remaining
 
-  // Now push anything that may be remaining
+
   insertTrailing(hunk, mine);
   insertTrailing(hunk, their);
-
   calcLineCount(hunk);
 }
 
@@ -215,21 +316,114 @@ function mutualChange(hunk, mine, their) {
 
   if (allRemoves(myChanges) && allRemoves(theirChanges)) {
     // Special case for remove changes that are supersets of one another
-    if ( /*istanbul ignore start*/(0, _array.arrayStartsWith /*istanbul ignore end*/)(myChanges, theirChanges) && skipRemoveSuperset(their, myChanges, myChanges.length - theirChanges.length)) {
-      /*istanbul ignore start*/var _hunk$lines3;
+    if (
+    /*istanbul ignore start*/
+    (0,
+    /*istanbul ignore end*/
 
-      /*istanbul ignore end*/ /*istanbul ignore start*/(_hunk$lines3 = /*istanbul ignore end*/hunk.lines).push. /*istanbul ignore start*/apply /*istanbul ignore end*/( /*istanbul ignore start*/_hunk$lines3 /*istanbul ignore end*/, /*istanbul ignore start*/_toConsumableArray( /*istanbul ignore end*/myChanges));
+    /*istanbul ignore start*/
+    _array
+    /*istanbul ignore end*/
+    .
+    /*istanbul ignore start*/
+    arrayStartsWith
+    /*istanbul ignore end*/
+    )(myChanges, theirChanges) && skipRemoveSuperset(their, myChanges, myChanges.length - theirChanges.length)) {
+      /*istanbul ignore start*/
+      var _hunk$lines3;
+
+      /*istanbul ignore end*/
+
+      /*istanbul ignore start*/
+      (_hunk$lines3 =
+      /*istanbul ignore end*/
+      hunk.lines).push.
+      /*istanbul ignore start*/
+      apply
+      /*istanbul ignore end*/
+      (
+      /*istanbul ignore start*/
+      _hunk$lines3
+      /*istanbul ignore end*/
+
+      , /*istanbul ignore start*/
+      _toConsumableArray(
+      /*istanbul ignore end*/
+      myChanges));
+
       return;
-    } else if ( /*istanbul ignore start*/(0, _array.arrayStartsWith /*istanbul ignore end*/)(theirChanges, myChanges) && skipRemoveSuperset(mine, theirChanges, theirChanges.length - myChanges.length)) {
-      /*istanbul ignore start*/var _hunk$lines4;
+    } else if (
+    /*istanbul ignore start*/
+    (0,
+    /*istanbul ignore end*/
 
-      /*istanbul ignore end*/ /*istanbul ignore start*/(_hunk$lines4 = /*istanbul ignore end*/hunk.lines).push. /*istanbul ignore start*/apply /*istanbul ignore end*/( /*istanbul ignore start*/_hunk$lines4 /*istanbul ignore end*/, /*istanbul ignore start*/_toConsumableArray( /*istanbul ignore end*/theirChanges));
+    /*istanbul ignore start*/
+    _array
+    /*istanbul ignore end*/
+    .
+    /*istanbul ignore start*/
+    arrayStartsWith
+    /*istanbul ignore end*/
+    )(theirChanges, myChanges) && skipRemoveSuperset(mine, theirChanges, theirChanges.length - myChanges.length)) {
+      /*istanbul ignore start*/
+      var _hunk$lines4;
+
+      /*istanbul ignore end*/
+
+      /*istanbul ignore start*/
+      (_hunk$lines4 =
+      /*istanbul ignore end*/
+      hunk.lines).push.
+      /*istanbul ignore start*/
+      apply
+      /*istanbul ignore end*/
+      (
+      /*istanbul ignore start*/
+      _hunk$lines4
+      /*istanbul ignore end*/
+
+      , /*istanbul ignore start*/
+      _toConsumableArray(
+      /*istanbul ignore end*/
+      theirChanges));
+
       return;
     }
-  } else if ( /*istanbul ignore start*/(0, _array.arrayEqual /*istanbul ignore end*/)(myChanges, theirChanges)) {
-    /*istanbul ignore start*/var _hunk$lines5;
+  } else if (
+  /*istanbul ignore start*/
+  (0,
+  /*istanbul ignore end*/
 
-    /*istanbul ignore end*/ /*istanbul ignore start*/(_hunk$lines5 = /*istanbul ignore end*/hunk.lines).push. /*istanbul ignore start*/apply /*istanbul ignore end*/( /*istanbul ignore start*/_hunk$lines5 /*istanbul ignore end*/, /*istanbul ignore start*/_toConsumableArray( /*istanbul ignore end*/myChanges));
+  /*istanbul ignore start*/
+  _array
+  /*istanbul ignore end*/
+  .
+  /*istanbul ignore start*/
+  arrayEqual
+  /*istanbul ignore end*/
+  )(myChanges, theirChanges)) {
+    /*istanbul ignore start*/
+    var _hunk$lines5;
+
+    /*istanbul ignore end*/
+
+    /*istanbul ignore start*/
+    (_hunk$lines5 =
+    /*istanbul ignore end*/
+    hunk.lines).push.
+    /*istanbul ignore start*/
+    apply
+    /*istanbul ignore end*/
+    (
+    /*istanbul ignore start*/
+    _hunk$lines5
+    /*istanbul ignore end*/
+
+    , /*istanbul ignore start*/
+    _toConsumableArray(
+    /*istanbul ignore end*/
+    myChanges));
+
     return;
   }
 
@@ -239,10 +433,29 @@ function mutualChange(hunk, mine, their) {
 function removal(hunk, mine, their, swap) {
   var myChanges = collectChange(mine),
       theirChanges = collectContext(their, myChanges);
-  if (theirChanges.merged) {
-    /*istanbul ignore start*/var _hunk$lines6;
 
-    /*istanbul ignore end*/ /*istanbul ignore start*/(_hunk$lines6 = /*istanbul ignore end*/hunk.lines).push. /*istanbul ignore start*/apply /*istanbul ignore end*/( /*istanbul ignore start*/_hunk$lines6 /*istanbul ignore end*/, /*istanbul ignore start*/_toConsumableArray( /*istanbul ignore end*/theirChanges.merged));
+  if (theirChanges.merged) {
+    /*istanbul ignore start*/
+    var _hunk$lines6;
+
+    /*istanbul ignore end*/
+
+    /*istanbul ignore start*/
+    (_hunk$lines6 =
+    /*istanbul ignore end*/
+    hunk.lines).push.
+    /*istanbul ignore start*/
+    apply
+    /*istanbul ignore end*/
+    (
+    /*istanbul ignore start*/
+    _hunk$lines6
+    /*istanbul ignore end*/
+
+    , /*istanbul ignore start*/
+    _toConsumableArray(
+    /*istanbul ignore end*/
+    theirChanges.merged));
   } else {
     conflict(hunk, swap ? theirChanges : myChanges, swap ? myChanges : theirChanges);
   }
@@ -264,6 +477,7 @@ function insertLeading(hunk, insert, their) {
     insert.offset++;
   }
 }
+
 function insertTrailing(hunk, insert) {
   while (insert.index < insert.lines.length) {
     var line = insert.lines[insert.index++];
@@ -274,10 +488,10 @@ function insertTrailing(hunk, insert) {
 function collectChange(state) {
   var ret = [],
       operation = state.lines[state.index][0];
-  while (state.index < state.lines.length) {
-    var line = state.lines[state.index];
 
-    // Group additions that are immediately after subtractions and treat them as one "atomic" modify change.
+  while (state.index < state.lines.length) {
+    var line = state.lines[state.index]; // Group additions that are immediately after subtractions and treat them as one "atomic" modify change.
+
     if (operation === '-' && line[0] === '+') {
       operation = '+';
     }
@@ -292,28 +506,27 @@ function collectChange(state) {
 
   return ret;
 }
+
 function collectContext(state, matchChanges) {
   var changes = [],
       merged = [],
       matchIndex = 0,
       contextChanges = false,
       conflicted = false;
+
   while (matchIndex < matchChanges.length && state.index < state.lines.length) {
     var change = state.lines[state.index],
-        match = matchChanges[matchIndex];
+        match = matchChanges[matchIndex]; // Once we've hit our add, then we are done
 
-    // Once we've hit our add, then we are done
     if (match[0] === '+') {
       break;
     }
 
     contextChanges = contextChanges || change[0] !== ' ';
-
     merged.push(match);
-    matchIndex++;
-
-    // Consume any additions in the other block as a conflict to attempt
+    matchIndex++; // Consume any additions in the other block as a conflict to attempt
     // to pull in the remaining context after this
+
     if (change[0] === '+') {
       conflicted = true;
 
@@ -354,9 +567,11 @@ function allRemoves(changes) {
     return prev && change[0] === '-';
   }, true);
 }
+
 function skipRemoveSuperset(state, removeChanges, delta) {
   for (var i = 0; i < delta; i++) {
     var changeContent = removeChanges[removeChanges.length - delta + i].substr(1);
+
     if (state.lines[state.index + i] !== ' ' + changeContent) {
       return false;
     }
@@ -369,7 +584,6 @@ function skipRemoveSuperset(state, removeChanges, delta) {
 function calcOldNewLineCount(lines) {
   var oldLines = 0;
   var newLines = 0;
-
   lines.forEach(function (line) {
     if (typeof line !== 'string') {
       var myCount = calcOldNewLineCount(line.mine);
@@ -394,11 +608,14 @@ function calcOldNewLineCount(lines) {
       if (newLines !== undefined && (line[0] === '+' || line[0] === ' ')) {
         newLines++;
       }
+
       if (oldLines !== undefined && (line[0] === '-' || line[0] === ' ')) {
         oldLines++;
       }
     }
   });
-
-  return { oldLines: oldLines, newLines: newLines };
+  return {
+    oldLines: oldLines,
+    newLines: newLines
+  };
 }

@@ -1,9 +1,14 @@
 /// BareSpecifier=diff/lib/util/array
-/*istanbul ignore start*/"use strict";
+/*istanbul ignore start*/
+"use strict";
 
-exports.__esModule = true;
-exports. /*istanbul ignore end*/arrayEqual = arrayEqual;
-/*istanbul ignore start*/exports. /*istanbul ignore end*/arrayStartsWith = arrayStartsWith;
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.arrayEqual = arrayEqual;
+exports.arrayStartsWith = arrayStartsWith;
+
+/*istanbul ignore end*/
 function arrayEqual(a, b) {
   if (a.length !== b.length) {
     return false;

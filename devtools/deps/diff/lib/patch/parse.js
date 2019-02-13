@@ -1,11 +1,18 @@
 /// BareSpecifier=diff/lib/patch/parse
-/*istanbul ignore start*/'use strict';
+/*istanbul ignore start*/
+"use strict";
 
-exports.__esModule = true;
-exports. /*istanbul ignore end*/parsePatch = parsePatch;
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.parsePatch = parsePatch;
+
+/*istanbul ignore end*/
 function parsePatch(uniDiff) {
-  /*istanbul ignore start*/var /*istanbul ignore end*/options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-
+  /*istanbul ignore start*/
+  var
+  /*istanbul ignore end*/
+  options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
   var diffstr = uniDiff.split(/\r\n|[\n\v\f\r\x85]/),
       delimiters = uniDiff.match(/\r\n|[\n\v\f\r\x85]/g) || [],
       list = [],
@@ -13,32 +20,30 @@ function parsePatch(uniDiff) {
 
   function parseIndex() {
     var index = {};
-    list.push(index);
+    list.push(index); // Parse diff metadata
 
-    // Parse diff metadata
     while (i < diffstr.length) {
-      var line = diffstr[i];
+      var line = diffstr[i]; // File header found, end parsing diff metadata
 
-      // File header found, end parsing diff metadata
       if (/^(\-\-\-|\+\+\+|@@)\s/.test(line)) {
         break;
-      }
+      } // Diff index
 
-      // Diff index
+
       var header = /^(?:Index:|diff(?: -r \w+)+)\s+(.+?)\s*$/.exec(line);
+
       if (header) {
         index.index = header[1];
       }
 
       i++;
-    }
-
-    // Parse file headers if they are defined. Unified diff requires them, but
+    } // Parse file headers if they are defined. Unified diff requires them, but
     // there's no technical issues to have an isolated hunk without file header
-    parseFileHeader(index);
-    parseFileHeader(index);
 
-    // Parse hunks
+
+    parseFileHeader(index);
+    parseFileHeader(index); // Parse hunks
+
     index.hunks = [];
 
     while (i < diffstr.length) {
@@ -55,33 +60,34 @@ function parsePatch(uniDiff) {
         i++;
       }
     }
-  }
-
-  // Parses the --- and +++ headers, if none are found, no lines
+  } // Parses the --- and +++ headers, if none are found, no lines
   // are consumed.
+
+
   function parseFileHeader(index) {
     var fileHeader = /^(---|\+\+\+)\s+(.*)$/.exec(diffstr[i]);
+
     if (fileHeader) {
       var keyPrefix = fileHeader[1] === '---' ? 'old' : 'new';
       var data = fileHeader[2].split('\t', 2);
       var fileName = data[0].replace(/\\\\/g, '\\');
+
       if (/^".*"$/.test(fileName)) {
         fileName = fileName.substr(1, fileName.length - 2);
       }
+
       index[keyPrefix + 'FileName'] = fileName;
       index[keyPrefix + 'Header'] = (data[1] || '').trim();
-
       i++;
     }
-  }
-
-  // Parses a hunk
+  } // Parses a hunk
   // This assumes that we are at the start of a hunk.
+
+
   function parseHunk() {
     var chunkHeaderIndex = i,
         chunkHeaderLine = diffstr[i++],
         chunkHeader = chunkHeaderLine.split(/@@ -(\d+)(?:,(\d+))? \+(\d+)(?:,(\d+))? @@/);
-
     var hunk = {
       oldStart: +chunkHeader[1],
       oldLines: +chunkHeader[2] || 1,
@@ -90,15 +96,16 @@ function parsePatch(uniDiff) {
       lines: [],
       linedelimiters: []
     };
-
     var addCount = 0,
         removeCount = 0;
+
     for (; i < diffstr.length; i++) {
       // Lines starting with '---' could be mistaken for the "remove line" operation
       // But they could be the header for the next file. Therefore prune such cases out.
       if (diffstr[i].indexOf('--- ') === 0 && i + 2 < diffstr.length && diffstr[i + 1].indexOf('+++ ') === 0 && diffstr[i + 2].indexOf('@@') === 0) {
         break;
       }
+
       var operation = diffstr[i].length == 0 && i != diffstr.length - 1 ? ' ' : diffstr[i][0];
 
       if (operation === '+' || operation === '-' || operation === ' ' || operation === '\\') {
@@ -116,21 +123,23 @@ function parsePatch(uniDiff) {
       } else {
         break;
       }
-    }
+    } // Handle the empty block count case
 
-    // Handle the empty block count case
+
     if (!addCount && hunk.newLines === 1) {
       hunk.newLines = 0;
     }
+
     if (!removeCount && hunk.oldLines === 1) {
       hunk.oldLines = 0;
-    }
+    } // Perform optional sanity checking
 
-    // Perform optional sanity checking
+
     if (options.strict) {
       if (addCount !== hunk.newLines) {
         throw new Error('Added line count did not match for hunk at line ' + (chunkHeaderIndex + 1));
       }
+
       if (removeCount !== hunk.oldLines) {
         throw new Error('Removed line count did not match for hunk at line ' + (chunkHeaderIndex + 1));
       }

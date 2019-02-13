@@ -1,8 +1,13 @@
 /// BareSpecifier=diff/lib/util/params
-/*istanbul ignore start*/'use strict';
+/*istanbul ignore start*/
+"use strict";
 
-exports.__esModule = true;
-exports. /*istanbul ignore end*/generateOptions = generateOptions;
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.generateOptions = generateOptions;
+
+/*istanbul ignore end*/
 function generateOptions(options, defaults) {
   if (typeof options === 'function') {
     defaults.callback = options;
@@ -14,5 +19,6 @@ function generateOptions(options, defaults) {
       }
     }
   }
+
   return defaults;
 }
