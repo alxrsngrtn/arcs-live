@@ -1,5 +1,5 @@
-commit 6a020e7b6203bd2d097d0e7b6cd90061f0001ea6
-Author: Paul Lindner <lindner@inuus.com>
-Date:   Wed Feb 13 17:03:44 2019 -0800
+commit 18a7b2aac095a951431db24a6ffede55a37e109f
+Author: AliceLetitia <AliceLetitia@users.noreply.github.com>
+Date:   Thu Feb 14 13:45:27 2019 -0800
 
-    move typescript typings to devDependencies (#2693)
+    bug fixes (#2695)

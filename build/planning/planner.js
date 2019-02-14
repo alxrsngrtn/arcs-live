@@ -19,6 +19,7 @@ import { ConvertConstraintsToConnections } from './strategies/convert-constraint
 import { CreateDescriptionHandle } from './strategies/create-description-handle.js';
 import { CreateHandleGroup } from './strategies/create-handle-group.js';
 import { FindHostedParticle } from './strategies/find-hosted-particle.js';
+import { FindRequiredParticle } from './strategies/find-required-particle.js';
 import { GroupHandleConnections } from './strategies/group-handle-connections.js';
 import { InitPopulation } from './strategies/init-population.js';
 import { InitSearch } from './strategies/init-search.js';
@@ -185,7 +186,8 @@ Planner.ResolutionStrategies = [
     MatchFreeHandlesToConnections,
     ResolveRecipe,
     FindHostedParticle,
-    CoalesceRecipes
+    CoalesceRecipes,
+    FindRequiredParticle
 ];
 // tslint:disable-next-line: variable-name
 Planner.AllStrategies = Planner.InitializationStrategies.concat(Planner.ResolutionStrategies);

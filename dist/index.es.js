@@ -22767,7 +22767,6 @@ class SlotUtils {
                     return false;
                 const clonedSlot = SlotUtils.getClonedSlot(oldSlot.sourceConnection.recipe, newSlot);
                 oldSlot.sourceConnection.providedSlots[oldSlot.name] = clonedSlot;
-                clonedSlot.sourceConnection = oldSlot.sourceConnection;
             }
             while (oldSlot.consumeConnections.length > 0) {
                 const conn = oldSlot.consumeConnections[0];
@@ -25393,6 +25392,41 @@ class FindHostedParticle extends Strategy {
     }
 }
 
+// Copyright (c) 2019 Google Inc. All rights reserved.
+class FindRequiredParticle extends Strategy {
+    async generate(inputParams) {
+        const arc = this.arc;
+        return StrategizerWalker.over(this.getResults(inputParams), new class extends StrategizerWalker {
+            onRequiredParticle(recipe, particle) {
+                // TODO: This strategy only matches particles based on slots, and only slots in the recipe gets modified. 
+                //       This strategy should do the same for handles as well. 
+                const particlesMatch = arc.activeRecipe.particles.filter(arcParticle => particle.matches(arcParticle));
+                return particlesMatch.map(particleMatch => ((recipe, particle) => {
+                    if (!particle.matches(particleMatch))
+                        return;
+                    for (const [name, slotConn] of Object.entries(particle.consumedSlotConnections)) {
+                        const oldSlot = slotConn.targetSlot;
+                        const newSlot = particleMatch.consumedSlotConnections[name].targetSlot;
+                        if (!SlotUtils.replaceOldSlot(recipe, oldSlot, newSlot))
+                            return;
+                        for (const [pname, oldPSlot] of Object.entries(slotConn.providedSlots)) {
+                            const pslot = particleMatch.consumedSlotConnections[name].providedSlots[pname];
+                            if (!SlotUtils.replaceOldSlot(recipe, oldPSlot, pslot))
+                                return;
+                        }
+                        // remove particle from require section 
+                        for (const requires of recipe.requires) {
+                            if (requires.particles.indexOf(particle) !== -1) {
+                                requires.removeParticle(particle);
+                            }
+                        }
+                    }
+                }));
+            }
+        }(StrategizerWalker.Permuted), this);
+    }
+}
+
 // Copyright (c) 2017 Google Inc. All rights reserved.
 class GroupHandleConnections extends Strategy {
     constructor(arc, args) {
@@ -26243,7 +26277,8 @@ Planner.ResolutionStrategies = [
     MatchFreeHandlesToConnections,
     ResolveRecipe,
     FindHostedParticle,
-    CoalesceRecipes
+    CoalesceRecipes,
+    FindRequiredParticle
 ];
 // tslint:disable-next-line: variable-name
 Planner.AllStrategies = Planner.InitializationStrategies.concat(Planner.ResolutionStrategies);
