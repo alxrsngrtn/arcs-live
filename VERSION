@@ -1,5 +1,5 @@
-commit 9fc47ffe76c5761b8608bbc58d32efcbd41c2f83
-Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Tue Feb 12 17:48:58 2019 -0800
+commit 6a020e7b6203bd2d097d0e7b6cd90061f0001ea6
+Author: Paul Lindner <lindner@inuus.com>
+Date:   Wed Feb 13 17:03:44 2019 -0800
 
-    Don't push node_modules/**/*.exe to arcs-live (#2689)
+    move typescript typings to devDependencies (#2693)
