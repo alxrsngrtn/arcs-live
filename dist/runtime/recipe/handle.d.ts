@@ -1,4 +1,6 @@
 import { ParticleSpec } from '../particle-spec.js';
+import { Schema } from '../schema.js';
+import { TypeVariableInfo } from '../type-variable-info.js';
 import { Type } from '../type.js';
 import { HandleConnection } from './handle-connection.js';
 import { Recipe } from './recipe.js';
@@ -18,7 +20,7 @@ export declare class Handle {
     private _pattern;
     private _immediateValue;
     constructor(recipe: Recipe);
-    _copyInto(recipe: Recipe): any;
+    _copyInto(recipe: Recipe, cloneMap: any, variableMap: Map<TypeVariableInfo | Schema, TypeVariableInfo | Schema>): any;
     mergeInto(handle: any): void;
     _mergedFate(fates: any): "use" | "create";
     _startNormalize(): void;

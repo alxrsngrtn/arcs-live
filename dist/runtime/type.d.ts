@@ -78,6 +78,7 @@ export declare class EntityType extends Type {
     };
     toString(options?: any): string;
     getEntitySchema(): Schema;
+    _cloneWithResolutions(variableMap: any): any;
     toPrettyString(): string;
 }
 export declare class TypeVariable extends Type {
@@ -92,7 +93,7 @@ export declare class TypeVariable extends Type {
     readonly canWriteSuperset: any;
     readonly canReadSubset: any;
     _clone(variableMap: any): TypeVariable;
-    _cloneWithResolutions(variableMap: any): TypeVariable;
+    _cloneWithResolutions(variableMap: Map<TypeVariableInfo | Schema, TypeVariableInfo | Schema>): TypeVariable;
     toLiteral(): TypeLiteral;
     toString(options?: any): string;
     getEntitySchema(): any;

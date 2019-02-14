@@ -24,7 +24,7 @@ export class Particle {
         this._recipe = recipe;
         this._name = name;
     }
-    _copyInto(recipe, cloneMap) {
+    _copyInto(recipe, cloneMap, variableMap) {
         const particle = recipe.newParticle(this._name);
         particle._id = this._id;
         particle._verbs = [...this._verbs];
@@ -33,7 +33,7 @@ export class Particle {
             particle._connections[key] = this._connections[key]._clone(particle, cloneMap);
         });
         particle._unnamedConnections = this._unnamedConnections.map(connection => connection._clone(particle, cloneMap));
-        particle._cloneConnectionRawTypes();
+        particle._cloneConnectionRawTypes(variableMap);
         for (const [key, slotConn] of Object.entries(this.consumedSlotConnections)) {
             particle.consumedSlotConnections[key] = slotConn._clone(particle, cloneMap);
             // if recipe is a requireSection, then slot may already exist in recipe.
@@ -58,17 +58,15 @@ export class Particle {
         }
         return particle;
     }
-    _cloneConnectionRawTypes() {
-        // TODO(shans): evaluate whether this is the appropriate context root for cloneWithResolution
-        const map = new Map();
+    _cloneConnectionRawTypes(variableMap) {
         for (const connection of Object.values(this._connections)) {
             if (connection.rawType) {
-                connection._rawType = connection.rawType._cloneWithResolutions(map);
+                connection._rawType = connection.rawType._cloneWithResolutions(variableMap);
             }
         }
         for (const connection of this._unnamedConnections) {
             if (connection.rawType) {
-                connection._rawType = connection.rawType._cloneWithResolutions(map);
+                connection._rawType = connection.rawType._cloneWithResolutions(variableMap);
             }
         }
     }

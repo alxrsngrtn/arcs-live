@@ -1,5 +1,9 @@
-commit 18a7b2aac095a951431db24a6ffede55a37e109f
-Author: AliceLetitia <AliceLetitia@users.noreply.github.com>
-Date:   Thu Feb 14 13:45:27 2019 -0800
+commit 12159d26b0472d94abdfdff87e0fba066d3b028c
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Thu Feb 14 14:11:37 2019 -0800
 
-    bug fixes (#2695)
+    consistent type variable cloning (#2672)
+    
+    * consistent type variable cloning
+    
+    * remove comment

@@ -1723,6 +1723,14 @@ class EntityType extends Type {
     getEntitySchema() {
         return this.entitySchema;
     }
+    _cloneWithResolutions(variableMap) {
+        if (variableMap.has(this.entitySchema)) {
+            return variableMap.get(this.entitySchema);
+        }
+        const clonedEntityType = new EntityType(this.entitySchema);
+        variableMap.set(this.entitySchema, clonedEntityType);
+        return clonedEntityType;
+    }
     toPrettyString() {
         if (this.entitySchema.description.pattern) {
             return this.entitySchema.description.pattern;
@@ -1792,14 +1800,13 @@ class TypeVariable extends Type {
         }
     }
     _cloneWithResolutions(variableMap) {
-        const name = this.variable.name;
-        if (variableMap.has(name)) {
-            return new TypeVariable(variableMap.get(name));
+        if (variableMap.has(this.variable)) {
+            return new TypeVariable(variableMap.get(this.variable));
         }
         else {
             const newTypeVariable = TypeVariableInfo.fromLiteral(this.variable.toLiteralIgnoringResolutions());
             if (this.variable.resolution) {
-                newTypeVariable.resolution = this.variable.resolution._cloneWithResolutions(variableMap);
+                newTypeVariable._resolution = this.variable._resolution._cloneWithResolutions(variableMap);
             }
             if (this.variable._canReadSubset) {
                 newTypeVariable.canReadSubset = this.variable.canReadSubset._cloneWithResolutions(variableMap);
@@ -1807,7 +1814,7 @@ class TypeVariable extends Type {
             if (this.variable._canWriteSuperset) {
                 newTypeVariable.canWriteSuperset = this.variable.canWriteSuperset._cloneWithResolutions(variableMap);
             }
-            variableMap.set(name, newTypeVariable);
+            variableMap.set(this.variable, newTypeVariable);
             return new TypeVariable(newTypeVariable);
         }
     }
@@ -11896,7 +11903,7 @@ class Handle$1 {
         assert$1(recipe);
         this._recipe = recipe;
     }
-    _copyInto(recipe) {
+    _copyInto(recipe, cloneMap, variableMap) {
         let handle = undefined;
         if (this._id !== null && ['map', 'use', 'copy'].includes(this.fate)) {
             handle = recipe.findHandle(this._id);
@@ -11905,7 +11912,7 @@ class Handle$1 {
             handle = recipe.newHandle();
             handle._id = this._id;
             handle._tags = [...this._tags];
-            handle._type = this._type ? Type.fromLiteral(this._type.toLiteral()) : undefined;
+            handle._type = this._type ? this._type._cloneWithResolutions(variableMap) : undefined;
             handle._fate = this._fate;
             handle._originalFate = this._originalFate;
             handle._originalId = this._originalId;
@@ -12523,7 +12530,7 @@ class Particle {
         this._recipe = recipe;
         this._name = name;
     }
-    _copyInto(recipe, cloneMap) {
+    _copyInto(recipe, cloneMap, variableMap) {
         const particle = recipe.newParticle(this._name);
         particle._id = this._id;
         particle._verbs = [...this._verbs];
@@ -12532,7 +12539,7 @@ class Particle {
             particle._connections[key] = this._connections[key]._clone(particle, cloneMap);
         });
         particle._unnamedConnections = this._unnamedConnections.map(connection => connection._clone(particle, cloneMap));
-        particle._cloneConnectionRawTypes();
+        particle._cloneConnectionRawTypes(variableMap);
         for (const [key, slotConn] of Object.entries(this.consumedSlotConnections)) {
             particle.consumedSlotConnections[key] = slotConn._clone(particle, cloneMap);
             // if recipe is a requireSection, then slot may already exist in recipe.
@@ -12557,17 +12564,15 @@ class Particle {
         }
         return particle;
     }
-    _cloneConnectionRawTypes() {
-        // TODO(shans): evaluate whether this is the appropriate context root for cloneWithResolution
-        const map = new Map();
+    _cloneConnectionRawTypes(variableMap) {
         for (const connection of Object.values(this._connections)) {
             if (connection.rawType) {
-                connection._rawType = connection.rawType._cloneWithResolutions(map);
+                connection._rawType = connection.rawType._cloneWithResolutions(variableMap);
             }
         }
         for (const connection of this._unnamedConnections) {
             if (connection.rawType) {
-                connection._rawType = connection.rawType._cloneWithResolutions(map);
+                connection._rawType = connection.rawType._cloneWithResolutions(variableMap);
             }
         }
     }
@@ -13443,8 +13448,9 @@ class Recipe {
         };
     }
     _copyInto(recipe, cloneMap) {
+        const variableMap = new Map();
         function cloneTheThing(object) {
-            const clonedObject = object._copyInto(recipe, cloneMap);
+            const clonedObject = object._copyInto(recipe, cloneMap, variableMap);
             cloneMap.set(object, clonedObject);
         }
         recipe._name = this.name;

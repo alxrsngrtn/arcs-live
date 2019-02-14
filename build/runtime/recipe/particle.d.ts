@@ -1,4 +1,6 @@
 import { ParticleSpec, SlotSpec } from '../particle-spec.js';
+import { Schema } from '../schema.js';
+import { TypeVariableInfo } from '../type-variable-info.js';
 import { HandleConnection } from './handle-connection.js';
 import { Recipe } from './recipe.js';
 import { SlotConnection } from './slot-connection.js';
@@ -16,8 +18,8 @@ export declare class Particle {
         [index: string]: SlotConnection;
     };
     constructor(recipe: Recipe, name: string);
-    _copyInto(recipe: Recipe, cloneMap: any): Particle;
-    _cloneConnectionRawTypes(): void;
+    _copyInto(recipe: Recipe, cloneMap: any, variableMap: Map<TypeVariableInfo | Schema, TypeVariableInfo | Schema>): Particle;
+    _cloneConnectionRawTypes(variableMap: Map<TypeVariableInfo | Schema, TypeVariableInfo | Schema>): void;
     _startNormalize(): void;
     _finishNormalize(): void;
     _compareTo(other: any): any;

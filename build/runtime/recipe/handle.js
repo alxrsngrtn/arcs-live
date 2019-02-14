@@ -29,7 +29,7 @@ export class Handle {
         assert(recipe);
         this._recipe = recipe;
     }
-    _copyInto(recipe) {
+    _copyInto(recipe, cloneMap, variableMap) {
         let handle = undefined;
         if (this._id !== null && ['map', 'use', 'copy'].includes(this.fate)) {
             handle = recipe.findHandle(this._id);
@@ -38,7 +38,7 @@ export class Handle {
             handle = recipe.newHandle();
             handle._id = this._id;
             handle._tags = [...this._tags];
-            handle._type = this._type ? Type.fromLiteral(this._type.toLiteral()) : undefined;
+            handle._type = this._type ? this._type._cloneWithResolutions(variableMap) : undefined;
             handle._fate = this._fate;
             handle._originalFate = this._originalFate;
             handle._originalId = this._originalId;
