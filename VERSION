@@ -1,9 +1,5 @@
-commit 7b7eccacc495fa41ee17b90490de7ba8916057ad
-Author: Paul Lindner <lindner@inuus.com>
-Date:   Fri Feb 15 09:19:01 2019 -0800
+commit 1a400523aab2accd6075608faee6a53d7a82094b
+Author: AliceLetitia <AliceLetitia@users.noreply.github.com>
+Date:   Fri Feb 15 09:31:08 2019 -0800
 
-    Misc Arcs Cleanup (#2691)
-    
-    * Remove unused imports
-    * Make readonly fields readonly
-    * Remove redundant variables
+    fixed bugs (#2697)
