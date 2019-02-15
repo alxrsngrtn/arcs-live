@@ -1,5 +1,7 @@
-commit 3a4bb68798a8d527b24936e337d2952d27a2b54a
-Author: raulverag <42563960+raulverag@users.noreply.github.com>
-Date:   Thu Feb 14 14:25:46 2019 -0800
+commit e59497f4c58a6cfbac58d39df66c9345495eb362
+Author: Joshua Pratt <jp10010101010000@gmail.com>
+Date:   Fri Feb 15 13:12:45 2019 +1100
 
-    Improve debug-channel connections at arc construction (#2694)
+    Revert "Replace primitiveType (#2684)" (#2696)
+    
+    This reverts commit 65dc975551f2d1a47fa951eadc85e07d0e103649.
