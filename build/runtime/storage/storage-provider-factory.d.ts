@@ -4,7 +4,7 @@ import { KeyBase } from './key-base.js';
 import { StorageBase, StorageProviderBase } from './storage-provider-base.js';
 export declare class StorageProviderFactory {
     private readonly arcId;
-    private _storageInstances;
+    private readonly _storageInstances;
     constructor(arcId: Id);
     private getInstance;
     _storageForKey(key: string): StorageBase;

@@ -1,7 +1,9 @@
-commit e59497f4c58a6cfbac58d39df66c9345495eb362
-Author: Joshua Pratt <jp10010101010000@gmail.com>
-Date:   Fri Feb 15 13:12:45 2019 +1100
+commit 7b7eccacc495fa41ee17b90490de7ba8916057ad
+Author: Paul Lindner <lindner@inuus.com>
+Date:   Fri Feb 15 09:19:01 2019 -0800
 
-    Revert "Replace primitiveType (#2684)" (#2696)
+    Misc Arcs Cleanup (#2691)
     
-    This reverts commit 65dc975551f2d1a47fa951eadc85e07d0e103649.
+    * Remove unused imports
+    * Make readonly fields readonly
+    * Remove redundant variables

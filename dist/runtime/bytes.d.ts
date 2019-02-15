@@ -10,7 +10,7 @@
  * ```
  */
 export declare class Bytes {
-    private blob;
+    private readonly blob;
     /**
      * Constructs a Bytes object from a base64 string.
      */

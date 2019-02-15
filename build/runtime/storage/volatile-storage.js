@@ -243,8 +243,7 @@ class VolatileCollection extends VolatileStorageProvider {
                 return null;
             }
             await this.ensureBackingStore();
-            const result = await this.backingStore.get(ref.id);
-            return result;
+            return await this.backingStore.get(ref.id);
         }
         return this._model.getValue(id);
     }
@@ -373,8 +372,7 @@ class VolatileVariable extends VolatileStorageProvider {
         if (this.referenceMode && this._stored) {
             const value = this._stored;
             await this.ensureBackingStore();
-            const result = await this.backingStore.get(value.id);
-            return result;
+            return await this.backingStore.get(value.id);
         }
         return this._stored;
     }

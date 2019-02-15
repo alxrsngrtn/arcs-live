@@ -45,7 +45,7 @@ export declare abstract class StorageProxy {
     protected readonly port: PECInnerPort;
     protected readonly scheduler: StorageProxyScheduler;
     name: string;
-    private baseForNewID;
+    private readonly baseForNewID;
     pec: ParticleExecutionContext;
     private localIDComponent;
     protected version: number | undefined;
@@ -56,7 +56,7 @@ export declare abstract class StorageProxy {
         particle: Particle;
         handle: Handle;
     }[];
-    private updates;
+    private readonly updates;
     protected barrier: string | null;
     constructor(id: string, type: Type, port: PECInnerPort, pec: ParticleExecutionContext, scheduler: any, name: string);
     abstract _getModelForSync(): any;

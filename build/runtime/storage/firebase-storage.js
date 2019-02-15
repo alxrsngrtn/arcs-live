@@ -692,8 +692,7 @@ class FirebaseCollection extends FirebaseStorageProvider {
                 return null;
             }
             await this.ensureBackingStore();
-            const result = await this.backingStore.get(ref.id);
-            return result;
+            return await this.backingStore.get(ref.id);
         }
         return this.model.getValue(id);
     }

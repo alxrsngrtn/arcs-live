@@ -5149,8 +5149,7 @@ function schemaLocationFor(name) {
 }
 class Loader {
     path(fileName) {
-        const path = fileName.replace(/[/][^/]+$/, '/');
-        return path;
+        return fileName.replace(/[/][^/]+$/, '/');
     }
     join(prefix, path) {
         if (/^https?:\/\//.test(path)) {

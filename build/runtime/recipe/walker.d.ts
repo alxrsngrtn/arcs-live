@@ -42,7 +42,7 @@ export interface Descendant {
  * Walker.
  */
 export declare abstract class Action {
-    private _arc?;
+    private readonly _arc?;
     private _args?;
     constructor(arc?: Arc, args?: any);
     readonly arc: Arc | undefined;

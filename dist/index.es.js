@@ -15314,8 +15314,7 @@ class FirebaseCollection extends FirebaseStorageProvider {
                 return null;
             }
             await this.ensureBackingStore();
-            const result = await this.backingStore.get(ref.id);
-            return result;
+            return await this.backingStore.get(ref.id);
         }
         return this.model.getValue(id);
     }
@@ -17369,8 +17368,7 @@ class VolatileCollection extends VolatileStorageProvider {
                 return null;
             }
             await this.ensureBackingStore();
-            const result = await this.backingStore.get(ref.id);
-            return result;
+            return await this.backingStore.get(ref.id);
         }
         return this._model.getValue(id);
     }
@@ -17499,8 +17497,7 @@ class VolatileVariable extends VolatileStorageProvider {
         if (this.referenceMode && this._stored) {
             const value = this._stored;
             await this.ensureBackingStore();
-            const result = await this.backingStore.get(value.id);
-            return result;
+            return await this.backingStore.get(value.id);
         }
         return this._stored;
     }
@@ -18288,8 +18285,7 @@ ${e.message}
             }
         };
         processArgTypes(particleItem.args);
-        const particleSpec = new ParticleSpec(particleItem);
-        manifest._particles[particleItem.name] = particleSpec;
+        manifest._particles[particleItem.name] = new ParticleSpec(particleItem);
     }
     // TODO: Move this to a generic pass over the AST and merge with resolveTypeName.
     static _processInterface(manifest, interfaceItem) {
@@ -20820,8 +20816,7 @@ class MultiplexerDomParticle extends TransformationDomParticle {
 const html = (strings, ...values) => (strings[0] + values.map((v, i) => v + strings[i + 1]).join('')).trim();
 class Loader {
     path(fileName) {
-        const path = fileName.replace(/[/][^/]+$/, '/');
-        return path;
+        return fileName.replace(/[/][^/]+$/, '/');
     }
     join(prefix, path) {
         if (/^https?:\/\//.test(path)) {
@@ -27742,6 +27737,15 @@ class MockSlotDomConsumer extends SlotDomConsumer {
     _observe() { }
 }
 
+/**
+ * @license
+ * Copyright (c) 2019 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
 class ModalityHandler {
     constructor(slotConsumerClass, descriptionFormatter) {
         this.slotConsumerClass = slotConsumerClass;

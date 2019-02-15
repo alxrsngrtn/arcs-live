@@ -6,7 +6,7 @@ import { Recipe } from '../recipe/recipe.js';
 import { SlotConnection } from '../recipe/slot-connection.js';
 import { Action } from '../recipe/walker.js';
 export declare class ResolveWalker extends RecipeWalker {
-    private arc;
+    private readonly arc;
     constructor(tactic: any, arc: any);
     onHandle(recipe: Recipe, handle: Handle): (recipe: any, handle: any) => void;
     onSlotConnection(recipe: Recipe, slotConnection: SlotConnection): (recipe: any, slotConnection: any) => number;

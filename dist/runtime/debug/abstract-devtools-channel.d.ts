@@ -22,7 +22,7 @@ export declare class AbstractDevtoolsChannel {
 }
 export declare class ArcDevtoolsChannel {
     private channel;
-    private arcId;
+    private readonly arcId;
     constructor(arc: Arc, channel: AbstractDevtoolsChannel);
     send(message: any): void;
     listen(messageType: any, callback: any): void;

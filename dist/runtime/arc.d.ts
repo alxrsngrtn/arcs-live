@@ -73,7 +73,7 @@ export declare class Arc {
     private waitForIdlePromise;
     private debugHandler;
     private innerArcsByParticle;
-    private listenerClasses;
+    private readonly listenerClasses;
     readonly id: Id;
     particleHandleMaps: Map<string, {
         spec: ParticleSpec;

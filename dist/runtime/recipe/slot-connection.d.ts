@@ -1,4 +1,3 @@
-import { SlotSpec } from '../particle-spec.js';
 import { Particle } from './particle.js';
 import { Recipe } from './recipe.js';
 import { Slot } from './slot.js';
@@ -20,7 +19,7 @@ export declare class SlotConnection {
         [index: string]: Slot;
     };
     tags: string[];
-    getSlotSpec(): SlotSpec;
+    getSlotSpec(): import("../particle-spec.js").SlotSpec;
     connectToSlot(targetSlot: any): void;
     disconnectFromSlot(): void;
     _clone(particle: any, cloneMap: any): any;
