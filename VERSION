@@ -1,5 +1,9 @@
-commit 1a400523aab2accd6075608faee6a53d7a82094b
-Author: AliceLetitia <AliceLetitia@users.noreply.github.com>
-Date:   Fri Feb 15 09:31:08 2019 -0800
+commit 084e1d37ed07e6264d54932086df82dcf1802a11
+Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
+Date:   Tue Feb 19 13:46:23 2019 +1100
 
-    fixed bugs (#2697)
+    FirebaseBackingStore: improve performance for large backing stores (#2670)
+    
+    * FirebaseBackingStore class to improve performance with large backing store collections
+    
+    * FirebaseBackingStore: fix some types for the backing stores

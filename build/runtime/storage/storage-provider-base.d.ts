@@ -18,7 +18,7 @@ export interface VariableStorageProvider extends StorageProviderBase {
 export interface CollectionStorageProvider extends StorageProviderBase {
     toList(): Promise<any[]>;
     getMultiple(ids: string[]): Promise<any[]>;
-    storeMultiple(values: {}, keys: string[], originatorId: string): Promise<void>;
+    storeMultiple(values: {}, keys: string[], originatorId?: string): Promise<void>;
     removeMultiple(items: any[], originatorId?: string): Promise<void>;
     get(id: string): Promise<any>;
     remove(id: string, keys: string[], originatorId?: string): any;

@@ -18,6 +18,11 @@ declare class FirebaseKey extends KeyBase {
     private buildChildKey;
     toString(): string;
 }
+declare enum Mode {
+    direct = 0,
+    reference = 1,
+    backing = 2
+}
 export declare class FirebaseStorage extends StorageBase {
     private readonly apps;
     private readonly sharedStores;
@@ -28,9 +33,9 @@ export declare class FirebaseStorage extends StorageBase {
     connect(id: string, type: Type, key: string): Promise<FirebaseStorageProvider>;
     shutdown(): void;
     baseStorageKey(type: Type, keyString: string): string;
-    baseStorageFor(type: any, key: string): Promise<FirebaseCollection>;
+    baseStorageFor(type: any, key: string): Promise<any>;
     parseStringAsKey(s: string): FirebaseKey;
-    _join(id: string, type: Type, keyString: string, shouldExist: boolean | 'unknown', referenceMode?: boolean): Promise<FirebaseCollection | FirebaseBigCollection | FirebaseVariable>;
+    _join(id: string, type: Type, keyString: string, shouldExist: boolean | 'unknown', mode: Mode): Promise<FirebaseBackingStore | FirebaseCollection | FirebaseBigCollection | FirebaseVariable>;
     static encodeKey(key: string): string;
     static decodeKey(key: string): string;
 }
@@ -38,13 +43,13 @@ declare abstract class FirebaseStorageProvider extends StorageProviderBase {
     private firebaseKey;
     protected persisting: Promise<void> | null;
     protected reference: firebase.database.Reference;
-    backingStore: FirebaseCollection | null;
+    backingStore: FirebaseBackingStore | null;
     protected storageEngine: FirebaseStorage;
     private pendingBackingStore;
     protected constructor(type: any, storageEngine: any, id: any, reference: any, key: any);
-    ensureBackingStore(): Promise<FirebaseCollection>;
+    ensureBackingStore(): Promise<FirebaseBackingStore>;
     abstract backingType(): Type;
-    static newProvider(type: any, storageEngine: any, id: any, reference: any, key: any, shouldExist: any): FirebaseCollection | FirebaseBigCollection | FirebaseVariable;
+    static newProvider(type: any, storageEngine: any, id: any, reference: any, key: any, shouldExist: any, mode: any): FirebaseBackingStore | FirebaseCollection | FirebaseBigCollection | FirebaseVariable;
     _transaction(transactionFunction: any): Promise<any>;
     abstract readonly _hasLocalChanges: boolean;
     abstract _persistChangesImpl(): Promise<void>;
@@ -152,7 +157,7 @@ declare class FirebaseCollection extends FirebaseStorageProvider implements Coll
     backingType(): any;
     remoteStateChanged(dataSnapshot: any): void;
     readonly versionForTesting: number;
-    get(id: string): any;
+    get(id: string): Promise<any>;
     removeMultiple(items: any, originatorId?: any): Promise<void>;
     remove(id: string, keys?: string[], originatorId?: any): Promise<void>;
     store(value: any, keys: any, originatorId?: any): Promise<void>;
@@ -252,5 +257,32 @@ declare class FirebaseBigCollection extends FirebaseStorageProvider implements B
         model: any;
     }): void;
     clearItemsForTesting(): void;
+}
+/**
+ * Thin wrapper providing a Collection API for a Firebase reference. This is used by
+ * FirebaseVariable and FirebaseCollection to access their underlying backing store
+ * collections without pulling the entirety of those collections locally.
+ */
+declare class FirebaseBackingStore extends FirebaseStorageProvider implements CollectionStorageProvider {
+    maxConcurrentRequests: number;
+    private childRef;
+    store(value: any, keys: string[]): Promise<void>;
+    storeMultiple(values: any, keys: string[]): Promise<void>;
+    private storeSingle;
+    remove(id: string, keys: string[]): Promise<void>;
+    removeMultiple(items: any): Promise<void>;
+    private removeSingle;
+    get(id: string): Promise<any>;
+    getMultiple(ids: string[]): Promise<any[]>;
+    toList(): Promise<any[]>;
+    backingType(): Type;
+    readonly _hasLocalChanges: boolean;
+    _persistChangesImpl(): Promise<void>;
+    enableReferenceMode(): void;
+    ensureBackingStore(): Promise<FirebaseBackingStore>;
+    on(kindStr: any, callback: any, target: any): void;
+    off(kindStr: any, callback: any): void;
+    toLiteral(): void;
+    cloneFrom(store: StorageProviderBase): void;
 }
 export {};

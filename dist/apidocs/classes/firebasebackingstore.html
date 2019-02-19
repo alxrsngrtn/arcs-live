@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>FirebaseBigCollection | arcs</title>
+	<title>FirebaseBackingStore | arcs</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -56,10 +56,10 @@
 					<a href="../globals.html">Globals</a>
 				</li>
 				<li>
-					<a href="firebasebigcollection.html">FirebaseBigCollection</a>
+					<a href="firebasebackingstore.html">FirebaseBackingStore</a>
 				</li>
 			</ul>
-			<h1>Class FirebaseBigCollection</h1>
+			<h1>Class FirebaseBackingStore</h1>
 		</div>
 	</div>
 </header>
@@ -69,23 +69,10 @@
 			<section class="tsd-panel tsd-comment">
 				<div class="tsd-comment tsd-typography">
 					<div class="lead">
-						<p>Provides access to large collections without pulling the entire contents locally.</p>
+						<p>Thin wrapper providing a Collection API for a Firebase reference. This is used by
+							FirebaseVariable and FirebaseCollection to access their underlying backing store
+						collections without pulling the entirety of those collections locally.</p>
 					</div>
-					<p>get(), store() and remove() all call immediately through to the backing Firebase collection.
-					There is currently no option for bulk instantiations of these methods.</p>
-					<p>The full collection can be read via a paginated FirebaseCursor returned by stream(). This views
-					a snapshot of the collection, locked to the version at which the cursor is created.</p>
-					<p>To get pagination working, we need to add an index field to items as they are stored, and that
-					field must be marked for indexing in the Firebase rules:</p>
-					<pre><code>   <span class="hljs-string">"rules"</span>: {
-     <span class="hljs-string">"&lt;storage-root&gt;"</span>: {
-       <span class="hljs-string">"<span class="hljs-variable">$collection</span>"</span>: {
-         <span class="hljs-string">"items"</span>: {
-           <span class="hljs-string">".indexOn"</span>: [<span class="hljs-string">"index"</span>]
-         }
-       }
-     }
-   }</code></pre>
 				</div>
 			</section>
 			<section class="tsd-panel tsd-hierarchy">
@@ -95,7 +82,7 @@
 						<a href="firebasestorageprovider.html" class="tsd-signature-type">FirebaseStorageProvider</a>
 						<ul class="tsd-hierarchy">
 							<li>
-								<span class="target">FirebaseBigCollection</span>
+								<span class="target">FirebaseBackingStore</span>
 							</li>
 						</ul>
 					</li>
@@ -104,96 +91,97 @@
 			<section class="tsd-panel">
 				<h3>Implements</h3>
 				<ul class="tsd-hierarchy">
-					<li><a href="../interfaces/bigcollectionstorageprovider.html" class="tsd-signature-type">BigCollectionStorageProvider</a></li>
+					<li><a href="../interfaces/collectionstorageprovider.html" class="tsd-signature-type">CollectionStorageProvider</a></li>
 				</ul>
 			</section>
 			<section class="tsd-panel-group tsd-index-group">
 				<h2>Index</h2>
 				<section class="tsd-panel tsd-index-panel">
 					<div class="tsd-index-content">
-						<section class="tsd-index-section tsd-is-not-exported">
+						<section class="tsd-index-section tsd-is-inherited tsd-is-private-protected tsd-is-not-exported">
 							<h3>Constructors</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite tsd-is-not-exported"><a href="firebasebigcollection.html#constructor" class="tsd-kind-icon">constructor</a></li>
+								<li class="tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited tsd-is-protected tsd-is-not-exported"><a href="firebasebackingstore.html#constructor" class="tsd-kind-icon">constructor</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section tsd-is-not-exported">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-protected tsd-is-not-exported"><a href="firebasebigcollection.html#_storagekey" class="tsd-kind-icon">_storage<wbr>Key</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited tsd-is-not-exported"><a href="firebasebigcollection.html#backingstore" class="tsd-kind-icon">backing<wbr>Store</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private tsd-is-not-exported"><a href="firebasebigcollection.html#cursorindex" class="tsd-kind-icon">cursor<wbr>Index</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private tsd-is-not-exported"><a href="firebasebigcollection.html#cursors" class="tsd-kind-icon">cursors</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-not-exported"><a href="firebasebigcollection.html#description" class="tsd-kind-icon">description</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-not-exported"><a href="firebasebigcollection.html#id" class="tsd-kind-icon">id</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-not-exported"><a href="firebasebigcollection.html#name" class="tsd-kind-icon">name</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-not-exported"><a href="firebasebigcollection.html#originalid" class="tsd-kind-icon">original<wbr>Id</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-protected tsd-is-not-exported"><a href="firebasebigcollection.html#persisting" class="tsd-kind-icon">persisting</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-protected tsd-is-not-exported"><a href="firebasebigcollection.html#reference" class="tsd-kind-icon">reference</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-not-exported"><a href="firebasebigcollection.html#referencemode" class="tsd-kind-icon">reference<wbr>Mode</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-not-exported"><a href="firebasebigcollection.html#source" class="tsd-kind-icon">source</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-protected tsd-is-not-exported"><a href="firebasebigcollection.html#storageengine" class="tsd-kind-icon">storage<wbr>Engine</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-not-exported"><a href="firebasebigcollection.html#version" class="tsd-kind-icon">version</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-protected tsd-is-not-exported"><a href="firebasebackingstore.html#_storagekey" class="tsd-kind-icon">_storage<wbr>Key</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited tsd-is-not-exported"><a href="firebasebackingstore.html#backingstore" class="tsd-kind-icon">backing<wbr>Store</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-not-exported"><a href="firebasebackingstore.html#description" class="tsd-kind-icon">description</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-not-exported"><a href="firebasebackingstore.html#id" class="tsd-kind-icon">id</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-not-exported"><a href="firebasebackingstore.html#maxconcurrentrequests" class="tsd-kind-icon">max<wbr>Concurrent<wbr>Requests</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-not-exported"><a href="firebasebackingstore.html#name" class="tsd-kind-icon">name</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-not-exported"><a href="firebasebackingstore.html#originalid" class="tsd-kind-icon">original<wbr>Id</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-protected tsd-is-not-exported"><a href="firebasebackingstore.html#persisting" class="tsd-kind-icon">persisting</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-protected tsd-is-not-exported"><a href="firebasebackingstore.html#reference" class="tsd-kind-icon">reference</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-not-exported"><a href="firebasebackingstore.html#referencemode" class="tsd-kind-icon">reference<wbr>Mode</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-not-exported"><a href="firebasebackingstore.html#source" class="tsd-kind-icon">source</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-protected tsd-is-not-exported"><a href="firebasebackingstore.html#storageengine" class="tsd-kind-icon">storage<wbr>Engine</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-not-exported"><a href="firebasebackingstore.html#version" class="tsd-kind-icon">version</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section tsd-is-not-exported">
 							<h3>Accessors</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-get-signature tsd-parent-kind-class tsd-is-overwrite tsd-is-not-exported"><a href="firebasebigcollection.html#_haslocalchanges" class="tsd-kind-icon">_has<wbr>Local<wbr>Changes</a></li>
-								<li class="tsd-kind-get-signature tsd-parent-kind-class tsd-is-inherited tsd-is-not-exported"><a href="firebasebigcollection.html#apichannelmappingid" class="tsd-kind-icon">api<wbr>Channel<wbr>Mapping<wbr>Id</a></li>
-								<li class="tsd-kind-get-signature tsd-parent-kind-class tsd-is-inherited tsd-is-not-exported"><a href="firebasebigcollection.html#storagekey" class="tsd-kind-icon">storage<wbr>Key</a></li>
-								<li class="tsd-kind-get-signature tsd-parent-kind-class tsd-is-inherited tsd-is-not-exported"><a href="firebasebigcollection.html#type" class="tsd-kind-icon">type</a></li>
+								<li class="tsd-kind-get-signature tsd-parent-kind-class tsd-is-overwrite tsd-is-not-exported"><a href="firebasebackingstore.html#_haslocalchanges" class="tsd-kind-icon">_has<wbr>Local<wbr>Changes</a></li>
+								<li class="tsd-kind-get-signature tsd-parent-kind-class tsd-is-inherited tsd-is-not-exported"><a href="firebasebackingstore.html#apichannelmappingid" class="tsd-kind-icon">api<wbr>Channel<wbr>Mapping<wbr>Id</a></li>
+								<li class="tsd-kind-get-signature tsd-parent-kind-class tsd-is-inherited tsd-is-not-exported"><a href="firebasebackingstore.html#storagekey" class="tsd-kind-icon">storage<wbr>Key</a></li>
+								<li class="tsd-kind-get-signature tsd-parent-kind-class tsd-is-inherited tsd-is-not-exported"><a href="firebasebackingstore.html#type" class="tsd-kind-icon">type</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section tsd-is-not-exported">
 							<h3>Methods</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-not-exported"><a href="firebasebigcollection.html#_compareto" class="tsd-kind-icon">_compare<wbr>To</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-protected tsd-is-not-exported"><a href="firebasebigcollection.html#_fire" class="tsd-kind-icon">_fire</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-not-exported"><a href="firebasebigcollection.html#_persistchanges" class="tsd-kind-icon">_persist<wbr>Changes</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-not-exported"><a href="firebasebigcollection.html#_persistchangesimpl" class="tsd-kind-icon">_persist<wbr>Changes<wbr>Impl</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-not-exported"><a href="firebasebigcollection.html#_transaction" class="tsd-kind-icon">_transaction</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-not-exported"><a href="firebasebigcollection.html#backingtype" class="tsd-kind-icon">backing<wbr>Type</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-not-exported"><a href="firebasebigcollection.html#clearitemsfortesting" class="tsd-kind-icon">clear<wbr>Items<wbr>For<wbr>Testing</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-not-exported"><a href="firebasebigcollection.html#clonefrom" class="tsd-kind-icon">clone<wbr>From</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-not-exported"><a href="firebasebigcollection.html#cursorclose" class="tsd-kind-icon">cursor<wbr>Close</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-not-exported"><a href="firebasebigcollection.html#cursornext" class="tsd-kind-icon">cursor<wbr>Next</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-not-exported"><a href="firebasebigcollection.html#cursorversion" class="tsd-kind-icon">cursor<wbr>Version</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-not-exported"><a href="firebasebigcollection.html#dispose" class="tsd-kind-icon">dispose</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-not-exported"><a href="firebasebigcollection.html#enablereferencemode" class="tsd-kind-icon">enable<wbr>Reference<wbr>Mode</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited tsd-is-not-exported"><a href="firebasebigcollection.html#ensurebackingstore" class="tsd-kind-icon">ensure<wbr>Backing<wbr>Store</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-not-exported"><a href="firebasebigcollection.html#fromliteral" class="tsd-kind-icon">from<wbr>Literal</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-not-exported"><a href="firebasebigcollection.html#generateid" class="tsd-kind-icon">generateID</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-not-exported"><a href="firebasebigcollection.html#generateidcomponents" class="tsd-kind-icon">generateIDComponents</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-not-exported"><a href="firebasebigcollection.html#get" class="tsd-kind-icon">get</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-not-exported"><a href="firebasebigcollection.html#modelforsynchronization" class="tsd-kind-icon">model<wbr>For<wbr>Synchronization</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-not-exported"><a href="firebasebigcollection.html#off" class="tsd-kind-icon">off</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-not-exported"><a href="firebasebigcollection.html#on" class="tsd-kind-icon">on</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-not-exported"><a href="firebasebigcollection.html#remove" class="tsd-kind-icon">remove</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-not-exported"><a href="firebasebigcollection.html#store" class="tsd-kind-icon">store</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-not-exported"><a href="firebasebigcollection.html#stream" class="tsd-kind-icon">stream</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-not-exported"><a href="firebasebigcollection.html#toliteral" class="tsd-kind-icon">to<wbr>Literal</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-not-exported"><a href="firebasebigcollection.html#tostring" class="tsd-kind-icon">to<wbr>String</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-static tsd-is-not-exported"><a href="firebasebigcollection.html#newprovider" class="tsd-kind-icon">new<wbr>Provider</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-not-exported"><a href="firebasebackingstore.html#_compareto" class="tsd-kind-icon">_compare<wbr>To</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-protected tsd-is-not-exported"><a href="firebasebackingstore.html#_fire" class="tsd-kind-icon">_fire</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-not-exported"><a href="firebasebackingstore.html#_persistchanges" class="tsd-kind-icon">_persist<wbr>Changes</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-not-exported"><a href="firebasebackingstore.html#_persistchangesimpl" class="tsd-kind-icon">_persist<wbr>Changes<wbr>Impl</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-not-exported"><a href="firebasebackingstore.html#_transaction" class="tsd-kind-icon">_transaction</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-not-exported"><a href="firebasebackingstore.html#backingtype" class="tsd-kind-icon">backing<wbr>Type</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private tsd-is-not-exported"><a href="firebasebackingstore.html#childref" class="tsd-kind-icon">child<wbr>Ref</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-not-exported"><a href="firebasebackingstore.html#clonefrom" class="tsd-kind-icon">clone<wbr>From</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-not-exported"><a href="firebasebackingstore.html#dispose" class="tsd-kind-icon">dispose</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-not-exported"><a href="firebasebackingstore.html#enablereferencemode" class="tsd-kind-icon">enable<wbr>Reference<wbr>Mode</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-not-exported"><a href="firebasebackingstore.html#ensurebackingstore" class="tsd-kind-icon">ensure<wbr>Backing<wbr>Store</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-not-exported"><a href="firebasebackingstore.html#generateid" class="tsd-kind-icon">generateID</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-not-exported"><a href="firebasebackingstore.html#generateidcomponents" class="tsd-kind-icon">generateIDComponents</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-not-exported"><a href="firebasebackingstore.html#get" class="tsd-kind-icon">get</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-not-exported"><a href="firebasebackingstore.html#getmultiple" class="tsd-kind-icon">get<wbr>Multiple</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-not-exported"><a href="firebasebackingstore.html#modelforsynchronization" class="tsd-kind-icon">model<wbr>For<wbr>Synchronization</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-not-exported"><a href="firebasebackingstore.html#off" class="tsd-kind-icon">off</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-not-exported"><a href="firebasebackingstore.html#on" class="tsd-kind-icon">on</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-not-exported"><a href="firebasebackingstore.html#remove" class="tsd-kind-icon">remove</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-not-exported"><a href="firebasebackingstore.html#removemultiple" class="tsd-kind-icon">remove<wbr>Multiple</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private tsd-is-not-exported"><a href="firebasebackingstore.html#removesingle" class="tsd-kind-icon">remove<wbr>Single</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-not-exported"><a href="firebasebackingstore.html#store" class="tsd-kind-icon">store</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-not-exported"><a href="firebasebackingstore.html#storemultiple" class="tsd-kind-icon">store<wbr>Multiple</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private tsd-is-not-exported"><a href="firebasebackingstore.html#storesingle" class="tsd-kind-icon">store<wbr>Single</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-not-exported"><a href="firebasebackingstore.html#tolist" class="tsd-kind-icon">to<wbr>List</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-not-exported"><a href="firebasebackingstore.html#toliteral" class="tsd-kind-icon">to<wbr>Literal</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-not-exported"><a href="firebasebackingstore.html#tostring" class="tsd-kind-icon">to<wbr>String</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-static tsd-is-not-exported"><a href="firebasebackingstore.html#newprovider" class="tsd-kind-icon">new<wbr>Provider</a></li>
 							</ul>
 						</section>
 					</div>
 				</section>
 			</section>
-			<section class="tsd-panel-group tsd-member-group tsd-is-not-exported">
+			<section class="tsd-panel-group tsd-member-group tsd-is-inherited tsd-is-private-protected tsd-is-not-exported">
 				<h2>Constructors</h2>
-				<section class="tsd-panel tsd-member tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite tsd-is-not-exported">
+				<section class="tsd-panel tsd-member tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited tsd-is-protected tsd-is-not-exported">
 					<a name="constructor" class="tsd-anchor"></a>
-					<h3>constructor</h3>
-					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite tsd-is-not-exported">
-						<li class="tsd-signature tsd-kind-icon">new <wbr>Firebase<wbr>Big<wbr>Collection<span class="tsd-signature-symbol">(</span>type<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, storageEngine<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, id<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, reference<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, firebaseKey<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="firebasebigcollection.html" class="tsd-signature-type">FirebaseBigCollection</a></li>
+					<h3><span class="tsd-flag ts-flagProtected">Protected</span> constructor</h3>
+					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited tsd-is-protected tsd-is-not-exported">
+						<li class="tsd-signature tsd-kind-icon">new <wbr>Firebase<wbr>Backing<wbr>Store<span class="tsd-signature-symbol">(</span>type<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, storageEngine<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, id<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, reference<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, key<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="firebasebackingstore.html" class="tsd-signature-type">FirebaseBackingStore</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
-								<p>Overrides <a href="firebasestorageprovider.html">FirebaseStorageProvider</a>.<a href="firebasestorageprovider.html#constructor">constructor</a></p>
+								<p>Inherited from <a href="firebasestorageprovider.html">FirebaseStorageProvider</a>.<a href="firebasestorageprovider.html#constructor">constructor</a></p>
+								<p>Overrides <a href="storageproviderbase.html">StorageProviderBase</a>.<a href="storageproviderbase.html#constructor">constructor</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/084e1d3/src/runtime/storage/firebase-storage.ts#L1322">runtime/storage/firebase-storage.ts:1322</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/084e1d3/src/runtime/storage/firebase-storage.ts#L254">runtime/storage/firebase-storage.ts:254</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -211,10 +199,10 @@
 									<h5>reference: <span class="tsd-signature-type">any</span></h5>
 								</li>
 								<li>
-									<h5>firebaseKey: <span class="tsd-signature-type">any</span></h5>
+									<h5>key: <span class="tsd-signature-type">any</span></h5>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <a href="firebasebigcollection.html" class="tsd-signature-type">FirebaseBigCollection</a></h4>
+							<h4 class="tsd-returns-title">Returns <a href="firebasebackingstore.html" class="tsd-signature-type">FirebaseBackingStore</a></h4>
 						</li>
 					</ul>
 				</section>
@@ -226,7 +214,7 @@
 					<h3><span class="tsd-flag ts-flagProtected">Protected</span> _storage<wbr>Key</h3>
 					<div class="tsd-signature tsd-kind-icon">_storage<wbr>Key<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
-						<p>Implementation of <a href="../interfaces/bigcollectionstorageprovider.html">BigCollectionStorageProvider</a>.<a href="../interfaces/bigcollectionstorageprovider.html#_storagekey">_storageKey</a></p>
+						<p>Implementation of <a href="../interfaces/collectionstorageprovider.html">CollectionStorageProvider</a>.<a href="../interfaces/collectionstorageprovider.html#_storagekey">_storageKey</a></p>
 						<p>Inherited from <a href="storageproviderbase.html">StorageProviderBase</a>.<a href="storageproviderbase.html#_storagekey">_storageKey</a></p>
 						<ul>
 							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/084e1d3/src/runtime/storage/storage-provider-base.ts#L118">runtime/storage/storage-provider-base.ts:118</a></li>
@@ -238,31 +226,11 @@
 					<h3>backing<wbr>Store</h3>
 					<div class="tsd-signature tsd-kind-icon">backing<wbr>Store<span class="tsd-signature-symbol">:</span> <a href="firebasebackingstore.html" class="tsd-signature-type">FirebaseBackingStore</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span></div>
 					<aside class="tsd-sources">
-						<p>Implementation of <a href="../interfaces/bigcollectionstorageprovider.html">BigCollectionStorageProvider</a>.<a href="../interfaces/bigcollectionstorageprovider.html#backingstore">backingStore</a></p>
+						<p>Implementation of <a href="../interfaces/collectionstorageprovider.html">CollectionStorageProvider</a>.<a href="../interfaces/collectionstorageprovider.html#backingstore">backingStore</a></p>
 						<p>Inherited from <a href="firebasestorageprovider.html">FirebaseStorageProvider</a>.<a href="firebasestorageprovider.html#backingstore">backingStore</a></p>
 						<p>Overrides <a href="storageproviderbase.html">StorageProviderBase</a>.<a href="storageproviderbase.html#backingstore">backingStore</a></p>
 						<ul>
 							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/084e1d3/src/runtime/storage/firebase-storage.ts#L252">runtime/storage/firebase-storage.ts:252</a></li>
-						</ul>
-					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private tsd-is-not-exported">
-					<a name="cursorindex" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagPrivate">Private</span> cursor<wbr>Index</h3>
-					<div class="tsd-signature tsd-kind-icon">cursor<wbr>Index<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/084e1d3/src/runtime/storage/firebase-storage.ts#L1322">runtime/storage/firebase-storage.ts:1322</a></li>
-						</ul>
-					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private tsd-is-not-exported">
-					<a name="cursors" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagPrivate">Private</span> cursors</h3>
-					<div class="tsd-signature tsd-kind-icon">cursors<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Map</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">, </span><a href="firebasecursor.html" class="tsd-signature-type">FirebaseCursor</a><span class="tsd-signature-symbol">&gt;</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/084e1d3/src/runtime/storage/firebase-storage.ts#L1321">runtime/storage/firebase-storage.ts:1321</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -271,7 +239,7 @@
 					<h3>description</h3>
 					<div class="tsd-signature tsd-kind-icon">description<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
-						<p>Implementation of <a href="../interfaces/bigcollectionstorageprovider.html">BigCollectionStorageProvider</a>.<a href="../interfaces/bigcollectionstorageprovider.html#description">description</a></p>
+						<p>Implementation of <a href="../interfaces/collectionstorageprovider.html">CollectionStorageProvider</a>.<a href="../interfaces/collectionstorageprovider.html#description">description</a></p>
 						<p>Inherited from <a href="storageproviderbase.html">StorageProviderBase</a>.<a href="storageproviderbase.html#description">description</a></p>
 						<ul>
 							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/084e1d3/src/runtime/storage/storage-provider-base.ts#L126">runtime/storage/storage-provider-base.ts:126</a></li>
@@ -283,10 +251,20 @@
 					<h3>id</h3>
 					<div class="tsd-signature tsd-kind-icon">id<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
-						<p>Implementation of <a href="../interfaces/bigcollectionstorageprovider.html">BigCollectionStorageProvider</a>.<a href="../interfaces/bigcollectionstorageprovider.html#id">id</a></p>
+						<p>Implementation of <a href="../interfaces/collectionstorageprovider.html">CollectionStorageProvider</a>.<a href="../interfaces/collectionstorageprovider.html#id">id</a></p>
 						<p>Inherited from <a href="storageproviderbase.html">StorageProviderBase</a>.<a href="storageproviderbase.html#id">id</a></p>
 						<ul>
 							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/084e1d3/src/runtime/storage/storage-provider-base.ts#L122">runtime/storage/storage-provider-base.ts:122</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-not-exported">
+					<a name="maxconcurrentrequests" class="tsd-anchor"></a>
+					<h3>max<wbr>Concurrent<wbr>Requests</h3>
+					<div class="tsd-signature tsd-kind-icon">max<wbr>Concurrent<wbr>Requests<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> =&nbsp;5</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/084e1d3/src/runtime/storage/firebase-storage.ts#L1485">runtime/storage/firebase-storage.ts:1485</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -295,7 +273,7 @@
 					<h3>name</h3>
 					<div class="tsd-signature tsd-kind-icon">name<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
-						<p>Implementation of <a href="../interfaces/bigcollectionstorageprovider.html">BigCollectionStorageProvider</a>.<a href="../interfaces/bigcollectionstorageprovider.html#name">name</a></p>
+						<p>Implementation of <a href="../interfaces/collectionstorageprovider.html">CollectionStorageProvider</a>.<a href="../interfaces/collectionstorageprovider.html#name">name</a></p>
 						<p>Inherited from <a href="storageproviderbase.html">StorageProviderBase</a>.<a href="storageproviderbase.html#name">name</a></p>
 						<ul>
 							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/084e1d3/src/runtime/storage/storage-provider-base.ts#L124">runtime/storage/storage-provider-base.ts:124</a></li>
@@ -307,7 +285,7 @@
 					<h3>original<wbr>Id</h3>
 					<div class="tsd-signature tsd-kind-icon">original<wbr>Id<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span></div>
 					<aside class="tsd-sources">
-						<p>Implementation of <a href="../interfaces/bigcollectionstorageprovider.html">BigCollectionStorageProvider</a>.<a href="../interfaces/bigcollectionstorageprovider.html#originalid">originalId</a></p>
+						<p>Implementation of <a href="../interfaces/collectionstorageprovider.html">CollectionStorageProvider</a>.<a href="../interfaces/collectionstorageprovider.html#originalid">originalId</a></p>
 						<p>Inherited from <a href="storageproviderbase.html">StorageProviderBase</a>.<a href="storageproviderbase.html#originalid">originalId</a></p>
 						<ul>
 							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/084e1d3/src/runtime/storage/storage-provider-base.ts#L123">runtime/storage/storage-provider-base.ts:123</a></li>
@@ -341,7 +319,7 @@
 					<h3>reference<wbr>Mode</h3>
 					<div class="tsd-signature tsd-kind-icon">reference<wbr>Mode<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> =&nbsp;false</span></div>
 					<aside class="tsd-sources">
-						<p>Implementation of <a href="../interfaces/bigcollectionstorageprovider.html">BigCollectionStorageProvider</a>.<a href="../interfaces/bigcollectionstorageprovider.html#referencemode">referenceMode</a></p>
+						<p>Implementation of <a href="../interfaces/collectionstorageprovider.html">CollectionStorageProvider</a>.<a href="../interfaces/collectionstorageprovider.html#referencemode">referenceMode</a></p>
 						<p>Inherited from <a href="storageproviderbase.html">StorageProviderBase</a>.<a href="storageproviderbase.html#referencemode">referenceMode</a></p>
 						<ul>
 							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/084e1d3/src/runtime/storage/storage-provider-base.ts#L119">runtime/storage/storage-provider-base.ts:119</a></li>
@@ -353,7 +331,7 @@
 					<h3>source</h3>
 					<div class="tsd-signature tsd-kind-icon">source<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span></div>
 					<aside class="tsd-sources">
-						<p>Implementation of <a href="../interfaces/bigcollectionstorageprovider.html">BigCollectionStorageProvider</a>.<a href="../interfaces/bigcollectionstorageprovider.html#source">source</a></p>
+						<p>Implementation of <a href="../interfaces/collectionstorageprovider.html">CollectionStorageProvider</a>.<a href="../interfaces/collectionstorageprovider.html#source">source</a></p>
 						<p>Inherited from <a href="storageproviderbase.html">StorageProviderBase</a>.<a href="storageproviderbase.html#source">source</a></p>
 						<ul>
 							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/084e1d3/src/runtime/storage/storage-provider-base.ts#L125">runtime/storage/storage-provider-base.ts:125</a></li>
@@ -376,7 +354,7 @@
 					<h3>version</h3>
 					<div class="tsd-signature tsd-kind-icon">version<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span></div>
 					<aside class="tsd-sources">
-						<p>Implementation of <a href="../interfaces/bigcollectionstorageprovider.html">BigCollectionStorageProvider</a>.<a href="../interfaces/bigcollectionstorageprovider.html#version">version</a></p>
+						<p>Implementation of <a href="../interfaces/collectionstorageprovider.html">CollectionStorageProvider</a>.<a href="../interfaces/collectionstorageprovider.html#version">version</a></p>
 						<p>Inherited from <a href="storageproviderbase.html">StorageProviderBase</a>.<a href="storageproviderbase.html#version">version</a></p>
 						<ul>
 							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/084e1d3/src/runtime/storage/storage-provider-base.ts#L121">runtime/storage/storage-provider-base.ts:121</a></li>
@@ -397,7 +375,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="firebasestorageprovider.html">FirebaseStorageProvider</a>.<a href="firebasestorageprovider.html#_haslocalchanges">_hasLocalChanges</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/084e1d3/src/runtime/storage/firebase-storage.ts#L1454">runtime/storage/firebase-storage.ts:1454</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/084e1d3/src/runtime/storage/firebase-storage.ts#L1574">runtime/storage/firebase-storage.ts:1574</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
@@ -470,7 +448,7 @@
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
-								<p>Implementation of <a href="../interfaces/bigcollectionstorageprovider.html">BigCollectionStorageProvider</a>.<a href="../interfaces/bigcollectionstorageprovider.html#_compareto">_compareTo</a></p>
+								<p>Implementation of <a href="../interfaces/collectionstorageprovider.html">CollectionStorageProvider</a>.<a href="../interfaces/collectionstorageprovider.html#_compareto">_compareTo</a></p>
 								<p>Inherited from <a href="storageproviderbase.html">StorageProviderBase</a>.<a href="storageproviderbase.html#_compareto">_compareTo</a></p>
 								<ul>
 									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/084e1d3/src/runtime/storage/storage-provider-base.ts#L211">runtime/storage/storage-provider-base.ts:211</a></li>
@@ -495,7 +473,7 @@
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
-								<p>Implementation of <a href="../interfaces/bigcollectionstorageprovider.html">BigCollectionStorageProvider</a>.<a href="../interfaces/bigcollectionstorageprovider.html#_fire">_fire</a></p>
+								<p>Implementation of <a href="../interfaces/collectionstorageprovider.html">CollectionStorageProvider</a>.<a href="../interfaces/collectionstorageprovider.html#_fire">_fire</a></p>
 								<p>Inherited from <a href="storageproviderbase.html">StorageProviderBase</a>.<a href="storageproviderbase.html#_fire">_fire</a></p>
 								<ul>
 									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/084e1d3/src/runtime/storage/storage-provider-base.ts#L188">runtime/storage/storage-provider-base.ts:188</a></li>
@@ -554,7 +532,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="firebasestorageprovider.html">FirebaseStorageProvider</a>.<a href="firebasestorageprovider.html#_persistchangesimpl">_persistChangesImpl</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/084e1d3/src/runtime/storage/firebase-storage.ts#L1450">runtime/storage/firebase-storage.ts:1450</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/084e1d3/src/runtime/storage/firebase-storage.ts#L1578">runtime/storage/firebase-storage.ts:1578</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -589,35 +567,40 @@
 					<a name="backingtype" class="tsd-anchor"></a>
 					<h3>backing<wbr>Type</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-not-exported">
-						<li class="tsd-signature tsd-kind-icon">backing<wbr>Type<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span></li>
+						<li class="tsd-signature tsd-kind-icon">backing<wbr>Type<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="type.html" class="tsd-signature-type">Type</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<p>Overrides <a href="firebasestorageprovider.html">FirebaseStorageProvider</a>.<a href="firebasestorageprovider.html#backingtype">backingType</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/084e1d3/src/runtime/storage/firebase-storage.ts#L1330">runtime/storage/firebase-storage.ts:1330</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/084e1d3/src/runtime/storage/firebase-storage.ts#L1570">runtime/storage/firebase-storage.ts:1570</a></li>
 								</ul>
 							</aside>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">any</span></h4>
+							<h4 class="tsd-returns-title">Returns <a href="type.html" class="tsd-signature-type">Type</a></h4>
 						</li>
 					</ul>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
-					<a name="clearitemsfortesting" class="tsd-anchor"></a>
-					<h3>clear<wbr>Items<wbr>For<wbr>Testing</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
-						<li class="tsd-signature tsd-kind-icon">clear<wbr>Items<wbr>For<wbr>Testing<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-private tsd-is-not-exported">
+					<a name="childref" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> child<wbr>Ref</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private tsd-is-not-exported">
+						<li class="tsd-signature tsd-kind-icon">child<wbr>Ref<span class="tsd-signature-symbol">(</span>id<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
-								<p>Implementation of <a href="../interfaces/bigcollectionstorageprovider.html">BigCollectionStorageProvider</a>.<a href="../interfaces/bigcollectionstorageprovider.html#clearitemsfortesting">clearItemsForTesting</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/084e1d3/src/runtime/storage/firebase-storage.ts#L1474">runtime/storage/firebase-storage.ts:1474</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/084e1d3/src/runtime/storage/firebase-storage.ts#L1487">runtime/storage/firebase-storage.ts:1487</a></li>
 								</ul>
 							</aside>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>id: <span class="tsd-signature-type">any</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">any</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -625,112 +608,24 @@
 					<a name="clonefrom" class="tsd-anchor"></a>
 					<h3>clone<wbr>From</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-not-exported">
-						<li class="tsd-signature tsd-kind-icon">clone<wbr>From<span class="tsd-signature-symbol">(</span>handle<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">clone<wbr>From<span class="tsd-signature-symbol">(</span>store<span class="tsd-signature-symbol">: </span><a href="storageproviderbase.html" class="tsd-signature-type">StorageProviderBase</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
-								<p>Implementation of <a href="../interfaces/bigcollectionstorageprovider.html">BigCollectionStorageProvider</a>.<a href="../interfaces/bigcollectionstorageprovider.html#clonefrom">cloneFrom</a></p>
+								<p>Implementation of <a href="../interfaces/collectionstorageprovider.html">CollectionStorageProvider</a>.<a href="../interfaces/collectionstorageprovider.html#clonefrom">cloneFrom</a></p>
 								<p>Overrides <a href="storageproviderbase.html">StorageProviderBase</a>.<a href="storageproviderbase.html#clonefrom">cloneFrom</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/084e1d3/src/runtime/storage/firebase-storage.ts#L1462">runtime/storage/firebase-storage.ts:1462</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/084e1d3/src/runtime/storage/firebase-storage.ts#L1602">runtime/storage/firebase-storage.ts:1602</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>handle: <span class="tsd-signature-type">any</span></h5>
-								</li>
-							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
-						</li>
-					</ul>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
-					<a name="cursorclose" class="tsd-anchor"></a>
-					<h3>cursor<wbr>Close</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
-						<li class="tsd-signature tsd-kind-icon">cursor<wbr>Close<span class="tsd-signature-symbol">(</span>cursorId<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<p>Implementation of <a href="../interfaces/bigcollectionstorageprovider.html">BigCollectionStorageProvider</a>.<a href="../interfaces/bigcollectionstorageprovider.html#cursorclose">cursorClose</a></p>
-								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/084e1d3/src/runtime/storage/firebase-storage.ts#L1434">runtime/storage/firebase-storage.ts:1434</a></li>
-								</ul>
-							</aside>
-							<div class="tsd-comment tsd-typography">
-								<div class="lead">
-									<p>Calls close() on and discards the cursor identified by cursorId.</p>
-								</div>
-							</div>
-							<h4 class="tsd-parameters-title">Parameters</h4>
-							<ul class="tsd-parameters">
-								<li>
-									<h5>cursorId: <span class="tsd-signature-type">number</span></h5>
+									<h5>store: <a href="storageproviderbase.html" class="tsd-signature-type">StorageProviderBase</a></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
-						</li>
-					</ul>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
-					<a name="cursornext" class="tsd-anchor"></a>
-					<h3>cursor<wbr>Next</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
-						<li class="tsd-signature tsd-kind-icon">cursor<wbr>Next<span class="tsd-signature-symbol">(</span>cursorId<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">object</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">object</span><span class="tsd-signature-symbol">&gt;</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<p>Implementation of <a href="../interfaces/bigcollectionstorageprovider.html">BigCollectionStorageProvider</a>.<a href="../interfaces/bigcollectionstorageprovider.html#cursornext">cursorNext</a></p>
-								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/084e1d3/src/runtime/storage/firebase-storage.ts#L1421">runtime/storage/firebase-storage.ts:1421</a></li>
-								</ul>
-							</aside>
-							<div class="tsd-comment tsd-typography">
-								<div class="lead">
-									<p>Calls next() on the cursor identified by cursorId. The cursor will be discarded once the end
-									of the stream has been reached.</p>
-								</div>
-							</div>
-							<h4 class="tsd-parameters-title">Parameters</h4>
-							<ul class="tsd-parameters">
-								<li>
-									<h5>cursorId: <span class="tsd-signature-type">number</span></h5>
-								</li>
-							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">object</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">object</span><span class="tsd-signature-symbol">&gt;</span></h4>
-						</li>
-					</ul>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
-					<a name="cursorversion" class="tsd-anchor"></a>
-					<h3>cursor<wbr>Version</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
-						<li class="tsd-signature tsd-kind-icon">cursor<wbr>Version<span class="tsd-signature-symbol">(</span>cursorId<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<p>Implementation of <a href="../interfaces/bigcollectionstorageprovider.html">BigCollectionStorageProvider</a>.<a href="../interfaces/bigcollectionstorageprovider.html#cursorversion">cursorVersion</a></p>
-								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/084e1d3/src/runtime/storage/firebase-storage.ts#L1445">runtime/storage/firebase-storage.ts:1445</a></li>
-								</ul>
-							</aside>
-							<div class="tsd-comment tsd-typography">
-								<div class="lead">
-									<p>Returns the version at which the cursor identified by cursorId is reading.</p>
-								</div>
-							</div>
-							<h4 class="tsd-parameters-title">Parameters</h4>
-							<ul class="tsd-parameters">
-								<li>
-									<h5>cursorId: <span class="tsd-signature-type">number</span></h5>
-								</li>
-							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -743,7 +638,7 @@
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
-								<p>Implementation of <a href="../interfaces/bigcollectionstorageprovider.html">BigCollectionStorageProvider</a>.<a href="../interfaces/bigcollectionstorageprovider.html#dispose">dispose</a></p>
+								<p>Implementation of <a href="../interfaces/collectionstorageprovider.html">CollectionStorageProvider</a>.<a href="../interfaces/collectionstorageprovider.html#dispose">dispose</a></p>
 								<p>Inherited from <a href="storageproviderbase.html">StorageProviderBase</a>.<a href="storageproviderbase.html#dispose">dispose</a></p>
 								<ul>
 									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/084e1d3/src/runtime/storage/storage-provider-base.ts#L253">runtime/storage/storage-provider-base.ts:253</a></li>
@@ -762,64 +657,32 @@
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
-								<p>Implementation of <a href="../interfaces/bigcollectionstorageprovider.html">BigCollectionStorageProvider</a>.<a href="../interfaces/bigcollectionstorageprovider.html#enablereferencemode">enableReferenceMode</a></p>
+								<p>Implementation of <a href="../interfaces/collectionstorageprovider.html">CollectionStorageProvider</a>.<a href="../interfaces/collectionstorageprovider.html#enablereferencemode">enableReferenceMode</a></p>
 								<p>Overrides <a href="storageproviderbase.html">StorageProviderBase</a>.<a href="storageproviderbase.html#enablereferencemode">enableReferenceMode</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/084e1d3/src/runtime/storage/firebase-storage.ts#L1334">runtime/storage/firebase-storage.ts:1334</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/084e1d3/src/runtime/storage/firebase-storage.ts#L1582">runtime/storage/firebase-storage.ts:1582</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
 						</li>
 					</ul>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited tsd-is-not-exported">
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-not-exported">
 					<a name="ensurebackingstore" class="tsd-anchor"></a>
 					<h3>ensure<wbr>Backing<wbr>Store</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited tsd-is-not-exported">
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-not-exported">
 						<li class="tsd-signature tsd-kind-icon">ensure<wbr>Backing<wbr>Store<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="firebasebackingstore.html" class="tsd-signature-type">FirebaseBackingStore</a><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
-								<p>Implementation of <a href="../interfaces/bigcollectionstorageprovider.html">BigCollectionStorageProvider</a>.<a href="../interfaces/bigcollectionstorageprovider.html#ensurebackingstore">ensureBackingStore</a></p>
-								<p>Inherited from <a href="firebasestorageprovider.html">FirebaseStorageProvider</a>.<a href="firebasestorageprovider.html#ensurebackingstore">ensureBackingStore</a></p>
-								<p>Overrides <a href="storageproviderbase.html">StorageProviderBase</a>.<a href="storageproviderbase.html#ensurebackingstore">ensureBackingStore</a></p>
+								<p>Implementation of <a href="../interfaces/collectionstorageprovider.html">CollectionStorageProvider</a>.<a href="../interfaces/collectionstorageprovider.html#ensurebackingstore">ensureBackingStore</a></p>
+								<p>Overrides <a href="firebasestorageprovider.html">FirebaseStorageProvider</a>.<a href="firebasestorageprovider.html#ensurebackingstore">ensureBackingStore</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/084e1d3/src/runtime/storage/firebase-storage.ts#L273">runtime/storage/firebase-storage.ts:273</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/084e1d3/src/runtime/storage/firebase-storage.ts#L1586">runtime/storage/firebase-storage.ts:1586</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="firebasebackingstore.html" class="tsd-signature-type">FirebaseBackingStore</a><span class="tsd-signature-symbol">&gt;</span></h4>
-						</li>
-					</ul>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
-					<a name="fromliteral" class="tsd-anchor"></a>
-					<h3>from<wbr>Literal</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
-						<li class="tsd-signature tsd-kind-icon">from<wbr>Literal<span class="tsd-signature-symbol">(</span>__namedParameters<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">object</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/084e1d3/src/runtime/storage/firebase-storage.ts#L1470">runtime/storage/firebase-storage.ts:1470</a></li>
-								</ul>
-							</aside>
-							<h4 class="tsd-parameters-title">Parameters</h4>
-							<ul class="tsd-parameters">
-								<li>
-									<h5>__namedParameters: <span class="tsd-signature-type">object</span></h5>
-									<ul class="tsd-parameters">
-										<li class="tsd-parameter">
-											<h5>model<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span></h5>
-										</li>
-										<li class="tsd-parameter">
-											<h5>version<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span></h5>
-										</li>
-									</ul>
-								</li>
-							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -832,7 +695,7 @@
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
-								<p>Implementation of <a href="../interfaces/bigcollectionstorageprovider.html">BigCollectionStorageProvider</a>.<a href="../interfaces/bigcollectionstorageprovider.html#generateid">generateID</a></p>
+								<p>Implementation of <a href="../interfaces/collectionstorageprovider.html">CollectionStorageProvider</a>.<a href="../interfaces/collectionstorageprovider.html#generateid">generateID</a></p>
 								<p>Inherited from <a href="storageproviderbase.html">StorageProviderBase</a>.<a href="storageproviderbase.html#generateid">generateID</a></p>
 								<ul>
 									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/084e1d3/src/runtime/storage/storage-provider-base.ts#L151">runtime/storage/storage-provider-base.ts:151</a></li>
@@ -851,7 +714,7 @@
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
-								<p>Implementation of <a href="../interfaces/bigcollectionstorageprovider.html">BigCollectionStorageProvider</a>.<a href="../interfaces/bigcollectionstorageprovider.html#generateidcomponents">generateIDComponents</a></p>
+								<p>Implementation of <a href="../interfaces/collectionstorageprovider.html">CollectionStorageProvider</a>.<a href="../interfaces/collectionstorageprovider.html#generateidcomponents">generateIDComponents</a></p>
 								<p>Inherited from <a href="storageproviderbase.html">StorageProviderBase</a>.<a href="storageproviderbase.html#generateidcomponents">generateIDComponents</a></p>
 								<ul>
 									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/084e1d3/src/runtime/storage/storage-provider-base.ts#L155">runtime/storage/storage-provider-base.ts:155</a></li>
@@ -890,9 +753,9 @@
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
-								<p>Implementation of <a href="../interfaces/bigcollectionstorageprovider.html">BigCollectionStorageProvider</a>.<a href="../interfaces/bigcollectionstorageprovider.html#get">get</a></p>
+								<p>Implementation of <a href="../interfaces/collectionstorageprovider.html">CollectionStorageProvider</a>.<a href="../interfaces/collectionstorageprovider.html#get">get</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/084e1d3/src/runtime/storage/firebase-storage.ts#L1339">runtime/storage/firebase-storage.ts:1339</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/084e1d3/src/runtime/storage/firebase-storage.ts#L1549">runtime/storage/firebase-storage.ts:1549</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -905,6 +768,30 @@
 						</li>
 					</ul>
 				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
+					<a name="getmultiple" class="tsd-anchor"></a>
+					<h3>get<wbr>Multiple</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
+						<li class="tsd-signature tsd-kind-icon">get<wbr>Multiple<span class="tsd-signature-symbol">(</span>ids<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Implementation of <a href="../interfaces/collectionstorageprovider.html">CollectionStorageProvider</a>.<a href="../interfaces/collectionstorageprovider.html#getmultiple">getMultiple</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/084e1d3/src/runtime/storage/firebase-storage.ts#L1554">runtime/storage/firebase-storage.ts:1554</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>ids: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-not-exported">
 					<a name="modelforsynchronization" class="tsd-anchor"></a>
 					<h3>model<wbr>For<wbr>Synchronization</h3>
@@ -914,7 +801,7 @@
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
-								<p>Implementation of <a href="../interfaces/bigcollectionstorageprovider.html">BigCollectionStorageProvider</a>.<a href="../interfaces/bigcollectionstorageprovider.html#modelforsynchronization">modelForSynchronization</a></p>
+								<p>Implementation of <a href="../interfaces/collectionstorageprovider.html">CollectionStorageProvider</a>.<a href="../interfaces/collectionstorageprovider.html#modelforsynchronization">modelForSynchronization</a></p>
 								<p>Inherited from <a href="storageproviderbase.html">StorageProviderBase</a>.<a href="storageproviderbase.html#modelforsynchronization">modelForSynchronization</a></p>
 								<ul>
 									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/084e1d3/src/runtime/storage/storage-provider-base.ts#L269">runtime/storage/storage-provider-base.ts:269</a></li>
@@ -929,56 +816,54 @@
 						</li>
 					</ul>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-not-exported">
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-not-exported">
 					<a name="off" class="tsd-anchor"></a>
 					<h3>off</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-not-exported">
-						<li class="tsd-signature tsd-kind-icon">off<span class="tsd-signature-symbol">(</span>kindStr<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, callback<span class="tsd-signature-symbol">: </span><a href="../globals.html#callback" class="tsd-signature-type">Callback</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-not-exported">
+						<li class="tsd-signature tsd-kind-icon">off<span class="tsd-signature-symbol">(</span>kindStr<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, callback<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
-								<p>Implementation of <a href="../interfaces/bigcollectionstorageprovider.html">BigCollectionStorageProvider</a>.<a href="../interfaces/bigcollectionstorageprovider.html#off">off</a></p>
-								<p>Inherited from <a href="storageproviderbase.html">StorageProviderBase</a>.<a href="storageproviderbase.html#off">off</a></p>
+								<p>Overrides <a href="storageproviderbase.html">StorageProviderBase</a>.<a href="storageproviderbase.html#off">off</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/084e1d3/src/runtime/storage/storage-provider-base.ts#L173">runtime/storage/storage-provider-base.ts:173</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/084e1d3/src/runtime/storage/firebase-storage.ts#L1594">runtime/storage/firebase-storage.ts:1594</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>kindStr: <span class="tsd-signature-type">string</span></h5>
+									<h5>kindStr: <span class="tsd-signature-type">any</span></h5>
 								</li>
 								<li>
-									<h5>callback: <a href="../globals.html#callback" class="tsd-signature-type">Callback</a></h5>
+									<h5>callback: <span class="tsd-signature-type">any</span></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
 						</li>
 					</ul>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-not-exported">
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-not-exported">
 					<a name="on" class="tsd-anchor"></a>
 					<h3>on</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-not-exported">
-						<li class="tsd-signature tsd-kind-icon">on<span class="tsd-signature-symbol">(</span>kindStr<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, callback<span class="tsd-signature-symbol">: </span><a href="../globals.html#callback" class="tsd-signature-type">Callback</a>, target<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-not-exported">
+						<li class="tsd-signature tsd-kind-icon">on<span class="tsd-signature-symbol">(</span>kindStr<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, callback<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, target<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
-								<p>Implementation of <a href="../interfaces/bigcollectionstorageprovider.html">BigCollectionStorageProvider</a>.<a href="../interfaces/bigcollectionstorageprovider.html#on">on</a></p>
-								<p>Inherited from <a href="storageproviderbase.html">StorageProviderBase</a>.<a href="storageproviderbase.html#on">on</a></p>
+								<p>Overrides <a href="storageproviderbase.html">StorageProviderBase</a>.<a href="storageproviderbase.html#on">on</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/084e1d3/src/runtime/storage/storage-provider-base.ts#L164">runtime/storage/storage-provider-base.ts:164</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/084e1d3/src/runtime/storage/firebase-storage.ts#L1590">runtime/storage/firebase-storage.ts:1590</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>kindStr: <span class="tsd-signature-type">string</span></h5>
+									<h5>kindStr: <span class="tsd-signature-type">any</span></h5>
 								</li>
 								<li>
-									<h5>callback: <a href="../globals.html#callback" class="tsd-signature-type">Callback</a></h5>
+									<h5>callback: <span class="tsd-signature-type">any</span></h5>
 								</li>
 								<li>
 									<h5>target: <span class="tsd-signature-type">any</span></h5>
@@ -992,14 +877,13 @@
 					<a name="remove" class="tsd-anchor"></a>
 					<h3>remove</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
-						<li class="tsd-signature tsd-kind-icon">remove<span class="tsd-signature-symbol">(</span>id<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, keys<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span>, originatorId<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">remove<span class="tsd-signature-symbol">(</span>id<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, keys<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
-								<p>Implementation of <a href="../interfaces/bigcollectionstorageprovider.html">BigCollectionStorageProvider</a>.<a href="../interfaces/bigcollectionstorageprovider.html#remove">remove</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/084e1d3/src/runtime/storage/firebase-storage.ts#L1390">runtime/storage/firebase-storage.ts:1390</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/084e1d3/src/runtime/storage/firebase-storage.ts#L1518">runtime/storage/firebase-storage.ts:1518</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1010,11 +894,57 @@
 								<li>
 									<h5>keys: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></h5>
 								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
+					<a name="removemultiple" class="tsd-anchor"></a>
+					<h3>remove<wbr>Multiple</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
+						<li class="tsd-signature tsd-kind-icon">remove<wbr>Multiple<span class="tsd-signature-symbol">(</span>items<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/084e1d3/src/runtime/storage/firebase-storage.ts#L1522">runtime/storage/firebase-storage.ts:1522</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
 								<li>
-									<h5><span class="tsd-flag ts-flagOptional">Optional</span> originatorId: <span class="tsd-signature-type">string</span></h5>
+									<h5>items: <span class="tsd-signature-type">any</span></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-private tsd-is-not-exported">
+					<a name="removesingle" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> remove<wbr>Single</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private tsd-is-not-exported">
+						<li class="tsd-signature tsd-kind-icon">remove<wbr>Single<span class="tsd-signature-symbol">(</span>id<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, keys<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/084e1d3/src/runtime/storage/firebase-storage.ts#L1533">runtime/storage/firebase-storage.ts:1533</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>id: <span class="tsd-signature-type">string</span></h5>
+								</li>
+								<li>
+									<h5>keys: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">any</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -1022,14 +952,13 @@
 					<a name="store" class="tsd-anchor"></a>
 					<h3>store</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
-						<li class="tsd-signature tsd-kind-icon">store<span class="tsd-signature-symbol">(</span>value<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, keys<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span>, originatorId<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">store<span class="tsd-signature-symbol">(</span>value<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, keys<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
-								<p>Implementation of <a href="../interfaces/bigcollectionstorageprovider.html">BigCollectionStorageProvider</a>.<a href="../interfaces/bigcollectionstorageprovider.html#store">store</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/084e1d3/src/runtime/storage/firebase-storage.ts#L1346">runtime/storage/firebase-storage.ts:1346</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/084e1d3/src/runtime/storage/firebase-storage.ts#L1491">runtime/storage/firebase-storage.ts:1491</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1040,48 +969,78 @@
 								<li>
 									<h5>keys: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></h5>
 								</li>
-								<li>
-									<h5><span class="tsd-flag ts-flagOptional">Optional</span> originatorId: <span class="tsd-signature-type">string</span></h5>
-								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
-					<a name="stream" class="tsd-anchor"></a>
-					<h3>stream</h3>
+					<a name="storemultiple" class="tsd-anchor"></a>
+					<h3>store<wbr>Multiple</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
-						<li class="tsd-signature tsd-kind-icon">stream<span class="tsd-signature-symbol">(</span>pageSize<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, forward<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">store<wbr>Multiple<span class="tsd-signature-symbol">(</span>values<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, keys<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
-								<p>Implementation of <a href="../interfaces/bigcollectionstorageprovider.html">BigCollectionStorageProvider</a>.<a href="../interfaces/bigcollectionstorageprovider.html#stream">stream</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/084e1d3/src/runtime/storage/firebase-storage.ts#L1408">runtime/storage/firebase-storage.ts:1408</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/084e1d3/src/runtime/storage/firebase-storage.ts#L1495">runtime/storage/firebase-storage.ts:1495</a></li>
 								</ul>
 							</aside>
-							<div class="tsd-comment tsd-typography">
-								<div class="lead">
-									<p>Returns a FirebaseCursor id for paginated reads of the current version of this BigCollection.
-										The id should be passed to cursorNext() to retrive the contained entities. The cursor itself
-									is held internally by this collection so we can discard it once the stream read has completed.</p>
-								</div>
-								<p>By default items are returned in order of original insertion into the collection (with the
-									caveat that items removed during a streamed read may be returned at the end). Set forward to
-								false to return items in reverse insertion order.</p>
-							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>pageSize: <span class="tsd-signature-type">number</span></h5>
+									<h5>values: <span class="tsd-signature-type">any</span></h5>
 								</li>
 								<li>
-									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> forward: <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> =&nbsp;true</span></h5>
+									<h5>keys: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></h5>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">&gt;</span></h4>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-private tsd-is-not-exported">
+					<a name="storesingle" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> store<wbr>Single</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private tsd-is-not-exported">
+						<li class="tsd-signature tsd-kind-icon">store<wbr>Single<span class="tsd-signature-symbol">(</span>value<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, keys<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/084e1d3/src/runtime/storage/firebase-storage.ts#L1502">runtime/storage/firebase-storage.ts:1502</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>value: <span class="tsd-signature-type">any</span></h5>
+								</li>
+								<li>
+									<h5>keys: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">any</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
+					<a name="tolist" class="tsd-anchor"></a>
+					<h3>to<wbr>List</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
+						<li class="tsd-signature tsd-kind-icon">to<wbr>List<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Implementation of <a href="../interfaces/collectionstorageprovider.html">CollectionStorageProvider</a>.<a href="../interfaces/collectionstorageprovider.html#tolist">toList</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/084e1d3/src/runtime/storage/firebase-storage.ts#L1564">runtime/storage/firebase-storage.ts:1564</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -1094,10 +1053,10 @@
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
-								<p>Implementation of <a href="../interfaces/bigcollectionstorageprovider.html">BigCollectionStorageProvider</a>.<a href="../interfaces/bigcollectionstorageprovider.html#toliteral">toLiteral</a></p>
+								<p>Implementation of <a href="../interfaces/collectionstorageprovider.html">CollectionStorageProvider</a>.<a href="../interfaces/collectionstorageprovider.html#toliteral">toLiteral</a></p>
 								<p>Overrides <a href="storageproviderbase.html">StorageProviderBase</a>.<a href="storageproviderbase.html#toliteral">toLiteral</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/084e1d3/src/runtime/storage/firebase-storage.ts#L1466">runtime/storage/firebase-storage.ts:1466</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/084e1d3/src/runtime/storage/firebase-storage.ts#L1598">runtime/storage/firebase-storage.ts:1598</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -1113,7 +1072,7 @@
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
-								<p>Implementation of <a href="../interfaces/bigcollectionstorageprovider.html">BigCollectionStorageProvider</a>.<a href="../interfaces/bigcollectionstorageprovider.html#tostring">toString</a></p>
+								<p>Implementation of <a href="../interfaces/collectionstorageprovider.html">CollectionStorageProvider</a>.<a href="../interfaces/collectionstorageprovider.html#tostring">toString</a></p>
 								<p>Inherited from <a href="storageproviderbase.html">StorageProviderBase</a>.<a href="storageproviderbase.html#tostring">toString</a></p>
 								<ul>
 									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/084e1d3/src/runtime/storage/storage-provider-base.ts#L224">runtime/storage/storage-provider-base.ts:224</a></li>
@@ -1193,145 +1152,145 @@
 				</ul>
 				<ul class="current">
 					<li class="current tsd-kind-class tsd-is-not-exported">
-						<a href="firebasebigcollection.html" class="tsd-kind-icon">Firebase<wbr>Big<wbr>Collection</a>
+						<a href="firebasebackingstore.html" class="tsd-kind-icon">Firebase<wbr>Backing<wbr>Store</a>
 						<ul>
-							<li class=" tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite tsd-is-not-exported">
-								<a href="firebasebigcollection.html#constructor" class="tsd-kind-icon">constructor</a>
+							<li class=" tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited tsd-is-protected tsd-is-not-exported">
+								<a href="firebasebackingstore.html#constructor" class="tsd-kind-icon">constructor</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-protected tsd-is-not-exported">
-								<a href="firebasebigcollection.html#_storagekey" class="tsd-kind-icon">_storage<wbr>Key</a>
+								<a href="firebasebackingstore.html#_storagekey" class="tsd-kind-icon">_storage<wbr>Key</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited tsd-is-not-exported">
-								<a href="firebasebigcollection.html#backingstore" class="tsd-kind-icon">backing<wbr>Store</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private tsd-is-not-exported">
-								<a href="firebasebigcollection.html#cursorindex" class="tsd-kind-icon">cursor<wbr>Index</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private tsd-is-not-exported">
-								<a href="firebasebigcollection.html#cursors" class="tsd-kind-icon">cursors</a>
+								<a href="firebasebackingstore.html#backingstore" class="tsd-kind-icon">backing<wbr>Store</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-not-exported">
-								<a href="firebasebigcollection.html#description" class="tsd-kind-icon">description</a>
+								<a href="firebasebackingstore.html#description" class="tsd-kind-icon">description</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-not-exported">
-								<a href="firebasebigcollection.html#id" class="tsd-kind-icon">id</a>
+								<a href="firebasebackingstore.html#id" class="tsd-kind-icon">id</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-not-exported">
+								<a href="firebasebackingstore.html#maxconcurrentrequests" class="tsd-kind-icon">max<wbr>Concurrent<wbr>Requests</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-not-exported">
-								<a href="firebasebigcollection.html#name" class="tsd-kind-icon">name</a>
+								<a href="firebasebackingstore.html#name" class="tsd-kind-icon">name</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-not-exported">
-								<a href="firebasebigcollection.html#originalid" class="tsd-kind-icon">original<wbr>Id</a>
+								<a href="firebasebackingstore.html#originalid" class="tsd-kind-icon">original<wbr>Id</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-protected tsd-is-not-exported">
-								<a href="firebasebigcollection.html#persisting" class="tsd-kind-icon">persisting</a>
+								<a href="firebasebackingstore.html#persisting" class="tsd-kind-icon">persisting</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-protected tsd-is-not-exported">
-								<a href="firebasebigcollection.html#reference" class="tsd-kind-icon">reference</a>
+								<a href="firebasebackingstore.html#reference" class="tsd-kind-icon">reference</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-not-exported">
-								<a href="firebasebigcollection.html#referencemode" class="tsd-kind-icon">reference<wbr>Mode</a>
+								<a href="firebasebackingstore.html#referencemode" class="tsd-kind-icon">reference<wbr>Mode</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-not-exported">
-								<a href="firebasebigcollection.html#source" class="tsd-kind-icon">source</a>
+								<a href="firebasebackingstore.html#source" class="tsd-kind-icon">source</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-protected tsd-is-not-exported">
-								<a href="firebasebigcollection.html#storageengine" class="tsd-kind-icon">storage<wbr>Engine</a>
+								<a href="firebasebackingstore.html#storageengine" class="tsd-kind-icon">storage<wbr>Engine</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-not-exported">
-								<a href="firebasebigcollection.html#version" class="tsd-kind-icon">version</a>
+								<a href="firebasebackingstore.html#version" class="tsd-kind-icon">version</a>
 							</li>
 							<li class=" tsd-kind-get-signature tsd-parent-kind-class tsd-is-overwrite tsd-is-not-exported">
-								<a href="firebasebigcollection.html#_haslocalchanges" class="tsd-kind-icon">_has<wbr>Local<wbr>Changes</a>
+								<a href="firebasebackingstore.html#_haslocalchanges" class="tsd-kind-icon">_has<wbr>Local<wbr>Changes</a>
 							</li>
 							<li class=" tsd-kind-get-signature tsd-parent-kind-class tsd-is-inherited tsd-is-not-exported">
-								<a href="firebasebigcollection.html#apichannelmappingid" class="tsd-kind-icon">api<wbr>Channel<wbr>Mapping<wbr>Id</a>
+								<a href="firebasebackingstore.html#apichannelmappingid" class="tsd-kind-icon">api<wbr>Channel<wbr>Mapping<wbr>Id</a>
 							</li>
 							<li class=" tsd-kind-get-signature tsd-parent-kind-class tsd-is-inherited tsd-is-not-exported">
-								<a href="firebasebigcollection.html#storagekey" class="tsd-kind-icon">storage<wbr>Key</a>
+								<a href="firebasebackingstore.html#storagekey" class="tsd-kind-icon">storage<wbr>Key</a>
 							</li>
 							<li class=" tsd-kind-get-signature tsd-parent-kind-class tsd-is-inherited tsd-is-not-exported">
-								<a href="firebasebigcollection.html#type" class="tsd-kind-icon">type</a>
+								<a href="firebasebackingstore.html#type" class="tsd-kind-icon">type</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-not-exported">
-								<a href="firebasebigcollection.html#_compareto" class="tsd-kind-icon">_compare<wbr>To</a>
+								<a href="firebasebackingstore.html#_compareto" class="tsd-kind-icon">_compare<wbr>To</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-protected tsd-is-not-exported">
-								<a href="firebasebigcollection.html#_fire" class="tsd-kind-icon">_fire</a>
+								<a href="firebasebackingstore.html#_fire" class="tsd-kind-icon">_fire</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-not-exported">
-								<a href="firebasebigcollection.html#_persistchanges" class="tsd-kind-icon">_persist<wbr>Changes</a>
+								<a href="firebasebackingstore.html#_persistchanges" class="tsd-kind-icon">_persist<wbr>Changes</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-not-exported">
-								<a href="firebasebigcollection.html#_persistchangesimpl" class="tsd-kind-icon">_persist<wbr>Changes<wbr>Impl</a>
+								<a href="firebasebackingstore.html#_persistchangesimpl" class="tsd-kind-icon">_persist<wbr>Changes<wbr>Impl</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-not-exported">
-								<a href="firebasebigcollection.html#_transaction" class="tsd-kind-icon">_transaction</a>
+								<a href="firebasebackingstore.html#_transaction" class="tsd-kind-icon">_transaction</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-not-exported">
-								<a href="firebasebigcollection.html#backingtype" class="tsd-kind-icon">backing<wbr>Type</a>
+								<a href="firebasebackingstore.html#backingtype" class="tsd-kind-icon">backing<wbr>Type</a>
 							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
-								<a href="firebasebigcollection.html#clearitemsfortesting" class="tsd-kind-icon">clear<wbr>Items<wbr>For<wbr>Testing</a>
-							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-not-exported">
-								<a href="firebasebigcollection.html#clonefrom" class="tsd-kind-icon">clone<wbr>From</a>
-							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
-								<a href="firebasebigcollection.html#cursorclose" class="tsd-kind-icon">cursor<wbr>Close</a>
-							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
-								<a href="firebasebigcollection.html#cursornext" class="tsd-kind-icon">cursor<wbr>Next</a>
-							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
-								<a href="firebasebigcollection.html#cursorversion" class="tsd-kind-icon">cursor<wbr>Version</a>
-							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-not-exported">
-								<a href="firebasebigcollection.html#dispose" class="tsd-kind-icon">dispose</a>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-private tsd-is-not-exported">
+								<a href="firebasebackingstore.html#childref" class="tsd-kind-icon">child<wbr>Ref</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-not-exported">
-								<a href="firebasebigcollection.html#enablereferencemode" class="tsd-kind-icon">enable<wbr>Reference<wbr>Mode</a>
-							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited tsd-is-not-exported">
-								<a href="firebasebigcollection.html#ensurebackingstore" class="tsd-kind-icon">ensure<wbr>Backing<wbr>Store</a>
-							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
-								<a href="firebasebigcollection.html#fromliteral" class="tsd-kind-icon">from<wbr>Literal</a>
+								<a href="firebasebackingstore.html#clonefrom" class="tsd-kind-icon">clone<wbr>From</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-not-exported">
-								<a href="firebasebigcollection.html#generateid" class="tsd-kind-icon">generateID</a>
-							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-not-exported">
-								<a href="firebasebigcollection.html#generateidcomponents" class="tsd-kind-icon">generateIDComponents</a>
-							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
-								<a href="firebasebigcollection.html#get" class="tsd-kind-icon">get</a>
-							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-not-exported">
-								<a href="firebasebigcollection.html#modelforsynchronization" class="tsd-kind-icon">model<wbr>For<wbr>Synchronization</a>
-							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-not-exported">
-								<a href="firebasebigcollection.html#off" class="tsd-kind-icon">off</a>
-							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-not-exported">
-								<a href="firebasebigcollection.html#on" class="tsd-kind-icon">on</a>
-							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
-								<a href="firebasebigcollection.html#remove" class="tsd-kind-icon">remove</a>
-							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
-								<a href="firebasebigcollection.html#store" class="tsd-kind-icon">store</a>
-							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
-								<a href="firebasebigcollection.html#stream" class="tsd-kind-icon">stream</a>
+								<a href="firebasebackingstore.html#dispose" class="tsd-kind-icon">dispose</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-not-exported">
-								<a href="firebasebigcollection.html#toliteral" class="tsd-kind-icon">to<wbr>Literal</a>
+								<a href="firebasebackingstore.html#enablereferencemode" class="tsd-kind-icon">enable<wbr>Reference<wbr>Mode</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-not-exported">
+								<a href="firebasebackingstore.html#ensurebackingstore" class="tsd-kind-icon">ensure<wbr>Backing<wbr>Store</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-not-exported">
-								<a href="firebasebigcollection.html#tostring" class="tsd-kind-icon">to<wbr>String</a>
+								<a href="firebasebackingstore.html#generateid" class="tsd-kind-icon">generateID</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-not-exported">
+								<a href="firebasebackingstore.html#generateidcomponents" class="tsd-kind-icon">generateIDComponents</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
+								<a href="firebasebackingstore.html#get" class="tsd-kind-icon">get</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
+								<a href="firebasebackingstore.html#getmultiple" class="tsd-kind-icon">get<wbr>Multiple</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-not-exported">
+								<a href="firebasebackingstore.html#modelforsynchronization" class="tsd-kind-icon">model<wbr>For<wbr>Synchronization</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-not-exported">
+								<a href="firebasebackingstore.html#off" class="tsd-kind-icon">off</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-not-exported">
+								<a href="firebasebackingstore.html#on" class="tsd-kind-icon">on</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
+								<a href="firebasebackingstore.html#remove" class="tsd-kind-icon">remove</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
+								<a href="firebasebackingstore.html#removemultiple" class="tsd-kind-icon">remove<wbr>Multiple</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-private tsd-is-not-exported">
+								<a href="firebasebackingstore.html#removesingle" class="tsd-kind-icon">remove<wbr>Single</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
+								<a href="firebasebackingstore.html#store" class="tsd-kind-icon">store</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
+								<a href="firebasebackingstore.html#storemultiple" class="tsd-kind-icon">store<wbr>Multiple</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-private tsd-is-not-exported">
+								<a href="firebasebackingstore.html#storesingle" class="tsd-kind-icon">store<wbr>Single</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
+								<a href="firebasebackingstore.html#tolist" class="tsd-kind-icon">to<wbr>List</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-not-exported">
+								<a href="firebasebackingstore.html#toliteral" class="tsd-kind-icon">to<wbr>Literal</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-not-exported">
+								<a href="firebasebackingstore.html#tostring" class="tsd-kind-icon">to<wbr>String</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-static tsd-is-not-exported">
-								<a href="firebasebigcollection.html#newprovider" class="tsd-kind-icon">new<wbr>Provider</a>
+								<a href="firebasebackingstore.html#newprovider" class="tsd-kind-icon">new<wbr>Provider</a>
 							</li>
 						</ul>
 					</li>
