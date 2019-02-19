@@ -7,9 +7,9 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-import { assert } from '../../platform/assert-web.js';
-import { SlotDomConsumer } from '../slot-dom-consumer.js';
-export class MockSlotDomConsumer extends SlotDomConsumer {
+import { assert } from '../platform/assert-web.js';
+import { SlotDomConsumer } from './slot-dom-consumer.js';
+export class HeadlessSlotDomConsumer extends SlotDomConsumer {
     constructor(arc, consumeConn) {
         super(arc, consumeConn);
         this._content = {};
@@ -66,4 +66,4 @@ export class MockSlotDomConsumer extends SlotDomConsumer {
     _initMutationObserver() { return null; }
     _observe() { }
 }
-//# sourceMappingURL=mock-slot-dom-consumer.js.map
+//# sourceMappingURL=headless-slot-dom-consumer.js.map

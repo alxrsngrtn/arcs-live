@@ -7,8 +7,8 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-import { SlotDomConsumer } from '../slot-dom-consumer.js';
-export declare class MockSlotDomConsumer extends SlotDomConsumer {
+import { SlotDomConsumer } from './slot-dom-consumer.js';
+export declare class HeadlessSlotDomConsumer extends SlotDomConsumer {
     _content: any;
     contentAvailable: any;
     _contentAvailableResolve: any;

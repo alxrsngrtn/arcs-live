@@ -8,9 +8,9 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { DescriptionDomFormatter } from '../runtime/description-dom-formatter.js';
+import { HeadlessSlotDomConsumer } from '../runtime/headless-slot-dom-consumer.js';
 import { ModalityHandler } from '../runtime/modality-handler.js';
 import { SlotDomConsumer } from '../runtime/slot-dom-consumer.js';
-import { MockSlotDomConsumer } from '../runtime/testing/mock-slot-dom-consumer.js';
 import { SuggestDomConsumer } from './suggest-dom-consumer.js';
 import { MockSuggestDomConsumer } from './testing/mock-suggest-dom-consumer.js';
 export class PlanningModalityHandler extends ModalityHandler {
@@ -19,7 +19,7 @@ export class PlanningModalityHandler extends ModalityHandler {
         this.suggestionConsumerClass = suggestionConsumerClass;
     }
     static createHeadlessHandler() {
-        return new PlanningModalityHandler(MockSlotDomConsumer, MockSuggestDomConsumer);
+        return new PlanningModalityHandler(HeadlessSlotDomConsumer, MockSuggestDomConsumer);
     }
 }
 PlanningModalityHandler.domHandler = new PlanningModalityHandler(SlotDomConsumer, SuggestDomConsumer, DescriptionDomFormatter);

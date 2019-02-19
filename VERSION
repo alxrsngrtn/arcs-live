@@ -1,9 +1,7 @@
-commit 084e1d37ed07e6264d54932086df82dcf1802a11
-Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
-Date:   Tue Feb 19 13:46:23 2019 +1100
+commit ecc98cde4f955d223fe43c4eb581fd8b329a39fb
+Author: raulverag <42563960+raulverag@users.noreply.github.com>
+Date:   Tue Feb 19 13:40:41 2019 -0800
 
-    FirebaseBackingStore: improve performance for large backing stores (#2670)
+    MockSlotDomConsumer -> HeadlessSlotDomConsumer (#2698)
     
-    * FirebaseBackingStore class to improve performance with large backing store collections
-    
-    * FirebaseBackingStore: fix some types for the backing stores
+    This class isn't just a mock, as it is used during preplanning and other situations requiring a dom slot consumer without an actual dom.
