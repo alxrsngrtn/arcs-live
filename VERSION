@@ -1,5 +1,5 @@
-commit a06f8cae3fe8804451648d72546a714284617fe0
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Wed Feb 20 13:28:35 2019 -0800
+commit 2e97567e434f6a4047fbe7493e49cf5b2151969b
+Author: Piotr Swigon <piotr.swigon@gmail.com>
+Date:   Thu Feb 21 08:54:48 2019 +1100
 
-    make renderSlot sync, and initialize description in slot-consumer ctor (#2703)
+    Simple favicon for standalone ArcsExplorer (#2704)
