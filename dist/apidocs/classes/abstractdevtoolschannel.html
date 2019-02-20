@@ -88,13 +88,14 @@
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="abstractdevtoolschannel.html#debouncedmessages" class="tsd-kind-icon">debounced<wbr>Messages</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="abstractdevtoolschannel.html#debouncing" class="tsd-kind-icon">debouncing</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="abstractdevtoolschannel.html#messagelisteners" class="tsd-kind-icon">message<wbr>Listeners</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="abstractdevtoolschannel.html#timer" class="tsd-kind-icon">timer</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
 							<h3>Methods</h3>
 							<ul class="tsd-index-list">
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="abstractdevtoolschannel.html#_empty" class="tsd-kind-icon">_empty</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="abstractdevtoolschannel.html#_flush" class="tsd-kind-icon">_flush</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="abstractdevtoolschannel.html#_handlemessage" class="tsd-kind-icon">_handle<wbr>Message</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="abstractdevtoolschannel.html#ensurenocycle" class="tsd-kind-icon">ensure<wbr>NoCycle</a></li>
@@ -118,7 +119,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/ec347c5/src/runtime/debug/abstract-devtools-channel.ts#L17">runtime/debug/abstract-devtools-channel.ts:17</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/41b4caa/src/runtime/debug/abstract-devtools-channel.ts#L17">runtime/debug/abstract-devtools-channel.ts:17</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <a href="abstractdevtoolschannel.html" class="tsd-signature-type">AbstractDevtoolsChannel</a></h4>
@@ -134,17 +135,7 @@
 					<div class="tsd-signature tsd-kind-icon">debounced<wbr>Messages<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> =&nbsp;[]</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/ec347c5/src/runtime/debug/abstract-devtools-channel.ts#L15">runtime/debug/abstract-devtools-channel.ts:15</a></li>
-						</ul>
-					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
-					<a name="debouncing" class="tsd-anchor"></a>
-					<h3>debouncing</h3>
-					<div class="tsd-signature tsd-kind-icon">debouncing<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> =&nbsp;false</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/ec347c5/src/runtime/debug/abstract-devtools-channel.ts#L16">runtime/debug/abstract-devtools-channel.ts:16</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/41b4caa/src/runtime/debug/abstract-devtools-channel.ts#L15">runtime/debug/abstract-devtools-channel.ts:15</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -154,13 +145,40 @@
 					<div class="tsd-signature tsd-kind-icon">message<wbr>Listeners<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Map</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> =&nbsp;new Map()</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/ec347c5/src/runtime/debug/abstract-devtools-channel.ts#L17">runtime/debug/abstract-devtools-channel.ts:17</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/41b4caa/src/runtime/debug/abstract-devtools-channel.ts#L16">runtime/debug/abstract-devtools-channel.ts:16</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="timer" class="tsd-anchor"></a>
+					<h3>timer</h3>
+					<div class="tsd-signature tsd-kind-icon">timer<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span><span class="tsd-signature-symbol"> =&nbsp;null</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/41b4caa/src/runtime/debug/abstract-devtools-channel.ts#L17">runtime/debug/abstract-devtools-channel.ts:17</a></li>
 						</ul>
 					</aside>
 				</section>
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Methods</h2>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="_empty" class="tsd-anchor"></a>
+					<h3>_empty</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">_empty<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/41b4caa/src/runtime/debug/abstract-devtools-channel.ts#L59">runtime/debug/abstract-devtools-channel.ts:59</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
 					<a name="_flush" class="tsd-anchor"></a>
 					<h3>_flush</h3>
@@ -171,7 +189,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/ec347c5/src/runtime/debug/abstract-devtools-channel.ts#L58">runtime/debug/abstract-devtools-channel.ts:58</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/41b4caa/src/runtime/debug/abstract-devtools-channel.ts#L66">runtime/debug/abstract-devtools-channel.ts:66</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -194,7 +212,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/ec347c5/src/runtime/debug/abstract-devtools-channel.ts#L49">runtime/debug/abstract-devtools-channel.ts:49</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/41b4caa/src/runtime/debug/abstract-devtools-channel.ts#L50">runtime/debug/abstract-devtools-channel.ts:50</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -217,7 +235,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/ec347c5/src/runtime/debug/abstract-devtools-channel.ts#L62">runtime/debug/abstract-devtools-channel.ts:62</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/41b4caa/src/runtime/debug/abstract-devtools-channel.ts#L70">runtime/debug/abstract-devtools-channel.ts:70</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -243,7 +261,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/ec347c5/src/runtime/debug/abstract-devtools-channel.ts#L45">runtime/debug/abstract-devtools-channel.ts:45</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/41b4caa/src/runtime/debug/abstract-devtools-channel.ts#L46">runtime/debug/abstract-devtools-channel.ts:46</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -266,7 +284,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/ec347c5/src/runtime/debug/abstract-devtools-channel.ts#L35">runtime/debug/abstract-devtools-channel.ts:35</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/41b4caa/src/runtime/debug/abstract-devtools-channel.ts#L36">runtime/debug/abstract-devtools-channel.ts:36</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -295,7 +313,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/ec347c5/src/runtime/debug/abstract-devtools-channel.ts#L22">runtime/debug/abstract-devtools-channel.ts:22</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/41b4caa/src/runtime/debug/abstract-devtools-channel.ts#L22">runtime/debug/abstract-devtools-channel.ts:22</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -332,10 +350,13 @@
 								<a href="abstractdevtoolschannel.html#debouncedmessages" class="tsd-kind-icon">debounced<wbr>Messages</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
-								<a href="abstractdevtoolschannel.html#debouncing" class="tsd-kind-icon">debouncing</a>
+								<a href="abstractdevtoolschannel.html#messagelisteners" class="tsd-kind-icon">message<wbr>Listeners</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
-								<a href="abstractdevtoolschannel.html#messagelisteners" class="tsd-kind-icon">message<wbr>Listeners</a>
+								<a href="abstractdevtoolschannel.html#timer" class="tsd-kind-icon">timer</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="abstractdevtoolschannel.html#_empty" class="tsd-kind-icon">_empty</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="abstractdevtoolschannel.html#_flush" class="tsd-kind-icon">_flush</a>
