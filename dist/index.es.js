@@ -23745,7 +23745,7 @@ ${this.activeRecipe.toString()}`;
         particles.forEach(recipeParticle => this._instantiateParticle(recipeParticle));
         if (this.pec.slotComposer) {
             // TODO: pass slot-connections instead
-            this.pec.slotComposer.initializeRecipe(this, particles);
+            await this.pec.slotComposer.initializeRecipe(this, particles);
         }
         if (!this.isSpeculative) { // Note: callbacks not triggered for speculative arcs.
             this.instantiatePlanCallbacks.forEach(callback => callback(recipe));
@@ -26518,8 +26518,8 @@ class ProvidedSlotContext extends SlotContext {
             ? this.spec.handles.map(handle => this.sourceSlotConsumer.consumeConn.particle.connections[handle].handle).filter(a => a !== undefined)
             : [];
     }
-    onRenderSlot(consumer, content, handler, description) {
-        consumer.setContent(content, handler, description);
+    onRenderSlot(consumer, content, handler) {
+        consumer.setContent(content, handler);
     }
     get container() { return this._container; }
     get containerAvailable() { return !!this._container; }
@@ -26639,7 +26639,7 @@ class SlotComposer {
         slot.stopRenderCallback = slot.arc.pec.stopRender.bind(slot.arc.pec);
         this._consumers.push(slot);
     }
-    initializeRecipe(arc, recipeParticles) {
+    async initializeRecipe(arc, recipeParticles) {
         const newConsumers = [];
         // Create slots for each of the recipe's particles slot connections.
         recipeParticles.forEach(p => {
@@ -26661,11 +26661,11 @@ class SlotComposer {
             assert$1(context, `No context found for ${consumer.consumeConn.getQualifiedName()}`);
             context.addSlotConsumer(consumer);
         });
+        await Promise.all(this.consumers.map(async (consumer) => await consumer.resetDescription()));
     }
-    async renderSlot(particle, slotName, content) {
+    renderSlot(particle, slotName, content) {
         const slotConsumer = this.getSlotConsumer(particle, slotName);
         assert$1(slotConsumer, `Cannot find slot (or hosted slot) ${slotName} for particle ${particle.name}`);
-        const description = await Description.create(slotConsumer.arc);
         slotConsumer.slotContext.onRenderSlot(slotConsumer, content, async (eventlet) => {
             slotConsumer.arc.pec.sendEvent(particle, slotName, eventlet);
             // This code is a temporary hack implemented in #2011 which allows to route UI events from
@@ -26693,7 +26693,7 @@ class SlotComposer {
                     }
                 }
             }
-        }, description);
+        });
     }
     getAvailableContexts() {
         return this._contexts;
@@ -27364,10 +27364,13 @@ class SlotConsumer {
         this._renderingBySubId = new Map();
         this.innerContainerBySlotId = {};
         this.arc = arc;
-        this._consumeConn = consumeConn;
+        this.consumeConn = consumeConn;
         this.containerKind = containerKind;
     }
-    get consumeConn() { return this._consumeConn; }
+    get description() { return this._description; }
+    async resetDescription() {
+        this._description = await Description.create(this.arc);
+    }
     getRendering(subId) { return this._renderingBySubId.get(subId); }
     get renderings() { return [...this._renderingBySubId.entries()]; }
     addRenderingBySubId(subId, rendering) {
@@ -27458,23 +27461,23 @@ class SlotConsumer {
             this.stopRenderCallback({ particle: this.consumeConn.particle, slotName: this.consumeConn.name });
         }
     }
-    setContent(content, handler, description) {
-        if (content && Object.keys(content).length > 0 && description) {
-            content.descriptions = this.populateHandleDescriptions(description);
+    setContent(content, handler) {
+        if (content && Object.keys(content).length > 0 && this.description) {
+            content.descriptions = this.populateHandleDescriptions();
         }
         this.eventHandler = handler;
         for (const [subId, rendering] of this.renderings) {
             this.setContainerContent(rendering, this.formatContent(content, subId), subId);
         }
     }
-    populateHandleDescriptions(description) {
+    populateHandleDescriptions() {
         if (!this.consumeConn)
             return null;
         const descriptions = {};
         Object.values(this.consumeConn.particle.connections).map(handleConn => {
             if (handleConn.handle) {
                 descriptions[`${handleConn.name}.description`] =
-                    description.getHandleDescription(handleConn.handle).toString();
+                    this.description.getHandleDescription(handleConn.handle).toString();
             }
         });
         return descriptions;
@@ -27826,7 +27829,7 @@ class HeadlessSlotDomConsumer extends SlotDomConsumer {
         this._content = {};
         this.contentAvailable = new Promise(resolve => this._contentAvailableResolve = resolve);
     }
-    setContent(content, handler, description) {
+    setContent(content, handler) {
         super.setContent(content, handler);
         // Mimics the behaviour of DomSlotConsumer::setContent, where template is only set at first,
         // and model is overriden every time.
@@ -27979,8 +27982,8 @@ class HeadlessSuggestDomConsumer extends SuggestDomConsumer {
     static render(arc, container, plan, content) {
         return undefined;
     }
-    async setContent(content, handler) {
-        await super.setContent(content, handler);
+    setContent(content, handler) {
+        super.setContent(content, handler);
         // Mimics the behaviour of DomSlotConsumer::setContent, where template is only set at first,
         // and model is overriden every time.
         if (content) {
@@ -28786,8 +28789,8 @@ class RamSlotComposer extends SlotComposer {
     this.pec.sendEvent(particles[0], slotName, {handler: event, data});
   }
 
-  async renderSlot(particle, slotName, content) {
-    await super.renderSlot(particle, slotName, content);
+  renderSlot(particle, slotName, content) {
+    super.renderSlot(particle, slotName, content);
     const slotConsumer = this.getSlotConsumer(particle, slotName);
     if (slotConsumer) {
       slotConsumer.updateProvidedContexts();

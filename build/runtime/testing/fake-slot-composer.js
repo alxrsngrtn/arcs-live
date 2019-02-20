@@ -16,8 +16,8 @@ export class FakeSlotComposer extends SlotComposer {
     constructor(options = {}) {
         super(Object.assign({ rootContainer: { 'root': 'root-context' }, modalityHandler: PlanningModalityHandler.createHeadlessHandler() }, options));
     }
-    async renderSlot(particle, slotName, content) {
-        await super.renderSlot(particle, slotName, content);
+    renderSlot(particle, slotName, content) {
+        super.renderSlot(particle, slotName, content);
         // In production updateProvidedContexts() is done in DOM Mutation Observer.
         // We don't have it in tests, so we do it here.
         const slotConsumer = this.getSlotConsumer(particle, slotName);

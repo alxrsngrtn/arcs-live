@@ -453,7 +453,7 @@ ${this.activeRecipe.toString()}`;
         particles.forEach(recipeParticle => this._instantiateParticle(recipeParticle));
         if (this.pec.slotComposer) {
             // TODO: pass slot-connections instead
-            this.pec.slotComposer.initializeRecipe(this, particles);
+            await this.pec.slotComposer.initializeRecipe(this, particles);
         }
         if (!this.isSpeculative) { // Note: callbacks not triggered for speculative arcs.
             this.instantiatePlanCallbacks.forEach(callback => callback(recipe));

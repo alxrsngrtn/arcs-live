@@ -8,6 +8,7 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { assert } from '../platform/assert-web.js';
+import { Description } from './description.js';
 import { ProvidedSlotContext } from './slot-context.js';
 export class SlotConsumer {
     constructor(arc, consumeConn, containerKind) {
@@ -18,10 +19,13 @@ export class SlotConsumer {
         this._renderingBySubId = new Map();
         this.innerContainerBySlotId = {};
         this.arc = arc;
-        this._consumeConn = consumeConn;
+        this.consumeConn = consumeConn;
         this.containerKind = containerKind;
     }
-    get consumeConn() { return this._consumeConn; }
+    get description() { return this._description; }
+    async resetDescription() {
+        this._description = await Description.create(this.arc);
+    }
     getRendering(subId) { return this._renderingBySubId.get(subId); }
     get renderings() { return [...this._renderingBySubId.entries()]; }
     addRenderingBySubId(subId, rendering) {
@@ -112,23 +116,23 @@ export class SlotConsumer {
             this.stopRenderCallback({ particle: this.consumeConn.particle, slotName: this.consumeConn.name });
         }
     }
-    setContent(content, handler, description) {
-        if (content && Object.keys(content).length > 0 && description) {
-            content.descriptions = this.populateHandleDescriptions(description);
+    setContent(content, handler) {
+        if (content && Object.keys(content).length > 0 && this.description) {
+            content.descriptions = this.populateHandleDescriptions();
         }
         this.eventHandler = handler;
         for (const [subId, rendering] of this.renderings) {
             this.setContainerContent(rendering, this.formatContent(content, subId), subId);
         }
     }
-    populateHandleDescriptions(description) {
+    populateHandleDescriptions() {
         if (!this.consumeConn)
             return null;
         const descriptions = {};
         Object.values(this.consumeConn.particle.connections).map(handleConn => {
             if (handleConn.handle) {
                 descriptions[`${handleConn.name}.description`] =
-                    description.getHandleDescription(handleConn.handle).toString();
+                    this.description.getHandleDescription(handleConn.handle).toString();
             }
         });
         return descriptions;

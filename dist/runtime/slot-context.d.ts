@@ -7,7 +7,6 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-import { Description } from './description.js';
 import { ProvidedSlotSpec } from './particle-spec.js';
 import { Handle } from './recipe/handle.js';
 import { SlotConsumer } from './slot-consumer.js';
@@ -21,7 +20,7 @@ export declare abstract class SlotContext {
     constructor(id: string, sourceSlotConsumer?: SlotConsumer);
     addSlotConsumer(slotConsumer: SlotConsumer): void;
     clearSlotConsumers(): void;
-    abstract onRenderSlot(consumer: SlotConsumer, content: any, handler: any, description?: Description): any;
+    abstract onRenderSlot(consumer: SlotConsumer, content: any, handler: any): any;
     abstract readonly containerAvailable: boolean;
 }
 /**
@@ -58,7 +57,7 @@ export declare class ProvidedSlotContext extends SlotContext {
     spec: ProvidedSlotSpec;
     handles: Handle[];
     constructor(id: string, name: string, tags: string[], container: HTMLElement, spec: ProvidedSlotSpec, sourceSlotConsumer?: SlotConsumer);
-    onRenderSlot(consumer: SlotConsumer, content: any, handler: any, description?: Description): void;
+    onRenderSlot(consumer: SlotConsumer, content: any, handler: any): void;
     container: HTMLElement;
     readonly containerAvailable: boolean;
     static createContextForContainer(id: any, name: any, container: any, tags: any): ProvidedSlotContext;

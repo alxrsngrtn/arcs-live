@@ -1,13 +1,5 @@
-commit 41b4caa95e5a8ef184fe8535e1eaaa742b7f7307
-Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Wed Feb 20 16:51:07 2019 +1100
+commit a06f8cae3fe8804451648d72546a714284617fe0
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Wed Feb 20 13:28:35 2019 -0800
 
-    ArcsExplorer using WebRTC for transport (#2665)
-    
-    * Demo of ArcsExplorer via WebRTC
-    
-    * Improvements to WebRTC connection
-    
-    * Signalling on Firebase
-    
-    * WebRTC done without external library
+    make renderSlot sync, and initialize description in slot-consumer ctor (#2703)

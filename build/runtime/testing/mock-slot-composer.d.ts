@@ -73,7 +73,7 @@ export declare class MockSlotComposer extends FakeSlotComposer {
     _canIgnore(particleName: string, slotName: string, content: any): boolean;
     _getHostedParticleNames(particle: Particle): any[];
     _verifyRenderContent(particle: any, slotName: any, content: any): boolean;
-    renderSlot(particle: any, slotName: any, content: any): Promise<void>;
+    renderSlot(particle: any, slotName: any, content: any): void;
     _expectationsMet(): void;
     detailedLogDebug(): this;
     _addDebugMessages(message: any): void;

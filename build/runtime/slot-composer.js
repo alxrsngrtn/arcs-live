@@ -8,7 +8,6 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { assert } from '../platform/assert-web.js';
-import { Description } from './description.js';
 import { Modality } from './modality.js';
 import { HostedSlotContext, ProvidedSlotContext } from './slot-context.js';
 export class SlotComposer {
@@ -85,7 +84,7 @@ export class SlotComposer {
         slot.stopRenderCallback = slot.arc.pec.stopRender.bind(slot.arc.pec);
         this._consumers.push(slot);
     }
-    initializeRecipe(arc, recipeParticles) {
+    async initializeRecipe(arc, recipeParticles) {
         const newConsumers = [];
         // Create slots for each of the recipe's particles slot connections.
         recipeParticles.forEach(p => {
@@ -107,11 +106,11 @@ export class SlotComposer {
             assert(context, `No context found for ${consumer.consumeConn.getQualifiedName()}`);
             context.addSlotConsumer(consumer);
         });
+        await Promise.all(this.consumers.map(async (consumer) => await consumer.resetDescription()));
     }
-    async renderSlot(particle, slotName, content) {
+    renderSlot(particle, slotName, content) {
         const slotConsumer = this.getSlotConsumer(particle, slotName);
         assert(slotConsumer, `Cannot find slot (or hosted slot) ${slotName} for particle ${particle.name}`);
-        const description = await Description.create(slotConsumer.arc);
         slotConsumer.slotContext.onRenderSlot(slotConsumer, content, async (eventlet) => {
             slotConsumer.arc.pec.sendEvent(particle, slotName, eventlet);
             // This code is a temporary hack implemented in #2011 which allows to route UI events from
@@ -139,7 +138,7 @@ export class SlotComposer {
                     }
                 }
             }
-        }, description);
+        });
     }
     getAvailableContexts() {
         return this._contexts;

@@ -45,8 +45,8 @@ export declare class SlotComposer {
     findContextById(slotId: any): SlotContext;
     createHostedSlot(innerArc: Arc, transformationParticle: Particle, transformationSlotName: string, storeId: string): string;
     _addSlotConsumer(slot: SlotConsumer): void;
-    initializeRecipe(arc: Arc, recipeParticles: Particle[]): void;
-    renderSlot(particle: Particle, slotName: string, content: any): Promise<void>;
+    initializeRecipe(arc: Arc, recipeParticles: Particle[]): Promise<void>;
+    renderSlot(particle: Particle, slotName: string, content: any): void;
     getAvailableContexts(): SlotContext[];
     dispose(): void;
 }

@@ -97,11 +97,11 @@
 						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="suggestdomconsumer.html#_consumeconn" class="tsd-kind-icon">_consume<wbr>Conn</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="suggestdomconsumer.html#_eventhandler" class="tsd-kind-icon">_event<wbr>Handler</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="suggestdomconsumer.html#_suggestion" class="tsd-kind-icon">_suggestion</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="suggestdomconsumer.html#_suggestioncontent" class="tsd-kind-icon">_suggestion<wbr>Content</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="suggestdomconsumer.html#arc" class="tsd-kind-icon">arc</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="suggestdomconsumer.html#consumeconn" class="tsd-kind-icon">consume<wbr>Conn</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="suggestdomconsumer.html#containerkind" class="tsd-kind-icon">container<wbr>Kind</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="suggestdomconsumer.html#directlyprovidedslotcontexts" class="tsd-kind-icon">directly<wbr>Provided<wbr>Slot<wbr>Contexts</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="suggestdomconsumer.html#eventhandler" class="tsd-kind-icon">event<wbr>Handler</a></li>
@@ -115,7 +115,7 @@
 							<h3>Accessors</h3>
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-get-signature tsd-parent-kind-class tsd-is-inherited"><a href="suggestdomconsumer.html#allprovidedslotcontexts" class="tsd-kind-icon">all<wbr>Provided<wbr>Slot<wbr>Contexts</a></li>
-								<li class="tsd-kind-get-signature tsd-parent-kind-class tsd-is-inherited"><a href="suggestdomconsumer.html#consumeconn" class="tsd-kind-icon">consume<wbr>Conn</a></li>
+								<li class="tsd-kind-get-signature tsd-parent-kind-class tsd-is-inherited"><a href="suggestdomconsumer.html#description" class="tsd-kind-icon">description</a></li>
 								<li class="tsd-kind-get-signature tsd-parent-kind-class tsd-is-inherited"><a href="suggestdomconsumer.html#renderings" class="tsd-kind-icon">renderings</a></li>
 								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="suggestdomconsumer.html#suggestion" class="tsd-kind-icon">suggestion</a></li>
 								<li class="tsd-kind-get-signature tsd-parent-kind-class tsd-is-overwrite"><a href="suggestdomconsumer.html#templateprefix" class="tsd-kind-icon">template<wbr>Prefix</a></li>
@@ -156,6 +156,7 @@
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited"><a href="suggestdomconsumer.html#issamecontainer" class="tsd-kind-icon">is<wbr>Same<wbr>Container</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="suggestdomconsumer.html#oncontainerupdate" class="tsd-kind-icon">on<wbr>Container<wbr>Update</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="suggestdomconsumer.html#populatehandledescriptions" class="tsd-kind-icon">populate<wbr>Handle<wbr>Descriptions</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="suggestdomconsumer.html#resetdescription" class="tsd-kind-icon">reset<wbr>Description</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited"><a href="suggestdomconsumer.html#setcontainercontent" class="tsd-kind-icon">set<wbr>Container<wbr>Content</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="suggestdomconsumer.html#setcontent" class="tsd-kind-icon">set<wbr>Content</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="suggestdomconsumer.html#startrender" class="tsd-kind-icon">start<wbr>Render</a></li>
@@ -184,7 +185,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="slotdomconsumer.html">SlotDomConsumer</a>.<a href="slotdomconsumer.html#constructor">constructor</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/41b4caa/src/planning/suggest-dom-consumer.ts#L19">planning/suggest-dom-consumer.ts:19</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/a06f8ca/src/planning/suggest-dom-consumer.ts#L19">planning/suggest-dom-consumer.ts:19</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -212,24 +213,13 @@
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Properties</h2>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
-					<a name="_consumeconn" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagOptional">Optional</span> _consume<wbr>Conn</h3>
-					<div class="tsd-signature tsd-kind-icon">_consume<wbr>Conn<span class="tsd-signature-symbol">:</span> <a href="slotconnection.html" class="tsd-signature-type">SlotConnection</a></div>
-					<aside class="tsd-sources">
-						<p>Inherited from <a href="slotconsumer.html">SlotConsumer</a>.<a href="slotconsumer.html#_consumeconn">_consumeConn</a></p>
-						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/41b4caa/src/runtime/slot-consumer.ts#L19">runtime/slot-consumer.ts:19</a></li>
-						</ul>
-					</aside>
-				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
 					<a name="_eventhandler" class="tsd-anchor"></a>
 					<h3>_event<wbr>Handler</h3>
 					<div class="tsd-signature tsd-kind-icon">_event<wbr>Handler<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/41b4caa/src/planning/suggest-dom-consumer.ts#L19">planning/suggest-dom-consumer.ts:19</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/a06f8ca/src/planning/suggest-dom-consumer.ts#L19">planning/suggest-dom-consumer.ts:19</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -239,7 +229,7 @@
 					<div class="tsd-signature tsd-kind-icon">_suggestion<span class="tsd-signature-symbol">:</span> <a href="suggestion.html" class="tsd-signature-type">Suggestion</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/41b4caa/src/planning/suggest-dom-consumer.ts#L17">planning/suggest-dom-consumer.ts:17</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/a06f8ca/src/planning/suggest-dom-consumer.ts#L17">planning/suggest-dom-consumer.ts:17</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -249,7 +239,7 @@
 					<div class="tsd-signature tsd-kind-icon">_suggestion<wbr>Content<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/41b4caa/src/planning/suggest-dom-consumer.ts#L18">planning/suggest-dom-consumer.ts:18</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/a06f8ca/src/planning/suggest-dom-consumer.ts#L18">planning/suggest-dom-consumer.ts:18</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -260,7 +250,18 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="slotconsumer.html">SlotConsumer</a>.<a href="slotconsumer.html#arc">arc</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/41b4caa/src/runtime/slot-consumer.ts#L31">runtime/slot-consumer.ts:31</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/a06f8ca/src/runtime/slot-consumer.ts#L31">runtime/slot-consumer.ts:31</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
+					<a name="consumeconn" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> consume<wbr>Conn</h3>
+					<div class="tsd-signature tsd-kind-icon">consume<wbr>Conn<span class="tsd-signature-symbol">:</span> <a href="slotconnection.html" class="tsd-signature-type">SlotConnection</a></div>
+					<aside class="tsd-sources">
+						<p>Inherited from <a href="slotconsumer.html">SlotConsumer</a>.<a href="slotconsumer.html#consumeconn">consumeConn</a></p>
+						<ul>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/a06f8ca/src/runtime/slot-consumer.ts#L19">runtime/slot-consumer.ts:19</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -271,7 +272,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="slotconsumer.html">SlotConsumer</a>.<a href="slotconsumer.html#containerkind">containerKind</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/41b4caa/src/runtime/slot-consumer.ts#L26">runtime/slot-consumer.ts:26</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/a06f8ca/src/runtime/slot-consumer.ts#L26">runtime/slot-consumer.ts:26</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -282,7 +283,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="slotconsumer.html">SlotConsumer</a>.<a href="slotconsumer.html#directlyprovidedslotcontexts">directlyProvidedSlotContexts</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/41b4caa/src/runtime/slot-consumer.ts#L21">runtime/slot-consumer.ts:21</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/a06f8ca/src/runtime/slot-consumer.ts#L21">runtime/slot-consumer.ts:21</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -293,7 +294,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="slotconsumer.html">SlotConsumer</a>.<a href="slotconsumer.html#eventhandler">eventHandler</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/41b4caa/src/runtime/slot-consumer.ts#L25">runtime/slot-consumer.ts:25</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/a06f8ca/src/runtime/slot-consumer.ts#L25">runtime/slot-consumer.ts:25</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-type-declaration">
@@ -327,7 +328,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="slotconsumer.html">SlotConsumer</a>.<a href="slotconsumer.html#hostedslotcontexts">hostedSlotContexts</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/41b4caa/src/runtime/slot-consumer.ts#L22">runtime/slot-consumer.ts:22</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/a06f8ca/src/runtime/slot-consumer.ts#L22">runtime/slot-consumer.ts:22</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -338,7 +339,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="slotconsumer.html">SlotConsumer</a>.<a href="slotconsumer.html#slotcontext">slotContext</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/41b4caa/src/runtime/slot-consumer.ts#L20">runtime/slot-consumer.ts:20</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/a06f8ca/src/runtime/slot-consumer.ts#L20">runtime/slot-consumer.ts:20</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -349,7 +350,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="slotconsumer.html">SlotConsumer</a>.<a href="slotconsumer.html#startrendercallback">startRenderCallback</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/41b4caa/src/runtime/slot-consumer.ts#L23">runtime/slot-consumer.ts:23</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/a06f8ca/src/runtime/slot-consumer.ts#L23">runtime/slot-consumer.ts:23</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-type-declaration">
@@ -383,7 +384,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="slotconsumer.html">SlotConsumer</a>.<a href="slotconsumer.html#stoprendercallback">stopRenderCallback</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/41b4caa/src/runtime/slot-consumer.ts#L24">runtime/slot-consumer.ts:24</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/a06f8ca/src/runtime/slot-consumer.ts#L24">runtime/slot-consumer.ts:24</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-type-declaration">
@@ -424,7 +425,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="slotconsumer.html">SlotConsumer</a>.<a href="slotconsumer.html#allprovidedslotcontexts">allProvidedSlotContexts</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/41b4caa/src/runtime/slot-consumer.ts#L51">runtime/slot-consumer.ts:51</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/a06f8ca/src/runtime/slot-consumer.ts#L56">runtime/slot-consumer.ts:56</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <a href="providedslotcontext.html" class="tsd-signature-type">ProvidedSlotContext</a><span class="tsd-signature-symbol">[]</span></h4>
@@ -432,20 +433,20 @@
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class tsd-is-inherited">
-					<a name="consumeconn" class="tsd-anchor"></a>
-					<h3>consume<wbr>Conn</h3>
+					<a name="description" class="tsd-anchor"></a>
+					<h3>description</h3>
 					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class tsd-is-inherited">
-						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> consumeConn<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="slotconnection.html" class="tsd-signature-type">SlotConnection</a></li>
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> description<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="description.html" class="tsd-signature-type">Description</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
-								<p>Inherited from <a href="slotconsumer.html">SlotConsumer</a>.<a href="slotconsumer.html#consumeconn">consumeConn</a></p>
+								<p>Inherited from <a href="slotconsumer.html">SlotConsumer</a>.<a href="slotconsumer.html#description">description</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/41b4caa/src/runtime/slot-consumer.ts#L38">runtime/slot-consumer.ts:38</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/a06f8ca/src/runtime/slot-consumer.ts#L40">runtime/slot-consumer.ts:40</a></li>
 								</ul>
 							</aside>
-							<h4 class="tsd-returns-title">Returns <a href="slotconnection.html" class="tsd-signature-type">SlotConnection</a></h4>
+							<h4 class="tsd-returns-title">Returns <a href="description.html" class="tsd-signature-type">Description</a></h4>
 						</li>
 					</ul>
 				</section>
@@ -460,7 +461,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="slotconsumer.html">SlotConsumer</a>.<a href="slotconsumer.html#renderings">renderings</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/41b4caa/src/runtime/slot-consumer.ts#L41">runtime/slot-consumer.ts:41</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/a06f8ca/src/runtime/slot-consumer.ts#L46">runtime/slot-consumer.ts:46</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-symbol">[</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">object</span><span class="tsd-signature-symbol">]</span><span class="tsd-signature-symbol">[]</span></h4>
@@ -477,7 +478,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/41b4caa/src/planning/suggest-dom-consumer.ts#L28">planning/suggest-dom-consumer.ts:28</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/a06f8ca/src/planning/suggest-dom-consumer.ts#L28">planning/suggest-dom-consumer.ts:28</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <a href="suggestion.html" class="tsd-signature-type">Suggestion</a></h4>
@@ -495,7 +496,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="slotdomconsumer.html">SlotDomConsumer</a>.<a href="slotdomconsumer.html#templateprefix">templatePrefix</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/41b4caa/src/planning/suggest-dom-consumer.ts#L32">planning/suggest-dom-consumer.ts:32</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/a06f8ca/src/planning/suggest-dom-consumer.ts#L32">planning/suggest-dom-consumer.ts:32</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
@@ -516,7 +517,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="slotconsumer.html">SlotConsumer</a>.<a href="slotconsumer.html#_clearinnerslotcontainers">_clearInnerSlotContainers</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/41b4caa/src/runtime/slot-consumer.ts#L178">runtime/slot-consumer.ts:178</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/a06f8ca/src/runtime/slot-consumer.ts#L183">runtime/slot-consumer.ts:183</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -540,7 +541,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="slotdomconsumer.html">SlotDomConsumer</a>.<a href="slotdomconsumer.html#_eventmapper">_eventMapper</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/41b4caa/src/runtime/slot-dom-consumer.ts#L312">runtime/slot-dom-consumer.ts:312</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/a06f8ca/src/runtime/slot-dom-consumer.ts#L313">runtime/slot-dom-consumer.ts:313</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -573,7 +574,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="slotconsumer.html">SlotConsumer</a>.<a href="slotconsumer.html#_initinnerslotcontainer">_initInnerSlotContainer</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/41b4caa/src/runtime/slot-consumer.ts#L167">runtime/slot-consumer.ts:167</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/a06f8ca/src/runtime/slot-consumer.ts#L172">runtime/slot-consumer.ts:172</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -603,7 +604,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="slotdomconsumer.html">SlotDomConsumer</a>.<a href="slotdomconsumer.html#_initmutationobserver">_initMutationObserver</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/41b4caa/src/runtime/slot-dom-consumer.ts#L287">runtime/slot-dom-consumer.ts:287</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/a06f8ca/src/runtime/slot-dom-consumer.ts#L288">runtime/slot-dom-consumer.ts:288</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">MutationObserver</span>
@@ -624,7 +625,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="slotdomconsumer.html">SlotDomConsumer</a>.<a href="slotdomconsumer.html#_modelforsetslotconsumedassetslot">_modelForSetSlotConsumedAsSetSlot</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/41b4caa/src/runtime/slot-dom-consumer.ts#L115">runtime/slot-dom-consumer.ts:115</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/a06f8ca/src/runtime/slot-dom-consumer.ts#L116">runtime/slot-dom-consumer.ts:116</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -651,7 +652,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="slotdomconsumer.html">SlotDomConsumer</a>.<a href="slotdomconsumer.html#_modelforsetslotconsumedassingletonslot">_modelForSetSlotConsumedAsSingletonSlot</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/41b4caa/src/runtime/slot-dom-consumer.ts#L121">runtime/slot-dom-consumer.ts:121</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/a06f8ca/src/runtime/slot-dom-consumer.ts#L122">runtime/slot-dom-consumer.ts:122</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -678,7 +679,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="slotdomconsumer.html">SlotDomConsumer</a>.<a href="slotdomconsumer.html#_modelforsingletonslot">_modelForSingletonSlot</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/41b4caa/src/runtime/slot-dom-consumer.ts#L110">runtime/slot-dom-consumer.ts:110</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/a06f8ca/src/runtime/slot-dom-consumer.ts#L111">runtime/slot-dom-consumer.ts:111</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -705,7 +706,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="slotdomconsumer.html">SlotDomConsumer</a>.<a href="slotdomconsumer.html#_observe">_observe</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/41b4caa/src/runtime/slot-dom-consumer.ts#L211">runtime/slot-dom-consumer.ts:211</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/a06f8ca/src/runtime/slot-dom-consumer.ts#L212">runtime/slot-dom-consumer.ts:212</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -729,7 +730,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="slotdomconsumer.html">SlotDomConsumer</a>.<a href="slotdomconsumer.html#_onupdate">_onUpdate</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/41b4caa/src/runtime/slot-dom-consumer.ts#L199">runtime/slot-dom-consumer.ts:199</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/a06f8ca/src/runtime/slot-dom-consumer.ts#L200">runtime/slot-dom-consumer.ts:200</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -753,7 +754,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="slotdomconsumer.html">SlotDomConsumer</a>.<a href="slotdomconsumer.html#_settemplate">_setTemplate</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/41b4caa/src/runtime/slot-dom-consumer.ts#L185">runtime/slot-dom-consumer.ts:185</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/a06f8ca/src/runtime/slot-dom-consumer.ts#L186">runtime/slot-dom-consumer.ts:186</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -786,7 +787,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="slotdomconsumer.html">SlotDomConsumer</a>.<a href="slotdomconsumer.html#_stamptemplate">_stampTemplate</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/41b4caa/src/runtime/slot-dom-consumer.ts#L223">runtime/slot-dom-consumer.ts:223</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/a06f8ca/src/runtime/slot-dom-consumer.ts#L224">runtime/slot-dom-consumer.ts:224</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -813,7 +814,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="slotdomconsumer.html">SlotDomConsumer</a>.<a href="slotdomconsumer.html#_updatemodel">_updateModel</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/41b4caa/src/runtime/slot-dom-consumer.ts#L234">runtime/slot-dom-consumer.ts:234</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/a06f8ca/src/runtime/slot-dom-consumer.ts#L235">runtime/slot-dom-consumer.ts:235</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -837,7 +838,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="slotconsumer.html">SlotConsumer</a>.<a href="slotconsumer.html#addhostedslotcontexts">addHostedSlotContexts</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/41b4caa/src/runtime/slot-consumer.ts#L46">runtime/slot-consumer.ts:46</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/a06f8ca/src/runtime/slot-consumer.ts#L51">runtime/slot-consumer.ts:51</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -861,7 +862,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="slotconsumer.html">SlotConsumer</a>.<a href="slotconsumer.html#addrenderingbysubid">addRenderingBySubId</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/41b4caa/src/runtime/slot-consumer.ts#L42">runtime/slot-consumer.ts:42</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/a06f8ca/src/runtime/slot-consumer.ts#L47">runtime/slot-consumer.ts:47</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -889,7 +890,7 @@
 								<p>Inherited from <a href="slotdomconsumer.html">SlotDomConsumer</a>.<a href="slotdomconsumer.html#clearcontainer">clearContainer</a></p>
 								<p>Overrides <a href="slotconsumer.html">SlotConsumer</a>.<a href="slotconsumer.html#clearcontainer">clearContainer</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/41b4caa/src/runtime/slot-dom-consumer.ts#L143">runtime/slot-dom-consumer.ts:143</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/a06f8ca/src/runtime/slot-dom-consumer.ts#L144">runtime/slot-dom-consumer.ts:144</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -914,7 +915,7 @@
 								<p>Inherited from <a href="slotdomconsumer.html">SlotDomConsumer</a>.<a href="slotdomconsumer.html#constructrenderrequest">constructRenderRequest</a></p>
 								<p>Overrides <a href="slotconsumer.html">SlotConsumer</a>.<a href="slotconsumer.html#constructrenderrequest">constructRenderRequest</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/41b4caa/src/runtime/slot-dom-consumer.ts#L31">runtime/slot-dom-consumer.ts:31</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/a06f8ca/src/runtime/slot-dom-consumer.ts#L32">runtime/slot-dom-consumer.ts:32</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></h4>
@@ -933,7 +934,7 @@
 								<p>Inherited from <a href="slotdomconsumer.html">SlotDomConsumer</a>.<a href="slotdomconsumer.html#createnewcontainer">createNewContainer</a></p>
 								<p>Overrides <a href="slotconsumer.html">SlotConsumer</a>.<a href="slotconsumer.html#createnewcontainer">createNewContainer</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/41b4caa/src/runtime/slot-dom-consumer.ts#L48">runtime/slot-dom-consumer.ts:48</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/a06f8ca/src/runtime/slot-dom-consumer.ts#L49">runtime/slot-dom-consumer.ts:49</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -960,7 +961,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="slotconsumer.html">SlotConsumer</a>.<a href="slotconsumer.html#createprovidedcontexts">createProvidedContexts</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/41b4caa/src/runtime/slot-consumer.ts#L113">runtime/slot-consumer.ts:113</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/a06f8ca/src/runtime/slot-consumer.ts#L118">runtime/slot-consumer.ts:118</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <a href="providedslotcontext.html" class="tsd-signature-type">ProvidedSlotContext</a><span class="tsd-signature-symbol">[]</span></h4>
@@ -978,7 +979,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="slotdomconsumer.html">SlotDomConsumer</a>.<a href="slotdomconsumer.html#createtemplateelement">createTemplateElement</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/41b4caa/src/runtime/slot-dom-consumer.ts#L177">runtime/slot-dom-consumer.ts:177</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/a06f8ca/src/runtime/slot-dom-consumer.ts#L178">runtime/slot-dom-consumer.ts:178</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1006,7 +1007,7 @@
 								<p>Inherited from <a href="slotdomconsumer.html">SlotDomConsumer</a>.<a href="slotdomconsumer.html#deletecontainer">deleteContainer</a></p>
 								<p>Overrides <a href="slotconsumer.html">SlotConsumer</a>.<a href="slotconsumer.html#deletecontainer">deleteContainer</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/41b4caa/src/runtime/slot-dom-consumer.ts#L65">runtime/slot-dom-consumer.ts:65</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/a06f8ca/src/runtime/slot-dom-consumer.ts#L66">runtime/slot-dom-consumer.ts:66</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1031,7 +1032,7 @@
 								<p>Inherited from <a href="slotdomconsumer.html">SlotDomConsumer</a>.<a href="slotdomconsumer.html#dispose">dispose</a></p>
 								<p>Overrides <a href="slotconsumer.html">SlotConsumer</a>.<a href="slotconsumer.html#dispose">dispose</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/41b4caa/src/runtime/slot-dom-consumer.ts#L150">runtime/slot-dom-consumer.ts:150</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/a06f8ca/src/runtime/slot-dom-consumer.ts#L151">runtime/slot-dom-consumer.ts:151</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -1049,7 +1050,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="slotconsumer.html">SlotConsumer</a>.<a href="slotconsumer.html#findprovidedcontext">findProvidedContext</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/41b4caa/src/runtime/slot-consumer.ts#L55">runtime/slot-consumer.ts:55</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/a06f8ca/src/runtime/slot-consumer.ts#L60">runtime/slot-consumer.ts:60</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1091,7 +1092,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="slotdomconsumer.html">SlotDomConsumer</a>.<a href="slotdomconsumer.html#formatcontent">formatContent</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/41b4caa/src/planning/suggest-dom-consumer.ts#L36">planning/suggest-dom-consumer.ts:36</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/a06f8ca/src/planning/suggest-dom-consumer.ts#L36">planning/suggest-dom-consumer.ts:36</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1132,7 +1133,7 @@
 								<p>Inherited from <a href="slotdomconsumer.html">SlotDomConsumer</a>.<a href="slotdomconsumer.html#formathostedcontent">formatHostedContent</a></p>
 								<p>Overrides <a href="slotconsumer.html">SlotConsumer</a>.<a href="slotconsumer.html#formathostedcontent">formatHostedContent</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/41b4caa/src/runtime/slot-dom-consumer.ts#L333">runtime/slot-dom-consumer.ts:333</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/a06f8ca/src/runtime/slot-dom-consumer.ts#L334">runtime/slot-dom-consumer.ts:334</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1156,7 +1157,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="slotconsumer.html">SlotConsumer</a>.<a href="slotconsumer.html#getinnercontainer">getInnerContainer</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/41b4caa/src/runtime/slot-consumer.ts#L163">runtime/slot-consumer.ts:163</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/a06f8ca/src/runtime/slot-consumer.ts#L168">runtime/slot-consumer.ts:168</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1180,7 +1181,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="slotdomconsumer.html">SlotDomConsumer</a>.<a href="slotdomconsumer.html#getnodevalue">getNodeValue</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/41b4caa/src/runtime/slot-dom-consumer.ts#L260">runtime/slot-dom-consumer.ts:260</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/a06f8ca/src/runtime/slot-dom-consumer.ts#L261">runtime/slot-dom-consumer.ts:261</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1207,7 +1208,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="slotconsumer.html">SlotConsumer</a>.<a href="slotconsumer.html#getrendering">getRendering</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/41b4caa/src/runtime/slot-consumer.ts#L40">runtime/slot-consumer.ts:40</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/a06f8ca/src/runtime/slot-consumer.ts#L45">runtime/slot-consumer.ts:45</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1242,7 +1243,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="slotdomconsumer.html">SlotDomConsumer</a>.<a href="slotdomconsumer.html#initinnercontainers">initInnerContainers</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/41b4caa/src/runtime/slot-dom-consumer.ts#L240">runtime/slot-dom-consumer.ts:240</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/a06f8ca/src/runtime/slot-dom-consumer.ts#L241">runtime/slot-dom-consumer.ts:241</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1266,7 +1267,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="slotdomconsumer.html">SlotDomConsumer</a>.<a href="slotdomconsumer.html#isdirectinnerslot">isDirectInnerSlot</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/41b4caa/src/runtime/slot-dom-consumer.ts#L265">runtime/slot-dom-consumer.ts:265</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/a06f8ca/src/runtime/slot-dom-consumer.ts#L266">runtime/slot-dom-consumer.ts:266</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1294,7 +1295,7 @@
 								<p>Inherited from <a href="slotdomconsumer.html">SlotDomConsumer</a>.<a href="slotdomconsumer.html#issamecontainer">isSameContainer</a></p>
 								<p>Overrides <a href="slotconsumer.html">SlotConsumer</a>.<a href="slotconsumer.html#issamecontainer">isSameContainer</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/41b4caa/src/runtime/slot-dom-consumer.ts#L44">runtime/slot-dom-consumer.ts:44</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/a06f8ca/src/runtime/slot-dom-consumer.ts#L45">runtime/slot-dom-consumer.ts:45</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1321,7 +1322,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="slotconsumer.html">SlotConsumer</a>.<a href="slotconsumer.html#oncontainerupdate">onContainerUpdate</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/41b4caa/src/planning/suggest-dom-consumer.ts#L44">planning/suggest-dom-consumer.ts:44</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/a06f8ca/src/planning/suggest-dom-consumer.ts#L44">planning/suggest-dom-consumer.ts:44</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1341,25 +1342,37 @@
 					<a name="populatehandledescriptions" class="tsd-anchor"></a>
 					<h3>populate<wbr>Handle<wbr>Descriptions</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
-						<li class="tsd-signature tsd-kind-icon">populate<wbr>Handle<wbr>Descriptions<span class="tsd-signature-symbol">(</span>description<span class="tsd-signature-symbol">: </span><a href="description.html" class="tsd-signature-type">Description</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">object</span></li>
+						<li class="tsd-signature tsd-kind-icon">populate<wbr>Handle<wbr>Descriptions<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">object</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="slotconsumer.html">SlotConsumer</a>.<a href="slotconsumer.html#populatehandledescriptions">populateHandleDescriptions</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/41b4caa/src/runtime/slot-consumer.ts#L151">runtime/slot-consumer.ts:151</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/a06f8ca/src/runtime/slot-consumer.ts#L156">runtime/slot-consumer.ts:156</a></li>
 								</ul>
 							</aside>
-							<h4 class="tsd-parameters-title">Parameters</h4>
-							<ul class="tsd-parameters">
-								<li>
-									<h5>description: <a href="description.html" class="tsd-signature-type">Description</a></h5>
-								</li>
-							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">object</span></h4>
 							<ul class="tsd-parameters">
 							</ul>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+					<a name="resetdescription" class="tsd-anchor"></a>
+					<h3>reset<wbr>Description</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+						<li class="tsd-signature tsd-kind-icon">reset<wbr>Description<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from <a href="slotconsumer.html">SlotConsumer</a>.<a href="slotconsumer.html#resetdescription">resetDescription</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/a06f8ca/src/runtime/slot-consumer.ts#L41">runtime/slot-consumer.ts:41</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -1375,7 +1388,7 @@
 								<p>Inherited from <a href="slotdomconsumer.html">SlotDomConsumer</a>.<a href="slotdomconsumer.html#setcontainercontent">setContainerContent</a></p>
 								<p>Overrides <a href="slotconsumer.html">SlotConsumer</a>.<a href="slotconsumer.html#setcontainercontent">setContainerContent</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/41b4caa/src/runtime/slot-dom-consumer.ts#L126">runtime/slot-dom-consumer.ts:126</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/a06f8ca/src/runtime/slot-dom-consumer.ts#L127">runtime/slot-dom-consumer.ts:127</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1398,14 +1411,14 @@
 					<a name="setcontent" class="tsd-anchor"></a>
 					<h3>set<wbr>Content</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
-						<li class="tsd-signature tsd-kind-icon">set<wbr>Content<span class="tsd-signature-symbol">(</span>content<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, handler<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, description<span class="tsd-signature-symbol">?: </span><a href="description.html" class="tsd-signature-type">Description</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+						<li class="tsd-signature tsd-kind-icon">set<wbr>Content<span class="tsd-signature-symbol">(</span>content<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, handler<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="slotconsumer.html">SlotConsumer</a>.<a href="slotconsumer.html#setcontent">setContent</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/41b4caa/src/runtime/slot-consumer.ts#L141">runtime/slot-consumer.ts:141</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/a06f8ca/src/runtime/slot-consumer.ts#L146">runtime/slot-consumer.ts:146</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1415,9 +1428,6 @@
 								</li>
 								<li>
 									<h5>handler: <span class="tsd-signature-type">any</span></h5>
-								</li>
-								<li>
-									<h5><span class="tsd-flag ts-flagOptional">Optional</span> description: <a href="description.html" class="tsd-signature-type">Description</a></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -1435,7 +1445,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="slotconsumer.html">SlotConsumer</a>.<a href="slotconsumer.html#startrender">startRender</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/41b4caa/src/runtime/slot-consumer.ts#L124">runtime/slot-consumer.ts:124</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/a06f8ca/src/runtime/slot-consumer.ts#L129">runtime/slot-consumer.ts:129</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -1453,7 +1463,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="slotconsumer.html">SlotConsumer</a>.<a href="slotconsumer.html#stoprender">stopRender</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/41b4caa/src/runtime/slot-consumer.ts#L135">runtime/slot-consumer.ts:135</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/a06f8ca/src/runtime/slot-consumer.ts#L140">runtime/slot-consumer.ts:140</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -1471,7 +1481,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="slotconsumer.html">SlotConsumer</a>.<a href="slotconsumer.html#updateprovidedcontexts">updateProvidedContexts</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/41b4caa/src/runtime/slot-consumer.ts#L118">runtime/slot-consumer.ts:118</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/a06f8ca/src/runtime/slot-consumer.ts#L123">runtime/slot-consumer.ts:123</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -1490,7 +1500,7 @@
 								<p>Inherited from <a href="slotdomconsumer.html">SlotDomConsumer</a>.<a href="slotdomconsumer.html#clear">clear</a></p>
 								<p>Overrides <a href="slotconsumer.html">SlotConsumer</a>.<a href="slotconsumer.html#clear">clear</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/41b4caa/src/runtime/slot-dom-consumer.ts#L158">runtime/slot-dom-consumer.ts:158</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/a06f8ca/src/runtime/slot-dom-consumer.ts#L159">runtime/slot-dom-consumer.ts:159</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1514,7 +1524,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="slotdomconsumer.html">SlotDomConsumer</a>.<a href="slotdomconsumer.html#clearcache">clearCache</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/41b4caa/src/runtime/slot-dom-consumer.ts#L162">runtime/slot-dom-consumer.ts:162</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/a06f8ca/src/runtime/slot-dom-consumer.ts#L163">runtime/slot-dom-consumer.ts:163</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -1532,7 +1542,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="slotdomconsumer.html">SlotDomConsumer</a>.<a href="slotdomconsumer.html#findrootcontainers">findRootContainers</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/41b4caa/src/runtime/slot-dom-consumer.ts#L166">runtime/slot-dom-consumer.ts:166</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/a06f8ca/src/runtime/slot-dom-consumer.ts#L167">runtime/slot-dom-consumer.ts:167</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1558,7 +1568,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="slotdomconsumer.html">SlotDomConsumer</a>.<a href="slotdomconsumer.html#hastemplate">hasTemplate</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/41b4caa/src/runtime/slot-dom-consumer.ts#L40">runtime/slot-dom-consumer.ts:40</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/a06f8ca/src/runtime/slot-dom-consumer.ts#L41">runtime/slot-dom-consumer.ts:41</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1581,7 +1591,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/41b4caa/src/planning/suggest-dom-consumer.ts#L52">planning/suggest-dom-consumer.ts:52</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/a06f8ca/src/planning/suggest-dom-consumer.ts#L52">planning/suggest-dom-consumer.ts:52</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1623,9 +1633,6 @@
 							<li class=" tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite">
 								<a href="suggestdomconsumer.html#constructor" class="tsd-kind-icon">constructor</a>
 							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
-								<a href="suggestdomconsumer.html#_consumeconn" class="tsd-kind-icon">_consume<wbr>Conn</a>
-							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
 								<a href="suggestdomconsumer.html#_eventhandler" class="tsd-kind-icon">_event<wbr>Handler</a>
 							</li>
@@ -1637,6 +1644,9 @@
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
 								<a href="suggestdomconsumer.html#arc" class="tsd-kind-icon">arc</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
+								<a href="suggestdomconsumer.html#consumeconn" class="tsd-kind-icon">consume<wbr>Conn</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
 								<a href="suggestdomconsumer.html#containerkind" class="tsd-kind-icon">container<wbr>Kind</a>
@@ -1663,7 +1673,7 @@
 								<a href="suggestdomconsumer.html#allprovidedslotcontexts" class="tsd-kind-icon">all<wbr>Provided<wbr>Slot<wbr>Contexts</a>
 							</li>
 							<li class=" tsd-kind-get-signature tsd-parent-kind-class tsd-is-inherited">
-								<a href="suggestdomconsumer.html#consumeconn" class="tsd-kind-icon">consume<wbr>Conn</a>
+								<a href="suggestdomconsumer.html#description" class="tsd-kind-icon">description</a>
 							</li>
 							<li class=" tsd-kind-get-signature tsd-parent-kind-class tsd-is-inherited">
 								<a href="suggestdomconsumer.html#renderings" class="tsd-kind-icon">renderings</a>
@@ -1769,6 +1779,9 @@
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
 								<a href="suggestdomconsumer.html#populatehandledescriptions" class="tsd-kind-icon">populate<wbr>Handle<wbr>Descriptions</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+								<a href="suggestdomconsumer.html#resetdescription" class="tsd-kind-icon">reset<wbr>Description</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited">
 								<a href="suggestdomconsumer.html#setcontainercontent" class="tsd-kind-icon">set<wbr>Container<wbr>Content</a>

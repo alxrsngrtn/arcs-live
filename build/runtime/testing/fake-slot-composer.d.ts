@@ -8,11 +8,12 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { SlotComposer, SlotComposerOptions } from '../slot-composer.js';
+import { SlotContext } from '../slot-context.js';
 /**
  * A helper class for NodeJS tests that mimics SlotComposer without relying on DOM APIs.
  */
 export declare class FakeSlotComposer extends SlotComposer {
     constructor(options?: SlotComposerOptions);
-    renderSlot(particle: any, slotName: any, content: any): Promise<void>;
-    readonly contexts: import("../slot-context.js").SlotContext[];
+    renderSlot(particle: any, slotName: any, content: any): void;
+    readonly contexts: SlotContext[];
 }

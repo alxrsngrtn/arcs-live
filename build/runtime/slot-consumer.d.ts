@@ -12,7 +12,7 @@ import { Description } from './description.js';
 import { SlotConnection } from './recipe/slot-connection.js';
 import { HostedSlotContext, ProvidedSlotContext, SlotContext } from './slot-context.js';
 export declare class SlotConsumer {
-    _consumeConn?: SlotConnection;
+    readonly consumeConn?: SlotConnection;
     slotContext: SlotContext;
     readonly directlyProvidedSlotContexts: ProvidedSlotContext[];
     readonly hostedSlotContexts: HostedSlotContext[];
@@ -23,8 +23,10 @@ export declare class SlotConsumer {
     private _renderingBySubId;
     private innerContainerBySlotId;
     readonly arc: Arc;
+    private _description;
     constructor(arc: Arc, consumeConn?: SlotConnection, containerKind?: string);
-    readonly consumeConn: SlotConnection;
+    readonly description: Description;
+    resetDescription(): Promise<void>;
     getRendering(subId?: any): {
         container?: {};
         model?: any;
@@ -45,8 +47,8 @@ export declare class SlotConsumer {
     updateProvidedContexts(): void;
     startRender(): void;
     stopRender(): void;
-    setContent(content: any, handler: any, description?: Description): void;
-    populateHandleDescriptions(description: Description): {};
+    setContent(content: any, handler: any): void;
+    populateHandleDescriptions(): {};
     getInnerContainer(slotId: any): any;
     _initInnerSlotContainer(slotId: any, subId: any, container: any): void;
     _clearInnerSlotContainers(subIds: any): void;

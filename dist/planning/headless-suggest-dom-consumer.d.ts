@@ -13,7 +13,7 @@ export declare class HeadlessSuggestDomConsumer extends SuggestDomConsumer {
     readonly templatePrefix: string;
     onContainerUpdate(container: any, originalContainer: any): void;
     static render(arc: Arc, container: any, plan: any, content: any): SuggestDomConsumer;
-    setContent(content: any, handler: any): Promise<void>;
+    setContent(content: any, handler: any): void;
     createNewContainer(container: any, subId: any): any;
     isSameContainer(container: any, contextContainer: any): boolean;
     getInnerContainer(slotId: any): any;

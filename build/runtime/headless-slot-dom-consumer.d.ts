@@ -13,7 +13,7 @@ export declare class HeadlessSlotDomConsumer extends SlotDomConsumer {
     contentAvailable: any;
     _contentAvailableResolve: any;
     constructor(arc: any, consumeConn: any);
-    setContent(content: any, handler: any, description: any): void;
+    setContent(content: any, handler: any): void;
     createNewContainer(container: any, subId: any): any;
     isSameContainer(container: any, contextContainer: any): boolean;
     getInnerContainer(slotId: any): any;

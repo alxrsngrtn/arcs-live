@@ -97,8 +97,8 @@ export class ProvidedSlotContext extends SlotContext {
             ? this.spec.handles.map(handle => this.sourceSlotConsumer.consumeConn.particle.connections[handle].handle).filter(a => a !== undefined)
             : [];
     }
-    onRenderSlot(consumer, content, handler, description) {
-        consumer.setContent(content, handler, description);
+    onRenderSlot(consumer, content, handler) {
+        consumer.setContent(content, handler);
     }
     get container() { return this._container; }
     get containerAvailable() { return !!this._container; }

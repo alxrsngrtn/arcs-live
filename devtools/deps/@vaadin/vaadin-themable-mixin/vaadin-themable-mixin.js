@@ -33,7 +33,16 @@ export const ThemableMixin = superClass => class VaadinThemableMixin extends The
     let hasThemes = false;
     const defaultModuleName = this.is + '-default-theme';
 
-    Object.keys(modules).forEach(moduleName => {
+    Object.keys(modules).sort((moduleNameA, moduleNameB) => {
+      const vaadinA = moduleNameA.indexOf('vaadin-') === 0;
+      const vaadinB = moduleNameB.indexOf('vaadin-') === 0;
+
+      if (vaadinA !== vaadinB) {
+        return vaadinA ? -1 : 1;
+      } else {
+        return 0;
+      }
+    }).forEach(moduleName => {
       if (moduleName !== defaultModuleName) {
         const themeFor = modules[moduleName].getAttribute('theme-for');
         if (themeFor) {
