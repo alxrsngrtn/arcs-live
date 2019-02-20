@@ -1,6 +1,6 @@
-import { Arc } from '../../runtime/arc.js';
-import { SuggestDomConsumer } from '../suggest-dom-consumer.js';
-export declare class MockSuggestDomConsumer extends SuggestDomConsumer {
+import { Arc } from '../runtime/arc.js';
+import { SuggestDomConsumer } from './suggest-dom-consumer.js';
+export declare class HeadlessSuggestDomConsumer extends SuggestDomConsumer {
     _eventHandler: any;
     _setContentPromise: any;
     _suggestion: any;

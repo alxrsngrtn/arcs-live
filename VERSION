@@ -1,5 +1,5 @@
-commit b2be96d50309a074545ba0c5af87569c0e5e6fc3
-Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Wed Feb 20 11:51:10 2019 +1100
+commit ec347c5f9bfda6a04d8a2852b117236c9a0154ae
+Author: raulverag <42563960+raulverag@users.noreply.github.com>
+Date:   Tue Feb 19 18:11:19 2019 -0800
 
-    Avoid invoke-planner message in no arc is available (#2699)
+    MockSuggestDomConsumer -> HeadlessSuggestDomConsumer (#2700)

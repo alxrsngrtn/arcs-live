@@ -27944,7 +27944,7 @@ class SuggestDomConsumer extends SlotDomConsumer {
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-class MockSuggestDomConsumer extends SuggestDomConsumer {
+class HeadlessSuggestDomConsumer extends SuggestDomConsumer {
     constructor(arc, containerKind, suggestion, suggestionContent, eventHandler) {
         super(arc, containerKind, suggestion, suggestionContent, eventHandler);
         this._suggestion = suggestion;
@@ -28035,7 +28035,7 @@ class PlanningModalityHandler extends ModalityHandler {
         this.suggestionConsumerClass = suggestionConsumerClass;
     }
     static createHeadlessHandler() {
-        return new PlanningModalityHandler(HeadlessSlotDomConsumer, MockSuggestDomConsumer);
+        return new PlanningModalityHandler(HeadlessSlotDomConsumer, HeadlessSuggestDomConsumer);
     }
 }
 PlanningModalityHandler.domHandler = new PlanningModalityHandler(SlotDomConsumer, SuggestDomConsumer, DescriptionDomFormatter);

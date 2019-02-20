@@ -7,9 +7,9 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-import { assert } from '../../platform/assert-web.js';
-import { SuggestDomConsumer } from '../suggest-dom-consumer.js';
-export class MockSuggestDomConsumer extends SuggestDomConsumer {
+import { assert } from '../platform/assert-web.js';
+import { SuggestDomConsumer } from './suggest-dom-consumer.js';
+export class HeadlessSuggestDomConsumer extends SuggestDomConsumer {
     constructor(arc, containerKind, suggestion, suggestionContent, eventHandler) {
         super(arc, containerKind, suggestion, suggestionContent, eventHandler);
         this._suggestion = suggestion;
@@ -84,4 +84,4 @@ export class MockSuggestDomConsumer extends SuggestDomConsumer {
     _initMutationObserver() { return null; }
     _observe() { }
 }
-//# sourceMappingURL=mock-suggest-dom-consumer.js.map
+//# sourceMappingURL=headless-suggest-dom-consumer.js.map

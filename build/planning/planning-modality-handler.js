@@ -11,15 +11,15 @@ import { DescriptionDomFormatter } from '../runtime/description-dom-formatter.js
 import { HeadlessSlotDomConsumer } from '../runtime/headless-slot-dom-consumer.js';
 import { ModalityHandler } from '../runtime/modality-handler.js';
 import { SlotDomConsumer } from '../runtime/slot-dom-consumer.js';
+import { HeadlessSuggestDomConsumer } from './headless-suggest-dom-consumer.js';
 import { SuggestDomConsumer } from './suggest-dom-consumer.js';
-import { MockSuggestDomConsumer } from './testing/mock-suggest-dom-consumer.js';
 export class PlanningModalityHandler extends ModalityHandler {
     constructor(slotConsumerClass, suggestionConsumerClass, descriptionFormatter) {
         super(slotConsumerClass, descriptionFormatter);
         this.suggestionConsumerClass = suggestionConsumerClass;
     }
     static createHeadlessHandler() {
-        return new PlanningModalityHandler(HeadlessSlotDomConsumer, MockSuggestDomConsumer);
+        return new PlanningModalityHandler(HeadlessSlotDomConsumer, HeadlessSuggestDomConsumer);
     }
 }
 PlanningModalityHandler.domHandler = new PlanningModalityHandler(SlotDomConsumer, SuggestDomConsumer, DescriptionDomFormatter);
