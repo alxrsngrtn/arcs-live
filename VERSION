@@ -1,5 +1,7 @@
-commit 2e97567e434f6a4047fbe7493e49cf5b2151969b
-Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Thu Feb 21 08:54:48 2019 +1100
+commit 3bcc998a2dcf301c526ed88c69575fec1bdc5a7c
+Author: raulverag <42563960+raulverag@users.noreply.github.com>
+Date:   Thu Feb 21 14:46:06 2019 -0800
 
-    Simple favicon for standalone ArcsExplorer (#2704)
+    Refactor manfifest integration tests into runtime and planning tests. (#2707)
+    
+    Also splits out the shared setup function.
