@@ -1,9 +1,5 @@
-commit b5883ebab8fc60b0934c01934ed138c758b1f9c1
+commit a027e612b00666f21c1b01405b8ede83fd179d4c
 Author: raulverag <42563960+raulverag@users.noreply.github.com>
-Date:   Thu Feb 21 17:06:35 2019 -0800
+Date:   Thu Feb 21 18:32:46 2019 -0800
 
-    Remove dependency on planning from FakeSlotComposer (#2708)
-    
-    * Remove dependency on planning from FakeSlotComposer
-    
-    * Remove blank line causing lint failure on Travis
+    Disable import-ordering rule (#2710)
