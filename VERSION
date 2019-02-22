@@ -1,7 +1,7 @@
-commit 3bcc998a2dcf301c526ed88c69575fec1bdc5a7c
-Author: raulverag <42563960+raulverag@users.noreply.github.com>
-Date:   Thu Feb 21 14:46:06 2019 -0800
+commit 81bff5f6a977a06c9c09b36c347c8593a73fc752
+Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
+Date:   Fri Feb 22 12:04:15 2019 +1100
 
-    Refactor manfifest integration tests into runtime and planning tests. (#2707)
+    Remove CallbackTracker from Firebase manual tests. (#2706)
     
-    Also splits out the shared setup function.
+    Unfortunately the new "direct" backing store mechanism for Firebase introduces unpredictable latencies in some of the notification messages, so relying on message counts is likely to be flaky.
