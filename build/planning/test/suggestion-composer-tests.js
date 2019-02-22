@@ -10,6 +10,7 @@
 import { assert } from '../../platform/chai-web.js';
 import { MockSlotComposer } from '../../runtime/testing/mock-slot-composer.js';
 import { TestHelper } from '../../runtime/testing/test-helper.js';
+import { PlanningModalityHandler } from '../planning-modality-handler.js';
 import { SuggestionComposer } from '../suggestion-composer.js';
 class TestSuggestionComposer extends SuggestionComposer {
     get suggestConsumers() {
@@ -18,7 +19,9 @@ class TestSuggestionComposer extends SuggestionComposer {
 }
 describe('suggestion composer', () => {
     it('singleton suggestion slots', async () => {
-        const slotComposer = new MockSlotComposer().newExpectations('debug');
+        const slotComposer = new MockSlotComposer({
+            modalityHandler: PlanningModalityHandler.createHeadlessHandler(),
+        }).newExpectations('debug');
         const helper = await TestHelper.createAndPlan({
             manifestFilename: './src/runtime/test/artifacts/suggestions/Cake.recipes',
             slotComposer
@@ -47,7 +50,10 @@ describe('suggestion composer', () => {
         await slotComposer.expectationsCompleted();
     });
     it('suggestion set-slots', async () => {
-        const slotComposer = new MockSlotComposer({ strict: false }).newExpectations('debug');
+        const slotComposer = new MockSlotComposer({
+            strict: false,
+            modalityHandler: PlanningModalityHandler.createHeadlessHandler(),
+        }).newExpectations('debug');
         const helper = await TestHelper.createAndPlan({
             manifestFilename: './src/runtime/test/artifacts/suggestions/Cakes.recipes',
             slotComposer

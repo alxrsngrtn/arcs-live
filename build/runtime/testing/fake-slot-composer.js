@@ -7,14 +7,17 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-import { PlanningModalityHandler } from '../../planning/planning-modality-handler.js';
+import { ModalityHandler } from '../modality-handler.js';
 import { SlotComposer } from '../slot-composer.js';
 /**
  * A helper class for NodeJS tests that mimics SlotComposer without relying on DOM APIs.
  */
 export class FakeSlotComposer extends SlotComposer {
     constructor(options = {}) {
-        super(Object.assign({ rootContainer: { 'root': 'root-context' }, modalityHandler: PlanningModalityHandler.createHeadlessHandler() }, options));
+        if (options.modalityHandler === undefined) {
+            options.modalityHandler = ModalityHandler.createHeadlessHandler();
+        }
+        super(Object.assign({ rootContainer: { 'root': 'root-context' } }, options));
     }
     renderSlot(particle, slotName, content) {
         super.renderSlot(particle, slotName, content);
