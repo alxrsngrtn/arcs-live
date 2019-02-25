@@ -5,19 +5,26 @@
 // Code distributed by Google as part of this project is also
 // subject to an additional IP rights grant found at
 // http://polymer.github.io/PATENTS.txt
-import { FirebaseStorage } from './firebase-storage.js';
-import { PouchDbStorage } from './pouchdb/pouch-db-storage.js';
-import { SyntheticStorage } from './synthetic-storage.js';
 import { VolatileStorage } from './volatile-storage.js';
+import { SyntheticStorage } from './synthetic-storage.js';
+// TODO(sjmiles): StorageProviderFactory.register can be used
+// to install additional providers, as long as it's invoked
+// before any StorageProviderFactory objects are constructed.
+const providers = {
+    volatile: { storage: VolatileStorage, isPersistent: false },
+    synthetic: { storage: SyntheticStorage, isPersistent: false }
+};
 export class StorageProviderFactory {
     constructor(arcId) {
         this.arcId = arcId;
-        this._storageInstances = {
-            volatile: { storage: new VolatileStorage(arcId), isPersistent: false },
-            firebase: { storage: new FirebaseStorage(arcId), isPersistent: true },
-            pouchdb: { storage: new PouchDbStorage(arcId), isPersistent: true },
-            synthetic: { storage: new SyntheticStorage(arcId, this), isPersistent: false },
-        };
+        this._storageInstances = {};
+        Object.keys(providers).forEach(name => {
+            const { storage, isPersistent } = providers[name];
+            this._storageInstances[name] = { storage: new storage(arcId, this), isPersistent };
+        });
+    }
+    static register(name, instance) {
+        providers[name] = instance;
     }
     getInstance(key) {
         const instance = this._storageInstances[key.split(':')[0]];

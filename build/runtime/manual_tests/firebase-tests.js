@@ -11,7 +11,7 @@ import { assert } from '../../platform/chai-web.js';
 import { Arc } from '../arc.js';
 import { Loader } from '../loader.js';
 import { Manifest } from '../manifest.js';
-import { resetStorageForTesting } from '../storage/firebase-storage.js';
+import { resetStorageForTesting } from '../storage/firebase/firebase-storage.js';
 import { StorageProviderFactory } from '../storage/storage-provider-factory.js';
 import { StubLoader } from '../testing/stub-loader.js';
 import { TestHelper } from '../testing/test-helper.js';

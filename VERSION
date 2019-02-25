@@ -1,5 +1,13 @@
-commit c2014f22c0217f1ea601c2265c36a9f15e83ab36
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Mon Feb 25 08:09:19 2019 -0800
+commit 819b20014b0c74f4f3a3202737b15b6158e65d37
+Author: Scott J. Miles <sjmiles@google.com>
+Date:   Mon Feb 25 12:00:23 2019 -0800
 
-    concat verbs when copying recipes (instead of overriding) (#2711)
+    Pluggable storage providers (#2709)
+    
+    * pluggable storage providers
+    
+    * select storage providers for web-shell
+    
+    * fix paths (and trailing spaces)
+    
+    * add storage providers to tests

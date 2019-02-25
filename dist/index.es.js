@@ -1,14 +1,6 @@
 import assert$1 from 'assert';
 import crypto$1 from 'crypto';
 import MersenneTwister from 'mersenne-twister';
-import atob from 'atob';
-import btoa$1 from 'btoa';
-import firebase from 'firebase/app';
-import 'firebase/database';
-import 'firebase/storage';
-import PouchDB from 'pouchdb';
-import PouchDbMemory from 'pouchdb-adapter-memory';
-import PouchDbDebug from 'pouchdb-debug';
 import idb from 'idb';
 import rs from 'jsrsasign';
 import WebSocket from 'ws';
@@ -14036,187 +14028,6 @@ class RecipeUtil {
     }
 }
 
-// Copyright (c) 2018 Google Inc. All rights reserved.
-
-// Copyright (c) 2017 Google Inc. All rights reserved.
-
-// @license
-/**
- * Returns the set delta between two lists based on direct object comparison.
- */
-function setDiff(from, to) {
-    const result = { add: [], remove: [] };
-    const items = new Set([...from, ...to]);
-    const fromSet = new Set(from);
-    const toSet = new Set(to);
-    for (const item of items) {
-        if (fromSet.has(item)) {
-            if (toSet.has(item)) {
-                continue;
-            }
-            result.remove.push(item);
-            continue;
-        }
-        assert$1(toSet.has(item));
-        result.add.push(item);
-    }
-    return result;
-}
-/**
- * Returns the set delta between two lists based on custom object comparison.
- * `keyFn` takes type T and returns the value by which items should be compared.
- */
-function setDiffCustom(from, to, keyFn) {
-    const result = { add: [], remove: [] };
-    const items = new Map();
-    const fromSet = new Map();
-    const toSet = new Map();
-    for (const item of from) {
-        const key = keyFn(item);
-        items.set(key, item);
-        fromSet.set(key, item);
-    }
-    for (const item of to) {
-        const key = keyFn(item);
-        items.set(key, item);
-        toSet.set(key, item);
-    }
-    for (const [key, item] of items) {
-        if (fromSet.has(key)) {
-            if (toSet.has(key)) {
-                continue;
-            }
-            result.remove.push(item);
-            continue;
-        }
-        assert$1(toSet.has(key));
-        result.add.push(item);
-    }
-    return result;
-}
-
-// @license
-class CrdtCollectionModel {
-    constructor(model = undefined) {
-        // id => {value, Set[keys]}
-        this.items = new Map();
-        if (model) {
-            for (let { id, value, keys } of model) {
-                if (!keys) {
-                    keys = [];
-                }
-                this.items.set(id, { value, keys: new Set(keys) });
-            }
-        }
-    }
-    /**
-     * Adds membership, `keys`, of `value` indexed by `id` to this collection.
-     * Returns whether the change is effective (`id` is new to the collection,
-     * or `value` is different to the value previously stored).
-     */
-    add(id, value, keys) {
-        // Ensure that keys is actually an array, not a single string.
-        // TODO(shans): remove this when all callers are implemented in typeScript.
-        assert$1(keys.length > 0 && typeof keys === 'object', 'add requires a list of keys');
-        let item = this.items.get(id);
-        let effective = false;
-        if (!item) {
-            item = { value, keys: new Set(keys) };
-            this.items.set(id, item);
-            effective = true;
-        }
-        else {
-            let newKeys = false;
-            for (const key of keys) {
-                if (!item.keys.has(key)) {
-                    newKeys = true;
-                }
-                item.keys.add(key);
-            }
-            if (!this._equals(item.value, value)) {
-                assert$1(newKeys, 'cannot add without new keys. incoming=' + keys.join(',') + ' existing=' + [...item.keys].join(','));
-                item.value = value;
-                effective = true;
-            }
-        }
-        return effective;
-    }
-    _equals(value1, value2) {
-        if (Boolean(value1) !== Boolean(value2)) {
-            return false;
-        }
-        if (!value1) {
-            return true;
-        }
-        const type1 = typeof (value1);
-        if (type1 !== typeof (value2)) {
-            return false;
-        }
-        if (type1 === 'object') {
-            const keys = Object.keys(value1);
-            if (keys.length !== Object.keys(value2).length) {
-                return false;
-            }
-            return keys.every(key => this._equals(value1[key], value2[key]));
-        }
-        return JSON.stringify(value1) === JSON.stringify(value2);
-    }
-    /**
-     * Removes the membership, `keys`, of the value indexed by `id` from this collection.
-     * Returns whether the change is effective (the value is no longer present
-     * in the collection because all of the keys have been removed).
-     */
-    remove(id, keys) {
-        const item = this.items.get(id);
-        if (!item) {
-            return false;
-        }
-        for (const key of keys) {
-            item.keys.delete(key);
-        }
-        const effective = item.keys.size === 0;
-        if (effective) {
-            this.items.delete(id);
-        }
-        return effective;
-    }
-    // [{id, value, keys: []}]
-    toLiteral() {
-        const result = [];
-        for (const [id, { value, keys }] of this.items.entries()) {
-            result.push({ id, value, keys: [...keys] });
-        }
-        return result;
-    }
-    toList() {
-        return [...this.items.values()].map(item => item.value);
-    }
-    has(id) {
-        return this.items.has(id);
-    }
-    getKeys(id) {
-        const item = this.items.get(id);
-        return item ? [...item.keys] : [];
-    }
-    getValue(id) {
-        const item = this.items.get(id);
-        return item ? item.value : null;
-    }
-    get size() {
-        return this.items.size;
-    }
-}
-
-// @
-// Copyright (c) 2017 Google Inc. All rights reserved.
-// This code may only be used under the BSD style license found at
-// http://polymer.github.io/LICENSE.txt
-// Code distributed by Google as part of this project is also
-// subject to an additional IP rights grant found at
-// http://polymer.github.io/PATENTS.txt
-class KeyBase {
-}
-
 /*
   Copyright 2015 Google Inc. All Rights Reserved.
   Licensed under the Apache License, Version 2.0 (the "License");
@@ -14497,6 +14308,128 @@ function init() {
 
 init();
 
+// @license
+class CrdtCollectionModel {
+    constructor(model = undefined) {
+        // id => {value, Set[keys]}
+        this.items = new Map();
+        if (model) {
+            for (let { id, value, keys } of model) {
+                if (!keys) {
+                    keys = [];
+                }
+                this.items.set(id, { value, keys: new Set(keys) });
+            }
+        }
+    }
+    /**
+     * Adds membership, `keys`, of `value` indexed by `id` to this collection.
+     * Returns whether the change is effective (`id` is new to the collection,
+     * or `value` is different to the value previously stored).
+     */
+    add(id, value, keys) {
+        // Ensure that keys is actually an array, not a single string.
+        // TODO(shans): remove this when all callers are implemented in typeScript.
+        assert$1(keys.length > 0 && typeof keys === 'object', 'add requires a list of keys');
+        let item = this.items.get(id);
+        let effective = false;
+        if (!item) {
+            item = { value, keys: new Set(keys) };
+            this.items.set(id, item);
+            effective = true;
+        }
+        else {
+            let newKeys = false;
+            for (const key of keys) {
+                if (!item.keys.has(key)) {
+                    newKeys = true;
+                }
+                item.keys.add(key);
+            }
+            if (!this._equals(item.value, value)) {
+                assert$1(newKeys, 'cannot add without new keys. incoming=' + keys.join(',') + ' existing=' + [...item.keys].join(','));
+                item.value = value;
+                effective = true;
+            }
+        }
+        return effective;
+    }
+    _equals(value1, value2) {
+        if (Boolean(value1) !== Boolean(value2)) {
+            return false;
+        }
+        if (!value1) {
+            return true;
+        }
+        const type1 = typeof (value1);
+        if (type1 !== typeof (value2)) {
+            return false;
+        }
+        if (type1 === 'object') {
+            const keys = Object.keys(value1);
+            if (keys.length !== Object.keys(value2).length) {
+                return false;
+            }
+            return keys.every(key => this._equals(value1[key], value2[key]));
+        }
+        return JSON.stringify(value1) === JSON.stringify(value2);
+    }
+    /**
+     * Removes the membership, `keys`, of the value indexed by `id` from this collection.
+     * Returns whether the change is effective (the value is no longer present
+     * in the collection because all of the keys have been removed).
+     */
+    remove(id, keys) {
+        const item = this.items.get(id);
+        if (!item) {
+            return false;
+        }
+        for (const key of keys) {
+            item.keys.delete(key);
+        }
+        const effective = item.keys.size === 0;
+        if (effective) {
+            this.items.delete(id);
+        }
+        return effective;
+    }
+    // [{id, value, keys: []}]
+    toLiteral() {
+        const result = [];
+        for (const [id, { value, keys }] of this.items.entries()) {
+            result.push({ id, value, keys: [...keys] });
+        }
+        return result;
+    }
+    toList() {
+        return [...this.items.values()].map(item => item.value);
+    }
+    has(id) {
+        return this.items.has(id);
+    }
+    getKeys(id) {
+        const item = this.items.get(id);
+        return item ? [...item.keys] : [];
+    }
+    getValue(id) {
+        const item = this.items.get(id);
+        return item ? item.value : null;
+    }
+    get size() {
+        return this.items.size;
+    }
+}
+
+// @
+// Copyright (c) 2017 Google Inc. All rights reserved.
+// This code may only be used under the BSD style license found at
+// http://polymer.github.io/LICENSE.txt
+// Code distributed by Google as part of this project is also
+// subject to an additional IP rights grant found at
+// http://polymer.github.io/PATENTS.txt
+class KeyBase {
+}
+
 // @
 var EventKind;
 (function (EventKind) {
@@ -14647,2625 +14580,6 @@ class StorageProviderBase {
     /** TODO */
     modelForSynchronization() {
         return this.toLiteral();
-    }
-}
-
-// @license
-class FirebaseKey extends KeyBase {
-    constructor(key) {
-        super();
-        let parts = key.split('://');
-        this.protocol = parts[0];
-        assert$1(this.protocol === 'firebase', `can't construct firebase key for protocol ${this.protocol} (input key ${key})`);
-        if (parts[1]) {
-            parts = parts[1].split('/');
-            this.databaseUrl = parts[0];
-            if (this.databaseUrl && this.databaseUrl.endsWith('.firebaseio.com')) {
-                this.projectId = this.databaseUrl.split('.')[0];
-            }
-            else {
-                throw new Error('FirebaseKey must end with .firebaseio.com');
-            }
-            this.apiKey = parts[1];
-            this.location = parts.slice(2).join('/');
-        }
-        else {
-            this.databaseUrl = undefined;
-            this.projectId = undefined;
-            this.apiKey = undefined;
-            this.location = '';
-        }
-    }
-    base() {
-        const str = this.toString();
-        return str.substring(0, str.length - this.arcId.length);
-    }
-    get arcId() {
-        return this.location.substring(this.location.lastIndexOf('/') + 1);
-    }
-    childKeyForHandle(id) {
-        return this.buildChildKey(`handles/${id}`);
-    }
-    childKeyForArcInfo() {
-        return this.buildChildKey('arc-info');
-    }
-    childKeyForSuggestions(userId, arcId) {
-        return this.buildChildKey(`${userId}/suggestions/${arcId}`);
-    }
-    childKeyForSearch(userId) {
-        return this.buildChildKey(`${userId}/search`);
-    }
-    buildChildKey(leaf) {
-        let location = '';
-        if (this.location != undefined && this.location.length > 0) {
-            location = this.location + '/';
-        }
-        location += leaf;
-        return new FirebaseKey(`${this.protocol}://${this.databaseUrl}/${this.apiKey}/${location}`);
-    }
-    toString() {
-        if (this.databaseUrl && this.apiKey) {
-            return `${this.protocol}://${this.databaseUrl}/${this.apiKey}/${this.location}`;
-        }
-        return `${this.protocol}://`;
-    }
-}
-let _nextAppNameSuffix = 0;
-var Mode;
-(function (Mode) {
-    Mode[Mode["direct"] = 0] = "direct";
-    Mode[Mode["reference"] = 1] = "reference";
-    Mode[Mode["backing"] = 2] = "backing";
-})(Mode || (Mode = {}));
-class FirebaseStorage extends StorageBase {
-    constructor(arcId) {
-        super(arcId);
-        this.apps = {};
-        this.baseStores = new Map();
-        this.baseStorePromises = new Map();
-    }
-    async construct(id, type, keyFragment) {
-        let mode = (type instanceof ReferenceType) ? Mode.direct : Mode.reference;
-        if (type instanceof BigCollectionType) {
-            mode = Mode.direct;
-        }
-        else if (type.isTypeContainer() && type.getContainedType() instanceof ReferenceType) {
-            mode = Mode.direct;
-        }
-        return this._join(id, type, keyFragment, false, mode);
-    }
-    async connect(id, type, key) {
-        return this._join(id, type, key, true, Mode.direct);
-    }
-    // Unit tests should call this in an 'after' block.
-    shutdown() {
-        for (const entry of Object.values(this.apps)) {
-            if (entry.owned) {
-                entry.app.delete();
-                entry.owned = false;
-            }
-        }
-    }
-    baseStorageKey(type, keyString) {
-        const fbKey = new FirebaseKey(keyString);
-        fbKey.location = `${fbKey.location.split('/')[0]}/backingStores/${type.toString()}`;
-        return fbKey.toString();
-    }
-    async baseStorageFor(type, key) {
-        const typeStr = type.toString();
-        let storage;
-        if (storage = this.baseStores.get(typeStr)) {
-            return storage;
-        }
-        if (storage = this.baseStorePromises.get(typeStr)) {
-            return storage;
-        }
-        const storagePromise = this._join(typeStr, type.collectionOf(), key, 'unknown', Mode.backing);
-        this.baseStorePromises.set(typeStr, storagePromise);
-        storage = await storagePromise;
-        assert$1(storage, 'baseStorageFor should not fail');
-        this.baseStores.set(typeStr, storage);
-        this.baseStorePromises.delete(typeStr);
-        return storage;
-    }
-    parseStringAsKey(s) {
-        return new FirebaseKey(s);
-    }
-    // mode is only referred to if shouldExist is false, or if shouldExist is 'unknown'
-    // but this _join creates the storage location.
-    async _join(id, type, keyString, shouldExist, mode) {
-        assert$1(!(type instanceof TypeVariable));
-        assert$1(!type.isTypeContainer() || !(type.getContainedType() instanceof TypeVariable));
-        const fbKey = new FirebaseKey(keyString);
-        // TODO: is it ever going to be possible to autoconstruct new firebase datastores?
-        if (fbKey.databaseUrl == undefined || fbKey.apiKey == undefined) {
-            throw new Error('Can\'t complete partial firebase keys');
-        }
-        if (this.apps[fbKey.projectId] == undefined) {
-            for (const app of firebase.apps) {
-                if (app.options['databaseURL'] === fbKey.databaseUrl) {
-                    this.apps[fbKey.projectId] = { app, owned: false };
-                    break;
-                }
-            }
-        }
-        if (this.apps[fbKey.projectId] == undefined) {
-            const app = firebase.initializeApp({
-                apiKey: fbKey.apiKey,
-                projectId: fbKey.projectId,
-                databaseURL: fbKey.databaseUrl
-            }, `app${_nextAppNameSuffix++}`);
-            this.apps[fbKey.projectId] = { app, owned: true };
-        }
-        const reference = firebase.database(this.apps[fbKey.projectId].app).ref(fbKey.location);
-        const currentSnapshot = await reference.once('value');
-        if (shouldExist !== 'unknown' && shouldExist !== currentSnapshot.exists()) {
-            return null;
-        }
-        let enableReferenceMode = currentSnapshot.exists() && currentSnapshot.val().referenceMode;
-        if (shouldExist === false || (shouldExist === 'unknown' && currentSnapshot.exists() === false)) {
-            const result = await reference.transaction(data => {
-                if (data != null) {
-                    return undefined;
-                }
-                return { version: 0, referenceMode: mode === Mode.reference };
-            }, undefined, false);
-            if (!result.committed) {
-                return null;
-            }
-            enableReferenceMode = (mode === Mode.reference);
-        }
-        const provider = FirebaseStorageProvider.newProvider(type, this, id, reference, fbKey, shouldExist, mode);
-        if (enableReferenceMode) {
-            assert$1(mode !== Mode.backing, 'backing stores should not have referenceMode enabled');
-            provider.enableReferenceMode();
-        }
-        return provider;
-    }
-    // For reference, Firebase keys cannot contain these chars: .#$/[]
-    static encodeKey(key) {
-        key = btoa$1(key);
-        return key.replace(/\//g, '*');
-    }
-    static decodeKey(key) {
-        key = key.replace(/\*/g, '/');
-        return atob(key);
-    }
-}
-class FirebaseStorageProvider extends StorageProviderBase {
-    constructor(type, storageEngine, id, reference, key) {
-        super(type, undefined, id, key.toString());
-        this.storageEngine = storageEngine;
-        this.firebaseKey = key;
-        this.reference = reference;
-        this.backingStore = null;
-        this.pendingBackingStore = null;
-        // Resolved when local modifications complete being persisted
-        // to firebase. Null when not persisting.
-        this.persisting = null;
-    }
-    // A consequence of awaiting this function is that this.backingStore
-    // is guaranteed to exist once the await completes. This is because
-    // if backingStore doesn't yet exist, the assignment in the then()
-    // is guaranteed to execute before anything awaiting this function.
-    async ensureBackingStore() {
-        if (this.backingStore) {
-            return this.backingStore;
-        }
-        if (!this.pendingBackingStore) {
-            const key = this.storageEngine.baseStorageKey(this.backingType(), this.storageKey);
-            this.pendingBackingStore = this.storageEngine.baseStorageFor(this.type, key);
-            this.pendingBackingStore.then(backingStore => this.backingStore = backingStore);
-        }
-        return this.pendingBackingStore;
-    }
-    static newProvider(type, storageEngine, id, reference, key, shouldExist, mode) {
-        if (mode === Mode.backing) {
-            return new FirebaseBackingStore(type, storageEngine, id, reference, key);
-        }
-        if (type instanceof CollectionType) {
-            return new FirebaseCollection(type, storageEngine, id, reference, key);
-        }
-        if (type instanceof BigCollectionType) {
-            return new FirebaseBigCollection(type, storageEngine, id, reference, key);
-        }
-        return new FirebaseVariable(type, storageEngine, id, reference, key, shouldExist);
-    }
-    async _transaction(transactionFunction) {
-        const result = await this.reference.transaction(data => {
-            if (data == null) {
-                // If the data is not cached locally, firebase will speculatively
-                // attempt to run the transaction against `null`. This should never
-                // actually commit, but we can't just abort the transaction or
-                // raise an error here -- both will prevent firebase from continuing
-                // to apply our write. So we return a dummy value and assert that
-                // we never actually commit it.
-                return 0;
-            }
-            const newData = transactionFunction(data);
-            // TODO(sjmiles): remove `undefined` values from the object tree
-            return JSON.parse(JSON.stringify(newData));
-        }, undefined, false);
-        if (result.committed) {
-            assert$1(result.snapshot.val() !== 0);
-        }
-        return result;
-    }
-    // Only one invokation of _persistChangesImpl should ever
-    // be in-flight at a time. This loop preserves that property.
-    async _persistChanges() {
-        while (this._hasLocalChanges) {
-            if (!this.persisting) {
-                this.persisting = this._persistChangesImpl();
-                await this.persisting;
-                this.persisting = null;
-            }
-            else {
-                await this.persisting;
-            }
-        }
-    }
-}
-/**
- * Models a Variable that is persisted to firebase in a
- * last-writer-wins scheme.
- *
- * Initialization: After construct/connect the variable is
- * not fully initialized, calls to `get` and `toLiteral`
- * will not complete until either:
- *  * The initial value is supplied via the firebase `.on`
- *    subscription.
- *  * A value is written to the store by a call to `set`.
- *
- * Updates from firebase: Each time an update is received
- * from firebase we update the local version and value,
- * unless there is a pending local modification (see below).
- *
- * Local modifications: When a local modification is applied
- * by a call to `set` we increment the version number,
- * mark this variable as locally modified, and start a
- * process to atomically persist the change to firebase.
- * Until this process has completed we suppress incoming
- * changes from firebase. The version that we have chosen
- * (by incrementing) may not match the final state that is
- * written to firebase (if there are concurrent changes in
- * firebase, or if we have queued up multiple local
- * modifications), but the result will always be
- * monotonically increasing.
- */
-class FirebaseVariable extends FirebaseStorageProvider {
-    constructor(type, storageEngine, id, reference, firebaseKey, shouldExist) {
-        super(type, storageEngine, id, reference, firebaseKey);
-        // TODO(sjmiles): localKeyId collisions occur when using device-client-pipe,
-        // so I'll randomize localKeyId a bit
-        this.localKeyId = Date.now();
-        this.pendingWrites = [];
-        this.wasConnect = shouldExist;
-        // Current value stored in this variable. Reflects either a
-        // value that was stored in firebase, or a value that was
-        // written locally.
-        this.value = null;
-        // Monotonic version, initialized via response from firebase,
-        // or a call to `set` (as 0). Updated on changes from firebase
-        // or during local modifications.
-        // TODO Replace this nullness with a uninitialized boolean.
-        this.version = null;
-        // Whether `this.value` is affected by a local modification.
-        // When this is true we are still in the process of writing
-        // the value to the remote store and will suppress any
-        // incoming changes from firebase.
-        this.localModified = false;
-        // Resolved when data is first available. The earlier of
-        // * the initial value is supplied via firebase `reference.on`
-        // * a value is written to the variable by a call to `set`.
-        this.initialized = new Promise(resolve => this.resolveInitialized = resolve);
-        this.valueChangeCallback =
-            this.reference.on('value', dataSnapshot => this.remoteStateChanged(dataSnapshot));
-    }
-    dispose() {
-        this.reference.off('value', this.valueChangeCallback);
-    }
-    backingType() {
-        return this.type;
-    }
-    remoteStateChanged(dataSnapshot) {
-        if (this.localModified) {
-            return;
-        }
-        const data = dataSnapshot.val();
-        assert$1(this.version == null || data.version > this.version);
-        // NOTE that remoteStateChanged will be invoked immediately by the
-        // this.reference.on(...) call in the constructor; this means that it's possible for this
-        // function to receive data with storageKeys before referenceMode has been switched on (as
-        // that happens after the constructor has completed). This doesn't matter as data can't
-        // be accessed until the constructor's returned (nothing has a handle on the object before
-        // that).
-        this.value = data.value || null;
-        this.version = data.version;
-        this.resolveInitialized();
-        // Firebase doesn't maintain a distinction between null and undefined, but we explicitly
-        // require empty variables to store 'null'.
-        if (this.referenceMode && this.value) {
-            const version = this.version;
-            this.ensureBackingStore().then(async (store) => {
-                const data = await store.get(this.value.id);
-                this._fire('change', new ChangeEvent({ data, version }));
-            });
-        }
-        else {
-            this._fire('change', new ChangeEvent({ data: data.value || null, version: this.version }));
-        }
-    }
-    get _hasLocalChanges() {
-        return this.localModified;
-    }
-    async _persistChangesImpl() {
-        assert$1(this.localModified);
-        // Guard the specific version that we're writing. If we receive another
-        // local mutation, these versions will be different when the transaction
-        // completes indicating that we need to continue the process of sending
-        // local modifications.
-        const version = this.version;
-        // the await required for fetching baseStorage can cause initialization/localModified
-        // flag reordering if done before persisting a change.
-        const value = this.value;
-        // We have to write the underlying storage before the local value, or it won't be present
-        // when another connected storage object gets the update of the local value.
-        if (this.referenceMode && this.pendingWrites.length > 0) {
-            await this.ensureBackingStore();
-            // TODO(shans): mutating the storageKey here to provide unique keys is a hack
-            // that can be removed once entity mutation is distinct from collection updates.
-            // Once entity mutation exists, it shouldn't ever be possible to write
-            // different values with the same id.
-            const pendingWrites = this.pendingWrites.slice();
-            this.pendingWrites = [];
-            await Promise.all(pendingWrites.map(pendingItem => this.backingStore.store(pendingItem.value, [this.storageKey + this.localKeyId++])));
-        }
-        const result = await this._transaction(data => {
-            assert$1(this.version >= version);
-            return {
-                version: Math.max(data.version + 1, version),
-                value,
-                referenceMode: this.referenceMode
-            };
-        });
-        assert$1(result.committed, 'uncommited transaction (offline?) not supported yet');
-        const data = result.snapshot.val();
-        assert$1(data !== 0);
-        assert$1(data.version >= version);
-        if (this.version !== version) {
-            // A new local modification happened while we were writing the previous one.
-            return this._persistChangesImpl();
-        }
-        this.localModified = false;
-        this.version = data.version;
-        // Firebase will return 'undefined' when data is set to null, but should
-        this.value = data.value || null;
-    }
-    get versionForTesting() {
-        return this.version;
-    }
-    async get() {
-        await this.initialized;
-        if (this.referenceMode && this.value) {
-            const referredType = this.type;
-            await this.ensureBackingStore();
-            return await this.backingStore.get(this.value.id);
-        }
-        return this.value;
-    }
-    async set(value, originatorId = null, barrier = null) {
-        assert$1(value !== undefined);
-        if (this.version == null) {
-            assert$1(!this.localModified);
-            // If the first modification happens before init, this becomes
-            // init. We pick the initial version which will be updated by the
-            // transaction in _persistChanges.
-            this.version = 0;
-            this.resolveInitialized();
-        }
-        else if (!this.referenceMode) {
-            // If in reference mode, we can't actually determine if this value is identical to the previous
-            // one.
-            if (JSON.stringify(this.value) === JSON.stringify(value)) {
-                return;
-            }
-        }
-        this.version++;
-        const version = this.version;
-        let storageKey;
-        if (this.referenceMode && value) {
-            storageKey = this.storageEngine.baseStorageKey(this.type, this.storageKey);
-            this.value = { id: value.id, storageKey };
-            this.pendingWrites.push({ value, storageKey });
-        }
-        else {
-            this.value = value;
-        }
-        this.localModified = true;
-        await this._persistChanges();
-        this._fire('change', new ChangeEvent({ data: value, version, originatorId, barrier }));
-    }
-    async clear(originatorId = null, barrier = null) {
-        return this.set(null, originatorId, barrier);
-    }
-    async cloneFrom(handle) {
-        this.referenceMode = handle.referenceMode;
-        const literal = await handle.toLiteral();
-        const data = literal.model[0].value;
-        if (this.referenceMode && literal.model.length > 0) {
-            await Promise.all([this.ensureBackingStore(), handle.ensureBackingStore()]);
-            literal.model = literal.model.map(({ id, value }) => ({ id, value: { id, storageKey: this.backingStore.storageKey } }));
-            const underlying = await handle.backingStore.getMultiple(literal.model.map(({ id }) => id));
-            await this.backingStore.storeMultiple(underlying, [this.storageKey]);
-        }
-        this.fromLiteral(literal);
-        this.localModified = true;
-        this.resolveInitialized();
-        // TODO: do we need to fire an event here?
-        this._fire('change', new ChangeEvent({ data: this.referenceMode ? data : this.value, version: this.version }));
-        await this._persistChanges();
-    }
-    async modelForSynchronization() {
-        await this.initialized;
-        if (this.value && !this.referenceMode) {
-            assert$1(this.value.storageKey == undefined, `values in non-referenceMode stores shouldn't have storageKeys. This store is ${this.storageKey}`);
-        }
-        if (this.referenceMode && this.value !== null) {
-            const value = this.value;
-            await this.ensureBackingStore();
-            const result = await this.backingStore.get(value.id);
-            return {
-                version: this.version,
-                model: [{ id: value.id, value: result }]
-            };
-        }
-        return super.modelForSynchronization();
-    }
-    // Returns {version, model: [{id, value}]}
-    async toLiteral() {
-        await this.initialized;
-        // fixme: think about if there are local mutations...
-        const value = this.value;
-        const model = (value == null) ? [] : [{ id: value.id, value }];
-        return { version: this.version, model };
-    }
-    fromLiteral({ version, model }) {
-        const value = model.length === 0 ? null : model[0].value;
-        assert$1(value !== undefined);
-        assert$1(this.referenceMode || !value.storageKey);
-        this.value = value;
-        this.version = version;
-    }
-}
-/**
- * Models a Collection that is persisted to firebase in scheme similar
- * to the CRDT OR-set. We don't model sets of both observed
- * and removed keys but instead we maintain a list of current keys and
- * add/remove as the corresponding operations are received. We're
- * able to do this as we only ever synchronize between the same two points
- * (the client & firebase).
- *
- * Initialization: The collection is not initialized and calls to read
- * and mutate the collection will not complete until the initial state
- * is received via the firebase `.on` subscription.
- * Note, this is different to FirebaseVariable as mutations do not cause
- * the collection to become initialized (since we do not have enough state
- * to generate events).
- *
- * Updates from firebase: Each time an update is received from firebase
- * we compare the new remote state with the previous remote state. We are
- * able to detect which entries (and the corresponding keys) that have been
- * added and removed remotely. These are filtered by a set of suppressions
- * for adds that we have previously issued and then applied to our local
- * model. Each time we receive an update from firebase, we update our local
- * version number. We align it with the remote version when possible.
- *
- * Local modifications: Additions and removal of entries (and membership
- * keys) are tracked in a local structure, `localChanges`, and a process
- * is started to persist remotely. These changes are applied to the remote
- * state and committed atomically. Any added keys are added to sets in
- * `addSuppressions` to prevent applying our own writes when they
- * are received back in a subsequent update from firebase. Each time we
- * receive a local modification we increment our local version number.
- * When we persist our changes to firebase we align it with the remote
- * version.
- */
-class FirebaseCollection extends FirebaseStorageProvider {
-    constructor(type, storageEngine, id, reference, firebaseKey) {
-        super(type, storageEngine, id, reference, firebaseKey);
-        this.pendingWrites = [];
-        this.localKeyId = Date.now();
-        // Lists mapped by id containing membership keys that have been
-        // added or removed by local modifications. Entries in this
-        // structure are still pending persistance remotely. Empty
-        // when there are no pending local modifications.
-        // id => {add: [key], remove: [key]}
-        this.localChanges = new Map();
-        // Sets mapped by id containing keys that were added locally
-        // and have been persisted to firebase. Entries here must be
-        // suppressed when they are echoed back as updates from firebase.
-        // They can be removed once the state received from firebase
-        // reaches `barrierVersion`.
-        // id => {keys: Set[key], barrierVersion}
-        this.addSuppressions = new Map();
-        // Local model of entries stored in this collection. Updated
-        // by local modifications and when we receive remote updates
-        // from firebase.
-        this.model = new CrdtCollectionModel();
-        // Monotonic version. Updated each time we receive an update
-        // from firebase, or when a local modification is applied.
-        this.version = null;
-        // The last copy of the serialized state received from firebase.
-        // {items: id => {value, keys: {[key]: null}}}
-        this.remoteState = { items: {} };
-        // Whether our model has been initialized after receiving the first
-        // copy of state from firebase.
-        this.initialized = new Promise(resolve => this.resolveInitialized = resolve);
-        this.valueChangeCallback =
-            this.reference.on('value', dataSnapshot => this.remoteStateChanged(dataSnapshot));
-    }
-    dispose() {
-        this.reference.off('value', this.valueChangeCallback);
-    }
-    backingType() {
-        return this.type.primitiveType();
-    }
-    remoteStateChanged(dataSnapshot) {
-        const newRemoteState = dataSnapshot.val();
-        if (!newRemoteState.items) {
-            // This is the inital remote state, where we have only {version: 0}
-            // fixme: assert this.
-            newRemoteState.items = {};
-        }
-        // [{id, value, keys}]
-        const add = [];
-        // [{id, keys}]
-        const remove = [];
-        const encIds = new Set([
-            ...Object.keys(newRemoteState.items),
-            ...Object.keys(this.remoteState.items),
-        ]);
-        // Diff the old state (this.remoteState) with the new state (newRemoteState) to determine
-        // which keys have been added/removed.
-        for (const encId of encIds) {
-            const id = FirebaseStorage.decodeKey(encId);
-            const suppression = this.addSuppressions.get(id);
-            if (encId in newRemoteState.items) {
-                let { keys: encKeys, value } = newRemoteState.items[encId];
-                encKeys = Object.keys(encKeys);
-                if (encId in this.remoteState.items) {
-                    // 1. possibly updated remotely.
-                    const encOldkeys = Object.keys(this.remoteState.items[encId].keys);
-                    const { add: encAddKeys, remove: encRemoveKeys } = setDiff(encOldkeys, encKeys);
-                    let addKeys = encAddKeys.map(FirebaseStorage.decodeKey);
-                    const removeKeys = encRemoveKeys.map(FirebaseStorage.decodeKey);
-                    if (suppression) {
-                        addKeys = addKeys.filter(key => !suppression.keys.has(key));
-                    }
-                    if (addKeys.length) {
-                        // If there's a local add for this id, retain the existing value,
-                        // to preserve the legacy behavior of updating in place.
-                        if (this.localChanges.has(id) && this.localChanges.get(id).add.length > 0 && this.model.has(id)) {
-                            value = this.model.getValue(id);
-                        }
-                        const effective = this.model.add(id, value, addKeys);
-                        add.push({ value, keys: addKeys, effective });
-                    }
-                    if (removeKeys.length) {
-                        const value = this.model.getValue(id);
-                        const effective = this.model.remove(id, removeKeys);
-                        remove.push({ value, keys: removeKeys, effective });
-                    }
-                }
-                else {
-                    // 2. added remotely.
-                    let addKeys = encKeys.map(FirebaseStorage.decodeKey);
-                    if (suppression) {
-                        // Remove any keys that *we* added previously.
-                        addKeys = addKeys.filter(key => !suppression.keys.has(key));
-                    }
-                    if (addKeys.length) {
-                        // If there's a local add for this id, retain the existing value,
-                        // to preserve the legacy behavior of updating in place.
-                        if (this.localChanges.has(id) && this.localChanges.get(id).add.length > 0 && this.model.has(id)) {
-                            value = this.model.getValue(id);
-                        }
-                        const keys = encKeys.map(FirebaseStorage.decodeKey);
-                        const effective = this.model.add(id, value, keys);
-                        add.push({ value, keys, effective });
-                    }
-                }
-            }
-            else {
-                // 3. Removed remotely.
-                const { keys: encKeys, value } = this.remoteState.items[encId];
-                const encKeysList = Object.keys(encKeys);
-                const keys = encKeysList.map(FirebaseStorage.decodeKey);
-                const effective = this.model.remove(id, keys);
-                remove.push({ value, keys, effective });
-            }
-        }
-        // Clean up any suppressions that have reached the barrier version.
-        for (const [id, { barrierVersion }] of this.addSuppressions.entries()) {
-            if (newRemoteState.version >= barrierVersion) {
-                this.addSuppressions.delete(id);
-            }
-        }
-        if (add.length === 0 && remove.length === 0) {
-            // The update had no effect.
-            this.resolveInitialized();
-            return;
-        }
-        // Bump version monotonically. Ideally we would use the remote
-        // version, but we might not be able to if there have been local
-        // modifications in the meantime. We'll recover the remote version
-        // once we persist those.
-        this.version = Math.max(this.version + 1, newRemoteState.version);
-        this.remoteState = newRemoteState;
-        this.resolveInitialized();
-        if (this.referenceMode) {
-            const ids = add.map(({ value }) => value.id).concat(remove.map(({ value }) => value.id));
-            this.ensureBackingStore().then(async (backingStore) => {
-                const values = await backingStore.getMultiple(ids);
-                const valueMap = {};
-                values.forEach(value => valueMap[value.id] = value);
-                const addPrimitives = add.map(({ value, keys, effective }) => ({ value: valueMap[value.id], keys, effective }));
-                const removePrimitives = remove.map(({ value, keys, effective }) => ({ value: valueMap[value.id], keys, effective }));
-                this._fire('change', new ChangeEvent({ add: addPrimitives, remove: removePrimitives, version: this.version }));
-            });
-        }
-        else {
-            this._fire('change', new ChangeEvent({ add, remove, version: this.version }));
-        }
-    }
-    get versionForTesting() {
-        return this.version;
-    }
-    async get(id) {
-        await this.initialized;
-        if (this.referenceMode) {
-            const ref = this.model.getValue(id);
-            if (ref == null) {
-                return null;
-            }
-            await this.ensureBackingStore();
-            return await this.backingStore.get(ref.id);
-        }
-        return this.model.getValue(id);
-    }
-    async removeMultiple(items, originatorId = null) {
-        await this.initialized;
-        if (items.length === 0) {
-            items = this.model.toList().map(item => ({ id: item.id, keys: [] }));
-        }
-        items.forEach(item => {
-            // 1. Apply the change to the local model.
-            item.value = this.model.getValue(item.id);
-            if (item.value === null) {
-                return;
-            }
-            if (item.keys.length === 0) {
-                item.keys = this.model.getKeys(item.id);
-            }
-            // TODO: These keys might already have been removed (concurrently).
-            // We should exit early in that case.
-            item.effective = this.model.remove(item.id, item.keys);
-        });
-        this.version++;
-        // 2. Notify listeners.
-        items = items.filter(item => item.value);
-        this._fire('change', new ChangeEvent({ remove: items, version: this.version, originatorId }));
-        // 3. Add this modification to the set of local changes that need to be persisted.
-        items.forEach(item => {
-            if (!this.localChanges.has(item.id)) {
-                this.localChanges.set(item.id, { add: [], remove: [] });
-            }
-            const localChange = this.localChanges.get(item.id);
-            for (const key of item.keys) {
-                localChange.remove.push(key);
-            }
-        });
-        // 4. Wait for the changes to persist.
-        await this._persistChanges();
-    }
-    async remove(id, keys = [], originatorId = null) {
-        await this.initialized;
-        // 1. Apply the change to the local model.
-        const value = this.model.getValue(id);
-        if (value === null) {
-            return;
-        }
-        if (keys.length === 0) {
-            keys = this.model.getKeys(id);
-        }
-        // TODO: These keys might already have been removed (concurrently).
-        // We should exit early in that case.
-        const effective = this.model.remove(id, keys);
-        this.version++;
-        // 2. Notify listeners.
-        this._fire('change', new ChangeEvent({ remove: [{ value, keys, effective }], version: this.version, originatorId }));
-        // 3. Add this modification to the set of local changes that need to be persisted.
-        if (!this.localChanges.has(id)) {
-            this.localChanges.set(id, { add: [], remove: [] });
-        }
-        const localChange = this.localChanges.get(id);
-        for (const key of keys) {
-            localChange.remove.push(key);
-        }
-        // 4. Wait for the changes to persist.
-        await this._persistChanges();
-    }
-    async store(value, keys, originatorId = null) {
-        assert$1(keys != null && keys.length > 0, 'keys required');
-        await this.initialized;
-        const id = value.id;
-        let effective;
-        // 1. Apply the change to the local model.
-        if (this.referenceMode) {
-            const referredType = this.type.primitiveType();
-            const storageKey = this.storageEngine.baseStorageKey(referredType, this.storageKey);
-            effective = this.model.add(id, { id, storageKey }, keys);
-            this.version++;
-            this.pendingWrites.push({ value, storageKey });
-        }
-        else {
-            effective = this.model.add(id, value, keys);
-            this.version++;
-        }
-        // 2. Notify listeners.
-        this._fire('change', new ChangeEvent({ add: [{ value, keys, effective }], version: this.version, originatorId }));
-        // 3. Add this modification to the set of local changes that need to be persisted.
-        if (!this.localChanges.has(id)) {
-            this.localChanges.set(id, { add: [], remove: [] });
-        }
-        const localChange = this.localChanges.get(id);
-        for (const key of keys) {
-            localChange.add.push(key);
-        }
-        // 4. Wait for persistence to complete.
-        await this._persistChanges();
-    }
-    get _hasLocalChanges() {
-        return this.localChanges.size > 0 || this.pendingWrites.length > 0;
-    }
-    async _persistChangesImpl() {
-        if (this.pendingWrites.length > 0) {
-            await this.ensureBackingStore();
-            assert$1(this.backingStore);
-            const pendingWrites = this.pendingWrites.slice();
-            this.pendingWrites = [];
-            // TODO(shans): mutating the storageKey here to provide unique keys is a hack
-            // that can be removed once entity mutation is distinct from collection updates.
-            // Once entity mutation exists, it shouldn't ever be possible to write
-            // different values with the same id.
-            await Promise.all(pendingWrites.map(pendingItem => this.backingStore.store(pendingItem.value, [this.storageKey + this.localKeyId++])));
-            // TODO(shans): Returning here prevents us from writing localChanges while there
-            // are pendingWrites. This in turn prevents change events for being generated for
-            // localChanges that have outstanding pendingWrites.
-            // A better approach would be to tie pendingWrites more closely to localChanges.
-            return;
-        }
-        if (this.localChanges.size > 0) {
-            // Record the changes that are persisted by the transaction.
-            let changesPersisted;
-            const result = await this._transaction(data => {
-                // Updating the inital state with no items.
-                if (!data.items) {
-                    // Ideally we would be able to assert that version is 0 here.
-                    // However it seems firebase will remove an empty object.
-                    data.items = {};
-                }
-                data.version = Math.max(data.version + 1, this.version);
-                // Record the changes that we're attempting to write. We'll remove
-                // these from this.localChanges if this transaction commits.
-                changesPersisted = new Map();
-                for (let [id, { add, remove }] of this.localChanges.entries()) {
-                    const encId = FirebaseStorage.encodeKey(id);
-                    changesPersisted.set(id, { add: [...add], remove: [...remove] });
-                    // Don't add keys that we have also removed.
-                    add = add.filter(key => !(remove.indexOf(key) >= 0));
-                    const item = data.items[encId] || { value: null, keys: {} };
-                    // Propagate keys added locally.
-                    for (const key of add) {
-                        const encKey = FirebaseStorage.encodeKey(key);
-                        item.keys[encKey] = data.version;
-                    }
-                    // Remove keys removed locally.
-                    for (const key of remove) {
-                        const encKey = FirebaseStorage.encodeKey(key);
-                        delete item.keys[encKey];
-                    }
-                    // If we've added a key, also propagate the value. (legacy mutation).
-                    if (add.length > 0) {
-                        assert$1(this.model.has(id));
-                        item.value = this.model.getValue(id);
-                    }
-                    const keys = Object.keys(item.keys);
-                    if (keys.length > 0) {
-                        data.items[encId] = item;
-                    }
-                    else {
-                        // Remove the entry entirely if there are no keys left.
-                        delete data.items[encId];
-                    }
-                }
-                data.referenceMode = this.referenceMode;
-                return data;
-            });
-            // We're assuming that firebase won't deliver updates between the
-            // transaction committing and the result promise resolving :/
-            assert$1(result.committed);
-            const data = result.snapshot.val();
-            // While we were persisting changes, we may have received new ones.
-            // We remove any changes that were just persisted, `changesPersisted`
-            // from `this.localChanges`.
-            for (let [id, { add, remove }] of changesPersisted.entries()) {
-                add = new Set(add);
-                remove = new Set(remove);
-                const localChange = this.localChanges.get(id);
-                localChange.add = localChange.add.filter(key => !add.has(key));
-                localChange.remove = localChange.remove.filter(key => !remove.has(key));
-                if (localChange.add.length === 0 && localChange.remove.length === 0) {
-                    this.localChanges.delete(id);
-                }
-                // Record details about keys added, so that we can suppress them
-                // when echoed back in an update from firebase.
-                if (this.addSuppressions.has(id)) {
-                    // If we already have a suppression, we augment it and bump the
-                    // barrier version.
-                    const suppression = this.addSuppressions.get(id);
-                    for (const key of add) {
-                        suppression.keys.add(key);
-                    }
-                    suppression.barrierVersion = data.version;
-                }
-                else {
-                    this.addSuppressions.set(id, {
-                        keys: add,
-                        barrierVersion: data.version,
-                    });
-                }
-            }
-        }
-    }
-    async _toList() {
-        await this.initialized;
-        if (this.referenceMode) {
-            const items = (await this.toLiteral()).model;
-            if (items.length === 0) {
-                return [];
-            }
-            const referredType = this.type.primitiveType();
-            const refSet = new Set();
-            items.forEach(item => refSet.add(item.value.storageKey));
-            assert$1(refSet.size === 1);
-            const ref = refSet.values().next().value;
-            await this.ensureBackingStore();
-            const retrieveItem = async (item) => {
-                const ref = item.value;
-                return { id: ref.id, value: await this.backingStore.get(ref.id), keys: item.keys };
-            };
-            return await Promise.all(items.map(retrieveItem));
-        }
-        return (await this.toLiteral()).model;
-    }
-    async modelForSynchronization() {
-        const model = await this._toList();
-        return { version: this.version, model };
-    }
-    async toList() {
-        return (await this._toList()).map(item => item.value);
-    }
-    async getMultiple(ids) {
-        assert$1(!this.referenceMode, 'getMultiple not implemented for referenceMode stores');
-        await this.initialized;
-        return ids.map(id => this.model.getValue(id));
-    }
-    async storeMultiple(values, keys, originatorId = null) {
-        assert$1(!this.referenceMode, 'storeMultiple not implemented for referenceMode stores');
-        values.map(value => {
-            this.model.add(value.id, value, keys);
-            if (!this.localChanges.has(value.id)) {
-                this.localChanges.set(value.id, { add: [], remove: [] });
-            }
-            const localChanges = this.localChanges.get(value.id);
-            for (const key of keys) {
-                localChanges.add.push(key);
-            }
-        });
-        await this._persistChanges();
-    }
-    async cloneFrom(handle) {
-        this.referenceMode = handle.referenceMode;
-        const literal = await handle.toLiteral();
-        if (this.referenceMode && literal.model.length > 0) {
-            await Promise.all([this.ensureBackingStore(), handle.ensureBackingStore()]);
-            if (this.backingStore !== handle.backingStore) {
-                literal.model = literal.model.map(({ id, value }) => ({ id, value: { id: value.id, storageKey: this.backingStore.storageKey } }));
-                const underlying = await handle.backingStore.getMultiple(literal.model.map(({ id }) => id));
-                await this.backingStore.storeMultiple(underlying, [this.storageKey]);
-            }
-        }
-        this.fromLiteral(literal);
-        // Don't notify about the contents that have just been cloned.
-        // However, do record local changes for persistence.
-        for (const item of this.model.toLiteral()) {
-            assert$1(item.value.id !== undefined);
-            this.localChanges.set(item.value.id, { add: [...item.keys], remove: [] });
-        }
-        await this._persistChanges();
-    }
-    // Returns {version, model: [{id, value, keys: []}]}
-    async toLiteral() {
-        await this.initialized;
-        // TODO: think about what to do here, do we really need toLiteral for a firebase store?
-        // if yes, how should it represent local modifications?
-        await this.persisting;
-        return {
-            version: this.version,
-            model: this.model.toLiteral(),
-        };
-    }
-    fromLiteral({ version, model }) {
-        this.version = version;
-        this.model = new CrdtCollectionModel(model);
-    }
-}
-var CursorState;
-(function (CursorState) {
-    CursorState[CursorState["new"] = 0] = "new";
-    CursorState[CursorState["init"] = 1] = "init";
-    CursorState[CursorState["stream"] = 2] = "stream";
-    CursorState[CursorState["removed"] = 3] = "removed";
-    CursorState[CursorState["done"] = 4] = "done";
-})(CursorState || (CursorState = {}));
-/**
- * FirebaseCursor provides paginated reads over the contents of a BigCollection, locked to the
- * version of the collection at which the cursor was created.
- *
- * This class technically conforms to the iterator protocol but is not marked as iterable because
- * next() is async, which is currently not supported by implicit iteration in Javascript.
- *
- * NOTE: entity mutation removes elements from a streamed read; the entity will be updated with an
- * index past the cursor's end but Firebase doesn't issue a child_removed event for it.
- */
-class FirebaseCursor {
-    constructor(reference, pageSize, forward) {
-        this.orderByIndex = reference.child('items').orderByChild('index');
-        this.pageSize = pageSize;
-        this.forward = forward;
-        this.state = CursorState.new;
-        this.removed = [];
-        this.baseQuery = null;
-        this.nextBoundary = null;
-        this.end = null;
-        this.removedFn = null;
-    }
-    // This must be called exactly once after construction and before any other methods are called.
-    async _init() {
-        assert$1(this.state === CursorState.new);
-        // Retrieve the current last item to establish our streaming version.
-        const lastEntry = await this.orderByIndex.limitToLast(1).once('value');
-        lastEntry.forEach(entry => this.end = entry.val().index);
-        // Read one past the page size each time to establish the boundary index for the next page.
-        this.baseQuery = this.forward
-            ? this.orderByIndex.limitToFirst(this.pageSize + 1)
-            : this.orderByIndex.limitToLast(this.pageSize + 1);
-        // Attach a listener for removed items and capture any that occur ahead of our streaming
-        // frame. These will be returned after the cursor reaches the item at this.end.
-        this.removedFn = this.orderByIndex.on('child_removed', snapshot => {
-            const index = snapshot.val().index;
-            if (index > this.end)
-                return;
-            if (this.nextBoundary === null || (this.forward && index >= this.nextBoundary)
-                || (!this.forward && index <= this.nextBoundary)) {
-                this.removed.push(snapshot.val().value);
-            }
-        });
-        this.state = CursorState.init;
-    }
-    // Returns the BigCollection version at which this cursor is reading.
-    get version() {
-        return this.end;
-    }
-    // Returns {value: [items], done: false} while there are items still available, or {done: true}
-    // when the cursor has completed reading the collection.
-    async next() {
-        assert$1(this.state !== CursorState.new);
-        if (this.state === CursorState.done) {
-            return { done: true };
-        }
-        let query;
-        if (this.state === CursorState.init) {
-            query = this.baseQuery.endAt(this.end);
-            this.state = CursorState.stream;
-        }
-        else if (this.state === CursorState.stream) {
-            assert$1(this.nextBoundary !== null);
-            query = this.forward
-                ? this.baseQuery.startAt(this.nextBoundary).endAt(this.end)
-                : this.baseQuery.endAt(this.nextBoundary);
-        }
-        const value = [];
-        if (this.state === CursorState.stream) {
-            this.nextBoundary = null;
-            const queryResults = await query.once('value');
-            if (this.forward) {
-                // For non-final pages, the last entry is the start of the next page.
-                queryResults.forEach(entry => {
-                    if (value.length < this.pageSize) {
-                        value.push(entry.val().value);
-                    }
-                    else {
-                        this.nextBoundary = entry.val().index;
-                    }
-                });
-            }
-            else {
-                // For non-final pages, the first entry is the end of the next page.
-                let startIndex = null;
-                queryResults.forEach(entry => {
-                    value.push(entry.val().value);
-                    if (startIndex === null) {
-                        startIndex = entry.val().index;
-                    }
-                });
-                if (value.length > this.pageSize) {
-                    value.shift();
-                    this.nextBoundary = startIndex;
-                }
-                value.reverse();
-            }
-            if (this.nextBoundary === null) {
-                this._detach();
-                this.state = CursorState.removed;
-            }
-        }
-        if (this.state === CursorState.removed) {
-            while (this.removed.length && value.length < this.pageSize) {
-                value.push(this.removed.pop());
-            }
-            if (this.removed.length === 0) {
-                this.state = CursorState.done;
-            }
-        }
-        assert$1(value.length > 0);
-        return { value, done: false };
-    }
-    // Terminates the streamed read. This must be called if a cursor is no longer needed but has not
-    // yet completed streaming (i.e. next() hasn't returned {done: true}).
-    close() {
-        this._detach();
-        this.state = CursorState.done;
-    }
-    _detach() {
-        if (this.removedFn) {
-            this.orderByIndex.off('child_removed', this.removedFn);
-            this.removedFn = null;
-        }
-    }
-}
-/**
- * Provides access to large collections without pulling the entire contents locally.
- *
- * get(), store() and remove() all call immediately through to the backing Firebase collection.
- * There is currently no option for bulk instantiations of these methods.
- *
- * The full collection can be read via a paginated FirebaseCursor returned by stream(). This views
- * a snapshot of the collection, locked to the version at which the cursor is created.
- *
- * To get pagination working, we need to add an index field to items as they are stored, and that
- * field must be marked for indexing in the Firebase rules:
- *
- * ```
- *    "rules": {
- *      "<storage-root>": {
- *        "$collection": {
- *          "items": {
- *            ".indexOn": ["index"]
- *          }
- *        }
- *      }
- *    }
- * ```
- */
-class FirebaseBigCollection extends FirebaseStorageProvider {
-    constructor(type, storageEngine, id, reference, firebaseKey) {
-        super(type, storageEngine, id, reference, firebaseKey);
-        this.cursors = new Map();
-        this.cursorIndex = 0;
-    }
-    backingType() {
-        return this.type.primitiveType();
-    }
-    enableReferenceMode() {
-        assert$1(false, 'referenceMode is not supported for BigCollection');
-    }
-    // TODO: rename this to avoid clashing with Variable and allow particles some way to specify the id
-    async get(id) {
-        const encId = FirebaseStorage.encodeKey(id);
-        const snapshot = await this.reference.child('items/' + encId).once('value');
-        return (snapshot.val() !== null) ? snapshot.val().value : null;
-    }
-    // originatorId is included to maintain parity with Collection.store but is not used.
-    async store(value, keys, originatorId) {
-        // Technically we don't really need keys here; Firebase provides the central replicated storage
-        // protocol and the mutating ops here are all pass-through (so no local CRDT management is
-        // required). This may change in the future - we may well move to full CRDT support in the
-        // backing stores - so it's best to keep the API in line with regular Collections.
-        assert$1(keys != null && keys.length > 0, 'keys required');
-        // Firebase does not support multi-location transactions. To modify both 'version' and a child
-        // of 'items', we'd need to transact directly on this.reference, which would pull the entire
-        // collection contents locally, avoiding which is the explicit intent of this class. So we have
-        // to double-step the operation, leaving a small window where another reader could see the new
-        // version but not the added/updated item, which actually isn't much of a problem. Concurrent
-        // store ops from different clients will work fine thanks to transaction(); both will correctly
-        // increment the version regardless of the order in which they occur.
-        let version;
-        await this.reference.child('version').transaction(data => {
-            version = (data || 0) + 1;
-            return version;
-        }, undefined, false);
-        const encId = FirebaseStorage.encodeKey(value.id);
-        await this.reference.child('items/' + encId).transaction(data => {
-            if (data === null) {
-                data = { value, keys: {} };
-            }
-            else {
-                // Allow legacy mutation for now.
-                data.value = value;
-            }
-            for (const key of keys) {
-                const encKey = FirebaseStorage.encodeKey(key);
-                data.keys[encKey] = version;
-            }
-            // If we ever have bulk additions for BigCollection, the index will need to be changed to an
-            // encoded string with version as the 'major' component and an index within the bulk add as
-            // the 'minor' component:
-            //   width = Math.ceil(Math.log(batchSize) / Math.log(36))
-            //   version.toString(36).padStart(6, '0') + '.' + itemIndex.toString(36).padStart(width, '0')
-            data.index = version;
-            return data;
-        }, undefined, false);
-    }
-    // keys and originatorId are included to maintain parity with Collection.remove but are not used.
-    async remove(id, keys, originatorId) {
-        await this.reference.child('version').transaction(data => {
-            return (data || 0) + 1;
-        }, undefined, false);
-        const encId = FirebaseStorage.encodeKey(id);
-        await this.reference.child('items/' + encId).remove();
-    }
-    /**
-     * Returns a FirebaseCursor id for paginated reads of the current version of this BigCollection.
-     * The id should be passed to cursorNext() to retrive the contained entities. The cursor itself
-     * is held internally by this collection so we can discard it once the stream read has completed.
-     *
-     * By default items are returned in order of original insertion into the collection (with the
-     * caveat that items removed during a streamed read may be returned at the end). Set forward to
-     * false to return items in reverse insertion order.
-     */
-    async stream(pageSize, forward = true) {
-        assert$1(!isNaN(pageSize) && pageSize > 0);
-        this.cursorIndex++;
-        const cursor = new FirebaseCursor(this.reference, pageSize, forward);
-        await cursor._init();
-        this.cursors.set(this.cursorIndex, cursor);
-        return this.cursorIndex;
-    }
-    /**
-     * Calls next() on the cursor identified by cursorId. The cursor will be discarded once the end
-     * of the stream has been reached.
-     */
-    async cursorNext(cursorId) {
-        const cursor = this.cursors.get(cursorId);
-        if (!cursor) {
-            return { done: true };
-        }
-        const data = await cursor.next();
-        if (data.done) {
-            this.cursors.delete(cursorId);
-        }
-        return data;
-    }
-    /** Calls close() on and discards the cursor identified by cursorId. */
-    cursorClose(cursorId) {
-        const cursor = this.cursors.get(cursorId);
-        if (cursor) {
-            this.cursors.delete(cursorId);
-            cursor.close();
-        }
-    }
-    /**
-     * Returns the version at which the cursor identified by cursorId is reading.
-     */
-    cursorVersion(cursorId) {
-        const cursor = this.cursors.get(cursorId);
-        return cursor ? cursor.version : null;
-    }
-    async _persistChangesImpl() {
-        throw new Error('FireBaseBigCollection does not implement _persistChangesImpl');
-    }
-    get _hasLocalChanges() {
-        return false;
-    }
-    // TODO: cloneFrom, toLiteral, fromLiteral
-    // A cloned instance will probably need to reference the same Firebase URL but collect all
-    // modifications locally for speculative execution.
-    async cloneFrom(handle) {
-        throw new Error('FirebaseBigCollection does not yet implement cloneFrom');
-    }
-    toLiteral() {
-        throw new Error('FirebaseBigCollection does not yet implement toLiteral');
-    }
-    fromLiteral({ version, model }) {
-        throw new Error('FirebaseBigCollection does not yet implement fromLiteral');
-    }
-    clearItemsForTesting() {
-        throw new Error('unimplemented');
-    }
-}
-/**
- * Thin wrapper providing a Collection API for a Firebase reference. This is used by
- * FirebaseVariable and FirebaseCollection to access their underlying backing store
- * collections without pulling the entirety of those collections locally.
- */
-class FirebaseBackingStore extends FirebaseStorageProvider {
-    constructor() {
-        super(...arguments);
-        this.maxConcurrentRequests = 5;
-    }
-    childRef(id) {
-        return this.reference.child('items/' + FirebaseStorage.encodeKey(id));
-    }
-    async store(value, keys) {
-        await this.storeSingle(value, keys);
-    }
-    async storeMultiple(values, keys) {
-        while (values.length > 0) {
-            const chunk = values.splice(0, this.maxConcurrentRequests);
-            await Promise.all(chunk.map(value => this.storeSingle(value, keys)));
-        }
-    }
-    storeSingle(value, keys) {
-        return this.childRef(value.id).transaction(data => {
-            if (data === null) {
-                data = { value, keys: {} };
-            }
-            else {
-                // Allow legacy mutation for now.
-                data.value = value;
-            }
-            for (const key of keys) {
-                const encKey = FirebaseStorage.encodeKey(key);
-                data.keys[encKey] = 1;
-            }
-            return data;
-        }, undefined, false);
-    }
-    async remove(id, keys) {
-        await this.removeSingle(id, keys);
-    }
-    async removeMultiple(items) {
-        if (items.length === 0) {
-            await this.reference.child('items').remove();
-        }
-        else {
-            while (items.length > 0) {
-                const chunk = items.splice(0, this.maxConcurrentRequests);
-                await Promise.all(chunk.map(item => this.removeSingle(item.id, item.keys)));
-            }
-        }
-    }
-    removeSingle(id, keys) {
-        return this.childRef(id).transaction(data => {
-            if (data === null) {
-                return null;
-            }
-            if (keys.length > 0) {
-                keys.forEach(key => delete data.keys[FirebaseStorage.encodeKey(key)]);
-                if (Object.keys(data.keys).length > 0) {
-                    return data;
-                }
-            }
-            // Returning an empty object deletes the Firebase node.
-            return {};
-        }, undefined, false);
-    }
-    async get(id) {
-        const snapshot = await this.childRef(id).once('value');
-        return (snapshot.val() !== null) ? snapshot.val().value : null;
-    }
-    async getMultiple(ids) {
-        const values = [];
-        while (ids.length > 0) {
-            const chunk = ids.splice(0, this.maxConcurrentRequests);
-            const snapshots = await Promise.all(chunk.map(id => this.childRef(id).once('value')));
-            values.push(...snapshots.map(s => (s.val() !== null) ? s.val().value : null));
-        }
-        return values;
-    }
-    async toList() {
-        const snapshot = await this.reference.child('items').once('value');
-        // tslint:disable-next-line: no-any
-        return snapshot.val() ? Object.values(snapshot.val()).map((x) => x.value) : [];
-    }
-    backingType() {
-        return this.type;
-    }
-    get _hasLocalChanges() {
-        return false;
-    }
-    async _persistChangesImpl() {
-        throw new Error('FirebaseBackingStore does not implement _persistChangesImpl');
-    }
-    enableReferenceMode() {
-        throw new Error('FirebaseBackingStore does not implement enableReferenceMode');
-    }
-    async ensureBackingStore() {
-        throw new Error('FirebaseBackingStore does not implement ensureBackingStore');
-    }
-    on(kindStr, callback, target) {
-        throw new Error('FirebaseBackingStore does not implement on');
-    }
-    off(kindStr, callback) {
-        throw new Error('FirebaseBackingStore does not implement off');
-    }
-    toLiteral() {
-        throw new Error('FirebaseBackingStore does not implement toLiteral');
-    }
-    cloneFrom(store) {
-        throw new Error('FirebaseBackingStore does not implement cloneFrom');
-    }
-}
-
-// @license
-/**
- * Keys for PouchDb entities.  A pouchdb key looks like a url. of the following form:
- *
- *    pouchdb://{dblocation}/{dbname}/{location}
- *
- * The scheme is pouchdb, followed by the database location which can be:
- *
- * - memory (stores in local memory)
- * - local (persistant stored in IDB (browser) or LevelDB (node)
- * - a hostname (stores on the remote host)
- *
- * A slash separated database name and key location then follow.
- * The default for dblocation is 'memory' and the default dbname is 'user'.
- *
- * Some sample keys
- *
- * - pouchdb://memory/user/nice/long-storage-key
- * - pouchdb://localhost:8080/user/storagekey123
- * - pouchdb://local/user/storagekey123
- */
-class PouchDbKey extends KeyBase {
-    constructor(key) {
-        super();
-        if (!key.startsWith('pouchdb://')) {
-            throw new Error(`can't construct pouchdb key for input key ${key}`);
-        }
-        const parts = key.replace(/^pouchdb:\/\//, '').split('/');
-        this.protocol = 'pouchdb';
-        this.dbLocation = parts[0] || 'memory';
-        this.dbName = parts[1] || 'user';
-        this.location = parts.slice(2).join('/') || '';
-        if (this.toString() !== key) {
-            throw new Error('PouchDb keys must match ' + this.toString() + ' vs ' + key);
-        }
-    }
-    base() {
-        const str = this.toString();
-        return str.substring(0, str.length - this.arcId.length);
-    }
-    get arcId() {
-        return this.location.substring(this.location.lastIndexOf('/') + 1);
-    }
-    /**
-     * Creates a new child PouchDbKey relative to the current key, based on the value of id.
-     */
-    childKeyForHandle(id) {
-        assert$1(id && id.length > 0, 'invalid id');
-        return this.buildChildKey(`handles/${id}`);
-    }
-    childKeyForArcInfo() {
-        return this.buildChildKey('arc-info');
-    }
-    childKeyForSuggestions(userId, arcId) {
-        return this.buildChildKey(`${userId}/suggestions/${arcId}`);
-    }
-    childKeyForSearch(userId) {
-        return this.buildChildKey(`${userId}/search`);
-    }
-    buildChildKey(leaf) {
-        let location = '';
-        if (this.location != undefined && this.location.length > 0) {
-            location = this.location + '/';
-        }
-        location += leaf;
-        const newKey = new PouchDbKey(this.toString());
-        newKey.location = location;
-        return newKey;
-    }
-    toString() {
-        return 'pouchdb://' + [this.dbLocation, this.dbName, this.location].join('/');
-    }
-    dbCacheKey() {
-        return [this.dbLocation, this.dbName].join('/');
-    }
-}
-
-/**
- * Base class for PouchDb related Storage classes
- * (PouchDbVariable/PouchDbCollection)
- */
-class PouchDbStorageProvider extends StorageProviderBase {
-    constructor(type, storageEngine, name, id, key) {
-        super(type, name, id, key);
-        // Manages backing store
-        this.backingStore = null;
-        this.pendingBackingStore = null;
-        this.storageEngine = storageEngine;
-        this.pouchDbKey = new PouchDbKey(key);
-    }
-    // A consequence of awaiting this function is that this.backingStore
-    // is guaranteed to exist once the await completes. This is because
-    // if backingStore doesn't yet exist, the assignment in the then()
-    // is guaranteed to execute before anything awaiting this function.
-    async ensureBackingStore() {
-        if (this.backingStore) {
-            return this.backingStore;
-        }
-        if (!this.pendingBackingStore) {
-            const key = this.storageEngine.baseStorageKey(this.backingType(), this.storageKey);
-            this.pendingBackingStore = this.storageEngine.baseStorageFor(this.type, key);
-            this.pendingBackingStore.then(backingStore => (this.backingStore = backingStore));
-        }
-        return this.pendingBackingStore;
-    }
-    /**
-     * The active database for this provider.
-     */
-    get db() {
-        return this.storageEngine.dbForKey(this.pouchDbKey);
-    }
-    /**
-     * Increments the local version to be one more than the maximum of
-     * the local and remove versions.
-     */
-    bumpVersion(otherVersion) {
-        this.version = Math.max(this.version, otherVersion) + 1;
-    }
-}
-
-// TODO(lindner): update to operate like the firebase version
-class PouchDbBigCollection extends PouchDbStorageProvider {
-    constructor(type, storageEngine, name, id, key) {
-        super(type, storageEngine, name, id, key);
-    }
-    backingType() {
-        return this.type.primitiveType();
-    }
-    async get(id) {
-        throw new Error('NotImplemented');
-    }
-    async store(value, keys, originatorId) {
-        assert$1(keys != null && keys.length > 0, 'keys required');
-        throw new Error('NotImplemented');
-    }
-    async remove(id, keys, originatorId) {
-        throw new Error('NotImplemented');
-    }
-    async stream(pageSize, forward = true) {
-        throw new Error('NotImplemented');
-    }
-    async cursorNext(cursorId) {
-        throw new Error('NotImplemented');
-    }
-    cursorClose(cursorId) {
-        throw new Error('NotImplemented');
-    }
-    cursorVersion(cursorId) {
-        throw new Error('NotImplemented');
-    }
-    toLiteral() {
-        throw new Error('NotImplemented');
-    }
-    cloneFrom() {
-        throw new Error('NotImplemented');
-    }
-    clearItemsForTesting() {
-        throw new Error('NotImplemented');
-    }
-    /**
-     * Triggered when the storage key has been modified.  For now we
-     * just refetch.  This is fast since the data is synced locally.
-     */
-    onRemoteStateSynced(doc) {
-        throw new Error('NotImplemented');
-    }
-}
-
-class PouchDbCollection extends PouchDbStorageProvider {
-    /**
-     * Create a new PouchDbCollection.
-     *
-     * @param type the underlying type for this collection.
-     * @param storageEngine a reference back to the PouchDbStorage, used for baseStorageKey calls.
-     * @param name appears unused.
-     * @param id see base class.
-     * @param key the storage key for this collection.
-     */
-    constructor(type, storageEngine, name, id, key) {
-        super(type, storageEngine, name, id, key);
-        this._model = new CrdtCollectionModel();
-        // Ensure that the underlying database item is created.
-        this.db.get(this.pouchDbKey.location).catch((err) => {
-            if (err.name === 'not_found') {
-                this.db.put({
-                    _id: this.pouchDbKey.location,
-                    model: this._model.toLiteral(),
-                    referenceMode: this.referenceMode,
-                    type: this.type.toLiteral()
-                }).catch((e) => { console.warn('error init', e); });
-            }
-        });
-        assert$1(this.version !== null);
-    }
-    /** @inheritDoc */
-    backingType() {
-        return this.type.primitiveType();
-    }
-    // TODO(lindner): write tests
-    clone() {
-        const handle = new PouchDbCollection(this.type, this.storageEngine, this.name, this.id, null);
-        handle.cloneFrom(this);
-        return handle;
-    }
-    async cloneFrom(handle) {
-        this.referenceMode = handle.referenceMode;
-        const literal = await handle.toLiteral();
-        if (this.referenceMode && literal.model.length > 0) {
-            await Promise.all([this.ensureBackingStore(), handle.ensureBackingStore()]);
-            literal.model = literal.model.map(({ id, value }) => ({ id, value: { id: value.id, storageKey: this.backingStore.storageKey } }));
-            const underlying = await handle.backingStore.getMultiple(literal.model.map(({ id }) => id));
-            await this.backingStore.storeMultiple(underlying, [this.storageKey]);
-        }
-        this.fromLiteral(literal);
-    }
-    /** @inheritDoc */
-    async modelForSynchronization() {
-        // TODO(lindner): should this change for reference mode??
-        return {
-            version: this.version,
-            model: await this._toList()
-        };
-    }
-    /** @inheritDoc */
-    // Returns {version, model: [{id, value, keys: []}]}
-    // TODO(lindner): this is async, but the base class isn't....
-    async toLiteral() {
-        return {
-            version: this.version,
-            model: (await this.getModel()).toLiteral()
-        };
-    }
-    /**
-     * Populate this collection with a provided version/model
-     */
-    fromLiteral({ version, model }) {
-        this.version = version;
-        // TODO(lindner): this might not be initialized yet...
-        this._model = new CrdtCollectionModel(model);
-    }
-    async _toList() {
-        if (this.referenceMode) {
-            const items = (await this.getModel()).toLiteral();
-            if (items.length === 0) {
-                return [];
-            }
-            const refSet = new Set();
-            items.forEach(item => refSet.add(item.value.storageKey));
-            assert$1(refSet.size === 1, `multiple storageKeys in reference set of collection not yet supported.`);
-            const ref = refSet.values().next().value;
-            await this.ensureBackingStore();
-            const retrieveItem = async (item) => {
-                const ref = item.value;
-                return { id: ref.id, value: await this.backingStore.get(ref.id), keys: item.keys };
-            };
-            return await Promise.all(items.map(retrieveItem));
-        }
-        return (await this.getModel()).toLiteral();
-    }
-    async toList() {
-        return (await this._toList()).map(item => item.value);
-    }
-    /**
-     * Returns an array of values for each of the specified ids.
-     *
-     * @param ids items to fetch from the underlying CRDT model.
-     * @return an array of values from the underlying CRDT
-     */
-    async getMultiple(ids) {
-        assert$1(!this.referenceMode, 'getMultiple not implemented for referenceMode stores');
-        const model = await this.getModel();
-        return ids.map(id => model.getValue(id));
-    }
-    /**
-     * Store multiple values with the given keys in the Collection.
-     * TODO(lindner): document originatorId, which is unused.
-     */
-    async storeMultiple(values, keys, originatorId = null) {
-        assert$1(!this.referenceMode, 'storeMultiple not implemented for referenceMode stores');
-        this.getModelAndUpdate(crdtmodel => {
-            values.map(value => crdtmodel.add(value.id, value, keys));
-            return crdtmodel;
-        });
-    }
-    /**
-     * Get a specific Id value previously set using store().
-     *
-     * @remarks Note that the id referred to here is not the same as
-     * used in the constructor.
-     */
-    async get(id) {
-        if (this.referenceMode) {
-            const ref = (await this.getModel()).getValue(id);
-            if (ref == null) {
-                return null;
-            }
-            await this.ensureBackingStore();
-            return await this.backingStore.get(ref.id);
-        }
-        const model = await this.getModel();
-        return model.getValue(id);
-    }
-    /**
-     * Store the specific value to the collection.  Value must include an id entry.
-     *
-     * @param value A data object with an id entry that is used as a key.
-     * @param keys The CRDT keys used to store this object
-     * @param originatorId TBD passed to event listeners
-     */
-    async store(value, keys, originatorId = null) {
-        assert$1(keys != null && keys.length > 0, 'keys required');
-        const id = value.id;
-        const item = { value, keys, effective: false };
-        if (this.referenceMode) {
-            const referredType = this.type.primitiveType();
-            const storageKey = this.storageEngine.baseStorageKey(referredType, this.storageKey);
-            // Update the referred data
-            await this.getModelAndUpdate(crdtmodel => {
-                item.effective = crdtmodel.add(value.id, { id: value.id, storageKey }, keys);
-                return crdtmodel;
-            });
-            await this.ensureBackingStore();
-            await this.backingStore.store(value, keys);
-        }
-        else {
-            await this.getModelAndUpdate(crdtmodel => {
-                // check for existing keys?
-                item.effective = crdtmodel.add(value.id, value, keys);
-                return crdtmodel;
-            });
-        }
-        this.version++;
-        // Notify Listeners
-        this._fire('change', new ChangeEvent({ add: [item], version: this.version, originatorId }));
-    }
-    async removeMultiple(items, originatorId = null) {
-        await this.getModelAndUpdate(crdtmodel => {
-            if (items.length === 0) {
-                items = crdtmodel.toList().map(item => ({ id: item.id, keys: [] }));
-            }
-            items.forEach(item => {
-                if (item.keys.length === 0) {
-                    item.keys = crdtmodel.getKeys(item.id);
-                }
-                item.value = crdtmodel.getValue(item.id);
-                if (item.value !== null) {
-                    item.effective = crdtmodel.remove(item.id, item.keys);
-                }
-            });
-            return crdtmodel;
-        }).then(() => {
-            this._fire('change', new ChangeEvent({ remove: items, version: this.version, originatorId }));
-        });
-    }
-    /**
-     * Remove ids from a collection for specific keys.
-     * @param id the id to remove.
-     * @param keys the CRDT specific keys to remove.
-     * @param originatorId TBD passed to event listeners.
-     */
-    async remove(id, keys = [], originatorId = null) {
-        await this.getModelAndUpdate(crdtmodel => {
-            if (keys.length === 0) {
-                keys = crdtmodel.getKeys(id);
-            }
-            const value = crdtmodel.getValue(id);
-            if (value !== null) {
-                const effective = crdtmodel.remove(id, keys);
-                // TODO(lindner): isolate side effects...
-                this.version++;
-                this._fire('change', new ChangeEvent({ remove: [{ value, keys, effective }], version: this.version, originatorId }));
-            }
-            return crdtmodel;
-        });
-    }
-    /**
-     * Triggered when the storage key has been modified.  For now we
-     * just refetch and trigger listeners.  This is fast since the data
-     * is synced locally.
-     */
-    onRemoteStateSynced(doc) {
-        // updates internal state
-        const previousRev = this._rev;
-        const previousModel = this._model;
-        if (this._rev === doc._rev) {
-            return;
-        }
-        // remote revision is different, update local copy.
-        const model = doc.model;
-        this._model = new CrdtCollectionModel(model);
-        this._rev = doc._rev;
-        this.version++;
-        // TODO(lindner): handle referenceMode
-        // TODO(lindner): calculate added/removed keys from previousModel/model
-        // TODO(lindner): fire change events here?
-        //   this._fire('change', new ChangeEvent({add, remove, version: this.version}));
-    }
-    /**
-     * Updates the local model cache from PouchDB and returns the CRDT
-     * model for use.
-     */
-    async getModel() {
-        try {
-            const result = await this.db.get(this.pouchDbKey.location);
-            // compare revisions
-            if (this._rev !== result._rev) {
-                // remote revision is different, update local copy.
-                this._model = new CrdtCollectionModel(result['model']);
-                this._rev = result._rev;
-                this.version++; // yuck.
-                // TODO(lindner): fire change events here?
-            }
-        }
-        catch (err) {
-            if (err.name === 'not_found') {
-                this._model = new CrdtCollectionModel();
-                this._rev = undefined;
-            }
-            else {
-                console.warn('PouchDbCollection.getModel err=', err);
-                throw err;
-            }
-        }
-        return this._model;
-    }
-    /**
-     * Provides a way to apply changes to the model in a way that will result in the
-     * crdt being written to the underlying PouchDB.
-     *
-     * - A new entry is stored if it doesn't exist.
-     * - If the existing entry is available it is fetched and the
-     *   internal state is updated.
-     * - A copy of the CRDT model is passed to the modelMutator, which may change it.
-     * - If the model is mutated by `modelMutator`, write a new revision and update the local
-     *   cached copy.
-     *
-     * @param modelMutator allows for modifying a copy of the underlying crdt model.
-     */
-    async getModelAndUpdate(modelMutator) {
-        // Keep retrying the operation until it succeeds.
-        while (1) {
-            // TODO(lindner): add backoff and error out if this goes on for too long
-            let doc;
-            let notFound = false;
-            try {
-                doc = await this.db.get(this.pouchDbKey.location);
-                // Check remote doc.
-                // TODO(lindner): refactor with getModel above.
-                if (this._rev !== doc._rev) {
-                    // remote revision is different, update local copy.
-                    this._model = new CrdtCollectionModel(doc.model);
-                    this._rev = doc._rev;
-                    this.referenceMode = doc.referenceMode;
-                    this.bumpVersion(doc.version);
-                    // TODO(lindner): fire change events here?
-                }
-            }
-            catch (err) {
-                if (err.name !== 'not_found') {
-                    throw err;
-                }
-                notFound = true;
-                // setup basic doc, model/version updated below.
-                doc = {
-                    _id: this.pouchDbKey.location,
-                    referenceMode: this.referenceMode,
-                    type: this.type.toLiteral()
-                };
-            }
-            // Run the mutator on a copy of the existing model
-            // TODO(lindner): check about how many times we call toLiteral here.
-            const newModel = modelMutator(new CrdtCollectionModel(this._model.toLiteral()));
-            // Check if the mutator made any changes..
-            // TODO(lindner): consider changing the api to let the mutator tell us if changes were made.
-            if (!notFound && JSON.stringify(this._model.toLiteral()) === JSON.stringify(newModel.toLiteral())) {
-                // mutator didn't make any changes.
-                return this._model;
-            }
-            // Apply changes made by the mutator
-            doc.model = newModel.toLiteral();
-            doc.version = this.version;
-            // Update on pouchdb
-            try {
-                const putResult = await this.db.put(doc);
-                // success! update local with new model
-                this._rev = putResult.rev;
-                this._model = newModel;
-                return this._model;
-            }
-            catch (err) {
-                if (err.name === 'conflict') ;
-                else {
-                    // failed to write new doc, give up.
-                    console.warn('PouchDbCollection.getModelAndUpdate (err,doc)=', err, doc);
-                    throw err;
-                }
-            }
-        } // end while (1)
-        // can never get here..
-        return null;
-    }
-    /**
-     * Remove this item from the database for testing purposes.
-     */
-    async clearItemsForTesting() {
-        // Remove the Pouch Document
-        // TODO(lindner): does this need to work with reference mode?
-        try {
-            const doc = await this.db.get(this.pouchDbKey.location);
-            await this.db.remove(doc);
-        }
-        catch (err) {
-            if (err.name !== 'not_found') {
-                console.warn('clearItemsForTesting: error removing', err);
-            }
-        }
-        this._model = new CrdtCollectionModel();
-        this._rev = undefined;
-    }
-}
-
-/**
- * The PouchDB-based implementation of a Variable.
- */
-class PouchDbVariable extends PouchDbStorageProvider {
-    constructor(type, storageEngine, name, id, key) {
-        super(type, storageEngine, name, id, key);
-        this._stored = null;
-        this.localKeyId = 0;
-        this.backingStore = null;
-        // Insure that there's a value stored.
-        this.db.get(this.pouchDbKey.location).catch((err) => {
-            if (err.name === 'not_found') {
-                this.db.put({
-                    _id: this.pouchDbKey.location,
-                    value: null,
-                    version: 0,
-                    referenceMode: this.referenceMode
-                }).catch((e) => { console.log('error init', e); });
-            }
-        });
-    }
-    backingType() {
-        return this.type;
-    }
-    clone() {
-        const variable = new PouchDbVariable(this.type, this.storageEngine, this.name, this.id, null);
-        variable.cloneFrom(this);
-        return variable;
-    }
-    async cloneFrom(handle) {
-        this.referenceMode = handle.referenceMode;
-        const literal = await handle.toLiteral();
-        if (this.referenceMode && literal.model.length > 0) {
-            // cloneFrom the backing store data by reading the model and writing it out.
-            await Promise.all([this.ensureBackingStore(), handle.ensureBackingStore()]);
-            literal.model = literal.model.map(({ id, value }) => ({ id, value: { id: value.id, storageKey: this.backingStore.storageKey } }));
-            const underlying = await handle.backingStore.getMultiple(literal.model.map(({ id }) => id));
-            await this.backingStore.storeMultiple(underlying, [this.storageKey]);
-        }
-        await this.fromLiteral(literal);
-        if (literal && literal.model && literal.model.length === 1) {
-            const newvalue = literal.model[0].value;
-            if (newvalue) {
-                await this.getStoredAndUpdate(stored => newvalue);
-            }
-            this._fire('change', new ChangeEvent({ data: newvalue, version: this.version }));
-        }
-    }
-    /**
-     * Returns the model data in a format suitable for transport over
-     * the API channel (i.e. between execution host and context).
-     */
-    async modelForSynchronization() {
-        const value = await this.getStored();
-        if (this.referenceMode && value !== null) {
-            await this.ensureBackingStore();
-            const result = await this.backingStore.get(value.id);
-            return {
-                version: this.version,
-                model: [{ id: value.id, value: result }]
-            };
-        }
-        return super.modelForSynchronization();
-    }
-    /**
-     * Returns the state of this variable based as an object of the form
-     * {version, model: [{id, value}]}
-     */
-    async toLiteral() {
-        const value = await this.getStored();
-        let model = [];
-        if (value != null) {
-            model = [
-                {
-                    id: value.id,
-                    value
-                }
-            ];
-        }
-        return {
-            version: this.version,
-            model
-        };
-    }
-    /**
-     * Updates the internal state of this variable with data and stores
-     * the data in the underlying Pouch Database.
-     */
-    async fromLiteral({ version, model }) {
-        const value = model.length === 0 ? null : model[0].value;
-        if (this.referenceMode && value && value.rawData) {
-            assert$1(false, `shouldn't have rawData ${JSON.stringify(value.rawData)} here`);
-        }
-        assert$1(value !== undefined);
-        await this.getStoredAndUpdate(stored => {
-            return value;
-        });
-        this.version = version;
-    }
-    /**
-     * @return a promise containing the variable value or null if it does not exist.
-     */
-    async get() {
-        try {
-            const value = await this.getStored();
-            if (this.referenceMode && value) {
-                await this.ensureBackingStore();
-                return await this.backingStore.get(value.id);
-            }
-            return value;
-        }
-        catch (err) {
-            // TODO(plindner): caught for compatibility: pouchdb layer can throw, firebase layer never does
-            console.warn('PouchDbVariable.get err=', err);
-            return null;
-        }
-    }
-    /**
-     * Set the value for this variable.
-     * @param value the value we want to set.  If null remove the variable from storage
-     * @param originatorId TBD
-     * @param barrier TBD
-     */
-    async set(value, originatorId = null, barrier = null) {
-        assert$1(value !== undefined);
-        if (this.referenceMode && value) {
-            // Even if this value is identical to the previously written one,
-            // we can't suppress an event here because we don't actually have
-            // the previous value for comparison (that's down in the backing store).
-            // TODO(shans): should we fetch and compare in the case of the ids matching?
-            const referredType = this.type;
-            const storageKey = this.storageEngine.baseStorageKey(referredType, this.storageKey);
-            await this.ensureBackingStore();
-            // TODO(shans): mutating the storageKey here to provide unique keys is
-            // a hack that can be removed once entity mutation is distinct from collection
-            // updates. Once entity mutation exists, it shouldn't ever be possible to write
-            // different values with the same id.
-            await this.backingStore.store(value, [this.storageKey + this.localKeyId++]);
-            // Store the indirect pointer to the storageKey
-            // Do this *after* the write to backing store, otherwise null responses could occur
-            await this.getStoredAndUpdate(stored => {
-                return { id: value['id'], storageKey };
-            });
-        }
-        else {
-            // If there's a barrier set, then the originating storage-proxy is expecting
-            // a result so we cannot suppress the event here.
-            // TODO(lindner): determine if this is really needed
-            if (JSON.stringify(this._stored) === JSON.stringify(value) && barrier == null) {
-                return;
-            }
-            // Update Pouch/_stored, If value is null delete key, otherwise store it.
-            if (value == null) {
-                try {
-                    const doc = await this.db.get(this.pouchDbKey.location);
-                    await this.db.remove(doc);
-                }
-                catch (err) {
-                    // Deleting an already deleted item is acceptable.
-                    if (err.name !== 'not_found') {
-                        console.warn('PouchDbVariable.remove err=', err);
-                        throw err;
-                    }
-                }
-            }
-            else {
-                await this.getStoredAndUpdate(stored => {
-                    return value;
-                });
-            }
-        }
-        this.version++;
-        const data = this.referenceMode ? value : this._stored;
-        await this._fire('change', new ChangeEvent({ data, version: this.version, originatorId, barrier }));
-    }
-    /**
-     * Clear a variable from storage.
-     * @param originatorId TBD
-     * @param barrier TBD
-     */
-    async clear(originatorId = null, barrier = null) {
-        await this.set(null, originatorId, barrier);
-    }
-    /**
-     * Triggered when the storage key has been modified or deleted.
-     */
-    onRemoteStateSynced(doc) {
-        // Same revs?  No changes, just return.
-        if (doc._rev === this._rev) {
-            return;
-        }
-        // This is null for deleted docs.
-        // TODO(lindner): consider using doc._deleted to special case.
-        const value = doc.value;
-        // Store locally
-        this._stored = value;
-        this._rev = doc._rev;
-        this.referenceMode = doc.referenceMode;
-        this.bumpVersion(doc.version);
-        // Skip if value == null, which is what happens when docs are deleted..
-        if (this.referenceMode && value) {
-            this.ensureBackingStore().then(async (store) => {
-                const data = await store.get(value.id);
-                if (!data) {
-                    // TODO(lindner): data referred to by this data is missing.
-                    console.log('PouchDbVariable.onRemoteSynced: possible race condition for id=' + value.id);
-                    return;
-                }
-                this._fire('change', new ChangeEvent({ data, version: this.version }));
-            });
-        }
-        else {
-            if (value != null) {
-                this._fire('change', new ChangeEvent({ data: value, version: this.version }));
-            }
-        }
-    }
-    /**
-     * Pouch stored version of _stored.  Requests the value from the
-     * database.
-     *
-     *  - If the fetched revision does not match update the local variable.
-     *  - If the value does not exist store a null value.
-     * @throw on misc pouch errors.
-     */
-    async getStored() {
-        try {
-            const result = await this.db.get(this.pouchDbKey.location);
-            // compare revisions
-            if (this._rev !== result._rev) {
-                // remote revision is different, update local copy.
-                this._stored = result.value;
-                this._rev = result._rev;
-                this.referenceMode = result.referenceMode;
-                this.bumpVersion(result.version);
-            }
-        }
-        catch (err) {
-            if (err.name === 'not_found') {
-                // If the item was removed from storage empty out our local storage and bump the version.
-                this._stored = null;
-                this._rev = undefined;
-                this.version++;
-            }
-            else {
-                console.warn('PouchDbVariable.getStored err=', err);
-                throw err;
-            }
-        }
-        return this._stored;
-    }
-    /**
-     * Provides a way to apply changes to the stored value in a way that
-     * will result in the stored value being written to the underlying
-     * PouchDB.
-     *
-     * - A new entry is stored if it doesn't exists.
-     * - If the existing entry is available it is fetched
-     * - If revisions differ a new item is written.
-     * - The storage is potentially mutated and written.
-     *
-     * @param variableStorageMutator allows for changing the variable.
-     * @return the current value of _stored.
-     */
-    async getStoredAndUpdate(variableStorageMutator) {
-        // Keep retrying the operation until it succeeds.
-        while (1) {
-            // TODO(lindner): add backoff and give up after a set period of time.
-            let doc;
-            let notFound = false;
-            try {
-                doc = await this.db.get(this.pouchDbKey.location);
-                // Check remote doc.
-                // TODO(lindner): refactor with getStored above.
-                if (this._rev !== doc._rev) {
-                    // remote revision is different, update local copy.
-                    this._stored = doc.value;
-                    this._rev = doc._rev;
-                    this.bumpVersion(doc.version);
-                }
-            }
-            catch (err) {
-                if (err.name !== 'not_found') {
-                    throw err;
-                }
-                notFound = true;
-            }
-            // Run the mutator on a copy of the existing model
-            const newValue = variableStorageMutator(Object.assign({}, this._stored));
-            // Check if the mutator made any changes..
-            // TODO(lindner): add a deep equals method for VariableStorage
-            if (!notFound && JSON.stringify(this._stored) === JSON.stringify(newValue)) {
-                // mutator didn't make any changes.
-                return this._stored;
-            }
-            // Apply changes made by the mutator
-            doc = {
-                _id: this.pouchDbKey.location,
-                _rev: this._rev,
-                value: newValue,
-                version: this.version,
-                referenceMode: this.referenceMode
-            };
-            // Update on pouchdb
-            try {
-                const putResult = await this.db.put(doc);
-                // success! update local with new stored value
-                this._rev = putResult.rev;
-                this._stored = newValue;
-                return this._stored;
-            }
-            catch (err) {
-                if (err.name === 'conflict') ;
-                else {
-                    // failed to write new doc, give up.
-                    console.warn('PouchDbVariable.getStoredAndUpdate (err, doc)=', err, doc);
-                    throw err;
-                }
-            }
-        } // end while (1)
-        // can never get here..
-        return null;
-    }
-}
-
-// @
-PouchDB.plugin(PouchDbDebug);
-PouchDB.debug.disable();
-class PouchDbStorage extends StorageBase {
-    constructor(arcId) {
-        super(arcId);
-        /**
-         * A map of the key location to the actual provider.
-         * Used for replication callbacks and as a short-circuit for the connect method.
-         */
-        this.providerByLocationCache = new Map();
-        // Used for reference mode
-        this.baseStores = new Map();
-        this.baseStorePromises = new Map();
-    }
-    set debug(d) {
-        super.debug = d;
-        if (d) {
-            PouchDB.debug.enable('*');
-        }
-        else {
-            PouchDB.debug.disable();
-        }
-    }
-    /**
-     * Instantiates a new key for id/type stored at keyFragment.
-     */
-    async construct(id, type, keyFragment) {
-        const provider = await this._construct(id, type, keyFragment);
-        if (type instanceof ReferenceType) {
-            return provider;
-        }
-        if (type.isTypeContainer() && type.getContainedType() instanceof ReferenceType) {
-            return provider;
-        }
-        provider.enableReferenceMode();
-        return provider;
-    }
-    async _construct(id, type, keyFragment) {
-        const key = new PouchDbKey(keyFragment);
-        const provider = this.newProvider(type, undefined, id, key.toString());
-        // Used to track changes for the key.
-        this.providerByLocationCache.set(key.location, provider);
-        return provider;
-    }
-    /**
-     * Connect with an existing storage key.  Returns a cached instance if available.
-     * Returns null if no such storage key exists.
-     */
-    async connect(id, type, key) {
-        const pouchKey = new PouchDbKey(key);
-        // Check if we have an already allocated instance
-        const provider = this.providerByLocationCache.get(pouchKey.location);
-        if (provider) {
-            return provider;
-        }
-        // Use a simple fetch to see if the document exists
-        try {
-            // TODO(lindner): optimize away this call.
-            await this.dbForKey(pouchKey).get(pouchKey.location);
-            return this.construct(id, type, key);
-        }
-        catch (err) {
-            if (err.name && err.name === 'not_found') {
-                return null;
-            }
-            throw err;
-        }
-    }
-    /** Unit tests should call this in an 'after' block. */
-    shutdown() {
-        // Stop syncing
-        if (PouchDbStorage.syncHandler) {
-            PouchDbStorage.syncHandler.cancel();
-        }
-        // Close databases
-        for (const db of PouchDbStorage.dbLocationToInstance.values()) {
-            db.close();
-        }
-        PouchDbStorage.dbLocationToInstance.clear();
-    }
-    /** @inheritDoc */
-    baseStorageKey(type, keyString) {
-        const key = new PouchDbKey(keyString);
-        key.location = `backingStores/${type.toString()}`;
-        return key.toString();
-    }
-    /** @inheritDoc */
-    async baseStorageFor(type, key) {
-        if (this.baseStores.has(type)) {
-            return this.baseStores.get(type);
-        }
-        if (this.baseStorePromises.has(type)) {
-            return this.baseStorePromises.get(type);
-        }
-        const storagePromise = this._construct(type.toString(), type.collectionOf(), key);
-        this.baseStorePromises.set(type, storagePromise);
-        const storage = await storagePromise;
-        assert$1(storage, 'baseStorageFor should not fail');
-        this.baseStores.set(type, storage);
-        return storage;
-    }
-    /** @inheritDoc */
-    parseStringAsKey(s) {
-        return new PouchDbKey(s);
-    }
-    /** Creates a new Variable or Collection given basic parameters */
-    newProvider(type, name, id, key) {
-        if (type instanceof CollectionType) {
-            return new PouchDbCollection(type, this, name, id, key);
-        }
-        if (type instanceof BigCollectionType) {
-            return new PouchDbBigCollection(type, this, name, id, key);
-        }
-        return new PouchDbVariable(type, this, name, id, key);
-    }
-    /** Removes everything that a test could have created. */
-    static async resetPouchDbStorageForTesting() {
-        for (const db of PouchDbStorage.dbLocationToInstance.values()) {
-            await db
-                .allDocs({ include_docs: true })
-                .then(allDocs => {
-                return allDocs.rows.map(row => {
-                    return { _id: row.id, _rev: row.doc._rev, _deleted: true };
-                });
-            })
-                .then(deleteDocs => {
-                return db.bulkDocs(deleteDocs);
-            });
-        }
-    }
-    static async dumpDB() {
-        for (const db of PouchDbStorage.dbLocationToInstance.values()) {
-            await db
-                .allDocs({ include_docs: true })
-                .then(allDocs => {
-                console.log(allDocs);
-            });
-        }
-    }
-    /**
-     * Returns a database for the specific dbLocation/dbName of PouchDbKey and caches it.
-     * @param key the PouchDbKey used to obtain the cache key.
-     */
-    dbForKey(key) {
-        let db = PouchDbStorage.dbLocationToInstance.get(key.dbCacheKey());
-        if (db) {
-            return db;
-        }
-        // New connect to a database
-        if (key.dbLocation === 'local') {
-            db = new PouchDB(key.dbName);
-        }
-        else if (key.dbLocation === 'memory') {
-            PouchDB.plugin(PouchDbMemory);
-            db = new PouchDB(key.dbName, { adapter: 'memory' });
-        }
-        else {
-            // Create a local db to sync to the remote
-            db = new PouchDB(key.dbName);
-            // Ensure a secure origin, http is okay for localhost, but other hosts need https
-            const httpScheme = key.dbLocation.startsWith('localhost') ? 'http://' : 'https://';
-            const dbUrl = `${httpScheme}${key.dbLocation}/${key.dbName}`;
-            console.log('Connecting to ' + dbUrl);
-            const remoteDb = new PouchDB(dbUrl);
-            if (!remoteDb || !db) {
-                throw new Error('unable to connect to remote database ' + dbUrl + ' for ' + key.toString());
-            }
-            // Make an early explicit connection to the database to catch bad configurations
-            remoteDb
-                .info()
-                .then(info => {
-                console.log('Connected to Remote Database', info);
-            })
-                .catch(err => {
-                console.warn('Error connecting to Remote Database', err);
-            });
-            this.setupSync(db, remoteDb);
-        }
-        if (!db) {
-            throw new Error('unable to connect to database for ' + key.toString());
-        }
-        PouchDbStorage.dbLocationToInstance.set(key.dbCacheKey(), db);
-        return db;
-    }
-    /**
-     * Starts syncing between the remote and local Pouch databases.
-     * Installs an event handler that propagates changes arriving from
-     * remote to local objects using matching location IDs.
-     */
-    setupSync(localDb, remoteDb) {
-        console.log('Replicating DBs');
-        const syncHandler = localDb.sync(remoteDb, { live: true, retry: true });
-        // Handle inbound changes.
-        syncHandler.on('change', info => {
-            const dir = info.direction; // push or pull.
-            if (dir === 'pull') {
-                // handle change from the server
-                for (const doc of info.change.docs) {
-                    // Find the handler for the id and pass the changed doc to it.
-                    const handler = this.providerByLocationCache.get(doc._id);
-                    if (handler) {
-                        handler.onRemoteStateSynced(doc);
-                    }
-                }
-            }
-        });
-        // Set up remaining event handlers.
-        syncHandler
-            .on('paused', err => {
-            // replication paused (e.g. replication up to date, user went offline)
-            console.log('DB Replication paused', err);
-        })
-            .on('active', () => {
-            // replicate resumed (e.g. new changes replicating, user went back online)
-            console.log('DB Replication active');
-        })
-            .on('denied', err => {
-            // a document failed to replicate (e.g. due to permissions)
-            // TODO(lindner): we should do something here..
-            console.log('DB Replication denied', err);
-        })
-            .on('complete', info => {
-            console.log('DB Replication complete', info);
-        })
-            .on('error', err => {
-            // TODO(lindner): we should do something here..
-            console.log('DB Replication error', err);
-        });
-        PouchDbStorage.syncHandler = syncHandler;
-    }
-}
-/** Global map of database types/name to Pouch Database Instances */
-PouchDbStorage.dbLocationToInstance = new Map();
-
-// @license
-var Scope;
-(function (Scope) {
-    Scope[Scope["arc"] = 1] = "arc"; // target must be a storage key for an ArcInfo Variable
-})(Scope || (Scope = {}));
-var Category;
-(function (Category) {
-    Category[Category["handles"] = 1] = "handles"; // synthetic data will be a collection of ArcHandles
-})(Category || (Category = {}));
-// Format is 'synthetic://<scope>/<category>/<target>'
-class SyntheticKey extends KeyBase {
-    constructor(key, storageFactory) {
-        super();
-        const match = key.match(/^synthetic:\/\/([^/]+)\/([^/]+)\/(.+)$/);
-        if (match === null || match.length !== 4) {
-            throw new Error(`invalid synthetic key: ${key}`);
-        }
-        this.scope = Scope[match[1]];
-        this.category = Category[match[2]];
-        if (this.scope === Scope.arc) {
-            this.targetType = new ArcType();
-            const key = storageFactory.parseStringAsKey(match[3]).childKeyForArcInfo();
-            this.targetKey = key.toString();
-        }
-        else {
-            throw new Error(`invalid scope '${match[1]}' for synthetic key: ${key}`);
-        }
-        if (this.category === Category.handles) {
-            this.syntheticType = new HandleType();
-        }
-        else {
-            throw new Error(`invalid category '${match[2]}' for synthetic key: ${key}`);
-        }
-    }
-    get protocol() {
-        return 'synthetic';
-    }
-    base() {
-        assert$1(false, 'base not supported for synthetic keys');
-        return null;
-    }
-    get arcId() {
-        assert$1(false, 'arcId not supported for synthetic keys');
-        return null;
-    }
-    childKeyForHandle(id) {
-        assert$1(false, 'childKeyForHandle not supported for synthetic keys');
-        return null;
-    }
-    childKeyForArcInfo() {
-        assert$1(false, 'childKeyForArcInfo not supported for synthetic keys');
-        return null;
-    }
-    childKeyForSuggestions(userId, arcId) {
-        assert$1(false, 'childKeyForSuggestions not supported for synthetic keys');
-        return null;
-    }
-    childKeyForSearch(userId) {
-        assert$1(false, 'childKeyForSearch not supported for synthetic keys');
-        return null;
-    }
-    toString() {
-        return `${this.protocol}://${Scope[this.scope]}/${Category[this.category]}/${this.targetKey}`;
-    }
-}
-class SyntheticStorage extends StorageBase {
-    constructor(arcId, storageFactory) {
-        super(arcId);
-        this.storageFactory = storageFactory;
-    }
-    async construct(id, type, keyFragment) {
-        throw new Error('cannot construct SyntheticStorage providers; use connect');
-    }
-    async connect(id, type, key) {
-        assert$1(type === null, 'SyntheticStorage does not accept a type parameter');
-        const synthKey = new SyntheticKey(key, this.storageFactory);
-        const targetStore = await this.storageFactory.connect(id, synthKey.targetType, synthKey.targetKey);
-        if (targetStore === null) {
-            return null;
-        }
-        return new SyntheticCollection(synthKey.syntheticType, id, key, targetStore, this.storageFactory);
-    }
-    async baseStorageFor(type, key) {
-        throw new Error('baseStorageFor not implemented for SyntheticStorage');
-    }
-    baseStorageKey(type, key) {
-        throw new Error('baseStorageKey not implemented for SyntheticStorage');
-    }
-    parseStringAsKey(s) {
-        return new SyntheticKey(s, this.storageFactory);
-    }
-}
-// Currently hard-wired to parse serialized data in an ArcInfo Variable to provide a list of ArcHandles.
-class SyntheticCollection extends StorageProviderBase {
-    constructor(type, id, key, targetStore, storageFactory) {
-        super(type, undefined, id, key);
-        this.model = [];
-        this.backingStore = undefined;
-        this.targetStore = targetStore;
-        this.storageFactory = storageFactory;
-        let resolveInitialized;
-        this.initialized = new Promise(resolve => resolveInitialized = resolve);
-        const process = async (data) => {
-            await this.process(data, false);
-            resolveInitialized();
-            targetStore.on('change', details => this.process(details.data, true), this);
-        };
-        targetStore.get().then(data => process(data));
-    }
-    async process(data, fireEvent) {
-        let handles;
-        try {
-            if (data) {
-                const manifest = await Manifest.parse(ArcInfo.extractSerialization(data), {});
-                handles = manifest.activeRecipe && manifest.activeRecipe.handles;
-            }
-        }
-        catch (e) {
-            console.warn(`Error parsing manifest at ${this.storageKey}:\n${e.message}`);
-        }
-        const oldModel = this.model;
-        this.model = [];
-        for (const handle of handles || []) {
-            if (this.storageFactory.isPersistent(handle._storageKey)) {
-                this.model.push(new ArcHandle(handle.storageKey, handle.mappedType, handle.tags));
-            }
-        }
-        if (fireEvent) {
-            const diff = setDiffCustom(oldModel, this.model, JSON.stringify);
-            const add = diff.add.map(arcHandle => ({ value: arcHandle }));
-            const remove = diff.remove.map(arcHandle => ({ value: arcHandle }));
-            this._fire('change', new ChangeEvent({ add, remove }));
-        }
-    }
-    async toList() {
-        await this.initialized;
-        return this.model;
-    }
-    async toLiteral() {
-        return this.toList();
-    }
-    cloneFrom() {
-        throw new Error('cloneFrom should never be called on SyntheticCollection!');
-    }
-    ensureBackingStore() {
-        throw new Error('ensureBackingStore should never be called on SyntheticCollection!');
-    }
-    // tslint:disable-next-line: no-any
-    async getMultiple(ids) {
-        throw new Error('unimplemented');
-    }
-    async storeMultiple(values, keys, originatorId) {
-        throw new Error('unimplemented');
-    }
-    removeMultiple(items, originatorId) {
-        throw new Error('unimplemented');
-    }
-    async get(id) {
-        throw new Error('unimplemented');
-    }
-    remove(id, keys, originatorId) {
-        throw new Error('unimplemented');
-    }
-    store(value, keys, originatorId) {
-        throw new Error('unimplemented');
     }
 }
 
@@ -17779,16 +15093,227 @@ class VolatileBigCollection extends VolatileStorageProvider {
     }
 }
 
+// @license
+/**
+ * Returns the set delta between two lists based on custom object comparison.
+ * `keyFn` takes type T and returns the value by which items should be compared.
+ */
+function setDiffCustom(from, to, keyFn) {
+    const result = { add: [], remove: [] };
+    const items = new Map();
+    const fromSet = new Map();
+    const toSet = new Map();
+    for (const item of from) {
+        const key = keyFn(item);
+        items.set(key, item);
+        fromSet.set(key, item);
+    }
+    for (const item of to) {
+        const key = keyFn(item);
+        items.set(key, item);
+        toSet.set(key, item);
+    }
+    for (const [key, item] of items) {
+        if (fromSet.has(key)) {
+            if (toSet.has(key)) {
+                continue;
+            }
+            result.remove.push(item);
+            continue;
+        }
+        assert$1(toSet.has(key));
+        result.add.push(item);
+    }
+    return result;
+}
+
+// @license
+var Scope;
+(function (Scope) {
+    Scope[Scope["arc"] = 1] = "arc"; // target must be a storage key for an ArcInfo Variable
+})(Scope || (Scope = {}));
+var Category;
+(function (Category) {
+    Category[Category["handles"] = 1] = "handles"; // synthetic data will be a collection of ArcHandles
+})(Category || (Category = {}));
+// Format is 'synthetic://<scope>/<category>/<target>'
+class SyntheticKey extends KeyBase {
+    constructor(key, storageFactory) {
+        super();
+        const match = key.match(/^synthetic:\/\/([^/]+)\/([^/]+)\/(.+)$/);
+        if (match === null || match.length !== 4) {
+            throw new Error(`invalid synthetic key: ${key}`);
+        }
+        this.scope = Scope[match[1]];
+        this.category = Category[match[2]];
+        if (this.scope === Scope.arc) {
+            this.targetType = new ArcType();
+            const key = storageFactory.parseStringAsKey(match[3]).childKeyForArcInfo();
+            this.targetKey = key.toString();
+        }
+        else {
+            throw new Error(`invalid scope '${match[1]}' for synthetic key: ${key}`);
+        }
+        if (this.category === Category.handles) {
+            this.syntheticType = new HandleType();
+        }
+        else {
+            throw new Error(`invalid category '${match[2]}' for synthetic key: ${key}`);
+        }
+    }
+    get protocol() {
+        return 'synthetic';
+    }
+    base() {
+        assert$1(false, 'base not supported for synthetic keys');
+        return null;
+    }
+    get arcId() {
+        assert$1(false, 'arcId not supported for synthetic keys');
+        return null;
+    }
+    childKeyForHandle(id) {
+        assert$1(false, 'childKeyForHandle not supported for synthetic keys');
+        return null;
+    }
+    childKeyForArcInfo() {
+        assert$1(false, 'childKeyForArcInfo not supported for synthetic keys');
+        return null;
+    }
+    childKeyForSuggestions(userId, arcId) {
+        assert$1(false, 'childKeyForSuggestions not supported for synthetic keys');
+        return null;
+    }
+    childKeyForSearch(userId) {
+        assert$1(false, 'childKeyForSearch not supported for synthetic keys');
+        return null;
+    }
+    toString() {
+        return `${this.protocol}://${Scope[this.scope]}/${Category[this.category]}/${this.targetKey}`;
+    }
+}
+class SyntheticStorage extends StorageBase {
+    constructor(arcId, storageFactory) {
+        super(arcId);
+        this.storageFactory = storageFactory;
+    }
+    async construct(id, type, keyFragment) {
+        throw new Error('cannot construct SyntheticStorage providers; use connect');
+    }
+    async connect(id, type, key) {
+        assert$1(type === null, 'SyntheticStorage does not accept a type parameter');
+        const synthKey = new SyntheticKey(key, this.storageFactory);
+        const targetStore = await this.storageFactory.connect(id, synthKey.targetType, synthKey.targetKey);
+        if (targetStore === null) {
+            return null;
+        }
+        return new SyntheticCollection(synthKey.syntheticType, id, key, targetStore, this.storageFactory);
+    }
+    async baseStorageFor(type, key) {
+        throw new Error('baseStorageFor not implemented for SyntheticStorage');
+    }
+    baseStorageKey(type, key) {
+        throw new Error('baseStorageKey not implemented for SyntheticStorage');
+    }
+    parseStringAsKey(s) {
+        return new SyntheticKey(s, this.storageFactory);
+    }
+}
+// Currently hard-wired to parse serialized data in an ArcInfo Variable to provide a list of ArcHandles.
+class SyntheticCollection extends StorageProviderBase {
+    constructor(type, id, key, targetStore, storageFactory) {
+        super(type, undefined, id, key);
+        this.model = [];
+        this.backingStore = undefined;
+        this.targetStore = targetStore;
+        this.storageFactory = storageFactory;
+        let resolveInitialized;
+        this.initialized = new Promise(resolve => resolveInitialized = resolve);
+        const process = async (data) => {
+            await this.process(data, false);
+            resolveInitialized();
+            targetStore.on('change', details => this.process(details.data, true), this);
+        };
+        targetStore.get().then(data => process(data));
+    }
+    async process(data, fireEvent) {
+        let handles;
+        try {
+            if (data) {
+                const manifest = await Manifest.parse(ArcInfo.extractSerialization(data), {});
+                handles = manifest.activeRecipe && manifest.activeRecipe.handles;
+            }
+        }
+        catch (e) {
+            console.warn(`Error parsing manifest at ${this.storageKey}:\n${e.message}`);
+        }
+        const oldModel = this.model;
+        this.model = [];
+        for (const handle of handles || []) {
+            if (this.storageFactory.isPersistent(handle._storageKey)) {
+                this.model.push(new ArcHandle(handle.storageKey, handle.mappedType, handle.tags));
+            }
+        }
+        if (fireEvent) {
+            const diff = setDiffCustom(oldModel, this.model, JSON.stringify);
+            const add = diff.add.map(arcHandle => ({ value: arcHandle }));
+            const remove = diff.remove.map(arcHandle => ({ value: arcHandle }));
+            this._fire('change', new ChangeEvent({ add, remove }));
+        }
+    }
+    async toList() {
+        await this.initialized;
+        return this.model;
+    }
+    async toLiteral() {
+        return this.toList();
+    }
+    cloneFrom() {
+        throw new Error('cloneFrom should never be called on SyntheticCollection!');
+    }
+    ensureBackingStore() {
+        throw new Error('ensureBackingStore should never be called on SyntheticCollection!');
+    }
+    // tslint:disable-next-line: no-any
+    async getMultiple(ids) {
+        throw new Error('unimplemented');
+    }
+    async storeMultiple(values, keys, originatorId) {
+        throw new Error('unimplemented');
+    }
+    removeMultiple(items, originatorId) {
+        throw new Error('unimplemented');
+    }
+    async get(id) {
+        throw new Error('unimplemented');
+    }
+    remove(id, keys, originatorId) {
+        throw new Error('unimplemented');
+    }
+    store(value, keys, originatorId) {
+        throw new Error('unimplemented');
+    }
+}
+
 // @
+// TODO(sjmiles): StorageProviderFactory.register can be used
+// to install additional providers, as long as it's invoked
+// before any StorageProviderFactory objects are constructed.
+const providers = {
+    volatile: { storage: VolatileStorage, isPersistent: false },
+    synthetic: { storage: SyntheticStorage, isPersistent: false }
+};
 class StorageProviderFactory {
     constructor(arcId) {
         this.arcId = arcId;
-        this._storageInstances = {
-            volatile: { storage: new VolatileStorage(arcId), isPersistent: false },
-            firebase: { storage: new FirebaseStorage(arcId), isPersistent: true },
-            pouchdb: { storage: new PouchDbStorage(arcId), isPersistent: true },
-            synthetic: { storage: new SyntheticStorage(arcId, this), isPersistent: false },
-        };
+        this._storageInstances = {};
+        Object.keys(providers).forEach(name => {
+            const { storage, isPersistent } = providers[name];
+            this._storageInstances[name] = { storage: new storage(arcId, this), isPersistent };
+        });
+    }
+    static register(name, instance) {
+        providers[name] = instance;
     }
     getInstance(key) {
         const instance = this._storageInstances[key.split(':')[0]];

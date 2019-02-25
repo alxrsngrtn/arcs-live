@@ -7,6 +7,8 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
+import '../storage/firebase/firebase-provider.js';
+import '../storage/pouchdb/pouchdb-provider.js';
 import { assert } from '../../platform/chai-web.js';
 import { Arc } from '../arc.js';
 import { handleFor } from '../handle.js';

@@ -7,4 +7,5 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-export {};
+import '../storage/firebase/firebase-provider.js';
+import '../storage/pouchdb/pouchdb-provider.js';

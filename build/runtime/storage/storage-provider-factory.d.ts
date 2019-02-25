@@ -1,10 +1,14 @@
+import { StorageBase, StorageProviderBase } from './storage-provider-base.js';
 import { Id } from '../id.js';
 import { Type } from '../type.js';
 import { KeyBase } from './key-base.js';
-import { StorageBase, StorageProviderBase } from './storage-provider-base.js';
 export declare class StorageProviderFactory {
     private readonly arcId;
-    private readonly _storageInstances;
+    static register(name: string, instance: {
+        storage: Function;
+        isPersistent: boolean;
+    }): void;
+    private _storageInstances;
     constructor(arcId: Id);
     private getInstance;
     _storageForKey(key: string): StorageBase;

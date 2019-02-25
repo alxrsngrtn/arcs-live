@@ -1,8 +1,8 @@
-import { firebase } from '../../platform/firebase-web.js';
-import { Id } from '../id.js';
-import { Type } from '../type.js';
-import { KeyBase } from './key-base.js';
-import { BigCollectionStorageProvider, CollectionStorageProvider, StorageBase, StorageProviderBase, VariableStorageProvider } from './storage-provider-base.js';
+import { firebase } from '../../../platform/firebase-web.js';
+import { Id } from '../../id.js';
+import { Type } from '../../type.js';
+import { KeyBase } from '../key-base.js';
+import { BigCollectionStorageProvider, CollectionStorageProvider, StorageBase, StorageProviderBase, VariableStorageProvider } from '../storage-provider-base.js';
 export declare function resetStorageForTesting(key: any): Promise<void>;
 declare class FirebaseKey extends KeyBase {
     databaseUrl?: string;
@@ -177,12 +177,12 @@ declare class FirebaseCollection extends FirebaseStorageProvider implements Coll
         }[];
     }>;
     toList(): Promise<any[]>;
-    getMultiple(ids: string[]): Promise<import("./crdt-collection-model.js").ModelValue[]>;
+    getMultiple(ids: string[]): Promise<import("../crdt-collection-model.js").ModelValue[]>;
     storeMultiple(values: any, keys: string[], originatorId?: any): Promise<void>;
     cloneFrom(handle: any): Promise<void>;
     toLiteral(): Promise<{
         version: number;
-        model: import("./crdt-collection-model.js").SerializedModelEntry[];
+        model: import("../crdt-collection-model.js").SerializedModelEntry[];
     }>;
     fromLiteral({ version, model }: {
         version: any;
