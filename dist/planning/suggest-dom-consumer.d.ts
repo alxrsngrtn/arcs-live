@@ -14,7 +14,7 @@ export declare class SuggestDomConsumer extends SlotDomConsumer {
     _suggestion: Suggestion;
     _suggestionContent: any;
     _eventHandler: any;
-    constructor(arc: Arc, containerKind: string, suggestion: Suggestion, suggestionContent: any, eventHandler: any);
+    constructor(arc: Arc, containerKind: string, suggestion: Suggestion, eventHandler: any);
     readonly suggestion: Suggestion;
     readonly templatePrefix: string;
     formatContent(content: any): {
@@ -23,5 +23,6 @@ export declare class SuggestDomConsumer extends SlotDomConsumer {
         model: any;
     };
     onContainerUpdate(container: any, originalContainer: any): void;
-    static render(arc: Arc, container: any, plan: any, content: any): SlotDomConsumer;
+    static _extractContent(suggestion: Suggestion): {};
+    static render(arc: Arc, container: any, suggestion: Suggestion): SlotDomConsumer;
 }

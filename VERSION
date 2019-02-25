@@ -1,13 +1,5 @@
-commit 819b20014b0c74f4f3a3202737b15b6158e65d37
-Author: Scott J. Miles <sjmiles@google.com>
-Date:   Mon Feb 25 12:00:23 2019 -0800
+commit 18f7060afce69611cf96dd8570c3c779bec7e442
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Mon Feb 25 12:14:54 2019 -0800
 
-    Pluggable storage providers (#2709)
-    
-    * pluggable storage providers
-    
-    * select storage providers for web-shell
-    
-    * fix paths (and trailing spaces)
-    
-    * add storage providers to tests
+    restore non-text modality support in suggestions (#2712)

@@ -7,12 +7,13 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
+import { Modality } from '../runtime/modality.js';
 import { SlotDomConsumer } from '../runtime/slot-dom-consumer.js';
 export class SuggestDomConsumer extends SlotDomConsumer {
-    constructor(arc, containerKind, suggestion, suggestionContent, eventHandler) {
+    constructor(arc, containerKind, suggestion, eventHandler) {
         super(arc, /* consumeConn= */ null, containerKind);
         this._suggestion = suggestion;
-        this._suggestionContent = suggestionContent;
+        this._suggestionContent = SuggestDomConsumer._extractContent(this._suggestion);
         this._eventHandler = eventHandler;
     }
     get suggestion() {
@@ -34,8 +35,15 @@ export class SuggestDomConsumer extends SlotDomConsumer {
             this.setContent(this._suggestionContent, this._eventHandler);
         }
     }
-    static render(arc, container, plan, content) {
-        const suggestionContainer = Object.assign(document.createElement('suggestion-element'), { plan });
+    static _extractContent(suggestion) {
+        return suggestion.getDescription(Modality.Name.Dom) || { template: suggestion.descriptionText };
+    }
+    static render(arc, container, suggestion) {
+        const content = SuggestDomConsumer._extractContent(suggestion);
+        if (!content) {
+            return undefined;
+        }
+        const suggestionContainer = Object.assign(document.createElement('suggestion-element'), { plan: suggestion });
         container.appendChild(suggestionContainer, container.firstElementChild);
         const rendering = { container: suggestionContainer, model: content.model };
         const consumer = new SlotDomConsumer(arc);

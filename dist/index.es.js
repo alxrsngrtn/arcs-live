@@ -25436,10 +25436,10 @@ ModalityHandler.domHandler = new ModalityHandler(SlotDomConsumer, DescriptionDom
  * http://polymer.github.io/PATENTS.txt
  */
 class SuggestDomConsumer extends SlotDomConsumer {
-    constructor(arc, containerKind, suggestion, suggestionContent, eventHandler) {
+    constructor(arc, containerKind, suggestion, eventHandler) {
         super(arc, /* consumeConn= */ null, containerKind);
         this._suggestion = suggestion;
-        this._suggestionContent = suggestionContent;
+        this._suggestionContent = SuggestDomConsumer._extractContent(this._suggestion);
         this._eventHandler = eventHandler;
     }
     get suggestion() {
@@ -25461,8 +25461,15 @@ class SuggestDomConsumer extends SlotDomConsumer {
             this.setContent(this._suggestionContent, this._eventHandler);
         }
     }
-    static render(arc, container, plan, content) {
-        const suggestionContainer = Object.assign(document.createElement('suggestion-element'), { plan });
+    static _extractContent(suggestion) {
+        return suggestion.getDescription(Modality.Name.Dom) || { template: suggestion.descriptionText };
+    }
+    static render(arc, container, suggestion) {
+        const content = SuggestDomConsumer._extractContent(suggestion);
+        if (!content) {
+            return undefined;
+        }
+        const suggestionContainer = Object.assign(document.createElement('suggestion-element'), { plan: suggestion });
         container.appendChild(suggestionContainer, container.firstElementChild);
         const rendering = { container: suggestionContainer, model: content.model };
         const consumer = new SlotDomConsumer(arc);
@@ -25484,11 +25491,10 @@ class SuggestDomConsumer extends SlotDomConsumer {
  * http://polymer.github.io/PATENTS.txt
  */
 class HeadlessSuggestDomConsumer extends SuggestDomConsumer {
-    constructor(arc, containerKind, suggestion, suggestionContent, eventHandler) {
-        super(arc, containerKind, suggestion, suggestionContent, eventHandler);
-        this._suggestion = suggestion;
-        this._suggestionContent = suggestionContent.template ? suggestionContent : {
-            template: `<dummy-suggestion>${suggestionContent}</dummy-element>`,
+    constructor(arc, containerKind, suggestion, eventHandler) {
+        super(arc, containerKind, suggestion, eventHandler);
+        this._suggestionContent = this._suggestionContent.template ? this._suggestionContent : {
+            template: `<dummy-suggestion>${this._suggestionContent}</dummy-element>`,
             templateName: 'dummy-suggestion',
             model: {}
         };
@@ -25504,7 +25510,7 @@ class HeadlessSuggestDomConsumer extends SuggestDomConsumer {
             this.setContent(this._suggestionContent, this._eventHandler);
         }
     }
-    static render(arc, container, plan, content) {
+    static render(arc, container, suggestion) {
         return undefined;
     }
     setContent(content, handler) {
@@ -27175,18 +27181,15 @@ class SuggestionComposer {
         this.clear();
         this._suggestions = suggestions.sort(Suggestion.compare);
         for (const suggestion of this._suggestions) {
-            // TODO(mmandlis): use modality-appropriate description.
-            const suggestionContent = { template: suggestion.descriptionText };
-            if (!suggestionContent) {
-                throw new Error('No suggestion content available');
-            }
             if (this._container) {
-                this.modalityHandler.suggestionConsumerClass.render(this.arc, this._container, suggestion, suggestionContent);
+                if (!this.modalityHandler.suggestionConsumerClass.render(this.arc, this._container, suggestion)) {
+                    throw new Error(`Couldn't render suggestion for ${suggestion.hash}`);
+                }
             }
-            this._addInlineSuggestion(suggestion, suggestionContent);
+            this._addInlineSuggestion(suggestion);
         }
     }
-    _addInlineSuggestion(suggestion, suggestionContent) {
+    _addInlineSuggestion(suggestion) {
         const remoteSlots = suggestion.plan.slots.filter(s => !!s.id);
         if (remoteSlots.length !== 1) {
             return;
@@ -27209,11 +27212,11 @@ class SuggestionComposer {
             return;
         }
         const handleIds = context.spec.handles.map(handleName => context.sourceSlotConsumer.consumeConn.particle.connections[handleName].handle.id);
-        if (!handleIds.find(handleId => suggestion.plan.handles.find(handle => handle.id === handleId))) {
+        if (!handleIds.find(handleId => suggestion.plan.handles.some(handle => handle.id === handleId))) {
             // the suggestion doesn't use any of the handles that the context is restricted to.
             return;
         }
-        const suggestConsumer = new this.modalityHandler.suggestionConsumerClass(this.arc, this._slotComposer.containerKind, suggestion, suggestionContent, (eventlet) => {
+        const suggestConsumer = new this.modalityHandler.suggestionConsumerClass(this.arc, this._slotComposer.containerKind, suggestion, (eventlet) => {
             const suggestion = this._suggestions.find(s => s.hash === eventlet.data.key);
             suggestConsumer.dispose();
             if (suggestion) {
