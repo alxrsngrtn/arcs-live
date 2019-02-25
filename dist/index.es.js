@@ -13456,7 +13456,7 @@ class Recipe {
             cloneMap.set(object, clonedObject);
         }
         recipe._name = this.name;
-        recipe._verbs = this._verbs.slice();
+        recipe._verbs = recipe._verbs.concat(...this._verbs);
         this._handles.forEach(cloneTheThing);
         this._particles.forEach(cloneTheThing);
         this._slots.forEach(cloneTheThing);
