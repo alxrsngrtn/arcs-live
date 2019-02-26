@@ -92,13 +92,15 @@
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _build_runtime_particle_execution_context_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1);
 /* harmony import */ var _build_platform_loader_web_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(31);
-// @license
-// Copyright (c) 2017 Google Inc. All rights reserved.
-// This code may only be used under the BSD style license found at
-// http://polymer.github.io/LICENSE.txt
-// Code distributed by Google as part of this project is also
-// subject to an additional IP rights grant found at
-// http://polymer.github.io/PATENTS.txt
+/*
+ * @license
+ * Copyright (c) 2019 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
 
 
 
@@ -1417,41 +1419,43 @@ class OuterPortAttachment {
         }
         // The slice discards the stack frame corresponding to the API channel
         // function, which is already being displayed in the log entry.
-        Object(_platform_sourcemapped_stacktrace_web_js__WEBPACK_IMPORTED_MODULE_0__["mapStackTrace"])(stackString, mapped => mapped.slice(1).map(frameString => {
-            // Each frame has the form '    at function (source:line:column)'.
-            // Extract the function name and source:line:column text, then set up
-            // a frame object with the following fields:
-            //   location: text to display as the source in devtools Arcs panel
-            //   target: URL to open in devtools Sources panel
-            //   targetClass: CSS class specifier to attach to the location text
-            let match = frameString.match(/^ {4}at (.*) \((.*)\)$/);
-            if (match === null) {
-                match = { 1: '<unknown>', 2: frameString.replace(/^ *at */, '') };
-            }
-            const frame = { method: match[1] };
-            const source = match[2].replace(/:[0-9]+$/, '');
-            if (source.startsWith('http')) {
-                // 'http://<url>/arcs.*/shell/file.js:150'
-                // -> location: 'shell/file.js:150', target: same as source
-                frame.location = source.replace(/^.*\/arcs[^/]*\//, '');
-                frame.target = source;
-                frame.targetClass = 'link';
-            }
-            else if (source.startsWith('webpack')) {
-                // 'webpack:///runtime/sub/file.js:18'
-                // -> location: 'runtime/sub/file.js:18', target: 'webpack:///./runtime/sub/file.js:18'
-                frame.location = source.slice(11);
-                frame.target = `webpack:///./${frame.location}`;
-                frame.targetClass = 'link';
-            }
-            else {
-                // '<anonymous>' (or similar)
-                frame.location = source;
-                frame.target = null;
-                frame.targetClass = 'noLink';
-            }
-            stack.push(frame);
-        }), { sync: false, cacheGlobally: true });
+        if (_platform_sourcemapped_stacktrace_web_js__WEBPACK_IMPORTED_MODULE_0__["mapStackTrace"]) {
+            Object(_platform_sourcemapped_stacktrace_web_js__WEBPACK_IMPORTED_MODULE_0__["mapStackTrace"])(stackString, mapped => mapped.slice(1).map(frameString => {
+                // Each frame has the form '    at function (source:line:column)'.
+                // Extract the function name and source:line:column text, then set up
+                // a frame object with the following fields:
+                //   location: text to display as the source in devtools Arcs panel
+                //   target: URL to open in devtools Sources panel
+                //   targetClass: CSS class specifier to attach to the location text
+                let match = frameString.match(/^ {4}at (.*) \((.*)\)$/);
+                if (match === null) {
+                    match = { 1: '<unknown>', 2: frameString.replace(/^ *at */, '') };
+                }
+                const frame = { method: match[1] };
+                const source = match[2].replace(/:[0-9]+$/, '');
+                if (source.startsWith('http')) {
+                    // 'http://<url>/arcs.*/shell/file.js:150'
+                    // -> location: 'shell/file.js:150', target: same as source
+                    frame.location = source.replace(/^.*\/arcs[^/]*\//, '');
+                    frame.target = source;
+                    frame.targetClass = 'link';
+                }
+                else if (source.startsWith('webpack')) {
+                    // 'webpack:///runtime/sub/file.js:18'
+                    // -> location: 'runtime/sub/file.js:18', target: 'webpack:///./runtime/sub/file.js:18'
+                    frame.location = source.slice(11);
+                    frame.target = `webpack:///./${frame.location}`;
+                    frame.targetClass = 'link';
+                }
+                else {
+                    // '<anonymous>' (or similar)
+                    frame.location = source;
+                    frame.target = null;
+                    frame.targetClass = 'noLink';
+                }
+                stack.push(frame);
+            }), { sync: false, cacheGlobally: true });
+        }
         return stack;
     }
 }
@@ -4549,7 +4553,14 @@ class StorageProxy {
     }
     raiseSystemException(exception, methodName, particleId) {
         // TODO: Encapsulate source-mapping of the stack trace once there are more users of the port.RaiseSystemException() call.
-        Object(_platform_sourcemapped_stacktrace_web_js__WEBPACK_IMPORTED_MODULE_1__["mapStackTrace"])(exception.stack, mappedStack => this.port.RaiseSystemException({ message: exception.message, stack: mappedStack.join('\n'), name: exception.name }, methodName, particleId));
+        const { message, stack, name } = exception;
+        const raise = stack => this.port.RaiseSystemException({ message, stack, name }, methodName, particleId);
+        if (!_platform_sourcemapped_stacktrace_web_js__WEBPACK_IMPORTED_MODULE_1__["mapStackTrace"]) {
+            raise(stack);
+        }
+        else {
+            Object(_platform_sourcemapped_stacktrace_web_js__WEBPACK_IMPORTED_MODULE_1__["mapStackTrace"])(stack, mappedStack => raise(mappedStack.join('\n')));
+        }
     }
     /**
      *  Called by ParticleExecutionContext to associate (potentially multiple) particle/handle pairs with this proxy.
@@ -4634,12 +4645,12 @@ class StorageProxy {
                 return true;
             }
             // Holy Layering Violation Batman
-            // 
+            //
             // If we are a variable waiting for a barriered set response
             // then that set response *is* the next thing we're waiting for,
             // regardless of version numbers.
             //
-            // TODO(shans): refactor this code so we don't need to layer-violate. 
+            // TODO(shans): refactor this code so we don't need to layer-violate.
             if (this.barrier && update.barrier === this.barrier) {
                 return true;
             }
@@ -4859,7 +4870,7 @@ class VariableProxy extends StorageProxy {
                 // We just cleared a barrier which means we are now synchronized. If we weren't
                 // synchronized already, then we need to tell the handles.
                 //
-                // TODO(shans): refactor this code so we don't need to layer-violate. 
+                // TODO(shans): refactor this code so we don't need to layer-violate.
                 if (this.synchronized !== SyncState.full) {
                     this.synchronized = SyncState.full;
                     const syncModel = this._getModelForSync();
@@ -4889,8 +4900,8 @@ class VariableProxy extends StorageProxy {
             return;
         }
         let barrier;
-        // If we're setting to this handle but we aren't listening to firebase, 
-        // then there's no point creating a barrier. In fact, if the response 
+        // If we're setting to this handle but we aren't listening to firebase,
+        // then there's no point creating a barrier. In fact, if the response
         // to the set comes back before a listener is registered then this proxy will
         // end up locked waiting for a barrier that will never arrive.
         if (this.listenerAttached) {
@@ -5247,7 +5258,7 @@ class PlatformLoader extends _runtime_loader_js__WEBPACK_IMPORTED_MODULE_0__["Lo
     const name = suffix.split('.').shift();
     this._urlMap[name] = folder;
   }
-    provisionLogger(fileName) {
+  provisionLogger(fileName) {
     return Object(_platform_log_web_js__WEBPACK_IMPORTED_MODULE_5__["logFactory"])(fileName.split('/').pop(), '#1faa00');
   }
   unwrapParticle(particleWrapper, log) {
@@ -5689,9 +5700,11 @@ class DomParticle extends Object(_modalities_dom_components_xen_xen_state_js__WE
         this._handlesToSync.add(name);
       }
     }
-    // make sure we invalidate once, even if there are no incoming handles
-    setTimeout(() => !this._hasProps && this._invalidate(), 200);
-    //this._invalidate();
+    // TODO(sjmiles): we must invalidate at least once, but we don't know if
+    // _handlesToProps will ever be called. If we wait we can avoid an extra
+    // invalidation, but then we potentially waste cycles.
+    //setTimeout(() => !this._hasProps && this._invalidate(), 20);
+    this._invalidate();
   }
   async onHandleSync(handle, model) {
     this._handlesToSync.delete(handle.name);
@@ -6655,12 +6668,24 @@ __webpack_require__.r(__webpack_exports__);
 // subject to an additional IP rights grant found at
 // http://polymer.github.io/PATENTS.txt
 
-//import {Debug, logFactory as _logFactory} from '../../modalities/dom/components/xen/xen-debug.js';
-//const factory = /*Debug.Level < 1 ? () => () => {} :*/ _logFactory;
+let logLevel = 0;
+if (typeof window !== 'undefined') {
+  logLevel = ('logLevel' in window) ? window.logLevel : logLevel;
+  console.log(`log-web: binding logFactory to level [${logLevel}]`);
+}
 
-const factory = (preamble, color, log='log') => console[log].bind(console, `%c${preamble}`, `background: ${color}; color: white; padding: 1px 6px 2px 7px; border-radius: 6px;`);
+const _factory = (preamble, color, log='log') => console[log].bind(console, `%c${preamble}`, `background: ${color}; color: white; padding: 1px 6px 2px 7px; border-radius: 6px;`);
+const factory = logLevel > 0 ? _factory : () => () => {};
+let logFactory;
+logFactory = (...args) => factory(...args);
 
-const logFactory = (...args) => factory(...args);
+if (typeof window !== 'undefined') {
+  //logFactory = () => (...args) => document.body.appendChild(document.createElement('div')).innerText = args.join();
+} else {
+  logFactory = () => (...args) => postMessage(args.join());
+}
+
+
 
 
 /***/ })

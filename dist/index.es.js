@@ -14138,16 +14138,16 @@ function pushEvent(event) {
     });
 }
 
-const module$1 = {exports: {}};
-const Tracing = module$1.exports;
-module$1.exports.enabled = false;
-module$1.exports.enable = function() {
-  module$1.exports.enabled = true;
+const module_ = {exports: {}};
+const Tracing = module_.exports;
+module_.exports.enabled = false;
+module_.exports.enable = function() {
+  module_.exports.enabled = true;
   init();
 };
 
 // TODO: Add back support for options.
-//module.exports.options = options;
+//module_.exports.options = options;
 //var enabled = Boolean(options.traceFile);
 
 function init() {
@@ -14170,23 +14170,23 @@ function init() {
       return v;
     },
   };
-  module$1.exports.wrap = function(info, fn) {
+  module_.exports.wrap = function(info, fn) {
     return fn;
   };
-  module$1.exports.start = function(info, fn) {
+  module_.exports.start = function(info, fn) {
     return result;
   };
-  module$1.exports.flow = function(info, fn) {
+  module_.exports.flow = function(info, fn) {
     return result;
   };
 
-  if (!module$1.exports.enabled) {
+  if (!module_.exports.enabled) {
     return;
   }
 
-  module$1.exports.wrap = function(info, fn) {
+  module_.exports.wrap = function(info, fn) {
     return function(...args) {
-      const t = module$1.exports.start(info);
+      const t = module_.exports.start(info);
       try {
         return fn(...args);
       } finally {
@@ -14226,7 +14226,7 @@ function init() {
       beginTs: begin
     };
   }
-  module$1.exports.start = function(info) {
+  module_.exports.start = function(info) {
     let trace = startSyncTrace(info);
     let flow;
     const baseInfo = {cat: info.cat, name: info.name + ' (async)', overview: info.overview, sequence: info.sequence};
@@ -14234,7 +14234,7 @@ function init() {
       async wait(v, info) {
         const flowExisted = !!flow;
         if (!flowExisted) {
-          flow = module$1.exports.flow(baseInfo);
+          flow = module_.exports.flow(baseInfo);
         }
         trace.end(info, flow);
         if (flowExisted) {
@@ -14273,7 +14273,7 @@ function init() {
       }
     };
   };
-  module$1.exports.flow = function(info) {
+  module_.exports.flow = function(info) {
     info = parseInfo(info);
     const id = flowId++;
     let started = false;
@@ -14329,22 +14329,22 @@ function init() {
       id: () => id
     };
   };
-  module$1.exports.save = function() {
+  module_.exports.save = function() {
     return {traceEvents: events};
   };
-  module$1.exports.download = function() {
+  module_.exports.download = function() {
     const a = document.createElement('a');
     a.download = 'trace.json';
-    a.href = 'data:text/plain;base64,' + btoa(JSON.stringify(module$1.exports.save()));
+    a.href = 'data:text/plain;base64,' + btoa(JSON.stringify(module_.exports.save()));
     a.click();
   };
-  module$1.exports.now = now;
-  module$1.exports.stream = function(callback, predicate) {
+  module_.exports.now = now;
+  module_.exports.stream = function(callback, predicate) {
     // Once we start streaming we no longer keep events in memory.
     events.length = 0;
     streamingCallbacks.push({callback, predicate});
   };
-  module$1.exports.__clearForTests = function() {
+  module_.exports.__clearForTests = function() {
     events.length = 0;
     streamingCallbacks.length = 0;
   };
@@ -18207,9 +18207,11 @@ class DomParticle extends XenStateMixin(DomParticleBase) {
         this._handlesToSync.add(name);
       }
     }
-    // make sure we invalidate once, even if there are no incoming handles
-    setTimeout(() => !this._hasProps && this._invalidate(), 200);
-    //this._invalidate();
+    // TODO(sjmiles): we must invalidate at least once, but we don't know if
+    // _handlesToProps will ever be called. If we wait we can avoid an extra
+    // invalidation, but then we potentially waste cycles.
+    //setTimeout(() => !this._hasProps && this._invalidate(), 20);
+    this._invalidate();
   }
   async onHandleSync(handle, model) {
     this._handlesToSync.delete(handle.name);
@@ -19290,7 +19292,11 @@ class StorageProxy {
     }
     raiseSystemException(exception, methodName, particleId) {
         // TODO: Encapsulate source-mapping of the stack trace once there are more users of the port.RaiseSystemException() call.
-        mapStackTrace(exception.stack, mappedStack => this.port.RaiseSystemException({ message: exception.message, stack: mappedStack.join('\n'), name: exception.name }, methodName, particleId));
+        const { message, stack, name } = exception;
+        const raise = stack => this.port.RaiseSystemException({ message, stack, name }, methodName, particleId);
+        if (!mapStackTrace) {
+            raise(stack);
+        }
     }
     /**
      *  Called by ParticleExecutionContext to associate (potentially multiple) particle/handle pairs with this proxy.
@@ -19375,12 +19381,12 @@ class StorageProxy {
                 return true;
             }
             // Holy Layering Violation Batman
-            // 
+            //
             // If we are a variable waiting for a barriered set response
             // then that set response *is* the next thing we're waiting for,
             // regardless of version numbers.
             //
-            // TODO(shans): refactor this code so we don't need to layer-violate. 
+            // TODO(shans): refactor this code so we don't need to layer-violate.
             if (this.barrier && update.barrier === this.barrier) {
                 return true;
             }
@@ -19600,7 +19606,7 @@ class VariableProxy extends StorageProxy {
                 // We just cleared a barrier which means we are now synchronized. If we weren't
                 // synchronized already, then we need to tell the handles.
                 //
-                // TODO(shans): refactor this code so we don't need to layer-violate. 
+                // TODO(shans): refactor this code so we don't need to layer-violate.
                 if (this.synchronized !== SyncState.full) {
                     this.synchronized = SyncState.full;
                     const syncModel = this._getModelForSync();
@@ -19630,8 +19636,8 @@ class VariableProxy extends StorageProxy {
             return;
         }
         let barrier;
-        // If we're setting to this handle but we aren't listening to firebase, 
-        // then there's no point creating a barrier. In fact, if the response 
+        // If we're setting to this handle but we aren't listening to firebase,
+        // then there's no point creating a barrier. In fact, if the response
         // to the set comes back before a listener is registered then this proxy will
         // end up locked waiting for a barrier that will never arrive.
         if (this.listenerAttached) {
@@ -26218,11 +26224,10 @@ const warn = console.warn.bind(console);
 const env = {};
 
 const createPathMap = root => ({
-  'https://$cdn/': `${root}/`,
+  'https://$arcs/': `${root}/`,
   'https://$shells/': `${root}/shells/`,
+  'https://$build/': `${root}/shells/lib/build/`,
   'https://$particles/': `${root}/particles/`,
-  'https://$shell/': `${root}/shells/`, // deprecated
-  'https://$artifacts/': `${root}/particles/`, // deprecated
 });
 
 const init$1 = (root, urls) => {
@@ -26347,7 +26352,9 @@ class ArcHost {
     this.composer = composer;
   }
   disposeArc() {
-    this.arc && this.arc.dispose();
+    if (this.arc) {
+      this.arc.dispose();
+    }
     this.arc = null;
   }
   // config = {id, [serialization], [manifest]}
@@ -26475,11 +26482,15 @@ class RamSlotComposer extends SlotComposer {
 }
 
 const version = '0_6_0';
+const firebase = `firebase://arcs-storage.firebaseio.com/AIzaSyBme42moeI-2k8WgXh-6YK_wYyjEXo4Oz8/${version}`;
+const pouchdb = `pouchdb://local/arcs`;
 
 const Const = {
   version,
   defaultUserId: 'user',
-  defaultStorageKey: `firebase://arcs-storage.firebaseio.com/AIzaSyBme42moeI-2k8WgXh-6YK_wYyjEXo4Oz8/${version}`,
+  defaultFirebaseStorageKey: firebase,
+  defaultPouchdbStorageKey: pouchdb,
+  defaultStorageKey: pouchdb, //firebase,
   defaultManifest: `https://$particles/canonical.manifest`,
   launcherSuffix: `-launcher`,
   LOCALSTORAGE: {
@@ -27805,7 +27816,15 @@ class UserPlanner {
   }
 }
 
-// @license
+/*
+ * @license
+ * Copyright (c) 2019 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
 
 const contextManifest = `
   import 'https://$particles/canonical.manifest'
