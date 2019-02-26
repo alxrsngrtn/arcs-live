@@ -28,8 +28,24 @@ export class RecipeWalker extends Walker {
                 }
             }
         }
-        if (this.onHandleConnection) {
-            for (const handleConnection of recipe.handleConnections) {
+        if (this.onPotentialHandleConnection) {
+            for (const particle of recipe.particles) {
+                if (particle.spec) {
+                    for (const connectionSpec of particle.spec.connections) {
+                        if (particle.connections[connectionSpec.name]) {
+                            continue;
+                        }
+                        const context = [particle, connectionSpec];
+                        const result = this.onPotentialHandleConnection(recipe, ...context);
+                        if (!this.isEmptyResult(result)) {
+                            updateList.push({ continuation: result, context });
+                        }
+                    }
+                }
+            }
+        }
+        for (const handleConnection of recipe.handleConnections) {
+            if (this.onHandleConnection) {
                 const context = [handleConnection];
                 const result = this.onHandleConnection(recipe, ...context);
                 if (!this.isEmptyResult(result)) {

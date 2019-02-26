@@ -549,20 +549,22 @@ export class Recipe {
     getFreeHandles() {
         return this.handles.filter(handle => handle.connections.length === 0);
     }
-    getFreeConnections() {
-        return this.handleConnections.filter(hc => !hc.handle && !hc.isOptional);
+    get allSpecifiedConnections() {
+        return [].concat(...this.particles.filter(p => p.spec && p.spec.connections.length > 0)
+            .map(particle => particle.spec.connections.map(connSpec => ({ particle, connSpec }))));
+    }
+    getFreeConnections(type) {
+        return this.allSpecifiedConnections.filter(({ particle, connSpec }) => !connSpec.isOptional &&
+            connSpec.name !== 'descriptions' &&
+            connSpec.direction !== 'host' &&
+            !particle.connections[connSpec.name] &&
+            (!type || type.equals(connSpec.type)));
     }
     findHandleByID(id) {
         return this.handles.find(handle => handle.id === id);
     }
     getUnnamedUntypedConnections() {
         return this.handleConnections.find(hc => !hc.type || !hc.name || hc.isOptional);
-    }
-    getTypeHandleConnections(type, p) {
-        // returns the handles of type 'type' that do not belong to particle 'p'
-        return this.handleConnections.filter(c => {
-            return !c.isOptional && !c.handle && type.equals(c.type) && (c.particle !== p);
-        });
     }
     getParticlesByImplFile(files) {
         return this.particles.filter(particle => particle.spec && files.has(particle.spec.implFile));
@@ -582,9 +584,6 @@ export class Recipe {
             }
         }
         return slot;
-    }
-    getDisconnectedConnections() {
-        return this.handleConnections.filter(hc => hc.handle == null && !hc.isOptional && hc.name !== 'descriptions' && hc.direction !== 'host');
     }
 }
 export class RequireSection extends Recipe {

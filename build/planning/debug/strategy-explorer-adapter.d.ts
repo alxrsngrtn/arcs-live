@@ -9,4 +9,6 @@
  */
 export declare class StrategyExplorerAdapter {
     static processGenerations(generations: any, devtoolsChannel: any, options?: {}): void;
+    static printGenerations(generations: any): void;
+    static _collectDerivation(derivation: any, allResults: any): any;
 }

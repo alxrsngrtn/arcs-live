@@ -1,4 +1,4 @@
-import { SlotSpec } from '../particle-spec';
+import { ConnectionSpec, SlotSpec } from '../particle-spec.js';
 import { ConnectionConstraint } from './connection-constraint.js';
 import { HandleConnection } from './handle-connection.js';
 import { Handle } from './handle.js';
@@ -9,6 +9,7 @@ import { Slot } from './slot.js';
 import { Walker } from './walker.js';
 export declare class RecipeWalker extends Walker {
     onHandle?(recipe: Recipe, handle: Handle): any;
+    onPotentialHandleConnection?(recipe: Recipe, particle: Particle, connectionSpec: ConnectionSpec): any;
     onHandleConnection?(recipe: Recipe, handleConnection: HandleConnection): any;
     onParticle?(recipe: Recipe, particle: Particle): any;
     onRecipe?(recipe: Recipe, result: any): any;

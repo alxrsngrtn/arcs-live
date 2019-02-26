@@ -125,6 +125,9 @@ export class ParticleSpec {
                 return true;
         return false;
     }
+    getConnectionByName(name) {
+        return this.connectionMap.get(name);
+    }
     getSlotSpec(slotName) {
         return this.slots.get(slotName);
     }
@@ -146,8 +149,17 @@ export class ParticleSpec {
         args = args.map(connectionFromLiteral);
         return new ParticleSpec({ args, name, verbs: verbs || [], description, implFile, modality, slots });
     }
+    // Note: this method shouldn't be called directly.
     clone() {
         return ParticleSpec.fromLiteral(this.toLiteral());
+    }
+    // Note: this method shouldn't be called directly (only as part of particle copying).
+    cloneWithResolutions(variableMap) {
+        const spec = this.clone();
+        this.connectionMap.forEach((conn, name) => {
+            spec.connectionMap.get(name).type = conn.type._cloneWithResolutions(variableMap);
+        });
+        return spec;
     }
     equals(other) {
         return JSON.stringify(this.toLiteral()) === JSON.stringify(other.toLiteral());

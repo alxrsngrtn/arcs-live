@@ -2525,6 +2525,9 @@ class ParticleSpec {
                 return true;
         return false;
     }
+    getConnectionByName(name) {
+        return this.connectionMap.get(name);
+    }
     getSlotSpec(slotName) {
         return this.slots.get(slotName);
     }
@@ -2546,8 +2549,17 @@ class ParticleSpec {
         args = args.map(connectionFromLiteral);
         return new ParticleSpec({ args, name, verbs: verbs || [], description, implFile, modality, slots });
     }
+    // Note: this method shouldn't be called directly.
     clone() {
         return ParticleSpec.fromLiteral(this.toLiteral());
+    }
+    // Note: this method shouldn't be called directly (only as part of particle copying).
+    cloneWithResolutions(variableMap) {
+        const spec = this.clone();
+        this.connectionMap.forEach((conn, name) => {
+            spec.connectionMap.get(name).type = conn.type._cloneWithResolutions(variableMap);
+        });
+        return spec;
     }
     equals(other) {
         return JSON.stringify(this.toLiteral()) === JSON.stringify(other.toLiteral());
@@ -12141,8 +12153,7 @@ class Handle$1 {
 class HandleConnection {
     constructor(name, particle) {
         this._tags = [];
-        this._type = undefined;
-        this._rawType = undefined;
+        this.resolvedType = undefined;
         this._direction = undefined;
         this._handle = undefined;
         assert$1(particle);
@@ -12157,10 +12168,10 @@ class HandleConnection {
         }
         const handleConnection = new HandleConnection(this._name, particle);
         handleConnection._tags = [...this._tags];
-        // Note that _rawType will be cloned later by the particle that references this connection.
+        // Note: _resolvedType will be cloned later by the particle that references this connection.
         // Doing it there allows the particle to maintain variable associations across the particle
         // scope.
-        handleConnection._rawType = this._rawType;
+        handleConnection.resolvedType = this.resolvedType;
         handleConnection._direction = this._direction;
         if (this._handle != undefined) {
             handleConnection._handle = cloneMap.get(this._handle);
@@ -12169,6 +12180,12 @@ class HandleConnection {
         }
         cloneMap.set(this, handleConnection);
         return handleConnection;
+    }
+    // Note: don't call this method directly, only called from particle cloning.
+    cloneTypeWithResolutions(variableMap) {
+        if (this.resolvedType) {
+            this.resolvedType = this.resolvedType._cloneWithResolutions(variableMap);
+        }
     }
     _normalize() {
         this._tags.sort();
@@ -12196,15 +12213,19 @@ class HandleConnection {
     getQualifiedName() { return `${this.particle.name}::${this.name}`; }
     get tags() { return this._tags; }
     get type() {
-        if (this._type) {
-            return this._type;
+        if (this.resolvedType) {
+            return this.resolvedType;
         }
-        return this._rawType;
+        const spec = this.spec;
+        return spec ? spec.type : null;
     }
-    get rawType() {
-        return this._rawType;
+    get direction() {
+        if (this._direction) {
+            return this._direction;
+        }
+        const spec = this.spec;
+        return spec ? spec.direction : null;
     }
-    get direction() { return this._direction; } // in/out
     get isInput() {
         return this.direction === 'in' || this.direction === 'inout';
     }
@@ -12215,8 +12236,7 @@ class HandleConnection {
     get particle() { return this._particle; } // never null
     set tags(tags) { this._tags = tags; }
     set type(type) {
-        this._rawType = type;
-        this._type = undefined;
+        this.resolvedType = type;
         this._resetHandleType();
     }
     set direction(direction) {
@@ -12242,19 +12262,31 @@ class HandleConnection {
             }
             return false;
         }
-        if (this.type && this.spec) {
+        if (this.particle.spec && this.name) {
             const connectionSpec = this.spec;
-            if (!connectionSpec.isCompatibleType(this.rawType)) {
+            if (!connectionSpec) {
                 if (options && options.errors) {
-                    options.errors.set(this, `Type '${this.rawType.toString()} for handle connection '${this.getQualifiedName()}' doesn't match particle spec's type '${connectionSpec.type.toString()}'`);
+                    options.errors.set(this, `Connection ${this.name} is not defined by ${this.particle.name}.`);
                 }
                 return false;
             }
-            if (this.direction !== connectionSpec.direction) {
+            if (this.direction !== connectionSpec.direction &&
+                !(['in', 'out'].includes(this.direction) && connectionSpec.direction === 'inout')) {
                 if (options && options.errors) {
                     options.errors.set(this, `Direction '${this.direction}' for handle connection '${this.getQualifiedName()}' doesn't match particle spec's direction '${connectionSpec.direction}'`);
                 }
                 return false;
+            }
+            if (this.resolvedType) {
+                if (!connectionSpec.isCompatibleType(this.resolvedType)) {
+                    if (options && options.errors) {
+                        options.errors.set(this, `Type '${this.resolvedType.toString()} for handle connection '${this.getQualifiedName()}' doesn't match particle spec's type '${connectionSpec.type.toString()}'`);
+                    }
+                    return false;
+                }
+            }
+            else {
+                this.resolvedType = connectionSpec.type;
             }
         }
         return true;
@@ -12275,7 +12307,7 @@ class HandleConnection {
             }
             return false;
         }
-        if (!this._direction) {
+        if (!this.direction) {
             if (options) {
                 options.details = 'missing direction';
             }
@@ -12290,8 +12322,8 @@ class HandleConnection {
             }
             return false;
         }
-        else if (parent) {
-            if (!parent.handle) {
+        else if (this.spec) {
+            if (this.spec.parentConnection && (!parent || !parent.handle)) {
                 if (options) {
                     options.details = 'parent connection missing handle';
                 }
@@ -12344,7 +12376,7 @@ class HandleConnection {
             // filter specs with matching types that don't have handles bound to the corresponding handle connection.
             return !specConn.isOptional &&
                 this.handle.type.equals(specConn.type) &&
-                !this.particle.getConnectionByName(specConn.name).handle;
+                !this.particle.getConnectionByName(specConn.name);
         });
     }
 }
@@ -12513,7 +12545,7 @@ class Particle {
     constructor(recipe, name) {
         this._id = undefined;
         this._localName = undefined;
-        this._spec = undefined;
+        this.spec = undefined;
         this._verbs = [];
         this._connections = {};
         // TODO: replace with constraint connections on the recipe
@@ -12528,7 +12560,7 @@ class Particle {
         const particle = recipe.newParticle(this._name);
         particle._id = this._id;
         particle._verbs = [...this._verbs];
-        particle._spec = this._spec;
+        particle.spec = this.spec ? this.spec.cloneWithResolutions(variableMap) : undefined;
         Object.keys(this._connections).forEach(key => {
             particle._connections[key] = this._connections[key]._clone(particle, cloneMap);
         });
@@ -12560,14 +12592,10 @@ class Particle {
     }
     _cloneConnectionRawTypes(variableMap) {
         for (const connection of Object.values(this._connections)) {
-            if (connection.rawType) {
-                connection._rawType = connection.rawType._cloneWithResolutions(variableMap);
-            }
+            connection.cloneTypeWithResolutions(variableMap);
         }
         for (const connection of this._unnamedConnections) {
-            if (connection.rawType) {
-                connection._rawType = connection.rawType._cloneWithResolutions(variableMap);
-            }
+            connection.cloneTypeWithResolutions(variableMap);
         }
     }
     _startNormalize() {
@@ -12656,9 +12684,26 @@ class Particle {
                 return false;
             }
         }
-        if (this.spec.connectionMap.size !== Object.keys(this._connections).length) {
+        if (!this.spec) {
             if (options && options.showUnresolved) {
-                options.details = 'unresolved connections';
+                options.details = 'missing spec';
+            }
+            return false;
+        }
+        const unresolvedRequiredConnections = this.getUnboundConnections().filter(connSpec => {
+            // A non-optional connection dependent on an optional and unresolved is ok.
+            let parent = connSpec.parentConnection;
+            while (parent !== null) {
+                if (!this.connections[parent.name]) {
+                    return false;
+                }
+                parent = parent.parentConnection;
+            }
+            return true;
+        });
+        if (unresolvedRequiredConnections.length > 0) {
+            if (options && options.showUnresolved) {
+                options.details = `unresolved connections: ${unresolvedRequiredConnections.map(c => c.name).join(', ')}`;
             }
             return false;
         }
@@ -12677,32 +12722,18 @@ class Particle {
     set id(id) { assert$1(!this._id, 'Particle ID can only be set once.'); this._id = id; }
     get name() { return this._name; }
     set name(name) { this._name = name; }
-    get spec() { return this._spec; }
     get connections() { return this._connections; } // {parameter -> HandleConnection}
     get unnamedConnections() { return this._unnamedConnections; } // HandleConnection*
     get consumedSlotConnections() { return this._consumedSlotConnections; }
     get primaryVerb() { return (this._verbs.length > 0) ? this._verbs[0] : undefined; }
     set verbs(verbs) { this._verbs = verbs; }
-    set spec(spec) {
-        this._spec = spec;
-        for (const connectionName of spec.connectionMap.keys()) {
-            const speccedConnection = spec.connectionMap.get(connectionName);
-            let connection = this.connections[connectionName];
-            if (connection == undefined) {
-                connection = this.addConnectionName(connectionName);
-            }
-            // TODO: don't just overwrite here, check that the types
-            // are compatible if one already exists.
-            connection.type = speccedConnection.type;
-            connection.direction = speccedConnection.direction;
-        }
-    }
     addUnnamedConnection() {
         const connection = new HandleConnection(undefined, this);
         this._unnamedConnections.push(connection);
         return connection;
     }
     addConnectionName(name) {
+        assert$1(name, `Cannot create connection with no name`);
         assert$1(this._connections[name] == undefined);
         this._connections[name] = new HandleConnection(name, this);
         return this._connections[name];
@@ -12717,17 +12748,23 @@ class Particle {
         return this._connections[name];
     }
     nameConnection(connection, name) {
-        assert$1(!this._connections[name].handle, `Connection "${name}" already has a handle`);
+        assert$1(!this._connections[name], `Connection "${name}" already has a handle`);
         const idx = this._unnamedConnections.indexOf(connection);
         assert$1(idx >= 0, `Cannot name '${name}' nonexistent unnamed connection.`);
         connection._name = name;
-        connection.type = this._connections[name].type;
-        if (connection.direction !== this._connections[name].direction) {
-            assert$1(connection.direction === 'inout', `Unnamed connection cannot adjust direction ${connection.direction} to ${name}'s direction ${this._connections[name].direction}`);
-            connection.direction = this._connections[name].direction;
+        const connectionSpec = this.spec.getConnectionByName(name);
+        connection.type = connectionSpec.type;
+        if (connection.direction !== connectionSpec.direction) {
+            assert$1(connection.direction === 'inout', `Unnamed connection cannot adjust direction ${connection.direction} to ${name}'s direction ${connectionSpec.direction}`);
+            connection.direction = connectionSpec.direction;
         }
         this._connections[name] = connection;
         this._unnamedConnections.splice(idx, 1);
+    }
+    getUnboundConnections(type) {
+        return this.spec.connections.filter(connSpec => !connSpec.isOptional &&
+            !this.getConnectionByName(connSpec.name) &&
+            (!type || type.equals(connSpec.type)));
     }
     addSlotConnection(name) {
         assert$1(!(name in this._consumedSlotConnections), "slot connection already exists");
@@ -12741,8 +12778,6 @@ class Particle {
                 slot.sourceConnection = slotConn;
                 slotConn.providedSlots[providedSlot.name] = slot;
                 // TODO: hook the handles up
-                assert$1(slot.handleConnections.length === 0, 'Handle connections must be empty');
-                providedSlot.handles.forEach(handle => slot.handleConnections.push(this.connections[handle]));
             });
         }
         return slotConn;
@@ -12904,8 +12939,6 @@ class Slot {
         this._tags = [];
         this._sourceConnection = undefined;
         this._formFactor = undefined;
-        // can only be set if source connection is set and particle in slot connections is set
-        this._handleConnections = [];
         this._consumeConnections = [];
         assert$1(recipe);
         this._recipe = recipe;
@@ -12922,7 +12955,6 @@ class Slot {
     set tags(tags) { this._tags = tags; }
     get formFactor() { return this._formFactor; }
     set formFactor(formFactor) { this._formFactor = formFactor; }
-    get handleConnections() { return this._handleConnections; }
     get sourceConnection() { return this._sourceConnection; }
     set sourceConnection(sourceConnection) { this._sourceConnection = sourceConnection; }
     get consumeConnections() { return this._consumeConnections; }
@@ -12932,7 +12964,16 @@ class Slot {
         return (this.sourceConnection && this.sourceConnection.getSlotSpec()) ? this.sourceConnection.getSlotSpec().getProvidedSlotSpec(this.name) : { isSet: false, tags: [] };
     }
     get handles() {
-        return this.handleConnections.map(connection => connection.handle).filter(a => a !== undefined);
+        const handles = [];
+        if (this.sourceConnection && this.sourceConnection.getSlotSpec()) {
+            for (const handleName of this.sourceConnection.getSlotSpec().getProvidedSlotSpec(this.name).handles) {
+                const handleConn = this.sourceConnection.particle.connections[handleName];
+                if (handleConn || handleConn.handle) {
+                    handles.push(handleConn.handle);
+                }
+            }
+        }
+        return handles;
     }
     _copyInto(recipe, cloneMap) {
         let slot = undefined;
@@ -12953,7 +12994,6 @@ class Slot {
             if (slot.sourceConnection) {
                 slot.sourceConnection._providedSlots[slot.name] = slot;
             }
-            this._handleConnections.forEach(connection => slot._handleConnections.push(cloneMap.get(connection)));
         }
         this._consumeConnections.forEach(connection => {
             if (cloneMap.get(connection) && cloneMap.get(connection).targetSlot == undefined) {
@@ -12987,8 +13027,7 @@ class Slot {
         return 0;
     }
     findHandleByID(id) {
-        const connection = this.handleConnections.find(handleConn => handleConn.handle && handleConn.handle.id === id);
-        return connection && connection.handle;
+        return this.handles.find(handle => handle.id === id);
     }
     removeConsumeConnection(slotConnection) {
         const idx = this._consumeConnections.indexOf(slotConnection);
@@ -13576,20 +13615,22 @@ class Recipe {
     getFreeHandles() {
         return this.handles.filter(handle => handle.connections.length === 0);
     }
-    getFreeConnections() {
-        return this.handleConnections.filter(hc => !hc.handle && !hc.isOptional);
+    get allSpecifiedConnections() {
+        return [].concat(...this.particles.filter(p => p.spec && p.spec.connections.length > 0)
+            .map(particle => particle.spec.connections.map(connSpec => ({ particle, connSpec }))));
+    }
+    getFreeConnections(type) {
+        return this.allSpecifiedConnections.filter(({ particle, connSpec }) => !connSpec.isOptional &&
+            connSpec.name !== 'descriptions' &&
+            connSpec.direction !== 'host' &&
+            !particle.connections[connSpec.name] &&
+            (!type || type.equals(connSpec.type)));
     }
     findHandleByID(id) {
         return this.handles.find(handle => handle.id === id);
     }
     getUnnamedUntypedConnections() {
         return this.handleConnections.find(hc => !hc.type || !hc.name || hc.isOptional);
-    }
-    getTypeHandleConnections(type, p) {
-        // returns the handles of type 'type' that do not belong to particle 'p'
-        return this.handleConnections.filter(c => {
-            return !c.isOptional && !c.handle && type.equals(c.type) && (c.particle !== p);
-        });
     }
     getParticlesByImplFile(files) {
         return this.particles.filter(particle => particle.spec && files.has(particle.spec.implFile));
@@ -13609,9 +13650,6 @@ class Recipe {
             }
         }
         return slot;
-    }
-    getDisconnectedConnections() {
-        return this.handleConnections.filter(hc => hc.handle == null && !hc.isOptional && hc.name !== 'descriptions' && hc.direction !== 'host');
     }
 }
 class RequireSection extends Recipe {
@@ -13737,96 +13775,102 @@ class RecipeUtil {
         function _buildNewHCMatches(recipe, shapeHC, match, outputList) {
             const { forward, reverse, score } = match;
             let matchFound = false;
-            for (const recipeHC of recipe.handleConnections) {
-                // TODO are there situations where multiple handleConnections should
-                // be allowed to point to the same one in the recipe?
-                if (reverse.has(recipeHC)) {
+            for (const recipeParticle of recipe.particles) {
+                if (!recipeParticle.spec) {
                     continue;
                 }
-                // TODO support unnamed shape particles.
-                if (recipeHC.particle.name !== shapeHC.particle.name) {
-                    continue;
-                }
-                if (shapeHC.name && shapeHC.name !== recipeHC.name) {
-                    continue;
-                }
-                const acceptedDirections = { 'in': ['in', 'inout'], 'out': ['out', 'inout'], '=': ['in', 'out', 'inout'], 'inout': ['inout'], 'host': ['host'] };
-                if (recipeHC.direction) {
-                    if (!acceptedDirections[shapeHC.direction].includes(recipeHC.direction)) {
+                for (const recipeConnSpec of recipeParticle.spec.connections) {
+                    // TODO are there situations where multiple handleConnections should
+                    // be allowed to point to the same one in the recipe?
+                    if (reverse.has(recipeConnSpec)) {
                         continue;
                     }
-                }
-                if (shapeHC.handle && recipeHC.handle && shapeHC.handle.localName &&
-                    shapeHC.handle.localName !== recipeHC.handle.localName) {
-                    continue;
-                }
-                // recipeHC is a candidate for shapeHC. shapeHC references a
-                // particle, so recipeHC must reference the matching particle,
-                // or a particle that isn't yet mapped from shape.
-                if (reverse.has(recipeHC.particle)) {
-                    if (reverse.get(recipeHC.particle) !== shapeHC.particle) {
+                    // TODO support unnamed shape particles.
+                    if (recipeParticle.name !== shapeHC.particle.name) {
                         continue;
                     }
-                }
-                else if (forward.has(shapeHC.particle)) {
-                    // we've already mapped the particle referenced by shapeHC
-                    // and it doesn't match recipeHC's particle as recipeHC's
-                    // particle isn't mapped
-                    continue;
-                }
-                // shapeHC doesn't necessarily reference a handle, but if it does
-                // then recipeHC needs to reference the matching handle, or one
-                // that isn't yet mapped, or no handle yet.
-                if (shapeHC.handle && recipeHC.handle) {
-                    if (reverse.has(recipeHC.handle)) {
-                        if (reverse.get(recipeHC.handle) !== shapeHC.handle) {
+                    if (shapeHC.name && shapeHC.name !== recipeConnSpec.name) {
+                        continue;
+                    }
+                    const acceptedDirections = { 'in': ['in', 'inout'], 'out': ['out', 'inout'], '=': ['in', 'out', 'inout'], 'inout': ['inout'], 'host': ['host'] };
+                    if (recipeConnSpec.direction) {
+                        if (!acceptedDirections[shapeHC.direction].includes(recipeConnSpec.direction)) {
                             continue;
                         }
                     }
-                    else if (forward.has(shapeHC.handle) && forward.get(shapeHC.handle) !== null) {
+                    const recipeHC = recipeParticle.connections[recipeConnSpec.name];
+                    if (shapeHC.handle && recipeHC && recipeHC.handle && shapeHC.handle.localName &&
+                        shapeHC.handle.localName !== recipeHC.handle.localName) {
                         continue;
                     }
-                    // Check whether shapeHC and recipeHC reference the same handle.
-                    if (shapeHC.handle.fate !== 'create' || (recipeHC.handle.fate !== 'create' && recipeHC.handle.originalFate !== 'create')) {
-                        if (Boolean(shapeHC.handle.immediateValue) !== Boolean(recipeHC.handle.immediateValue)) {
-                            continue; // One is an immediate value handle and the other is not.
+                    // recipeHC is a candidate for shapeHC. shapeHC references a
+                    // particle, so recipeHC must reference the matching particle,
+                    // or a particle that isn't yet mapped from shape.
+                    if (reverse.has(recipeParticle)) {
+                        if (reverse.get(recipeParticle) !== shapeHC.particle) {
+                            continue;
                         }
-                        if (recipeHC.handle.immediateValue) {
-                            if (!recipeHC.handle.immediateValue.equals(shapeHC.handle.immediateValue)) {
-                                continue; // Immediate values are different.
+                    }
+                    else if (forward.has(shapeHC.particle)) {
+                        // we've already mapped the particle referenced by shapeHC
+                        // and it doesn't match recipeHC's particle as recipeHC's
+                        // particle isn't mapped
+                        continue;
+                    }
+                    // shapeHC doesn't necessarily reference a handle, but if it does
+                    // then recipeHC needs to reference the matching handle, or one
+                    // that isn't yet mapped, or no handle yet.
+                    if (shapeHC.handle && recipeHC && recipeHC.handle) {
+                        if (reverse.has(recipeHC.handle)) {
+                            if (reverse.get(recipeHC.handle) !== shapeHC.handle) {
+                                continue;
+                            }
+                        }
+                        else if (forward.has(shapeHC.handle) && forward.get(shapeHC.handle) !== null) {
+                            continue;
+                        }
+                        // Check whether shapeHC and recipeHC reference the same handle.
+                        if (shapeHC.handle.fate !== 'create' || (recipeHC.handle.fate !== 'create' && recipeHC.handle.originalFate !== 'create')) {
+                            if (Boolean(shapeHC.handle.immediateValue) !== Boolean(recipeHC.handle.immediateValue)) {
+                                continue; // One is an immediate value handle and the other is not.
+                            }
+                            if (recipeHC.handle.immediateValue) {
+                                if (!recipeHC.handle.immediateValue.equals(shapeHC.handle.immediateValue)) {
+                                    continue; // Immediate values are different.
+                                }
+                            }
+                            else {
+                                // Note: the id of a handle with 'copy' fate changes during recipe instantiation, hence comparing to original id too.
+                                // Skip the check if handles have 'create' fate (their ids are arbitrary).
+                                if (shapeHC.handle.id !== recipeHC.handle.id && shapeHC.handle.id !== recipeHC.handle.originalId) {
+                                    continue; // This is a different handle.
+                                }
+                            }
+                        }
+                    }
+                    // clone forward and reverse mappings and establish new components.
+                    const newMatch = { forward: new Map(forward), reverse: new Map(reverse), score };
+                    assert$1(!newMatch.reverse.has(recipeParticle) || newMatch.reverse.get(recipeParticle) === shapeHC.particle);
+                    assert$1(!newMatch.forward.has(shapeHC.particle) || newMatch.forward.get(shapeHC.particle) === recipeParticle);
+                    newMatch.forward.set(shapeHC.particle, recipeParticle);
+                    newMatch.reverse.set(recipeParticle, shapeHC.particle);
+                    if (shapeHC.handle) {
+                        if (!recipeHC || !recipeHC.handle) {
+                            if (!newMatch.forward.has(shapeHC.handle)) {
+                                newMatch.forward.set(shapeHC.handle, null);
+                                newMatch.score -= 2;
                             }
                         }
                         else {
-                            // Note: the id of a handle with 'copy' fate changes during recipe instantiation, hence comparing to original id too.
-                            // Skip the check if handles have 'create' fate (their ids are arbitrary).
-                            if (shapeHC.handle.id !== recipeHC.handle.id && shapeHC.handle.id !== recipeHC.handle.originalId) {
-                                continue; // This is a different handle.
-                            }
+                            newMatch.forward.set(shapeHC.handle, recipeHC.handle);
+                            newMatch.reverse.set(recipeHC.handle, shapeHC.handle);
                         }
                     }
+                    newMatch.forward.set(shapeHC, recipeConnSpec);
+                    newMatch.reverse.set(recipeConnSpec, shapeHC);
+                    outputList.push(newMatch);
+                    matchFound = true;
                 }
-                // clone forward and reverse mappings and establish new components.
-                const newMatch = { forward: new Map(forward), reverse: new Map(reverse), score };
-                assert$1(!newMatch.reverse.has(recipeHC.particle) || newMatch.reverse.get(recipeHC.particle) === shapeHC.particle);
-                assert$1(!newMatch.forward.has(shapeHC.particle) || newMatch.forward.get(shapeHC.particle) === recipeHC.particle);
-                newMatch.forward.set(shapeHC.particle, recipeHC.particle);
-                newMatch.reverse.set(recipeHC.particle, shapeHC.particle);
-                if (shapeHC.handle) {
-                    if (!recipeHC.handle) {
-                        if (!newMatch.forward.has(shapeHC.handle)) {
-                            newMatch.forward.set(shapeHC.handle, null);
-                            newMatch.score -= 2;
-                        }
-                    }
-                    else {
-                        newMatch.forward.set(shapeHC.handle, recipeHC.handle);
-                        newMatch.reverse.set(recipeHC.handle, shapeHC.handle);
-                    }
-                }
-                newMatch.forward.set(shapeHC, recipeHC);
-                newMatch.reverse.set(recipeHC, shapeHC);
-                outputList.push(newMatch);
-                matchFound = true;
             }
             if (matchFound === false) {
                 // Non-null particle in the `forward` map means that some of the particle
@@ -16148,7 +16192,6 @@ ${e.message}
                                 assert$1(theSlot !== providedSlot);
                                 assert$1(!theSlot.name && providedSlot);
                                 assert$1(!theSlot.sourceConnection && providedSlot.sourceConnection);
-                                assert$1(theSlot.handleConnections.length === 0);
                                 providedSlot.id = theSlot.id;
                                 providedSlot.tags = theSlot.tags;
                                 items.byName.set(ps.name, providedSlot);
@@ -20253,8 +20296,24 @@ class RecipeWalker extends Walker {
                 }
             }
         }
-        if (this.onHandleConnection) {
-            for (const handleConnection of recipe.handleConnections) {
+        if (this.onPotentialHandleConnection) {
+            for (const particle of recipe.particles) {
+                if (particle.spec) {
+                    for (const connectionSpec of particle.spec.connections) {
+                        if (particle.connections[connectionSpec.name]) {
+                            continue;
+                        }
+                        const context = [particle, connectionSpec];
+                        const result = this.onPotentialHandleConnection(recipe, ...context);
+                        if (!this.isEmptyResult(result)) {
+                            updateList.push({ continuation: result, context });
+                        }
+                    }
+                }
+            }
+        }
+        for (const handleConnection of recipe.handleConnections) {
+            if (this.onHandleConnection) {
                 const context = [handleConnection];
                 const result = this.onHandleConnection(recipe, ...context);
                 if (!this.isEmptyResult(result)) {
@@ -21559,6 +21618,36 @@ class StrategyExplorerAdapter {
             });
         }
     }
+    // This is a helper method that logs all possible derivations of stratetegies that contributed
+    // to generating the resolved recipes.
+    static printGenerations(generations) {
+        for (let i = 0; i < generations.length; ++i) {
+            for (let j = 0; j < generations[i].generated.length; ++j) {
+                const gg = generations[i].generated[j];
+                if (!gg.result.isResolved()) {
+                    continue;
+                }
+                const results = StrategyExplorerAdapter._collectDerivation(gg.derivation, []);
+                console.log(results.map(r => `gen [${i}][${j}] ${r.reverse().join(' -> ')}`).join('\n'));
+            }
+        }
+    }
+    static _collectDerivation(derivation, allResults) {
+        for (const d of derivation) {
+            const results = [];
+            results.push(d.strategy.constructor.name);
+            if (d.parent) {
+                const innerResults = StrategyExplorerAdapter._collectDerivation(d.parent.derivation, []);
+                for (const ir of innerResults) {
+                    allResults.push([].concat(results, ir));
+                }
+            }
+            else {
+                allResults.push(results);
+            }
+        }
+        return allResults;
+    }
 }
 
 // Copyright (c) 2018 Google Inc. All rights reserved.
@@ -22404,16 +22493,17 @@ class AddMissingHandles extends Strategy {
                 }
                 // TODO: "description" handles are always created, and in the future they need to be "optional" (blocked by optional handles
                 // not being properly supported in arc instantiation). For now just hardcode skiping them.
-                const disconnectedConnections = recipe.getDisconnectedConnections();
+                const disconnectedConnections = recipe.getFreeConnections();
                 if (disconnectedConnections.length === 0) {
                     return undefined;
                 }
                 return recipe => {
-                    disconnectedConnections.forEach(hc => {
-                        const clonedHC = recipe.updateToClone({ hc }).hc;
+                    disconnectedConnections.forEach(({ particle, connSpec }) => {
+                        const cloneParticle = recipe.updateToClone({ particle }).particle;
+                        const handleConnection = cloneParticle.addConnectionName(connSpec.name);
                         const handle = recipe.newHandle();
                         handle.fate = '?';
-                        clonedHC.connectToHandle(handle);
+                        handleConnection.connectToHandle(handle);
                     });
                     return 0;
                 };
@@ -22622,7 +22712,7 @@ class CoalesceRecipes extends Strategy {
                     }
                     results.push((recipe, slot) => {
                         // Find other handles that may be merged, as recipes are being coalesced.
-                        const otherToHandle = index.findCoalescableHandles(recipe, recipeParticle.recipe, new Set(slot.handleConnections.map(hc => hc.handle).concat(matchingHandles.map(({ handle, matchingConn }) => matchingConn.handle))));
+                        const otherToHandle = index.findCoalescableHandles(recipe, recipeParticle.recipe, new Set(slot.handles.concat(matchingHandles.map(({ handle, matchingConn }) => matchingConn.handle))));
                         const { cloneMap } = recipeParticle.recipe.mergeInto(slot.recipe);
                         const slotConn = recipeParticle.getSlotConnectionByName(slot.name);
                         let mergedSlotConn = cloneMap.get(slotConn);
@@ -22744,6 +22834,9 @@ class ConvertConstraintsToConnections extends Strategy {
         const arcModality = this.arc.modality;
         return StrategizerWalker.over(this.getResults(inputParams), new class extends StrategizerWalker {
             onRecipe(recipe) {
+                if (recipe.connectionConstraints.length === 0) {
+                    return undefined;
+                }
                 const modality = arcModality.intersection(recipe.modality);
                 // The particles & handles Sets are used as input to RecipeUtil's shape functionality
                 // (this is the algorithm that "finds" the constraint set in the recipe).
@@ -22757,9 +22850,6 @@ class ConvertConstraintsToConnections extends Strategy {
                 const particlesByName = {};
                 let handleCount = 0;
                 const obligations = [];
-                if (recipe.connectionConstraints.length === 0) {
-                    return undefined;
-                }
                 for (const constraint of recipe.connectionConstraints) {
                     const from = constraint.from;
                     const to = constraint.to;
@@ -22953,11 +23043,22 @@ class CreateDescriptionHandle extends Strategy {
                     return undefined;
                 }
                 return (recipe, handleConnection) => {
-                    const handle = recipe.newHandle();
-                    handle.fate = 'create';
-                    handleConnection.connectToHandle(handle);
-                    return 1;
+                    return this._createAndConnectHandle(handleConnection);
                 };
+            }
+            onPotentialHandleConnection(recipe, particle, connectionSpec) {
+                if (connectionSpec.name !== 'descriptions') {
+                    return undefined;
+                }
+                return (recipe, particle, connectionSpec) => {
+                    return this._createAndConnectHandle(particle.addConnectionName(connectionSpec.name));
+                };
+            }
+            _createAndConnectHandle(handleConnection) {
+                const handle = handleConnection.recipe.newHandle();
+                handle.fate = 'create';
+                handleConnection.connectToHandle(handle);
+                return 1;
             }
         }(StrategizerWalker.Permuted), this);
     }
@@ -22973,15 +23074,15 @@ class CreateHandleGroup extends Strategy {
                     return undefined;
                 const freeConnections = recipe.getFreeConnections();
                 let maximalGroup = null;
-                for (const writer of freeConnections.filter(hc => hc.isOutput)) {
+                for (const writer of freeConnections.filter(({ connSpec }) => connSpec.isOutput)) {
                     const compatibleConnections = [writer];
-                    let effectiveType = Handle$1.effectiveType(null, compatibleConnections);
+                    let effectiveType = Handle$1.effectiveType(null, compatibleConnections.map(cc => cc.connSpec));
                     let typeCandidate = null;
                     const involvedParticles = new Set([writer.particle]);
                     let foundSomeReader = false;
-                    for (const reader of freeConnections.filter(hc => hc.isInput)) {
+                    for (const reader of freeConnections.filter(({ connSpec }) => connSpec.isInput)) {
                         if (!involvedParticles.has(reader.particle) &&
-                            (typeCandidate = Handle$1.effectiveType(effectiveType, [reader])) !== null) {
+                            (typeCandidate = Handle$1.effectiveType(effectiveType, [reader.connSpec])) !== null) {
                             compatibleConnections.push(reader);
                             involvedParticles.add(reader.particle);
                             effectiveType = typeCandidate;
@@ -22991,9 +23092,9 @@ class CreateHandleGroup extends Strategy {
                     // Only make a 'create' group for a writer->reader case.
                     if (!foundSomeReader)
                         continue;
-                    for (const otherWriter of freeConnections.filter(hc => hc.isOutput)) {
+                    for (const otherWriter of freeConnections.filter(({ connSpec }) => connSpec.isOutput)) {
                         if (!involvedParticles.has(otherWriter.particle) &&
-                            (typeCandidate = Handle$1.effectiveType(effectiveType, [otherWriter])) !== null) {
+                            (typeCandidate = Handle$1.effectiveType(effectiveType, [otherWriter.connSpec])) !== null) {
                             compatibleConnections.push(otherWriter);
                             involvedParticles.add(otherWriter.particle);
                             effectiveType = typeCandidate;
@@ -23007,9 +23108,10 @@ class CreateHandleGroup extends Strategy {
                     return recipe => {
                         const newHandle = recipe.newHandle();
                         newHandle.fate = 'create';
-                        for (const conn of maximalGroup) {
-                            const cloneConn = recipe.updateToClone({ conn }).conn;
-                            cloneConn.connectToHandle(newHandle);
+                        for (const { particle, connSpec } of maximalGroup) {
+                            const cloneParticle = recipe.updateToClone({ particle }).particle;
+                            const conn = cloneParticle.addConnectionName(connSpec.name);
+                            conn.connectToHandle(newHandle);
                         }
                     };
                 }
@@ -23024,12 +23126,32 @@ class FindHostedParticle extends Strategy {
     async generate(inputParams) {
         const arc = this.arc;
         return StrategizerWalker.over(this.getResults(inputParams), new class extends StrategizerWalker {
-            onHandleConnection(recipe, connection) {
-                if (connection.direction !== 'host' || connection.handle)
+            onPotentialHandleConnection(recipe, particle, connectionSpec) {
+                const matchingParticleSpecs = this._findMatchingParticleSpecs(arc, connectionSpec, connectionSpec.type);
+                if (!matchingParticleSpecs) {
                     return undefined;
-                assert$1(connection.type instanceof InterfaceType);
-                const iface = connection.type;
+                }
                 const results = [];
+                for (const particleSpec of matchingParticleSpecs) {
+                    results.push((recipe, particle, connectionSpec) => {
+                        const handleConnection = particle.addConnectionName(connectionSpec.name);
+                        const handle = RecipeUtil.constructImmediateValueHandle(handleConnection, particleSpec, arc.generateID());
+                        assert$1(handle); // Type matching should have been ensure by the checks above;
+                        handleConnection.connectToHandle(handle);
+                    });
+                }
+                return results;
+            }
+            _findMatchingParticleSpecs(arc, connectionSpec, connectionType) {
+                if (!connectionSpec) {
+                    return undefined;
+                }
+                if (connectionSpec.direction !== 'host') {
+                    return undefined;
+                }
+                assert$1(connectionType instanceof InterfaceType);
+                const iface = connectionType;
+                const particles = [];
                 for (const particle of arc.context.allParticles) {
                     // This is what interfaceInfo.particleMatches() does, but we also do
                     // canEnsureResolved at the end:
@@ -23043,13 +23165,9 @@ class FindHostedParticle extends Strategy {
                     //       handle, but we don't have one.
                     if (!ifaceClone.canEnsureResolved())
                         continue;
-                    results.push((recipe, hc) => {
-                        const handle = RecipeUtil.constructImmediateValueHandle(hc, particle, arc.generateID());
-                        assert$1(handle); // Type matching should have been ensure by the checks above;
-                        hc.connectToHandle(handle);
-                    });
+                    particles.push(particle);
                 }
-                return results;
+                return particles;
             }
         }(StrategizerWalker.Permuted), this);
     }
@@ -23100,78 +23218,84 @@ class GroupHandleConnections extends Strategy {
                 if (recipe.getUnnamedUntypedConnections()) {
                     return undefined;
                 }
+                // All particles must have spec.
+                if (recipe.particles.some(p => !p.spec)) {
+                    return undefined;
+                }
                 // Find all unique types used in the recipe that have unbound handle connections.
                 const types = new Set();
-                recipe.getFreeConnections().forEach(hc => {
-                    if (!Array.from(types).find(t => t.equals(hc.type))) {
-                        types.add(hc.type);
+                recipe.getFreeConnections().forEach(({ connSpec }) => {
+                    if (!Array.from(types).find(t => t.equals(connSpec.type))) {
+                        types.add(connSpec.type);
                     }
                 });
                 const groupsByType = new Map();
-                types.forEach(type => {
-                    // Find the particle with the largest number of unbound connections of the same type.
-                    const countConnectionsByType = (connections) => Object.values(connections).filter(conn => {
-                        return !conn.isOptional && !conn.handle && type.equals(conn.type);
-                    }).length;
+                for (const type of types) {
                     const sortedParticles = [...recipe.particles].sort((p1, p2) => {
-                        return countConnectionsByType(p2.connections) - countConnectionsByType(p1.connections);
-                    }).filter(p => countConnectionsByType(p.connections) > 0);
+                        return p2.getUnboundConnections(type).length - p1.getUnboundConnections(type).length;
+                    }).filter(p => p.getUnboundConnections(type).length > 0);
                     assert$1(sortedParticles.length > 0);
-                    // Handle connections of the same particle cannot be bound to the same handle. Iterate on handle connections of the particle
-                    // with the most connections of the given type, and group each of them with same typed handle connections of other particles.
+                    // Handle connections of the same particle cannot be bound to the same handle. Iterate
+                    // on handle connections of the particle with the most connections of the given type,
+                    // and group each of them with same typed handle connections of other particles.
                     const particleWithMostConnectionsOfType = sortedParticles[0];
-                    const groups = new Map();
-                    let allTypeHandleConnections = recipe.getTypeHandleConnections(type, particleWithMostConnectionsOfType);
+                    const groups = [];
+                    let allTypeHandleConnections = recipe.getFreeConnections(type)
+                        .filter(c => c.particle !== particleWithMostConnectionsOfType);
                     let iteration = 0;
                     while (allTypeHandleConnections.length > 0) {
-                        Object.values(particleWithMostConnectionsOfType.connections).forEach(handleConnection => {
-                            if (!type.equals(handleConnection.type)) {
-                                return;
+                        for (const connSpec of particleWithMostConnectionsOfType.spec.connections) {
+                            if (!type.equals(connSpec.type)) {
+                                continue;
                             }
-                            if (!groups.has(handleConnection)) {
-                                groups.set(handleConnection, []);
+                            if (!groups.find(g => g.particle === particleWithMostConnectionsOfType && g.connSpec === connSpec)) {
+                                groups.push({ particle: particleWithMostConnectionsOfType, connSpec, group: [] });
                             }
-                            const group = groups.get(handleConnection);
+                            const group = groups.find(g => g.particle === particleWithMostConnectionsOfType && g.connSpec === connSpec).group;
                             // filter all connections where this particle is already in a group.
                             const possibleConnections = allTypeHandleConnections.filter(c => !group.find(gc => gc.particle === c.particle));
-                            let selectedConn = possibleConnections.find(c => handleConnection.isInput !== c.isInput || handleConnection.isOutput !== c.isOutput);
+                            let selectedConn = possibleConnections.find(({ connSpec }) => connSpec.isInput !== connSpec.isInput || connSpec.isOutput !== connSpec.isOutput);
                             // TODO: consider tags.
                             // TODO: Slots handle restrictions should also be accounted for when grouping.
                             if (!selectedConn) {
                                 if (possibleConnections.length === 0 || iteration === 0) {
                                     // During first iteration only bind opposite direction connections ("in" with "out" and vice versa)
                                     // to ensure each group has both direction connections as much as possible.
-                                    return;
+                                    continue;
                                 }
                                 selectedConn = possibleConnections[0];
                             }
                             group.push(selectedConn);
-                            allTypeHandleConnections = allTypeHandleConnections.filter(c => c !== selectedConn);
-                        });
+                            allTypeHandleConnections = allTypeHandleConnections.filter(({ connSpec }) => connSpec !== selectedConn.connSpec);
+                        }
                         iteration++;
                     }
                     // Remove groups where no connections were bound together.
-                    groups.forEach((otherConns, conn) => {
-                        if (otherConns.length === 0) {
-                            groups.delete(conn);
+                    for (let i = 0; i < groups.length; ++i) {
+                        if (groups[i].group.length === 0) {
+                            groups.splice(i, 1);
                         }
                         else {
-                            otherConns.push(conn);
+                            groups[i].group.push({ particle: groups[i].particle, connSpec: groups[i].connSpec });
                         }
-                    });
-                    if (groups.size !== 0) {
+                    }
+                    if (groups.length !== 0) {
                         groupsByType.set(type, groups);
                     }
-                });
+                }
                 if (groupsByType.size > 0) {
                     return recipe => {
                         groupsByType.forEach((groups, type) => {
-                            groups.forEach(group => {
+                            groups.forEach(({ group }) => {
                                 const recipeHandle = recipe.newHandle();
-                                group.forEach(conn => {
-                                    const cloneConn = recipe.updateToClone({ conn }).conn;
-                                    cloneConn.connectToHandle(recipeHandle);
-                                });
+                                for (const { particle, connSpec } of group) {
+                                    const particleClone = recipe.updateToClone({ particle }).particle;
+                                    if (!particleClone.connections[connSpec.name]) {
+                                        particleClone.addConnectionName(connSpec.name);
+                                    }
+                                    const conn = particleClone.connections[connSpec.name];
+                                    conn.connectToHandle(recipeHandle);
+                                }
                             });
                         });
                         // TODO: score!
@@ -23325,10 +23449,11 @@ class MatchFreeHandlesToConnections extends Strategy {
                 if (handle.connections.length > 0) {
                     return;
                 }
-                const matchingConnections = recipe.getDisconnectedConnections();
-                return matchingConnections.map(connection => {
+                const matchingConnections = recipe.getFreeConnections();
+                return matchingConnections.map(({ particle, connSpec }) => {
                     return (recipe, handle) => {
-                        const newConnection = recipe.updateToClone({ connection }).connection;
+                        const cloneParticle = recipe.updateToClone({ particle }).particle;
+                        const newConnection = cloneParticle.addConnectionName(connSpec.name);
                         newConnection.connectToHandle(handle);
                         return 1;
                     };
@@ -23448,13 +23573,15 @@ class MatchRecipeByVerb extends Strategy {
                                 assert$1(slotMapped);
                             }
                         }
-                        function tryApplyHandleConstraint(name, connection, constraint, handle) {
-                            if (connection.handle != null) {
+                        function tryApplyHandleConstraint(name, connSpec, particle, constraint, handle) {
+                            let connection = particle.connections[name];
+                            if (connection && connection.handle != null) {
                                 return false;
                             }
-                            if (!MatchRecipeByVerb.connectionMatchesConstraint(connection, constraint)) {
+                            if (!MatchRecipeByVerb.connectionMatchesConstraint(connection || connSpec, constraint)) {
                                 return false;
                             }
+                            connection = connection || particle.addConnectionName(connSpec.name);
                             for (let i = 0; i < handle.connections.length; i++) {
                                 const candidate = handle.connections[i];
                                 // TODO candidate.name === name triggers test failures
@@ -23471,13 +23598,13 @@ class MatchRecipeByVerb extends Strategy {
                             const { mappedHandle } = outputRecipe.updateToClone({ mappedHandle: handle });
                             for (const particle of particles) {
                                 if (name) {
-                                    if (tryApplyHandleConstraint(name, particle.connections[name], constraint, mappedHandle)) {
+                                    if (tryApplyHandleConstraint(name, particle.spec.getConnectionByName(name), particle, constraint, mappedHandle)) {
                                         return true;
                                     }
                                 }
                                 else {
-                                    for (const connection of Object.values(particle.connections)) {
-                                        if (tryApplyHandleConstraint(name, connection, constraint, mappedHandle)) {
+                                    for (const connSpec of particle.spec.connections) {
+                                        if (tryApplyHandleConstraint(name, connSpec, particle, constraint, mappedHandle)) {
                                             return true;
                                         }
                                     }
@@ -23525,6 +23652,13 @@ class MatchRecipeByVerb extends Strategy {
                     return true;
                 }
             }
+            if (particle.spec) {
+                for (const connectionSpec of particle.spec.connections) {
+                    if (MatchRecipeByVerb.connectionSpecMatchesConstraint(connectionSpec, handleData)) {
+                        return true;
+                    }
+                }
+            }
         }
         return false;
     }
@@ -23535,8 +23669,19 @@ class MatchRecipeByVerb extends Strategy {
                     return true;
                 }
             }
+            else if (particle.spec && particle.spec.getConnectionByName(handleName)) {
+                if (MatchRecipeByVerb.connectionSpecMatchesConstraint(particle.spec.getConnectionByName(handleName), handleData)) {
+                    return true;
+                }
+            }
         }
         return false;
+    }
+    static connectionSpecMatchesConstraint(connSpec, handleData) {
+        if (connSpec.direction !== handleData.direction) {
+            return false;
+        }
+        return true;
     }
     static connectionMatchesConstraint(connection, handleData) {
         if (connection.direction !== handleData.direction) {

@@ -27,10 +27,10 @@ describe('Recipe Particle', () => {
         let recipe = manifest.recipes[0];
         {
             const [recipeParticle] = recipe.particles;
-            const hostedParticleConn = recipeParticle.connections['hostedParticle'];
-            const listConn = recipeParticle.connections['list'];
+            const hostedParticleConn = recipeParticle.spec.getConnectionByName('hostedParticle');
             const type = hostedParticleConn.type;
             const ifaceVariable = type.interfaceInfo.handles[0].type;
+            const listConn = recipeParticle.connections['list'];
             const listConnType = listConn.type;
             const listUnpackedVariable = listConnType.collectionType;
             assert.strictEqual(ifaceVariable.variable, listUnpackedVariable.variable);
@@ -38,14 +38,48 @@ describe('Recipe Particle', () => {
         recipe = recipe.clone();
         {
             const recipeParticle = recipe.particles[0];
-            const hostedParticleConn = recipeParticle.connections['hostedParticle'];
+            const hostedParticleConn = recipeParticle.spec.getConnectionByName('hostedParticle');
             const listConn = recipeParticle.connections['list'];
             const type = hostedParticleConn.type;
             const ifaceVariable = type.interfaceInfo.handles[0].type;
             const listConnType = listConn.type;
             const listUnpackedVariable = listConnType.collectionType;
+            assert.isTrue(ifaceVariable.equals(listUnpackedVariable));
             assert.strictEqual(ifaceVariable.variable, listUnpackedVariable.variable);
         }
+    });
+    it('verifies is resolved for optional connections', async () => {
+        const particleManifest = `
+      schema Thing
+      particle P
+        out? Thing thing0
+          out Thing thing1
+            out Thing thing2
+    `;
+        const verifyRecipe = async (recipeManifest, expectedResolved) => {
+            const manifest = await Manifest.parse(`${particleManifest}${recipeManifest}`);
+            const recipe = manifest.recipes[0];
+            assert.isTrue(recipe.normalize());
+            assert.equal(recipe.isResolved(), expectedResolved);
+        };
+        verifyRecipe(`
+      recipe
+        P
+    `, true);
+        verifyRecipe(`
+      recipe
+        create as handle0
+        P
+          thing0 = handle0
+    `, false);
+        verifyRecipe(`
+      recipe
+        create as handle0
+        create as handle1
+        P
+          thing0 = handle0
+          thing1 = handle1
+    `, false);
     });
 });
 //# sourceMappingURL=particle-tests.js.map

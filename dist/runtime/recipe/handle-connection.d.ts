@@ -8,13 +8,13 @@ export declare class HandleConnection {
     _recipe: Recipe;
     _name: string;
     _tags: string[];
-    _type: Type | undefined;
-    _rawType: Type | undefined;
+    private resolvedType;
     _direction: Direction | undefined;
     _particle: Particle;
     _handle: Handle | undefined;
     constructor(name: any, particle: any);
     _clone(particle: any, cloneMap: any): any;
+    cloneTypeWithResolutions(variableMap: any): void;
     _normalize(): void;
     _compareTo(other: any): number;
     readonly recipe: Recipe;
@@ -22,7 +22,6 @@ export declare class HandleConnection {
     getQualifiedName(): string;
     tags: string[];
     type: Type;
-    readonly rawType: Type;
     direction: Direction;
     readonly isInput: boolean;
     readonly isOutput: boolean;

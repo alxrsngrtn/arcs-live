@@ -16,11 +16,22 @@ export class CreateDescriptionHandle extends Strategy {
                     return undefined;
                 }
                 return (recipe, handleConnection) => {
-                    const handle = recipe.newHandle();
-                    handle.fate = 'create';
-                    handleConnection.connectToHandle(handle);
-                    return 1;
+                    return this._createAndConnectHandle(handleConnection);
                 };
+            }
+            onPotentialHandleConnection(recipe, particle, connectionSpec) {
+                if (connectionSpec.name !== 'descriptions') {
+                    return undefined;
+                }
+                return (recipe, particle, connectionSpec) => {
+                    return this._createAndConnectHandle(particle.addConnectionName(connectionSpec.name));
+                };
+            }
+            _createAndConnectHandle(handleConnection) {
+                const handle = handleConnection.recipe.newHandle();
+                handle.fate = 'create';
+                handleConnection.connectToHandle(handle);
+                return 1;
             }
         }(StrategizerWalker.Permuted), this);
     }

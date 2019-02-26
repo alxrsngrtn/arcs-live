@@ -12,6 +12,9 @@ export class ConvertConstraintsToConnections extends Strategy {
         const arcModality = this.arc.modality;
         return StrategizerWalker.over(this.getResults(inputParams), new class extends StrategizerWalker {
             onRecipe(recipe) {
+                if (recipe.connectionConstraints.length === 0) {
+                    return undefined;
+                }
                 const modality = arcModality.intersection(recipe.modality);
                 // The particles & handles Sets are used as input to RecipeUtil's shape functionality
                 // (this is the algorithm that "finds" the constraint set in the recipe).
@@ -25,9 +28,6 @@ export class ConvertConstraintsToConnections extends Strategy {
                 const particlesByName = {};
                 let handleCount = 0;
                 const obligations = [];
-                if (recipe.connectionConstraints.length === 0) {
-                    return undefined;
-                }
                 for (const constraint of recipe.connectionConstraints) {
                     const from = constraint.from;
                     const to = constraint.to;

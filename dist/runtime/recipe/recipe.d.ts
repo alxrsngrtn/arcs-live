@@ -1,4 +1,6 @@
 import { Modality } from '../modality.js';
+import { ConnectionSpec } from '../particle-spec.js';
+import { Type } from '../type.js';
 import { ConnectionConstraint } from './connection-constraint.js';
 import { HandleConnection } from './handle-connection.js';
 import { Handle } from './handle.js';
@@ -74,13 +76,18 @@ export declare class Recipe {
     _makeLocalNameMap(): Map<any, any>;
     toString(options?: any): string;
     getFreeHandles(): Handle[];
-    getFreeConnections(): HandleConnection[];
+    readonly allSpecifiedConnections: {
+        particle: Particle;
+        connSpec: ConnectionSpec;
+    }[];
+    getFreeConnections(type?: Type): {
+        particle: Particle;
+        connSpec: ConnectionSpec;
+    }[];
     findHandleByID(id: any): Handle;
     getUnnamedUntypedConnections(): HandleConnection;
-    getTypeHandleConnections(type: any, p: any): HandleConnection[];
     getParticlesByImplFile(files: Set<string>): Particle[];
     findSlotByID(id: any): Slot;
-    getDisconnectedConnections(): HandleConnection[];
 }
 export declare class RequireSection extends Recipe {
     parent: Recipe;

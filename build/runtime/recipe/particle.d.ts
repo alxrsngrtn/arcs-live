@@ -1,6 +1,7 @@
-import { ParticleSpec, SlotSpec } from '../particle-spec.js';
+import { ConnectionSpec, ParticleSpec, SlotSpec } from '../particle-spec.js';
 import { Schema } from '../schema.js';
 import { TypeVariableInfo } from '../type-variable-info.js';
+import { Type } from '../type.js';
 import { HandleConnection } from './handle-connection.js';
 import { Recipe } from './recipe.js';
 import { SlotConnection } from './slot-connection.js';
@@ -10,7 +11,7 @@ export declare class Particle {
     private _id;
     private _name;
     private _localName;
-    private _spec;
+    spec: ParticleSpec | undefined;
     private _verbs;
     private _connections;
     _unnamedConnections: HandleConnection[];
@@ -35,7 +36,6 @@ export declare class Particle {
     localName: string;
     id: string;
     name: string;
-    spec: ParticleSpec;
     readonly connections: {
         [index: string]: HandleConnection;
     };
@@ -46,11 +46,12 @@ export declare class Particle {
     readonly primaryVerb: string;
     verbs: any;
     addUnnamedConnection(): HandleConnection;
-    addConnectionName(name: any): HandleConnection;
+    addConnectionName(name: string): HandleConnection;
     allConnections(): HandleConnection[];
     ensureConnectionName(name: any): HandleConnection;
     getConnectionByName(name: any): HandleConnection;
     nameConnection(connection: any, name: any): void;
+    getUnboundConnections(type?: Type): ConnectionSpec[];
     addSlotConnection(name: string): SlotConnection;
     addSlotConnectionAsCopy(name: string): SlotConnection;
     removeSlotConnection(slotConnection: any): void;

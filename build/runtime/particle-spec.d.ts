@@ -9,6 +9,8 @@
  */
 import { Modality } from './modality.js';
 import { Direction } from './recipe/handle-connection.js';
+import { Schema } from './schema.js';
+import { TypeVariableInfo } from './type-variable-info.js';
 import { InterfaceType, Type, TypeLiteral } from './type.js';
 declare type SerializedConnectionSpec = {
     direction: Direction;
@@ -97,12 +99,14 @@ export declare class ParticleSpec {
     createConnection(arg: SerializedConnectionSpec, typeVarMap: Map<string, Type>): ConnectionSpec;
     isInput(param: string): boolean;
     isOutput(param: string): boolean;
+    getConnectionByName(name: string): ConnectionSpec;
     getSlotSpec(slotName: string): SlotSpec;
     readonly primaryVerb: string;
     isCompatible(modality: Modality): boolean;
     toLiteral(): SerializedParticleSpec;
     static fromLiteral(literal: SerializedParticleSpec): ParticleSpec;
     clone(): ParticleSpec;
+    cloneWithResolutions(variableMap: Map<TypeVariableInfo | Schema, TypeVariableInfo | Schema>): ParticleSpec;
     equals(other: any): boolean;
     validateDescription(description: any): void;
     toInterface(): InterfaceType;

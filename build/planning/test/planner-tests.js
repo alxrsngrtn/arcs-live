@@ -464,8 +464,7 @@ recipe
 schema Thing1
 store MyThings1 of [Thing1] #mythings1 in 'things.json'
 store MyThings2 of [Thing1] #mythings2 in 'things.json'`);
-        // Transformations carry types through their interface, so P1 can't resolve with
-        // Thing2
+        // Transformations carry types through their interface, so P1 can't resolve with Thing2
         await verifyUnresolvedPlan(`
 ${particleSpecs}
 recipe
@@ -670,7 +669,7 @@ describe('Automatic resolution', () => {
         assert.lengthOf(recipes, 2);
         const composedRecipes = recipes.filter(r => r.name !== 'ProducingRecipe');
         assert.lengthOf(composedRecipes, 1);
-        assert.equal(composedRecipes[0].toString(), `recipe
+        const recipeString = `recipe
   create #items as handle0 // [Thing {}]
   create #selected as handle1 // Thing {}
   slot 'rootslotid-root' #root as slot1
@@ -688,7 +687,9 @@ describe('Automatic resolution', () => {
       provide postamble as slot4
       provide preamble as slot5
   ThingProducer as particle2
-    things -> handle0`);
+    things -> handle0`;
+        assert.equal(composedRecipes[0].toString(), recipeString);
+        assert.equal(composedRecipes[0].toString({ showUnresolved: true }), recipeString);
     });
     it('composes recipe rendering a list of items from the current arc', async () => {
         let arc = null;

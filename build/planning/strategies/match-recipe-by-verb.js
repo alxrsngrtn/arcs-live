@@ -90,13 +90,15 @@ export class MatchRecipeByVerb extends Strategy {
                                 assert(slotMapped);
                             }
                         }
-                        function tryApplyHandleConstraint(name, connection, constraint, handle) {
-                            if (connection.handle != null) {
+                        function tryApplyHandleConstraint(name, connSpec, particle, constraint, handle) {
+                            let connection = particle.connections[name];
+                            if (connection && connection.handle != null) {
                                 return false;
                             }
-                            if (!MatchRecipeByVerb.connectionMatchesConstraint(connection, constraint)) {
+                            if (!MatchRecipeByVerb.connectionMatchesConstraint(connection || connSpec, constraint)) {
                                 return false;
                             }
+                            connection = connection || particle.addConnectionName(connSpec.name);
                             for (let i = 0; i < handle.connections.length; i++) {
                                 const candidate = handle.connections[i];
                                 // TODO candidate.name === name triggers test failures
@@ -113,13 +115,13 @@ export class MatchRecipeByVerb extends Strategy {
                             const { mappedHandle } = outputRecipe.updateToClone({ mappedHandle: handle });
                             for (const particle of particles) {
                                 if (name) {
-                                    if (tryApplyHandleConstraint(name, particle.connections[name], constraint, mappedHandle)) {
+                                    if (tryApplyHandleConstraint(name, particle.spec.getConnectionByName(name), particle, constraint, mappedHandle)) {
                                         return true;
                                     }
                                 }
                                 else {
-                                    for (const connection of Object.values(particle.connections)) {
-                                        if (tryApplyHandleConstraint(name, connection, constraint, mappedHandle)) {
+                                    for (const connSpec of particle.spec.connections) {
+                                        if (tryApplyHandleConstraint(name, connSpec, particle, constraint, mappedHandle)) {
                                             return true;
                                         }
                                     }
@@ -167,6 +169,13 @@ export class MatchRecipeByVerb extends Strategy {
                     return true;
                 }
             }
+            if (particle.spec) {
+                for (const connectionSpec of particle.spec.connections) {
+                    if (MatchRecipeByVerb.connectionSpecMatchesConstraint(connectionSpec, handleData)) {
+                        return true;
+                    }
+                }
+            }
         }
         return false;
     }
@@ -177,8 +186,19 @@ export class MatchRecipeByVerb extends Strategy {
                     return true;
                 }
             }
+            else if (particle.spec && particle.spec.getConnectionByName(handleName)) {
+                if (MatchRecipeByVerb.connectionSpecMatchesConstraint(particle.spec.getConnectionByName(handleName), handleData)) {
+                    return true;
+                }
+            }
         }
         return false;
+    }
+    static connectionSpecMatchesConstraint(connSpec, handleData) {
+        if (connSpec.direction !== handleData.direction) {
+            return false;
+        }
+        return true;
     }
     static connectionMatchesConstraint(connection, handleData) {
         if (connection.direction !== handleData.direction) {

@@ -179,7 +179,7 @@ describe('interface', () => {
             assert.isTrue(resolved instanceof TypeVariable);
             assert.isFalse(resolved.canEnsureResolved());
         }
-        const hostedParticleType = multiplexer.connections['hostedParticle'].type;
+        const hostedParticleType = multiplexer.spec.getConnectionByName('hostedParticle').type;
         assert.isTrue(!!hostedParticleType.interfaceInfo.restrictType(burritoDisplayer));
         // After restricting the interface, handle types are constrainted to a Burrito.
         assert.lengthOf(recipe.handles, 2);
@@ -236,7 +236,7 @@ describe('interface', () => {
         const recipe = manifest.recipes[0];
         recipe.normalize();
         const hostParticle = recipe.particles.find(p => p.name === 'Host');
-        const hostedInterface = hostParticle.connections['hosted'].type.interfaceInfo;
+        const hostedInterface = hostParticle.spec.getConnectionByName('hosted').type.interfaceInfo;
         const check = name => hostedInterface.particleMatches(manifest.findParticleByName(name));
         // inout Thing is not be compatible with in Instrument input
         // inout LesPaul is not be compatible with out Gibson output
