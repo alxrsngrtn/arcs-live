@@ -1,25 +1,8 @@
-commit 83891e74706b6caa2bc79645f797217f8bdd01c5
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Mon Feb 25 16:32:18 2019 -0800
+commit 8ae50dd94bb2b8e5a3eadcf30e1d32a7ebe4fc2c
+Author: raulverag <42563960+raulverag@users.noreply.github.com>
+Date:   Mon Feb 25 17:42:39 2019 -0800
 
-    Only create handle-connections when there is handle to connect (#2644)
+    Move slot-composer-tests.ts to an integration-tests directory under src. (#2715)
     
-    * Only create handle-connections when there is handle to connect
-    (except interfaces)
-    
-    * fix recipe particle isResolved
-    
-    * address comments: recipe handle connection's direction and type only derived from recipe (not spec)
-    
-    * clone particle spec and types with resolution
-    create interface connections on demand
-    
-    * Address comments
-    
-    * cleanup and comments
-    
-    * update handle connection type members and validation, and reenable test
-    
-    * refactor free/disconnected handle connection getters in recipe
-    
-    * refactor common functionality in create-description-handle strategy
+    Also remove ts.inputs from sigh.js, as these are unused and confusing: tsc
+    actually gets it's inputs from tsconfig.json.
