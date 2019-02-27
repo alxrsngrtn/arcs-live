@@ -11,12 +11,12 @@ import { assert } from '../../../platform/chai-web.js';
 import { Arc } from '../../../runtime/arc.js';
 import { Loader } from '../../../runtime/loader.js';
 import { FakeSlotComposer } from '../../../runtime/testing/fake-slot-composer.js';
-import { TestHelper } from '../../../runtime/testing/test-helper.js';
+import { PlanningTestHelper } from '../../testing/planning-test-helper.js';
 import { Planificator } from '../../plan/planificator.js';
 import { PlanningResult } from '../../plan/planning-result.js';
 describe('planificator', () => {
     it('constructs suggestion and search storage keys for fb arc', async () => {
-        const helper = await TestHelper.create({ storageKey: 'firebase://arcs-storage.firebaseio.com/AIzaSyBme42moeI-2k8WgXh-6YK_wYyjEXo4Oz8/0_6_0/testuser--LT97ssVNw_ttCZtjlMT' });
+        const helper = await PlanningTestHelper.create({ storageKey: 'firebase://arcs-storage.firebaseio.com/AIzaSyBme42moeI-2k8WgXh-6YK_wYyjEXo4Oz8/0_6_0/testuser--LT97ssVNw_ttCZtjlMT' });
         const arc = helper.arc;
         const verifySuggestion = (storageKeyBase) => {
             const key = Planificator.constructSuggestionKey(arc, 'testuser', storageKeyBase);
@@ -35,7 +35,7 @@ describe('remote planificator', () => {
     // TODO: support arc storage key be in PouchDB as well.
     const storageKey = 'volatile://!123:demo^^abcdef';
     async function createArc(options, storageKey) {
-        return (await TestHelper.createAndPlan(Object.assign({}, options, { slotComposer: new FakeSlotComposer(), storageKey }))).arc;
+        return (await PlanningTestHelper.createAndPlan(Object.assign({}, options, { slotComposer: new FakeSlotComposer(), storageKey }))).arc;
     }
     async function createConsumePlanificator(plannerStorageKeyBase, manifestFilename) {
         return Planificator.create(await createArc({ manifestFilename }, storageKey), { userid, storageKeyBase: plannerStorageKeyBase, onlyConsumer: true, debug: false });

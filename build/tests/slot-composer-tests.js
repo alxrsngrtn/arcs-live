@@ -17,6 +17,7 @@ import { HostedSlotContext, ProvidedSlotContext } from '../runtime/slot-context.
 import { MockSlotComposer } from '../runtime/testing/mock-slot-composer.js';
 import { StubLoader } from '../runtime/testing/stub-loader.js';
 import { TestHelper } from '../runtime/testing/test-helper.js';
+import { PlanningTestHelper } from '../planning/testing/planning-test-helper.js';
 async function initSlotComposer(recipeStr) {
     const slotComposer = new MockSlotComposer().newExpectations();
     const manifest = await TestHelper.parseManifest(recipeStr, new Loader());
@@ -108,8 +109,8 @@ recipe
             .expectRenderSlot('List', 'root', { 'contentTypes': ['model', 'templateName'] })
             .expectRenderSlot('ShowProduct', 'item', { 'contentTypes': ['template', 'model', 'templateName'] })
             .expectRenderSlot('ItemMultiplexer', 'item', { 'contentTypes': ['template', 'model', 'templateName'] });
-        const helper = await TestHelper.createAndPlan({
-            manifestFilename: './src/runtime/test/particles/artifacts/products-test.recipes',
+        const helper = await PlanningTestHelper.createAndPlan({
+            manifestFilename: './src/tests/particles/artifacts/products-test.recipes',
             slotComposer
         });
         await helper.acceptSuggestion({ particles: ['ItemMultiplexer', 'List', 'ProductFilter'] });
@@ -192,7 +193,7 @@ recipe
             .expectRenderSlot('A', 'content', { 'contentTypes': ['model', 'templateName'] })
             .expectRenderSlot('TransformationParticle', 'root', { 'contentTypes': ['model', 'templateName'] })
             .expectRenderSlot('B', 'detail', { 'contentTypes': ['model', 'templateName'] });
-        const { arc } = await TestHelper.create({
+        const { arc } = await PlanningTestHelper.create({
             manifestString: `
         particle TransformationParticle in 'TransformationParticle.js'
           consume root

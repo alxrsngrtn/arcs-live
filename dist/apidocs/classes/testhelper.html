@@ -66,22 +66,16 @@
 <div class="container container-main">
 	<div class="row">
 		<div class="col-8 col-content">
-			<section class="tsd-panel tsd-comment">
-				<div class="tsd-comment tsd-typography">
-					<div class="lead">
-						<p>Helper class to recipe instantiation and replanning.
-							Usage example:
-							let helper = await TestHelper.createAndPlan({manifestFilename: &#39;my.manifest&#39;});
-							await helper.acceptSuggestion({particles: [&#39;MyParticle1&#39;, &#39;MyParticle2&#39;]});
-						await helper.verifyData(&#39;MyParticle1&#39;, &#39;myHandle1&#39;, async (handle) =&gt; { ... });</p>
-					</div>
-				</div>
-			</section>
 			<section class="tsd-panel tsd-hierarchy">
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
 						<span class="target">TestHelper</span>
+						<ul class="tsd-hierarchy">
+							<li>
+								<a href="planningtesthelper.html" class="tsd-signature-type">PlanningTestHelper</a>
+							</li>
+						</ul>
 					</li>
 				</ul>
 			</section>
@@ -95,9 +89,7 @@
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="testhelper.html#arc" class="tsd-kind-icon">arc</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="testhelper.html#loader" class="tsd-kind-icon">loader</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="testhelper.html#logging" class="tsd-kind-icon">logging</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="testhelper.html#recipeindex" class="tsd-kind-icon">recipe<wbr>Index</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="testhelper.html#slotcomposer" class="tsd-kind-icon">slot<wbr>Composer</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="testhelper.html#suggestions" class="tsd-kind-icon">suggestions</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="testhelper.html#timeout" class="tsd-kind-icon">timeout</a></li>
 							</ul>
 						</section>
@@ -105,27 +97,23 @@
 							<h3>Accessors</h3>
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="testhelper.html#envoptions" class="tsd-kind-icon">env<wbr>Options</a></li>
-								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="testhelper.html#plan" class="tsd-kind-icon">plan</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
 							<h3>Methods</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="testhelper.html#acceptsuggestion" class="tsd-kind-icon">accept<wbr>Suggestion</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="testhelper.html#cleartimeout" class="tsd-kind-icon">clear<wbr>Timeout</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="testhelper.html#findsuggestionbyparticlenames" class="tsd-kind-icon">find<wbr>Suggestion<wbr>ByParticle<wbr>Names</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="testhelper.html#idle" class="tsd-kind-icon">idle</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="testhelper.html#instantiatesuggestion" class="tsd-kind-icon">instantiate<wbr>Suggestion</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="testhelper.html#log" class="tsd-kind-icon">log</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="testhelper.html#makeplans" class="tsd-kind-icon">make<wbr>Plans</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="testhelper.html#sendslotevent" class="tsd-kind-icon">send<wbr>Slot<wbr>Event</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="testhelper.html#settimeout" class="tsd-kind-icon">set<wbr>Timeout</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="testhelper.html#verifydata" class="tsd-kind-icon">verify<wbr>Data</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="testhelper.html#verifysetsize" class="tsd-kind-icon">verify<wbr>Set<wbr>Size</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="testhelper.html#verifyslots" class="tsd-kind-icon">verify<wbr>Slots</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-static"><a href="testhelper.html#create" class="tsd-kind-icon">create</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-static"><a href="testhelper.html#createandplan" class="tsd-kind-icon">create<wbr>And<wbr>Plan</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-static"><a href="testhelper.html#parsemanifest" class="tsd-kind-icon">parse<wbr>Manifest</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-static"><a href="testhelper.html#setuphelper" class="tsd-kind-icon">setup<wbr>Helper</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-static"><a href="testhelper.html#setupoptions" class="tsd-kind-icon">setup<wbr>Options</a></li>
 							</ul>
 						</section>
 					</div>
@@ -139,7 +127,7 @@
 					<div class="tsd-signature tsd-kind-icon">arc<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/8e85e44/src/runtime/testing/test-helper.ts#L53">runtime/testing/test-helper.ts:53</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/386dbcf/src/runtime/testing/test-helper.ts#L35">runtime/testing/test-helper.ts:35</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -149,7 +137,7 @@
 					<div class="tsd-signature tsd-kind-icon">loader<span class="tsd-signature-symbol">:</span> <a href="loader.html" class="tsd-signature-type">Loader</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/8e85e44/src/runtime/testing/test-helper.ts#L49">runtime/testing/test-helper.ts:49</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/386dbcf/src/runtime/testing/test-helper.ts#L32">runtime/testing/test-helper.ts:32</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -159,17 +147,7 @@
 					<div class="tsd-signature tsd-kind-icon">logging<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/8e85e44/src/runtime/testing/test-helper.ts#L48">runtime/testing/test-helper.ts:48</a></li>
-						</ul>
-					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
-					<a name="recipeindex" class="tsd-anchor"></a>
-					<h3>recipe<wbr>Index</h3>
-					<div class="tsd-signature tsd-kind-icon">recipe<wbr>Index<span class="tsd-signature-symbol">:</span> <a href="recipeindex.html" class="tsd-signature-type">RecipeIndex</a></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/8e85e44/src/runtime/testing/test-helper.ts#L55">runtime/testing/test-helper.ts:55</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/386dbcf/src/runtime/testing/test-helper.ts#L31">runtime/testing/test-helper.ts:31</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -179,17 +157,7 @@
 					<div class="tsd-signature tsd-kind-icon">slot<wbr>Composer<span class="tsd-signature-symbol">:</span> <a href="mockslotcomposer.html" class="tsd-signature-type">MockSlotComposer</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/8e85e44/src/runtime/testing/test-helper.ts#L54">runtime/testing/test-helper.ts:54</a></li>
-						</ul>
-					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
-					<a name="suggestions" class="tsd-anchor"></a>
-					<h3>suggestions</h3>
-					<div class="tsd-signature tsd-kind-icon">suggestions<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/8e85e44/src/runtime/testing/test-helper.ts#L52">runtime/testing/test-helper.ts:52</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/386dbcf/src/runtime/testing/test-helper.ts#L36">runtime/testing/test-helper.ts:36</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -199,7 +167,7 @@
 					<div class="tsd-signature tsd-kind-icon">timeout<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/8e85e44/src/runtime/testing/test-helper.ts#L50">runtime/testing/test-helper.ts:50</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/386dbcf/src/runtime/testing/test-helper.ts#L33">runtime/testing/test-helper.ts:33</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -216,7 +184,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/8e85e44/src/runtime/testing/test-helper.ts#L117">runtime/testing/test-helper.ts:117</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/386dbcf/src/runtime/testing/test-helper.ts#L95">runtime/testing/test-helper.ts:95</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">object</span></h4>
@@ -231,71 +199,9 @@
 						</li>
 					</ul>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class">
-					<a name="plan" class="tsd-anchor"></a>
-					<h3>plan</h3>
-					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> plan<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/8e85e44/src/runtime/testing/test-helper.ts#L211">runtime/testing/test-helper.ts:211</a></li>
-								</ul>
-							</aside>
-							<div class="tsd-comment tsd-typography">
-								<div class="lead">
-									<p>Getter for a single available suggestion plan (fails, if there is more than one).</p>
-								</div>
-							</div>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">any</span></h4>
-						</li>
-					</ul>
-				</section>
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Methods</h2>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
-					<a name="acceptsuggestion" class="tsd-anchor"></a>
-					<h3>accept<wbr>Suggestion</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">accept<wbr>Suggestion<span class="tsd-signature-symbol">(</span>options<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">object</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/8e85e44/src/runtime/testing/test-helper.ts#L168">runtime/testing/test-helper.ts:168</a></li>
-								</ul>
-							</aside>
-							<div class="tsd-comment tsd-typography">
-								<div class="lead">
-									<p>Accepts a suggestion. |options| may provide the exact list of particles representing the
-									suggestion to accept. Otherwise, fallback to a single generated suggestion, if appropriate.</p>
-								</div>
-							</div>
-							<h4 class="tsd-parameters-title">Parameters</h4>
-							<ul class="tsd-parameters">
-								<li>
-									<h5><span class="tsd-flag ts-flagOptional">Optional</span> options: <span class="tsd-signature-type">object</span></h5>
-									<ul class="tsd-parameters">
-										<li class="tsd-parameter">
-											<h5><span class="tsd-flag ts-flagOptional">Optional</span> description<wbr>Text<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span></h5>
-										</li>
-										<li class="tsd-parameter">
-											<h5><span class="tsd-flag ts-flagOptional">Optional</span> hosted<wbr>Particles<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></h5>
-										</li>
-										<li class="tsd-parameter">
-											<h5><span class="tsd-flag ts-flagOptional">Optional</span> particles<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></h5>
-										</li>
-									</ul>
-								</li>
-							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
-						</li>
-					</ul>
-				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
 					<a name="cleartimeout" class="tsd-anchor"></a>
 					<h3>clear<wbr>Timeout</h3>
@@ -306,33 +212,10 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/8e85e44/src/runtime/testing/test-helper.ts#L113">runtime/testing/test-helper.ts:113</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/386dbcf/src/runtime/testing/test-helper.ts#L91">runtime/testing/test-helper.ts:91</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
-						</li>
-					</ul>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
-					<a name="findsuggestionbyparticlenames" class="tsd-anchor"></a>
-					<h3>find<wbr>Suggestion<wbr>ByParticle<wbr>Names</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">find<wbr>Suggestion<wbr>ByParticle<wbr>Names<span class="tsd-signature-symbol">(</span>particlesNames<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/8e85e44/src/runtime/testing/test-helper.ts#L195">runtime/testing/test-helper.ts:195</a></li>
-								</ul>
-							</aside>
-							<h4 class="tsd-parameters-title">Parameters</h4>
-							<ul class="tsd-parameters">
-								<li>
-									<h5>particlesNames: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></h5>
-								</li>
-							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">any</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -346,7 +229,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/8e85e44/src/runtime/testing/test-helper.ts#L229">runtime/testing/test-helper.ts:229</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/386dbcf/src/runtime/testing/test-helper.ts#L112">runtime/testing/test-helper.ts:112</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -354,29 +237,6 @@
 									<p>Awaits particle execution context idleness and mock slot composer expectations completeness.</p>
 								</div>
 							</div>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
-						</li>
-					</ul>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
-					<a name="instantiatesuggestion" class="tsd-anchor"></a>
-					<h3>instantiate<wbr>Suggestion</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">instantiate<wbr>Suggestion<span class="tsd-signature-symbol">(</span>suggestion<span class="tsd-signature-symbol">: </span><a href="suggestion.html" class="tsd-signature-type">Suggestion</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/8e85e44/src/runtime/testing/test-helper.ts#L202">runtime/testing/test-helper.ts:202</a></li>
-								</ul>
-							</aside>
-							<h4 class="tsd-parameters-title">Parameters</h4>
-							<ul class="tsd-parameters">
-								<li>
-									<h5>suggestion: <a href="suggestion.html" class="tsd-signature-type">Suggestion</a></h5>
-								</li>
-							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
@@ -391,7 +251,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/8e85e44/src/runtime/testing/test-helper.ts#L276">runtime/testing/test-helper.ts:276</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/386dbcf/src/runtime/testing/test-helper.ts#L159">runtime/testing/test-helper.ts:159</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -405,40 +265,6 @@
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
-					<a name="makeplans" class="tsd-anchor"></a>
-					<h3>make<wbr>Plans</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">make<wbr>Plans<span class="tsd-signature-symbol">(</span>options<span class="tsd-signature-symbol">?: </span><a href="../globals.html#testhelperplanoptions" class="tsd-signature-type">TestHelperPlanOptions</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="testhelper.html" class="tsd-signature-type">TestHelper</a><span class="tsd-signature-symbol">&gt;</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/8e85e44/src/runtime/testing/test-helper.ts#L128">runtime/testing/test-helper.ts:128</a></li>
-								</ul>
-							</aside>
-							<div class="tsd-comment tsd-typography">
-								<div class="lead">
-									<p>Generates suggestions for the arc.
-									|options| contains possible verifications to be performed on the generated plans:</p>
-									<ul>
-										<li>expectedNumPlans: (optional) number of expected number of generated suggestions to verify.</li>
-										<li>expectedSuggestions: (optional) list of expected description texts representing the generated suggestion.</li>
-										<li>verify: a handler method to be called to verify the resulting suggestions.</li>
-									</ul>
-								</div>
-							</div>
-							<h4 class="tsd-parameters-title">Parameters</h4>
-							<ul class="tsd-parameters">
-								<li>
-									<h5><span class="tsd-flag ts-flagOptional">Optional</span> options: <a href="../globals.html#testhelperplanoptions" class="tsd-signature-type">TestHelperPlanOptions</a></h5>
-								</li>
-							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="testhelper.html" class="tsd-signature-type">TestHelper</a><span class="tsd-signature-symbol">&gt;</span></h4>
-						</li>
-					</ul>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
 					<a name="sendslotevent" class="tsd-anchor"></a>
 					<h3>send<wbr>Slot<wbr>Event</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
@@ -448,7 +274,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/8e85e44/src/runtime/testing/test-helper.ts#L219">runtime/testing/test-helper.ts:219</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/386dbcf/src/runtime/testing/test-helper.ts#L102">runtime/testing/test-helper.ts:102</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -485,7 +311,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/8e85e44/src/runtime/testing/test-helper.ts#L109">runtime/testing/test-helper.ts:109</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/386dbcf/src/runtime/testing/test-helper.ts#L87">runtime/testing/test-helper.ts:87</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -508,7 +334,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/8e85e44/src/runtime/testing/test-helper.ts#L239">runtime/testing/test-helper.ts:239</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/386dbcf/src/runtime/testing/test-helper.ts#L122">runtime/testing/test-helper.ts:122</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -542,7 +368,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/8e85e44/src/runtime/testing/test-helper.ts#L260">runtime/testing/test-helper.ts:260</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/386dbcf/src/runtime/testing/test-helper.ts#L143">runtime/testing/test-helper.ts:143</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -576,7 +402,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/8e85e44/src/runtime/testing/test-helper.ts#L267">runtime/testing/test-helper.ts:267</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/386dbcf/src/runtime/testing/test-helper.ts#L150">runtime/testing/test-helper.ts:150</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -602,7 +428,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/8e85e44/src/runtime/testing/test-helper.ts#L67">runtime/testing/test-helper.ts:67</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/386dbcf/src/runtime/testing/test-helper.ts#L75">runtime/testing/test-helper.ts:75</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -630,34 +456,6 @@
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-static">
-					<a name="createandplan" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagStatic">Static</span> create<wbr>And<wbr>Plan</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-static">
-						<li class="tsd-signature tsd-kind-icon">create<wbr>And<wbr>Plan<span class="tsd-signature-symbol">(</span>options<span class="tsd-signature-symbol">: </span><a href="../globals.html#testhelperplanoptions" class="tsd-signature-type">TestHelperPlanOptions</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="testhelper.html" class="tsd-signature-type">TestHelper</a><span class="tsd-signature-symbol">&gt;</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/8e85e44/src/runtime/testing/test-helper.ts#L103">runtime/testing/test-helper.ts:103</a></li>
-								</ul>
-							</aside>
-							<div class="tsd-comment tsd-typography">
-								<div class="lead">
-									<p>Creates a Test Helper instances and triggers planning .</p>
-								</div>
-							</div>
-							<h4 class="tsd-parameters-title">Parameters</h4>
-							<ul class="tsd-parameters">
-								<li>
-									<h5>options: <a href="../globals.html#testhelperplanoptions" class="tsd-signature-type">TestHelperPlanOptions</a></h5>
-								</li>
-							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="testhelper.html" class="tsd-signature-type">TestHelper</a><span class="tsd-signature-symbol">&gt;</span></h4>
-						</li>
-					</ul>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-static">
 					<a name="parsemanifest" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagStatic">Static</span> parse<wbr>Manifest</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-static">
@@ -667,7 +465,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/8e85e44/src/runtime/testing/test-helper.ts#L96">runtime/testing/test-helper.ts:96</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/386dbcf/src/runtime/testing/test-helper.ts#L83">runtime/testing/test-helper.ts:83</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -680,6 +478,55 @@
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="manifest.html" class="tsd-signature-type">Manifest</a><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-static">
+					<a name="setuphelper" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagStatic">Static</span> setup<wbr>Helper</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-static">
+						<li class="tsd-signature tsd-kind-icon">setup<wbr>Helper<span class="tsd-signature-symbol">(</span>options<span class="tsd-signature-symbol">: </span><a href="../globals.html#testhelperoptions" class="tsd-signature-type">TestHelperOptions</a>, helper<span class="tsd-signature-symbol">: </span><a href="testhelper.html" class="tsd-signature-type">TestHelper</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/386dbcf/src/runtime/testing/test-helper.ts#L51">runtime/testing/test-helper.ts:51</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>options: <a href="../globals.html#testhelperoptions" class="tsd-signature-type">TestHelperOptions</a></h5>
+								</li>
+								<li>
+									<h5>helper: <a href="testhelper.html" class="tsd-signature-type">TestHelper</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-static">
+					<a name="setupoptions" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagStatic">Static</span> setup<wbr>Options</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-static">
+						<li class="tsd-signature tsd-kind-icon">setup<wbr>Options<span class="tsd-signature-symbol">(</span>options<span class="tsd-signature-symbol">: </span><a href="../globals.html#testhelperoptions" class="tsd-signature-type">TestHelperOptions</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/386dbcf/src/runtime/testing/test-helper.ts#L38">runtime/testing/test-helper.ts:38</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>options: <a href="../globals.html#testhelperoptions" class="tsd-signature-type">TestHelperOptions</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -710,13 +557,7 @@
 								<a href="testhelper.html#logging" class="tsd-kind-icon">logging</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
-								<a href="testhelper.html#recipeindex" class="tsd-kind-icon">recipe<wbr>Index</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class">
 								<a href="testhelper.html#slotcomposer" class="tsd-kind-icon">slot<wbr>Composer</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class">
-								<a href="testhelper.html#suggestions" class="tsd-kind-icon">suggestions</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
 								<a href="testhelper.html#timeout" class="tsd-kind-icon">timeout</a>
@@ -724,29 +565,14 @@
 							<li class=" tsd-kind-get-signature tsd-parent-kind-class">
 								<a href="testhelper.html#envoptions" class="tsd-kind-icon">env<wbr>Options</a>
 							</li>
-							<li class=" tsd-kind-get-signature tsd-parent-kind-class">
-								<a href="testhelper.html#plan" class="tsd-kind-icon">plan</a>
-							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class">
-								<a href="testhelper.html#acceptsuggestion" class="tsd-kind-icon">accept<wbr>Suggestion</a>
-							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="testhelper.html#cleartimeout" class="tsd-kind-icon">clear<wbr>Timeout</a>
-							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class">
-								<a href="testhelper.html#findsuggestionbyparticlenames" class="tsd-kind-icon">find<wbr>Suggestion<wbr>ByParticle<wbr>Names</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="testhelper.html#idle" class="tsd-kind-icon">idle</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
-								<a href="testhelper.html#instantiatesuggestion" class="tsd-kind-icon">instantiate<wbr>Suggestion</a>
-							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="testhelper.html#log" class="tsd-kind-icon">log</a>
-							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class">
-								<a href="testhelper.html#makeplans" class="tsd-kind-icon">make<wbr>Plans</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="testhelper.html#sendslotevent" class="tsd-kind-icon">send<wbr>Slot<wbr>Event</a>
@@ -767,10 +593,13 @@
 								<a href="testhelper.html#create" class="tsd-kind-icon">create</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-static">
-								<a href="testhelper.html#createandplan" class="tsd-kind-icon">create<wbr>And<wbr>Plan</a>
+								<a href="testhelper.html#parsemanifest" class="tsd-kind-icon">parse<wbr>Manifest</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-static">
-								<a href="testhelper.html#parsemanifest" class="tsd-kind-icon">parse<wbr>Manifest</a>
+								<a href="testhelper.html#setuphelper" class="tsd-kind-icon">setup<wbr>Helper</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-static">
+								<a href="testhelper.html#setupoptions" class="tsd-kind-icon">setup<wbr>Options</a>
 							</li>
 						</ul>
 					</li>

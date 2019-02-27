@@ -1,7 +1,7 @@
 /// BareSpecifier=@vaadin/vaadin-material-styles/version
 class Material extends HTMLElement {
   static get version() {
-    return '1.2.0';
+    return '1.2.1';
   }
 }
 

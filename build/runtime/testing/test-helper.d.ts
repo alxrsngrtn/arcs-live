@@ -7,12 +7,10 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-import { Suggestion } from '../../planning/plan/suggestion.js';
-import { RecipeIndex } from '../../planning/recipe-index.js';
 import { Loader } from '../loader.js';
 import { Manifest } from '../manifest.js';
 import { MockSlotComposer } from '../testing/mock-slot-composer.js';
-declare type TestHelperOptions = {
+export declare type TestHelperOptions = {
     slotComposerStrict?: boolean;
     slotComposer?: MockSlotComposer;
     logging?: boolean;
@@ -22,27 +20,14 @@ declare type TestHelperOptions = {
     manifestString?: string;
     storageKey?: string;
 };
-declare type TestHelperPlanOptions = TestHelperOptions & {
-    expectedNumPlans?: number;
-    expectedSuggestions?: any;
-    includeInnerArcs?: boolean;
-    verify?: any;
-};
-/**
- * Helper class to recipe instantiation and replanning.
- * Usage example:
- *   let helper = await TestHelper.createAndPlan({manifestFilename: 'my.manifest'});
- *   await helper.acceptSuggestion({particles: ['MyParticle1', 'MyParticle2']});
- *   await helper.verifyData('MyParticle1', 'myHandle1', async (handle) => { ... });
- */
 export declare class TestHelper {
     logging?: boolean;
     loader?: Loader;
     timeout: any;
-    suggestions: any;
     arc: any;
     slotComposer: MockSlotComposer;
-    recipeIndex: RecipeIndex;
+    static setupOptions(options: TestHelperOptions): Promise<void>;
+    static setupHelper(options: TestHelperOptions, helper: TestHelper): void;
     /**
      * Initializes a single arc using a mock slot composer.
      * |options| may contain:
@@ -55,39 +40,12 @@ export declare class TestHelper {
      */
     static create(options?: TestHelperOptions): Promise<TestHelper>;
     static parseManifest(manifestString: string, loader: any): Promise<Manifest>;
-    /**
-     * Creates a Test Helper instances and triggers planning .
-     */
-    static createAndPlan(options: TestHelperPlanOptions): Promise<TestHelper>;
     setTimeout(timeout: number): void;
     clearTimeout(): void;
     readonly envOptions: {
         context: any;
         loader: any;
     };
-    /**
-     * Generates suggestions for the arc.
-     * |options| contains possible verifications to be performed on the generated plans:
-     *   - expectedNumPlans: (optional) number of expected number of generated suggestions to verify.
-     *   - expectedSuggestions: (optional) list of expected description texts representing the generated suggestion.
-     *   - verify: a handler method to be called to verify the resulting suggestions.
-     */
-    makePlans(options?: TestHelperPlanOptions): Promise<TestHelper>;
-    /**
-     * Accepts a suggestion. |options| may provide the exact list of particles representing the
-     * suggestion to accept. Otherwise, fallback to a single generated suggestion, if appropriate.
-     */
-    acceptSuggestion(options?: {
-        hostedParticles?: string[];
-        particles?: string[];
-        descriptionText?: string;
-    }): Promise<void>;
-    findSuggestionByParticleNames(particlesNames: string[]): any;
-    instantiateSuggestion(suggestion: Suggestion): Promise<void>;
-    /**
-     * Getter for a single available suggestion plan (fails, if there is more than one).
-     */
-    readonly plan: any;
     /**
      * Sends an event to particle's slot via the slot composer.
      */
@@ -107,4 +65,3 @@ export declare class TestHelper {
     verifySlots(numConsumers: number, verifyHandler: any): void;
     log(message: any): void;
 }
-export {};

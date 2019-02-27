@@ -34,7 +34,13 @@ $_documentContainer.innerHTML = `<dom-module id="material-required-field">
         font-size: .75em;
         line-height: 1;
         color: var(--material-error-text-color);
-        margin-top: 6px;
+      }
+
+      /* Margin that doesn’t reserve space when there’s no error message */
+      [part="error-message"]:not(:empty)::before {
+        content: "";
+        display: block;
+        height: 6px;
       }
 
       :host(:not([invalid])) [part="error-message"] {

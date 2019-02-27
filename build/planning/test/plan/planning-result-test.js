@@ -10,12 +10,12 @@
 import { assert } from '../../../platform/chai-web.js';
 import { Search } from '../../../runtime/recipe/search.js';
 import { Relevance } from '../../../runtime/relevance.js';
-import { TestHelper } from '../../../runtime/testing/test-helper.js';
+import { PlanningTestHelper } from '../../testing/planning-test-helper.js';
 import { PlanningResult } from '../../plan/planning-result.js';
 import { Suggestion } from '../../plan/suggestion.js';
 describe('planning result', () => {
     async function testResultSerialization(manifestFilename) {
-        const helper = await TestHelper.createAndPlan({ manifestFilename });
+        const helper = await PlanningTestHelper.createAndPlan({ manifestFilename });
         assert.isNotEmpty(helper.suggestions);
         helper.suggestions.forEach(s => {
             s.relevance = Relevance.create(helper.arc, s.plan);
@@ -34,7 +34,7 @@ describe('planning result', () => {
         await testResultSerialization('./src/runtime/test/artifacts/Products/Products.recipes');
     });
     it('appends search suggestions', async () => {
-        const helper = await TestHelper.createAndPlan({ manifestFilename: './src/runtime/test/artifacts/Products/Products.recipes' });
+        const helper = await PlanningTestHelper.createAndPlan({ manifestFilename: './src/runtime/test/artifacts/Products/Products.recipes' });
         const result = new PlanningResult(helper.envOptions);
         // Appends new suggestion.
         assert.isTrue(result.merge({ suggestions: helper.suggestions }, helper.arc));
@@ -91,7 +91,7 @@ recipe R3
     thing <- thingHandle
         `;
     async function prepareMerge(manifestStr1, manifestStr2) {
-        const helper = await TestHelper.create();
+        const helper = await PlanningTestHelper.create();
         const planToSuggestion = async (plan) => {
             const suggestion = Suggestion.create(plan, await plan.digest(), Relevance.create(helper.arc, plan));
             suggestion.descriptionByModality['text'] = plan.name;
@@ -103,7 +103,7 @@ recipe R3
             return suggestion;
         };
         const manifestToResult = async (manifestStr) => {
-            const manifest = await TestHelper.parseManifest(manifestStr, helper.loader);
+            const manifest = await PlanningTestHelper.parseManifest(manifestStr, helper.loader);
             const result = new PlanningResult(helper.envOptions);
             const suggestions = await Promise.all(manifest.recipes.map(async (plan) => await planToSuggestion(plan)));
             result.merge({ suggestions }, helper.arc);

@@ -1,8 +1,8 @@
 {
   "_from": "@vaadin/vaadin-material-styles@^1.1.0",
-  "_id": "@vaadin/vaadin-material-styles@1.2.0",
+  "_id": "@vaadin/vaadin-material-styles@1.2.1",
   "_inBundle": false,
-  "_integrity": "sha512-H46YlNxrG+pvFqzYdVB+LM5PE4WpW38dwagHA13RNIHO52mpqZvaRz8U7YNJ+zjqoy9btz7jk7m9QSpgcNLy2w==",
+  "_integrity": "sha512-oGLQfwBRBhYnPGvsGE+Vi9VTRzotJYn9B+FvBwF5qJxKKhpPNDTWnjLhs3t9JTC/rYPXgiY7uCRLMb8Tsngqtw==",
   "_location": "/@vaadin/vaadin-material-styles",
   "_phantomChildren": {},
   "_requested": {
@@ -19,10 +19,10 @@
   "_requiredBy": [
     "/@vaadin/vaadin-split-layout"
   ],
-  "_resolved": "https://registry.npmjs.org/@vaadin/vaadin-material-styles/-/vaadin-material-styles-1.2.0.tgz",
-  "_shasum": "8ac6056b30617a789ff806017ec14e779a1e0252",
+  "_resolved": "https://registry.npmjs.org/@vaadin/vaadin-material-styles/-/vaadin-material-styles-1.2.1.tgz",
+  "_shasum": "fa19f1e80dcd2f4744f94475cd4827edcc4712b6",
   "_spec": "@vaadin/vaadin-material-styles@^1.1.0",
-  "_where": "/tmp/asset_stageufbswk/node_modules/@vaadin/vaadin-split-layout",
+  "_where": "/tmp/asset_stageElq7l3/node_modules/@vaadin/vaadin-split-layout",
   "author": {
     "name": "Vaadin Ltd"
   },
@@ -36,8 +36,8 @@
   "deprecated": false,
   "description": "Vaadin Material is a complete theme for Vaadin components, inspired by Google’s Material Design guidelines.",
   "devDependencies": {
-    "@polymer/iron-ajax": "^3.0.0-pre.18",
-    "@polymer/iron-icons": "^3.0.0-pre.18",
+    "@polymer/iron-ajax": "^3.0.0",
+    "@polymer/iron-icons": "^3.0.0",
     "@vaadin/elements-demo-resources": "^2.1.0",
     "@vaadin/vaadin-button": "^2.1.0",
     "@vaadin/vaadin-checkbox": "^2.2.1",
@@ -45,16 +45,15 @@
     "@vaadin/vaadin-context-menu": "^4.1.0",
     "@vaadin/vaadin-date-picker": "^3.2.0",
     "@vaadin/vaadin-dialog": "^2.1.0",
-    "@vaadin/vaadin-dropdown-menu": "^1.1.0",
     "@vaadin/vaadin-form-layout": "^2.1.0",
     "@vaadin/vaadin-grid": "^5.1.0",
     "@vaadin/vaadin-item": "^2.1.0",
     "@vaadin/vaadin-list-box": "^1.1.0",
     "@vaadin/vaadin-notification": "^1.1.0",
     "@vaadin/vaadin-ordered-layout": "^1.1.0",
-    "@vaadin/vaadin-overlay": "^3.1.1",
     "@vaadin/vaadin-progress-bar": "^1.1.0",
     "@vaadin/vaadin-radio-button": "^1.1.0",
+    "@vaadin/vaadin-select": "^2.0.0",
     "@vaadin/vaadin-split-layout": "^4.1.0",
     "@vaadin/vaadin-tabs": "^2.1.0",
     "@vaadin/vaadin-text-field": "^2.1.1",
@@ -78,7 +77,7 @@
     "polymer"
   ],
   "license": "Apache-2.0",
-  "main": "",
+  "main": "all-imports.js",
   "name": "@vaadin/vaadin-material-styles",
   "repository": {
     "type": "git",
@@ -90,5 +89,5 @@
     "supports-color": "3.1.2",
     "type-detect": "1.0.0"
   },
-  "version": "1.2.0"
+  "version": "1.2.1"
 }

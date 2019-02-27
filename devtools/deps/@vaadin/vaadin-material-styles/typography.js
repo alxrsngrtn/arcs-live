@@ -1,9 +1,9 @@
 /// BareSpecifier=@vaadin/vaadin-material-styles/typography
 import './version.js';
 import '../../@polymer/polymer/lib/elements/custom-style.js';
-const $_documentContainer = document.createElement('template');
+import { html } from '../../@polymer/polymer/lib/utils/html-tag.js';
 
-$_documentContainer.innerHTML = `<custom-style>
+const $_documentContainer = html`<custom-style>
   <style>
     html {
       /* Font family */
@@ -106,9 +106,3 @@ $_documentContainer.innerHTML = `<custom-style>
 document.head.appendChild($_documentContainer.content);
 
 import './font-roboto.js';
-/*
-  FIXME(polymer-modulizer): the above comments were extracted
-  from HTML and may be out of place here. Review them and
-  then delete this comment!
-*/
-;
