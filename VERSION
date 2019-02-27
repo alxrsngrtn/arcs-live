@@ -1,7 +1,5 @@
-commit 386dbcf6f73e1118b96e80387da960210185f849
-Author: raulverag <42563960+raulverag@users.noreply.github.com>
-Date:   Tue Feb 26 19:42:13 2019 -0800
+commit 956a120a73249f031dd98cc493dc6158702a1cf7
+Author: Walter Korman <wkorman@chromium.org>
+Date:   Wed Feb 27 12:51:37 2019 -0800
 
-    Removes the last references to planning from runtime (#2716)
-    
-    Some tests were moved or split into a new integration-test directory src/tests.
+    Update README shell and doc links. (#2717)

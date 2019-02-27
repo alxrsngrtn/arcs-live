@@ -67,19 +67,19 @@
 				<p><a href="https://travis-ci.org/PolymerLabs/arcs"><img src="https://travis-ci.org/PolymerLabs/arcs.svg?branch=master" alt="Build Status"></a>
 				<a href="https://ci.appveyor.com/project/arcs/arcs-3i77k/branch/master"><img src="https://ci.appveyor.com/api/projects/status/rswlpkq2vtp9cns0/branch/master?svg=true" alt="AppVeyor Build status"></a></p>
 				<h1 id="arcs">arcs</h1>
-				<p>Particle developers should visit our <a href="https://polymerlabs.github.io/arcs-live/shell/docs/">particle developer
-					website</a>. This document is
-				targeted at Arcs core system developers.</p>
 				<p>A hosted version of Arcs is available in both tagged and bleeding edge forms.
 				Neither is stable -- the runtime, database and front-end are all iterating rapidly.</p>
+				<p><a href="https://polymerlabs.github.io/arcs-live/dist/apidocs/">TypeDoc</a>
+				generated documentation is available for Arcs Runtime.</p>
+				<h2 id="tagged-releases">Tagged Releases</h2>
 				<p>Tagged release URLs have the form
-					<code>https://cdn.rawgit.com/PolymerLabs/arcs-live/&lt;release_number&gt;/shell/apps/web/index.html</code>
+					<code>https://cdn.rawgit.com/PolymerLabs/arcs-live/&lt;release_number&gt;/shells/web-shell</code>
 					(the list of releases is
-					<a href="https://github.com/PolymerLabs/arcs-live/releases">here</a>). A recent version
-					(latest as of this writing) is
+					<a href="https://github.com/PolymerLabs/arcs-live/releases">here</a>). A tagged release (with an older
+					path due to a previous version of shell code) is
 				<a href="https://cdn.rawgit.com/PolymerLabs/arcs-live/v0.4.1/shell/apps/web/index.html">v0.4.1</a>.</p>
 				<p>Bleeding edge often works and is available via github pages:
-				<a href="https://polymerlabs.github.io/arcs-live/shell/apps/web/">https://polymerlabs.github.io/arcs-live/shell/apps/web/</a>.</p>
+				<a href="https://polymerlabs.github.io/arcs-live/shells/web-shell">https://polymerlabs.github.io/arcs-live/shells/web-shell</a></p>
 				<h2 id="install">Install</h2>
 				<p>Arcs is developed with a recent version of Node (v10.0.0 at the time of this
 					writing), in particular as we use new ES6 features. You can check our <a href="https://github.com/PolymerLabs/arcs/blob/master/.travis.yml">Travis
@@ -121,13 +121,11 @@
 				<h2 id="starting-arcs">Starting Arcs</h2>
 				<p>After the full build (<code>npm install &amp;&amp; tools/sigh</code>) run: (note that <code>npm
 start</code> will block, so you&#39;ll have to run the second command in a new shell):</p>
-				<pre><code>$ <span class="hljs-built_in">npm</span> start</code></pre><p>Then open <code>http://localhost:8080/shell/apps/web/index.html</code> in a web browser
-				(or, on MacOS, use <code>open &#39;http://localhost:8080/shell/apps/web/index.html&#39;</code>).</p>
+				<pre><code>$ <span class="hljs-built_in">npm</span> start</code></pre><p>Then open <code>http://localhost:8080/shells/web-shell</code> in a web browser
+				(or, on MacOS, use <code>open &#39;http://localhost:8080/shells/web-shell</code>).</p>
 				<h2 id="subprojects">Subprojects</h2>
 				<p>Subcomponents have more detailed descriptions. Particularly the extensions
 				also have individual installation steps.</p>
-				<h3 id="shell">Shell</h3>
-				<p>For more information on the shell, see <a href="shell/README.md">shell</a>.</p>
 				<h3 id="chrome-extension">Chrome Extension</h3>
 				<p>See <a href="extension/README.md">extension</a>.</p>
 				<h3 id="chrome-developer-tools-extension">Chrome Developer Tools Extension</h3>
@@ -172,7 +170,7 @@ chrome
 --wdio-debug=true</code>).  Directly through wdio: <code>node_modules/.bin/wdio
 --wdio-debug=true shell/test/wdio.conf.js</code>.</p>
 				<p>Webdriver takes screenshots of failures, which are saved to the
-					<code>./shell/test/errorShots/</code> directory. When running on Travis, the screenshots
+					<code>./shells/test/errorShots/</code> directory. When running on Travis, the screenshots
 				are uploaded to the <code>Arcs Webdriver Screenshots</code> team drive.</p>
 				<h4 id="graphical-non-headless-">Graphical (non-headless)</h4>
 				<p>It may be easiest to see the problem in a browser window to diagnose it. Edit
@@ -180,8 +178,8 @@ chrome
 					option and increase the mocha timeout. In combination, these two changes will
 					allow you to see what&#39;s happening on the screen, and will give you enough time
 				to debug the situation.</p>
-				<pre><code>arcs/shell&gt; vi test/wdio<span class="hljs-selector-class">.conf</span><span class="hljs-selector-class">.js</span>
-arcs/shell&gt; git diff test/wdio<span class="hljs-selector-class">.conf</span><span class="hljs-selector-class">.js</span>
+				<pre><code>arcs/shells&gt; vi test/wdio<span class="hljs-selector-class">.conf</span><span class="hljs-selector-class">.js</span>
+arcs/shells&gt; git diff test/wdio<span class="hljs-selector-class">.conf</span><span class="hljs-selector-class">.js</span>
 diff --git a/test/wdio<span class="hljs-selector-class">.conf</span><span class="hljs-selector-class">.js</span> b/test/wdio<span class="hljs-selector-class">.conf</span><span class="hljs-selector-class">.js</span>
 index <span class="hljs-number">0</span>e36452..<span class="hljs-number">8</span>ecf3d6 <span class="hljs-number">100644</span>
 --- a/test/wdio<span class="hljs-selector-class">.conf</span><span class="hljs-selector-class">.js</span>
@@ -217,7 +215,7 @@ index <span class="hljs-number">0</span>e36452..<span class="hljs-number">8</spa
 				<p>To attach a debugger, uncomment the <code>execArgv</code> <code>--inspect</code> configuration option.
 					It&#39;s likely that you&#39;ll still want to have increased the <code>mochaTimeout</code> and to
 				be running graphically, so those are in the example as well:</p>
-				<pre><code>arcs/shell&gt; git diff test/wdio<span class="hljs-selector-class">.conf</span><span class="hljs-selector-class">.js</span>
+				<pre><code>arcs/shells&gt; git diff test/wdio<span class="hljs-selector-class">.conf</span><span class="hljs-selector-class">.js</span>
 diff --git a/test/wdio<span class="hljs-selector-class">.conf</span><span class="hljs-selector-class">.js</span> b/test/wdio<span class="hljs-selector-class">.conf</span><span class="hljs-selector-class">.js</span>
 index <span class="hljs-number">0</span>e36452..<span class="hljs-number">4240</span>c0a <span class="hljs-number">100644</span>
 --- a/test/wdio<span class="hljs-selector-class">.conf</span><span class="hljs-selector-class">.js</span>
