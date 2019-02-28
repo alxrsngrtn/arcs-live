@@ -4351,6 +4351,7 @@ __webpack_require__.r(__webpack_exports__);
  * http://polymer.github.io/PATENTS.txt
  */
 
+// Id consists of 2 component: a session and an idTree.
 class Id {
     constructor(currentSession, components = []) {
         this.nextIdComponent = 0;
@@ -4380,11 +4381,12 @@ class Id {
         newId.components.push(...components);
         return newId;
     }
+    // Returns the full Id string.
     toString() {
         return `!${this.session}:${this.components.join(':')}`;
     }
-    // Only use this for testing!
-    toStringWithoutSessionForTesting() {
+    // Returns the idTree as string (without the session component).
+    idTreeAsString() {
         return this.components.join(':');
     }
     createId(component = '') {

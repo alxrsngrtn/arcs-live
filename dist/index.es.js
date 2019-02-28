@@ -11629,6 +11629,7 @@ class Random {
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
+// Id consists of 2 component: a session and an idTree.
 class Id {
     constructor(currentSession, components = []) {
         this.nextIdComponent = 0;
@@ -11658,11 +11659,12 @@ class Id {
         newId.components.push(...components);
         return newId;
     }
+    // Returns the full Id string.
     toString() {
         return `!${this.session}:${this.components.join(':')}`;
     }
-    // Only use this for testing!
-    toStringWithoutSessionForTesting() {
+    // Returns the idTree as string (without the session component).
+    idTreeAsString() {
         return this.components.join(':');
     }
     createId(component = '') {
@@ -20914,7 +20916,6 @@ class Arc {
         const innerPecPort = this.pecFactory(pecId);
         this.pec = new ParticleExecutionHost(innerPecPort, slotComposer, this);
         this.storageProviderFactory = storageProviderFactory || new StorageProviderFactory(this.id);
-        this.arcId = this.storageKey ? this.storageProviderFactory.parseStringAsKey(this.storageKey).arcId : '';
         this.listenerClasses = listenerClasses;
         this.debugHandler = new ArcDebugHandler(this, listenerClasses);
     }
@@ -27122,7 +27123,7 @@ class PlanProducer {
     }
     async onSearchChanged() {
         const values = await this.searchStore.get() || [];
-        const arcId = this.arc.arcId;
+        const arcId = this.arc.id.idTreeAsString();
         const value = values.find(value => value.arc === arcId);
         if (!value) {
             return;
@@ -27183,7 +27184,7 @@ class PlanProducer {
         }
         time = ((now$1() - time) / 1000).toFixed(2);
         if (suggestions) {
-            log$5(`[${this.arc.arcId}] Produced ${suggestions.length} suggestions [elapsed=${time}s].`);
+            log$5(`[${this.arc.id.idTreeAsString()}] Produced ${suggestions.length} suggestions [elapsed=${time}s].`);
             this.isPlanning = false;
             if (this.result.merge({
                 suggestions,
@@ -27699,7 +27700,7 @@ class Planificator {
     }
     async _storeSearch() {
         const values = await this.searchStore.get() || [];
-        const arcKey = this.arc.arcId;
+        const arcKey = this.arc.id.idTreeAsString();
         const newValues = [];
         for (const { arc, search } of values) {
             if (arc === arcKey) {

@@ -49,7 +49,6 @@ export class Arc {
         const innerPecPort = this.pecFactory(pecId);
         this.pec = new ParticleExecutionHost(innerPecPort, slotComposer, this);
         this.storageProviderFactory = storageProviderFactory || new StorageProviderFactory(this.id);
-        this.arcId = this.storageKey ? this.storageProviderFactory.parseStringAsKey(this.storageKey).arcId : '';
         this.listenerClasses = listenerClasses;
         this.debugHandler = new ArcDebugHandler(this, listenerClasses);
     }

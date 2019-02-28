@@ -1,10 +1,9 @@
-commit 2869befc044d24d695bafc14a278eaca44bc93a8
-Author: shans <shane.stephens@gmail.com>
-Date:   Thu Feb 28 14:38:50 2019 +1100
+commit 69e31340a4e00673ffe37806e1e80238506da3a9
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Wed Feb 27 20:18:59 2019 -0800
 
-    Remove mersenne-twister as a dependency (#2721)
+    in Arc use Id class getter instead of extracting `arcId` from storageKey (#2722)
     
-    * Remove mersenne-twister as a dependency.
-    Also takes atob and btoa out of deplist in package.json
+    * in Arc use Id class getter instead of extracting `arcId` from storageKey
     
-    * lint
+    * rename Id::toStringWithoutSession to idTreeAsString

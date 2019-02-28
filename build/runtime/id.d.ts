@@ -23,7 +23,7 @@ export declare class Id {
      */
     fromString(str: string): Id;
     toString(): string;
-    toStringWithoutSessionForTesting(): string;
+    idTreeAsString(): string;
     createId(component?: string): Id;
     equal(id: Id): boolean;
 }
