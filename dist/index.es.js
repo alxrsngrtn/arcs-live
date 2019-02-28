@@ -1,6 +1,5 @@
 import assert$1 from 'assert';
 import crypto$1 from 'crypto';
-import MersenneTwister from 'mersenne-twister';
 import idb from 'idb';
 import rs from 'jsrsasign';
 import WebSocket from 'ws';
@@ -11613,27 +11612,11 @@ class MathRandomRNG extends RNG {
         return Math.random();
     }
 }
-/**
- * Provides a deterministic Random Number Generator for Tests
- */
-class SeededRNG extends RNG {
-    constructor() {
-        super(...arguments);
-        this.generator = new MersenneTwister(7);
-    }
-    next() {
-        return this.generator.random();
-    }
-}
 // Singleton Pattern
-let random = new MathRandomRNG();
+const random = new MathRandomRNG();
 class Random {
     static next() {
         return random.next();
-    }
-    // TODO: remove test code and allow for injectable implementations.
-    static seedForTests() {
-        random = new SeededRNG();
     }
 }
 

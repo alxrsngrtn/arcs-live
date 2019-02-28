@@ -9,14 +9,12 @@
  */
 import { assert } from '../../../platform/chai-web.js';
 import { DevtoolsForTests } from '../../debug/devtools-connection.js';
-import { Random } from '../../random.js';
 import { StubLoader } from '../../testing/stub-loader.js';
 import { TestHelper } from '../../testing/test-helper.js';
 describe('OuterPortAttachment', () => {
     before(() => DevtoolsForTests.ensureStub());
     after(() => DevtoolsForTests.reset());
     it('produces PEC Log messages on devtools channel', async () => {
-        Random.seedForTests();
         const testHelper = await TestHelper.create({
             manifestString: `
         schema Foo
@@ -47,9 +45,8 @@ describe('OuterPortAttachment', () => {
         // Type is a complex object to reproduce, let's skip asserting on it.
         delete instantiateParticleCall.pecMsgBody.spec.args[0].type;
         assert.deepEqual(instantiateParticleCall.pecMsgBody, {
-            // IDs are stable thanks to Random.seedForTests().
-            id: '!85915497922560:demo:particle1',
-            identifier: '!85915497922560:demo:particle1',
+            id: `!${arc.id.currentSession}:demo:particle1`,
+            identifier: `!${arc.id.currentSession}:demo:particle1`,
             handles: {
                 foo: 'fooStore'
             },

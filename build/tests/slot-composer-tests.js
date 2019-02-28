@@ -12,7 +12,6 @@ import { StrategyTestHelper } from '../planning/test/strategies/strategy-test-he
 import { assert } from '../platform/chai-web.js';
 import { Arc } from '../runtime/arc.js';
 import { Loader } from '../runtime/loader.js';
-import { Random } from '../runtime/random.js';
 import { HostedSlotContext, ProvidedSlotContext } from '../runtime/slot-context.js';
 import { MockSlotComposer } from '../runtime/testing/mock-slot-composer.js';
 import { StubLoader } from '../runtime/testing/stub-loader.js';
@@ -184,7 +183,6 @@ recipe
         await slotComposer.expectationsCompleted();
     });
     it.skip('renders inner slots in transformations without intercepting', async () => {
-        Random.seedForTests();
         const slotComposer = new MockSlotComposer().newExpectations()
             .expectRenderSlot('A', 'content', { 'contentTypes': ['template', 'model', 'templateName'] })
             .expectRenderSlot('TransformationParticle', 'root', { 'contentTypes': ['template', 'model', 'templateName'] })
@@ -283,7 +281,7 @@ recipe
         assert.deepEqual(rootSlotConsumer._content, {
             model: {
                 a: 'A content/intercepted-model',
-                '$detail': 'slotid-!493604905418752:demo:inner2:2'
+                '$detail': `slotid-!${detailSlotConsumer.arc.id.currentSession}:demo:inner2:2`
             },
             template: `<div>intercepted-template<div><span>{{a}}</span><div slotid$="{{$detail}}"></div></div></div>`,
             templateName: 'A::content::default/intercepted'

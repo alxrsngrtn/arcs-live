@@ -1,5 +1,10 @@
-commit 37f48ca665c07cd22ce82374bdb28ce212a9cc7e
-Author: raulverag <42563960+raulverag@users.noreply.github.com>
-Date:   Wed Feb 27 16:42:08 2019 -0800
+commit 2869befc044d24d695bafc14a278eaca44bc93a8
+Author: shans <shane.stephens@gmail.com>
+Date:   Thu Feb 28 14:38:50 2019 +1100
 
-    Disable weirdly failing test (#2720)
+    Remove mersenne-twister as a dependency (#2721)
+    
+    * Remove mersenne-twister as a dependency.
+    Also takes atob and btoa out of deplist in package.json
+    
+    * lint

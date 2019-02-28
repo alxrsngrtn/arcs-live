@@ -8,8 +8,8 @@
  * http://polymer.github.io/PATENTS.txt
  */
 export declare class Id {
-    private session;
-    private readonly currentSession;
+    session: string;
+    readonly currentSession: string;
     private nextIdComponent;
     private readonly components;
     constructor(currentSession: string, components?: string[]);

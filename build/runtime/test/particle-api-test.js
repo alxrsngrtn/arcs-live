@@ -8,7 +8,6 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { assert } from '../../platform/chai-web.js';
-import { Random } from '../random.js';
 import { MockSlotComposer } from '../testing/mock-slot-composer.js';
 import { StubLoader } from '../testing/stub-loader.js';
 import { TestHelper } from '../testing/test-helper.js';
@@ -731,7 +730,6 @@ describe('particle-api', () => {
         await inspector.verify('v1,v2,v3', 'v4,v5', 'done');
     });
     it('loadRecipe returns ids of provided slots', async () => {
-        Random.seedForTests();
         const { arc } = await TestHelper.create({
             manifestString: `
         particle TransformationParticle in 'TransformationParticle.js'
@@ -789,8 +787,8 @@ describe('particle-api', () => {
         assert.lengthOf(arc.recipeDeltas, 1);
         const [innerArc] = arc.findInnerArcs(transformationParticle);
         assert.equal(innerArc.activeRecipe.toString(), `recipe
-  slot '!878110499405824:demo:inner2:1' as slot0
-  slot 'slotid-!878110499405824:demo:inner2:2' as slot1
+  slot '!${innerArc.id.currentSession}:demo:inner2:1' as slot0
+  slot 'slotid-!${innerArc.id.currentSession}:demo:inner2:2' as slot1
   A as particle0
     consume content as slot0
       provide detail as slot1

@@ -9,5 +9,4 @@
  */
 export declare class Random {
     static next(): number;
-    static seedForTests(): void;
 }
