@@ -183,7 +183,7 @@ recipe
         assert.deepEqual({ 'id1': ['C moved to id1'], 'id2': ['B moved to id2'] }, gatherRenderings(itemSlotContext));
         await slotComposer.expectationsCompleted();
     });
-    it('renders inner slots in transformations without intercepting', async () => {
+    it.skip('renders inner slots in transformations without intercepting', async () => {
         Random.seedForTests();
         const slotComposer = new MockSlotComposer().newExpectations()
             .expectRenderSlot('A', 'content', { 'contentTypes': ['template', 'model', 'templateName'] })
