@@ -59,7 +59,7 @@ export declare class Arc {
     readonly isInnerArc: boolean;
     readonly isStub: boolean;
     private _activeRecipe;
-    private _recipes;
+    private _recipeDeltas;
     readonly _loader: Loader;
     private dataChangeCallbacks;
     private storesById;
@@ -101,7 +101,9 @@ export declare class Arc {
     static deserialize({ serialization, pecFactory, slotComposer, loader, fileName, context, listenerClasses }: DeserializeArcOptions): Promise<Arc>;
     readonly context: Manifest;
     readonly activeRecipe: Recipe;
-    readonly recipes: {
+    readonly allRecipes: Recipe[];
+    readonly recipes: Recipe[];
+    readonly recipeDeltas: {
         handles: Handle[];
         particles: Particle[];
         slots: Slot[];

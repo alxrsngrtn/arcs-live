@@ -21,8 +21,7 @@ import { ArcType, CollectionType, EntityType, InterfaceType, RelationType, Type,
 export class Arc {
     constructor({ id, context, pecFactory, slotComposer, loader, storageKey, storageProviderFactory, speculative, innerArc, stub, listenerClasses }) {
         this._activeRecipe = new Recipe();
-        // TODO: rename: these are just tuples of {particles, handles, slots, pattern} of instantiated recipes merged into active recipe.
-        this._recipes = [];
+        this._recipeDeltas = [];
         this.dataChangeCallbacks = new Map();
         // All the stores, mapped by store ID
         this.storesById = new Map();
@@ -320,7 +319,9 @@ ${this.activeRecipe.toString()}`;
         return this._context;
     }
     get activeRecipe() { return this._activeRecipe; }
-    get recipes() { return this._recipes; }
+    get allRecipes() { return [this.activeRecipe].concat(this.context.allRecipes); }
+    get recipes() { return [this.activeRecipe]; }
+    get recipeDeltas() { return this._recipeDeltas; }
     loadedParticles() {
         return [...this.particleHandleMaps.values()].map(({ spec }) => spec);
     }
@@ -373,7 +374,7 @@ ${this.activeRecipe.toString()}`;
             value.handles.forEach(handle => arc.particleHandleMaps.get(key).handles.set(handle.name, storeMap.get(handle)));
         });
         const { cloneMap } = this._activeRecipe.mergeInto(arc._activeRecipe);
-        this._recipes.forEach(recipe => arc._recipes.push({
+        this._recipeDeltas.forEach(recipe => arc._recipeDeltas.push({
             particles: recipe.particles.map(p => cloneMap.get(p)),
             handles: recipe.handles.map(h => cloneMap.get(h)),
             slots: recipe.slots.map(s => cloneMap.get(s)),
@@ -392,7 +393,7 @@ ${this.activeRecipe.toString()}`;
         assert(recipe.isResolved(), `Cannot instantiate an unresolved recipe: ${recipe.toString({ showUnresolved: true })}`);
         assert(recipe.isCompatible(this.modality), `Cannot instantiate recipe ${recipe.toString()} with [${recipe.modality.names}] modalities in '${this.modality.names}' arc`);
         const { handles, particles, slots } = recipe.mergeInto(this._activeRecipe);
-        this._recipes.push({ particles, handles, slots, patterns: recipe.patterns });
+        this._recipeDeltas.push({ particles, handles, slots, patterns: recipe.patterns });
         // TODO(mmandlis): Get rid of populating the missing local slot IDs here,
         // it should be done at planning stage.
         slots.forEach(slot => slot.id = slot.id || `slotid-${this.generateID()}`);

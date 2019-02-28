@@ -77,7 +77,7 @@ export declare class Manifest {
     findStoreById(id: any): StorageProviderBase;
     findStoreTags(store: any): string[];
     findManifestUrlForHandleId(id: any): string;
-    findStoreByType(type: any, options?: {
+    findStoresByType(type: Type, options?: {
         tags: string[];
         subtype: boolean;
     }): StorageProviderBase[];

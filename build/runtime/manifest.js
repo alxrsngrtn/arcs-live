@@ -236,7 +236,7 @@ export class Manifest {
     findManifestUrlForHandleId(id) {
         return this._find(manifest => manifest.storeManifestUrls.get(id));
     }
-    findStoreByType(type, options = { tags: [], subtype: false }) {
+    findStoresByType(type, options = { tags: [], subtype: false }) {
         const tags = options.tags || [];
         const subtype = options.subtype || false;
         function typePredicate(store) {

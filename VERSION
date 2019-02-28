@@ -1,5 +1,5 @@
-commit 956a120a73249f031dd98cc493dc6158702a1cf7
-Author: Walter Korman <wkorman@chromium.org>
-Date:   Wed Feb 27 12:51:37 2019 -0800
+commit 056900588f16b6cb8dc67038c8dc7fa6e62a6aaa
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Wed Feb 27 15:59:01 2019 -0800
 
-    Update README shell and doc links. (#2717)
+    rename Arc getters to be compatible with manifest (#2718)

@@ -3106,7 +3106,7 @@ class Description {
     }
     static async create(arc, relevance) {
         const particleDescriptions = await Description.initDescriptionHandles(arc, relevance);
-        return new Description(particleDescriptions, Description._getStoreDescById(arc), arc.activeRecipe.name, arc.recipes);
+        return new Description(particleDescriptions, Description._getStoreDescById(arc), arc.activeRecipe.name, arc.recipeDeltas);
     }
     getArcDescription(formatterClass = DescriptionFormatter) {
         const desc = new (formatterClass)(this.particleDescriptions, this.storeDescById).getDescription({
@@ -15630,7 +15630,7 @@ class Manifest {
     findManifestUrlForHandleId(id) {
         return this._find(manifest => manifest.storeManifestUrls.get(id));
     }
-    findStoreByType(type, options = { tags: [], subtype: false }) {
+    findStoresByType(type, options = { tags: [], subtype: false }) {
         const tags = options.tags || [];
         const subtype = options.subtype || false;
         function typePredicate(store) {
@@ -20529,7 +20529,7 @@ class ResolveWalker extends RecipeWalker {
                     break;
                 case 'map':
                 case 'copy':
-                    mappable = arc.context.findStoreByType(handle.type, { tags: handle.tags, subtype: true });
+                    mappable = arc.context.findStoresByType(handle.type, { tags: handle.tags, subtype: true });
                     break;
                 case 'create':
                 case '?':
@@ -20903,8 +20903,7 @@ class ParticleExecutionHost {
 class Arc {
     constructor({ id, context, pecFactory, slotComposer, loader, storageKey, storageProviderFactory, speculative, innerArc, stub, listenerClasses }) {
         this._activeRecipe = new Recipe();
-        // TODO: rename: these are just tuples of {particles, handles, slots, pattern} of instantiated recipes merged into active recipe.
-        this._recipes = [];
+        this._recipeDeltas = [];
         this.dataChangeCallbacks = new Map();
         // All the stores, mapped by store ID
         this.storesById = new Map();
@@ -21202,7 +21201,9 @@ ${this.activeRecipe.toString()}`;
         return this._context;
     }
     get activeRecipe() { return this._activeRecipe; }
-    get recipes() { return this._recipes; }
+    get allRecipes() { return [this.activeRecipe].concat(this.context.allRecipes); }
+    get recipes() { return [this.activeRecipe]; }
+    get recipeDeltas() { return this._recipeDeltas; }
     loadedParticles() {
         return [...this.particleHandleMaps.values()].map(({ spec }) => spec);
     }
@@ -21255,7 +21256,7 @@ ${this.activeRecipe.toString()}`;
             value.handles.forEach(handle => arc.particleHandleMaps.get(key).handles.set(handle.name, storeMap.get(handle)));
         });
         const { cloneMap } = this._activeRecipe.mergeInto(arc._activeRecipe);
-        this._recipes.forEach(recipe => arc._recipes.push({
+        this._recipeDeltas.forEach(recipe => arc._recipeDeltas.push({
             particles: recipe.particles.map(p => cloneMap.get(p)),
             handles: recipe.handles.map(h => cloneMap.get(h)),
             slots: recipe.slots.map(s => cloneMap.get(s)),
@@ -21274,7 +21275,7 @@ ${this.activeRecipe.toString()}`;
         assert$1(recipe.isResolved(), `Cannot instantiate an unresolved recipe: ${recipe.toString({ showUnresolved: true })}`);
         assert$1(recipe.isCompatible(this.modality), `Cannot instantiate recipe ${recipe.toString()} with [${recipe.modality.names}] modalities in '${this.modality.names}' arc`);
         const { handles, particles, slots } = recipe.mergeInto(this._activeRecipe);
-        this._recipes.push({ particles, handles, slots, patterns: recipe.patterns });
+        this._recipeDeltas.push({ particles, handles, slots, patterns: recipe.patterns });
         // TODO(mmandlis): Get rid of populating the missing local slot IDs here,
         // it should be done at planning stage.
         slots.forEach(slot => slot.id = slot.id || `slotid-${this.generateID()}`);
@@ -22595,7 +22596,7 @@ class AssignHandles extends Strategy {
             this.arc.findStoresByType(type, { tags, subtype }).forEach(store => stores.set(store, 'use'));
         }
         if (fate === 'map' || fate === 'copy' || fate === '?') {
-            this.arc.context.findStoreByType(type, { tags, subtype: true }).forEach(store => stores.set(store, fate === '?' ? (counts.out > 0 ? 'copy' : 'map') : fate));
+            this.arc.context.findStoresByType(type, { tags, subtype: true }).forEach(store => stores.set(store, fate === '?' ? (counts.out > 0 ? 'copy' : 'map') : fate));
         }
         return stores;
     }
@@ -23905,7 +23906,7 @@ class SearchTokensToHandles extends Strategy {
             let stores = arc.findStoresByType(handle.type, { tags: [`${token}`], subtype: counts.out === 0 });
             let fate = 'use';
             if (stores.length === 0) {
-                stores = arc.context.findStoreByType(handle.type, { tags: [`${token}`], subtype: counts.out === 0 });
+                stores = arc.context.findStoresByType(handle.type, { tags: [`${token}`], subtype: counts.out === 0 });
                 fate = counts.out === 0 ? 'map' : 'copy';
             }
             stores = stores.filter(store => !handle.recipe.handles.find(handle => handle.id === store.id));

@@ -21,7 +21,7 @@ export class Description {
     }
     static async create(arc, relevance) {
         const particleDescriptions = await Description.initDescriptionHandles(arc, relevance);
-        return new Description(particleDescriptions, Description._getStoreDescById(arc), arc.activeRecipe.name, arc.recipes);
+        return new Description(particleDescriptions, Description._getStoreDescById(arc), arc.activeRecipe.name, arc.recipeDeltas);
     }
     getArcDescription(formatterClass = DescriptionFormatter) {
         const desc = new (formatterClass)(this.particleDescriptions, this.storeDescById).getDescription({

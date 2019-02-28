@@ -21,7 +21,7 @@ function createTestArc(recipe, manifest) {
     const arc = new Arc({ slotComposer, id: 'test', context: manifest, loader: new Loader() });
     // TODO(lindner) stop messing with arc internal state, or provide a way to supply in constructor..
     arc['_activeRecipe'] = recipe;
-    arc['_recipes'].push({ particles: recipe.particles, handles: recipe.handles, slots: recipe.slots, patterns: recipe.patterns });
+    arc['_recipeDeltas'].push({ particles: recipe.particles, handles: recipe.handles, slots: recipe.slots, patterns: recipe.patterns });
     return arc;
 }
 const tests = [
@@ -733,7 +733,7 @@ recipe
             assert.isUndefined(description.getArcDescription());
             const recipeClone = recipe.clone();
             arc['_activeRecipe'] = recipeClone;
-            arc['_recipes'] = [recipeClone];
+            arc['_recipeDeltas'] = [recipeClone];
             // Particle (static) spec pattern.
             recipeClone.particles[0].spec.pattern = 'hello world';
             await test.verifySuggestion({ arc }, 'Hello world.');

@@ -786,7 +786,7 @@ describe('particle-api', () => {
         await arc.idle;
         assert.lengthOf(arc.activeRecipe.particles, 1);
         const [transformationParticle] = arc.activeRecipe.particles;
-        assert.lengthOf(arc.recipes, 1);
+        assert.lengthOf(arc.recipeDeltas, 1);
         const [innerArc] = arc.findInnerArcs(transformationParticle);
         assert.equal(innerArc.activeRecipe.toString(), `recipe
   slot '!878110499405824:demo:inner2:1' as slot0
