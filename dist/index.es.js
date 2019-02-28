@@ -16024,8 +16024,8 @@ ${e.message}
             search: recipeItem.items.find(item => item.kind === 'search'),
             description: recipeItem.items.find(item => item.kind === 'description')
         };
-        // A recipe should either source handles by the 'handle' keyword (requireHandle item) or use fates (handle item). 
-        // A recipe should not use both methods. 
+        // A recipe should either source handles by the 'handle' keyword (requireHandle item) or use fates (handle item).
+        // A recipe should not use both methods.
         assert$1(!(items.handles.length > 0 && items.requireHandles.length > 0), `Inconsistent handle definitions`);
         const itemHandles = items.handles.length > 0 ? items.handles : items.requireHandles;
         for (const item of itemHandles) {
@@ -16158,7 +16158,7 @@ ${e.message}
                         throw new ManifestError(item.location, `invalid slot connection: provide slot must not have dependencies`);
                     }
                     if (recipe instanceof RequireSection) {
-                        // replace provided slot if it already exist in recipe. 
+                        // replace provided slot if it already exist in recipe.
                         const existingSlot = recipe.parent.slots.find(rslot => rslot.localName === ps.name);
                         if (existingSlot !== undefined) {
                             slotConn.providedSlots[ps.param] = existingSlot;
@@ -16310,7 +16310,7 @@ ${e.message}
                     assert$1(targetSlot === items.byName.get(slotConnectionItem.name), `Target slot ${targetSlot.name} doesn't match slot connection ${slotConnectionItem.param}`);
                 }
                 else if (slotConnectionItem.name) {
-                    // if this is a require section, check if slot exists in recipe. 
+                    // if this is a require section, check if slot exists in recipe.
                     if (recipe instanceof RequireSection) {
                         targetSlot = recipe.parent.slots.find(slot => slot.localName === slotConnectionItem.name);
                         if (targetSlot !== undefined) {
@@ -27009,9 +27009,9 @@ class ArcHost {
     log$2('spawning arc', config);
     this.config = config;
     const context = this.context || await Utils.parse(``);
-    const serialization = this.serialization = await this.computeSerialization(config, this.storage);
-    this.arc = await this._spawn(context, this.composer, this.storage, config.id, serialization);
-    if (config.manifest && !serialization) {
+    this.serialization = await this.computeSerialization(config, this.storage);
+    this.arc = await this._spawn(context, this.composer, this.storage, config.id, this.serialization);
+    if (config.manifest && !this.serialization) {
       await this.instantiateDefaultRecipe(this.arc, config.manifest);
     }
     if (this.pendingPlan) {
@@ -27055,7 +27055,7 @@ class ArcHost {
       const recipe = manifest.allRecipes[0];
       const plan = await Utils.resolve(arc, recipe);
       if (plan) {
-        this.instantiatePlan(arc, plan);
+        await this.instantiatePlan(arc, plan);
       }
     } catch (x) {
       error$2(x);
@@ -27080,6 +27080,7 @@ class ArcHost {
     const key = `${storage}/${arcid}/arc-info`;
     const store = await SyntheticStores.providerFactory.connect('id', new ArcType(), key);
     if (store) {
+      log$2('loading stored serialization');
       const info = await store.get();
       return info && info.serialization;
     }
