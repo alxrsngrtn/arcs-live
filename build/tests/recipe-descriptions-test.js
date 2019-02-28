@@ -11,7 +11,7 @@ import { assert } from '../platform/chai-web.js';
 import { DescriptionDomFormatter } from '../runtime/description-dom-formatter.js';
 import { Recipe } from '../runtime/recipe/recipe.js';
 import { StubLoader } from '../runtime/testing/stub-loader.js';
-import { PlanningTestHelper } from '../planning/testing/planning-test-helper.js';
+import { PlanningTestHelper } from '../planning/testing/arcs-planning-testing.js';
 describe('recipe descriptions test', () => {
     // Avoid initialising non-POD variables globally, since they would be constructed even when
     // these tests are not going to be executed (i.e. another test file uses 'only').

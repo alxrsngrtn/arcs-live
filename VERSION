@@ -1,9 +1,9 @@
-commit 69e31340a4e00673ffe37806e1e80238506da3a9
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Wed Feb 27 20:18:59 2019 -0800
+commit 7246060530c15bab114574095f3b753a21265c30
+Author: raulverag <42563960+raulverag@users.noreply.github.com>
+Date:   Wed Feb 27 21:17:38 2019 -0800
 
-    in Arc use Id class getter instead of extracting `arcId` from storageKey (#2722)
+    Adds first versions of planning and planning-testing interface files (#2723)
     
-    * in Arc use Id class getter instead of extracting `arcId` from storageKey
+    * Adds first versions of planning and planning-testing interface files
     
-    * rename Id::toStringWithoutSession to idTreeAsString
+    * Missed a few files

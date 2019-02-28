@@ -26029,1056 +26029,9 @@ class RecipeIndex {
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-class InitialRecipe extends Strategy {
-    constructor(recipe) {
-        super();
-        this.recipe = recipe;
-    }
-    async generate({ generation }) {
-        if (generation !== 0) {
-            return [];
-        }
-        return [{
-                result: this.recipe,
-                score: 1,
-                derivation: [{ strategy: this, parent: undefined }],
-                hash: this.recipe.digest(),
-                valid: Object.isFrozen(this.recipe),
-            }];
-    }
-}
-class ArcPlannerInvoker extends ArcDebugListener {
-    constructor(arc, arcDevtoolsChannel) {
-        super(arc, arcDevtoolsChannel);
-        this.arc = arc;
-        arcDevtoolsChannel.listen('fetch-strategies', () => arcDevtoolsChannel.send({
-            messageType: 'fetch-strategies-result',
-            messageBody: Planner.AllStrategies.map(s => s.name)
-        }));
-        arcDevtoolsChannel.listen('invoke-planner', async (msg) => arcDevtoolsChannel.send({
-            messageType: 'invoke-planner-result',
-            messageBody: await this.invokePlanner(msg.messageBody.manifest, msg.messageBody.method),
-            requestId: msg.requestId
-        }));
-    }
-    async invokePlanner(manifestString, method) {
-        if (!this.recipeIndex) {
-            this.recipeIndex = RecipeIndex.create(this.arc, { reportGenerations: false });
-            await this.recipeIndex.ready;
-        }
-        let manifest;
-        try {
-            manifest = await Manifest.parse(manifestString, { loader: this.arc._loader, fileName: 'manifest.manifest' });
-        }
-        catch (error) {
-            return this.processManifestError(error);
-        }
-        if (manifest.recipes.length === 0)
-            return { results: [] };
-        if (manifest.recipes.length > 1)
-            return { error: { message: `More than 1 recipe present, found ${manifest.recipes.length}.` } };
-        const recipe = manifest.recipes[0];
-        recipe.normalize();
-        if (method === 'arc' || method === 'arc_coalesce') {
-            return this.multiStrategyRun(recipe, method);
-        }
-        else {
-            return this.singleStrategyRun(recipe, method);
-        }
-    }
-    async multiStrategyRun(recipe, method) {
-        const strategies = method === 'arc_coalesce' ? Planner.ResolutionStrategies
-            : Planner.ResolutionStrategies.filter(s => s !== CoalesceRecipes);
-        const strategizer = new Strategizer([new InitialRecipe(recipe), ...strategies.map(S => this.instantiate(S))], [], Empty);
-        const terminal = [];
-        do {
-            await strategizer.generate();
-            terminal.push(...strategizer.terminal);
-        } while (strategizer.generated.length + strategizer.terminal.length > 0);
-        return this.processStrategyOutput(terminal);
-    }
-    async singleStrategyRun(recipe, strategyName) {
-        const strategy = Planner.AllStrategies.find(s => s.name === strategyName);
-        if (!strategy)
-            return { error: { message: `Strategy ${strategyName} not found` } };
-        return this.processStrategyOutput(await this.instantiate(strategy).generate({
-            generation: 0,
-            generated: [{ result: recipe, score: 1 }],
-            population: [{ result: recipe, score: 1 }],
-            terminal: [{ result: recipe, score: 1 }]
-        }));
-    }
-    instantiate(strategyClass) {
-        // TODO: Strategies should have access to the context that is a combination of arc context and
-        //       the entered manifest. Right now strategies only see arc context, which means that
-        //       various strategies will not see particles defined in the manifest entered in the
-        //       editor. This may bite us with verb substitution, hosted particle resolution etc.
-        return new strategyClass(this.arc, { recipeIndex: this.recipeIndex });
-    }
-    processStrategyOutput(inputs) {
-        return { results: inputs.map(result => {
-                const recipe = result.result;
-                const errors = new Map();
-                if (!Object.isFrozen(recipe)) {
-                    recipe.normalize({ errors });
-                }
-                let recipeString = '';
-                try {
-                    recipeString = recipe.toString({ showUnresolved: true });
-                }
-                catch (e) {
-                    console.warn(e);
-                }
-                return {
-                    recipe: recipeString,
-                    derivation: this.extractDerivation(result),
-                    errors: [...errors.values()].map(error => ({ error })),
-                };
-            }) };
-    }
-    extractDerivation(result) {
-        const found = [];
-        for (const deriv of result.derivation || []) {
-            if (!deriv.parent && deriv.strategy.constructor !== InitialRecipe) {
-                found.push(deriv.strategy.constructor.name);
-            }
-            else if (deriv.parent) {
-                const childDerivs = this.extractDerivation(deriv.parent);
-                for (const childDeriv of childDerivs) {
-                    found.push(childDeriv
-                        ? `${childDeriv} -> ${deriv.strategy.constructor.name}`
-                        : deriv.strategy.constructor.name);
-                }
-                if (childDerivs.length === 0)
-                    found.push(deriv.strategy.constructor.name);
-            }
-        }
-        return found;
-    }
-    processManifestError(error) {
-        let suggestion = null;
-        const errorTypes = [{
-                // TODO: Switch to declaring errors in a structured way in the error object, instead of message parsing.
-                pattern: /could not find particle ([A-Z][A-Za-z0-9_]*)\n/,
-                predicate: extracted => manifest => !!(manifest.particles.find(p => p.name === extracted))
-            }, {
-                pattern: /Could not resolve type reference to type name '([A-Z][A-Za-z0-9_]*)'\n/,
-                predicate: extracted => manifest => !!(manifest.schemas[extracted])
-            }];
-        for (const { pattern, predicate } of errorTypes) {
-            const match = pattern.exec(error.message);
-            if (match) {
-                const [_, extracted] = match;
-                const fileNames = this.findManifestNames(this.arc.context, predicate(extracted));
-                if (fileNames.length > 0)
-                    suggestion = { action: 'import', fileNames };
-            }
-        }
-        return { suggestion, error: ((({ location, message }) => ({ location, message }))(error)) };
-    }
-    findManifestNames(manifest, predicate) {
-        const map = new Map();
-        this.findManifestNamesRecursive(manifest, predicate, map);
-        return [...map.entries()].sort(([a, depthA], [b, depthB]) => (depthA - depthB)).map(v => v[0]);
-    }
-    findManifestNamesRecursive(manifest, predicate, fileNames) {
-        let depth = predicate(manifest) ? 0 : Number.MAX_SAFE_INTEGER;
-        for (const child of manifest.imports) {
-            depth = Math.min(depth, this.findManifestNamesRecursive(child, predicate, fileNames) + 1);
-        }
-        // http check to avoid listing shell created 'in-memory manifest'.
-        if (depth < Number.MAX_SAFE_INTEGER && manifest.fileName.startsWith('http')) {
-            fileNames.set(manifest.fileName, depth);
-        }
-        return depth;
-    }
-}
-// TODO: This should move to the planning interface file when it exists. 
-const defaultPlanningDebugListeners = [
-    ArcPlannerInvoker
-];
-
-// Debug-channel listeners are injected, so that the runtime need not know about them.
-const debugListeners = [
-  ...defaultPlanningDebugListeners, // This should change for a shell w/out planning
-  ...defaultCoreDebugListeners
-  ];
-
-const log = console.log.bind(console);
-const warn = console.warn.bind(console);
-const env = {};
-
-const createPathMap = root => ({
-  'https://$arcs/': `${root}/`,
-  'https://$shells/': `${root}/shells/`,
-  'https://$build/': `${root}/shells/lib/build/`,
-  'https://$particles/': `${root}/particles/`,
-});
-
-const init$1 = (root, urls) => {
-  const map = Object.assign(Utils.createPathMap(root), urls);
-  env.loader = new PlatformLoader(map);
-  env.pecFactory = PecIndustry(env.loader);
-  return env;
-};
-
-const parse = async (content, options) => {
-  const id = `in-memory-${Math.floor((Math.random()+1)*1e6)}.manifest`;
-  const localOptions = {
-    id,
-    fileName: `./${id}`,
-    loader: env.loader
-  };
-  if (options) {
-    Object.assign(localOptions, options);
-  }
-  return Manifest.parse(content, localOptions);
-};
-
-const resolve = async (arc, recipe) =>{
-  if (recipe.normalize()) {
-    let plan = recipe;
-    if (!plan.isResolved()) {
-      const resolver = new RecipeResolver(arc);
-      plan = await resolver.resolve(recipe);
-      if (!plan || !plan.isResolved()) {
-        warn('failed to resolve:\n', (plan || recipe).toString({showUnresolved: true}));
-        log(arc.context, arc, arc.context.storeTags);
-        plan = null;
-      }
-    }
-    return plan;
-  }
-};
-
-const spawn = async ({id, serialization, context, composer, storage}) => {
-  const params = {
-    id,
-    fileName: './serialized.manifest',
-    serialization,
-    context,
-    storageKey: storage,
-    slotComposer: composer,
-    pecFactory: env.pecFactory,
-    loader: env.loader,
-    listenerClasses: debugListeners
-  };
-  Object.assign(params, env.params);
-  return serialization ? Arc.deserialize(params) : new Arc(params);
-};
-
-const Utils = {
-  createPathMap,
-  init: init$1,
-  env,
-  parse,
-  resolve,
-  spawn
-};
-
-//const stores = {};
-
-class SyntheticStores {
-  static init() {
-    if (!SyntheticStores.providerFactory) {
-      SyntheticStores.providerFactory = new StorageProviderFactory('shell');
-    }
-  }
-  static async getArcsStore(storage, name) {
-    const handleStore = await SyntheticStores.getStore(storage, name);
-    if (handleStore) {
-      const handles = await handleStore.toList();
-      const handle = handles[0];
-      if (handle) {
-        return await SyntheticStores.getHandleStore(handle);
-      }
-    }
-  }
-  static async getStore(storage, id) {
-    // cached stores can be incorrect?
-    //return stores[id] || (stores[id] = await SyntheticStores.syntheticConnectKind('handles', storage, id));
-    return await SyntheticStores.connectToKind('handles', storage, id);
-  }
-  static async connectToKind(kind, storage, arcid) {
-    return SyntheticStores.storeConnect(null, `synthetic://arc/${kind}/${storage}/${arcid}`);
-  }
-  static async getHandleStore(handle) {
-    return await SyntheticStores.storeConnect(handle.type, handle.storageKey);
-  }
-  static async storeConnect(type, storageKey) {
-    return SyntheticStores.providerFactory.connect(SyntheticStores.makeId(), type, storageKey);
-  }
-  static makeId() {
-    return `id${Math.random()}`;
-  }
-  static snarfId(key) {
-    return key.split('/').pop();
-  }
-}
-
-/*
-@license
-Copyright (c) 2018 The Polymer Project Authors. All rights reserved.
-This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
-The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
-The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
-Code distributed by Google as part of the polymer project is also
-subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
-*/
-
-const log$1 = logFactory('ArcHost', '#cade57');
-const warn$1 = logFactory('ArcHost', '#cade57', 'warn');
-const error$1 = logFactory('ArcHost', '#cade57', 'error');
-
-class ArcHost {
-  constructor(context, storage, composer) {
-    this.context = context;
-    this.storage = storage;
-    this.composer = composer;
-  }
-  disposeArc() {
-    if (this.arc) {
-      this.arc.dispose();
-    }
-    this.arc = null;
-  }
-  // config = {id, [serialization], [manifest]}
-  async spawn(config) {
-    log$1('spawning arc', config);
-    this.config = config;
-    const context = this.context || await Utils.parse(``);
-    const serialization = this.serialization = await this.computeSerialization(config, this.storage);
-    this.arc = await this._spawn(context, this.composer, this.storage, config.id, serialization);
-    if (config.manifest && !serialization) {
-      await this.instantiateDefaultRecipe(this.arc, config.manifest);
-    }
-    if (this.pendingPlan) {
-      const plan = this.pendingPlan;
-      this.pendingPlan = null;
-      await this.instantiatePlan(this.arc, plan);
-    }
-    return this.arc;
-  }
-  set manifest(manifest) {
-    this.instantiateDefaultRecipe(this.arc, manifest);
-  }
-  set plan(plan) {
-    if (this.arc) {
-      this.instantiatePlan(this.arc, plan);
-    } else {
-      this.pendingPlan = plan;
-    }
-  }
-  async computeSerialization(config, storage) {
-    let serialization;
-    if (config.serialization != null) {
-      serialization = config.serialization;
-    }
-    if (serialization == null) {
-      if (storage.includes('volatile')) {
-        serialization = '';
-      } else {
-        serialization = await this.fetchSerialization(storage, config.id) || '';
-      }
-    }
-    return serialization;
-  }
-  async _spawn(context, composer, storage, id, serialization) {
-    return await Utils.spawn({id, context, composer, serialization, storage: `${storage}/${id}`});
-  }
-  async instantiateDefaultRecipe(arc, manifest) {
-    log$1('instantiateDefaultRecipe');
-    try {
-      manifest = await Utils.parse(manifest);
-      const recipe = manifest.allRecipes[0];
-      const plan = await Utils.resolve(arc, recipe);
-      if (plan) {
-        this.instantiatePlan(arc, plan);
-      }
-    } catch (x) {
-      error$1(x);
-    }
-  }
-  async instantiatePlan(arc, plan) {
-    log$1('instantiatePlan');
-    // TODO(sjmiles): pass suggestion all the way from web-shell
-    // and call suggestion.instantiate(arc).
-    if (!plan.isResolved()) {
-      log$1(`Suggestion plan ${plan.toString({showUnresolved: true})} is not resolved.`);
-    }
-    try {
-      await arc.instantiate(plan);
-    } catch (x) {
-      error$1(x);
-      //console.error(plan.toString());
-    }
-    await this.persistSerialization();
-  }
-  async fetchSerialization(storage, arcid) {
-    const key = `${storage}/${arcid}/arc-info`;
-    const store = await SyntheticStores.providerFactory.connect('id', new ArcType(), key);
-    if (store) {
-      const info = await store.get();
-      return info && info.serialization;
-    }
-  }
-  async persistSerialization() {
-    const {arc, config: {id}, storage} = this;
-    if (!storage.includes('volatile')) {
-      log$1(`persisting serialization to [${id}/serialization]`);
-      const serialization = await arc.serialize();
-      await arc.persistSerialization(serialization);
-    }
-  }
-}
-
-/**
- * @license
- * Copyright (c) 2017 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-
-class RamSlotComposer extends SlotComposer {
-  constructor(options = {}) {
-    super({
-      rootContainer: options.rootContainer || {'root': 'root-context'},
-      modalityName: options.modalityName,
-      modalityHandler: PlanningModalityHandler.createHeadlessHandler()
-    });
-  }
-
-  sendEvent(particleName, slotName, event, data) {
-    const particles = this.consumers.filter(s => s.consumeConn.particle.name == particleName).map(s => s.consumeConn.particle);
-    assert(1 == particles.length, `Multiple particles with name ${particleName} - cannot send event.`);
-    this.pec.sendEvent(particles[0], slotName, {handler: event, data});
-  }
-
-  renderSlot(particle, slotName, content) {
-    super.renderSlot(particle, slotName, content);
-    const slotConsumer = this.getSlotConsumer(particle, slotName);
-    if (slotConsumer) {
-      slotConsumer.updateProvidedContexts();
-    }
-  }
-}
-
-const version = '0_6_0';
-const firebase = `firebase://arcs-storage.firebaseio.com/AIzaSyBme42moeI-2k8WgXh-6YK_wYyjEXo4Oz8/${version}`;
-const pouchdb = `pouchdb://local/arcs`;
-
-const Const = {
-  version,
-  defaultUserId: 'user',
-  defaultFirebaseStorageKey: firebase,
-  defaultPouchdbStorageKey: pouchdb,
-  defaultStorageKey: pouchdb, //firebase,
-  defaultManifest: `https://$particles/canonical.manifest`,
-  launcherSuffix: `-launcher`,
-  LOCALSTORAGE: {
-    user: `${version}-user`,
-    storage: `${version}-storage`
-  },
-  SHARE: {
-    private: 1,
-    self: 2,
-    friends: 3
-  },
-  STORES: {
-    boxed: 'BOXED',
-    my: 'PROFILE',
-    shared: 'FRIEND'
-  }
-};
-
-/*
-@license
-Copyright (c) 2018 The Polymer Project Authors. All rights reserved.
-This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
-The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
-The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
-Code distributed by Google as part of the polymer project is also
-subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
-*/
-
-const log$2 = logFactory('UserArcs', '#4f0433');
-const warn$2 = logFactory('UserArcs', '#4f0433', 'warn');
-
-class UserArcs {
-  constructor(storage, userid) {
-    SyntheticStores.init();
-    this.values = [];
-    this.listeners = [];
-    this.contextWait = 3000;
-    this.updateArcsStore(storage, userid);
-  }
-  async subscribe(listener) {
-    if (this.listeners.indexOf(listener) < 0) {
-      await this.publishInitialChanges([listener]);
-      this.listeners.push(listener);
-      this.publish(this.values, [listener]);
-    }
-  }
-  publish(changes, listeners) {
-    // convert {add:[], remove:[]} to [{add, remove}]
-    if (changes.add) {
-      changes.add.forEach(add => this._publish({add: add.value}, listeners));
-    }
-    if (changes.remove) {
-      changes.remove.forEach(remove => this._publish({remove: remove.value}, listeners));
-    }
-  }
-  async publishInitialChanges(listeners) {
-    const changes = {add: []};
-    if (this.store) {
-      const values = await this.store.toList();
-      values.forEach(value => this._publish({add: value}, listeners));
-    }
-    return changes;
-  }
-  _publish(change, listeners) {
-    if (!change.add || !change.add.rawData.deleted) {
-      listeners.forEach(listener => listener(change));
-    }
-  }
-  async updateArcsStore(storage, userid) {
-    // attempt to marshal arcs-store for this user
-    this.store = await this.fetchArcsStore(storage, userid);
-    if (this.store) {
-      // TODO(sjmiles): plop arcsStore into state early for updateUserContext, usage is weird
-      this.foundArcsStore(this.store);
-    } else {
-      // retry after a bit
-      setTimeout(() => this.updateArcsStore(storage, userid), this.contextWait);
-    }
-  }
-  async fetchArcsStore(storage, userid) {
-    // TODO(sjmiles): marshalling of arcs-store arc id from userid should be elsewhere
-    const store = await SyntheticStores.getArcsStore(storage, `${userid}${Const.launcherSuffix}`);
-    if (store) {
-      log$2(`marshalled arcsStore for [${userid}]`);
-      return store;
-    }
-    warn$2(`failed to marshal arcsStore for [${userid}][${storage}]`);
-  }
-  async foundArcsStore(store) {
-    log$2('foundArcsStore', Boolean(store));
-    await this.publishInitialChanges(this.listeners);
-    store.on('change', changes => this.arcsStoreChange(changes), this);
-  }
-  arcsStoreChange(changes) {
-    this.publish(changes, this.listeners);
-  }
-}
-
-/*
-@license
-Copyright (c) 2018 The Polymer Project Authors. All rights reserved.
-This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
-The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
-The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
-Code distributed by Google as part of the polymer project is also
-subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
-*/
-
-const log$3 = logFactory('SingleUserContext', '#f2ce14');
-const warn$3 = logFactory('SingleUserContext', '#f2ce14', 'warn');
-const error$2 = logFactory('SingleUserContext', '#f2ce14', 'error');
-
-// SoloContext (?)
-const SingleUserContext = class {
-  constructor(storage, context, userid, arcstore, isProfile) {
-    this.storage = storage;
-    this.context = context;
-    this.userid = userid;
-    this.arcstore = arcstore;
-    this.isProfile = isProfile;
-    // we observe `arcid`s and `storageKey`s
-    this.observers = {};
-    // when we remove an arc from consideration, we have to unobserve storageKeys from that arc
-    // `handles` maps an arcid to an array of storageKeys to unobserve
-    this.handles = {};
-    // promises for async store marshaling
-    this.pendingStores = [];
-    if (arcstore) {
-      this.attachArcStore(storage, arcstore);
-    }
-  }
-  async attachArcStore(storage, arcstore) {
-    this.observeStore(arcstore, arcstore.id, info => {
-      log$3('arcstore::observer', info);
-      if (info.add) {
-        info.add.forEach(({value}) => this._addArc(storage, value.rawData));
-      } else if (info.remove) {
-        info.remove.forEach(({value}) => {
-          // TODO(sjmiles): value should contain `rawData.key`, but sometimes there is no `rawData`
-          this.removeArc(value.id);
-        });
-      } else {
-        log$3('arcstore::observer info type not supported: ', info);
-      }
-    });
-  }
-  async dispose() {
-    // chuck all observers
-    Object.values(this.observers).forEach(({key}) => this.unobserve(key));
-    // chuck all data
-    await this.removeUserEntities(this.context, this.userid, this.isProfile);
-  }
-  removeArc(arcid) {
-    this.unobserve(arcid);
-    const handles = this.handles[arcid];
-    if (handles) {
-      handles.forEach(({storageKey}) => this.unobserve(storageKey));
-      this.handles[arcid] = null;
-    }
-  }
-  async _addArc(storage, arcmeta) {
-    const {deleted, key} = arcmeta;
-    if (!deleted) {
-      const store = await SyntheticStores.getStore(storage, key);
-      if (store) {
-        await this.observeStore(store, key, info => this.onArcStoreChanged(key, info));
-      }
-    }
-  }
-  async addArc(key) {
-    //if (!deleted) {
-      const store = await SyntheticStores.getStore(this.storage, key);
-      if (store) {
-        await this.observeStore(store, key, info => this.onArcStoreChanged(key, info));
-      } else {
-        warn$3(`failed to get SyntheticStore for arc at [${this.storage}, ${key}]\nhttps://github.com/PolymerLabs/arcs/issues/2304`);
-      }
-    //}
-  }
-  unobserve(key) {
-    const observer = this.observers[key];
-    if (observer) {
-      this.observers[key] = null;
-      //log(`UNobserving [${key}]`);
-      observer.store.off('change', observer.cb);
-    }
-  }
-  async observeStore(store, key, cb) {
-   if (!store) {
-      console.warn(`observeStore: store is null for [${key}]`);
-    } else {
-      if (!this.observers[key]) {
-        log$3(`observing [${key}]`);
-        // TODO(sjmiles): create synthetic store `change` records from the initial state
-        // SyntheticCollection has `toList` but is `!type.isCollection`,
-        if (store.toList) {
-          const data = await store.toList();
-          if (data && data.length) {
-            const add = data.map(value => ({value}));
-            cb({add});
-          } else log$3('...store is empty collection');
-        } else if (store.type.isEntity) {
-          const data = await store.get();
-          if (data) {
-            cb({data});
-          }
-        }
-        this.observers[key] = {key, store, cb: store.on('change', cb, this)};
-      }
-    }
-  }
-   onArcStoreChanged(arcid, info) {
-    log$3('Synthetic-store change event (onArcStoreChanged):', info);
-    // TODO(sjmiles): synthesize add/remove records from data record
-    //   this._patchArcDataInfo(arcid, info);
-    // process add/remove stream
-    if (info.add) {
-      info.add.forEach(async add => {
-        let handle = add.value;
-        if (!handle) {
-          error$2('`add` record has no `value`, applying workaround', add);
-          handle = add;
-        }
-        if (handle) { //} && handle.tags.length) {
-          //handle.tags.length && log('observing handle', handle.tags);
-          //log('fetching handle store', handle);
-          const store = await SyntheticStores.getHandleStore(handle);
-          await this.observeStore(store, handle.storageKey, info => this.updateHandle(arcid, handle, info));
-        }
-      });
-    }
-    if (info.remove) {
-      info.remove.forEach(async remove => {
-        const handle = remove.value;
-        if (handle) {
-          //log('UNobserving handle', handle);
-          this.unobserve(handle.storageKey);
-        }
-      });
-    }
-  }
-  async updateHandle(arcid, handle, info) {
-    const {context, userid, isProfile} = this;
-    const tags = handle.tags ? handle.tags.join('-') : '';
-    if (tags) {
-      log$3('updateHandle', tags/*, info*/);
-      const type = handle.type.isCollection ? handle.type : handle.type.collectionOf();
-      const id = SyntheticStores.snarfId(handle.storageKey);
-      //
-      const shareid = `${tags}|${id}|from|${userid}|${arcid}`;
-      const shortid = `${(isProfile ? `PROFILE` : `FRIEND`)}_${tags}`;
-      const storeName = shortid;
-      const storeId = isProfile ? shortid : shareid;
-      log$3('share id:', storeId);
-      const store = await this.getShareStore(context, type, storeName, storeId, ['shared']); //handle.tags);
-      //
-      const boxStoreId = `BOXED_${tags}`;
-      const boxDataId = `${userid}|${arcid}`;
-      //const boxId = `${tags}|${boxDataId}`;
-      log$3('box ids:', boxStoreId, boxDataId/*, boxId*/);
-      const boxStore = await this.getShareStore(context, type, boxStoreId, boxStoreId, ['shared']); //[boxStoreId]);
-      //
-      // TODO(sjmiles): no mutation
-      if (handle.type.isEntity) {
-        if (info.data) {
-          // TODO(sjmiles): in the absence of data mutation, when an entity changes
-          // it gets an entirely new id, so we cannot use ids to track entities
-          // in boxed stores. However as this entity is a Highlander for this
-          // user and arc (by virtue of not being in a Collection) we can synthesize
-          // a stable id.
-          info.data.id = boxDataId;
-          this.unshareEntities(userid, store, boxStore, info.data);
-          this.shareEntities(userid, store, boxStore, info.data);
-        }
-      } else if (info.add || info.remove) {
-        info.remove && info.remove.forEach(remove => this.unshareEntities(userid, store, boxStore, [remove.value]));
-        info.add && info.add.forEach(add => this.shareEntities(userid, store, boxStore, [add.value]));
-      } else if (info.data) {
-        this.shareEntities(userid, store, boxStore, info.data);
-      }
-    }
-  }
-  async getShareStore(context, type, name, id, tags) {
-    // TODO(sjmiles): cache and return promises in case of re-entrancy
-    let promise = this.pendingStores[id];
-    if (!promise) {
-      promise = new Promise(async (resolve) => {
-        const store = await context.findStoreById(id);
-        if (store) {
-          resolve(store);
-        } else {
-          const store = await context.createStore(type, name, id, tags);
-          resolve(store);
-        }
-      });
-      this.pendingStores[id] = promise;
-    }
-    return promise;
-  }
-  async shareEntities(userid, shareStore, boxStore, data) {
-    if (data) {
-      this.storeEntitiesWithUid(shareStore, data, userid);
-      boxStore.idMap = this.storeEntitiesWithUid(boxStore, data, userid);
-    }
-  }
-  async unshareEntities(userid, shareStore, boxStore, data) {
-    if (data) {
-      this.removeEntitiesWithUid(shareStore, data, userid);
-      this.removeEntitiesWithUid(boxStore, data, userid);
-    }
-  }
-  storeEntitiesWithUid(store, data, uid) {
-    const ids = [];
-    const storeDecoratedEntity = ({id, rawData}, uid) => {
-      const decoratedId = `${id}:uid:${uid}`;
-      ids.push({id: decoratedId, rawData});
-      //console.log('pushing data to store');
-      if (store.type.isCollection) {
-        // FIXME: store.generateID may not be safe (session scoped)?
-        store.store({id: decoratedId, rawData}, [store.generateID()]);
-      } else {
-        store.set({id: decoratedId, rawData});
-      }
-    };
-    if (data && data.id) {
-      storeDecoratedEntity(data, uid);
-    } else {
-      Object.values(data).forEach(entity => entity && storeDecoratedEntity(entity, uid));
-    }
-    return ids;
-  }
-  removeEntitiesWithUid(store, data, uid) {
-    const removeDecoratedEntity = ({id, rawData}, uid) => {
-      const decoratedId = `${id}:uid:${uid}`;
-      if (store.type.isCollection) {
-        store.remove(decoratedId);
-      }
-    };
-    if (store.type.isCollection) {
-      if (Array.isArray(data)) {
-        data.forEach(entity => entity && removeDecoratedEntity(entity, uid));
-      } else if (data && data.id) {
-        removeDecoratedEntity(data, uid);
-      }
-    } else {
-      store.clear();
-    }
-  }
-  async removeEntities(context) {
-    this.removeUserEntities(context, 'all', true);
-  }
-  async removeUserEntities(context, userid, isProfile) {
-    log$3(`removing entities for [${userid}]`);
-    const jobs = [];
-    for (let i=0, store; (store=context.stores[i]); i++) {
-      jobs.push(this.removeUserStoreEntities(userid, store, isProfile));
-    }
-    await Promise.all(jobs);
-  }
-  async removeUserStoreEntities(userid, store, isProfile) {
-   if (!store) {
-      console.warn(`removeUserStoreEntities: store is null for [${userid}]`);
-    } else {
-      log$3(`scanning [${userid}] [${store.id}] (${store.toList ? 'collection' : 'variable'})`);
-      //const tags = context.findStoreTags(store);
-      if (store.toList) {
-        const entities = await store.toList();
-        entities.forEach(entity => {
-          const uid = entity.id.split('uid:').pop().split('|').shift();
-          if (isProfile || uid === userid) {
-            log$3(`  REMOVE `, entity.id);
-            // TODO(sjmiles): _removeUserStoreEntities is strangely re-entering
-            //  (1) `remove` fires synchronous change events
-            //  (2) looks like there are double `remove` events in the queue. Bug?
-            // In general, to avoid interleaving we'll probably need to
-            // use a stack to process changes async to receiving them.
-            // Parallel processing works as of now ... feature?
-            store.remove(entity.id);
-          }
-        });
-      }
-      else {
-        const uid = store.id.split('|').slice(-2, -1).pop();
-        if (isProfile || uid === userid) {
-          log$3(`  CLEAR store`);
-          store.clear();
-        }
-      }
-    }
-  }
-};
-
-/*
-@license
-Copyright (c) 2018 The Polymer Project Authors. All rights reserved.
-This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
-The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
-The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
-Code distributed by Google as part of the polymer project is also
-subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
-*/
-
-const log$4 = logFactory('UserContext', '#4f0433');
-const warn$4 = logFactory('UserContext', '#4f0433', 'warn');
-
-class UserContext {
-  constructor() {
-  }
-  async init(storage, userid, context) {
-    await this.disposeUserContext(this.userContext);
-    const isProfile = true;
-    this.userContext = new SingleUserContext(storage, context, userid, null, isProfile);
-  }
-  async disposeUserContext(userContext) {
-    if (userContext) {
-      try {
-        await userContext.dispose();
-      } catch (x) {
-        //
-      }
-    }
-  }
-  onArc({add, remove}) {
-    if (add) {
-      this.userContext.addArc(add.id);
-    }
-    if (remove) {
-      this.userContext.removeArc(remove.id);
-    }
-  }
-  // _getInitialState() {
-  //   return {
-  //     // ms to wait until we think there is probably some context
-  //     contextWait: 3000,
-  //     // maps userid to SingleUserContext for friends
-  //     friends: {},
-  //     // TODO(sjmiles): workaround for missing data in `remove` records
-  //     // maps entityids to userids for friends
-  //     friendEntityIds: {},
-  //     // snapshot of BOXED_avatar for use by shell
-  //     avatars: {},
-  //   };
-  // }
-  // update(props, state) {
-  //   if (!state.env && props.env) {
-  //     state.env = props.env;
-  //     SyntheticStores.init(props.env);
-  //   }
-  //   if (props.context && state.context !== props.context) {
-  //     state.context = props.context;
-  //     this.updateFriends(props, state);
-  //   }
-  //   if (props.storage && props.context && props.userid !== state.userid) {
-  //     state.userid = props.userid;
-  //     this.awaitState('arcsStore', () => this.updateArcsStore(props, state));
-  //   }
-  // }
-  // async updateArcsStore(props, state) {
-  //   const {storage, userid} = props;
-  //   const arcsStore = await this.fetchArcsStore(storage, userid);
-  //   if (arcsStore) {
-  //     // TODO(sjmiles): plop arcsStore into state early for updateUserContext, usage is weird
-  //     state.arcsStore = arcsStore;
-  //     // TODO(sjmiles): props and state are suspect after await
-  //     await this.updateUserContext(props, state);
-  //   } else {
-  //     // retry after a bit
-  //     setTimeout(() => this.state = {userid: null}, state.contextWait);
-  //   }
-  //   // signal when user-decorated context is `ready`
-  //   // TODO(sjmiles): ideally we have a better signal than a timeout
-  //   setTimeout(() => this.fire('context', props.context), state.contextWait);
-  //   return arcsStore;
-  // }
-  // async fetchArcsStore(storage, userid) {
-  //   const store = await SyntheticStores.getArcsStore(storage, `${userid}${Const.launcherSuffix}`);
-  //   if (store) {
-  //     log(`marshalled arcsStore for [${userid}]`); //[${storage}]`, store);
-  //     return store;
-  //   }
-  //   warn(`failed to marshal arcsStore for [${userid}][${storage}]`);
-  // }
-  // async updateSystemUser({userid, context}) {
-  //   const store = await context.findStoreById('SYSTEM_user');
-  //   if (store) {
-  //     const user = {
-  //       id: store.generateID(),
-  //       rawData: {
-  //         id: userid,
-  //       }
-  //     };
-  //     store.set(user);
-  //     log('installed SYSTEM_user');
-  //   }
-  // }
-  // async updateUserContext({storage, userid, context}, {userContext, arcsStore}) {
-  //   await this.disposeUserContext(userContext);
-  //   // do not operate on stale userid
-  //   if (!this.state.userContext && userid === this.state.userid) {
-  //     const isProfile = true;
-  //     this.state = {
-  //       userContext: new SingleUserContext(storage, context, userid, arcsStore, isProfile)
-  //     };
-  //   }
-  // }
-  // async disposeUserContext(userContext) {
-  //   if (userContext) {
-  //     this.state = {userContext: null};
-  //     try {
-  //       await userContext.dispose();
-  //     } catch (x) {
-  //       //
-  //     }
-  //   }
-  // }
-  // async updateFriends({storage, userid, context}, state) {
-  //   if (state.friendsStore) {
-  //     log('discarding old PROFILE_friends');
-  //     state.friendsStore.off('change', state.friendsStoreCb);
-  //     state.friendsStore = null;
-  //   }
-  //   const friendsStore = await context.findStoreById('PROFILE_friends');
-  //   if (friendsStore) {
-  //     log('found PROFILE_friends');
-  //     const friendsStoreCb = info => this.onFriendsChange(storage, context, info);
-  //     // get current data
-  //     const friends = await friendsStore.toList();
-  //     // listen for changes
-  //     friendsStore.on('change', friendsStoreCb, this);
-  //     // process friends already in store
-  //     this.onFriendsChange(storage, context, {add: friends.map(f => ({value: f}))});
-  //     this.state = {friendsStore, friendsStoreCb};
-  //   } else {
-  //     warn('PROFILE_friends missing');
-  //   }
-  // }
-  // onFriendsChange(storage, context, info) {
-  //   const {friends, friendEntityIds} = this._state;
-  //   if (info.add) {
-  //     info.add.forEach(({value}) => {
-  //       const entityId = value.id;
-  //       const friendId = value.rawData.id;
-  //       // TODO(sjmiles): friendEntityIds is a hack to workaround missing rawData in removal records
-  //       friendEntityIds[entityId] = friendId;
-  //       this.addFriend(storage, context, friends, friendId);
-  //     });
-  //   }
-  //   if (info.remove) {
-  //     info.remove.forEach(remove => this.removeFriend(friends, friendEntityIds[remove.value.id]));
-  //   }
-  // }
-  // async addFriend(storage, context, friends, friendId, attempts) {
-  //   log(`trying to addFriend [${friendId}]`);
-  //   if (!friends[friendId]) {
-  //     friends[friendId] = true;
-  //     const arcsStore = await this.fetchArcsStore(storage, friendId);
-  //     if (arcsStore) {
-  //       friends[friendId] = new SingleUserContext(storage, context, friendId, arcsStore, false);
-  //     } else {
-  //       friends[friendId] = null;
-  //       // retry a bit
-  //       attempts = (attempts || 0) + 1;
-  //       if (attempts < 11) {
-  //         const timeout = 1000*Math.pow(2.9076, attempts);
-  //         console.warn(`retry [${attempts}/10] to addFriend [${friendId}] in ${(timeout/1000/60).toFixed(2)}m`);
-  //         setTimeout(() => this.addFriend(storage, context, friends, friendId, attempts), timeout);
-  //       }
-  //     }
-  //   }
-  // }
-  // removeFriend(friends, friendId) {
-  //   log('removeFriend', friendId);
-  //   const friend = friends[friendId];
-  //   if (friend) {
-  //     friend.dispose && friend.dispose();
-  //     friends[friendId] = null;
-  //   }
-  // }
-  //async _boxedAvatarChanged(store) {
-  //   const avatars = await store.toList();
-  //   this._fire('avatars', avatars);
-  //   avatars.get = id => {
-  //     const avatar = avatars.find(avatar => {
-  //       const uid = avatar.id.split(':uid:').pop();
-  //       return uid === id;
-  //     });
-  //     return avatar && avatar.rawData;
-  //   };
-  // }
-}
-
-/**
- * @license
- * Copyright (c) 2018 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
 const defaultTimeoutMs = 5000;
-const log$5 = logFactory('PlanProducer', '#ff0090', 'log');
-const error$3 = logFactory('PlanProducer', '#ff0090', 'error');
+const log = logFactory('PlanProducer', '#ff0090', 'log');
+const error$1 = logFactory('PlanProducer', '#ff0090', 'error');
 var Trigger;
 (function (Trigger) {
     Trigger["Init"] = "init";
@@ -27184,7 +26137,7 @@ class PlanProducer {
         }
         time = ((now$1() - time) / 1000).toFixed(2);
         if (suggestions) {
-            log$5(`[${this.arc.id.idTreeAsString()}] Produced ${suggestions.length} suggestions [elapsed=${time}s].`);
+            log(`[${this.arc.id.idTreeAsString()}] Produced ${suggestions.length} suggestions [elapsed=${time}s].`);
             this.isPlanning = false;
             if (this.result.merge({
                 suggestions,
@@ -27233,7 +26186,7 @@ class PlanProducer {
         this.speculator.dispose();
         this.needReplan = false;
         this.isPlanning = false; // using the setter method to trigger callbacks.
-        log$5(`Cancel planning`);
+        log(`Cancel planning`);
     }
 }
 
@@ -27717,6 +26670,1063 @@ class Planificator {
         }
         return this.searchStore.set(newValues);
     }
+}
+
+/**
+ * @license
+ * Copyright (c) 2018 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+class InitialRecipe extends Strategy {
+    constructor(recipe) {
+        super();
+        this.recipe = recipe;
+    }
+    async generate({ generation }) {
+        if (generation !== 0) {
+            return [];
+        }
+        return [{
+                result: this.recipe,
+                score: 1,
+                derivation: [{ strategy: this, parent: undefined }],
+                hash: this.recipe.digest(),
+                valid: Object.isFrozen(this.recipe),
+            }];
+    }
+}
+class ArcPlannerInvoker extends ArcDebugListener {
+    constructor(arc, arcDevtoolsChannel) {
+        super(arc, arcDevtoolsChannel);
+        this.arc = arc;
+        arcDevtoolsChannel.listen('fetch-strategies', () => arcDevtoolsChannel.send({
+            messageType: 'fetch-strategies-result',
+            messageBody: Planner.AllStrategies.map(s => s.name)
+        }));
+        arcDevtoolsChannel.listen('invoke-planner', async (msg) => arcDevtoolsChannel.send({
+            messageType: 'invoke-planner-result',
+            messageBody: await this.invokePlanner(msg.messageBody.manifest, msg.messageBody.method),
+            requestId: msg.requestId
+        }));
+    }
+    async invokePlanner(manifestString, method) {
+        if (!this.recipeIndex) {
+            this.recipeIndex = RecipeIndex.create(this.arc, { reportGenerations: false });
+            await this.recipeIndex.ready;
+        }
+        let manifest;
+        try {
+            manifest = await Manifest.parse(manifestString, { loader: this.arc._loader, fileName: 'manifest.manifest' });
+        }
+        catch (error) {
+            return this.processManifestError(error);
+        }
+        if (manifest.recipes.length === 0)
+            return { results: [] };
+        if (manifest.recipes.length > 1)
+            return { error: { message: `More than 1 recipe present, found ${manifest.recipes.length}.` } };
+        const recipe = manifest.recipes[0];
+        recipe.normalize();
+        if (method === 'arc' || method === 'arc_coalesce') {
+            return this.multiStrategyRun(recipe, method);
+        }
+        else {
+            return this.singleStrategyRun(recipe, method);
+        }
+    }
+    async multiStrategyRun(recipe, method) {
+        const strategies = method === 'arc_coalesce' ? Planner.ResolutionStrategies
+            : Planner.ResolutionStrategies.filter(s => s !== CoalesceRecipes);
+        const strategizer = new Strategizer([new InitialRecipe(recipe), ...strategies.map(S => this.instantiate(S))], [], Empty);
+        const terminal = [];
+        do {
+            await strategizer.generate();
+            terminal.push(...strategizer.terminal);
+        } while (strategizer.generated.length + strategizer.terminal.length > 0);
+        return this.processStrategyOutput(terminal);
+    }
+    async singleStrategyRun(recipe, strategyName) {
+        const strategy = Planner.AllStrategies.find(s => s.name === strategyName);
+        if (!strategy)
+            return { error: { message: `Strategy ${strategyName} not found` } };
+        return this.processStrategyOutput(await this.instantiate(strategy).generate({
+            generation: 0,
+            generated: [{ result: recipe, score: 1 }],
+            population: [{ result: recipe, score: 1 }],
+            terminal: [{ result: recipe, score: 1 }]
+        }));
+    }
+    instantiate(strategyClass) {
+        // TODO: Strategies should have access to the context that is a combination of arc context and
+        //       the entered manifest. Right now strategies only see arc context, which means that
+        //       various strategies will not see particles defined in the manifest entered in the
+        //       editor. This may bite us with verb substitution, hosted particle resolution etc.
+        return new strategyClass(this.arc, { recipeIndex: this.recipeIndex });
+    }
+    processStrategyOutput(inputs) {
+        return { results: inputs.map(result => {
+                const recipe = result.result;
+                const errors = new Map();
+                if (!Object.isFrozen(recipe)) {
+                    recipe.normalize({ errors });
+                }
+                let recipeString = '';
+                try {
+                    recipeString = recipe.toString({ showUnresolved: true });
+                }
+                catch (e) {
+                    console.warn(e);
+                }
+                return {
+                    recipe: recipeString,
+                    derivation: this.extractDerivation(result),
+                    errors: [...errors.values()].map(error => ({ error })),
+                };
+            }) };
+    }
+    extractDerivation(result) {
+        const found = [];
+        for (const deriv of result.derivation || []) {
+            if (!deriv.parent && deriv.strategy.constructor !== InitialRecipe) {
+                found.push(deriv.strategy.constructor.name);
+            }
+            else if (deriv.parent) {
+                const childDerivs = this.extractDerivation(deriv.parent);
+                for (const childDeriv of childDerivs) {
+                    found.push(childDeriv
+                        ? `${childDeriv} -> ${deriv.strategy.constructor.name}`
+                        : deriv.strategy.constructor.name);
+                }
+                if (childDerivs.length === 0)
+                    found.push(deriv.strategy.constructor.name);
+            }
+        }
+        return found;
+    }
+    processManifestError(error) {
+        let suggestion = null;
+        const errorTypes = [{
+                // TODO: Switch to declaring errors in a structured way in the error object, instead of message parsing.
+                pattern: /could not find particle ([A-Z][A-Za-z0-9_]*)\n/,
+                predicate: extracted => manifest => !!(manifest.particles.find(p => p.name === extracted))
+            }, {
+                pattern: /Could not resolve type reference to type name '([A-Z][A-Za-z0-9_]*)'\n/,
+                predicate: extracted => manifest => !!(manifest.schemas[extracted])
+            }];
+        for (const { pattern, predicate } of errorTypes) {
+            const match = pattern.exec(error.message);
+            if (match) {
+                const [_, extracted] = match;
+                const fileNames = this.findManifestNames(this.arc.context, predicate(extracted));
+                if (fileNames.length > 0)
+                    suggestion = { action: 'import', fileNames };
+            }
+        }
+        return { suggestion, error: ((({ location, message }) => ({ location, message }))(error)) };
+    }
+    findManifestNames(manifest, predicate) {
+        const map = new Map();
+        this.findManifestNamesRecursive(manifest, predicate, map);
+        return [...map.entries()].sort(([a, depthA], [b, depthB]) => (depthA - depthB)).map(v => v[0]);
+    }
+    findManifestNamesRecursive(manifest, predicate, fileNames) {
+        let depth = predicate(manifest) ? 0 : Number.MAX_SAFE_INTEGER;
+        for (const child of manifest.imports) {
+            depth = Math.min(depth, this.findManifestNamesRecursive(child, predicate, fileNames) + 1);
+        }
+        // http check to avoid listing shell created 'in-memory manifest'.
+        if (depth < Number.MAX_SAFE_INTEGER && manifest.fileName.startsWith('http')) {
+            fileNames.set(manifest.fileName, depth);
+        }
+        return depth;
+    }
+}
+// TODO: This should move to the planning interface file when it exists. 
+const defaultPlanningDebugListeners = [
+    ArcPlannerInvoker
+];
+
+/**
+ * @license
+ * Copyright (c) 2019 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+
+// Debug-channel listeners are injected, so that the runtime need not know about them.
+const debugListeners = [
+  ...defaultPlanningDebugListeners, // This should change for a shell w/out planning
+  ...defaultCoreDebugListeners
+  ];
+
+const log$1 = console.log.bind(console);
+const warn = console.warn.bind(console);
+const env = {};
+
+const createPathMap = root => ({
+  'https://$arcs/': `${root}/`,
+  'https://$shells/': `${root}/shells/`,
+  'https://$build/': `${root}/shells/lib/build/`,
+  'https://$particles/': `${root}/particles/`,
+});
+
+const init$1 = (root, urls) => {
+  const map = Object.assign(Utils.createPathMap(root), urls);
+  env.loader = new PlatformLoader(map);
+  env.pecFactory = PecIndustry(env.loader);
+  return env;
+};
+
+const parse = async (content, options) => {
+  const id = `in-memory-${Math.floor((Math.random()+1)*1e6)}.manifest`;
+  const localOptions = {
+    id,
+    fileName: `./${id}`,
+    loader: env.loader
+  };
+  if (options) {
+    Object.assign(localOptions, options);
+  }
+  return Manifest.parse(content, localOptions);
+};
+
+const resolve = async (arc, recipe) =>{
+  if (recipe.normalize()) {
+    let plan = recipe;
+    if (!plan.isResolved()) {
+      const resolver = new RecipeResolver(arc);
+      plan = await resolver.resolve(recipe);
+      if (!plan || !plan.isResolved()) {
+        warn('failed to resolve:\n', (plan || recipe).toString({showUnresolved: true}));
+        log$1(arc.context, arc, arc.context.storeTags);
+        plan = null;
+      }
+    }
+    return plan;
+  }
+};
+
+const spawn = async ({id, serialization, context, composer, storage}) => {
+  const params = {
+    id,
+    fileName: './serialized.manifest',
+    serialization,
+    context,
+    storageKey: storage,
+    slotComposer: composer,
+    pecFactory: env.pecFactory,
+    loader: env.loader,
+    listenerClasses: debugListeners
+  };
+  Object.assign(params, env.params);
+  return serialization ? Arc.deserialize(params) : new Arc(params);
+};
+
+const Utils = {
+  createPathMap,
+  init: init$1,
+  env,
+  parse,
+  resolve,
+  spawn
+};
+
+//const stores = {};
+
+class SyntheticStores {
+  static init() {
+    if (!SyntheticStores.providerFactory) {
+      SyntheticStores.providerFactory = new StorageProviderFactory('shell');
+    }
+  }
+  static async getArcsStore(storage, name) {
+    const handleStore = await SyntheticStores.getStore(storage, name);
+    if (handleStore) {
+      const handles = await handleStore.toList();
+      const handle = handles[0];
+      if (handle) {
+        return await SyntheticStores.getHandleStore(handle);
+      }
+    }
+  }
+  static async getStore(storage, id) {
+    // cached stores can be incorrect?
+    //return stores[id] || (stores[id] = await SyntheticStores.syntheticConnectKind('handles', storage, id));
+    return await SyntheticStores.connectToKind('handles', storage, id);
+  }
+  static async connectToKind(kind, storage, arcid) {
+    return SyntheticStores.storeConnect(null, `synthetic://arc/${kind}/${storage}/${arcid}`);
+  }
+  static async getHandleStore(handle) {
+    return await SyntheticStores.storeConnect(handle.type, handle.storageKey);
+  }
+  static async storeConnect(type, storageKey) {
+    return SyntheticStores.providerFactory.connect(SyntheticStores.makeId(), type, storageKey);
+  }
+  static makeId() {
+    return `id${Math.random()}`;
+  }
+  static snarfId(key) {
+    return key.split('/').pop();
+  }
+}
+
+/*
+@license
+Copyright (c) 2018 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+*/
+
+const log$2 = logFactory('ArcHost', '#cade57');
+const warn$1 = logFactory('ArcHost', '#cade57', 'warn');
+const error$2 = logFactory('ArcHost', '#cade57', 'error');
+
+class ArcHost {
+  constructor(context, storage, composer) {
+    this.context = context;
+    this.storage = storage;
+    this.composer = composer;
+  }
+  disposeArc() {
+    if (this.arc) {
+      this.arc.dispose();
+    }
+    this.arc = null;
+  }
+  // config = {id, [serialization], [manifest]}
+  async spawn(config) {
+    log$2('spawning arc', config);
+    this.config = config;
+    const context = this.context || await Utils.parse(``);
+    const serialization = this.serialization = await this.computeSerialization(config, this.storage);
+    this.arc = await this._spawn(context, this.composer, this.storage, config.id, serialization);
+    if (config.manifest && !serialization) {
+      await this.instantiateDefaultRecipe(this.arc, config.manifest);
+    }
+    if (this.pendingPlan) {
+      const plan = this.pendingPlan;
+      this.pendingPlan = null;
+      await this.instantiatePlan(this.arc, plan);
+    }
+    return this.arc;
+  }
+  set manifest(manifest) {
+    this.instantiateDefaultRecipe(this.arc, manifest);
+  }
+  set plan(plan) {
+    if (this.arc) {
+      this.instantiatePlan(this.arc, plan);
+    } else {
+      this.pendingPlan = plan;
+    }
+  }
+  async computeSerialization(config, storage) {
+    let serialization;
+    if (config.serialization != null) {
+      serialization = config.serialization;
+    }
+    if (serialization == null) {
+      if (storage.includes('volatile')) {
+        serialization = '';
+      } else {
+        serialization = await this.fetchSerialization(storage, config.id) || '';
+      }
+    }
+    return serialization;
+  }
+  async _spawn(context, composer, storage, id, serialization) {
+    return await Utils.spawn({id, context, composer, serialization, storage: `${storage}/${id}`});
+  }
+  async instantiateDefaultRecipe(arc, manifest) {
+    log$2('instantiateDefaultRecipe');
+    try {
+      manifest = await Utils.parse(manifest);
+      const recipe = manifest.allRecipes[0];
+      const plan = await Utils.resolve(arc, recipe);
+      if (plan) {
+        this.instantiatePlan(arc, plan);
+      }
+    } catch (x) {
+      error$2(x);
+    }
+  }
+  async instantiatePlan(arc, plan) {
+    log$2('instantiatePlan');
+    // TODO(sjmiles): pass suggestion all the way from web-shell
+    // and call suggestion.instantiate(arc).
+    if (!plan.isResolved()) {
+      log$2(`Suggestion plan ${plan.toString({showUnresolved: true})} is not resolved.`);
+    }
+    try {
+      await arc.instantiate(plan);
+    } catch (x) {
+      error$2(x);
+      //console.error(plan.toString());
+    }
+    await this.persistSerialization();
+  }
+  async fetchSerialization(storage, arcid) {
+    const key = `${storage}/${arcid}/arc-info`;
+    const store = await SyntheticStores.providerFactory.connect('id', new ArcType(), key);
+    if (store) {
+      const info = await store.get();
+      return info && info.serialization;
+    }
+  }
+  async persistSerialization() {
+    const {arc, config: {id}, storage} = this;
+    if (!storage.includes('volatile')) {
+      log$2(`persisting serialization to [${id}/serialization]`);
+      const serialization = await arc.serialize();
+      await arc.persistSerialization(serialization);
+    }
+  }
+}
+
+/**
+ * @license
+ * Copyright (c) 2017 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+
+class RamSlotComposer extends SlotComposer {
+  constructor(options = {}) {
+    super({
+      rootContainer: options.rootContainer || {'root': 'root-context'},
+      modalityName: options.modalityName,
+      modalityHandler: PlanningModalityHandler.createHeadlessHandler()
+    });
+  }
+
+  sendEvent(particleName, slotName, event, data) {
+    const particles = this.consumers.filter(s => s.consumeConn.particle.name == particleName).map(s => s.consumeConn.particle);
+    assert(1 == particles.length, `Multiple particles with name ${particleName} - cannot send event.`);
+    this.pec.sendEvent(particles[0], slotName, {handler: event, data});
+  }
+
+  renderSlot(particle, slotName, content) {
+    super.renderSlot(particle, slotName, content);
+    const slotConsumer = this.getSlotConsumer(particle, slotName);
+    if (slotConsumer) {
+      slotConsumer.updateProvidedContexts();
+    }
+  }
+}
+
+const version = '0_6_0';
+const firebase = `firebase://arcs-storage.firebaseio.com/AIzaSyBme42moeI-2k8WgXh-6YK_wYyjEXo4Oz8/${version}`;
+const pouchdb = `pouchdb://local/arcs`;
+
+const Const = {
+  version,
+  defaultUserId: 'user',
+  defaultFirebaseStorageKey: firebase,
+  defaultPouchdbStorageKey: pouchdb,
+  defaultStorageKey: pouchdb, //firebase,
+  defaultManifest: `https://$particles/canonical.manifest`,
+  launcherSuffix: `-launcher`,
+  LOCALSTORAGE: {
+    user: `${version}-user`,
+    storage: `${version}-storage`
+  },
+  SHARE: {
+    private: 1,
+    self: 2,
+    friends: 3
+  },
+  STORES: {
+    boxed: 'BOXED',
+    my: 'PROFILE',
+    shared: 'FRIEND'
+  }
+};
+
+/*
+@license
+Copyright (c) 2018 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+*/
+
+const log$3 = logFactory('UserArcs', '#4f0433');
+const warn$2 = logFactory('UserArcs', '#4f0433', 'warn');
+
+class UserArcs {
+  constructor(storage, userid) {
+    SyntheticStores.init();
+    this.values = [];
+    this.listeners = [];
+    this.contextWait = 3000;
+    this.updateArcsStore(storage, userid);
+  }
+  async subscribe(listener) {
+    if (this.listeners.indexOf(listener) < 0) {
+      await this.publishInitialChanges([listener]);
+      this.listeners.push(listener);
+      this.publish(this.values, [listener]);
+    }
+  }
+  publish(changes, listeners) {
+    // convert {add:[], remove:[]} to [{add, remove}]
+    if (changes.add) {
+      changes.add.forEach(add => this._publish({add: add.value}, listeners));
+    }
+    if (changes.remove) {
+      changes.remove.forEach(remove => this._publish({remove: remove.value}, listeners));
+    }
+  }
+  async publishInitialChanges(listeners) {
+    const changes = {add: []};
+    if (this.store) {
+      const values = await this.store.toList();
+      values.forEach(value => this._publish({add: value}, listeners));
+    }
+    return changes;
+  }
+  _publish(change, listeners) {
+    if (!change.add || !change.add.rawData.deleted) {
+      listeners.forEach(listener => listener(change));
+    }
+  }
+  async updateArcsStore(storage, userid) {
+    // attempt to marshal arcs-store for this user
+    this.store = await this.fetchArcsStore(storage, userid);
+    if (this.store) {
+      // TODO(sjmiles): plop arcsStore into state early for updateUserContext, usage is weird
+      this.foundArcsStore(this.store);
+    } else {
+      // retry after a bit
+      setTimeout(() => this.updateArcsStore(storage, userid), this.contextWait);
+    }
+  }
+  async fetchArcsStore(storage, userid) {
+    // TODO(sjmiles): marshalling of arcs-store arc id from userid should be elsewhere
+    const store = await SyntheticStores.getArcsStore(storage, `${userid}${Const.launcherSuffix}`);
+    if (store) {
+      log$3(`marshalled arcsStore for [${userid}]`);
+      return store;
+    }
+    warn$2(`failed to marshal arcsStore for [${userid}][${storage}]`);
+  }
+  async foundArcsStore(store) {
+    log$3('foundArcsStore', Boolean(store));
+    await this.publishInitialChanges(this.listeners);
+    store.on('change', changes => this.arcsStoreChange(changes), this);
+  }
+  arcsStoreChange(changes) {
+    this.publish(changes, this.listeners);
+  }
+}
+
+/*
+@license
+Copyright (c) 2018 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+*/
+
+const log$4 = logFactory('SingleUserContext', '#f2ce14');
+const warn$3 = logFactory('SingleUserContext', '#f2ce14', 'warn');
+const error$3 = logFactory('SingleUserContext', '#f2ce14', 'error');
+
+// SoloContext (?)
+const SingleUserContext = class {
+  constructor(storage, context, userid, arcstore, isProfile) {
+    this.storage = storage;
+    this.context = context;
+    this.userid = userid;
+    this.arcstore = arcstore;
+    this.isProfile = isProfile;
+    // we observe `arcid`s and `storageKey`s
+    this.observers = {};
+    // when we remove an arc from consideration, we have to unobserve storageKeys from that arc
+    // `handles` maps an arcid to an array of storageKeys to unobserve
+    this.handles = {};
+    // promises for async store marshaling
+    this.pendingStores = [];
+    if (arcstore) {
+      this.attachArcStore(storage, arcstore);
+    }
+  }
+  async attachArcStore(storage, arcstore) {
+    this.observeStore(arcstore, arcstore.id, info => {
+      log$4('arcstore::observer', info);
+      if (info.add) {
+        info.add.forEach(({value}) => this._addArc(storage, value.rawData));
+      } else if (info.remove) {
+        info.remove.forEach(({value}) => {
+          // TODO(sjmiles): value should contain `rawData.key`, but sometimes there is no `rawData`
+          this.removeArc(value.id);
+        });
+      } else {
+        log$4('arcstore::observer info type not supported: ', info);
+      }
+    });
+  }
+  async dispose() {
+    // chuck all observers
+    Object.values(this.observers).forEach(({key}) => this.unobserve(key));
+    // chuck all data
+    await this.removeUserEntities(this.context, this.userid, this.isProfile);
+  }
+  removeArc(arcid) {
+    this.unobserve(arcid);
+    const handles = this.handles[arcid];
+    if (handles) {
+      handles.forEach(({storageKey}) => this.unobserve(storageKey));
+      this.handles[arcid] = null;
+    }
+  }
+  async _addArc(storage, arcmeta) {
+    const {deleted, key} = arcmeta;
+    if (!deleted) {
+      const store = await SyntheticStores.getStore(storage, key);
+      if (store) {
+        await this.observeStore(store, key, info => this.onArcStoreChanged(key, info));
+      }
+    }
+  }
+  async addArc(key) {
+    //if (!deleted) {
+      const store = await SyntheticStores.getStore(this.storage, key);
+      if (store) {
+        await this.observeStore(store, key, info => this.onArcStoreChanged(key, info));
+      } else {
+        warn$3(`failed to get SyntheticStore for arc at [${this.storage}, ${key}]\nhttps://github.com/PolymerLabs/arcs/issues/2304`);
+      }
+    //}
+  }
+  unobserve(key) {
+    const observer = this.observers[key];
+    if (observer) {
+      this.observers[key] = null;
+      //log(`UNobserving [${key}]`);
+      observer.store.off('change', observer.cb);
+    }
+  }
+  async observeStore(store, key, cb) {
+   if (!store) {
+      console.warn(`observeStore: store is null for [${key}]`);
+    } else {
+      if (!this.observers[key]) {
+        log$4(`observing [${key}]`);
+        // TODO(sjmiles): create synthetic store `change` records from the initial state
+        // SyntheticCollection has `toList` but is `!type.isCollection`,
+        if (store.toList) {
+          const data = await store.toList();
+          if (data && data.length) {
+            const add = data.map(value => ({value}));
+            cb({add});
+          } else log$4('...store is empty collection');
+        } else if (store.type.isEntity) {
+          const data = await store.get();
+          if (data) {
+            cb({data});
+          }
+        }
+        this.observers[key] = {key, store, cb: store.on('change', cb, this)};
+      }
+    }
+  }
+   onArcStoreChanged(arcid, info) {
+    log$4('Synthetic-store change event (onArcStoreChanged):', info);
+    // TODO(sjmiles): synthesize add/remove records from data record
+    //   this._patchArcDataInfo(arcid, info);
+    // process add/remove stream
+    if (info.add) {
+      info.add.forEach(async add => {
+        let handle = add.value;
+        if (!handle) {
+          error$3('`add` record has no `value`, applying workaround', add);
+          handle = add;
+        }
+        if (handle) { //} && handle.tags.length) {
+          //handle.tags.length && log('observing handle', handle.tags);
+          //log('fetching handle store', handle);
+          const store = await SyntheticStores.getHandleStore(handle);
+          await this.observeStore(store, handle.storageKey, info => this.updateHandle(arcid, handle, info));
+        }
+      });
+    }
+    if (info.remove) {
+      info.remove.forEach(async remove => {
+        const handle = remove.value;
+        if (handle) {
+          //log('UNobserving handle', handle);
+          this.unobserve(handle.storageKey);
+        }
+      });
+    }
+  }
+  async updateHandle(arcid, handle, info) {
+    const {context, userid, isProfile} = this;
+    const tags = handle.tags ? handle.tags.join('-') : '';
+    if (tags) {
+      log$4('updateHandle', tags/*, info*/);
+      const type = handle.type.isCollection ? handle.type : handle.type.collectionOf();
+      const id = SyntheticStores.snarfId(handle.storageKey);
+      //
+      const shareid = `${tags}|${id}|from|${userid}|${arcid}`;
+      const shortid = `${(isProfile ? `PROFILE` : `FRIEND`)}_${tags}`;
+      const storeName = shortid;
+      const storeId = isProfile ? shortid : shareid;
+      log$4('share id:', storeId);
+      const store = await this.getShareStore(context, type, storeName, storeId, ['shared']); //handle.tags);
+      //
+      const boxStoreId = `BOXED_${tags}`;
+      const boxDataId = `${userid}|${arcid}`;
+      //const boxId = `${tags}|${boxDataId}`;
+      log$4('box ids:', boxStoreId, boxDataId/*, boxId*/);
+      const boxStore = await this.getShareStore(context, type, boxStoreId, boxStoreId, ['shared']); //[boxStoreId]);
+      //
+      // TODO(sjmiles): no mutation
+      if (handle.type.isEntity) {
+        if (info.data) {
+          // TODO(sjmiles): in the absence of data mutation, when an entity changes
+          // it gets an entirely new id, so we cannot use ids to track entities
+          // in boxed stores. However as this entity is a Highlander for this
+          // user and arc (by virtue of not being in a Collection) we can synthesize
+          // a stable id.
+          info.data.id = boxDataId;
+          this.unshareEntities(userid, store, boxStore, info.data);
+          this.shareEntities(userid, store, boxStore, info.data);
+        }
+      } else if (info.add || info.remove) {
+        info.remove && info.remove.forEach(remove => this.unshareEntities(userid, store, boxStore, [remove.value]));
+        info.add && info.add.forEach(add => this.shareEntities(userid, store, boxStore, [add.value]));
+      } else if (info.data) {
+        this.shareEntities(userid, store, boxStore, info.data);
+      }
+    }
+  }
+  async getShareStore(context, type, name, id, tags) {
+    // TODO(sjmiles): cache and return promises in case of re-entrancy
+    let promise = this.pendingStores[id];
+    if (!promise) {
+      promise = new Promise(async (resolve) => {
+        const store = await context.findStoreById(id);
+        if (store) {
+          resolve(store);
+        } else {
+          const store = await context.createStore(type, name, id, tags);
+          resolve(store);
+        }
+      });
+      this.pendingStores[id] = promise;
+    }
+    return promise;
+  }
+  async shareEntities(userid, shareStore, boxStore, data) {
+    if (data) {
+      this.storeEntitiesWithUid(shareStore, data, userid);
+      boxStore.idMap = this.storeEntitiesWithUid(boxStore, data, userid);
+    }
+  }
+  async unshareEntities(userid, shareStore, boxStore, data) {
+    if (data) {
+      this.removeEntitiesWithUid(shareStore, data, userid);
+      this.removeEntitiesWithUid(boxStore, data, userid);
+    }
+  }
+  storeEntitiesWithUid(store, data, uid) {
+    const ids = [];
+    const storeDecoratedEntity = ({id, rawData}, uid) => {
+      const decoratedId = `${id}:uid:${uid}`;
+      ids.push({id: decoratedId, rawData});
+      //console.log('pushing data to store');
+      if (store.type.isCollection) {
+        // FIXME: store.generateID may not be safe (session scoped)?
+        store.store({id: decoratedId, rawData}, [store.generateID()]);
+      } else {
+        store.set({id: decoratedId, rawData});
+      }
+    };
+    if (data && data.id) {
+      storeDecoratedEntity(data, uid);
+    } else {
+      Object.values(data).forEach(entity => entity && storeDecoratedEntity(entity, uid));
+    }
+    return ids;
+  }
+  removeEntitiesWithUid(store, data, uid) {
+    const removeDecoratedEntity = ({id, rawData}, uid) => {
+      const decoratedId = `${id}:uid:${uid}`;
+      if (store.type.isCollection) {
+        store.remove(decoratedId);
+      }
+    };
+    if (store.type.isCollection) {
+      if (Array.isArray(data)) {
+        data.forEach(entity => entity && removeDecoratedEntity(entity, uid));
+      } else if (data && data.id) {
+        removeDecoratedEntity(data, uid);
+      }
+    } else {
+      store.clear();
+    }
+  }
+  async removeEntities(context) {
+    this.removeUserEntities(context, 'all', true);
+  }
+  async removeUserEntities(context, userid, isProfile) {
+    log$4(`removing entities for [${userid}]`);
+    const jobs = [];
+    for (let i=0, store; (store=context.stores[i]); i++) {
+      jobs.push(this.removeUserStoreEntities(userid, store, isProfile));
+    }
+    await Promise.all(jobs);
+  }
+  async removeUserStoreEntities(userid, store, isProfile) {
+   if (!store) {
+      console.warn(`removeUserStoreEntities: store is null for [${userid}]`);
+    } else {
+      log$4(`scanning [${userid}] [${store.id}] (${store.toList ? 'collection' : 'variable'})`);
+      //const tags = context.findStoreTags(store);
+      if (store.toList) {
+        const entities = await store.toList();
+        entities.forEach(entity => {
+          const uid = entity.id.split('uid:').pop().split('|').shift();
+          if (isProfile || uid === userid) {
+            log$4(`  REMOVE `, entity.id);
+            // TODO(sjmiles): _removeUserStoreEntities is strangely re-entering
+            //  (1) `remove` fires synchronous change events
+            //  (2) looks like there are double `remove` events in the queue. Bug?
+            // In general, to avoid interleaving we'll probably need to
+            // use a stack to process changes async to receiving them.
+            // Parallel processing works as of now ... feature?
+            store.remove(entity.id);
+          }
+        });
+      }
+      else {
+        const uid = store.id.split('|').slice(-2, -1).pop();
+        if (isProfile || uid === userid) {
+          log$4(`  CLEAR store`);
+          store.clear();
+        }
+      }
+    }
+  }
+};
+
+/*
+@license
+Copyright (c) 2018 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+*/
+
+const log$5 = logFactory('UserContext', '#4f0433');
+const warn$4 = logFactory('UserContext', '#4f0433', 'warn');
+
+class UserContext {
+  constructor() {
+  }
+  async init(storage, userid, context) {
+    await this.disposeUserContext(this.userContext);
+    const isProfile = true;
+    this.userContext = new SingleUserContext(storage, context, userid, null, isProfile);
+  }
+  async disposeUserContext(userContext) {
+    if (userContext) {
+      try {
+        await userContext.dispose();
+      } catch (x) {
+        //
+      }
+    }
+  }
+  onArc({add, remove}) {
+    if (add) {
+      this.userContext.addArc(add.id);
+    }
+    if (remove) {
+      this.userContext.removeArc(remove.id);
+    }
+  }
+  // _getInitialState() {
+  //   return {
+  //     // ms to wait until we think there is probably some context
+  //     contextWait: 3000,
+  //     // maps userid to SingleUserContext for friends
+  //     friends: {},
+  //     // TODO(sjmiles): workaround for missing data in `remove` records
+  //     // maps entityids to userids for friends
+  //     friendEntityIds: {},
+  //     // snapshot of BOXED_avatar for use by shell
+  //     avatars: {},
+  //   };
+  // }
+  // update(props, state) {
+  //   if (!state.env && props.env) {
+  //     state.env = props.env;
+  //     SyntheticStores.init(props.env);
+  //   }
+  //   if (props.context && state.context !== props.context) {
+  //     state.context = props.context;
+  //     this.updateFriends(props, state);
+  //   }
+  //   if (props.storage && props.context && props.userid !== state.userid) {
+  //     state.userid = props.userid;
+  //     this.awaitState('arcsStore', () => this.updateArcsStore(props, state));
+  //   }
+  // }
+  // async updateArcsStore(props, state) {
+  //   const {storage, userid} = props;
+  //   const arcsStore = await this.fetchArcsStore(storage, userid);
+  //   if (arcsStore) {
+  //     // TODO(sjmiles): plop arcsStore into state early for updateUserContext, usage is weird
+  //     state.arcsStore = arcsStore;
+  //     // TODO(sjmiles): props and state are suspect after await
+  //     await this.updateUserContext(props, state);
+  //   } else {
+  //     // retry after a bit
+  //     setTimeout(() => this.state = {userid: null}, state.contextWait);
+  //   }
+  //   // signal when user-decorated context is `ready`
+  //   // TODO(sjmiles): ideally we have a better signal than a timeout
+  //   setTimeout(() => this.fire('context', props.context), state.contextWait);
+  //   return arcsStore;
+  // }
+  // async fetchArcsStore(storage, userid) {
+  //   const store = await SyntheticStores.getArcsStore(storage, `${userid}${Const.launcherSuffix}`);
+  //   if (store) {
+  //     log(`marshalled arcsStore for [${userid}]`); //[${storage}]`, store);
+  //     return store;
+  //   }
+  //   warn(`failed to marshal arcsStore for [${userid}][${storage}]`);
+  // }
+  // async updateSystemUser({userid, context}) {
+  //   const store = await context.findStoreById('SYSTEM_user');
+  //   if (store) {
+  //     const user = {
+  //       id: store.generateID(),
+  //       rawData: {
+  //         id: userid,
+  //       }
+  //     };
+  //     store.set(user);
+  //     log('installed SYSTEM_user');
+  //   }
+  // }
+  // async updateUserContext({storage, userid, context}, {userContext, arcsStore}) {
+  //   await this.disposeUserContext(userContext);
+  //   // do not operate on stale userid
+  //   if (!this.state.userContext && userid === this.state.userid) {
+  //     const isProfile = true;
+  //     this.state = {
+  //       userContext: new SingleUserContext(storage, context, userid, arcsStore, isProfile)
+  //     };
+  //   }
+  // }
+  // async disposeUserContext(userContext) {
+  //   if (userContext) {
+  //     this.state = {userContext: null};
+  //     try {
+  //       await userContext.dispose();
+  //     } catch (x) {
+  //       //
+  //     }
+  //   }
+  // }
+  // async updateFriends({storage, userid, context}, state) {
+  //   if (state.friendsStore) {
+  //     log('discarding old PROFILE_friends');
+  //     state.friendsStore.off('change', state.friendsStoreCb);
+  //     state.friendsStore = null;
+  //   }
+  //   const friendsStore = await context.findStoreById('PROFILE_friends');
+  //   if (friendsStore) {
+  //     log('found PROFILE_friends');
+  //     const friendsStoreCb = info => this.onFriendsChange(storage, context, info);
+  //     // get current data
+  //     const friends = await friendsStore.toList();
+  //     // listen for changes
+  //     friendsStore.on('change', friendsStoreCb, this);
+  //     // process friends already in store
+  //     this.onFriendsChange(storage, context, {add: friends.map(f => ({value: f}))});
+  //     this.state = {friendsStore, friendsStoreCb};
+  //   } else {
+  //     warn('PROFILE_friends missing');
+  //   }
+  // }
+  // onFriendsChange(storage, context, info) {
+  //   const {friends, friendEntityIds} = this._state;
+  //   if (info.add) {
+  //     info.add.forEach(({value}) => {
+  //       const entityId = value.id;
+  //       const friendId = value.rawData.id;
+  //       // TODO(sjmiles): friendEntityIds is a hack to workaround missing rawData in removal records
+  //       friendEntityIds[entityId] = friendId;
+  //       this.addFriend(storage, context, friends, friendId);
+  //     });
+  //   }
+  //   if (info.remove) {
+  //     info.remove.forEach(remove => this.removeFriend(friends, friendEntityIds[remove.value.id]));
+  //   }
+  // }
+  // async addFriend(storage, context, friends, friendId, attempts) {
+  //   log(`trying to addFriend [${friendId}]`);
+  //   if (!friends[friendId]) {
+  //     friends[friendId] = true;
+  //     const arcsStore = await this.fetchArcsStore(storage, friendId);
+  //     if (arcsStore) {
+  //       friends[friendId] = new SingleUserContext(storage, context, friendId, arcsStore, false);
+  //     } else {
+  //       friends[friendId] = null;
+  //       // retry a bit
+  //       attempts = (attempts || 0) + 1;
+  //       if (attempts < 11) {
+  //         const timeout = 1000*Math.pow(2.9076, attempts);
+  //         console.warn(`retry [${attempts}/10] to addFriend [${friendId}] in ${(timeout/1000/60).toFixed(2)}m`);
+  //         setTimeout(() => this.addFriend(storage, context, friends, friendId, attempts), timeout);
+  //       }
+  //     }
+  //   }
+  // }
+  // removeFriend(friends, friendId) {
+  //   log('removeFriend', friendId);
+  //   const friend = friends[friendId];
+  //   if (friend) {
+  //     friend.dispose && friend.dispose();
+  //     friends[friendId] = null;
+  //   }
+  // }
+  //async _boxedAvatarChanged(store) {
+  //   const avatars = await store.toList();
+  //   this._fire('avatars', avatars);
+  //   avatars.get = id => {
+  //     const avatar = avatars.find(avatar => {
+  //       const uid = avatar.id.split(':uid:').pop();
+  //       return uid === id;
+  //     });
+  //     return avatar && avatar.rawData;
+  //   };
+  // }
 }
 
 /*

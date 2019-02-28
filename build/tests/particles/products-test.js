@@ -8,7 +8,7 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { assert } from '../../platform/chai-web.js';
-import { PlanningTestHelper } from '../../planning/testing/planning-test-helper.js';
+import { PlanningTestHelper } from '../../planning/testing/arcs-planning-testing.js';
 describe('products test', () => {
     const manifestFilename = './src/tests/particles/artifacts/products-test.recipes';
     const verifyFilteredBook = async (handle) => {

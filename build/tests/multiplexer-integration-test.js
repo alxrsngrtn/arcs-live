@@ -10,7 +10,7 @@
 import { assert } from '../platform/chai-web.js';
 import { HostedSlotContext } from '../runtime/slot-context.js';
 import { SlotDomConsumer } from '../runtime/slot-dom-consumer.js';
-import { PlanningTestHelper } from '../planning/testing/planning-test-helper.js';
+import { PlanningTestHelper } from '../planning/testing/arcs-planning-testing.js';
 describe('Multiplexer', () => {
     it('renders polymorphic multiplexed slots', async () => {
         const helper = await PlanningTestHelper.create({
