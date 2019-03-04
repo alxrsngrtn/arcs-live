@@ -1,29 +1,7 @@
-commit adcf87a3cbf331f7b808f8562449f7bd08a48f01
-Author: Scott J. Miles <sjmiles@google.com>
-Date:   Thu Feb 28 13:42:17 2019 -0800
+commit f405d16865afd5a9421eb3994372e4d00cefc262
+Author: Joshua Pratt <jp10010101010000@gmail.com>
+Date:   Mon Mar 4 16:00:35 2019 +1100
 
-    Plumb PouchDB persistence into pipes-shell (#2719)
+    Remove primitive type accessor and use getContainedType in its place (#2725)
     
-    * punt trivial atob/bota npm modules
-    
-    * make pipes-shell deployable on nodejs
-    
-    * support both nodejs and web targets for pipes-shell
-    
-    * only expose arc on window on web
-    
-    * wip
-    
-    * wip
-    
-    * dotting-eyes
-    
-    * revert changes to trace.js
-    
-    * fix merge conflict in manifest.ts
-    
-    * fix merge conflict in manifest.ts
-    
-    * remove `debugger` statement
-    
-    * incorporate reviewer's notes
+    Removes deprecated Type.primitiveType()

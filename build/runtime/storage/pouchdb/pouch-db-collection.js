@@ -30,7 +30,7 @@ export class PouchDbCollection extends PouchDbStorageProvider {
     }
     /** @inheritDoc */
     backingType() {
-        return this.type.primitiveType();
+        return this.type.getContainedType();
     }
     // TODO(lindner): write tests
     clone() {
@@ -148,7 +148,7 @@ export class PouchDbCollection extends PouchDbStorageProvider {
         const id = value.id;
         const item = { value, keys, effective: false };
         if (this.referenceMode) {
-            const referredType = this.type.primitiveType();
+            const referredType = this.type.getContainedType();
             const storageKey = this.storageEngine.baseStorageKey(referredType, this.storageKey);
             // Update the referred data
             await this.getModelAndUpdate(crdtmodel => {

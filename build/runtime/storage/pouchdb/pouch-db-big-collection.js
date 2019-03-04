@@ -6,7 +6,7 @@ export class PouchDbBigCollection extends PouchDbStorageProvider {
         super(type, storageEngine, name, id, key);
     }
     backingType() {
-        return this.type.primitiveType();
+        return this.type.getContainedType();
     }
     async get(id) {
         throw new Error('NotImplemented');

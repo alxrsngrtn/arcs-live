@@ -1,6 +1,7 @@
 /// BareSpecifier=@vaadin/vaadin-material-styles/typography
 import './version.js';
 import '../../@polymer/polymer/lib/elements/custom-style.js';
+import '../../@polymer/polymer/lib/elements/dom-module.js';
 import { html } from '../../@polymer/polymer/lib/utils/html-tag.js';
 
 const $_documentContainer = html`<custom-style>

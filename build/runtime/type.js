@@ -98,9 +98,6 @@ export class Type {
     get hasUnresolvedVariable() {
         return this._applyExistenceTypeTest(type => type instanceof TypeVariable && !type.variable.isResolved());
     }
-    primitiveType() {
-        return null;
-    }
     getContainedType() {
         return null;
     }
@@ -323,16 +320,12 @@ export class CollectionType extends Type {
         return true;
     }
     mergeTypeVariablesByName(variableMap) {
-        const primitiveType = this.collectionType;
-        const result = primitiveType.mergeTypeVariablesByName(variableMap);
-        return (result === primitiveType) ? this : result.collectionOf();
+        const collectionType = this.collectionType;
+        const result = collectionType.mergeTypeVariablesByName(variableMap);
+        return (result === collectionType) ? this : result.collectionOf();
     }
     _applyExistenceTypeTest(test) {
         return this.collectionType._applyExistenceTypeTest(test);
-    }
-    // TODO: remove this in favor of a renamed collectionType
-    primitiveType() {
-        return this.collectionType;
     }
     getContainedType() {
         return this.collectionType;
@@ -341,9 +334,9 @@ export class CollectionType extends Type {
         return true;
     }
     resolvedType() {
-        const primitiveType = this.collectionType;
-        const resolvedPrimitiveType = primitiveType.resolvedType();
-        return (primitiveType !== resolvedPrimitiveType) ? resolvedPrimitiveType.collectionOf() : this;
+        const collectionType = this.collectionType;
+        const resolvedCollectionType = collectionType.resolvedType();
+        return (collectionType !== resolvedCollectionType) ? resolvedCollectionType.collectionOf() : this;
     }
     _canEnsureResolved() {
         return this.collectionType.canEnsureResolved();
@@ -387,9 +380,9 @@ export class BigCollectionType extends Type {
         return true;
     }
     mergeTypeVariablesByName(variableMap) {
-        const primitiveType = this.bigCollectionType;
-        const result = primitiveType.mergeTypeVariablesByName(variableMap);
-        return (result === primitiveType) ? this : result.bigCollectionOf();
+        const collectionType = this.bigCollectionType;
+        const result = collectionType.mergeTypeVariablesByName(variableMap);
+        return (result === collectionType) ? this : result.bigCollectionOf();
     }
     _applyExistenceTypeTest(test) {
         return this.bigCollectionType._applyExistenceTypeTest(test);
@@ -401,9 +394,9 @@ export class BigCollectionType extends Type {
         return true;
     }
     resolvedType() {
-        const primitiveType = this.bigCollectionType;
-        const resolvedPrimitiveType = primitiveType.resolvedType();
-        return (primitiveType !== resolvedPrimitiveType) ? resolvedPrimitiveType.bigCollectionOf() : this;
+        const collectionType = this.bigCollectionType;
+        const resolvedCollectionType = collectionType.resolvedType();
+        return (collectionType !== resolvedCollectionType) ? resolvedCollectionType.bigCollectionOf() : this;
     }
     _canEnsureResolved() {
         return this.bigCollectionType.canEnsureResolved();
@@ -575,9 +568,9 @@ export class ReferenceType extends Type {
         return true;
     }
     resolvedType() {
-        const primitiveType = this.referredType;
-        const resolvedPrimitiveType = primitiveType.resolvedType();
-        return (primitiveType !== resolvedPrimitiveType) ? new ReferenceType(resolvedPrimitiveType) : this;
+        const referredType = this.referredType;
+        const resolvedReferredType = referredType.resolvedType();
+        return (referredType !== resolvedReferredType) ? new ReferenceType(resolvedReferredType) : this;
     }
     _canEnsureResolved() {
         return this.referredType.canEnsureResolved();

@@ -173,7 +173,7 @@ class VolatileCollection extends VolatileStorageProvider {
         assert(this.version !== null);
     }
     backingType() {
-        return this.type.primitiveType();
+        return this.type.getContainedType();
     }
     clone() {
         const handle = new VolatileCollection(this.type, this.storageEngine, this.name, this.id, null);
@@ -255,7 +255,7 @@ class VolatileCollection extends VolatileStorageProvider {
         const trace = Tracing.start({ cat: 'handle', name: 'VolatileCollection::store', args: { name: this.name } });
         const item = { value, keys, effective: undefined };
         if (this.referenceMode) {
-            const referredType = this.type.primitiveType();
+            const referredType = this.type.getContainedType();
             const storageKey = this.backingStore ? this.backingStore.storageKey : this.storageEngine.baseStorageKey(referredType);
             // It's important to store locally first, as the upstream consumers
             // are set up to assume all writes are processed (at least locally) synchronously.
@@ -445,7 +445,7 @@ class VolatileBigCollection extends VolatileStorageProvider {
         assert(false, 'referenceMode is not supported for BigCollection');
     }
     backingType() {
-        return this.type.primitiveType();
+        return this.type.getContainedType();
     }
     async get(id) {
         const data = this.items.get(id);

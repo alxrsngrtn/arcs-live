@@ -24,7 +24,6 @@ export declare abstract class Type {
     _applyExistenceTypeTest(test: any): any;
     readonly hasVariable: any;
     readonly hasUnresolvedVariable: any;
-    primitiveType(): any;
     getContainedType(): any;
     isTypeContainer(): boolean;
     collectionOf(): CollectionType<this>;
@@ -105,7 +104,6 @@ export declare class CollectionType<T extends Type> extends Type {
     readonly isCollection: boolean;
     mergeTypeVariablesByName(variableMap: Map<string, Type>): CollectionType<Type>;
     _applyExistenceTypeTest(test: (type: Type) => boolean): boolean;
-    primitiveType(): T;
     getContainedType(): T;
     isTypeContainer(): boolean;
     resolvedType(): CollectionType<Type>;

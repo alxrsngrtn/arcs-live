@@ -1607,9 +1607,6 @@ class Type {
     get hasUnresolvedVariable() {
         return this._applyExistenceTypeTest(type => type instanceof TypeVariable && !type.variable.isResolved());
     }
-    primitiveType() {
-        return null;
-    }
     getContainedType() {
         return null;
     }
@@ -1832,16 +1829,12 @@ class CollectionType extends Type {
         return true;
     }
     mergeTypeVariablesByName(variableMap) {
-        const primitiveType = this.collectionType;
-        const result = primitiveType.mergeTypeVariablesByName(variableMap);
-        return (result === primitiveType) ? this : result.collectionOf();
+        const collectionType = this.collectionType;
+        const result = collectionType.mergeTypeVariablesByName(variableMap);
+        return (result === collectionType) ? this : result.collectionOf();
     }
     _applyExistenceTypeTest(test) {
         return this.collectionType._applyExistenceTypeTest(test);
-    }
-    // TODO: remove this in favor of a renamed collectionType
-    primitiveType() {
-        return this.collectionType;
     }
     getContainedType() {
         return this.collectionType;
@@ -1850,9 +1843,9 @@ class CollectionType extends Type {
         return true;
     }
     resolvedType() {
-        const primitiveType = this.collectionType;
-        const resolvedPrimitiveType = primitiveType.resolvedType();
-        return (primitiveType !== resolvedPrimitiveType) ? resolvedPrimitiveType.collectionOf() : this;
+        const collectionType = this.collectionType;
+        const resolvedCollectionType = collectionType.resolvedType();
+        return (collectionType !== resolvedCollectionType) ? resolvedCollectionType.collectionOf() : this;
     }
     _canEnsureResolved() {
         return this.collectionType.canEnsureResolved();
@@ -1896,9 +1889,9 @@ class BigCollectionType extends Type {
         return true;
     }
     mergeTypeVariablesByName(variableMap) {
-        const primitiveType = this.bigCollectionType;
-        const result = primitiveType.mergeTypeVariablesByName(variableMap);
-        return (result === primitiveType) ? this : result.bigCollectionOf();
+        const collectionType = this.bigCollectionType;
+        const result = collectionType.mergeTypeVariablesByName(variableMap);
+        return (result === collectionType) ? this : result.bigCollectionOf();
     }
     _applyExistenceTypeTest(test) {
         return this.bigCollectionType._applyExistenceTypeTest(test);
@@ -1910,9 +1903,9 @@ class BigCollectionType extends Type {
         return true;
     }
     resolvedType() {
-        const primitiveType = this.bigCollectionType;
-        const resolvedPrimitiveType = primitiveType.resolvedType();
-        return (primitiveType !== resolvedPrimitiveType) ? resolvedPrimitiveType.bigCollectionOf() : this;
+        const collectionType = this.bigCollectionType;
+        const resolvedCollectionType = collectionType.resolvedType();
+        return (collectionType !== resolvedCollectionType) ? resolvedCollectionType.bigCollectionOf() : this;
     }
     _canEnsureResolved() {
         return this.bigCollectionType.canEnsureResolved();
@@ -2084,9 +2077,9 @@ class ReferenceType extends Type {
         return true;
     }
     resolvedType() {
-        const primitiveType = this.referredType;
-        const resolvedPrimitiveType = primitiveType.resolvedType();
-        return (primitiveType !== resolvedPrimitiveType) ? new ReferenceType(resolvedPrimitiveType) : this;
+        const referredType = this.referredType;
+        const resolvedReferredType = referredType.resolvedType();
+        return (referredType !== resolvedReferredType) ? new ReferenceType(resolvedReferredType) : this;
     }
     _canEnsureResolved() {
         return this.referredType.canEnsureResolved();
@@ -14770,7 +14763,7 @@ class VolatileCollection extends VolatileStorageProvider {
         assert$1(this.version !== null);
     }
     backingType() {
-        return this.type.primitiveType();
+        return this.type.getContainedType();
     }
     clone() {
         const handle = new VolatileCollection(this.type, this.storageEngine, this.name, this.id, null);
@@ -14852,7 +14845,7 @@ class VolatileCollection extends VolatileStorageProvider {
         const trace = Tracing.start({ cat: 'handle', name: 'VolatileCollection::store', args: { name: this.name } });
         const item = { value, keys, effective: undefined };
         if (this.referenceMode) {
-            const referredType = this.type.primitiveType();
+            const referredType = this.type.getContainedType();
             const storageKey = this.backingStore ? this.backingStore.storageKey : this.storageEngine.baseStorageKey(referredType);
             // It's important to store locally first, as the upstream consumers
             // are set up to assume all writes are processed (at least locally) synchronously.
@@ -15042,7 +15035,7 @@ class VolatileBigCollection extends VolatileStorageProvider {
         assert$1(false, 'referenceMode is not supported for BigCollection');
     }
     backingType() {
-        return this.type.primitiveType();
+        return this.type.getContainedType();
     }
     async get(id) {
         const data = this.items.get(id);
@@ -18389,7 +18382,7 @@ class MultiplexerDomParticle extends TransformationDomParticle {
       }
 
       const itemHandlePromise =
-          arc.createHandle(type.primitiveType(), 'item' + index);
+          arc.createHandle(type.getContainedType(), 'item' + index);
       this.handleIds[item.id] = itemHandlePromise;
 
       const itemHandle = await itemHandlePromise;

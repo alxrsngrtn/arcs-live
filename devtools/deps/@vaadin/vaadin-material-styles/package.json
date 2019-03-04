@@ -1,8 +1,8 @@
 {
   "_from": "@vaadin/vaadin-material-styles@^1.1.0",
-  "_id": "@vaadin/vaadin-material-styles@1.2.1",
+  "_id": "@vaadin/vaadin-material-styles@1.2.2",
   "_inBundle": false,
-  "_integrity": "sha512-oGLQfwBRBhYnPGvsGE+Vi9VTRzotJYn9B+FvBwF5qJxKKhpPNDTWnjLhs3t9JTC/rYPXgiY7uCRLMb8Tsngqtw==",
+  "_integrity": "sha512-da4zBLC9e16AjTXh1wG3jdFFV+2/L57NeQez2xj/al689uvts8WpB7NErXhNMUU5m9X2os4XpyEBS+OX/8OUdQ==",
   "_location": "/@vaadin/vaadin-material-styles",
   "_phantomChildren": {},
   "_requested": {
@@ -19,10 +19,10 @@
   "_requiredBy": [
     "/@vaadin/vaadin-split-layout"
   ],
-  "_resolved": "https://registry.npmjs.org/@vaadin/vaadin-material-styles/-/vaadin-material-styles-1.2.1.tgz",
-  "_shasum": "fa19f1e80dcd2f4744f94475cd4827edcc4712b6",
+  "_resolved": "https://registry.npmjs.org/@vaadin/vaadin-material-styles/-/vaadin-material-styles-1.2.2.tgz",
+  "_shasum": "7a4d30cd09adf7b93d8201d83f806c9dc103c1a7",
   "_spec": "@vaadin/vaadin-material-styles@^1.1.0",
-  "_where": "/tmp/asset_stagesuFaP9/node_modules/@vaadin/vaadin-split-layout",
+  "_where": "/tmp/asset_stageWIIFJD/node_modules/@vaadin/vaadin-split-layout",
   "author": {
     "name": "Vaadin Ltd"
   },
@@ -66,7 +66,7 @@
     "mixins/*.js",
     "!wdio.conf.js"
   ],
-  "homepage": "https://vaadin.com/components",
+  "homepage": "https://vaadin.com/themes",
   "keywords": [
     "vaadin",
     "material",
@@ -89,5 +89,5 @@
     "supports-color": "3.1.2",
     "type-detect": "1.0.0"
   },
-  "version": "1.2.1"
+  "version": "1.2.2"
 }
