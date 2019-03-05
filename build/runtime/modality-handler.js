@@ -19,5 +19,6 @@ export class ModalityHandler {
         return new ModalityHandler(HeadlessSlotDomConsumer);
     }
 }
+ModalityHandler.headlessHandler = new ModalityHandler(HeadlessSlotDomConsumer);
 ModalityHandler.domHandler = new ModalityHandler(SlotDomConsumer, DescriptionDomFormatter);
 //# sourceMappingURL=modality-handler.js.map
