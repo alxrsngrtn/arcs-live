@@ -1,11 +1,5 @@
-commit d0a53d461d7b16065ef98131a218588ff58b3f8d
+commit 401a8859c0ad0f9d8d9cf0f8edbb5d3d675eb084
 Author: Scott J. Miles <sjmiles@google.com>
-Date:   Wed Mar 6 13:06:33 2019 -0800
+Date:   Wed Mar 6 14:28:48 2019 -0800
 
-    pipes-shell: glitch support (#2734)
-    
-    * abstract dispatch
-    
-    * fetch ArtistAutofill from Glitch instead of localhost
-    
-    * plumb ShellApi.flush() to loader
+    don't record falsey plannerStorage option (#2739)
