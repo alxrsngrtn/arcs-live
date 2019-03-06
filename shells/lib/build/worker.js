@@ -5022,12 +5022,15 @@ __webpack_require__.r(__webpack_exports__);
 
 const html = (strings, ...values) => (strings[0] + values.map((v, i) => v + strings[i + 1]).join('')).trim();
 
-const dumbCache = {};
+let dumbCache = {};
 
 class PlatformLoader extends _runtime_loader_js__WEBPACK_IMPORTED_MODULE_0__["Loader"] {
   constructor(urlMap) {
     super();
     this._urlMap = urlMap || [];
+  }
+  flushCaches() {
+    dumbCache = {};
   }
   _loadURL(url) {
     const resolved = this._resolve(url);

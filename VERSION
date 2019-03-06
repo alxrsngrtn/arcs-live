@@ -1,9 +1,11 @@
-commit c63f7a1e8fa1d34d9bc451b63883d144ae093516
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Tue Mar 5 23:04:14 2019 -0800
+commit d0a53d461d7b16065ef98131a218588ff58b3f8d
+Author: Scott J. Miles <sjmiles@google.com>
+Date:   Wed Mar 6 13:06:33 2019 -0800
 
-    add test for notifying on inner arc handle updates (#2738)
+    pipes-shell: glitch support (#2734)
     
-    * add test for notifying on inner arc handle updates
+    * abstract dispatch
     
-    * Address comment: inline particles implementation and manifest.
+    * fetch ArtistAutofill from Glitch instead of localhost
+    
+    * plumb ShellApi.flush() to loader
