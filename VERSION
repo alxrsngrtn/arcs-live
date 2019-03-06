@@ -1,51 +1,13 @@
-commit 29b0de031462e12665e8aa79ded5ca104a1e41ea
+commit 0fda6d84f33668e85e0b1ac37c5c44b02c746778
 Author: Scott J. Miles <sjmiles@google.com>
-Date:   Tue Mar 5 12:36:14 2019 -0800
+Date:   Tue Mar 5 17:05:44 2019 -0800
 
-    More PipesShell work (#2724)
+    update config and shell/README (#2730)
     
-    * reduce package footprint
+    * update config and shell/README
     
-    * factoring
+    * persist plannerStorage option
     
-    * remove dangling commas (OCD), switch to size-summary stats
+    * fix typos and md compat
     
-    * readme and ignore pack-stats.json
-    
-    * simplify pipe recipe marshalling
-    
-    * disable pipes-recipes in web-shell
-    
-    * dev tools fixups
-    
-    * update names, enhance parallelism
-    
-    * modality control
-    
-    * flag updates in README
-    
-    * attempt to repair devtools polluting worker.js with firebase code, et al
-    
-    * use stub version of devtools-channel inside worker
-    
-    * refactor pipe particles, add dummy slots so the devtools graph is connected
-    
-    * remove/disable deprecated pipes stuff in web-shell
-    
-    * enable debug-listeners
-    
-    * fix path
-    
-    * use a proper import to marshal a configured firebase for devtools-channel(-web)
-    
-    * punt deprecated pipes particles
-    
-    * fix body margin
-    
-    * deprecate more old pipes stuff
-    
-    * don't create a global in lib/firebase.js
-    
-    * disable tests for deprecated web-shell:pipes
-    
-    * delete a space to make app-veyor happy
+    * remove extra newline
