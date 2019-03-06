@@ -1,5 +1,9 @@
-commit 31072a9ba2553b25e1370db64c9a403826191470
-Author: Scott J. Miles <sjmiles@google.com>
-Date:   Tue Mar 5 22:21:39 2019 -0800
+commit c63f7a1e8fa1d34d9bc451b63883d144ae093516
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Tue Mar 5 23:04:14 2019 -0800
 
-    Update README.md (#2735)
+    add test for notifying on inner arc handle updates (#2738)
+    
+    * add test for notifying on inner arc handle updates
+    
+    * Address comment: inline particles implementation and manifest.
