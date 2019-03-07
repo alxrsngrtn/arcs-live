@@ -1,5 +1,9 @@
-commit 401a8859c0ad0f9d8d9cf0f8edbb5d3d675eb084
-Author: Scott J. Miles <sjmiles@google.com>
-Date:   Wed Mar 6 14:28:48 2019 -0800
+commit f825ecee5043962bf15cadf341d9df5dd0ebc4d3
+Author: Joshua Pratt <jp10010101010000@gmail.com>
+Date:   Thu Mar 7 15:28:37 2019 +1100
 
-    don't record falsey plannerStorage option (#2739)
+    Add tests and change instantiation checks for handle-connection optionality (#2737)
+    
+    * Add optionality tests
+    * Remove checking for resolved handles and connections during instantiation
+    * Rewrite isResolved for handle connections to include optionality

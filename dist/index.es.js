@@ -12271,17 +12271,24 @@ class HandleConnection {
     }
     isResolved(options) {
         assert(Object.isFrozen(this));
-        if (this.isOptional) {
-            return true;
-        }
         let parent;
         if (this.spec && this.spec.parentConnection) {
             parent = this.particle.connections[this.spec.parentConnection.name];
+            if (!parent || !parent.handle) {
+                if (options) {
+                    options.details = 'parent connection missing handle';
+                }
+                return false;
+            }
         }
-        // TODO: This should use this._type, or possibly not consider type at all.
-        if (!this.type) {
+        if (!this.handle) {
+            if (this.isOptional) {
+                // We're optional we don't need to resolve.
+                return true;
+            }
+            // We're not optional we do need to resolve.
             if (options) {
-                options.details = 'missing type';
+                options.details = 'missing handle';
             }
             return false;
         }
@@ -12291,22 +12298,12 @@ class HandleConnection {
             }
             return false;
         }
-        if (!this.handle) {
-            if (parent && parent.isOptional && !parent.handle) {
-                return true;
-            }
+        // TODO: This should use this._type, or possibly not consider type at all.
+        if (!this.type) {
             if (options) {
-                options.details = 'missing handle';
+                options.details = 'missing type';
             }
             return false;
-        }
-        else if (this.spec) {
-            if (this.spec.parentConnection && (!parent || !parent.handle)) {
-                if (options) {
-                    options.details = 'parent connection missing handle';
-                }
-                return false;
-            }
         }
         return true;
     }
@@ -21189,16 +21186,10 @@ ${this.activeRecipe.toString()}`;
         const handleMap = { spec: recipeParticle.spec, handles: new Map() };
         this.particleHandleMaps.set(recipeParticle.id, handleMap);
         for (const [name, connection] of Object.entries(recipeParticle.connections)) {
-            if (!connection.handle) {
-                assert(connection.isOptional);
-                continue;
-            }
             const handle = this.findStoreById(connection.handle.id);
             assert(handle, `can't find handle of id ${connection.handle.id}`);
             this._connectParticleToHandle(recipeParticle, name, handle);
         }
-        // At least all non-optional connections must be resolved
-        assert(handleMap.handles.size >= handleMap.spec.connections.filter(c => !c.isOptional).length, `Not all mandatory connections are resolved for {$particle}`);
         this.pec.instantiate(recipeParticle, handleMap.spec, handleMap.handles);
     }
     generateID(component = '') {
