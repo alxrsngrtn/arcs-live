@@ -103,7 +103,11 @@
 <span class="hljs-variable">$ </span>./tools/sigh</code></pre><p><code>npm install</code> is required on a fresh checkout. After that it only needs to be
 					re-run infrequently as new dependencies are included, and usually a build
 				failure will be the signal for that.</p>
-				<h3 id="windows-installation-notes">Windows Installation Notes</h3>
+				<h2 id="git-setup">Git Setup</h2>
+				<p>You may also find it helpful to have sigh lint and type check your work locally
+					before you commit it. To do this, you can setup git to run presubmit checks
+				using:</p>
+				<pre><code>$ git<span class="hljs-built_in"> config </span>core.hooksPath tools/hooks</code></pre><h3 id="windows-installation-notes">Windows Installation Notes</h3>
 				<ul>
 					<li><a href="https://git-scm.com/downloads">Git for Windows</a> is one of many Git options.</li>
 					<li>Consider using <a href="https://github.com/coreybutler/nvm-windows/">nvm-windows</a>

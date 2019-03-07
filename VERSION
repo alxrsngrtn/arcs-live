@@ -1,15 +1,10 @@
-commit fb11eda173dea377bae67e4d289b84dde87d67cc
-Author: Scott J. Miles <sjmiles@google.com>
-Date:   Thu Mar 7 12:14:50 2019 -0800
+commit 87e1e4b22f2efe9298cbb93bc2ba62e65dca666a
+Author: Joshua Pratt <jp10010101010000@gmail.com>
+Date:   Fri Mar 8 09:06:02 2019 +1100
 
-    pipes-shell: automatically match recipes to entity types for autofill (#2740)
+    Create a hooks directory to run sigh lint and sigh check (#2742)
     
-    * work towards automatic pipes recipes
-    
-    * emit warning if recipe cannot be normalized
-    
-    * autodetect autofill recipes instead of hardcoding
-    
-    * factor out devtools handshake
-    
-    * update README
+    * Add keyword spacing to our linting rules
+    * Set up a pre-commit script
+    * Update readme
+    * Ensure that sigh ignores the lint cache
