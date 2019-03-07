@@ -7,6 +7,7 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
+import { FlowAssertion } from './flow-assertion.js';
 /**
  * A FlowConfig is a set of assertions used to configure a FlowChecker,
  * along with any assertion-related metadata. The language for specifying
@@ -16,7 +17,7 @@
  */
 export class FlowConfig {
     constructor(input) {
-        this.assertions = input; // Just a dummy without parsing for now.
+        this.assertions = input.map(i => FlowAssertion.instantiate(i));
     }
 }
-//# sourceMappingURL=flowconfig.js.map
+//# sourceMappingURL=flow-config.js.map

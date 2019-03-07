@@ -72,7 +72,9 @@
 						<p>Object used to perform dataflow analysis on recipes. The constructor accepts
 							a FlowConfig object containing the set of assertions to be checked, then the
 							flowcheck method checks a recipe against that set, returning true if all the
-						assertions are true for the recipe and false if any one is false.</p>
+							assertions are true for the recipe and false if any one is false. In order
+							to provide a human-readable reason why the check failed, the return value is
+						FlowAssertResult rather than a simple boolean.</p>
 					</div>
 				</div>
 			</section>
@@ -97,7 +99,7 @@
 						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="flowchecker.html#assertions" class="tsd-kind-icon">assertions</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="flowchecker.html#config" class="tsd-kind-icon">config</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
@@ -121,7 +123,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/f825ece/src/dataflow/analysis/flowchecker.ts#L20">dataflow/analysis/flowchecker.ts:20</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/2a9e937/src/dataflow/analysis/flow-checker.ts#L25">dataflow/analysis/flow-checker.ts:25</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -138,12 +140,12 @@
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Properties</h2>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
-					<a name="assertions" class="tsd-anchor"></a>
-					<h3>assertions</h3>
-					<div class="tsd-signature tsd-kind-icon">assertions<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></div>
+					<a name="config" class="tsd-anchor"></a>
+					<h3>config</h3>
+					<div class="tsd-signature tsd-kind-icon">config<span class="tsd-signature-symbol">:</span> <a href="flowconfig.html" class="tsd-signature-type">FlowConfig</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/f825ece/src/dataflow/analysis/flowchecker.ts#L20">dataflow/analysis/flowchecker.ts:20</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/2a9e937/src/dataflow/analysis/flow-checker.ts#L25">dataflow/analysis/flow-checker.ts:25</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -154,13 +156,13 @@
 					<a name="flowcheck" class="tsd-anchor"></a>
 					<h3>flowcheck</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">flowcheck<span class="tsd-signature-symbol">(</span>target<span class="tsd-signature-symbol">: </span><a href="recipe.html" class="tsd-signature-type">Recipe</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
+						<li class="tsd-signature tsd-kind-icon">flowcheck<span class="tsd-signature-symbol">(</span>target<span class="tsd-signature-symbol">: </span><a href="recipe.html" class="tsd-signature-type">Recipe</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="flowassertresult.html" class="tsd-signature-type">FlowAssertResult</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/f825ece/src/dataflow/analysis/flowchecker.ts#L26">dataflow/analysis/flowchecker.ts:26</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/2a9e937/src/dataflow/analysis/flow-checker.ts#L31">dataflow/analysis/flow-checker.ts:31</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -169,7 +171,7 @@
 									<h5>target: <a href="recipe.html" class="tsd-signature-type">Recipe</a></h5>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
+							<h4 class="tsd-returns-title">Returns <a href="flowassertresult.html" class="tsd-signature-type">FlowAssertResult</a></h4>
 						</li>
 					</ul>
 				</section>
@@ -194,7 +196,7 @@
 								<a href="flowchecker.html#constructor" class="tsd-kind-icon">constructor</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
-								<a href="flowchecker.html#assertions" class="tsd-kind-icon">assertions</a>
+								<a href="flowchecker.html#config" class="tsd-kind-icon">config</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="flowchecker.html#flowcheck" class="tsd-kind-icon">flowcheck</a>

@@ -7,6 +7,7 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-import { FlowConfig } from './analysis/flowconfig.js';
-import { FlowChecker } from './analysis/flowchecker.js';
-export { FlowConfig, FlowChecker };
+import { FlowConfig } from './analysis/flow-config.js';
+import { FlowChecker } from './analysis/flow-checker.js';
+import { FlowAssertResult } from './analysis/flow-assertion.js';
+export { FlowConfig, FlowChecker, FlowAssertResult };

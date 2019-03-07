@@ -8,15 +8,18 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { Recipe } from '../../runtime/recipe/recipe.js';
-import { FlowConfig } from './flowconfig.js';
+import { FlowAssertResult } from './flow-assertion.js';
+import { FlowConfig } from './flow-config.js';
 /**
  * Object used to perform dataflow analysis on recipes. The constructor accepts
  * a FlowConfig object containing the set of assertions to be checked, then the
  * flowcheck method checks a recipe against that set, returning true if all the
- * assertions are true for the recipe and false if any one is false.
+ * assertions are true for the recipe and false if any one is false. In order
+ * to provide a human-readable reason why the check failed, the return value is
+ * FlowAssertResult rather than a simple boolean.
  */
 export declare class FlowChecker {
-    assertions: string[];
+    config: FlowConfig;
     constructor(flowconfig: FlowConfig);
-    flowcheck(target: Recipe): boolean;
+    flowcheck(target: Recipe): FlowAssertResult;
 }
