@@ -1,10 +1,15 @@
-commit 87e1e4b22f2efe9298cbb93bc2ba62e65dca666a
-Author: Joshua Pratt <jp10010101010000@gmail.com>
-Date:   Fri Mar 8 09:06:02 2019 +1100
+commit 3208bf1479c6c3fe5783dbad8fa5ff70c704b361
+Author: Scott J. Miles <sjmiles@google.com>
+Date:   Thu Mar 7 17:32:13 2019 -0800
 
-    Create a hooks directory to run sigh lint and sigh check (#2742)
+    Bring back Hint feature (system ui pops-up on new suggestions) (#2747)
     
-    * Add keyword spacing to our linting rules
-    * Set up a pre-commit script
-    * Update readme
-    * Ensure that sigh ignores the lint cache
+    * add identifying attributes to slots as slotid is destroyed by SlotComposer
+    
+    * (re)implement showhint, some cleanup and notes
+    
+    * note about reason for dead styles
+    
+    * fix legacy style
+    
+    * improve comment
