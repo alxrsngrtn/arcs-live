@@ -25759,7 +25759,7 @@ const IndexStrategies = [
     CreateHandleGroup
 ];
 class RecipeIndex {
-    constructor(arc, { reportGenerations = true } = {}) {
+    constructor(arc, { reportGenerations = false } = {}) {
         this._isReady = false;
         const trace = Tracing.start({ cat: 'indexing', name: 'RecipeIndex::constructor', overview: true });
         const arcStub = new Arc({

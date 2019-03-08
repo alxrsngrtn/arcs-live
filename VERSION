@@ -1,11 +1,5 @@
-commit 596cb2a0cf03f8918b2021cad0e6d0b5272e39bb
-Author: Scott J. Miles <sjmiles@google.com>
-Date:   Thu Mar 7 18:23:36 2019 -0800
+commit 97c085ead773eab811f7646ae0df4a424818d3ec
+Author: Piotr Swigon <piotr.swigon@gmail.com>
+Date:   Fri Mar 8 13:40:20 2019 +1100
 
-    Capture human-readable slotid as slotname before destroying the original (#2749)
-    
-    * capture human-readable slotid as slotname before destroying
-    
-    * update test
-    
-    * remove hack-form of this solution from Tiles.js
+    Don't show recipe index in Strategy Explorer by default (#2750)
