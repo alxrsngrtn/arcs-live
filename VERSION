@@ -1,15 +1,11 @@
-commit 3208bf1479c6c3fe5783dbad8fa5ff70c704b361
+commit 596cb2a0cf03f8918b2021cad0e6d0b5272e39bb
 Author: Scott J. Miles <sjmiles@google.com>
-Date:   Thu Mar 7 17:32:13 2019 -0800
+Date:   Thu Mar 7 18:23:36 2019 -0800
 
-    Bring back Hint feature (system ui pops-up on new suggestions) (#2747)
+    Capture human-readable slotid as slotname before destroying the original (#2749)
     
-    * add identifying attributes to slots as slotid is destroyed by SlotComposer
+    * capture human-readable slotid as slotname before destroying
     
-    * (re)implement showhint, some cleanup and notes
+    * update test
     
-    * note about reason for dead styles
-    
-    * fix legacy style
-    
-    * improve comment
+    * remove hack-form of this solution from Tiles.js

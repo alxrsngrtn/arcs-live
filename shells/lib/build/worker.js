@@ -5870,7 +5870,8 @@ class DomParticleBase extends _particle_js__WEBPACK_IMPORTED_MODULE_2__["Particl
         slot.providedSlots.forEach((slotId, slotName) => {
             // TODO: This is a simple string replacement right now,
             // ensuring that 'slotid' is an attribute on an HTML element would be an improvement.
-            template = template.replace(new RegExp(`slotid=\"${slotName}\"`, 'gi'), `slotid$="{{$${slotName}}}"`);
+            // TODO(sjmiles): clone original id as `slotname` for human readability
+            template = template.replace(new RegExp(`slotid=\"${slotName}\"`, 'gi'), `slotname="${slotName}" slotid$="{{$${slotName}}}"`);
         });
         return template;
     }
