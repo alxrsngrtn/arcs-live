@@ -1,5 +1,7 @@
-commit 97c085ead773eab811f7646ae0df4a424818d3ec
-Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Fri Mar 8 13:40:20 2019 +1100
+commit ffba32757f9fbcfebcb128487751c7e423092a6d
+Author: Joshua Pratt <jp10010101010000@gmail.com>
+Date:   Tue Mar 12 15:26:30 2019 +1100
 
-    Don't show recipe index in Strategy Explorer by default (#2750)
+    Add slot related helper interfaces (#2741)
+    
+    * Introduce types for Content and Rendering

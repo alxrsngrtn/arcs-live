@@ -9,6 +9,7 @@
  */
 import { Arc } from '../runtime/arc.js';
 import { SlotDomConsumer } from '../runtime/slot-dom-consumer.js';
+import { Content } from '../runtime/slot-consumer.js';
 import { Suggestion } from './plan/suggestion.js';
 export declare class SuggestDomConsumer extends SlotDomConsumer {
     _suggestion: Suggestion;
@@ -17,11 +18,7 @@ export declare class SuggestDomConsumer extends SlotDomConsumer {
     constructor(arc: Arc, containerKind: string, suggestion: Suggestion, eventHandler: any);
     readonly suggestion: Suggestion;
     readonly templatePrefix: string;
-    formatContent(content: any): {
-        template: string;
-        templateName: string;
-        model: any;
-    };
+    formatContent(content: Content): Content | undefined;
     onContainerUpdate(container: any, originalContainer: any): void;
     static _extractContent(suggestion: Suggestion): {};
     static render(arc: Arc, container: any, suggestion: Suggestion): SlotDomConsumer;

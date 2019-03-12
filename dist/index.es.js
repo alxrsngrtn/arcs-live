@@ -25118,8 +25118,8 @@ class SlotConsumer {
     }
     populateHandleDescriptions() {
         if (!this.consumeConn)
-            return null;
-        const descriptions = {};
+            return null; // TODO: remove null ability
+        const descriptions = new Map();
         Object.values(this.consumeConn.particle.connections).map(handleConn => {
             if (handleConn.handle) {
                 descriptions[`${handleConn.name}.description`] =
@@ -25237,7 +25237,7 @@ class SlotDomConsumer extends SlotConsumer {
                     formattedModel = this._modelForSingletonSlot(content.model, subId);
                 }
                 if (!formattedModel)
-                    return null;
+                    return undefined;
                 // Merge descriptions into model.
                 newContent.model = Object.assign({}, formattedModel, content.descriptions);
             }
@@ -25498,7 +25498,7 @@ class HeadlessSlotDomConsumer extends SlotDomConsumer {
         return container === contextContainer;
     }
     getInnerContainer(slotId) {
-        const model = this.renderings.map(([subId, { model }]) => model)[0];
+        const model = Array.from(this.renderings, ([_, { model }]) => model)[0];
         const providedContext = this.findProvidedContext(ctx => ctx.id === slotId);
         if (!providedContext) {
             console.warn(`Cannot find provided spec for ${slotId} in ${this.consumeConn.getQualifiedName()}`);
@@ -25658,7 +25658,7 @@ class HeadlessSuggestDomConsumer extends SuggestDomConsumer {
         return container === contextContainer;
     }
     getInnerContainer(slotId) {
-        const model = this.renderings.map(([subId, { model }]) => model)[0];
+        const model = Array.from(this.renderings, ([_, { model }]) => model)[0];
         const providedContext = this.findProvidedContext(ctx => ctx.id === slotId);
         if (!providedContext) {
             console.warn(`Cannot find provided spec for ${slotId} in ${this.consumeConn.getQualifiedName()}`);

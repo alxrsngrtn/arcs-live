@@ -9,7 +9,7 @@
  */
 import { ProvidedSlotSpec } from './particle-spec.js';
 import { Handle } from './recipe/handle.js';
-import { SlotConsumer } from './slot-consumer.js';
+import { SlotConsumer, Content } from './slot-consumer.js';
 /**
  * Represents a single slot in the rendering system.
  */
@@ -20,7 +20,7 @@ export declare abstract class SlotContext {
     constructor(id: string, sourceSlotConsumer?: SlotConsumer);
     addSlotConsumer(slotConsumer: SlotConsumer): void;
     clearSlotConsumers(): void;
-    abstract onRenderSlot(consumer: SlotConsumer, content: any, handler: any): any;
+    abstract onRenderSlot(consumer: SlotConsumer, content: Content, handler: any): any;
     abstract readonly containerAvailable: boolean;
 }
 /**
@@ -40,7 +40,7 @@ export declare class HostedSlotContext extends SlotContext {
     readonly storeId: string;
     private _containerAvailable;
     constructor(id: string, transformationSlotConsumer: SlotConsumer, storeId: string);
-    onRenderSlot(consumer: SlotConsumer, content: any, handler: any): void;
+    onRenderSlot(consumer: SlotConsumer, content: Content, handler: any): void;
     addSlotConsumer(consumer: SlotConsumer): void;
     containerAvailable: boolean;
 }
@@ -57,7 +57,7 @@ export declare class ProvidedSlotContext extends SlotContext {
     spec: ProvidedSlotSpec;
     handles: Handle[];
     constructor(id: string, name: string, tags: string[], container: HTMLElement, spec: ProvidedSlotSpec, sourceSlotConsumer?: SlotConsumer);
-    onRenderSlot(consumer: SlotConsumer, content: any, handler: any): void;
+    onRenderSlot(consumer: SlotConsumer, content: Content, handler: any): void;
     container: HTMLElement;
     readonly containerAvailable: boolean;
     static createContextForContainer(id: any, name: any, container: any, tags: any): ProvidedSlotContext;

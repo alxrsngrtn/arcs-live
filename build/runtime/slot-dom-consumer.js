@@ -72,7 +72,7 @@ export class SlotDomConsumer extends SlotConsumer {
                     formattedModel = this._modelForSingletonSlot(content.model, subId);
                 }
                 if (!formattedModel)
-                    return null;
+                    return undefined;
                 // Merge descriptions into model.
                 newContent.model = Object.assign({}, formattedModel, content.descriptions);
             }

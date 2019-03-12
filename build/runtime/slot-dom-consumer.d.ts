@@ -7,9 +7,13 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
+import { Template } from '../../modalities/dom/components/xen/xen-template.js';
 import { Arc } from './arc.js';
 import { SlotConnection } from './recipe/slot-connection.js';
-import { SlotConsumer } from './slot-consumer.js';
+import { SlotConsumer, Content, Rendering } from './slot-consumer.js';
+export interface DomRendering extends Rendering {
+    liveDom?: Template;
+}
 export declare class SlotDomConsumer extends SlotConsumer {
     private readonly _observer;
     constructor(arc: Arc, consumeConn?: SlotConnection, containerKind?: string);
@@ -18,12 +22,12 @@ export declare class SlotDomConsumer extends SlotConsumer {
     isSameContainer(container: any, contextContainer: any): boolean;
     createNewContainer(contextContainer: any, subId: any): ShadowRoot;
     deleteContainer(container: any): void;
-    formatContent(content: any, subId: any): object;
+    formatContent(content: Content, subId: string): Content | undefined;
     _modelForSingletonSlot(model: any, subId: any): any;
     _modelForSetSlotConsumedAsSetSlot(model: any, subId: any): any;
     _modelForSetSlotConsumedAsSingletonSlot(model: any, subId: any): any;
-    setContainerContent(rendering: any, content: any, subId: any): void;
-    clearContainer(rendering: any): void;
+    setContainerContent(rendering: DomRendering, content: Content, subId: any): void;
+    clearContainer(rendering: DomRendering): void;
     dispose(): void;
     static clear(container: any): void;
     static clearCache(): void;
@@ -32,15 +36,15 @@ export declare class SlotDomConsumer extends SlotConsumer {
         innerHTML: any;
     };
     readonly templatePrefix: string;
-    _setTemplate(rendering: any, templatePrefix: any, templateName: any, template: any): void;
-    _onUpdate(rendering: any): void;
+    _setTemplate(rendering: DomRendering, templatePrefix: any, templateName: any, template: any): void;
+    _onUpdate(rendering: DomRendering): void;
     _observe(container: any): void;
-    _stampTemplate(rendering: any, template: any): void;
-    _updateModel(rendering: any): void;
+    _stampTemplate(rendering: DomRendering, template: any): void;
+    _updateModel(rendering: DomRendering): void;
     initInnerContainers(container: any): void;
     getNodeValue(node: any, name: any): any;
     isDirectInnerSlot(container: any, innerContainer: any): boolean;
     _initMutationObserver(): MutationObserver | null;
     _eventMapper(eventHandler: any, node: any, eventName: any, handlerName: any): void;
-    formatHostedContent(content: any): {};
+    formatHostedContent(content: Content): {};
 }

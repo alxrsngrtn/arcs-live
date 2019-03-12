@@ -11,6 +11,20 @@ import { Arc } from './arc.js';
 import { Description } from './description.js';
 import { SlotConnection } from './recipe/slot-connection.js';
 import { HostedSlotContext, ProvidedSlotContext, SlotContext } from './slot-context.js';
+export interface Content {
+    templateName?: string | Map<string, string>;
+    model?: {
+        models: any;
+        hash: string;
+    };
+    descriptions?: Map<string, Description>;
+    template?: string | Map<string, string>;
+}
+export interface Rendering {
+    container?: any;
+    model?: any;
+    templateName?: string;
+}
 export declare class SlotConsumer {
     readonly consumeConn?: SlotConnection;
     slotContext: SlotContext;
@@ -27,17 +41,9 @@ export declare class SlotConsumer {
     constructor(arc: Arc, consumeConn?: SlotConnection, containerKind?: string);
     readonly description: Description;
     resetDescription(): Promise<void>;
-    getRendering(subId?: any): {
-        container?: {};
-        model?: any;
-        templateName?: string;
-    };
-    readonly renderings: [string, {
-        container?: {};
-        model?: any;
-        templateName?: string;
-    }][];
-    addRenderingBySubId(subId: string | undefined, rendering: any): void;
+    getRendering(subId?: any): Rendering;
+    readonly renderings: [string, Rendering][];
+    addRenderingBySubId(subId: string | undefined, rendering: Rendering): void;
     addHostedSlotContexts(context: HostedSlotContext): void;
     readonly allProvidedSlotContexts: ProvidedSlotContext[];
     findProvidedContext(predicate: (_: ProvidedSlotContext) => boolean): ProvidedSlotContext;
@@ -47,8 +53,8 @@ export declare class SlotConsumer {
     updateProvidedContexts(): void;
     startRender(): void;
     stopRender(): void;
-    setContent(content: any, handler: any): void;
-    populateHandleDescriptions(): {};
+    setContent(content: Content, handler: any): void;
+    populateHandleDescriptions(): Map<string, Description>;
     getInnerContainer(slotId: any): any;
     _initInnerSlotContainer(slotId: any, subId: any, container: any): void;
     _clearInnerSlotContainers(subIds: any): void;
@@ -58,8 +64,8 @@ export declare class SlotConsumer {
     createNewContainer(contextContainer: any, subId: any): {};
     deleteContainer(container: any): void;
     clearContainer(rendering: any): void;
-    setContainerContent(rendering: any, content: any, subId: any): void;
-    formatContent(content: any, subId: any): object;
-    formatHostedContent(content: any): {};
+    setContainerContent(rendering: any, content: Content, subId: any): void;
+    formatContent(content: Content, subId: any): Content;
+    formatHostedContent(content: Content): {};
     static clear(container: any): void;
 }
