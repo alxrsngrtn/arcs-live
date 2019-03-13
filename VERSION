@@ -1,5 +1,5 @@
-commit 7dac53871a3799fe56fe0105a34f69bf603990ba
+commit 509db402b3073660bba0a71169e1927dabc91d15
 Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Thu Mar 14 07:56:12 2019 +1100
+Date:   Thu Mar 14 07:59:07 2019 +1100
 
-    Fix devtools issue with message passing (#2754)
+    Use full names for devtools tabs (#2753)
