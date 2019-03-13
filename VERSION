@@ -1,7 +1,5 @@
-commit ffba32757f9fbcfebcb128487751c7e423092a6d
-Author: Joshua Pratt <jp10010101010000@gmail.com>
-Date:   Tue Mar 12 15:26:30 2019 +1100
+commit 7dac53871a3799fe56fe0105a34f69bf603990ba
+Author: Piotr Swigon <piotr.swigon@gmail.com>
+Date:   Thu Mar 14 07:56:12 2019 +1100
 
-    Add slot related helper interfaces (#2741)
-    
-    * Introduce types for Content and Rendering
+    Fix devtools issue with message passing (#2754)
