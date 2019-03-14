@@ -1,9 +1,5 @@
-commit d935917cfc6701c7e9b579ae3ff5c257d56cce01
-Author: raulverag <42563960+raulverag@users.noreply.github.com>
-Date:   Wed Mar 13 19:40:19 2019 -0700
+commit 4879d8521aa68743d1d0a7675f5cda58ee0406b8
+Author: Scott J. Miles <sjmiles@google.com>
+Date:   Thu Mar 14 13:06:34 2019 -0700
 
-    clean up the clean command (#2755)
-    
-    * clean up the clean command
-    
-    * Added missing file.
+    favor export over global, add license headers (#2751)
