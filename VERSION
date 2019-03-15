@@ -1,5 +1,13 @@
-commit 4879d8521aa68743d1d0a7675f5cda58ee0406b8
+commit bf4f04a3fc22b8f6ec5b9db00bae0c14347c29e7
 Author: Scott J. Miles <sjmiles@google.com>
-Date:   Thu Mar 14 13:06:34 2019 -0700
+Date:   Thu Mar 14 17:23:59 2019 -0700
 
-    favor export over global, add license headers (#2751)
+    pipes-shell: config improvements and shellReady() (#2757)
+    
+    * config improvements
+    
+    * separate paths and config, since only paths depend on deploy
+    
+    * separate paths and config, since only paths depend on deploy
+    
+    * flush() reloads entire (recipe) context
