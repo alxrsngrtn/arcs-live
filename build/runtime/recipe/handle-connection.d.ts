@@ -1,4 +1,4 @@
-import { ConnectionSpec } from '../particle-spec.js';
+import { HandleConnectionSpec } from '../particle-spec.js';
 import { Type } from '../type.js';
 import { Handle } from './handle.js';
 import { Particle } from './particle.js';
@@ -27,7 +27,7 @@ export declare class HandleConnection {
     readonly isOutput: boolean;
     readonly handle: Handle;
     readonly particle: Particle;
-    readonly spec: ConnectionSpec;
+    readonly spec: HandleConnectionSpec;
     readonly isOptional: boolean;
     _isValid(options: any): boolean;
     isResolved(options?: any): boolean;
@@ -35,5 +35,5 @@ export declare class HandleConnection {
     connectToHandle(handle: any): void;
     disconnectHandle(): void;
     toString(nameMap: any, options: any): string;
-    findSpecsForUnnamedHandles(): ConnectionSpec[];
+    findSpecsForUnnamedHandles(): HandleConnectionSpec[];
 }

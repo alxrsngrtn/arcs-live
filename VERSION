@@ -1,13 +1,8 @@
-commit bf4f04a3fc22b8f6ec5b9db00bae0c14347c29e7
-Author: Scott J. Miles <sjmiles@google.com>
-Date:   Thu Mar 14 17:23:59 2019 -0700
+commit e2be9fce838b2fcffca55e376570eb43e0a9dabd
+Author: shans <shane.stephens@gmail.com>
+Date:   Mon Mar 18 16:20:40 2019 +1100
 
-    pipes-shell: config improvements and shellReady() (#2757)
+    Rename the connection objects in ParticleSpec to reflect what they are. (#2760)
     
-    * config improvements
-    
-    * separate paths and config, since only paths depend on deploy
-    
-    * separate paths and config, since only paths depend on deploy
-    
-    * flush() reloads entire (recipe) context
+    Rename the connection objects in ParticleSpec to reflect what the are.
+    Move Slotlet out of particle-execution-context.ts and rename it to SlotProxy.

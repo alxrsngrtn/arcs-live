@@ -9,6 +9,7 @@
  */
 import { Handle } from './handle.js';
 import { Loader } from './loader.js';
+import { ParticleSpec } from './particle-spec.js';
 import { StorageProxy } from './storage-proxy.js';
 export declare class ParticleExecutionContext {
     private apiPort;
@@ -30,7 +31,7 @@ export declare class ParticleExecutionContext {
     defaultCapabilitySet(): {
         constructInnerArc: (particle: any) => Promise<{}>;
     };
-    _instantiateParticle(id: any, spec: any, proxies: any): Promise<any[]>;
+    _instantiateParticle(id: any, spec: ParticleSpec, proxies: any): Promise<any[]>;
     readonly relevance: Map<any, any>;
     readonly busy: boolean;
     readonly idle: Promise<any>;

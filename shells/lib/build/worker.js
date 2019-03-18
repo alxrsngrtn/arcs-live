@@ -91,7 +91,7 @@
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _build_runtime_particle_execution_context_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1);
-/* harmony import */ var _build_platform_loader_web_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(29);
+/* harmony import */ var _build_platform_loader_web_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(30);
 /*
  * @license
  * Copyright (c) 2019 Google Inc. All rights reserved.
@@ -123,7 +123,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _api_channel_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(4);
 /* harmony import */ var _handle_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(21);
 /* harmony import */ var _id_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(25);
-/* harmony import */ var _storage_proxy_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(27);
+/* harmony import */ var _slot_proxy_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(27);
+/* harmony import */ var _storage_proxy_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(28);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -138,24 +139,25 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+
 class ParticleExecutionContext {
     constructor(port, idBase, loader) {
         this.particles = [];
         this.pendingLoads = [];
-        this.scheduler = new _storage_proxy_js__WEBPACK_IMPORTED_MODULE_4__["StorageProxyScheduler"]();
+        this.scheduler = new _storage_proxy_js__WEBPACK_IMPORTED_MODULE_5__["StorageProxyScheduler"]();
         this.keyedProxies = {};
         const pec = this;
         this.apiPort = new class extends _api_channel_js__WEBPACK_IMPORTED_MODULE_1__["PECInnerPort"] {
             onDefineHandle(identifier, type, name) {
-                return _storage_proxy_js__WEBPACK_IMPORTED_MODULE_4__["StorageProxy"].newProxy(identifier, type, this, pec, pec.scheduler, name);
+                return _storage_proxy_js__WEBPACK_IMPORTED_MODULE_5__["StorageProxy"].newProxy(identifier, type, this, pec, pec.scheduler, name);
             }
             onGetBackingStoreCallback(callback, type, name, id, storageKey) {
-                const proxy = _storage_proxy_js__WEBPACK_IMPORTED_MODULE_4__["StorageProxy"].newProxy(id, type, this, pec, pec.scheduler, name);
+                const proxy = _storage_proxy_js__WEBPACK_IMPORTED_MODULE_5__["StorageProxy"].newProxy(id, type, this, pec, pec.scheduler, name);
                 proxy.storageKey = storageKey;
                 return [proxy, () => callback(proxy, storageKey)];
             }
             onCreateHandleCallback(callback, type, name, id) {
-                const proxy = _storage_proxy_js__WEBPACK_IMPORTED_MODULE_4__["StorageProxy"].newProxy(id, type, this, pec, pec.scheduler, name);
+                const proxy = _storage_proxy_js__WEBPACK_IMPORTED_MODULE_5__["StorageProxy"].newProxy(id, type, this, pec, pec.scheduler, name);
                 return [proxy, () => callback(proxy)];
             }
             onMapHandleCallback(callback, id) {
@@ -192,54 +194,12 @@ class ParticleExecutionContext {
                 particle.fireEvent(slotName, event);
             }
             onStartRender(particle, slotName, providedSlots, contentTypes) {
-                const apiPort = this;
-                /**
-                 * A representation of a consumed slot. Retrieved from a particle using
-                 * particle.getSlot(name)
-                 */
-                class Slotlet {
-                    constructor(particle, slotName, providedSlots) {
-                        this.handlers = new Map();
-                        this.requestedContentTypes = new Set();
-                        this._isRendered = false;
-                        this.slotName = slotName;
-                        this.particle = particle;
-                        this.providedSlots = providedSlots;
-                    }
-                    get isRendered() { return this._isRendered; }
-                    /**
-                     * renders content to the slot.
-                     */
-                    render(content) {
-                        apiPort.Render(particle, slotName, content);
-                        Object.keys(content).forEach(key => { this.requestedContentTypes.delete(key); });
-                        // Slot is considered rendered, if a non-empty content was sent and all requested content types were fullfilled.
-                        this._isRendered = this.requestedContentTypes.size === 0 && (Object.keys(content).length > 0);
-                    }
-                    /** @method registerEventHandler(name, f)
-                     * registers a callback to be invoked when 'name' event happens.
-                     */
-                    registerEventHandler(name, f) {
-                        if (!this.handlers.has(name)) {
-                            this.handlers.set(name, []);
-                        }
-                        this.handlers.get(name).push(f);
-                    }
-                    clearEventHandlers(name) {
-                        this.handlers.set(name, []);
-                    }
-                    fireEvent(event) {
-                        for (const handler of this.handlers.get(event.handler) || []) {
-                            handler(event);
-                        }
-                    }
-                }
-                particle.slotByName.set(slotName, new Slotlet(particle, slotName, providedSlots));
+                particle.addSlotProxy(new _slot_proxy_js__WEBPACK_IMPORTED_MODULE_4__["SlotProxy"](this, particle, slotName, providedSlots));
                 particle.renderSlot(slotName, contentTypes);
             }
             onStopRender(particle, slotName) {
-                Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(particle.slotByName.has(slotName), `Stop render called for particle ${particle.spec.name} slot ${slotName} without start render being called.`);
-                particle.slotByName.delete(slotName);
+                Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(particle.hasSlotProxy(slotName), `Stop render called for particle ${particle.spec.name} slot ${slotName} without start render being called.`);
+                particle.removeSlotProxy(slotName);
             }
         }(port);
         this.idBase = _id_js__WEBPACK_IMPORTED_MODULE_3__["Id"].newSessionId().fromString(idBase);
@@ -326,7 +286,7 @@ class ParticleExecutionContext {
         const handleMap = new Map();
         const registerList = [];
         proxies.forEach((proxy, name) => {
-            const connSpec = spec.connectionMap.get(name);
+            const connSpec = spec.handleConnectionMap.get(name);
             const handle = Object(_handle_js__WEBPACK_IMPORTED_MODULE_2__["handleFor"])(proxy, name, id, connSpec.isInput, connSpec.isOutput);
             handleMap.set(name, handle);
             // Defer registration of handles with proxies until after particles have a chance to
@@ -1330,8 +1290,10 @@ __webpack_require__.r(__webpack_exports__);
 // subject to an additional IP rights grant found at
 // http://polymer.github.io/PATENTS.txt
 
-// This is only relevant in the web devtools.
-const mapStackTrace = () => {};
+// This is only relevant in the web devtools, but we need to
+// ensure that the stack trace is passed through on node
+// so that system exceptions are plumbed properly.
+const mapStackTrace = (x, f) => f([x]);
 
 
 /***/ }),
@@ -1340,9 +1302,9 @@ const mapStackTrace = () => {};
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ConnectionSpec", function() { return ConnectionSpec; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SlotSpec", function() { return SlotSpec; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ProvidedSlotSpec", function() { return ProvidedSlotSpec; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "HandleConnectionSpec", function() { return HandleConnectionSpec; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ConsumeSlotConnectionSpec", function() { return ConsumeSlotConnectionSpec; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ProvideSlotConnectionSpec", function() { return ProvideSlotConnectionSpec; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ParticleSpec", function() { return ParticleSpec; });
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
 /* harmony import */ var _modality_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(13);
@@ -1367,7 +1329,7 @@ function asType(t) {
 function asTypeLiteral(t) {
     return (t instanceof _type_js__WEBPACK_IMPORTED_MODULE_3__["Type"]) ? t.toLiteral() : t;
 }
-class ConnectionSpec {
+class HandleConnectionSpec {
     constructor(rawData, typeVarMap) {
         this.parentConnection = null;
         this.rawData = rawData;
@@ -1396,26 +1358,26 @@ class ConnectionSpec {
         return _recipe_type_checker_js__WEBPACK_IMPORTED_MODULE_2__["TypeChecker"].compareTypes({ type }, { type: this.type, direction: this.direction });
     }
 }
-class SlotSpec {
+class ConsumeSlotConnectionSpec {
     constructor(slotModel) {
         this.name = slotModel.name;
         this.isRequired = slotModel.isRequired;
         this.isSet = slotModel.isSet;
         this.tags = slotModel.tags || [];
         this.formFactor = slotModel.formFactor; // TODO: deprecate form factors?
-        this.providedSlots = [];
-        if (!slotModel.providedSlots) {
+        this.provideSlotConnections = [];
+        if (!slotModel.provideSlotConnections) {
             return;
         }
-        slotModel.providedSlots.forEach(ps => {
-            this.providedSlots.push(new ProvidedSlotSpec(ps));
+        slotModel.provideSlotConnections.forEach(ps => {
+            this.provideSlotConnections.push(new ProvideSlotConnectionSpec(ps));
         });
     }
     getProvidedSlotSpec(name) {
-        return this.providedSlots.find(ps => ps.name === name);
+        return this.provideSlotConnections.find(ps => ps.name === name);
     }
 }
-class ProvidedSlotSpec {
+class ProvideSlotConnectionSpec {
     constructor(slotModel) {
         this.name = slotModel.name;
         this.isRequired = slotModel.isRequired || false;
@@ -1431,35 +1393,35 @@ class ParticleSpec {
         this.name = model.name;
         this.verbs = model.verbs;
         const typeVarMap = new Map();
-        this.connections = [];
+        this.handleConnections = [];
         model.args.forEach(arg => this.createConnection(arg, typeVarMap));
-        this.connectionMap = new Map();
-        this.connections.forEach(a => this.connectionMap.set(a.name, a));
-        this.inputs = this.connections.filter(a => a.isInput);
-        this.outputs = this.connections.filter(a => a.isOutput);
+        this.handleConnectionMap = new Map();
+        this.handleConnections.forEach(a => this.handleConnectionMap.set(a.name, a));
+        this.inputs = this.handleConnections.filter(a => a.isInput);
+        this.outputs = this.handleConnections.filter(a => a.isOutput);
         // initialize descriptions patterns.
         model.description = model.description || {};
         this.validateDescription(model.description);
         this.pattern = model.description['pattern'];
-        this.connections.forEach(connectionSpec => {
+        this.handleConnections.forEach(connectionSpec => {
             connectionSpec.pattern = model.description[connectionSpec.name];
         });
         this.implFile = model.implFile;
         this.modality = _modality_js__WEBPACK_IMPORTED_MODULE_1__["Modality"].create(model.modality || []);
-        this.slots = new Map();
-        if (model.slots) {
-            model.slots.forEach(s => this.slots.set(s.name, new SlotSpec(s)));
+        this.slotConnections = new Map();
+        if (model.slotConnections) {
+            model.slotConnections.forEach(s => this.slotConnections.set(s.name, new ConsumeSlotConnectionSpec(s)));
         }
         // Verify provided slots use valid handle connection names.
-        this.slots.forEach(slot => {
-            slot.providedSlots.forEach(ps => {
-                ps.handles.forEach(v => Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(this.connectionMap.has(v), 'Cannot provide slot for nonexistent handle constraint ', v));
+        this.slotConnections.forEach(slot => {
+            slot.provideSlotConnections.forEach(ps => {
+                ps.handles.forEach(v => Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(this.handleConnectionMap.has(v), 'Cannot provide slot for nonexistent handle constraint ', v));
             });
         });
     }
     createConnection(arg, typeVarMap) {
-        const connection = new ConnectionSpec(arg, typeVarMap);
-        this.connections.push(connection);
+        const connection = new HandleConnectionSpec(arg, typeVarMap);
+        this.handleConnections.push(connection);
         connection.instantiateDependentConnections(this, typeVarMap);
         return connection;
     }
@@ -1476,28 +1438,28 @@ class ParticleSpec {
         return false;
     }
     getConnectionByName(name) {
-        return this.connectionMap.get(name);
+        return this.handleConnectionMap.get(name);
     }
     getSlotSpec(slotName) {
-        return this.slots.get(slotName);
+        return this.slotConnections.get(slotName);
     }
     get primaryVerb() {
         return (this.verbs.length > 0) ? this.verbs[0] : undefined;
     }
     isCompatible(modality) {
-        return this.slots.size === 0 || this.modality.intersection(modality).isResolved();
+        return this.slotConnections.size === 0 || this.modality.intersection(modality).isResolved();
     }
     toLiteral() {
-        const { args, name, verbs, description, implFile, modality, slots } = this.model;
+        const { args, name, verbs, description, implFile, modality, slotConnections } = this.model;
         const connectionToLiteral = ({ type, direction, name, isOptional, dependentConnections }) => ({ type: asTypeLiteral(type), direction, name, isOptional, dependentConnections: dependentConnections.map(connectionToLiteral) });
         const argsLiteral = args.map(a => connectionToLiteral(a));
-        return { args: argsLiteral, name, verbs, description, implFile, modality, slots };
+        return { args: argsLiteral, name, verbs, description, implFile, modality, slotConnections };
     }
     static fromLiteral(literal) {
-        let { args, name, verbs, description, implFile, modality, slots } = literal;
+        let { args, name, verbs, description, implFile, modality, slotConnections } = literal;
         const connectionFromLiteral = ({ type, direction, name, isOptional, dependentConnections }) => ({ type: asType(type), direction, name, isOptional, dependentConnections: dependentConnections ? dependentConnections.map(connectionFromLiteral) : [] });
         args = args.map(connectionFromLiteral);
-        return new ParticleSpec({ args, name, verbs: verbs || [], description, implFile, modality, slots });
+        return new ParticleSpec({ args, name, verbs: verbs || [], description, implFile, modality, slotConnections });
     }
     // Note: this method shouldn't be called directly.
     clone() {
@@ -1506,8 +1468,8 @@ class ParticleSpec {
     // Note: this method shouldn't be called directly (only as part of particle copying).
     cloneWithResolutions(variableMap) {
         const spec = this.clone();
-        this.connectionMap.forEach((conn, name) => {
-            spec.connectionMap.get(name).type = conn.type._cloneWithResolutions(variableMap);
+        this.handleConnectionMap.forEach((conn, name) => {
+            spec.handleConnectionMap.get(name).type = conn.type._cloneWithResolutions(variableMap);
         });
         return spec;
     }
@@ -1516,12 +1478,12 @@ class ParticleSpec {
     }
     validateDescription(description) {
         Object.keys(description || []).forEach(d => {
-            Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(['kind', 'location', 'pattern'].includes(d) || this.connectionMap.has(d), `Unexpected description for ${d}`);
+            Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(['kind', 'location', 'pattern'].includes(d) || this.handleConnectionMap.has(d), `Unexpected description for ${d}`);
         });
     }
     toInterface() {
         // TODO: wat do?
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(!this.slots.size, 'please implement slots toInterface');
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(!this.slotConnections.size, 'please implement slots toInterface');
         const handles = this.model.args.map(({ type, name, direction }) => ({ type: asType(type), name, direction }));
         const slots = [];
         return _type_js__WEBPACK_IMPORTED_MODULE_3__["InterfaceType"].make(this.name, handles, slots);
@@ -1541,14 +1503,14 @@ class ParticleSpec {
                 writeConnection(dependent, indent + '  ');
             }
         };
-        for (const connection of this.connections) {
+        for (const connection of this.handleConnections) {
             if (connection.parentConnection) {
                 continue;
             }
             writeConnection(connection, indent);
         }
         this.modality.names.forEach(a => results.push(`  modality ${a}`));
-        this.slots.forEach(s => {
+        this.slotConnections.forEach(s => {
             // Consume slot.
             const consume = [];
             if (s.isRequired) {
@@ -1567,7 +1529,7 @@ class ParticleSpec {
                 results.push(`    formFactor ${s.formFactor}`);
             }
             // Provided slots.
-            s.providedSlots.forEach(ps => {
+            s.provideSlotConnections.forEach(ps => {
                 const provide = [];
                 if (ps.isRequired) {
                     provide.push('must');
@@ -1590,7 +1552,7 @@ class ParticleSpec {
         // Description
         if (this.pattern) {
             results.push(`  description \`${this.pattern}\``);
-            this.connections.forEach(cs => {
+            this.handleConnections.forEach(cs => {
                 if (cs.pattern) {
                     results.push(`    ${cs.name} \`${cs.pattern}\``);
                 }
@@ -2890,12 +2852,12 @@ ${this._slotsToManifestString()}
         return this._restrictThis(particleSpec);
     }
     _restrictThis(particleSpec) {
-        const handleMatches = this.handles.map(h => particleSpec.connections.map(c => ({ match: c, result: InterfaceInfo.handlesMatch(h, c) }))
+        const handleMatches = this.handles.map(h => particleSpec.handleConnections.map(c => ({ match: c, result: InterfaceInfo.handlesMatch(h, c) }))
             .filter(a => a.result !== false));
         const particleSlots = [];
-        particleSpec.slots.forEach(consumedSlot => {
+        particleSpec.slotConnections.forEach(consumedSlot => {
             particleSlots.push({ name: consumedSlot.name, direction: 'consume', isRequired: consumedSlot.isRequired, isSet: consumedSlot.isSet });
-            consumedSlot.providedSlots.forEach(providedSlot => {
+            consumedSlot.provideSlotConnections.forEach(providedSlot => {
                 particleSlots.push({ name: providedSlot.name, direction: 'provide', isRequired: false, isSet: providedSlot.isSet });
             });
         });
@@ -3623,7 +3585,13 @@ class Collection extends Handle {
         Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(this.canRead, '_notify should not be called for non-readable handles');
         switch (kind) {
             case 'sync':
-                particle.onHandleSync(this, this._restore(details));
+                try {
+                    particle.onHandleSync(this, this._restore(details));
+                }
+                catch (e) {
+                    // TODO(shans): this should be a UserException, once we have those.
+                    this.raiseSystemException(e, "onHandleSync");
+                }
                 return;
             case 'update': {
                 // tslint:disable-next-line: no-any
@@ -4297,6 +4265,57 @@ class Random {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SlotProxy", function() { return SlotProxy; });
+/**
+ * A representation of a consumed slot. Retrieved from a particle using
+ * particle.getSlot(name)
+ */
+class SlotProxy {
+    constructor(apiPort, particle, slotName, providedSlots) {
+        this.handlers = new Map();
+        this.requestedContentTypes = new Set();
+        this._isRendered = false;
+        this.apiPort = apiPort;
+        this.slotName = slotName;
+        this.particle = particle;
+        this.providedSlots = providedSlots;
+    }
+    get isRendered() { return this._isRendered; }
+    /**
+     * renders content to the slot.
+     */
+    render(content) {
+        this.apiPort.Render(this.particle, this.slotName, content);
+        Object.keys(content).forEach(key => { this.requestedContentTypes.delete(key); });
+        // Slot is considered rendered, if a non-empty content was sent and all requested content types were fullfilled.
+        this._isRendered = this.requestedContentTypes.size === 0 && (Object.keys(content).length > 0);
+    }
+    /** @method registerEventHandler(name, f)
+     * registers a callback to be invoked when 'name' event happens.
+     */
+    registerEventHandler(name, f) {
+        if (!this.handlers.has(name)) {
+            this.handlers.set(name, []);
+        }
+        this.handlers.get(name).push(f);
+    }
+    clearEventHandlers(name) {
+        this.handlers.set(name, []);
+    }
+    fireEvent(event) {
+        for (const handler of this.handlers.get(event.handler) || []) {
+            handler(event);
+        }
+    }
+}
+//# sourceMappingURL=slot-proxy.js.map
+
+/***/ }),
+/* 28 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "StorageProxy", function() { return StorageProxy; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CollectionProxy", function() { return CollectionProxy; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "VariableProxy", function() { return VariableProxy; });
@@ -4304,7 +4323,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "StorageProxyScheduler", function() { return StorageProxyScheduler; });
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
 /* harmony import */ var _platform_sourcemapped_stacktrace_web_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(11);
-/* harmony import */ var _storage_crdt_collection_model_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(28);
+/* harmony import */ var _storage_crdt_collection_model_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(29);
 /* harmony import */ var _type_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(15);
 /**
  * @license
@@ -4863,7 +4882,7 @@ class StorageProxyScheduler {
 //# sourceMappingURL=storage-proxy.js.map
 
 /***/ }),
-/* 28 */
+/* 29 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -4991,18 +5010,18 @@ class CrdtCollectionModel {
 //# sourceMappingURL=crdt-collection-model.js.map
 
 /***/ }),
-/* 29 */
+/* 30 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "PlatformLoader", function() { return PlatformLoader; });
-/* harmony import */ var _runtime_loader_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(30);
-/* harmony import */ var _runtime_particle_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(38);
-/* harmony import */ var _runtime_dom_particle_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(35);
-/* harmony import */ var _runtime_multiplexer_dom_particle_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(39);
-/* harmony import */ var _runtime_transformation_dom_particle_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(40);
-/* harmony import */ var _platform_log_web_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(41);
+/* harmony import */ var _runtime_loader_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(31);
+/* harmony import */ var _runtime_particle_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(39);
+/* harmony import */ var _runtime_dom_particle_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(36);
+/* harmony import */ var _runtime_multiplexer_dom_particle_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(40);
+/* harmony import */ var _runtime_transformation_dom_particle_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(41);
+/* harmony import */ var _platform_log_web_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(42);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -5102,22 +5121,22 @@ class PlatformLoader extends _runtime_loader_js__WEBPACK_IMPORTED_MODULE_0__["Lo
 
 
 /***/ }),
-/* 30 */
+/* 31 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Loader", function() { return Loader; });
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
-/* harmony import */ var _platform_fetch_web_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(31);
-/* harmony import */ var _platform_fs_web_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(32);
-/* harmony import */ var _platform_vm_web_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(33);
-/* harmony import */ var _converters_jsonldToManifest_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(34);
-/* harmony import */ var _dom_particle_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(35);
-/* harmony import */ var _multiplexer_dom_particle_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(39);
-/* harmony import */ var _particle_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(38);
+/* harmony import */ var _platform_fetch_web_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(32);
+/* harmony import */ var _platform_fs_web_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(33);
+/* harmony import */ var _platform_vm_web_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(34);
+/* harmony import */ var _converters_jsonldToManifest_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(35);
+/* harmony import */ var _dom_particle_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(36);
+/* harmony import */ var _multiplexer_dom_particle_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(40);
+/* harmony import */ var _particle_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(39);
 /* harmony import */ var _reference_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(20);
-/* harmony import */ var _transformation_dom_particle_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(40);
+/* harmony import */ var _transformation_dom_particle_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(41);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -5232,7 +5251,7 @@ class Loader {
 //# sourceMappingURL=loader.js.map
 
 /***/ }),
-/* 31 */
+/* 32 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -5255,7 +5274,7 @@ const local_fetch = fetch;
 
 
 /***/ }),
-/* 32 */
+/* 33 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -5272,7 +5291,7 @@ const fs = {};
 
 
 /***/ }),
-/* 33 */
+/* 34 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -5289,7 +5308,7 @@ const vm = {};
 
 
 /***/ }),
-/* 34 */
+/* 35 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -5403,14 +5422,14 @@ class JsonldToManifest {
 //# sourceMappingURL=jsonldToManifest.js.map
 
 /***/ }),
-/* 35 */
+/* 36 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "DomParticle", function() { return DomParticle; });
-/* harmony import */ var _modalities_dom_components_xen_xen_state_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(36);
-/* harmony import */ var _dom_particle_base_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(37);
+/* harmony import */ var _modalities_dom_components_xen_xen_state_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(37);
+/* harmony import */ var _dom_particle_base_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(38);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -5488,7 +5507,7 @@ class DomParticle extends Object(_modalities_dom_components_xen_xen_state_js__WE
       handleNames: this.spec.inputs.map(i => i.name),
       // TODO(mmandlis): this.spec needs to be replaced with a particle-spec loaded from
       // .manifest files, instead of .ptcl ones.
-      slotNames: [...this.spec.slots.values()].map(s => s.name)
+      slotNames: [...this.spec.slotConnections.values()].map(s => s.name)
     };
   }
   // affordances for aliasing methods to remove `_`
@@ -5586,7 +5605,7 @@ class DomParticle extends Object(_modalities_dom_components_xen_xen_state_js__WE
 
 
 /***/ }),
-/* 36 */
+/* 37 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -5755,7 +5774,7 @@ const XenStateMixin = Base => class extends Base {
 
 
 /***/ }),
-/* 37 */
+/* 38 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -5763,7 +5782,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "DomParticleBase", function() { return DomParticleBase; });
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
 /* harmony import */ var _handle_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(21);
-/* harmony import */ var _particle_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(38);
+/* harmony import */ var _particle_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(39);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -5895,7 +5914,7 @@ class DomParticleBase extends _particle_js__WEBPACK_IMPORTED_MODULE_2__["Particl
         return [];
     }
     forceRenderTemplate(slotName) {
-        this.slotByName.forEach((slot, name) => {
+        this.slotProxiesByName.forEach((slot, name) => {
             if (!slotName || (name === slotName)) {
                 slot.requestedContentTypes.add('template');
             }
@@ -6027,7 +6046,7 @@ class DomParticleBase extends _particle_js__WEBPACK_IMPORTED_MODULE_2__["Particl
 //# sourceMappingURL=dom-particle-base.js.map
 
 /***/ }),
-/* 38 */
+/* 39 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -6054,9 +6073,7 @@ class Particle {
         this.relevances = [];
         this._idle = Promise.resolve();
         this._busy = 0;
-        // Only used by a Slotlet class in particle-execution-context
-        // tslint:disable-next-line: no-any
-        this.slotByName = new Map();
+        this.slotProxiesByName = new Map();
         // Typescript only sees this.constructor as a Function type.
         // TODO(shans): move spec off the constructor
         this.spec = this.constructor['spec'];
@@ -6150,11 +6167,20 @@ class Particle {
     outputs() {
         return this.spec.outputs;
     }
+    hasSlotProxy(name) {
+        return this.slotProxiesByName.has(name);
+    }
+    addSlotProxy(slotlet) {
+        this.slotProxiesByName.set(slotlet.slotName, slotlet);
+    }
+    removeSlotProxy(name) {
+        this.slotProxiesByName.delete(name);
+    }
     /**
      * Returns the slot with provided name.
      */
     getSlot(name) {
-        return this.slotByName.get(name);
+        return this.slotProxiesByName.get(name);
     }
     static buildManifest(strings, ...bits) {
         const output = [];
@@ -6201,7 +6227,7 @@ class Particle {
 //# sourceMappingURL=particle.js.map
 
 /***/ }),
-/* 39 */
+/* 40 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -6209,7 +6235,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "MultiplexerDomParticle", function() { return MultiplexerDomParticle; });
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
 /* harmony import */ var _particle_spec_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(12);
-/* harmony import */ var _transformation_dom_particle_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(40);
+/* harmony import */ var _transformation_dom_particle_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(41);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -6251,7 +6277,7 @@ class MultiplexerDomParticle extends _transformation_dom_particle_js__WEBPACK_IM
       // arc multiple times unnecessarily.
       otherMappedHandles.push(
           `use '${await arc.mapHandle(otherHandle._proxy)}' as v${index}`);
-      const hostedOtherConnection = hostedParticle.connections.find(
+      const hostedOtherConnection = hostedParticle.handleConnections.find(
           conn => conn.isCompatibleType(otherHandle.type));
       if (hostedOtherConnection) {
         otherConnections.push(`${hostedOtherConnection.name} = v${index++}`);
@@ -6298,7 +6324,7 @@ class MultiplexerDomParticle extends _transformation_dom_particle_js__WEBPACK_IM
     if (list.length > 0) {
       this.relevance = 0.1;
     }
-
+  
     for (const [index, item] of this.getListEntries(list)) {
       let resolvedHostedParticle = hostedParticle;
       if (this.handleIds[item.id]) {
@@ -6334,8 +6360,8 @@ class MultiplexerDomParticle extends _transformation_dom_particle_js__WEBPACK_IM
                 this.handles,
                 arc);
       }
-      const hostedSlotName = [...resolvedHostedParticle.slots.keys()][0];
-      const slotName = [...this.spec.slots.values()][0].name;
+      const hostedSlotName = [...resolvedHostedParticle.slotConnections.keys()][0];
+      const slotName = [...this.spec.slotConnections.values()][0].name;
       const slotId = await arc.createSlot(this, slotName, itemHandle._id);
 
       if (!slotId) {
@@ -6421,13 +6447,13 @@ class MultiplexerDomParticle extends _transformation_dom_particle_js__WEBPACK_IM
 
 
 /***/ }),
-/* 40 */
+/* 41 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "TransformationDomParticle", function() { return TransformationDomParticle; });
-/* harmony import */ var _dom_particle_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(35);
+/* harmony import */ var _dom_particle_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(36);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -6480,7 +6506,7 @@ class TransformationDomParticle extends _dom_particle_js__WEBPACK_IMPORTED_MODUL
 
 
 /***/ }),
-/* 41 */
+/* 42 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";

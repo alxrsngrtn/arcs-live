@@ -7,7 +7,7 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-import { ProvidedSlotSpec } from './particle-spec.js';
+import { ProvideSlotConnectionSpec } from './particle-spec.js';
 import { Handle } from './recipe/handle.js';
 import { SlotConsumer, Content } from './slot-consumer.js';
 /**
@@ -54,9 +54,9 @@ export declare class ProvidedSlotContext extends SlotContext {
     readonly name: string;
     readonly tags: string[];
     private _container;
-    spec: ProvidedSlotSpec;
+    spec: ProvideSlotConnectionSpec;
     handles: Handle[];
-    constructor(id: string, name: string, tags: string[], container: HTMLElement, spec: ProvidedSlotSpec, sourceSlotConsumer?: SlotConsumer);
+    constructor(id: string, name: string, tags: string[], container: HTMLElement, spec: ProvideSlotConnectionSpec, sourceSlotConsumer?: SlotConsumer);
     onRenderSlot(consumer: SlotConsumer, content: Content, handler: any): void;
     container: HTMLElement;
     readonly containerAvailable: boolean;

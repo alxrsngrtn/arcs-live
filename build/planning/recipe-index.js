@@ -201,7 +201,7 @@ export class RecipeIndex {
             for (const recipeParticle of recipe.particles) {
                 if (!recipeParticle.spec)
                     continue;
-                for (const [name, slotSpec] of recipeParticle.spec.slots) {
+                for (const [name, slotSpec] of recipeParticle.spec.slotConnections) {
                     const recipeSlotConn = recipeParticle.getSlotConnectionByName(name);
                     if (recipeSlotConn && recipeSlotConn.targetSlot)
                         continue;

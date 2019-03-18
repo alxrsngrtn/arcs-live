@@ -681,7 +681,7 @@ ${e.message}
                     if (!particle) {
                         throw new ManifestError(connection.location, `could not find particle '${info.particle}'`);
                     }
-                    if (info.param !== null && !particle.connectionMap.has(info.param)) {
+                    if (info.param !== null && !particle.handleConnectionMap.has(info.param)) {
                         throw new ManifestError(connection.location, `param '${info.param}' is not defined by '${info.particle}'`);
                     }
                     return new ParticleEndPoint(particle, info.param);
@@ -712,7 +712,8 @@ ${e.message}
             recipe.search = new Search(items.search.phrase, items.search.tokens);
         }
         for (const item of items.slots) {
-            const slot = recipe.newSlot();
+            // TODO(mmandlis): newSlot requires a name. What should the name be here?
+            const slot = recipe.newSlot(undefined);
             item.ref = item.ref || {};
             if (item.ref.id) {
                 slot.id = item.ref.id;
@@ -730,7 +731,8 @@ ${e.message}
         // TODO: disambiguate.
         for (const item of items.particles) {
             const particle = recipe.newParticle(item.ref.name);
-            particle.tags = item.ref.tags;
+            // TODO: particle doesn't have a tags member. Should we be setting this here?
+            particle['tags'] = item.ref.tags;
             particle.verbs = item.ref.verbs;
             if (!(recipe instanceof RequireSection)) {
                 if (item.ref.name) {
@@ -759,11 +761,11 @@ ${e.message}
                     // instead.
                     if (particle.spec !== undefined) {
                         // Validate consumed and provided slots names are according to spec.
-                        if (!particle.spec.slots.has(slotConnectionItem.param)) {
+                        if (!particle.spec.slotConnections.has(slotConnectionItem.param)) {
                             throw new ManifestError(slotConnectionItem.location, `Consumed slot '${slotConnectionItem.param}' is not defined by '${particle.name}'`);
                         }
                         slotConnectionItem.dependentSlotConnections.forEach(ps => {
-                            if (!particle.spec.slots.get(slotConnectionItem.param).getProvidedSlotSpec(ps.param)) {
+                            if (!particle.spec.slotConnections.get(slotConnectionItem.param).getProvidedSlotSpec(ps.param)) {
                                 throw new ManifestError(ps.location, `Provided slot '${ps.param}' is not defined by '${particle.name}'`);
                             }
                         });
@@ -868,10 +870,11 @@ ${e.message}
                         handle.tags = [];
                         handle.localName = connectionItem.target.name;
                         handle.fate = 'create';
-                        handle.item = { kind: 'handle' };
-                        entry = { item: handle.item, handle };
+                        // TODO: item does not exist on handle.
+                        handle['item'] = { kind: 'handle' };
+                        entry = { item: handle['item'], handle };
                         items.byName.set(handle.localName, entry);
-                        items.byHandle.set(handle, handle.item);
+                        items.byHandle.set(handle, handle['item']);
                     }
                     else if (!entry.item) {
                         throw new ManifestError(connectionItem.location, `did not expect ${entry} expected handle or particle`);

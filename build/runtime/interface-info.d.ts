@@ -8,6 +8,7 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { Type, TypeVariable } from './type.js';
+import { ParticleSpec } from './particle-spec.js';
 interface Handle {
     type?: Type;
     name?: string | TypeVariable;
@@ -75,6 +76,6 @@ export declare class InterfaceInfo {
     static slotsMatch(interfaceSlot: any, particleSlot: any): boolean;
     particleMatches(particleSpec: any): boolean;
     restrictType(particleSpec: any): boolean;
-    _restrictThis(particleSpec: any): boolean;
+    _restrictThis(particleSpec: ParticleSpec): boolean;
 }
 export {};

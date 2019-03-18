@@ -19,7 +19,7 @@ export declare class SlotConnection {
         [index: string]: Slot;
     };
     tags: string[];
-    getSlotSpec(): import("../particle-spec.js").SlotSpec;
+    getSlotSpec(): import("../particle-spec.js").ConsumeSlotConnectionSpec;
     connectToSlot(targetSlot: any): void;
     disconnectFromSlot(): void;
     _clone(particle: any, cloneMap: any): any;

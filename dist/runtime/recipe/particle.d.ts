@@ -1,4 +1,4 @@
-import { ConnectionSpec, ParticleSpec, SlotSpec } from '../particle-spec.js';
+import { HandleConnectionSpec, ParticleSpec, ConsumeSlotConnectionSpec } from '../particle-spec.js';
 import { Schema } from '../schema.js';
 import { TypeVariableInfo } from '../type-variable-info.js';
 import { Type } from '../type.js';
@@ -51,15 +51,15 @@ export declare class Particle {
     ensureConnectionName(name: any): HandleConnection;
     getConnectionByName(name: any): HandleConnection;
     nameConnection(connection: any, name: any): void;
-    getUnboundConnections(type?: Type): ConnectionSpec[];
+    getUnboundConnections(type?: Type): HandleConnectionSpec[];
     addSlotConnection(name: string): SlotConnection;
     addSlotConnectionAsCopy(name: string): SlotConnection;
     removeSlotConnection(slotConnection: any): void;
     remove(): void;
-    getSlotConnectionBySpec(spec: SlotSpec): SlotConnection;
-    getSlotSpecByName(name: string): SlotSpec;
+    getSlotConnectionBySpec(spec: ConsumeSlotConnectionSpec): SlotConnection;
+    getSlotSpecByName(name: string): ConsumeSlotConnectionSpec;
     getSlotConnectionByName(name: string): SlotConnection;
     getProvidedSlotByName(consumeName: string, name: string): Slot;
-    getSlotSpecs(): Map<string, SlotSpec>;
+    getSlotSpecs(): Map<string, ConsumeSlotConnectionSpec>;
     toString(nameMap: any, options: any): string;
 }

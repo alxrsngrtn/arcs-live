@@ -580,7 +580,7 @@ recipe
             const recipe = manifest.recipes[0];
             const arc = createTestArc(recipe, manifest);
             const hostedParticle = manifest.findParticleByName('NoDescription');
-            const hostedType = manifest.findParticleByName('NoDescMuxer').connections[0].type;
+            const hostedType = manifest.findParticleByName('NoDescMuxer').handleConnections[0].type;
             const newStore = await arc.createStore(hostedType, /* name= */ null, 'hosted-particle-handle');
             await newStore.set(hostedParticle.clone().toLiteral());
             await test.verifySuggestion({ arc }, 'Start with capital letter.');

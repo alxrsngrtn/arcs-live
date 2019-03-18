@@ -18,9 +18,7 @@ export class Particle {
         this.relevances = [];
         this._idle = Promise.resolve();
         this._busy = 0;
-        // Only used by a Slotlet class in particle-execution-context
-        // tslint:disable-next-line: no-any
-        this.slotByName = new Map();
+        this.slotProxiesByName = new Map();
         // Typescript only sees this.constructor as a Function type.
         // TODO(shans): move spec off the constructor
         this.spec = this.constructor['spec'];
@@ -114,11 +112,20 @@ export class Particle {
     outputs() {
         return this.spec.outputs;
     }
+    hasSlotProxy(name) {
+        return this.slotProxiesByName.has(name);
+    }
+    addSlotProxy(slotlet) {
+        this.slotProxiesByName.set(slotlet.slotName, slotlet);
+    }
+    removeSlotProxy(name) {
+        this.slotProxiesByName.delete(name);
+    }
     /**
      * Returns the slot with provided name.
      */
     getSlot(name) {
-        return this.slotByName.get(name);
+        return this.slotProxiesByName.get(name);
     }
     static buildManifest(strings, ...bits) {
         const output = [];

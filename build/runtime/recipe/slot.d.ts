@@ -19,7 +19,7 @@ export declare class Slot {
     formFactor: string;
     sourceConnection: SlotConnection;
     readonly consumeConnections: SlotConnection[];
-    readonly spec: import("../particle-spec.js").ProvidedSlotSpec | {
+    readonly spec: import("../particle-spec.js").ProvideSlotConnectionSpec | {
         isSet: boolean;
         tags: any[];
     };

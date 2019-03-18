@@ -290,7 +290,7 @@ export const parser = /*
         peg$c67 = function(name, verbs, implFile, items) {
             let args = [];
             let modality = [];
-            let slots = [];
+            let slotConnections = [];
             let description = null;
             let hasParticleArgument = false;
             verbs = optional(verbs, parsedOutput => parsedOutput[1], []);
@@ -306,7 +306,7 @@ export const parser = /*
               } else if (item.kind == 'particle-argument') {
                 args.push(item);
               } else if (item.kind == 'particle-slot') {
-                slots.push(item);
+                slotConnections.push(item);
               } else if (item.kind == 'description') {
                 // TODO: Super hacks.
                 description = {
@@ -333,7 +333,7 @@ export const parser = /*
               verbs,
               args,
               modality,
-              slots,
+              slotConnections,
               description,
               hasParticleArgument
             };
@@ -481,11 +481,11 @@ export const parser = /*
         peg$c134 = peg$literalExpectation("mock-voice", false),
         peg$c135 = function(isRequired, isSet, name, tags, items) {
             let formFactor = null;
-            let providedSlots = [];
+            let provideSlotConnections = [];
             items = optional(items, extractIndented, []);
             items.forEach(item => {
               if (item.kind == 'provided-slot') {
-                providedSlots.push(item);
+                provideSlotConnections.push(item);
               } else if (item.kind == 'form-factor') {
                 if (formFactor)
                   error('duplicate form factor for a slot');
@@ -502,7 +502,7 @@ export const parser = /*
               isRequired: optional(isRequired, isRequired => isRequired[0] == 'must', false),
               isSet: !!isSet,
               formFactor,
-              providedSlots
+              provideSlotConnections
             };
           },
         peg$c136 = "formFactor",

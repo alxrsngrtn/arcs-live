@@ -150,7 +150,7 @@ ${particleStr1}
         provide otherThing
     `);
         assert.lengthOf(manifest.particles, 1);
-        assert.lengthOf(manifest.particles[0].connections, 2);
+        assert.lengthOf(manifest.particles[0].handleConnections, 2);
     });
     it('SLANDLES can parse a manifest containing a particle with an argument list', async () => {
         const manifest = await Manifest.parse(`
@@ -161,7 +161,7 @@ ${particleStr1}
         \`provide Slot otherThing
     `);
         assert.lengthOf(manifest.particles, 1);
-        assert.lengthOf(manifest.particles[0].connections, 4);
+        assert.lengthOf(manifest.particles[0].handleConnections, 4);
     });
     it('can parse a manifest with dependent handles', async () => {
         const manifest = await Manifest.parse(`
@@ -172,7 +172,7 @@ ${particleStr1}
         provide otherThing
     `);
         assert.lengthOf(manifest.particles, 1);
-        assert.lengthOf(manifest.particles[0].connections, 2);
+        assert.lengthOf(manifest.particles[0].handleConnections, 2);
     });
     it('SLANDLES can parse a manifest with dependent handles', async () => {
         const manifest = await Manifest.parse(`
@@ -183,7 +183,7 @@ ${particleStr1}
         \`provide Slot otherThing
     `);
         assert.lengthOf(manifest.particles, 1);
-        assert.lengthOf(manifest.particles[0].connections, 4);
+        assert.lengthOf(manifest.particles[0].handleConnections, 4);
     });
     it('can round-trip particles with dependent handles', async () => {
         const manifestString = `particle TestParticle in 'a.js'
@@ -726,11 +726,11 @@ ${particleStr1}
         // verify particle spec
         assert.lengthOf(manifest.particles, 1);
         const spec = manifest.particles[0];
-        assert.equal(spec.slots.size, 1);
-        const slotSpec = [...spec.slots.values()][0];
+        assert.equal(spec.slotConnections.size, 1);
+        const slotSpec = [...spec.slotConnections.values()][0];
         assert.deepEqual(slotSpec.tags, ['aaa']);
-        assert.lengthOf(slotSpec.providedSlots, 1);
-        const providedSlotSpec = slotSpec.providedSlots[0];
+        assert.lengthOf(slotSpec.provideSlotConnections, 1);
+        const providedSlotSpec = slotSpec.provideSlotConnections[0];
         assert.deepEqual(providedSlotSpec.tags, ['bbb']);
         // verify recipe slots
         assert.lengthOf(manifest.recipes, 1);
@@ -758,8 +758,8 @@ ${particleStr1}
         // verify particle spec
         assert.lengthOf(manifest.particles, 1);
         const spec = manifest.particles[0];
-        assert.lengthOf(spec.connections, 2);
-        const slotSpec = spec.connections[0];
+        assert.lengthOf(spec.handleConnections, 2);
+        const slotSpec = spec.handleConnections[0];
         assert.deepEqual(slotSpec.tags, ['aaa']);
         assert.lengthOf(slotSpec.dependentConnections, 1);
         const providedSlotSpec = slotSpec.dependentConnections[0];
@@ -1438,8 +1438,8 @@ resource SomeName
         Thing
           inThing <- handle0`);
         const verify = (manifest) => {
-            assert.isFalse(manifest.particles[0].connections[0].isOptional);
-            assert.isTrue(manifest.particles[0].connections[1].isOptional);
+            assert.isFalse(manifest.particles[0].handleConnections[0].isOptional);
+            assert.isTrue(manifest.particles[0].handleConnections[1].isOptional);
             const recipe = manifest.recipes[0];
             recipe.normalize();
             assert.isTrue(recipe.isResolved());
@@ -1807,8 +1807,8 @@ resource SomeName
         out DogSled dogsled #multidog #winter #sled
     `);
         assert.equal(manifest.particles.length, 1);
-        assert.equal(manifest.particles[0].connections.length, 4);
-        const connections = manifest.particles[0].connections;
+        assert.equal(manifest.particles[0].handleConnections.length, 4);
+        const connections = manifest.particles[0].handleConnections;
         assert.equal(connections[0].name, 'leader');
         assert.deepEqual(connections[0].tags, ['leader']);
         assert.equal(connections[1].name, 'team');

@@ -8,8 +8,9 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { Handle } from './handle.js';
-import { ConnectionSpec, ParticleSpec } from './particle-spec.js';
+import { HandleConnectionSpec, ParticleSpec } from './particle-spec.js';
 import { Relevance } from './relevance.js';
+import { SlotProxy } from './slot-proxy.js';
 /**
  * A basic particle. For particles that provide UI, you may like to
  * instead use DOMParticle.
@@ -24,7 +25,7 @@ export declare class Particle {
     private _idle;
     private _idleResolver;
     private _busy;
-    slotByName: Map<string, any>;
+    protected slotProxiesByName: Map<string, SlotProxy>;
     private capabilities;
     constructor(capabilities?: {
         constructInnerArc?: Function;
@@ -86,12 +87,15 @@ export declare class Particle {
     relevance: Relevance;
     startBusy(): void;
     doneBusy(): void;
-    inputs(): ConnectionSpec[];
-    outputs(): ConnectionSpec[];
+    inputs(): HandleConnectionSpec[];
+    outputs(): HandleConnectionSpec[];
+    hasSlotProxy(name: string): boolean;
+    addSlotProxy(slotlet: SlotProxy): void;
+    removeSlotProxy(name: string): void;
     /**
      * Returns the slot with provided name.
      */
-    getSlot(name: any): any;
+    getSlot(name: any): SlotProxy;
     static buildManifest(strings: string[], ...bits: any[]): string;
     setParticleDescription(pattern: any): boolean;
     setDescriptionPattern(connectionName: string, pattern: any): boolean;

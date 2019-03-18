@@ -8,7 +8,7 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { Arc } from '../runtime/arc.js';
-import { ProvidedSlotSpec, SlotSpec } from '../runtime/particle-spec.js';
+import { ProvideSlotConnectionSpec, ConsumeSlotConnectionSpec } from '../runtime/particle-spec.js';
 import { HandleConnection } from '../runtime/recipe/handle-connection.js';
 import { Handle } from '../runtime/recipe/handle.js';
 import { Particle } from '../runtime/recipe/particle.js';
@@ -16,7 +16,7 @@ import { Recipe } from '../runtime/recipe/recipe.js';
 import { Slot } from '../runtime/recipe/slot.js';
 declare type ConsumeSlotConnectionMatch = {
     recipeParticle: Particle;
-    slotSpec: SlotSpec;
+    slotSpec: ConsumeSlotConnectionSpec;
     matchingHandles: {
         handle: Handle;
         matchingConn: HandleConnection;
@@ -42,8 +42,8 @@ export declare class RecipeIndex {
      * Given a particle and a slot spec for a slot that particle could provide, find consume slot connections that
      * could be connected to the potential slot.
      */
-    findConsumeSlotConnectionMatch(particle: Particle, providedSlotSpec: ProvidedSlotSpec): ConsumeSlotConnectionMatch[];
-    findProvidedSlot(particle: Particle, slotSpec: SlotSpec): Slot[];
+    findConsumeSlotConnectionMatch(particle: Particle, providedSlotSpec: ProvideSlotConnectionSpec): ConsumeSlotConnectionMatch[];
+    findProvidedSlot(particle: Particle, slotSpec: ConsumeSlotConnectionSpec): Slot[];
     private _getMatchingHandles;
     /**
      * Helper function that determines whether handle connections in a provided slot

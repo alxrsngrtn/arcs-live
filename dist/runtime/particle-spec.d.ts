@@ -12,49 +12,49 @@ import { Direction } from './recipe/handle-connection.js';
 import { Schema } from './schema.js';
 import { TypeVariableInfo } from './type-variable-info.js';
 import { InterfaceType, Type, TypeLiteral } from './type.js';
-declare type SerializedConnectionSpec = {
+declare type SerializedHandleConnectionSpec = {
     direction: Direction;
     name: string;
     type: Type | TypeLiteral;
     isOptional: boolean;
     tags?: string[];
-    dependentConnections: SerializedConnectionSpec[];
+    dependentConnections: SerializedHandleConnectionSpec[];
 };
-export declare class ConnectionSpec {
-    rawData: SerializedConnectionSpec;
+export declare class HandleConnectionSpec {
+    rawData: SerializedHandleConnectionSpec;
     direction: Direction;
     name: string;
     type: Type;
     isOptional: boolean;
     tags: string[];
-    dependentConnections: ConnectionSpec[];
+    dependentConnections: HandleConnectionSpec[];
     pattern: string;
-    parentConnection: ConnectionSpec | null;
-    constructor(rawData: SerializedConnectionSpec, typeVarMap: Map<string, Type>);
+    parentConnection: HandleConnectionSpec | null;
+    constructor(rawData: SerializedHandleConnectionSpec, typeVarMap: Map<string, Type>);
     instantiateDependentConnections(particle: any, typeVarMap: Map<string, Type>): void;
     readonly isInput: boolean;
     readonly isOutput: boolean;
     isCompatibleType(type: any): any;
 }
-declare type SerializedSlotSpec = {
+declare type SerializedConsumeSlotConnectionSpec = {
     name: string;
     isRequired: boolean;
     isSet: boolean;
     tags: string[];
     formFactor: string;
-    providedSlots: SerializedProvidedSlotSpec[];
+    provideSlotConnections: SerializedProvideSlotConnectionSpec[];
 };
-export declare class SlotSpec {
+export declare class ConsumeSlotConnectionSpec {
     name: string;
     isRequired: boolean;
     isSet: boolean;
     tags: string[];
     formFactor: string;
-    providedSlots: ProvidedSlotSpec[];
-    constructor(slotModel: SerializedSlotSpec);
-    getProvidedSlotSpec(name: any): ProvidedSlotSpec;
+    provideSlotConnections: ProvideSlotConnectionSpec[];
+    constructor(slotModel: SerializedConsumeSlotConnectionSpec);
+    getProvidedSlotSpec(name: any): ProvideSlotConnectionSpec;
 }
-declare type SerializedProvidedSlotSpec = {
+declare type SerializedProvideSlotConnectionSpec = {
     name: string;
     isRequired?: boolean;
     isSet?: boolean;
@@ -62,45 +62,45 @@ declare type SerializedProvidedSlotSpec = {
     formFactor?: string;
     handles?: string[];
 };
-export declare class ProvidedSlotSpec {
+export declare class ProvideSlotConnectionSpec {
     name: string;
     isRequired: boolean;
     isSet: boolean;
     tags: string[];
     formFactor: string;
     handles: string[];
-    constructor(slotModel: SerializedProvidedSlotSpec);
+    constructor(slotModel: SerializedProvideSlotConnectionSpec);
 }
 declare type SerializedParticleSpec = {
     name: string;
     id?: string;
     verbs: string[];
-    args: SerializedConnectionSpec[];
+    args: SerializedHandleConnectionSpec[];
     description: {
         pattern?: string;
     };
     implFile: string;
     modality: string[];
-    slots: SerializedSlotSpec[];
+    slotConnections: SerializedConsumeSlotConnectionSpec[];
 };
 export declare class ParticleSpec {
     private readonly model;
     name: string;
     verbs: string[];
-    connections: ConnectionSpec[];
-    connectionMap: Map<string, ConnectionSpec>;
-    inputs: ConnectionSpec[];
-    outputs: ConnectionSpec[];
+    handleConnections: HandleConnectionSpec[];
+    handleConnectionMap: Map<string, HandleConnectionSpec>;
+    inputs: HandleConnectionSpec[];
+    outputs: HandleConnectionSpec[];
     pattern: string;
     implFile: string;
     modality: Modality;
-    slots: Map<string, SlotSpec>;
+    slotConnections: Map<string, ConsumeSlotConnectionSpec>;
     constructor(model: SerializedParticleSpec);
-    createConnection(arg: SerializedConnectionSpec, typeVarMap: Map<string, Type>): ConnectionSpec;
+    createConnection(arg: SerializedHandleConnectionSpec, typeVarMap: Map<string, Type>): HandleConnectionSpec;
     isInput(param: string): boolean;
     isOutput(param: string): boolean;
-    getConnectionByName(name: string): ConnectionSpec;
-    getSlotSpec(slotName: string): SlotSpec;
+    getConnectionByName(name: string): HandleConnectionSpec;
+    getSlotSpec(slotName: string): ConsumeSlotConnectionSpec;
     readonly primaryVerb: string;
     isCompatible(modality: Modality): boolean;
     toLiteral(): SerializedParticleSpec;

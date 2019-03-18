@@ -71,5 +71,5 @@ export declare class DescriptionFormatter {
     _formatStoreDescription(handleConn: any): string | undefined;
     _formatHandleType(handleConnection: any): any;
     _selectHandleConnection(recipeHandle: any): any;
-    static sort(p1: any, p2: any): number;
+    static sort(p1: ParticleDescription, p2: ParticleDescription): number;
 }

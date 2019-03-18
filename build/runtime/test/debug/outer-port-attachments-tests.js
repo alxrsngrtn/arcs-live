@@ -55,7 +55,7 @@ describe('OuterPortAttachment', () => {
                 description: {},
                 implFile: 'p.js',
                 modality: ['dom'],
-                slots: [],
+                slotConnections: [],
                 verbs: [],
                 args: [{
                         dependentConnections: [],

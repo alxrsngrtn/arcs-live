@@ -120,7 +120,7 @@ export class MatchRecipeByVerb extends Strategy {
                                     }
                                 }
                                 else {
-                                    for (const connSpec of particle.spec.connections) {
+                                    for (const connSpec of particle.spec.handleConnections) {
                                         if (tryApplyHandleConstraint(name, connSpec, particle, constraint, mappedHandle)) {
                                             return true;
                                         }
@@ -170,7 +170,7 @@ export class MatchRecipeByVerb extends Strategy {
                 }
             }
             if (particle.spec) {
-                for (const connectionSpec of particle.spec.connections) {
+                for (const connectionSpec of particle.spec.handleConnections) {
                     if (MatchRecipeByVerb.connectionSpecMatchesConstraint(connectionSpec, handleData)) {
                         return true;
                     }
@@ -232,12 +232,12 @@ export class MatchRecipeByVerb extends Strategy {
             return false;
         }
         const slotConn = particle.getSlotConnectionBySpec(slotSpecs.get(name));
-        if (slotConn && slotConn._targetSlot != null &&
+        if (slotConn && slotConn.targetSlot != null &&
             constraints.targetSlot != null) {
             return false;
         }
         for (const provideName in constraints.providedSlots) {
-            if (slotSpecs.get(name).providedSlots.find(spec => spec.name === provideName).length === 0) {
+            if (slotSpecs.get(name).provideSlotConnections.find(spec => spec.name === provideName) === undefined) {
                 return false;
             }
         }

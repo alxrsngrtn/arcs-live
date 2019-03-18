@@ -1,5 +1,5 @@
 import { Modality } from '../modality.js';
-import { ConnectionSpec } from '../particle-spec.js';
+import { HandleConnectionSpec } from '../particle-spec.js';
 import { Type } from '../type.js';
 import { ConnectionConstraint } from './connection-constraint.js';
 import { HandleConnection } from './handle-connection.js';
@@ -78,11 +78,11 @@ export declare class Recipe {
     getFreeHandles(): Handle[];
     readonly allSpecifiedConnections: {
         particle: Particle;
-        connSpec: ConnectionSpec;
+        connSpec: HandleConnectionSpec;
     }[];
     getFreeConnections(type?: Type): {
         particle: Particle;
-        connSpec: ConnectionSpec;
+        connSpec: HandleConnectionSpec;
     }[];
     findHandleByID(id: any): Handle;
     getUnnamedUntypedConnections(): HandleConnection;

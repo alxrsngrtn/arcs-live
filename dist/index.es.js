@@ -347,12 +347,12 @@ ${this._slotsToManifestString()}
         return this._restrictThis(particleSpec);
     }
     _restrictThis(particleSpec) {
-        const handleMatches = this.handles.map(h => particleSpec.connections.map(c => ({ match: c, result: InterfaceInfo.handlesMatch(h, c) }))
+        const handleMatches = this.handles.map(h => particleSpec.handleConnections.map(c => ({ match: c, result: InterfaceInfo.handlesMatch(h, c) }))
             .filter(a => a.result !== false));
         const particleSlots = [];
-        particleSpec.slots.forEach(consumedSlot => {
+        particleSpec.slotConnections.forEach(consumedSlot => {
             particleSlots.push({ name: consumedSlot.name, direction: 'consume', isRequired: consumedSlot.isRequired, isSet: consumedSlot.isSet });
-            consumedSlot.providedSlots.forEach(providedSlot => {
+            consumedSlot.provideSlotConnections.forEach(providedSlot => {
                 particleSlots.push({ name: providedSlot.name, direction: 'provide', isRequired: false, isSet: providedSlot.isSet });
             });
         });
@@ -557,7 +557,13 @@ class Collection extends Handle {
         assert(this.canRead, '_notify should not be called for non-readable handles');
         switch (kind) {
             case 'sync':
-                particle.onHandleSync(this, this._restore(details));
+                try {
+                    particle.onHandleSync(this, this._restore(details));
+                }
+                catch (e) {
+                    // TODO(shans): this should be a UserException, once we have those.
+                    this.raiseSystemException(e, "onHandleSync");
+                }
                 return;
             case 'update': {
                 // tslint:disable-next-line: no-any
@@ -2409,7 +2415,7 @@ function asType(t) {
 function asTypeLiteral(t) {
     return (t instanceof Type) ? t.toLiteral() : t;
 }
-class ConnectionSpec {
+class HandleConnectionSpec {
     constructor(rawData, typeVarMap) {
         this.parentConnection = null;
         this.rawData = rawData;
@@ -2438,26 +2444,26 @@ class ConnectionSpec {
         return TypeChecker.compareTypes({ type }, { type: this.type, direction: this.direction });
     }
 }
-class SlotSpec {
+class ConsumeSlotConnectionSpec {
     constructor(slotModel) {
         this.name = slotModel.name;
         this.isRequired = slotModel.isRequired;
         this.isSet = slotModel.isSet;
         this.tags = slotModel.tags || [];
         this.formFactor = slotModel.formFactor; // TODO: deprecate form factors?
-        this.providedSlots = [];
-        if (!slotModel.providedSlots) {
+        this.provideSlotConnections = [];
+        if (!slotModel.provideSlotConnections) {
             return;
         }
-        slotModel.providedSlots.forEach(ps => {
-            this.providedSlots.push(new ProvidedSlotSpec(ps));
+        slotModel.provideSlotConnections.forEach(ps => {
+            this.provideSlotConnections.push(new ProvideSlotConnectionSpec(ps));
         });
     }
     getProvidedSlotSpec(name) {
-        return this.providedSlots.find(ps => ps.name === name);
+        return this.provideSlotConnections.find(ps => ps.name === name);
     }
 }
-class ProvidedSlotSpec {
+class ProvideSlotConnectionSpec {
     constructor(slotModel) {
         this.name = slotModel.name;
         this.isRequired = slotModel.isRequired || false;
@@ -2473,35 +2479,35 @@ class ParticleSpec {
         this.name = model.name;
         this.verbs = model.verbs;
         const typeVarMap = new Map();
-        this.connections = [];
+        this.handleConnections = [];
         model.args.forEach(arg => this.createConnection(arg, typeVarMap));
-        this.connectionMap = new Map();
-        this.connections.forEach(a => this.connectionMap.set(a.name, a));
-        this.inputs = this.connections.filter(a => a.isInput);
-        this.outputs = this.connections.filter(a => a.isOutput);
+        this.handleConnectionMap = new Map();
+        this.handleConnections.forEach(a => this.handleConnectionMap.set(a.name, a));
+        this.inputs = this.handleConnections.filter(a => a.isInput);
+        this.outputs = this.handleConnections.filter(a => a.isOutput);
         // initialize descriptions patterns.
         model.description = model.description || {};
         this.validateDescription(model.description);
         this.pattern = model.description['pattern'];
-        this.connections.forEach(connectionSpec => {
+        this.handleConnections.forEach(connectionSpec => {
             connectionSpec.pattern = model.description[connectionSpec.name];
         });
         this.implFile = model.implFile;
         this.modality = Modality.create(model.modality || []);
-        this.slots = new Map();
-        if (model.slots) {
-            model.slots.forEach(s => this.slots.set(s.name, new SlotSpec(s)));
+        this.slotConnections = new Map();
+        if (model.slotConnections) {
+            model.slotConnections.forEach(s => this.slotConnections.set(s.name, new ConsumeSlotConnectionSpec(s)));
         }
         // Verify provided slots use valid handle connection names.
-        this.slots.forEach(slot => {
-            slot.providedSlots.forEach(ps => {
-                ps.handles.forEach(v => assert(this.connectionMap.has(v), 'Cannot provide slot for nonexistent handle constraint ', v));
+        this.slotConnections.forEach(slot => {
+            slot.provideSlotConnections.forEach(ps => {
+                ps.handles.forEach(v => assert(this.handleConnectionMap.has(v), 'Cannot provide slot for nonexistent handle constraint ', v));
             });
         });
     }
     createConnection(arg, typeVarMap) {
-        const connection = new ConnectionSpec(arg, typeVarMap);
-        this.connections.push(connection);
+        const connection = new HandleConnectionSpec(arg, typeVarMap);
+        this.handleConnections.push(connection);
         connection.instantiateDependentConnections(this, typeVarMap);
         return connection;
     }
@@ -2518,28 +2524,28 @@ class ParticleSpec {
         return false;
     }
     getConnectionByName(name) {
-        return this.connectionMap.get(name);
+        return this.handleConnectionMap.get(name);
     }
     getSlotSpec(slotName) {
-        return this.slots.get(slotName);
+        return this.slotConnections.get(slotName);
     }
     get primaryVerb() {
         return (this.verbs.length > 0) ? this.verbs[0] : undefined;
     }
     isCompatible(modality) {
-        return this.slots.size === 0 || this.modality.intersection(modality).isResolved();
+        return this.slotConnections.size === 0 || this.modality.intersection(modality).isResolved();
     }
     toLiteral() {
-        const { args, name, verbs, description, implFile, modality, slots } = this.model;
+        const { args, name, verbs, description, implFile, modality, slotConnections } = this.model;
         const connectionToLiteral = ({ type, direction, name, isOptional, dependentConnections }) => ({ type: asTypeLiteral(type), direction, name, isOptional, dependentConnections: dependentConnections.map(connectionToLiteral) });
         const argsLiteral = args.map(a => connectionToLiteral(a));
-        return { args: argsLiteral, name, verbs, description, implFile, modality, slots };
+        return { args: argsLiteral, name, verbs, description, implFile, modality, slotConnections };
     }
     static fromLiteral(literal) {
-        let { args, name, verbs, description, implFile, modality, slots } = literal;
+        let { args, name, verbs, description, implFile, modality, slotConnections } = literal;
         const connectionFromLiteral = ({ type, direction, name, isOptional, dependentConnections }) => ({ type: asType(type), direction, name, isOptional, dependentConnections: dependentConnections ? dependentConnections.map(connectionFromLiteral) : [] });
         args = args.map(connectionFromLiteral);
-        return new ParticleSpec({ args, name, verbs: verbs || [], description, implFile, modality, slots });
+        return new ParticleSpec({ args, name, verbs: verbs || [], description, implFile, modality, slotConnections });
     }
     // Note: this method shouldn't be called directly.
     clone() {
@@ -2548,8 +2554,8 @@ class ParticleSpec {
     // Note: this method shouldn't be called directly (only as part of particle copying).
     cloneWithResolutions(variableMap) {
         const spec = this.clone();
-        this.connectionMap.forEach((conn, name) => {
-            spec.connectionMap.get(name).type = conn.type._cloneWithResolutions(variableMap);
+        this.handleConnectionMap.forEach((conn, name) => {
+            spec.handleConnectionMap.get(name).type = conn.type._cloneWithResolutions(variableMap);
         });
         return spec;
     }
@@ -2558,12 +2564,12 @@ class ParticleSpec {
     }
     validateDescription(description) {
         Object.keys(description || []).forEach(d => {
-            assert(['kind', 'location', 'pattern'].includes(d) || this.connectionMap.has(d), `Unexpected description for ${d}`);
+            assert(['kind', 'location', 'pattern'].includes(d) || this.handleConnectionMap.has(d), `Unexpected description for ${d}`);
         });
     }
     toInterface() {
         // TODO: wat do?
-        assert(!this.slots.size, 'please implement slots toInterface');
+        assert(!this.slotConnections.size, 'please implement slots toInterface');
         const handles = this.model.args.map(({ type, name, direction }) => ({ type: asType(type), name, direction }));
         const slots = [];
         return InterfaceType.make(this.name, handles, slots);
@@ -2583,14 +2589,14 @@ class ParticleSpec {
                 writeConnection(dependent, indent + '  ');
             }
         };
-        for (const connection of this.connections) {
+        for (const connection of this.handleConnections) {
             if (connection.parentConnection) {
                 continue;
             }
             writeConnection(connection, indent);
         }
         this.modality.names.forEach(a => results.push(`  modality ${a}`));
-        this.slots.forEach(s => {
+        this.slotConnections.forEach(s => {
             // Consume slot.
             const consume = [];
             if (s.isRequired) {
@@ -2609,7 +2615,7 @@ class ParticleSpec {
                 results.push(`    formFactor ${s.formFactor}`);
             }
             // Provided slots.
-            s.providedSlots.forEach(ps => {
+            s.provideSlotConnections.forEach(ps => {
                 const provide = [];
                 if (ps.isRequired) {
                     provide.push('must');
@@ -2632,7 +2638,7 @@ class ParticleSpec {
         // Description
         if (this.pattern) {
             results.push(`  description \`${this.pattern}\``);
-            this.connections.forEach(cs => {
+            this.handleConnections.forEach(cs => {
                 if (cs.pattern) {
                     results.push(`    ${cs.name} \`${cs.pattern}\``);
                 }
@@ -2679,8 +2685,8 @@ class DescriptionFormatter {
         let selectedDescriptions = this.particleDescriptions
             .filter(desc => (particlesSet.has(desc._particle) && this._isSelectedDescription(desc)));
         // Prefer particles that render UI, if any.
-        if (selectedDescriptions.find(desc => (desc._particle.spec.slots.size > 0))) {
-            selectedDescriptions = selectedDescriptions.filter(desc => (desc._particle.spec.slots.size > 0));
+        if (selectedDescriptions.find(desc => (desc._particle.spec.slotConnections.size > 0))) {
+            selectedDescriptions = selectedDescriptions.filter(desc => (desc._particle.spec.slotConnections.size > 0));
         }
         selectedDescriptions = selectedDescriptions.sort(DescriptionFormatter.sort);
         if (selectedDescriptions.length > 0) {
@@ -3058,8 +3064,8 @@ class DescriptionFormatter {
     static sort(p1, p2) {
         const isRoot = (slotSpec) => slotSpec.name === 'root' || slotSpec.tags.includes('root');
         // Root slot comes first.
-        const hasRoot1 = Boolean([...p1._particle.spec.slots.values()].find(slotSpec => isRoot(slotSpec)));
-        const hasRoot2 = Boolean([...p2._particle.spec.slots.values()].find(slotSpec => isRoot(slotSpec)));
+        const hasRoot1 = Boolean([...p1._particle.spec.slotConnections.values()].find(slotSpec => isRoot(slotSpec)));
+        const hasRoot2 = Boolean([...p2._particle.spec.slotConnections.values()].find(slotSpec => isRoot(slotSpec)));
         if (hasRoot1 !== hasRoot2) {
             return hasRoot1 ? -1 : 1;
         }
@@ -3070,9 +3076,9 @@ class DescriptionFormatter {
         // Sort by number of singleton slots.
         let p1Slots = 0;
         let p2Slots = 0;
-        p1._particle.spec.slots.forEach((slotSpec) => { if (!slotSpec.isSet)
+        p1._particle.spec.slotConnections.forEach((slotSpec) => { if (!slotSpec.isSet)
             ++p1Slots; });
-        p2._particle.spec.slots.forEach((slotSpec) => { if (!slotSpec.isSet)
+        p2._particle.spec.slotConnections.forEach((slotSpec) => { if (!slotSpec.isSet)
             ++p2Slots; });
         return p2Slots - p1Slots;
     }
@@ -3154,7 +3160,7 @@ class Description {
         pDesc = Object.assign({}, pDesc, descByName);
         pDesc.pattern = pDesc.pattern || particle.spec.pattern;
         for (const handleConn of Object.values(particle.connections)) {
-            const specConn = particle.spec.connectionMap.get(handleConn.name);
+            const specConn = particle.spec.handleConnectionMap.get(handleConn.name);
             const pattern = descByName[handleConn.name] || specConn.pattern;
             const store = arc.findStoreById(handleConn.handle.id);
             pDesc._connections[handleConn.name] = {
@@ -3505,7 +3511,7 @@ const parser = /*
         peg$c67 = function(name, verbs, implFile, items) {
             let args = [];
             let modality = [];
-            let slots = [];
+            let slotConnections = [];
             let description = null;
             let hasParticleArgument = false;
             verbs = optional(verbs, parsedOutput => parsedOutput[1], []);
@@ -3521,7 +3527,7 @@ const parser = /*
               } else if (item.kind == 'particle-argument') {
                 args.push(item);
               } else if (item.kind == 'particle-slot') {
-                slots.push(item);
+                slotConnections.push(item);
               } else if (item.kind == 'description') {
                 // TODO: Super hacks.
                 description = {
@@ -3548,7 +3554,7 @@ const parser = /*
               verbs,
               args,
               modality,
-              slots,
+              slotConnections,
               description,
               hasParticleArgument
             };
@@ -3696,11 +3702,11 @@ const parser = /*
         peg$c134 = peg$literalExpectation("mock-voice", false),
         peg$c135 = function(isRequired, isSet, name, tags, items) {
             let formFactor = null;
-            let providedSlots = [];
+            let provideSlotConnections = [];
             items = optional(items, extractIndented, []);
             items.forEach(item => {
               if (item.kind == 'provided-slot') {
-                providedSlots.push(item);
+                provideSlotConnections.push(item);
               } else if (item.kind == 'form-factor') {
                 if (formFactor)
                   error('duplicate form factor for a slot');
@@ -3717,7 +3723,7 @@ const parser = /*
               isRequired: optional(isRequired, isRequired => isRequired[0] == 'must', false),
               isSet: !!isSet,
               formFactor,
-              providedSlots
+              provideSlotConnections
             };
           },
         peg$c136 = "formFactor",
@@ -12225,7 +12231,7 @@ class HandleConnection {
         if (this.particle.spec == null) {
             return null;
         }
-        return this.particle.spec.connectionMap.get(this.name);
+        return this.particle.spec.handleConnectionMap.get(this.name);
     }
     get isOptional() {
         if (this.spec == null) {
@@ -12347,7 +12353,7 @@ class HandleConnection {
     }
     // TODO: the logic is wrong :)
     findSpecsForUnnamedHandles() {
-        return this.particle.spec.connections.filter(specConn => {
+        return this.particle.spec.handleConnections.filter(specConn => {
             // filter specs with matching types that don't have handles bound to the corresponding handle connection.
             return !specConn.isOptional &&
                 this.handle.type.equals(specConn.type) &&
@@ -12464,7 +12470,7 @@ class SlotConnection {
         }
         if (this.getSlotSpec() == undefined)
             return true;
-        return this.getSlotSpec().providedSlots.every(providedSlot => {
+        return this.getSlotSpec().provideSlotConnections.every(providedSlot => {
             if (providedSlot.isRequired && this.providedSlots[providedSlot.name].consumeConnections.length === 0) {
                 if (options) {
                     options.details = 'missing consuming slot';
@@ -12650,7 +12656,7 @@ class Particle {
             }
             return false;
         }
-        if (this.spec.slots.size > 0) {
+        if (this.spec.slotConnections.size > 0) {
             const fulfilledSlotConnections = Object.values(this.consumedSlotConnections).filter(connection => connection.targetSlot !== undefined);
             if (fulfilledSlotConnections.length === 0) {
                 if (options && options.showUnresolved) {
@@ -12737,18 +12743,18 @@ class Particle {
         this._unnamedConnections.splice(idx, 1);
     }
     getUnboundConnections(type) {
-        return this.spec.connections.filter(connSpec => !connSpec.isOptional &&
+        return this.spec.handleConnections.filter(connSpec => !connSpec.isOptional &&
             !this.getConnectionByName(connSpec.name) &&
             (!type || type.equals(connSpec.type)));
     }
     addSlotConnection(name) {
         assert(!(name in this._consumedSlotConnections), "slot connection already exists");
-        assert(!this.spec || this.spec.slots.has(name), "slot connection not in particle spec");
+        assert(!this.spec || this.spec.slotConnections.has(name), "slot connection not in particle spec");
         const slotConn = new SlotConnection(name, this);
         this._consumedSlotConnections[name] = slotConn;
         const slotSpec = this.getSlotSpecByName(name);
         if (slotSpec) {
-            slotSpec.providedSlots.forEach(providedSlot => {
+            slotSpec.provideSlotConnections.forEach(providedSlot => {
                 const slot = this.recipe.newSlot(providedSlot.name);
                 slot.sourceConnection = slotConn;
                 slotConn.providedSlots[providedSlot.name] = slot;
@@ -12777,7 +12783,7 @@ class Particle {
         return Object.values(this._consumedSlotConnections).find(slotConn => slotConn.getSlotSpec() === spec);
     }
     getSlotSpecByName(name) {
-        return this.spec && this.spec.slots.get(name);
+        return this.spec && this.spec.slotConnections.get(name);
     }
     getSlotConnectionByName(name) {
         return this._consumedSlotConnections[name];
@@ -12787,7 +12793,7 @@ class Particle {
     }
     getSlotSpecs() {
         if (this.spec)
-            return this.spec.slots;
+            return this.spec.slotConnections;
         return new Map();
     }
     toString(nameMap, options) {
@@ -13176,24 +13182,24 @@ class Recipe {
         return this.particles.every(p => !p.spec || p.spec.isCompatible(modality));
     }
     get modality() {
-        return this.particles.filter(p => Boolean(p.spec && p.spec.slots.size > 0)).map(p => p.spec.modality)
+        return this.particles.filter(p => Boolean(p.spec && p.spec.slotConnections.size > 0)).map(p => p.spec.modality)
             .reduce((modality, total) => modality.intersection(total), Modality.all);
     }
     allRequiredSlotsPresent() {
         // All required slots and at least one consume slot for each particle must be present in order for the 
         // recipe to be considered resolved. 
         for (const particle of this.particles) {
-            if (particle.spec.slots.size === 0) {
+            if (particle.spec.slotConnections.size === 0) {
                 continue;
             }
             let atLeastOneSlotConnection = false;
-            for (const [name, slotSpec] of particle.spec.slots) {
+            for (const [name, slotSpec] of particle.spec.slotConnections) {
                 if (slotSpec.isRequired && !particle.consumedSlotConnections[name]) {
                     return false;
                 }
                 // required provided slots are only required when the corresponding consume slot connection is present
                 if (particle.consumedSlotConnections[name]) {
-                    for (const providedSlotSpec of slotSpec.providedSlots) {
+                    for (const providedSlotSpec of slotSpec.provideSlotConnections) {
                         if (providedSlotSpec.isRequired && !particle.getProvidedSlotByName(name, providedSlotSpec.name)) {
                             return false;
                         }
@@ -13591,8 +13597,8 @@ class Recipe {
         return this.handles.filter(handle => handle.connections.length === 0);
     }
     get allSpecifiedConnections() {
-        return [].concat(...this.particles.filter(p => p.spec && p.spec.connections.length > 0)
-            .map(particle => particle.spec.connections.map(connSpec => ({ particle, connSpec }))));
+        return [].concat(...this.particles.filter(p => p.spec && p.spec.handleConnections.length > 0)
+            .map(particle => particle.spec.handleConnections.map(connSpec => ({ particle, connSpec }))));
     }
     getFreeConnections(type) {
         return this.allSpecifiedConnections.filter(({ particle, connSpec }) => !connSpec.isOptional &&
@@ -13754,7 +13760,7 @@ class RecipeUtil {
                 if (!recipeParticle.spec) {
                     continue;
                 }
-                for (const recipeConnSpec of recipeParticle.spec.connections) {
+                for (const recipeConnSpec of recipeParticle.spec.handleConnections) {
                     // TODO are there situations where multiple handleConnections should
                     // be allowed to point to the same one in the recipe?
                     if (reverse.has(recipeConnSpec)) {
@@ -16050,7 +16056,7 @@ ${e.message}
                     if (!particle) {
                         throw new ManifestError(connection.location, `could not find particle '${info.particle}'`);
                     }
-                    if (info.param !== null && !particle.connectionMap.has(info.param)) {
+                    if (info.param !== null && !particle.handleConnectionMap.has(info.param)) {
                         throw new ManifestError(connection.location, `param '${info.param}' is not defined by '${info.particle}'`);
                     }
                     return new ParticleEndPoint(particle, info.param);
@@ -16081,7 +16087,8 @@ ${e.message}
             recipe.search = new Search(items.search.phrase, items.search.tokens);
         }
         for (const item of items.slots) {
-            const slot = recipe.newSlot();
+            // TODO(mmandlis): newSlot requires a name. What should the name be here?
+            const slot = recipe.newSlot(undefined);
             item.ref = item.ref || {};
             if (item.ref.id) {
                 slot.id = item.ref.id;
@@ -16099,7 +16106,8 @@ ${e.message}
         // TODO: disambiguate.
         for (const item of items.particles) {
             const particle = recipe.newParticle(item.ref.name);
-            particle.tags = item.ref.tags;
+            // TODO: particle doesn't have a tags member. Should we be setting this here?
+            particle['tags'] = item.ref.tags;
             particle.verbs = item.ref.verbs;
             if (!(recipe instanceof RequireSection)) {
                 if (item.ref.name) {
@@ -16128,11 +16136,11 @@ ${e.message}
                     // instead.
                     if (particle.spec !== undefined) {
                         // Validate consumed and provided slots names are according to spec.
-                        if (!particle.spec.slots.has(slotConnectionItem.param)) {
+                        if (!particle.spec.slotConnections.has(slotConnectionItem.param)) {
                             throw new ManifestError(slotConnectionItem.location, `Consumed slot '${slotConnectionItem.param}' is not defined by '${particle.name}'`);
                         }
                         slotConnectionItem.dependentSlotConnections.forEach(ps => {
-                            if (!particle.spec.slots.get(slotConnectionItem.param).getProvidedSlotSpec(ps.param)) {
+                            if (!particle.spec.slotConnections.get(slotConnectionItem.param).getProvidedSlotSpec(ps.param)) {
                                 throw new ManifestError(ps.location, `Provided slot '${ps.param}' is not defined by '${particle.name}'`);
                             }
                         });
@@ -16237,10 +16245,11 @@ ${e.message}
                         handle.tags = [];
                         handle.localName = connectionItem.target.name;
                         handle.fate = 'create';
-                        handle.item = { kind: 'handle' };
-                        entry = { item: handle.item, handle };
+                        // TODO: item does not exist on handle.
+                        handle['item'] = { kind: 'handle' };
+                        entry = { item: handle['item'], handle };
                         items.byName.set(handle.localName, entry);
-                        items.byHandle.set(handle, handle.item);
+                        items.byHandle.set(handle, handle['item']);
                     }
                     else if (!entry.item) {
                         throw new ManifestError(connectionItem.location, `did not expect ${entry} expected handle or particle`);
@@ -17673,9 +17682,7 @@ class Particle$1 {
         this.relevances = [];
         this._idle = Promise.resolve();
         this._busy = 0;
-        // Only used by a Slotlet class in particle-execution-context
-        // tslint:disable-next-line: no-any
-        this.slotByName = new Map();
+        this.slotProxiesByName = new Map();
         // Typescript only sees this.constructor as a Function type.
         // TODO(shans): move spec off the constructor
         this.spec = this.constructor['spec'];
@@ -17769,11 +17776,20 @@ class Particle$1 {
     outputs() {
         return this.spec.outputs;
     }
+    hasSlotProxy(name) {
+        return this.slotProxiesByName.has(name);
+    }
+    addSlotProxy(slotlet) {
+        this.slotProxiesByName.set(slotlet.slotName, slotlet);
+    }
+    removeSlotProxy(name) {
+        this.slotProxiesByName.delete(name);
+    }
     /**
      * Returns the slot with provided name.
      */
     getSlot(name) {
-        return this.slotByName.get(name);
+        return this.slotProxiesByName.get(name);
     }
     static buildManifest(strings, ...bits) {
         const output = [];
@@ -17944,7 +17960,7 @@ class DomParticleBase extends Particle$1 {
         return [];
     }
     forceRenderTemplate(slotName) {
-        this.slotByName.forEach((slot, name) => {
+        this.slotProxiesByName.forEach((slot, name) => {
             if (!slotName || (name === slotName)) {
                 slot.requestedContentTypes.add('template');
             }
@@ -18147,7 +18163,7 @@ class DomParticle extends XenStateMixin(DomParticleBase) {
       handleNames: this.spec.inputs.map(i => i.name),
       // TODO(mmandlis): this.spec needs to be replaced with a particle-spec loaded from
       // .manifest files, instead of .ptcl ones.
-      slotNames: [...this.spec.slots.values()].map(s => s.name)
+      slotNames: [...this.spec.slotConnections.values()].map(s => s.name)
     };
   }
   // affordances for aliasing methods to remove `_`
@@ -18323,7 +18339,7 @@ class MultiplexerDomParticle extends TransformationDomParticle {
       // arc multiple times unnecessarily.
       otherMappedHandles.push(
           `use '${await arc.mapHandle(otherHandle._proxy)}' as v${index}`);
-      const hostedOtherConnection = hostedParticle.connections.find(
+      const hostedOtherConnection = hostedParticle.handleConnections.find(
           conn => conn.isCompatibleType(otherHandle.type));
       if (hostedOtherConnection) {
         otherConnections.push(`${hostedOtherConnection.name} = v${index++}`);
@@ -18370,7 +18386,7 @@ class MultiplexerDomParticle extends TransformationDomParticle {
     if (list.length > 0) {
       this.relevance = 0.1;
     }
-
+  
     for (const [index, item] of this.getListEntries(list)) {
       let resolvedHostedParticle = hostedParticle;
       if (this.handleIds[item.id]) {
@@ -18406,8 +18422,8 @@ class MultiplexerDomParticle extends TransformationDomParticle {
                 this.handles,
                 arc);
       }
-      const hostedSlotName = [...resolvedHostedParticle.slots.keys()][0];
-      const slotName = [...this.spec.slots.values()][0].name;
+      const hostedSlotName = [...resolvedHostedParticle.slotConnections.keys()][0];
+      const slotName = [...this.spec.slotConnections.values()][0].name;
       const slotId = await arc.createSlot(this, slotName, itemHandle._id);
 
       if (!slotId) {
@@ -18650,8 +18666,10 @@ class MessageChannel {
 // subject to an additional IP rights grant found at
 // http://polymer.github.io/PATENTS.txt
 
-// This is only relevant in the web devtools.
-const mapStackTrace = () => {};
+// This is only relevant in the web devtools, but we need to
+// ensure that the stack trace is passed through on node
+// so that system exceptions are plumbed properly.
+const mapStackTrace = (x, f) => f([x]);
 
 /**
  * @license
@@ -18697,6 +18715,45 @@ class OuterPortAttachment {
                 stack.push({ method: match[1], location, target: null, targetClass: 'noLink' });
             }
             return stack;
+        }
+        // The slice discards the stack frame corresponding to the API channel
+        // function, which is already being displayed in the log entry.
+        if (mapStackTrace) {
+            mapStackTrace(stackString, mapped => mapped.slice(1).map(frameString => {
+                // Each frame has the form '    at function (source:line:column)'.
+                // Extract the function name and source:line:column text, then set up
+                // a frame object with the following fields:
+                //   location: text to display as the source in devtools Arcs panel
+                //   target: URL to open in devtools Sources panel
+                //   targetClass: CSS class specifier to attach to the location text
+                let match = frameString.match(/^ {4}at (.*) \((.*)\)$/);
+                if (match === null) {
+                    match = { 1: '<unknown>', 2: frameString.replace(/^ *at */, '') };
+                }
+                const frame = { method: match[1] };
+                const source = match[2].replace(/:[0-9]+$/, '');
+                if (source.startsWith('http')) {
+                    // 'http://<url>/arcs.*/shell/file.js:150'
+                    // -> location: 'shell/file.js:150', target: same as source
+                    frame.location = source.replace(/^.*\/arcs[^/]*\//, '');
+                    frame.target = source;
+                    frame.targetClass = 'link';
+                }
+                else if (source.startsWith('webpack')) {
+                    // 'webpack:///runtime/sub/file.js:18'
+                    // -> location: 'runtime/sub/file.js:18', target: 'webpack:///./runtime/sub/file.js:18'
+                    frame.location = source.slice(11);
+                    frame.target = `webpack:///./${frame.location}`;
+                    frame.targetClass = 'link';
+                }
+                else {
+                    // '<anonymous>' (or similar)
+                    frame.location = source;
+                    frame.target = null;
+                    frame.targetClass = 'noLink';
+                }
+                stack.push(frame);
+            }), { sync: false, cacheGlobally: true });
         }
         return stack;
     }
@@ -19205,6 +19262,49 @@ PECInnerPort = __decorate([
 ], PECInnerPort);
 
 /**
+ * A representation of a consumed slot. Retrieved from a particle using
+ * particle.getSlot(name)
+ */
+class SlotProxy {
+    constructor(apiPort, particle, slotName, providedSlots) {
+        this.handlers = new Map();
+        this.requestedContentTypes = new Set();
+        this._isRendered = false;
+        this.apiPort = apiPort;
+        this.slotName = slotName;
+        this.particle = particle;
+        this.providedSlots = providedSlots;
+    }
+    get isRendered() { return this._isRendered; }
+    /**
+     * renders content to the slot.
+     */
+    render(content) {
+        this.apiPort.Render(this.particle, this.slotName, content);
+        Object.keys(content).forEach(key => { this.requestedContentTypes.delete(key); });
+        // Slot is considered rendered, if a non-empty content was sent and all requested content types were fullfilled.
+        this._isRendered = this.requestedContentTypes.size === 0 && (Object.keys(content).length > 0);
+    }
+    /** @method registerEventHandler(name, f)
+     * registers a callback to be invoked when 'name' event happens.
+     */
+    registerEventHandler(name, f) {
+        if (!this.handlers.has(name)) {
+            this.handlers.set(name, []);
+        }
+        this.handlers.get(name).push(f);
+    }
+    clearEventHandlers(name) {
+        this.handlers.set(name, []);
+    }
+    fireEvent(event) {
+        for (const handler of this.handlers.get(event.handler) || []) {
+            handler(event);
+        }
+    }
+}
+
+/**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
  * This code may only be used under the BSD style license found at
@@ -19272,6 +19372,9 @@ class StorageProxy {
         const raise = stack => this.port.RaiseSystemException({ message, stack, name }, methodName, particleId);
         if (!mapStackTrace) {
             raise(stack);
+        }
+        else {
+            mapStackTrace(stack, mappedStack => raise(mappedStack.join('\n')));
         }
     }
     /**
@@ -19815,54 +19918,12 @@ class ParticleExecutionContext {
                 particle.fireEvent(slotName, event);
             }
             onStartRender(particle, slotName, providedSlots, contentTypes) {
-                const apiPort = this;
-                /**
-                 * A representation of a consumed slot. Retrieved from a particle using
-                 * particle.getSlot(name)
-                 */
-                class Slotlet {
-                    constructor(particle, slotName, providedSlots) {
-                        this.handlers = new Map();
-                        this.requestedContentTypes = new Set();
-                        this._isRendered = false;
-                        this.slotName = slotName;
-                        this.particle = particle;
-                        this.providedSlots = providedSlots;
-                    }
-                    get isRendered() { return this._isRendered; }
-                    /**
-                     * renders content to the slot.
-                     */
-                    render(content) {
-                        apiPort.Render(particle, slotName, content);
-                        Object.keys(content).forEach(key => { this.requestedContentTypes.delete(key); });
-                        // Slot is considered rendered, if a non-empty content was sent and all requested content types were fullfilled.
-                        this._isRendered = this.requestedContentTypes.size === 0 && (Object.keys(content).length > 0);
-                    }
-                    /** @method registerEventHandler(name, f)
-                     * registers a callback to be invoked when 'name' event happens.
-                     */
-                    registerEventHandler(name, f) {
-                        if (!this.handlers.has(name)) {
-                            this.handlers.set(name, []);
-                        }
-                        this.handlers.get(name).push(f);
-                    }
-                    clearEventHandlers(name) {
-                        this.handlers.set(name, []);
-                    }
-                    fireEvent(event) {
-                        for (const handler of this.handlers.get(event.handler) || []) {
-                            handler(event);
-                        }
-                    }
-                }
-                particle.slotByName.set(slotName, new Slotlet(particle, slotName, providedSlots));
+                particle.addSlotProxy(new SlotProxy(this, particle, slotName, providedSlots));
                 particle.renderSlot(slotName, contentTypes);
             }
             onStopRender(particle, slotName) {
-                assert(particle.slotByName.has(slotName), `Stop render called for particle ${particle.spec.name} slot ${slotName} without start render being called.`);
-                particle.slotByName.delete(slotName);
+                assert(particle.hasSlotProxy(slotName), `Stop render called for particle ${particle.spec.name} slot ${slotName} without start render being called.`);
+                particle.removeSlotProxy(slotName);
             }
         }(port);
         this.idBase = Id.newSessionId().fromString(idBase);
@@ -19949,7 +20010,7 @@ class ParticleExecutionContext {
         const handleMap = new Map();
         const registerList = [];
         proxies.forEach((proxy, name) => {
-            const connSpec = spec.connectionMap.get(name);
+            const connSpec = spec.handleConnectionMap.get(name);
             const handle = handleFor(proxy, name, id, connSpec.isInput, connSpec.isOutput);
             handleMap.set(name, handle);
             // Defer registration of handles with proxies until after particles have a chance to
@@ -20281,7 +20342,7 @@ class RecipeWalker extends Walker {
         if (this.onPotentialHandleConnection) {
             for (const particle of recipe.particles) {
                 if (particle.spec) {
-                    for (const connectionSpec of particle.spec.connections) {
+                    for (const connectionSpec of particle.spec.handleConnections) {
                         if (particle.connections[connectionSpec.name]) {
                             continue;
                         }
@@ -20670,7 +20731,8 @@ class ParticleExecutionHost {
             async onHandleToList(handle, callback) {
                 // TODO(shans): fix typing once we have types for Singleton/Collection/etc
                 // tslint:disable-next-line: no-any
-                this.SimpleCallback(callback, await handle.toList());
+                const data = await handle.toList();
+                this.SimpleCallback(callback, data);
             }
             onHandleSet(handle, data, particleId, barrier) {
                 // TODO(shans): fix typing once we have types for Singleton/Collection/etc
@@ -21106,7 +21168,7 @@ class Arc {
             .map(h => h.immediateValue));
         const results = [];
         particleSpecs.forEach(spec => {
-            for (const connection of spec.connections) {
+            for (const connection of spec.handleConnections) {
                 if (connection.type instanceof InterfaceType) {
                     results.push(connection.type.interfaceInfo.toString());
                 }
@@ -21315,7 +21377,7 @@ ${this.activeRecipe.toString()}`;
     _connectParticleToHandle(particle, name, targetHandle) {
         assert(targetHandle, 'no target handle provided');
         const handleMap = this.particleHandleMaps.get(particle.id);
-        assert(handleMap.spec.connectionMap.get(name) !== undefined, 'can\'t connect handle to a connection that doesn\'t exist');
+        assert(handleMap.spec.handleConnectionMap.get(name) !== undefined, 'can\'t connect handle to a connection that doesn\'t exist');
         handleMap.handles.set(name, targetHandle);
     }
     async createStore(type, name, id, tags, storageKey = undefined) {
@@ -23220,7 +23282,7 @@ class GroupHandleConnections extends Strategy {
                         .filter(c => c.particle !== particleWithMostConnectionsOfType);
                     let iteration = 0;
                     while (allTypeHandleConnections.length > 0) {
-                        for (const connSpec of particleWithMostConnectionsOfType.spec.connections) {
+                        for (const connSpec of particleWithMostConnectionsOfType.spec.handleConnections) {
                             if (!type.equals(connSpec.type)) {
                                 continue;
                             }
@@ -23316,8 +23378,8 @@ class InitPopulation extends Strategy {
     _contextualResults() {
         const results = [];
         for (const particle of this.arc.activeRecipe.particles) {
-            for (const [name, slotSpec] of particle.spec.slots) {
-                for (const providedSlotSpec of slotSpec.providedSlots) {
+            for (const [name, slotSpec] of particle.spec.slotConnections) {
+                for (const providedSlotSpec of slotSpec.provideSlotConnections) {
                     results.push(...this._recipeIndex.findConsumeSlotConnectionMatch(particle, providedSlotSpec).map(({ recipeParticle }) => ({ recipe: recipeParticle.recipe })));
                 }
             }
@@ -23579,7 +23641,7 @@ class MatchRecipeByVerb extends Strategy {
                                     }
                                 }
                                 else {
-                                    for (const connSpec of particle.spec.connections) {
+                                    for (const connSpec of particle.spec.handleConnections) {
                                         if (tryApplyHandleConstraint(name, connSpec, particle, constraint, mappedHandle)) {
                                             return true;
                                         }
@@ -23629,7 +23691,7 @@ class MatchRecipeByVerb extends Strategy {
                 }
             }
             if (particle.spec) {
-                for (const connectionSpec of particle.spec.connections) {
+                for (const connectionSpec of particle.spec.handleConnections) {
                     if (MatchRecipeByVerb.connectionSpecMatchesConstraint(connectionSpec, handleData)) {
                         return true;
                     }
@@ -23691,12 +23753,12 @@ class MatchRecipeByVerb extends Strategy {
             return false;
         }
         const slotConn = particle.getSlotConnectionBySpec(slotSpecs.get(name));
-        if (slotConn && slotConn._targetSlot != null &&
+        if (slotConn && slotConn.targetSlot != null &&
             constraints.targetSlot != null) {
             return false;
         }
         for (const provideName in constraints.providedSlots) {
-            if (slotSpecs.get(name).providedSlots.find(spec => spec.name === provideName).length === 0) {
+            if (slotSpecs.get(name).provideSlotConnections.find(spec => spec.name === provideName) === undefined) {
                 return false;
             }
         }
@@ -24155,7 +24217,7 @@ class ProvidedSlotContext extends SlotContext {
         this._container = container;
         // The context's accompanying ProvidedSlotSpec (see particle-spec.js).
         // Initialized to a default spec, if the container is one of the shell provided top root-contexts.
-        this.spec = spec || new ProvidedSlotSpec({ name });
+        this.spec = spec || new ProvideSlotConnectionSpec({ name });
         if (this.sourceSlotConsumer) {
             this.sourceSlotConsumer.directlyProvidedSlotContexts.push(this);
         }
@@ -25085,7 +25147,7 @@ class SlotConsumer {
         }
     }
     createProvidedContexts() {
-        return this.consumeConn.getSlotSpec().providedSlots.map(spec => new ProvidedSlotContext(this.consumeConn.providedSlots[spec.name].id, spec.name, /* tags=*/ [], /* container= */ null, spec, this));
+        return this.consumeConn.getSlotSpec().provideSlotConnections.map(spec => new ProvidedSlotContext(this.consumeConn.providedSlots[spec.name].id, spec.name, /* tags=*/ [], /* container= */ null, spec, this));
     }
     updateProvidedContexts() {
         this.allProvidedSlotContexts.forEach(providedContext => {
@@ -25891,7 +25953,7 @@ class RecipeIndex {
             for (const recipeParticle of recipe.particles) {
                 if (!recipeParticle.spec)
                     continue;
-                for (const [name, slotSpec] of recipeParticle.spec.slots) {
+                for (const [name, slotSpec] of recipeParticle.spec.slotConnections) {
                     const recipeSlotConn = recipeParticle.getSlotConnectionByName(name);
                     if (recipeSlotConn && recipeSlotConn.targetSlot)
                         continue;
