@@ -1,8 +1,5 @@
-commit e2be9fce838b2fcffca55e376570eb43e0a9dabd
-Author: shans <shane.stephens@gmail.com>
-Date:   Mon Mar 18 16:20:40 2019 +1100
+commit 9e386f6a00365e467003b4888a6e518dc499a4ee
+Author: Ray Cromwell <cromwellian@gmail.com>
+Date:   Sun Mar 17 22:40:22 2019 -0700
 
-    Rename the connection objects in ParticleSpec to reflect what they are. (#2760)
-    
-    Rename the connection objects in ParticleSpec to reflect what the are.
-    Move Slotlet out of particle-execution-context.ts and rename it to SlotProxy.
+    Fix ArtistAutofill recipe (#2763)
