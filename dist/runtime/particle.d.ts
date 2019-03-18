@@ -21,7 +21,6 @@ export declare class Particle {
     extraData: boolean;
     relevances: Relevance[];
     handles: Map<string, Handle>;
-    consumedSlotConnections: any[];
     private _idle;
     private _idleResolver;
     private _busy;

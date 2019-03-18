@@ -142,7 +142,7 @@ $_documentContainer.innerHTML = `<dom-module id="lumo-badge">
       /* Pill */
 
       [theme~="badge"][theme~="pill"] {
-        --lumo-border-radius: 1em;
+        --lumo-border-radius-s: 1em;
       }
     </style>
   </template>
