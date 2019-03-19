@@ -125,8 +125,8 @@
 				<h2 id="starting-arcs">Starting Arcs</h2>
 				<p>After the full build (<code>npm install &amp;&amp; tools/sigh</code>) run: (note that <code>npm
 start</code> will block, so you&#39;ll have to run the second command in a new shell):</p>
-				<pre><code>$ <span class="hljs-built_in">npm</span> start</code></pre><p>Then open <code>http://localhost:8080/shells/web-shell</code> in a web browser
-				(or, on MacOS, use <code>open &#39;http://localhost:8080/shells/web-shell</code>).</p>
+				<pre><code>$ <span class="hljs-built_in">npm</span> start</code></pre><p>Then open <code>http://localhost:8786/shells/web-shell</code> in a web browser
+				(or, on MacOS, use <code>open &#39;http://localhost:8786/shells/web-shell</code>).</p>
 				<h2 id="subprojects">Subprojects</h2>
 				<p>Subcomponents have more detailed descriptions. Particularly the extensions
 				also have individual installation steps.</p>
@@ -141,10 +141,10 @@ start</code> will block, so you&#39;ll have to run the second command in a new s
 				<pre><code>$ npm <span class="hljs-keyword">install</span>
 $ npm run <span class="hljs-keyword">test</span>-<span class="hljs-keyword">with</span>-<span class="hljs-keyword">start</span></code></pre><p>There are additional targets provided to run subsets of those commands.</p>
 				<ul>
-					<li><code>npm start</code>: spins up a server (and blocks), serving in port 8080.</li>
+					<li><code>npm start</code>: spins up a server (and blocks), serving in port 8786.</li>
 					<li><code>tools/sigh</code>: run a subset of tests and build packed artifacts.</li>
 					<li><code>npm test</code>: run all tests (using currently built artifacts) against an
-					already-running server (assumed to be port 8080).</li>
+					already-running server (assumed to be port 8786).</li>
 					<li><code>npm run test-no-web</code>: run all non-web tests.</li>
 				</ul>
 				<p>To run a specific Selenium test using Mocha&#39;s &#39;grep&#39; capability:</p>
