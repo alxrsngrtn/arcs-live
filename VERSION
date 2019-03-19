@@ -1,5 +1,13 @@
-commit 6e98d405f4ebbc8d604f27fc2427b46d2837606c
-Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Tue Mar 19 14:04:18 2019 +1100
+commit e02fd6444f2cd3da6c99f05cea26f4204fb21e06
+Author: Scott J. Miles <sjmiles@google.com>
+Date:   Tue Mar 19 13:34:16 2019 -0700
 
-    Per-tool search (#2762)
+    add info for usage and solo param (#2767)
+    
+    * add info for usage and solo param
+    
+    * Fix typos, add info about returned JSON.
+    
+    * Update README.md
+    
+    remove extra newlines
