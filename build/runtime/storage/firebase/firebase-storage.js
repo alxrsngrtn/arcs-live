@@ -626,12 +626,16 @@ class FirebaseCollection extends FirebaseStorageProvider {
                             value = this.model.getValue(id);
                         }
                         const effective = this.model.add(id, value, addKeys);
-                        add.push({ value, keys: addKeys, effective });
+                        if (effective) {
+                            add.push({ value, keys: addKeys, effective });
+                        }
                     }
                     if (removeKeys.length) {
                         const value = this.model.getValue(id);
                         const effective = this.model.remove(id, removeKeys);
-                        remove.push({ value, keys: removeKeys, effective });
+                        if (effective) {
+                            remove.push({ value, keys: removeKeys, effective });
+                        }
                     }
                 }
                 else {
@@ -649,7 +653,9 @@ class FirebaseCollection extends FirebaseStorageProvider {
                         }
                         const keys = encKeys.map(FirebaseStorage.decodeKey);
                         const effective = this.model.add(id, value, keys);
-                        add.push({ value, keys, effective });
+                        if (effective) {
+                            add.push({ value, keys, effective });
+                        }
                     }
                 }
             }
@@ -659,7 +665,9 @@ class FirebaseCollection extends FirebaseStorageProvider {
                 const encKeysList = Object.keys(encKeys);
                 const keys = encKeysList.map(FirebaseStorage.decodeKey);
                 const effective = this.model.remove(id, keys);
-                remove.push({ value, keys, effective });
+                if (effective) {
+                    remove.push({ value, keys, effective });
+                }
             }
         }
         // Clean up any suppressions that have reached the barrier version.

@@ -1,13 +1,5 @@
-commit e02fd6444f2cd3da6c99f05cea26f4204fb21e06
-Author: Scott J. Miles <sjmiles@google.com>
-Date:   Tue Mar 19 13:34:16 2019 -0700
+commit 003691ddffb4a27be308c27a66141fd16e4f67c6
+Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
+Date:   Wed Mar 20 13:49:50 2019 +1100
 
-    add info for usage and solo param (#2767)
-    
-    * add info for usage and solo param
-    
-    * Fix typos, add info about returned JSON.
-    
-    * Update README.md
-    
-    remove extra newlines
+    FirebaseCollection: only fire events for remote updates that actually affect the local model (#2773)

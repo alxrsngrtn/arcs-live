@@ -7,6 +7,7 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
+import '../storage/firebase/firebase-provider.js';
 import { assert } from '../../platform/chai-web.js';
 import { Arc } from '../arc.js';
 import { Loader } from '../loader.js';
@@ -61,9 +62,13 @@ describe('firebase', function () {
             const barType = new EntityType(manifest.schemas.Bar);
             const value = 'Hi there' + Math.random();
             const variable = await storage.construct('test0', barType, newStoreKey('variable'));
+            let events = 0;
+            variable.on('change', () => events++, this);
             await variable.set({ id: 'test0:test', value });
             const result = await variable.get();
             assert.equal(result.value, value);
+            assert.equal(variable.version, 1);
+            assert.equal(events, 1);
         });
         it('resolves concurrent set', async () => {
             const manifest = await Manifest.parse(`
@@ -156,12 +161,16 @@ describe('firebase', function () {
             const value1 = 'Hi there' + Math.random();
             const value2 = 'Goodbye' + Math.random();
             const collection = await storage.construct('test1', barType.collectionOf(), newStoreKey('collection'));
+            let events = 0;
+            collection.on('change', () => events++, this);
             await collection.store({ id: 'id0', value: value1 }, ['key0']);
             await collection.store({ id: 'id1', value: value2 }, ['key1']);
             let result = await collection.get('id0');
             assert.equal(result.value, value1);
             result = await collection.toList();
             assert.deepEqual(result, [{ id: 'id0', value: value1 }, { id: 'id1', value: value2 }]);
+            assert.equal(collection.version, 2);
+            assert.equal(events, 2);
         });
         it('resolves concurrent add of same id', async () => {
             const manifest = await Manifest.parse(`
