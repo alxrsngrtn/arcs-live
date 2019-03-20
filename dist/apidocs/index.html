@@ -141,8 +141,8 @@ start</code> will block, so you&#39;ll have to run the second command in a new s
 				<pre><code>$ npm <span class="hljs-keyword">install</span>
 $ npm run <span class="hljs-keyword">test</span>-<span class="hljs-keyword">with</span>-<span class="hljs-keyword">start</span></code></pre><p>There are additional targets provided to run subsets of those commands.</p>
 				<ul>
-					<li><code>npm start</code>: spins up a server (and blocks), serving in port 8786.</li>
-					<li><code>tools/sigh</code>: run a subset of tests and build packed artifacts.</li>
+					<li><code>npm start</code>: spins up a server (and blocks), serving on port 8786.</li>
+					<li><code>./tools/sigh</code>: run a subset of tests and build packed artifacts.</li>
 					<li><code>npm test</code>: run all tests (using currently built artifacts) against an
 					already-running server (assumed to be port 8786).</li>
 					<li><code>npm run test-no-web</code>: run all non-web tests.</li>
@@ -152,13 +152,23 @@ $ npm run <span class="hljs-keyword">test</span>-<span class="hljs-keyword">with
 					<li>In one terminal: <code>npm start</code></li>
 					<li>In another: <code>npm run test-wdio-shells -- --mochaOpts.grep &#39;regex&#39;</code></li>
 				</ul>
+				<p>This also works for unit tests: <code>./tools/sigh test --grep &#39;regex&#39;</code>. In addition,
+					for unit tests you can run only a single test case by using <code>it.only()</code> instead
+				of <code>it()</code>, or a single suite using <code>describe.only()</code> instead of <code>describe()</code>.</p>
 				<h3 id="debugging-tests">Debugging tests</h3>
 				<p>If you see errors like</p>
 				<pre><code><span class="hljs-symbol">ERROR:</span> connect ECONNREFUSED <span class="hljs-number">127.0</span>.<span class="hljs-number">0.1</span>:<span class="hljs-number">9515</span>
 chrome
     at new RuntimeError (...\node_modules\webdriverio\build\<span class="hljs-class"><span class="hljs-keyword">lib</span>\<span class="hljs-title">utils</span>\<span class="hljs-title">ErrorHandler</span>.<span class="hljs-title">js</span>:144:12)</span>
     at Request._callback (...\node_modules\webdriverio\build\<span class="hljs-class"><span class="hljs-keyword">lib</span>\<span class="hljs-title">utils</span>\<span class="hljs-title">RequestHandler</span>.<span class="hljs-title">js</span>:327:43)</span></code></pre><p>It may indicate that chromedriver hasn&#39;t been installed completely. Run the install script:</p>
-				<pre><code><span class="hljs-keyword">node</span> <span class="hljs-title">node_modules</span>\chromedriver\install.js</code></pre><h3 id="debugging-selenium-failures">Debugging Selenium Failures</h3>
+				<pre><code><span class="hljs-keyword">node</span> <span class="hljs-title">node_modules</span>\chromedriver\install.js</code></pre><h4 id="debugging-unit-tests-in-chrome">Debugging unit tests in Chrome</h4>
+				<p>You can attach the Chrome debugger to debug your unit tests using the
+				<code>--inspect</code> flag:</p>
+				<pre><code>.<span class="hljs-regexp">/tools/</span>sigh test --<span class="hljs-keyword">inspect</span></code></pre><p>It will wait for you to attach your debugger before running the tests. Open
+					[chrome://inspect] and look for the &quot;inspect&quot; button under the &quot;Remote Target&quot;
+					heading. You can use <code>Ctrl-P</code> to open files (you may need to add the <code>build</code>
+				folder to your workspace first). Hit &quot;resume&quot; to start running the unit tests.</p>
+				<h3 id="debugging-selenium-failures">Debugging Selenium Failures</h3>
 				<p>Selenium failures are often easy to cause due to seemingly unrelated changes,
 				and difficult to diagnose.</p>
 				<p>There are 2 main avenues to debug them in this system. The first is to have
