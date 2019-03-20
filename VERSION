@@ -1,5 +1,7 @@
-commit f9f23e74d30f24670850a2c6f566d78b217d1894
-Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
-Date:   Thu Mar 21 10:27:13 2019 +1100
+commit e9b4652a870b8ef8f2683924cef300fb72f35a87
+Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
+Date:   Thu Mar 21 10:36:29 2019 +1100
 
-    Adds a test to check that all schemas/recipes/manifests are parsed successfully. (#2776)
+    Remove reducethislist and just link all .js files under src. (#2774)
+    
+    This also cleans up sigh a bit; we don't actually have any async command functions.
