@@ -40,11 +40,11 @@ export declare class SlotDomConsumer extends SlotConsumer {
     _onUpdate(rendering: DomRendering): void;
     _observe(container: any): void;
     _stampTemplate(rendering: DomRendering, template: any): void;
+    _eventMapper(eventHandler: any, node: any, eventName: any, handlerName: any): void;
     _updateModel(rendering: DomRendering): void;
     initInnerContainers(container: any): void;
     getNodeValue(node: any, name: any): any;
     isDirectInnerSlot(container: any, innerContainer: any): boolean;
     _initMutationObserver(): MutationObserver | null;
-    _eventMapper(eventHandler: any, node: any, eventName: any, handlerName: any): void;
     formatHostedContent(content: Content): {};
 }

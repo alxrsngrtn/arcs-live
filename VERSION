@@ -1,5 +1,5 @@
-commit 003691ddffb4a27be308c27a66141fd16e4f67c6
-Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
-Date:   Wed Mar 20 13:49:50 2019 +1100
+commit 6c4de17c8e56d521ab113f68bdb8a233bd555384
+Author: Scott J. Miles <sjmiles@google.com>
+Date:   Tue Mar 19 21:37:03 2019 -0700
 
-    FirebaseCollection: only fire events for remote updates that actually affect the local model (#2773)
+    fixups to Xen event handling, and continue fumbling with log-* (#2771)

@@ -183,13 +183,41 @@ export class SlotDomConsumer extends SlotConsumer {
     }
     _stampTemplate(rendering, template) {
         if (!rendering.liveDom) {
-            // TODO(sjmiles): hack to allow subtree elements (e.g. x-list) to marshal events
-            rendering.container._eventMapper = this._eventMapper.bind(this, this.eventHandler);
+            const mapper = this._eventMapper.bind(this, this.eventHandler);
             rendering.liveDom = Template
                 .stamp(template)
-                .events(rendering.container._eventMapper)
+                .events(mapper)
                 .appendTo(rendering.container);
         }
+    }
+    _eventMapper(eventHandler, node, eventName, handlerName) {
+        node.addEventListener(eventName, event => {
+            // TODO(sjmiles): we have an extremely minimalist approach to events here, this is useful IMO for
+            // finding the smallest set of features that we are going to need.
+            // First problem: click event firing multiple times as it bubbles up the tree, minimalist solution
+            // is to enforce a 'first listener' rule by executing `stopPropagation`.
+            event.stopPropagation();
+            // TODO(sjmiles): affordance for forwarded events (events produced by a template that is lexically
+            // scoped to the mapped template [e.g. dom-repeater])
+            if (eventName === 'xen:forward') {
+                node = event.detail.target;
+                handlerName = event.detail.handlerName;
+            }
+            // collate keyboard information
+            const { altKey, ctrlKey, metaKey, shiftKey, code, key, repeat } = event;
+            const detail = {
+                // TODO(sjmiles): `key` is a data-key (as in key-value pair), may be confusing vs keyboard `keys`
+                key: node.key,
+                value: node.value,
+                keys: { altKey, ctrlKey, metaKey, shiftKey, code, key, repeat }
+            };
+            eventHandler({
+                detail,
+                handler: handlerName,
+                // TODO(sjmiles): deprecated
+                data: detail
+            });
+        });
     }
     _updateModel(rendering) {
         if (rendering.liveDom) {
@@ -260,26 +288,6 @@ export class SlotDomConsumer extends SlotConsumer {
             });
         }
         return null;
-    }
-    _eventMapper(eventHandler, node, eventName, handlerName) {
-        node.addEventListener(eventName, event => {
-            // TODO(sjmiles): we have an extremely minimalist approach to events here, this is useful IMO for
-            // finding the smallest set of features that we are going to need.
-            // First problem: click event firing multiple times as it bubbles up the tree, minimalist solution
-            // is to enforce a 'first listener' rule by executing `stopPropagation`.
-            event.stopPropagation();
-            // propagate keyboard information
-            const { altKey, ctrlKey, metaKey, shiftKey, code, key, repeat } = event;
-            eventHandler({
-                handler: handlerName,
-                data: {
-                    // TODO(sjmiles): this is a data-key (as in key-value pair), may be confusing vs `keys`
-                    key: node.key,
-                    value: node.value,
-                    keys: { altKey, ctrlKey, metaKey, shiftKey, code, key, repeat }
-                }
-            });
-        });
     }
     formatHostedContent(content) {
         if (content.templateName) {

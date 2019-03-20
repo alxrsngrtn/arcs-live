@@ -17043,7 +17043,7 @@ class KeyManager {
 
 var commonjsGlobal = typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
 
-commonjsGlobal.debugLevel = 2;
+commonjsGlobal.logLevel = 2;
 
 /**
  * @license
@@ -21702,7 +21702,7 @@ const _logFactory = (preamble, color, log='log') => {
   return console[log].bind(console, `(${preamble})`);
 };
 
-const factory = global.debugLevel < 1 ? () => () => {} : _logFactory;
+const factory = global.logLevel < 1 ? () => () => {} : _logFactory;
 
 const logFactory = (...args) => factory(...args);
 
@@ -24669,22 +24669,6 @@ Code distributed by Google as part of the polymer project is also
 subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
 */
 
-// HTMLImports compatibility stuff, delete soonish
-if (typeof document !== 'undefined' && !('currentImport' in document)) {
-  Object.defineProperty(document, 'currentImport', {
-    get() {
-      const script = this.currentScript;
-      let doc = script.ownerDocument || this;
-      // this code for CEv1 compatible HTMLImports polyfill (aka modern)
-      if (window['HTMLImports']) {
-        doc = window.HTMLImports.importForElement(script);
-        doc.URL = script.parentElement.href;
-      }
-      return doc;
-    }
-  });
-}
-
 /* Annotator */
 // tree walker that generates arbitrary data using visitor function `cb`
 // `cb` is called as `cb(node, key, notes)`
@@ -24793,7 +24777,8 @@ const annotateElementNode = function(node, key, notes) {
     for (let a$ = node.attributes, i = a$.length - 1, a; i >= 0 && (a = a$[i]); i--) {
       if (
         annotateEvent(node, key, notes, a.name, a.value) ||
-        annotateMustache(node, key, notes, a.name, a.value)
+        annotateMustache(node, key, notes, a.name, a.value) ||
+        annotateDirective(node, key, notes, a.name, a.value)
       ) {
         node.removeAttribute(a.name);
         noted = true;
@@ -24831,6 +24816,13 @@ const annotateEvent = function(node, key, notes, name, value) {
       );
     }
     takeNote(notes, key, 'events', name.slice(3), value);
+    return true;
+  }
+};
+
+const annotateDirective = function(node, key, notes, name, value) {
+  if (name === 'xen:forward') {
+    takeNote(notes, key, 'events', 'xen:forward', value);
     return true;
   }
 };
@@ -24994,6 +24986,9 @@ const stamp = function(template, opts) {
   // we could clone into an inert document (say a new template) and process the nodes
   // before importing if necessary.
   const root = document.importNode(template.content, true);
+  // templates don't require a single container element, but sometimes they do have one...
+  // capture the fire element, because it's harder to find after we insert the nodes into DOM
+  const firstElement = root.firstElementChild;
   // map DOM to keys
   const map = locateNodes(root, notes.locator);
   // return dom manager
@@ -25001,6 +24996,7 @@ const stamp = function(template, opts) {
     root,
     notes,
     map,
+    firstElement,
     $(slctr) {
       return this.root.querySelector(slctr);
     },
@@ -25023,6 +25019,19 @@ const stamp = function(template, opts) {
       }
       return this;
     },
+    // support event-forwarding when stamping descendent template DOM
+    // i.e. for objects (say, elements) that consume templates as input
+    // see also: support for `xen:forward` attribute above
+    forward: function() {
+      mapEvents(notes, map, (node, eventName, handlerName) => {
+        node.addEventListener(eventName, e => {
+          //console.log(`xen::forward: forwarding [${eventName}]`);
+          const wrapper = {eventName, handlerName, detail: e.detail, target: e.target};
+          fire(node, 'xen:forward', wrapper, {bubbles: true});
+        });
+      });
+      return this;
+    },
     appendTo: function(node) {
       if (this.root) {
         // TODO(sjmiles): assumes this.root is a fragment
@@ -25037,6 +25046,14 @@ const stamp = function(template, opts) {
   };
   //window.stampTime += performance.now() - startTime;
   return dom;
+};
+
+const fire = (node, eventName, detail, init) => {
+  const eventInit = init || {};
+  eventInit.detail = detail;
+  const event = new CustomEvent(eventName, eventInit);
+  node.dispatchEvent(event);
+  return event.detail;
 };
 
 const maybeStringToTemplate = template => {
@@ -25410,13 +25427,41 @@ class SlotDomConsumer extends SlotConsumer {
     }
     _stampTemplate(rendering, template) {
         if (!rendering.liveDom) {
-            // TODO(sjmiles): hack to allow subtree elements (e.g. x-list) to marshal events
-            rendering.container._eventMapper = this._eventMapper.bind(this, this.eventHandler);
+            const mapper = this._eventMapper.bind(this, this.eventHandler);
             rendering.liveDom = Template
                 .stamp(template)
-                .events(rendering.container._eventMapper)
+                .events(mapper)
                 .appendTo(rendering.container);
         }
+    }
+    _eventMapper(eventHandler, node, eventName, handlerName) {
+        node.addEventListener(eventName, event => {
+            // TODO(sjmiles): we have an extremely minimalist approach to events here, this is useful IMO for
+            // finding the smallest set of features that we are going to need.
+            // First problem: click event firing multiple times as it bubbles up the tree, minimalist solution
+            // is to enforce a 'first listener' rule by executing `stopPropagation`.
+            event.stopPropagation();
+            // TODO(sjmiles): affordance for forwarded events (events produced by a template that is lexically
+            // scoped to the mapped template [e.g. dom-repeater])
+            if (eventName === 'xen:forward') {
+                node = event.detail.target;
+                handlerName = event.detail.handlerName;
+            }
+            // collate keyboard information
+            const { altKey, ctrlKey, metaKey, shiftKey, code, key, repeat } = event;
+            const detail = {
+                // TODO(sjmiles): `key` is a data-key (as in key-value pair), may be confusing vs keyboard `keys`
+                key: node.key,
+                value: node.value,
+                keys: { altKey, ctrlKey, metaKey, shiftKey, code, key, repeat }
+            };
+            eventHandler({
+                detail,
+                handler: handlerName,
+                // TODO(sjmiles): deprecated
+                data: detail
+            });
+        });
     }
     _updateModel(rendering) {
         if (rendering.liveDom) {
@@ -25487,26 +25532,6 @@ class SlotDomConsumer extends SlotConsumer {
             });
         }
         return null;
-    }
-    _eventMapper(eventHandler, node, eventName, handlerName) {
-        node.addEventListener(eventName, event => {
-            // TODO(sjmiles): we have an extremely minimalist approach to events here, this is useful IMO for
-            // finding the smallest set of features that we are going to need.
-            // First problem: click event firing multiple times as it bubbles up the tree, minimalist solution
-            // is to enforce a 'first listener' rule by executing `stopPropagation`.
-            event.stopPropagation();
-            // propagate keyboard information
-            const { altKey, ctrlKey, metaKey, shiftKey, code, key, repeat } = event;
-            eventHandler({
-                handler: handlerName,
-                data: {
-                    // TODO(sjmiles): this is a data-key (as in key-value pair), may be confusing vs `keys`
-                    key: node.key,
-                    value: node.value,
-                    keys: { altKey, ctrlKey, metaKey, shiftKey, code, key, repeat }
-                }
-            });
-        });
     }
     formatHostedContent(content) {
         if (content.templateName) {
