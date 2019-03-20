@@ -1,5 +1,9 @@
-commit 6c4de17c8e56d521ab113f68bdb8a233bd555384
-Author: Scott J. Miles <sjmiles@google.com>
-Date:   Tue Mar 19 21:37:03 2019 -0700
+commit 7bcee0bf1a31d18eb6b534a167effe57220e078b
+Author: Paul Lindner <lindner@inuus.com>
+Date:   Wed Mar 20 05:40:08 2019 -0700
 
-    fixups to Xen event handling, and continue fumbling with log-* (#2771)
+    Upgrade to npm v6.9.0 (#2770)
+    
+    Eliminates the workarond for modifying server/pacakge.json from
+    https://npm.community/t/issue-npm-install-with-local-packages-and-symlinks-enoent/518
+    fixed in https://github.com/npm/cli/pull/86
