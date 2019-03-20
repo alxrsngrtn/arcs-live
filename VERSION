@@ -1,5 +1,5 @@
-commit 7322ece395b4f840ba1e022280769a806d90662a
+commit f9f23e74d30f24670850a2c6f566d78b217d1894
 Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
-Date:   Thu Mar 21 10:26:35 2019 +1100
+Date:   Thu Mar 21 10:27:13 2019 +1100
 
-    Added instructions to README.md for running/debugging unit tests. (#2775)
+    Adds a test to check that all schemas/recipes/manifests are parsed successfully. (#2776)
