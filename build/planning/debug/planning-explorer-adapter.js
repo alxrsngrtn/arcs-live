@@ -56,6 +56,7 @@ export class PlanningExplorerAdapter {
             const devtoolsChannel = DevtoolsConnection.get().forArc(planificator.arc);
             devtoolsChannel.listen('force-replan', async () => {
                 planificator.consumer.result.suggestions = [];
+                planificator.consumer.result.generations = [];
                 await planificator.consumer.result.flush();
                 await planificator.requestPlanning({ metadata: { trigger: Trigger.Forced } });
                 await planificator.loadSuggestions();

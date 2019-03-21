@@ -1,5 +1,5 @@
-commit e7582b17d92a57625c7364b4f0952922b4118930
-Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
-Date:   Thu Mar 21 11:59:18 2019 +1100
+commit f66f9dcda33e4e128af810b22e9d74cec3bf1689
+Author: Piotr Swigon <piotr.swigon@gmail.com>
+Date:   Thu Mar 21 13:08:42 2019 +1100
 
-    Fixed manifest.md guide to use new syntax (#2772)
+    Clear generations before force re-plan (#2779)

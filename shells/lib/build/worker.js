@@ -2642,10 +2642,8 @@ class InterfaceInfo {
     }
     _handlesToManifestString() {
         return this.handles
-            .map(handle => {
-            const type = handle.type.resolvedType();
-            return `  ${handle.direction ? handle.direction + ' ' : ''}${type.toString()} ${handle.name ? handle.name : '*'}`;
-        }).join('\n');
+            .map(h => `  ${h.direction ? h.direction + ' ' : ''}${h.type.toString()} ${h.name ? h.name : '*'}`)
+            .join('\n');
     }
     _slotsToManifestString() {
         // TODO deal with isRequired
@@ -2657,8 +2655,7 @@ class InterfaceInfo {
     toString() {
         return `interface ${this.name}
 ${this._handlesToManifestString()}
-${this._slotsToManifestString()}
-`;
+${this._slotsToManifestString()}`;
     }
     static fromLiteral(data) {
         const handles = data.handles.map(handle => ({ type: _fromLiteral(handle.type), name: _fromLiteral(handle.name), direction: _fromLiteral(handle.direction) }));
