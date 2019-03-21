@@ -1,5 +1,9 @@
-commit f66f9dcda33e4e128af810b22e9d74cec3bf1689
-Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Thu Mar 21 13:08:42 2019 +1100
+commit 6f626e8ee61825eb7bea04f2189c0ff755a7732d
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Wed Mar 20 21:23:48 2019 -0700
 
-    Clear generations before force re-plan (#2779)
+    set default planner storage to volatile (#2780)
+    
+    * set default planner storage to volatile
+    
+    * update plan/readme.md
