@@ -1,7 +1,5 @@
-commit e9b4652a870b8ef8f2683924cef300fb72f35a87
-Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
-Date:   Thu Mar 21 10:36:29 2019 +1100
+commit e7582b17d92a57625c7364b4f0952922b4118930
+Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
+Date:   Thu Mar 21 11:59:18 2019 +1100
 
-    Remove reducethislist and just link all .js files under src. (#2774)
-    
-    This also cleans up sigh a bit; we don't actually have any async command functions.
+    Fixed manifest.md guide to use new syntax (#2772)
