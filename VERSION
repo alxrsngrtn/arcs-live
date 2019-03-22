@@ -1,15 +1,5 @@
-commit f2cef0e511ebd52eca77e24bfad435377f8c4cf6
-Author: raulverag <42563960+raulverag@users.noreply.github.com>
-Date:   Thu Mar 21 17:39:34 2019 -0700
+commit 139ddc343924362f0441dddbd83c1d074f36e642
+Author: Piotr Swigon <piotr.swigon@gmail.com>
+Date:   Fri Mar 22 13:05:36 2019 +1100
 
-    Add dataflow-assertion language parser and flesh out some infrastructure (#2781)
-    
-    * Partial commit
-    
-    * Partial commit.
-    
-    * More dataflow-analysis infrastructure, with tests.
-    
-    Also makes git ignore railroad file for assertion-language parser.
-    
-    * Fix lint issues
+    Basic codehealth metrics in sigh (#2784)
