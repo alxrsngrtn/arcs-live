@@ -1,9 +1,15 @@
-commit 6f626e8ee61825eb7bea04f2189c0ff755a7732d
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Wed Mar 20 21:23:48 2019 -0700
+commit f2cef0e511ebd52eca77e24bfad435377f8c4cf6
+Author: raulverag <42563960+raulverag@users.noreply.github.com>
+Date:   Thu Mar 21 17:39:34 2019 -0700
 
-    set default planner storage to volatile (#2780)
+    Add dataflow-assertion language parser and flesh out some infrastructure (#2781)
     
-    * set default planner storage to volatile
+    * Partial commit
     
-    * update plan/readme.md
+    * Partial commit.
+    
+    * More dataflow-analysis infrastructure, with tests.
+    
+    Also makes git ignore railroad file for assertion-language parser.
+    
+    * Fix lint issues

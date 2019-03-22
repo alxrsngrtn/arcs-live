@@ -7,41 +7,24 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
+import { parser } from '../../../build/dataflow/analysis/assertion-parser.js';
 export class FlowAssertResult {
 }
 /**
  * Object that captures an assertion to be checked on a recipe as part of data
- * flow analysis. Assertions are specified in a configuration using the
- * following syntax:
+ * flow analysis. Assertions are specified using the syntax defined in
+ * https://docs.google.com/document/d/1sQPYE4GEZKrIgMwvcs6Od3C-kBc8bhALY-xwz8bwimU/edit#
  *
- * <name> : <quantifier> : <object> : <predicate> : <target?>
  */
 export class FlowAssertion {
-    // Validates that the input conforms to the syntax above.
-    // Returns the string split into the above components, or undefined if the
-    // string is invalid.
-    // TODO: check against allowed values
-    static validate(s) {
-        const ret = s.split(":");
-        if ((ret.length !== 4) && (ret.length !== 5)) {
-            console.log('Invalid assertion string <' + s + '>');
-            console.log("Assertion string must have 4 or 5 components separated by colons");
-            return undefined;
-        }
-        return ret;
-    }
-    // Returns a new FlowAssertion object, or undefined if the input string is not
-    // a valid assertion.
-    static instantiate(s) {
-        const parts = FlowAssertion.validate(s);
-        if (parts === undefined)
-            return undefined;
-        return new FlowAssertion(s, parts);
-    }
-    constructor(s, parts) {
+    constructor(s) {
+        // console.log('Parsing assertion <' + s + '>');
+        // This will throw if it fails
+        const parsed = parser.parse(s);
         this.source = s;
-        this.name = parts[0].trim();
-        // TODO: Parse the rest
+        this.name = s.split(":")[0].trim();
+        // TODO Post-parse processing of this assertion. Alternatively, put js into
+        // the peg file so that the parser returns the right stuff.
     }
     check(graph) {
         // TODO: implement

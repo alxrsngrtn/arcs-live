@@ -12,6 +12,7 @@ import '../utils/boot.js';
 
 import { dedupingMixin } from '../utils/mixin.js';
 import { microTask } from '../utils/async.js';
+import { wrap } from '../utils/wrap.js';
 
 /** @const {!AsyncInterface} */
 const microtask = microTask;
@@ -158,6 +159,7 @@ superClass => {
 
     constructor() {
       super();
+      /** @protected {boolean} */
       this.__dataEnabled = false;
       this.__dataReady = false;
       this.__dataInvalid = false;
@@ -423,7 +425,7 @@ superClass => {
      * @param {string} name Name of attribute that changed
      * @param {?string} old Old attribute value
      * @param {?string} value New attribute value
-     * @param {?string} namespace Attribute namespace.
+     * @param {?string=} namespace Attribute namespace.
      * @return {void}
      * @suppress {missingProperties} Super may or may not implement the callback
      * @override
@@ -495,6 +497,9 @@ superClass => {
       if (str === undefined) {
         node.removeAttribute(attribute);
       } else {
+        if (attribute === 'class' || attribute === 'name' || attribute === 'slot') {
+          node = /** @type {?Element} */wrap(node);
+        }
         node.setAttribute(attribute, str);
       }
     }

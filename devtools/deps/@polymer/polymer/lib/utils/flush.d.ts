@@ -8,15 +8,14 @@
  *   lib/utils/flush.js
  */
 
+
+// tslint:disable:variable-name Describing an API that's defined elsewhere.
+
 import {Debouncer} from '../utils/debounce.js';
 
-export {enqueueDebouncer};
+import {flushDebouncers} from '../utils/debounce.js';
 
-
-/**
- * Adds a `Debouncer` to a list of globally flushable tasks.
- */
-declare function enqueueDebouncer(debouncer: Debouncer): void;
+export {enqueueDebouncer} from '../utils/debounce.js';
 
 export {flush};
 

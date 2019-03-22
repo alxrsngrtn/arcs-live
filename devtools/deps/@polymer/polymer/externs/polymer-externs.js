@@ -48,7 +48,10 @@ PolymerInit.prototype.template;
 PolymerInit.prototype.hostAttributes;
 /** @type {(!Object<string, string> | undefined)} */
 PolymerInit.prototype.listeners;
+/** @type {(!Object| !Array<!Object> | undefined)} */
+PolymerInit.prototype.behaviors;
 
+/** @record */
 let PolymerElementConstructor = function () {};
 /** @type {(string | undefined)} */
 PolymerElementConstructor.is;
@@ -80,6 +83,26 @@ function Polymer(init) {}
 Polymer.sanitizeDOMValue;
 
 /**
+ * @type {boolean}
+ */
+Polymer.passiveTouchGestures;
+
+/**
+ * @type {boolean}
+ */
+Polymer.strictTemplatePolicy;
+
+/**
+ * @type {boolean}
+ */
+Polymer.allowTemplateFromDomModule;
+
+/**
+ * @type {string}
+ */
+Polymer.rootPath;
+
+/**
  * @param {string} string
  * @param {Object} obj
  * @return {string}
@@ -90,6 +113,8 @@ function JSCompiler_renameProperty(string, obj) {}
 function PolymerTelemetry() {}
 /** @type {number} */
 PolymerTelemetry.instanceCount;
+/** @type {function():void} */
+PolymerTelemetry.incrementInstanceCount;
 /** @type {Array<HTMLElement>} */
 PolymerTelemetry.registrations;
 /** @type {function(HTMLElement)} */
@@ -104,6 +129,12 @@ Polymer.telemetry;
 
 /** @type {string} */
 Polymer.version;
+
+/** @type {boolean} */
+Polymer.legacyOptimizations;
+
+/** @type {boolean} */
+Polymer.syncInitialRender;
 
 // nb. This is explicitly 'var', as Closure Compiler checks that this is the case.
 /**
@@ -175,7 +206,7 @@ var PolymerDeepPropertyChange;
  * @constructor
  * @template T
  */
-let DomRepeatEvent = function () {};
+var DomRepeatEvent = function () {};
 
 /**
  * @type {{

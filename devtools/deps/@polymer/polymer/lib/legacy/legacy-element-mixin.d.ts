@@ -8,6 +8,10 @@
  *   lib/legacy/legacy-element-mixin.js
  */
 
+
+// tslint:disable:variable-name Describing an API that's defined elsewhere.
+// tslint:disable:no-any describes the API as best we are able today
+
 import {ElementMixin} from '../mixins/element-mixin.js';
 
 import {GestureEventListeners} from '../mixins/gesture-event-listeners.js';
@@ -59,7 +63,7 @@ export {LegacyElementMixinConstructor};
 
 interface LegacyElementMixin extends ElementMixin, PropertyEffects, TemplateStamp, PropertyAccessors, PropertiesChanged, PropertiesMixin, GestureEventListeners {
   isAttached: boolean;
-  _debouncers: {[key: string]: Function|null};
+  _debouncers: {[key: string]: Function|null}|null;
 
   /**
    * Return the element whose local dom within which this element
@@ -67,6 +71,7 @@ interface LegacyElementMixin extends ElementMixin, PropertyEffects, TemplateStam
    * `this.getRootNode().host`.
    */
   readonly domHost: any;
+  is: string;
 
   /**
    * Overrides the default `Polymer.PropertyEffects` implementation to
@@ -385,7 +390,8 @@ interface LegacyElementMixin extends ElementMixin, PropertyEffects, TemplateStam
    * to children that are insertion points.
    *
    * @param selector Selector to run.
-   * @returns List of effective child nodes that match selector.
+   * @returns List of effective child nodes that match
+   *     selector.
    */
   queryAllEffectiveChildren(selector: string): Node[];
 
@@ -475,7 +481,7 @@ interface LegacyElementMixin extends ElementMixin, PropertyEffects, TemplateStam
    * `flush()` immediately invokes the debounced callback if the debouncer
    * is active.
    */
-  debounce(jobName: string, callback: () => void, wait: number): object;
+  debounce(jobName: string, callback: () => void, wait?: number): object;
 
   /**
    * Returns whether a named debouncer is active.
@@ -505,7 +511,8 @@ interface LegacyElementMixin extends ElementMixin, PropertyEffects, TemplateStam
    * By default (if no waitTime is specified), async callbacks are run at
    * microtask timing, which will occur before paint.
    *
-   * @param callback The callback function to run, bound to `this`.
+   * @param callback The callback function to run, bound to
+   *     `this`.
    * @param waitTime Time to wait before calling the
    *   `callback`.  If unspecified or 0, the callback will be run at microtask
    *   timing (before paint).
@@ -592,7 +599,8 @@ interface LegacyElementMixin extends ElementMixin, PropertyEffects, TemplateStam
    * If the array is passed directly, **no change
    * notification is generated**.
    *
-   * @param arrayOrPath Path to array from which to remove the item
+   * @param arrayOrPath Path to array from
+   *     which to remove the item
    *   (or the array itself).
    * @param item Item to remove.
    * @returns Array containing item removed.

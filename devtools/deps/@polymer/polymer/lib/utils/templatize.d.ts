@@ -8,6 +8,10 @@
  *   lib/utils/templatize.js
  */
 
+
+// tslint:disable:variable-name Describing an API that's defined elsewhere.
+// tslint:disable:no-any describes the API as best we are able today
+
 import {PropertyEffects} from '../mixins/property-effects.js';
 
 import {MutableData} from '../mixins/mutable-data.js';
@@ -15,6 +19,7 @@ import {MutableData} from '../mixins/mutable-data.js';
 declare class TemplateInstanceBase extends
   PropertyEffects(
   Object) {
+  root: StampedTemplate;
 
   /**
    * Find the parent model of this template instance.  The parent model
@@ -74,6 +79,9 @@ declare class TemplateInstanceBase extends
    * @returns Always true.
    */
   dispatchEvent(event: Event|null): boolean;
+}
+
+declare class templatizerBase extends TemplateInstanceBase {
 }
 
 export {templatize};
@@ -154,6 +162,9 @@ export {templatize};
  */
 declare function templatize(template: HTMLTemplateElement, owner?: PropertyEffects|null, options?: object|null): {new(): TemplateInstanceBase};
 
+declare class baseClass extends TemplateInstanceBase {
+}
+
 export {modelForElement};
 
 
@@ -177,3 +188,5 @@ export {modelForElement};
 declare function modelForElement(template: HTMLTemplateElement|null, node?: Node|null): TemplateInstanceBase|null;
 
 export {TemplateInstanceBase};
+
+import {StampedTemplate} from '../../interfaces';

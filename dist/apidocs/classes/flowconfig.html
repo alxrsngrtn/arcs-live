@@ -69,11 +69,9 @@
 			<section class="tsd-panel tsd-comment">
 				<div class="tsd-comment tsd-typography">
 					<div class="lead">
-						<p>A FlowConfig is a set of assertions used to configure a FlowChecker,
-							along with any assertion-related metadata. The language for specifying
-							the assertions is parsed in the constructor, or, if we choose to have
-							a FlowAssertion class, each assertion is parsed in the FlowAssertion
-						constructor.</p>
+						<p>A FlowConfig is a configuration of a dataflow analysis run. Currently this
+							consists only of a set of assertions, although later it might include
+						configuration options.</p>
 					</div>
 				</div>
 			</section>
@@ -110,19 +108,19 @@
 					<a name="constructor" class="tsd-anchor"></a>
 					<h3>constructor</h3>
 					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">new <wbr>Flow<wbr>Config<span class="tsd-signature-symbol">(</span>input<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="flowconfig.html" class="tsd-signature-type">FlowConfig</a></li>
+						<li class="tsd-signature tsd-kind-icon">new <wbr>Flow<wbr>Config<span class="tsd-signature-symbol">(</span>input<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="flowconfig.html" class="tsd-signature-type">FlowConfig</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/6f626e8/src/dataflow/analysis/flow-config.ts#L21">dataflow/analysis/flow-config.ts:21</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/f2cef0e/src/dataflow/analysis/flow-config.ts#L19">dataflow/analysis/flow-config.ts:19</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>input: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></h5>
+									<h5>input: <span class="tsd-signature-type">string</span></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <a href="flowconfig.html" class="tsd-signature-type">FlowConfig</a></h4>
@@ -135,10 +133,10 @@
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
 					<a name="assertions" class="tsd-anchor"></a>
 					<h3>assertions</h3>
-					<div class="tsd-signature tsd-kind-icon">assertions<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Array</span></div>
+					<div class="tsd-signature tsd-kind-icon">assertions<span class="tsd-signature-symbol">:</span> <a href="flowassertion.html" class="tsd-signature-type">FlowAssertion</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> =&nbsp;[]</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/6f626e8/src/dataflow/analysis/flow-config.ts#L21">dataflow/analysis/flow-config.ts:21</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/f2cef0e/src/dataflow/analysis/flow-config.ts#L19">dataflow/analysis/flow-config.ts:19</a></li>
 						</ul>
 					</aside>
 				</section>

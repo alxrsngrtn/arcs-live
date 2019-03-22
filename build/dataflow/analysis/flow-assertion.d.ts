@@ -14,16 +14,13 @@ export declare class FlowAssertResult {
 }
 /**
  * Object that captures an assertion to be checked on a recipe as part of data
- * flow analysis. Assertions are specified in a configuration using the
- * following syntax:
+ * flow analysis. Assertions are specified using the syntax defined in
+ * https://docs.google.com/document/d/1sQPYE4GEZKrIgMwvcs6Od3C-kBc8bhALY-xwz8bwimU/edit#
  *
- * <name> : <quantifier> : <object> : <predicate> : <target?>
  */
 export declare class FlowAssertion {
     source: string;
     name: string;
-    private static validate;
-    static instantiate(s: string): FlowAssertion;
-    private constructor();
+    constructor(s: string);
     check(graph: FlowGraph): FlowAssertResult;
 }
