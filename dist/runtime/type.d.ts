@@ -13,17 +13,19 @@ export declare abstract class Type {
     protected constructor(tag: any);
     static fromLiteral(literal: TypeLiteral): Type;
     abstract toLiteral(): TypeLiteral;
-    static unwrapPair(type1: Type, type2: Type): any;
+    static unwrapPair(type1: Type, type2: Type): [Type, Type];
     /** Tests whether two types' constraints are compatible with each other. */
     static canMergeConstraints(type1: any, type2: any): boolean;
     static _canMergeCanReadSubset(type1: any, type2: any): boolean;
     static _canMergeCanWriteSuperset(type1: any, type2: any): boolean;
+    isCollectionType<T extends Type>(): this is CollectionType<T>;
+    isBigCollectionType<T extends Type>(): this is BigCollectionType<T>;
     equals(type: any): any;
-    isResolved(): boolean;
+    isResolved(): any;
     mergeTypeVariablesByName(variableMap: Map<string, Type>): Type;
-    _applyExistenceTypeTest(test: any): any;
-    readonly hasVariable: any;
-    readonly hasUnresolvedVariable: any;
+    _applyExistenceTypeTest(test: (type: Type) => boolean): boolean;
+    readonly hasVariable: boolean;
+    readonly hasUnresolvedVariable: boolean;
     getContainedType(): any;
     isTypeContainer(): boolean;
     collectionOf(): CollectionType<this>;
@@ -34,8 +36,8 @@ export declare abstract class Type {
     maybeEnsureResolved(): boolean;
     readonly canWriteSuperset: Type;
     readonly canReadSubset: Type;
-    isMoreSpecificThan(type: any): void;
-    protected _isMoreSpecificThan(type: any): void;
+    isMoreSpecificThan(type: Type): boolean;
+    protected _isMoreSpecificThan(type: any): boolean;
     /**
      * Clone a type object.
      * When cloning multiple types, variables that were associated with the same name
@@ -89,8 +91,8 @@ export declare class TypeVariable extends Type {
     resolvedType(): any;
     _canEnsureResolved(): boolean;
     maybeEnsureResolved(): boolean;
-    readonly canWriteSuperset: any;
-    readonly canReadSubset: any;
+    readonly canWriteSuperset: Type;
+    readonly canReadSubset: Type;
     _clone(variableMap: any): TypeVariable;
     _cloneWithResolutions(variableMap: Map<TypeVariableInfo | Schema, TypeVariableInfo | Schema>): TypeVariable;
     toLiteral(): TypeLiteral;

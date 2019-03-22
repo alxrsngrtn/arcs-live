@@ -42,12 +42,15 @@ export class TypeVariableInfo {
             // TODO: formFactor compatibility, etc.
             return true;
         }
-        const mergedSchema = Schema.intersect(this.canReadSubset.entitySchema, constraint.entitySchema);
-        if (!mergedSchema) {
-            return false;
+        if (this.canReadSubset instanceof EntityType) {
+            const mergedSchema = Schema.intersect(this.canReadSubset.entitySchema, constraint.entitySchema);
+            if (!mergedSchema) {
+                return false;
+            }
+            this.canReadSubset = new EntityType(mergedSchema);
+            return true;
         }
-        this.canReadSubset = new EntityType(mergedSchema);
-        return true;
+        return false;
     }
     /**
      * merge a type variable's write superset (lower bound) constraints into this variable.
@@ -65,12 +68,15 @@ export class TypeVariableInfo {
             // TODO: formFactor compatibility, etc.
             return true;
         }
-        const mergedSchema = Schema.union(this.canWriteSuperset.entitySchema, constraint.entitySchema);
-        if (!mergedSchema) {
-            return false;
+        if (this.canWriteSuperset instanceof EntityType) {
+            const mergedSchema = Schema.union(this.canWriteSuperset.entitySchema, constraint.entitySchema);
+            if (!mergedSchema) {
+                return false;
+            }
+            this.canWriteSuperset = new EntityType(mergedSchema);
+            return true;
         }
-        this.canWriteSuperset = new EntityType(mergedSchema);
-        return true;
+        return false;
     }
     isSatisfiedBy(type) {
         const constraint = this._canWriteSuperset;

@@ -27,8 +27,8 @@ export declare class TypeVariableInfo {
         result: boolean;
         detail?: string;
     };
-    canWriteSuperset: any;
-    canReadSubset: any;
+    canWriteSuperset: Type | null;
+    canReadSubset: Type | null;
     readonly hasConstraint: boolean;
     canEnsureResolved(): boolean;
     maybeEnsureResolved(): boolean;

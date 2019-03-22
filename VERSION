@@ -1,5 +1,5 @@
-commit e83ff5ea2c7066d7f66bab654c89ab15459b4752
-Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Fri Mar 22 15:53:33 2019 +1100
+commit 3af0bd39ec5f54f3842fc97a42e3aabbfb2e6719
+Author: shans <shane.stephens@gmail.com>
+Date:   Fri Mar 22 15:55:21 2019 +1100
 
-    95% of type declarations for Strategizer (#2791)
+    Make sure the type checker is fully type checked. (#2790)

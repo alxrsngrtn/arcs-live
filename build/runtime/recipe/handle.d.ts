@@ -40,8 +40,8 @@ export declare class Handle {
     pattern: string;
     mappedType: Type;
     immediateValue: ParticleSpec;
-    static effectiveType(handleType: any, connections: any): any;
-    static resolveEffectiveType(handleType: any, connections: any): any;
+    static effectiveType(handleType: any, connections: any): Type | import("../type.js").TypeVariable;
+    static resolveEffectiveType(handleType: any, connections: any): Type | import("../type.js").TypeVariable;
     _isValid(options: any): boolean;
     isResolved(options?: any): boolean;
     toString(nameMap: any, options: any): string;

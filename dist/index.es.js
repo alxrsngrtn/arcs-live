@@ -1378,12 +1378,15 @@ class TypeVariableInfo {
             // TODO: formFactor compatibility, etc.
             return true;
         }
-        const mergedSchema = Schema.intersect(this.canReadSubset.entitySchema, constraint.entitySchema);
-        if (!mergedSchema) {
-            return false;
+        if (this.canReadSubset instanceof EntityType) {
+            const mergedSchema = Schema.intersect(this.canReadSubset.entitySchema, constraint.entitySchema);
+            if (!mergedSchema) {
+                return false;
+            }
+            this.canReadSubset = new EntityType(mergedSchema);
+            return true;
         }
-        this.canReadSubset = new EntityType(mergedSchema);
-        return true;
+        return false;
     }
     /**
      * merge a type variable's write superset (lower bound) constraints into this variable.
@@ -1401,12 +1404,15 @@ class TypeVariableInfo {
             // TODO: formFactor compatibility, etc.
             return true;
         }
-        const mergedSchema = Schema.union(this.canWriteSuperset.entitySchema, constraint.entitySchema);
-        if (!mergedSchema) {
-            return false;
+        if (this.canWriteSuperset instanceof EntityType) {
+            const mergedSchema = Schema.union(this.canWriteSuperset.entitySchema, constraint.entitySchema);
+            if (!mergedSchema) {
+                return false;
+            }
+            this.canWriteSuperset = new EntityType(mergedSchema);
+            return true;
         }
-        this.canWriteSuperset = new EntityType(mergedSchema);
-        return true;
+        return false;
     }
     isSatisfiedBy(type) {
         const constraint = this._canWriteSuperset;
@@ -1588,6 +1594,18 @@ class Type {
             }
         }
         return true;
+    }
+    // If you want to type-check fully, this is an improvement over just using
+    // this instaneceof CollectionType,
+    // because instanceof doesn't propagate generic restrictions.
+    isCollectionType() {
+        return this instanceof CollectionType;
+    }
+    // If you want to type-check fully, this is an improvement over just using
+    // this instaneceof BigCollectionType,
+    // because instanceof doesn't propagate generic restrictions.
+    isBigCollectionType() {
+        return this instanceof BigCollectionType;
     }
     // TODO: update call sites to use the type checker instead (since they will
     // have additional information about direction etc.)
@@ -2174,7 +2192,7 @@ class TypeChecker {
                 return null;
             }
         }
-        const getResolution = candidate => {
+        const getResolution = (candidate) => {
             if (!(candidate instanceof TypeVariable)) {
                 return candidate;
             }
@@ -2190,11 +2208,11 @@ class TypeChecker {
             return null;
         };
         const candidate = baseType.resolvedType();
-        if (candidate instanceof CollectionType) {
+        if (candidate.isCollectionType()) {
             const resolution = getResolution(candidate.collectionType);
             return (resolution !== null) ? resolution.collectionOf() : null;
         }
-        if (candidate instanceof BigCollectionType) {
+        if (candidate.isBigCollectionType()) {
             const resolution = getResolution(candidate.bigCollectionType);
             return (resolution !== null) ? resolution.bigCollectionOf() : null;
         }
@@ -2267,6 +2285,10 @@ class TypeChecker {
                 }
                 const unwrap = Type.unwrapPair(primitiveHandleType.resolvedType(), primitiveConnectionType);
                 [primitiveHandleType, primitiveConnectionType] = unwrap;
+                if (!(primitiveHandleType instanceof TypeVariable)) {
+                    // This should never happen, and the guard above is just here so we type-check.
+                    throw new TypeError("unwrapping a wrapped TypeVariable somehow didn't become a TypeVariable");
+                }
             }
             if (direction === 'out' || direction === 'inout' || direction === '`provide') {
                 // the canReadSubset of the handle represents the maximal type that can be read from the

@@ -77,6 +77,18 @@ export class Type {
         }
         return true;
     }
+    // If you want to type-check fully, this is an improvement over just using
+    // this instaneceof CollectionType,
+    // because instanceof doesn't propagate generic restrictions.
+    isCollectionType() {
+        return this instanceof CollectionType;
+    }
+    // If you want to type-check fully, this is an improvement over just using
+    // this instaneceof BigCollectionType,
+    // because instanceof doesn't propagate generic restrictions.
+    isBigCollectionType() {
+        return this instanceof BigCollectionType;
+    }
     // TODO: update call sites to use the type checker instead (since they will
     // have additional information about direction etc.)
     equals(type) {

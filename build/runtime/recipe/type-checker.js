@@ -45,7 +45,7 @@ export class TypeChecker {
                 return null;
             }
         }
-        const getResolution = candidate => {
+        const getResolution = (candidate) => {
             if (!(candidate instanceof TypeVariable)) {
                 return candidate;
             }
@@ -61,11 +61,11 @@ export class TypeChecker {
             return null;
         };
         const candidate = baseType.resolvedType();
-        if (candidate instanceof CollectionType) {
+        if (candidate.isCollectionType()) {
             const resolution = getResolution(candidate.collectionType);
             return (resolution !== null) ? resolution.collectionOf() : null;
         }
-        if (candidate instanceof BigCollectionType) {
+        if (candidate.isBigCollectionType()) {
             const resolution = getResolution(candidate.bigCollectionType);
             return (resolution !== null) ? resolution.bigCollectionOf() : null;
         }
@@ -138,6 +138,10 @@ export class TypeChecker {
                 }
                 const unwrap = Type.unwrapPair(primitiveHandleType.resolvedType(), primitiveConnectionType);
                 [primitiveHandleType, primitiveConnectionType] = unwrap;
+                if (!(primitiveHandleType instanceof TypeVariable)) {
+                    // This should never happen, and the guard above is just here so we type-check.
+                    throw new TypeError("unwrapping a wrapped TypeVariable somehow didn't become a TypeVariable");
+                }
             }
             if (direction === 'out' || direction === 'inout' || direction === '`provide') {
                 // the canReadSubset of the handle represents the maximal type that can be read from the
