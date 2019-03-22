@@ -1,5 +1,11 @@
-commit 6006900319d9c546e1418f7870d2dde8926352c5
-Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
-Date:   Fri Mar 22 17:04:23 2019 +1100
+commit 2338a3725e9c79d741e9dcbba12d61242af3e341
+Author: Scott J. Miles <sjmiles@google.com>
+Date:   Fri Mar 22 11:23:24 2019 -0700
 
-    Convert tracelib to TypeScript (#2793)
+    Fix bad manifests and remove parsing test exclusions (#2785)
+    
+    * fix some non-parsing recipes
+    
+    * more manifest fixups
+    
+    * remove particle exclusion affordance
