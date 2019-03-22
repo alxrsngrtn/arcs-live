@@ -4,7 +4,7 @@
 // Code distributed by Google as part of this project is also
 // subject to an additional IP rights grant found at
 // http://polymer.github.io/PATENTS.txt
-
 // Assume firebase has been loaded. We can't `import` it here as it does not
 // support strict mode.
 export const atob = window.atob;
+//# sourceMappingURL=atob-web.js.map

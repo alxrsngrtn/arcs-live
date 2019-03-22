@@ -4,7 +4,7 @@
 // Code distributed by Google as part of this project is also
 // subject to an additional IP rights grant found at
 // http://polymer.github.io/PATENTS.txt
-
 export function now() {
-  return performance.now();
+    return performance.now();
 }
+//# sourceMappingURL=date-web.js.map

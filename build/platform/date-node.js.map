@@ -1,0 +1,1 @@
+{"version":3,"file":"date-node.js","sourceRoot":"","sources":["../../src/platform/date-node.ts"],"names":[],"mappings":"AAAA,sDAAsD;AACtD,kEAAkE;AAClE,uCAAuC;AACvC,6DAA6D;AAC7D,oDAAoD;AACpD,uCAAuC;AAEvC,MAAM,UAAU,GAAG;IACjB,MAAM,IAAI,GAAG,OAAO,CAAC,MAAM,EAAE,CAAC;IAC9B,OAAO,IAAI,CAAC,CAAC,CAAC,GAAG,IAAI,GAAG,IAAI,CAAC,CAAC,CAAC,GAAG,OAAO,CAAC;AAC5C,CAAC"}

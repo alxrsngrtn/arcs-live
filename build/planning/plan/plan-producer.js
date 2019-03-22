@@ -115,7 +115,7 @@ export class PlanProducer {
             return;
         }
         this.isPlanning = true;
-        let time = now();
+        const time = now();
         let suggestions = [];
         let generations = [];
         while (this.needReplan) {
@@ -123,9 +123,9 @@ export class PlanProducer {
             generations = [];
             suggestions = await this.runPlanner(this.replanOptions, generations);
         }
-        time = ((now() - time) / 1000).toFixed(2);
+        const timestr = ((now() - time) / 1000).toFixed(2);
         if (suggestions) {
-            log(`[${this.arc.id.idTreeAsString()}] Produced ${suggestions.length} suggestions [elapsed=${time}s].`);
+            log(`[${this.arc.id.idTreeAsString()}] Produced ${suggestions.length} suggestions [elapsed=${timestr}s].`);
             this.isPlanning = false;
             if (this.result.merge({
                 suggestions,

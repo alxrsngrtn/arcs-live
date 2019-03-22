@@ -4,7 +4,6 @@
 // Code distributed by Google as part of this project is also
 // subject to an additional IP rights grant found at
 // http://polymer.github.io/PATENTS.txt
-
-const local_path = undefined;
-
-export {local_path as path};
+const localPath = undefined;
+export { localPath as path };
+//# sourceMappingURL=path-web.js.map

@@ -1,4 +1,4 @@
-export declare function compareNulls(o1: any, o2: any): 1 | -1 | 0;
+export declare function compareNulls(o1: any, o2: any): 1 | 0 | -1;
 export declare function compareStrings(s1: string | null, s2: string | null): number;
 export declare function compareNumbers(n1: number, n2: number): number;
 export declare function compareBools(b1: boolean | null, b2: boolean | null): number;

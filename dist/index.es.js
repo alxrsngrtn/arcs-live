@@ -22434,12 +22434,12 @@ class PlatformLoader extends Loader {
   }
 }
 
-const PecIndustry = loader => {
-  return id => {
-    const channel = new MessageChannel();
-    new ParticleExecutionContext(channel.port1, `${id}:inner`, loader);
-    return channel.port2;
-  };
+const pecIndustry = loader => {
+    return id => {
+        const channel = new MessageChannel();
+        const _throwAway = new ParticleExecutionContext(channel.port1, `${id}:inner`, loader);
+        return channel.port2;
+    };
 };
 
 // Copyright (c) 2018 Google Inc. All rights reserved.
@@ -22448,10 +22448,9 @@ const PecIndustry = loader => {
 // Code distributed by Google as part of this project is also
 // subject to an additional IP rights grant found at
 // http://polymer.github.io/PATENTS.txt
-
 function now$1() {
-  const time = process.hrtime();
-  return time[0] * 1000 + time[1] / 1000000;
+    const time = process.hrtime();
+    return time[0] * 1000 + time[1] / 1000000;
 }
 
 // Copyright (c) 2018 Google Inc. All rights reserved.
@@ -27030,7 +27029,7 @@ class PlanProducer {
             return;
         }
         this.isPlanning = true;
-        let time = now$1();
+        const time = now$1();
         let suggestions = [];
         let generations = [];
         while (this.needReplan) {
@@ -27038,9 +27037,9 @@ class PlanProducer {
             generations = [];
             suggestions = await this.runPlanner(this.replanOptions, generations);
         }
-        time = ((now$1() - time) / 1000).toFixed(2);
+        const timestr = ((now$1() - time) / 1000).toFixed(2);
         if (suggestions) {
-            log(`[${this.arc.id.idTreeAsString()}] Produced ${suggestions.length} suggestions [elapsed=${time}s].`);
+            log(`[${this.arc.id.idTreeAsString()}] Produced ${suggestions.length} suggestions [elapsed=${timestr}s].`);
             this.isPlanning = false;
             if (this.result.merge({
                 suggestions,
@@ -27784,7 +27783,7 @@ const createPathMap = root => ({
 const init$1 = (root, urls) => {
   const map = Object.assign(Utils.createPathMap(root), urls);
   env.loader = new PlatformLoader(map);
-  env.pecFactory = PecIndustry(env.loader);
+  env.pecFactory = pecIndustry(env.loader);
   return env;
 };
 
