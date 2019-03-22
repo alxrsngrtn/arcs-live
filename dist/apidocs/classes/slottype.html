@@ -71,6 +71,9 @@
 				<ul class="tsd-hierarchy">
 					<li>
 						<a href="type.html" class="tsd-signature-type">Type</a>
+					</li>
+					<li>
+						<a href="../interfaces/basetoken.html" class="tsd-signature-type">BaseToken</a>
 						<ul class="tsd-hierarchy">
 							<li>
 								<span class="target">SlotType</span>
@@ -92,6 +95,9 @@
 						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="slottype.html#fields" class="tsd-kind-icon">fields</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-overwrite"><a href="slottype.html#kind" class="tsd-kind-icon">kind</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="slottype.html#location" class="tsd-kind-icon">location</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="slottype.html#slot" class="tsd-kind-icon">slot</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="slottype.html#tag" class="tsd-kind-icon">tag</a></li>
 							</ul>
@@ -156,7 +162,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="type.html">Type</a>.<a href="type.html#constructor">constructor</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/7c18b43/src/runtime/type.ts#L644">runtime/type.ts:644</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/b63fd96/src/runtime/type.ts#L644">runtime/type.ts:644</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -173,12 +179,44 @@
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Properties</h2>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="fields" class="tsd-anchor"></a>
+					<h3>fields</h3>
+					<div class="tsd-signature tsd-kind-icon">fields<span class="tsd-signature-symbol">:</span> <a href="../interfaces/slotfield.html" class="tsd-signature-type">SlotField</a><span class="tsd-signature-symbol">[]</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/b63fd96/src/runtime/manifest-ast-nodes.ts#L69">runtime/manifest-ast-nodes.ts:69</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-overwrite">
+					<a name="kind" class="tsd-anchor"></a>
+					<h3>kind</h3>
+					<div class="tsd-signature tsd-kind-icon">kind<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">"slot-type"</span></div>
+					<aside class="tsd-sources">
+						<p>Overrides <a href="../interfaces/basetoken.html">BaseToken</a>.<a href="../interfaces/basetoken.html#kind">kind</a></p>
+						<ul>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/b63fd96/src/runtime/manifest-ast-nodes.ts#L68">runtime/manifest-ast-nodes.ts:68</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
+					<a name="location" class="tsd-anchor"></a>
+					<h3>location</h3>
+					<div class="tsd-signature tsd-kind-icon">location<span class="tsd-signature-symbol">:</span> <a href="../interfaces/sourcelocation.html" class="tsd-signature-type">SourceLocation</a></div>
+					<aside class="tsd-sources">
+						<p>Inherited from <a href="../interfaces/basetoken.html">BaseToken</a>.<a href="../interfaces/basetoken.html#location">location</a></p>
+						<ul>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/b63fd96/src/runtime/manifest-ast-nodes.ts#L42">runtime/manifest-ast-nodes.ts:42</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
 					<a name="slot" class="tsd-anchor"></a>
 					<h3>slot</h3>
 					<div class="tsd-signature tsd-kind-icon">slot<span class="tsd-signature-symbol">:</span> <a href="slotinfo.html" class="tsd-signature-type">SlotInfo</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/7c18b43/src/runtime/type.ts#L644">runtime/type.ts:644</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/b63fd96/src/runtime/type.ts#L644">runtime/type.ts:644</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -189,7 +227,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="type.html">Type</a>.<a href="type.html#tag">tag</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/7c18b43/src/runtime/type.ts#L21">runtime/type.ts:21</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/b63fd96/src/runtime/type.ts#L21">runtime/type.ts:21</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -207,7 +245,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="type.html">Type</a>.<a href="type.html#canreadsubset">canReadSubset</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/7c18b43/src/runtime/type.ts#L663">runtime/type.ts:663</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/b63fd96/src/runtime/type.ts#L663">runtime/type.ts:663</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4>
@@ -225,7 +263,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="type.html">Type</a>.<a href="type.html#canwritesuperset">canWriteSuperset</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/7c18b43/src/runtime/type.ts#L659">runtime/type.ts:659</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/b63fd96/src/runtime/type.ts#L659">runtime/type.ts:659</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4>
@@ -243,7 +281,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="type.html">Type</a>.<a href="type.html#hasunresolvedvariable">hasUnresolvedVariable</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/7c18b43/src/runtime/type.ts#L120">runtime/type.ts:120</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/b63fd96/src/runtime/type.ts#L120">runtime/type.ts:120</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">any</span></h4>
@@ -261,7 +299,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="type.html">Type</a>.<a href="type.html#hasvariable">hasVariable</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/7c18b43/src/runtime/type.ts#L116">runtime/type.ts:116</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/b63fd96/src/runtime/type.ts#L116">runtime/type.ts:116</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">any</span></h4>
@@ -278,7 +316,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/7c18b43/src/runtime/type.ts#L655">runtime/type.ts:655</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/b63fd96/src/runtime/type.ts#L655">runtime/type.ts:655</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
@@ -299,7 +337,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="type.html">Type</a>.<a href="type.html#_applyexistencetypetest">_applyExistenceTypeTest</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/7c18b43/src/runtime/type.ts#L112">runtime/type.ts:112</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/b63fd96/src/runtime/type.ts#L112">runtime/type.ts:112</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -323,7 +361,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="type.html">Type</a>.<a href="type.html#_canensureresolved">_canEnsureResolved</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/7c18b43/src/runtime/type.ts#L148">runtime/type.ts:148</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/b63fd96/src/runtime/type.ts#L148">runtime/type.ts:148</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
@@ -341,7 +379,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="type.html">Type</a>.<a href="type.html#_clone">_clone</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/7c18b43/src/runtime/type.ts#L182">runtime/type.ts:182</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/b63fd96/src/runtime/type.ts#L182">runtime/type.ts:182</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -365,7 +403,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="type.html">Type</a>.<a href="type.html#_clonewithresolutions">_cloneWithResolutions</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/7c18b43/src/runtime/type.ts#L192">runtime/type.ts:192</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/b63fd96/src/runtime/type.ts#L192">runtime/type.ts:192</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -397,7 +435,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="type.html">Type</a>.<a href="type.html#_hasproperty">_hasProperty</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/7c18b43/src/runtime/type.ts#L201">runtime/type.ts:201</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/b63fd96/src/runtime/type.ts#L201">runtime/type.ts:201</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -421,7 +459,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="type.html">Type</a>.<a href="type.html#_ismorespecificthan">_isMoreSpecificThan</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/7c18b43/src/runtime/type.ts#L667">runtime/type.ts:667</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/b63fd96/src/runtime/type.ts#L667">runtime/type.ts:667</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -445,7 +483,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="type.html">Type</a>.<a href="type.html#bigcollectionof">bigCollectionOf</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/7c18b43/src/runtime/type.ts#L136">runtime/type.ts:136</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/b63fd96/src/runtime/type.ts#L136">runtime/type.ts:136</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <a href="bigcollectiontype.html" class="tsd-signature-type">BigCollectionType</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">this</span><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -463,7 +501,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="type.html">Type</a>.<a href="type.html#canensureresolved">canEnsureResolved</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/7c18b43/src/runtime/type.ts#L144">runtime/type.ts:144</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/b63fd96/src/runtime/type.ts#L144">runtime/type.ts:144</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
@@ -481,7 +519,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="type.html">Type</a>.<a href="type.html#clone">clone</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/7c18b43/src/runtime/type.ts#L178">runtime/type.ts:178</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/b63fd96/src/runtime/type.ts#L178">runtime/type.ts:178</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -513,7 +551,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="type.html">Type</a>.<a href="type.html#collectionof">collectionOf</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/7c18b43/src/runtime/type.ts#L132">runtime/type.ts:132</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/b63fd96/src/runtime/type.ts#L132">runtime/type.ts:132</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <a href="collectiontype.html" class="tsd-signature-type">CollectionType</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">this</span><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -531,7 +569,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="type.html">Type</a>.<a href="type.html#equals">equals</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/7c18b43/src/runtime/type.ts#L99">runtime/type.ts:99</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/b63fd96/src/runtime/type.ts#L99">runtime/type.ts:99</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -555,7 +593,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="type.html">Type</a>.<a href="type.html#getcontainedtype">getContainedType</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/7c18b43/src/runtime/type.ts#L124">runtime/type.ts:124</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/b63fd96/src/runtime/type.ts#L124">runtime/type.ts:124</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">any</span></h4>
@@ -573,7 +611,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="type.html">Type</a>.<a href="type.html#getentityschema">getEntitySchema</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/7c18b43/src/runtime/type.ts#L209">runtime/type.ts:209</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/b63fd96/src/runtime/type.ts#L209">runtime/type.ts:209</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">any</span></h4>
@@ -591,7 +629,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="type.html">Type</a>.<a href="type.html#hasproperty">hasProperty</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/7c18b43/src/runtime/type.ts#L197">runtime/type.ts:197</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/b63fd96/src/runtime/type.ts#L197">runtime/type.ts:197</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -615,7 +653,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="type.html">Type</a>.<a href="type.html#ismorespecificthan">isMoreSpecificThan</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/7c18b43/src/runtime/type.ts#L164">runtime/type.ts:164</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/b63fd96/src/runtime/type.ts#L164">runtime/type.ts:164</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -639,7 +677,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="type.html">Type</a>.<a href="type.html#isresolved">isResolved</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/7c18b43/src/runtime/type.ts#L103">runtime/type.ts:103</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/b63fd96/src/runtime/type.ts#L103">runtime/type.ts:103</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
@@ -657,7 +695,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="type.html">Type</a>.<a href="type.html#istypecontainer">isTypeContainer</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/7c18b43/src/runtime/type.ts#L128">runtime/type.ts:128</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/b63fd96/src/runtime/type.ts#L128">runtime/type.ts:128</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
@@ -675,7 +713,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="type.html">Type</a>.<a href="type.html#maybeensureresolved">maybeEnsureResolved</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/7c18b43/src/runtime/type.ts#L152">runtime/type.ts:152</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/b63fd96/src/runtime/type.ts#L152">runtime/type.ts:152</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
@@ -693,7 +731,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="type.html">Type</a>.<a href="type.html#mergetypevariablesbyname">mergeTypeVariablesByName</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/7c18b43/src/runtime/type.ts#L108">runtime/type.ts:108</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/b63fd96/src/runtime/type.ts#L108">runtime/type.ts:108</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -717,7 +755,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="type.html">Type</a>.<a href="type.html#resolvedtype">resolvedType</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/7c18b43/src/runtime/type.ts#L140">runtime/type.ts:140</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/b63fd96/src/runtime/type.ts#L140">runtime/type.ts:140</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <a href="type.html" class="tsd-signature-type">Type</a></h4>
@@ -735,7 +773,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="type.html">Type</a>.<a href="type.html#toliteral">toLiteral</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/7c18b43/src/runtime/type.ts#L672">runtime/type.ts:672</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/b63fd96/src/runtime/type.ts#L672">runtime/type.ts:672</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">object</span></h4>
@@ -761,7 +799,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="type.html">Type</a>.<a href="type.html#toprettystring">toPrettyString</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/7c18b43/src/runtime/type.ts#L690">runtime/type.ts:690</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/b63fd96/src/runtime/type.ts#L690">runtime/type.ts:690</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
@@ -779,7 +817,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="type.html">Type</a>.<a href="type.html#tostring">toString</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/7c18b43/src/runtime/type.ts#L676">runtime/type.ts:676</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/b63fd96/src/runtime/type.ts#L676">runtime/type.ts:676</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -803,7 +841,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="type.html">Type</a>.<a href="type.html#_canmergecanreadsubset">_canMergeCanReadSubset</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/7c18b43/src/runtime/type.ts#L72">runtime/type.ts:72</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/b63fd96/src/runtime/type.ts#L72">runtime/type.ts:72</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -830,7 +868,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="type.html">Type</a>.<a href="type.html#_canmergecanwritesuperset">_canMergeCanWriteSuperset</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/7c18b43/src/runtime/type.ts#L85">runtime/type.ts:85</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/b63fd96/src/runtime/type.ts#L85">runtime/type.ts:85</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -857,7 +895,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="type.html">Type</a>.<a href="type.html#canmergeconstraints">canMergeConstraints</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/7c18b43/src/runtime/type.ts#L68">runtime/type.ts:68</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/b63fd96/src/runtime/type.ts#L68">runtime/type.ts:68</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -889,7 +927,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="type.html">Type</a>.<a href="type.html#fromliteral">fromLiteral</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/7c18b43/src/runtime/type.ts#L28">runtime/type.ts:28</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/b63fd96/src/runtime/type.ts#L28">runtime/type.ts:28</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -912,7 +950,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/7c18b43/src/runtime/type.ts#L651">runtime/type.ts:651</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/b63fd96/src/runtime/type.ts#L651">runtime/type.ts:651</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -939,7 +977,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="type.html">Type</a>.<a href="type.html#unwrappair">unwrapPair</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/7c18b43/src/runtime/type.ts#L57">runtime/type.ts:57</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/b63fd96/src/runtime/type.ts#L57">runtime/type.ts:57</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -974,6 +1012,15 @@
 						<ul>
 							<li class=" tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite">
 								<a href="slottype.html#constructor" class="tsd-kind-icon">constructor</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="slottype.html#fields" class="tsd-kind-icon">fields</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-overwrite">
+								<a href="slottype.html#kind" class="tsd-kind-icon">kind</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
+								<a href="slottype.html#location" class="tsd-kind-icon">location</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
 								<a href="slottype.html#slot" class="tsd-kind-icon">slot</a>

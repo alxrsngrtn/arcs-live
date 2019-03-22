@@ -1,5 +1,13 @@
-commit 7c18b437186e69d0861f9c12aa11448feb25a299
-Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Fri Mar 22 13:46:58 2019 +1100
+commit b63fd962e386e4c9d59a48dafcd0b428714b8549
+Author: Joshua Pratt <jp10010101010000@gmail.com>
+Date:   Fri Mar 22 13:49:49 2019 +1100
 
-    Fix my health (#2787)
+    Use ts-pegjs to do type checking on parse results (#2786)
+    
+    * Add ts-pegjs
+    * Remove some uses of any
+    * Add comment to request keeping the parser's types up to date
+    * Ensure that the peg is regenerated
+    * Apply lint fixes using object spreading, enforcing brackets and semis
+    * Merge with dataflow analysis parser
+    * Add ts-pegjs support for the dataflow analysis parser
