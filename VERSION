@@ -1,11 +1,5 @@
-commit a7fe3d1f120a925ce68a7eed175c1e47abca60b1
-Author: raulverag <42563960+raulverag@users.noreply.github.com>
-Date:   Thu Mar 21 22:07:43 2019 -0700
+commit 06ac9c5dac1ac3fb4557343db2a76679e6273faa
+Author: Piotr Swigon <piotr.swigon@gmail.com>
+Date:   Fri Mar 22 16:35:15 2019 +1100
 
-    Migrate all low-hanging fruit in src/platform from js to ts. (#2789)
-    
-    * Migrate all low-hanging fruit in src/platform from js to ts.
-    
-    Low-hanging fruit here means that changing just the name works. :-)
-    
-    * Fixed tslint errors.
+    Show health points by default (#2792)
