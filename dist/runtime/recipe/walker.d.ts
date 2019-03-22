@@ -31,8 +31,11 @@ export declare enum WalkerTactic {
 export interface Descendant {
     result: any;
     score: number;
-    derivation: any;
-    hash: any;
+    derivation: {
+        parent: Descendant;
+        strategy: Action;
+    }[];
+    hash: Promise<string> | string;
     valid: boolean;
     errors?: any;
     normalized?: any;
@@ -53,15 +56,15 @@ export declare abstract class Walker {
     static Permuted: WalkerTactic;
     static Independent: WalkerTactic;
     descendants: Descendant[];
-    currentAction: any;
-    currentResult: any;
+    currentAction: Action;
+    currentResult: Descendant;
     tactic: WalkerTactic;
-    constructor(tactic: any);
+    constructor(tactic: WalkerTactic);
     onAction(action: Action): void;
-    onResult(result: any): void;
+    onResult(result: Descendant): void;
     onResultDone(): void;
     onActionDone(): void;
-    static walk(results: any, walker: Walker, action: Action): Descendant[];
+    static walk(results: Descendant[], walker: Walker, action: Action): Descendant[];
     _runUpdateList(start: any, updateList: any): void;
     abstract createDescendant(result: any, score: any): void;
     createWalkerDescendant(item: any, score: any, hash: any, valid: any): void;

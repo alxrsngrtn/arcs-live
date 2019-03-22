@@ -6,7 +6,7 @@ import { Particle } from './particle.js';
 import { Recipe } from './recipe.js';
 import { SlotConnection } from './slot-connection.js';
 import { Slot } from './slot.js';
-import { Walker } from './walker.js';
+import { Walker, Descendant } from './walker.js';
 export declare class RecipeWalker extends Walker {
     onHandle?(recipe: Recipe, handle: Handle): any;
     onPotentialHandleConnection?(recipe: Recipe, particle: Particle, connectionSpec: HandleConnectionSpec): any;
@@ -18,6 +18,6 @@ export declare class RecipeWalker extends Walker {
     onSlot?(recipe: Recipe, slot: Slot): any;
     onObligation?(recipe: Recipe, obligation: ConnectionConstraint): any;
     onRequiredParticle?(recipe: Recipe, particle: Particle): any;
-    onResult(result: any): void;
-    createDescendant(recipe: any, score: any): void;
+    onResult(result: Descendant): void;
+    createDescendant(recipe: Recipe, score: number): void;
 }

@@ -1,5 +1,5 @@
-commit d65a1d2f54b044499c63416ec941af2e69e8d948
-Author: shans <shane.stephens@gmail.com>
-Date:   Fri Mar 22 14:03:08 2019 +1100
+commit e83ff5ea2c7066d7f66bab654c89ab15459b4752
+Author: Piotr Swigon <piotr.swigon@gmail.com>
+Date:   Fri Mar 22 15:53:33 2019 +1100
 
-    Let sigh health work on windows too (#2788)
+    95% of type declarations for Strategizer (#2791)

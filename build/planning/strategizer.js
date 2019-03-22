@@ -43,7 +43,7 @@ export class Strategizer {
         // Generate
         const generation = this.generation + 1;
         const generatedResults = await Promise.all(this._strategies.map(strategy => {
-            const recipeFilter = recipe => this._ruleset.isAllowed(strategy, recipe);
+            const recipeFilter = (recipe) => this._ruleset.isAllowed(strategy, recipe);
             return strategy.generate({
                 generation: this.generation,
                 generated: this.generated.filter(recipeFilter),
@@ -216,7 +216,6 @@ export class Strategy extends Action {
 }
 export class RulesetBuilder {
     constructor() {
-        // Strategy -> [Strategy*]
         this._orderingRules = new Map();
     }
     /**
@@ -266,7 +265,7 @@ export class RulesetBuilder {
         assert(!beingExpanded.has(strategy), 'Detected a loop in the ordering rules');
         const followingStrategies = this._orderingRules.get(strategy);
         if (alreadyExpanded.has(strategy))
-            return followingStrategies || [];
+            return followingStrategies || new Set();
         if (followingStrategies) {
             beingExpanded.add(strategy);
             for (const following of followingStrategies) {
@@ -277,7 +276,7 @@ export class RulesetBuilder {
             beingExpanded.delete(strategy);
         }
         alreadyExpanded.add(strategy);
-        return followingStrategies || [];
+        return followingStrategies || new Set();
     }
 }
 export class Ruleset {

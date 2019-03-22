@@ -1,5 +1,7 @@
 import { Arc } from '../runtime/arc.js';
+import { Recipe } from '../runtime/recipe/recipe.js';
 import { RecipeWalker } from '../runtime/recipe/recipe-walker.js';
+import { WalkerTactic } from '../runtime/recipe/walker.js';
 import { Action, Descendant } from '../runtime/recipe/walker.js';
 export declare class Strategizer {
     _strategies: Strategy[];
@@ -7,57 +9,67 @@ export declare class Strategizer {
     _generation: number;
     _internalPopulation: {
         fitness: number;
-        individual: any;
+        individual: Descendant;
     }[];
-    _population: any[];
-    _generated: any[];
+    _population: Descendant[];
+    _generated: Descendant[];
     _ruleset: Ruleset;
-    _terminal: any[];
-    populationHash: any;
+    _terminal: Descendant[];
+    populationHash: Map<string, Descendant>;
     constructor(strategies: Strategy[], evaluators: Strategy[], ruleset: Ruleset);
     readonly generation: number;
-    readonly population: any[];
-    readonly generated: any[];
+    readonly population: Descendant[];
+    readonly generated: Descendant[];
     /**
      * @return Individuals from the previous generation that were not descended from in the
      * current generation.
      */
-    readonly terminal: any[];
+    readonly terminal: Descendant[];
     generate(): Promise<{
         generation: number;
         sizeOfLastGeneration: number;
-        generatedDerivationsByStrategy: any;
+        generatedDerivationsByStrategy: {
+            [index: string]: number;
+        };
         generatedDerivations?: number;
         nullDerivations?: number;
         invalidDerivations?: number;
         duplicateDerivations?: number;
         duplicateSameParentDerivations?: number;
-        nullDerivationsByStrategy?: any;
-        invalidDerivationsByStrategy?: any;
-        duplicateDerivationsByStrategy?: any;
-        duplicateSameParentDerivationsByStrategy?: any;
-        survivingDerivations?: any;
+        nullDerivationsByStrategy?: {
+            [index: string]: number;
+        };
+        invalidDerivationsByStrategy?: {
+            [index: string]: number;
+        };
+        duplicateDerivationsByStrategy?: {
+            [index: string]: number;
+        };
+        duplicateSameParentDerivationsByStrategy?: {
+            [index: string]: number;
+        };
+        survivingDerivations?: number;
     }>;
-    static _mergeEvaluations(evaluations: any, generated: any): any[];
+    static _mergeEvaluations(evaluations: number[][], generated: Descendant[]): number[];
 }
 export declare class StrategizerWalker extends RecipeWalker {
-    constructor(tactic: any);
-    createDescendant(recipe: any, score: any): void;
-    static over(results: any, walker: StrategizerWalker, strategy: Strategy): Descendant[];
+    constructor(tactic: WalkerTactic);
+    createDescendant(recipe: Recipe, score: number): void;
+    static over(results: Descendant[], walker: StrategizerWalker, strategy: Strategy): Descendant[];
 }
 export declare abstract class Strategy extends Action {
     constructor(arc?: Arc, args?: any);
-    activate(strategizer: any): Promise<{
+    activate(strategizer: Strategizer): Promise<{
         generate: number;
         evaluate: number;
     }>;
-    evaluate(strategizer: any, individuals: any): Promise<any>;
+    evaluate(strategizer: Strategizer, individuals: Descendant[]): Promise<number[]>;
 }
 declare type StrategyClass = typeof Strategy;
 export interface StrategyDerived extends StrategyClass {
 }
 export declare class RulesetBuilder {
-    _orderingRules: any;
+    _orderingRules: Map<StrategyDerived, Set<StrategyDerived>>;
     constructor();
     /**
      * When invoked for strategies (A, B), ensures that B will never follow A in
@@ -77,14 +89,14 @@ export declare class RulesetBuilder {
      * E.g. ([A, B], [C, D], E) is a shorthand for:
      * (A, C), (A, D), (B, C), (B, D), (C, E), (D, E).
      */
-    order(...strategiesOrGroups: any[]): this;
+    order(...strategiesOrGroups: (StrategyDerived | StrategyDerived[])[]): this;
     build(): Ruleset;
-    _transitiveClosureFor(strategy: any, beingExpanded: any, alreadyExpanded: any): any;
+    _transitiveClosureFor(strategy: StrategyDerived, beingExpanded: Set<StrategyDerived>, alreadyExpanded: Set<StrategyDerived>): Set<StrategyDerived>;
 }
 export declare class Ruleset {
-    _orderingRules: any;
-    constructor(orderingRules: any);
-    isAllowed(strategy: Strategy, recipe: any): boolean;
+    _orderingRules: Map<StrategyDerived, Set<StrategyDerived>>;
+    constructor(orderingRules: Map<StrategyDerived, Set<StrategyDerived>>);
+    isAllowed(strategy: Strategy, recipe: Descendant): boolean;
     static Builder: typeof RulesetBuilder;
 }
 export {};
