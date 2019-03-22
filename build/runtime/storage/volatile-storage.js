@@ -6,7 +6,6 @@
 // subject to an additional IP rights grant found at
 // http://polymer.github.io/PATENTS.txt
 import { assert } from '../../platform/assert-web.js';
-import { Tracing } from '../../tracelib/trace.js';
 import { BigCollectionType, CollectionType, ReferenceType } from '../type.js';
 import { CrdtCollectionModel } from './crdt-collection-model.js';
 import { KeyBase } from './key-base.js';
@@ -252,7 +251,6 @@ class VolatileCollection extends VolatileStorageProvider {
     }
     async store(value, keys, originatorId = null) {
         assert(keys != null && keys.length > 0, 'keys required');
-        const trace = Tracing.start({ cat: 'handle', name: 'VolatileCollection::store', args: { name: this.name } });
         const item = { value, keys, effective: undefined };
         if (this.referenceMode) {
             const referredType = this.type.getContainedType();
@@ -267,8 +265,7 @@ class VolatileCollection extends VolatileStorageProvider {
             item.effective = this._model.add(value.id, value, keys);
         }
         this.version++;
-        await trace.wait(this._fire('change', new ChangeEvent({ add: [item], version: this.version, originatorId })));
-        trace.end({ args: { value } });
+        await this._fire('change', new ChangeEvent({ add: [item], version: this.version, originatorId }));
     }
     async removeMultiple(items, originatorId = null) {
         if (items.length === 0) {
@@ -287,7 +284,6 @@ class VolatileCollection extends VolatileStorageProvider {
         this._fire('change', new ChangeEvent({ remove: items, version: this.version, originatorId }));
     }
     async remove(id, keys = [], originatorId = null) {
-        const trace = Tracing.start({ cat: 'handle', name: 'VolatileCollection::remove', args: { name: this.name } });
         if (keys.length === 0) {
             keys = this._model.getKeys(id);
         }
@@ -295,9 +291,8 @@ class VolatileCollection extends VolatileStorageProvider {
         if (value !== null) {
             const effective = this._model.remove(id, keys);
             this.version++;
-            await trace.wait(this._fire('change', new ChangeEvent({ remove: [{ value, keys, effective }], version: this.version, originatorId })));
+            await this._fire('change', new ChangeEvent({ remove: [{ value, keys, effective }], version: this.version, originatorId }));
         }
-        trace.end({ args: { entity: value } });
     }
     clearItemsForTesting() {
         this._model = new CrdtCollectionModel();

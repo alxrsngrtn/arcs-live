@@ -1,5 +1,5 @@
-commit 06ac9c5dac1ac3fb4557343db2a76679e6273faa
-Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Fri Mar 22 16:35:15 2019 +1100
+commit 6006900319d9c546e1418f7870d2dde8926352c5
+Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
+Date:   Fri Mar 22 17:04:23 2019 +1100
 
-    Show health points by default (#2792)
+    Convert tracelib to TypeScript (#2793)
