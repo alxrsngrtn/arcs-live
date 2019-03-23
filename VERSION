@@ -1,11 +1,9 @@
-commit 2338a3725e9c79d741e9dcbba12d61242af3e341
-Author: Scott J. Miles <sjmiles@google.com>
-Date:   Fri Mar 22 11:23:24 2019 -0700
+commit 271747b98e13f04a957fe39248ac7af438ae9189
+Author: shans <shane.stephens@gmail.com>
+Date:   Sat Mar 23 12:20:51 2019 +1100
 
-    Fix bad manifests and remove parsing test exclusions (#2785)
+    Interface info types (#2796)
     
-    * fix some non-parsing recipes
+    * interface info types
     
-    * more manifest fixups
-    
-    * remove particle exclusion affordance
+    * lint fixes

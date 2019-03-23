@@ -44,7 +44,7 @@ export declare abstract class Type {
      * before cloning should still be associated after cloning. To maintain this
      * property, create a Map() and pass it into all clone calls in the group.
      */
-    clone(variableMap: any): Type;
+    clone(variableMap: Map<string, Type>): Type;
     protected _clone(variableMap: any): Type;
     /**
      * Clone a type object, maintaining resolution information.
@@ -171,20 +171,7 @@ export declare class InterfaceType extends Type {
     _cloneWithResolutions(variableMap: any): InterfaceType;
     toLiteral(): {
         tag: "Entity" | "TypeVariable" | "Collection" | "BigCollection" | "Relation" | "Interface" | "Slot" | "Reference" | "Arc" | "Handle";
-        data: {
-            name: string;
-            handles: {
-                type: any;
-                name: any;
-                direction: any;
-            }[];
-            slots: {
-                name: any;
-                direction: any;
-                isRequired: any;
-                isSet: any;
-            }[];
-        };
+        data: import("./interface-info.js").InterfaceInfoLiteral;
     };
     toString(options?: any): string;
     toPrettyString(): string;
