@@ -7,9 +7,18 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
+import { DevtoolsChannel } from '../../platform/devtools-channel-web.js';
+import { Arc } from '../arc.js';
+declare type StackFrame = {
+    method: string;
+    location?: string;
+    target?: string;
+    targetClass?: string;
+};
 export declare class OuterPortAttachment {
     private arcDevtoolsChannel;
-    constructor(arc: any, devtoolsChannel: any);
-    handlePecMessage(name: any, pecMsgBody: any, pecMsgCount: any, stackString: any): void;
-    _extractStackFrames(stackString: any): any[];
+    constructor(arc: Arc, devtoolsChannel: DevtoolsChannel);
+    handlePecMessage(name: string, pecMsgBody: {}, pecMsgCount: number, stackString: string): void;
+    _extractStackFrames(stackString: string): StackFrame[];
 }
+export {};

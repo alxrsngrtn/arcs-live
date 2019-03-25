@@ -19549,36 +19549,34 @@ class OuterPortAttachment {
             // corresponding to the API channel function, which is already being
             // displayed in the log entry.
             for (const frameString of stackString.split('\n    at ').slice(2)) {
-                let match = frameString.match(/^(.*) \((.*)\)$/);
-                if (match === null) {
-                    match = { 1: '<unknown>', 2: frameString };
-                }
-                let location = match[2].replace(/:[0-9]+$/, '');
+                const match = frameString.match(/^(.*) \((.*)\)$/);
+                const method = match ? match[1] : '<unknown>';
+                let location = match ? match[2] : frameString;
+                location = location.replace(/:[0-9]+$/, '');
                 if (location.startsWith('file')) {
                     // 'file:///<path>/arcs.*/runtime/file.js:84'
                     // -> location: 'runtime/file.js:150'
                     location = location.replace(/^.*\/arcs[^/]*\//, '');
                 }
-                stack.push({ method: match[1], location, target: null, targetClass: 'noLink' });
+                stack.push({ method, location, target: null, targetClass: 'noLink' });
             }
             return stack;
         }
         // The slice discards the stack frame corresponding to the API channel
         // function, which is already being displayed in the log entry.
         if (mapStackTrace) {
-            mapStackTrace(stackString, mapped => mapped.slice(1).map(frameString => {
+            mapStackTrace(stackString, (mapped) => mapped.slice(1).map(frameString => {
                 // Each frame has the form '    at function (source:line:column)'.
                 // Extract the function name and source:line:column text, then set up
                 // a frame object with the following fields:
                 //   location: text to display as the source in devtools Arcs panel
                 //   target: URL to open in devtools Sources panel
                 //   targetClass: CSS class specifier to attach to the location text
-                let match = frameString.match(/^ {4}at (.*) \((.*)\)$/);
-                if (match === null) {
-                    match = { 1: '<unknown>', 2: frameString.replace(/^ *at */, '') };
-                }
-                const frame = { method: match[1] };
-                const source = match[2].replace(/:[0-9]+$/, '');
+                const match = frameString.match(/^ {4}at (.*) \((.*)\)$/);
+                const method = match ? match[1] : '<unknown>';
+                let source = match ? match[2] : frameString.replace(/^ *at */, '');
+                const frame = { method };
+                source = match[2].replace(/:[0-9]+$/, '');
                 if (source.startsWith('http')) {
                     // 'http://<url>/arcs.*/shell/file.js:150'
                     // -> location: 'shell/file.js:150', target: same as source

@@ -42,7 +42,7 @@ export declare class APIPort {
     _testingHook(): void;
     close(): void;
     _processMessage(e: any): Promise<void>;
-    send(name: any, args: any): void;
+    send(name: string, args: {}): void;
 }
 export declare abstract class PECOuterPort extends APIPort {
     constructor(messagePort: any, arc: any);

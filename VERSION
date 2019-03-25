@@ -1,9 +1,7 @@
-commit 271747b98e13f04a957fe39248ac7af438ae9189
-Author: shans <shane.stephens@gmail.com>
-Date:   Sat Mar 23 12:20:51 2019 +1100
+commit 376f993403c9fa3b9f545b8267a6a8bc3c92e8ce
+Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
+Date:   Mon Mar 25 11:00:55 2019 +1100
 
-    Interface info types (#2796)
+    Adds some types to src/runtime/debug and src/runtime/keymgmt (#2794)
     
-    * interface info types
-    
-    * lint fixes
+    Added types in src/runtime/keymgmt and src/runtime/debug
