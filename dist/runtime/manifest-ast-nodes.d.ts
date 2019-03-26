@@ -13,7 +13,6 @@
  *
  * - Most interfaces should extend `BaseToken`
  * - When returning data add `as Token.NewTypeName` to validate your return types.
- * - Add an entry to tools/sigh.js to map the rule to it's output type.
  *
  * You may need to check the generated output in runtime/ts/manifest-parser.ts to validate.
  */
@@ -28,7 +27,7 @@ interface SourceLocation {
     end: SourcePosition;
 }
 /**
- * A base token interface for theh `kind` and `location` entries.  This creates
+ * A base token interface for the `kind` and `location` entries. This creates
  * a TypeScript Discriminated Union for most tokens.
  */
 interface BaseToken {

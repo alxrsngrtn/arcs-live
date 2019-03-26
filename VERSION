@@ -1,5 +1,5 @@
-commit f55f24ecca31b6251876fc2fb7d30efc4a2fb83f
-Author: Paul Lindner <lindner@inuus.com>
-Date:   Tue Mar 26 14:52:56 2019 -0700
+commit af7e2b2927bfdb54e1597d5389ea726ae128d4e3
+Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
+Date:   Wed Mar 27 10:14:52 2019 +1100
 
-    Name PouchDb files consistently (#2800)
+    Auto-generate the list of AST node return types for ts-pegjs. (#2804)
