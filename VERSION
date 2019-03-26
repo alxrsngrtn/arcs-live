@@ -1,14 +1,11 @@
-commit 9de1d966577b4890b19a38aef7daa862bc6de509
+commit 4fe5e322bb23b09251abb207204123d1135501f8
 Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
-Date:   Tue Mar 26 15:32:28 2019 +1100
+Date:   Tue Mar 26 15:42:19 2019 +1100
 
-    Created SystemException and UserException types. (#2782)
+    Adds a series of tutorials for writing new particles (#2797)
     
-    * Created SystemException and UserException types.
+    * Started a particle tutorial.
     
-    These exceptions get propagated back to the host, and wrap the real
-    exception that occurred. Orignal exception, message and stack are
-    retained. Other useful info like the particle that caused it is given as
-    well.
+    * Renamed tutorial folders to be numbered
     
-    * Made ReportExceptionInHost use @ByLiteral
+    * Fixed hello world docs
