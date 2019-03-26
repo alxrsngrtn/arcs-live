@@ -8,4 +8,4 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import '../../../runtime/storage/firebase/firebase-provider.js';
-import '../../../runtime/storage/pouchdb/pouchdb-provider.js';
+import '../../../runtime/storage/pouchdb/pouch-db-provider.js';

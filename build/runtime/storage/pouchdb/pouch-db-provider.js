@@ -8,4 +8,4 @@
 import { StorageProviderFactory } from '../storage-provider-factory.js';
 import { PouchDbStorage } from './pouch-db-storage.js';
 StorageProviderFactory.register('pouchdb', { storage: PouchDbStorage, isPersistent: true });
-//# sourceMappingURL=pouchdb-provider.js.map
+//# sourceMappingURL=pouch-db-provider.js.map

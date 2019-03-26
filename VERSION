@@ -1,11 +1,5 @@
-commit 81da5e20f3dede9bd892c14e39ae73bb70dad366
-Author: Scott J. Miles <sjmiles@google.com>
-Date:   Tue Mar 26 14:10:44 2019 -0700
+commit f55f24ecca31b6251876fc2fb7d30efc4a2fb83f
+Author: Paul Lindner <lindner@inuus.com>
+Date:   Tue Mar 26 14:52:56 2019 -0700
 
-    bring up pipes-shell/node (#2803)
-    
-    * fixups to pipes-shell/node, ensure ShellApi return values are synchronous
-    
-    * update README
-    
-    * only run start-up test if given `test` param (+document)
+    Name PouchDb files consistently (#2800)
