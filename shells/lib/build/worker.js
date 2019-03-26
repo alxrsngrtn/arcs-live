@@ -91,7 +91,7 @@
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _build_runtime_particle_execution_context_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1);
-/* harmony import */ var _build_platform_loader_web_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(30);
+/* harmony import */ var _build_platform_loader_web_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(31);
 /*
  * @license
  * Copyright (c) 2019 Google Inc. All rights reserved.
@@ -122,9 +122,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
 /* harmony import */ var _api_channel_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(4);
 /* harmony import */ var _handle_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(21);
-/* harmony import */ var _id_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(25);
-/* harmony import */ var _slot_proxy_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(27);
-/* harmony import */ var _storage_proxy_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(28);
+/* harmony import */ var _id_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(26);
+/* harmony import */ var _slot_proxy_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(28);
+/* harmony import */ var _storage_proxy_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(29);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -394,6 +394,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _debug_outer_port_attachment_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(10);
 /* harmony import */ var _particle_spec_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(12);
 /* harmony import */ var _type_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(15);
+/* harmony import */ var _arc_exceptions_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(22);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -412,6 +413,7 @@ var __decorate = (undefined && undefined.__decorate) || function (decorators, ta
 var __param = (undefined && undefined.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
+
 
 
 
@@ -826,7 +828,7 @@ let PECInnerPort = class PECInnerPort extends APIPort {
     ArcMapHandle(callback, arc, handle) { }
     ArcCreateSlot(callback, arc, transformationParticle, transformationSlotName, handleId) { }
     ArcLoadRecipe(arc, recipe, callback) { }
-    RaiseSystemException(exception, methodName, particleId) { }
+    ReportExceptionInHost(exception) { }
     // To show stack traces for calls made inside the context, we need to capture the trace at the call point and
     // send it along with the message. We only want to do this after a DevTools connection has been detected, which
     // we can't directly detect inside a worker context, so the PECOuterPort will send an API message instead.
@@ -895,8 +897,8 @@ __decorate([
     __param(0, RemoteMapped), __param(1, Direct), __param(2, LocalMapped)
 ], PECInnerPort.prototype, "ArcLoadRecipe", null);
 __decorate([
-    __param(0, Direct), __param(1, Direct), __param(2, Direct)
-], PECInnerPort.prototype, "RaiseSystemException", null);
+    __param(0, ByLiteral(_arc_exceptions_js__WEBPACK_IMPORTED_MODULE_5__["PropagatedException"]))
+], PECInnerPort.prototype, "ReportExceptionInHost", null);
 PECInnerPort = __decorate([
     AutoConstruct(PECOuterPort)
 ], PECInnerPort);
@@ -1920,9 +1922,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _interface_info_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(16);
 /* harmony import */ var _recipe_type_checker_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(14);
 /* harmony import */ var _schema_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(17);
-/* harmony import */ var _slot_info_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(22);
-/* harmony import */ var _synthetic_types_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(23);
-/* harmony import */ var _type_variable_info_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(24);
+/* harmony import */ var _slot_info_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(23);
+/* harmony import */ var _synthetic_types_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(24);
+/* harmony import */ var _type_variable_info_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(25);
 // @license
 // Copyright (c) 2017 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
@@ -3514,10 +3516,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "BigCollection", function() { return BigCollection; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "handleFor", function() { return handleFor; });
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
-/* harmony import */ var _particle_spec_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(12);
-/* harmony import */ var _reference_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(20);
-/* harmony import */ var _symbols_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(19);
-/* harmony import */ var _type_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(15);
+/* harmony import */ var _arc_exceptions_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(22);
+/* harmony import */ var _particle_spec_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(12);
+/* harmony import */ var _reference_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(20);
+/* harmony import */ var _symbols_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(19);
+/* harmony import */ var _type_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(15);
 /** @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
  * This code may only be used under the BSD style license found at
@@ -3526,6 +3529,7 @@ __webpack_require__.r(__webpack_exports__);
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
+
 
 
 
@@ -3565,8 +3569,11 @@ class Handle {
             notifyDesync: false,
         };
     }
-    raiseSystemException(exception, method) {
-        this._proxy.raiseSystemException(exception, method, this._particleId);
+    reportUserExceptionInHost(exception, particle, method) {
+        this._proxy.reportExceptionInHost(new _arc_exceptions_js__WEBPACK_IMPORTED_MODULE_1__["UserException"](exception, method, this._particleId, particle.spec.name));
+    }
+    reportSystemExceptionInHost(exception, method) {
+        this._proxy.reportExceptionInHost(new _arc_exceptions_js__WEBPACK_IMPORTED_MODULE_1__["SystemException"](exception, method, this._particleId));
     }
     // `options` may contain any of:
     // - keepSynced (bool): load full data on startup, maintain data in proxy and resync as required
@@ -3584,7 +3591,7 @@ class Handle {
             Object.assign(this.options, options);
         }
         catch (e) {
-            this.raiseSystemException(e, 'Handle::configure');
+            this.reportSystemExceptionInHost(e, 'Handle::configure');
             throw e;
         }
     }
@@ -3593,7 +3600,7 @@ class Handle {
         if (!entity.isIdentified()) {
             entity.createIdentity(this._proxy.generateIDComponents());
         }
-        const id = entity[_symbols_js__WEBPACK_IMPORTED_MODULE_3__["Symbols"].identifier];
+        const id = entity[_symbols_js__WEBPACK_IMPORTED_MODULE_4__["Symbols"].identifier];
         const rawData = entity.dataClone();
         return {
             id,
@@ -3626,8 +3633,7 @@ class Collection extends Handle {
                     particle.onHandleSync(this, this._restore(details));
                 }
                 catch (e) {
-                    // TODO(shans): this should be a UserException, once we have those.
-                    this.raiseSystemException(e, "onHandleSync");
+                    this.reportUserExceptionInHost(e, particle, 'onHandleSync');
                 }
                 return;
             case 'update': {
@@ -3730,7 +3736,7 @@ class Variable extends Handle {
                     await particle.onHandleSync(this, this._restore(details));
                 }
                 catch (e) {
-                    this.raiseSystemException(e, `${particle.spec.name}::onHandleSync`);
+                    this.reportUserExceptionInHost(e, particle, 'onHandleSync');
                 }
                 return;
             case 'update': {
@@ -3738,7 +3744,7 @@ class Variable extends Handle {
                     await particle.onHandleUpdate(this, { data: this._restore(details.data) });
                 }
                 catch (e) {
-                    this.raiseSystemException(e, `${particle.spec.name}::onHandleUpdate`);
+                    this.reportUserExceptionInHost(e, particle, 'onHandleUpdate');
                 }
                 return;
             }
@@ -3747,7 +3753,7 @@ class Variable extends Handle {
                     await particle.onHandleDesync(this);
                 }
                 catch (e) {
-                    this.raiseSystemException(e, `${particle.spec.name}::onHandleDesync`);
+                    this.reportUserExceptionInHost(e, particle, 'onHandleDesync');
                 }
                 return;
             default:
@@ -3771,14 +3777,14 @@ class Variable extends Handle {
         if (model === null) {
             return null;
         }
-        if (this.type instanceof _type_js__WEBPACK_IMPORTED_MODULE_4__["EntityType"]) {
+        if (this.type instanceof _type_js__WEBPACK_IMPORTED_MODULE_5__["EntityType"]) {
             return restore(model, this.entityClass);
         }
-        if (this.type instanceof _type_js__WEBPACK_IMPORTED_MODULE_4__["InterfaceType"]) {
-            return _particle_spec_js__WEBPACK_IMPORTED_MODULE_1__["ParticleSpec"].fromLiteral(model);
+        if (this.type instanceof _type_js__WEBPACK_IMPORTED_MODULE_5__["InterfaceType"]) {
+            return _particle_spec_js__WEBPACK_IMPORTED_MODULE_2__["ParticleSpec"].fromLiteral(model);
         }
-        if (this.type instanceof _type_js__WEBPACK_IMPORTED_MODULE_4__["ReferenceType"]) {
-            return new _reference_js__WEBPACK_IMPORTED_MODULE_2__["Reference"](model, this.type, this._proxy.pec);
+        if (this.type instanceof _type_js__WEBPACK_IMPORTED_MODULE_5__["ReferenceType"]) {
+            return new _reference_js__WEBPACK_IMPORTED_MODULE_3__["Reference"](model, this.type, this._proxy.pec);
         }
         Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(false, `Don't know how to deliver handle data of type ${this.type}`);
     }
@@ -3795,7 +3801,7 @@ class Variable extends Handle {
             return this._proxy.set(this._serialize(entity), this._particleId);
         }
         catch (e) {
-            this.raiseSystemException(e, 'Handle::set');
+            this.reportSystemExceptionInHost(e, 'Handle::set');
             throw e;
         }
     }
@@ -3905,17 +3911,17 @@ class BigCollection extends Handle {
 }
 function handleFor(proxy, name = null, particleId = '', canRead = true, canWrite = true) {
     let handle;
-    if (proxy.type instanceof _type_js__WEBPACK_IMPORTED_MODULE_4__["CollectionType"]) {
+    if (proxy.type instanceof _type_js__WEBPACK_IMPORTED_MODULE_5__["CollectionType"]) {
         handle = new Collection(proxy, name, particleId, canRead, canWrite);
     }
-    else if (proxy.type instanceof _type_js__WEBPACK_IMPORTED_MODULE_4__["BigCollectionType"]) {
+    else if (proxy.type instanceof _type_js__WEBPACK_IMPORTED_MODULE_5__["BigCollectionType"]) {
         handle = new BigCollection(proxy, name, particleId, canRead, canWrite);
     }
     else {
         handle = new Variable(proxy, name, particleId, canRead, canWrite);
     }
     const type = proxy.type.getContainedType() || proxy.type;
-    if (type instanceof _type_js__WEBPACK_IMPORTED_MODULE_4__["EntityType"]) {
+    if (type instanceof _type_js__WEBPACK_IMPORTED_MODULE_5__["EntityType"]) {
         handle.entityClass = type.entitySchema.entityClass(proxy.pec);
     }
     return handle;
@@ -3924,6 +3930,96 @@ function handleFor(proxy, name = null, particleId = '', canRead = true, canWrite
 
 /***/ }),
 /* 22 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "PropagatedException", function() { return PropagatedException; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SystemException", function() { return SystemException; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "UserException", function() { return UserException; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "reportSystemException", function() { return reportSystemException; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "registerSystemExceptionHandler", function() { return registerSystemExceptionHandler; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "removeSystemExceptionHandler", function() { return removeSystemExceptionHandler; });
+/** An exception that is to be propagated back to the host. */
+class PropagatedException extends Error {
+    constructor(cause, method, particleId, particleName) {
+        super();
+        this.cause = cause;
+        this.method = method;
+        this.particleId = particleId;
+        this.particleName = particleName;
+        this.stack += `\nCaused by: ${this.cause.stack}`;
+    }
+    toLiteral() {
+        return {
+            exceptionType: this.constructor.name,
+            cause: {
+                name: this.cause.name,
+                message: this.cause.message,
+                stack: this.cause.stack,
+            },
+            method: this.method,
+            particleId: this.particleId,
+            particleName: this.particleName,
+            stack: this.stack,
+        };
+    }
+    static fromLiteral(literal) {
+        const cause = literal.cause;
+        let exception;
+        switch (literal.exceptionType) {
+            case SystemException.name:
+                exception = new SystemException(cause, literal.method, literal.particleId, literal.particleName);
+                break;
+            case UserException.name:
+                exception = new UserException(cause, literal.method, literal.particleId, literal.particleName);
+                break;
+            default:
+                throw new Error(`Unknown exception type: ${literal.exceptionType}`);
+        }
+        exception.stack = literal.stack;
+        return exception;
+    }
+}
+/** An exception thrown in Arcs runtime code. */
+class SystemException extends PropagatedException {
+    get message() {
+        const particleName = this.particleName ? this.particleName : this.particleId;
+        return `SystemException: exception ${this.cause.name} raised when invoking system function ${this.method} on behalf of particle ${particleName}: ${this.cause.message}`;
+    }
+}
+/** An exception thrown in the user particle code (as opposed to an error in the Arcs runtime). */
+class UserException extends PropagatedException {
+    get message() {
+        const particleName = this.particleName ? this.particleName : this.particleId;
+        return `UserException: exception ${this.cause.name} raised when invoking function ${this.method} on particle ${particleName}: ${this.cause.message}`;
+    }
+}
+const systemHandlers = [];
+function reportSystemException(exception) {
+    for (const handler of systemHandlers) {
+        handler(exception);
+    }
+}
+function registerSystemExceptionHandler(handler) {
+    if (!systemHandlers.includes(handler)) {
+        systemHandlers.push(handler);
+    }
+}
+function removeSystemExceptionHandler(handler) {
+    const idx = systemHandlers.indexOf(handler);
+    if (idx > -1) {
+        systemHandlers.splice(idx, 1);
+    }
+}
+registerSystemExceptionHandler((exception) => {
+    console.log(exception.method, exception.particleName);
+    throw exception;
+});
+//# sourceMappingURL=arc-exceptions.js.map
+
+/***/ }),
+/* 23 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -3951,7 +4047,7 @@ class SlotInfo {
 //# sourceMappingURL=slot-info.js.map
 
 /***/ }),
-/* 23 */
+/* 24 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -3988,7 +4084,7 @@ class ArcHandle {
 //# sourceMappingURL=synthetic-types.js.map
 
 /***/ }),
-/* 24 */
+/* 25 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -4193,13 +4289,13 @@ class TypeVariableInfo {
 //# sourceMappingURL=type-variable-info.js.map
 
 /***/ }),
-/* 25 */
+/* 26 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Id", function() { return Id; });
-/* harmony import */ var _random_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(26);
+/* harmony import */ var _random_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(27);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -4268,7 +4364,7 @@ class Id {
 //# sourceMappingURL=id.js.map
 
 /***/ }),
-/* 26 */
+/* 27 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -4303,7 +4399,7 @@ class Random {
 //# sourceMappingURL=random.js.map
 
 /***/ }),
-/* 27 */
+/* 28 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -4354,7 +4450,7 @@ class SlotProxy {
 //# sourceMappingURL=slot-proxy.js.map
 
 /***/ }),
-/* 28 */
+/* 29 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -4366,8 +4462,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "StorageProxyScheduler", function() { return StorageProxyScheduler; });
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
 /* harmony import */ var _platform_sourcemapped_stacktrace_web_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(11);
-/* harmony import */ var _storage_crdt_collection_model_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(29);
-/* harmony import */ var _type_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(15);
+/* harmony import */ var _arc_exceptions_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(22);
+/* harmony import */ var _storage_crdt_collection_model_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(30);
+/* harmony import */ var _type_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(15);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -4377,6 +4474,7 @@ __webpack_require__.r(__webpack_exports__);
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
+
 
 
 
@@ -4426,23 +4524,24 @@ class StorageProxy {
         this.pec = pec;
     }
     static newProxy(id, type, port, pec, scheduler, name) {
-        if (type instanceof _type_js__WEBPACK_IMPORTED_MODULE_3__["CollectionType"]) {
+        if (type instanceof _type_js__WEBPACK_IMPORTED_MODULE_4__["CollectionType"]) {
             return new CollectionProxy(id, type, port, pec, scheduler, name);
         }
-        if (type instanceof _type_js__WEBPACK_IMPORTED_MODULE_3__["BigCollectionType"]) {
+        if (type instanceof _type_js__WEBPACK_IMPORTED_MODULE_4__["BigCollectionType"]) {
             return new BigCollectionProxy(id, type, port, pec, scheduler, name);
         }
         return new VariableProxy(id, type, port, pec, scheduler, name);
     }
-    raiseSystemException(exception, methodName, particleId) {
+    reportExceptionInHost(exception) {
         // TODO: Encapsulate source-mapping of the stack trace once there are more users of the port.RaiseSystemException() call.
-        const { message, stack, name } = exception;
-        const raise = stack => this.port.RaiseSystemException({ message, stack, name }, methodName, particleId);
-        if (!_platform_sourcemapped_stacktrace_web_js__WEBPACK_IMPORTED_MODULE_1__["mapStackTrace"]) {
-            raise(stack);
+        if (_platform_sourcemapped_stacktrace_web_js__WEBPACK_IMPORTED_MODULE_1__["mapStackTrace"]) {
+            Object(_platform_sourcemapped_stacktrace_web_js__WEBPACK_IMPORTED_MODULE_1__["mapStackTrace"])(exception.cause.stack, mappedStack => {
+                exception.cause.stack = mappedStack;
+                this.port.ReportExceptionInHost(exception);
+            });
         }
         else {
-            Object(_platform_sourcemapped_stacktrace_web_js__WEBPACK_IMPORTED_MODULE_1__["mapStackTrace"])(stack, mappedStack => raise(mappedStack.join('\n')));
+            this.port.ReportExceptionInHost(exception);
         }
     }
     /**
@@ -4595,14 +4694,14 @@ class StorageProxy {
 class CollectionProxy extends StorageProxy {
     constructor() {
         super(...arguments);
-        this.model = new _storage_crdt_collection_model_js__WEBPACK_IMPORTED_MODULE_2__["CrdtCollectionModel"]();
+        this.model = new _storage_crdt_collection_model_js__WEBPACK_IMPORTED_MODULE_3__["CrdtCollectionModel"]();
     }
     _getModelForSync() {
         return this.model.toList();
     }
     _synchronizeModel(version, model) {
         this.version = version;
-        this.model = new _storage_crdt_collection_model_js__WEBPACK_IMPORTED_MODULE_2__["CrdtCollectionModel"](model);
+        this.model = new _storage_crdt_collection_model_js__WEBPACK_IMPORTED_MODULE_3__["CrdtCollectionModel"](model);
         return true;
     }
     _processUpdate(update, apply = true) {
@@ -4914,7 +5013,7 @@ class StorageProxyScheduler {
                     }
                     catch (e) {
                         console.error('Error dispatching to particle', e);
-                        handle._proxy.raiseSystemException(e, 'StorageProxyScheduler::_dispatch', handle._particleId);
+                        handle._proxy.reportExceptionInHost(new _arc_exceptions_js__WEBPACK_IMPORTED_MODULE_2__["SystemException"](e, handle._particleId, 'StorageProxyScheduler::_dispatch'));
                     }
                 }
             }
@@ -4925,7 +5024,7 @@ class StorageProxyScheduler {
 //# sourceMappingURL=storage-proxy.js.map
 
 /***/ }),
-/* 29 */
+/* 30 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -5053,18 +5152,18 @@ class CrdtCollectionModel {
 //# sourceMappingURL=crdt-collection-model.js.map
 
 /***/ }),
-/* 30 */
+/* 31 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "PlatformLoader", function() { return PlatformLoader; });
-/* harmony import */ var _runtime_loader_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(31);
-/* harmony import */ var _runtime_particle_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(39);
-/* harmony import */ var _runtime_dom_particle_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(36);
-/* harmony import */ var _runtime_multiplexer_dom_particle_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(40);
-/* harmony import */ var _runtime_transformation_dom_particle_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(41);
-/* harmony import */ var _platform_log_web_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(42);
+/* harmony import */ var _runtime_loader_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(32);
+/* harmony import */ var _runtime_particle_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(40);
+/* harmony import */ var _runtime_dom_particle_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(37);
+/* harmony import */ var _runtime_multiplexer_dom_particle_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(41);
+/* harmony import */ var _runtime_transformation_dom_particle_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(42);
+/* harmony import */ var _platform_log_web_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(43);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -5164,22 +5263,22 @@ class PlatformLoader extends _runtime_loader_js__WEBPACK_IMPORTED_MODULE_0__["Lo
 
 
 /***/ }),
-/* 31 */
+/* 32 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Loader", function() { return Loader; });
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
-/* harmony import */ var _platform_fetch_web_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(32);
-/* harmony import */ var _platform_fs_web_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(33);
-/* harmony import */ var _platform_vm_web_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(34);
-/* harmony import */ var _converters_jsonldToManifest_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(35);
-/* harmony import */ var _dom_particle_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(36);
-/* harmony import */ var _multiplexer_dom_particle_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(40);
-/* harmony import */ var _particle_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(39);
+/* harmony import */ var _platform_fetch_web_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(33);
+/* harmony import */ var _platform_fs_web_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(34);
+/* harmony import */ var _platform_vm_web_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(35);
+/* harmony import */ var _converters_jsonldToManifest_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(36);
+/* harmony import */ var _dom_particle_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(37);
+/* harmony import */ var _multiplexer_dom_particle_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(41);
+/* harmony import */ var _particle_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(40);
 /* harmony import */ var _reference_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(20);
-/* harmony import */ var _transformation_dom_particle_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(41);
+/* harmony import */ var _transformation_dom_particle_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(42);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -5294,7 +5393,7 @@ class Loader {
 //# sourceMappingURL=loader.js.map
 
 /***/ }),
-/* 32 */
+/* 33 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -5317,7 +5416,7 @@ const local_fetch = fetch;
 
 
 /***/ }),
-/* 33 */
+/* 34 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -5334,7 +5433,7 @@ const fs = {};
 
 
 /***/ }),
-/* 34 */
+/* 35 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -5351,7 +5450,7 @@ const vm = {};
 
 
 /***/ }),
-/* 35 */
+/* 36 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -5465,14 +5564,14 @@ class JsonldToManifest {
 //# sourceMappingURL=jsonldToManifest.js.map
 
 /***/ }),
-/* 36 */
+/* 37 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "DomParticle", function() { return DomParticle; });
-/* harmony import */ var _modalities_dom_components_xen_xen_state_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(37);
-/* harmony import */ var _dom_particle_base_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(38);
+/* harmony import */ var _modalities_dom_components_xen_xen_state_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(38);
+/* harmony import */ var _dom_particle_base_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(39);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -5648,7 +5747,7 @@ class DomParticle extends Object(_modalities_dom_components_xen_xen_state_js__WE
 
 
 /***/ }),
-/* 37 */
+/* 38 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -5817,7 +5916,7 @@ const XenStateMixin = Base => class extends Base {
 
 
 /***/ }),
-/* 38 */
+/* 39 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -5825,7 +5924,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "DomParticleBase", function() { return DomParticleBase; });
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
 /* harmony import */ var _handle_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(21);
-/* harmony import */ var _particle_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(39);
+/* harmony import */ var _particle_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(40);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -6089,7 +6188,7 @@ class DomParticleBase extends _particle_js__WEBPACK_IMPORTED_MODULE_2__["Particl
 //# sourceMappingURL=dom-particle-base.js.map
 
 /***/ }),
-/* 39 */
+/* 40 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -6270,7 +6369,7 @@ class Particle {
 //# sourceMappingURL=particle.js.map
 
 /***/ }),
-/* 40 */
+/* 41 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -6278,7 +6377,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "MultiplexerDomParticle", function() { return MultiplexerDomParticle; });
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
 /* harmony import */ var _particle_spec_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(12);
-/* harmony import */ var _transformation_dom_particle_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(41);
+/* harmony import */ var _transformation_dom_particle_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(42);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -6490,13 +6589,13 @@ class MultiplexerDomParticle extends _transformation_dom_particle_js__WEBPACK_IM
 
 
 /***/ }),
-/* 41 */
+/* 42 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "TransformationDomParticle", function() { return TransformationDomParticle; });
-/* harmony import */ var _dom_particle_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(36);
+/* harmony import */ var _dom_particle_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(37);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -6549,7 +6648,7 @@ class TransformationDomParticle extends _dom_particle_js__WEBPACK_IMPORTED_MODUL
 
 
 /***/ }),
-/* 42 */
+/* 43 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";

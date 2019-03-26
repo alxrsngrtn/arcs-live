@@ -18,6 +18,7 @@ import { StorageProxy } from './storage-proxy.js';
 import { SerializedModelEntry } from './storage/crdt-collection-model.js';
 import { StorageProviderBase } from './storage/storage-provider-base.js';
 import { Type } from './type.js';
+import { PropagatedException } from './arc-exceptions.js';
 declare class ThingMapper {
     _prefix: string;
     _nextIdentifier: number;
@@ -87,7 +88,7 @@ export declare abstract class PECOuterPort extends APIPort {
     CreateSlotCallback(slot: {}, callback: number, hostedSlotId: string): void;
     InnerArcRender(transformationParticle: recipeParticle.Particle, transformationSlotName: string, hostedSlotId: string, content: {}): void;
     abstract onArcLoadRecipe(arc: Arc, recipe: string, callback: number): any;
-    abstract onRaiseSystemException(exception: {}, methodName: string, particleId: string): any;
+    abstract onReportExceptionInHost(exception: PropagatedException): any;
     DevToolsConnected(): void;
 }
 export interface CursorNextValue {
@@ -143,7 +144,7 @@ export declare abstract class PECInnerPort extends APIPort {
     ArcLoadRecipe(arc: {}, recipe: string, callback: (data: {
         error?: string;
     }) => void): void;
-    RaiseSystemException(exception: {}, methodName: string, particleId: string): void;
+    ReportExceptionInHost(exception: PropagatedException): void;
     onDevToolsConnected(): void;
 }
 export {};

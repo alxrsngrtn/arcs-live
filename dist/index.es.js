@@ -482,6 +482,77 @@ class Entity {
     }
 }
 
+/** An exception that is to be propagated back to the host. */
+class PropagatedException extends Error {
+    constructor(cause, method, particleId, particleName) {
+        super();
+        this.cause = cause;
+        this.method = method;
+        this.particleId = particleId;
+        this.particleName = particleName;
+        this.stack += `\nCaused by: ${this.cause.stack}`;
+    }
+    toLiteral() {
+        return {
+            exceptionType: this.constructor.name,
+            cause: {
+                name: this.cause.name,
+                message: this.cause.message,
+                stack: this.cause.stack,
+            },
+            method: this.method,
+            particleId: this.particleId,
+            particleName: this.particleName,
+            stack: this.stack,
+        };
+    }
+    static fromLiteral(literal) {
+        const cause = literal.cause;
+        let exception;
+        switch (literal.exceptionType) {
+            case SystemException.name:
+                exception = new SystemException(cause, literal.method, literal.particleId, literal.particleName);
+                break;
+            case UserException.name:
+                exception = new UserException(cause, literal.method, literal.particleId, literal.particleName);
+                break;
+            default:
+                throw new Error(`Unknown exception type: ${literal.exceptionType}`);
+        }
+        exception.stack = literal.stack;
+        return exception;
+    }
+}
+/** An exception thrown in Arcs runtime code. */
+class SystemException extends PropagatedException {
+    get message() {
+        const particleName = this.particleName ? this.particleName : this.particleId;
+        return `SystemException: exception ${this.cause.name} raised when invoking system function ${this.method} on behalf of particle ${particleName}: ${this.cause.message}`;
+    }
+}
+/** An exception thrown in the user particle code (as opposed to an error in the Arcs runtime). */
+class UserException extends PropagatedException {
+    get message() {
+        const particleName = this.particleName ? this.particleName : this.particleId;
+        return `UserException: exception ${this.cause.name} raised when invoking function ${this.method} on particle ${particleName}: ${this.cause.message}`;
+    }
+}
+const systemHandlers = [];
+function reportSystemException(exception) {
+    for (const handler of systemHandlers) {
+        handler(exception);
+    }
+}
+function registerSystemExceptionHandler(handler) {
+    if (!systemHandlers.includes(handler)) {
+        systemHandlers.push(handler);
+    }
+}
+registerSystemExceptionHandler((exception) => {
+    console.log(exception.method, exception.particleName);
+    throw exception;
+});
+
 /** @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
  * This code may only be used under the BSD style license found at
@@ -524,8 +595,11 @@ class Handle {
             notifyDesync: false,
         };
     }
-    raiseSystemException(exception, method) {
-        this._proxy.raiseSystemException(exception, method, this._particleId);
+    reportUserExceptionInHost(exception, particle, method) {
+        this._proxy.reportExceptionInHost(new UserException(exception, method, this._particleId, particle.spec.name));
+    }
+    reportSystemExceptionInHost(exception, method) {
+        this._proxy.reportExceptionInHost(new SystemException(exception, method, this._particleId));
     }
     // `options` may contain any of:
     // - keepSynced (bool): load full data on startup, maintain data in proxy and resync as required
@@ -543,7 +617,7 @@ class Handle {
             Object.assign(this.options, options);
         }
         catch (e) {
-            this.raiseSystemException(e, 'Handle::configure');
+            this.reportSystemExceptionInHost(e, 'Handle::configure');
             throw e;
         }
     }
@@ -585,8 +659,7 @@ class Collection extends Handle {
                     particle.onHandleSync(this, this._restore(details));
                 }
                 catch (e) {
-                    // TODO(shans): this should be a UserException, once we have those.
-                    this.raiseSystemException(e, "onHandleSync");
+                    this.reportUserExceptionInHost(e, particle, 'onHandleSync');
                 }
                 return;
             case 'update': {
@@ -689,7 +762,7 @@ class Variable extends Handle {
                     await particle.onHandleSync(this, this._restore(details));
                 }
                 catch (e) {
-                    this.raiseSystemException(e, `${particle.spec.name}::onHandleSync`);
+                    this.reportUserExceptionInHost(e, particle, 'onHandleSync');
                 }
                 return;
             case 'update': {
@@ -697,7 +770,7 @@ class Variable extends Handle {
                     await particle.onHandleUpdate(this, { data: this._restore(details.data) });
                 }
                 catch (e) {
-                    this.raiseSystemException(e, `${particle.spec.name}::onHandleUpdate`);
+                    this.reportUserExceptionInHost(e, particle, 'onHandleUpdate');
                 }
                 return;
             }
@@ -706,7 +779,7 @@ class Variable extends Handle {
                     await particle.onHandleDesync(this);
                 }
                 catch (e) {
-                    this.raiseSystemException(e, `${particle.spec.name}::onHandleDesync`);
+                    this.reportUserExceptionInHost(e, particle, 'onHandleDesync');
                 }
                 return;
             default:
@@ -754,7 +827,7 @@ class Variable extends Handle {
             return this._proxy.set(this._serialize(entity), this._particleId);
         }
         catch (e) {
-            this.raiseSystemException(e, 'Handle::set');
+            this.reportSystemExceptionInHost(e, 'Handle::set');
             throw e;
         }
     }
@@ -20031,7 +20104,7 @@ let PECInnerPort = class PECInnerPort extends APIPort {
     ArcMapHandle(callback, arc, handle) { }
     ArcCreateSlot(callback, arc, transformationParticle, transformationSlotName, handleId) { }
     ArcLoadRecipe(arc, recipe, callback) { }
-    RaiseSystemException(exception, methodName, particleId) { }
+    ReportExceptionInHost(exception) { }
     // To show stack traces for calls made inside the context, we need to capture the trace at the call point and
     // send it along with the message. We only want to do this after a DevTools connection has been detected, which
     // we can't directly detect inside a worker context, so the PECOuterPort will send an API message instead.
@@ -20100,8 +20173,8 @@ __decorate([
     __param(0, RemoteMapped), __param(1, Direct), __param(2, LocalMapped)
 ], PECInnerPort.prototype, "ArcLoadRecipe", null);
 __decorate([
-    __param(0, Direct), __param(1, Direct), __param(2, Direct)
-], PECInnerPort.prototype, "RaiseSystemException", null);
+    __param(0, ByLiteral(PropagatedException))
+], PECInnerPort.prototype, "ReportExceptionInHost", null);
 PECInnerPort = __decorate([
     AutoConstruct(PECOuterPort)
 ], PECInnerPort);
@@ -20211,15 +20284,16 @@ class StorageProxy {
         }
         return new VariableProxy(id, type, port, pec, scheduler, name);
     }
-    raiseSystemException(exception, methodName, particleId) {
+    reportExceptionInHost(exception) {
         // TODO: Encapsulate source-mapping of the stack trace once there are more users of the port.RaiseSystemException() call.
-        const { message, stack, name } = exception;
-        const raise = stack => this.port.RaiseSystemException({ message, stack, name }, methodName, particleId);
-        if (!mapStackTrace) {
-            raise(stack);
+        if (mapStackTrace) {
+            mapStackTrace(exception.cause.stack, mappedStack => {
+                exception.cause.stack = mappedStack;
+                this.port.ReportExceptionInHost(exception);
+            });
         }
         else {
-            mapStackTrace(stack, mappedStack => raise(mappedStack.join('\n')));
+            this.port.ReportExceptionInHost(exception);
         }
     }
     /**
@@ -20691,7 +20765,7 @@ class StorageProxyScheduler {
                     }
                     catch (e) {
                         console.error('Error dispatching to particle', e);
-                        handle._proxy.raiseSystemException(e, 'StorageProxyScheduler::_dispatch', handle._particleId);
+                        handle._proxy.reportExceptionInHost(new SystemException(e, handle._particleId, 'StorageProxyScheduler::_dispatch'));
                     }
                 }
             }
@@ -20956,31 +21030,6 @@ function FakePecFactory(loader) {
         return channel.port2;
     };
 }
-
-/**
- * @license
- * Copyright (c) 2018 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-const systemHandlers = [];
-function reportSystemException(exception, methodName, particle) {
-    for (const handler of systemHandlers) {
-        handler(exception, methodName, particle);
-    }
-}
-function registerSystemExceptionHandler(handler) {
-    if (!systemHandlers.includes(handler)) {
-        systemHandlers.push(handler);
-    }
-}
-registerSystemExceptionHandler((exception, methodName, particle) => {
-    console.log(methodName, particle);
-    throw exception;
-});
 
 // Copyright (c) 2017 Google Inc. All rights reserved.
 /**
@@ -21731,9 +21780,11 @@ class ParticleExecutionHost {
                 }
                 this.SimpleCallback(callback, error ? { error } : successResponse);
             }
-            onRaiseSystemException(exception, methodName, particleId) {
-                const particle = pec.arc.particleHandleMaps.get(particleId).spec.name;
-                reportSystemException(exception, methodName, particle);
+            onReportExceptionInHost(exception) {
+                if (!exception.particleName) {
+                    exception.particleName = pec.arc.particleHandleMaps.get(exception.particleId).spec.name;
+                }
+                reportSystemException(exception);
             }
         }(port, arc);
     }

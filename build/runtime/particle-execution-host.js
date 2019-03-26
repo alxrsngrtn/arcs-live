@@ -201,9 +201,11 @@ export class ParticleExecutionHost {
                 }
                 this.SimpleCallback(callback, error ? { error } : successResponse);
             }
-            onRaiseSystemException(exception, methodName, particleId) {
-                const particle = pec.arc.particleHandleMaps.get(particleId).spec.name;
-                reportSystemException(exception, methodName, particle);
+            onReportExceptionInHost(exception) {
+                if (!exception.particleName) {
+                    exception.particleName = pec.arc.particleHandleMaps.get(exception.particleId).spec.name;
+                }
+                reportSystemException(exception);
             }
         }(port, arc);
     }

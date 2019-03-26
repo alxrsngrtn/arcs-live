@@ -1,9 +1,14 @@
-commit 38b8eb3fb1c696a466c04948ef4ea35ee1b20dce
-Author: Scott J. Miles <sjmiles@google.com>
-Date:   Mon Mar 25 11:48:47 2019 -0700
+commit 9de1d966577b4890b19a38aef7daa862bc6de509
+Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
+Date:   Tue Mar 26 15:32:28 2019 +1100
 
-    Provide transaction id's to match receiveEntity with foundSuggestions (#2799)
+    Created SystemException and UserException types. (#2782)
     
-    * receive/found pairs send arc id
+    * Created SystemException and UserException types.
     
-    * fix up display, s/callback/foundSuggestions
+    These exceptions get propagated back to the host, and wrap the real
+    exception that occurred. Orignal exception, message and stack are
+    retained. Other useful info like the particle that caused it is given as
+    well.
+    
+    * Made ReportExceptionInHost use @ByLiteral

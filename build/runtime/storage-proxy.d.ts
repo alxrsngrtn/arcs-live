@@ -8,6 +8,7 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { CursorNextValue, PECInnerPort } from './api-channel.js';
+import { PropagatedException } from './arc-exceptions.js';
 import { Handle, HandleOptions } from './handle.js';
 import { ParticleExecutionContext } from './particle-execution-context.js';
 import { Particle } from './particle.js';
@@ -64,7 +65,7 @@ export declare abstract class StorageProxy {
     abstract _processUpdate(update: {
         version: number;
     }, apply?: boolean): {};
-    raiseSystemException(exception: any, methodName: any, particleId: any): void;
+    reportExceptionInHost(exception: PropagatedException): void;
     /**
      *  Called by ParticleExecutionContext to associate (potentially multiple) particle/handle pairs with this proxy.
      */

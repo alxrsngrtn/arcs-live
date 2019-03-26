@@ -9,6 +9,7 @@
  */
 import { assert } from '../platform/assert-web.js';
 import { mapStackTrace } from '../platform/sourcemapped-stacktrace-web.js';
+import { SystemException } from './arc-exceptions.js';
 import { CrdtCollectionModel } from './storage/crdt-collection-model.js';
 import { BigCollectionType, CollectionType } from './type.js';
 var SyncState;
@@ -64,15 +65,16 @@ export class StorageProxy {
         }
         return new VariableProxy(id, type, port, pec, scheduler, name);
     }
-    raiseSystemException(exception, methodName, particleId) {
+    reportExceptionInHost(exception) {
         // TODO: Encapsulate source-mapping of the stack trace once there are more users of the port.RaiseSystemException() call.
-        const { message, stack, name } = exception;
-        const raise = stack => this.port.RaiseSystemException({ message, stack, name }, methodName, particleId);
-        if (!mapStackTrace) {
-            raise(stack);
+        if (mapStackTrace) {
+            mapStackTrace(exception.cause.stack, mappedStack => {
+                exception.cause.stack = mappedStack;
+                this.port.ReportExceptionInHost(exception);
+            });
         }
         else {
-            mapStackTrace(stack, mappedStack => raise(mappedStack.join('\n')));
+            this.port.ReportExceptionInHost(exception);
         }
     }
     /**
@@ -544,7 +546,7 @@ export class StorageProxyScheduler {
                     }
                     catch (e) {
                         console.error('Error dispatching to particle', e);
-                        handle._proxy.raiseSystemException(e, 'StorageProxyScheduler::_dispatch', handle._particleId);
+                        handle._proxy.reportExceptionInHost(new SystemException(e, handle._particleId, 'StorageProxyScheduler::_dispatch'));
                     }
                 }
             }

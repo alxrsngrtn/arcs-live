@@ -27,7 +27,8 @@ export declare abstract class Handle {
     entityClass: string | null;
     abstract _notify(kind: string, particle: Particle, details: {}): any;
     constructor(proxy: StorageProxy, name: string, particleId: any, canRead: boolean, canWrite: boolean);
-    raiseSystemException(exception: any, method: any): void;
+    protected reportUserExceptionInHost(exception: Error, particle: Particle, method: string): void;
+    protected reportSystemExceptionInHost(exception: Error, method: string): void;
     configure(options: any): void;
     _serialize(entity: any): {
         id: any;

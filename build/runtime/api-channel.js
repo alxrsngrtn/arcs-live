@@ -21,6 +21,7 @@ import { DevtoolsConnection } from './debug/devtools-connection.js';
 import { OuterPortAttachment } from './debug/outer-port-attachment.js';
 import { ParticleSpec } from './particle-spec.js';
 import { Type } from './type.js';
+import { PropagatedException } from './arc-exceptions.js';
 var MappingType;
 (function (MappingType) {
     MappingType[MappingType["Mapped"] = 0] = "Mapped";
@@ -430,7 +431,7 @@ let PECInnerPort = class PECInnerPort extends APIPort {
     ArcMapHandle(callback, arc, handle) { }
     ArcCreateSlot(callback, arc, transformationParticle, transformationSlotName, handleId) { }
     ArcLoadRecipe(arc, recipe, callback) { }
-    RaiseSystemException(exception, methodName, particleId) { }
+    ReportExceptionInHost(exception) { }
     // To show stack traces for calls made inside the context, we need to capture the trace at the call point and
     // send it along with the message. We only want to do this after a DevTools connection has been detected, which
     // we can't directly detect inside a worker context, so the PECOuterPort will send an API message instead.
@@ -499,8 +500,8 @@ __decorate([
     __param(0, RemoteMapped), __param(1, Direct), __param(2, LocalMapped)
 ], PECInnerPort.prototype, "ArcLoadRecipe", null);
 __decorate([
-    __param(0, Direct), __param(1, Direct), __param(2, Direct)
-], PECInnerPort.prototype, "RaiseSystemException", null);
+    __param(0, ByLiteral(PropagatedException))
+], PECInnerPort.prototype, "ReportExceptionInHost", null);
 PECInnerPort = __decorate([
     AutoConstruct(PECOuterPort)
 ], PECInnerPort);
