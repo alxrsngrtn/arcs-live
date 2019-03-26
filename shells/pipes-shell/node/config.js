@@ -6,13 +6,9 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
+export let manifest;
+const {params} = global;
+if ('solo' in params) {
+  manifest = `import '${params.solo}'`;
+}
 
-global.logLevel = 2;
-
-export const Paths = {
-  root: '.',
-  map: {
-    'https://$build/': `../../lib/build/`,
-    'https://$particles/': `../../../particles/`
-  }
-};

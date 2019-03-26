@@ -1,11 +1,11 @@
-commit 4fe5e322bb23b09251abb207204123d1135501f8
-Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
-Date:   Tue Mar 26 15:42:19 2019 +1100
+commit 81da5e20f3dede9bd892c14e39ae73bb70dad366
+Author: Scott J. Miles <sjmiles@google.com>
+Date:   Tue Mar 26 14:10:44 2019 -0700
 
-    Adds a series of tutorials for writing new particles (#2797)
+    bring up pipes-shell/node (#2803)
     
-    * Started a particle tutorial.
+    * fixups to pipes-shell/node, ensure ShellApi return values are synchronous
     
-    * Renamed tutorial folders to be numbered
+    * update README
     
-    * Fixed hello world docs
+    * only run start-up test if given `test` param (+document)

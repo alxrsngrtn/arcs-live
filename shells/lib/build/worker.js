@@ -6661,7 +6661,7 @@ __webpack_require__.r(__webpack_exports__);
 // subject to an additional IP rights grant found at
 // http://polymer.github.io/PATENTS.txt
 
-const _factory = (preamble, color, log='log') => console[log].bind(console, `%c${preamble}`, `background: ${color}; color: white; padding: 1px 6px 2px 7px; border-radius: 6px;`);
+const _factory = (preamble, color, log='log') => console[log].bind(console, `%c${preamble}`, `background: ${color || 'gray'}; color: white; padding: 1px 6px 2px 7px; border-radius: 6px;`);
 
 // when punting, use full logging
 let logLevel = 2;
