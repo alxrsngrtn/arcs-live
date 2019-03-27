@@ -1,5 +1,5 @@
-commit 6321b9e31448531bb2ac9eaf0a086923cdac6e3c
-Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
-Date:   Wed Mar 27 13:25:57 2019 +1100
+commit bc57ee9ac9afe7a35c255f0aa4b3c64a4e21365f
+Author: shans <shane.stephens@gmail.com>
+Date:   Wed Mar 27 13:32:52 2019 +1100
 
-    Update README.md (#2806)
+    Manifest ts types (#2805)

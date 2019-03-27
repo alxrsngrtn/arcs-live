@@ -10,7 +10,7 @@
 import { assert } from '../platform/assert-web.js';
 import { PECOuterPort } from './api-channel.js';
 import { reportSystemException } from './arc-exceptions.js';
-import { Manifest } from './manifest.js';
+import { Manifest, StorageStub } from './manifest.js';
 import { RecipeResolver } from './recipe/recipe-resolver.js';
 export class ParticleExecutionHost {
     constructor(port, slotComposer, arc) {
@@ -184,7 +184,14 @@ export class ParticleExecutionHost {
                             if (recipe0.isResolved()) {
                                 // TODO: pass tags through too, and reconcile with similar logic
                                 // in Arc.deserialize.
-                                manifest.stores.forEach(store => pec.arc._registerStore(store, []));
+                                manifest.stores.forEach(async (store) => {
+                                    if (store instanceof StorageStub) {
+                                        pec.arc._registerStore(await store.inflate(), []);
+                                    }
+                                    else {
+                                        pec.arc._registerStore(store, []);
+                                    }
+                                });
                                 arc.instantiate(recipe0);
                             }
                             else {

@@ -23,26 +23,71 @@ import { compareComparables } from './recipe/util.js';
 import { Schema } from './schema.js';
 import { StorageProviderFactory } from './storage/storage-provider-factory.js';
 import { BigCollectionType, CollectionType, EntityType, InterfaceType, ReferenceType, SlotType, Type, TypeVariable } from './type.js';
+import { compareStrings } from './recipe/util.js';
 class ManifestError extends Error {
     constructor(location, message) {
         super(message);
         this.location = location;
     }
 }
+// TODO(shans): Make sure that after refactor Storage objects have a lifecycle and can be directly used
+// deflated rather than requiring this stub.
 export class StorageStub {
     constructor(type, id, name, storageKey, storageProviderFactory, originalId) {
+        this.referenceMode = false;
         this.type = type;
         this.id = id;
-        this.originalId = originalId;
         this.name = name;
         this.storageKey = storageKey;
         this.storageProviderFactory = storageProviderFactory;
+        this.originalId = originalId;
+    }
+    get version() {
+        return undefined; // Fake to match StorageProviderBase.
+    }
+    get description() {
+        return undefined; // Fake to match StorageProviderBase;
     }
     async inflate() {
         const store = await this.storageProviderFactory.connect(this.id, this.type, this.storageKey);
         assert(store != null, 'inflating missing storageKey ' + this.storageKey);
         store.originalId = this.originalId;
         return store;
+    }
+    toLiteral() {
+        return undefined; // Fake to match StorageProviderBase;
+    }
+    toString(handleTags) {
+        const results = [];
+        const handleStr = [];
+        handleStr.push(`store`);
+        if (this.name) {
+            handleStr.push(`${this.name}`);
+        }
+        handleStr.push(`of ${this.type.toString()}`);
+        if (this.id) {
+            handleStr.push(`'${this.id}'`);
+        }
+        if (handleTags && handleTags.length) {
+            handleStr.push(`${handleTags.join(' ')}`);
+        }
+        // TODO(shans): there's a 'this.source' in StorageProviderBase which is sometimes
+        // serialized here too - could it ever be part of StorageStub?
+        results.push(handleStr.join(' '));
+        if (this.description) {
+            results.push(`  description \`${this.description}\``);
+        }
+        return results.join('\n');
+    }
+    _compareTo(other) {
+        let cmp;
+        cmp = compareStrings(this.name, other.name);
+        if (cmp !== 0)
+            return cmp;
+        cmp = compareStrings(this.id, other.id);
+        if (cmp !== 0)
+            return cmp;
+        return 0;
     }
 }
 /**
@@ -53,7 +98,7 @@ class ManifestVisitor {
         if (['string', 'number', 'boolean'].includes(typeof ast) || ast === null) {
             return;
         }
-        if (Array.isArray(ast)) {
+        if (ast instanceof Array) {
             for (const item of ast) {
                 this.traverse(item);
             }
@@ -216,7 +261,7 @@ export class Manifest {
         if (iface) {
             return new InterfaceType(iface);
         }
-        return null;
+        return undefined;
     }
     findParticleByName(name) {
         return this._find(manifest => manifest._particles[name]);
@@ -254,8 +299,8 @@ export class Manifest {
             }
             return store.type.equals(type);
         }
-        function tagPredicate(manifest, handle) {
-            return tags.filter(tag => !manifest.storeTags.get(handle).includes(tag)).length === 0;
+        function tagPredicate(manifest, store) {
+            return tags.filter(tag => !manifest.storeTags.get(store).includes(tag)).length === 0;
         }
         const stores = [...this._findAll(manifest => manifest._stores.filter(store => typePredicate(store) && tagPredicate(manifest, store)))];
         // Quick check that a new handle can fulfill the type contract.
@@ -288,7 +333,6 @@ export class Manifest {
                 fileName,
                 loader,
                 registry,
-                position: { line: 1, column: 0 }
             });
         })();
         return await registry[fileName];
@@ -296,10 +340,9 @@ export class Manifest {
     static async parse(content, options) {
         options = options || {};
         // TODO(sjmiles): allow `context` for including an existing manifest in the import list
-        let { id, fileName, position, loader, registry, context } = options;
+        let { session_id, fileName, loader, registry, context } = options;
         registry = registry || {};
-        position = position || { line: 1, column: 0 };
-        id = `manifest:${fileName}:`;
+        const id = `manifest:${fileName}:`;
         function dumpWarnings(manifest) {
             for (const warning of manifest.warnings) {
                 // TODO: make a decision as to whether we should be logging these here, or if it should

@@ -7,4 +7,10 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
+/**
+ * A base token interface for the `kind` and `location` entries. This creates
+ * a TypeScript Discriminated Union for most tokens.
+ */
+export class BaseNode {
+}
 //# sourceMappingURL=manifest-ast-nodes.js.map

@@ -11,7 +11,7 @@ import { PECInnerPort } from './api-channel.js';
 import { ArcDebugListenerDerived } from './debug/abstract-devtools-channel.js';
 import { Id } from './id.js';
 import { Loader } from './loader.js';
-import { Manifest } from './manifest.js';
+import { Manifest, StorageStub } from './manifest.js';
 import { Modality } from './modality.js';
 import { ParticleExecutionHost } from './particle-execution-host.js';
 import { ParticleSpec } from './particle-spec.js';
@@ -111,7 +111,7 @@ export declare class Arc {
     loadedParticles(): ParticleSpec[];
     _instantiateParticle(recipeParticle: Particle): void;
     generateID(component?: string): string;
-    readonly _stores: StorageProviderBase[];
+    readonly _stores: (StorageProviderBase)[];
     cloneForSpeculativeExecution(): Promise<Arc>;
     instantiate(recipe: Recipe): Promise<void>;
     _connectParticleToHandle(particle: any, name: any, targetHandle: any): void;
@@ -123,7 +123,7 @@ export declare class Arc {
     clearDataChange(registration: any): void;
     static _typeToKey(type: Type): any;
     findStoresByType(type: Type, options?: any): StorageProviderBase[];
-    findStoreById(id: any): StorageProviderBase;
+    findStoreById(id: any): StorageProviderBase | StorageStub;
     findStoreTags(store: StorageProviderBase): string[] | Set<string>;
     getStoreDescription(store: StorageProviderBase): string;
     getVersionByStore({ includeArc, includeContext }: {

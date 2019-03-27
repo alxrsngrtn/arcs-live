@@ -11,5 +11,8 @@ export declare class ManifestMeta {
     storageKey: string | null;
     name: string | null;
     constructor();
-    apply(items: any): void;
+    apply(items: {
+        key: string;
+        value: string;
+    }[]): void;
 }

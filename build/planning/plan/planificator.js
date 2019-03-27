@@ -8,6 +8,7 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { assert } from '../../platform/assert-web.js';
+import { StorageProviderBase } from "../../runtime/storage/storage-provider-base.js";
 import { EntityType } from '../../runtime/type.js';
 import { PlanningExplorerAdapter } from '../debug/planning-explorer-adapter.js';
 import { PlanConsumer } from './plan-consumer.js';
@@ -103,7 +104,7 @@ export class Planificator {
     _listenToArcStores() {
         this.arc.onDataChange(this.dataChangeCallback, this);
         this.arc.context.allStores.forEach(store => {
-            if (store.on) { // #2141: some are StorageStubs.
+            if (store instanceof StorageProviderBase) {
                 store.on('change', this.dataChangeCallback, this);
             }
         });
@@ -111,7 +112,7 @@ export class Planificator {
     _unlistenToArcStores() {
         this.arc.clearDataChange(this);
         this.arc.context.allStores.forEach(store => {
-            if (store.off) { // #2141: some are StorageStubs.
+            if (store instanceof StorageProviderBase) {
                 store.off('change', this.dataChangeCallback);
             }
         });

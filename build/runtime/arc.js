@@ -16,6 +16,7 @@ import { ParticleExecutionHost } from './particle-execution-host.js';
 import { Handle } from './recipe/handle.js';
 import { Recipe } from './recipe/recipe.js';
 import { compareComparables } from './recipe/util.js';
+import { StorageProviderBase } from './storage/storage-provider-base.js';
 import { StorageProviderFactory } from './storage/storage-provider-factory.js';
 import { ArcType, CollectionType, EntityType, InterfaceType, RelationType, Type, TypeVariable } from './type.js';
 export class Arc {
@@ -191,8 +192,10 @@ export class Arc {
                         context.dataResources.set(storageKey, storeId);
                         // TODO: can't just reach into the store for the backing Store like this, should be an
                         // accessor that loads-on-demand in the storage objects.
-                        await handle.ensureBackingStore();
-                        await this._serializeHandle(handle.backingStore, context, storeId);
+                        if (handle instanceof StorageProviderBase) {
+                            await handle.ensureBackingStore();
+                            await this._serializeHandle(handle.backingStore, context, storeId);
+                        }
                     }
                     const storeId = context.dataResources.get(storageKey);
                     serializedData.forEach(a => { a.storageKey = storeId; });
@@ -410,7 +413,14 @@ ${this.activeRecipe.toString()}`;
                     await newStore.set(particleClone);
                 }
                 else if (recipeHandle.fate === 'copy') {
-                    const copiedStore = this.findStoreById(recipeHandle.id);
+                    const copiedStoreRef = this.findStoreById(recipeHandle.id);
+                    let copiedStore;
+                    if (copiedStoreRef instanceof StorageStub) {
+                        copiedStore = await copiedStoreRef.inflate();
+                    }
+                    else {
+                        copiedStore = copiedStoreRef;
+                    }
                     assert(copiedStore, `Cannot find store ${recipeHandle.id}`);
                     assert(copiedStore.version !== null, `Copied store ${recipeHandle.id} doesn't have version.`);
                     await newStore.cloneFrom(copiedStore);
@@ -566,9 +576,9 @@ ${this.activeRecipe.toString()}`;
         return stores.filter(s => !!Handle.effectiveType(type, [{ type: s.type, direction: (s.type instanceof InterfaceType) ? 'host' : 'inout' }]));
     }
     findStoreById(id) {
-        let store = this.storesById.get(id);
+        const store = this.storesById.get(id);
         if (store == null) {
-            store = this._context.findStoreById(id);
+            return this._context.findStoreById(id);
         }
         return store;
     }

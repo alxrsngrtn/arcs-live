@@ -19,12 +19,18 @@ import { EntityType, InterfaceType, Type } from './type.js';
 export declare class StorageStub {
     type: Type;
     id: string;
-    originalId: string;
     name: string;
     storageKey: string;
     storageProviderFactory: StorageProviderFactory;
-    constructor(type: any, id: any, name: any, storageKey: any, storageProviderFactory: any, originalId: any);
+    referenceMode: boolean;
+    originalId: string;
+    constructor(type: Type, id: string, name: string, storageKey: string, storageProviderFactory: StorageProviderFactory, originalId: string);
+    readonly version: any;
+    readonly description: any;
     inflate(): Promise<StorageProviderBase>;
+    toLiteral(): any;
+    toString(handleTags: string[]): string;
+    _compareTo(other: StorageProviderBase): number;
 }
 declare type ManifestFinder<a> = (manifest: Manifest) => a;
 declare type ManifestFinderGenerator<a> = ((manifest: Manifest) => IterableIterator<a>) | ((manifest: Manifest) => a[]);
@@ -35,7 +41,7 @@ export declare class Manifest {
     private _schemas;
     private _stores;
     private _interfaces;
-    storeTags: Map<StorageProviderBase, string[]>;
+    storeTags: Map<StorageProviderBase | StorageStub, string[]>;
     private _fileName;
     private readonly _id;
     private _storageProviderFactory;
@@ -58,33 +64,40 @@ export declare class Manifest {
         [index: string]: Schema;
     };
     readonly fileName: string;
-    readonly stores: StorageProviderBase[];
-    readonly allStores: StorageProviderBase[];
+    readonly stores: (StorageStub | StorageProviderBase)[];
+    readonly allStores: (StorageStub | StorageProviderBase)[];
     readonly interfaces: InterfaceInfo[];
     readonly meta: ManifestMeta;
     readonly resources: {};
-    applyMeta(section: any): void;
-    createStore(type: any, name: any, id: any, tags: any, storageKey?: any): Promise<any>;
-    _addStore(store: any, tags: any): any;
-    newStorageStub(type: any, name: any, id: any, storageKey: any, tags: any, originalId: any): any;
+    applyMeta(section: {
+        name: string;
+    } & {
+        key: string;
+        value: string;
+    }[]): void;
+    createStore(type: Type, name: string, id: string, tags: string[], storageKey?: string): Promise<StorageStub | StorageProviderBase>;
+    _addStore(store: StorageProviderBase | StorageStub, tags: string[]): StorageStub | StorageProviderBase;
+    newStorageStub(type: Type, name: string, id: string, storageKey: string, tags: string[], originalId: string): StorageStub | StorageProviderBase;
     _find<a>(manifestFinder: ManifestFinder<a>): a;
     _findAll<a>(manifestFinder: ManifestFinderGenerator<a>): IterableIterator<a>;
     findSchemaByName(name: string): Schema;
-    findTypeByName(name: any): EntityType | InterfaceType;
-    findParticleByName(name: any): ParticleSpec;
-    findParticlesByVerb(verb: any): ParticleSpec[];
-    findStoreByName(name: any): StorageProviderBase;
-    findStoreById(id: any): StorageProviderBase;
-    findStoreTags(store: any): string[];
-    findManifestUrlForHandleId(id: any): string;
+    findTypeByName(name: string): EntityType | InterfaceType | undefined;
+    findParticleByName(name: string): ParticleSpec;
+    findParticlesByVerb(verb: string): ParticleSpec[];
+    findStoreByName(name: string): StorageStub | StorageProviderBase;
+    findStoreById(id: string): StorageStub | StorageProviderBase;
+    findStoreTags(store: StorageProviderBase | StorageStub): string[];
+    findManifestUrlForHandleId(id: string): string;
     findStoresByType(type: Type, options?: {
         tags: string[];
         subtype: boolean;
-    }): StorageProviderBase[];
-    findInterfaceByName(name: any): InterfaceInfo;
-    findRecipesByVerb(verb: any): Recipe[];
+    }): (StorageProviderBase | StorageStub)[];
+    findInterfaceByName(name: string): InterfaceInfo;
+    findRecipesByVerb(verb: string): Recipe[];
     generateID(): string;
-    static load(fileName: string, loader: any, options?: any): Promise<Manifest>;
+    static load(fileName: string, loader: {
+        loadResource: any;
+    }, options?: any): Promise<Manifest>;
     static parse(content: string, options?: any): Promise<Manifest>;
     static _augmentAstWithTypes(manifest: any, items: any): void;
     static _processSchema(manifest: any, schemaItem: any): void;

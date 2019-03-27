@@ -3203,6 +3203,190 @@ class DescriptionFormatter {
     }
 }
 
+// Copyright (c) 2017 Google Inc. All rights reserved.
+function compareNulls(o1, o2) {
+    if (o1 === o2)
+        return 0;
+    if (o1 === null)
+        return -1;
+    return 1;
+}
+function compareStrings(s1, s2) {
+    if (s1 == null || s2 == null)
+        return compareNulls(s1, s2);
+    return s1.localeCompare(s2);
+}
+function compareNumbers(n1, n2) {
+    if (n1 == null || n2 == null)
+        return compareNulls(n1, n2);
+    return n1 - n2;
+}
+function compareArrays(a1, a2, compare) {
+    assert(a1 != null);
+    assert(a2 != null);
+    if (a1.length !== a2.length)
+        return compareNumbers(a1.length, a2.length);
+    for (let i = 0; i < a1.length; i++) {
+        let result;
+        if ((result = compare(a1[i], a2[i])) !== 0)
+            return result;
+    }
+    return 0;
+}
+function compareComparables(o1, o2) {
+    if (o1 == null || o2 == null)
+        return compareNulls(o1, o2);
+    return o1._compareTo(o2);
+}
+
+// @
+var EventKind;
+(function (EventKind) {
+    EventKind["change"] = "Change";
+})(EventKind || (EventKind = {}));
+class StorageBase {
+    constructor(arcId) {
+        this.arcId = arcId;
+        this._debug = false;
+        assert(arcId !== undefined, 'Arcs with storage must have ids');
+    }
+    /**
+     * Turn on debugginf for this storage provider.  Providers should
+     * subclass this and react to changes in the debug value.
+     */
+    set debug(d) {
+        this._debug = d;
+    }
+    /**
+     * Provides graceful shutdown for tests.
+     */
+    shutdown() { }
+}
+class ChangeEvent {
+    constructor(args) {
+        Object.assign(this, args);
+    }
+}
+/**
+ * Docs TBD
+ */
+class StorageProviderBase {
+    constructor(type, name, id, key) {
+        this.referenceMode = false;
+        assert(id, 'id must be provided when constructing StorageProviders');
+        assert(!type.hasUnresolvedVariable, 'Storage types must be concrete');
+        this._type = type;
+        this.listeners = new Map();
+        this.name = name;
+        this.version = 0;
+        this.id = id;
+        this.source = null;
+        this._storageKey = key;
+        this.nextLocalID = 0;
+    }
+    enableReferenceMode() {
+        this.referenceMode = true;
+    }
+    get storageKey() {
+        return this._storageKey;
+    }
+    generateID() {
+        return `${this.id}:${this.nextLocalID++}`;
+    }
+    generateIDComponents() {
+        return { base: this.id, component: () => this.nextLocalID++ };
+    }
+    get type() {
+        return this._type;
+    }
+    // TODO: add 'once' which returns a promise.
+    on(kindStr, callback, target) {
+        assert(target !== undefined, 'must provide a target to register a storage event handler');
+        const kind = EventKind[kindStr];
+        const listeners = this.listeners.get(kind) || new Map();
+        listeners.set(callback, { target });
+        this.listeners.set(kind, listeners);
+    }
+    off(kindStr, callback) {
+        const kind = EventKind[kindStr];
+        const listeners = this.listeners.get(kind);
+        if (listeners) {
+            listeners.delete(callback);
+        }
+    }
+    // TODO: rename to _fireAsync so it's clear that callers are not re-entrant.
+    /**
+     * Propagate updates to change listeners.
+     *
+     * @param kindStr the type of event, only 'change' is supported.
+     * @param details details about the change
+     */
+    async _fire(kindStr, details) {
+        const kind = EventKind[kindStr];
+        const listenerMap = this.listeners.get(kind);
+        if (!listenerMap || listenerMap.size === 0) {
+            return;
+        }
+        const callbacks = [];
+        for (const [callback] of listenerMap.entries()) {
+            callbacks.push(callback);
+        }
+        // Yield so that event firing is not re-entrant with mutation.
+        await 0;
+        for (const callback of callbacks) {
+            callback(details);
+        }
+    }
+    _compareTo(other) {
+        let cmp;
+        cmp = compareStrings(this.name, other.name);
+        if (cmp !== 0)
+            return cmp;
+        cmp = compareNumbers(this.version, other.version);
+        if (cmp !== 0)
+            return cmp;
+        cmp = compareStrings(this.source, other.source);
+        if (cmp !== 0)
+            return cmp;
+        cmp = compareStrings(this.id, other.id);
+        if (cmp !== 0)
+            return cmp;
+        return 0;
+    }
+    toString(handleTags) {
+        const results = [];
+        const handleStr = [];
+        handleStr.push(`store`);
+        if (this.name) {
+            handleStr.push(`${this.name}`);
+        }
+        handleStr.push(`of ${this.type.toString()}`);
+        if (this.id) {
+            handleStr.push(`'${this.id}'`);
+        }
+        if (handleTags && handleTags.length) {
+            handleStr.push(`${handleTags.join(' ')}`);
+        }
+        if (this.source) {
+            handleStr.push(`in '${this.source}'`);
+        }
+        results.push(handleStr.join(' '));
+        if (this.description) {
+            results.push(`  description \`${this.description}\``);
+        }
+        return results.join('\n');
+    }
+    get apiChannelMappingId() {
+        return this.id;
+    }
+    // TODO: make abstract?
+    dispose() { }
+    /** TODO */
+    modelForSynchronization() {
+        return this.toLiteral();
+    }
+}
+
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -3253,7 +3437,7 @@ class Description {
         const storeDescById = {};
         for (const { id } of arc.activeRecipe.handles) {
             const store = arc.findStoreById(id);
-            if (store) {
+            if (store && store instanceof StorageProviderBase) {
                 storeDescById[id] = arc.getStoreDescription(store);
             }
         }
@@ -12632,42 +12816,6 @@ class ManifestMeta {
 }
 
 // Copyright (c) 2017 Google Inc. All rights reserved.
-function compareNulls(o1, o2) {
-    if (o1 === o2)
-        return 0;
-    if (o1 === null)
-        return -1;
-    return 1;
-}
-function compareStrings(s1, s2) {
-    if (s1 == null || s2 == null)
-        return compareNulls(s1, s2);
-    return s1.localeCompare(s2);
-}
-function compareNumbers(n1, n2) {
-    if (n1 == null || n2 == null)
-        return compareNulls(n1, n2);
-    return n1 - n2;
-}
-function compareArrays(a1, a2, compare) {
-    assert(a1 != null);
-    assert(a2 != null);
-    if (a1.length !== a2.length)
-        return compareNumbers(a1.length, a2.length);
-    for (let i = 0; i < a1.length; i++) {
-        let result;
-        if ((result = compare(a1[i], a2[i])) !== 0)
-            return result;
-    }
-    return 0;
-}
-function compareComparables(o1, o2) {
-    if (o1 == null || o2 == null)
-        return compareNulls(o1, o2);
-    return o1._compareTo(o2);
-}
-
-// Copyright (c) 2017 Google Inc. All rights reserved.
 class EndPoint {
 }
 class ParticleEndPoint extends EndPoint {
@@ -15104,154 +15252,6 @@ class KeyBase {
 }
 
 // @
-var EventKind;
-(function (EventKind) {
-    EventKind["change"] = "Change";
-})(EventKind || (EventKind = {}));
-class StorageBase {
-    constructor(arcId) {
-        this.arcId = arcId;
-        this._debug = false;
-        assert(arcId !== undefined, 'Arcs with storage must have ids');
-    }
-    /**
-     * Turn on debugginf for this storage provider.  Providers should
-     * subclass this and react to changes in the debug value.
-     */
-    set debug(d) {
-        this._debug = d;
-    }
-    /**
-     * Provides graceful shutdown for tests.
-     */
-    shutdown() { }
-}
-class ChangeEvent {
-    constructor(args) {
-        Object.assign(this, args);
-    }
-}
-/**
- * Docs TBD
- */
-class StorageProviderBase {
-    constructor(type, name, id, key) {
-        this.referenceMode = false;
-        assert(id, 'id must be provided when constructing StorageProviders');
-        assert(!type.hasUnresolvedVariable, 'Storage types must be concrete');
-        this._type = type;
-        this.listeners = new Map();
-        this.name = name;
-        this.version = 0;
-        this.id = id;
-        this.source = null;
-        this._storageKey = key;
-        this.nextLocalID = 0;
-    }
-    enableReferenceMode() {
-        this.referenceMode = true;
-    }
-    get storageKey() {
-        return this._storageKey;
-    }
-    generateID() {
-        return `${this.id}:${this.nextLocalID++}`;
-    }
-    generateIDComponents() {
-        return { base: this.id, component: () => this.nextLocalID++ };
-    }
-    get type() {
-        return this._type;
-    }
-    // TODO: add 'once' which returns a promise.
-    on(kindStr, callback, target) {
-        assert(target !== undefined, 'must provide a target to register a storage event handler');
-        const kind = EventKind[kindStr];
-        const listeners = this.listeners.get(kind) || new Map();
-        listeners.set(callback, { target });
-        this.listeners.set(kind, listeners);
-    }
-    off(kindStr, callback) {
-        const kind = EventKind[kindStr];
-        const listeners = this.listeners.get(kind);
-        if (listeners) {
-            listeners.delete(callback);
-        }
-    }
-    // TODO: rename to _fireAsync so it's clear that callers are not re-entrant.
-    /**
-     * Propagate updates to change listeners.
-     *
-     * @param kindStr the type of event, only 'change' is supported.
-     * @param details details about the change
-     */
-    async _fire(kindStr, details) {
-        const kind = EventKind[kindStr];
-        const listenerMap = this.listeners.get(kind);
-        if (!listenerMap || listenerMap.size === 0) {
-            return;
-        }
-        const callbacks = [];
-        for (const [callback] of listenerMap.entries()) {
-            callbacks.push(callback);
-        }
-        // Yield so that event firing is not re-entrant with mutation.
-        await 0;
-        for (const callback of callbacks) {
-            callback(details);
-        }
-    }
-    _compareTo(other) {
-        let cmp;
-        cmp = compareStrings(this.name, other.name);
-        if (cmp !== 0)
-            return cmp;
-        cmp = compareNumbers(this.version, other.version);
-        if (cmp !== 0)
-            return cmp;
-        cmp = compareStrings(this.source, other.source);
-        if (cmp !== 0)
-            return cmp;
-        cmp = compareStrings(this.id, other.id);
-        if (cmp !== 0)
-            return cmp;
-        return 0;
-    }
-    toString(handleTags) {
-        const results = [];
-        const handleStr = [];
-        handleStr.push(`store`);
-        if (this.name) {
-            handleStr.push(`${this.name}`);
-        }
-        handleStr.push(`of ${this.type.toString()}`);
-        if (this.id) {
-            handleStr.push(`'${this.id}'`);
-        }
-        if (handleTags && handleTags.length) {
-            handleStr.push(`${handleTags.join(' ')}`);
-        }
-        if (this.source) {
-            handleStr.push(`in '${this.source}'`);
-        }
-        results.push(handleStr.join(' '));
-        if (this.description) {
-            results.push(`  description \`${this.description}\``);
-        }
-        return results.join('\n');
-    }
-    get apiChannelMappingId() {
-        return this.id;
-    }
-    // TODO: make abstract?
-    dispose() { }
-    /** TODO */
-    modelForSynchronization() {
-        return this.toLiteral();
-    }
-}
-
-// @
 class VolatileKey extends KeyBase {
     constructor(key) {
         super();
@@ -16043,20 +16043,64 @@ class ManifestError extends Error {
         this.location = location;
     }
 }
+// TODO(shans): Make sure that after refactor Storage objects have a lifecycle and can be directly used
+// deflated rather than requiring this stub.
 class StorageStub {
     constructor(type, id, name, storageKey, storageProviderFactory, originalId) {
+        this.referenceMode = false;
         this.type = type;
         this.id = id;
-        this.originalId = originalId;
         this.name = name;
         this.storageKey = storageKey;
         this.storageProviderFactory = storageProviderFactory;
+        this.originalId = originalId;
+    }
+    get version() {
+        return undefined; // Fake to match StorageProviderBase.
+    }
+    get description() {
+        return undefined; // Fake to match StorageProviderBase;
     }
     async inflate() {
         const store = await this.storageProviderFactory.connect(this.id, this.type, this.storageKey);
         assert(store != null, 'inflating missing storageKey ' + this.storageKey);
         store.originalId = this.originalId;
         return store;
+    }
+    toLiteral() {
+        return undefined; // Fake to match StorageProviderBase;
+    }
+    toString(handleTags) {
+        const results = [];
+        const handleStr = [];
+        handleStr.push(`store`);
+        if (this.name) {
+            handleStr.push(`${this.name}`);
+        }
+        handleStr.push(`of ${this.type.toString()}`);
+        if (this.id) {
+            handleStr.push(`'${this.id}'`);
+        }
+        if (handleTags && handleTags.length) {
+            handleStr.push(`${handleTags.join(' ')}`);
+        }
+        // TODO(shans): there's a 'this.source' in StorageProviderBase which is sometimes
+        // serialized here too - could it ever be part of StorageStub?
+        results.push(handleStr.join(' '));
+        if (this.description) {
+            results.push(`  description \`${this.description}\``);
+        }
+        return results.join('\n');
+    }
+    _compareTo(other) {
+        let cmp;
+        cmp = compareStrings(this.name, other.name);
+        if (cmp !== 0)
+            return cmp;
+        cmp = compareStrings(this.id, other.id);
+        if (cmp !== 0)
+            return cmp;
+        return 0;
     }
 }
 /**
@@ -16067,7 +16111,7 @@ class ManifestVisitor {
         if (['string', 'number', 'boolean'].includes(typeof ast) || ast === null) {
             return;
         }
-        if (Array.isArray(ast)) {
+        if (ast instanceof Array) {
             for (const item of ast) {
                 this.traverse(item);
             }
@@ -16230,7 +16274,7 @@ class Manifest {
         if (iface) {
             return new InterfaceType(iface);
         }
-        return null;
+        return undefined;
     }
     findParticleByName(name) {
         return this._find(manifest => manifest._particles[name]);
@@ -16268,8 +16312,8 @@ class Manifest {
             }
             return store.type.equals(type);
         }
-        function tagPredicate(manifest, handle) {
-            return tags.filter(tag => !manifest.storeTags.get(handle).includes(tag)).length === 0;
+        function tagPredicate(manifest, store) {
+            return tags.filter(tag => !manifest.storeTags.get(store).includes(tag)).length === 0;
         }
         const stores = [...this._findAll(manifest => manifest._stores.filter(store => typePredicate(store) && tagPredicate(manifest, store)))];
         // Quick check that a new handle can fulfill the type contract.
@@ -16302,7 +16346,6 @@ class Manifest {
                 fileName,
                 loader,
                 registry,
-                position: { line: 1, column: 0 }
             });
         })();
         return await registry[fileName];
@@ -16310,10 +16353,9 @@ class Manifest {
     static async parse(content, options) {
         options = options || {};
         // TODO(sjmiles): allow `context` for including an existing manifest in the import list
-        let { id, fileName, position, loader, registry, context } = options;
+        let { session_id, fileName, loader, registry, context } = options;
         registry = registry || {};
-        position = position || { line: 1, column: 0 };
-        id = `manifest:${fileName}:`;
+        const id = `manifest:${fileName}:`;
         function dumpWarnings(manifest) {
             for (const warning of manifest.warnings) {
                 // TODO: make a decision as to whether we should be logging these here, or if it should
@@ -21763,7 +21805,14 @@ class ParticleExecutionHost {
                             if (recipe0.isResolved()) {
                                 // TODO: pass tags through too, and reconcile with similar logic
                                 // in Arc.deserialize.
-                                manifest.stores.forEach(store => pec.arc._registerStore(store, []));
+                                manifest.stores.forEach(async (store) => {
+                                    if (store instanceof StorageStub) {
+                                        pec.arc._registerStore(await store.inflate(), []);
+                                    }
+                                    else {
+                                        pec.arc._registerStore(store, []);
+                                    }
+                                });
                                 arc.instantiate(recipe0);
                             }
                             else {
@@ -22007,8 +22056,10 @@ class Arc {
                         context.dataResources.set(storageKey, storeId);
                         // TODO: can't just reach into the store for the backing Store like this, should be an
                         // accessor that loads-on-demand in the storage objects.
-                        await handle.ensureBackingStore();
-                        await this._serializeHandle(handle.backingStore, context, storeId);
+                        if (handle instanceof StorageProviderBase) {
+                            await handle.ensureBackingStore();
+                            await this._serializeHandle(handle.backingStore, context, storeId);
+                        }
                     }
                     const storeId = context.dataResources.get(storageKey);
                     serializedData.forEach(a => { a.storageKey = storeId; });
@@ -22226,7 +22277,14 @@ ${this.activeRecipe.toString()}`;
                     await newStore.set(particleClone);
                 }
                 else if (recipeHandle.fate === 'copy') {
-                    const copiedStore = this.findStoreById(recipeHandle.id);
+                    const copiedStoreRef = this.findStoreById(recipeHandle.id);
+                    let copiedStore;
+                    if (copiedStoreRef instanceof StorageStub) {
+                        copiedStore = await copiedStoreRef.inflate();
+                    }
+                    else {
+                        copiedStore = copiedStoreRef;
+                    }
                     assert(copiedStore, `Cannot find store ${recipeHandle.id}`);
                     assert(copiedStore.version !== null, `Copied store ${recipeHandle.id} doesn't have version.`);
                     await newStore.cloneFrom(copiedStore);
@@ -22382,9 +22440,9 @@ ${this.activeRecipe.toString()}`;
         return stores.filter(s => !!Handle$1.effectiveType(type, [{ type: s.type, direction: (s.type instanceof InterfaceType) ? 'host' : 'inout' }]));
     }
     findStoreById(id) {
-        let store = this.storesById.get(id);
+        const store = this.storesById.get(id);
         if (store == null) {
-            store = this._context.findStoreById(id);
+            return this._context.findStoreById(id);
         }
         return store;
     }
@@ -24828,7 +24886,8 @@ class SearchTokensToHandles extends Strategy {
         // which are not already mapped into the provided handle's recipe
         const findMatchingStores = (token, handle) => {
             const counts = RecipeUtil.directionCounts(handle);
-            let stores = arc.findStoresByType(handle.type, { tags: [`${token}`], subtype: counts.out === 0 });
+            let stores;
+            stores = arc.findStoresByType(handle.type, { tags: [`${token}`], subtype: counts.out === 0 });
             let fate = 'use';
             if (stores.length === 0) {
                 stores = arc.context.findStoresByType(handle.type, { tags: [`${token}`], subtype: counts.out === 0 });
@@ -27582,7 +27641,7 @@ class Planificator {
     _listenToArcStores() {
         this.arc.onDataChange(this.dataChangeCallback, this);
         this.arc.context.allStores.forEach(store => {
-            if (store.on) { // #2141: some are StorageStubs.
+            if (store instanceof StorageProviderBase) {
                 store.on('change', this.dataChangeCallback, this);
             }
         });
@@ -27590,7 +27649,7 @@ class Planificator {
     _unlistenToArcStores() {
         this.arc.clearDataChange(this);
         this.arc.context.allStores.forEach(store => {
-            if (store.off) { // #2141: some are StorageStubs.
+            if (store instanceof StorageProviderBase) {
                 store.off('change', this.dataChangeCallback);
             }
         });

@@ -1,5 +1,6 @@
 import { Id } from '../id.js';
 import { Type } from '../type.js';
+import { StorageStub } from '../manifest.js';
 import { KeyBase } from './key-base.js';
 declare type Callback = (v: {
     [index: string]: any;
@@ -32,7 +33,7 @@ export interface BigCollectionStorageProvider extends StorageProviderBase {
     cursorNext(cursorId: number): any;
     cursorClose(cursorId: number): any;
     cursorVersion(cursorId: number): any;
-    cloneFrom(handle: any): any;
+    cloneFrom(store: StorageProviderBase | StorageStub): any;
     clearItemsForTesting(): void;
 }
 export declare abstract class StorageBase {
@@ -116,7 +117,7 @@ export declare abstract class StorageProviderBase {
      * @returns an object notation of this storage provider.
      */
     abstract toLiteral(): any;
-    abstract cloneFrom(store: StorageProviderBase): any;
+    abstract cloneFrom(store: StorageProviderBase | StorageStub): any;
     abstract ensureBackingStore(): any;
     abstract backingStore: any;
     /** TODO */

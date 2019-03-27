@@ -10,6 +10,7 @@
 import { assert } from '../platform/assert-web.js';
 import { DescriptionFormatter } from './description-formatter.js';
 import { BigCollectionType, CollectionType, EntityType, InterfaceType } from './type.js';
+import { StorageProviderBase } from './storage/storage-provider-base.js';
 export class Description {
     constructor(particleDescriptions = [], storeDescById = {}, arcRecipeName, 
     // TODO(mmandlis): replace Particle[] with serializable json objects.
@@ -51,7 +52,7 @@ export class Description {
         const storeDescById = {};
         for (const { id } of arc.activeRecipe.handles) {
             const store = arc.findStoreById(id);
-            if (store) {
+            if (store && store instanceof StorageProviderBase) {
                 storeDescById[id] = arc.getStoreDescription(store);
             }
         }
