@@ -1,5 +1,5 @@
-commit bc57ee9ac9afe7a35c255f0aa4b3c64a4e21365f
-Author: shans <shane.stephens@gmail.com>
-Date:   Wed Mar 27 13:32:52 2019 +1100
+commit ed9561304d449e85e353beceb5b46dc4815a0c97
+Author: Paul Lindner <lindner@inuus.com>
+Date:   Wed Mar 27 15:01:03 2019 -0700
 
-    Manifest ts types (#2805)
+    fix schema path in spotify importer (#2811)
