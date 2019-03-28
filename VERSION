@@ -1,5 +1,7 @@
-commit ed9561304d449e85e353beceb5b46dc4815a0c97
-Author: Paul Lindner <lindner@inuus.com>
-Date:   Wed Mar 27 15:01:03 2019 -0700
+commit 5de2fb45f115872bfeb66244dedbdb84eb29f522
+Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
+Date:   Thu Mar 28 13:11:32 2019 +1100
 
-    fix schema path in spotify importer (#2811)
+    Adds a new tutorial for showing how to use lists (#2807)
+    
+    Adds a new tutorial for showing how to use lists
