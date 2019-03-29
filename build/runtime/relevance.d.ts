@@ -17,8 +17,8 @@ export declare class Relevance {
     static create(arc: Arc, recipe: Recipe): Relevance;
     apply(relevance: Map<Particle, number[]>): void;
     calcRelevanceScore(): number;
-    isRelevant(plan: any): boolean;
-    static scaleRelevance(relevance: any): number;
-    static particleRelevance(relevanceList: any): number;
+    isRelevant(plan: Recipe): boolean;
+    static scaleRelevance(relevance: number): number;
+    static particleRelevance(relevanceList: number[]): number;
     calcParticleRelevance(particle: Particle): number;
 }

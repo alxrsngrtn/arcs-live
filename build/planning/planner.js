@@ -4,6 +4,7 @@
 // Code distributed by Google as part of this project is also
 // subject to an additional IP rights grant found at
 // http://polymer.github.io/PATENTS.txt
+import { assert } from '../platform/assert-web.js';
 import { now } from '../platform/date-web.js';
 import { DeviceInfo } from '../platform/deviceinfo-web.js';
 import { DevtoolsConnection } from '../runtime/debug/devtools-connection.js';
@@ -113,7 +114,6 @@ export class Planner {
     async suggest(timeout, generations = [], speculator) {
         const trace = Tracing.start({ cat: 'planning', name: 'Planner::suggest', overview: true, args: { timeout } });
         const plans = await trace.wait(this.plan(timeout, generations));
-        const suggestions = [];
         speculator = speculator || new Speculator();
         // We don't actually know how many threads the VM will decide to use to
         // handle the parallel speculation, but at least we know we won't kick off
@@ -156,7 +156,8 @@ export class Planner {
         if (generations) {
             generations.forEach(g => {
                 g.generated.forEach(gg => {
-                    if (gg.hash.endsWith(hash)) {
+                    assert(typeof gg.hash === 'string');
+                    if (typeof gg.hash === 'string' && gg.hash.endsWith(hash)) {
                         handler(gg);
                     }
                 });

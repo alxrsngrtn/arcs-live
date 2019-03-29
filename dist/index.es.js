@@ -25046,7 +25046,8 @@ class Planner {
         if (generations) {
             generations.forEach(g => {
                 g.generated.forEach(gg => {
-                    if (gg.hash.endsWith(hash)) {
+                    assert(typeof gg.hash === 'string');
+                    if (typeof gg.hash === 'string' && gg.hash.endsWith(hash)) {
                         handler(gg);
                     }
                 });

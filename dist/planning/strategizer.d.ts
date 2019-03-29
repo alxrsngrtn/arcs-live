@@ -3,6 +3,31 @@ import { Recipe } from '../runtime/recipe/recipe.js';
 import { RecipeWalker } from '../runtime/recipe/recipe-walker.js';
 import { WalkerTactic } from '../runtime/recipe/walker.js';
 import { Action, Descendant } from '../runtime/recipe/walker.js';
+export interface GenerationRecord {
+    generation: number;
+    sizeOfLastGeneration: number;
+    generatedDerivationsByStrategy: {
+        [index: string]: number;
+    };
+    generatedDerivations?: number;
+    nullDerivations?: number;
+    invalidDerivations?: number;
+    duplicateDerivations?: number;
+    duplicateSameParentDerivations?: number;
+    nullDerivationsByStrategy?: {
+        [index: string]: number;
+    };
+    invalidDerivationsByStrategy?: {
+        [index: string]: number;
+    };
+    duplicateDerivationsByStrategy?: {
+        [index: string]: number;
+    };
+    duplicateSameParentDerivationsByStrategy?: {
+        [index: string]: number;
+    };
+    survivingDerivations?: number;
+}
 export declare class Strategizer {
     _strategies: Strategy[];
     _evaluators: Strategy[];
@@ -25,31 +50,7 @@ export declare class Strategizer {
      * current generation.
      */
     readonly terminal: Descendant<Recipe>[];
-    generate(): Promise<{
-        generation: number;
-        sizeOfLastGeneration: number;
-        generatedDerivationsByStrategy: {
-            [index: string]: number;
-        };
-        generatedDerivations?: number;
-        nullDerivations?: number;
-        invalidDerivations?: number;
-        duplicateDerivations?: number;
-        duplicateSameParentDerivations?: number;
-        nullDerivationsByStrategy?: {
-            [index: string]: number;
-        };
-        invalidDerivationsByStrategy?: {
-            [index: string]: number;
-        };
-        duplicateDerivationsByStrategy?: {
-            [index: string]: number;
-        };
-        duplicateSameParentDerivationsByStrategy?: {
-            [index: string]: number;
-        };
-        survivingDerivations?: number;
-    }>;
+    generate(): Promise<GenerationRecord>;
     static _mergeEvaluations(evaluations: number[][], generated: Descendant<Recipe>[]): number[];
 }
 export declare class StrategizerWalker extends RecipeWalker {
