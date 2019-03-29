@@ -74,9 +74,9 @@ export declare class Arc {
     private innerArcsByParticle;
     private readonly listenerClasses;
     readonly id: Id;
-    particleHandleMaps: Map<string, {
+    loadedParticleInfo: Map<string, {
         spec: ParticleSpec;
-        handles: Map<string, StorageProviderBase>;
+        stores: Map<string, StorageProviderBase>;
     }>;
     pec: ParticleExecutionHost;
     constructor({ id, context, pecFactory, slotComposer, loader, storageKey, storageProviderFactory, speculative, innerArc, stub, listenerClasses }: ArcOptions);
@@ -108,13 +108,12 @@ export declare class Arc {
         slots: Slot[];
         patterns: string[];
     }[];
-    loadedParticles(): ParticleSpec[];
+    loadedParticleSpecs(): ParticleSpec[];
     _instantiateParticle(recipeParticle: Particle): void;
     generateID(component?: string): string;
     readonly _stores: (StorageProviderBase)[];
     cloneForSpeculativeExecution(): Promise<Arc>;
     instantiate(recipe: Recipe): Promise<void>;
-    _connectParticleToHandle(particle: any, name: any, targetHandle: any): void;
     createStore(type: Type, name?: any, id?: string, tags?: any, storageKey?: string): Promise<StorageProviderBase>;
     _registerStore(store: StorageProviderBase, tags?: any): void;
     _tagStore(store: StorageProviderBase, tags: any): void;

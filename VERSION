@@ -1,5 +1,5 @@
-commit 68965a778ae9ca2de51c64b2c88402f5f2fec625
-Author: shans <shane.stephens@gmail.com>
-Date:   Fri Mar 29 16:25:43 2019 +1100
+commit c10f5b4b7409a10e9cae51fd1670a29d0ebdfa22
+Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
+Date:   Fri Mar 29 16:33:21 2019 +1100
 
-    Add type information to type-variable-info.ts (#2819)
+    Fix incorrect types in API channel DefineHandle and InstantiateParticle. (#2820)

@@ -345,8 +345,8 @@ export class PECOuterPort extends APIPort {
         });
     }
     Stop() { }
-    DefineHandle(handle, type, name) { }
-    InstantiateParticle(particle, id, spec, handles) { }
+    DefineHandle(store, type, name) { }
+    InstantiateParticle(particle, id, spec, stores) { }
     UIEvent(particle, slotName, event) { }
     SimpleCallback(callback, data) { }
     AwaitIdle(version) { }

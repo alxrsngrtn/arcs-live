@@ -210,7 +210,7 @@ export class ParticleExecutionHost {
             }
             onReportExceptionInHost(exception) {
                 if (!exception.particleName) {
-                    exception.particleName = pec.arc.particleHandleMaps.get(exception.particleId).spec.name;
+                    exception.particleName = pec.arc.loadedParticleInfo.get(exception.particleId).spec.name;
                 }
                 reportSystemException(exception);
             }
@@ -235,12 +235,11 @@ export class ParticleExecutionHost {
     sendEvent(particle, slotName, event) {
         this._apiPort.UIEvent(particle, slotName, event);
     }
-    instantiate(particle, spec, handles) {
-        handles.forEach(handle => {
-            this._apiPort.DefineHandle(handle, handle.type.resolvedType(), handle.name);
+    instantiate(particle, stores) {
+        stores.forEach((store, name) => {
+            this._apiPort.DefineHandle(store, store.type.resolvedType(), name);
         });
-        this._apiPort.InstantiateParticle(particle, particle.id, spec, handles);
-        return particle;
+        this._apiPort.InstantiateParticle(particle, particle.id, particle.spec, stores);
     }
     startRender({ particle, slotName, providedSlots, contentTypes }) {
         this._apiPort.StartRender(particle, slotName, providedSlots, contentTypes);

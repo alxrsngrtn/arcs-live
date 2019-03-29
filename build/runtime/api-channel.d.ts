@@ -48,10 +48,8 @@ export declare class APIPort {
 export declare abstract class PECOuterPort extends APIPort {
     constructor(messagePort: any, arc: any);
     Stop(): void;
-    DefineHandle(handle: Handle, type: Type, name: string): void;
-    InstantiateParticle(particle: ParticleSpec, id: string, spec: ParticleSpec, handles: {
-        [index: string]: Handle;
-    }): void;
+    DefineHandle(store: StorageProviderBase, type: Type, name: string): void;
+    InstantiateParticle(particle: recipeParticle.Particle, id: string, spec: ParticleSpec, stores: Map<string, StorageProviderBase>): void;
     UIEvent(particle: recipeParticle.Particle, slotName: string, event: {}): void;
     SimpleCallback(callback: number, data: {}): void;
     AwaitIdle(version: number): void;
@@ -99,9 +97,7 @@ export declare abstract class PECInnerPort extends APIPort {
     constructor(messagePort: any);
     abstract onStop(): any;
     abstract onDefineHandle(identifier: string, type: Type, name: string): any;
-    abstract onInstantiateParticle(id: string, spec: ParticleSpec, handles: {
-        [index: string]: Handle;
-    }): any;
+    abstract onInstantiateParticle(id: string, spec: ParticleSpec, proxies: Map<string, StorageProxy>): any;
     abstract onUIEvent(particle: Particle, slotName: string, event: {}): any;
     abstract onSimpleCallback(callback: (data: {}) => void, data: {}): any;
     abstract onAwaitIdle(version: number): any;

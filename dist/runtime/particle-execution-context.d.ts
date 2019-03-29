@@ -31,7 +31,7 @@ export declare class ParticleExecutionContext {
     defaultCapabilitySet(): {
         constructInnerArc: (particle: any) => Promise<{}>;
     };
-    _instantiateParticle(id: any, spec: ParticleSpec, proxies: any): Promise<any[]>;
+    _instantiateParticle(id: string, spec: ParticleSpec, proxies: Map<string, StorageProxy>): Promise<any[]>;
     readonly relevance: Map<any, any>;
     readonly busy: boolean;
     readonly idle: Promise<any>;

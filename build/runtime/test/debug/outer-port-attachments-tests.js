@@ -47,7 +47,7 @@ describe('OuterPortAttachment', () => {
         assert.deepEqual(instantiateParticleCall.pecMsgBody, {
             id: `!${arc.id.currentSession}:demo:particle1`,
             identifier: `!${arc.id.currentSession}:demo:particle1`,
-            handles: {
+            stores: {
                 foo: 'fooStore'
             },
             spec: {

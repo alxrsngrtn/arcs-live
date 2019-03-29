@@ -10,6 +10,7 @@
 import { Arc } from './arc.js';
 import { Particle } from './recipe/particle.js';
 import { SlotComposer } from './slot-composer.js';
+import { StorageProviderBase } from './storage/storage-provider-base.js';
 export declare class ParticleExecutionHost {
     private _apiPort;
     close: () => void;
@@ -24,7 +25,7 @@ export declare class ParticleExecutionHost {
     readonly idle: Promise<Map<Particle, number[]>>;
     readonly messageCount: number;
     sendEvent(particle: any, slotName: any, event: any): void;
-    instantiate(particle: any, spec: any, handles: any): any;
+    instantiate(particle: Particle, stores: Map<string, StorageProviderBase>): void;
     startRender({ particle, slotName, providedSlots, contentTypes }: {
         particle: Particle;
         slotName: string;

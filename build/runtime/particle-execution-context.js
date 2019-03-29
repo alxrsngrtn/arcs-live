@@ -47,8 +47,8 @@ export class ParticleExecutionContext {
                     global['close']();
                 }
             }
-            onInstantiateParticle(id, spec, handles) {
-                return pec._instantiateParticle(id, spec, handles);
+            onInstantiateParticle(id, spec, proxies) {
+                return pec._instantiateParticle(id, spec, proxies);
             }
             onSimpleCallback(callback, data) {
                 callback(data);
@@ -146,7 +146,6 @@ export class ParticleExecutionContext {
         };
     }
     async _instantiateParticle(id, spec, proxies) {
-        const name = spec.name;
         let resolve = null;
         const p = new Promise(res => resolve = res);
         this.pendingLoads.push(p);

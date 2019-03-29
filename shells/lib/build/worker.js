@@ -174,8 +174,8 @@ class ParticleExecutionContext {
                     global['close']();
                 }
             }
-            onInstantiateParticle(id, spec, handles) {
-                return pec._instantiateParticle(id, spec, handles);
+            onInstantiateParticle(id, spec, proxies) {
+                return pec._instantiateParticle(id, spec, proxies);
             }
             onSimpleCallback(callback, data) {
                 callback(data);
@@ -273,7 +273,6 @@ class ParticleExecutionContext {
         };
     }
     async _instantiateParticle(id, spec, proxies) {
-        const name = spec.name;
         let resolve = null;
         const p = new Promise(res => resolve = res);
         this.pendingLoads.push(p);
@@ -742,8 +741,8 @@ class PECOuterPort extends APIPort {
         });
     }
     Stop() { }
-    DefineHandle(handle, type, name) { }
-    InstantiateParticle(particle, id, spec, handles) { }
+    DefineHandle(store, type, name) { }
+    InstantiateParticle(particle, id, spec, stores) { }
     UIEvent(particle, slotName, event) { }
     SimpleCallback(callback, data) { }
     AwaitIdle(version) { }
