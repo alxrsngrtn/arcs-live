@@ -9,22 +9,22 @@ export declare class Strategizer {
     _generation: number;
     _internalPopulation: {
         fitness: number;
-        individual: Descendant;
+        individual: Descendant<Recipe>;
     }[];
-    _population: Descendant[];
-    _generated: Descendant[];
+    _population: Descendant<Recipe>[];
+    _generated: Descendant<Recipe>[];
     _ruleset: Ruleset;
-    _terminal: Descendant[];
-    populationHash: Map<string, Descendant>;
+    _terminal: Descendant<Recipe>[];
+    populationHash: Map<string, Descendant<Recipe>>;
     constructor(strategies: Strategy[], evaluators: Strategy[], ruleset: Ruleset);
     readonly generation: number;
-    readonly population: Descendant[];
-    readonly generated: Descendant[];
+    readonly population: Descendant<Recipe>[];
+    readonly generated: Descendant<Recipe>[];
     /**
      * @return Individuals from the previous generation that were not descended from in the
      * current generation.
      */
-    readonly terminal: Descendant[];
+    readonly terminal: Descendant<Recipe>[];
     generate(): Promise<{
         generation: number;
         sizeOfLastGeneration: number;
@@ -50,20 +50,20 @@ export declare class Strategizer {
         };
         survivingDerivations?: number;
     }>;
-    static _mergeEvaluations(evaluations: number[][], generated: Descendant[]): number[];
+    static _mergeEvaluations(evaluations: number[][], generated: Descendant<Recipe>[]): number[];
 }
 export declare class StrategizerWalker extends RecipeWalker {
     constructor(tactic: WalkerTactic);
     createDescendant(recipe: Recipe, score: number): void;
-    static over(results: Descendant[], walker: StrategizerWalker, strategy: Strategy): Descendant[];
+    static over(results: Descendant<Recipe>[], walker: StrategizerWalker, strategy: Strategy): Descendant<Recipe>[];
 }
-export declare abstract class Strategy extends Action {
+export declare abstract class Strategy extends Action<Recipe> {
     constructor(arc?: Arc, args?: any);
     activate(strategizer: Strategizer): Promise<{
         generate: number;
         evaluate: number;
     }>;
-    evaluate(strategizer: Strategizer, individuals: Descendant[]): Promise<number[]>;
+    evaluate(strategizer: Strategizer, individuals: Descendant<Recipe>[]): Promise<number[]>;
 }
 declare type StrategyClass = typeof Strategy;
 export interface StrategyDerived extends StrategyClass {
@@ -96,7 +96,7 @@ export declare class RulesetBuilder {
 export declare class Ruleset {
     _orderingRules: Map<StrategyDerived, Set<StrategyDerived>>;
     constructor(orderingRules: Map<StrategyDerived, Set<StrategyDerived>>);
-    isAllowed(strategy: Strategy, recipe: Descendant): boolean;
+    isAllowed(strategy: Strategy, recipe: Descendant<Recipe>): boolean;
     static Builder: typeof RulesetBuilder;
 }
 export {};

@@ -28,12 +28,15 @@ export declare enum WalkerTactic {
     Permuted = "permuted",
     Independent = "independent"
 }
-export interface Descendant {
-    result: any;
+interface Cloneable {
+    clone(map: Map<object, object>): this;
+}
+export interface Descendant<T extends Cloneable> {
+    result: T;
     score: number;
     derivation: {
-        parent: Descendant;
-        strategy: Action;
+        parent: Descendant<T>;
+        strategy: Action<T>;
     }[];
     hash: Promise<string> | string;
     valid: boolean;
@@ -44,29 +47,30 @@ export interface Descendant {
  * An Action generates the list of Descendants by walking the object with a
  * Walker.
  */
-export declare abstract class Action {
+export declare abstract class Action<T extends Cloneable> {
     private readonly _arc?;
     private _args?;
     constructor(arc?: Arc, args?: any);
     readonly arc: Arc | undefined;
     getResults(inputParams: any): any;
-    generate(inputParams: any): Promise<Descendant[]>;
+    generate(inputParams: any): Promise<Descendant<T>[]>;
 }
-export declare abstract class Walker {
+export declare abstract class Walker<T extends Cloneable> {
     static Permuted: WalkerTactic;
     static Independent: WalkerTactic;
-    descendants: Descendant[];
-    currentAction: Action;
-    currentResult: Descendant;
+    descendants: Descendant<T>[];
+    currentAction: Action<T>;
+    currentResult: Descendant<T>;
     tactic: WalkerTactic;
     constructor(tactic: WalkerTactic);
-    onAction(action: Action): void;
-    onResult(result: Descendant): void;
+    onAction(action: Action<T>): void;
+    onResult(result: Descendant<T>): void;
     onResultDone(): void;
     onActionDone(): void;
-    static walk(results: Descendant[], walker: Walker, action: Action): Descendant[];
-    _runUpdateList(start: any, updateList: any): void;
-    abstract createDescendant(result: any, score: any): void;
-    createWalkerDescendant(item: any, score: any, hash: any, valid: any): void;
+    static walk<T extends Cloneable>(results: Descendant<T>[], walker: Walker<T>, action: Action<T>): Descendant<T>[];
+    _runUpdateList(start: T, updateList: any): void;
+    abstract createDescendant(result: T, score: number): void;
+    createWalkerDescendant(item: T, score: number, hash: Promise<string> | string, valid: boolean): void;
     isEmptyResult(result: any): boolean;
 }
+export {};

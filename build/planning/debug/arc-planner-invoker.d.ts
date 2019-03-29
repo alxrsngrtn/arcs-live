@@ -41,7 +41,7 @@ export declare class ArcPlannerInvoker extends ArcDebugListener {
         };
     }>;
     instantiate(strategyClass: StrategyDerived): Strategy;
-    processStrategyOutput(inputs: Descendant[]): {
+    processStrategyOutput(inputs: Descendant<Recipe>[]): {
         results: {
             recipe: string;
             derivation: string[];
@@ -50,7 +50,7 @@ export declare class ArcPlannerInvoker extends ArcDebugListener {
             }[];
         }[];
     };
-    extractDerivation(result: Descendant): string[];
+    extractDerivation(result: Descendant<Recipe>): string[];
     processManifestError(error: any): {
         suggestion: any;
         error: {

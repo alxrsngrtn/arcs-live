@@ -13,7 +13,7 @@ export declare class ResolveWalker extends RecipeWalker {
     onPotentialSlotConnection(recipe: Recipe, particle: Particle, slotSpec: ConsumeSlotConnectionSpec): (recipe: any, particle: any, slotSpec: any) => number;
     onObligation(recipe: Recipe, obligation: any): (recipe: any, obligation: any) => number;
 }
-export declare class ResolveRecipeAction extends Action {
+export declare class ResolveRecipeAction extends Action<Recipe> {
     generate(inputParams: any): any;
 }
 export declare class RecipeResolver {

@@ -1,3 +1,4 @@
+import { Recipe } from '../../runtime/recipe/recipe.js';
 import { Descendant } from '../../runtime/recipe/walker.js';
 import { Strategy } from '../strategizer.js';
 export declare class InitSearch extends Strategy {
@@ -7,5 +8,5 @@ export declare class InitSearch extends Strategy {
     });
     generate({ generation }: {
         generation: any;
-    }): Promise<Descendant[]>;
+    }): Promise<Descendant<Recipe>[]>;
 }
