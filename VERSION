@@ -1,7 +1,5 @@
-commit 5de2fb45f115872bfeb66244dedbdb84eb29f522
-Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
-Date:   Thu Mar 28 13:11:32 2019 +1100
+commit 2746a9b2a70a0a6acd4b6b3e4ff01b59ec3dc778
+Author: Piotr Swigon <piotr.swigon@gmail.com>
+Date:   Fri Mar 29 12:09:46 2019 +1100
 
-    Adds a new tutorial for showing how to use lists (#2807)
-    
-    Adds a new tutorial for showing how to use lists
+    Updates paydown points (#2814)
