@@ -2,7 +2,7 @@ import { BigCollectionStorageProvider } from '../storage-provider-base.js';
 import { PouchDbStorageProvider } from './pouch-db-storage-provider.js';
 export declare class PouchDbBigCollection extends PouchDbStorageProvider implements BigCollectionStorageProvider {
     constructor(type: any, storageEngine: any, name: any, id: any, key: any);
-    backingType(): any;
+    backingType(): import("../../type.js").Type;
     get(id: string): Promise<void>;
     store(value: any, keys: string[], originatorId?: string): Promise<void>;
     remove(id: string, keys: string[], originatorId?: string): Promise<void>;

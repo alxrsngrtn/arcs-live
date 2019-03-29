@@ -1,5 +1,5 @@
-commit bfa905c30ae7d13061b88dd48bb29cd6c2c58add
-Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Fri Mar 29 15:27:36 2019 +1100
+commit 68965a778ae9ca2de51c64b2c88402f5f2fec625
+Author: shans <shane.stephens@gmail.com>
+Date:   Fri Mar 29 16:25:43 2019 +1100
 
-    A few types around speculating and planning (#2818)
+    Add type information to type-variable-info.ts (#2819)

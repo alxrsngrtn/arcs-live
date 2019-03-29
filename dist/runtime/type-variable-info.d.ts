@@ -1,4 +1,9 @@
-import { Type } from './type.js';
+import { Type, TypeLiteral } from './type.js';
+interface TypeVariableInfoLiteral {
+    name: string;
+    canWriteSuperset?: TypeLiteral;
+    canReadSubset?: TypeLiteral;
+}
 export declare class TypeVariableInfo {
     name: string;
     _canWriteSuperset?: Type;
@@ -15,13 +20,13 @@ export declare class TypeVariableInfo {
      * Merge a type variable's read subset (upper bound) constraints into this variable.
      * This is used to accumulate read constraints when resolving a handle's type.
      */
-    maybeMergeCanReadSubset(constraint: any): boolean;
+    maybeMergeCanReadSubset(constraint: Type): boolean;
     /**
      * merge a type variable's write superset (lower bound) constraints into this variable.
      * This is used to accumulate write constraints when resolving a handle's type.
      */
-    maybeMergeCanWriteSuperset(constraint: any): boolean;
-    isSatisfiedBy(type: any): boolean;
+    maybeMergeCanWriteSuperset(constraint: Type): boolean;
+    isSatisfiedBy(type: Type): boolean;
     resolution: Type;
     isValidResolutionCandidate(value: Type): {
         result: boolean;
@@ -32,16 +37,9 @@ export declare class TypeVariableInfo {
     readonly hasConstraint: boolean;
     canEnsureResolved(): boolean;
     maybeEnsureResolved(): boolean;
-    toLiteral(): {
-        name: string;
-        canWriteSuperset: import("./type.js").TypeLiteral;
-        canReadSubset: import("./type.js").TypeLiteral;
-    };
-    toLiteralIgnoringResolutions(): {
-        name: string;
-        canWriteSuperset: import("./type.js").TypeLiteral;
-        canReadSubset: import("./type.js").TypeLiteral;
-    };
-    static fromLiteral(data: any): TypeVariableInfo;
+    toLiteral(): TypeVariableInfoLiteral;
+    toLiteralIgnoringResolutions(): TypeVariableInfoLiteral;
+    static fromLiteral(data: TypeVariableInfoLiteral): TypeVariableInfo;
     isResolved(): boolean;
 }
+export {};

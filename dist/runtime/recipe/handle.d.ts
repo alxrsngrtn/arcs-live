@@ -43,8 +43,8 @@ export declare class Handle {
     static effectiveType(handleType: Type, connections: {
         type: Type;
         direction: string;
-    }[]): Type | import("../type.js").TypeVariable;
-    static resolveEffectiveType(handleType: Type, connections: HandleConnection[]): Type | import("../type.js").TypeVariable;
+    }[]): Type | import("../type.js").TypeVariable | import("../type.js").CollectionType<import("../type.js").TypeVariable> | import("../type.js").BigCollectionType<import("../type.js").TypeVariable>;
+    static resolveEffectiveType(handleType: Type, connections: HandleConnection[]): Type | import("../type.js").TypeVariable | import("../type.js").CollectionType<import("../type.js").TypeVariable> | import("../type.js").BigCollectionType<import("../type.js").TypeVariable>;
     _isValid(options: any): boolean;
     isResolved(options?: any): boolean;
     toString(nameMap: any, options: any): string;

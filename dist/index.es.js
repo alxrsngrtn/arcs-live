@@ -1478,7 +1478,7 @@ class TypeVariableInfo {
             // TODO: formFactor compatibility, etc.
             return true;
         }
-        if (this.canReadSubset instanceof EntityType) {
+        if (this.canReadSubset instanceof EntityType && constraint instanceof EntityType) {
             const mergedSchema = Schema.intersect(this.canReadSubset.entitySchema, constraint.entitySchema);
             if (!mergedSchema) {
                 return false;
@@ -1504,7 +1504,7 @@ class TypeVariableInfo {
             // TODO: formFactor compatibility, etc.
             return true;
         }
-        if (this.canWriteSuperset instanceof EntityType) {
+        if (this.canWriteSuperset instanceof EntityType && constraint instanceof EntityType) {
             const mergedSchema = Schema.union(this.canWriteSuperset.entitySchema, constraint.entitySchema);
             if (!mergedSchema) {
                 return false;

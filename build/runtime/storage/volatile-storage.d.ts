@@ -43,7 +43,7 @@ declare abstract class VolatileStorageProvider extends StorageProviderBase {
 declare class VolatileCollection extends VolatileStorageProvider implements CollectionStorageProvider {
     _model: CrdtCollectionModel;
     constructor(type: any, storageEngine: any, name: any, id: any, key: any);
-    backingType(): any;
+    backingType(): Type;
     clone(): VolatileCollection;
     cloneFrom(handle: any): Promise<void>;
     modelForSynchronization(): Promise<{
@@ -109,7 +109,7 @@ declare class VolatileBigCollection extends VolatileStorageProvider implements B
     private cursorIndex;
     constructor(type: any, storageEngine: any, name: any, id: any, key: any);
     enableReferenceMode(): void;
-    backingType(): any;
+    backingType(): Type;
     get(id: string): Promise<{}>;
     store(value: any, keys: string[], originatorId?: string): Promise<void>;
     remove(id: string, keys?: string[], originatorId?: string): Promise<void>;
