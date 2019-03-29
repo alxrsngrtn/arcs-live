@@ -1,5 +1,5 @@
-commit c10f5b4b7409a10e9cae51fd1670a29d0ebdfa22
-Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
-Date:   Fri Mar 29 16:33:21 2019 +1100
+commit 1905490cf7cbe4fd5fc0ce52576d63f22b295cbf
+Author: shans <shane.stephens@gmail.com>
+Date:   Fri Mar 29 16:57:48 2019 +1100
 
-    Fix incorrect types in API channel DefineHandle and InstantiateParticle. (#2820)
+    Improve types in recipe/util and recipe/handle (#2821)

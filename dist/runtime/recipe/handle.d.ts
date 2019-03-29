@@ -3,7 +3,7 @@ import { Schema } from '../schema.js';
 import { TypeVariableInfo } from '../type-variable-info.js';
 import { Type } from '../type.js';
 import { HandleConnection } from './handle-connection.js';
-import { Recipe } from './recipe.js';
+import { Recipe, CloneMap, RecipeComponent, IsValidOptions, ToStringOptions } from './recipe.js';
 declare type Fate = 'use' | 'create' | 'map' | 'copy' | '?' | '`slot';
 export declare class Handle {
     private readonly _recipe;
@@ -20,12 +20,12 @@ export declare class Handle {
     private _pattern;
     private _immediateValue;
     constructor(recipe: Recipe);
-    _copyInto(recipe: Recipe, cloneMap: any, variableMap: Map<TypeVariableInfo | Schema, TypeVariableInfo | Schema>): any;
-    mergeInto(handle: any): void;
-    _mergedFate(fates: any): "use" | "create";
+    _copyInto(recipe: Recipe, cloneMap: CloneMap, variableMap: Map<TypeVariableInfo | Schema, TypeVariableInfo | Schema>): Handle;
+    mergeInto(handle: Handle): void;
+    _mergedFate(fates: Fate[]): "use" | "create";
     _startNormalize(): void;
     _finishNormalize(): void;
-    _compareTo(other: any): any;
+    _compareTo(other: Handle): any;
     fate: Fate;
     readonly originalFate: Fate;
     readonly originalId: string | null;
@@ -33,7 +33,12 @@ export declare class Handle {
     tags: string[];
     readonly type: Type;
     id: string | null;
-    mapToStorage(storage: any): void;
+    mapToStorage(storage: {
+        id: string;
+        type: Type;
+        originalId?: string;
+        storageKey?: string;
+    }): void;
     localName: string;
     readonly connections: HandleConnection[];
     storageKey: string;
@@ -45,9 +50,9 @@ export declare class Handle {
         direction: string;
     }[]): Type | import("../type.js").TypeVariable | import("../type.js").CollectionType<import("../type.js").TypeVariable> | import("../type.js").BigCollectionType<import("../type.js").TypeVariable>;
     static resolveEffectiveType(handleType: Type, connections: HandleConnection[]): Type | import("../type.js").TypeVariable | import("../type.js").CollectionType<import("../type.js").TypeVariable> | import("../type.js").BigCollectionType<import("../type.js").TypeVariable>;
-    _isValid(options: any): boolean;
+    _isValid(options: IsValidOptions): boolean;
     isResolved(options?: any): boolean;
-    toString(nameMap: any, options: any): string;
+    toString(nameMap: Map<RecipeComponent, string>, options: ToStringOptions): string;
     findConnectionByDirection(dir: string): HandleConnection;
 }
 export {};

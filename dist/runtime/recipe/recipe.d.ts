@@ -8,6 +8,15 @@ import { Particle } from './particle.js';
 import { Search } from './search.js';
 import { SlotConnection } from './slot-connection.js';
 import { Slot } from './slot.js';
+export declare type RecipeComponent = Particle | Handle | HandleConnection | Slot | SlotConnection;
+export declare type CloneMap = Map<RecipeComponent, RecipeComponent>;
+export declare type IsValidOptions = {
+    errors: Map<RecipeComponent, string>;
+};
+export declare type ToStringOptions = {
+    showUnresolved?: boolean;
+    hideFields?: boolean;
+};
 export declare class Recipe {
     private _requires;
     private _particles;
