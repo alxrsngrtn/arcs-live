@@ -1,14 +1,5 @@
-commit b704b6bf02c40fcbf6ecdf4db0b3edb2a6f8b060
-Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
-Date:   Mon Apr 1 21:02:15 2019 +1100
+commit 877384cffc3178aa576dde02713b453617f1063d
+Author: shans <shane.stephens@gmail.com>
+Date:   Tue Apr 2 08:18:36 2019 +1100
 
-    Type defs for src/platform. (#2822)
-    
-    Type defs for src/platform.
-    
-    This was achieved through a a combination of:
-    * Converting from .js to .ts files
-    * Adding .d.ts files
-    
-    The additional typing produced some new type errors in our code, which I
-    had to fix/silence.
+    Remove chokidar as a dependency, add a message telling users how to install if they need it. (#2815)
