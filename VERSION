@@ -1,9 +1,14 @@
-commit 3772f4ab8f6efe53909f123a19a4bc6e86c6e145
-Author: Ray Cromwell <cromwellian@gmail.com>
-Date:   Sun Mar 31 21:18:05 2019 -0700
+commit b704b6bf02c40fcbf6ecdf4db0b3edb2a6f8b060
+Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
+Date:   Mon Apr 1 21:02:15 2019 +1100
 
-    Add Person autofill to default pipe apps (#2823)
+    Type defs for src/platform. (#2822)
     
-    * Add Person autofill to default pipe apps
+    Type defs for src/platform.
     
-    * fix tabs
+    This was achieved through a a combination of:
+    * Converting from .js to .ts files
+    * Adding .d.ts files
+    
+    The additional typing produced some new type errors in our code, which I
+    had to fix/silence.

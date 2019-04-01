@@ -300,7 +300,10 @@ export class PouchDbCollection extends PouchDbStorageProvider {
                 doc = {
                     _id: this.pouchDbKey.location,
                     referenceMode: this.referenceMode,
-                    type: this.type.toLiteral()
+                    type: this.type.toLiteral(),
+                    model: null,
+                    version: null,
+                    _rev: null,
                 };
             }
             // Run the mutator on a copy of the existing model

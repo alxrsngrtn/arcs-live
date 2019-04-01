@@ -102,13 +102,13 @@ export async function assertSingletonIs(store, field, expectation) {
     const actual = await store.get();
     assert.equal(actual !== null ? actual.rawData[field] : '(null)', expectation);
 }
-export async function assertThrowsAsync(fn, message) {
+export async function assertThrowsAsync(fn, ...args) {
     try {
         await fn();
-        assert.throws(() => undefined, message);
+        assert.throws(() => undefined, ...args);
     }
     catch (e) {
-        assert.throws(() => { throw e; }, message);
+        assert.throws(() => { throw e; }, ...args);
     }
 }
 //# sourceMappingURL=test-util.js.map

@@ -69,7 +69,7 @@ export declare class Recipe {
     findSlot(id: any): Slot;
     patterns: string[];
     description: any;
-    digest(): Promise<any>;
+    digest(): Promise<string>;
     normalize(options?: any): boolean;
     clone(cloneMap?: any): Recipe;
     mergeInto(recipe: Recipe): {

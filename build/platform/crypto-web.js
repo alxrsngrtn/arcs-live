@@ -4,5 +4,5 @@
 // Code distributed by Google as part of this project is also
 // subject to an additional IP rights grant found at
 // http://polymer.github.io/PATENTS.txt
-
 export const crypto = window.crypto;
+//# sourceMappingURL=crypto-web.js.map

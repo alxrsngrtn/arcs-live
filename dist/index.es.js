@@ -22568,18 +22568,17 @@ function now$1() {
 }
 
 // Copyright (c) 2018 Google Inc. All rights reserved.
-
 // Provides access to device hardware resource metrics for a node process.
 class DeviceInfo {
-  // Returns the number of logical cores.
-  static hardwareConcurrency() {
-    return os.cpus().length;
-  }
-  // Returns the device memory in gigabytes.
-  static deviceMemory() {
-    // Convert bytes to gigabytes.
-    return os.totalmem() / Math.pow(1024, 3);
-  }
+    // Returns the number of logical cores.
+    static hardwareConcurrency() {
+        return os.cpus().length;
+    }
+    // Returns the device memory in gigabytes.
+    static deviceMemory() {
+        // Convert bytes to gigabytes.
+        return os.totalmem() / Math.pow(1024, 3);
+    }
 }
 
 /**

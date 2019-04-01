@@ -1,4 +1,7 @@
-import { PouchDB } from '../../../platform/pouchdb-web.js';
+/// <reference types="pouchdb-find" />
+/// <reference types="pouchdb-core" />
+/// <reference types="pouchdb-mapreduce" />
+/// <reference types="pouchdb-replication" />
 import { Id } from '../../id.js';
 import { Type } from '../../type.js';
 import { StorageBase } from '../storage-provider-base.js';

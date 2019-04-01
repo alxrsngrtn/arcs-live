@@ -1,6 +1,6 @@
-import { PouchDB } from '../../../platform/pouchdb-web.js';
+/// <reference types="pouchdb-core" />
 import { Type, TypeLiteral } from '../../type.js';
-import { CrdtCollectionModel } from '../crdt-collection-model.js';
+import { SerializedModelEntry } from '../crdt-collection-model.js';
 import { CollectionStorageProvider } from '../storage-provider-base.js';
 import { PouchDbStorage } from './pouch-db-storage';
 import { PouchDbStorageProvider } from './pouch-db-storage-provider.js';
@@ -8,7 +8,7 @@ import { PouchDbStorageProvider } from './pouch-db-storage-provider.js';
  * Contains the data that is stored within Pouch
  */
 interface CollectionStorage {
-    model: CrdtCollectionModel;
+    model: SerializedModelEntry[];
     version: number;
     referenceMode: boolean;
     type: TypeLiteral;
@@ -42,7 +42,7 @@ export declare class PouchDbCollection extends PouchDbStorageProvider implements
     /** @inheritDoc */
     toLiteral(): Promise<{
         version: number;
-        model: import("../crdt-collection-model.js").SerializedModelEntry[];
+        model: SerializedModelEntry[];
     }>;
     /**
      * Populate this collection with a provided version/model

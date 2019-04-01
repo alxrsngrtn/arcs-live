@@ -75,7 +75,7 @@ describe('crdt-collection-model', () => {
         assert.sameMembers(model.getKeys('keys'), ['key1']);
         const effective = model.remove('nokeys', []);
         assert.isTrue(effective);
-        assert(model.size, 1);
+        assert.equal(model.size, 1);
     });
 });
 //# sourceMappingURL=crdt-collection-model-test.js.map

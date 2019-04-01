@@ -4,9 +4,9 @@ export declare class Loader {
     path(fileName: string): string;
     join(prefix: string, path: string): string;
     normalizeDots(path: string): string;
-    loadResource(file: string): any;
-    _loadFile(file: string): Promise<{}>;
-    _loadURL(url: string): any;
+    loadResource(file: string): Promise<string>;
+    _loadFile(file: string): Promise<string>;
+    _loadURL(url: string): Promise<string>;
     loadParticleClass(spec: any): Promise<any>;
     requireParticle(fileName: string): Promise<any>;
     setParticleExecutionContext(pec: ParticleExecutionContext): void;
