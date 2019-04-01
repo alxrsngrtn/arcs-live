@@ -1,5 +1,9 @@
-commit 1905490cf7cbe4fd5fc0ce52576d63f22b295cbf
-Author: shans <shane.stephens@gmail.com>
-Date:   Fri Mar 29 16:57:48 2019 +1100
+commit 3772f4ab8f6efe53909f123a19a4bc6e86c6e145
+Author: Ray Cromwell <cromwellian@gmail.com>
+Date:   Sun Mar 31 21:18:05 2019 -0700
 
-    Improve types in recipe/util and recipe/handle (#2821)
+    Add Person autofill to default pipe apps (#2823)
+    
+    * Add Person autofill to default pipe apps
+    
+    * fix tabs
