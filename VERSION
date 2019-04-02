@@ -1,15 +1,29 @@
-commit 20101484d6e3496d8aef7ec437df2d038b17c1a8
+commit 65a49c44f912293bd22a90500dd55d88800acbc5
 Author: Scott J. Miles <sjmiles@google.com>
-Date:   Mon Apr 1 19:30:59 2019 -0700
+Date:   Mon Apr 1 21:10:39 2019 -0700
 
-    Slot stylesheet fix (#2828)
+    Updates to TVMaze and attendant fixes (#2826)
     
-    * install common stylesheet when stamping, not when provisioning container
+    * try new organization using TVMaze
     
-    * add missing SuggestAddress particle, use common Json.schema
+    * try generic Detail particle without default description
     
-    * convention is that for [FolderName] the canonical manifest is [FolderName].recipes
+    * remove test code
     
-    * fix spacing
+    * fix system-ui popup states
     
-    * defer construction of commonStyleTemplate to allow this module to run under node tests
+    * update dom-particle to allow optional handles
+    
+    * only 'showHint' if suggestions.length > 0
+    
+    * rename TVMazeDemo  to TVMazeApp, move into TVMaze
+    
+    * remove dead file
+    
+    * DetailSlider shouldn't describe itself (it's generic)
+    
+    * remove unused connection
+    
+    * remove dead declarations
+    
+    * change names of files-in-waiting so they don't get tested
