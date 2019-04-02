@@ -1,5 +1,9 @@
-commit e70a6684525df7c73c74f1199bcfbe93d587ed02
+commit f509921146e297035d026968a3d8e29bcb8e2f1d
 Author: shans <shane.stephens@gmail.com>
-Date:   Tue Apr 2 15:26:27 2019 +1100
+Date:   Tue Apr 2 16:23:48 2019 +1100
 
-    Ensure sigh test correctly reports failure. (#2829)
+    Enforce boolean return values in sigh steps (#2830)
+    
+    * Ensure sigh test correctly reports failure.
+    
+    * Enforce boolean return values from sigh steps
