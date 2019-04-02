@@ -17,7 +17,9 @@ export class DevtoolsChannelStub {
     send(message) {
         this._messages.push(JSON.parse(JSON.stringify(message)));
     }
-    listen(arcOrId, messageType, callback) { }
+    listen(arcOrId, messageType, listener) {
+        // No-op.
+    }
     clear() {
         this._messages.length = 0;
     }

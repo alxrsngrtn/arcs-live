@@ -697,7 +697,7 @@ recipe
             recipe,
             fooStore,
             DescriptionType: descriptionStore.type.getContainedType().entitySchema.entityClass(),
-            descriptionHandle: handleFor(descriptionStoreProxy)
+            descriptionHandle: handleFor(descriptionStoreProxy),
         };
     }
     tests.forEach((test) => {

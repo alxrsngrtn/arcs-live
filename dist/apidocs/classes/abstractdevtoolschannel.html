@@ -119,7 +119,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/877384c/src/runtime/debug/abstract-devtools-channel.ts#L17">runtime/debug/abstract-devtools-channel.ts:17</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c8cad9d/src/runtime/debug/abstract-devtools-channel.ts#L29">runtime/debug/abstract-devtools-channel.ts:29</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <a href="abstractdevtoolschannel.html" class="tsd-signature-type">AbstractDevtoolsChannel</a></h4>
@@ -132,20 +132,20 @@
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
 					<a name="debouncedmessages" class="tsd-anchor"></a>
 					<h3>debounced<wbr>Messages</h3>
-					<div class="tsd-signature tsd-kind-icon">debounced<wbr>Messages<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> =&nbsp;[]</span></div>
+					<div class="tsd-signature tsd-kind-icon">debounced<wbr>Messages<span class="tsd-signature-symbol">:</span> <a href="../globals.html#devtoolsmessage" class="tsd-signature-type">DevtoolsMessage</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> =&nbsp;[]</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/877384c/src/runtime/debug/abstract-devtools-channel.ts#L15">runtime/debug/abstract-devtools-channel.ts:15</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c8cad9d/src/runtime/debug/abstract-devtools-channel.ts#L27">runtime/debug/abstract-devtools-channel.ts:27</a></li>
 						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
 					<a name="messagelisteners" class="tsd-anchor"></a>
 					<h3>message<wbr>Listeners</h3>
-					<div class="tsd-signature tsd-kind-icon">message<wbr>Listeners<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Map</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> =&nbsp;new Map()</span></div>
+					<div class="tsd-signature tsd-kind-icon">message<wbr>Listeners<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Map</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">, </span><a href="../globals.html#devtoolslistener" class="tsd-signature-type">DevtoolsListener</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> =&nbsp;new Map()</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/877384c/src/runtime/debug/abstract-devtools-channel.ts#L16">runtime/debug/abstract-devtools-channel.ts:16</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c8cad9d/src/runtime/debug/abstract-devtools-channel.ts#L28">runtime/debug/abstract-devtools-channel.ts:28</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -155,7 +155,7 @@
 					<div class="tsd-signature tsd-kind-icon">timer<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span><span class="tsd-signature-symbol"> =&nbsp;null</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/877384c/src/runtime/debug/abstract-devtools-channel.ts#L17">runtime/debug/abstract-devtools-channel.ts:17</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c8cad9d/src/runtime/debug/abstract-devtools-channel.ts#L29">runtime/debug/abstract-devtools-channel.ts:29</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -172,7 +172,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/877384c/src/runtime/debug/abstract-devtools-channel.ts#L59">runtime/debug/abstract-devtools-channel.ts:59</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c8cad9d/src/runtime/debug/abstract-devtools-channel.ts#L75">runtime/debug/abstract-devtools-channel.ts:75</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -183,19 +183,19 @@
 					<a name="_flush" class="tsd-anchor"></a>
 					<h3>_flush</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">_flush<span class="tsd-signature-symbol">(</span>messages<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+						<li class="tsd-signature tsd-kind-icon">_flush<span class="tsd-signature-symbol">(</span>_messages<span class="tsd-signature-symbol">: </span><a href="../globals.html#devtoolsmessage" class="tsd-signature-type">DevtoolsMessage</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/877384c/src/runtime/debug/abstract-devtools-channel.ts#L66">runtime/debug/abstract-devtools-channel.ts:66</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c8cad9d/src/runtime/debug/abstract-devtools-channel.ts#L82">runtime/debug/abstract-devtools-channel.ts:82</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>messages: <span class="tsd-signature-type">any</span></h5>
+									<h5>_messages: <a href="../globals.html#devtoolsmessage" class="tsd-signature-type">DevtoolsMessage</a><span class="tsd-signature-symbol">[]</span></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -206,19 +206,19 @@
 					<a name="_handlemessage" class="tsd-anchor"></a>
 					<h3>_handle<wbr>Message</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">_handle<wbr>Message<span class="tsd-signature-symbol">(</span>msg<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+						<li class="tsd-signature tsd-kind-icon">_handle<wbr>Message<span class="tsd-signature-symbol">(</span>msg<span class="tsd-signature-symbol">: </span><a href="../globals.html#devtoolsmessage" class="tsd-signature-type">DevtoolsMessage</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/877384c/src/runtime/debug/abstract-devtools-channel.ts#L50">runtime/debug/abstract-devtools-channel.ts:50</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c8cad9d/src/runtime/debug/abstract-devtools-channel.ts#L64">runtime/debug/abstract-devtools-channel.ts:64</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>msg: <span class="tsd-signature-type">any</span></h5>
+									<h5>msg: <a href="../globals.html#devtoolsmessage" class="tsd-signature-type">DevtoolsMessage</a></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -229,13 +229,13 @@
 					<a name="ensurenocycle" class="tsd-anchor"></a>
 					<h3>ensure<wbr>NoCycle</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">ensure<wbr>NoCycle<span class="tsd-signature-symbol">(</span>object<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, objectPath<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+						<li class="tsd-signature tsd-kind-icon">ensure<wbr>NoCycle<span class="tsd-signature-symbol">(</span>object<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, objectPath<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">__type</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/877384c/src/runtime/debug/abstract-devtools-channel.ts#L70">runtime/debug/abstract-devtools-channel.ts:70</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c8cad9d/src/runtime/debug/abstract-devtools-channel.ts#L87">runtime/debug/abstract-devtools-channel.ts:87</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -244,7 +244,7 @@
 									<h5>object: <span class="tsd-signature-type">any</span></h5>
 								</li>
 								<li>
-									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> objectPath: <span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> =&nbsp;[]</span></h5>
+									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> objectPath: <span class="tsd-signature-type">__type</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> =&nbsp;[]</span></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -255,22 +255,25 @@
 					<a name="forarc" class="tsd-anchor"></a>
 					<h3>for<wbr>Arc</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">for<wbr>Arc<span class="tsd-signature-symbol">(</span>arc<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="arcdevtoolschannel.html" class="tsd-signature-type">ArcDevtoolsChannel</a></li>
+						<li class="tsd-signature tsd-kind-icon">for<wbr>Arc<span class="tsd-signature-symbol">(</span>arc<span class="tsd-signature-symbol">: </span><a href="arc.html" class="tsd-signature-type">Arc</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="arcdevtoolschannel.html" class="tsd-signature-type">ArcDevtoolsChannel</a><span class="tsd-signature-symbol"> | </span><a href="abstractdevtoolschannel.html" class="tsd-signature-type">AbstractDevtoolsChannel</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/877384c/src/runtime/debug/abstract-devtools-channel.ts#L46">runtime/debug/abstract-devtools-channel.ts:46</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c8cad9d/src/runtime/debug/abstract-devtools-channel.ts#L60">runtime/debug/abstract-devtools-channel.ts:60</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>arc: <span class="tsd-signature-type">any</span></h5>
+									<h5>arc: <a href="arc.html" class="tsd-signature-type">Arc</a></h5>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <a href="arcdevtoolschannel.html" class="tsd-signature-type">ArcDevtoolsChannel</a></h4>
+							<h4 class="tsd-returns-title">Returns <a href="arcdevtoolschannel.html" class="tsd-signature-type">ArcDevtoolsChannel</a>
+								<span class="tsd-signature-symbol"> | </span>
+								<a href="abstractdevtoolschannel.html" class="tsd-signature-type">AbstractDevtoolsChannel</a>
+							</h4>
 						</li>
 					</ul>
 				</section>
@@ -278,25 +281,25 @@
 					<a name="listen" class="tsd-anchor"></a>
 					<h3>listen</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">listen<span class="tsd-signature-symbol">(</span>arcOrId<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, messageType<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, callback<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+						<li class="tsd-signature tsd-kind-icon">listen<span class="tsd-signature-symbol">(</span>arcOrId<span class="tsd-signature-symbol">: </span><a href="arc.html" class="tsd-signature-type">Arc</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span>, messageType<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, listener<span class="tsd-signature-symbol">: </span><a href="../globals.html#devtoolslistener" class="tsd-signature-type">DevtoolsListener</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/877384c/src/runtime/debug/abstract-devtools-channel.ts#L36">runtime/debug/abstract-devtools-channel.ts:36</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c8cad9d/src/runtime/debug/abstract-devtools-channel.ts#L48">runtime/debug/abstract-devtools-channel.ts:48</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>arcOrId: <span class="tsd-signature-type">any</span></h5>
+									<h5>arcOrId: <a href="arc.html" class="tsd-signature-type">Arc</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></h5>
 								</li>
 								<li>
-									<h5>messageType: <span class="tsd-signature-type">any</span></h5>
+									<h5>messageType: <span class="tsd-signature-type">string</span></h5>
 								</li>
 								<li>
-									<h5>callback: <span class="tsd-signature-type">any</span></h5>
+									<h5>listener: <a href="../globals.html#devtoolslistener" class="tsd-signature-type">DevtoolsListener</a></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -307,19 +310,19 @@
 					<a name="send" class="tsd-anchor"></a>
 					<h3>send</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">send<span class="tsd-signature-symbol">(</span>message<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+						<li class="tsd-signature tsd-kind-icon">send<span class="tsd-signature-symbol">(</span>message<span class="tsd-signature-symbol">: </span><a href="../globals.html#devtoolsmessage" class="tsd-signature-type">DevtoolsMessage</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/877384c/src/runtime/debug/abstract-devtools-channel.ts#L22">runtime/debug/abstract-devtools-channel.ts:22</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c8cad9d/src/runtime/debug/abstract-devtools-channel.ts#L34">runtime/debug/abstract-devtools-channel.ts:34</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>message: <span class="tsd-signature-type">any</span></h5>
+									<h5>message: <a href="../globals.html#devtoolsmessage" class="tsd-signature-type">DevtoolsMessage</a></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>

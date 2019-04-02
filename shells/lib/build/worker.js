@@ -1082,15 +1082,16 @@ class AbstractDevtoolsChannel {
             this.timer = setTimeout(() => this._empty(), 100);
         }
     }
-    listen(arcOrId, messageType, callback) {
+    listen(arcOrId, messageType, listener) {
         Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(messageType);
         Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(arcOrId);
         const arcId = typeof arcOrId === 'string' ? arcOrId : arcOrId.id.toString();
         const key = `${arcId}/${messageType}`;
         let listeners = this.messageListeners.get(key);
-        if (!listeners)
+        if (!listeners) {
             this.messageListeners.set(key, listeners = []);
-        listeners.push(callback);
+        }
+        listeners.push(listener);
     }
     forArc(arc) {
         return new ArcDevtoolsChannel(arc, this);
@@ -1101,8 +1102,9 @@ class AbstractDevtoolsChannel {
             console.warn(`No one is listening to ${msg.messageType} message`);
         }
         else {
-            for (const listener of listeners)
+            for (const listener of listeners) {
                 listener(msg);
+            }
         }
     }
     _empty() {
@@ -1111,9 +1113,10 @@ class AbstractDevtoolsChannel {
         clearTimeout(this.timer);
         this.timer = null;
     }
-    _flush(messages) {
+    _flush(_messages) {
         throw new Error('Not implemented in an abstract class');
     }
+    // tslint:disable-next-line: no-any
     ensureNoCycle(object, objectPath = []) {
         if (!object || typeof object !== 'object')
             return;
@@ -1139,7 +1142,7 @@ class ArcDevtoolsChannel {
     }
 }
 class ArcDebugListener {
-    constructor(arc, channel) { }
+    constructor(_arc, _channel) { }
 }
 //# sourceMappingURL=abstract-devtools-channel.js.map
 
@@ -1169,7 +1172,9 @@ class DevtoolsChannelStub {
     send(message) {
         this._messages.push(JSON.parse(JSON.stringify(message)));
     }
-    listen(arcOrId, messageType, callback) { }
+    listen(arcOrId, messageType, listener) {
+        // No-op.
+    }
     clear() {
         this._messages.length = 0;
     }
@@ -3355,9 +3360,6 @@ class Entity {
         this[_symbols_js__WEBPACK_IMPORTED_MODULE_1__["Symbols"].identifier] = undefined;
         this.userIDComponent = userIDComponent;
     }
-    get data() {
-        return undefined;
-    }
     getUserID() {
         return this.userIDComponent;
     }
@@ -3599,6 +3601,7 @@ class Handle {
         if (!entity.isIdentified()) {
             entity.createIdentity(this._proxy.generateIDComponents());
         }
+        // tslint:disable-next-line: no-any
         const id = entity[_symbols_js__WEBPACK_IMPORTED_MODULE_4__["Symbols"].identifier];
         const rawData = entity.dataClone();
         return {
@@ -3785,7 +3788,7 @@ class Variable extends Handle {
         if (this.type instanceof _type_js__WEBPACK_IMPORTED_MODULE_5__["ReferenceType"]) {
             return new _reference_js__WEBPACK_IMPORTED_MODULE_3__["Reference"](model, this.type, this._proxy.pec);
         }
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(false, `Don't know how to deliver handle data of type ${this.type}`);
+        throw new Error(`Don't know how to deliver handle data of type ${this.type}`);
     }
     /**
      * Stores a new entity into the Variable, replacing any existing entity.
@@ -6125,8 +6128,6 @@ class DomParticleBase extends _particle_js__WEBPACK_IMPORTED_MODULE_2__["Particl
         const handle = this.handles.get(handleName);
         if (handle && handle.entityClass) {
             if (handle instanceof _handle_js__WEBPACK_IMPORTED_MODULE_1__["Collection"] || handle instanceof _handle_js__WEBPACK_IMPORTED_MODULE_1__["BigCollection"]) {
-                // Typescript can't infer the type here and fails with TS2351
-                // tslint:disable-next-line: no-any
                 const entityClass = handle.entityClass;
                 Promise.all(rawDataArray.map(raw => handle.store(new entityClass(raw))));
             }
@@ -6143,8 +6144,6 @@ class DomParticleBase extends _particle_js__WEBPACK_IMPORTED_MODULE_2__["Particl
         const handle = this.handles.get(handleName);
         if (handle && handle.entityClass) {
             if (handle instanceof _handle_js__WEBPACK_IMPORTED_MODULE_1__["Variable"]) {
-                // Typescript can't infer the type here and fails with TS2351
-                // tslint:disable-next-line: no-any
                 const entityClass = handle.entityClass;
                 const entity = new entityClass(rawData);
                 handle.set(entity);
@@ -6348,8 +6347,6 @@ class Particle {
     setDescriptionPattern(connectionName, pattern) {
         const descriptions = this.handles.get('descriptions');
         if (descriptions) {
-            // Typescript can't infer the type here and fails with TS2351
-            // tslint:disable-next-line: no-any
             const entityClass = descriptions.entityClass;
             if (descriptions instanceof _handle_js__WEBPACK_IMPORTED_MODULE_0__["Collection"] || descriptions instanceof _handle_js__WEBPACK_IMPORTED_MODULE_0__["BigCollection"]) {
                 descriptions.store(new entityClass({ key: connectionName, value: pattern }, this.spec.name + '-' + connectionName));

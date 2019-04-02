@@ -28,15 +28,16 @@ export class AbstractDevtoolsChannel {
             this.timer = setTimeout(() => this._empty(), 100);
         }
     }
-    listen(arcOrId, messageType, callback) {
+    listen(arcOrId, messageType, listener) {
         assert(messageType);
         assert(arcOrId);
         const arcId = typeof arcOrId === 'string' ? arcOrId : arcOrId.id.toString();
         const key = `${arcId}/${messageType}`;
         let listeners = this.messageListeners.get(key);
-        if (!listeners)
+        if (!listeners) {
             this.messageListeners.set(key, listeners = []);
-        listeners.push(callback);
+        }
+        listeners.push(listener);
     }
     forArc(arc) {
         return new ArcDevtoolsChannel(arc, this);
@@ -47,8 +48,9 @@ export class AbstractDevtoolsChannel {
             console.warn(`No one is listening to ${msg.messageType} message`);
         }
         else {
-            for (const listener of listeners)
+            for (const listener of listeners) {
                 listener(msg);
+            }
         }
     }
     _empty() {
@@ -57,9 +59,10 @@ export class AbstractDevtoolsChannel {
         clearTimeout(this.timer);
         this.timer = null;
     }
-    _flush(messages) {
+    _flush(_messages) {
         throw new Error('Not implemented in an abstract class');
     }
+    // tslint:disable-next-line: no-any
     ensureNoCycle(object, objectPath = []) {
         if (!object || typeof object !== 'object')
             return;
@@ -85,6 +88,6 @@ export class ArcDevtoolsChannel {
     }
 }
 export class ArcDebugListener {
-    constructor(arc, channel) { }
+    constructor(_arc, _channel) { }
 }
 //# sourceMappingURL=abstract-devtools-channel.js.map

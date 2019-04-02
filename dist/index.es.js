@@ -444,9 +444,6 @@ class Entity {
         this[Symbols.identifier] = undefined;
         this.userIDComponent = userIDComponent;
     }
-    get data() {
-        return undefined;
-    }
     getUserID() {
         return this.userIDComponent;
     }
@@ -626,6 +623,7 @@ class Handle {
         if (!entity.isIdentified()) {
             entity.createIdentity(this._proxy.generateIDComponents());
         }
+        // tslint:disable-next-line: no-any
         const id = entity[Symbols.identifier];
         const rawData = entity.dataClone();
         return {
@@ -812,7 +810,7 @@ class Variable extends Handle {
         if (this.type instanceof ReferenceType) {
             return new Reference(model, this.type, this._proxy.pec);
         }
-        assert(false, `Don't know how to deliver handle data of type ${this.type}`);
+        throw new Error(`Don't know how to deliver handle data of type ${this.type}`);
     }
     /**
      * Stores a new entity into the Variable, replacing any existing entity.
@@ -17758,15 +17756,16 @@ class AbstractDevtoolsChannel {
             this.timer = setTimeout(() => this._empty(), 100);
         }
     }
-    listen(arcOrId, messageType, callback) {
+    listen(arcOrId, messageType, listener) {
         assert(messageType);
         assert(arcOrId);
         const arcId = typeof arcOrId === 'string' ? arcOrId : arcOrId.id.toString();
         const key = `${arcId}/${messageType}`;
         let listeners = this.messageListeners.get(key);
-        if (!listeners)
+        if (!listeners) {
             this.messageListeners.set(key, listeners = []);
-        listeners.push(callback);
+        }
+        listeners.push(listener);
     }
     forArc(arc) {
         return new ArcDevtoolsChannel(arc, this);
@@ -17777,8 +17776,9 @@ class AbstractDevtoolsChannel {
             console.warn(`No one is listening to ${msg.messageType} message`);
         }
         else {
-            for (const listener of listeners)
+            for (const listener of listeners) {
                 listener(msg);
+            }
         }
     }
     _empty() {
@@ -17787,9 +17787,10 @@ class AbstractDevtoolsChannel {
         clearTimeout(this.timer);
         this.timer = null;
     }
-    _flush(messages) {
+    _flush(_messages) {
         throw new Error('Not implemented in an abstract class');
     }
+    // tslint:disable-next-line: no-any
     ensureNoCycle(object, objectPath = []) {
         if (!object || typeof object !== 'object')
             return;
@@ -17815,7 +17816,7 @@ class ArcDevtoolsChannel {
     }
 }
 class ArcDebugListener {
-    constructor(arc, channel) { }
+    constructor(_arc, _channel) { }
 }
 
 /**
@@ -17837,7 +17838,7 @@ class ArcStoresFetcher extends ArcDebugListener {
         }));
     }
     async _listStores() {
-        const find = manifest => {
+        const find = (manifest) => {
             let tags = [...manifest.storeTags];
             if (manifest.imports) {
                 manifest.imports.forEach(imp => tags = tags.concat(find(imp)));
@@ -17845,23 +17846,28 @@ class ArcStoresFetcher extends ArcDebugListener {
             return tags;
         };
         return {
-            arcStores: await this._digestStores(this.arc.storeTags),
+            arcStores: await this._digestStores([...this.arc.storeTags]),
             contextStores: await this._digestStores(find(this.arc.context))
         };
     }
     async _digestStores(stores) {
         const result = [];
         for (const [store, tags] of stores) {
-            let value = `(don't know how to dereference)`;
+            // tslint:disable-next-line: no-any
+            let value;
             if (store.toList) {
                 value = await store.toList();
             }
             else if (store.get) {
                 value = await store.get();
             }
+            else {
+                value = `(don't know how to dereference)`;
+            }
             // TODO: Fix issues with WebRTC message splitting.
-            if (JSON.stringify(value).length > 50000)
+            if (JSON.stringify(value).length > 50000) {
                 value = 'too large for WebRTC';
+            }
             result.push({
                 name: store.name,
                 tags: tags ? [...tags] : [],
@@ -18780,8 +18786,6 @@ class Particle$1 {
     setDescriptionPattern(connectionName, pattern) {
         const descriptions = this.handles.get('descriptions');
         if (descriptions) {
-            // Typescript can't infer the type here and fails with TS2351
-            // tslint:disable-next-line: no-any
             const entityClass = descriptions.entityClass;
             if (descriptions instanceof Collection || descriptions instanceof BigCollection) {
                 descriptions.store(new entityClass({ key: connectionName, value: pattern }, this.spec.name + '-' + connectionName));
@@ -18994,8 +18998,6 @@ class DomParticleBase extends Particle$1 {
         const handle = this.handles.get(handleName);
         if (handle && handle.entityClass) {
             if (handle instanceof Collection || handle instanceof BigCollection) {
-                // Typescript can't infer the type here and fails with TS2351
-                // tslint:disable-next-line: no-any
                 const entityClass = handle.entityClass;
                 Promise.all(rawDataArray.map(raw => handle.store(new entityClass(raw))));
             }
@@ -19012,8 +19014,6 @@ class DomParticleBase extends Particle$1 {
         const handle = this.handles.get(handleName);
         if (handle && handle.entityClass) {
             if (handle instanceof Variable) {
-                // Typescript can't infer the type here and fails with TS2351
-                // tslint:disable-next-line: no-any
                 const entityClass = handle.entityClass;
                 const entity = new entityClass(rawData);
                 handle.set(entity);

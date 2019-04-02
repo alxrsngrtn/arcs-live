@@ -25,7 +25,7 @@ describe('runtime manifest integration', () => {
         // TODO: This should not be necessary.
         type.maybeEnsureResolved();
         const result = await handle.get();
-        assert.equal(result.value, 'Hello, world!');
+        assert.equal(result['value'], 'Hello, world!');
     });
 });
 //# sourceMappingURL=runtime-manifest-integration-test.js.map

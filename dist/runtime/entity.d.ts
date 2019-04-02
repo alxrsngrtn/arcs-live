@@ -1,15 +1,20 @@
 import { Schema } from './schema.js';
 import { Type } from './type.js';
+declare type EntityIdComponents = {
+    base: string;
+    component: () => number;
+};
+export declare type EntityRawData = {};
 /**
  * Regular interface for Entities.
  */
 export interface EntityInterface {
     isIdentified(): boolean;
-    data: any;
-    id: any;
-    identify(identifier: any): any;
-    createIdentity(components: any): any;
-    toLiteral(): any;
+    id: string;
+    identify(identifier: string): void;
+    createIdentity(components: EntityIdComponents): void;
+    toLiteral(): EntityRawData;
+    dataClone(): any;
     [index: string]: any;
 }
 /**
@@ -33,13 +38,14 @@ export interface EntityStaticInterface {
 export declare type EntityClass = (new (data: any, userIDComponent?: string) => EntityInterface) & EntityStaticInterface;
 export declare abstract class Entity implements EntityInterface {
     private userIDComponent?;
-    protected rawData: any;
+    protected rawData: EntityRawData;
     protected constructor(userIDComponent?: string);
-    readonly data: any;
     getUserID(): string;
     isIdentified(): boolean;
     readonly id: any;
-    identify(identifier: any): void;
-    createIdentity(components: any): void;
-    toLiteral(): any;
+    identify(identifier: string): void;
+    createIdentity(components: EntityIdComponents): void;
+    toLiteral(): EntityRawData;
+    abstract dataClone(): EntityRawData;
 }
+export {};

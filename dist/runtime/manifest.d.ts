@@ -26,7 +26,7 @@ export declare class StorageStub {
     originalId: string;
     constructor(type: Type, id: string, name: string, storageKey: string, storageProviderFactory: StorageProviderFactory, originalId: string);
     readonly version: any;
-    readonly description: any;
+    readonly description: string;
     inflate(): Promise<StorageProviderBase>;
     toLiteral(): any;
     toString(handleTags: string[]): string;

@@ -1,5 +1,5 @@
-commit 877384cffc3178aa576dde02713b453617f1063d
-Author: shans <shane.stephens@gmail.com>
-Date:   Tue Apr 2 08:18:36 2019 +1100
+commit c8cad9d1a4762878d1435fe0004ee09294ff6e49
+Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
+Date:   Tue Apr 2 10:43:33 2019 +1100
 
-    Remove chokidar as a dependency, add a message telling users how to install if they need it. (#2815)
+    EntityClass type annotations, and other minor stuff (#2824)

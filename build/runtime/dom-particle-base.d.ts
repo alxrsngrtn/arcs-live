@@ -64,7 +64,7 @@ export declare class DomParticleBase extends Particle {
      * Modify value of named handle. A new entity is created
      * from `rawData` (`new [EntityClass](rawData)`).
      */
-    updateVariable(handleName: string, rawData: any): any;
+    updateVariable(handleName: string, rawData: any): import("./entity.js").EntityInterface;
     /**
      * Modify or insert `entity` into named handle.
      * Modification is done by removing the old entity and reinserting the new one.

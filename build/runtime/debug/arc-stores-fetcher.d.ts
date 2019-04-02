@@ -7,13 +7,27 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-import { ArcDebugListener } from './abstract-devtools-channel.js';
+import { Arc } from '../arc.js';
+import { ArcDebugListener, ArcDevtoolsChannel } from './abstract-devtools-channel.js';
+import { StorageStub } from '../manifest.js';
+import { StorageProviderBase } from '../storage/storage-provider-base.js';
+import { Type } from '../type.js';
+declare type Result = {
+    name: string;
+    tags: string[];
+    id: string;
+    storage: string;
+    type: Type;
+    description: string;
+    value: any;
+};
 export declare class ArcStoresFetcher extends ArcDebugListener {
     private arc;
-    constructor(arc: any, arcDevtoolsChannel: any);
+    constructor(arc: Arc, arcDevtoolsChannel: ArcDevtoolsChannel);
     _listStores(): Promise<{
-        arcStores: any[];
-        contextStores: any[];
+        arcStores: Result[];
+        contextStores: Result[];
     }>;
-    _digestStores(stores: any): Promise<any[]>;
+    _digestStores(stores: [StorageProviderBase | StorageStub, string[] | Set<string>][]): Promise<Result[]>;
 }
+export {};

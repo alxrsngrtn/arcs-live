@@ -154,8 +154,6 @@ export class Particle {
     setDescriptionPattern(connectionName, pattern) {
         const descriptions = this.handles.get('descriptions');
         if (descriptions) {
-            // Typescript can't infer the type here and fails with TS2351
-            // tslint:disable-next-line: no-any
             const entityClass = descriptions.entityClass;
             if (descriptions instanceof Collection || descriptions instanceof BigCollection) {
                 descriptions.store(new entityClass({ key: connectionName, value: pattern }, this.spec.name + '-' + connectionName));

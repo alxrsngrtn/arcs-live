@@ -105,7 +105,7 @@ describe('Handle', () => {
         await fooHandle.set(new Foo({ value: '1' }, 'id1'));
         await fooHandle.set(new Foo({ value: '2' }, 'id1'));
         const stored = await fooHandle.get();
-        assert.equal(stored.value, '2');
+        assert.equal(stored['value'], '2');
     });
     it('remove entry from store', async () => {
         const arc = new Arc({ slotComposer: new FakeSlotComposer(), id: 'test', loader: new Loader(), context: undefined });

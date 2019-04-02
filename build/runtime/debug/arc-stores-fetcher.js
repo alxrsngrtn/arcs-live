@@ -18,7 +18,7 @@ export class ArcStoresFetcher extends ArcDebugListener {
         }));
     }
     async _listStores() {
-        const find = manifest => {
+        const find = (manifest) => {
             let tags = [...manifest.storeTags];
             if (manifest.imports) {
                 manifest.imports.forEach(imp => tags = tags.concat(find(imp)));
@@ -26,23 +26,28 @@ export class ArcStoresFetcher extends ArcDebugListener {
             return tags;
         };
         return {
-            arcStores: await this._digestStores(this.arc.storeTags),
+            arcStores: await this._digestStores([...this.arc.storeTags]),
             contextStores: await this._digestStores(find(this.arc.context))
         };
     }
     async _digestStores(stores) {
         const result = [];
         for (const [store, tags] of stores) {
-            let value = `(don't know how to dereference)`;
+            // tslint:disable-next-line: no-any
+            let value;
             if (store.toList) {
                 value = await store.toList();
             }
             else if (store.get) {
                 value = await store.get();
             }
+            else {
+                value = `(don't know how to dereference)`;
+            }
             // TODO: Fix issues with WebRTC message splitting.
-            if (JSON.stringify(value).length > 50000)
+            if (JSON.stringify(value).length > 50000) {
                 value = 'too large for WebRTC';
+            }
             result.push({
                 name: store.name,
                 tags: tags ? [...tags] : [],
