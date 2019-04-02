@@ -85,7 +85,6 @@
 				<h3>Implemented by</h3>
 				<ul class="tsd-hierarchy">
 					<li><a href="../classes/entity.html" class="tsd-signature-type">Entity</a></li>
-					<li><a href="../classes/relation.html" class="tsd-signature-type">Relation</a></li>
 				</ul>
 			</section>
 			<section class="tsd-panel tsd-kind-interface">
@@ -104,7 +103,6 @@
 						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="entityinterface.html#data" class="tsd-kind-icon">data</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="entityinterface.html#id" class="tsd-kind-icon">id</a></li>
 							</ul>
 						</section>
@@ -112,6 +110,7 @@
 							<h3>Methods</h3>
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="entityinterface.html#createidentity" class="tsd-kind-icon">create<wbr>Identity</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="entityinterface.html#dataclone" class="tsd-kind-icon">data<wbr>Clone</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="entityinterface.html#identify" class="tsd-kind-icon">identify</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="entityinterface.html#isidentified" class="tsd-kind-icon">is<wbr>Identified</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="entityinterface.html#toliteral" class="tsd-kind-icon">to<wbr>Literal</a></li>
@@ -123,22 +122,12 @@
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Properties</h2>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="data" class="tsd-anchor"></a>
-					<h3>data</h3>
-					<div class="tsd-signature tsd-kind-icon">data<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9fa608b/src/runtime/entity.ts#L20">runtime/entity.ts:20</a></li>
-						</ul>
-					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
 					<a name="id" class="tsd-anchor"></a>
 					<h3>id</h3>
-					<div class="tsd-signature tsd-kind-icon">id<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span></div>
+					<div class="tsd-signature tsd-kind-icon">id<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9fa608b/src/runtime/entity.ts#L21">runtime/entity.ts:21</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/2010148/src/runtime/entity.ts#L27">runtime/entity.ts:27</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -149,21 +138,38 @@
 					<a name="createidentity" class="tsd-anchor"></a>
 					<h3>create<wbr>Identity</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
-						<li class="tsd-signature tsd-kind-icon">create<wbr>Identity<span class="tsd-signature-symbol">(</span>components<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span></li>
+						<li class="tsd-signature tsd-kind-icon">create<wbr>Identity<span class="tsd-signature-symbol">(</span>components<span class="tsd-signature-symbol">: </span><a href="../globals.html#entityidcomponents" class="tsd-signature-type">EntityIdComponents</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9fa608b/src/runtime/entity.ts#L23">runtime/entity.ts:23</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/2010148/src/runtime/entity.ts#L29">runtime/entity.ts:29</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>components: <span class="tsd-signature-type">any</span></h5>
+									<h5>components: <a href="../globals.html#entityidcomponents" class="tsd-signature-type">EntityIdComponents</a></h5>
 								</li>
 							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface">
+					<a name="dataclone" class="tsd-anchor"></a>
+					<h3>data<wbr>Clone</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
+						<li class="tsd-signature tsd-kind-icon">data<wbr>Clone<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/2010148/src/runtime/entity.ts#L31">runtime/entity.ts:31</a></li>
+								</ul>
+							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">any</span></h4>
 						</li>
 					</ul>
@@ -172,22 +178,22 @@
 					<a name="identify" class="tsd-anchor"></a>
 					<h3>identify</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
-						<li class="tsd-signature tsd-kind-icon">identify<span class="tsd-signature-symbol">(</span>identifier<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span></li>
+						<li class="tsd-signature tsd-kind-icon">identify<span class="tsd-signature-symbol">(</span>identifier<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9fa608b/src/runtime/entity.ts#L22">runtime/entity.ts:22</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/2010148/src/runtime/entity.ts#L28">runtime/entity.ts:28</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>identifier: <span class="tsd-signature-type">any</span></h5>
+									<h5>identifier: <span class="tsd-signature-type">string</span></h5>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">any</span></h4>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -201,7 +207,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9fa608b/src/runtime/entity.ts#L19">runtime/entity.ts:19</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/2010148/src/runtime/entity.ts#L26">runtime/entity.ts:26</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
@@ -212,16 +218,16 @@
 					<a name="toliteral" class="tsd-anchor"></a>
 					<h3>to<wbr>Literal</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
-						<li class="tsd-signature tsd-kind-icon">to<wbr>Literal<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span></li>
+						<li class="tsd-signature tsd-kind-icon">to<wbr>Literal<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../globals.html#entityrawdata" class="tsd-signature-type">EntityRawData</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9fa608b/src/runtime/entity.ts#L24">runtime/entity.ts:24</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/2010148/src/runtime/entity.ts#L30">runtime/entity.ts:30</a></li>
 								</ul>
 							</aside>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">any</span></h4>
+							<h4 class="tsd-returns-title">Returns <a href="../globals.html#entityrawdata" class="tsd-signature-type">EntityRawData</a></h4>
 						</li>
 					</ul>
 				</section>
@@ -243,13 +249,13 @@
 						<a href="entityinterface.html" class="tsd-kind-icon">Entity<wbr>Interface</a>
 						<ul>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="entityinterface.html#data" class="tsd-kind-icon">data</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-interface">
 								<a href="entityinterface.html#id" class="tsd-kind-icon">id</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-interface">
 								<a href="entityinterface.html#createidentity" class="tsd-kind-icon">create<wbr>Identity</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-interface">
+								<a href="entityinterface.html#dataclone" class="tsd-kind-icon">data<wbr>Clone</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-interface">
 								<a href="entityinterface.html#identify" class="tsd-kind-icon">identify</a>

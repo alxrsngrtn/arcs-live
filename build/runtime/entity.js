@@ -13,9 +13,6 @@ export class Entity {
         this[Symbols.identifier] = undefined;
         this.userIDComponent = userIDComponent;
     }
-    get data() {
-        return undefined;
-    }
     getUserID() {
         return this.userIDComponent;
     }

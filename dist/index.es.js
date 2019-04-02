@@ -444,9 +444,6 @@ class Entity {
         this[Symbols.identifier] = undefined;
         this.userIDComponent = userIDComponent;
     }
-    get data() {
-        return undefined;
-    }
     getUserID() {
         return this.userIDComponent;
     }
@@ -626,6 +623,7 @@ class Handle {
         if (!entity.isIdentified()) {
             entity.createIdentity(this._proxy.generateIDComponents());
         }
+        // tslint:disable-next-line: no-any
         const id = entity[Symbols.identifier];
         const rawData = entity.dataClone();
         return {
@@ -812,7 +810,7 @@ class Variable extends Handle {
         if (this.type instanceof ReferenceType) {
             return new Reference(model, this.type, this._proxy.pec);
         }
-        assert(false, `Don't know how to deliver handle data of type ${this.type}`);
+        throw new Error(`Don't know how to deliver handle data of type ${this.type}`);
     }
     /**
      * Stores a new entity into the Variable, replacing any existing entity.
@@ -18788,8 +18786,6 @@ class Particle$1 {
     setDescriptionPattern(connectionName, pattern) {
         const descriptions = this.handles.get('descriptions');
         if (descriptions) {
-            // Typescript can't infer the type here and fails with TS2351
-            // tslint:disable-next-line: no-any
             const entityClass = descriptions.entityClass;
             if (descriptions instanceof Collection || descriptions instanceof BigCollection) {
                 descriptions.store(new entityClass({ key: connectionName, value: pattern }, this.spec.name + '-' + connectionName));
@@ -19002,8 +18998,6 @@ class DomParticleBase extends Particle$1 {
         const handle = this.handles.get(handleName);
         if (handle && handle.entityClass) {
             if (handle instanceof Collection || handle instanceof BigCollection) {
-                // Typescript can't infer the type here and fails with TS2351
-                // tslint:disable-next-line: no-any
                 const entityClass = handle.entityClass;
                 Promise.all(rawDataArray.map(raw => handle.store(new entityClass(raw))));
             }
@@ -19020,8 +19014,6 @@ class DomParticleBase extends Particle$1 {
         const handle = this.handles.get(handleName);
         if (handle && handle.entityClass) {
             if (handle instanceof Variable) {
-                // Typescript can't infer the type here and fails with TS2351
-                // tslint:disable-next-line: no-any
                 const entityClass = handle.entityClass;
                 const entity = new entityClass(rawData);
                 handle.set(entity);
@@ -26209,6 +26201,8 @@ class SlotConsumer {
  * http://polymer.github.io/PATENTS.txt
  */
 const templateByName = new Map();
+// this style sheet is installed in every particle shadow-root
+let commonStyleTemplate;
 class SlotDomConsumer extends SlotConsumer {
     constructor(arc, consumeConn, containerKind) {
         super(arc, consumeConn, containerKind);
@@ -26238,9 +26232,6 @@ class SlotDomConsumer extends SlotConsumer {
         //return newContainer;
         // TODO(sjmiles): introduce tree scope
         newContainer.attachShadow({ mode: `open` });
-        // provision basic stylesheet
-        Template.stamp(`<style>${IconStyles}</style>`).appendTo(newContainer.shadowRoot);
-        // TODO(sjmiles): maybe inject boilerplate styles
         return newContainer.shadowRoot;
     }
     deleteContainer(container) {
@@ -26379,6 +26370,14 @@ class SlotDomConsumer extends SlotConsumer {
     }
     _stampTemplate(rendering, template) {
         if (!rendering.liveDom) {
+            // TODO(sjmiles): normally I would create this template as part of module startup,
+            // but this file is node-test-dependency, and `createTemplate` requires `document`
+            // see https://github.com/PolymerLabs/arcs/issues/2827
+            if (!commonStyleTemplate) {
+                commonStyleTemplate = Template.createTemplate(`<style>${IconStyles}</style>`);
+            }
+            // provision common stylesheet
+            Template.stamp(commonStyleTemplate).appendTo(rendering.container);
             const mapper = this._eventMapper.bind(this, this.eventHandler);
             rendering.liveDom = Template
                 .stamp(template)

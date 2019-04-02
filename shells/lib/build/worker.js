@@ -3360,9 +3360,6 @@ class Entity {
         this[_symbols_js__WEBPACK_IMPORTED_MODULE_1__["Symbols"].identifier] = undefined;
         this.userIDComponent = userIDComponent;
     }
-    get data() {
-        return undefined;
-    }
     getUserID() {
         return this.userIDComponent;
     }
@@ -3604,6 +3601,7 @@ class Handle {
         if (!entity.isIdentified()) {
             entity.createIdentity(this._proxy.generateIDComponents());
         }
+        // tslint:disable-next-line: no-any
         const id = entity[_symbols_js__WEBPACK_IMPORTED_MODULE_4__["Symbols"].identifier];
         const rawData = entity.dataClone();
         return {
@@ -3790,7 +3788,7 @@ class Variable extends Handle {
         if (this.type instanceof _type_js__WEBPACK_IMPORTED_MODULE_5__["ReferenceType"]) {
             return new _reference_js__WEBPACK_IMPORTED_MODULE_3__["Reference"](model, this.type, this._proxy.pec);
         }
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(false, `Don't know how to deliver handle data of type ${this.type}`);
+        throw new Error(`Don't know how to deliver handle data of type ${this.type}`);
     }
     /**
      * Stores a new entity into the Variable, replacing any existing entity.
@@ -6130,8 +6128,6 @@ class DomParticleBase extends _particle_js__WEBPACK_IMPORTED_MODULE_2__["Particl
         const handle = this.handles.get(handleName);
         if (handle && handle.entityClass) {
             if (handle instanceof _handle_js__WEBPACK_IMPORTED_MODULE_1__["Collection"] || handle instanceof _handle_js__WEBPACK_IMPORTED_MODULE_1__["BigCollection"]) {
-                // Typescript can't infer the type here and fails with TS2351
-                // tslint:disable-next-line: no-any
                 const entityClass = handle.entityClass;
                 Promise.all(rawDataArray.map(raw => handle.store(new entityClass(raw))));
             }
@@ -6148,8 +6144,6 @@ class DomParticleBase extends _particle_js__WEBPACK_IMPORTED_MODULE_2__["Particl
         const handle = this.handles.get(handleName);
         if (handle && handle.entityClass) {
             if (handle instanceof _handle_js__WEBPACK_IMPORTED_MODULE_1__["Variable"]) {
-                // Typescript can't infer the type here and fails with TS2351
-                // tslint:disable-next-line: no-any
                 const entityClass = handle.entityClass;
                 const entity = new entityClass(rawData);
                 handle.set(entity);
@@ -6353,8 +6347,6 @@ class Particle {
     setDescriptionPattern(connectionName, pattern) {
         const descriptions = this.handles.get('descriptions');
         if (descriptions) {
-            // Typescript can't infer the type here and fails with TS2351
-            // tslint:disable-next-line: no-any
             const entityClass = descriptions.entityClass;
             if (descriptions instanceof _handle_js__WEBPACK_IMPORTED_MODULE_0__["Collection"] || descriptions instanceof _handle_js__WEBPACK_IMPORTED_MODULE_0__["BigCollection"]) {
                 descriptions.store(new entityClass({ key: connectionName, value: pattern }, this.spec.name + '-' + connectionName));

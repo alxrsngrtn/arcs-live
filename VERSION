@@ -1,5 +1,15 @@
-commit 9fa608b7e93cbba067558e045ae0cb97f281f48e
-Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
-Date:   Tue Apr 2 10:42:54 2019 +1100
+commit 20101484d6e3496d8aef7ec437df2d038b17c1a8
+Author: Scott J. Miles <sjmiles@google.com>
+Date:   Mon Apr 1 19:30:59 2019 -0700
 
-    Typify src/runtime/debug/ directory. (#2817)
+    Slot stylesheet fix (#2828)
+    
+    * install common stylesheet when stamping, not when provisioning container
+    
+    * add missing SuggestAddress particle, use common Json.schema
+    
+    * convention is that for [FolderName] the canonical manifest is [FolderName].recipes
+    
+    * fix spacing
+    
+    * defer construction of commonStyleTemplate to allow this module to run under node tests
