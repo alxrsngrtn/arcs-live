@@ -135,7 +135,7 @@ export declare class VariableProxy extends StorageProxy {
     get(): Promise<{
         id: string;
     }>;
-    set(entity: any, particleId: string): void;
+    set(entity: any, particleId: any): void;
     clear(particleId: any): void;
 }
 export declare class BigCollectionProxy extends StorageProxy {

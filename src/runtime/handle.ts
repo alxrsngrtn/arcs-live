@@ -16,7 +16,6 @@ import {Reference} from './reference.js';
 import {BigCollectionProxy, CollectionProxy, StorageProxy, VariableProxy} from './storage-proxy.js';
 import {Symbols} from './symbols.js';
 import {BigCollectionType, CollectionType, EntityType, InterfaceType, ReferenceType} from './type.js';
-import {EntityClass, EntityInterface, EntityRawData} from './entity.js';
 
 // TODO: This won't be needed once runtime is transferred between contexts.
 function cloneData(data) {
@@ -24,12 +23,7 @@ function cloneData(data) {
   //return JSON.parse(JSON.stringify(data));
 }
 
-type SerializedEntity = {
-  id: string,
-  rawData: EntityRawData,
-};
-
-function restore(entry: SerializedEntity, entityClass: EntityClass) {
+function restore(entry, entityClass) {
   assert(entityClass, 'Handles need entity classes for deserialization');
   const {id, rawData} = entry;
   const entity = new entityClass(cloneData(rawData));
@@ -54,7 +48,7 @@ export abstract class Handle {
   canWrite: boolean;
   _particleId: string|null;
   options: HandleOptions;
-  entityClass: EntityClass|null;
+  entityClass: string|null;
 
   abstract _notify(kind: string, particle: Particle, details: {});
 
@@ -102,13 +96,12 @@ export abstract class Handle {
     }
   }
 
-  _serialize(entity: EntityInterface) {
+  _serialize(entity) {
     assert(entity, 'can\'t serialize a null entity');
     if (!entity.isIdentified()) {
       entity.createIdentity(this._proxy.generateIDComponents());
     }
-    // tslint:disable-next-line: no-any
-    const id = entity[Symbols.identifier as any];
+    const id = entity[Symbols.identifier];
     const rawData = entity.dataClone();
     return {
       id,
@@ -307,7 +300,7 @@ export class Variable extends Handle {
     if (this.type instanceof ReferenceType) {
       return new Reference(model, this.type, this._proxy.pec);
     }
-    throw new Error(`Don't know how to deliver handle data of type ${this.type}`);
+    assert(false, `Don't know how to deliver handle data of type ${this.type}`);
   }
 
   /**
@@ -315,7 +308,7 @@ export class Variable extends Handle {
    * @throws {Error} if this variable is not configured as a writeable handle (i.e. 'out' or 'inout')
    * in the particle's manifest.
    */
-  async set(entity: EntityInterface) {
+  async set(entity) {
     try {
       if (!this.canWrite) {
         throw new Error('Handle not writeable');
@@ -361,7 +354,7 @@ class Cursor {
   async next() {
     const data = await this._parent._proxy.cursorNext(this._cursorId);
     if (!data.done) {
-      data.value = data.value.map(a => restore(a as SerializedEntity, this._parent.entityClass));
+      data.value = data.value.map(a => restore(a, this._parent.entityClass));
     }
     return data;
   }
@@ -445,7 +438,7 @@ export class BigCollection extends Handle {
 }
 
 export function handleFor(proxy: StorageProxy, name: string = null, particleId = '', canRead = true, canWrite = true) {
-  let handle: Handle;
+  let handle;
   if (proxy.type instanceof CollectionType) {
     handle = new Collection(proxy, name, particleId, canRead, canWrite);
   } else if (proxy.type instanceof BigCollectionType) {

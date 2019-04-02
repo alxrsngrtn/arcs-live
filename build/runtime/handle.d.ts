@@ -6,11 +6,8 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-import { ParticleSpec } from './particle-spec.js';
 import { Particle } from './particle.js';
-import { Reference } from './reference.js';
 import { BigCollectionProxy, CollectionProxy, StorageProxy, VariableProxy } from './storage-proxy.js';
-import { EntityClass, EntityInterface } from './entity.js';
 export interface HandleOptions {
     keepSynced: boolean;
     notifySync: boolean;
@@ -27,13 +24,13 @@ export declare abstract class Handle {
     canWrite: boolean;
     _particleId: string | null;
     options: HandleOptions;
-    entityClass: EntityClass | null;
+    entityClass: string | null;
     abstract _notify(kind: string, particle: Particle, details: {}): any;
     constructor(proxy: StorageProxy, name: string, particleId: any, canRead: boolean, canWrite: boolean);
     protected reportUserExceptionInHost(exception: Error, particle: Particle, method: string): void;
     protected reportSystemExceptionInHost(exception: Error, method: string): void;
     configure(options: any): void;
-    _serialize(entity: EntityInterface): {
+    _serialize(entity: any): {
         id: any;
         rawData: any;
     };
@@ -98,14 +95,14 @@ export declare class Variable extends Handle {
      * @throws {Error} if this variable is not configured as a readable handle (i.e. 'in' or 'inout')
      * in the particle's manifest.
      */
-    get(): Promise<ParticleSpec | EntityInterface | Reference>;
-    _restore(model: any): ParticleSpec | EntityInterface | Reference;
+    get(): Promise<any>;
+    _restore(model: any): any;
     /**
      * Stores a new entity into the Variable, replacing any existing entity.
      * @throws {Error} if this variable is not configured as a writeable handle (i.e. 'out' or 'inout')
      * in the particle's manifest.
      */
-    set(entity: EntityInterface): Promise<void>;
+    set(entity: any): Promise<void>;
     /**
      * Clears any entity currently in the Variable.
      * @throws {Error} if this variable is not configured as a writeable handle (i.e. 'out' or 'inout')
@@ -172,5 +169,5 @@ export declare class BigCollection extends Handle {
         forward?: boolean;
     }): Promise<Cursor>;
 }
-export declare function handleFor(proxy: StorageProxy, name?: string, particleId?: string, canRead?: boolean, canWrite?: boolean): Handle;
+export declare function handleFor(proxy: StorageProxy, name?: string, particleId?: string, canRead?: boolean, canWrite?: boolean): any;
 export {};

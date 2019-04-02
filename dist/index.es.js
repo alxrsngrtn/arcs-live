@@ -444,6 +444,9 @@ class Entity {
         this[Symbols.identifier] = undefined;
         this.userIDComponent = userIDComponent;
     }
+    get data() {
+        return undefined;
+    }
     getUserID() {
         return this.userIDComponent;
     }
@@ -623,7 +626,6 @@ class Handle {
         if (!entity.isIdentified()) {
             entity.createIdentity(this._proxy.generateIDComponents());
         }
-        // tslint:disable-next-line: no-any
         const id = entity[Symbols.identifier];
         const rawData = entity.dataClone();
         return {
@@ -810,7 +812,7 @@ class Variable extends Handle {
         if (this.type instanceof ReferenceType) {
             return new Reference(model, this.type, this._proxy.pec);
         }
-        throw new Error(`Don't know how to deliver handle data of type ${this.type}`);
+        assert(false, `Don't know how to deliver handle data of type ${this.type}`);
     }
     /**
      * Stores a new entity into the Variable, replacing any existing entity.
@@ -18786,6 +18788,8 @@ class Particle$1 {
     setDescriptionPattern(connectionName, pattern) {
         const descriptions = this.handles.get('descriptions');
         if (descriptions) {
+            // Typescript can't infer the type here and fails with TS2351
+            // tslint:disable-next-line: no-any
             const entityClass = descriptions.entityClass;
             if (descriptions instanceof Collection || descriptions instanceof BigCollection) {
                 descriptions.store(new entityClass({ key: connectionName, value: pattern }, this.spec.name + '-' + connectionName));
@@ -18998,6 +19002,8 @@ class DomParticleBase extends Particle$1 {
         const handle = this.handles.get(handleName);
         if (handle && handle.entityClass) {
             if (handle instanceof Collection || handle instanceof BigCollection) {
+                // Typescript can't infer the type here and fails with TS2351
+                // tslint:disable-next-line: no-any
                 const entityClass = handle.entityClass;
                 Promise.all(rawDataArray.map(raw => handle.store(new entityClass(raw))));
             }
@@ -19014,6 +19020,8 @@ class DomParticleBase extends Particle$1 {
         const handle = this.handles.get(handleName);
         if (handle && handle.entityClass) {
             if (handle instanceof Variable) {
+                // Typescript can't infer the type here and fails with TS2351
+                // tslint:disable-next-line: no-any
                 const entityClass = handle.entityClass;
                 const entity = new entityClass(rawData);
                 handle.set(entity);

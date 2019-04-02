@@ -79,10 +79,6 @@ async function setupSlandlesWithOptional(cProvided, dProvided) {
     await arc.instantiate(recipe);
     return { arc, recipe, aStore, bStore, cStore, dStore };
 }
-function getVariableHandle(store) {
-    // tslint:disable-next-line: no-any
-    return handleFor(store);
-}
 describe('Arc', () => {
     it('idle can safely be called multiple times', async () => {
         const manifest = await Manifest.parse(`
@@ -98,7 +94,7 @@ describe('Arc', () => {
         const fooStore = await arc.createStore(Foo.type, undefined, 'test:1');
         const barStore = await arc.createStore(Bar.type, undefined, 'test:2');
         // tslint:disable-next-line: no-any
-        await getVariableHandle(fooStore).set(new Foo({ value: 'a Foo' }));
+        await handleFor(fooStore).set(new Foo({ value: 'a Foo' }));
         recipe.handles[0].mapToStorage(fooStore);
         recipe.handles[1].mapToStorage(barStore);
         assert(recipe.normalize());
@@ -114,7 +110,7 @@ describe('Arc', () => {
         recipe.normalize();
         await arc.instantiate(recipe);
         // tslint:disable-next-line: no-any
-        await getVariableHandle(fooStore).set(new Foo({ value: 'a Foo' }));
+        await handleFor(fooStore).set(new Foo({ value: 'a Foo' }));
         await util.assertSingletonWillChangeTo(arc, barStore, 'value', 'a Foo1');
     });
     it('optional provided handles do not resolve without parent', async () => {
@@ -154,9 +150,9 @@ describe('Arc', () => {
         await arc.instantiate(recipe);
         // NOTE: handleFor using incompatible types
         // tslint:disable-next-line: no-any
-        await getVariableHandle(aStore).set(new thingClass({ value: 'from_a' }));
+        await handleFor(aStore).set(new thingClass({ value: 'from_a' }));
         // tslint:disable-next-line: no-any
-        await getVariableHandle(cStore).set(new thingClass({ value: 'from_c' }));
+        await handleFor(cStore).set(new thingClass({ value: 'from_c' }));
         await util.assertSingletonWillChangeTo(arc, bStore, 'value', 'from_a1');
         await util.assertSingletonWillChangeTo(arc, dStore, 'value', '(null)');
     });
@@ -197,9 +193,9 @@ describe('Arc', () => {
         await arc.instantiate(recipe);
         // NOTE: handleFor using incompatible types
         // tslint:disable-next-line: no-any
-        await getVariableHandle(aStore).set(new thingClass({ value: 'from_a' }));
+        await handleFor(aStore).set(new thingClass({ value: 'from_a' }));
         // tslint:disable-next-line: no-any
-        await getVariableHandle(cStore).set(new thingClass({ value: 'from_c' }));
+        await handleFor(cStore).set(new thingClass({ value: 'from_c' }));
         await util.assertSingletonWillChangeTo(arc, bStore, 'value', 'from_a1');
         await util.assertSingletonWillChangeTo(arc, dStore, 'value', '(null)');
     });
@@ -316,9 +312,9 @@ describe('Arc', () => {
         recipe.normalize();
         await arc.instantiate(recipe);
         // tslint:disable-next-line: no-any
-        await getVariableHandle(aStore).set(new thingClass({ value: 'from_a' }));
+        await handleFor(aStore).set(new thingClass({ value: 'from_a' }));
         // tslint:disable-next-line: no-any
-        await getVariableHandle(cStore).set(new thingClass({ value: 'from_c' }));
+        await handleFor(cStore).set(new thingClass({ value: 'from_c' }));
         await util.assertSingletonWillChangeTo(arc, bStore, 'value', 'from_a1');
         await util.assertSingletonWillChangeTo(arc, dStore, 'value', '(null)');
     });
@@ -397,9 +393,9 @@ describe('Arc', () => {
         recipe.normalize();
         await arc.instantiate(recipe);
         // tslint:disable-next-line: no-any
-        await getVariableHandle(aStore).set(new thingClass({ value: 'from_a' }));
+        await handleFor(aStore).set(new thingClass({ value: 'from_a' }));
         // tslint:disable-next-line: no-any
-        await getVariableHandle(cStore).set(new thingClass({ value: 'from_c' }));
+        await handleFor(cStore).set(new thingClass({ value: 'from_c' }));
         await util.assertSingletonWillChangeTo(arc, bStore, 'value', 'from_a1');
         await util.assertSingletonWillChangeTo(arc, dStore, 'value', 'from_c1');
     });
@@ -441,9 +437,9 @@ describe('Arc', () => {
         recipe.normalize();
         await arc.instantiate(recipe);
         // tslint:disable-next-line: no-any
-        await getVariableHandle(aStore).set(new thingClass({ value: 'from_a' }));
+        await handleFor(aStore).set(new thingClass({ value: 'from_a' }));
         // tslint:disable-next-line: no-any
-        await getVariableHandle(cStore).set(new thingClass({ value: 'from_c' }));
+        await handleFor(cStore).set(new thingClass({ value: 'from_c' }));
         await util.assertSingletonWillChangeTo(arc, bStore, 'value', 'from_a1');
         await util.assertSingletonWillChangeTo(arc, dStore, 'value', 'from_c1');
     });
@@ -462,7 +458,7 @@ describe('Arc', () => {
         let fooStore = await arc.createStore(Foo.type, undefined, 'test:1');
         const fooStoreCallbacks = new CallbackTracker(fooStore, 1);
         // tslint:disable-next-line: no-any
-        await getVariableHandle(fooStore).set(new Foo({ value: 'a Foo' }));
+        await handleFor(fooStore).set(new Foo({ value: 'a Foo' }));
         let barStore = await arc.createStore(Bar.type, undefined, 'test:2', ['tag1', 'tag2']);
         recipe.handles[0].mapToStorage(fooStore);
         recipe.handles[1].mapToStorage(barStore);
@@ -558,7 +554,7 @@ describe('Arc', () => {
         // Populate the stores, run the arc and get its serialization.
         // TODO: the serialization roundtrip re-generates keys using the entity ids; we should keep the actual keys
         // tslint:disable-next-line: no-any
-        await getVariableHandle(varStore).set(new dataClass({ value: 'v1' }));
+        await handleFor(varStore).set(new dataClass({ value: 'v1' }));
         await colStore.store({ id: 'i2', rawData: { value: 'v2', size: 20 } }, ['i2']);
         await colStore.store({ id: 'i3', rawData: { value: 'v3', size: 30 } }, ['i3']);
         await bigStore.store({ id: 'i4', rawData: { value: 'v4', size: 40 } }, ['i4']);

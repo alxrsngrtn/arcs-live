@@ -219,7 +219,9 @@ export class DomParticleBase extends Particle {
     const handle = this.handles.get(handleName);
     if (handle && handle.entityClass) {
       if (handle instanceof Collection || handle instanceof BigCollection) {
-        const entityClass = handle.entityClass;
+        // Typescript can't infer the type here and fails with TS2351
+        // tslint:disable-next-line: no-any
+        const entityClass: any = handle.entityClass;
         Promise.all(rawDataArray.map(raw => handle.store(new entityClass(raw))));
       } else {
         throw new Error('Collection required');
@@ -235,7 +237,9 @@ export class DomParticleBase extends Particle {
     const handle = this.handles.get(handleName);
     if (handle && handle.entityClass) {
       if (handle instanceof Variable) {
-        const entityClass = handle.entityClass;
+        // Typescript can't infer the type here and fails with TS2351
+        // tslint:disable-next-line: no-any
+        const entityClass: any = handle.entityClass;
         const entity = new entityClass(rawData);
         handle.set(entity);
         return entity;

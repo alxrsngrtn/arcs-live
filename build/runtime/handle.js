@@ -77,7 +77,6 @@ export class Handle {
         if (!entity.isIdentified()) {
             entity.createIdentity(this._proxy.generateIDComponents());
         }
-        // tslint:disable-next-line: no-any
         const id = entity[Symbols.identifier];
         const rawData = entity.dataClone();
         return {
@@ -264,7 +263,7 @@ export class Variable extends Handle {
         if (this.type instanceof ReferenceType) {
             return new Reference(model, this.type, this._proxy.pec);
         }
-        throw new Error(`Don't know how to deliver handle data of type ${this.type}`);
+        assert(false, `Don't know how to deliver handle data of type ${this.type}`);
     }
     /**
      * Stores a new entity into the Variable, replacing any existing entity.
