@@ -1,9 +1,5 @@
-commit f509921146e297035d026968a3d8e29bcb8e2f1d
-Author: shans <shane.stephens@gmail.com>
-Date:   Tue Apr 2 16:23:48 2019 +1100
+commit bf7e99b9bc113fe994e18c0a96c47b8a52bd12a3
+Author: Scott J. Miles <sjmiles@google.com>
+Date:   Tue Apr 2 17:24:57 2019 -0700
 
-    Enforce boolean return values in sigh steps (#2830)
-    
-    * Ensure sigh test correctly reports failure.
-    
-    * Enforce boolean return values from sigh steps
+    skip flaky test (#2837)
