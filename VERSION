@@ -1,16 +1,9 @@
-commit 6f9deaf27b52f3a43cc31f8fdf99871236480840
-Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
-Date:   Wed Apr 3 13:17:11 2019 +1100
+commit dd625432d481e3af397e54e9918b9ecd01711f0c
+Author: Scott J. Miles <sjmiles@google.com>
+Date:   Wed Apr 3 13:10:02 2019 -0700
 
-    Moves entity class construction into entity.js (#2832)
+    Pipes deploy improvements (#2835)
     
-    * Moved all of the Entity class construction code into entity.js
+    * simplify node deployment
     
-    * Shrunk down the createEntityClass function.
-    
-    Moved all of the private methods onto the Entity base class. The
-    magic createEntityClass function now only adds some static methods.
-    
-    * Fix style issues
-    
-    * Moved createEntityClass to be a static method on Entity
+    * keep process alive (until killed externally)
