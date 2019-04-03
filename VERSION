@@ -1,5 +1,16 @@
-commit bf7e99b9bc113fe994e18c0a96c47b8a52bd12a3
-Author: Scott J. Miles <sjmiles@google.com>
-Date:   Tue Apr 2 17:24:57 2019 -0700
+commit 6f9deaf27b52f3a43cc31f8fdf99871236480840
+Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
+Date:   Wed Apr 3 13:17:11 2019 +1100
 
-    skip flaky test (#2837)
+    Moves entity class construction into entity.js (#2832)
+    
+    * Moved all of the Entity class construction code into entity.js
+    
+    * Shrunk down the createEntityClass function.
+    
+    Moved all of the private methods onto the Entity base class. The
+    magic createEntityClass function now only adds some static methods.
+    
+    * Fix style issues
+    
+    * Moved createEntityClass to be a static method on Entity

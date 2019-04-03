@@ -1,5 +1,6 @@
 import { Schema } from './schema.js';
 import { Type } from './type.js';
+import { ParticleExecutionContext } from './particle-execution-context.js';
 declare type EntityIdComponents = {
     base: string;
     component: () => number;
@@ -14,7 +15,8 @@ export interface EntityInterface {
     identify(identifier: string): void;
     createIdentity(components: EntityIdComponents): void;
     toLiteral(): EntityRawData;
-    dataClone(): any;
+    toJSON(): EntityRawData;
+    dataClone(): EntityRawData;
     [index: string]: any;
 }
 /**
@@ -31,6 +33,7 @@ export interface EntityStaticInterface {
         tag: string;
         schema: Schema;
     };
+    readonly schema: Schema;
 }
 /**
  * The merged interfaces.  Replaces usages of typeof Entity.
@@ -38,14 +41,18 @@ export interface EntityStaticInterface {
 export declare type EntityClass = (new (data: any, userIDComponent?: string) => EntityInterface) & EntityStaticInterface;
 export declare abstract class Entity implements EntityInterface {
     private userIDComponent?;
+    private schema;
     protected rawData: EntityRawData;
-    protected constructor(userIDComponent?: string);
+    protected constructor(data: EntityRawData, schema: Schema, context: ParticleExecutionContext, userIDComponent?: string);
     getUserID(): string;
     isIdentified(): boolean;
     readonly id: any;
     identify(identifier: string): void;
     createIdentity(components: EntityIdComponents): void;
     toLiteral(): EntityRawData;
-    abstract dataClone(): EntityRawData;
+    toJSON(): EntityRawData;
+    dataClone(): EntityRawData;
+    /** Dynamically constructs a new JS class for the entity type represented by the given schema. */
+    static createEntityClass(schema: Schema, context: ParticleExecutionContext): EntityClass;
 }
 export {};

@@ -10,7 +10,7 @@ import { ParticleSpec } from './particle-spec.js';
 import { Particle } from './particle.js';
 import { Reference } from './reference.js';
 import { BigCollectionProxy, CollectionProxy, StorageProxy, VariableProxy } from './storage-proxy.js';
-import { EntityClass, EntityInterface } from './entity.js';
+import { EntityClass, EntityInterface, EntityRawData } from './entity.js';
 export interface HandleOptions {
     keepSynced: boolean;
     notifySync: boolean;
@@ -35,7 +35,7 @@ export declare abstract class Handle {
     configure(options: any): void;
     _serialize(entity: EntityInterface): {
         id: any;
-        rawData: any;
+        rawData: EntityRawData;
     };
     readonly type: import("./type.js").Type;
     readonly _id: string;
@@ -98,8 +98,8 @@ export declare class Variable extends Handle {
      * @throws {Error} if this variable is not configured as a readable handle (i.e. 'in' or 'inout')
      * in the particle's manifest.
      */
-    get(): Promise<ParticleSpec | EntityInterface | Reference>;
-    _restore(model: any): ParticleSpec | EntityInterface | Reference;
+    get(): Promise<ParticleSpec | Reference | EntityInterface>;
+    _restore(model: any): ParticleSpec | Reference | EntityInterface;
     /**
      * Stores a new entity into the Variable, replacing any existing entity.
      * @throws {Error} if this variable is not configured as a writeable handle (i.e. 'out' or 'inout')

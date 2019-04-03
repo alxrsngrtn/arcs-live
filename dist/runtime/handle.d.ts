@@ -10,7 +10,7 @@ import { ParticleSpec } from './particle-spec.js';
 import { Particle } from './particle.js';
 import { Reference } from './reference.js';
 import { BigCollectionProxy, CollectionProxy, StorageProxy, VariableProxy } from './storage-proxy.js';
-import { EntityClass, EntityInterface } from './entity.js';
+import { EntityClass, EntityInterface, EntityRawData } from './entity.js';
 export interface HandleOptions {
     keepSynced: boolean;
     notifySync: boolean;
@@ -35,7 +35,7 @@ export declare abstract class Handle {
     configure(options: any): void;
     _serialize(entity: EntityInterface): {
         id: any;
-        rawData: any;
+        rawData: EntityRawData;
     };
     readonly type: import("./type.js").Type;
     readonly _id: string;
