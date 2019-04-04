@@ -91,7 +91,8 @@
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _build_runtime_particle_execution_context_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1);
-/* harmony import */ var _build_platform_loader_web_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(31);
+/* harmony import */ var _build_platform_loader_web_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(29);
+/* harmony import */ var _build_runtime_id_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(42);
 /*
  * @license
  * Copyright (c) 2019 Google Inc. All rights reserved.
@@ -105,10 +106,11 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+
 self.onmessage = function(e) {
   self.onmessage = null;
   const {id, base} = e.data;
-  new _build_runtime_particle_execution_context_js__WEBPACK_IMPORTED_MODULE_0__["ParticleExecutionContext"](e.ports[0], id, new _build_platform_loader_web_js__WEBPACK_IMPORTED_MODULE_1__["PlatformLoader"](base));
+  new _build_runtime_particle_execution_context_js__WEBPACK_IMPORTED_MODULE_0__["ParticleExecutionContext"](e.ports[0], _build_runtime_id_js__WEBPACK_IMPORTED_MODULE_2__["Id"].fromString(id), _build_runtime_id_js__WEBPACK_IMPORTED_MODULE_2__["IdGenerator"].newSession(), new _build_platform_loader_web_js__WEBPACK_IMPORTED_MODULE_1__["PlatformLoader"](base));
 };
 
 
@@ -122,9 +124,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
 /* harmony import */ var _api_channel_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(4);
 /* harmony import */ var _handle_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(21);
-/* harmony import */ var _id_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(26);
-/* harmony import */ var _slot_proxy_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(28);
-/* harmony import */ var _storage_proxy_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(29);
+/* harmony import */ var _slot_proxy_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(26);
+/* harmony import */ var _storage_proxy_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(27);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -139,25 +140,24 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-
 class ParticleExecutionContext {
-    constructor(port, idBase, loader) {
+    constructor(port, pecId, idGenerator, loader) {
         this.particles = [];
         this.pendingLoads = [];
-        this.scheduler = new _storage_proxy_js__WEBPACK_IMPORTED_MODULE_5__["StorageProxyScheduler"]();
+        this.scheduler = new _storage_proxy_js__WEBPACK_IMPORTED_MODULE_4__["StorageProxyScheduler"]();
         this.keyedProxies = {};
         const pec = this;
         this.apiPort = new class extends _api_channel_js__WEBPACK_IMPORTED_MODULE_1__["PECInnerPort"] {
             onDefineHandle(identifier, type, name) {
-                return _storage_proxy_js__WEBPACK_IMPORTED_MODULE_5__["StorageProxy"].newProxy(identifier, type, this, pec, pec.scheduler, name);
+                return _storage_proxy_js__WEBPACK_IMPORTED_MODULE_4__["StorageProxy"].newProxy(identifier, type, this, pec, pec.scheduler, name);
             }
             onGetBackingStoreCallback(callback, type, name, id, storageKey) {
-                const proxy = _storage_proxy_js__WEBPACK_IMPORTED_MODULE_5__["StorageProxy"].newProxy(id, type, this, pec, pec.scheduler, name);
+                const proxy = _storage_proxy_js__WEBPACK_IMPORTED_MODULE_4__["StorageProxy"].newProxy(id, type, this, pec, pec.scheduler, name);
                 proxy.storageKey = storageKey;
                 return [proxy, () => callback(proxy, storageKey)];
             }
             onCreateHandleCallback(callback, type, name, id) {
-                const proxy = _storage_proxy_js__WEBPACK_IMPORTED_MODULE_5__["StorageProxy"].newProxy(id, type, this, pec, pec.scheduler, name);
+                const proxy = _storage_proxy_js__WEBPACK_IMPORTED_MODULE_4__["StorageProxy"].newProxy(id, type, this, pec, pec.scheduler, name);
                 return [proxy, () => callback(proxy)];
             }
             onMapHandleCallback(callback, id) {
@@ -194,7 +194,7 @@ class ParticleExecutionContext {
                 particle.fireEvent(slotName, event);
             }
             onStartRender(particle, slotName, providedSlots, contentTypes) {
-                particle.addSlotProxy(new _slot_proxy_js__WEBPACK_IMPORTED_MODULE_4__["SlotProxy"](this, particle, slotName, providedSlots));
+                particle.addSlotProxy(new _slot_proxy_js__WEBPACK_IMPORTED_MODULE_3__["SlotProxy"](this, particle, slotName, providedSlots));
                 particle.renderSlot(slotName, contentTypes);
             }
             onStopRender(particle, slotName) {
@@ -202,7 +202,8 @@ class ParticleExecutionContext {
                 particle.removeSlotProxy(slotName);
             }
         }(port);
-        this.idBase = _id_js__WEBPACK_IMPORTED_MODULE_3__["Id"].newSessionId().fromString(idBase);
+        this.pecId = pecId;
+        this.idGenerator = idGenerator;
         this.loader = loader;
         loader.setParticleExecutionContext(this);
         /*
@@ -217,7 +218,7 @@ class ParticleExecutionContext {
          */
     }
     generateID() {
-        return this.idBase.createId().toString();
+        return this.idGenerator.createChildId(this.pecId).toString();
     }
     innerArcHandle(arcId, particleId) {
         const pec = this;
@@ -4318,116 +4319,6 @@ class TypeVariableInfo {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Id", function() { return Id; });
-/* harmony import */ var _random_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(27);
-/**
- * @license
- * Copyright (c) 2017 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-
-// Id consists of 2 component: a session and an idTree.
-class Id {
-    constructor(currentSession, components = []) {
-        this.nextIdComponent = 0;
-        this.components = [];
-        this.session = currentSession;
-        this.currentSession = currentSession;
-        this.components = components;
-    }
-    static newSessionId() {
-        const session = Math.floor(_random_js__WEBPACK_IMPORTED_MODULE_0__["Random"].next() * Math.pow(2, 50)) + '';
-        return new Id(session);
-    }
-    /**
-     * When used in the following way:
-     *   const id = Id.newSessionId().fromString(stringId);
-     *
-     * The resulting id will receive a newly generated session id in the currentSession field,
-     * while maintaining an original session from the string representation in the session field.
-     */
-    fromString(str) {
-        const newId = new Id(this.currentSession);
-        let components = str.split(':');
-        if (components[0][0] === '!') {
-            newId.session = components[0].slice(1);
-            components = components.slice(1);
-        }
-        newId.components.push(...components);
-        return newId;
-    }
-    // Returns the full Id string.
-    toString() {
-        return `!${this.session}:${this.components.join(':')}`;
-    }
-    // Returns the idTree as string (without the session component).
-    idTreeAsString() {
-        return this.components.join(':');
-    }
-    createId(component = '') {
-        const id = new Id(this.currentSession, this.components.slice());
-        id.components.push(component + this.nextIdComponent++);
-        return id;
-    }
-    equal(id) {
-        if (id.session !== this.session || id.components.length !== this.components.length) {
-            return false;
-        }
-        for (let i = 0; i < id.components.length; i++) {
-            if (id.components[i] !== this.components[i]) {
-                return false;
-            }
-        }
-        return true;
-    }
-}
-//# sourceMappingURL=id.js.map
-
-/***/ }),
-/* 27 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Random", function() { return Random; });
-/**
- * @license
- * Copyright (c) 2018 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-class RNG {
-}
-/**
- * A basic random number generator using Math.random();
- */
-class MathRandomRNG extends RNG {
-    next() {
-        return Math.random();
-    }
-}
-// Singleton Pattern
-const random = new MathRandomRNG();
-class Random {
-    static next() {
-        return random.next();
-    }
-}
-//# sourceMappingURL=random.js.map
-
-/***/ }),
-/* 28 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SlotProxy", function() { return SlotProxy; });
 /**
  * A representation of a consumed slot. Retrieved from a particle using
@@ -4474,7 +4365,7 @@ class SlotProxy {
 //# sourceMappingURL=slot-proxy.js.map
 
 /***/ }),
-/* 29 */
+/* 27 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -4487,7 +4378,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
 /* harmony import */ var _platform_sourcemapped_stacktrace_web_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(11);
 /* harmony import */ var _arc_exceptions_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(22);
-/* harmony import */ var _storage_crdt_collection_model_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(30);
+/* harmony import */ var _storage_crdt_collection_model_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(28);
 /* harmony import */ var _type_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(15);
 /**
  * @license
@@ -5048,7 +4939,7 @@ class StorageProxyScheduler {
 //# sourceMappingURL=storage-proxy.js.map
 
 /***/ }),
-/* 30 */
+/* 28 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -5176,18 +5067,18 @@ class CrdtCollectionModel {
 //# sourceMappingURL=crdt-collection-model.js.map
 
 /***/ }),
-/* 31 */
+/* 29 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "PlatformLoader", function() { return PlatformLoader; });
-/* harmony import */ var _runtime_loader_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(32);
-/* harmony import */ var _runtime_particle_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(40);
-/* harmony import */ var _runtime_dom_particle_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(37);
-/* harmony import */ var _runtime_multiplexer_dom_particle_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(41);
-/* harmony import */ var _runtime_transformation_dom_particle_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(42);
-/* harmony import */ var _platform_log_web_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(43);
+/* harmony import */ var _runtime_loader_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(30);
+/* harmony import */ var _runtime_particle_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(38);
+/* harmony import */ var _runtime_dom_particle_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(35);
+/* harmony import */ var _runtime_multiplexer_dom_particle_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(39);
+/* harmony import */ var _runtime_transformation_dom_particle_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(40);
+/* harmony import */ var _platform_log_web_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(41);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -5287,22 +5178,22 @@ class PlatformLoader extends _runtime_loader_js__WEBPACK_IMPORTED_MODULE_0__["Lo
 
 
 /***/ }),
-/* 32 */
+/* 30 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Loader", function() { return Loader; });
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
-/* harmony import */ var _platform_fetch_web_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(33);
-/* harmony import */ var _platform_fs_web_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(34);
-/* harmony import */ var _platform_vm_web_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(35);
-/* harmony import */ var _converters_jsonldToManifest_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(36);
-/* harmony import */ var _dom_particle_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(37);
-/* harmony import */ var _multiplexer_dom_particle_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(41);
-/* harmony import */ var _particle_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(40);
+/* harmony import */ var _platform_fetch_web_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(31);
+/* harmony import */ var _platform_fs_web_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(32);
+/* harmony import */ var _platform_vm_web_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(33);
+/* harmony import */ var _converters_jsonldToManifest_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(34);
+/* harmony import */ var _dom_particle_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(35);
+/* harmony import */ var _multiplexer_dom_particle_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(39);
+/* harmony import */ var _particle_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(38);
 /* harmony import */ var _reference_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(20);
-/* harmony import */ var _transformation_dom_particle_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(42);
+/* harmony import */ var _transformation_dom_particle_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(40);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -5417,7 +5308,7 @@ class Loader {
 //# sourceMappingURL=loader.js.map
 
 /***/ }),
-/* 33 */
+/* 31 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -5438,7 +5329,7 @@ const localFetch = fetch;
 //# sourceMappingURL=fetch-web.js.map
 
 /***/ }),
-/* 34 */
+/* 32 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -5455,7 +5346,7 @@ const fs = {};
 
 
 /***/ }),
-/* 35 */
+/* 33 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -5472,7 +5363,7 @@ const vm = {};
 
 
 /***/ }),
-/* 36 */
+/* 34 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -5586,14 +5477,14 @@ class JsonldToManifest {
 //# sourceMappingURL=jsonldToManifest.js.map
 
 /***/ }),
-/* 37 */
+/* 35 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "DomParticle", function() { return DomParticle; });
-/* harmony import */ var _modalities_dom_components_xen_xen_state_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(38);
-/* harmony import */ var _dom_particle_base_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(39);
+/* harmony import */ var _modalities_dom_components_xen_xen_state_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(36);
+/* harmony import */ var _dom_particle_base_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(37);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -5771,7 +5662,7 @@ class DomParticle extends Object(_modalities_dom_components_xen_xen_state_js__WE
 
 
 /***/ }),
-/* 38 */
+/* 36 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -5940,7 +5831,7 @@ const XenStateMixin = Base => class extends Base {
 
 
 /***/ }),
-/* 39 */
+/* 37 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -5948,7 +5839,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "DomParticleBase", function() { return DomParticleBase; });
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
 /* harmony import */ var _handle_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(21);
-/* harmony import */ var _particle_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(40);
+/* harmony import */ var _particle_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(38);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -6208,7 +6099,7 @@ class DomParticleBase extends _particle_js__WEBPACK_IMPORTED_MODULE_2__["Particl
 //# sourceMappingURL=dom-particle-base.js.map
 
 /***/ }),
-/* 40 */
+/* 38 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -6387,7 +6278,7 @@ class Particle {
 //# sourceMappingURL=particle.js.map
 
 /***/ }),
-/* 41 */
+/* 39 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -6395,7 +6286,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "MultiplexerDomParticle", function() { return MultiplexerDomParticle; });
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
 /* harmony import */ var _particle_spec_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(12);
-/* harmony import */ var _transformation_dom_particle_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(42);
+/* harmony import */ var _transformation_dom_particle_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(40);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -6607,13 +6498,13 @@ class MultiplexerDomParticle extends _transformation_dom_particle_js__WEBPACK_IM
 
 
 /***/ }),
-/* 42 */
+/* 40 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "TransformationDomParticle", function() { return TransformationDomParticle; });
-/* harmony import */ var _dom_particle_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(37);
+/* harmony import */ var _dom_particle_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(35);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -6666,7 +6557,7 @@ class TransformationDomParticle extends _dom_particle_js__WEBPACK_IMPORTED_MODUL
 
 
 /***/ }),
-/* 43 */
+/* 41 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -6695,6 +6586,140 @@ if (typeof window !== 'undefined') {
 const factory = logLevel > 0 ? _factory : () => () => {};
 const logFactory = (...args) => factory(...args);
 
+
+/***/ }),
+/* 42 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "IdGenerator", function() { return IdGenerator; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Id", function() { return Id; });
+/* harmony import */ var _random_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(43);
+/**
+ * @license
+ * Copyright (c) 2017 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+
+/**
+ * Generates new IDs which are rooted in the current session. Only one IdGenerator should be instantiated for each running Arc, and all of the
+ * IDs created should be created using that same IdGenerator instance.
+ */
+class IdGenerator {
+    /** Use the newSession factory method instead. */
+    constructor(currentSessionId) {
+        this._nextComponentId = 0;
+        this._currentSessionId = currentSessionId;
+    }
+    /** Generates a new random session ID to use when creating new IDs. */
+    static newSession() {
+        const sessionId = Math.floor(_random_js__WEBPACK_IMPORTED_MODULE_0__["Random"].next() * Math.pow(2, 50)) + '';
+        return new IdGenerator(sessionId);
+    }
+    /**
+     * Intended only for testing the IdGenerator class itself. Lets you specify the session ID manually. Prefer using the real
+     * IdGenerator.newSession() method when testing other classes.
+     */
+    static createWithSessionIdForTesting(sessionId) {
+        return new IdGenerator(sessionId);
+    }
+    /**
+     * Creates a new ID, as a child of the given parentId. The given subcomponent will be appended to the component hierarchy of the given ID, but
+     * the generator's random session ID will be used as the ID's root.
+     */
+    createChildId(parentId, subcomponent = '') {
+        // Append (and increment) a counter to the subcomponent, to ensure that it is unique.
+        subcomponent += this._nextComponentId++;
+        return new Id(this._currentSessionId, [...parentId.idTree, subcomponent]);
+    }
+    get currentSessionIdForTesting() {
+        return this._currentSessionId;
+    }
+}
+/**
+ * An immutable object consisting of two components: a root, and an idTree. The root is the session ID from the particular session in which the
+ * ID was constructed (see the IdGenerator class). The idTree is a list of subcomponents, forming a hierarchy of IDs (child IDs are created by
+ * appending subcomponents to their parent ID's idTree).
+ */
+class Id {
+    constructor(root, idTree = []) {
+        /** The components of the idTree. */
+        this.idTree = [];
+        this.root = root;
+        this.idTree = idTree;
+    }
+    static fromString(str) {
+        const bits = str.split(':');
+        if (bits[0].startsWith('!')) {
+            const root = bits[0].slice(1);
+            const idTree = bits.slice(1).filter(component => component.length > 0);
+            return new Id(root, idTree);
+        }
+        else {
+            return new Id('', bits);
+        }
+    }
+    /** Returns the full ID string. */
+    toString() {
+        return `!${this.root}:${this.idTree.join(':')}`;
+    }
+    /** Returns the idTree as as string (without the root). */
+    idTreeAsString() {
+        return this.idTree.join(':');
+    }
+    equal(id) {
+        if (id.root !== this.root || id.idTree.length !== this.idTree.length) {
+            return false;
+        }
+        for (let i = 0; i < id.idTree.length; i++) {
+            if (id.idTree[i] !== this.idTree[i]) {
+                return false;
+            }
+        }
+        return true;
+    }
+}
+//# sourceMappingURL=id.js.map
+
+/***/ }),
+/* 43 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Random", function() { return Random; });
+/**
+ * @license
+ * Copyright (c) 2018 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+class RNG {
+}
+/**
+ * A basic random number generator using Math.random();
+ */
+class MathRandomRNG extends RNG {
+    next() {
+        return Math.random();
+    }
+}
+// Singleton Pattern
+const random = new MathRandomRNG();
+class Random {
+    static next() {
+        return random.next();
+    }
+}
+//# sourceMappingURL=random.js.map
 
 /***/ })
 /******/ ]);

@@ -44,9 +44,10 @@ describe('OuterPortAttachment', () => {
         const instantiateParticleCall = DevtoolsForTests.channel.messages.find(m => m.messageType === 'PecLog' && m.messageBody.name === 'InstantiateParticle').messageBody;
         // Type is a complex object to reproduce, let's skip asserting on it.
         delete instantiateParticleCall.pecMsgBody.spec.args[0].type;
+        const sessionId = arc.idGeneratorForTesting.currentSessionIdForTesting;
         assert.deepEqual(instantiateParticleCall.pecMsgBody, {
-            id: `!${arc.id.currentSession}:demo:particle1`,
-            identifier: `!${arc.id.currentSession}:demo:particle1`,
+            id: `!${sessionId}:demo:particle1`,
+            identifier: `!${sessionId}:demo:particle1`,
             stores: {
                 foo: 'fooStore'
             },

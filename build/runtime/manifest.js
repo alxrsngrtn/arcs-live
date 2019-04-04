@@ -10,7 +10,7 @@
 import { parse } from '../gen/runtime/manifest-parser.js';
 import { assert } from '../platform/assert-web.js';
 import { digest } from '../platform/digest-web.js';
-import { Id } from './id.js';
+import { Id, IdGenerator } from './id.js';
 import { InterfaceInfo } from './interface-info.js';
 import { ManifestMeta } from './manifest-meta.js';
 import { ParticleSpec } from './particle-spec.js';
@@ -139,6 +139,8 @@ export class Manifest {
         this._interfaces = [];
         this.storeTags = new Map();
         this._fileName = null;
+        // TODO(csilvestrini): Inject an IdGenerator instance instead of creating a new one.
+        this._idGenerator = IdGenerator.newSession();
         this._storageProviderFactory = undefined;
         this._meta = new ManifestMeta();
         this._resources = {};
@@ -159,7 +161,7 @@ export class Manifest {
     }
     get id() {
         if (this._meta.name) {
-            return Id.newSessionId().fromString(this._meta.name);
+            return Id.fromString(this._meta.name);
         }
         return this._id;
     }
@@ -315,7 +317,7 @@ export class Manifest {
     }
     // TODO: Unify ID handling to use ID instances, not strings. Change return type here to ID.
     generateID() {
-        return this.id.createId().toString();
+        return this._idGenerator.createChildId(this.id).toString();
     }
     static async load(fileName, loader, options) {
         options = options || {};
@@ -1172,6 +1174,9 @@ ${e.message}
             results.push(store.toString(this.storeTags.get(store).map(a => `#${a}`)));
         });
         return results.join('\n');
+    }
+    get idGeneratorForTesting() {
+        return this._idGenerator;
     }
 }
 //# sourceMappingURL=manifest.js.map

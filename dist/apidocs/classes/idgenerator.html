@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>Id | arcs</title>
+	<title>IdGenerator | arcs</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -56,10 +56,10 @@
 					<a href="../globals.html">Globals</a>
 				</li>
 				<li>
-					<a href="id.html">Id</a>
+					<a href="idgenerator.html">IdGenerator</a>
 				</li>
 			</ul>
-			<h1>Class Id</h1>
+			<h1>Class IdGenerator</h1>
 		</div>
 	</div>
 </header>
@@ -69,9 +69,8 @@
 			<section class="tsd-panel tsd-comment">
 				<div class="tsd-comment tsd-typography">
 					<div class="lead">
-						<p>An immutable object consisting of two components: a root, and an idTree. The root is the session ID from the particular session in which the
-							ID was constructed (see the IdGenerator class). The idTree is a list of subcomponents, forming a hierarchy of IDs (child IDs are created by
-						appending subcomponents to their parent ID&#39;s idTree).</p>
+						<p>Generates new IDs which are rooted in the current session. Only one IdGenerator should be instantiated for each running Arc, and all of the
+						IDs created should be created using that same IdGenerator instance.</p>
 					</div>
 				</div>
 			</section>
@@ -79,7 +78,7 @@
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<span class="target">Id</span>
+						<span class="target">IdGenerator</span>
 					</li>
 				</ul>
 			</section>
@@ -87,182 +86,192 @@
 				<h2>Index</h2>
 				<section class="tsd-panel tsd-index-panel">
 					<div class="tsd-index-content">
-						<section class="tsd-index-section ">
+						<section class="tsd-index-section tsd-is-private tsd-is-private-protected">
 							<h3>Constructors</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-constructor tsd-parent-kind-class"><a href="id.html#constructor" class="tsd-kind-icon">constructor</a></li>
+								<li class="tsd-kind-constructor tsd-parent-kind-class tsd-is-private"><a href="idgenerator.html#constructor" class="tsd-kind-icon">constructor</a></li>
+							</ul>
+						</section>
+						<section class="tsd-index-section tsd-is-private tsd-is-private-protected">
+							<h3>Properties</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="idgenerator.html#_currentsessionid" class="tsd-kind-icon">_current<wbr>Session<wbr>Id</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="idgenerator.html#_nextcomponentid" class="tsd-kind-icon">_next<wbr>Component<wbr>Id</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
-							<h3>Properties</h3>
+							<h3>Accessors</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="id.html#idtree" class="tsd-kind-icon">id<wbr>Tree</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="id.html#root" class="tsd-kind-icon">root</a></li>
+								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="idgenerator.html#currentsessionidfortesting" class="tsd-kind-icon">current<wbr>Session<wbr>IdFor<wbr>Testing</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
 							<h3>Methods</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="id.html#equal" class="tsd-kind-icon">equal</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="id.html#idtreeasstring" class="tsd-kind-icon">id<wbr>Tree<wbr>AsString</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="id.html#tostring" class="tsd-kind-icon">to<wbr>String</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-static"><a href="id.html#fromstring" class="tsd-kind-icon">from<wbr>String</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="idgenerator.html#createchildid" class="tsd-kind-icon">create<wbr>Child<wbr>Id</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-static"><a href="idgenerator.html#createwithsessionidfortesting" class="tsd-kind-icon">create<wbr>With<wbr>Session<wbr>IdFor<wbr>Testing</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-static"><a href="idgenerator.html#newsession" class="tsd-kind-icon">new<wbr>Session</a></li>
 							</ul>
 						</section>
 					</div>
 				</section>
 			</section>
-			<section class="tsd-panel-group tsd-member-group ">
+			<section class="tsd-panel-group tsd-member-group tsd-is-private tsd-is-private-protected">
 				<h2>Constructors</h2>
-				<section class="tsd-panel tsd-member tsd-kind-constructor tsd-parent-kind-class">
+				<section class="tsd-panel tsd-member tsd-kind-constructor tsd-parent-kind-class tsd-is-private">
 					<a name="constructor" class="tsd-anchor"></a>
-					<h3>constructor</h3>
-					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">new <wbr>Id<span class="tsd-signature-symbol">(</span>root<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, idTree<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="id.html" class="tsd-signature-type">Id</a></li>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> constructor</h3>
+					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class tsd-is-private">
+						<li class="tsd-signature tsd-kind-icon">new <wbr>IdGenerator<span class="tsd-signature-symbol">(</span>currentSessionId<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="idgenerator.html" class="tsd-signature-type">IdGenerator</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/adf9faa/src/runtime/id.ts#L66">runtime/id.ts:66</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/adf9faa/src/runtime/id.ts#L19">runtime/id.ts:19</a></li>
 								</ul>
 							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Use the newSession factory method instead.</p>
+								</div>
+							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>root: <span class="tsd-signature-type">string</span></h5>
-								</li>
-								<li>
-									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> idTree: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> =&nbsp;[]</span></h5>
+									<h5>currentSessionId: <span class="tsd-signature-type">string</span></h5>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <a href="id.html" class="tsd-signature-type">Id</a></h4>
+							<h4 class="tsd-returns-title">Returns <a href="idgenerator.html" class="tsd-signature-type">IdGenerator</a></h4>
 						</li>
 					</ul>
 				</section>
 			</section>
-			<section class="tsd-panel-group tsd-member-group ">
+			<section class="tsd-panel-group tsd-member-group tsd-is-private tsd-is-private-protected">
 				<h2>Properties</h2>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
-					<a name="idtree" class="tsd-anchor"></a>
-					<h3>id<wbr>Tree</h3>
-					<div class="tsd-signature tsd-kind-icon">id<wbr>Tree<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> =&nbsp;[]</span></div>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private">
+					<a name="_currentsessionid" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> _current<wbr>Session<wbr>Id</h3>
+					<div class="tsd-signature tsd-kind-icon">_current<wbr>Session<wbr>Id<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/adf9faa/src/runtime/id.ts#L66">runtime/id.ts:66</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/adf9faa/src/runtime/id.ts#L18">runtime/id.ts:18</a></li>
 						</ul>
 					</aside>
-					<div class="tsd-comment tsd-typography">
-						<div class="lead">
-							<p>The components of the idTree.</p>
-						</div>
-					</div>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
-					<a name="root" class="tsd-anchor"></a>
-					<h3>root</h3>
-					<div class="tsd-signature tsd-kind-icon">root<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private">
+					<a name="_nextcomponentid" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> _next<wbr>Component<wbr>Id</h3>
+					<div class="tsd-signature tsd-kind-icon">_next<wbr>Component<wbr>Id<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> =&nbsp;0</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/adf9faa/src/runtime/id.ts#L63">runtime/id.ts:63</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/adf9faa/src/runtime/id.ts#L19">runtime/id.ts:19</a></li>
 						</ul>
 					</aside>
-					<div class="tsd-comment tsd-typography">
-						<div class="lead">
-							<p>The Session ID of the session during which the ID got created. See IdGenerator class.</p>
-						</div>
-					</div>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group ">
+				<h2>Accessors</h2>
+				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class">
+					<a name="currentsessionidfortesting" class="tsd-anchor"></a>
+					<h3>current<wbr>Session<wbr>IdFor<wbr>Testing</h3>
+					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> currentSessionIdForTesting<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/adf9faa/src/runtime/id.ts#L50">runtime/id.ts:50</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
+						</li>
+					</ul>
 				</section>
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Methods</h2>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
-					<a name="equal" class="tsd-anchor"></a>
-					<h3>equal</h3>
+					<a name="createchildid" class="tsd-anchor"></a>
+					<h3>create<wbr>Child<wbr>Id</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">equal<span class="tsd-signature-symbol">(</span>id<span class="tsd-signature-symbol">: </span><a href="id.html" class="tsd-signature-type">Id</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
+						<li class="tsd-signature tsd-kind-icon">create<wbr>Child<wbr>Id<span class="tsd-signature-symbol">(</span>parentId<span class="tsd-signature-symbol">: </span><a href="id.html" class="tsd-signature-type">Id</a>, subcomponent<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="id.html" class="tsd-signature-type">Id</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/adf9faa/src/runtime/id.ts#L95">runtime/id.ts:95</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/adf9faa/src/runtime/id.ts#L44">runtime/id.ts:44</a></li>
 								</ul>
 							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Creates a new ID, as a child of the given parentId. The given subcomponent will be appended to the component hierarchy of the given ID, but
+									the generator&#39;s random session ID will be used as the ID&#39;s root.</p>
+								</div>
+							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>id: <a href="id.html" class="tsd-signature-type">Id</a></h5>
+									<h5>parentId: <a href="id.html" class="tsd-signature-type">Id</a></h5>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> subcomponent: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> =&nbsp;&quot;&quot;</span></h5>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
-						</li>
-					</ul>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
-					<a name="idtreeasstring" class="tsd-anchor"></a>
-					<h3>id<wbr>Tree<wbr>AsString</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">id<wbr>Tree<wbr>AsString<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/adf9faa/src/runtime/id.ts#L91">runtime/id.ts:91</a></li>
-								</ul>
-							</aside>
-							<div class="tsd-comment tsd-typography">
-								<div class="lead">
-									<p>Returns the idTree as as string (without the root).</p>
-								</div>
-							</div>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
-						</li>
-					</ul>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
-					<a name="tostring" class="tsd-anchor"></a>
-					<h3>to<wbr>String</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">to<wbr>String<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/adf9faa/src/runtime/id.ts#L86">runtime/id.ts:86</a></li>
-								</ul>
-							</aside>
-							<div class="tsd-comment tsd-typography">
-								<div class="lead">
-									<p>Returns the full ID string.</p>
-								</div>
-							</div>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
+							<h4 class="tsd-returns-title">Returns <a href="id.html" class="tsd-signature-type">Id</a></h4>
 						</li>
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-static">
-					<a name="fromstring" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagStatic">Static</span> from<wbr>String</h3>
+					<a name="createwithsessionidfortesting" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagStatic">Static</span> create<wbr>With<wbr>Session<wbr>IdFor<wbr>Testing</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-static">
-						<li class="tsd-signature tsd-kind-icon">from<wbr>String<span class="tsd-signature-symbol">(</span>str<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="id.html" class="tsd-signature-type">Id</a></li>
+						<li class="tsd-signature tsd-kind-icon">create<wbr>With<wbr>Session<wbr>IdFor<wbr>Testing<span class="tsd-signature-symbol">(</span>sessionId<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="idgenerator.html" class="tsd-signature-type">IdGenerator</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/adf9faa/src/runtime/id.ts#L73">runtime/id.ts:73</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/adf9faa/src/runtime/id.ts#L36">runtime/id.ts:36</a></li>
 								</ul>
 							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Intended only for testing the IdGenerator class itself. Lets you specify the session ID manually. Prefer using the real
+									IdGenerator.newSession() method when testing other classes.</p>
+								</div>
+							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>str: <span class="tsd-signature-type">string</span></h5>
+									<h5>sessionId: <span class="tsd-signature-type">string</span></h5>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <a href="id.html" class="tsd-signature-type">Id</a></h4>
+							<h4 class="tsd-returns-title">Returns <a href="idgenerator.html" class="tsd-signature-type">IdGenerator</a></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-static">
+					<a name="newsession" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagStatic">Static</span> new<wbr>Session</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-static">
+						<li class="tsd-signature tsd-kind-icon">new<wbr>Session<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="idgenerator.html" class="tsd-signature-type">IdGenerator</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/adf9faa/src/runtime/id.ts#L27">runtime/id.ts:27</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Generates a new random session ID to use when creating new IDs.</p>
+								</div>
+							</div>
+							<h4 class="tsd-returns-title">Returns <a href="idgenerator.html" class="tsd-signature-type">IdGenerator</a></h4>
 						</li>
 					</ul>
 				</section>
@@ -281,28 +290,28 @@
 				</ul>
 				<ul class="current">
 					<li class="current tsd-kind-class">
-						<a href="id.html" class="tsd-kind-icon">Id</a>
+						<a href="idgenerator.html" class="tsd-kind-icon">Id<wbr>Generator</a>
 						<ul>
-							<li class=" tsd-kind-constructor tsd-parent-kind-class">
-								<a href="id.html#constructor" class="tsd-kind-icon">constructor</a>
+							<li class=" tsd-kind-constructor tsd-parent-kind-class tsd-is-private">
+								<a href="idgenerator.html#constructor" class="tsd-kind-icon">constructor</a>
 							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class">
-								<a href="id.html#idtree" class="tsd-kind-icon">id<wbr>Tree</a>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
+								<a href="idgenerator.html#_currentsessionid" class="tsd-kind-icon">_current<wbr>Session<wbr>Id</a>
 							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class">
-								<a href="id.html#root" class="tsd-kind-icon">root</a>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
+								<a href="idgenerator.html#_nextcomponentid" class="tsd-kind-icon">_next<wbr>Component<wbr>Id</a>
 							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class">
-								<a href="id.html#equal" class="tsd-kind-icon">equal</a>
-							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class">
-								<a href="id.html#idtreeasstring" class="tsd-kind-icon">id<wbr>Tree<wbr>AsString</a>
+							<li class=" tsd-kind-get-signature tsd-parent-kind-class">
+								<a href="idgenerator.html#currentsessionidfortesting" class="tsd-kind-icon">current<wbr>Session<wbr>IdFor<wbr>Testing</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
-								<a href="id.html#tostring" class="tsd-kind-icon">to<wbr>String</a>
+								<a href="idgenerator.html#createchildid" class="tsd-kind-icon">create<wbr>Child<wbr>Id</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-static">
-								<a href="id.html#fromstring" class="tsd-kind-icon">from<wbr>String</a>
+								<a href="idgenerator.html#createwithsessionidfortesting" class="tsd-kind-icon">create<wbr>With<wbr>Session<wbr>IdFor<wbr>Testing</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-static">
+								<a href="idgenerator.html#newsession" class="tsd-kind-icon">new<wbr>Session</a>
 							</li>
 						</ul>
 					</li>

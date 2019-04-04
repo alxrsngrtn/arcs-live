@@ -8,18 +8,22 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { Handle } from './handle.js';
+import { Id, IdGenerator } from './id.js';
 import { Loader } from './loader.js';
 import { ParticleSpec } from './particle-spec.js';
 import { StorageProxy } from './storage-proxy.js';
+import { MessagePort } from './message-channel.js';
+export declare type PecFactory = (pecId: Id, idGenerator: IdGenerator) => MessagePort;
 export declare class ParticleExecutionContext {
     private apiPort;
     private particles;
-    private idBase;
+    private readonly pecId;
+    private readonly idGenerator;
     private loader;
     private pendingLoads;
     private scheduler;
     private keyedProxies;
-    constructor(port: any, idBase: string, loader: Loader);
+    constructor(port: any, pecId: Id, idGenerator: IdGenerator, loader: Loader);
     generateID(): string;
     innerArcHandle(arcId: string, particleId: string): {
         createHandle(type: any, name: any, hostParticle: any): Promise<{}>;

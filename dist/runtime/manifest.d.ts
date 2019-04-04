@@ -7,7 +7,7 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-import { Id } from './id.js';
+import { Id, IdGenerator } from './id.js';
 import { InterfaceInfo } from './interface-info.js';
 import { ManifestMeta } from './manifest-meta.js';
 import { ParticleSpec } from './particle-spec.js';
@@ -44,6 +44,7 @@ export declare class Manifest {
     storeTags: Map<StorageProviderBase | StorageStub, string[]>;
     private _fileName;
     private readonly _id;
+    private readonly _idGenerator;
     private _storageProviderFactory;
     private _meta;
     private _resources;
@@ -117,5 +118,6 @@ export declare class Manifest {
     static _createStore(manifest: any, type: any, name: any, id: any, tags: any, item: any, originalId: any): Promise<any>;
     _newRecipe(name: any): Recipe;
     toString(options?: any): string;
+    readonly idGeneratorForTesting: IdGenerator;
 }
 export {};

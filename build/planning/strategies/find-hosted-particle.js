@@ -21,7 +21,7 @@ export class FindHostedParticle extends Strategy {
                 for (const particleSpec of matchingParticleSpecs) {
                     results.push((recipe, particle, connectionSpec) => {
                         const handleConnection = particle.addConnectionName(connectionSpec.name);
-                        const handle = RecipeUtil.constructImmediateValueHandle(handleConnection, particleSpec, arc.generateID());
+                        const handle = RecipeUtil.constructImmediateValueHandle(handleConnection, particleSpec, arc.generateID().toString());
                         assert(handle); // Type matching should have been ensure by the checks above;
                         handleConnection.connectToHandle(handle);
                     });

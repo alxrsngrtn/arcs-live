@@ -1036,9 +1036,10 @@ ${particleStr1}
         const manifest = await Manifest.load('the.manifest', loader);
         const store = manifest.findStoreByName('Store0');
         assert(store);
+        const sessionId = manifest.idGeneratorForTesting.currentSessionIdForTesting;
         assert.deepEqual(await store.toList(), [
             {
-                id: '!manifest:the.manifest::0',
+                id: `!${sessionId}:the.manifest::0`,
                 rawData: { someProp: 'someValue' },
             }, {
                 id: 'entity-id',
@@ -1079,10 +1080,11 @@ Error parsing JSON from 'EntityList' (Unexpected token h in JSON at position 1)'
     `, { fileName: 'the.manifest' });
         const store = manifest.findStoreByName('Store0');
         assert(store);
+        const sessionId = manifest.idGeneratorForTesting.currentSessionIdForTesting;
         // TODO(shans): address as part of storage refactor
         assert.deepEqual(await store.toList(), [
             {
-                id: '!manifest:the.manifest::0',
+                id: `!${sessionId}:the.manifest::0`,
                 rawData: { someProp: 'someValue' },
             }, {
                 id: 'entity-id',

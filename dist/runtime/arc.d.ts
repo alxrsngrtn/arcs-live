@@ -7,9 +7,8 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-import { PECInnerPort } from './api-channel.js';
 import { ArcDebugListenerDerived } from './debug/abstract-devtools-channel.js';
-import { Id } from './id.js';
+import { Id, IdGenerator } from './id.js';
 import { Loader } from './loader.js';
 import { Manifest, StorageStub } from './manifest.js';
 import { Modality } from './modality.js';
@@ -23,10 +22,11 @@ import { SlotComposer } from './slot-composer.js';
 import { StorageProviderBase } from './storage/storage-provider-base.js';
 import { StorageProviderFactory } from './storage/storage-provider-factory.js';
 import { Type } from './type.js';
+import { PecFactory } from './particle-execution-context.js';
 declare type ArcOptions = {
     id: string;
     context: Manifest;
-    pecFactory?: (id: string) => PECInnerPort;
+    pecFactory?: PecFactory;
     slotComposer?: SlotComposer;
     loader: Loader;
     storageKey?: string;
@@ -38,7 +38,7 @@ declare type ArcOptions = {
 };
 declare type DeserializeArcOptions = {
     serialization: string;
-    pecFactory?: (id: string) => PECInnerPort;
+    pecFactory?: PecFactory;
     slotComposer?: SlotComposer;
     loader: Loader;
     fileName: string;
@@ -74,6 +74,7 @@ export declare class Arc {
     private innerArcsByParticle;
     private readonly listenerClasses;
     readonly id: Id;
+    private readonly idGenerator;
     loadedParticleInfo: Map<string, {
         spec: ParticleSpec;
         stores: Map<string, StorageProviderBase>;
@@ -110,7 +111,7 @@ export declare class Arc {
     }[];
     loadedParticleSpecs(): ParticleSpec[];
     _instantiateParticle(recipeParticle: Particle): void;
-    generateID(component?: string): string;
+    generateID(component?: string): Id;
     readonly _stores: (StorageProviderBase)[];
     cloneForSpeculativeExecution(): Promise<Arc>;
     instantiate(recipe: Recipe): Promise<void>;
@@ -132,5 +133,6 @@ export declare class Arc {
     keyForId(id: string): string;
     toContextString(options: any): string;
     readonly apiChannelMappingId: string;
+    readonly idGeneratorForTesting: IdGenerator;
 }
 export {};

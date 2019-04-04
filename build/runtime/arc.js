@@ -10,7 +10,7 @@
 import { assert } from '../platform/assert-web.js';
 import { ArcDebugHandler } from './debug/arc-debug-handler.js';
 import { FakePecFactory } from './fake-pec-factory.js';
-import { Id } from './id.js';
+import { Id, IdGenerator } from './id.js';
 import { Manifest, StorageStub } from './manifest.js';
 import { ParticleExecutionHost } from './particle-execution-host.js';
 import { Handle } from './recipe/handle.js';
@@ -34,20 +34,20 @@ export class Arc {
         this.storeDescriptions = new Map();
         this.instantiatePlanCallbacks = [];
         this.innerArcsByParticle = new Map();
+        this.idGenerator = IdGenerator.newSession();
         this.loadedParticleInfo = new Map();
         // TODO: context should not be optional.
         this._context = context || new Manifest({ id });
         // TODO: pecFactory should not be optional. update all callers and fix here.
         this.pecFactory = pecFactory || FakePecFactory(loader).bind(null);
-        // for now, every Arc gets its own session
-        this.id = Id.newSessionId().fromString(id);
+        this.id = Id.fromString(id);
         this.isSpeculative = !!speculative; // undefined => false
         this.isInnerArc = !!innerArc; // undefined => false
         this.isStub = !!stub;
         this._loader = loader;
         this.storageKey = storageKey;
         const pecId = this.generateID();
-        const innerPecPort = this.pecFactory(pecId);
+        const innerPecPort = this.pecFactory(pecId, this.idGenerator);
         this.pec = new ParticleExecutionHost(innerPecPort, slotComposer, this);
         this.storageProviderFactory = storageProviderFactory || new StorageProviderFactory(this.id);
         this.listenerClasses = listenerClasses;
@@ -328,7 +328,7 @@ ${this.activeRecipe.toString()}`;
         return [...this.loadedParticleInfo.values()].map(({ spec }) => spec);
     }
     _instantiateParticle(recipeParticle) {
-        recipeParticle.id = this.generateID('particle');
+        recipeParticle.id = this.generateID('particle').toString();
         const info = { spec: recipeParticle.spec, stores: new Map() };
         this.loadedParticleInfo.set(recipeParticle.id, info);
         for (const [name, connection] of Object.entries(recipeParticle.connections)) {
@@ -340,7 +340,7 @@ ${this.activeRecipe.toString()}`;
         this.pec.instantiate(recipeParticle, info.stores);
     }
     generateID(component = '') {
-        return this.id.createId(component).toString();
+        return this.idGenerator.createChildId(this.id, component);
     }
     get _stores() {
         return [...this.storesById.values()];
@@ -391,7 +391,7 @@ ${this.activeRecipe.toString()}`;
         this._recipeDeltas.push({ particles, handles, slots, patterns: recipe.patterns });
         // TODO(mmandlis): Get rid of populating the missing local slot IDs here,
         // it should be done at planning stage.
-        slots.forEach(slot => slot.id = slot.id || `slotid-${this.generateID()}`);
+        slots.forEach(slot => slot.id = slot.id || `slotid-${this.generateID().toString()}`);
         for (const recipeHandle of handles) {
             if (['copy', 'create'].includes(recipeHandle.fate)) {
                 let type = recipeHandle.type;
@@ -400,7 +400,7 @@ ${this.activeRecipe.toString()}`;
                 }
                 type = type.resolvedType();
                 assert(type.isResolved(), `Can't create handle for unresolved type ${type}`);
-                const newStore = await this.createStore(type, /* name= */ null, this.generateID(), recipeHandle.tags, recipeHandle.immediateValue ? 'volatile' : null);
+                const newStore = await this.createStore(type, /* name= */ null, this.generateID().toString(), recipeHandle.tags, recipeHandle.immediateValue ? 'volatile' : null);
                 if (recipeHandle.immediateValue) {
                     const particleSpec = recipeHandle.immediateValue;
                     const type = recipeHandle.type;
@@ -469,7 +469,7 @@ ${this.activeRecipe.toString()}`;
             type = new CollectionType(type);
         }
         if (id == undefined) {
-            id = this.generateID();
+            id = this.generateID().toString();
         }
         if (storageKey == undefined && this.storageKey) {
             storageKey =
@@ -613,6 +613,9 @@ ${this.activeRecipe.toString()}`;
     }
     get apiChannelMappingId() {
         return this.id.toString();
+    }
+    get idGeneratorForTesting() {
+        return this.idGenerator;
     }
 }
 //# sourceMappingURL=arc.js.map

@@ -12,12 +12,12 @@ import { StubLoader } from './testing/stub-loader.js';
 // TODO: Make this generic so that it can also be used in-browser, or add a
 // separate in-process browser pec-factory.
 export function FakePecFactory(loader) {
-    return (id) => {
+    return (pecId, idGenerator) => {
         const channel = new MessageChannel();
         // Each PEC should get its own loader. Only a StubLoader knows how to be cloned,
         // so its either a clone of a Stub or a new Loader.
         const loaderToUse = loader instanceof StubLoader ? loader.clone() : new Loader();
-        const pec = new ParticleExecutionContext(channel.port1, `${id}:inner`, loaderToUse);
+        const pec = new ParticleExecutionContext(channel.port1, pecId, idGenerator, loaderToUse);
         return channel.port2;
     };
 }

@@ -1,9 +1,19 @@
-commit dd625432d481e3af397e54e9918b9ecd01711f0c
-Author: Scott J. Miles <sjmiles@google.com>
-Date:   Wed Apr 3 13:10:02 2019 -0700
+commit adf9faa22824ec74744e1acd3886d5ba27f7af48
+Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
+Date:   Thu Apr 4 14:34:22 2019 +1100
 
-    Pipes deploy improvements (#2835)
+    Moves the ID-creating code out of Id and into a new class: IdGenerator (#2839)
     
-    * simplify node deployment
+    * Created a new IdGenerator class, and uses it when creating new IDs.
     
-    * keep process alive (until killed externally)
+    * Hook up the IdGenerator
+    
+    * Fixed failing unit tests
+    
+    * Delete fake-random.ts, it's not needed
+    
+    * Revert random.ts
+    
+    * Added unit tests for Id and IdGenerator
+    
+    * Fixed shell

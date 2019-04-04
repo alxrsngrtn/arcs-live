@@ -12758,55 +12758,78 @@ class Random {
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-// Id consists of 2 component: a session and an idTree.
-class Id {
-    constructor(currentSession, components = []) {
-        this.nextIdComponent = 0;
-        this.components = [];
-        this.session = currentSession;
-        this.currentSession = currentSession;
-        this.components = components;
+/**
+ * Generates new IDs which are rooted in the current session. Only one IdGenerator should be instantiated for each running Arc, and all of the
+ * IDs created should be created using that same IdGenerator instance.
+ */
+class IdGenerator {
+    /** Use the newSession factory method instead. */
+    constructor(currentSessionId) {
+        this._nextComponentId = 0;
+        this._currentSessionId = currentSessionId;
     }
-    static newSessionId() {
-        const session = Math.floor(Random.next() * Math.pow(2, 50)) + '';
-        return new Id(session);
+    /** Generates a new random session ID to use when creating new IDs. */
+    static newSession() {
+        const sessionId = Math.floor(Random.next() * Math.pow(2, 50)) + '';
+        return new IdGenerator(sessionId);
     }
     /**
-     * When used in the following way:
-     *   const id = Id.newSessionId().fromString(stringId);
-     *
-     * The resulting id will receive a newly generated session id in the currentSession field,
-     * while maintaining an original session from the string representation in the session field.
+     * Intended only for testing the IdGenerator class itself. Lets you specify the session ID manually. Prefer using the real
+     * IdGenerator.newSession() method when testing other classes.
      */
-    fromString(str) {
-        const newId = new Id(this.currentSession);
-        let components = str.split(':');
-        if (components[0][0] === '!') {
-            newId.session = components[0].slice(1);
-            components = components.slice(1);
+    static createWithSessionIdForTesting(sessionId) {
+        return new IdGenerator(sessionId);
+    }
+    /**
+     * Creates a new ID, as a child of the given parentId. The given subcomponent will be appended to the component hierarchy of the given ID, but
+     * the generator's random session ID will be used as the ID's root.
+     */
+    createChildId(parentId, subcomponent = '') {
+        // Append (and increment) a counter to the subcomponent, to ensure that it is unique.
+        subcomponent += this._nextComponentId++;
+        return new Id(this._currentSessionId, [...parentId.idTree, subcomponent]);
+    }
+    get currentSessionIdForTesting() {
+        return this._currentSessionId;
+    }
+}
+/**
+ * An immutable object consisting of two components: a root, and an idTree. The root is the session ID from the particular session in which the
+ * ID was constructed (see the IdGenerator class). The idTree is a list of subcomponents, forming a hierarchy of IDs (child IDs are created by
+ * appending subcomponents to their parent ID's idTree).
+ */
+class Id {
+    constructor(root, idTree = []) {
+        /** The components of the idTree. */
+        this.idTree = [];
+        this.root = root;
+        this.idTree = idTree;
+    }
+    static fromString(str) {
+        const bits = str.split(':');
+        if (bits[0].startsWith('!')) {
+            const root = bits[0].slice(1);
+            const idTree = bits.slice(1).filter(component => component.length > 0);
+            return new Id(root, idTree);
         }
-        newId.components.push(...components);
-        return newId;
+        else {
+            return new Id('', bits);
+        }
     }
-    // Returns the full Id string.
+    /** Returns the full ID string. */
     toString() {
-        return `!${this.session}:${this.components.join(':')}`;
+        return `!${this.root}:${this.idTree.join(':')}`;
     }
-    // Returns the idTree as string (without the session component).
+    /** Returns the idTree as as string (without the root). */
     idTreeAsString() {
-        return this.components.join(':');
-    }
-    createId(component = '') {
-        const id = new Id(this.currentSession, this.components.slice());
-        id.components.push(component + this.nextIdComponent++);
-        return id;
+        return this.idTree.join(':');
     }
     equal(id) {
-        if (id.session !== this.session || id.components.length !== this.components.length) {
+        if (id.root !== this.root || id.idTree.length !== this.idTree.length) {
             return false;
         }
-        for (let i = 0; i < id.components.length; i++) {
-            if (id.components[i] !== this.components[i]) {
+        for (let i = 0; i < id.idTree.length; i++) {
+            if (id.idTree[i] !== this.idTree[i]) {
                 return false;
             }
         }
@@ -16170,6 +16193,8 @@ class Manifest {
         this._interfaces = [];
         this.storeTags = new Map();
         this._fileName = null;
+        // TODO(csilvestrini): Inject an IdGenerator instance instead of creating a new one.
+        this._idGenerator = IdGenerator.newSession();
         this._storageProviderFactory = undefined;
         this._meta = new ManifestMeta();
         this._resources = {};
@@ -16190,7 +16215,7 @@ class Manifest {
     }
     get id() {
         if (this._meta.name) {
-            return Id.newSessionId().fromString(this._meta.name);
+            return Id.fromString(this._meta.name);
         }
         return this._id;
     }
@@ -16346,7 +16371,7 @@ class Manifest {
     }
     // TODO: Unify ID handling to use ID instances, not strings. Change return type here to ID.
     generateID() {
-        return this.id.createId().toString();
+        return this._idGenerator.createChildId(this.id).toString();
     }
     static async load(fileName, loader, options) {
         options = options || {};
@@ -17203,6 +17228,9 @@ ${e.message}
             results.push(store.toString(this.storeTags.get(store).map(a => `#${a}`)));
         });
         return results.join('\n');
+    }
+    get idGeneratorForTesting() {
+        return this._idGenerator;
     }
 }
 
@@ -20848,7 +20876,7 @@ class StorageProxyScheduler {
  * http://polymer.github.io/PATENTS.txt
  */
 class ParticleExecutionContext {
-    constructor(port, idBase, loader) {
+    constructor(port, pecId, idGenerator, loader) {
         this.particles = [];
         this.pendingLoads = [];
         this.scheduler = new StorageProxyScheduler();
@@ -20909,7 +20937,8 @@ class ParticleExecutionContext {
                 particle.removeSlotProxy(slotName);
             }
         }(port);
-        this.idBase = Id.newSessionId().fromString(idBase);
+        this.pecId = pecId;
+        this.idGenerator = idGenerator;
         this.loader = loader;
         loader.setParticleExecutionContext(this);
         /*
@@ -20924,7 +20953,7 @@ class ParticleExecutionContext {
          */
     }
     generateID() {
-        return this.idBase.createId().toString();
+        return this.idGenerator.createChildId(this.pecId).toString();
     }
     innerArcHandle(arcId, particleId) {
         const pec = this;
@@ -21084,12 +21113,12 @@ class StubLoader extends Loader {
 // TODO: Make this generic so that it can also be used in-browser, or add a
 // separate in-process browser pec-factory.
 function FakePecFactory(loader) {
-    return (id) => {
+    return (pecId, idGenerator) => {
         const channel = new MessageChannel();
         // Each PEC should get its own loader. Only a StubLoader knows how to be cloned,
         // so its either a clone of a Stub or a new Loader.
         const loaderToUse = loader instanceof StubLoader ? loader.clone() : new Loader();
-        const pec = new ParticleExecutionContext(channel.port1, `${id}:inner`, loaderToUse);
+        const pec = new ParticleExecutionContext(channel.port1, pecId, idGenerator, loaderToUse);
         return channel.port2;
     };
 }
@@ -21918,20 +21947,20 @@ class Arc {
         this.storeDescriptions = new Map();
         this.instantiatePlanCallbacks = [];
         this.innerArcsByParticle = new Map();
+        this.idGenerator = IdGenerator.newSession();
         this.loadedParticleInfo = new Map();
         // TODO: context should not be optional.
         this._context = context || new Manifest({ id });
         // TODO: pecFactory should not be optional. update all callers and fix here.
         this.pecFactory = pecFactory || FakePecFactory(loader).bind(null);
-        // for now, every Arc gets its own session
-        this.id = Id.newSessionId().fromString(id);
+        this.id = Id.fromString(id);
         this.isSpeculative = !!speculative; // undefined => false
         this.isInnerArc = !!innerArc; // undefined => false
         this.isStub = !!stub;
         this._loader = loader;
         this.storageKey = storageKey;
         const pecId = this.generateID();
-        const innerPecPort = this.pecFactory(pecId);
+        const innerPecPort = this.pecFactory(pecId, this.idGenerator);
         this.pec = new ParticleExecutionHost(innerPecPort, slotComposer, this);
         this.storageProviderFactory = storageProviderFactory || new StorageProviderFactory(this.id);
         this.listenerClasses = listenerClasses;
@@ -22212,7 +22241,7 @@ ${this.activeRecipe.toString()}`;
         return [...this.loadedParticleInfo.values()].map(({ spec }) => spec);
     }
     _instantiateParticle(recipeParticle) {
-        recipeParticle.id = this.generateID('particle');
+        recipeParticle.id = this.generateID('particle').toString();
         const info = { spec: recipeParticle.spec, stores: new Map() };
         this.loadedParticleInfo.set(recipeParticle.id, info);
         for (const [name, connection] of Object.entries(recipeParticle.connections)) {
@@ -22224,7 +22253,7 @@ ${this.activeRecipe.toString()}`;
         this.pec.instantiate(recipeParticle, info.stores);
     }
     generateID(component = '') {
-        return this.id.createId(component).toString();
+        return this.idGenerator.createChildId(this.id, component);
     }
     get _stores() {
         return [...this.storesById.values()];
@@ -22275,7 +22304,7 @@ ${this.activeRecipe.toString()}`;
         this._recipeDeltas.push({ particles, handles, slots, patterns: recipe.patterns });
         // TODO(mmandlis): Get rid of populating the missing local slot IDs here,
         // it should be done at planning stage.
-        slots.forEach(slot => slot.id = slot.id || `slotid-${this.generateID()}`);
+        slots.forEach(slot => slot.id = slot.id || `slotid-${this.generateID().toString()}`);
         for (const recipeHandle of handles) {
             if (['copy', 'create'].includes(recipeHandle.fate)) {
                 let type = recipeHandle.type;
@@ -22284,7 +22313,7 @@ ${this.activeRecipe.toString()}`;
                 }
                 type = type.resolvedType();
                 assert(type.isResolved(), `Can't create handle for unresolved type ${type}`);
-                const newStore = await this.createStore(type, /* name= */ null, this.generateID(), recipeHandle.tags, recipeHandle.immediateValue ? 'volatile' : null);
+                const newStore = await this.createStore(type, /* name= */ null, this.generateID().toString(), recipeHandle.tags, recipeHandle.immediateValue ? 'volatile' : null);
                 if (recipeHandle.immediateValue) {
                     const particleSpec = recipeHandle.immediateValue;
                     const type = recipeHandle.type;
@@ -22353,7 +22382,7 @@ ${this.activeRecipe.toString()}`;
             type = new CollectionType(type);
         }
         if (id == undefined) {
-            id = this.generateID();
+            id = this.generateID().toString();
         }
         if (storageKey == undefined && this.storageKey) {
             storageKey =
@@ -22498,6 +22527,9 @@ ${this.activeRecipe.toString()}`;
     get apiChannelMappingId() {
         return this.id.toString();
     }
+    get idGeneratorForTesting() {
+        return this.idGenerator;
+    }
 }
 
 /**
@@ -22571,9 +22603,9 @@ class PlatformLoader extends Loader {
 }
 
 const pecIndustry = loader => {
-    return id => {
+    return (pecId, idGenerator) => {
         const channel = new MessageChannel();
-        const _throwAway = new ParticleExecutionContext(channel.port1, `${id}:inner`, loader);
+        const _throwAway = new ParticleExecutionContext(channel.port1, pecId, idGenerator, loader);
         return channel.port2;
     };
 };
@@ -24137,7 +24169,7 @@ class FindHostedParticle extends Strategy {
                 for (const particleSpec of matchingParticleSpecs) {
                     results.push((recipe, particle, connectionSpec) => {
                         const handleConnection = particle.addConnectionName(connectionSpec.name);
-                        const handle = RecipeUtil.constructImmediateValueHandle(handleConnection, particleSpec, arc.generateID());
+                        const handle = RecipeUtil.constructImmediateValueHandle(handleConnection, particleSpec, arc.generateID().toString());
                         assert(handle); // Type matching should have been ensure by the checks above;
                         handleConnection.connectToHandle(handle);
                     });
@@ -25304,7 +25336,7 @@ class SlotComposer {
     createHostedSlot(innerArc, transformationParticle, transformationSlotName, storeId) {
         const transformationSlotConsumer = this.getSlotConsumer(transformationParticle, transformationSlotName);
         assert(transformationSlotConsumer, `Transformation particle ${transformationParticle.name} with consumed ${transformationSlotName} not found`);
-        const hostedSlotId = innerArc.generateID();
+        const hostedSlotId = innerArc.generateID().toString();
         this._contexts.push(new HostedSlotContext(hostedSlotId, transformationSlotConsumer, storeId));
         return hostedSlotId;
     }

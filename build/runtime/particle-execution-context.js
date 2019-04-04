@@ -10,11 +10,10 @@
 import { assert } from '../platform/assert-web.js';
 import { PECInnerPort } from './api-channel.js';
 import { handleFor } from './handle.js';
-import { Id } from './id.js';
 import { SlotProxy } from './slot-proxy.js';
 import { StorageProxy, StorageProxyScheduler } from './storage-proxy.js';
 export class ParticleExecutionContext {
-    constructor(port, idBase, loader) {
+    constructor(port, pecId, idGenerator, loader) {
         this.particles = [];
         this.pendingLoads = [];
         this.scheduler = new StorageProxyScheduler();
@@ -75,7 +74,8 @@ export class ParticleExecutionContext {
                 particle.removeSlotProxy(slotName);
             }
         }(port);
-        this.idBase = Id.newSessionId().fromString(idBase);
+        this.pecId = pecId;
+        this.idGenerator = idGenerator;
         this.loader = loader;
         loader.setParticleExecutionContext(this);
         /*
@@ -90,7 +90,7 @@ export class ParticleExecutionContext {
          */
     }
     generateID() {
-        return this.idBase.createId().toString();
+        return this.idGenerator.createChildId(this.pecId).toString();
     }
     innerArcHandle(arcId, particleId) {
         const pec = this;
