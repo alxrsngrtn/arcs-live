@@ -1,12 +1,7 @@
-commit 6f7152741276b19c40599ce1ee17788795f3234e
-Author: Paul Lindner <lindner@inuus.com>
-Date:   Thu Apr 4 17:05:02 2019 -0700
+commit f65c384ebf71eb6bda9daae38a141030fec4c1c6
+Author: raulverag <42563960+raulverag@users.noreply.github.com>
+Date:   Thu Apr 4 17:08:05 2019 -0700
 
-    Fix Pouch timing issues (#2834)
+    Committing to set aside current work in favour of leaner version Bernie wants. (#2841)
     
-    * Fix Pouch timing issues
-    
-    - Add initialization barriers in Constructor
-    - Switch toList() to use getMultiple() API instead of slow multiple gets
-    - Fix cloneFrom usage, wait for initialization and properly update the changed model.
-    - Deal with referenceMode changes.
+    Note that flowcheck.ts does not work.
