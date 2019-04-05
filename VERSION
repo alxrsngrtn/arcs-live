@@ -1,19 +1,12 @@
-commit adf9faa22824ec74744e1acd3886d5ba27f7af48
-Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
-Date:   Thu Apr 4 14:34:22 2019 +1100
+commit 6f7152741276b19c40599ce1ee17788795f3234e
+Author: Paul Lindner <lindner@inuus.com>
+Date:   Thu Apr 4 17:05:02 2019 -0700
 
-    Moves the ID-creating code out of Id and into a new class: IdGenerator (#2839)
+    Fix Pouch timing issues (#2834)
     
-    * Created a new IdGenerator class, and uses it when creating new IDs.
+    * Fix Pouch timing issues
     
-    * Hook up the IdGenerator
-    
-    * Fixed failing unit tests
-    
-    * Delete fake-random.ts, it's not needed
-    
-    * Revert random.ts
-    
-    * Added unit tests for Id and IdGenerator
-    
-    * Fixed shell
+    - Add initialization barriers in Constructor
+    - Switch toList() to use getMultiple() API instead of slow multiple gets
+    - Fix cloneFrom usage, wait for initialization and properly update the changed model.
+    - Deal with referenceMode changes.

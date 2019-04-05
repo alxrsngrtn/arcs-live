@@ -30,9 +30,11 @@ interface VariableStorage {
 export declare class PouchDbVariable extends PouchDbStorageProvider implements VariableStorageProvider {
     private _stored;
     private localKeyId;
+    private readonly initialized;
+    private resolveInitialized;
     constructor(type: Type, storageEngine: PouchDbStorage, name: string, id: string, key: string);
     backingType(): Type;
-    clone(): PouchDbVariable;
+    clone(): Promise<PouchDbVariable>;
     cloneFrom(handle: any): Promise<void>;
     /**
      * Returns the model data in a format suitable for transport over

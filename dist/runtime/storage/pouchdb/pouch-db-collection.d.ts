@@ -10,10 +10,12 @@ import { PouchDbStorageProvider } from './pouch-db-storage-provider.js';
 interface CollectionStorage {
     model: SerializedModelEntry[];
     version: number;
-    referenceMode: boolean;
+    referenceMode: boolean | null;
     type: TypeLiteral;
 }
 export declare class PouchDbCollection extends PouchDbStorageProvider implements CollectionStorageProvider {
+    private readonly initialized;
+    private resolveInitialized;
     /** The local synced model */
     private _model;
     /**
@@ -33,29 +35,14 @@ export declare class PouchDbCollection extends PouchDbStorageProvider implements
     /** @inheritDoc */
     modelForSynchronization(): Promise<{
         version: number;
-        model: {
-            id: any;
-            value: any;
-            keys: any;
-        }[];
+        model: any[];
     }>;
     /** @inheritDoc */
     toLiteral(): Promise<{
         version: number;
         model: SerializedModelEntry[];
     }>;
-    /**
-     * Populate this collection with a provided version/model
-     */
-    fromLiteral({ version, model }: {
-        version: any;
-        model: any;
-    }): void;
-    _toList(): Promise<{
-        id: any;
-        value: any;
-        keys: any;
-    }[]>;
+    private _toList;
     toList(): Promise<any[]>;
     /**
      * Returns an array of values for each of the specified ids.

@@ -10,27 +10,35 @@ export class PouchDbVariable extends PouchDbStorageProvider {
         this._stored = null;
         this.localKeyId = 0;
         this.backingStore = null;
+        this.initialized = new Promise(resolve => this.resolveInitialized = resolve);
         // Insure that there's a value stored.
-        this.db.get(this.pouchDbKey.location).catch((err) => {
+        this.db.get(this.pouchDbKey.location).then(() => {
+            this.resolveInitialized();
+        }).catch((err) => {
             if (err.name === 'not_found') {
                 this.db.put({
                     _id: this.pouchDbKey.location,
                     value: null,
                     version: 0,
                     referenceMode: this.referenceMode
-                }).catch((e) => { console.log('error init', e); });
+                }).then(() => {
+                    this.resolveInitialized();
+                }).catch((e) => {
+                    console.log('error init', e);
+                });
             }
         });
     }
     backingType() {
         return this.type;
     }
-    clone() {
+    async clone() {
         const variable = new PouchDbVariable(this.type, this.storageEngine, this.name, this.id, null);
-        variable.cloneFrom(this);
+        await variable.cloneFrom(this);
         return variable;
     }
     async cloneFrom(handle) {
+        await this.initialized;
         this.referenceMode = handle.referenceMode;
         const literal = await handle.toLiteral();
         if (this.referenceMode && literal.model.length > 0) {
@@ -54,6 +62,7 @@ export class PouchDbVariable extends PouchDbStorageProvider {
      * the API channel (i.e. between execution host and context).
      */
     async modelForSynchronization() {
+        await this.initialized;
         const value = await this.getStored();
         if (this.referenceMode && value !== null) {
             await this.ensureBackingStore();
@@ -70,6 +79,7 @@ export class PouchDbVariable extends PouchDbStorageProvider {
      * {version, model: [{id, value}]}
      */
     async toLiteral() {
+        await this.initialized;
         const value = await this.getStored();
         let model = [];
         if (value != null) {
@@ -90,6 +100,7 @@ export class PouchDbVariable extends PouchDbStorageProvider {
      * the data in the underlying Pouch Database.
      */
     async fromLiteral({ version, model }) {
+        await this.initialized;
         const value = model.length === 0 ? null : model[0].value;
         if (this.referenceMode && value && value.rawData) {
             assert(false, `shouldn't have rawData ${JSON.stringify(value.rawData)} here`);
@@ -104,12 +115,14 @@ export class PouchDbVariable extends PouchDbStorageProvider {
      * @return a promise containing the variable value or null if it does not exist.
      */
     async get() {
+        await this.initialized;
         try {
-            const value = await this.getStored();
+            let value = await this.getStored();
             if (this.referenceMode && value) {
                 await this.ensureBackingStore();
-                return await this.backingStore.get(value.id);
+                value = await this.backingStore.get(value.id);
             }
+            // logging goes here
             return value;
         }
         catch (err) {
@@ -126,6 +139,7 @@ export class PouchDbVariable extends PouchDbStorageProvider {
      */
     async set(value, originatorId = null, barrier = null) {
         assert(value !== undefined);
+        await this.initialized;
         if (this.referenceMode && value) {
             // Even if this value is identical to the previously written one,
             // we can't suppress an event here because we don't actually have
@@ -182,6 +196,7 @@ export class PouchDbVariable extends PouchDbStorageProvider {
      * @param barrier TBD
      */
     async clear(originatorId = null, barrier = null) {
+        await this.initialized;
         await this.set(null, originatorId, barrier);
     }
     /**
