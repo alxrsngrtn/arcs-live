@@ -38,7 +38,7 @@ export declare class DomParticleBase extends Particle {
     private slotNamesToModelReferences;
     private enhanceModelWithSlotIDs;
     _getStateArgs(): any[];
-    forceRenderTemplate(slotName: string): void;
+    forceRenderTemplate(slotName?: string): void;
     fireEvent(slotName: string, { handler, data }: {
         handler: any;
         data: any;

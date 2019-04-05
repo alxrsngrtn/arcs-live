@@ -1,5 +1,37 @@
-commit 1735a2dad86fcf1ecc6cf1a68a20a46e192af14a
-Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
-Date:   Fri Apr 5 11:57:36 2019 +1100
+commit 1ef9c0278a19d9cdcf2091381b5ae57ab1c0b888
+Author: Scott J. Miles <sjmiles@google.com>
+Date:   Thu Apr 4 18:47:20 2019 -0700
 
-    Updates Arc to accept an Id instead of a string (#2840)
+    Convert the remaining -dom- files to Typescript (#2833)
+    
+    * experimenting with typescript defuns
+    
+    * make it build
+    
+    * /js/ts
+    
+    * resolve linter issues
+    
+    * Sometimes `relevance` is just a number
+    
+    * allow forceRenderTemplate to be called with no arguments
+    
+    * remove unused import
+    
+    * ts fixes for dom-particle
+    
+    * fix minor formatting
+    
+    * fix minor formatting
+    
+    * forgot to `await`
+    
+    * make tslint happy
+    
+    * skip flaky test
+    
+    * fix format
+    
+    * make it clearer why the interface statements exist
+    
+    * punt setIfDirty (was deprecated)

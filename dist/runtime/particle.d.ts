@@ -19,7 +19,7 @@ export declare class Particle {
     static spec: ParticleSpec;
     spec: ParticleSpec;
     extraData: boolean;
-    relevances: Relevance[];
+    relevances: (Relevance | number)[];
     handles: Map<string, Handle>;
     private _idle;
     private _idleResolver;
@@ -83,7 +83,7 @@ export declare class Particle {
     constructInnerArc(): any;
     readonly busy: boolean;
     readonly idle: Promise<void>;
-    relevance: Relevance;
+    relevance: Relevance | number;
     startBusy(): void;
     doneBusy(): void;
     inputs(): HandleConnectionSpec[];

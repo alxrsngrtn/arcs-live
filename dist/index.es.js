@@ -18618,10 +18618,6 @@ const XenStateMixin = Base => class extends Base {
       return true;
     }
   }
-  // TODO(sjmiles): deprecated
-  _setIfDirty(object) {
-    return this._setState(object);
-  }
   _async(fn) {
     return Promise.resolve().then(fn.bind(this));
     //return setTimeout(fn.bind(this), 10);
@@ -18973,7 +18969,7 @@ class DomParticleBase extends Particle$1 {
     _getStateArgs() {
         return [];
     }
-    forceRenderTemplate(slotName) {
+    forceRenderTemplate(slotName = '') {
         this.slotProxiesByName.forEach((slot, name) => {
             if (!slotName || (name === slotName)) {
                 slot.requestedContentTypes.add('template');
@@ -19109,166 +19105,164 @@ class DomParticleBase extends Particle$1 {
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-
 /** @class DomParticle
  * Particle that interoperates with DOM and uses a simple state system
  * to handle updates.
  */
 class DomParticle extends XenStateMixin(DomParticleBase) {
-  constructor() {
-    super();
-    // alias properties to remove `_`
-    this.state = this._state;
-    this.props = this._props;
-  }
-  /** @method willReceiveProps(props, state, oldProps, oldState)
-   * Override if necessary, to do things when props change.
-   */
-  willReceiveProps() {
-  }
-  /** @method update(props, state, oldProps, oldState)
-   * Override if necessary, to modify superclass config.
-   */
-  update() {
-  }
-  /** @method shouldRender(props, state, oldProps, oldState)
-   * Override to return false if the Particle won't use
-   * it's slot.
-   */
-  shouldRender() {
-    return true;
-  }
-  /** @method render(props, state, oldProps, oldState)
-   * Override to return a dictionary to map into the template.
-   */
-  render() {
-    return {};
-  }
-  /** @method setState(state)
-   * Copy values from `state` into the particle's internal state,
-   * triggering an update cycle unless currently updating.
-   */
-  setState(state) {
-    return this._setState(state);
-  }
-  // TODO(sjmiles): deprecated, just use setState
-  setIfDirty(state) {
-    console.warn('DomParticle: `setIfDirty` is deprecated, please use `setState` instead');
-    return this._setState(state);
-  }
-  /** @method configureHandles(handles)
-   * This is called once during particle setup. Override to control sync and update
-   * configuration on specific handles (via their configure() method).
-   * `handles` is a map from names to handle instances.
-   */
-  configureHandles(handles) {
-    // Example: handles.get('foo').configure({keepSynced: false});
-  }
-  /** @method get config()
-   * Override if necessary, to modify superclass config.
-   */
-  get config() {
-    // TODO(sjmiles): getter that does work is a bad idea, this is temporary
-    return {
-      handleNames: this.spec.inputs.map(i => i.name),
-      // TODO(mmandlis): this.spec needs to be replaced with a particle-spec loaded from
-      // .manifest files, instead of .ptcl ones.
-      slotNames: [...this.spec.slotConnections.values()].map(s => s.name)
-    };
-  }
-  // affordances for aliasing methods to remove `_`
-  _willReceiveProps(...args) {
-    this.willReceiveProps(...args);
-  }
-  _update(...args) {
-    this.update(...args);
-    if (this.shouldRender(...args)) { // TODO: should shouldRender be slot specific?
-      this.relevance = 1; // TODO: improve relevance signal.
+    constructor() {
+        super();
+        // alias properties to remove `_`
+        this.state = this._state;
+        this.props = this._props;
     }
-    this.config.slotNames.forEach(s => this.renderSlot(s, ['model']));
-  }
-  //
-  // deprecated
-  get _views() {
-    console.warn(`Particle ${this.spec.name} uses deprecated _views getter.`);
-    return this.handles;
-  }
-  async setViews(views) {
-    console.warn(`Particle ${this.spec.name} uses deprecated setViews method.`);
-    return this.setHandles(views);
-  }
-  // end deprecated
-  //
-  async setHandles(handles) {
-    this.configureHandles(handles);
-    this.handles = handles;
-    this._handlesToSync = new Set();
-    for (const name of this.config.handleNames) {
-      const handle = handles.get(name);
-      if (handle && handle.options.keepSynced && handle.options.notifySync) {
-        this._handlesToSync.add(name);
-      }
+    /** @method willReceiveProps(props, state, oldProps, oldState)
+     * Override if necessary, to do things when props change.
+     */
+    willReceiveProps(...args) {
     }
-    // TODO(sjmiles): we must invalidate at least once, but we don't know if
-    // _handlesToProps will ever be called. If we wait we can avoid an extra
-    // invalidation, but then we potentially waste cycles.
-    //setTimeout(() => !this._hasProps && this._invalidate(), 20);
-    //this._invalidate();
-    // TODO(sjmiles): let's assume we will miss _handlesToProps if handlesToSync is empty
-    if (!this._handlesToSync.length) {
-      this._invalidate();
+    /** @method update(props, state, oldProps, oldState)
+     * Override if necessary, to modify superclass config.
+     */
+    update(...args) {
     }
-  }
-  async onHandleSync(handle, model) {
-    this._handlesToSync.delete(handle.name);
-    if (this._handlesToSync.size == 0) {
-      await this._handlesToProps();
+    /** @method shouldRender(props, state, oldProps, oldState)
+     * Override to return false if the Particle won't use
+     * it's slot.
+     */
+    shouldRender(...args) {
+        return true;
     }
-  }
-  async onHandleUpdate(handle, update) {
-    // TODO(sjmiles): debounce handles updates
-    const work = () => {
-      //console.warn(handle, update);
-      this._handlesToProps();
-    };
-    this._debounce('handleUpdateDebounce', work, 300);
-  }
-  async _handlesToProps() {
-    // convert handle data (array) into props (dictionary)
-    const props = Object.create(null);
-    // acquire list data from handles
-    const {handleNames} = this.config;
-    // data-acquisition is async
-    await Promise.all(handleNames.map(name => this._getNamedHandleData(props, name)));
-    this._hasProps = true;
-    this._setProps(props);
-  }
-  async _getNamedHandleData(dictionary, handleName) {
-    const handle = this.handles.get(handleName);
-    if (handle) {
-      // BigCollections map to the handle itself
-      const data = handle.toList ? await handle.toList() : handle.get ? await handle.get() : handle;
-      dictionary[handleName] = data;
+    /** @method render(props, state, oldProps, oldState)
+     * Override to return a dictionary to map into the template.
+     */
+    render(...args) {
+        return {};
     }
-  }
-  fireEvent(slotName, {handler, data}) {
-    if (this[handler]) {
-      // TODO(sjmiles): remove `this._state` parameter
-      this[handler]({data}, this._state);
+    /** @method setState(state)
+     * Copy values from `state` into the particle's internal state,
+     * triggering an update cycle unless currently updating.
+     */
+    setState(state) {
+        return this._setState(state);
     }
-  }
-  _debounce(key, func, delay) {
-    const subkey = `_debounce_${key}`;
-    if (!this._state[subkey]) {
-      this.startBusy();
+    /** @method configureHandles(handles)
+     * This is called once during particle setup. Override to control sync and update
+     * configuration on specific handles (via their configure() method).
+     * `handles` is a map from names to handle instances.
+     */
+    configureHandles(handles) {
+        // Example: handles.get('foo').configure({keepSynced: false});
     }
-    const idleThenFunc = () => {
-      this.doneBusy();
-      func();
-      this._state[subkey] = null;
-    };
-    super._debounce(key, idleThenFunc, delay);
-  }
+    /** @method get config()
+     * Override if necessary, to modify superclass config.
+     */
+    get config() {
+        // TODO(sjmiles): getter that does work is a bad idea, this is temporary
+        return {
+            handleNames: this.spec.inputs.map(i => i.name),
+            // TODO(mmandlis): this.spec needs to be replaced with a particle-spec loaded from
+            // .manifest files, instead of .ptcl ones.
+            slotNames: [...this.spec.slotConnections.values()].map(s => s.name)
+        };
+    }
+    // affordances for aliasing methods to remove `_`
+    _willReceiveProps(...args) {
+        this.willReceiveProps(...args);
+    }
+    _update(...args) {
+        this.update(...args);
+        if (this.shouldRender(...args)) { // TODO: should shouldRender be slot specific?
+            this.relevance = 1; // TODO: improve relevance signal.
+        }
+        this.config.slotNames.forEach(s => this.renderSlot(s, ['model']));
+    }
+    //
+    // deprecated
+    get _views() {
+        console.warn(`Particle ${this.spec.name} uses deprecated _views getter.`);
+        return this.handles;
+    }
+    async setViews(views) {
+        console.warn(`Particle ${this.spec.name} uses deprecated setViews method.`);
+        return this.setHandles(views);
+    }
+    // end deprecated
+    //
+    async setHandles(handles) {
+        this.configureHandles(handles);
+        this.handles = handles;
+        this._handlesToSync = new Set();
+        for (const name of this.config.handleNames) {
+            const handle = handles.get(name);
+            if (handle && handle.options.keepSynced && handle.options.notifySync) {
+                this._handlesToSync.add(name);
+            }
+        }
+        // TODO(sjmiles): we must invalidate at least once,
+        // let's assume we will miss _handlesToProps if handlesToSync is empty
+        if (!this._handlesToSync.length) {
+            this._invalidate();
+        }
+    }
+    async onHandleSync(handle, model) {
+        this._handlesToSync.delete(handle.name);
+        if (this._handlesToSync.size === 0) {
+            await this._handlesToProps();
+        }
+    }
+    async onHandleUpdate(handle, update) {
+        // TODO(sjmiles): debounce handles updates
+        const work = () => {
+            //console.warn(handle, update);
+            this._handlesToProps();
+        };
+        this._debounce('handleUpdateDebounce', work, 300);
+    }
+    async _handlesToProps() {
+        // convert handle data (array) into props (dictionary)
+        const props = Object.create(null);
+        // acquire list data from handles
+        const { handleNames } = this.config;
+        // data-acquisition is async
+        await Promise.all(handleNames.map(name => this._addNamedHandleData(props, name)));
+        // initialize properties
+        this._setProps(props);
+    }
+    async _addNamedHandleData(dictionary, handleName) {
+        const handle = this.handles.get(handleName);
+        if (handle) {
+            dictionary[handleName] = await this._getHandleData(handle);
+        }
+    }
+    async _getHandleData(handle) {
+        if (handle instanceof Collection) {
+            return await handle.toList();
+        }
+        if (handle instanceof Variable) {
+            return await handle.get();
+        }
+        // other types (e.g. BigCollections) map to the handle itself
+        return handle;
+    }
+    fireEvent(slotName, { handler, data }) {
+        if (this[handler]) {
+            // TODO(sjmiles): remove `this._state` parameter
+            this[handler]({ data }, this._state);
+        }
+    }
+    _debounce(key, func, delay) {
+        const subkey = `_debounce_${key}`;
+        if (!this._state[subkey]) {
+            this.startBusy();
+        }
+        const idleThenFunc = () => {
+            this.doneBusy();
+            func();
+            this._state[subkey] = null;
+        };
+        super._debounce(key, idleThenFunc, delay);
+    }
 }
 
 /**
@@ -19280,39 +19274,37 @@ class DomParticle extends XenStateMixin(DomParticleBase) {
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-
 /** @class TransformationDomParticle
  * Particle that does transformation stuff with DOM.
  */
 class TransformationDomParticle extends DomParticle {
-  getTemplate(slotName) {
-    // TODO: add support for multiple slots.
-    return this._state.template;
-  }
-  getTemplateName(slotName) {
-    // TODO: add support for multiple slots.
-    return this._state.templateName;
-  }
-  render(props, state) {
-    return state.renderModel;
-  }
-  shouldRender(props, state) {
-    return Boolean((state.template || state.templateName) && state.renderModel);
-  }
-
-  renderHostedSlot(slotName, hostedSlotId, content) {
-    this.combineHostedTemplate(slotName, hostedSlotId, content);
-    this.combineHostedModel(slotName, hostedSlotId, content);
-  }
-
-  // abstract
-  combineHostedTemplate(slotName, hostedSlotId, content) {}
-  combineHostedModel(slotName, hostedSlotId, content) {}
-
-  // Helper methods that may be reused in transformation particles to combine hosted content.
-  static propsToItems(propsValues) {
-    return propsValues ? propsValues.map(({rawData, id}) => Object.assign({}, rawData, {subId: id})) : [];
-  }
+    getTemplate(slotName) {
+        // TODO: add support for multiple slots.
+        return this._state.template;
+    }
+    getTemplateName(slotName) {
+        // TODO: add support for multiple slots.
+        return this._state.templateName;
+    }
+    render(props, state) {
+        return state.renderModel;
+    }
+    shouldRender(props, state) {
+        return Boolean((state.template || state.templateName) && state.renderModel);
+    }
+    renderHostedSlot(slotName, hostedSlotId, content) {
+        this.combineHostedTemplate(slotName, hostedSlotId, content);
+        this.combineHostedModel(slotName, hostedSlotId, content);
+    }
+    // abstract
+    combineHostedTemplate(slotName, hostedSlotId, content) {
+    }
+    combineHostedModel(slotName, hostedSlotId, content) {
+    }
+    // Helper methods that may be reused in transformation particles to combine hosted content.
+    static propsToItems(propsValues) {
+        return propsValues ? propsValues.map(({ rawData, id }) => (Object.assign({}, rawData, { subId: id }))) : [];
+    }
 }
 
 /**
@@ -19324,199 +19316,159 @@ class TransformationDomParticle extends DomParticle {
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-
 class MultiplexerDomParticle extends TransformationDomParticle {
-  constructor() {
-    super();
-    this._itemSubIdByHostedSlotId = new Map();
-    this._connByHostedConn = new Map();
-  }
-
-  async _mapParticleConnections(
-      listHandleName,
-      particleHandleName,
-      hostedParticle,
-      handles,
-      arc) {
-    const otherMappedHandles = [];
-    const otherConnections = [];
-    let index = 2;
-    const skipConnectionNames = [listHandleName, particleHandleName];
-    for (const [connectionName, otherHandle] of handles) {
-      if (skipConnectionNames.includes(connectionName)) {
-        continue;
-      }
-      // TODO(wkorman): For items with embedded recipes we may need a map
-      // (perhaps id to index) to make sure we don't map a handle into the inner
-      // arc multiple times unnecessarily.
-      otherMappedHandles.push(
-          `use '${await arc.mapHandle(otherHandle._proxy)}' as v${index}`);
-      const hostedOtherConnection = hostedParticle.handleConnections.find(
-          conn => conn.isCompatibleType(otherHandle.type));
-      if (hostedOtherConnection) {
-        otherConnections.push(`${hostedOtherConnection.name} = v${index++}`);
-        // TODO(wkorman): For items with embedded recipes where we may have a
-        // different particle rendering each item, we need to track
-        // |connByHostedConn| keyed on the particle type.
-        this._connByHostedConn.set(hostedOtherConnection.name, connectionName);
-      }
+    constructor() {
+        super();
+        this._itemSubIdByHostedSlotId = new Map();
+        this._connByHostedConn = new Map();
     }
-    return [otherMappedHandles, otherConnections];
-  }
-
-  async setHandles(handles) {
-    this.handleIds = {};
-    const arc = await this.constructInnerArc();
-    const listHandleName = 'list';
-    const particleHandleName = 'hostedParticle';
-    const particleHandle = handles.get(particleHandleName);
-    let hostedParticle = null;
-    let otherMappedHandles = [];
-    let otherConnections = [];
-    if (particleHandle) {
-      hostedParticle = await particleHandle.get();
-      if (hostedParticle) {
-        [otherMappedHandles, otherConnections] =
-            await this._mapParticleConnections(
-                listHandleName, particleHandleName, hostedParticle, handles, arc);
-      }
-    }
-    this.setState({
-      arc,
-      type: handles.get(listHandleName).type,
-      hostedParticle,
-      otherMappedHandles,
-      otherConnections
-    });
-
-    super.setHandles(handles);
-  }
-
-  async willReceiveProps(
-      {list},
-      {arc, type, hostedParticle, otherMappedHandles, otherConnections}) {
-    if (list.length > 0) {
-      this.relevance = 0.1;
-    }
-  
-    for (const [index, item] of this.getListEntries(list)) {
-      let resolvedHostedParticle = hostedParticle;
-      if (this.handleIds[item.id]) {
-        const itemHandle = await this.handleIds[item.id];
-        itemHandle.set(item);
-        continue;
-      }
-
-      const itemHandlePromise =
-          arc.createHandle(type.getContainedType(), 'item' + index);
-      this.handleIds[item.id] = itemHandlePromise;
-
-      const itemHandle = await itemHandlePromise;
-
-      if (!resolvedHostedParticle) {
-        // If we're muxing on behalf of an item with an embedded recipe, the
-        // hosted particle should be retrievable from the item itself. Else we
-        // just skip this item.
-        if (!item.renderParticleSpec) {
-          continue;
+    async _mapParticleConnections(listHandleName, particleHandleName, hostedParticle, handles, arc) {
+        const otherMappedHandles = [];
+        const otherConnections = [];
+        let index = 2;
+        const skipConnectionNames = [listHandleName, particleHandleName];
+        for (const [connectionName, otherHandle] of handles) {
+            if (skipConnectionNames.includes(connectionName)) {
+                continue;
+            }
+            // TODO(wkorman): For items with embedded recipes we may need a map
+            // (perhaps id to index) to make sure we don't map a handle into the inner
+            // arc multiple times unnecessarily.
+            otherMappedHandles.push(`use '${await arc.mapHandle(otherHandle._proxy)}' as v${index}`);
+            const hostedOtherConnection = hostedParticle.handleConnections.find(conn => conn.isCompatibleType(otherHandle.type));
+            if (hostedOtherConnection) {
+                otherConnections.push(`${hostedOtherConnection.name} = v${index++}`);
+                // TODO(wkorman): For items with embedded recipes where we may have a
+                // different particle rendering each item, we need to track
+                // |connByHostedConn| keyed on the particle type.
+                this._connByHostedConn.set(hostedOtherConnection.name, connectionName);
+            }
         }
-        resolvedHostedParticle =
-            ParticleSpec.fromLiteral(JSON.parse(item.renderParticleSpec));
-        // Re-map compatible handles and compute the connections specific
-        // to this item's render particle.
+        return [otherMappedHandles, otherConnections];
+    }
+    async setHandles(handles) {
+        this.handleIds = {};
+        const arc = await this.constructInnerArc();
         const listHandleName = 'list';
-        const particleHandleName = 'renderParticle';
-        [otherMappedHandles, otherConnections] =
-            await this._mapParticleConnections(
-                listHandleName,
-                particleHandleName,
-                resolvedHostedParticle,
-                this.handles,
-                arc);
-      }
-      const hostedSlotName = [...resolvedHostedParticle.slotConnections.keys()][0];
-      const slotName = [...this.spec.slotConnections.values()][0].name;
-      const slotId = await arc.createSlot(this, slotName, itemHandle._id);
-
-      if (!slotId) {
-        continue;
-      }
-
-      this._itemSubIdByHostedSlotId.set(slotId, item.id);
-
-      try {
-        const recipe = this.constructInnerRecipe(
-          resolvedHostedParticle,
-          item,
-          itemHandle,
-          {name: hostedSlotName, id: slotId},
-          {connections: otherConnections, handles: otherMappedHandles}
-        );
-        await arc.loadRecipe(recipe, this);
-        itemHandle.set(item);
-      } catch (e) {
-        console.log(e);
-      }
+        const particleHandleName = 'hostedParticle';
+        const particleHandle = handles.get(particleHandleName);
+        let hostedParticle = null;
+        let otherMappedHandles = [];
+        let otherConnections = [];
+        if (particleHandle) {
+            hostedParticle = await particleHandle.get();
+            if (hostedParticle) {
+                [otherMappedHandles, otherConnections] =
+                    await this._mapParticleConnections(listHandleName, particleHandleName, hostedParticle, handles, arc);
+            }
+        }
+        this.setState({
+            arc,
+            type: handles.get(listHandleName).type,
+            hostedParticle,
+            otherMappedHandles,
+            otherConnections
+        });
+        super.setHandles(handles);
     }
-  }
-
-  combineHostedModel(slotName, hostedSlotId, content) {
-    const subId = this._itemSubIdByHostedSlotId.get(hostedSlotId);
-    if (!subId) {
-      return;
+    async willReceiveProps({ list }, { arc, type, hostedParticle, otherMappedHandles, otherConnections }) {
+        if (list.length > 0) {
+            this.relevance = 0.1;
+        }
+        for (const [index, item] of this.getListEntries(list)) {
+            let resolvedHostedParticle = hostedParticle;
+            if (this.handleIds[item.id]) {
+                const itemHandle = await this.handleIds[item.id];
+                itemHandle.set(item);
+                continue;
+            }
+            const itemHandlePromise = arc.createHandle(type.getContainedType(), `item${index}`);
+            this.handleIds[item.id] = itemHandlePromise;
+            const itemHandle = await itemHandlePromise;
+            if (!resolvedHostedParticle) {
+                // If we're muxing on behalf of an item with an embedded recipe, the
+                // hosted particle should be retrievable from the item itself. Else we
+                // just skip this item.
+                if (!item.renderParticleSpec) {
+                    continue;
+                }
+                resolvedHostedParticle =
+                    ParticleSpec.fromLiteral(JSON.parse(item.renderParticleSpec));
+                // Re-map compatible handles and compute the connections specific
+                // to this item's render particle.
+                const listHandleName = 'list';
+                const particleHandleName = 'renderParticle';
+                [otherMappedHandles, otherConnections] =
+                    await this._mapParticleConnections(listHandleName, particleHandleName, resolvedHostedParticle, this.handles, arc);
+            }
+            const hostedSlotName = [...resolvedHostedParticle.slotConnections.keys()][0];
+            const slotName = [...this.spec.slotConnections.values()][0].name;
+            const slotId = await arc.createSlot(this, slotName, itemHandle._id);
+            if (!slotId) {
+                continue;
+            }
+            this._itemSubIdByHostedSlotId.set(slotId, item.id);
+            try {
+                const recipe = this.constructInnerRecipe(resolvedHostedParticle, item, itemHandle, { name: hostedSlotName, id: slotId }, { connections: otherConnections, handles: otherMappedHandles });
+                await arc.loadRecipe(recipe, this);
+                itemHandle.set(item);
+            }
+            catch (e) {
+                console.log(e);
+            }
+        }
     }
-    const items = this._state.renderModel ? this._state.renderModel.items : [];
-    const listIndex = items.findIndex(item => item.subId == subId);
-    const item = Object.assign({}, content.model, {subId});
-    if (listIndex >= 0 && listIndex < items.length) {
-      items[listIndex] = item;
-    } else {
-      items.push(item);
+    combineHostedModel(slotName, hostedSlotId, content) {
+        const subId = this._itemSubIdByHostedSlotId.get(hostedSlotId);
+        if (!subId) {
+            return;
+        }
+        const items = this._state.renderModel ? this._state.renderModel.items : [];
+        const listIndex = items.findIndex(item => item.subId === subId);
+        const item = Object.assign({}, content.model, { subId });
+        if (listIndex >= 0 && listIndex < items.length) {
+            items[listIndex] = item;
+        }
+        else {
+            items.push(item);
+        }
+        this._setState({ renderModel: { items } });
     }
-    this._setState({renderModel: {items}});
-  }
-
-  combineHostedTemplate(slotName, hostedSlotId, content) {
-    const subId = this._itemSubIdByHostedSlotId.get(hostedSlotId);
-    if (!subId) {
-      return;
+    combineHostedTemplate(slotName, hostedSlotId, content) {
+        const subId = this._itemSubIdByHostedSlotId.get(hostedSlotId);
+        if (!subId) {
+            return;
+        }
+        assert(content.templateName, `Template name is missing for slot '${slotName}' (hosted slot ID: '${hostedSlotId}')`);
+        const templateName = Object.assign({}, this._state.templateName, { [subId]: `${content.templateName}` });
+        this._setState({ templateName });
+        if (content.template) {
+            let template = content.template;
+            // Append subid$={{subid}} attribute to all provided slots, to make it usable for the transformation particle.
+            template = template.replace(new RegExp('slotid="[a-z]+"', 'gi'), '$& subid$="{{subId}}"');
+            // Replace hosted particle connection in template with the corresponding particle connection names.
+            // TODO: make this generic!
+            this._connByHostedConn.forEach((conn, hostedConn) => {
+                template = template.replace(new RegExp(`{{${hostedConn}.description}}`, 'g'), `{{${conn}.description}}`);
+            });
+            this._setState({ template: Object.assign({}, this._state.template, { [content.templateName]: template }) });
+            this.forceRenderTemplate();
+        }
     }
-    assert(content.templateName, `Template name is missing for slot '${slotName}' (hosted slot ID: '${hostedSlotId}')`);
-    this._setState({templateName: Object.assign(this._state.templateName || {}, {[subId]: `${content.templateName}`})});
-
-    if (content.template) {
-      let template = content.template;
-      // Append subid$={{subid}} attribute to all provided slots, to make it usable for the transformation particle.
-      template = template.replace(new RegExp('slotid="[a-z]+"', 'gi'), '$& subid$="{{subId}}"');
-
-      // Replace hosted particle connection in template with the corresponding particle connection names.
-      // TODO: make this generic!
-      this._connByHostedConn.forEach((conn, hostedConn) => {
-        template = template.replace(
-            new RegExp(`{{${hostedConn}.description}}`, 'g'),
-            `{{${conn}.description}}`);
-      });
-      this._setState({template: Object.assign(this._state.template || {}, {[content.templateName]: template})});
-
-      this.forceRenderTemplate();
+    // Abstract methods below.
+    // Called to produce a full interpolated recipe for loading into an inner
+    // arc for each item. Subclasses should override this method as by default
+    // it does nothing and so no recipe will be returned and content will not
+    // be loaded successfully into the inner arc.
+    constructInnerRecipe(hostedParticle, item, itemHandle, slot, other) {
     }
-  }
-
-  // Abstract methods below.
-
-  // Called to produce a full interpolated recipe for loading into an inner
-  // arc for each item. Subclasses should override this method as by default
-  // it does nothing and so no recipe will be returned and content will not
-  // be loaded successfully into the inner arc.
-  constructInnerRecipe(hostedParticle, item, itemHandle, slot, other) {}
-
-  // Called with the list of items and by default returns the direct result of
-  // `Array.entries()`. Subclasses can override this method to alter the item
-  // order or otherwise permute the items as desired before their slots are
-  // created and contents are rendered.
-  getListEntries(list) {
-    return list.entries();
-  }
+    // Called with the list of items and by default returns the direct result of
+    // `Array.entries()`. Subclasses can override this method to alter the item
+    // order or otherwise permute the items as desired before their slots are
+    // created and contents are rendered.
+    getListEntries(list) {
+        return list.entries();
+    }
 }
 
 /**
