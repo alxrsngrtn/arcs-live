@@ -1,7 +1,5 @@
-commit f65c384ebf71eb6bda9daae38a141030fec4c1c6
-Author: raulverag <42563960+raulverag@users.noreply.github.com>
-Date:   Thu Apr 4 17:08:05 2019 -0700
+commit 1735a2dad86fcf1ecc6cf1a68a20a46e192af14a
+Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
+Date:   Fri Apr 5 11:57:36 2019 +1100
 
-    Committing to set aside current work in favour of leaner version Bernie wants. (#2841)
-    
-    Note that flowcheck.ts does not work.
+    Updates Arc to accept an Id instead of a string (#2840)

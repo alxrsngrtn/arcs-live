@@ -24,7 +24,7 @@ import { StorageProviderFactory } from './storage/storage-provider-factory.js';
 import { Type } from './type.js';
 import { PecFactory } from './particle-execution-context.js';
 declare type ArcOptions = {
-    id: string;
+    id: Id;
     context: Manifest;
     pecFactory?: PecFactory;
     slotComposer?: SlotComposer;

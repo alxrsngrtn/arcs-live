@@ -34,7 +34,7 @@ async function setup() {
         foo <- handle0
         bar -> handle1
   `, { loader, fileName: process.cwd() + '/input.manifest' });
-    const arc = new Arc({ slotComposer: new FakeSlotComposer(), loader, id: 'test', context: manifest });
+    const arc = new Arc({ slotComposer: new FakeSlotComposer(), loader, id: new Id('test'), context: manifest });
     return {
         arc,
         recipe: manifest.recipes[0],
@@ -64,7 +64,7 @@ async function setupSlandlesWithOptional(cProvided, dProvided) {
         ${cProvided ? 'c <- maybeSlotC' : ''}
         ${dProvided ? 'd -> maybeSlotD' : ''}
   `, { loader, fileName: process.cwd() + '/input.manifest' });
-    const arc = new Arc({ slotComposer: new FakeSlotComposer(), loader, id: 'test', context: manifest });
+    const arc = new Arc({ slotComposer: new FakeSlotComposer(), loader, id: new Id('test'), context: manifest });
     const slotType = manifest.findSchemaByName('Slot').entityClass().type;
     const aStore = await arc.createStore(slotType, 'aStore', 'test:1');
     const bStore = await arc.createStore(slotType, 'bStore', 'test:2');
@@ -89,7 +89,7 @@ describe('Arc', () => {
         schema Bar
           Text value
       `);
-        const arc = new Arc({ slotComposer: new FakeSlotComposer(), loader: new Loader(), id: 'test', context: manifest });
+        const arc = new Arc({ slotComposer: new FakeSlotComposer(), loader: new Loader(), id: new Id('test'), context: manifest });
         const f = async () => { await arc.idle; };
         await Promise.all([f(), f()]);
     });
@@ -139,7 +139,7 @@ describe('Arc', () => {
           a <- thingA
           b -> thingB
     `, { loader, fileName: process.cwd() + '/input.manifest' });
-        const arc = new Arc({ slotComposer: new FakeSlotComposer(), loader, context: manifest, id: 'test' });
+        const arc = new Arc({ slotComposer: new FakeSlotComposer(), loader, context: manifest, id: new Id('test') });
         const thingClass = manifest.findSchemaByName('Thing').entityClass();
         const aStore = await arc.createStore(thingClass.type, 'aStore', 'test:1');
         const bStore = await arc.createStore(thingClass.type, 'bStore', 'test:2');
@@ -182,7 +182,7 @@ describe('Arc', () => {
           a <- thingA
           b -> thingB
     `, { loader, fileName: process.cwd() + '/input.manifest' });
-        const arc = new Arc({ slotComposer: new FakeSlotComposer(), loader, context: manifest, id: 'test' });
+        const arc = new Arc({ slotComposer: new FakeSlotComposer(), loader, context: manifest, id: new Id('test') });
         const thingClass = manifest.findSchemaByName('Thing').entityClass();
         const aStore = await arc.createStore(thingClass.type, 'aStore', 'test:1');
         const bStore = await arc.createStore(thingClass.type, 'bStore', 'test:2');
@@ -227,7 +227,7 @@ describe('Arc', () => {
             b -> thingB
             d -> maybeThingD
       `, { loader, fileName: process.cwd() + '/input.manifest' });
-            const arc = new Arc({ slotComposer: new FakeSlotComposer(), loader, context: manifest, id: 'test' });
+            const arc = new Arc({ slotComposer: new FakeSlotComposer(), loader, context: manifest, id: new Id('test') });
             const thingClass = manifest.findSchemaByName('Thing').entityClass();
             const aStore = await arc.createStore(thingClass.type, 'aStore', 'test:1');
             const bStore = await arc.createStore(thingClass.type, 'bStore', 'test:2');
@@ -265,7 +265,7 @@ describe('Arc', () => {
             b -> thingB
             d -> maybeThingD
       `, { loader, fileName: process.cwd() + '/input.manifest' });
-        const arc = new Arc({ slotComposer: new FakeSlotComposer(), loader, context: manifest, id: 'test' });
+        const arc = new Arc({ slotComposer: new FakeSlotComposer(), loader, context: manifest, id: new Id('test') });
         const thingClass = manifest.findSchemaByName('Thing').entityClass();
         const aStore = await arc.createStore(thingClass.type, 'aStore', 'test:1');
         const bStore = await arc.createStore(thingClass.type, 'bStore', 'test:2');
@@ -302,7 +302,7 @@ describe('Arc', () => {
           b -> thingB
           c <- maybeThingC
     `, { loader, fileName: process.cwd() + '/input.manifest' });
-        const arc = new Arc({ slotComposer: new FakeSlotComposer(), loader, context: manifest, id: 'test' });
+        const arc = new Arc({ slotComposer: new FakeSlotComposer(), loader, context: manifest, id: new Id('test') });
         const thingClass = manifest.findSchemaByName('Thing').entityClass();
         const aStore = await arc.createStore(thingClass.type, 'aStore', 'test:1');
         const bStore = await arc.createStore(thingClass.type, 'bStore', 'test:2');
@@ -345,7 +345,7 @@ describe('Arc', () => {
             b -> thingB
             c <- maybeThingC
       `, { loader, fileName: process.cwd() + '/input.manifest' });
-        const arc = new Arc({ slotComposer: new FakeSlotComposer(), loader, context: manifest, id: 'test' });
+        const arc = new Arc({ slotComposer: new FakeSlotComposer(), loader, context: manifest, id: new Id('test') });
         const thingClass = manifest.findSchemaByName('Thing').entityClass();
         const aStore = await arc.createStore(thingClass.type, 'aStore', 'test:1');
         const bStore = await arc.createStore(thingClass.type, 'bStore', 'test:2');
@@ -383,7 +383,7 @@ describe('Arc', () => {
           c <- maybeThingC
           d -> maybeThingD
     `, { loader, fileName: process.cwd() + '/input.manifest' });
-        const arc = new Arc({ slotComposer: new FakeSlotComposer(), loader, context: manifest, id: 'test' });
+        const arc = new Arc({ slotComposer: new FakeSlotComposer(), loader, context: manifest, id: new Id('test') });
         const thingClass = manifest.findSchemaByName('Thing').entityClass();
         const aStore = await arc.createStore(thingClass.type, 'aStore', 'test:1');
         const bStore = await arc.createStore(thingClass.type, 'bStore', 'test:2');
@@ -427,7 +427,7 @@ describe('Arc', () => {
           c <- maybeThingC
           d -> maybeThingD
     `, { loader, fileName: process.cwd() + '/input.manifest' });
-        const arc = new Arc({ slotComposer: new FakeSlotComposer(), loader, context: manifest, id: 'test' });
+        const arc = new Arc({ slotComposer: new FakeSlotComposer(), loader, context: manifest, id: new Id('test') });
         const thingClass = manifest.findSchemaByName('Thing').entityClass();
         const aStore = await arc.createStore(thingClass.type, 'aStore', 'test:1');
         const bStore = await arc.createStore(thingClass.type, 'bStore', 'test:2');
@@ -450,7 +450,7 @@ describe('Arc', () => {
     it('deserializing a serialized empty arc produces an empty arc', async () => {
         const slotComposer = new FakeSlotComposer();
         const loader = new Loader();
-        const arc = new Arc({ slotComposer, loader, id: 'test', context: undefined });
+        const arc = new Arc({ slotComposer, loader, id: Id.fromString('test'), context: undefined });
         const serialization = await arc.serialize();
         const newArc = await Arc.deserialize({ serialization, loader, slotComposer, context: undefined, fileName: 'foo.manifest' });
         assert.equal(newArc._stores.length, 0);
@@ -504,7 +504,7 @@ describe('Arc', () => {
             slotsCreated++;
             return slotComposerCreateHostedSlot.apply(slotComposer, args);
         };
-        const arc = new Arc({ id: 'test', context: manifest, slotComposer, loader: new Loader() });
+        const arc = new Arc({ id: Id.fromString('test'), context: manifest, slotComposer, loader: new Loader() });
         const barType = manifest.findTypeByName('Bar');
         let store = await arc.createStore(barType.collectionOf(), undefined, 'test:1');
         recipe.handles[0].mapToStorage(store);
@@ -548,7 +548,7 @@ describe('Arc', () => {
         });
         const manifest = await Manifest.load('manifest', loader);
         const dataClass = manifest.findSchemaByName('Data').entityClass();
-        const arc = new Arc({ id: 'test', loader, context: manifest });
+        const arc = new Arc({ id: new Id('test'), loader, context: manifest });
         const varStore = await arc.createStore(dataClass.type, undefined, 'test:0');
         const colStore = await arc.createStore(dataClass.type.collectionOf(), undefined, 'test:1');
         const bigStore = await arc.createStore(dataClass.type.bigCollectionOf(), undefined, 'test:2');
@@ -617,7 +617,7 @@ describe('Arc', () => {
             '*': 'defineParticle(({Particle}) => class extends Particle {});',
         });
         const manifest = await Manifest.load('manifest', loader);
-        const arc = new Arc({ id: 'test', loader, context: manifest });
+        const arc = new Arc({ id: new Id('test'), loader, context: manifest });
         const recipe = manifest.recipes[0];
         assert(recipe.normalize());
         assert(recipe.isResolved());
@@ -636,7 +636,7 @@ describe('Arc', () => {
     });
     ['volatile://', 'pouchdb://memory/user/'].forEach((storageKeyPrefix) => {
         it('persist serialization for ' + storageKeyPrefix, async () => {
-            const id = new Id('123', ['test']).toString();
+            const id = new Id('123', ['test']);
             const manifest = await Manifest.parse(`
       schema Data
         Text value
@@ -737,7 +737,7 @@ describe('Arc', () => {
     });
     ['volatile://', 'pouchdb://memory/user/'].forEach((storageKeyPrefix) => {
         it('handles serialization/deserialization of empty arcs handles ' + storageKeyPrefix, async () => {
-            const id = new Id('123', ['test']).toString();
+            const id = new Id('123', ['test']);
             const loader = new Loader();
             const manifest = await Manifest.parse(`
         schema FavoriteFood

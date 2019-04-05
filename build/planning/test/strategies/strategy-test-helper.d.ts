@@ -1,9 +1,10 @@
 import { Arc } from '../../../runtime/arc.js';
 import { Loader } from '../../../runtime/loader.js';
 import { Manifest } from '../../../runtime/manifest.js';
+import { Id } from '../../../runtime/id.js';
 export declare class StrategyTestHelper {
     static createTestArc(context: Manifest, options?: {
-        arcId?: string;
+        arcId?: Id;
         modalityName?: string;
         loader?: Loader;
     }): Arc;

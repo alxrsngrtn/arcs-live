@@ -14,10 +14,11 @@ import { Manifest } from '../../../runtime/manifest.js';
 import { Modality } from '../../../runtime/modality.js';
 import { FakeSlotComposer } from '../../../runtime/testing/fake-slot-composer.js';
 import { ConvertConstraintsToConnections } from '../../strategies/convert-constraints-to-connections.js';
+import { Id } from '../../../runtime/id.js';
 describe('ConvertConstraintsToConnections', async () => {
     const newArc = (manifest) => {
         return new Arc({
-            id: 'test-plan-arc',
+            id: new Id('test-plan-arc'),
             slotComposer: new FakeSlotComposer(),
             context: manifest,
             loader: new Loader()
@@ -280,7 +281,7 @@ describe('ConvertConstraintsToConnections', async () => {
     `);
         const inputParams = { generated: [{ result: manifest.recipes[0], score: 1 }, { result: manifest.recipes[1], score: 1 }] };
         const cctc = new ConvertConstraintsToConnections(new Arc({
-            id: 'test-plan-arc',
+            id: new Id('test-plan-arc'),
             slotComposer: new FakeSlotComposer({ modalityName: Modality.Name.Vr }),
             context: manifest,
             loader: new Loader()

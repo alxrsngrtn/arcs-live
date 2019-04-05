@@ -12,6 +12,7 @@ import { Arc } from '../arc.js';
 import { Loader } from '../loader.js';
 import { Manifest } from '../manifest.js';
 import { MockSlotComposer } from '../testing/mock-slot-composer.js';
+import { Id } from '../id.js';
 export class TestHelper {
     static async setupOptions(options) {
         const loader = options.loader || new Loader();
@@ -29,7 +30,7 @@ export class TestHelper {
         helper.slotComposer = options.slotComposer || new MockSlotComposer({ strict: options.slotComposerStrict, logging: options.logging });
         helper.loader = options.loader;
         helper.arc = new Arc({
-            id: 'demo',
+            id: Id.fromString('demo'),
             slotComposer: helper.slotComposer,
             loader: helper.loader,
             context: options.context,

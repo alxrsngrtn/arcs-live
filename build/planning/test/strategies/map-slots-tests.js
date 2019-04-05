@@ -16,6 +16,7 @@ import { FakeSlotComposer } from '../../../runtime/testing/fake-slot-composer.js
 import { MapSlots } from '../../strategies/map-slots.js';
 import { ResolveRecipe } from '../../strategies/resolve-recipe.js';
 import { StrategyTestHelper } from './strategy-test-helper.js';
+import { Id } from '../../../runtime/id.js';
 describe('MapSlots', () => {
     const particlesSpec = `
       particle A in 'A.js'
@@ -142,9 +143,9 @@ ${recipeManifest}
     it('prefers local slots if available', async () => {
         // Arc has both a 'root' and an 'action' slot.
         const arc = new Arc({
-            id: 'test-plan-arc',
+            id: new Id('test-plan-arc'),
             loader: new Loader(),
-            context: new Manifest({ id: 'test' }),
+            context: new Manifest({ id: new Id('test') }),
             slotComposer: new FakeSlotComposer({ containers: { root: {}, action: {} } })
         });
         const particles = `

@@ -21953,7 +21953,15 @@ class Arc {
         this._context = context || new Manifest({ id });
         // TODO: pecFactory should not be optional. update all callers and fix here.
         this.pecFactory = pecFactory || FakePecFactory(loader).bind(null);
-        this.id = Id.fromString(id);
+        if (typeof id === 'string') {
+            // TODO(csilvestrini): Replace this warning with an exception.
+            console.error(`Arc created with string ID ${id}!!! This should be an object of type Id instead. This warning will turn into an ` +
+                `exception soon (end of April 2019).`);
+            this.id = new Id(id);
+        }
+        else {
+            this.id = id;
+        }
         this.isSpeculative = !!speculative; // undefined => false
         this.isInnerArc = !!innerArc; // undefined => false
         this.isStub = !!stub;
@@ -22043,7 +22051,7 @@ class Arc {
         return [this].concat(...this.innerArcs.map(arc => arc.allDescendingArcs));
     }
     createInnerArc(transformationParticle) {
-        const id = this.generateID('inner').toString();
+        const id = this.generateID('inner');
         const innerArc = new Arc({ id, pecFactory: this.pecFactory, slotComposer: this.pec.slotComposer, loader: this._loader, context: this.context, innerArc: true, speculative: this.isSpeculative, listenerClasses: this.listenerClasses });
         let particleInnerArcs = this.innerArcsByParticle.get(transformationParticle);
         if (!particleInnerArcs) {
@@ -22208,7 +22216,7 @@ ${this.activeRecipe.toString()}`;
     static async deserialize({ serialization, pecFactory, slotComposer, loader, fileName, context, listenerClasses }) {
         const manifest = await Manifest.parse(serialization, { loader, fileName, context });
         const arc = new Arc({
-            id: manifest.meta.name,
+            id: Id.fromString(manifest.meta.name),
             storageKey: manifest.meta.storageKey,
             slotComposer,
             pecFactory,
@@ -22260,7 +22268,7 @@ ${this.activeRecipe.toString()}`;
     }
     // Makes a copy of the arc used for speculative execution.
     async cloneForSpeculativeExecution() {
-        const arc = new Arc({ id: this.generateID().toString(),
+        const arc = new Arc({ id: this.generateID(),
             pecFactory: this.pecFactory,
             context: this.context,
             loader: this._loader,
@@ -26855,8 +26863,8 @@ class RecipeIndex {
         this._isReady = false;
         const trace = Tracing.start({ cat: 'indexing', name: 'RecipeIndex::constructor', overview: true });
         const arcStub = new Arc({
-            id: 'index-stub',
-            context: new Manifest({ id: 'empty-context' }),
+            id: new Id('index-stub'),
+            context: new Manifest({ id: new Id('empty-context') }),
             loader: arc.loader,
             slotComposer: new SlotComposer({
                 modalityHandler: PlanningModalityHandler.createHeadlessHandler(),
@@ -27996,7 +28004,7 @@ const resolve = async (arc, recipe) =>{
 
 const spawn = async ({id, serialization, context, composer, storage}) => {
   const params = {
-    id,
+    id: new Id(id),
     fileName: './serialized.manifest',
     serialization,
     context,
