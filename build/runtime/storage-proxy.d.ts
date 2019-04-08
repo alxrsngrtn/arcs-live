@@ -39,7 +39,7 @@ declare enum SyncState {
  *   are applied.
  */
 export declare abstract class StorageProxy {
-    static newProxy(id: string, type: Type, port: PECInnerPort, pec: ParticleExecutionContext, scheduler: any, name: string): CollectionProxy | BigCollectionProxy | VariableProxy;
+    static newProxy(id: string, type: Type, port: PECInnerPort, pec: ParticleExecutionContext, scheduler: any, name: string): VariableProxy | CollectionProxy | BigCollectionProxy;
     storageKey: string;
     readonly id: string;
     readonly type: Type;
