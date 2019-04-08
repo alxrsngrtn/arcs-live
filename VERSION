@@ -1,9 +1,9 @@
-commit 7925953a065aa47ab7a55d725d61ed8e90cd8401
-Author: Paul Lindner <lindner@inuus.com>
-Date:   Mon Apr 8 10:18:27 2019 -0700
+commit 3b5e055d88e59c8044e55c71db35a4b6d105cd8e
+Author: Scott J. Miles <sjmiles@google.com>
+Date:   Mon Apr 8 12:39:27 2019 -0700
 
-    Storage Cleanups resulting from PouchDB timing changes (#2849)
+    Pipes-shell notifies outer process for supported Autofill types (#2864)
     
-    * Make fromLiteral private, add Promise<void> types for cloneFrom
-    * Tighten up CRDT Typescript Types
-    * make resolveInitialized a scoped variable
+    * affordance for sending known autofill types to DeviceClient
+    
+    * fix names
