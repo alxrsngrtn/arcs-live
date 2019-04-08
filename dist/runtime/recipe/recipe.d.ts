@@ -1,14 +1,14 @@
 import { Modality } from '../modality.js';
 import { HandleConnectionSpec } from '../particle-spec.js';
 import { Type } from '../type.js';
-import { ConnectionConstraint } from './connection-constraint.js';
+import { ConnectionConstraint, EndPoint } from './connection-constraint.js';
 import { HandleConnection } from './handle-connection.js';
 import { Handle } from './handle.js';
 import { Particle } from './particle.js';
 import { Search } from './search.js';
 import { SlotConnection } from './slot-connection.js';
 import { Slot } from './slot.js';
-export declare type RecipeComponent = Particle | Handle | HandleConnection | Slot | SlotConnection;
+export declare type RecipeComponent = Particle | Handle | HandleConnection | Slot | SlotConnection | EndPoint;
 export declare type CloneMap = Map<RecipeComponent, RecipeComponent>;
 export declare type IsValidOptions = {
     errors?: Map<Recipe | RecipeComponent, string>;

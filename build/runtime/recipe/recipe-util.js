@@ -34,24 +34,24 @@ export class RecipeUtil {
         handles.forEach(handle => hMap.set(handle, recipe.newHandle()));
         Object.keys(map).forEach(key => {
             Object.keys(map[key]).forEach(name => {
-                let handle = map[key][name];
+                const handle = map[key][name];
+                // NOTE: for now, '=' on the shape means "accept anything". This is going
+                // to change when we redo capabilities; for now it's modeled by mapping '=' to
+                // '=' rather than to 'inout'.
                 let direction = '=';
-                let tags = [];
-                if (handle.handle) {
-                    // NOTE: for now, '=' on the shape means "accept anything". This is going
-                    // to change when we redo capabilities; for now it's modeled by mapping '=' to
-                    // '=' rather than to 'inout'.
+                if (handle.direction) {
                     direction = { '->': 'out', '<-': 'in', '=': '=' }[handle.direction];
-                    tags = handle.tags || [];
-                    handle = handle.handle;
                 }
-                if (handle.localName) {
-                    hMap.get(handle).localName = handle.localName;
+                const tags = handle.tags || [];
+                if (handle['localName']) {
+                    hMap.get(handle.handle).localName = handle.localName;
                 }
                 const connection = pMap[key].addConnectionName(name);
+                // TODO(shans): work out a cleaner way to encode "accept anything" - 
+                // this is an abuse of the type system. 
                 connection.direction = direction;
-                hMap.get(handle).tags = tags;
-                connection.connectToHandle(hMap.get(handle));
+                hMap.get(handle.handle).tags = tags;
+                connection.connectToHandle(hMap.get(handle.handle));
                 hcMap[key + ':' + name] = pMap[key].connections[name];
             });
         });
@@ -90,6 +90,7 @@ export class RecipeUtil {
                     }
                     const acceptedDirections = { 'in': ['in', 'inout'], 'out': ['out', 'inout'], '=': ['in', 'out', 'inout'], 'inout': ['inout'], 'host': ['host'] };
                     if (recipeConnSpec.direction) {
+                        assert(Object.keys(acceptedDirections).includes(shapeHC.direction), `${shapeHC.direction} not in ${Object.keys(acceptedDirections)}`);
                         if (!acceptedDirections[shapeHC.direction].includes(recipeConnSpec.direction)) {
                             continue;
                         }
@@ -314,7 +315,7 @@ export class RecipeUtil {
                     newMatches = newMatches.concat(_assignHandlesToEmptyPosition(match, emptyHandles, nullHandles));
                 }
                 else {
-                    newMatches.concat(match);
+                    newMatches = newMatches.concat(match);
                 }
             }
             matches = newMatches;

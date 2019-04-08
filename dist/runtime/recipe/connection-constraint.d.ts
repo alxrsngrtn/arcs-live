@@ -2,40 +2,42 @@ import { ParticleSpec } from '../particle-spec.js';
 import { Direction } from './handle-connection.js';
 import { Handle } from './handle.js';
 import { Comparable } from './util.js';
+import { Recipe, RecipeComponent, CloneMap, ToStringOptions } from './recipe.js';
+import { Particle } from './particle.js';
 export declare abstract class EndPoint implements Comparable {
-    abstract _compareTo(other: any): number;
-    abstract _clone(cloneMap?: any): any;
-    abstract toString(nameMap?: any): any;
+    abstract _compareTo(other: EndPoint): number;
+    abstract _clone(cloneMap?: CloneMap): any;
+    abstract toString(nameMap?: Map<RecipeComponent, string>): any;
 }
 export declare class ParticleEndPoint extends EndPoint {
     particle: ParticleSpec;
     connection: string;
     constructor(particle: ParticleSpec, connection: string);
-    _clone(cloneMap?: any): ParticleEndPoint;
-    _compareTo(other: any): number;
-    toString(nameMap?: any): string;
+    _clone(cloneMap?: CloneMap): ParticleEndPoint;
+    _compareTo(other: ParticleEndPoint): number;
+    toString(nameMap?: Map<RecipeComponent, string>): string;
 }
 export declare class InstanceEndPoint extends EndPoint {
-    instance: EndPoint;
+    instance: Particle;
     connection: string;
-    constructor(instance: EndPoint, connection: string);
-    _clone(cloneMap: any): InstanceEndPoint;
-    _compareTo(other: any): any;
-    toString(nameMap: any): string;
+    constructor(instance: Particle, connection: string);
+    _clone(cloneMap: CloneMap): InstanceEndPoint;
+    _compareTo(other: InstanceEndPoint): number;
+    toString(nameMap: Map<RecipeComponent, string>): string;
 }
 export declare class HandleEndPoint extends EndPoint {
     readonly handle: Handle;
     constructor(handle: Handle);
-    _clone(cloneMap?: any): HandleEndPoint;
-    _compareTo(other: any): any;
-    toString(nameMap?: any): string;
+    _clone(cloneMap?: CloneMap): HandleEndPoint;
+    _compareTo(other: HandleEndPoint): number;
+    toString(nameMap?: Map<RecipeComponent, string>): string;
 }
 export declare class TagEndPoint extends EndPoint {
     readonly tags: string[];
     constructor(tags: string[]);
-    _clone(cloneMap?: any): TagEndPoint;
-    _compareTo(other: any): any;
-    toString(nameMap?: any): string;
+    _clone(cloneMap?: CloneMap): TagEndPoint;
+    _compareTo(other: TagEndPoint): number;
+    toString(nameMap?: Map<RecipeComponent, string>): string;
 }
 export declare class ConnectionConstraint {
     from: EndPoint;
@@ -43,7 +45,7 @@ export declare class ConnectionConstraint {
     direction: Direction;
     type: 'constraint' | 'obligation';
     constructor(fromConnection: EndPoint, toConnection: EndPoint, direction: Direction, type: 'constraint' | 'obligation');
-    _copyInto(recipe: any, cloneMap: any): any;
-    _compareTo(other: any): any;
-    toString(nameMap?: any, options?: any): string;
+    _copyInto(recipe: Recipe, cloneMap: CloneMap): ConnectionConstraint;
+    _compareTo(other: ConnectionConstraint): number;
+    toString(nameMap?: Map<RecipeComponent, string>, options?: ToStringOptions): string;
 }

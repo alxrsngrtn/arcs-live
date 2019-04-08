@@ -52,7 +52,9 @@ export declare abstract class Action<T extends Cloneable> {
     private _args?;
     constructor(arc?: Arc, args?: any);
     readonly arc: Arc | undefined;
-    getResults(inputParams: any): any;
+    getResults(inputParams: {
+        generated: Descendant<T>[];
+    }): Descendant<T>[];
     generate(inputParams: any): Promise<Descendant<T>[]>;
 }
 export declare abstract class Walker<T extends Cloneable> {

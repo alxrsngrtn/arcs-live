@@ -14840,24 +14840,24 @@ class RecipeUtil {
         handles.forEach(handle => hMap.set(handle, recipe.newHandle()));
         Object.keys(map).forEach(key => {
             Object.keys(map[key]).forEach(name => {
-                let handle = map[key][name];
+                const handle = map[key][name];
+                // NOTE: for now, '=' on the shape means "accept anything". This is going
+                // to change when we redo capabilities; for now it's modeled by mapping '=' to
+                // '=' rather than to 'inout'.
                 let direction = '=';
-                let tags = [];
-                if (handle.handle) {
-                    // NOTE: for now, '=' on the shape means "accept anything". This is going
-                    // to change when we redo capabilities; for now it's modeled by mapping '=' to
-                    // '=' rather than to 'inout'.
+                if (handle.direction) {
                     direction = { '->': 'out', '<-': 'in', '=': '=' }[handle.direction];
-                    tags = handle.tags || [];
-                    handle = handle.handle;
                 }
-                if (handle.localName) {
-                    hMap.get(handle).localName = handle.localName;
+                const tags = handle.tags || [];
+                if (handle['localName']) {
+                    hMap.get(handle.handle).localName = handle.localName;
                 }
                 const connection = pMap[key].addConnectionName(name);
+                // TODO(shans): work out a cleaner way to encode "accept anything" - 
+                // this is an abuse of the type system. 
                 connection.direction = direction;
-                hMap.get(handle).tags = tags;
-                connection.connectToHandle(hMap.get(handle));
+                hMap.get(handle.handle).tags = tags;
+                connection.connectToHandle(hMap.get(handle.handle));
                 hcMap[key + ':' + name] = pMap[key].connections[name];
             });
         });
@@ -14896,6 +14896,7 @@ class RecipeUtil {
                     }
                     const acceptedDirections = { 'in': ['in', 'inout'], 'out': ['out', 'inout'], '=': ['in', 'out', 'inout'], 'inout': ['inout'], 'host': ['host'] };
                     if (recipeConnSpec.direction) {
+                        assert(Object.keys(acceptedDirections).includes(shapeHC.direction), `${shapeHC.direction} not in ${Object.keys(acceptedDirections)}`);
                         if (!acceptedDirections[shapeHC.direction].includes(recipeConnSpec.direction)) {
                             continue;
                         }
@@ -15120,7 +15121,7 @@ class RecipeUtil {
                     newMatches = newMatches.concat(_assignHandlesToEmptyPosition(match, emptyHandles, nullHandles));
                 }
                 else {
-                    newMatches.concat(match);
+                    newMatches = newMatches.concat(match);
                 }
             }
             matches = newMatches;
@@ -23862,12 +23863,29 @@ class ConvertConstraintsToConnections extends Strategy {
                 // (this is the algorithm that "finds" the constraint set in the recipe).
                 // They track which particles/handles need to be found/created.
                 const particles = new Set();
+                const handleNames = new Map();
                 const handles = new Set();
                 // The map object tracks the connections between particles that need to be found/created.
                 // It's another input to RecipeUtil.makeShape.
-                // tslint:disable-next-line: no-any
                 const map = {};
                 const particlesByName = {};
+                let handleNameIndex = 0;
+                function nameForHandle(handle, existingNames) {
+                    if (existingNames.has(handle)) {
+                        return existingNames.get(handle);
+                    }
+                    if (handle.localName) {
+                        if (!handles.has(handle.localName)) {
+                            existingNames.set(handle, handle.localName);
+                            return handle.localName;
+                        }
+                    }
+                    while (!handles.has('handle' + handleNameIndex)) {
+                        handleNameIndex++;
+                    }
+                    existingNames.set(handle, 'handle' + handleNameIndex);
+                    return 'handle' + (handleNameIndex++);
+                }
                 let handleCount = 0;
                 const obligations = [];
                 for (const constraint of recipe.connectionConstraints) {
@@ -23899,7 +23917,7 @@ class ConvertConstraintsToConnections extends Strategy {
                         }
                     }
                     if (from instanceof HandleEndPoint) {
-                        handle = { handle: from.handle, direction: reverse[constraint.direction] };
+                        handle = { handle: nameForHandle(from.handle, handleNames), direction: reverse[constraint.direction], localName: from.handle.localName };
                         handles.add(handle.handle);
                     }
                     if (to instanceof ParticleEndPoint) {
@@ -23920,7 +23938,7 @@ class ConvertConstraintsToConnections extends Strategy {
                         }
                     }
                     if (to instanceof HandleEndPoint) {
-                        handle = { handle: to.handle, direction: constraint.direction };
+                        handle = { handle: nameForHandle(to.handle, handleNames), direction: constraint.direction, localName: to.handle.localName };
                         handles.add(handle.handle);
                     }
                     if (handle == undefined) {
@@ -23965,7 +23983,7 @@ class ConvertConstraintsToConnections extends Strategy {
                                     return undefined;
                                 }
                             }
-                            map[from.particle.name][connection] = { handle: handle.handle, direction, tags: handle.tags };
+                            map[from.particle.name][connection] = { handle: handle.handle, direction, tags: handle.tags, localName: handle.localName };
                         }
                     }
                     direction = reverse[constraint.direction];
@@ -23979,12 +23997,11 @@ class ConvertConstraintsToConnections extends Strategy {
                                     return undefined;
                                 }
                             }
-                            map[to.particle.name][connection] = { handle: handle.handle, direction, tags: handle.tags };
+                            map[to.particle.name][connection] = { handle: handle.handle, direction, tags: handle.tags, localName: handle.localName };
                         }
                     }
                 }
                 const shape = RecipeUtil.makeShape([...particles.values()], [...handles.values()], map);
-                const matches = RecipeUtil.find(recipe, shape);
                 const results = RecipeUtil.find(recipe, shape);
                 const processedResults = results.filter(match => {
                     // Ensure that every handle is either matched, or an input of at least one
@@ -24038,9 +24055,14 @@ class ConvertConstraintsToConnections extends Strategy {
                         }
                         recipe.clearConnectionConstraints();
                         for (const obligation of obligations) {
-                            const from = new InstanceEndPoint(recipeMap[obligation.from.particle.name], obligation.from.connection);
-                            const to = new InstanceEndPoint(recipeMap[obligation.to.particle.name], obligation.to.connection);
-                            recipe.newObligation(from, to, obligation.direction);
+                            if ((obligation.from instanceof ParticleEndPoint) && (obligation.to instanceof ParticleEndPoint)) {
+                                const from = new InstanceEndPoint(recipeMap[obligation.from.particle.name], obligation.from.connection);
+                                const to = new InstanceEndPoint(recipeMap[obligation.to.particle.name], obligation.to.connection);
+                                recipe.newObligation(from, to, obligation.direction);
+                            }
+                            else {
+                                throw new Error("constraints with a particle endpoint at one end but not at the other are not supported");
+                            }
                         }
                         return score;
                     };
