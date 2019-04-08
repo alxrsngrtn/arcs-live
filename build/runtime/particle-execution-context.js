@@ -90,7 +90,7 @@ export class ParticleExecutionContext {
          */
     }
     generateID() {
-        return this.idGenerator.createChildId(this.pecId).toString();
+        return this.idGenerator.newChildId(this.pecId).toString();
     }
     innerArcHandle(arcId, particleId) {
         const pec = this;

@@ -10,7 +10,7 @@
 import { assert } from '../platform/assert-web.js';
 import { ArcDebugHandler } from './debug/arc-debug-handler.js';
 import { FakePecFactory } from './fake-pec-factory.js';
-import { Id, IdGenerator } from './id.js';
+import { Id, IdGenerator, ArcId } from './id.js';
 import { Manifest, StorageStub } from './manifest.js';
 import { ParticleExecutionHost } from './particle-execution-host.js';
 import { Handle } from './recipe/handle.js';
@@ -44,7 +44,7 @@ export class Arc {
             // TODO(csilvestrini): Replace this warning with an exception.
             console.error(`Arc created with string ID ${id}!!! This should be an object of type Id instead. This warning will turn into an ` +
                 `exception soon (end of April 2019).`);
-            this.id = new Id(id);
+            this.id = ArcId.fromString(id);
         }
         else {
             this.id = id;
@@ -348,7 +348,7 @@ ${this.activeRecipe.toString()}`;
         this.pec.instantiate(recipeParticle, info.stores);
     }
     generateID(component = '') {
-        return this.idGenerator.createChildId(this.id, component);
+        return this.idGenerator.newChildId(this.id, component);
     }
     get _stores() {
         return [...this.storesById.values()];

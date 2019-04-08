@@ -108,7 +108,8 @@
 						<section class="tsd-index-section ">
 							<h3>Methods</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="idgenerator.html#createchildid" class="tsd-kind-icon">create<wbr>Child<wbr>Id</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="idgenerator.html#newarcid" class="tsd-kind-icon">new<wbr>Arc<wbr>Id</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="idgenerator.html#newchildid" class="tsd-kind-icon">new<wbr>Child<wbr>Id</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-static"><a href="idgenerator.html#createwithsessionidfortesting" class="tsd-kind-icon">create<wbr>With<wbr>Session<wbr>IdFor<wbr>Testing</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-static"><a href="idgenerator.html#newsession" class="tsd-kind-icon">new<wbr>Session</a></li>
 							</ul>
@@ -128,7 +129,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/6648d4c/src/runtime/id.ts#L19">runtime/id.ts:19</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/83a03b0/src/runtime/id.ts#L19">runtime/id.ts:19</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -155,7 +156,7 @@
 					<div class="tsd-signature tsd-kind-icon">_current<wbr>Session<wbr>Id<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/6648d4c/src/runtime/id.ts#L18">runtime/id.ts:18</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/83a03b0/src/runtime/id.ts#L18">runtime/id.ts:18</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -165,7 +166,7 @@
 					<div class="tsd-signature tsd-kind-icon">_next<wbr>Component<wbr>Id<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> =&nbsp;0</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/6648d4c/src/runtime/id.ts#L19">runtime/id.ts:19</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/83a03b0/src/runtime/id.ts#L19">runtime/id.ts:19</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -182,7 +183,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/6648d4c/src/runtime/id.ts#L50">runtime/id.ts:50</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/83a03b0/src/runtime/id.ts#L54">runtime/id.ts:54</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
@@ -193,16 +194,39 @@
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Methods</h2>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
-					<a name="createchildid" class="tsd-anchor"></a>
-					<h3>create<wbr>Child<wbr>Id</h3>
+					<a name="newarcid" class="tsd-anchor"></a>
+					<h3>new<wbr>Arc<wbr>Id</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">create<wbr>Child<wbr>Id<span class="tsd-signature-symbol">(</span>parentId<span class="tsd-signature-symbol">: </span><a href="id.html" class="tsd-signature-type">Id</a>, subcomponent<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="id.html" class="tsd-signature-type">Id</a></li>
+						<li class="tsd-signature tsd-kind-icon">new<wbr>Arc<wbr>Id<span class="tsd-signature-symbol">(</span>name<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="arcid.html" class="tsd-signature-type">ArcId</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/6648d4c/src/runtime/id.ts#L44">runtime/id.ts:44</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/83a03b0/src/runtime/id.ts#L40">runtime/id.ts:40</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>name: <span class="tsd-signature-type">string</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="arcid.html" class="tsd-signature-type">ArcId</a></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="newchildid" class="tsd-anchor"></a>
+					<h3>new<wbr>Child<wbr>Id</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">new<wbr>Child<wbr>Id<span class="tsd-signature-symbol">(</span>parentId<span class="tsd-signature-symbol">: </span><a href="id.html" class="tsd-signature-type">Id</a>, subcomponent<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="id.html" class="tsd-signature-type">Id</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/83a03b0/src/runtime/id.ts#L48">runtime/id.ts:48</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -234,7 +258,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/6648d4c/src/runtime/id.ts#L36">runtime/id.ts:36</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/83a03b0/src/runtime/id.ts#L36">runtime/id.ts:36</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -263,7 +287,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/6648d4c/src/runtime/id.ts#L27">runtime/id.ts:27</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/83a03b0/src/runtime/id.ts#L27">runtime/id.ts:27</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -305,7 +329,10 @@
 								<a href="idgenerator.html#currentsessionidfortesting" class="tsd-kind-icon">current<wbr>Session<wbr>IdFor<wbr>Testing</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
-								<a href="idgenerator.html#createchildid" class="tsd-kind-icon">create<wbr>Child<wbr>Id</a>
+								<a href="idgenerator.html#newarcid" class="tsd-kind-icon">new<wbr>Arc<wbr>Id</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="idgenerator.html#newchildid" class="tsd-kind-icon">new<wbr>Child<wbr>Id</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-static">
 								<a href="idgenerator.html#createwithsessionidfortesting" class="tsd-kind-icon">create<wbr>With<wbr>Session<wbr>IdFor<wbr>Testing</a>

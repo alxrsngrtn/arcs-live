@@ -15,7 +15,7 @@ import { PouchDbStorage } from '../../../storage/pouchdb/pouch-db-storage.js';
 import { StorageProviderFactory } from '../../../storage/storage-provider-factory.js';
 import { CallbackTracker } from '../../../testing/callback-tracker.js';
 import { EntityType, ReferenceType } from '../../../type.js';
-import { Id } from '../../../id.js';
+import { ArcId } from '../../../id.js';
 const testUrl = 'pouchdb://memory/user-test';
 // TODO(lindner): run tests for remote and local variants
 const testUrlReplicated = 'pouchdb://memory/user-test';
@@ -49,7 +49,7 @@ describe('pouchdb', () => {
         schema Bar
           Text value
       `);
-            const arc = new Arc({ id: new Id('test'), context: manifest, loader: new Loader() });
+            const arc = new Arc({ id: ArcId.newForTest('test'), context: manifest, loader: new Loader() });
             const storage = createStorage(arc.id);
             const barType = new EntityType(manifest.schemas.Bar);
             const value = 'Hi there' + Math.random();
@@ -65,7 +65,7 @@ describe('pouchdb', () => {
         schema Bar
           Text value
       `);
-            const arc = new Arc({ id: new Id('test'), context: manifest, loader: new Loader() });
+            const arc = new Arc({ id: ArcId.newForTest('test'), context: manifest, loader: new Loader() });
             const storage = createStorage(arc.id);
             const barType = new EntityType(manifest.schemas.Bar);
             const key = newStoreKey('variable');
@@ -88,7 +88,7 @@ describe('pouchdb', () => {
         schema Bar
           Text value
       `);
-            const arc = new Arc({ id: new Id('test'), context: manifest, loader: new Loader() });
+            const arc = new Arc({ id: ArcId.newForTest('test'), context: manifest, loader: new Loader() });
             const storage = createStorage(arc.id);
             const barType = new EntityType(manifest.schemas.Bar);
             const key1 = newStoreKey('varPtr');
@@ -105,7 +105,7 @@ describe('pouchdb', () => {
         schema Bar
           Text value
       `);
-            const arc = new Arc({ id: new Id('test'), context: manifest, loader: new Loader() });
+            const arc = new Arc({ id: ArcId.newForTest('test'), context: manifest, loader: new Loader() });
             const storage = createStorage(arc.id);
             const barType = new EntityType(manifest.schemas.Bar);
             const key1 = newStoreKey('varPtr');
@@ -123,7 +123,7 @@ describe('pouchdb', () => {
         schema Bar
           Text value
       `);
-            const arc = new Arc({ id: new Id('test'), context: manifest, loader: new Loader() });
+            const arc = new Arc({ id: ArcId.newForTest('test'), context: manifest, loader: new Loader() });
             const storage = createStorage(arc.id);
             const barType = new EntityType(manifest.schemas.Bar);
             const value1 = 'Hi there' + Math.random();
@@ -141,7 +141,7 @@ describe('pouchdb', () => {
         schema Bar
           Text value
       `);
-            const arc = new Arc({ id: new Id('test'), context: manifest, loader: new Loader() });
+            const arc = new Arc({ id: ArcId.newForTest('test'), context: manifest, loader: new Loader() });
             const storage = createStorage(arc.id);
             const barType = new EntityType(manifest.schemas.Bar);
             const key = newStoreKey('collection');
@@ -157,7 +157,7 @@ describe('pouchdb', () => {
         schema Bar
           Text value
       `);
-            const arc = new Arc({ id: new Id('test'), context: manifest, loader: new Loader() });
+            const arc = new Arc({ id: ArcId.newForTest('test'), context: manifest, loader: new Loader() });
             const storage = createStorage(arc.id);
             const barType = new EntityType(manifest.schemas.Bar);
             const key = newStoreKey('collection');
@@ -173,7 +173,7 @@ describe('pouchdb', () => {
         schema Bar
           Text value
       `);
-            const arc = new Arc({ id: new Id('test'), context: manifest, loader: new Loader() });
+            const arc = new Arc({ id: ArcId.newForTest('test'), context: manifest, loader: new Loader() });
             const storage = createStorage(arc.id);
             const barType = new EntityType(manifest.schemas.Bar);
             const key = newStoreKey('collection');
@@ -189,7 +189,7 @@ describe('pouchdb', () => {
         schema Bar
           Text value
       `);
-            const arc = new Arc({ id: new Id('test'), context: manifest, loader: new Loader() });
+            const arc = new Arc({ id: ArcId.newForTest('test'), context: manifest, loader: new Loader() });
             const storage = createStorage(arc.id);
             const barType = new EntityType(manifest.schemas.Bar);
             const key1 = newStoreKey('colPtr');
@@ -210,7 +210,7 @@ describe('pouchdb', () => {
         schema Bar
           Text value
       `);
-            const arc = new Arc({ id: new Id('test'), context: manifest, loader: new Loader() });
+            const arc = new Arc({ id: ArcId.newForTest('test'), context: manifest, loader: new Loader() });
             const storage = new StorageProviderFactory(arc.id);
             const barType = new EntityType(manifest.schemas.Bar);
             const key = newStoreKey('collectionRemoveMultiple');
@@ -229,7 +229,7 @@ describe('pouchdb', () => {
         schema Bar
           Text value
       `);
-            const arc = new Arc({ id: new Id('test'), context: manifest, loader: new Loader() });
+            const arc = new Arc({ id: ArcId.newForTest('test'), context: manifest, loader: new Loader() });
             const storage = createStorage(arc.id);
             const barType = new EntityType(manifest.schemas.Bar);
             const key1 = newStoreKey('colPtr');
@@ -250,7 +250,7 @@ describe('pouchdb', () => {
         schema Bar
           Text value
       `);
-            const arc = new Arc({ id: new Id('test'), context: manifest, loader: new Loader() });
+            const arc = new Arc({ id: ArcId.newForTest('test'), context: manifest, loader: new Loader() });
             const storage = createStorage(arc.id);
             const barType = new EntityType(manifest.schemas.Bar);
             const key = newStoreKey('collection');

@@ -35,7 +35,8 @@ export class ArcDebugHandler {
             this.arcDevtoolsChannel.send({
                 messageType: 'arc-available',
                 messageBody: {
-                    speculative: arc.isSpeculative
+                    speculative: arc.isSpeculative,
+                    inner: arc.isInnerArc
                 }
             });
             this.sendEnvironmentMessage(arc);

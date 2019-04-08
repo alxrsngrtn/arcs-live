@@ -14,11 +14,11 @@ import { Loader } from '../loader.js';
 import { Schema } from '../schema.js';
 import { FakeSlotComposer } from '../testing/fake-slot-composer.js';
 import { EntityType } from '../type.js';
-import { Id } from '../id.js';
+import { ArcId } from '../id.js';
 describe('entity', async () => {
     it('can be created, stored, and restored', async () => {
         const schema = new Schema(['TestSchema'], { value: 'Text' });
-        const arc = new Arc({ slotComposer: new FakeSlotComposer(), id: new Id('test'), context: null, loader: new Loader() });
+        const arc = new Arc({ slotComposer: new FakeSlotComposer(), id: ArcId.newForTest('test'), context: null, loader: new Loader() });
         const entity = new (schema.entityClass())({ value: 'hello world' });
         assert.isDefined(entity);
         const collectionType = new EntityType(schema).collectionOf();

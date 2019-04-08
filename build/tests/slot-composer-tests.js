@@ -16,7 +16,7 @@ import { MockSlotComposer } from '../runtime/testing/mock-slot-composer.js';
 import { StubLoader } from '../runtime/testing/stub-loader.js';
 import { TestHelper } from '../runtime/testing/test-helper.js';
 import { PlanningTestHelper, StrategyTestHelper } from '../planning/testing/arcs-planning-testing.js';
-import { Id } from '../runtime/id.js';
+import { ArcId } from '../runtime/id.js';
 async function initSlotComposer(recipeStr) {
     const slotComposer = new MockSlotComposer().newExpectations();
     const manifest = await TestHelper.parseManifest(recipeStr, new Loader());
@@ -24,7 +24,7 @@ async function initSlotComposer(recipeStr) {
         '*': `defineParticle(({Particle}) => { return class P extends Particle {} });`
     });
     const arc = new Arc({
-        id: new Id('test-plan-arc'),
+        id: ArcId.newForTest('test-plan-arc'),
         context: manifest,
         slotComposer,
         loader

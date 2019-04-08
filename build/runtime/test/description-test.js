@@ -16,10 +16,10 @@ import { Loader } from '../loader.js';
 import { Manifest } from '../manifest.js';
 import { Relevance } from '../relevance.js';
 import { FakeSlotComposer } from '../testing/fake-slot-composer.js';
-import { Id } from '../id.js';
+import { ArcId } from '../id.js';
 function createTestArc(recipe, manifest) {
     const slotComposer = new FakeSlotComposer();
-    const arc = new Arc({ slotComposer, id: new Id('test'), context: manifest, loader: new Loader() });
+    const arc = new Arc({ slotComposer, id: ArcId.newForTest('test'), context: manifest, loader: new Loader() });
     // TODO(lindner) stop messing with arc internal state, or provide a way to supply in constructor..
     arc['_activeRecipe'] = recipe;
     arc['_recipeDeltas'].push({ particles: recipe.particles, handles: recipe.handles, slots: recipe.slots, patterns: recipe.patterns });

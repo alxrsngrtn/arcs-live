@@ -12784,14 +12784,17 @@ class IdGenerator {
     static createWithSessionIdForTesting(sessionId) {
         return new IdGenerator(sessionId);
     }
+    newArcId(name) {
+        return ArcId._newArcIdInternal(this._currentSessionId, name);
+    }
     /**
      * Creates a new ID, as a child of the given parentId. The given subcomponent will be appended to the component hierarchy of the given ID, but
      * the generator's random session ID will be used as the ID's root.
      */
-    createChildId(parentId, subcomponent = '') {
+    newChildId(parentId, subcomponent = '') {
         // Append (and increment) a counter to the subcomponent, to ensure that it is unique.
         subcomponent += this._nextComponentId++;
-        return new Id(this._currentSessionId, [...parentId.idTree, subcomponent]);
+        return Id._newIdInternal(this._currentSessionId, [...parentId.idTree, subcomponent]);
     }
     get currentSessionIdForTesting() {
         return this._currentSessionId;
@@ -12803,12 +12806,18 @@ class IdGenerator {
  * appending subcomponents to their parent ID's idTree).
  */
 class Id {
+    /** Protected constructor. Use IdGenerator to create new IDs instead. */
     constructor(root, idTree = []) {
         /** The components of the idTree. */
         this.idTree = [];
         this.root = root;
         this.idTree = idTree;
     }
+    /** Creates a new ID. Use IdGenerator to create new IDs instead. */
+    static _newIdInternal(root, idTree = []) {
+        return new Id(root, idTree);
+    }
+    /** Parses a string representation of an ID (see toString). */
     static fromString(str) {
         const bits = str.split(':');
         if (bits[0].startsWith('!')) {
@@ -12838,6 +12847,16 @@ class Id {
             }
         }
         return true;
+    }
+}
+class ArcId extends Id {
+    /** Creates a new Arc ID. Use IdGenerator to create new IDs instead. */
+    static _newArcIdInternal(root, name) {
+        return new ArcId(root, [name]);
+    }
+    /** Creates a new Arc ID with the given name. For convenience in unit testing only; otherwise use IdGenerator to create new IDs instead. */
+    static newForTest(id) {
+        return IdGenerator.newSession().newArcId(id);
     }
 }
 
@@ -16213,9 +16232,9 @@ class Manifest {
         else {
             // We use the first component of an ID as a session ID, for manifests parsed
             // from the file, this is the 'manifest' phrase.
-            // TODO: Figure out if this is ok.
+            // TODO: Figure out if this is ok, and stop using internal Id APIs.
             const components = id.split(':');
-            this._id = new Id(components[0], components.slice(1));
+            this._id = Id._newIdInternal(components[0], components.slice(1));
         }
     }
     get id() {
@@ -16376,7 +16395,7 @@ class Manifest {
     }
     // TODO: Unify ID handling to use ID instances, not strings. Change return type here to ID.
     generateID() {
-        return this._idGenerator.createChildId(this.id).toString();
+        return this._idGenerator.newChildId(this.id).toString();
     }
     static async load(fileName, loader, options) {
         options = options || {};
@@ -18385,7 +18404,8 @@ class ArcDebugHandler {
             this.arcDevtoolsChannel.send({
                 messageType: 'arc-available',
                 messageBody: {
-                    speculative: arc.isSpeculative
+                    speculative: arc.isSpeculative,
+                    inner: arc.isInnerArc
                 }
             });
             this.sendEnvironmentMessage(arc);
@@ -20932,7 +20952,7 @@ class ParticleExecutionContext {
          */
     }
     generateID() {
-        return this.idGenerator.createChildId(this.pecId).toString();
+        return this.idGenerator.newChildId(this.pecId).toString();
     }
     innerArcHandle(arcId, particleId) {
         const pec = this;
@@ -21936,7 +21956,7 @@ class Arc {
             // TODO(csilvestrini): Replace this warning with an exception.
             console.error(`Arc created with string ID ${id}!!! This should be an object of type Id instead. This warning will turn into an ` +
                 `exception soon (end of April 2019).`);
-            this.id = new Id(id);
+            this.id = ArcId.fromString(id);
         }
         else {
             this.id = id;
@@ -22240,7 +22260,7 @@ ${this.activeRecipe.toString()}`;
         this.pec.instantiate(recipeParticle, info.stores);
     }
     generateID(component = '') {
-        return this.idGenerator.createChildId(this.id, component);
+        return this.idGenerator.newChildId(this.id, component);
     }
     get _stores() {
         return [...this.storesById.values()];
@@ -26862,9 +26882,10 @@ class RecipeIndex {
     constructor(arc, { reportGenerations = false } = {}) {
         this._isReady = false;
         const trace = Tracing.start({ cat: 'indexing', name: 'RecipeIndex::constructor', overview: true });
+        const idGenerator = IdGenerator.newSession();
         const arcStub = new Arc({
-            id: new Id('index-stub'),
-            context: new Manifest({ id: new Id('empty-context') }),
+            id: idGenerator.newArcId('index-stub'),
+            context: new Manifest({ id: idGenerator.newArcId('empty-context') }),
             loader: arc.loader,
             slotComposer: new SlotComposer({
                 modalityHandler: PlanningModalityHandler.createHeadlessHandler(),
@@ -28003,8 +28024,9 @@ const resolve = async (arc, recipe) =>{
 };
 
 const spawn = async ({id, serialization, context, composer, storage}) => {
+  const arcId = IdGenerator.newSession().newArcId(id);
   const params = {
-    id: new Id(id),
+    id: arcId,
     fileName: './serialized.manifest',
     serialization,
     context,

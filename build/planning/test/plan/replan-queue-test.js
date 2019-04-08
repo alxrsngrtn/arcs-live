@@ -15,7 +15,7 @@ import { FakeSlotComposer } from '../../../runtime/testing/fake-slot-composer.js
 import { PlanProducer } from '../../plan/plan-producer.js';
 import { PlanningResult } from '../../plan/planning-result.js';
 import { ReplanQueue } from '../../plan/replan-queue.js';
-import { Id } from '../../../runtime/id.js';
+import { ArcId } from '../../../runtime/id.js';
 class TestPlanProducer extends PlanProducer {
     constructor(arc) {
         super(arc, new PlanningResult({ context: arc.context, loader: arc.loader }));
@@ -35,7 +35,7 @@ async function init(options) {
     schema Bar
       Text value
   `);
-    const arc = new Arc({ slotComposer: new FakeSlotComposer(), loader, context: manifest, id: new Id('test') });
+    const arc = new Arc({ slotComposer: new FakeSlotComposer(), loader, context: manifest, id: ArcId.newForTest('test') });
     const producer = new TestPlanProducer(arc);
     const queue = new ReplanQueue(producer, options);
     const expectedCalls = 0;

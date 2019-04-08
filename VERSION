@@ -1,5 +1,11 @@
-commit 6648d4c9f0abd01d0dfa47f11dcab78eeb34264e
-Author: shans <shane.stephens@gmail.com>
-Date:   Mon Apr 8 13:54:48 2019 +1000
+commit 83a03b074ce454c451c313d7398f54efe9d479ee
+Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
+Date:   Mon Apr 8 16:42:34 2019 +1000
 
-    Add types to recipe-utils and a few other bits and pieces (#2854)
+    Fix Travis build failures caused by sigh changes (#2859)
+    
+    * Test PR: debugging Travis build failures
+    
+    * Don't use set -e
+    
+    * Explicitly check for the existence of build/sigh.js

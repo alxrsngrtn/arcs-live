@@ -12,7 +12,7 @@ import { Arc } from '../arc.js';
 import { Loader } from '../loader.js';
 import { FakeSlotComposer } from '../testing/fake-slot-composer.js';
 import { TestHelper } from '../testing/test-helper.js';
-import { Id } from '../id.js';
+import { ArcId } from '../id.js';
 describe('Multiplexer', () => {
     it('Processes multiple inputs', async () => {
         const manifest = await TestHelper.parseManifest(`
@@ -36,7 +36,7 @@ describe('Multiplexer', () => {
             slotsCreated++;
             return slotComposerCreateHostedSlot.apply(slotComposer, args);
         };
-        const arc = new Arc({ id: new Id('test'), context: manifest, slotComposer, loader: new Loader() });
+        const arc = new Arc({ id: ArcId.newForTest('test'), context: manifest, slotComposer, loader: new Loader() });
         const barStore = await arc.createStore(barType.collectionOf(), null, 'test:1');
         recipe.handles[0].mapToStorage(barStore);
         assert(recipe.normalize());

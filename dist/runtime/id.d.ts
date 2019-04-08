@@ -23,11 +23,12 @@ export declare class IdGenerator {
      * IdGenerator.newSession() method when testing other classes.
      */
     static createWithSessionIdForTesting(sessionId: string): IdGenerator;
+    newArcId(name: string): ArcId;
     /**
      * Creates a new ID, as a child of the given parentId. The given subcomponent will be appended to the component hierarchy of the given ID, but
      * the generator's random session ID will be used as the ID's root.
      */
-    createChildId(parentId: Id, subcomponent?: string): Id;
+    newChildId(parentId: Id, subcomponent?: string): Id;
     readonly currentSessionIdForTesting: string;
 }
 /**
@@ -40,11 +41,21 @@ export declare class Id {
     readonly root: string;
     /** The components of the idTree. */
     readonly idTree: string[];
-    constructor(root: string, idTree?: string[]);
+    /** Protected constructor. Use IdGenerator to create new IDs instead. */
+    protected constructor(root: string, idTree?: string[]);
+    /** Creates a new ID. Use IdGenerator to create new IDs instead. */
+    static _newIdInternal(root: string, idTree?: string[]): Id;
+    /** Parses a string representation of an ID (see toString). */
     static fromString(str: string): Id;
     /** Returns the full ID string. */
     toString(): string;
     /** Returns the idTree as as string (without the root). */
     idTreeAsString(): string;
     equal(id: Id): boolean;
+}
+export declare class ArcId extends Id {
+    /** Creates a new Arc ID. Use IdGenerator to create new IDs instead. */
+    static _newArcIdInternal(root: string, name: string): ArcId;
+    /** Creates a new Arc ID with the given name. For convenience in unit testing only; otherwise use IdGenerator to create new IDs instead. */
+    static newForTest(id: string): ArcId;
 }

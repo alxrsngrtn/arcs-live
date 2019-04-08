@@ -13,11 +13,11 @@ import { Arc } from '../../../runtime/arc.js';
 import { Loader } from '../../../runtime/loader.js';
 import { FakeSlotComposer } from '../../../runtime/testing/fake-slot-composer.js';
 import { RecipeIndex } from '../../recipe-index.js';
-import { Id } from '../../../runtime/id.js';
+import { ArcId } from '../../../runtime/id.js';
 export class StrategyTestHelper {
     static createTestArc(context, options = {}) {
         return new Arc({
-            id: options.arcId || new Id('test-arc'),
+            id: options.arcId || ArcId.newForTest('test-arc'),
             loader: options.loader || new Loader(),
             context,
             slotComposer: new FakeSlotComposer(options)

@@ -16,7 +16,7 @@ import { PlanningTestHelper } from '../../testing/planning-test-helper.js';
 import { PlanProducer } from '../../plan/plan-producer.js';
 import { Planificator } from '../../plan/planificator.js';
 import { PlanningResult } from '../../plan/planning-result.js';
-import { Id } from '../../../runtime/id.js';
+import { ArcId } from '../../../runtime/id.js';
 class TestPlanProducer extends PlanProducer {
     constructor(arc, store) {
         super(arc, new PlanningResult({ context: arc.context, loader: arc.loader }, store));
@@ -137,7 +137,7 @@ class TestPlanProducer extends PlanProducer {
       schema Bar
         Text value
     `);
-            const arc = new Arc({ slotComposer: new FakeSlotComposer(), loader, context: manifest, id: new Id('test'),
+            const arc = new Arc({ slotComposer: new FakeSlotComposer(), loader, context: manifest, id: ArcId.newForTest('test'),
                 storageKey: 'volatile://test^^123' });
             const searchStore = await Planificator['_initSearchStore'](arc, /* userid= */ 'TestUser');
             const producer = new TestSearchPlanProducer(arc, searchStore);

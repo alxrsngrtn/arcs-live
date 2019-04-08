@@ -14,7 +14,7 @@ import { Manifest } from '../../../runtime/manifest.js';
 import { StubLoader } from '../../../runtime/testing/stub-loader.js';
 import { InitPopulation } from '../../strategies/init-population.js';
 import { StrategyTestHelper } from './strategy-test-helper.js';
-import { Id } from '../../../runtime/id.js';
+import { ArcId } from '../../../runtime/id.js';
 describe('InitPopulation', async () => {
     it('penalizes resolution of particles that already exist in the arc', async () => {
         const manifest = await Manifest.parse(`
@@ -32,7 +32,7 @@ describe('InitPopulation', async () => {
         });
         const recipe = manifest.recipes[0];
         assert(recipe.normalize());
-        const arc = new Arc({ id: new Id('test-plan-arc'), context: manifest, loader });
+        const arc = new Arc({ id: ArcId.newForTest('test-plan-arc'), context: manifest, loader });
         async function scoreOfInitPopulationOutput() {
             const results = await new InitPopulation(arc, StrategyTestHelper.createTestStrategyArgs(arc, { contextual: false })).generate({ generation: 0 });
             assert.lengthOf(results, 1);
@@ -53,8 +53,8 @@ describe('InitPopulation', async () => {
             'A.js': 'defineParticle(({Particle}) => class extends Particle {})'
         });
         const arc = new Arc({
-            id: new Id('test-plan-arc'),
-            context: new Manifest({ id: new Id('test') }),
+            id: ArcId.newForTest('test-plan-arc'),
+            context: new Manifest({ id: ArcId.newForTest('test') }),
             loader
         });
         const results = await new InitPopulation(arc, { contextual: false,

@@ -26,7 +26,7 @@ import { CreateHandleGroup } from './strategies/create-handle-group.js';
 import { MatchFreeHandlesToConnections } from './strategies/match-free-handles-to-connections.js';
 import { ResolveRecipe } from './strategies/resolve-recipe.js';
 import * as Rulesets from './strategies/rulesets.js';
-import { Id } from '../runtime/id.js';
+import { IdGenerator } from '../runtime/id.js';
 class RelevantContextRecipes extends Strategy {
     constructor(context, modality) {
         super();
@@ -73,9 +73,10 @@ export class RecipeIndex {
     constructor(arc, { reportGenerations = false } = {}) {
         this._isReady = false;
         const trace = Tracing.start({ cat: 'indexing', name: 'RecipeIndex::constructor', overview: true });
+        const idGenerator = IdGenerator.newSession();
         const arcStub = new Arc({
-            id: new Id('index-stub'),
-            context: new Manifest({ id: new Id('empty-context') }),
+            id: idGenerator.newArcId('index-stub'),
+            context: new Manifest({ id: idGenerator.newArcId('empty-context') }),
             loader: arc.loader,
             slotComposer: new SlotComposer({
                 modalityHandler: PlanningModalityHandler.createHeadlessHandler(),

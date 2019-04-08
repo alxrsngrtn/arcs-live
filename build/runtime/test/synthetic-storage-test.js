@@ -6,7 +6,7 @@
 // subject to an additional IP rights grant found at
 // http://polymer.github.io/PATENTS.txt
 import { assert } from '../../platform/chai-web.js';
-import { Id } from '../id.js';
+import { ArcId } from '../id.js';
 import { StorageProviderFactory } from '../storage/storage-provider-factory.js';
 import { resetVolatileStorageForTesting } from '../storage/volatile-storage.js';
 import { assertThrowsAsync } from '../testing/test-util.js';
@@ -17,7 +17,7 @@ describe('synthetic storage ', () => {
         resetVolatileStorageForTesting();
     });
     async function setup(serialization) {
-        const id = new Id('123', ['test']);
+        const id = ArcId.newForTest('test');
         const storage = new StorageProviderFactory(id);
         const type = new ArcType();
         const key = storage.parseStringAsKey(`volatile://${id}`).childKeyForArcInfo().toString();
@@ -31,7 +31,7 @@ describe('synthetic storage ', () => {
         return `${arcHandle.storageKey} ${arcHandle.type.toString()} <${arcHandle.tags.join(',')}>`;
     }
     it('invalid synthetic keys', async () => {
-        const storage = new StorageProviderFactory(new Id('123', ['test']));
+        const storage = new StorageProviderFactory(ArcId.newForTest('test'));
         const check = (key, msg) => assertThrowsAsync(() => storage.connect('id1', null, key), msg);
         check('simplistic://arc/handles/volatile', 'unknown storage protocol');
         check('synthetic://arc/handles/not-a-protocol://test', 'unknown storage protocol');
@@ -41,7 +41,7 @@ describe('synthetic storage ', () => {
         check('synthetic://arc/cranks/volatile://test', 'invalid category');
     });
     it('non-existent target key', async () => {
-        const storage = new StorageProviderFactory(new Id('123', ['test']));
+        const storage = new StorageProviderFactory(ArcId.newForTest('test'));
         const synth = await storage.connect('id1', null, `synthetic://arc/handles/volatile://nope`);
         assert.isNull(synth);
     });

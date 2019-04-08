@@ -218,7 +218,7 @@ class ParticleExecutionContext {
          */
     }
     generateID() {
-        return this.idGenerator.createChildId(this.pecId).toString();
+        return this.idGenerator.newChildId(this.pecId).toString();
     }
     innerArcHandle(arcId, particleId) {
         const pec = this;
@@ -6571,6 +6571,7 @@ const logFactory = (...args) => factory(...args);
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "IdGenerator", function() { return IdGenerator; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Id", function() { return Id; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ArcId", function() { return ArcId; });
 /* harmony import */ var _random_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(43);
 /**
  * @license
@@ -6604,14 +6605,17 @@ class IdGenerator {
     static createWithSessionIdForTesting(sessionId) {
         return new IdGenerator(sessionId);
     }
+    newArcId(name) {
+        return ArcId._newArcIdInternal(this._currentSessionId, name);
+    }
     /**
      * Creates a new ID, as a child of the given parentId. The given subcomponent will be appended to the component hierarchy of the given ID, but
      * the generator's random session ID will be used as the ID's root.
      */
-    createChildId(parentId, subcomponent = '') {
+    newChildId(parentId, subcomponent = '') {
         // Append (and increment) a counter to the subcomponent, to ensure that it is unique.
         subcomponent += this._nextComponentId++;
-        return new Id(this._currentSessionId, [...parentId.idTree, subcomponent]);
+        return Id._newIdInternal(this._currentSessionId, [...parentId.idTree, subcomponent]);
     }
     get currentSessionIdForTesting() {
         return this._currentSessionId;
@@ -6623,12 +6627,18 @@ class IdGenerator {
  * appending subcomponents to their parent ID's idTree).
  */
 class Id {
+    /** Protected constructor. Use IdGenerator to create new IDs instead. */
     constructor(root, idTree = []) {
         /** The components of the idTree. */
         this.idTree = [];
         this.root = root;
         this.idTree = idTree;
     }
+    /** Creates a new ID. Use IdGenerator to create new IDs instead. */
+    static _newIdInternal(root, idTree = []) {
+        return new Id(root, idTree);
+    }
+    /** Parses a string representation of an ID (see toString). */
     static fromString(str) {
         const bits = str.split(':');
         if (bits[0].startsWith('!')) {
@@ -6658,6 +6668,16 @@ class Id {
             }
         }
         return true;
+    }
+}
+class ArcId extends Id {
+    /** Creates a new Arc ID. Use IdGenerator to create new IDs instead. */
+    static _newArcIdInternal(root, name) {
+        return new ArcId(root, [name]);
+    }
+    /** Creates a new Arc ID with the given name. For convenience in unit testing only; otherwise use IdGenerator to create new IDs instead. */
+    static newForTest(id) {
+        return IdGenerator.newSession().newArcId(id);
     }
 }
 //# sourceMappingURL=id.js.map
