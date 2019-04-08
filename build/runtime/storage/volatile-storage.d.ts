@@ -54,10 +54,7 @@ declare class VolatileCollection extends VolatileStorageProvider implements Coll
         version: number;
         model: import("./crdt-collection-model.js").SerializedModelEntry[];
     };
-    fromLiteral({ version, model }: {
-        version: any;
-        model: any;
-    }): void;
+    private fromLiteral;
     _toList(): Promise<any[]>;
     toList(): Promise<any[]>;
     getMultiple(ids: string[]): Promise<import("./crdt-collection-model.js").ModelValue[]>;
@@ -90,10 +87,7 @@ declare class VolatileVariable extends VolatileStorageProvider implements Variab
             };
         }[];
     }>;
-    fromLiteral({ version, model }: {
-        version: any;
-        model: any;
-    }): void;
+    private fromLiteral;
     traceInfo(): {
         stored: boolean;
     };
@@ -127,10 +121,7 @@ declare class VolatileBigCollection extends VolatileStorageProvider implements B
         version: number;
         model: any[];
     };
-    fromLiteral({ version, model }: {
-        version: any;
-        model: any;
-    }): void;
+    private fromLiteral;
     clearItemsForTesting(): void;
 }
 export {};

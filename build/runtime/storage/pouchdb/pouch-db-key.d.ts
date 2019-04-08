@@ -30,8 +30,8 @@ export declare class PouchDbKey extends KeyBase {
      */
     childKeyForHandle(id: string): PouchDbKey;
     childKeyForArcInfo(): PouchDbKey;
-    childKeyForSuggestions(userId: any, arcId: any): KeyBase;
-    childKeyForSearch(userId: any): KeyBase;
+    childKeyForSuggestions(userId: string, arcId: string): KeyBase;
+    childKeyForSearch(userId: string): KeyBase;
     private buildChildKey;
     toString(): string;
     dbCacheKey(): string;

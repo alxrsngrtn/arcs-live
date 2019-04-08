@@ -7,7 +7,7 @@
 // http://polymer.github.io/PATENTS.txt
 import { assert } from '../../platform/assert-web.js';
 export class CrdtCollectionModel {
-    constructor(model = undefined) {
+    constructor(model) {
         // id => {value, Set[keys]}
         this.items = new Map();
         if (model) {
@@ -90,7 +90,6 @@ export class CrdtCollectionModel {
         }
         return effective;
     }
-    // [{id, value, keys: []}]
     toLiteral() {
         const result = [];
         for (const [id, { value, keys }] of this.items.entries()) {

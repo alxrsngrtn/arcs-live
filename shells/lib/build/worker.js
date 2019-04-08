@@ -4955,7 +4955,7 @@ __webpack_require__.r(__webpack_exports__);
 // http://polymer.github.io/PATENTS.txt
 
 class CrdtCollectionModel {
-    constructor(model = undefined) {
+    constructor(model) {
         // id => {value, Set[keys]}
         this.items = new Map();
         if (model) {
@@ -5038,7 +5038,6 @@ class CrdtCollectionModel {
         }
         return effective;
     }
-    // [{id, value, keys: []}]
     toLiteral() {
         const result = [];
         for (const [id, { value, keys }] of this.items.entries()) {

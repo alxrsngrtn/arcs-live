@@ -11,7 +11,7 @@ export declare class PouchDbBigCollection extends PouchDbStorageProvider impleme
     cursorClose(cursorId: number): void;
     cursorVersion(cursorId: number): void;
     toLiteral(): void;
-    cloneFrom(): void;
+    cloneFrom(): Promise<void>;
     clearItemsForTesting(): void;
     /**
      * Triggered when the storage key has been modified.  For now we

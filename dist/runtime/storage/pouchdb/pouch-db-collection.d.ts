@@ -1,6 +1,6 @@
 /// <reference types="pouchdb-core" />
 import { Type, TypeLiteral } from '../../type.js';
-import { SerializedModelEntry } from '../crdt-collection-model.js';
+import { SerializedModelEntry, ModelValue } from '../crdt-collection-model.js';
 import { CollectionStorageProvider } from '../storage-provider-base.js';
 import { PouchDbStorage } from './pouch-db-storage';
 import { PouchDbStorageProvider } from './pouch-db-storage-provider.js';
@@ -15,7 +15,6 @@ interface CollectionStorage {
 }
 export declare class PouchDbCollection extends PouchDbStorageProvider implements CollectionStorageProvider {
     private readonly initialized;
-    private resolveInitialized;
     /** The local synced model */
     private _model;
     /**
@@ -35,7 +34,7 @@ export declare class PouchDbCollection extends PouchDbStorageProvider implements
     /** @inheritDoc */
     modelForSynchronization(): Promise<{
         version: number;
-        model: any[];
+        model: SerializedModelEntry[];
     }>;
     /** @inheritDoc */
     toLiteral(): Promise<{
@@ -43,14 +42,14 @@ export declare class PouchDbCollection extends PouchDbStorageProvider implements
         model: SerializedModelEntry[];
     }>;
     private _toList;
-    toList(): Promise<any[]>;
+    toList(): Promise<ModelValue[]>;
     /**
      * Returns an array of values for each of the specified ids.
      *
      * @param ids items to fetch from the underlying CRDT model.
      * @return an array of values from the underlying CRDT
      */
-    getMultiple(ids: string[]): Promise<import("../crdt-collection-model.js").ModelValue[]>;
+    getMultiple(ids: string[]): Promise<ModelValue[]>;
     /**
      * Store multiple values with the given keys in the Collection.
      * TODO(lindner): document originatorId, which is unused.

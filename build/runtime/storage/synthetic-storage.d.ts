@@ -45,7 +45,7 @@ declare class SyntheticCollection extends StorageProviderBase implements Collect
     private process;
     toList(): Promise<ArcHandle[]>;
     toLiteral(): Promise<ArcHandle[]>;
-    cloneFrom(): void;
+    cloneFrom(): Promise<void>;
     ensureBackingStore(): void;
     getMultiple(ids: string[]): Promise<any[]>;
     storeMultiple(values: any, keys: any, originatorId: any): Promise<void>;

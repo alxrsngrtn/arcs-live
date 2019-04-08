@@ -104,10 +104,7 @@ declare class FirebaseVariable extends FirebaseStorageProvider implements Variab
     cloneFrom(handle: any): Promise<void>;
     modelForSynchronization(): Promise<any>;
     toLiteral(): Promise<{}>;
-    fromLiteral({ version, model }: {
-        version: any;
-        model: any;
-    }): void;
+    private fromLiteral;
 }
 /**
  * Models a Collection that is persisted to firebase in scheme similar
@@ -184,10 +181,7 @@ declare class FirebaseCollection extends FirebaseStorageProvider implements Coll
         version: number;
         model: import("../crdt-collection-model.js").SerializedModelEntry[];
     }>;
-    fromLiteral({ version, model }: {
-        version: any;
-        model: any;
-    }): void;
+    private fromLiteral;
 }
 /**
  * Provides access to large collections without pulling the entire contents locally.
@@ -252,10 +246,7 @@ declare class FirebaseBigCollection extends FirebaseStorageProvider implements B
     readonly _hasLocalChanges: boolean;
     cloneFrom(handle: any): Promise<void>;
     toLiteral(): void;
-    fromLiteral({ version, model }: {
-        version: any;
-        model: any;
-    }): void;
+    private fromLiteral;
     clearItemsForTesting(): void;
 }
 /**
@@ -283,6 +274,6 @@ declare class FirebaseBackingStore extends FirebaseStorageProvider implements Co
     on(kindStr: any, callback: any, target: any): void;
     off(kindStr: any, callback: any): void;
     toLiteral(): void;
-    cloneFrom(store: StorageProviderBase): void;
+    cloneFrom(store: StorageProviderBase): Promise<void>;
 }
 export {};

@@ -14,11 +14,12 @@ export class PouchDbCollection extends PouchDbStorageProvider {
      */
     constructor(type, storageEngine, name, id, key) {
         super(type, storageEngine, name, id, key);
+        let resolveInitialized;
+        this.initialized = new Promise(resolve => resolveInitialized = resolve);
         this._model = new CrdtCollectionModel();
-        this.initialized = new Promise(resolve => this.resolveInitialized = resolve);
         // Ensure that the underlying database item is created.
         this.db.get(this.pouchDbKey.location).then(() => {
-            this.resolveInitialized();
+            resolveInitialized();
         }).catch((err) => {
             if (err.name === 'not_found') {
                 this.db.put({
@@ -28,7 +29,7 @@ export class PouchDbCollection extends PouchDbStorageProvider {
                     type: this.type.toLiteral()
                 }).then(() => {
                     this.version = 0;
-                    this.resolveInitialized();
+                    resolveInitialized();
                 }).catch((e) => {
                     // should throw something?
                     console.warn('error init', e);

@@ -31,7 +31,6 @@ export declare class PouchDbVariable extends PouchDbStorageProvider implements V
     private _stored;
     private localKeyId;
     private readonly initialized;
-    private resolveInitialized;
     constructor(type: Type, storageEngine: PouchDbStorage, name: string, id: string, key: string);
     backingType(): Type;
     clone(): Promise<PouchDbVariable>;

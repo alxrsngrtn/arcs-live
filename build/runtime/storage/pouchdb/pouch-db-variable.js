@@ -9,11 +9,12 @@ export class PouchDbVariable extends PouchDbStorageProvider {
         super(type, storageEngine, name, id, key);
         this._stored = null;
         this.localKeyId = 0;
+        let resolveInitialized;
+        this.initialized = new Promise(resolve => resolveInitialized = resolve);
         this.backingStore = null;
-        this.initialized = new Promise(resolve => this.resolveInitialized = resolve);
         // Insure that there's a value stored.
         this.db.get(this.pouchDbKey.location).then(() => {
-            this.resolveInitialized();
+            resolveInitialized();
         }).catch((err) => {
             if (err.name === 'not_found') {
                 this.db.put({
@@ -22,7 +23,7 @@ export class PouchDbVariable extends PouchDbStorageProvider {
                     version: 0,
                     referenceMode: this.referenceMode
                 }).then(() => {
-                    this.resolveInitialized();
+                    resolveInitialized();
                 }).catch((e) => {
                     console.log('error init', e);
                 });

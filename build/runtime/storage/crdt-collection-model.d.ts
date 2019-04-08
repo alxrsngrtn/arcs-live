@@ -10,14 +10,14 @@ export interface SerializedModelEntry {
 }
 export declare class CrdtCollectionModel {
     private items;
-    constructor(model?: any);
+    constructor(model?: SerializedModelEntry[]);
     /**
      * Adds membership, `keys`, of `value` indexed by `id` to this collection.
      * Returns whether the change is effective (`id` is new to the collection,
      * or `value` is different to the value previously stored).
      */
-    add(id: string, value: any, keys: string[]): boolean;
-    _equals(value1: string | {}, value2: string | {}): any;
+    add(id: string, value: ModelValue, keys: string[]): boolean;
+    _equals(value1: string | {}, value2: string | {}): boolean;
     /**
      * Removes the membership, `keys`, of the value indexed by `id` from this collection.
      * Returns whether the change is effective (the value is no longer present
@@ -28,6 +28,6 @@ export declare class CrdtCollectionModel {
     toList(): ModelValue[];
     has(id: string): boolean;
     getKeys(id: string): string[];
-    getValue(id: string): ModelValue;
+    getValue(id: string): ModelValue | null;
     readonly size: number;
 }
