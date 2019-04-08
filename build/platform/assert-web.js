@@ -4,10 +4,11 @@
 // Code distributed by Google as part of this project is also
 // subject to an additional IP rights grant found at
 // http://polymer.github.io/PATENTS.txt
-
 export function assert(test, message) {
-  if (!test) {
-    debugger; // eslint-disable-line no-debugger
-    throw new Error(message);
-  }
+    if (!test) {
+        // tslint:disable-next-line: no-debugger
+        debugger; // eslint-disable-line no-debugger
+        throw new Error(message);
+    }
 }
+//# sourceMappingURL=assert-web.js.map

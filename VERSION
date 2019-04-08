@@ -1,5 +1,8 @@
-commit 4baea0fb5424be4f85f0eda0d1405779914f857a
-Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
-Date:   Fri Apr 5 13:41:40 2019 +1100
+commit c8e4c2ca334a2f5c90290cec42137b5ed55c8f45
+Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
+Date:   Mon Apr 8 13:06:04 2019 +1000
 
-    sigh: fix table formatting for health report (#2843)
+    Fixes type of the `tags` variable. (#2853)
+    
+    It is now always a Set (used to be either a Set or an array, which have
+    different forEach methods, which was causing an error).

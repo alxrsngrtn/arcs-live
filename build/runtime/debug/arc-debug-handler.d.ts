@@ -16,5 +16,6 @@ export declare class ArcDebugHandler {
     recipeInstantiated({ particles }: {
         particles: Particle[];
     }): void;
+    sendEnvironmentMessage(arc: Arc): void;
 }
 export declare const defaultCoreDebugListeners: ArcDebugListenerDerived[];

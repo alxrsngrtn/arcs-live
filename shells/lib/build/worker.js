@@ -371,14 +371,14 @@ __webpack_require__.r(__webpack_exports__);
 // Code distributed by Google as part of this project is also
 // subject to an additional IP rights grant found at
 // http://polymer.github.io/PATENTS.txt
-
 function assert(test, message) {
-  if (!test) {
-    debugger; // eslint-disable-line no-debugger
-    throw new Error(message);
-  }
+    if (!test) {
+        // tslint:disable-next-line: no-debugger
+        debugger; // eslint-disable-line no-debugger
+        throw new Error(message);
+    }
 }
-
+//# sourceMappingURL=assert-web.js.map
 
 /***/ }),
 /* 4 */
@@ -1420,7 +1420,7 @@ class ParticleSpec {
         // Verify provided slots use valid handle connection names.
         this.slotConnections.forEach(slot => {
             slot.provideSlotConnections.forEach(ps => {
-                ps.handles.forEach(v => Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(this.handleConnectionMap.has(v), 'Cannot provide slot for nonexistent handle constraint ', v));
+                ps.handles.forEach(v => Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(this.handleConnectionMap.has(v), 'Cannot provide slot for nonexistent handle constraint ' + v));
             });
         });
     }
@@ -5080,8 +5080,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _runtime_transformation_dom_particle_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(40);
 /* harmony import */ var _platform_log_web_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(41);
 /**
- * @license
- * Copyright (c) 2017 Google Inc. All rights reserved.
+ * Copyright (c) 2019 Google Inc. All rights reserved.
  * This code may only be used under the BSD style license found at
  * http://polymer.github.io/LICENSE.txt
  * Code distributed by Google as part of this project is also
@@ -5096,9 +5095,14 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+const log = Object(_platform_log_web_js__WEBPACK_IMPORTED_MODULE_5__["logFactory"])('loader-web', 'green');
+const warn = Object(_platform_log_web_js__WEBPACK_IMPORTED_MODULE_5__["logFactory"])('loader-web', 'green', 'warn');
+const error = Object(_platform_log_web_js__WEBPACK_IMPORTED_MODULE_5__["logFactory"])('loader-web', 'green', 'error');
+
 const html = (strings, ...values) => (strings[0] + values.map((v, i) => v + strings[i + 1]).join('')).trim();
 
-let dumbCache = {};
+// mono-state data (module scope)
+let simpleCache = {};
 
 class PlatformLoader extends _runtime_loader_js__WEBPACK_IMPORTED_MODULE_0__["Loader"] {
   constructor(urlMap) {
@@ -5106,13 +5110,13 @@ class PlatformLoader extends _runtime_loader_js__WEBPACK_IMPORTED_MODULE_0__["Lo
     this._urlMap = urlMap || [];
   }
   flushCaches() {
-    dumbCache = {};
+    simpleCache = {};
   }
   _loadURL(url) {
     const resolved = this._resolve(url);
     const cacheKey = this.normalizeDots(url);
-    const resource = dumbCache[cacheKey];
-    return resource || (dumbCache[cacheKey] = super._loadURL(resolved));
+    const resource = simpleCache[cacheKey];
+    return resource || (simpleCache[cacheKey] = super._loadURL(resolved));
   }
   loadResource(name) {
     // subclass impl differentiates paths and URLs,
@@ -5129,7 +5133,7 @@ class PlatformLoader extends _runtime_loader_js__WEBPACK_IMPORTED_MODULE_0__["Lo
       }
     }
     url = url || path;
-    //console.log(`loader-web: resolve(${path}) = ${url}`);
+    //log(`resolve(${path}) = ${url}`);
     return url;
   }
   // Below here invoked from inside Worker
@@ -5137,29 +5141,36 @@ class PlatformLoader extends _runtime_loader_js__WEBPACK_IMPORTED_MODULE_0__["Lo
     // inject path to this particle into the UrlMap,
     // allows "foo.js" particle to invoke "importScripts(resolver('foo/othermodule.js'))"
     this.mapParticleUrl(fileName);
-    // load wrapped particle
-    const result = [];
-    self.defineParticle = function(particleWrapper) {
-      result.push(particleWrapper);
-    };
     // determine URL to load fileName
-    const url = await this._resolve(fileName);
-    importScripts(url);
+    const url = this._resolve(fileName);
+    // load wrapped particle
+    const particle = this.loadWrappedParticle(url);
+    // execute particle wrapper, if we have one
+    if (particle) {
+      return this.unwrapParticle(particle, this.provisionLogger(fileName));
+    }
+  }
+  loadWrappedParticle(url) {
+    let result;
+    // MUST be synchronous from here until deletion
+    // of self.defineParticle because we share this
+    // scope with other particles
+    self.defineParticle = function(particleWrapper) {
+      if (result) {
+        warn('multiple particles not supported, last particle wins');
+      }
+      // multiple particles not supported: last particle wins
+      result = particleWrapper;
+    };
+    try {
+    // import (execute) particle code
+      importScripts(url);
+    } catch (x) {
+      error(x);
+    }
     // clean up
     delete self.defineParticle;
-    // execute particle wrapper
-    return this.unwrapParticle(result[0], this.provisionLogger(fileName));
-  }
-  mapParticleUrl(fileName) {
-    const path = this._resolve(fileName);
-    const parts = path.split('/');
-    const suffix = parts.pop();
-    const folder = parts.join('/');
-    const name = suffix.split('.').shift();
-    this._urlMap[name] = folder;
-  }
-  provisionLogger(fileName) {
-    return Object(_platform_log_web_js__WEBPACK_IMPORTED_MODULE_5__["logFactory"])(fileName.split('/').pop(), '#1faa00');
+    return result;
   }
   unwrapParticle(particleWrapper, log) {
     const resolver = this._resolve.bind(this);
@@ -5173,6 +5184,20 @@ class PlatformLoader extends _runtime_loader_js__WEBPACK_IMPORTED_MODULE_0__["Lo
       log,
       html
     });
+  }
+  mapParticleUrl(fileName) {
+    const path = this._resolve(fileName);
+    const parts = path.split('/');
+    const suffix = parts.pop();
+    const folder = parts.join('/');
+    const name = suffix.split('.').shift();
+    this.mapUrl(name, folder);
+  }
+  mapUrl(prefix, url) {
+    this._urlMap[prefix] = url;
+  }
+  provisionLogger(fileName) {
+    return Object(_platform_log_web_js__WEBPACK_IMPORTED_MODULE_5__["logFactory"])(fileName.split('/').pop(), '#1faa00');
   }
 }
 
@@ -6513,13 +6538,14 @@ class TransformationDomParticle extends _dom_particle_js__WEBPACK_IMPORTED_MODUL
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "logFactory", function() { return logFactory; });
-// Copyright (c) 2018 Google Inc. All rights reserved.
-// This code may only be used under the BSD style license found at
-// http://polymer.github.io/LICENSE.txt
-// Code distributed by Google as part of this project is also
-// subject to an additional IP rights grant found at
-// http://polymer.github.io/PATENTS.txt
-
+/**
+ * Copyright (c) 2019 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
 const _factory = (preamble, color, log='log') => console[log].bind(console, `%c${preamble}`, `background: ${color || 'gray'}; color: white; padding: 1px 6px 2px 7px; border-radius: 6px;`);
 
 // when punting, use full logging

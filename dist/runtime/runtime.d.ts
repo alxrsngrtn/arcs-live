@@ -8,18 +8,18 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { Manifest } from './manifest.js';
+import { Arc } from './arc.js';
 export declare class Runtime {
-    private arcs;
     constructor();
     /**
      * Given an arc, returns it's description as a string.
      */
-    static getArcDescription(arc: any): Promise<string>;
+    static getArcDescription(arc: Arc): Promise<string>;
     /**
      * Parse a textual manifest and return a Manifest object. See the Manifest
      * class for the options accepted.
      */
-    static parseManifest(content: any, options?: any): Promise<Manifest>;
+    static parseManifest(content: string, options?: any): Promise<Manifest>;
     /**
      * Load and parse a manifest from a resource (not striclty a file) and return
      * a Manifest object. The loader determines the semantics of the fileName. See

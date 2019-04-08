@@ -23,6 +23,7 @@ import { StorageProviderBase } from './storage/storage-provider-base.js';
 import { StorageProviderFactory } from './storage/storage-provider-factory.js';
 import { Type } from './type.js';
 import { PecFactory } from './particle-execution-context.js';
+import { InterfaceInfo } from './interface-info.js';
 declare type ArcOptions = {
     id: Id;
     context: Manifest;
@@ -115,23 +116,25 @@ export declare class Arc {
     readonly _stores: (StorageProviderBase)[];
     cloneForSpeculativeExecution(): Promise<Arc>;
     instantiate(recipe: Recipe): Promise<void>;
-    createStore(type: Type, name?: any, id?: string, tags?: any, storageKey?: string): Promise<StorageProviderBase>;
-    _registerStore(store: StorageProviderBase, tags?: any): void;
-    _tagStore(store: StorageProviderBase, tags: any): void;
+    createStore(type: Type, name?: string, id?: string, tags?: string[], storageKey?: string): Promise<StorageProviderBase>;
+    _registerStore(store: StorageProviderBase, tags?: string[]): void;
+    _tagStore(store: StorageProviderBase, tags: Set<string>): void;
     _onDataChange(): void;
-    onDataChange(callback: any, registration: any): void;
-    clearDataChange(registration: any): void;
-    static _typeToKey(type: Type): any;
-    findStoresByType(type: Type, options?: any): StorageProviderBase[];
-    findStoreById(id: any): StorageProviderBase | StorageStub;
-    findStoreTags(store: StorageProviderBase): string[] | Set<string>;
+    onDataChange(callback: () => void, registration: object): void;
+    clearDataChange(registration: object): void;
+    static _typeToKey(type: Type): string | InterfaceInfo | null;
+    findStoresByType(type: Type, options?: {
+        tags: string[];
+    }): StorageProviderBase[];
+    findStoreById(id: string): StorageProviderBase | StorageStub;
+    findStoreTags(store: StorageProviderBase): Set<string>;
     getStoreDescription(store: StorageProviderBase): string;
     getVersionByStore({ includeArc, includeContext }: {
         includeArc?: boolean;
         includeContext?: boolean;
     }): {};
     keyForId(id: string): string;
-    toContextString(options: any): string;
+    toContextString(): string;
     readonly apiChannelMappingId: string;
     readonly idGeneratorForTesting: IdGenerator;
 }

@@ -11,7 +11,7 @@ import { Slot } from './slot.js';
 export declare type RecipeComponent = Particle | Handle | HandleConnection | Slot | SlotConnection;
 export declare type CloneMap = Map<RecipeComponent, RecipeComponent>;
 export declare type IsValidOptions = {
-    errors: Map<RecipeComponent, string>;
+    errors?: Map<Recipe | RecipeComponent, string>;
 };
 export declare type ToStringOptions = {
     showUnresolved?: boolean;
@@ -49,8 +49,8 @@ export declare class Recipe {
     isCompatible(modality: Modality): boolean;
     readonly modality: Modality;
     allRequiredSlotsPresent(): boolean;
-    _findDuplicate(items: any, options: any): any;
-    _isValid(options?: any): boolean;
+    _findDuplicate(items: any, options: IsValidOptions): any;
+    _isValid(options?: IsValidOptions): boolean;
     readonly requires: RequireSection[];
     name: string | undefined;
     localName: string;
@@ -70,7 +70,7 @@ export declare class Recipe {
     patterns: string[];
     description: any;
     digest(): Promise<string>;
-    normalize(options?: any): boolean;
+    normalize(options?: IsValidOptions): boolean;
     clone(cloneMap?: any): Recipe;
     mergeInto(recipe: Recipe): {
         handles: Handle[];

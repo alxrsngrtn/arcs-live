@@ -78,9 +78,7 @@ export class AssignHandles extends Strategy {
     getMappableStores(fate, type, tags, counts) {
         const stores = new Map();
         if (fate === 'use' || fate === '?') {
-            const subtype = counts.out === 0;
-            // TODO: arc.findStoresByType doesn't use `subtype`. Shall it be removed?
-            this.arc.findStoresByType(type, { tags, subtype }).forEach(store => stores.set(store, 'use'));
+            this.arc.findStoresByType(type, { tags }).forEach(store => stores.set(store, 'use'));
         }
         if (fate === 'map' || fate === 'copy' || fate === '?') {
             this.arc.context.findStoresByType(type, { tags, subtype: true }).forEach(store => stores.set(store, fate === '?' ? (counts.out > 0 ? 'copy' : 'map') : fate));

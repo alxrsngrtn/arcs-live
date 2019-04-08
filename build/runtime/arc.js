@@ -154,7 +154,7 @@ export class Arc {
             context.interfaces += type.interfaceInfo.toString() + '\n';
         }
         const key = this.storageProviderFactory.parseStringAsKey(handle.storageKey);
-        const tags = this.storeTags.get(handle) || [];
+        const tags = this.storeTags.get(handle) || new Set();
         const handleTags = [...tags].map(a => `#${a}`).join(' ');
         const actualHandle = this.activeRecipe.findHandle(handle.id);
         const originalId = actualHandle ? actualHandle.originalId : null;
@@ -486,7 +486,7 @@ ${this.activeRecipe.toString()}`;
                     .toString();
         }
         // TODO(sjmiles): use `volatile` for volatile stores
-        const hasVolatileTag = tags => tags && ((Array.isArray(tags) && tags.includes('volatile')) || tags === 'volatile');
+        const hasVolatileTag = (tags) => tags && tags.includes('volatile');
         if (storageKey == undefined || hasVolatileTag(tags)) {
             storageKey = 'volatile';
         }
@@ -508,7 +508,8 @@ ${this.activeRecipe.toString()}`;
     _tagStore(store, tags) {
         assert(this.storesById.has(store.id) && this.storeTags.has(store), `Store not registered '${store.id}'`);
         const storeTags = this.storeTags.get(store);
-        (tags || []).forEach(tag => storeTags.add(tag));
+        tags = tags || new Set();
+        tags.forEach(tag => storeTags.add(tag));
     }
     _onDataChange() {
         for (const callback of this.dataChangeCallbacks.values()) {
@@ -546,6 +547,7 @@ ${this.activeRecipe.toString()}`;
         else if (type instanceof TypeVariable && type.isResolved()) {
             return Arc._typeToKey(type.resolvedType());
         }
+        return null;
     }
     findStoresByType(type, options) {
         const typeKey = Arc._typeToKey(type);
@@ -587,7 +589,7 @@ ${this.activeRecipe.toString()}`;
         if (this.storeTags.has(store)) {
             return this.storeTags.get(store);
         }
-        return this._context.findStoreTags(store);
+        return new Set(this._context.findStoreTags(store));
     }
     getStoreDescription(store) {
         assert(store, 'Cannot fetch description for nonexistent store');
@@ -606,7 +608,7 @@ ${this.activeRecipe.toString()}`;
     keyForId(id) {
         return this.storageKeys[id];
     }
-    toContextString(options) {
+    toContextString() {
         const results = [];
         const stores = [...this.storesById.values()].sort(compareComparables);
         stores.forEach(store => {

@@ -14,7 +14,6 @@ import { Manifest } from './manifest.js';
 // think about what the api should actually look like.
 export class Runtime {
     constructor() {
-        this.arcs = [];
         // user information. One persona per runtime for now.
     }
     // Stuff the shell needs

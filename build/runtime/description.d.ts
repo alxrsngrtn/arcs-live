@@ -11,6 +11,9 @@ import { Arc } from './arc.js';
 import { DescriptionFormatter, DescriptionValue, ParticleDescription } from './description-formatter.js';
 import { Particle } from './recipe/particle.js';
 import { Relevance } from './relevance.js';
+import { StorageProviderBase } from './storage/storage-provider-base.js';
+import { StorageStub } from './manifest.js';
+import { Handle } from './recipe/handle.js';
 export declare class Description {
     private readonly particleDescriptions;
     private readonly storeDescById;
@@ -18,13 +21,15 @@ export declare class Description {
     private readonly arcRecipes;
     private constructor();
     static create(arc: Arc, relevance?: Relevance): Promise<Description>;
-    getArcDescription(formatterClass?: typeof DescriptionFormatter): Promise<string>;
+    getArcDescription(formatterClass?: typeof DescriptionFormatter): any;
     getRecipeSuggestion(formatterClass?: typeof DescriptionFormatter): any;
-    getHandleDescription(recipeHandle: any): any;
+    getHandleDescription(recipeHandle: Handle): any;
     static _getStoreDescById(arc: Arc): {};
-    static initDescriptionHandles(arc: Arc, relevance?: Relevance): Promise<any[]>;
+    static initDescriptionHandles(arc: Arc, relevance?: Relevance): Promise<ParticleDescription[]>;
     static _createParticleDescription(particle: Particle, arc: Arc, relevance?: Relevance): Promise<ParticleDescription>;
-    static _getPatternByNameFromDescriptionHandle(particle: Particle, arc: Arc): Promise<{}>;
-    static _prepareStoreValue(store: any): Promise<DescriptionValue>;
+    static _getPatternByNameFromDescriptionHandle(particle: Particle, arc: Arc): Promise<{
+        [key: string]: string;
+    }>;
+    static _prepareStoreValue(store: StorageProviderBase | StorageStub): Promise<DescriptionValue>;
     static defaultDescription: string;
 }

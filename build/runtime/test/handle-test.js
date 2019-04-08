@@ -134,7 +134,7 @@ describe('Handle', () => {
         // contrived test since this is now caught at compile time
         // tslint:disable-next-line: no-any
         await assertThrowsAsync(async () => await arc['createStore']('not a type'), /isn't a Type/);
-        await arc.createStore(Bar.type, 'name', 'id1', '#sufficient');
+        await arc.createStore(Bar.type, 'name', 'id1', ['#sufficient']);
         await arc.createStore(Bar.type, 'name', 'id2', ['#valid']);
         await arc.createStore(Bar.type, 'name', 'id3', ['#valid', '#good']);
         ['#sufficient', '#valid', '#good'].forEach(tag => assert([...arc.storeTags.values()].find(tags => tags.has(tag)), `tags ${arc.storeTags.values()} should have included ${tag}`));

@@ -2638,7 +2638,7 @@ class ParticleSpec {
         // Verify provided slots use valid handle connection names.
         this.slotConnections.forEach(slot => {
             slot.provideSlotConnections.forEach(ps => {
-                ps.handles.forEach(v => assert(this.handleConnectionMap.has(v), 'Cannot provide slot for nonexistent handle constraint ', v));
+                ps.handles.forEach(v => assert(this.handleConnectionMap.has(v), 'Cannot provide slot for nonexistent handle constraint ' + v));
             });
         });
     }
@@ -3429,8 +3429,8 @@ class Description {
     }
     getArcDescription(formatterClass = DescriptionFormatter) {
         const desc = new (formatterClass)(this.particleDescriptions, this.storeDescById).getDescription({
-            patterns: [].concat.apply([], this.arcRecipes.map(recipe => recipe.patterns)),
-            particles: [].concat.apply([], this.arcRecipes.map(recipe => recipe.particles))
+            patterns: [].concat(...this.arcRecipes.map(recipe => recipe.patterns)),
+            particles: [].concat(...this.arcRecipes.map(recipe => recipe.particles))
         });
         if (desc) {
             return desc;
@@ -3511,27 +3511,31 @@ class Description {
             return undefined;
         }
         if (store.type instanceof CollectionType) {
-            const values = await store.toList();
+            const collectionStore = store;
+            const values = await collectionStore.toList();
             if (values && values.length > 0) {
                 return { collectionValues: values };
             }
         }
         else if (store.type instanceof BigCollectionType) {
-            const cursorId = await store.stream(1);
-            const { value, done } = await store.cursorNext(cursorId);
-            store.cursorClose(cursorId);
+            const bigCollectionStore = store;
+            const cursorId = await bigCollectionStore.stream(1);
+            const { value, done } = await bigCollectionStore.cursorNext(cursorId);
+            bigCollectionStore.cursorClose(cursorId);
             if (!done && value[0].rawData.name) {
                 return { bigCollectionValues: value[0] };
             }
         }
         else if (store.type instanceof EntityType) {
-            const value = await store.get();
+            const variableStore = store;
+            const value = await variableStore.get();
             if (value && value['rawData']) {
                 return { entityValue: value['rawData'], valueDescription: store.type.entitySchema.description.value };
             }
         }
         else if (store.type instanceof InterfaceType) {
-            const interfaceValue = await store.get();
+            const variableStore = store;
+            const interfaceValue = await variableStore.get();
             if (interfaceValue) {
                 return { interfaceValue };
             }
@@ -17248,7 +17252,6 @@ ${e.message}
 // think about what the api should actually look like.
 class Runtime {
     constructor() {
-        this.arcs = [];
         // user information. One persona per runtime for now.
     }
     // Stuff the shell needs
@@ -18384,6 +18387,7 @@ class ArcDebugHandler {
                     speculative: arc.isSpeculative
                 }
             });
+            this.sendEnvironmentMessage(arc);
         });
     }
     recipeInstantiated({ particles }) {
@@ -18403,6 +18407,28 @@ class ArcDebugHandler {
         this.arcDevtoolsChannel.send({
             messageType: 'recipe-instantiated',
             messageBody: { slotConnections }
+        });
+    }
+    sendEnvironmentMessage(arc) {
+        const allManifests = [];
+        (function traverse(manifest) {
+            allManifests.push(manifest);
+            manifest.imports.forEach(traverse);
+        })(arc.context);
+        this.arcDevtoolsChannel.send({
+            messageType: 'arc-environment',
+            messageBody: {
+                recipes: arc.context.allRecipes.map(r => ({
+                    name: r.name,
+                    text: r.toString(),
+                    file: allManifests.find(m => m.recipes.includes(r)).fileName
+                })),
+                particles: arc.context.allParticles.map(p => ({
+                    name: p.name,
+                    spec: p.toString(),
+                    file: allManifests.find(m => m.particles.includes(p)).fileName
+                }))
+            }
         });
     }
 }
@@ -21500,7 +21526,7 @@ class ResolveWalker extends RecipeWalker {
             const counts = RecipeUtil.directionCounts(handle);
             switch (handle.fate) {
                 case 'use':
-                    mappable = arc.findStoresByType(handle.type, { tags: handle.tags, subtype: counts.out === 0 });
+                    mappable = arc.findStoresByType(handle.type, { tags: handle.tags });
                     break;
                 case 'map':
                 case 'copy':
@@ -22019,7 +22045,7 @@ class Arc {
             context.interfaces += type.interfaceInfo.toString() + '\n';
         }
         const key = this.storageProviderFactory.parseStringAsKey(handle.storageKey);
-        const tags = this.storeTags.get(handle) || [];
+        const tags = this.storeTags.get(handle) || new Set();
         const handleTags = [...tags].map(a => `#${a}`).join(' ');
         const actualHandle = this.activeRecipe.findHandle(handle.id);
         const originalId = actualHandle ? actualHandle.originalId : null;
@@ -22351,7 +22377,7 @@ ${this.activeRecipe.toString()}`;
                     .toString();
         }
         // TODO(sjmiles): use `volatile` for volatile stores
-        const hasVolatileTag = tags => tags && ((Array.isArray(tags) && tags.includes('volatile')) || tags === 'volatile');
+        const hasVolatileTag = (tags) => tags && tags.includes('volatile');
         if (storageKey == undefined || hasVolatileTag(tags)) {
             storageKey = 'volatile';
         }
@@ -22373,7 +22399,8 @@ ${this.activeRecipe.toString()}`;
     _tagStore(store, tags) {
         assert(this.storesById.has(store.id) && this.storeTags.has(store), `Store not registered '${store.id}'`);
         const storeTags = this.storeTags.get(store);
-        (tags || []).forEach(tag => storeTags.add(tag));
+        tags = tags || new Set();
+        tags.forEach(tag => storeTags.add(tag));
     }
     _onDataChange() {
         for (const callback of this.dataChangeCallbacks.values()) {
@@ -22411,6 +22438,7 @@ ${this.activeRecipe.toString()}`;
         else if (type instanceof TypeVariable && type.isResolved()) {
             return Arc._typeToKey(type.resolvedType());
         }
+        return null;
     }
     findStoresByType(type, options) {
         const typeKey = Arc._typeToKey(type);
@@ -22452,7 +22480,7 @@ ${this.activeRecipe.toString()}`;
         if (this.storeTags.has(store)) {
             return this.storeTags.get(store);
         }
-        return this._context.findStoreTags(store);
+        return new Set(this._context.findStoreTags(store));
     }
     getStoreDescription(store) {
         assert(store, 'Cannot fetch description for nonexistent store');
@@ -22471,7 +22499,7 @@ ${this.activeRecipe.toString()}`;
     keyForId(id) {
         return this.storageKeys[id];
     }
-    toContextString(options) {
+    toContextString() {
         const results = [];
         const stores = [...this.storesById.values()].sort(compareComparables);
         stores.forEach(store => {
@@ -23578,9 +23606,7 @@ class AssignHandles extends Strategy {
     getMappableStores(fate, type, tags, counts) {
         const stores = new Map();
         if (fate === 'use' || fate === '?') {
-            const subtype = counts.out === 0;
-            // TODO: arc.findStoresByType doesn't use `subtype`. Shall it be removed?
-            this.arc.findStoresByType(type, { tags, subtype }).forEach(store => stores.set(store, 'use'));
+            this.arc.findStoresByType(type, { tags }).forEach(store => stores.set(store, 'use'));
         }
         if (fate === 'map' || fate === 'copy' || fate === '?') {
             this.arc.context.findStoresByType(type, { tags, subtype: true }).forEach(store => stores.set(store, fate === '?' ? (counts.out > 0 ? 'copy' : 'map') : fate));
@@ -24891,7 +24917,7 @@ class SearchTokensToHandles extends Strategy {
         const findMatchingStores = (token, handle) => {
             const counts = RecipeUtil.directionCounts(handle);
             let stores;
-            stores = arc.findStoresByType(handle.type, { tags: [`${token}`], subtype: counts.out === 0 });
+            stores = arc.findStoresByType(handle.type, { tags: [`${token}`] });
             let fate = 'use';
             if (stores.length === 0) {
                 stores = arc.context.findStoresByType(handle.type, { tags: [`${token}`], subtype: counts.out === 0 });

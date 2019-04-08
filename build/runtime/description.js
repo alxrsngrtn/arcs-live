@@ -26,8 +26,8 @@ export class Description {
     }
     getArcDescription(formatterClass = DescriptionFormatter) {
         const desc = new (formatterClass)(this.particleDescriptions, this.storeDescById).getDescription({
-            patterns: [].concat.apply([], this.arcRecipes.map(recipe => recipe.patterns)),
-            particles: [].concat.apply([], this.arcRecipes.map(recipe => recipe.particles))
+            patterns: [].concat(...this.arcRecipes.map(recipe => recipe.patterns)),
+            particles: [].concat(...this.arcRecipes.map(recipe => recipe.particles))
         });
         if (desc) {
             return desc;
@@ -108,27 +108,31 @@ export class Description {
             return undefined;
         }
         if (store.type instanceof CollectionType) {
-            const values = await store.toList();
+            const collectionStore = store;
+            const values = await collectionStore.toList();
             if (values && values.length > 0) {
                 return { collectionValues: values };
             }
         }
         else if (store.type instanceof BigCollectionType) {
-            const cursorId = await store.stream(1);
-            const { value, done } = await store.cursorNext(cursorId);
-            store.cursorClose(cursorId);
+            const bigCollectionStore = store;
+            const cursorId = await bigCollectionStore.stream(1);
+            const { value, done } = await bigCollectionStore.cursorNext(cursorId);
+            bigCollectionStore.cursorClose(cursorId);
             if (!done && value[0].rawData.name) {
                 return { bigCollectionValues: value[0] };
             }
         }
         else if (store.type instanceof EntityType) {
-            const value = await store.get();
+            const variableStore = store;
+            const value = await variableStore.get();
             if (value && value['rawData']) {
                 return { entityValue: value['rawData'], valueDescription: store.type.entitySchema.description.value };
             }
         }
         else if (store.type instanceof InterfaceType) {
-            const interfaceValue = await store.get();
+            const variableStore = store;
+            const interfaceValue = await variableStore.get();
             if (interfaceValue) {
                 return { interfaceValue };
             }
