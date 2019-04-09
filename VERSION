@@ -1,5 +1,14 @@
-commit ff60814a1d1d5f1f01ee36d62fac69c4fc096ec9
-Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
-Date:   Tue Apr 9 13:17:38 2019 +1000
+commit 30fbdee9e046eeee7ea7b171a1bc2b6a78540431
+Author: Paul Lindner <lindner@inuus.com>
+Date:   Mon Apr 8 22:20:33 2019 -0700
 
-    Migrated a few more places to use Id objects instead of raw strings (#2861)
+    Upgrade eslint/tslint, enable deprecation and other rules (#2867)
+    
+    * Upgrade eslint/tslint, enable deprecation and other rules
+    
+    - eslint 5.13.0 -> 5.16.0
+    - tslint 5.12.1 -> 5.15.0
+    - Add deprecation with severity WARNING
+    - Add other non-impacting rule (no-unsafe-finally)
+    - Add note that tslint rules are sourced from GTS
+    - Also update tslint in server and missed typescript update

@@ -48,7 +48,9 @@ export declare class DomParticle extends DomParticle_base {
     };
     _willReceiveProps(...args: any[]): void;
     _update(...args: any[]): void;
+    /** @deprecated */
     readonly _views: Map<string, import("./handle.js").Handle>;
+    /** @deprecated */
     setViews(views: any): Promise<void>;
     setHandles(handles: any): Promise<void>;
     onHandleSync(handle: any, model: any): Promise<void>;

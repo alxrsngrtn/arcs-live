@@ -5595,18 +5595,16 @@ class DomParticle extends Object(_modalities_dom_components_xen_xen_state_js__WE
         }
         this.config.slotNames.forEach(s => this.renderSlot(s, ['model']));
     }
-    //
-    // deprecated
+    /** @deprecated */
     get _views() {
         console.warn(`Particle ${this.spec.name} uses deprecated _views getter.`);
         return this.handles;
     }
+    /** @deprecated */
     async setViews(views) {
         console.warn(`Particle ${this.spec.name} uses deprecated setViews method.`);
         return this.setHandles(views);
     }
-    // end deprecated
-    //
     async setHandles(handles) {
         this.configureHandles(handles);
         this.handles = handles;
@@ -6165,7 +6163,7 @@ class Particle {
     setHandles(handles) {
     }
     /**
-     * This method is deprecated. Use setHandles instead.
+     * @deprecated Use setHandles instead.
      */
     setViews(views) {
     }

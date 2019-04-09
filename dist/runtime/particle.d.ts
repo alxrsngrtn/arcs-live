@@ -39,7 +39,7 @@ export declare class Particle {
      */
     setHandles(handles: Map<string, Handle>): void;
     /**
-     * This method is deprecated. Use setHandles instead.
+     * @deprecated Use setHandles instead.
      */
     setViews(views: any): void;
     /**
