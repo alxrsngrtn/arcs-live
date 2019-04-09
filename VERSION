@@ -1,5 +1,9 @@
-commit 54799e645f39c2d93353512d5a77da758a6fb6e7
-Author: Paul Lindner <lindner@inuus.com>
-Date:   Mon Apr 8 16:12:35 2019 -0700
+commit 7e6d6d578d62d2acbc3e12ee3bbc98acd09bf7b8
+Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
+Date:   Tue Apr 9 11:38:31 2019 +1000
 
-    Remove obsolete TVMaze (#2866)
+    sigh: use a cross-platform bootstrap.js pre-compile step (#2868)
+    
+    * sigh: use a cross-platform bootstrap.js pre-compile step
+    
+    * Reduced bootstrap file size
