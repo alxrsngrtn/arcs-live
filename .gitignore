@@ -28,3 +28,5 @@ devtools/build
 server/log.txt
 pack-stats.json
 default.profraw
+# pouch local database
+user-test/

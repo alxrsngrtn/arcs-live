@@ -150,12 +150,12 @@ class SyntheticCollection extends StorageProviderBase {
         return this.model;
     }
     async toLiteral() {
-        return this.toList();
+        throw new Error('unimplemented');
     }
     cloneFrom() {
         throw new Error('cloneFrom should never be called on SyntheticCollection!');
     }
-    ensureBackingStore() {
+    async ensureBackingStore() {
         throw new Error('ensureBackingStore should never be called on SyntheticCollection!');
     }
     // tslint:disable-next-line: no-any

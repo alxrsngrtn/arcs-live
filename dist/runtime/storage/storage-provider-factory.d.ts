@@ -20,5 +20,5 @@ export declare class StorageProviderFactory {
     baseStorageKey(type: Type, keyString: string): string;
     parseStringAsKey(s: string): KeyBase;
     newKey(id: any, associatedKeyFragment: any): void;
-    shutdown(): void;
+    shutdown(): Promise<void>;
 }

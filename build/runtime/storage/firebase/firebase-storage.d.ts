@@ -1,6 +1,7 @@
 import { firebase } from '../../../platform/firebase-web.js';
 import { Id } from '../../id.js';
 import { Type } from '../../type.js';
+import { SerializedModelEntry } from '../crdt-collection-model.js';
 import { KeyBase } from '../key-base.js';
 import { BigCollectionStorageProvider, CollectionStorageProvider, StorageBase, StorageProviderBase, VariableStorageProvider } from '../storage-provider-base.js';
 export declare function resetStorageForTesting(key: any): Promise<void>;
@@ -31,7 +32,7 @@ export declare class FirebaseStorage extends StorageBase {
     constructor(arcId: Id);
     construct(id: string, type: Type, keyFragment: string): Promise<FirebaseStorageProvider>;
     connect(id: string, type: Type, key: string): Promise<FirebaseStorageProvider>;
-    shutdown(): void;
+    shutdown(): Promise<void>;
     baseStorageKey(type: Type, keyString: string): string;
     baseStorageFor(type: any, key: string): Promise<any>;
     parseStringAsKey(s: string): FirebaseKey;
@@ -102,8 +103,14 @@ declare class FirebaseVariable extends FirebaseStorageProvider implements Variab
     set(value: any, originatorId?: any, barrier?: any): Promise<void>;
     clear(originatorId?: string, barrier?: string): Promise<void>;
     cloneFrom(handle: any): Promise<void>;
-    modelForSynchronization(): Promise<any>;
-    toLiteral(): Promise<{}>;
+    modelForSynchronization(): Promise<{
+        version: number;
+        model: {};
+    }>;
+    toLiteral(): Promise<{
+        version: number;
+        model: SerializedModelEntry[];
+    }>;
     private fromLiteral;
 }
 /**
@@ -179,7 +186,7 @@ declare class FirebaseCollection extends FirebaseStorageProvider implements Coll
     cloneFrom(handle: any): Promise<void>;
     toLiteral(): Promise<{
         version: number;
-        model: import("../crdt-collection-model.js").SerializedModelEntry[];
+        model: SerializedModelEntry[];
     }>;
     private fromLiteral;
 }
@@ -245,7 +252,10 @@ declare class FirebaseBigCollection extends FirebaseStorageProvider implements B
     _persistChangesImpl(): Promise<void>;
     readonly _hasLocalChanges: boolean;
     cloneFrom(handle: any): Promise<void>;
-    toLiteral(): void;
+    toLiteral(): Promise<{
+        version: number;
+        model: SerializedModelEntry[];
+    }>;
     private fromLiteral;
     clearItemsForTesting(): void;
 }
@@ -273,7 +283,10 @@ declare class FirebaseBackingStore extends FirebaseStorageProvider implements Co
     ensureBackingStore(): Promise<FirebaseBackingStore>;
     on(kindStr: any, callback: any, target: any): void;
     off(kindStr: any, callback: any): void;
-    toLiteral(): void;
+    toLiteral(): Promise<{
+        version: number;
+        model: SerializedModelEntry[];
+    }>;
     cloneFrom(store: StorageProviderBase): Promise<void>;
 }
 export {};

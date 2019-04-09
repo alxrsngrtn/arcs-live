@@ -76,8 +76,6 @@ export class PouchDbCollection extends PouchDbStorageProvider {
         };
     }
     /** @inheritDoc */
-    // Returns {version, model: [{id, value, keys: []}]}
-    // TODO(lindner): this is async, but the base class isn't....
     async toLiteral() {
         await this.initialized;
         return {

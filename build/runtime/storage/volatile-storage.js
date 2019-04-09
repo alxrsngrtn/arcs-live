@@ -195,7 +195,7 @@ class VolatileCollection extends VolatileStorageProvider {
         return { version: this.version, model };
     }
     // Returns {version, model: [{id, value, keys: []}]}
-    toLiteral() {
+    async toLiteral() {
         return { version: this.version, model: this._model.toLiteral() };
     }
     fromLiteral({ version, model }) {
@@ -204,7 +204,7 @@ class VolatileCollection extends VolatileStorageProvider {
     }
     async _toList() {
         if (this.referenceMode) {
-            const items = this.toLiteral().model;
+            const items = (await this.toLiteral()).model;
             if (items.length === 0) {
                 return [];
             }
@@ -221,7 +221,8 @@ class VolatileCollection extends VolatileStorageProvider {
             }
             return output;
         }
-        return this.toLiteral().model;
+        const literal = await this.toLiteral();
+        return literal.model;
     }
     async toList() {
         return (await this._toList()).map(item => item.value);
@@ -345,10 +346,10 @@ class VolatileVariable extends VolatileStorageProvider {
         }
         return super.modelForSynchronization();
     }
-    // Returns {version, model: [{id, value}]}
     async toLiteral() {
         const value = this._stored;
-        const model = (value != null) ? [{ id: value.id, value }] : [];
+        // TODO: what should keys be set to?
+        const model = (value != null) ? [{ id: value.id, value, keys: [] }] : [];
         return { version: this.version, model };
     }
     fromLiteral({ version, model }) {
@@ -497,7 +498,7 @@ class VolatileBigCollection extends VolatileStorageProvider {
         }
     }
     // Returns {version, model: [{id, index, value, keys: []}]}
-    toLiteral() {
+    async toLiteral() {
         const model = [];
         for (const [id, { index, value, keys }] of this.items.entries()) {
             model.push({ id, index, value, keys: Object.keys(keys) });

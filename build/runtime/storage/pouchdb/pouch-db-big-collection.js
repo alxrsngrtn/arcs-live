@@ -30,7 +30,7 @@ export class PouchDbBigCollection extends PouchDbStorageProvider {
     cursorVersion(cursorId) {
         throw new Error('NotImplemented');
     }
-    toLiteral() {
+    async toLiteral() {
         throw new Error('NotImplemented');
     }
     cloneFrom() {

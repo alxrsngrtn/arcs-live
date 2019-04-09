@@ -1,8 +1,9 @@
+import { SerializedModelEntry } from './crdt-collection-model.js';
 import { Id } from '../id.js';
 import { ArcHandle } from '../synthetic-types.js';
 import { Type } from '../type.js';
 import { KeyBase } from './key-base.js';
-import { CollectionStorageProvider, StorageBase, StorageProviderBase } from './storage-provider-base.js';
+import { CollectionStorageProvider, StorageBase, StorageProviderBase, VariableStorageProvider } from './storage-provider-base.js';
 import { StorageProviderFactory } from './storage-provider-factory.js';
 declare enum Scope {
     arc = 1
@@ -41,12 +42,15 @@ declare class SyntheticCollection extends StorageProviderBase implements Collect
     private readonly initialized;
     private model;
     backingStore: any;
-    constructor(type: any, id: any, key: any, targetStore: any, storageFactory: any);
+    constructor(type: Type, id: string, key: string, targetStore: VariableStorageProvider, storageFactory: StorageProviderFactory);
     private process;
     toList(): Promise<ArcHandle[]>;
-    toLiteral(): Promise<ArcHandle[]>;
+    toLiteral(): Promise<{
+        version: number;
+        model: SerializedModelEntry[];
+    }>;
     cloneFrom(): Promise<void>;
-    ensureBackingStore(): void;
+    ensureBackingStore(): Promise<void>;
     getMultiple(ids: string[]): Promise<any[]>;
     storeMultiple(values: any, keys: any, originatorId: any): Promise<void>;
     removeMultiple(items: any, originatorId: string): Promise<void>;

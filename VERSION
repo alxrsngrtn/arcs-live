@@ -1,14 +1,9 @@
-commit 30fbdee9e046eeee7ea7b171a1bc2b6a78540431
+commit add279bafa2702399191502483d986fd35a6f652
 Author: Paul Lindner <lindner@inuus.com>
-Date:   Mon Apr 8 22:20:33 2019 -0700
+Date:   Tue Apr 9 11:04:34 2019 -0700
 
-    Upgrade eslint/tslint, enable deprecation and other rules (#2867)
+    Improve Pouch testability/coherence. (#2865)
     
-    * Upgrade eslint/tslint, enable deprecation and other rules
-    
-    - eslint 5.13.0 -> 5.16.0
-    - tslint 5.12.1 -> 5.15.0
-    - Add deprecation with severity WARNING
-    - Add other non-impacting rule (no-unsafe-finally)
-    - Add note that tslint rules are sourced from GTS
-    - Also update tslint in server and missed typescript update
+    - Add consistent types for Storage methods toLiteral and ensureBackingStore
+    - Add pouch on filesystem tests to help catch race conditions
+    - Switch shutdown to async

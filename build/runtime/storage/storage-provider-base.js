@@ -27,7 +27,7 @@ export class StorageBase {
     /**
      * Provides graceful shutdown for tests.
      */
-    shutdown() { }
+    async shutdown() { }
 }
 export class ChangeEvent {
     constructor(args) {
@@ -148,8 +148,10 @@ export class StorageProviderBase {
     }
     // TODO: make abstract?
     dispose() { }
-    /** TODO */
-    modelForSynchronization() {
+    /**
+     * Called by Particle Execution Host to synchronize it's proxy.
+     */
+    async modelForSynchronization() {
         return this.toLiteral();
     }
 }

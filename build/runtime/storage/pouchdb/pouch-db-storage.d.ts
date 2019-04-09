@@ -33,7 +33,7 @@ export declare class PouchDbStorage extends StorageBase {
      */
     connect(id: string, type: Type, key: string): Promise<PouchDbStorageProvider>;
     /** Unit tests should call this in an 'after' block. */
-    shutdown(): void;
+    shutdown(): Promise<void>;
     /** @inheritDoc */
     baseStorageKey(type: Type, keyString: string): string;
     /** @inheritDoc */

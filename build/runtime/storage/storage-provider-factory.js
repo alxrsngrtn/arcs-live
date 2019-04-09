@@ -70,8 +70,10 @@ export class StorageProviderFactory {
     newKey(id, associatedKeyFragment) {
     }
     // For testing
-    shutdown() {
-        Object.values(this._storageInstances).map(item => item.storage.shutdown());
+    async shutdown() {
+        for (const s of Object.values(this._storageInstances)) {
+            await s.storage.shutdown();
+        }
     }
 }
 //# sourceMappingURL=storage-provider-factory.js.map

@@ -1,6 +1,7 @@
 /// <reference types="pouchdb-core" />
 import { Type } from '../../type.js';
 import { VariableStorageProvider } from '../storage-provider-base.js';
+import { SerializedModelEntry } from '../crdt-collection-model.js';
 import { PouchDbStorageProvider } from './pouch-db-storage-provider.js';
 import { PouchDbStorage } from './pouch-db-storage.js';
 /**
@@ -39,14 +40,17 @@ export declare class PouchDbVariable extends PouchDbStorageProvider implements V
      * Returns the model data in a format suitable for transport over
      * the API channel (i.e. between execution host and context).
      */
-    modelForSynchronization(): Promise<any>;
+    modelForSynchronization(): Promise<{
+        version: number;
+        model: {};
+    }>;
     /**
      * Returns the state of this variable based as an object of the form
      * {version, model: [{id, value}]}
      */
     toLiteral(): Promise<{
         version: number;
-        model: {}[];
+        model: SerializedModelEntry[];
     }>;
     /**
      * Updates the internal state of this variable with data and stores

@@ -1,6 +1,6 @@
 import { Id } from '../id.js';
 import { Type } from '../type.js';
-import { CrdtCollectionModel } from './crdt-collection-model.js';
+import { CrdtCollectionModel, SerializedModelEntry } from './crdt-collection-model.js';
 import { KeyBase } from './key-base.js';
 import { BigCollectionStorageProvider, CollectionStorageProvider, StorageBase, StorageProviderBase, VariableStorageProvider } from './storage-provider-base.js';
 export declare function resetVolatileStorageForTesting(): void;
@@ -50,10 +50,10 @@ declare class VolatileCollection extends VolatileStorageProvider implements Coll
         version: number;
         model: any[];
     }>;
-    toLiteral(): {
+    toLiteral(): Promise<{
         version: number;
-        model: import("./crdt-collection-model.js").SerializedModelEntry[];
-    };
+        model: SerializedModelEntry[];
+    }>;
     private fromLiteral;
     _toList(): Promise<any[]>;
     toList(): Promise<any[]>;
@@ -71,21 +71,20 @@ declare class VolatileCollection extends VolatileStorageProvider implements Coll
 declare class VolatileVariable extends VolatileStorageProvider implements VariableStorageProvider {
     _stored: {
         id: string;
+        storageKey?: string;
     } | null;
     private localKeyId;
     constructor(type: any, storageEngine: any, name: any, id: any, key: any);
     backingType(): Type;
     clone(): VolatileVariable;
     cloneFrom(handle: any): Promise<void>;
-    modelForSynchronization(): Promise<any>;
+    modelForSynchronization(): Promise<{
+        version: number;
+        model: {};
+    }>;
     toLiteral(): Promise<{
         version: number;
-        model: {
-            id: string;
-            value: {
-                id: string;
-            };
-        }[];
+        model: SerializedModelEntry[];
     }>;
     private fromLiteral;
     traceInfo(): {
@@ -117,10 +116,10 @@ declare class VolatileBigCollection extends VolatileStorageProvider implements B
     cursorClose(cursorId: number): void;
     cursorVersion(cursorId: number): number;
     cloneFrom(handle: any): Promise<void>;
-    toLiteral(): {
+    toLiteral(): Promise<{
         version: number;
         model: any[];
-    };
+    }>;
     private fromLiteral;
     clearItemsForTesting(): void;
 }

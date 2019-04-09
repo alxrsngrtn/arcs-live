@@ -1,6 +1,7 @@
 import { Id } from '../id.js';
 import { Type } from '../type.js';
 import { StorageStub } from '../manifest.js';
+import { SerializedModelEntry } from './crdt-collection-model.js';
 import { KeyBase } from './key-base.js';
 declare type Callback = (v: {
     [index: string]: any;
@@ -53,7 +54,7 @@ export declare abstract class StorageBase {
     /**
      * Provides graceful shutdown for tests.
      */
-    shutdown(): void;
+    shutdown(): Promise<void>;
 }
 declare type DeltaItems = {
     value: any;
@@ -91,7 +92,7 @@ export declare abstract class StorageProviderBase {
     name: string;
     source: string | null;
     description: string;
-    protected constructor(type: Type, name: any, id: any, key: any);
+    protected constructor(type: Type, name: string, id: string, key: string);
     enableReferenceMode(): void;
     readonly storageKey: string;
     generateID(): string;
@@ -116,11 +117,19 @@ export declare abstract class StorageProviderBase {
     /**
      * @returns an object notation of this storage provider.
      */
-    abstract toLiteral(): any;
+    abstract toLiteral(): Promise<{
+        version: number;
+        model: SerializedModelEntry[];
+    }>;
     abstract cloneFrom(store: StorageProviderBase | StorageStub): any;
     abstract ensureBackingStore(): any;
     abstract backingStore: any;
-    /** TODO */
-    modelForSynchronization(): any;
+    /**
+     * Called by Particle Execution Host to synchronize it's proxy.
+     */
+    modelForSynchronization(): Promise<{
+        version: number;
+        model: {};
+    }>;
 }
 export {};

@@ -114,7 +114,7 @@ export class FirebaseStorage extends StorageBase {
         return this._join(id, type, key, true, Mode.direct);
     }
     // Unit tests should call this in an 'after' block.
-    shutdown() {
+    async shutdown() {
         for (const entry of Object.values(this.apps)) {
             if (entry.owned) {
                 entry.app.delete();
@@ -498,12 +498,12 @@ class FirebaseVariable extends FirebaseStorageProvider {
         }
         return super.modelForSynchronization();
     }
-    // Returns {version, model: [{id, value}]}
     async toLiteral() {
         await this.initialized;
         // fixme: think about if there are local mutations...
         const value = this.value;
-        const model = (value == null) ? [] : [{ id: value.id, value }];
+        // TODO: what should keys be set to?
+        const model = (value == null) ? [] : [{ id: value.id, value, keys: [] }];
         return { version: this.version, model };
     }
     fromLiteral({ version, model }) {
@@ -980,7 +980,6 @@ class FirebaseCollection extends FirebaseStorageProvider {
         }
         await this._persistChanges();
     }
-    // Returns {version, model: [{id, value, keys: []}]}
     async toLiteral() {
         await this.initialized;
         // TODO: think about what to do here, do we really need toLiteral for a firebase store?
@@ -1280,7 +1279,7 @@ class FirebaseBigCollection extends FirebaseStorageProvider {
     async cloneFrom(handle) {
         throw new Error('FirebaseBigCollection does not yet implement cloneFrom');
     }
-    toLiteral() {
+    async toLiteral() {
         throw new Error('FirebaseBigCollection does not yet implement toLiteral');
     }
     fromLiteral({ version, model }) {
@@ -1396,7 +1395,7 @@ class FirebaseBackingStore extends FirebaseStorageProvider {
     off(kindStr, callback) {
         throw new Error('FirebaseBackingStore does not implement off');
     }
-    toLiteral() {
+    async toLiteral() {
         throw new Error('FirebaseBackingStore does not implement toLiteral');
     }
     cloneFrom(store) {

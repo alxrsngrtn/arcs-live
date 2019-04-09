@@ -1,4 +1,5 @@
 import { BigCollectionStorageProvider } from '../storage-provider-base.js';
+import { SerializedModelEntry } from '../crdt-collection-model.js';
 import { PouchDbStorageProvider } from './pouch-db-storage-provider.js';
 export declare class PouchDbBigCollection extends PouchDbStorageProvider implements BigCollectionStorageProvider {
     constructor(type: any, storageEngine: any, name: any, id: any, key: any);
@@ -10,7 +11,10 @@ export declare class PouchDbBigCollection extends PouchDbStorageProvider impleme
     cursorNext(cursorId: number): Promise<void>;
     cursorClose(cursorId: number): void;
     cursorVersion(cursorId: number): void;
-    toLiteral(): void;
+    toLiteral(): Promise<{
+        version: number;
+        model: SerializedModelEntry[];
+    }>;
     cloneFrom(): Promise<void>;
     clearItemsForTesting(): void;
     /**
