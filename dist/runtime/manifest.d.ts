@@ -95,7 +95,7 @@ export declare class Manifest {
     }): (StorageProviderBase | StorageStub)[];
     findInterfaceByName(name: string): InterfaceInfo;
     findRecipesByVerb(verb: string): Recipe[];
-    generateID(): string;
+    generateID(): Id;
     static load(fileName: string, loader: {
         loadResource: any;
     }, options?: any): Promise<Manifest>;

@@ -315,9 +315,8 @@ export class Manifest {
     findRecipesByVerb(verb) {
         return [...this._findAll(manifest => manifest._recipes.filter(recipe => recipe.verbs.includes(verb)))];
     }
-    // TODO: Unify ID handling to use ID instances, not strings. Change return type here to ID.
     generateID() {
-        return this._idGenerator.newChildId(this.id).toString();
+        return this._idGenerator.newChildId(this.id);
     }
     static async load(fileName, loader, options) {
         options = options || {};
@@ -1089,7 +1088,7 @@ ${e.message}
                     return null;
                 }
                 hasSerializedId = hasSerializedId || entity.$id;
-                const id = entity.$id || manifest.generateID();
+                const id = entity.$id || manifest.generateID().toString();
                 delete entity.$id;
                 return { id, rawData: entity };
             });

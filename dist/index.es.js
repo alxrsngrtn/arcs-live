@@ -13739,7 +13739,7 @@ class Particle {
     }
     _compareTo(other) {
         let cmp;
-        if ((cmp = compareStrings(this._id, other._id)) !== 0)
+        if ((cmp = compareStrings(this._id ? this._id.toString() : '', other._id ? other._id.toString() : '')) !== 0)
             return cmp;
         if ((cmp = compareStrings(this._name, other._name)) !== 0)
             return cmp;
@@ -15167,7 +15167,7 @@ class RecipeUtil {
         const handleType = connection.type.clone(new Map());
         handleType.maybeEnsureResolved();
         const handle = connection.recipe.newHandle();
-        handle.id = id;
+        handle.id = id.toString();
         handle.mappedType = handleType;
         handle.fate = 'copy';
         handle.immediateValue = particleSpec;
@@ -16392,9 +16392,8 @@ class Manifest {
     findRecipesByVerb(verb) {
         return [...this._findAll(manifest => manifest._recipes.filter(recipe => recipe.verbs.includes(verb)))];
     }
-    // TODO: Unify ID handling to use ID instances, not strings. Change return type here to ID.
     generateID() {
-        return this._idGenerator.newChildId(this.id).toString();
+        return this._idGenerator.newChildId(this.id);
     }
     static async load(fileName, loader, options) {
         options = options || {};
@@ -17166,7 +17165,7 @@ ${e.message}
                     return null;
                 }
                 hasSerializedId = hasSerializedId || entity.$id;
-                const id = entity.$id || manifest.generateID();
+                const id = entity.$id || manifest.generateID().toString();
                 delete entity.$id;
                 return { id, rawData: entity };
             });
@@ -18418,7 +18417,7 @@ class ArcDebugHandler {
         particles.forEach(p => Object.values(p.consumedSlotConnections).forEach(cs => {
             if (cs.targetSlot) {
                 slotConnections.push({
-                    particleId: cs.particle.id,
+                    particleId: cs.particle.id.toString(),
                     consumed: truncate(cs.targetSlot),
                     provided: Object.values(cs.providedSlots).map(slot => truncate(slot)),
                 });
@@ -21908,7 +21907,7 @@ class ParticleExecutionHost {
         stores.forEach((store, name) => {
             this._apiPort.DefineHandle(store, store.type.resolvedType(), name);
         });
-        this._apiPort.InstantiateParticle(particle, particle.id, particle.spec, stores);
+        this._apiPort.InstantiateParticle(particle, particle.id.toString(), particle.spec, stores);
     }
     startRender({ particle, slotName, providedSlots, contentTypes }) {
         this._apiPort.StartRender(particle, slotName, providedSlots, contentTypes);
@@ -22247,9 +22246,9 @@ ${this.activeRecipe.toString()}`;
         return [...this.loadedParticleInfo.values()].map(({ spec }) => spec);
     }
     _instantiateParticle(recipeParticle) {
-        recipeParticle.id = this.generateID('particle').toString();
+        recipeParticle.id = this.generateID('particle');
         const info = { spec: recipeParticle.spec, stores: new Map() };
-        this.loadedParticleInfo.set(recipeParticle.id, info);
+        this.loadedParticleInfo.set(recipeParticle.id.toString(), info);
         for (const [name, connection] of Object.entries(recipeParticle.connections)) {
             const store = this.findStoreById(connection.handle.id);
             assert(store, `can't find store of id ${connection.handle.id}`);
@@ -24196,7 +24195,7 @@ class FindHostedParticle extends Strategy {
                 for (const particleSpec of matchingParticleSpecs) {
                     results.push((recipe, particle, connectionSpec) => {
                         const handleConnection = particle.addConnectionName(connectionSpec.name);
-                        const handle = RecipeUtil.constructImmediateValueHandle(handleConnection, particleSpec, arc.generateID().toString());
+                        const handle = RecipeUtil.constructImmediateValueHandle(handleConnection, particleSpec, arc.generateID());
                         assert(handle); // Type matching should have been ensure by the checks above;
                         handleConnection.connectToHandle(handle);
                     });

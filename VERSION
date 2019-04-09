@@ -1,9 +1,5 @@
-commit 7e6d6d578d62d2acbc3e12ee3bbc98acd09bf7b8
-Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
-Date:   Tue Apr 9 11:38:31 2019 +1000
+commit ff60814a1d1d5f1f01ee36d62fac69c4fc096ec9
+Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
+Date:   Tue Apr 9 13:17:38 2019 +1000
 
-    sigh: use a cross-platform bootstrap.js pre-compile step (#2868)
-    
-    * sigh: use a cross-platform bootstrap.js pre-compile step
-    
-    * Reduced bootstrap file size
+    Migrated a few more places to use Id objects instead of raw strings (#2861)

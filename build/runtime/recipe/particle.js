@@ -86,7 +86,7 @@ export class Particle {
     }
     _compareTo(other) {
         let cmp;
-        if ((cmp = compareStrings(this._id, other._id)) !== 0)
+        if ((cmp = compareStrings(this._id ? this._id.toString() : '', other._id ? other._id.toString() : '')) !== 0)
             return cmp;
         if ((cmp = compareStrings(this._name, other._name)) !== 0)
             return cmp;

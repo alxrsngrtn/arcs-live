@@ -6,6 +6,7 @@ import { HandleConnection } from './handle-connection.js';
 import { Recipe } from './recipe.js';
 import { SlotConnection } from './slot-connection.js';
 import { Slot } from './slot.js';
+import { Id } from '../id.js';
 export declare class Particle {
     private readonly _recipe;
     private _id;
@@ -34,7 +35,7 @@ export declare class Particle {
     isResolved(options?: any): boolean;
     readonly recipe: Recipe;
     localName: string;
-    id: string;
+    id: Id;
     name: string;
     readonly connections: {
         [index: string]: HandleConnection;

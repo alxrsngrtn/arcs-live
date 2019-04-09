@@ -342,7 +342,7 @@ export class RecipeUtil {
         const handleType = connection.type.clone(new Map());
         handleType.maybeEnsureResolved();
         const handle = connection.recipe.newHandle();
-        handle.id = id;
+        handle.id = id.toString();
         handle.mappedType = handleType;
         handle.fate = 'copy';
         handle.immediateValue = particleSpec;

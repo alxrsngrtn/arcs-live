@@ -3,6 +3,7 @@ import { HandleConnection } from './handle-connection.js';
 import { Handle } from './handle.js';
 import { Particle } from './particle.js';
 import { Recipe, RecipeComponent } from './recipe.js';
+import { Id } from '../id.js';
 declare class Shape {
     recipe: Recipe;
     particles: {
@@ -39,7 +40,7 @@ export declare class RecipeUtil {
         match: {};
         score: number;
     }[];
-    static constructImmediateValueHandle(connection: HandleConnection, particleSpec: ParticleSpec, id: string): Handle;
+    static constructImmediateValueHandle(connection: HandleConnection, particleSpec: ParticleSpec, id: Id): Handle;
     static directionCounts(handle: Handle): DirectionCounts;
     static matchesRecipe(recipe: Recipe, otherRecipe: Recipe): boolean;
 }

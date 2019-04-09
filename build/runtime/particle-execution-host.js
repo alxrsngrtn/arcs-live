@@ -239,7 +239,7 @@ export class ParticleExecutionHost {
         stores.forEach((store, name) => {
             this._apiPort.DefineHandle(store, store.type.resolvedType(), name);
         });
-        this._apiPort.InstantiateParticle(particle, particle.id, particle.spec, stores);
+        this._apiPort.InstantiateParticle(particle, particle.id.toString(), particle.spec, stores);
     }
     startRender({ particle, slotName, providedSlots, contentTypes }) {
         this._apiPort.StartRender(particle, slotName, providedSlots, contentTypes);

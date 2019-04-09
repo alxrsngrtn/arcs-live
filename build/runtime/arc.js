@@ -336,9 +336,9 @@ ${this.activeRecipe.toString()}`;
         return [...this.loadedParticleInfo.values()].map(({ spec }) => spec);
     }
     _instantiateParticle(recipeParticle) {
-        recipeParticle.id = this.generateID('particle').toString();
+        recipeParticle.id = this.generateID('particle');
         const info = { spec: recipeParticle.spec, stores: new Map() };
-        this.loadedParticleInfo.set(recipeParticle.id, info);
+        this.loadedParticleInfo.set(recipeParticle.id.toString(), info);
         for (const [name, connection] of Object.entries(recipeParticle.connections)) {
             const store = this.findStoreById(connection.handle.id);
             assert(store, `can't find store of id ${connection.handle.id}`);
