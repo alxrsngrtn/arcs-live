@@ -47,17 +47,17 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   function ka(a) {
     for (var b, c = []; !(b = a.next()).done;) c.push(b.value);return c;
   }function la() {
-    this.aa = this.root = null;this.K = !1;this.v = this.H = this.R = this.assignedSlot = this.assignedNodes = this.w = null;this.childNodes = this.nextSibling = this.previousSibling = this.lastChild = this.firstChild = this.parentNode = this.B = void 0;this.W = this.X = !1;this.G = {};
+    this.ba = this.root = null;this.L = !1;this.v = this.I = this.R = this.assignedSlot = this.assignedNodes = this.B = null;this.childNodes = this.nextSibling = this.previousSibling = this.lastChild = this.firstChild = this.parentNode = this.C = void 0;this.W = this.X = !1;this.H = {};
   }la.prototype.toJSON = function () {
     return {};
   };function q(a) {
     a.__shady || (a.__shady = new la());return a.__shady;
   }function r(a) {
     return a && a.__shady;
-  };var t = window.ShadyDOM || {};t.na = !(!Element.prototype.attachShadow || !Node.prototype.getRootNode);var ma = Object.getOwnPropertyDescriptor(Node.prototype, "firstChild");t.i = !!(ma && ma.configurable && ma.get);t.T = t.force || !t.na;t.A = t.noPatch || !1;t.$ = t.preferPerformance;function v(a) {
+  };var t = window.ShadyDOM || {};t.pa = !(!Element.prototype.attachShadow || !Node.prototype.getRootNode);var ma = Object.getOwnPropertyDescriptor(Node.prototype, "firstChild");t.i = !!(ma && ma.configurable && ma.get);t.T = t.force || !t.pa;t.A = t.noPatch || !1;t.aa = t.preferPerformance;function v(a) {
     return (a = r(a)) && void 0 !== a.firstChild;
   }function w(a) {
-    return "ShadyRoot" === a.ga;
+    return "ShadyRoot" === a.ia;
   }function na(a) {
     return (a = (a = r(a)) && a.root) && oa(a);
   }
@@ -106,14 +106,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   }function za() {
     xa = !1;for (var a = !!A.length; A.length;) A.shift()();return a;
   }za.list = A;function Aa() {
-    this.a = !1;this.addedNodes = [];this.removedNodes = [];this.J = new Set();
+    this.a = !1;this.addedNodes = [];this.removedNodes = [];this.K = new Set();
   }function Ba(a) {
     a.a || (a.a = !0, ta(function () {
       a.flush();
     }));
   }Aa.prototype.flush = function () {
     if (this.a) {
-      this.a = !1;var a = this.takeRecords();a.length && this.J.forEach(function (b) {
+      this.a = !1;var a = this.takeRecords();a.length && this.K.forEach(function (b) {
         b(a);
       });
     }
@@ -123,11 +123,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     }return [];
   };
   function Ca(a, b) {
-    var c = q(a);c.w || (c.w = new Aa());c.w.J.add(b);var d = c.w;return { fa: b, ia: d, ha: a, takeRecords: function () {
+    var c = q(a);c.B || (c.B = new Aa());c.B.K.add(b);var d = c.B;return { ha: b, ka: d, ja: a, takeRecords: function () {
         return d.takeRecords();
       } };
   }function Da(a) {
-    var b = a && a.ia;b && (b.J.delete(a.fa), b.J.size || (q(a.ha).w = null));
+    var b = a && a.ka;b && (b.K.delete(a.ha), b.K.size || (q(a.ja).B = null));
   }
   function Ea(a, b) {
     var c = b.getRootNode();return a.map(function (a) {
@@ -285,41 +285,50 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       return a.get.call(b);
     } : null;
   }(),
-      fb = { blur: !0, focus: !0, focusin: !0, focusout: !0, click: !0, dblclick: !0, mousedown: !0, mouseenter: !0, mouseleave: !0, mousemove: !0, mouseout: !0, mouseover: !0, mouseup: !0, wheel: !0, beforeinput: !0, input: !0, keydown: !0, keyup: !0, compositionstart: !0, compositionupdate: !0, compositionend: !0, touchstart: !0, touchend: !0, touchmove: !0, touchcancel: !0, pointerover: !0,
-    pointerenter: !0, pointerdown: !0, pointermove: !0, pointerup: !0, pointercancel: !0, pointerout: !0, pointerleave: !0, gotpointercapture: !0, lostpointercapture: !0, dragstart: !0, drag: !0, dragenter: !0, dragleave: !0, dragover: !0, drop: !0, dragend: !0, DOMActivate: !0, DOMFocusIn: !0, DOMFocusOut: !0, keypress: !0 },
-      gb = { DOMAttrModified: !0, DOMAttributeNameChanged: !0, DOMCharacterDataModified: !0, DOMElementNameChanged: !0, DOMNodeInserted: !0, DOMNodeInsertedIntoDocument: !0, DOMNodeRemoved: !0, DOMNodeRemovedFromDocument: !0, DOMSubtreeModified: !0 };
-  function hb(a) {
+      fb = function () {
+    function a() {}var b = !1,
+        c = { get capture() {
+        b = !0;
+      } };window.addEventListener("test", a, c);window.removeEventListener("test", a, c);return b;
+  }();function gb(a) {
+    if (a && "object" === typeof a) {
+      var b = !!a.capture;var c = !!a.once;var d = !!a.passive;var e = a.w;
+    } else b = !!a, d = c = !1;return { ca: e, capture: b, once: c, passive: d, $: fb ? a : b };
+  }
+  var hb = { blur: !0, focus: !0, focusin: !0, focusout: !0, click: !0, dblclick: !0, mousedown: !0, mouseenter: !0, mouseleave: !0, mousemove: !0, mouseout: !0, mouseover: !0, mouseup: !0, wheel: !0, beforeinput: !0, input: !0, keydown: !0, keyup: !0, compositionstart: !0, compositionupdate: !0, compositionend: !0, touchstart: !0, touchend: !0, touchmove: !0, touchcancel: !0, pointerover: !0, pointerenter: !0, pointerdown: !0, pointermove: !0, pointerup: !0, pointercancel: !0, pointerout: !0, pointerleave: !0, gotpointercapture: !0, lostpointercapture: !0, dragstart: !0,
+    drag: !0, dragenter: !0, dragleave: !0, dragover: !0, drop: !0, dragend: !0, DOMActivate: !0, DOMFocusIn: !0, DOMFocusOut: !0, keypress: !0 },
+      ib = { DOMAttrModified: !0, DOMAttributeNameChanged: !0, DOMCharacterDataModified: !0, DOMElementNameChanged: !0, DOMNodeInserted: !0, DOMNodeInsertedIntoDocument: !0, DOMNodeRemoved: !0, DOMNodeRemovedFromDocument: !0, DOMSubtreeModified: !0 };function jb(a) {
     return a instanceof Node ? a.__shady_getRootNode() : a;
-  }function ib(a, b) {
-    var c = [],
-        d = a;for (a = hb(a); d;) c.push(d), d.__shady_assignedSlot ? d = d.__shady_assignedSlot : d.nodeType === Node.DOCUMENT_FRAGMENT_NODE && d.host && (b || d !== a) ? d = d.host : d = d.__shady_parentNode;c[c.length - 1] === document && c.push(window);return c;
-  }function jb(a) {
-    a.__composedPath || (a.__composedPath = ib(a.target, !0));return a.__composedPath;
   }
   function kb(a, b) {
-    if (!w) return a;a = ib(a, !0);for (var c = 0, d, e = void 0, f, g = void 0; c < b.length; c++) if (d = b[c], f = hb(d), f !== e && (g = a.indexOf(f), e = f), !w(f) || -1 < g) return d;
+    var c = [],
+        d = a;for (a = jb(a); d;) c.push(d), d.__shady_assignedSlot ? d = d.__shady_assignedSlot : d.nodeType === Node.DOCUMENT_FRAGMENT_NODE && d.host && (b || d !== a) ? d = d.host : d = d.__shady_parentNode;c[c.length - 1] === document && c.push(window);return c;
   }function lb(a) {
+    a.__composedPath || (a.__composedPath = kb(a.target, !0));return a.__composedPath;
+  }function mb(a, b) {
+    if (!w) return a;a = kb(a, !0);for (var c = 0, d, e = void 0, f, g = void 0; c < b.length; c++) if (d = b[c], f = jb(d), f !== e && (g = a.indexOf(f), e = f), !w(f) || -1 < g) return d;
+  }
+  function nb(a) {
     function b(b, d) {
       b = new a(b, d);b.__composed = d && !!d.composed;return b;
     }b.__proto__ = a;b.prototype = a.prototype;return b;
-  }var mb = { focus: !0, blur: !0 };function nb(a) {
+  }var ob = { focus: !0, blur: !0 };function pb(a) {
     return a.__target !== a.target || a.__relatedTarget !== a.relatedTarget;
+  }function qb(a, b, c) {
+    if (c = b.__handlers && b.__handlers[a.type] && b.__handlers[a.type][c]) for (var d = 0, e; (e = c[d]) && (!pb(a) || a.target !== a.relatedTarget) && (e.call(b, a), !a.__immediatePropagationStopped); d++);
   }
-  function ob(a, b, c) {
-    if (c = b.__handlers && b.__handlers[a.type] && b.__handlers[a.type][c]) for (var d = 0, e; (e = c[d]) && (!nb(a) || a.target !== a.relatedTarget) && (e.call(b, a), !a.__immediatePropagationStopped); d++);
-  }
-  function pb(a) {
+  function rb(a) {
     var b = a.composedPath();Object.defineProperty(a, "currentTarget", { get: function () {
         return d;
       }, configurable: !0 });for (var c = b.length - 1; 0 <= c; c--) {
-      var d = b[c];ob(a, d, "capture");if (a.N) return;
+      var d = b[c];qb(a, d, "capture");if (a.O) return;
     }Object.defineProperty(a, "eventPhase", { get: function () {
         return Event.AT_TARGET;
       } });var e;for (c = 0; c < b.length; c++) {
-      d = b[c];var f = r(d);f = f && f.root;if (0 === c || f && f === e) if (ob(a, d, "bubble"), d !== window && (e = d.__shady_getRootNode()), a.N) break;
+      d = b[c];var f = r(d);f = f && f.root;if (0 === c || f && f === e) if (qb(a, d, "bubble"), d !== window && (e = d.__shady_getRootNode()), a.O) break;
     }
   }
-  function qb(a, b, c, d, e, f) {
+  function sb(a, b, c, d, e, f) {
     for (var g = 0; g < a.length; g++) {
       var h = a[g],
           k = h.type,
@@ -328,76 +337,74 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           u = h.passive;if (b === h.node && c === k && d === l && e === p && f === u) return g;
     }return -1;
   }
-  function rb(a, b, c) {
-    if (b) {
-      var d = typeof b;if ("function" === d || "object" === d) if ("object" !== d || b.handleEvent && "function" === typeof b.handleEvent) {
-        if (gb[a]) return this.__shady_native_addEventListener(a, b, c);if (c && "object" === typeof c) {
-          var e = !!c.capture;var f = !!c.once;var g = !!c.passive;
-        } else e = !!c, g = f = !1;var h = c && c.O || this,
-            k = b[db];if (k) {
-          if (-1 < qb(k, h, a, e, f, g)) return;
-        } else b[db] = [];k = function (e) {
-          f && this.__shady_removeEventListener(a, b, c);e.__target || sb(e);if (h !== this) {
-            var g = Object.getOwnPropertyDescriptor(e, "currentTarget");
-            Object.defineProperty(e, "currentTarget", { get: function () {
-                return h;
+  function tb(a, b, c) {
+    var d = gb(c);c = d.capture;var e = d.once,
+        f = d.passive,
+        g = d.ca,
+        h = d.$;if (b) {
+      var k = typeof b;if ("function" === k || "object" === k) if ("object" !== k || b.handleEvent && "function" === typeof b.handleEvent) {
+        if (ib[a]) return this.__shady_native_addEventListener(a, b, h);var l = g || this;if (d = b[db]) {
+          if (-1 < sb(d, l, a, c, e, f)) return;
+        } else b[db] = [];d = function (c) {
+          e && this.__shady_removeEventListener(a, b, h);c.__target || ub(c);if (l !== this) {
+            var d = Object.getOwnPropertyDescriptor(c, "currentTarget");Object.defineProperty(c, "currentTarget", { get: function () {
+                return l;
               }, configurable: !0 });
-          }e.__previousCurrentTarget = e.currentTarget;if (!w(h) || -1 != e.composedPath().indexOf(h)) if (e.composed || -1 < e.composedPath().indexOf(h)) if (nb(e) && e.target === e.relatedTarget) e.eventPhase === Event.BUBBLING_PHASE && e.stopImmediatePropagation();else if (e.eventPhase === Event.CAPTURING_PHASE || e.bubbles || e.target === h || h instanceof Window) {
-            var k = "function" === d ? b.call(h, e) : b.handleEvent && b.handleEvent(e);h !== this && (g ? (Object.defineProperty(e, "currentTarget", g), g = null) : delete e.currentTarget);return k;
+          }c.__previousCurrentTarget = c.currentTarget;if (!w(l) && "slot" !== l.localName || -1 != c.composedPath().indexOf(l)) if (c.composed || -1 < c.composedPath().indexOf(l)) if (pb(c) && c.target === c.relatedTarget) c.eventPhase === Event.BUBBLING_PHASE && c.stopImmediatePropagation();else if (c.eventPhase === Event.CAPTURING_PHASE || c.bubbles || c.target === l || l instanceof Window) {
+            var f = "function" === k ? b.call(l, c) : b.handleEvent && b.handleEvent(c);l !== this && (d ? (Object.defineProperty(c, "currentTarget", d), d = null) : delete c.currentTarget);return f;
           }
-        };b[db].push({ node: h, type: a, capture: e, once: f, passive: g, xa: k });mb[a] ? (this.__handlers = this.__handlers || {}, this.__handlers[a] = this.__handlers[a] || { capture: [], bubble: [] }, this.__handlers[a][e ? "capture" : "bubble"].push(k)) : this.__shady_native_addEventListener(a, k, c);
+        };b[db].push({ node: l, type: a, capture: c, once: e, passive: f, za: d });ob[a] ? (this.__handlers = this.__handlers || {}, this.__handlers[a] = this.__handlers[a] || { capture: [], bubble: [] }, this.__handlers[a][c ? "capture" : "bubble"].push(d)) : this.__shady_native_addEventListener(a, d, h);
       }
     }
   }
-  function tb(a, b, c) {
+  function vb(a, b, c) {
     if (b) {
-      if (gb[a]) return this.__shady_native_removeEventListener(a, b, c);if (c && "object" === typeof c) {
-        var d = !!c.capture;var e = !!c.once;var f = !!c.passive;
-      } else d = !!c, f = e = !1;var g = c && c.O || this,
-          h = void 0;var k = null;try {
+      var d = gb(c);c = d.capture;var e = d.once,
+          f = d.passive,
+          g = d.ca;d = d.$;if (ib[a]) return this.__shady_native_removeEventListener(a, b, d);var h = g || this;g = void 0;var k = null;try {
         k = b[db];
-      } catch (l) {}k && (e = qb(k, g, a, d, e, f), -1 < e && (h = k.splice(e, 1)[0].xa, k.length || (b[db] = void 0)));this.__shady_native_removeEventListener(a, h || b, c);h && mb[a] && this.__handlers && this.__handlers[a] && (a = this.__handlers[a][d ? "capture" : "bubble"], h = a.indexOf(h), -1 < h && a.splice(h, 1));
+      } catch (l) {}k && (e = sb(k, h, a, c, e, f), -1 < e && (g = k.splice(e, 1)[0].za, k.length || (b[db] = void 0)));this.__shady_native_removeEventListener(a, g || b, d);g && ob[a] && this.__handlers && this.__handlers[a] && (a = this.__handlers[a][c ? "capture" : "bubble"], b = a.indexOf(g), -1 < b && a.splice(b, 1));
     }
   }
-  function ub() {
-    for (var a in mb) window.__shady_native_addEventListener(a, function (a) {
-      a.__target || (sb(a), pb(a));
+  function wb() {
+    for (var a in ob) window.__shady_native_addEventListener(a, function (a) {
+      a.__target || (ub(a), rb(a));
     }, !0);
   }
-  var vb = z({ get composed() {
-      void 0 === this.__composed && (eb ? this.__composed = "focusin" === this.type || "focusout" === this.type || eb(this) : !1 !== this.isTrusted && (this.__composed = fb[this.type]));return this.__composed || !1;
+  var xb = z({ get composed() {
+      void 0 === this.__composed && (eb ? this.__composed = "focusin" === this.type || "focusout" === this.type || eb(this) : !1 !== this.isTrusted && (this.__composed = hb[this.type]));return this.__composed || !1;
     }, composedPath: function () {
-      this.__composedPath || (this.__composedPath = ib(this.__target, this.composed));return this.__composedPath;
+      this.__composedPath || (this.__composedPath = kb(this.__target, this.composed));return this.__composedPath;
     }, get target() {
-      return kb(this.currentTarget || this.__previousCurrentTarget, this.composedPath());
+      return mb(this.currentTarget || this.__previousCurrentTarget, this.composedPath());
     }, get relatedTarget() {
-      if (!this.__relatedTarget) return null;this.__relatedTargetComposedPath || (this.__relatedTargetComposedPath = ib(this.__relatedTarget, !0));return kb(this.currentTarget || this.__previousCurrentTarget, this.__relatedTargetComposedPath);
+      if (!this.__relatedTarget) return null;this.__relatedTargetComposedPath || (this.__relatedTargetComposedPath = kb(this.__relatedTarget, !0));return mb(this.currentTarget || this.__previousCurrentTarget, this.__relatedTargetComposedPath);
     }, stopPropagation: function () {
-      Event.prototype.stopPropagation.call(this);this.N = !0;
+      Event.prototype.stopPropagation.call(this);this.O = !0;
     }, stopImmediatePropagation: function () {
-      Event.prototype.stopImmediatePropagation.call(this);this.N = this.__immediatePropagationStopped = !0;
+      Event.prototype.stopImmediatePropagation.call(this);this.O = this.__immediatePropagationStopped = !0;
     } });
-  function sb(a) {
+  function ub(a) {
     a.__target = a.target;a.__relatedTarget = a.relatedTarget;if (t.i) {
       var b = Object.getPrototypeOf(a);if (!Object.hasOwnProperty(b, "__shady_patchedProto")) {
-        var c = Object.create(b);c.__shady_sourceProto = b;y(c, vb);b.__shady_patchedProto = c;
+        var c = Object.create(b);c.__shady_sourceProto = b;y(c, xb);b.__shady_patchedProto = c;
       }a.__proto__ = b.__shady_patchedProto;
-    } else y(a, vb);
-  }var wb = lb(Event),
-      xb = lb(CustomEvent),
-      yb = lb(MouseEvent);
-  function zb() {
+    } else y(a, xb);
+  }var yb = nb(Event),
+      zb = nb(CustomEvent),
+      Ab = nb(MouseEvent);
+  function Bb() {
     if (!eb && Object.getOwnPropertyDescriptor(Event.prototype, "isTrusted")) {
       var a = function () {
         var a = new MouseEvent("click", { bubbles: !0, cancelable: !0, composed: !0 });this.__shady_dispatchEvent(a);
       };Element.prototype.click ? Element.prototype.click = a : HTMLElement.prototype.click && (HTMLElement.prototype.click = a);
     }
-  }var Ab = Object.getOwnPropertyNames(Document.prototype).filter(function (a) {
+  }var Cb = Object.getOwnPropertyNames(Document.prototype).filter(function (a) {
     return "on" === a.substring(0, 2);
-  });function Bb(a, b) {
-    return { index: a, C: [], I: b };
+  });function Db(a, b) {
+    return { index: a, D: [], J: b };
   }
-  function Cb(a, b, c, d) {
+  function Eb(a, b, c, d) {
     var e = 0,
         f = 0,
         g = 0,
@@ -405,69 +412,69 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         k = Math.min(b - e, d - f);if (0 == e && 0 == f) a: {
       for (g = 0; g < k; g++) if (a[g] !== c[g]) break a;g = k;
     }if (b == a.length && d == c.length) {
-      h = a.length;for (var l = c.length, p = 0; p < k - g && Db(a[--h], c[--l]);) p++;h = p;
+      h = a.length;for (var l = c.length, p = 0; p < k - g && Fb(a[--h], c[--l]);) p++;h = p;
     }e += g;f += g;b -= h;d -= h;if (0 == b - e && 0 == d - f) return [];if (e == b) {
-      for (b = Bb(e, 0); f < d;) b.C.push(c[f++]);return [b];
-    }if (f == d) return [Bb(e, b - e)];k = e;g = f;d = d - g + 1;h = b - k + 1;b = Array(d);for (l = 0; l < d; l++) b[l] = Array(h), b[l][0] = l;for (l = 0; l < h; l++) b[0][l] = l;for (l = 1; l < d; l++) for (p = 1; p < h; p++) if (a[k + p - 1] === c[g + l - 1]) b[l][p] = b[l - 1][p - 1];else {
+      for (b = Db(e, 0); f < d;) b.D.push(c[f++]);return [b];
+    }if (f == d) return [Db(e, b - e)];k = e;g = f;d = d - g + 1;h = b - k + 1;b = Array(d);for (l = 0; l < d; l++) b[l] = Array(h), b[l][0] = l;for (l = 0; l < h; l++) b[0][l] = l;for (l = 1; l < d; l++) for (p = 1; p < h; p++) if (a[k + p - 1] === c[g + l - 1]) b[l][p] = b[l - 1][p - 1];else {
       var u = b[l - 1][p] + 1,
           aa = b[l][p - 1] + 1;b[l][p] = u < aa ? u : aa;
     }k = b.length - 1;g = b[0].length - 1;d = b[k][g];for (a = []; 0 < k || 0 < g;) 0 == k ? (a.push(2), g--) : 0 == g ? (a.push(3), k--) : (h = b[k - 1][g - 1], l = b[k - 1][g], p = b[k][g - 1], u = l < p ? l < h ? l : h : p < h ? p : h, u == h ? (h == d ? a.push(0) : (a.push(1), d = h), k--, g--) : u == l ? (a.push(3), k--, d = l) : (a.push(2), g--, d = p));a.reverse();b = void 0;k = [];for (g = 0; g < a.length; g++) switch (a[g]) {case 0:
         b && (k.push(b), b = void 0);e++;f++;break;case 1:
-        b || (b = Bb(e, 0));b.I++;e++;b.C.push(c[f]);f++;break;case 2:
-        b || (b = Bb(e, 0));b.I++;e++;break;case 3:
-        b || (b = Bb(e, 0)), b.C.push(c[f]), f++;}b && k.push(b);return k;
-  }function Db(a, b) {
+        b || (b = Db(e, 0));b.J++;e++;b.D.push(c[f]);f++;break;case 2:
+        b || (b = Db(e, 0));b.J++;e++;break;case 3:
+        b || (b = Db(e, 0)), b.D.push(c[f]), f++;}b && k.push(b);return k;
+  }function Fb(a, b) {
     return a === b;
-  };function Eb(a, b, c) {
+  };function Gb(a, b, c) {
     bb(a);c = c || null;var d = q(a),
         e = q(b),
         f = c ? q(c) : null;d.previousSibling = c ? f.previousSibling : b.__shady_lastChild;if (f = r(d.previousSibling)) f.nextSibling = a;if (f = r(d.nextSibling = c)) f.previousSibling = a;d.parentNode = b;c ? c === e.firstChild && (e.firstChild = a) : (e.lastChild = a, e.firstChild || (e.firstChild = a));e.childNodes = null;
   }
-  function Fb(a, b, c) {
+  function Hb(a, b, c) {
     cb(b);var d = q(b);void 0 !== d.firstChild && (d.childNodes = null);if (a.nodeType === Node.DOCUMENT_FRAGMENT_NODE) {
-      d = a.__shady_childNodes;for (var e = 0; e < d.length; e++) Eb(d[e], b, c);a = q(a);b = void 0 !== a.firstChild ? null : void 0;a.firstChild = a.lastChild = b;a.childNodes = b;
-    } else Eb(a, b, c);
+      d = a.__shady_childNodes;for (var e = 0; e < d.length; e++) Gb(d[e], b, c);a = q(a);b = void 0 !== a.firstChild ? null : void 0;a.firstChild = a.lastChild = b;a.childNodes = b;
+    } else Gb(a, b, c);
   }
-  function Gb(a, b) {
+  function Ib(a, b) {
     var c = q(a);b = q(b);a === b.firstChild && (b.firstChild = c.nextSibling);a === b.lastChild && (b.lastChild = c.previousSibling);a = c.previousSibling;var d = c.nextSibling;a && (q(a).nextSibling = d);d && (q(d).previousSibling = a);c.parentNode = c.previousSibling = c.nextSibling = void 0;void 0 !== b.childNodes && (b.childNodes = null);
   }
-  function Hb(a) {
+  function Jb(a) {
     var b = q(a);if (void 0 === b.firstChild) {
       b.childNodes = null;var c = b.firstChild = a.__shady_native_firstChild || null;b.lastChild = a.__shady_native_lastChild || null;cb(a);b = c;for (c = void 0; b; b = b.__shady_native_nextSibling) {
         var d = q(b);d.parentNode = a;d.nextSibling = b.__shady_native_nextSibling || null;d.previousSibling = c || null;c = b;bb(b);
       }
     }
-  };var Ib = null;function E() {
-    Ib || (Ib = window.ShadyCSS && window.ShadyCSS.ScopingShim);return Ib || null;
-  }function Jb(a, b) {
+  };var Kb = null;function E() {
+    Kb || (Kb = window.ShadyCSS && window.ShadyCSS.ScopingShim);return Kb || null;
+  }function Lb(a, b) {
     var c = E();c && c.unscopeNode(a, b);
-  }function Kb(a, b) {
+  }function Mb(a, b) {
     var c = E();if (!c) return !0;if (a.nodeType === Node.DOCUMENT_FRAGMENT_NODE) {
-      c = !0;a = a.__shady_childNodes;for (var d = 0; c && d < a.length; d++) c = c && Kb(a[d], b);return c;
+      c = !0;a = a.__shady_childNodes;for (var d = 0; c && d < a.length; d++) c = c && Mb(a[d], b);return c;
     }return a.nodeType !== Node.ELEMENT_NODE ? !0 : c.currentScopeForNode(a) === b;
-  }function Lb(a) {
+  }function Nb(a) {
     if (a.nodeType !== Node.ELEMENT_NODE) return "";var b = E();return b ? b.currentScopeForNode(a) : "";
   }
-  function Mb(a, b) {
+  function Ob(a, b) {
     if (a) {
-      a.nodeType === Node.ELEMENT_NODE && b(a);a = a.__shady_childNodes;for (var c = 0, d; c < a.length; c++) d = a[c], d.nodeType === Node.ELEMENT_NODE && Mb(d, b);
+      a.nodeType === Node.ELEMENT_NODE && b(a);a = a.__shady_childNodes;for (var c = 0, d; c < a.length; c++) d = a[c], d.nodeType === Node.ELEMENT_NODE && Ob(d, b);
     }
-  };var Nb = window.document,
-      Ob = t.$,
-      Pb = Object.getOwnPropertyDescriptor(Node.prototype, "isConnected"),
-      Qb = Pb && Pb.get;function Rb(a) {
+  };var Pb = window.document,
+      Qb = t.aa,
+      Rb = Object.getOwnPropertyDescriptor(Node.prototype, "isConnected"),
+      Sb = Rb && Rb.get;function Tb(a) {
     for (var b; b = a.__shady_firstChild;) a.__shady_removeChild(b);
-  }function Sb(a) {
-    var b = r(a);if (b && void 0 !== b.B) {
-      b = a.__shady_childNodes;for (var c = 0, d = b.length, e = void 0; c < d && (e = b[c]); c++) Sb(e);
-    }if (a = r(a)) a.B = void 0;
-  }function Tb(a) {
-    var b = a;a && "slot" === a.localName && (b = (b = (b = r(a)) && b.v) && b.length ? b[0] : Tb(a.__shady_nextSibling));return b;
+  }function Ub(a) {
+    var b = r(a);if (b && void 0 !== b.C) {
+      b = a.__shady_childNodes;for (var c = 0, d = b.length, e = void 0; c < d && (e = b[c]); c++) Ub(e);
+    }if (a = r(a)) a.C = void 0;
+  }function Vb(a) {
+    var b = a;a && "slot" === a.localName && (b = (b = (b = r(a)) && b.v) && b.length ? b[0] : Vb(a.__shady_nextSibling));return b;
   }
-  function Ub(a, b, c) {
-    if (a = (a = r(a)) && a.w) b && a.addedNodes.push(b), c && a.removedNodes.push(c), Ba(a);
+  function Wb(a, b, c) {
+    if (a = (a = r(a)) && a.B) b && a.addedNodes.push(b), c && a.removedNodes.push(c), Ba(a);
   }
-  var Wb = z({ get parentNode() {
+  var Yb = z({ get parentNode() {
       var a = r(this);a = a && a.parentNode;return void 0 !== a ? a : this.__shady_native_parentNode;
     }, get firstChild() {
       var a = r(this);a = a && a.firstChild;return void 0 !== a ? a : this.__shady_native_firstChild;
@@ -489,7 +496,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     }, get parentElement() {
       var a = r(this);(a = a && a.parentNode) && a.nodeType !== Node.ELEMENT_NODE && (a = null);return void 0 !== a ? a : this.__shady_native_parentElement;
     }, get isConnected() {
-      if (Qb && Qb.call(this)) return !0;if (this.nodeType == Node.DOCUMENT_FRAGMENT_NODE) return !1;
+      if (Sb && Sb.call(this)) return !0;if (this.nodeType == Node.DOCUMENT_FRAGMENT_NODE) return !1;
       var a = this.ownerDocument;if (ua) {
         if (a.__shady_native_contains(this)) return !0;
       } else if (a.documentElement && a.documentElement.__shady_native_contains(this)) return !0;for (a = this; a && !(a instanceof Document);) a = a.__shady_parentNode || (w(a) ? a.host : void 0);return !!(a && a instanceof Document);
@@ -500,35 +507,34 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     }, set textContent(a) {
       if ("undefined" === typeof a || null === a) a = "";switch (this.nodeType) {case Node.ELEMENT_NODE:case Node.DOCUMENT_FRAGMENT_NODE:
           if (!v(this) && t.i) {
-            var b = this.__shady_firstChild;(b != this.__shady_lastChild || b && b.nodeType != Node.TEXT_NODE) && Rb(this);this.__shady_native_textContent = a;
-          } else Rb(this), (0 < a.length || this.nodeType === Node.ELEMENT_NODE) && this.__shady_insertBefore(document.createTextNode(a));break;default:
+            var b = this.__shady_firstChild;(b != this.__shady_lastChild || b && b.nodeType != Node.TEXT_NODE) && Tb(this);this.__shady_native_textContent = a;
+          } else Tb(this), (0 < a.length || this.nodeType === Node.ELEMENT_NODE) && this.__shady_insertBefore(document.createTextNode(a));break;default:
           this.nodeValue = a;}
     }, insertBefore: function (a, b) {
-      if (this.ownerDocument !== Nb && a.ownerDocument !== Nb) return this.__shady_native_insertBefore(a, b), a;if (a === this) throw Error("Failed to execute 'appendChild' on 'Node': The new child element contains the parent.");if (b) {
+      if (this.ownerDocument !== Pb && a.ownerDocument !== Pb) return this.__shady_native_insertBefore(a, b), a;if (a === this) throw Error("Failed to execute 'appendChild' on 'Node': The new child element contains the parent.");if (b) {
         var c = r(b);c = c && c.parentNode;if (void 0 !== c && c !== this || void 0 === c && b.__shady_native_parentNode !== this) throw Error("Failed to execute 'insertBefore' on 'Node': The node before which the new node is to be inserted is not a child of this node.");
       }if (b === a) return a;var d = [],
-          e = (c = F(this)) ? c.host.localName : Lb(this),
+          e = (c = F(this)) ? c.host.localName : Nb(this),
           f = a.__shady_parentNode;if (f) {
-        var g = Lb(a);f.__shady_removeChild(a, !!c || !F(a));
-      }f = !0;var h = (!Ob || void 0 === a.__noInsertionPoint) && !Kb(a, e),
-          k = c && !a.__noInsertionPoint && (!Ob || a.nodeType === Node.DOCUMENT_FRAGMENT_NODE);if (k || h) h && (g = g || Lb(a)), Mb(a, function (a) {
-        k && "slot" === a.localName && d.push(a);if (h) {
-          var b = g;E() && (b && Jb(a, b), (b = E()) && b.scopeNode(a, e));
+        var g = Nb(a);var h = !!c || !F(a) || Qb && void 0 !== this.__noInsertionPoint;f.__shady_removeChild(a, h);
+      }f = !0;var k = (!Qb || void 0 === a.__noInsertionPoint && void 0 === this.__noInsertionPoint) && !Mb(a, e),
+          l = c && !a.__noInsertionPoint && (!Qb || a.nodeType === Node.DOCUMENT_FRAGMENT_NODE);if (l || k) k && (g = g || Nb(a)), Ob(a, function (a) {
+        l && "slot" === a.localName && d.push(a);if (k) {
+          var b = g;E() && (b && Lb(a, b), (b = E()) && b.scopeNode(a, e));
         }
-      });if ("slot" === this.localName || d.length) d.length && (c.c = c.c || [], c.a = c.a || [], c.b = c.b || {}, c.c.push.apply(c.c, d instanceof Array ? d : ka(ja(d)))), c && G(c);v(this) && (Fb(a, this, b), c = r(this), na(this) ? (G(c.root), f = !1) : c.root && (f = !1));f ? (c = w(this) ? this.host : this, b ? (b = Tb(b), c.__shady_native_insertBefore(a, b)) : c.__shady_native_appendChild(a)) : a.ownerDocument !== this.ownerDocument && this.ownerDocument.adoptNode(a);Ub(this, a);return a;
+      });if ("slot" === this.localName || d.length) d.length && (c.c = c.c || [], c.a = c.a || [], c.b = c.b || {}, c.c.push.apply(c.c, d instanceof Array ? d : ka(ja(d)))), c && G(c);v(this) && (Hb(a, this, b), c = r(this), na(this) ? (G(c.root), f = !1) : c.root && (f = !1));f ? (c = w(this) ? this.host : this, b ? (b = Vb(b), c.__shady_native_insertBefore(a, b)) : c.__shady_native_appendChild(a)) : a.ownerDocument !== this.ownerDocument && this.ownerDocument.adoptNode(a);Wb(this, a);return a;
     }, appendChild: function (a) {
       return this.__shady_insertBefore(a);
     }, removeChild: function (a, b) {
-      b = void 0 === b ? !1 : b;if (this.ownerDocument !== Nb) return this.__shady_native_removeChild(a);if (a.__shady_parentNode !== this) throw Error("The node to be removed is not a child of this node: " + a);var c = F(a),
-          d = c && Vb(c, a),
-          e = r(this);
-      if (v(this) && (Gb(a, this), na(this))) {
+      b = void 0 === b ? !1 : b;if (this.ownerDocument !== Pb) return this.__shady_native_removeChild(a);if (a.__shady_parentNode !== this) throw Error("The node to be removed is not a child of this node: " + a);var c = F(a),
+          d = c && Xb(c, a),
+          e = r(this);if (v(this) && (Ib(a, this), na(this))) {
         G(e.root);var f = !0;
       }if (E() && !b && c) {
-        var g = Lb(a);Mb(a, function (a) {
-          Jb(a, g);
+        var g = Nb(a);Ob(a, function (a) {
+          Lb(a, g);
         });
-      }Sb(a);c && ((b = this && "slot" === this.localName) && (f = !0), (d || b) && G(c));f || (f = w(this) ? this.host : this, (!e.root && "slot" !== a.localName || f === a.__shady_native_parentNode) && f.__shady_native_removeChild(a));Ub(this, null, a);return a;
+      }Ub(a);c && ((b = this && "slot" === this.localName) && (f = !0), (d || b) && G(c));f || (f = w(this) ? this.host : this, (!e.root && "slot" !== a.localName || f === a.__shady_native_parentNode) && f.__shady_native_removeChild(a));Wb(this, null, a);return a;
     }, replaceChild: function (a, b) {
       this.__shady_insertBefore(a, b);this.__shady_removeChild(b);return a;
     }, cloneNode: function (a) {
@@ -539,19 +545,19 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     }, getRootNode: function (a) {
       if (this && this.nodeType) {
         var b = q(this),
-            c = b.B;void 0 === c && (w(this) ? (c = this, b.B = c) : (c = (c = this.__shady_parentNode) ? c.__shady_getRootNode(a) : this, document.documentElement.__shady_native_contains(this) && (b.B = c)));return c;
+            c = b.C;void 0 === c && (w(this) ? (c = this, b.C = c) : (c = (c = this.__shady_parentNode) ? c.__shady_getRootNode(a) : this, document.documentElement.__shady_native_contains(this) && (b.C = c)));return c;
       }
     }, contains: function (a) {
       return va(this, a);
-    } });function Xb(a, b, c) {
-    var d = [];Yb(a.__shady_childNodes, b, c, d);return d;
-  }function Yb(a, b, c, d) {
+    } });function Zb(a, b, c) {
+    var d = [];$b(a.__shady_childNodes, b, c, d);return d;
+  }function $b(a, b, c, d) {
     for (var e = 0, f = a.length, g = void 0; e < f && (g = a[e]); e++) {
       var h;if (h = g.nodeType === Node.ELEMENT_NODE) {
         h = g;var k = b,
             l = c,
             p = d,
-            u = k(h);u && p.push(h);l && l(u) ? h = u : (Yb(h.__shady_childNodes, k, l, p), h = void 0);
+            u = k(h);u && p.push(h);l && l(u) ? h = u : ($b(h.__shady_childNodes, k, l, p), h = void 0);
       }if (h) break;
     }
   }
@@ -570,8 +576,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     }, get childElementCount() {
       var a = this.__shady_children;return a ? a.length : 0;
     } }),
-      Zb = z({ querySelector: function (a) {
-      return Xb(this, function (b) {
+      ac = z({ querySelector: function (a) {
+      return Zb(this, function (b) {
         return pa.call(b, a);
       }, function (a) {
         return !!a;
@@ -581,107 +587,107 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         b = Array.prototype.slice.call(this.__shady_native_querySelectorAll(a));var c = this.__shady_getRootNode();return b.filter(function (a) {
           return a.__shady_getRootNode() == c;
         });
-      }return Xb(this, function (b) {
+      }return Zb(this, function (b) {
         return pa.call(b, a);
       });
     } }),
-      $b = t.$ ? Object.assign({}, H) : H;Object.assign(H, Zb);var ac = z({ getElementById: function (a) {
-      return "" === a ? null : Xb(this, function (b) {
+      bc = t.aa && !t.A ? Object.assign({}, H) : H;Object.assign(H, ac);var cc = z({ getElementById: function (a) {
+      return "" === a ? null : Zb(this, function (b) {
         return b.id == a;
       }, function (a) {
         return !!a;
       })[0] || null;
-    } });var bc = z({ get activeElement() {
+    } });var dc = z({ get activeElement() {
       var a = t.i ? document.__shady_native_activeElement : document.activeElement;if (!a || !a.nodeType) return null;var b = !!w(this);if (!(this === document || b && this.host !== a && this.host.__shady_native_contains(a))) return null;for (b = F(a); b && b !== this;) a = b.host, b = F(a);return this === document ? b ? null : a : b === this ? a : null;
-    } });var cc = document.implementation.createHTMLDocument("inert"),
-      dc = z({ get innerHTML() {
+    } });var ec = document.implementation.createHTMLDocument("inert"),
+      fc = z({ get innerHTML() {
       return v(this) ? Ma("template" === this.localName ? this.content : this, function (a) {
         return a.__shady_childNodes;
       }) : this.__shady_native_innerHTML;
     }, set innerHTML(a) {
       if ("template" === this.localName) this.__shady_native_innerHTML = a;else {
-        Rb(this);var b = this.localName || "div";b = this.namespaceURI && this.namespaceURI !== cc.namespaceURI ? cc.createElementNS(this.namespaceURI, b) : cc.createElement(b);for (t.i ? b.__shady_native_innerHTML = a : b.innerHTML = a; a = b.__shady_firstChild;) this.__shady_insertBefore(a);
+        Tb(this);var b = this.localName || "div";b = this.namespaceURI && this.namespaceURI !== ec.namespaceURI ? ec.createElementNS(this.namespaceURI, b) : ec.createElement(b);for (t.i ? b.__shady_native_innerHTML = a : b.innerHTML = a; a = b.__shady_firstChild;) this.__shady_insertBefore(a);
       }
-    } });var ec = z({ addEventListener: function (a, b, c) {
-      "object" !== typeof c && (c = { capture: !!c });c.O = this;this.host.__shady_addEventListener(a, b, c);
+    } });var gc = z({ addEventListener: function (a, b, c) {
+      "object" !== typeof c && (c = { capture: !!c });c.w = c.w || this;this.host.__shady_addEventListener(a, b, c);
     }, removeEventListener: function (a, b, c) {
-      "object" !== typeof c && (c = { capture: !!c });c.O = this;this.host.__shady_removeEventListener(a, b, c);
-    } });function fc(a, b) {
-    y(a, ec, b);y(a, bc, b);y(a, dc, b);y(a, H, b);t.A && !b ? (y(a, Wb, b), y(a, ac, b)) : t.i || (y(a, Ya), y(a, Xa));
-  };var gc = {},
+      "object" !== typeof c && (c = { capture: !!c });c.w = c.w || this;this.host.__shady_removeEventListener(a, b, c);
+    } });function hc(a, b) {
+    y(a, gc, b);y(a, dc, b);y(a, fc, b);y(a, H, b);t.A && !b ? (y(a, Yb, b), y(a, cc, b)) : t.i || (y(a, Ya), y(a, Xa));
+  };var ic = {},
       I = t.deferConnectionCallbacks && "loading" === document.readyState,
-      hc;function ic(a) {
+      jc;function kc(a) {
     var b = [];do b.unshift(a); while (a = a.__shady_parentNode);return b;
   }
-  function jc(a, b, c) {
-    if (a !== gc) throw new TypeError("Illegal constructor");this.ga = "ShadyRoot";this.host = b;this.mode = c && c.mode;Hb(b);a = q(b);a.root = this;a.aa = "closed" !== this.mode ? this : null;a = q(this);a.firstChild = a.lastChild = a.parentNode = a.nextSibling = a.previousSibling = null;a.childNodes = [];this.P = this.u = !1;this.c = this.b = this.a = null;if (t.preferPerformance) for (; a = b.__shady_native_firstChild;) b.__shady_native_removeChild(a);else G(this);
+  function lc(a, b, c) {
+    if (a !== ic) throw new TypeError("Illegal constructor");this.ia = "ShadyRoot";this.host = b;this.mode = c && c.mode;Jb(b);a = q(b);a.root = this;a.ba = "closed" !== this.mode ? this : null;a = q(this);a.firstChild = a.lastChild = a.parentNode = a.nextSibling = a.previousSibling = null;a.childNodes = [];this.P = this.u = !1;this.c = this.b = this.a = null;if (t.preferPerformance) for (; a = b.__shady_native_firstChild;) b.__shady_native_removeChild(a);else G(this);
   }function G(a) {
     a.u || (a.u = !0, ya(function () {
-      return kc(a);
+      return mc(a);
     }));
   }
-  function kc(a) {
+  function mc(a) {
     var b;if (b = a.u) {
       for (var c; a;) a: {
-        a.u && (c = a), b = a;a = b.host.__shady_getRootNode();if (w(a) && (b = r(b.host)) && 0 < b.F) break a;a = void 0;
+        a.u && (c = a), b = a;a = b.host.__shady_getRootNode();if (w(a) && (b = r(b.host)) && 0 < b.G) break a;a = void 0;
       }b = c;
     }(c = b) && c._renderSelf();
   }
-  jc.prototype._renderSelf = function () {
+  lc.prototype._renderSelf = function () {
     var a = I;I = !0;this.u = !1;if (this.a) {
-      lc(this);for (var b = 0, c; b < this.a.length; b++) {
+      nc(this);for (var b = 0, c; b < this.a.length; b++) {
         c = this.a[b];var d = r(c),
             e = d.assignedNodes;d.assignedNodes = [];d.v = [];if (d.R = e) for (d = 0; d < e.length; d++) {
-          var f = r(e[d]);f.H = f.assignedSlot;f.assignedSlot === c && (f.assignedSlot = null);
+          var f = r(e[d]);f.I = f.assignedSlot;f.assignedSlot === c && (f.assignedSlot = null);
         }
-      }for (b = this.host.__shady_firstChild; b; b = b.__shady_nextSibling) mc(this, b);for (b = 0; b < this.a.length; b++) {
-        c = this.a[b];e = r(c);if (!e.assignedNodes.length) for (d = c.__shady_firstChild; d; d = d.__shady_nextSibling) mc(this, d, c);
-        (d = (d = r(c.__shady_parentNode)) && d.root) && (oa(d) || d.u) && d._renderSelf();nc(this, e.v, e.assignedNodes);if (d = e.R) {
-          for (f = 0; f < d.length; f++) r(d[f]).H = null;e.R = null;d.length > e.assignedNodes.length && (e.K = !0);
-        }e.K && (e.K = !1, oc(this, c));
+      }for (b = this.host.__shady_firstChild; b; b = b.__shady_nextSibling) oc(this, b);for (b = 0; b < this.a.length; b++) {
+        c = this.a[b];e = r(c);if (!e.assignedNodes.length) for (d = c.__shady_firstChild; d; d = d.__shady_nextSibling) oc(this, d, c);
+        (d = (d = r(c.__shady_parentNode)) && d.root) && (oa(d) || d.u) && d._renderSelf();pc(this, e.v, e.assignedNodes);if (d = e.R) {
+          for (f = 0; f < d.length; f++) r(d[f]).I = null;e.R = null;d.length > e.assignedNodes.length && (e.L = !0);
+        }e.L && (e.L = !1, qc(this, c));
       }c = this.a;b = [];for (e = 0; e < c.length; e++) d = c[e].__shady_parentNode, (f = r(d)) && f.root || !(0 > b.indexOf(d)) || b.push(d);for (c = 0; c < b.length; c++) {
         f = b[c];e = f === this ? this.host : f;d = [];f = f.__shady_childNodes;for (var g = 0; g < f.length; g++) {
           var h = f[g];if ("slot" == h.localName) {
             h = r(h).v;for (var k = 0; k < h.length; k++) d.push(h[k]);
           } else d.push(h);
-        }f = Array.prototype.slice.call(e.__shady_native_childNodes);g = Cb(d, d.length, f, f.length);k = h = 0;for (var l = void 0; h < g.length && (l = g[h]); h++) {
-          for (var p = 0, u = void 0; p < l.C.length && (u = l.C[p]); p++) u.__shady_native_parentNode === e && e.__shady_native_removeChild(u), f.splice(l.index + k, 1);k -= l.I;
-        }k = 0;for (l = void 0; k < g.length && (l = g[k]); k++) for (h = f[l.index], p = l.index; p < l.index + l.I; p++) u = d[p], e.__shady_native_insertBefore(u, h), f.splice(p, 0, u);
+        }f = Array.prototype.slice.call(e.__shady_native_childNodes);g = Eb(d, d.length, f, f.length);k = h = 0;for (var l = void 0; h < g.length && (l = g[h]); h++) {
+          for (var p = 0, u = void 0; p < l.D.length && (u = l.D[p]); p++) u.__shady_native_parentNode === e && e.__shady_native_removeChild(u), f.splice(l.index + k, 1);k -= l.J;
+        }k = 0;for (l = void 0; k < g.length && (l = g[k]); k++) for (h = f[l.index], p = l.index; p < l.index + l.J; p++) u = d[p], e.__shady_native_insertBefore(u, h), f.splice(p, 0, u);
       }
-    }if (!t.preferPerformance && !this.P) for (b = this.host.__shady_childNodes, c = 0, e = b.length; c < e; c++) d = b[c], f = r(d), d.__shady_native_parentNode !== this.host || "slot" !== d.localName && f.assignedSlot || this.host.__shady_native_removeChild(d);this.P = !0;I = a;hc && hc();
-  };function mc(a, b, c) {
+    }if (!t.preferPerformance && !this.P) for (b = this.host.__shady_childNodes, c = 0, e = b.length; c < e; c++) d = b[c], f = r(d), d.__shady_native_parentNode !== this.host || "slot" !== d.localName && f.assignedSlot || this.host.__shady_native_removeChild(d);this.P = !0;I = a;jc && jc();
+  };function oc(a, b, c) {
     var d = q(b),
-        e = d.H;d.H = null;c || (c = (a = a.b[b.__shady_slot || "__catchall"]) && a[0]);c ? (q(c).assignedNodes.push(b), d.assignedSlot = c) : d.assignedSlot = void 0;e !== d.assignedSlot && d.assignedSlot && (q(d.assignedSlot).K = !0);
+        e = d.I;d.I = null;c || (c = (a = a.b[b.__shady_slot || "__catchall"]) && a[0]);c ? (q(c).assignedNodes.push(b), d.assignedSlot = c) : d.assignedSlot = void 0;e !== d.assignedSlot && d.assignedSlot && (q(d.assignedSlot).L = !0);
   }
-  function nc(a, b, c) {
+  function pc(a, b, c) {
     for (var d = 0, e = void 0; d < c.length && (e = c[d]); d++) if ("slot" == e.localName) {
-      var f = r(e).assignedNodes;f && f.length && nc(a, b, f);
+      var f = r(e).assignedNodes;f && f.length && pc(a, b, f);
     } else b.push(c[d]);
-  }function oc(a, b) {
-    b.__shady_native_dispatchEvent(new Event("slotchange"));b = r(b);b.assignedSlot && oc(a, b.assignedSlot);
+  }function qc(a, b) {
+    b.__shady_native_dispatchEvent(new Event("slotchange"));b = r(b);b.assignedSlot && qc(a, b.assignedSlot);
   }
-  function lc(a) {
+  function nc(a) {
     if (a.c && a.c.length) {
       for (var b = a.c, c, d = 0; d < b.length; d++) {
-        var e = b[d];Hb(e);var f = e.__shady_parentNode;Hb(f);f = r(f);f.F = (f.F || 0) + 1;f = pc(e);a.b[f] ? (c = c || {}, c[f] = !0, a.b[f].push(e)) : a.b[f] = [e];a.a.push(e);
-      }if (c) for (var g in c) a.b[g] = qc(a.b[g]);a.c = [];
+        var e = b[d];Jb(e);var f = e.__shady_parentNode;Jb(f);f = r(f);f.G = (f.G || 0) + 1;f = rc(e);a.b[f] ? (c = c || {}, c[f] = !0, a.b[f].push(e)) : a.b[f] = [e];a.a.push(e);
+      }if (c) for (var g in c) a.b[g] = sc(a.b[g]);a.c = [];
     }
-  }function pc(a) {
-    var b = a.name || a.getAttribute("name") || "__catchall";return a.ea = b;
+  }function rc(a) {
+    var b = a.name || a.getAttribute("name") || "__catchall";return a.ga = b;
   }
-  function qc(a) {
+  function sc(a) {
     return a.sort(function (a, c) {
-      a = ic(a);for (var b = ic(c), e = 0; e < a.length; e++) {
+      a = kc(a);for (var b = kc(c), e = 0; e < a.length; e++) {
         c = a[e];var f = b[e];if (c !== f) return a = Array.from(c.__shady_parentNode.__shady_childNodes), a.indexOf(c) - a.indexOf(f);
       }
     });
   }
-  function Vb(a, b) {
+  function Xb(a, b) {
     if (a.a) {
-      lc(a);var c = a.b,
+      nc(a);var c = a.b,
           d;for (d in c) for (var e = c[d], f = 0; f < e.length; f++) {
         var g = e[f];if (va(b, g)) {
-          e.splice(f, 1);var h = a.a.indexOf(g);0 <= h && (a.a.splice(h, 1), (h = r(g.__shady_parentNode)) && h.F && h.F--);f--;g = r(g);if (h = g.v) for (var k = 0; k < h.length; k++) {
+          e.splice(f, 1);var h = a.a.indexOf(g);0 <= h && (a.a.splice(h, 1), (h = r(g.__shady_parentNode)) && h.G && h.G--);f--;g = r(g);if (h = g.v) for (var k = 0; k < h.length; k++) {
             var l = h[k],
                 p = l.__shady_native_parentNode;p && p.__shady_native_removeChild(l);
           }g.v = [];g.assignedNodes = [];h = !0;
@@ -689,10 +695,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }return h;
     }
   }function oa(a) {
-    lc(a);return !(!a.a || !a.a.length);
+    nc(a);return !(!a.a || !a.a.length);
   }
   (function (a) {
-    a.__proto__ = DocumentFragment.prototype;fc(a, "__shady_");fc(a);Object.defineProperties(a, { nodeType: { value: Node.DOCUMENT_FRAGMENT_NODE, configurable: !0 }, nodeName: { value: "#document-fragment", configurable: !0 }, nodeValue: { value: null, configurable: !0 } });["localName", "namespaceURI", "prefix"].forEach(function (b) {
+    a.__proto__ = DocumentFragment.prototype;hc(a, "__shady_");hc(a);Object.defineProperties(a, { nodeType: { value: Node.DOCUMENT_FRAGMENT_NODE, configurable: !0 }, nodeName: { value: "#document-fragment", configurable: !0 }, nodeValue: { value: null, configurable: !0 } });["localName", "namespaceURI", "prefix"].forEach(function (b) {
       Object.defineProperty(a, b, { value: void 0, configurable: !0 });
     });["ownerDocument", "baseURI", "isConnected"].forEach(function (b) {
       Object.defineProperty(a, b, { get: function () {
@@ -700,27 +706,27 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         },
         configurable: !0 });
     });
-  })(jc.prototype);
+  })(lc.prototype);
   if (window.customElements && t.T && !t.preferPerformance) {
-    var rc = new Map();hc = function () {
-      var a = [];rc.forEach(function (b, c) {
+    var tc = new Map();jc = function () {
+      var a = [];tc.forEach(function (b, c) {
         a.push([c, b]);
-      });rc.clear();for (var b = 0; b < a.length; b++) {
-        var c = a[b][0];a[b][1] ? c.ca() : c.da();
+      });tc.clear();for (var b = 0; b < a.length; b++) {
+        var c = a[b][0];a[b][1] ? c.ea() : c.fa();
       }
     };I && document.addEventListener("readystatechange", function () {
-      I = !1;hc();
-    }, { once: !0 });var sc = function (a, b, c) {
+      I = !1;jc();
+    }, { once: !0 });var uc = function (a, b, c) {
       var d = 0,
-          e = "__isConnected" + d++;if (b || c) a.prototype.connectedCallback = a.prototype.ca = function () {
-        I ? rc.set(this, !0) : this[e] || (this[e] = !0, b && b.call(this));
-      }, a.prototype.disconnectedCallback = a.prototype.da = function () {
-        I ? this.isConnected || rc.set(this, !1) : this[e] && (this[e] = !1, c && c.call(this));
+          e = "__isConnected" + d++;if (b || c) a.prototype.connectedCallback = a.prototype.ea = function () {
+        I ? tc.set(this, !0) : this[e] || (this[e] = !0, b && b.call(this));
+      }, a.prototype.disconnectedCallback = a.prototype.fa = function () {
+        I ? this.isConnected || tc.set(this, !1) : this[e] && (this[e] = !1, c && c.call(this));
       };return a;
     },
         define = window.customElements.define;Object.defineProperty(window.CustomElementRegistry.prototype, "define", { value: function (a, b) {
         var c = b.prototype.connectedCallback,
-            d = b.prototype.disconnectedCallback;define.call(window.customElements, a, sc(b, c, d));b.prototype.connectedCallback = c;b.prototype.disconnectedCallback = d;
+            d = b.prototype.disconnectedCallback;define.call(window.customElements, a, uc(b, c, d));b.prototype.connectedCallback = c;b.prototype.disconnectedCallback = d;
       } });
   }function F(a) {
     a = a.__shady_getRootNode();if (w(a)) return a;
@@ -825,30 +831,34 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         return this.node.__shady_slot;
       }, set: function (a) {
         this.node.__shady_slot = a;
-      } } });Ab.forEach(function (a) {
+      } }, className: { configurable: !0, enumerable: !0, get: function () {
+        return this.node.__shady_className;
+      }, set: function (a) {
+        return this.node.__shady_className = a;
+      } } });
+  Cb.forEach(function (a) {
     Object.defineProperty(J.prototype, a, { get: function () {
         return this.node["__shady_" + a];
       }, set: function (b) {
         this.node["__shady_" + a] = b;
       }, configurable: !0 });
-  });var tc = new WeakMap();
-  function uc(a) {
-    if (w(a) || a instanceof J) return a;var b = tc.get(a);b || (b = new J(a), tc.set(a, b));return b;
-  };var vc = z({ dispatchEvent: function (a) {
+  });var vc = new WeakMap();function wc(a) {
+    if (w(a) || a instanceof J) return a;var b = vc.get(a);b || (b = new J(a), vc.set(a, b));return b;
+  };var xc = z({ dispatchEvent: function (a) {
       za();return this.__shady_native_dispatchEvent(a);
-    }, addEventListener: rb, removeEventListener: tb });var wc = z({ get assignedSlot() {
-      var a = this.__shady_parentNode;(a = a && a.__shady_shadowRoot) && kc(a);return (a = r(this)) && a.assignedSlot || null;
-    } });var xc = window.document;function yc(a, b) {
+    }, addEventListener: tb, removeEventListener: vb });var yc = z({ get assignedSlot() {
+      var a = this.__shady_parentNode;(a = a && a.__shady_shadowRoot) && mc(a);return (a = r(this)) && a.assignedSlot || null;
+    } });var zc = window.document;function Ac(a, b) {
     if ("slot" === b) a = a.__shady_parentNode, na(a) && G(r(a).root);else if ("slot" === a.localName && "name" === b && (b = F(a))) {
       if (b.a) {
-        lc(b);var c = a.ea,
-            d = pc(a);if (d !== c) {
-          c = b.b[c];var e = c.indexOf(a);0 <= e && c.splice(e, 1);c = b.b[d] || (b.b[d] = []);c.push(a);1 < c.length && (b.b[d] = qc(c));
+        nc(b);var c = a.ga,
+            d = rc(a);if (d !== c) {
+          c = b.b[c];var e = c.indexOf(a);0 <= e && c.splice(e, 1);c = b.b[d] || (b.b[d] = []);c.push(a);1 < c.length && (b.b[d] = sc(c));
         }
       }G(b);
     }
   }
-  var zc = z({ get previousElementSibling() {
+  var Bc = z({ get previousElementSibling() {
       var a = r(this);if (a && void 0 !== a.previousSibling) {
         for (a = this.__shady_previousSibling; a && a.nodeType !== Node.ELEMENT_NODE;) a = a.__shady_previousSibling;return a;
       }return this.__shady_native_previousElementSibling;
@@ -862,55 +872,63 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     set slot(a) {
       this.__shady_setAttribute("slot", a);
     }, get shadowRoot() {
-      var a = r(this);return a && a.aa || null;
+      var a = r(this);return a && a.ba || null;
     }, get className() {
       return this.getAttribute("class") || "";
     }, set className(a) {
       this.__shady_setAttribute("class", a);
     }, setAttribute: function (a, b) {
-      if (this.ownerDocument !== xc) this.__shady_native_setAttribute(a, b);else {
-        var c;(c = E()) && "class" === a ? (c.setElementClass(this, b), c = !0) : c = !1;c || (this.__shady_native_setAttribute(a, b), yc(this, a));
+      if (this.ownerDocument !== zc) this.__shady_native_setAttribute(a, b);else {
+        var c;(c = E()) && "class" === a ? (c.setElementClass(this, b), c = !0) : c = !1;c || (this.__shady_native_setAttribute(a, b), Ac(this, a));
       }
     }, removeAttribute: function (a) {
-      this.__shady_native_removeAttribute(a);yc(this, a);
+      this.__shady_native_removeAttribute(a);Ac(this, a);
     }, attachShadow: function (a) {
-      if (!this) throw Error("Must provide a host.");if (!a) throw Error("Not enough arguments.");return new jc(gc, this, a);
-    } });var Ac = z({ blur: function () {
+      if (!this) throw Error("Must provide a host.");if (!a) throw Error("Not enough arguments.");return new lc(ic, this, a);
+    } });var Cc = z({ blur: function () {
       var a = r(this);(a = (a = a && a.root) && a.activeElement) ? a.__shady_blur() : this.__shady_native_blur();
-    } });Ab.forEach(function (a) {
-    Ac[a] = { set: function (b) {
+    } });Cb.forEach(function (a) {
+    Cc[a] = { set: function (b) {
         var c = q(this),
-            d = a.substring(2);c.G[a] && this.removeEventListener(d, c.G[a]);this.__shady_addEventListener(d, b);c.G[a] = b;
+            d = a.substring(2);c.H[a] && this.removeEventListener(d, c.H[a]);this.__shady_addEventListener(d, b);c.H[a] = b;
       }, get: function () {
-        var b = r(this);return b && b.G[a];
+        var b = r(this);return b && b.H[a];
       }, configurable: !0 };
-  });var Bc = z({ assignedNodes: function (a) {
+  });var Dc = z({ assignedNodes: function (a) {
       if ("slot" === this.localName) {
-        var b = this.__shady_getRootNode();b && w(b) && kc(b);return (b = r(this)) ? (a && a.flatten ? b.v : b.assignedNodes) || [] : [];
+        var b = this.__shady_getRootNode();b && w(b) && mc(b);return (b = r(this)) ? (a && a.flatten ? b.v : b.assignedNodes) || [] : [];
       }
-    } });var Cc = window.document,
-      Dc = z({ importNode: function (a, b) {
-      if (a.ownerDocument !== Cc || "template" === a.localName) return this.__shady_native_importNode(a, b);var c = this.__shady_native_importNode(a, !1);if (b) {
+    }, addEventListener: function (a, b, c) {
+      if ("slot" !== this.localName || "slotchange" === a) tb.call(this, a, b, c);else {
+        "object" !== typeof c && (c = { capture: !!c });var d = this.__shady_parentNode;if (!d) throw Error("ShadyDOM cannot attach event to slot unless it has a `parentNode`");c.w = this;d.__shady_addEventListener(a, b, c);
+      }
+    }, removeEventListener: function (a, b, c) {
+      if ("slot" !== this.localName || "slotchange" === a) vb.call(this, a, b, c);else {
+        "object" !== typeof c && (c = { capture: !!c });var d = this.__shady_parentNode;if (!d) throw Error("ShadyDOM cannot attach event to slot unless it has a `parentNode`");c.w = this;d.__shady_removeEventListener(a, b, c);
+      }
+    } });var Ec = window.document,
+      Fc = z({ importNode: function (a, b) {
+      if (a.ownerDocument !== Ec || "template" === a.localName) return this.__shady_native_importNode(a, b);var c = this.__shady_native_importNode(a, !1);if (b) {
         a = a.__shady_childNodes;b = 0;for (var d; b < a.length; b++) d = this.__shady_importNode(a[b], !0), c.__shady_appendChild(d);
       }return c;
-    } });var Ec = z({ addEventListener: rb.bind(window), removeEventListener: tb.bind(window) });var K = {};Object.getOwnPropertyDescriptor(HTMLElement.prototype, "parentElement") && (K.parentElement = Wb.parentElement);Object.getOwnPropertyDescriptor(HTMLElement.prototype, "contains") && (K.contains = Wb.contains);Object.getOwnPropertyDescriptor(HTMLElement.prototype, "children") && (K.children = H.children);Object.getOwnPropertyDescriptor(HTMLElement.prototype, "innerHTML") && (K.innerHTML = dc.innerHTML);Object.getOwnPropertyDescriptor(HTMLElement.prototype, "className") && (K.className = zc.className);
-  var Fc = { EventTarget: [vc], Node: [Wb, window.EventTarget ? null : vc], Text: [wc], Element: [zc, H, wc, !t.i || "innerHTML" in Element.prototype ? dc : null, window.HTMLSlotElement ? null : Bc], HTMLElement: [Ac, K], HTMLSlotElement: [Bc], DocumentFragment: [$b, ac], Document: [Dc, $b, ac, bc], Window: [Ec] },
-      Gc = t.i ? null : ["innerHTML", "textContent"];function Hc(a) {
-    var b = a ? null : Gc,
+    } });var Gc = z({ addEventListener: tb.bind(window), removeEventListener: vb.bind(window) });var K = {};Object.getOwnPropertyDescriptor(HTMLElement.prototype, "parentElement") && (K.parentElement = Yb.parentElement);Object.getOwnPropertyDescriptor(HTMLElement.prototype, "contains") && (K.contains = Yb.contains);Object.getOwnPropertyDescriptor(HTMLElement.prototype, "children") && (K.children = H.children);Object.getOwnPropertyDescriptor(HTMLElement.prototype, "innerHTML") && (K.innerHTML = fc.innerHTML);Object.getOwnPropertyDescriptor(HTMLElement.prototype, "className") && (K.className = Bc.className);
+  var Hc = { EventTarget: [xc], Node: [Yb, window.EventTarget ? null : xc], Text: [yc], Element: [Bc, H, yc, !t.i || "innerHTML" in Element.prototype ? fc : null, window.HTMLSlotElement ? null : Dc], HTMLElement: [Cc, K], HTMLSlotElement: [Dc], DocumentFragment: [bc, cc], Document: [Fc, bc, cc, dc], Window: [Gc] },
+      Ic = t.i ? null : ["innerHTML", "textContent"];function Jc(a) {
+    var b = a ? null : Ic,
         c = {},
-        d;for (d in Fc) c.M = window[d] && window[d].prototype, Fc[d].forEach(function (c) {
+        d;for (d in Hc) c.N = window[d] && window[d].prototype, Hc[d].forEach(function (c) {
       return function (d) {
-        return c.M && d && y(c.M, d, a, b);
+        return c.N && d && y(c.N, d, a, b);
       };
-    }(c)), c = { M: c.M };
+    }(c)), c = { N: c.N };
   };if (t.T) {
     var ShadyDOM = { inUse: t.T, patch: function (a) {
         cb(a);bb(a);return a;
       }, isShadyRoot: w, enqueue: ya, flush: za, flushInitial: function (a) {
-        !a.P && a.u && kc(a);
-      }, settings: t, filterMutations: Ea, observeChildren: Ca, unobserveChildren: Da, deferConnectionCallbacks: t.deferConnectionCallbacks, preferPerformance: t.preferPerformance, handlesDynamicScoping: !0, wrap: t.A ? uc : function (a) {
+        !a.P && a.u && mc(a);
+      }, settings: t, filterMutations: Ea, observeChildren: Ca, unobserveChildren: Da, deferConnectionCallbacks: t.deferConnectionCallbacks, preferPerformance: t.preferPerformance, handlesDynamicScoping: !0, wrap: t.A ? wc : function (a) {
         return a;
-      }, Wrapper: J, composedPath: jb, noPatch: t.A, nativeMethods: Oa, nativeTree: Pa };window.ShadyDOM = ShadyDOM;Wa();Hc("__shady_");Object.defineProperty(document, "_activeElement", bc.activeElement);y(Window.prototype, Ec, "__shady_");t.A || (Hc(), zb());ub();window.Event = wb;window.CustomEvent = xb;window.MouseEvent = yb;window.ShadowRoot = jc;
+      }, Wrapper: J, composedPath: lb, noPatch: t.A, nativeMethods: Oa, nativeTree: Pa };window.ShadyDOM = ShadyDOM;Wa();Jc("__shady_");Object.defineProperty(document, "_activeElement", dc.activeElement);y(Window.prototype, Gc, "__shady_");t.A || (Jc(), Bb());wb();window.Event = yb;window.CustomEvent = zb;window.MouseEvent = Ab;window.ShadowRoot = lc;
   }; /*
      Copyright (c) 2017 The Polymer Project Authors. All rights reserved.
      This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
@@ -919,94 +937,94 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
      Code distributed by Google as part of the polymer project is also
      subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
      */
-  function Ic() {
+  function Kc() {
     this.end = this.start = 0;this.rules = this.parent = this.previous = null;this.cssText = this.parsedCssText = "";this.atRule = !1;this.type = 0;this.parsedSelector = this.selector = this.keyframesName = "";
   }
-  function Jc(a) {
-    a = a.replace(Kc, "").replace(Lc, "");var b = Mc,
+  function Lc(a) {
+    a = a.replace(Mc, "").replace(Nc, "");var b = Oc,
         c = a,
-        d = new Ic();d.start = 0;d.end = c.length;for (var e = d, f = 0, g = c.length; f < g; f++) if ("{" === c[f]) {
+        d = new Kc();d.start = 0;d.end = c.length;for (var e = d, f = 0, g = c.length; f < g; f++) if ("{" === c[f]) {
       e.rules || (e.rules = []);var h = e,
-          k = h.rules[h.rules.length - 1] || null;e = new Ic();e.start = f + 1;e.parent = h;e.previous = k;h.rules.push(e);
+          k = h.rules[h.rules.length - 1] || null;e = new Kc();e.start = f + 1;e.parent = h;e.previous = k;h.rules.push(e);
     } else "}" === c[f] && (e.end = f + 1, e = e.parent || d);return b(d, a);
   }
-  function Mc(a, b) {
-    var c = b.substring(a.start, a.end - 1);a.parsedCssText = a.cssText = c.trim();a.parent && (c = b.substring(a.previous ? a.previous.end : a.parent.start, a.start - 1), c = Nc(c), c = c.replace(Oc, " "), c = c.substring(c.lastIndexOf(";") + 1), c = a.parsedSelector = a.selector = c.trim(), a.atRule = 0 === c.indexOf("@"), a.atRule ? 0 === c.indexOf("@media") ? a.type = Pc : c.match(Qc) && (a.type = Rc, a.keyframesName = a.selector.split(Oc).pop()) : a.type = 0 === c.indexOf("--") ? Sc : Tc);if (c = a.rules) for (var d = 0, e = c.length, f = void 0; d < e && (f = c[d]); d++) Mc(f, b);return a;
-  }function Nc(a) {
+  function Oc(a, b) {
+    var c = b.substring(a.start, a.end - 1);a.parsedCssText = a.cssText = c.trim();a.parent && (c = b.substring(a.previous ? a.previous.end : a.parent.start, a.start - 1), c = Pc(c), c = c.replace(Qc, " "), c = c.substring(c.lastIndexOf(";") + 1), c = a.parsedSelector = a.selector = c.trim(), a.atRule = 0 === c.indexOf("@"), a.atRule ? 0 === c.indexOf("@media") ? a.type = Rc : c.match(Sc) && (a.type = Tc, a.keyframesName = a.selector.split(Qc).pop()) : a.type = 0 === c.indexOf("--") ? Uc : Vc);if (c = a.rules) for (var d = 0, e = c.length, f = void 0; d < e && (f = c[d]); d++) Oc(f, b);return a;
+  }function Pc(a) {
     return a.replace(/\\([0-9a-f]{1,6})\s/gi, function (a, c) {
       a = c;for (c = 6 - a.length; c--;) a = "0" + a;return "\\" + a;
     });
   }
-  function Uc(a, b, c) {
+  function Wc(a, b, c) {
     c = void 0 === c ? "" : c;var d = "";if (a.cssText || a.rules) {
       var e = a.rules,
           f;if (f = e) f = e[0], f = !(f && f.selector && 0 === f.selector.indexOf("--"));if (f) {
-        f = 0;for (var g = e.length, h = void 0; f < g && (h = e[f]); f++) d = Uc(h, b, d);
-      } else b ? b = a.cssText : (b = a.cssText, b = b.replace(Vc, "").replace(Wc, ""), b = b.replace(Xc, "").replace(Yc, "")), (d = b.trim()) && (d = "  " + d + "\n");
+        f = 0;for (var g = e.length, h = void 0; f < g && (h = e[f]); f++) d = Wc(h, b, d);
+      } else b ? b = a.cssText : (b = a.cssText, b = b.replace(Xc, "").replace(Yc, ""), b = b.replace(Zc, "").replace($c, "")), (d = b.trim()) && (d = "  " + d + "\n");
     }d && (a.selector && (c += a.selector + " {\n"), c += d, a.selector && (c += "}\n\n"));return c;
   }
-  var Tc = 1,
-      Rc = 7,
-      Pc = 4,
-      Sc = 1E3,
-      Kc = /\/\*[^*]*\*+([^/*][^*]*\*+)*\//gim,
-      Lc = /@import[^;]*;/gim,
-      Vc = /(?:^[^;\-\s}]+)?--[^;{}]*?:[^{};]*?(?:[;\n]|$)/gim,
-      Wc = /(?:^[^;\-\s}]+)?--[^;{}]*?:[^{};]*?{[^}]*?}(?:[;\n]|$)?/gim,
-      Xc = /@apply\s*\(?[^);]*\)?\s*(?:[;\n]|$)?/gim,
-      Yc = /[^;:]*?:[^;]*?var\([^;]*\)(?:[;\n]|$)?/gim,
-      Qc = /^@[^\s]*keyframes/,
-      Oc = /\s+/g;var L = !(window.ShadyDOM && window.ShadyDOM.inUse),
-      Zc;function $c(a) {
-    Zc = a && a.shimcssproperties ? !1 : L || !(navigator.userAgent.match(/AppleWebKit\/601|Edge\/15/) || !window.CSS || !CSS.supports || !CSS.supports("box-shadow", "0 0 0 var(--foo)"));
-  }var ad;window.ShadyCSS && void 0 !== window.ShadyCSS.cssBuild && (ad = window.ShadyCSS.cssBuild);var M = !(!window.ShadyCSS || !window.ShadyCSS.disableRuntime);
-  window.ShadyCSS && void 0 !== window.ShadyCSS.nativeCss ? Zc = window.ShadyCSS.nativeCss : window.ShadyCSS ? ($c(window.ShadyCSS), window.ShadyCSS = void 0) : $c(window.WebComponents && window.WebComponents.flags);var N = Zc,
-      bd = ad;var cd = /(?:^|[;\s{]\s*)(--[\w-]*?)\s*:\s*(?:((?:'(?:\\'|.)*?'|"(?:\\"|.)*?"|\([^)]*?\)|[^};{])+)|\{([^}]*)\}(?:(?=[;\s}])|$))/gi,
-      dd = /(?:^|\W+)@apply\s*\(?([^);\n]*)\)?/gi,
-      ed = /(--[\w-]+)\s*([:,;)]|$)/gi,
-      fd = /(animation\s*:)|(animation-name\s*:)/,
-      gd = /@media\s(.*)/,
-      hd = /\{[^}]*\}/g;var id = new Set();function O(a, b) {
-    if (!a) return "";"string" === typeof a && (a = Jc(a));b && P(a, b);return Uc(a, N);
-  }function jd(a) {
-    !a.__cssRules && a.textContent && (a.__cssRules = Jc(a.textContent));return a.__cssRules || null;
-  }function kd(a) {
-    return !!a.parent && a.parent.type === Rc;
+  var Vc = 1,
+      Tc = 7,
+      Rc = 4,
+      Uc = 1E3,
+      Mc = /\/\*[^*]*\*+([^/*][^*]*\*+)*\//gim,
+      Nc = /@import[^;]*;/gim,
+      Xc = /(?:^[^;\-\s}]+)?--[^;{}]*?:[^{};]*?(?:[;\n]|$)/gim,
+      Yc = /(?:^[^;\-\s}]+)?--[^;{}]*?:[^{};]*?{[^}]*?}(?:[;\n]|$)?/gim,
+      Zc = /@apply\s*\(?[^);]*\)?\s*(?:[;\n]|$)?/gim,
+      $c = /[^;:]*?:[^;]*?var\([^;]*\)(?:[;\n]|$)?/gim,
+      Sc = /^@[^\s]*keyframes/,
+      Qc = /\s+/g;var L = !(window.ShadyDOM && window.ShadyDOM.inUse),
+      ad;function bd(a) {
+    ad = a && a.shimcssproperties ? !1 : L || !(navigator.userAgent.match(/AppleWebKit\/601|Edge\/15/) || !window.CSS || !CSS.supports || !CSS.supports("box-shadow", "0 0 0 var(--foo)"));
+  }var cd;window.ShadyCSS && void 0 !== window.ShadyCSS.cssBuild && (cd = window.ShadyCSS.cssBuild);var M = !(!window.ShadyCSS || !window.ShadyCSS.disableRuntime);
+  window.ShadyCSS && void 0 !== window.ShadyCSS.nativeCss ? ad = window.ShadyCSS.nativeCss : window.ShadyCSS ? (bd(window.ShadyCSS), window.ShadyCSS = void 0) : bd(window.WebComponents && window.WebComponents.flags);var N = ad,
+      dd = cd;var ed = /(?:^|[;\s{]\s*)(--[\w-]*?)\s*:\s*(?:((?:'(?:\\'|.)*?'|"(?:\\"|.)*?"|\([^)]*?\)|[^};{])+)|\{([^}]*)\}(?:(?=[;\s}])|$))/gi,
+      fd = /(?:^|\W+)@apply\s*\(?([^);\n]*)\)?/gi,
+      gd = /(--[\w-]+)\s*([:,;)]|$)/gi,
+      hd = /(animation\s*:)|(animation-name\s*:)/,
+      id = /@media\s(.*)/,
+      jd = /\{[^}]*\}/g;var kd = new Set();function O(a, b) {
+    if (!a) return "";"string" === typeof a && (a = Lc(a));b && P(a, b);return Wc(a, N);
+  }function ld(a) {
+    !a.__cssRules && a.textContent && (a.__cssRules = Lc(a.textContent));return a.__cssRules || null;
+  }function md(a) {
+    return !!a.parent && a.parent.type === Tc;
   }function P(a, b, c, d) {
     if (a) {
       var e = !1,
-          f = a.type;if (d && f === Pc) {
-        var g = a.selector.match(gd);g && (window.matchMedia(g[1]).matches || (e = !0));
-      }f === Tc ? b(a) : c && f === Rc ? c(a) : f === Sc && (e = !0);if ((a = a.rules) && !e) for (e = 0, f = a.length, g = void 0; e < f && (g = a[e]); e++) P(g, b, c, d);
+          f = a.type;if (d && f === Rc) {
+        var g = a.selector.match(id);g && (window.matchMedia(g[1]).matches || (e = !0));
+      }f === Vc ? b(a) : c && f === Tc ? c(a) : f === Uc && (e = !0);if ((a = a.rules) && !e) for (e = 0, f = a.length, g = void 0; e < f && (g = a[e]); e++) P(g, b, c, d);
     }
   }
-  function ld(a, b, c, d) {
-    var e = document.createElement("style");b && e.setAttribute("scope", b);e.textContent = a;md(e, c, d);return e;
-  }var Q = null;function nd(a) {
+  function nd(a, b, c, d) {
+    var e = document.createElement("style");b && e.setAttribute("scope", b);e.textContent = a;od(e, c, d);return e;
+  }var Q = null;function pd(a) {
     a = document.createComment(" Shady DOM styles for " + a + " ");var b = document.head;b.insertBefore(a, (Q ? Q.nextSibling : null) || b.firstChild);return Q = a;
-  }function md(a, b, c) {
+  }function od(a, b, c) {
     b = b || document.head;b.insertBefore(a, c && c.nextSibling || b.firstChild);Q ? a.compareDocumentPosition(Q) === Node.DOCUMENT_POSITION_PRECEDING && (Q = a) : Q = a;
   }
-  function od(a, b) {
+  function qd(a, b) {
     for (var c = 0, d = a.length; b < d; b++) if ("(" === a[b]) c++;else if (")" === a[b] && 0 === --c) return b;return -1;
-  }function pd(a, b) {
-    var c = a.indexOf("var(");if (-1 === c) return b(a, "", "", "");var d = od(a, c + 3),
-        e = a.substring(c + 4, d);c = a.substring(0, c);a = pd(a.substring(d + 1), b);d = e.indexOf(",");return -1 === d ? b(c, e.trim(), "", a) : b(c, e.substring(0, d).trim(), e.substring(d + 1).trim(), a);
-  }function qd(a, b) {
+  }function rd(a, b) {
+    var c = a.indexOf("var(");if (-1 === c) return b(a, "", "", "");var d = qd(a, c + 3),
+        e = a.substring(c + 4, d);c = a.substring(0, c);a = rd(a.substring(d + 1), b);d = e.indexOf(",");return -1 === d ? b(c, e.trim(), "", a) : b(c, e.substring(0, d).trim(), e.substring(d + 1).trim(), a);
+  }function sd(a, b) {
     L ? a.setAttribute("class", b) : window.ShadyDOM.nativeMethods.setAttribute.call(a, "class", b);
   }
-  var rd = window.ShadyDOM && window.ShadyDOM.wrap || function (a) {
+  var td = window.ShadyDOM && window.ShadyDOM.wrap || function (a) {
     return a;
   };function R(a) {
     var b = a.localName,
-        c = "";b ? -1 < b.indexOf("-") || (c = b, b = a.getAttribute && a.getAttribute("is") || "") : (b = a.is, c = a.extends);return { is: b, D: c };
-  }function sd(a) {
+        c = "";b ? -1 < b.indexOf("-") || (c = b, b = a.getAttribute && a.getAttribute("is") || "") : (b = a.is, c = a.extends);return { is: b, F: c };
+  }function ud(a) {
     for (var b = [], c = "", d = 0; 0 <= d && d < a.length; d++) if ("(" === a[d]) {
-      var e = od(a, d);c += a.slice(d, e + 1);d = e;
+      var e = qd(a, d);c += a.slice(d, e + 1);d = e;
     } else "," === a[d] ? (b.push(c), c = "") : c += a[d];c && b.push(c);return b;
   }
   function S(a) {
-    if (void 0 !== bd) return bd;if (void 0 === a.__cssBuild) {
+    if (void 0 !== dd) return dd;if (void 0 === a.__cssBuild) {
       var b = a.getAttribute("css-build");if (b) a.__cssBuild = b;else {
         a: {
           b = "template" === a.localName ? a.content.firstChild : a.firstChild;if (b instanceof Comment && (b = b.textContent.trim().split(":"), "css-build" === b[0])) {
@@ -1018,312 +1036,311 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
     }return a.__cssBuild || "";
   }
-  function td(a) {
+  function vd(a) {
     a = void 0 === a ? "" : a;return "" !== a && N ? L ? "shadow" === a : "shady" === a : !1;
-  };function ud() {}function vd(a, b) {
-    wd(T, a, function (a) {
+  };function wd() {}function xd(a, b) {
+    yd(T, a, function (a) {
       U(a, b || "");
     });
-  }function wd(a, b, c) {
-    b.nodeType === Node.ELEMENT_NODE && c(b);var d;"template" === b.localName ? d = (b.content || b._content || b).childNodes : d = b.children || b.childNodes;if (d) for (b = 0; b < d.length; b++) wd(a, d[b], c);
+  }function yd(a, b, c) {
+    b.nodeType === Node.ELEMENT_NODE && c(b);var d;"template" === b.localName ? d = (b.content || b._content || b).childNodes : d = b.children || b.childNodes;if (d) for (b = 0; b < d.length; b++) yd(a, d[b], c);
   }
   function U(a, b, c) {
     if (b) if (a.classList) c ? (a.classList.remove("style-scope"), a.classList.remove(b)) : (a.classList.add("style-scope"), a.classList.add(b));else if (a.getAttribute) {
-      var d = a.getAttribute("class");c ? d && (b = d.replace("style-scope", "").replace(b, ""), qd(a, b)) : qd(a, (d ? d + " " : "") + "style-scope " + b);
+      var d = a.getAttribute("class");c ? d && (b = d.replace("style-scope", "").replace(b, ""), sd(a, b)) : sd(a, (d ? d + " " : "") + "style-scope " + b);
     }
-  }function xd(a, b, c) {
-    wd(T, a, function (a) {
+  }function zd(a, b, c) {
+    yd(T, a, function (a) {
       U(a, b, !0);U(a, c);
     });
-  }function yd(a, b) {
-    wd(T, a, function (a) {
+  }function Ad(a, b) {
+    yd(T, a, function (a) {
       U(a, b || "", !0);
     });
   }
-  function zd(a, b, c, d, e) {
-    var f = T;e = void 0 === e ? "" : e;"" === e && (L || "shady" === (void 0 === d ? "" : d) ? e = O(b, c) : (a = R(a), e = Ad(f, b, a.is, a.D, c) + "\n\n"));return e.trim();
-  }function Ad(a, b, c, d, e) {
-    var f = Bd(c, d);c = c ? "." + c : "";return O(b, function (b) {
-      b.c || (b.selector = b.g = Cd(a, b, a.b, c, f), b.c = !0);e && e(b, c, f);
+  function Bd(a, b, c, d, e) {
+    var f = T;e = void 0 === e ? "" : e;"" === e && (L || "shady" === (void 0 === d ? "" : d) ? e = O(b, c) : (a = R(a), e = Cd(f, b, a.is, a.F, c) + "\n\n"));return e.trim();
+  }function Cd(a, b, c, d, e) {
+    var f = Dd(c, d);c = c ? "." + c : "";return O(b, function (b) {
+      b.c || (b.selector = b.g = Ed(a, b, a.b, c, f), b.c = !0);e && e(b, c, f);
     });
-  }function Bd(a, b) {
+  }function Dd(a, b) {
     return b ? "[is=" + a + "]" : a;
   }
-  function Cd(a, b, c, d, e) {
-    var f = sd(b.selector);if (!kd(b)) {
+  function Ed(a, b, c, d, e) {
+    var f = ud(b.selector);if (!md(b)) {
       b = 0;for (var g = f.length, h = void 0; b < g && (h = f[b]); b++) f[b] = c.call(a, h, d, e);
     }return f.filter(function (a) {
       return !!a;
     }).join(",");
-  }function Dd(a) {
-    return a.replace(Ed, function (a, c, d) {
+  }function Fd(a) {
+    return a.replace(Gd, function (a, c, d) {
       -1 < d.indexOf("+") ? d = d.replace(/\+/g, "___") : -1 < d.indexOf("___") && (d = d.replace(/___/g, "+"));return ":" + c + "(" + d + ")";
     });
   }
-  function Fd(a) {
-    for (var b = [], c; c = a.match(Gd);) {
+  function Hd(a) {
+    for (var b = [], c; c = a.match(Id);) {
       var d = c.index,
-          e = od(a, d);if (-1 === e) throw Error(c.input + " selector missing ')'");c = a.slice(d, e + 1);a = a.replace(c, "\ue000");b.push(c);
+          e = qd(a, d);if (-1 === e) throw Error(c.input + " selector missing ')'");c = a.slice(d, e + 1);a = a.replace(c, "\ue000");b.push(c);
     }return { V: a, matches: b };
-  }function Hd(a, b) {
+  }function Jd(a, b) {
     var c = a.split("\ue000");return b.reduce(function (a, b, f) {
       return a + b + c[f + 1];
     }, c[0]);
   }
-  ud.prototype.b = function (a, b, c) {
-    var d = !1;a = a.trim();var e = Ed.test(a);e && (a = a.replace(Ed, function (a, b, c) {
+  wd.prototype.b = function (a, b, c) {
+    var d = !1;a = a.trim();var e = Gd.test(a);e && (a = a.replace(Gd, function (a, b, c) {
       return ":" + b + "(" + c.replace(/\s/g, "") + ")";
-    }), a = Dd(a));var f = Gd.test(a);if (f) {
-      var g = Fd(a);a = g.V;g = g.matches;
-    }a = a.replace(Id, ":host $1");a = a.replace(Jd, function (a, e, f) {
-      d || (a = Kd(f, e, b, c), d = d || a.stop, e = a.ka, f = a.value);return e + f;
-    });f && (a = Hd(a, g));e && (a = Dd(a));return a;
+    }), a = Fd(a));var f = Id.test(a);if (f) {
+      var g = Hd(a);a = g.V;g = g.matches;
+    }a = a.replace(Kd, ":host $1");a = a.replace(Ld, function (a, e, f) {
+      d || (a = Md(f, e, b, c), d = d || a.stop, e = a.ma, f = a.value);return e + f;
+    });f && (a = Jd(a, g));e && (a = Fd(a));return a = a.replace(Nd, function (a, b, c, d) {
+      return '[dir="' + c + '"] ' + b + d + ", " + b + '[dir="' + c + '"]' + d;
+    });
   };
-  function Kd(a, b, c, d) {
-    var e = a.indexOf("::slotted");0 <= a.indexOf(":host") ? a = Ld(a, d) : 0 !== e && (a = c ? Md(a, c) : a);c = !1;0 <= e && (b = "", c = !0);if (c) {
-      var f = !0;c && (a = a.replace(Nd, function (a, b) {
+  function Md(a, b, c, d) {
+    var e = a.indexOf("::slotted");0 <= a.indexOf(":host") ? a = Od(a, d) : 0 !== e && (a = c ? Pd(a, c) : a);c = !1;0 <= e && (b = "", c = !0);if (c) {
+      var f = !0;c && (a = a.replace(Qd, function (a, b) {
         return " > " + b;
       }));
-    }a = a.replace(Od, function (a, b, c) {
-      return '[dir="' + c + '"] ' + b + ", " + b + '[dir="' + c + '"]';
-    });return { value: a, ka: b, stop: f };
-  }
-  function Md(a, b) {
+    }return { value: a, ma: b, stop: f };
+  }function Pd(a, b) {
     a = a.split(/(\[.+?\])/);for (var c = [], d = 0; d < a.length; d++) if (1 === d % 2) c.push(a[d]);else {
       var e = a[d];if ("" !== e || d !== a.length - 1) e = e.split(":"), e[0] += b, c.push(e.join(":"));
     }return c.join("");
-  }function Ld(a, b) {
-    var c = a.match(Pd);return (c = c && c[2].trim() || "") ? c[0].match(Qd) ? a.replace(Pd, function (a, c, f) {
-      return b + f;
-    }) : c.split(Qd)[0] === b ? c : "should_not_match" : a.replace(":host", b);
-  }function Rd(a) {
-    ":root" === a.selector && (a.selector = "html");
   }
-  ud.prototype.c = function (a) {
-    return a.match(":host") ? "" : a.match("::slotted") ? this.b(a, ":not(.style-scope)") : Md(a.trim(), ":not(.style-scope)");
-  };n.Object.defineProperties(ud.prototype, { a: { configurable: !0, enumerable: !0, get: function () {
+  function Od(a, b) {
+    var c = a.match(Rd);return (c = c && c[2].trim() || "") ? c[0].match(Sd) ? a.replace(Rd, function (a, c, f) {
+      return b + f;
+    }) : c.split(Sd)[0] === b ? c : "should_not_match" : a.replace(":host", b);
+  }function Td(a) {
+    ":root" === a.selector && (a.selector = "html");
+  }wd.prototype.c = function (a) {
+    return a.match(":host") ? "" : a.match("::slotted") ? this.b(a, ":not(.style-scope)") : Pd(a.trim(), ":not(.style-scope)");
+  };n.Object.defineProperties(wd.prototype, { a: { configurable: !0, enumerable: !0, get: function () {
         return "style-scope";
       } } });
-  var Ed = /:(nth[-\w]+)\(([^)]+)\)/,
-      Jd = /(^|[\s>+~]+)((?:\[.+?\]|[^\s>+~=[])+)/g,
-      Qd = /[[.:#*]/,
-      Id = /^(::slotted)/,
-      Pd = /(:host)(?:\(((?:\([^)(]*\)|[^)(]*)+?)\))/,
-      Nd = /(?:::slotted)(?:\(((?:\([^)(]*\)|[^)(]*)+?)\))/,
-      Od = /(.*):dir\((?:(ltr|rtl))\)/,
-      Gd = /:(?:matches|any|-(?:webkit|moz)-any)/,
-      T = new ud();function V(a, b, c, d, e) {
-    this.s = a || null;this.b = b || null;this.U = c || [];this.j = null;this.cssBuild = e || "";this.D = d || "";this.a = this.l = this.o = null;
+  var Gd = /:(nth[-\w]+)\(([^)]+)\)/,
+      Ld = /(^|[\s>+~]+)((?:\[.+?\]|[^\s>+~=[])+)/g,
+      Sd = /[[.:#*]/,
+      Kd = /^(::slotted)/,
+      Rd = /(:host)(?:\(((?:\([^)(]*\)|[^)(]*)+?)\))/,
+      Qd = /(?:::slotted)(?:\(((?:\([^)(]*\)|[^)(]*)+?)\))/,
+      Nd = /(.*):dir\((?:(ltr|rtl))\)(.*)/,
+      Id = /:(?:matches|any|-(?:webkit|moz)-any)/,
+      T = new wd();function V(a, b, c, d, e) {
+    this.s = a || null;this.b = b || null;this.U = c || [];this.j = null;this.cssBuild = e || "";this.F = d || "";this.a = this.l = this.o = null;
   }function W(a) {
     return a ? a.__styleInfo : null;
-  }function Sd(a, b) {
+  }function Ud(a, b) {
     return a.__styleInfo = b;
   }V.prototype.c = function () {
     return this.s;
-  };V.prototype._getStyleRules = V.prototype.c;function Td(a) {
+  };V.prototype._getStyleRules = V.prototype.c;function Vd(a) {
     var b = this.matches || this.matchesSelector || this.mozMatchesSelector || this.msMatchesSelector || this.oMatchesSelector || this.webkitMatchesSelector;return b && b.call(this, a);
-  }var Ud = navigator.userAgent.match("Trident");function Vd() {}function Wd(a) {
+  }var Wd = navigator.userAgent.match("Trident");function Xd() {}function Yd(a) {
     var b = {},
         c = [],
         d = 0;P(a, function (a) {
-      Xd(a);a.index = d++;a = a.f.cssText;for (var c; c = ed.exec(a);) {
+      Zd(a);a.index = d++;a = a.f.cssText;for (var c; c = gd.exec(a);) {
         var e = c[1];":" !== c[2] && (b[e] = !0);
       }
     }, function (a) {
       c.push(a);
     });a.b = c;a = [];for (var e in b) a.push(e);return a;
   }
-  function Xd(a) {
+  function Zd(a) {
     if (!a.f) {
       var b = {},
-          c = {};Yd(a, c) && (b.m = c, a.rules = null);b.cssText = a.parsedCssText.replace(hd, "").replace(cd, "");a.f = b;
+          c = {};$d(a, c) && (b.m = c, a.rules = null);b.cssText = a.parsedCssText.replace(jd, "").replace(ed, "");a.f = b;
     }
-  }function Yd(a, b) {
+  }function $d(a, b) {
     var c = a.f;if (c) {
       if (c.m) return Object.assign(b, c.m), !0;
     } else {
-      c = a.parsedCssText;for (var d; a = cd.exec(c);) {
+      c = a.parsedCssText;for (var d; a = ed.exec(c);) {
         d = (a[2] || a[3]).trim();if ("inherit" !== d || "unset" !== d) b[a[1].trim()] = d;d = !0;
       }return d;
     }
   }
-  function Zd(a, b, c) {
-    b && (b = 0 <= b.indexOf(";") ? $d(a, b, c) : pd(b, function (b, e, f, g) {
-      if (!e) return b + g;(e = Zd(a, c[e], c)) && "initial" !== e ? "apply-shim-inherit" === e && (e = "inherit") : e = Zd(a, c[f] || f, c) || f;return b + (e || "") + g;
+  function ae(a, b, c) {
+    b && (b = 0 <= b.indexOf(";") ? be(a, b, c) : rd(b, function (b, e, f, g) {
+      if (!e) return b + g;(e = ae(a, c[e], c)) && "initial" !== e ? "apply-shim-inherit" === e && (e = "inherit") : e = ae(a, c[f] || f, c) || f;return b + (e || "") + g;
     }));return b && b.trim() || "";
   }
-  function $d(a, b, c) {
+  function be(a, b, c) {
     b = b.split(";");for (var d = 0, e, f; d < b.length; d++) if (e = b[d]) {
-      dd.lastIndex = 0;if (f = dd.exec(e)) e = Zd(a, c[f[1]], c);else if (f = e.indexOf(":"), -1 !== f) {
-        var g = e.substring(f);g = g.trim();g = Zd(a, g, c) || g;e = e.substring(0, f) + g;
+      fd.lastIndex = 0;if (f = fd.exec(e)) e = ae(a, c[f[1]], c);else if (f = e.indexOf(":"), -1 !== f) {
+        var g = e.substring(f);g = g.trim();g = ae(a, g, c) || g;e = e.substring(0, f) + g;
       }b[d] = e && e.lastIndexOf(";") === e.length - 1 ? e.slice(0, -1) : e || "";
     }return b.join(";");
   }
-  function ae(a, b) {
+  function ce(a, b) {
     var c = {},
         d = [];P(a, function (a) {
-      a.f || Xd(a);var e = a.g || a.parsedSelector;b && a.f.m && e && Td.call(b, e) && (Yd(a, c), a = a.index, e = parseInt(a / 32, 10), d[e] = (d[e] || 0) | 1 << a % 32);
+      a.f || Zd(a);var e = a.g || a.parsedSelector;b && a.f.m && e && Vd.call(b, e) && ($d(a, c), a = a.index, e = parseInt(a / 32, 10), d[e] = (d[e] || 0) | 1 << a % 32);
     }, null, !0);return { m: c, key: d };
   }
-  function be(a, b, c, d) {
-    b.f || Xd(b);if (b.f.m) {
-      var e = R(a);a = e.is;e = e.D;e = a ? Bd(a, e) : "html";var f = b.parsedSelector,
+  function de(a, b, c, d) {
+    b.f || Zd(b);if (b.f.m) {
+      var e = R(a);a = e.is;e = e.F;e = a ? Dd(a, e) : "html";var f = b.parsedSelector,
           g = ":host > *" === f || "html" === f,
-          h = 0 === f.indexOf(":host") && !g;"shady" === c && (g = f === e + " > *." + e || -1 !== f.indexOf("html"), h = !g && 0 === f.indexOf(e));if (g || h) c = e, h && (b.g || (b.g = Cd(T, b, T.b, a ? "." + a : "", e)), c = b.g || e), d({ V: c, pa: h, ya: g });
+          h = 0 === f.indexOf(":host") && !g;"shady" === c && (g = f === e + " > *." + e || -1 !== f.indexOf("html"), h = !g && 0 === f.indexOf(e));if (g || h) c = e, h && (b.g || (b.g = Ed(T, b, T.b, a ? "." + a : "", e)), c = b.g || e), d({ V: c, ra: h, Aa: g });
     }
-  }function ce(a, b, c) {
+  }function ee(a, b, c) {
     var d = {},
         e = {};P(b, function (b) {
-      be(a, b, c, function (c) {
-        Td.call(a._element || a, c.V) && (c.pa ? Yd(b, d) : Yd(b, e));
+      de(a, b, c, function (c) {
+        Vd.call(a._element || a, c.V) && (c.ra ? $d(b, d) : $d(b, e));
       });
-    }, null, !0);return { ra: e, oa: d };
+    }, null, !0);return { ta: e, qa: d };
   }
-  function de(a, b, c, d) {
+  function fe(a, b, c, d) {
     var e = R(b),
-        f = Bd(e.is, e.D),
+        f = Dd(e.is, e.F),
         g = new RegExp("(?:^|[^.#[:])" + (b.extends ? "\\" + f.slice(0, -1) + "\\]" : f) + "($|[.:[\\s>+~])"),
-        h = W(b);e = h.s;h = h.cssBuild;var k = ee(e, d);return zd(b, e, function (b) {
-      var e = "";b.f || Xd(b);b.f.cssText && (e = $d(a, b.f.cssText, c));b.cssText = e;if (!L && !kd(b) && b.cssText) {
-        var h = e = b.cssText;null == b.Z && (b.Z = fd.test(e));if (b.Z) if (null == b.L) {
-          b.L = [];for (var l in k) h = k[l], h = h(e), e !== h && (e = h, b.L.push(l));
+        h = W(b);e = h.s;h = h.cssBuild;var k = ge(e, d);return Bd(b, e, function (b) {
+      var e = "";b.f || Zd(b);b.f.cssText && (e = be(a, b.f.cssText, c));b.cssText = e;if (!L && !md(b) && b.cssText) {
+        var h = e = b.cssText;null == b.Z && (b.Z = hd.test(e));if (b.Z) if (null == b.M) {
+          b.M = [];for (var l in k) h = k[l], h = h(e), e !== h && (e = h, b.M.push(l));
         } else {
-          for (l = 0; l < b.L.length; ++l) h = k[b.L[l]], e = h(e);h = e;
+          for (l = 0; l < b.M.length; ++l) h = k[b.M[l]], e = h(e);h = e;
         }b.cssText = h;b.g = b.g || b.selector;
-        e = "." + d;l = sd(b.g);h = 0;for (var ba = l.length, Fa = void 0; h < ba && (Fa = l[h]); h++) l[h] = Fa.match(g) ? Fa.replace(f, e) : e + " " + Fa;b.selector = l.join(",");
+        e = "." + d;l = ud(b.g);h = 0;for (var ba = l.length, Fa = void 0; h < ba && (Fa = l[h]); h++) l[h] = Fa.match(g) ? Fa.replace(f, e) : e + " " + Fa;b.selector = l.join(",");
       }
     }, h);
-  }function ee(a, b) {
+  }function ge(a, b) {
     a = a.b;var c = {};if (!L && a) for (var d = 0, e = a[d]; d < a.length; e = a[++d]) {
       var f = e,
-          g = b;f.h = new RegExp("\\b" + f.keyframesName + "(?!\\B|-)", "g");f.a = f.keyframesName + "-" + g;f.g = f.g || f.selector;f.selector = f.g.replace(f.keyframesName, f.a);c[e.keyframesName] = fe(e);
+          g = b;f.h = new RegExp("\\b" + f.keyframesName + "(?!\\B|-)", "g");f.a = f.keyframesName + "-" + g;f.g = f.g || f.selector;f.selector = f.g.replace(f.keyframesName, f.a);c[e.keyframesName] = he(e);
     }return c;
-  }function fe(a) {
+  }function he(a) {
     return function (b) {
       return b.replace(a.h, a.a);
     };
   }
-  function ge(a, b) {
-    var c = he,
-        d = jd(a);a.textContent = O(d, function (a) {
-      var d = a.cssText = a.parsedCssText;a.f && a.f.cssText && (d = d.replace(Vc, "").replace(Wc, ""), a.cssText = $d(c, d, b));
+  function ie(a, b) {
+    var c = je,
+        d = ld(a);a.textContent = O(d, function (a) {
+      var d = a.cssText = a.parsedCssText;a.f && a.f.cssText && (d = d.replace(Xc, "").replace(Yc, ""), a.cssText = be(c, d, b));
     });
-  }n.Object.defineProperties(Vd.prototype, { a: { configurable: !0, enumerable: !0, get: function () {
+  }n.Object.defineProperties(Xd.prototype, { a: { configurable: !0, enumerable: !0, get: function () {
         return "x-scope";
-      } } });var he = new Vd();var X = {},
-      ie = window.customElements;if (ie && !L && !M) {
-    var je = ie.define;ie.define = function (a, b, c) {
-      X[a] || (X[a] = nd(a));je.call(ie, a, b, c);
+      } } });var je = new Xd();var X = {},
+      ke = window.customElements;if (ke && !L && !M) {
+    var le = ke.define;ke.define = function (a, b, c) {
+      X[a] || (X[a] = pd(a));le.call(ke, a, b, c);
     };
-  };function ke() {
+  };function me() {
     this.cache = {};
-  }ke.prototype.store = function (a, b, c, d) {
+  }me.prototype.store = function (a, b, c, d) {
     var e = this.cache[a] || [];e.push({ m: b, styleElement: c, l: d });100 < e.length && e.shift();this.cache[a] = e;
-  };function le() {}var me = new RegExp(T.a + "\\s*([^\\s]*)");function ne(a) {
-    return (a = (a.classList && a.classList.value ? a.classList.value : a.getAttribute("class") || "").match(me)) ? a[1] : "";
-  }function oe(a) {
-    var b = rd(a).getRootNode();return b === a || b === a.ownerDocument ? "" : (a = b.host) ? R(a).is : "";
+  };function ne() {}var oe = new RegExp(T.a + "\\s*([^\\s]*)");function pe(a) {
+    return (a = (a.classList && a.classList.value ? a.classList.value : a.getAttribute("class") || "").match(oe)) ? a[1] : "";
+  }function qe(a) {
+    var b = td(a).getRootNode();return b === a || b === a.ownerDocument ? "" : (a = b.host) ? R(a).is : "";
   }
-  function pe(a) {
+  function re(a) {
     for (var b = 0; b < a.length; b++) {
       var c = a[b];if (c.target !== document.documentElement && c.target !== document.head) for (var d = 0; d < c.addedNodes.length; d++) {
         var e = c.addedNodes[d];if (e.nodeType === Node.ELEMENT_NODE) {
           var f = e.getRootNode(),
-              g = ne(e);if (g && f === e.ownerDocument && ("style" !== e.localName && "template" !== e.localName || "" === S(e))) yd(e, g);else if (f instanceof ShadowRoot) for (f = oe(e), f !== g && xd(e, g, f), e = window.ShadyDOM.nativeMethods.querySelectorAll.call(e, ":not(." + T.a + ")"), g = 0; g < e.length; g++) {
+              g = pe(e);if (g && f === e.ownerDocument && ("style" !== e.localName && "template" !== e.localName || "" === S(e))) Ad(e, g);else if (f instanceof ShadowRoot) for (f = qe(e), f !== g && zd(e, g, f), e = window.ShadyDOM.nativeMethods.querySelectorAll.call(e, ":not(." + T.a + ")"), g = 0; g < e.length; g++) {
             f = e[g];
-            var h = oe(f);h && U(f, h);
+            var h = qe(f);h && U(f, h);
           }
         }
       }
     }
   }
   if (!(L || window.ShadyDOM && window.ShadyDOM.handlesDynamicScoping)) {
-    var qe = new MutationObserver(pe),
-        re = function (a) {
-      qe.observe(a, { childList: !0, subtree: !0 });
-    };if (window.customElements && !window.customElements.polyfillWrapFlushCallback) re(document);else {
-      var se = function () {
-        re(document.body);
-      };window.HTMLImports ? window.HTMLImports.whenReady(se) : requestAnimationFrame(function () {
+    var se = new MutationObserver(re),
+        te = function (a) {
+      se.observe(a, { childList: !0, subtree: !0 });
+    };if (window.customElements && !window.customElements.polyfillWrapFlushCallback) te(document);else {
+      var ue = function () {
+        te(document.body);
+      };window.HTMLImports ? window.HTMLImports.whenReady(ue) : requestAnimationFrame(function () {
         if ("loading" === document.readyState) {
           var a = function () {
-            se();document.removeEventListener("readystatechange", a);
+            ue();document.removeEventListener("readystatechange", a);
           };document.addEventListener("readystatechange", a);
-        } else se();
+        } else ue();
       });
-    }le = function () {
-      pe(qe.takeRecords());
+    }ne = function () {
+      re(se.takeRecords());
     };
-  }var te = le;var ue = {};var ve = Promise.resolve();function we(a) {
-    if (a = ue[a]) a._applyShimCurrentVersion = a._applyShimCurrentVersion || 0, a._applyShimValidatingVersion = a._applyShimValidatingVersion || 0, a._applyShimNextVersion = (a._applyShimNextVersion || 0) + 1;
-  }function xe(a) {
+  }var ve = ne;var we = {};var xe = Promise.resolve();function ye(a) {
+    if (a = we[a]) a._applyShimCurrentVersion = a._applyShimCurrentVersion || 0, a._applyShimValidatingVersion = a._applyShimValidatingVersion || 0, a._applyShimNextVersion = (a._applyShimNextVersion || 0) + 1;
+  }function ze(a) {
     return a._applyShimCurrentVersion === a._applyShimNextVersion;
-  }function ye(a) {
-    a._applyShimValidatingVersion = a._applyShimNextVersion;a._validating || (a._validating = !0, ve.then(function () {
+  }function Ae(a) {
+    a._applyShimValidatingVersion = a._applyShimNextVersion;a._validating || (a._validating = !0, xe.then(function () {
       a._applyShimCurrentVersion = a._applyShimNextVersion;a._validating = !1;
     }));
-  };var ze = {},
-      Ae = new ke();function Y() {
-    this.Y = {};this.c = document.documentElement;var a = new Ic();a.rules = [];this.h = Sd(this.c, new V(a));this.S = !1;this.b = this.a = null;
+  };var Be = {},
+      Ce = new me();function Y() {
+    this.Y = {};this.c = document.documentElement;var a = new Kc();a.rules = [];this.h = Ud(this.c, new V(a));this.S = !1;this.b = this.a = null;
   }m = Y.prototype;m.flush = function () {
-    te();
-  };m.ma = function (a) {
-    return jd(a);
-  };m.va = function (a) {
+    ve();
+  };m.oa = function (a) {
+    return ld(a);
+  };m.xa = function (a) {
     return O(a);
   };m.prepareTemplate = function (a, b, c) {
     this.prepareTemplateDom(a, b);this.prepareTemplateStyles(a, b, c);
   };
   m.prepareTemplateStyles = function (a, b, c) {
     if (!a._prepared && !M) {
-      L || X[b] || (X[b] = nd(b));a._prepared = !0;a.name = b;a.extends = c;ue[b] = a;var d = S(a),
-          e = td(d);c = { is: b, extends: c };for (var f = [], g = a.content.querySelectorAll("style"), h = 0; h < g.length; h++) {
+      L || X[b] || (X[b] = pd(b));a._prepared = !0;a.name = b;a.extends = c;we[b] = a;var d = S(a),
+          e = vd(d);c = { is: b, extends: c };for (var f = [], g = a.content.querySelectorAll("style"), h = 0; h < g.length; h++) {
         var k = g[h];if (k.hasAttribute("shady-unscoped")) {
           if (!L) {
-            var l = k.textContent;id.has(l) || (id.add(l), l = k.cloneNode(!0), document.head.appendChild(l));k.parentNode.removeChild(k);
+            var l = k.textContent;kd.has(l) || (kd.add(l), l = k.cloneNode(!0), document.head.appendChild(l));k.parentNode.removeChild(k);
           }
         } else f.push(k.textContent), k.parentNode.removeChild(k);
-      }f = f.join("").trim() + (ze[b] || "");Be(this);
+      }f = f.join("").trim() + (Be[b] || "");De(this);
       if (!e) {
-        if (g = !d) g = dd.test(f) || cd.test(f), dd.lastIndex = 0, cd.lastIndex = 0;h = Jc(f);g && N && this.a && this.a.transformRules(h, b);a._styleAst = h;
-      }g = [];N || (g = Wd(a._styleAst));if (!g.length || N) h = L ? a.content : null, b = X[b] || null, d = zd(c, a._styleAst, null, d, e ? f : ""), d = d.length ? ld(d, c.is, h, b) : null, a._style = d;a.a = g;
+        if (g = !d) g = fd.test(f) || ed.test(f), fd.lastIndex = 0, ed.lastIndex = 0;h = Lc(f);g && N && this.a && this.a.transformRules(h, b);a._styleAst = h;
+      }g = [];N || (g = Yd(a._styleAst));if (!g.length || N) h = L ? a.content : null, b = X[b] || null, d = Bd(c, a._styleAst, null, d, e ? f : ""), d = d.length ? nd(d, c.is, h, b) : null, a._style = d;a.a = g;
     }
-  };m.qa = function (a, b) {
-    ze[b] = a.join(" ");
+  };m.sa = function (a, b) {
+    Be[b] = a.join(" ");
   };m.prepareTemplateDom = function (a, b) {
     if (!M) {
-      var c = S(a);L || "shady" === c || a._domPrepared || (a._domPrepared = !0, vd(a.content, b));
+      var c = S(a);L || "shady" === c || a._domPrepared || (a._domPrepared = !0, xd(a.content, b));
     }
   };
-  function Ce(a) {
+  function Ee(a) {
     var b = R(a),
-        c = b.is;b = b.D;var d = X[c] || null,
-        e = ue[c];if (e) {
-      c = e._styleAst;var f = e.a;e = S(e);b = new V(c, d, f, b, e);Sd(a, b);return b;
+        c = b.is;b = b.F;var d = X[c] || null,
+        e = we[c];if (e) {
+      c = e._styleAst;var f = e.a;e = S(e);b = new V(c, d, f, b, e);Ud(a, b);return b;
     }
-  }function De(a) {
+  }function Fe(a) {
     !a.b && window.ShadyCSS && window.ShadyCSS.CustomStyleInterface && (a.b = window.ShadyCSS.CustomStyleInterface, a.b.transformCallback = function (b) {
-      a.ba(b);
+      a.da(b);
     }, a.b.validateCallback = function () {
       requestAnimationFrame(function () {
         (a.b.enqueued || a.S) && a.flushCustomStyles();
       });
     });
   }
-  function Be(a) {
-    !a.a && window.ShadyCSS && window.ShadyCSS.ApplyShim && (a.a = window.ShadyCSS.ApplyShim, a.a.invalidCallback = we);De(a);
+  function De(a) {
+    !a.a && window.ShadyCSS && window.ShadyCSS.ApplyShim && (a.a = window.ShadyCSS.ApplyShim, a.a.invalidCallback = ye);Fe(a);
   }
   m.flushCustomStyles = function () {
-    if (!M && (Be(this), this.b)) {
-      var a = this.b.processStyles();if (this.b.enqueued && !td(this.h.cssBuild)) {
+    if (!M && (De(this), this.b)) {
+      var a = this.b.processStyles();if (this.b.enqueued && !vd(this.h.cssBuild)) {
         if (N) {
           if (!this.h.cssBuild) for (var b = 0; b < a.length; b++) {
             var c = this.b.getStyleForCustomStyle(a[b]);if (c && N && this.a) {
-              var d = jd(c);Be(this);this.a.transformRules(d);c.textContent = O(d);
+              var d = ld(c);De(this);this.a.transformRules(d);c.textContent = O(d);
             }
           }
         } else {
-          Ee(this, this.c, this.h);for (b = 0; b < a.length; b++) (c = this.b.getStyleForCustomStyle(a[b])) && ge(c, this.h.o);this.S && this.styleDocument();
+          Ge(this, this.c, this.h);for (b = 0; b < a.length; b++) (c = this.b.getStyleForCustomStyle(a[b])) && ie(c, this.h.o);this.S && this.styleDocument();
         }this.b.enqueued = !1;
       }
     }
@@ -1331,11 +1348,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   m.styleElement = function (a, b) {
     if (M) {
       if (b) {
-        W(a) || Sd(a, new V(null));var c = W(a);c.j = c.j || {};Object.assign(c.j, b);Fe(this, a, c);
+        W(a) || Ud(a, new V(null));var c = W(a);c.j = c.j || {};Object.assign(c.j, b);He(this, a, c);
       }
-    } else if (c = W(a) || Ce(a)) if (a !== this.c && (this.S = !0), b && (c.j = c.j || {}, Object.assign(c.j, b)), N) Fe(this, a, c);else if (this.flush(), Ee(this, a, c), c.U && c.U.length) {
+    } else if (c = W(a) || Ee(a)) if (a !== this.c && (this.S = !0), b && (c.j = c.j || {}, Object.assign(c.j, b)), N) He(this, a, c);else if (this.flush(), Ge(this, a, c), c.U && c.U.length) {
       b = R(a).is;var d;a: {
-        if (d = Ae.cache[b]) for (var e = d.length - 1; 0 <= e; e--) {
+        if (d = Ce.cache[b]) for (var e = d.length - 1; 0 <= e; e--) {
           var f = d[e];b: {
             var g = c.U;for (var h = 0; h < g.length; h++) {
               var k = g[h];if (f.m[k] !== c.o[k]) {
@@ -1347,69 +1364,69 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           }
         }d = void 0;
       }g = d ? d.styleElement : null;e = c.l;
-      (f = d && d.l) || (f = this.Y[b] = (this.Y[b] || 0) + 1, f = b + "-" + f);c.l = f;f = c.l;h = he;h = g ? g.textContent || "" : de(h, a, c.o, f);k = W(a);var l = k.a;l && !L && l !== g && (l._useCount--, 0 >= l._useCount && l.parentNode && l.parentNode.removeChild(l));L ? k.a ? (k.a.textContent = h, g = k.a) : h && (g = ld(h, f, a.shadowRoot, k.b)) : g ? g.parentNode || (Ud && -1 < h.indexOf("@media") && (g.textContent = h), md(g, null, k.b)) : h && (g = ld(h, f, null, k.b));g && (g._useCount = g._useCount || 0, k.a != g && g._useCount++, k.a = g);f = g;L || (g = c.l, k = h = a.getAttribute("class") || "", e && (k = h.replace(new RegExp("\\s*x-scope\\s*" + e + "\\s*", "g"), " ")), k += (k ? " " : "") + "x-scope " + g, h !== k && qd(a, k));d || Ae.store(b, c.o, f, c.l);
+      (f = d && d.l) || (f = this.Y[b] = (this.Y[b] || 0) + 1, f = b + "-" + f);c.l = f;f = c.l;h = je;h = g ? g.textContent || "" : fe(h, a, c.o, f);k = W(a);var l = k.a;l && !L && l !== g && (l._useCount--, 0 >= l._useCount && l.parentNode && l.parentNode.removeChild(l));L ? k.a ? (k.a.textContent = h, g = k.a) : h && (g = nd(h, f, a.shadowRoot, k.b)) : g ? g.parentNode || (Wd && -1 < h.indexOf("@media") && (g.textContent = h), od(g, null, k.b)) : h && (g = nd(h, f, null, k.b));g && (g._useCount = g._useCount || 0, k.a != g && g._useCount++, k.a = g);f = g;L || (g = c.l, k = h = a.getAttribute("class") || "", e && (k = h.replace(new RegExp("\\s*x-scope\\s*" + e + "\\s*", "g"), " ")), k += (k ? " " : "") + "x-scope " + g, h !== k && sd(a, k));d || Ce.store(b, c.o, f, c.l);
     }
   };
-  function Fe(a, b, c) {
+  function He(a, b, c) {
     var d = R(b).is;if (c.j) {
       var e = c.j,
           f;for (f in e) null === f ? b.style.removeProperty(f) : b.style.setProperty(f, e[f]);
-    }e = ue[d];if (!(!e && b !== a.c || e && "" !== S(e)) && e && e._style && !xe(e)) {
-      if (xe(e) || e._applyShimValidatingVersion !== e._applyShimNextVersion) Be(a), a.a && a.a.transformRules(e._styleAst, d), e._style.textContent = zd(b, c.s), ye(e);L && (a = b.shadowRoot) && (a = a.querySelector("style")) && (a.textContent = zd(b, c.s));c.s = e._styleAst;
+    }e = we[d];if (!(!e && b !== a.c || e && "" !== S(e)) && e && e._style && !ze(e)) {
+      if (ze(e) || e._applyShimValidatingVersion !== e._applyShimNextVersion) De(a), a.a && a.a.transformRules(e._styleAst, d), e._style.textContent = Bd(b, c.s), Ae(e);L && (a = b.shadowRoot) && (a = a.querySelector("style")) && (a.textContent = Bd(b, c.s));c.s = e._styleAst;
     }
   }
-  function Ge(a, b) {
-    return (b = rd(b).getRootNode().host) ? W(b) || Ce(b) ? b : Ge(a, b) : a.c;
-  }function Ee(a, b, c) {
-    var d = Ge(a, b),
+  function Ie(a, b) {
+    return (b = td(b).getRootNode().host) ? W(b) || Ee(b) ? b : Ie(a, b) : a.c;
+  }function Ge(a, b, c) {
+    var d = Ie(a, b),
         e = W(d),
-        f = e.o;d === a.c || f || (Ee(a, d, e), f = e.o);a = Object.create(f || null);d = ce(b, c.s, c.cssBuild);b = ae(e.s, b).m;Object.assign(a, d.oa, b, d.ra);b = c.j;for (var g in b) if ((e = b[g]) || 0 === e) a[g] = e;g = he;b = Object.getOwnPropertyNames(a);for (e = 0; e < b.length; e++) d = b[e], a[d] = Zd(g, a[d], a);c.o = a;
+        f = e.o;d === a.c || f || (Ge(a, d, e), f = e.o);a = Object.create(f || null);d = ee(b, c.s, c.cssBuild);b = ce(e.s, b).m;Object.assign(a, d.qa, b, d.ta);b = c.j;for (var g in b) if ((e = b[g]) || 0 === e) a[g] = e;g = je;b = Object.getOwnPropertyNames(a);for (e = 0; e < b.length; e++) d = b[e], a[d] = ae(g, a[d], a);c.o = a;
   }m.styleDocument = function (a) {
     this.styleSubtree(this.c, a);
   };
   m.styleSubtree = function (a, b) {
-    var c = rd(a),
+    var c = td(a),
         d = c.shadowRoot;(d || a === this.c) && this.styleElement(a, b);if (a = d && (d.children || d.childNodes)) for (c = 0; c < a.length; c++) this.styleSubtree(a[c]);else if (c = c.children || c.childNodes) for (a = 0; a < c.length; a++) this.styleSubtree(c[a]);
   };
-  m.ba = function (a) {
+  m.da = function (a) {
     var b = this,
-        c = S(a);c !== this.h.cssBuild && (this.h.cssBuild = c);if (!td(c)) {
-      var d = jd(a);P(d, function (a) {
-        if (L) Rd(a);else {
-          var d = T;a.selector = a.parsedSelector;Rd(a);a.selector = a.g = Cd(d, a, d.c, void 0, void 0);
-        }N && "" === c && (Be(b), b.a && b.a.transformRule(a));
+        c = S(a);c !== this.h.cssBuild && (this.h.cssBuild = c);if (!vd(c)) {
+      var d = ld(a);P(d, function (a) {
+        if (L) Td(a);else {
+          var d = T;a.selector = a.parsedSelector;Td(a);a.selector = a.g = Ed(d, a, d.c, void 0, void 0);
+        }N && "" === c && (De(b), b.a && b.a.transformRule(a));
       });N ? a.textContent = O(d) : this.h.s.rules.push(d);
     }
   };m.getComputedStyleValue = function (a, b) {
-    var c;N || (c = (W(a) || W(Ge(this, a))).o[b]);return (c = c || window.getComputedStyle(a).getPropertyValue(b)) ? c.trim() : "";
+    var c;N || (c = (W(a) || W(Ie(this, a))).o[b]);return (c = c || window.getComputedStyle(a).getPropertyValue(b)) ? c.trim() : "";
   };
-  m.ua = function (a, b) {
-    var c = rd(a).getRootNode();b = b ? b.split(/\s/) : [];c = c.host && c.host.localName;if (!c) {
+  m.wa = function (a, b) {
+    var c = td(a).getRootNode();b = b ? b.split(/\s/) : [];c = c.host && c.host.localName;if (!c) {
       var d = a.getAttribute("class");if (d) {
         d = d.split(/\s/);for (var e = 0; e < d.length; e++) if (d[e] === T.a) {
           c = d[e + 1];break;
         }
       }
-    }c && b.push(T.a, c);N || (c = W(a)) && c.l && b.push(he.a, c.l);qd(a, b.join(" "));
-  };m.ja = function (a) {
-    return W(a);
-  };m.ta = function (a, b) {
-    U(a, b);
-  };m.wa = function (a, b) {
-    U(a, b, !0);
-  };m.sa = function (a) {
-    return oe(a);
+    }c && b.push(T.a, c);N || (c = W(a)) && c.l && b.push(je.a, c.l);sd(a, b.join(" "));
   };m.la = function (a) {
-    return ne(a);
+    return W(a);
+  };m.va = function (a, b) {
+    U(a, b);
+  };m.ya = function (a, b) {
+    U(a, b, !0);
+  };m.ua = function (a) {
+    return qe(a);
+  };m.na = function (a) {
+    return pe(a);
   };Y.prototype.flush = Y.prototype.flush;Y.prototype.prepareTemplate = Y.prototype.prepareTemplate;
-  Y.prototype.styleElement = Y.prototype.styleElement;Y.prototype.styleDocument = Y.prototype.styleDocument;Y.prototype.styleSubtree = Y.prototype.styleSubtree;Y.prototype.getComputedStyleValue = Y.prototype.getComputedStyleValue;Y.prototype.setElementClass = Y.prototype.ua;Y.prototype._styleInfoForNode = Y.prototype.ja;Y.prototype.transformCustomStyleForDocument = Y.prototype.ba;Y.prototype.getStyleAst = Y.prototype.ma;Y.prototype.styleAstToString = Y.prototype.va;Y.prototype.flushCustomStyles = Y.prototype.flushCustomStyles;
-  Y.prototype.scopeNode = Y.prototype.ta;Y.prototype.unscopeNode = Y.prototype.wa;Y.prototype.scopeForNode = Y.prototype.sa;Y.prototype.currentScopeForNode = Y.prototype.la;Y.prototype.prepareAdoptedCssText = Y.prototype.qa;Object.defineProperties(Y.prototype, { nativeShadow: { get: function () {
+  Y.prototype.styleElement = Y.prototype.styleElement;Y.prototype.styleDocument = Y.prototype.styleDocument;Y.prototype.styleSubtree = Y.prototype.styleSubtree;Y.prototype.getComputedStyleValue = Y.prototype.getComputedStyleValue;Y.prototype.setElementClass = Y.prototype.wa;Y.prototype._styleInfoForNode = Y.prototype.la;Y.prototype.transformCustomStyleForDocument = Y.prototype.da;Y.prototype.getStyleAst = Y.prototype.oa;Y.prototype.styleAstToString = Y.prototype.xa;Y.prototype.flushCustomStyles = Y.prototype.flushCustomStyles;
+  Y.prototype.scopeNode = Y.prototype.va;Y.prototype.unscopeNode = Y.prototype.ya;Y.prototype.scopeForNode = Y.prototype.ua;Y.prototype.currentScopeForNode = Y.prototype.na;Y.prototype.prepareAdoptedCssText = Y.prototype.sa;Object.defineProperties(Y.prototype, { nativeShadow: { get: function () {
         return L;
       } }, nativeCss: { get: function () {
         return N;
       } } });var Z = new Y(),
-      He,
-      Ie;window.ShadyCSS && (He = window.ShadyCSS.ApplyShim, Ie = window.ShadyCSS.CustomStyleInterface);
+      Je,
+      Ke;window.ShadyCSS && (Je = window.ShadyCSS.ApplyShim, Ke = window.ShadyCSS.CustomStyleInterface);
   window.ShadyCSS = { ScopingShim: Z, prepareTemplate: function (a, b, c) {
       Z.flushCustomStyles();Z.prepareTemplate(a, b, c);
     }, prepareTemplateDom: function (a, b) {
@@ -1427,7 +1444,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     },
     getComputedStyleValue: function (a, b) {
       return Z.getComputedStyleValue(a, b);
-    }, nativeCss: N, nativeShadow: L, cssBuild: bd, disableRuntime: M };He && (window.ShadyCSS.ApplyShim = He);Ie && (window.ShadyCSS.CustomStyleInterface = Ie);
+    }, nativeCss: N, nativeShadow: L, cssBuild: dd, disableRuntime: M };Je && (window.ShadyCSS.ApplyShim = Je);Ke && (window.ShadyCSS.CustomStyleInterface = Ke);
 }).call(this);
 
 //# sourceMappingURL=webcomponents-sd.js.map

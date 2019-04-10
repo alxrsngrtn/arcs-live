@@ -16,7 +16,7 @@ export class Entity {
     // TODO(shans): Remove this dependency on ParticleExecutionContext, so that you can construct entities without one.
     constructor(data, schema, context, userIDComponent) {
         assert(!userIDComponent || userIDComponent.indexOf(':') === -1, 'user IDs must not contain the \':\' character');
-        this[Symbols.identifier] = undefined;
+        setEntityId(this, undefined);
         this.userIDComponent = userIDComponent;
         this.schema = schema;
         assert(data, `can't construct entity with null data`);
@@ -31,16 +31,16 @@ export class Entity {
         return this.userIDComponent;
     }
     isIdentified() {
-        return this[Symbols.identifier] !== undefined;
+        return getEntityId(this) !== undefined;
     }
     // TODO: entity should not be exposing its IDs.
     get id() {
         assert(!!this.isIdentified());
-        return this[Symbols.identifier];
+        return getEntityId(this);
     }
     identify(identifier) {
         assert(!this.isIdentified());
-        this[Symbols.identifier] = identifier;
+        setEntityId(this, identifier);
         const components = identifier.split(':');
         if (components[components.length - 2] === 'uid') {
             this.userIDComponent = components[components.length - 1];
@@ -55,7 +55,7 @@ export class Entity {
         else {
             id = `${components.base}:${components.component()}`;
         }
-        this[Symbols.identifier] = id;
+        setEntityId(this, id);
     }
     toLiteral() {
         return this.rawData;
@@ -81,12 +81,20 @@ export class Entity {
         }
         return clone;
     }
+    serialize() {
+        const id = getEntityId(this);
+        const rawData = this.dataClone();
+        return { id, rawData };
+    }
     /** Dynamically constructs a new JS class for the entity type represented by the given schema. */
     static createEntityClass(schema, context) {
         // Create a new class which extends the Entity base class, and implement all of the required static methods/properties.
         const clazz = class extends Entity {
             constructor(data, userIDComponent) {
                 super(data, schema, context, userIDComponent);
+            }
+            get entityClass() {
+                return clazz;
             }
             static get type() {
                 // TODO: should the entity's key just be its type?
@@ -266,5 +274,23 @@ function createRawDataProxy(schema) {
             return true;
         }
     });
+}
+/**
+ * Returns the ID of the given entity. This is a function private to this file instead of a method on the Entity class, so that developers can't
+ * get access to it.
+ */
+function getEntityId(entity) {
+    // Typescript doesn't let us use symbols as indexes, so cast to any first.
+    // tslint:disable-next-line: no-any
+    return entity[Symbols.identifier];
+}
+/**
+ * Sets the ID of the given entity. This is a function private to this file instead of a method on the Entity class, so that developers can't
+ * get access to it.
+ */
+function setEntityId(entity, id) {
+    // Typescript doesn't let us use symbols as indexes, so cast to any first.
+    // tslint:disable-next-line: no-any
+    entity[Symbols.identifier] = id;
 }
 //# sourceMappingURL=entity.js.map

@@ -10,8 +10,8 @@ import { assert } from '../platform/assert-web.js';
 import { SystemException, UserException } from './arc-exceptions.js';
 import { ParticleSpec } from './particle-spec.js';
 import { Reference } from './reference.js';
-import { Symbols } from './symbols.js';
 import { BigCollectionType, CollectionType, EntityType, InterfaceType, ReferenceType } from './type.js';
+import { Entity } from './entity.js';
 // TODO: This won't be needed once runtime is transferred between contexts.
 function cloneData(data) {
     return data;
@@ -74,16 +74,12 @@ export class Handle {
     }
     _serialize(entity) {
         assert(entity, 'can\'t serialize a null entity');
-        if (!entity.isIdentified()) {
-            entity.createIdentity(this._proxy.generateIDComponents());
+        if (entity instanceof Entity) {
+            if (!entity.isIdentified()) {
+                entity.createIdentity(this._proxy.generateIDComponents());
+            }
         }
-        // tslint:disable-next-line: no-any
-        const id = entity[Symbols.identifier];
-        const rawData = entity.dataClone();
-        return {
-            id,
-            rawData
-        };
+        return entity.serialize();
     }
     get type() {
         return this._proxy.type;
@@ -276,7 +272,8 @@ export class Variable extends Handle {
             if (!this.canWrite) {
                 throw new Error('Handle not writeable');
             }
-            return this._proxy.set(this._serialize(entity), this._particleId);
+            const serialization = this._serialize(entity);
+            return this._proxy.set(serialization, this._particleId);
         }
         catch (e) {
             this.reportSystemExceptionInHost(e, 'Handle::set');

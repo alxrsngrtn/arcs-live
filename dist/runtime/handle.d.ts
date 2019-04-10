@@ -9,8 +9,12 @@
 import { ParticleSpec } from './particle-spec.js';
 import { Particle } from './particle.js';
 import { Reference } from './reference.js';
-import { BigCollectionProxy, CollectionProxy, StorageProxy, VariableProxy } from './storage-proxy.js';
-import { EntityClass, EntityInterface, EntityRawData } from './entity.js';
+import { BigCollectionProxy, CollectionProxy, StorageProxy, VariableProxy, SerializedEntity } from './storage-proxy.js';
+import { EntityClass, Entity } from './entity.js';
+/** An interface representing anything storable in a Handle. Concretely, this is the {@link Entity} and {@link ClientReference} classes. */
+export interface Storable {
+    serialize(): SerializedEntity;
+}
 export interface HandleOptions {
     keepSynced: boolean;
     notifySync: boolean;
@@ -33,10 +37,7 @@ export declare abstract class Handle {
     protected reportUserExceptionInHost(exception: Error, particle: Particle, method: string): void;
     protected reportSystemExceptionInHost(exception: Error, method: string): void;
     configure(options: any): void;
-    _serialize(entity: EntityInterface): {
-        id: any;
-        rawData: EntityRawData;
-    };
+    _serialize(entity: Storable): SerializedEntity;
     readonly type: import("./type.js").Type;
     readonly _id: string;
     toManifestString(): string;
@@ -70,7 +71,7 @@ export declare class Collection extends Handle {
      * @throws {Error} if this handle is not configured as a writeable handle (i.e. 'out' or 'inout')
      * in the particle's manifest.
      */
-    store(entity: any): Promise<void>;
+    store(entity: Storable): Promise<void>;
     /**
      * Removes all known entities from the Handle.
      * @throws {Error} if this handle is not configured as a writeable handle (i.e. 'out' or 'inout')
@@ -82,7 +83,7 @@ export declare class Collection extends Handle {
      * @throws {Error} if this handle is not configured as a writeable handle (i.e. 'out' or 'inout')
      * in the particle's manifest.
      */
-    remove(entity: any): Promise<void>;
+    remove(entity: Storable): Promise<void>;
 }
 /**
  * A handle on a single entity. A particle's manifest dictates
@@ -98,14 +99,14 @@ export declare class Variable extends Handle {
      * @throws {Error} if this variable is not configured as a readable handle (i.e. 'in' or 'inout')
      * in the particle's manifest.
      */
-    get(): Promise<EntityInterface | ParticleSpec | Reference>;
-    _restore(model: any): EntityInterface | ParticleSpec | Reference;
+    get(): Promise<import("./entity.js").EntityInterface | ParticleSpec | Reference>;
+    _restore(model: any): import("./entity.js").EntityInterface | ParticleSpec | Reference;
     /**
      * Stores a new entity into the Variable, replacing any existing entity.
      * @throws {Error} if this variable is not configured as a writeable handle (i.e. 'out' or 'inout')
      * in the particle's manifest.
      */
-    set(entity: EntityInterface): Promise<void>;
+    set(entity: Storable): Promise<void>;
     /**
      * Clears any entity currently in the Variable.
      * @throws {Error} if this variable is not configured as a writeable handle (i.e. 'out' or 'inout')
@@ -148,13 +149,13 @@ export declare class BigCollection extends Handle {
      * @throws {Error} if this handle is not configured as a writeable handle (i.e. 'out' or 'inout')
      * in the particle's manifest.
      */
-    store(entity: any): Promise<void>;
+    store(entity: Storable): Promise<void>;
     /**
      * Removes an entity from the Handle.
      * @throws {Error} if this handle is not configured as a writeable handle (i.e. 'out' or 'inout')
      * in the particle's manifest.
      */
-    remove(entity: any): Promise<void>;
+    remove(entity: Entity): Promise<void>;
     /**
      * @returns a Cursor instance that iterates over the full set of entities, reading `pageSize`
      * entities at a time. The cursor views a snapshot of the collection, locked to the version

@@ -578,16 +578,12 @@ class Handle {
     }
     _serialize(entity) {
         assert(entity, 'can\'t serialize a null entity');
-        if (!entity.isIdentified()) {
-            entity.createIdentity(this._proxy.generateIDComponents());
+        if (entity instanceof Entity) {
+            if (!entity.isIdentified()) {
+                entity.createIdentity(this._proxy.generateIDComponents());
+            }
         }
-        // tslint:disable-next-line: no-any
-        const id = entity[Symbols.identifier];
-        const rawData = entity.dataClone();
-        return {
-            id,
-            rawData
-        };
+        return entity.serialize();
     }
     get type() {
         return this._proxy.type;
@@ -780,7 +776,8 @@ class Variable extends Handle {
             if (!this.canWrite) {
                 throw new Error('Handle not writeable');
             }
-            return this._proxy.set(this._serialize(entity), this._particleId);
+            const serialization = this._serialize(entity);
+            return this._proxy.set(serialization, this._particleId);
         }
         catch (e) {
             this.reportSystemExceptionInHost(e, 'Handle::set');
@@ -956,31 +953,44 @@ class Reference {
     dataClone() {
         return { storageKey: this.storageKey, id: this.id };
     }
+    serialize() {
+        return {
+            id: this.id,
+            rawData: this.dataClone(),
+        };
+    }
+}
+/** A subclass of Reference that clients can create. */
+class ClientReference extends Reference {
+    /** Use the newClientReference factory method instead. */
+    constructor(entity, context) {
+        // TODO(shans): start carrying storageKey information around on Entity objects
+        super({ id: entity.id, storageKey: null }, new ReferenceType(entity.entityClass.type), context);
+        this.mode = ReferenceMode.Unstored;
+        this.entity = entity;
+        this.stored = new Promise(async (resolve, reject) => {
+            await this.storeReference(entity);
+            resolve();
+        });
+    }
+    async storeReference(entity) {
+        await this.ensureStorageProxy();
+        await this.handle.store(entity);
+        this.mode = ReferenceMode.Stored;
+    }
+    async dereference() {
+        if (this.mode === ReferenceMode.Unstored) {
+            return null;
+        }
+        return super.dereference();
+    }
+    isIdentified() {
+        return this.entity.isIdentified();
+    }
     static newClientReference(context) {
-        return class extends Reference {
+        return class extends ClientReference {
             constructor(entity) {
-                // TODO(shans): start carrying storageKey information around on Entity objects
-                super({ id: entity.id, storageKey: null }, new ReferenceType(entity.constructor.type), context);
-                this.mode = ReferenceMode.Unstored;
-                this.entity = entity;
-                this.stored = new Promise(async (resolve, reject) => {
-                    await this.storeReference(entity);
-                    resolve();
-                });
-            }
-            async storeReference(entity) {
-                await this.ensureStorageProxy();
-                await this.handle.store(entity);
-                this.mode = ReferenceMode.Stored;
-            }
-            async dereference() {
-                if (this.mode === ReferenceMode.Unstored) {
-                    return null;
-                }
-                return super.dereference();
-            }
-            isIdentified() {
-                return this.entity.isIdentified();
+                super(entity, context);
             }
         };
     }
@@ -993,7 +1003,7 @@ class Entity {
     // TODO(shans): Remove this dependency on ParticleExecutionContext, so that you can construct entities without one.
     constructor(data, schema, context, userIDComponent) {
         assert(!userIDComponent || userIDComponent.indexOf(':') === -1, 'user IDs must not contain the \':\' character');
-        this[Symbols.identifier] = undefined;
+        setEntityId(this, undefined);
         this.userIDComponent = userIDComponent;
         this.schema = schema;
         assert(data, `can't construct entity with null data`);
@@ -1008,16 +1018,16 @@ class Entity {
         return this.userIDComponent;
     }
     isIdentified() {
-        return this[Symbols.identifier] !== undefined;
+        return getEntityId(this) !== undefined;
     }
     // TODO: entity should not be exposing its IDs.
     get id() {
         assert(!!this.isIdentified());
-        return this[Symbols.identifier];
+        return getEntityId(this);
     }
     identify(identifier) {
         assert(!this.isIdentified());
-        this[Symbols.identifier] = identifier;
+        setEntityId(this, identifier);
         const components = identifier.split(':');
         if (components[components.length - 2] === 'uid') {
             this.userIDComponent = components[components.length - 1];
@@ -1032,7 +1042,7 @@ class Entity {
         else {
             id = `${components.base}:${components.component()}`;
         }
-        this[Symbols.identifier] = id;
+        setEntityId(this, id);
     }
     toLiteral() {
         return this.rawData;
@@ -1058,12 +1068,20 @@ class Entity {
         }
         return clone;
     }
+    serialize() {
+        const id = getEntityId(this);
+        const rawData = this.dataClone();
+        return { id, rawData };
+    }
     /** Dynamically constructs a new JS class for the entity type represented by the given schema. */
     static createEntityClass(schema, context) {
         // Create a new class which extends the Entity base class, and implement all of the required static methods/properties.
         const clazz = class extends Entity {
             constructor(data, userIDComponent) {
                 super(data, schema, context, userIDComponent);
+            }
+            get entityClass() {
+                return clazz;
             }
             static get type() {
                 // TODO: should the entity's key just be its type?
@@ -1243,6 +1261,24 @@ function createRawDataProxy(schema) {
             return true;
         }
     });
+}
+/**
+ * Returns the ID of the given entity. This is a function private to this file instead of a method on the Entity class, so that developers can't
+ * get access to it.
+ */
+function getEntityId(entity) {
+    // Typescript doesn't let us use symbols as indexes, so cast to any first.
+    // tslint:disable-next-line: no-any
+    return entity[Symbols.identifier];
+}
+/**
+ * Sets the ID of the given entity. This is a function private to this file instead of a method on the Entity class, so that developers can't
+ * get access to it.
+ */
+function setEntityId(entity, id) {
+    // Typescript doesn't let us use symbols as indexes, so cast to any first.
+    // tslint:disable-next-line: no-any
+    entity[Symbols.identifier] = id;
 }
 
 /**
@@ -19614,7 +19650,7 @@ class Loader {
     }
     unwrapParticle(particleWrapper) {
         assert(this.pec);
-        return particleWrapper({ Particle: Particle$1, DomParticle, TransformationDomParticle, MultiplexerDomParticle, Reference: Reference.newClientReference(this.pec), html });
+        return particleWrapper({ Particle: Particle$1, DomParticle, TransformationDomParticle, MultiplexerDomParticle, Reference: ClientReference.newClientReference(this.pec), html });
     }
 }
 

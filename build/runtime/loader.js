@@ -15,7 +15,7 @@ import { JsonldToManifest } from './converters/jsonldToManifest.js';
 import { DomParticle } from './dom-particle.js';
 import { MultiplexerDomParticle } from './multiplexer-dom-particle.js';
 import { Particle } from './particle.js';
-import { Reference } from './reference.js';
+import { ClientReference } from './reference.js';
 import { TransformationDomParticle } from './transformation-dom-particle.js';
 const html = (strings, ...values) => (strings[0] + values.map((v, i) => v + strings[i + 1]).join('')).trim();
 function schemaLocationFor(name) {
@@ -106,7 +106,7 @@ export class Loader {
     }
     unwrapParticle(particleWrapper) {
         assert(this.pec);
-        return particleWrapper({ Particle, DomParticle, TransformationDomParticle, MultiplexerDomParticle, Reference: Reference.newClientReference(this.pec), html });
+        return particleWrapper({ Particle, DomParticle, TransformationDomParticle, MultiplexerDomParticle, Reference: ClientReference.newClientReference(this.pec), html });
     }
 }
 //# sourceMappingURL=loader.js.map

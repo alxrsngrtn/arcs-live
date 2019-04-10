@@ -1,6 +1,8 @@
 import { Schema } from './schema.js';
 import { Type } from './type.js';
 import { ParticleExecutionContext } from './particle-execution-context.js';
+import { Storable } from './handle.js';
+import { SerializedEntity } from './storage-proxy.js';
 declare type EntityIdComponents = {
     base: string;
     component: () => number;
@@ -9,7 +11,7 @@ export declare type EntityRawData = {};
 /**
  * Regular interface for Entities.
  */
-export interface EntityInterface {
+export interface EntityInterface extends Storable {
     isIdentified(): boolean;
     id: string;
     identify(identifier: string): void;
@@ -17,6 +19,7 @@ export interface EntityInterface {
     toLiteral(): EntityRawData;
     toJSON(): EntityRawData;
     dataClone(): EntityRawData;
+    entityClass: EntityClass;
     [index: string]: any;
 }
 /**
@@ -46,12 +49,14 @@ export declare abstract class Entity implements EntityInterface {
     protected constructor(data: EntityRawData, schema: Schema, context: ParticleExecutionContext, userIDComponent?: string);
     getUserID(): string;
     isIdentified(): boolean;
-    readonly id: any;
+    readonly id: string;
     identify(identifier: string): void;
     createIdentity(components: EntityIdComponents): void;
     toLiteral(): EntityRawData;
     toJSON(): EntityRawData;
     dataClone(): EntityRawData;
+    serialize(): SerializedEntity;
+    abstract entityClass: EntityClass;
     /** Dynamically constructs a new JS class for the entity type represented by the given schema. */
     static createEntityClass(schema: Schema, context: ParticleExecutionContext): EntityClass;
 }

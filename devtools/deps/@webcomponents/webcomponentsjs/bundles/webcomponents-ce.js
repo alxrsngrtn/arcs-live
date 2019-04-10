@@ -9,6 +9,14 @@ Code distributed by Google as part of the polymer project is also
 subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
 */
 (function () {
+  /*
+  Copyright (c) 2016 The Polymer Project Authors. All rights reserved.
+  This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+  The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+  The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+  Code distributed by Google as part of the polymer project is also
+  subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+  */
   'use strict';
   var aa = new Set("annotation-xml color-profile font-face font-face-src font-face-uri font-face-format font-face-name missing-glyph".split(" "));function g(b) {
     var a = aa.has(b);b = /^[a-z][.0-9_a-z]*-[\-.0-9_a-z]*$/.test(b);return !a && b;
@@ -310,15 +318,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     });t(Element.prototype, "removeAttributeNS", function (a, b) {
       if (1 !== this.__CE_state) return ka.call(this, a, b);var d = T.call(this, a, b);ka.call(this, a, b);var e = T.call(this, a, b);d !== e && c.attributeChangedCallback(this, b, d, e, a);
     });ta ? a(HTMLElement.prototype, ta) : la ? a(Element.prototype, la) : console.warn("Custom Elements: `Element#insertAdjacentElement` was not patched.");ua ? d(HTMLElement.prototype, ua) : ma ? d(Element.prototype, ma) : console.warn("Custom Elements: `Element#insertAdjacentHTML` was not patched.");Y(c, Element.prototype, { g: na, append: oa });za(c);
-  }; /*
-     Copyright (c) 2016 The Polymer Project Authors. All rights reserved.
-     This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
-     The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
-     The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
-     Code distributed by Google as part of the polymer project is also
-     subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
-     */
-  var Z = window.customElements;if (!Z || Z.forcePolyfill || "function" != typeof Z.define || "function" != typeof Z.get) {
+  };var Z = window.customElements;if (!Z || Z.forcePolyfill || "function" != typeof Z.define || "function" != typeof Z.get) {
     var X = new u();wa();xa();Y(X, DocumentFragment.prototype, { g: ia, append: ja });ya();Aa();document.__CE_hasRegistry = !0;var customElements = new F(X);Object.defineProperty(window, "customElements", { configurable: !0, enumerable: !0, value: customElements });
   }; /*
      Copyright (c) 2017 The Polymer Project Authors. All rights reserved.

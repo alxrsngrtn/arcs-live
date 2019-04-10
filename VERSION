@@ -1,9 +1,9 @@
-commit add279bafa2702399191502483d986fd35a6f652
-Author: Paul Lindner <lindner@inuus.com>
-Date:   Tue Apr 9 11:04:34 2019 -0700
+commit fd0603dec0f8dcb8fd1810f5cb470d6bde62dcb7
+Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
+Date:   Wed Apr 10 15:09:41 2019 +1000
 
-    Improve Pouch testability/coherence. (#2865)
+    Adds a new Storable interface for things stored in Handles (#2872)
     
-    - Add consistent types for Storage methods toLiteral and ensureBackingStore
-    - Add pouch on filesystem tests to help catch race conditions
-    - Switch shutdown to async
+    * Refactored reference.ts
+    
+    * Storable interface, added types to Handle

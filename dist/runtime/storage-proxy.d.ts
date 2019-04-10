@@ -14,11 +14,16 @@ import { ParticleExecutionContext } from './particle-execution-context.js';
 import { Particle } from './particle.js';
 import { SerializedModelEntry } from './storage/crdt-collection-model.js';
 import { Type } from './type.js';
+import { EntityRawData } from './entity.js';
 declare enum SyncState {
     none = 0,
     pending = 1,
     full = 2
 }
+export declare type SerializedEntity = {
+    id: string;
+    rawData: EntityRawData;
+};
 /**
  * Mediates between one or more Handles and the backing store outside the PEC.
  *

@@ -48,31 +48,44 @@ export class Reference {
     dataClone() {
         return { storageKey: this.storageKey, id: this.id };
     }
+    serialize() {
+        return {
+            id: this.id,
+            rawData: this.dataClone(),
+        };
+    }
+}
+/** A subclass of Reference that clients can create. */
+export class ClientReference extends Reference {
+    /** Use the newClientReference factory method instead. */
+    constructor(entity, context) {
+        // TODO(shans): start carrying storageKey information around on Entity objects
+        super({ id: entity.id, storageKey: null }, new ReferenceType(entity.entityClass.type), context);
+        this.mode = ReferenceMode.Unstored;
+        this.entity = entity;
+        this.stored = new Promise(async (resolve, reject) => {
+            await this.storeReference(entity);
+            resolve();
+        });
+    }
+    async storeReference(entity) {
+        await this.ensureStorageProxy();
+        await this.handle.store(entity);
+        this.mode = ReferenceMode.Stored;
+    }
+    async dereference() {
+        if (this.mode === ReferenceMode.Unstored) {
+            return null;
+        }
+        return super.dereference();
+    }
+    isIdentified() {
+        return this.entity.isIdentified();
+    }
     static newClientReference(context) {
-        return class extends Reference {
+        return class extends ClientReference {
             constructor(entity) {
-                // TODO(shans): start carrying storageKey information around on Entity objects
-                super({ id: entity.id, storageKey: null }, new ReferenceType(entity.constructor.type), context);
-                this.mode = ReferenceMode.Unstored;
-                this.entity = entity;
-                this.stored = new Promise(async (resolve, reject) => {
-                    await this.storeReference(entity);
-                    resolve();
-                });
-            }
-            async storeReference(entity) {
-                await this.ensureStorageProxy();
-                await this.handle.store(entity);
-                this.mode = ReferenceMode.Stored;
-            }
-            async dereference() {
-                if (this.mode === ReferenceMode.Unstored) {
-                    return null;
-                }
-                return super.dereference();
-            }
-            isIdentified() {
-                return this.entity.isIdentified();
+                super(entity, context);
             }
         };
     }
