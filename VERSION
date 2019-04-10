@@ -1,9 +1,10 @@
-commit fd0603dec0f8dcb8fd1810f5cb470d6bde62dcb7
+commit 2e838e75b8127c861b5183ec3edc3ddd2632c0ab
 Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
-Date:   Wed Apr 10 15:09:41 2019 +1000
+Date:   Thu Apr 11 09:50:54 2019 +1000
 
-    Adds a new Storable interface for things stored in Handles (#2872)
+    Added a "mutable" field to Entity. (#2873)
     
-    * Refactored reference.ts
-    
-    * Storable interface, added types to Handle
+    This lets you disable mutation on a given Entity instance. It's a
+    temporary stand-in for future functionality where entities will only be
+    mutable when instantiated in the same Arc that "owns" them -- details
+    TBA.

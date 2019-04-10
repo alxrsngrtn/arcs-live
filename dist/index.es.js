@@ -1002,17 +1002,35 @@ class Entity {
     // function below).
     // TODO(shans): Remove this dependency on ParticleExecutionContext, so that you can construct entities without one.
     constructor(data, schema, context, userIDComponent) {
+        this._mutable = true;
         assert(!userIDComponent || userIDComponent.indexOf(':') === -1, 'user IDs must not contain the \':\' character');
         setEntityId(this, undefined);
         this.userIDComponent = userIDComponent;
         this.schema = schema;
         assert(data, `can't construct entity with null data`);
-        this.rawData = createRawDataProxy(schema);
         // TODO: figure out how to do this only on wire-created entities.
+        const rawData = {};
         const sanitizedData = sanitizeData(data, schema, context);
         for (const [name, value] of Object.entries(sanitizedData)) {
-            this.rawData[name] = value;
+            rawData[name] = value;
         }
+        this.rawData = createRawDataProxy(rawData, schema, this);
+    }
+    /** Returns true if this Entity instance can have its fields mutated. */
+    get mutable() {
+        // TODO: Only the Arc that "owns" this Entity should be allowed to mutate it.
+        return this._mutable;
+    }
+    /**
+     * Prevents further mutation of this Entity instance. Note that calling this method only affects this particular Entity instance; the entity
+     * it represents (in a data store somewhere) can still be mutated by others. Also note that this field offers no security at all against
+     * malicious developers; they can reach in and modify the "private" backing field directly.
+     */
+    set mutable(mutable) {
+        if (!this.mutable && mutable) {
+            throw new Error('You cannot make an immutable entity mutable again.');
+        }
+        this._mutable = mutable;
     }
     getUserID() {
         return this.userIDComponent;
@@ -1199,7 +1217,9 @@ function validateFieldAndTypes({ op, name, value, schema, fieldType }) {
 function sanitizeData(data, schema, context) {
     const sanitizedData = {};
     for (const [name, value] of Object.entries(data)) {
-        sanitizedData[name] = sanitizeEntry(schema.fields[name], value, name, context);
+        const sanitizedValue = sanitizeEntry(schema.fields[name], value, name, context);
+        validateFieldAndTypes({ op: 'set', name, value: sanitizedValue, schema });
+        sanitizedData[name] = sanitizedValue;
     }
     return sanitizedData;
 }
@@ -1244,9 +1264,9 @@ function sanitizeEntry(type, value, name, context) {
     }
 }
 /** Constructs a Proxy object to use for entities' rawData objects. This proxy will perform type-checking when getting/setting fields. */
-function createRawDataProxy(schema) {
+function createRawDataProxy(rawData, schema, entity) {
     const classJunk = ['toJSON', 'prototype', 'toString', 'inspect'];
-    return new Proxy({}, {
+    return new Proxy(rawData, {
         get: (target, name) => {
             if (classJunk.includes(name) || name.constructor === Symbol) {
                 return undefined;
@@ -1256,7 +1276,12 @@ function createRawDataProxy(schema) {
             return value;
         },
         set: (target, name, value) => {
+            // TODO: Disallow mutation via regular field properties, and add a new mutate method instead.
             validateFieldAndTypes({ op: 'set', name, value, schema });
+            if (!entity.mutable) {
+                throw new Error('Entity is immutable.');
+            }
+            // TODO: If the given value is a JS object/list, make an immutable copy of it first before storing it.
             target[name] = value;
             return true;
         }

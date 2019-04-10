@@ -20,6 +20,7 @@ export interface EntityInterface extends Storable {
     toJSON(): EntityRawData;
     dataClone(): EntityRawData;
     entityClass: EntityClass;
+    mutable: boolean;
     [index: string]: any;
 }
 /**
@@ -46,7 +47,15 @@ export declare abstract class Entity implements EntityInterface {
     private userIDComponent?;
     private schema;
     protected rawData: EntityRawData;
+    private _mutable;
     protected constructor(data: EntityRawData, schema: Schema, context: ParticleExecutionContext, userIDComponent?: string);
+    /** Returns true if this Entity instance can have its fields mutated. */
+    /**
+    * Prevents further mutation of this Entity instance. Note that calling this method only affects this particular Entity instance; the entity
+    * it represents (in a data store somewhere) can still be mutated by others. Also note that this field offers no security at all against
+    * malicious developers; they can reach in and modify the "private" backing field directly.
+    */
+    mutable: boolean;
     getUserID(): string;
     isIdentified(): boolean;
     readonly id: string;
