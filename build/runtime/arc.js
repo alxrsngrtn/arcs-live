@@ -15,7 +15,7 @@ import { Manifest, StorageStub } from './manifest.js';
 import { ParticleExecutionHost } from './particle-execution-host.js';
 import { Handle } from './recipe/handle.js';
 import { Recipe } from './recipe/recipe.js';
-import { compareComparables } from './recipe/util.js';
+import { compareComparables } from './recipe/comparable.js';
 import { StorageProviderBase } from './storage/storage-provider-base.js';
 import { StorageProviderFactory } from './storage/storage-provider-factory.js';
 import { ArcType, CollectionType, EntityType, InterfaceType, RelationType, Type, TypeVariable } from './type.js';

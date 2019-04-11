@@ -1,4 +1,5 @@
 import { Id } from '../id.js';
+import { Comparable } from '../recipe/comparable.js';
 import { Type } from '../type.js';
 import { StorageStub } from '../manifest.js';
 import { SerializedModelEntry } from './crdt-collection-model.js';
@@ -80,7 +81,7 @@ export declare class ChangeEvent {
 /**
  * Docs TBD
  */
-export declare abstract class StorageProviderBase {
+export declare abstract class StorageProviderBase implements Comparable<StorageProviderBase> {
     private listeners;
     private nextLocalID;
     private readonly _type;
@@ -111,7 +112,7 @@ export declare abstract class StorageProviderBase {
      */
     protected _fire(kindStr: 'change', details: ChangeEvent): Promise<void>;
     _compareTo(other: StorageProviderBase): number;
-    toString(handleTags: string[]): string;
+    toString(handleTags?: string[]): string;
     readonly apiChannelMappingId: string;
     dispose(): void;
     /**

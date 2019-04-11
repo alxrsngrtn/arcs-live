@@ -6,7 +6,7 @@
 // subject to an additional IP rights grant found at
 // http://polymer.github.io/PATENTS.txt
 import { assert } from '../../platform/assert-web.js';
-import { compareNumbers, compareStrings } from '../recipe/util.js';
+import { compareNumbers, compareStrings } from '../recipe/comparable.js';
 var EventKind;
 (function (EventKind) {
     EventKind["change"] = "Change";

@@ -5,7 +5,7 @@
 // subject to an additional IP rights grant found at
 // http://polymer.github.io/PATENTS.txt
 import { assert } from '../../platform/assert-web.js';
-import { compareArrays, compareComparables, compareStrings } from './util.js';
+import { compareArrays, compareComparables, compareStrings } from './comparable.js';
 export class EndPoint {
 }
 export class ParticleEndPoint extends EndPoint {

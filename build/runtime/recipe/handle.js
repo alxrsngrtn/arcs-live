@@ -7,7 +7,7 @@
 import { assert } from '../../platform/assert-web.js';
 import { Type } from '../type.js';
 import { TypeChecker } from './type-checker.js';
-import { compareArrays, compareComparables, compareStrings } from './util.js';
+import { compareArrays, compareComparables, compareStrings } from './comparable.js';
 export class Handle {
     constructor(recipe) {
         this._id = null;

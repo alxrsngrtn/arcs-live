@@ -1,10 +1,10 @@
 import { ParticleSpec } from '../particle-spec.js';
 import { Direction } from './handle-connection.js';
 import { Handle } from './handle.js';
-import { Comparable } from './util.js';
+import { Comparable } from './comparable.js';
 import { Recipe, RecipeComponent, CloneMap, ToStringOptions } from './recipe.js';
 import { Particle } from './particle.js';
-export declare abstract class EndPoint implements Comparable {
+export declare abstract class EndPoint implements Comparable<EndPoint> {
     abstract _compareTo(other: EndPoint): number;
     abstract _clone(cloneMap?: CloneMap): any;
     abstract toString(nameMap?: Map<RecipeComponent, string>): any;
@@ -39,7 +39,7 @@ export declare class TagEndPoint extends EndPoint {
     _compareTo(other: TagEndPoint): number;
     toString(nameMap?: Map<RecipeComponent, string>): string;
 }
-export declare class ConnectionConstraint {
+export declare class ConnectionConstraint implements Comparable<ConnectionConstraint> {
     from: EndPoint;
     to: EndPoint;
     direction: Direction;

@@ -6,7 +6,7 @@
 // http://polymer.github.io/PATENTS.txt
 import { assert } from '../../platform/assert-web.js';
 import { RequireSection } from './recipe.js';
-import { compareComparables, compareStrings } from './util.js';
+import { compareComparables, compareStrings } from './comparable.js';
 export class SlotConnection {
     constructor(name, particle) {
         this._targetSlot = undefined;

@@ -8,7 +8,7 @@ import { assert } from '../../platform/assert-web.js';
 import { HandleConnection } from './handle-connection.js';
 import { RequireSection } from './recipe.js';
 import { SlotConnection } from './slot-connection.js';
-import { compareArrays, compareComparables, compareStrings } from './util.js';
+import { compareArrays, compareComparables, compareStrings } from './comparable.js';
 export class Particle {
     constructor(recipe, name) {
         this._id = undefined;

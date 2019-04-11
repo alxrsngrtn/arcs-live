@@ -13,7 +13,7 @@ import { Handle } from './handle.js';
 import { Particle } from './particle.js';
 import { Search } from './search.js';
 import { Slot } from './slot.js';
-import { compareComparables } from './util.js';
+import { compareComparables } from './comparable.js';
 export class Recipe {
     constructor(name = undefined) {
         this._requires = [];

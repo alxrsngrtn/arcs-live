@@ -1,5 +1,8 @@
-commit 122893c659e64bef8dcd4ee1f689c165c4d6bc88
-Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Thu Apr 11 14:58:05 2019 +1000
+commit 2c5e81b248d9564ff5b1421e4d3e448007dc3bf8
+Author: Paul Lindner <lindner@inuus.com>
+Date:   Thu Apr 11 05:54:16 2019 -0700
 
-    Check for existence of particle impl (#2874)
+    Improve Comparable types for strictFunctionTypes (#2878)
+    
+    * Improve Comparable types for strictFunctionTypes
+    * rename util.ts --> comparable.ts

@@ -8,7 +8,7 @@ export declare function compareObjects<a>(o1: {
 } | null, o2: {
     [index: string]: a;
 } | null, compare: (first: a, second: a) => number): number;
-export declare type Comparable = {
-    _compareTo: (other: Comparable) => number;
-};
-export declare function compareComparables(o1: Comparable | null, o2: Comparable | null): number;
+export interface Comparable<T> {
+    _compareTo<T>(other: Comparable<T>): number;
+}
+export declare function compareComparables<T>(o1: Comparable<T> | null, o2: Comparable<T> | null): number;
