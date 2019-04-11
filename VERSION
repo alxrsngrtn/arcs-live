@@ -1,5 +1,5 @@
-commit 75154b29a62eee99ffc965f4455c40a4c1cd69f9
-Author: shans <shane.stephens@gmail.com>
-Date:   Thu Apr 11 14:15:20 2019 +1000
+commit 122893c659e64bef8dcd4ee1f689c165c4d6bc88
+Author: Piotr Swigon <piotr.swigon@gmail.com>
+Date:   Thu Apr 11 14:58:05 2019 +1000
 
-    Initial sketch of CRDTs (#2871)
+    Check for existence of particle impl (#2874)
