@@ -311,6 +311,15 @@ ws://127.0.0.1:9229/..</code> as normally appears for <a href="https://nodejs.or
 					<li class=" tsd-kind-enum tsd-is-not-exported">
 						<a href="enums/category.html" class="tsd-kind-icon">Category</a>
 					</li>
+					<li class=" tsd-kind-enum">
+						<a href="enums/changetype.html" class="tsd-kind-icon">Change<wbr>Type</a>
+					</li>
+					<li class=" tsd-kind-enum tsd-is-not-exported">
+						<a href="enums/collectionoptypes.html" class="tsd-kind-icon">Collection<wbr>OpTypes</a>
+					</li>
+					<li class=" tsd-kind-enum">
+						<a href="enums/countoptypes.html" class="tsd-kind-icon">Count<wbr>OpTypes</a>
+					</li>
 					<li class=" tsd-kind-enum tsd-is-not-exported">
 						<a href="enums/cursorstate.html" class="tsd-kind-icon">Cursor<wbr>State</a>
 					</li>
@@ -409,6 +418,12 @@ ws://127.0.0.1:9229/..</code> as normally appears for <a href="https://nodejs.or
 					</li>
 					<li class=" tsd-kind-class">
 						<a href="classes/bytes.html" class="tsd-kind-icon">Bytes</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/crdtcount.html" class="tsd-kind-icon">CRDTCount</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/crdterror.html" class="tsd-kind-icon">CRDTError</a>
 					</li>
 					<li class=" tsd-kind-class">
 						<a href="classes/callbacktracker.html" class="tsd-kind-icon">Callback<wbr>Tracker</a>
@@ -1019,6 +1034,9 @@ ws://127.0.0.1:9229/..</code> as normally appears for <a href="https://nodejs.or
 					<li class=" tsd-kind-interface">
 						<a href="interfaces/bigcollectionstorageprovider.html" class="tsd-kind-icon">Big<wbr>Collection<wbr>Storage<wbr>Provider</a>
 					</li>
+					<li class=" tsd-kind-interface tsd-has-type-parameter">
+						<a href="interfaces/crdtmodel.html" class="tsd-kind-icon">CRDTModel</a>
+					</li>
 					<li class=" tsd-kind-interface tsd-is-not-exported">
 						<a href="interfaces/class.html" class="tsd-kind-icon">Class</a>
 					</li>
@@ -1376,11 +1394,29 @@ ws://127.0.0.1:9229/..</code> as normally appears for <a href="https://nodejs.or
 					<li class=" tsd-kind-type-alias tsd-is-not-exported">
 						<a href="globals.html#arcoptions" class="tsd-kind-icon">Arc<wbr>Options</a>
 					</li>
+					<li class=" tsd-kind-type-alias tsd-has-type-parameter">
+						<a href="globals.html#crdtchange" class="tsd-kind-icon">CRDTChange</a>
+					</li>
 					<li class=" tsd-kind-type-alias tsd-is-not-exported">
 						<a href="globals.html#callback" class="tsd-kind-icon">Callback</a>
 					</li>
 					<li class=" tsd-kind-type-alias">
 						<a href="globals.html#clonemap" class="tsd-kind-icon">Clone<wbr>Map</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-has-type-parameter tsd-is-not-exported">
+						<a href="globals.html#collectionchange" class="tsd-kind-icon">Collection<wbr>Change</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-has-type-parameter tsd-is-not-exported">
+						<a href="globals.html#collectiondata" class="tsd-kind-icon">Collection<wbr>Data</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-has-type-parameter tsd-is-not-exported">
+						<a href="globals.html#collectionmodel" class="tsd-kind-icon">Collection<wbr>Model</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-has-type-parameter tsd-is-not-exported">
+						<a href="globals.html#collectionoperation" class="tsd-kind-icon">Collection<wbr>Operation</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-has-type-parameter tsd-is-not-exported">
+						<a href="globals.html#collectionvalue" class="tsd-kind-icon">Collection<wbr>Value</a>
 					</li>
 					<li class=" tsd-kind-type-alias">
 						<a href="globals.html#combineddescriptionsoptions" class="tsd-kind-icon">Combined<wbr>Descriptions<wbr>Options</a>
@@ -1390,6 +1426,18 @@ ws://127.0.0.1:9229/..</code> as normally appears for <a href="https://nodejs.or
 					</li>
 					<li class=" tsd-kind-type-alias tsd-is-not-exported">
 						<a href="globals.html#consumeslotconnectionmatch" class="tsd-kind-icon">Consume<wbr>Slot<wbr>Connection<wbr>Match</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-is-not-exported">
+						<a href="globals.html#countchange" class="tsd-kind-icon">Count<wbr>Change</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-is-not-exported">
+						<a href="globals.html#countdata" class="tsd-kind-icon">Count<wbr>Data</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-is-not-exported">
+						<a href="globals.html#countmodel" class="tsd-kind-icon">Count<wbr>Model</a>
+					</li>
+					<li class=" tsd-kind-type-alias">
+						<a href="globals.html#countoperation" class="tsd-kind-icon">Count<wbr>Operation</a>
 					</li>
 					<li class=" tsd-kind-type-alias tsd-is-not-exported">
 						<a href="globals.html#deltaitems" class="tsd-kind-icon">Delta<wbr>Items</a>
@@ -1502,6 +1550,15 @@ ws://127.0.0.1:9229/..</code> as normally appears for <a href="https://nodejs.or
 					<li class=" tsd-kind-type-alias">
 						<a href="globals.html#planningresultoptions" class="tsd-kind-icon">Planning<wbr>Result<wbr>Options</a>
 					</li>
+					<li class=" tsd-kind-type-alias tsd-has-type-parameter tsd-is-not-exported">
+						<a href="globals.html#rawcollection" class="tsd-kind-icon">Raw<wbr>Collection</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-is-not-exported">
+						<a href="globals.html#rawcount" class="tsd-kind-icon">Raw<wbr>Count</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-has-type-parameter tsd-is-not-exported">
+						<a href="globals.html#rawsingleton" class="tsd-kind-icon">Raw<wbr>Singleton</a>
+					</li>
 					<li class=" tsd-kind-type-alias">
 						<a href="globals.html#recipecomponent" class="tsd-kind-icon">Recipe<wbr>Component</a>
 					</li>
@@ -1559,6 +1616,18 @@ ws://127.0.0.1:9229/..</code> as normally appears for <a href="https://nodejs.or
 					<li class=" tsd-kind-type-alias tsd-is-not-exported">
 						<a href="globals.html#serializedprovideslotconnectionspec" class="tsd-kind-icon">Serialized<wbr>Provide<wbr>Slot<wbr>Connection<wbr>Spec</a>
 					</li>
+					<li class=" tsd-kind-type-alias tsd-has-type-parameter tsd-is-not-exported">
+						<a href="globals.html#singletonchange" class="tsd-kind-icon">Singleton<wbr>Change</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-has-type-parameter tsd-is-not-exported">
+						<a href="globals.html#singletondata" class="tsd-kind-icon">Singleton<wbr>Data</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-has-type-parameter tsd-is-not-exported">
+						<a href="globals.html#singletonmodel" class="tsd-kind-icon">Singleton<wbr>Model</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-has-type-parameter tsd-is-not-exported">
+						<a href="globals.html#singletonoperation" class="tsd-kind-icon">Singleton<wbr>Operation</a>
+					</li>
 					<li class=" tsd-kind-type-alias">
 						<a href="globals.html#slotcomposeroptions" class="tsd-kind-icon">Slot<wbr>Composer<wbr>Options</a>
 					</li>
@@ -1606,6 +1675,12 @@ ws://127.0.0.1:9229/..</code> as normally appears for <a href="https://nodejs.or
 					</li>
 					<li class=" tsd-kind-type-alias">
 						<a href="globals.html#version" class="tsd-kind-icon">Version</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-is-not-exported">
+						<a href="globals.html#versioninfo" class="tsd-kind-icon">Version<wbr>Info</a>
+					</li>
+					<li class=" tsd-kind-type-alias">
+						<a href="globals.html#versionmap" class="tsd-kind-icon">Version<wbr>Map</a>
 					</li>
 					<li class=" tsd-kind-type-alias">
 						<a href="globals.html#backquotedstring" class="tsd-kind-icon">backquoted<wbr>String</a>
