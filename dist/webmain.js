@@ -550,7 +550,7 @@ function bnClone(){var a=nbi();this.copyTo(a);return a}function bnIntValue(){if(
 function Arcfour(){this.i=0;this.j=0;this.S=new Array();}function ARC4init(d){var c,a,b;for(c=0;c<256;++c){this.S[c]=c;}a=0;for(c=0;c<256;++c){a=(a+this.S[c]+d[c%d.length])&255;b=this.S[c];this.S[c]=this.S[a];this.S[a]=b;}this.i=0;this.j=0;}function ARC4next(){var a;this.i=(this.i+1)&255;this.j=(this.j+this.S[this.i])&255;a=this.S[this.i];this.S[this.i]=this.S[this.j];this.S[this.j]=a;return this.S[(a+this.S[this.i])&255]}Arcfour.prototype.init=ARC4init;Arcfour.prototype.next=ARC4next;function prng_newstate(){return new Arcfour()}var rng_psize=256;
 /*! (c) Tom Wu | http://www-cs-students.stanford.edu/~tjw/jsbn/
  */
-var rng_state;var rng_pool;var rng_pptr;function rng_seed_int(a){rng_pool[rng_pptr++]^=a&255;rng_pool[rng_pptr++]^=(a>>8)&255;rng_pool[rng_pptr++]^=(a>>16)&255;rng_pool[rng_pptr++]^=(a>>24)&255;if(rng_pptr>=rng_psize){rng_pptr-=rng_psize;}}function rng_seed_time(){rng_seed_int(new Date().getTime());}if(rng_pool==null){rng_pool=new Array();rng_pptr=0;var t;if(window$1!==undefined&&(window$1.msCrypto!==undefined)){var crypto$1=window$1.msCrypto;if(crypto$1.getRandomValues){var ua=new Uint8Array(32);crypto$1.getRandomValues(ua);for(t=0;t<32;++t){rng_pool[rng_pptr++]=ua[t];}}}while(rng_pptr<rng_psize){t=Math.floor(65536*Math.random());rng_pool[rng_pptr++]=t>>>8;rng_pool[rng_pptr++]=t&255;}rng_pptr=0;rng_seed_time();}function rng_get_byte(){if(rng_state==null){rng_seed_time();rng_state=prng_newstate();rng_state.init(rng_pool);for(rng_pptr=0;rng_pptr<rng_pool.length;++rng_pptr){rng_pool[rng_pptr]=0;}rng_pptr=0;}return rng_state.next()}function rng_get_bytes(b){var a;for(a=0;a<b.length;++a){b[a]=rng_get_byte();}}function SecureRandom(){}SecureRandom.prototype.nextBytes=rng_get_bytes;
+var rng_state;var rng_pool;var rng_pptr;function rng_seed_int(a){rng_pool[rng_pptr++]^=a&255;rng_pool[rng_pptr++]^=(a>>8)&255;rng_pool[rng_pptr++]^=(a>>16)&255;rng_pool[rng_pptr++]^=(a>>24)&255;if(rng_pptr>=rng_psize){rng_pptr-=rng_psize;}}function rng_seed_time(){rng_seed_int(new Date().getTime());}if(rng_pool==null){rng_pool=new Array();rng_pptr=0;var t;if(window$1!==undefined&&(window$1.msCrypto!==undefined)){var crypto=window$1.msCrypto;if(crypto.getRandomValues){var ua=new Uint8Array(32);crypto.getRandomValues(ua);for(t=0;t<32;++t){rng_pool[rng_pptr++]=ua[t];}}}while(rng_pptr<rng_psize){t=Math.floor(65536*Math.random());rng_pool[rng_pptr++]=t>>>8;rng_pool[rng_pptr++]=t&255;}rng_pptr=0;rng_seed_time();}function rng_get_byte(){if(rng_state==null){rng_seed_time();rng_state=prng_newstate();rng_state.init(rng_pool);for(rng_pptr=0;rng_pptr<rng_pool.length;++rng_pptr){rng_pool[rng_pptr]=0;}rng_pptr=0;}return rng_state.next()}function rng_get_bytes(b){var a;for(a=0;a<b.length;++a){b[a]=rng_get_byte();}}function SecureRandom(){}SecureRandom.prototype.nextBytes=rng_get_bytes;
 /*! (c) Tom Wu | http://www-cs-students.stanford.edu/~tjw/jsbn/
  */
 function parseBigInt(b,a){return new BigInteger(b,a)}function pkcs1pad2(e,h){if(h<e.length+11){throw"Message too long for RSA";return null}var g=new Array();var d=e.length-1;while(d>=0&&h>0){var f=e.charCodeAt(d--);if(f<128){g[--h]=f;}else{if((f>127)&&(f<2048)){g[--h]=(f&63)|128;g[--h]=(f>>6)|192;}else{g[--h]=(f&63)|128;g[--h]=((f>>6)&63)|128;g[--h]=(f>>12)|224;}}}g[--h]=0;var b=new SecureRandom();var a=new Array();while(h>2){a[0]=0;while(a[0]==0){b.nextBytes(a);}g[--h]=a[0];}g[--h]=2;g[--h]=0;return new BigInteger(g)}function oaep_mgf1_arr(c,a,e){var b="",d=0;while(b.length<a){b+=e(String.fromCharCode.apply(String,c.concat([(d&4278190080)>>24,(d&16711680)>>16,(d&65280)>>8,d&255])));d+=1;}return b}function oaep_pad(q,a,f,l){var c=KJUR.crypto.MessageDigest;var o=KJUR.crypto.Util;var b=null;if(!f){f="sha1";}if(typeof f==="string"){b=c.getCanonicalAlgName(f);l=c.getHashLength(b);f=function(i){return hextorstr(o.hashHex(rstrtohex(i),b))};}if(q.length+2*l+2>a){throw"Message too long for RSA"}var k="",e;for(e=0;e<a-q.length-2*l-2;e+=1){k+="\x00";}var h=f("")+k+"\x01"+q;var g=new Array(l);new SecureRandom().nextBytes(g);var j=oaep_mgf1_arr(g,h.length,f);var p=[];for(e=0;e<h.length;e+=1){p[e]=h.charCodeAt(e)^j.charCodeAt(e);}var m=oaep_mgf1_arr(p,g.length,f);var d=[0];for(e=0;e<g.length;e+=1){d[e+1]=g[e]^m.charCodeAt(e);}return new BigInteger(d.concat(p))}function RSAKey(){this.n=null;this.e=0;this.d=null;this.p=null;this.q=null;this.dmp1=null;this.dmq1=null;this.coeff=null;}function RSASetPublic(b,a){this.isPublic=true;this.isPrivate=false;if(typeof b!=="string"){this.n=b;this.e=a;}else{if(b!=null&&a!=null&&b.length>0&&a.length>0){this.n=parseBigInt(b,16);this.e=parseInt(a,16);}else{throw"Invalid RSA public key"}}}function RSADoPublic(a){return a.modPowInt(this.e,this.n)}function RSAEncrypt(d){var a=pkcs1pad2(d,(this.n.bitLength()+7)>>3);if(a==null){return null}var e=this.doPublic(a);if(e==null){return null}var b=e.toString(16);if((b.length&1)==0){return b}else{return "0"+b}}function RSAEncryptOAEP(f,e,b){var a=oaep_pad(f,(this.n.bitLength()+7)>>3,e,b);if(a==null){return null}var g=this.doPublic(a);if(g==null){return null}var d=g.toString(16);if((d.length&1)==0){return d}else{return "0"+d}}RSAKey.prototype.doPublic=RSADoPublic;RSAKey.prototype.setPublic=RSASetPublic;RSAKey.prototype.encrypt=RSAEncrypt;RSAKey.prototype.encryptOAEP=RSAEncryptOAEP;RSAKey.prototype.type="RSA";
@@ -723,6 +723,14 @@ var jsrsasign = {
 	jws: jws,
 	lang: lang
 };
+
+// Copyright (c) 2018 Google Inc. All rights reserved.
+// This code may only be used under the BSD style license found at
+// http://polymer.github.io/LICENSE.txt
+// Code distributed by Google as part of this project is also
+// subject to an additional IP rights grant found at
+// http://polymer.github.io/PATENTS.txt
+const crypto$1 = window.crypto;
 
 // ISC License (ISC)
 //
@@ -923,7 +931,7 @@ class WebCryptoWrappedKey {
     }
     unwrap(privKey) {
         const webPrivKey = privKey;
-        return crypto.subtle.unwrapKey("raw", this.wrappedKeyData, webPrivKey.cryptoKey(), {
+        return crypto$1.subtle.unwrapKey("raw", this.wrappedKeyData, webPrivKey.cryptoKey(), {
             name: privKey.algorithm()
         }, {
             name: STORAGE_KEY_ALGORITHM,
@@ -982,10 +990,10 @@ class WebCryptoPublicKey extends WebCryptoStorableKey {
     static sha256(str) {
         // We transform the string into an arraybuffer.
         const buffer = new Uint8Array(str.split('').map(x => x.charCodeAt(0)));
-        return crypto.subtle.digest("SHA-256", buffer).then((hash) => WebCryptoPublicKey.hex(hash));
+        return crypto$1.subtle.digest("SHA-256", buffer).then((hash) => WebCryptoPublicKey.hex(hash));
     }
     fingerprint() {
-        return crypto.subtle.exportKey("jwk", this.cryptoKey())
+        return crypto$1.subtle.exportKey("jwk", this.cryptoKey())
             // Use the modulus 'n' as the fingerprint since 'e' is fixed
             .then(key => WebCryptoPublicKey.digest(key['n']));
     }
@@ -993,14 +1001,14 @@ class WebCryptoPublicKey extends WebCryptoStorableKey {
 class WebCryptoSessionKey {
     // Visible/Used for testing only.
     decrypt(buffer, iv) {
-        return crypto.subtle.decrypt({
+        return crypto$1.subtle.decrypt({
             name: this.algorithm(),
             iv,
         }, this.sessionKey, buffer);
     }
     // Visible/Used for testing only.
     encrypt(buffer, iv) {
-        return crypto.subtle.encrypt({
+        return crypto$1.subtle.encrypt({
             name: this.algorithm(),
             iv
         }, this.sessionKey, buffer);
@@ -1014,7 +1022,7 @@ class WebCryptoSessionKey {
      * removed once the the key-blessing algorithm is implemented.
      */
     export() {
-        return crypto.subtle.exportKey("raw", this.sessionKey).then((raw) => {
+        return crypto$1.subtle.exportKey("raw", this.sessionKey).then((raw) => {
             const buf = new Uint8Array(raw);
             let res = "";
             buf.forEach((x) => res += (x < 16 ? '0' : '') + x.toString(16));
@@ -1032,7 +1040,7 @@ class WebCryptoSessionKey {
     disposeToWrappedKeyUsing(pkey) {
         try {
             const webPkey = pkey;
-            const rawWrappedKey = crypto.subtle.wrapKey("raw", this.sessionKey, pkey.cryptoKey(), {
+            const rawWrappedKey = crypto$1.subtle.wrapKey("raw", this.sessionKey, pkey.cryptoKey(), {
                 name: webPkey.algorithm(),
             });
             return rawWrappedKey.then(rawKey => new WebCryptoWrappedKey(new Uint8Array(rawKey), pkey));
@@ -1071,7 +1079,7 @@ class WebCryptoDeviceKey extends WebCryptoStorableKey {
  */
 class WebCryptoKeyGenerator {
     generateWrappedStorageKey(deviceKey) {
-        const generatedKey = crypto.subtle.generateKey({ name: 'AES-GCM', length: 256 }, true, ["encrypt", "decrypt", "wrapKey", "unwrapKey"]);
+        const generatedKey = crypto$1.subtle.generateKey({ name: 'AES-GCM', length: 256 }, true, ["encrypt", "decrypt", "wrapKey", "unwrapKey"]);
         return generatedKey.then(key => new WebCryptoSessionKey(key))
             .then(skey => skey.disposeToWrappedKeyUsing(deviceKey.publicKey()));
     }
@@ -1084,7 +1092,7 @@ class WebCryptoKeyGenerator {
         return Promise.reject("Not implemented");
     }
     generateDeviceKey() {
-        const generatedKey = crypto.subtle.generateKey({
+        const generatedKey = crypto$1.subtle.generateKey({
             hash: { name: DEVICE_KEY_HASH_ALGORITHM },
             // TODO: Note, RSA-OAEP is deprecated, we should move to ECDH in the future, but it
             // doesn't use key-wrapping, instead it uses a different mechanism: key-derivation.
@@ -1104,7 +1112,7 @@ class WebCryptoKeyGenerator {
     importKey(pemKey) {
         const key = jsrsasign.KEYUTIL.getKey(pemKey);
         const jwk = jsrsasign.KEYUTIL.getJWKFromKey(key);
-        return crypto.subtle.importKey("jwk", jwk, {
+        return crypto$1.subtle.importKey("jwk", jwk, {
             name: X509_CERTIFICATE_ALGORITHM,
             hash: { name: X509_CERTIFICATE_HASH_ALGORITHM }
         }, true, ["encrypt", "wrapKey"]).then(ikey => new WebCryptoPublicKey(ikey));

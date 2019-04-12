@@ -4,8 +4,6 @@
 // Code distributed by Google as part of this project is also
 // subject to an additional IP rights grant found at
 // http://polymer.github.io/PATENTS.txt
-
 import WebCrypto from 'node-webcrypto-ossl';
-
-global.crypto = new WebCrypto();
-export const crypto = global.crypto;
+export const crypto = new WebCrypto();
+//# sourceMappingURL=crypto-node.js.map

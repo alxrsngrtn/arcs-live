@@ -1,8 +1,5 @@
-commit 2c5e81b248d9564ff5b1421e4d3e448007dc3bf8
-Author: Paul Lindner <lindner@inuus.com>
-Date:   Thu Apr 11 05:54:16 2019 -0700
+commit a050d2c1849298d98559417354eec4b28aafee32
+Author: raulverag <42563960+raulverag@users.noreply.github.com>
+Date:   Thu Apr 11 20:34:54 2019 -0700
 
-    Improve Comparable types for strictFunctionTypes (#2878)
-    
-    * Improve Comparable types for strictFunctionTypes
-    * rename util.ts --> comparable.ts
+    Convert src/platform/crypto-node to ts. (#2883)

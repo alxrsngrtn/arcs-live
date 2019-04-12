@@ -1,7 +1,8 @@
 import assert from 'assert';
-import crypto$1 from 'crypto';
+import crypto from 'crypto';
 import idb from 'idb';
 import rs from 'jsrsasign';
+import WebCrypto from 'node-webcrypto-ossl';
 import WebSocket from 'ws';
 import fetch from 'node-fetch';
 import fs from 'fs';
@@ -12784,7 +12785,7 @@ const parse = peg$parse;
 // Copyright (c) 2017 Google Inc. All rights reserved.
 
 async function digest(str) {
-  const sha = crypto$1.createHash('sha1');
+  const sha = crypto.createHash('sha1');
   sha.update(str);
   return Promise.resolve().then(() => sha.digest('hex'));
 }
@@ -17383,6 +17384,9 @@ class WebCryptoMemoryKeyStorage {
     }
 }
 
+// Copyright (c) 2018 Google Inc. All rights reserved.
+const crypto$1 = new WebCrypto();
+
 // ISC License (ISC)
 //
 // Copyright 2017 Rhett Robinson
@@ -17582,7 +17586,7 @@ class WebCryptoWrappedKey {
     }
     unwrap(privKey) {
         const webPrivKey = privKey;
-        return crypto.subtle.unwrapKey("raw", this.wrappedKeyData, webPrivKey.cryptoKey(), {
+        return crypto$1.subtle.unwrapKey("raw", this.wrappedKeyData, webPrivKey.cryptoKey(), {
             name: privKey.algorithm()
         }, {
             name: STORAGE_KEY_ALGORITHM,
@@ -17641,10 +17645,10 @@ class WebCryptoPublicKey extends WebCryptoStorableKey {
     static sha256(str) {
         // We transform the string into an arraybuffer.
         const buffer = new Uint8Array(str.split('').map(x => x.charCodeAt(0)));
-        return crypto.subtle.digest("SHA-256", buffer).then((hash) => WebCryptoPublicKey.hex(hash));
+        return crypto$1.subtle.digest("SHA-256", buffer).then((hash) => WebCryptoPublicKey.hex(hash));
     }
     fingerprint() {
-        return crypto.subtle.exportKey("jwk", this.cryptoKey())
+        return crypto$1.subtle.exportKey("jwk", this.cryptoKey())
             // Use the modulus 'n' as the fingerprint since 'e' is fixed
             .then(key => WebCryptoPublicKey.digest(key['n']));
     }
@@ -17652,14 +17656,14 @@ class WebCryptoPublicKey extends WebCryptoStorableKey {
 class WebCryptoSessionKey {
     // Visible/Used for testing only.
     decrypt(buffer, iv) {
-        return crypto.subtle.decrypt({
+        return crypto$1.subtle.decrypt({
             name: this.algorithm(),
             iv,
         }, this.sessionKey, buffer);
     }
     // Visible/Used for testing only.
     encrypt(buffer, iv) {
-        return crypto.subtle.encrypt({
+        return crypto$1.subtle.encrypt({
             name: this.algorithm(),
             iv
         }, this.sessionKey, buffer);
@@ -17673,7 +17677,7 @@ class WebCryptoSessionKey {
      * removed once the the key-blessing algorithm is implemented.
      */
     export() {
-        return crypto.subtle.exportKey("raw", this.sessionKey).then((raw) => {
+        return crypto$1.subtle.exportKey("raw", this.sessionKey).then((raw) => {
             const buf = new Uint8Array(raw);
             let res = "";
             buf.forEach((x) => res += (x < 16 ? '0' : '') + x.toString(16));
@@ -17691,7 +17695,7 @@ class WebCryptoSessionKey {
     disposeToWrappedKeyUsing(pkey) {
         try {
             const webPkey = pkey;
-            const rawWrappedKey = crypto.subtle.wrapKey("raw", this.sessionKey, pkey.cryptoKey(), {
+            const rawWrappedKey = crypto$1.subtle.wrapKey("raw", this.sessionKey, pkey.cryptoKey(), {
                 name: webPkey.algorithm(),
             });
             return rawWrappedKey.then(rawKey => new WebCryptoWrappedKey(new Uint8Array(rawKey), pkey));
@@ -17730,7 +17734,7 @@ class WebCryptoDeviceKey extends WebCryptoStorableKey {
  */
 class WebCryptoKeyGenerator {
     generateWrappedStorageKey(deviceKey) {
-        const generatedKey = crypto.subtle.generateKey({ name: 'AES-GCM', length: 256 }, true, ["encrypt", "decrypt", "wrapKey", "unwrapKey"]);
+        const generatedKey = crypto$1.subtle.generateKey({ name: 'AES-GCM', length: 256 }, true, ["encrypt", "decrypt", "wrapKey", "unwrapKey"]);
         return generatedKey.then(key => new WebCryptoSessionKey(key))
             .then(skey => skey.disposeToWrappedKeyUsing(deviceKey.publicKey()));
     }
@@ -17743,7 +17747,7 @@ class WebCryptoKeyGenerator {
         return Promise.reject("Not implemented");
     }
     generateDeviceKey() {
-        const generatedKey = crypto.subtle.generateKey({
+        const generatedKey = crypto$1.subtle.generateKey({
             hash: { name: DEVICE_KEY_HASH_ALGORITHM },
             // TODO: Note, RSA-OAEP is deprecated, we should move to ECDH in the future, but it
             // doesn't use key-wrapping, instead it uses a different mechanism: key-derivation.
@@ -17763,7 +17767,7 @@ class WebCryptoKeyGenerator {
     importKey(pemKey) {
         const key = rs.KEYUTIL.getKey(pemKey);
         const jwk = rs.KEYUTIL.getJWKFromKey(key);
-        return crypto.subtle.importKey("jwk", jwk, {
+        return crypto$1.subtle.importKey("jwk", jwk, {
             name: X509_CERTIFICATE_ALGORITHM,
             hash: { name: X509_CERTIFICATE_HASH_ALGORITHM }
         }, true, ["encrypt", "wrapKey"]).then(ikey => new WebCryptoPublicKey(ikey));

@@ -9,6 +9,7 @@
  */
 import idb from 'idb';
 import rs from 'jsrsasign';
+import { crypto } from '../../platform/crypto-web.js';
 import { decode, encode } from './base64';
 const DEVICE_KEY_ALGORITHM = 'RSA-OAEP';
 const X509_CERTIFICATE_ALGORITHM = "RSA-OAEP";

@@ -1093,6 +1093,18 @@
         "version": "b0d0272787b7fd9cacdc53726559fcdd8a76c66bdcf6a34ce3eba41cf9ea899b",
         "signature": "ea9a7b2f13e29a0cb3bffa9123573fd012b44b8142a59f52df885919bbe34801"
       },
+      "/home/travis/build/PolymerLabs/arcs/node_modules/webcrypto-core/index.d.ts": {
+        "version": "f0382edf8460db66cd5ae2fb972ef509f39fd88b54de046c82cb452232bf496c",
+        "signature": "f0382edf8460db66cd5ae2fb972ef509f39fd88b54de046c82cb452232bf496c"
+      },
+      "/home/travis/build/PolymerLabs/arcs/node_modules/node-webcrypto-ossl/index.d.ts": {
+        "version": "4f231a718231585ff4b32e110bbd774fd62cc427a0b02e3e6c3fd04befe9ae55",
+        "signature": "4f231a718231585ff4b32e110bbd774fd62cc427a0b02e3e6c3fd04befe9ae55"
+      },
+      "/home/travis/build/PolymerLabs/arcs/src/platform/crypto-node.ts": {
+        "version": "ffb0ae71e3353e7e8fea689b31d443b11d991d2ab1a31785826fb740b99172bc",
+        "signature": "8f6871f81fffaf828e36187631f8a573868467439467f820ff3eb91e58f8a994"
+      },
       "/home/travis/build/PolymerLabs/arcs/src/platform/crypto-web.ts": {
         "version": "7ab23e255e5d29c045edddcfa9d7556b974e4846a1ae1ce4011af28a8eeb2762",
         "signature": "72037fe2552d3689ebf6c52161fda334c1f0e737d9108f4e9d74864c8ff27619"
@@ -1146,7 +1158,7 @@
         "signature": "a6ebbd3d564d34e22f17f696f28516c5b226e3f0a69def14352bfea93b255e0d"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/keymgmt/webcrypto.ts": {
-        "version": "61a6f9060ddfb75780355d3f75dfc27c374854e2795e4f57ef1ece633e9c753d",
+        "version": "1fa6a6f59b7afd38f474853f6dd6756b07ca5bc3e70094fee48d08facd6ce1e5",
         "signature": "4704b884ecdd21a23bc522a885a7f875db35c6871454846e5ddd1488e25453b5"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/keymgmt/manager.ts": {
@@ -3703,6 +3715,21 @@
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
       ],
+      "/home/travis/build/PolymerLabs/arcs/node_modules/webcrypto-core/index.d.ts": [
+        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
+        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
+      ],
+      "/home/travis/build/PolymerLabs/arcs/node_modules/node-webcrypto-ossl/index.d.ts": [
+        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/index.d.ts",
+        "/home/travis/build/PolymerLabs/arcs/node_modules/webcrypto-core/index.d.ts",
+        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
+        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
+      ],
+      "/home/travis/build/PolymerLabs/arcs/src/platform/crypto-node.ts": [
+        "/home/travis/build/PolymerLabs/arcs/node_modules/node-webcrypto-ossl/index.d.ts",
+        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
+        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
+      ],
       "/home/travis/build/PolymerLabs/arcs/src/platform/crypto-web.ts": [
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
@@ -3769,6 +3796,7 @@
       ],
       "/home/travis/build/PolymerLabs/arcs/src/runtime/keymgmt/webcrypto.ts": [
         "/home/travis/build/PolymerLabs/arcs/node_modules/idb/lib/idb.d.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/platform/crypto-web.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/keymgmt/base64.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/keymgmt/keys.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/keymgmt/manager.ts",
@@ -5596,6 +5624,12 @@
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
       ],
+      "/home/travis/build/PolymerLabs/arcs/node_modules/node-webcrypto-ossl/index.d.ts": [
+        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/index.d.ts",
+        "/home/travis/build/PolymerLabs/arcs/node_modules/webcrypto-core/index.d.ts",
+        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
+        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
+      ],
       "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node-fetch/index.d.ts": [
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/http.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/url.d.ts",
@@ -6077,6 +6111,10 @@
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
       ],
+      "/home/travis/build/PolymerLabs/arcs/node_modules/webcrypto-core/index.d.ts": [
+        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
+        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
+      ],
       "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts": [
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts"
       ],
@@ -6363,6 +6401,9 @@
       "/home/travis/build/PolymerLabs/arcs/src/platform/assert-node.ts",
       "/home/travis/build/PolymerLabs/arcs/src/platform/atob-node.ts",
       "/home/travis/build/PolymerLabs/arcs/src/platform/btoa-node.ts",
+      "/home/travis/build/PolymerLabs/arcs/node_modules/webcrypto-core/index.d.ts",
+      "/home/travis/build/PolymerLabs/arcs/node_modules/node-webcrypto-ossl/index.d.ts",
+      "/home/travis/build/PolymerLabs/arcs/src/platform/crypto-node.ts",
       "/home/travis/build/PolymerLabs/arcs/src/platform/crypto-web.ts",
       "/home/travis/build/PolymerLabs/arcs/src/platform/date-node.ts",
       "/home/travis/build/PolymerLabs/arcs/src/platform/deviceinfo-node.ts",
