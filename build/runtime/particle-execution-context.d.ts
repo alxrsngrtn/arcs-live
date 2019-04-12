@@ -11,9 +11,19 @@ import { Handle } from './handle.js';
 import { Id, IdGenerator } from './id.js';
 import { Loader } from './loader.js';
 import { ParticleSpec } from './particle-spec.js';
+import { Particle } from './particle.js';
 import { StorageProxy } from './storage-proxy.js';
+import { Type } from './type.js';
 import { MessagePort } from './message-channel.js';
 export declare type PecFactory = (pecId: Id, idGenerator: IdGenerator) => MessagePort;
+export declare type InnerArcHandle = {
+    createHandle(type: Type, name: string, hostParticle?: Particle): Promise<Handle>;
+    mapHandle(handle: Handle): Promise<string>;
+    createSlot(transformationParticle: Particle, transformationSlotName: string, handleId: string): Promise<string>;
+    loadRecipe(recipe: string): Promise<{
+        error?: string;
+    }>;
+};
 export declare class ParticleExecutionContext {
     private apiPort;
     private particles;
@@ -25,15 +35,10 @@ export declare class ParticleExecutionContext {
     private keyedProxies;
     constructor(port: any, pecId: Id, idGenerator: IdGenerator, loader: Loader);
     generateID(): string;
-    innerArcHandle(arcId: string, particleId: string): {
-        createHandle(type: any, name: any, hostParticle: any): Promise<{}>;
-        mapHandle(handle: Handle): Promise<{}>;
-        createSlot(transformationParticle: any, transformationSlotName: any, handleId: any): Promise<{}>;
-        loadRecipe(recipe: any): Promise<{}>;
-    };
+    innerArcHandle(arcId: string, particleId: string): InnerArcHandle;
     getStorageProxy(storageKey: any, type: any): StorageProxy | Promise<StorageProxy>;
     defaultCapabilitySet(): {
-        constructInnerArc: (particle: any) => Promise<{}>;
+        constructInnerArc: (particle: any) => Promise<InnerArcHandle>;
     };
     _instantiateParticle(id: string, spec: ParticleSpec, proxies: Map<string, StorageProxy>): Promise<any[]>;
     readonly relevance: Map<any, any>;

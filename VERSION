@@ -1,5 +1,5 @@
-commit e8ff50d94f6a0ffac9c6e77ea08e8855f4fc27d5
-Author: raulverag <42563960+raulverag@users.noreply.github.com>
-Date:   Thu Apr 11 21:46:25 2019 -0700
+commit 9de8fd1df60701d129fff1410571b19561aacd67
+Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
+Date:   Fri Apr 12 17:18:27 2019 +1000
 
-    Convert src/platform/mocha-node to ts (#2886)
+    Added some types (#2888)

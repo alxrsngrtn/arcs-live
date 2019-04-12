@@ -83,16 +83,19 @@
 				<h2>Index</h2>
 				<section class="tsd-panel tsd-index-panel">
 					<div class="tsd-index-content">
-						<section class="tsd-index-section ">
+						<section class="tsd-index-section tsd-is-inherited">
 							<h3>Constructors</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite"><a href="multiplexerdomparticle.html#constructor" class="tsd-kind-icon">constructor</a></li>
+								<li class="tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited"><a href="multiplexerdomparticle.html#constructor" class="tsd-kind-icon">constructor</a></li>
 							</ul>
 						</section>
-						<section class="tsd-index-section tsd-is-inherited">
+						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="multiplexerdomparticle.html#_connbyhostedconn" class="tsd-kind-icon">_conn<wbr>ByHosted<wbr>Conn</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="multiplexerdomparticle.html#_itemsubidbyhostedslotid" class="tsd-kind-icon">_item<wbr>Sub<wbr>IdBy<wbr>Hosted<wbr>Slot<wbr>Id</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="multiplexerdomparticle.html#extradata" class="tsd-kind-icon">extra<wbr>Data</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="multiplexerdomparticle.html#handleids" class="tsd-kind-icon">handle<wbr>Ids</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="multiplexerdomparticle.html#handles" class="tsd-kind-icon">handles</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="multiplexerdomparticle.html#relevances" class="tsd-kind-icon">relevances</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-protected"><a href="multiplexerdomparticle.html#slotproxiesbyname" class="tsd-kind-icon">slot<wbr>Proxies<wbr>ByName</a></li>
@@ -158,20 +161,21 @@
 					</div>
 				</section>
 			</section>
-			<section class="tsd-panel-group tsd-member-group ">
+			<section class="tsd-panel-group tsd-member-group tsd-is-inherited">
 				<h2>Constructors</h2>
-				<section class="tsd-panel tsd-member tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite">
+				<section class="tsd-panel tsd-member tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited">
 					<a name="constructor" class="tsd-anchor"></a>
 					<h3>constructor</h3>
-					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite">
+					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited">
 						<li class="tsd-signature tsd-kind-icon">new <wbr>Multiplexer<wbr>Dom<wbr>Particle<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="multiplexerdomparticle.html" class="tsd-signature-type">MultiplexerDomParticle</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
-								<p>Overrides <a href="domparticlebase.html">DomParticleBase</a>.<a href="domparticlebase.html#constructor">constructor</a></p>
+								<p>Inherited from <a href="domparticlebase.html">DomParticleBase</a>.<a href="domparticlebase.html#constructor">constructor</a></p>
+								<p>Overrides Particle.__constructor</p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/e8ff50d/src/runtime/multiplexer-dom-particle.ts#L16">runtime/multiplexer-dom-particle.ts:16</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9de8fd1/src/runtime/dom-particle-base.ts#L22">runtime/dom-particle-base.ts:22</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <a href="multiplexerdomparticle.html" class="tsd-signature-type">MultiplexerDomParticle</a></h4>
@@ -179,8 +183,28 @@
 					</ul>
 				</section>
 			</section>
-			<section class="tsd-panel-group tsd-member-group tsd-is-inherited">
+			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Properties</h2>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private">
+					<a name="_connbyhostedconn" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> _conn<wbr>ByHosted<wbr>Conn</h3>
+					<div class="tsd-signature tsd-kind-icon">_conn<wbr>ByHosted<wbr>Conn<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Map</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> =&nbsp;new Map()</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9de8fd1/src/runtime/multiplexer-dom-particle.ts#L23">runtime/multiplexer-dom-particle.ts:23</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private">
+					<a name="_itemsubidbyhostedslotid" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> _item<wbr>Sub<wbr>IdBy<wbr>Hosted<wbr>Slot<wbr>Id</h3>
+					<div class="tsd-signature tsd-kind-icon">_item<wbr>Sub<wbr>IdBy<wbr>Hosted<wbr>Slot<wbr>Id<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Map</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> =&nbsp;new Map()</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9de8fd1/src/runtime/multiplexer-dom-particle.ts#L22">runtime/multiplexer-dom-particle.ts:22</a></li>
+						</ul>
+					</aside>
+				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
 					<a name="extradata" class="tsd-anchor"></a>
 					<h3>extra<wbr>Data</h3>
@@ -188,9 +212,27 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="particle.html">Particle</a>.<a href="particle.html#extradata">extraData</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/e8ff50d/src/runtime/particle.ts#L25">runtime/particle.ts:25</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9de8fd1/src/runtime/particle.ts#L25">runtime/particle.ts:25</a></li>
 						</ul>
 					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="handleids" class="tsd-anchor"></a>
+					<h3>handle<wbr>Ids</h3>
+					<div class="tsd-signature tsd-kind-icon">handle<wbr>Ids<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9de8fd1/src/runtime/multiplexer-dom-particle.ts#L24">runtime/multiplexer-dom-particle.ts:24</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-type-declaration">
+						<h4>Type declaration</h4>
+						<ul class="tsd-parameters">
+							<li class="tsd-parameter-index-signature">
+								<h5><span class="tsd-signature-symbol">[</span>key: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">]: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Handle</span><span class="tsd-signature-symbol">&gt;</span></h5>
+							</li>
+						</ul>
+					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
 					<a name="handles" class="tsd-anchor"></a>
@@ -199,7 +241,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="particle.html">Particle</a>.<a href="particle.html#handles">handles</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/e8ff50d/src/runtime/particle.ts#L27">runtime/particle.ts:27</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9de8fd1/src/runtime/particle.ts#L27">runtime/particle.ts:27</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -210,7 +252,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="particle.html">Particle</a>.<a href="particle.html#relevances">relevances</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/e8ff50d/src/runtime/particle.ts#L26">runtime/particle.ts:26</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9de8fd1/src/runtime/particle.ts#L26">runtime/particle.ts:26</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -221,7 +263,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="particle.html">Particle</a>.<a href="particle.html#slotproxiesbyname">slotProxiesByName</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/e8ff50d/src/runtime/particle.ts#L33">runtime/particle.ts:33</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9de8fd1/src/runtime/particle.ts#L33">runtime/particle.ts:33</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -232,7 +274,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from Particle.spec</p>
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/e8ff50d/src/runtime/particle.ts#L24">runtime/particle.ts:24</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9de8fd1/src/runtime/particle.ts#L24">runtime/particle.ts:24</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -243,7 +285,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="particle.html">Particle</a>.<a href="particle.html#spec-1">spec</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/e8ff50d/src/runtime/particle.ts#L23">runtime/particle.ts:23</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9de8fd1/src/runtime/particle.ts#L23">runtime/particle.ts:23</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -261,7 +303,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="particle.html">Particle</a>.<a href="particle.html#busy">busy</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/e8ff50d/src/runtime/particle.ts#L110">runtime/particle.ts:110</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9de8fd1/src/runtime/particle.ts#L110">runtime/particle.ts:110</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
@@ -279,7 +321,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="particle.html">Particle</a>.<a href="particle.html#idle">idle</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/e8ff50d/src/runtime/particle.ts#L114">runtime/particle.ts:114</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9de8fd1/src/runtime/particle.ts#L114">runtime/particle.ts:114</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -297,7 +339,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="particle.html">Particle</a>.<a href="particle.html#relevance">relevance</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/e8ff50d/src/runtime/particle.ts#L118">runtime/particle.ts:118</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9de8fd1/src/runtime/particle.ts#L118">runtime/particle.ts:118</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -321,7 +363,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="domparticlebase.html">DomParticleBase</a>.<a href="domparticlebase.html#template">template</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/e8ff50d/src/runtime/dom-particle-base.ts#L30">runtime/dom-particle-base.ts:30</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9de8fd1/src/runtime/dom-particle-base.ts#L30">runtime/dom-particle-base.ts:30</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -347,7 +389,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="domparticlebase.html">DomParticleBase</a>.<a href="domparticlebase.html#_getstateargs">_getStateArgs</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/e8ff50d/src/runtime/dom-particle-base.ts#L142">runtime/dom-particle-base.ts:142</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9de8fd1/src/runtime/dom-particle-base.ts#L142">runtime/dom-particle-base.ts:142</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">[]</span></h4>
@@ -365,7 +407,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="../interfaces/statefuldomparticle.html">StatefulDomParticle</a>.<a href="../interfaces/statefuldomparticle.html#_invalidate">_invalidate</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/e8ff50d/src/runtime/dom-particle.ts#L18">runtime/dom-particle.ts:18</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9de8fd1/src/runtime/dom-particle.ts#L18">runtime/dom-particle.ts:18</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -376,34 +418,34 @@
 					<a name="_mapparticleconnections" class="tsd-anchor"></a>
 					<h3>_map<wbr>Particle<wbr>Connections</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">_map<wbr>Particle<wbr>Connections<span class="tsd-signature-symbol">(</span>listHandleName<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, particleHandleName<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, hostedParticle<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, handles<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, arc<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">_map<wbr>Particle<wbr>Connections<span class="tsd-signature-symbol">(</span>listHandleName<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, particleHandleName<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, hostedParticle<span class="tsd-signature-symbol">: </span><a href="particlespec.html" class="tsd-signature-type">ParticleSpec</a>, handles<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Map</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">Handle</span><span class="tsd-signature-symbol">&gt;</span>, arc<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/e8ff50d/src/runtime/multiplexer-dom-particle.ts#L22">runtime/multiplexer-dom-particle.ts:22</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9de8fd1/src/runtime/multiplexer-dom-particle.ts#L26">runtime/multiplexer-dom-particle.ts:26</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>listHandleName: <span class="tsd-signature-type">any</span></h5>
+									<h5>listHandleName: <span class="tsd-signature-type">string</span></h5>
 								</li>
 								<li>
-									<h5>particleHandleName: <span class="tsd-signature-type">any</span></h5>
+									<h5>particleHandleName: <span class="tsd-signature-type">string</span></h5>
 								</li>
 								<li>
-									<h5>hostedParticle: <span class="tsd-signature-type">any</span></h5>
+									<h5>hostedParticle: <a href="particlespec.html" class="tsd-signature-type">ParticleSpec</a></h5>
 								</li>
 								<li>
-									<h5>handles: <span class="tsd-signature-type">any</span></h5>
+									<h5>handles: <span class="tsd-signature-type">Map</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">Handle</span><span class="tsd-signature-symbol">&gt;</span></h5>
 								</li>
 								<li>
 									<h5>arc: <span class="tsd-signature-type">any</span></h5>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span></h4>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -418,7 +460,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="particle.html">Particle</a>.<a href="particle.html#addslotproxy">addSlotProxy</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/e8ff50d/src/runtime/particle.ts#L148">runtime/particle.ts:148</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9de8fd1/src/runtime/particle.ts#L148">runtime/particle.ts:148</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -442,7 +484,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="domparticlebase.html">DomParticleBase</a>.<a href="domparticlebase.html#appendentitiestohandle">appendEntitiesToHandle</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/e8ff50d/src/runtime/dom-particle-base.ts#L204">runtime/dom-particle-base.ts:204</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9de8fd1/src/runtime/dom-particle-base.ts#L204">runtime/dom-particle-base.ts:204</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -474,7 +516,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="domparticlebase.html">DomParticleBase</a>.<a href="domparticlebase.html#appendrawdatatohandle">appendRawDataToHandle</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/e8ff50d/src/runtime/dom-particle-base.ts#L218">runtime/dom-particle-base.ts:218</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9de8fd1/src/runtime/dom-particle-base.ts#L218">runtime/dom-particle-base.ts:218</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -506,7 +548,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="domparticlebase.html">DomParticleBase</a>.<a href="domparticlebase.html#boxquery">boxQuery</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/e8ff50d/src/runtime/dom-particle-base.ts#L271">runtime/dom-particle-base.ts:271</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9de8fd1/src/runtime/dom-particle-base.ts#L271">runtime/dom-particle-base.ts:271</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -538,7 +580,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="domparticlebase.html">DomParticleBase</a>.<a href="domparticlebase.html#clearhandle">clearHandle</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/e8ff50d/src/runtime/dom-particle-base.ts#L173">runtime/dom-particle-base.ts:173</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9de8fd1/src/runtime/dom-particle-base.ts#L173">runtime/dom-particle-base.ts:173</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -560,26 +602,26 @@
 					<a name="combinehostedmodel" class="tsd-anchor"></a>
 					<h3>combine<wbr>Hosted<wbr>Model</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
-						<li class="tsd-signature tsd-kind-icon">combine<wbr>Hosted<wbr>Model<span class="tsd-signature-symbol">(</span>slotName<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, hostedSlotId<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, content<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+						<li class="tsd-signature tsd-kind-icon">combine<wbr>Hosted<wbr>Model<span class="tsd-signature-symbol">(</span>slotName<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, hostedSlotId<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, content<span class="tsd-signature-symbol">: </span><a href="../interfaces/content.html" class="tsd-signature-type">Content</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<p>Overrides <a href="transformationdomparticle.html">TransformationDomParticle</a>.<a href="transformationdomparticle.html#combinehostedmodel">combineHostedModel</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/e8ff50d/src/runtime/multiplexer-dom-particle.ts#L118">runtime/multiplexer-dom-particle.ts:118</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9de8fd1/src/runtime/multiplexer-dom-particle.ts#L140">runtime/multiplexer-dom-particle.ts:140</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>slotName: <span class="tsd-signature-type">any</span></h5>
+									<h5>slotName: <span class="tsd-signature-type">string</span></h5>
 								</li>
 								<li>
-									<h5>hostedSlotId: <span class="tsd-signature-type">any</span></h5>
+									<h5>hostedSlotId: <span class="tsd-signature-type">string</span></h5>
 								</li>
 								<li>
-									<h5>content: <span class="tsd-signature-type">any</span></h5>
+									<h5>content: <a href="../interfaces/content.html" class="tsd-signature-type">Content</a></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -590,26 +632,26 @@
 					<a name="combinehostedtemplate" class="tsd-anchor"></a>
 					<h3>combine<wbr>Hosted<wbr>Template</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
-						<li class="tsd-signature tsd-kind-icon">combine<wbr>Hosted<wbr>Template<span class="tsd-signature-symbol">(</span>slotName<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, hostedSlotId<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, content<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+						<li class="tsd-signature tsd-kind-icon">combine<wbr>Hosted<wbr>Template<span class="tsd-signature-symbol">(</span>slotName<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, hostedSlotId<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, content<span class="tsd-signature-symbol">: </span><a href="../interfaces/content.html" class="tsd-signature-type">Content</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<p>Overrides <a href="transformationdomparticle.html">TransformationDomParticle</a>.<a href="transformationdomparticle.html#combinehostedtemplate">combineHostedTemplate</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/e8ff50d/src/runtime/multiplexer-dom-particle.ts#L134">runtime/multiplexer-dom-particle.ts:134</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9de8fd1/src/runtime/multiplexer-dom-particle.ts#L157">runtime/multiplexer-dom-particle.ts:157</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>slotName: <span class="tsd-signature-type">any</span></h5>
+									<h5>slotName: <span class="tsd-signature-type">string</span></h5>
 								</li>
 								<li>
-									<h5>hostedSlotId: <span class="tsd-signature-type">any</span></h5>
+									<h5>hostedSlotId: <span class="tsd-signature-type">string</span></h5>
 								</li>
 								<li>
-									<h5>content: <span class="tsd-signature-type">any</span></h5>
+									<h5>content: <a href="../interfaces/content.html" class="tsd-signature-type">Content</a></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -627,7 +669,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="particle.html">Particle</a>.<a href="particle.html#constructinnerarc-1">constructInnerArc</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/e8ff50d/src/runtime/particle.ts#L103">runtime/particle.ts:103</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9de8fd1/src/runtime/particle.ts#L103">runtime/particle.ts:103</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">any</span></h4>
@@ -636,15 +678,15 @@
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
 					<a name="constructinnerrecipe" class="tsd-anchor"></a>
-					<h3>construct<wbr>Inner<wbr>Recipe</h3>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> construct<wbr>Inner<wbr>Recipe</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">construct<wbr>Inner<wbr>Recipe<span class="tsd-signature-symbol">(</span>hostedParticle<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, item<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, itemHandle<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, slot<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, other<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+						<li class="tsd-signature tsd-kind-icon">construct<wbr>Inner<wbr>Recipe<span class="tsd-signature-symbol">(</span>hostedParticle<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, item<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, itemHandle<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, slot<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, other<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/e8ff50d/src/runtime/multiplexer-dom-particle.ts#L160">runtime/multiplexer-dom-particle.ts:160</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9de8fd1/src/runtime/multiplexer-dom-particle.ts#L184">runtime/multiplexer-dom-particle.ts:184</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -665,7 +707,7 @@
 									<h5>other: <span class="tsd-signature-type">any</span></h5>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -680,7 +722,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="particle.html">Particle</a>.<a href="particle.html#donebusy">doneBusy</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/e8ff50d/src/runtime/particle.ts#L129">runtime/particle.ts:129</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9de8fd1/src/runtime/particle.ts#L129">runtime/particle.ts:129</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -699,7 +741,7 @@
 								<p>Inherited from <a href="domparticlebase.html">DomParticleBase</a>.<a href="domparticlebase.html#fireevent">fireEvent</a></p>
 								<p>Overrides <a href="particle.html">Particle</a>.<a href="particle.html#fireevent">fireEvent</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/e8ff50d/src/runtime/dom-particle-base.ts#L154">runtime/dom-particle-base.ts:154</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9de8fd1/src/runtime/dom-particle-base.ts#L154">runtime/dom-particle-base.ts:154</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -734,7 +776,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="domparticlebase.html">DomParticleBase</a>.<a href="domparticlebase.html#forcerendertemplate">forceRenderTemplate</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/e8ff50d/src/runtime/dom-particle-base.ts#L146">runtime/dom-particle-base.ts:146</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9de8fd1/src/runtime/dom-particle-base.ts#L146">runtime/dom-particle-base.ts:146</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -751,22 +793,22 @@
 					<a name="getlistentries" class="tsd-anchor"></a>
 					<h3>get<wbr>List<wbr>Entries</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">get<wbr>List<wbr>Entries<span class="tsd-signature-symbol">(</span>list<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span></li>
+						<li class="tsd-signature tsd-kind-icon">get<wbr>List<wbr>Entries<span class="tsd-signature-symbol">(</span>list<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">IterableIterator</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-symbol">[</span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">]</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/e8ff50d/src/runtime/multiplexer-dom-particle.ts#L166">runtime/multiplexer-dom-particle.ts:166</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9de8fd1/src/runtime/multiplexer-dom-particle.ts#L191">runtime/multiplexer-dom-particle.ts:191</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>list: <span class="tsd-signature-type">any</span></h5>
+									<h5>list: <span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">[]</span></h5>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">any</span></h4>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">IterableIterator</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-symbol">[</span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">]</span><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -781,7 +823,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="particle.html">Particle</a>.<a href="particle.html#getslot">getSlot</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/e8ff50d/src/runtime/particle.ts#L159">runtime/particle.ts:159</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9de8fd1/src/runtime/particle.ts#L159">runtime/particle.ts:159</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -811,7 +853,7 @@
 								<p>Inherited from <a href="transformationdomparticle.html">TransformationDomParticle</a>.<a href="transformationdomparticle.html#gettemplate">getTemplate</a></p>
 								<p>Overrides <a href="domparticlebase.html">DomParticleBase</a>.<a href="domparticlebase.html#gettemplate">getTemplate</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/e8ff50d/src/runtime/transformation-dom-particle.ts#L21">runtime/transformation-dom-particle.ts:21</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9de8fd1/src/runtime/transformation-dom-particle.ts#L21">runtime/transformation-dom-particle.ts:21</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -836,7 +878,7 @@
 								<p>Inherited from <a href="transformationdomparticle.html">TransformationDomParticle</a>.<a href="transformationdomparticle.html#gettemplatename">getTemplateName</a></p>
 								<p>Overrides <a href="domparticlebase.html">DomParticleBase</a>.<a href="domparticlebase.html#gettemplatename">getTemplateName</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/e8ff50d/src/runtime/transformation-dom-particle.ts#L25">runtime/transformation-dom-particle.ts:25</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9de8fd1/src/runtime/transformation-dom-particle.ts#L25">runtime/transformation-dom-particle.ts:25</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -860,7 +902,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="particle.html">Particle</a>.<a href="particle.html#hasslotproxy">hasSlotProxy</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/e8ff50d/src/runtime/particle.ts#L144">runtime/particle.ts:144</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9de8fd1/src/runtime/particle.ts#L144">runtime/particle.ts:144</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -884,7 +926,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="particle.html">Particle</a>.<a href="particle.html#inputs">inputs</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/e8ff50d/src/runtime/particle.ts#L136">runtime/particle.ts:136</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9de8fd1/src/runtime/particle.ts#L136">runtime/particle.ts:136</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <a href="handleconnectionspec.html" class="tsd-signature-type">HandleConnectionSpec</a><span class="tsd-signature-symbol">[]</span></h4>
@@ -902,7 +944,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="domparticlebase.html">DomParticleBase</a>.<a href="domparticlebase.html#mergeentitiestohandle">mergeEntitiesToHandle</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/e8ff50d/src/runtime/dom-particle-base.ts#L185">runtime/dom-particle-base.ts:185</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9de8fd1/src/runtime/dom-particle-base.ts#L185">runtime/dom-particle-base.ts:185</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -934,7 +976,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="particle.html">Particle</a>.<a href="particle.html#onhandledesync">onHandleDesync</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/e8ff50d/src/runtime/particle.ts#L100">runtime/particle.ts:100</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9de8fd1/src/runtime/particle.ts#L100">runtime/particle.ts:100</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -970,7 +1012,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="particle.html">Particle</a>.<a href="particle.html#onhandlesync">onHandleSync</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/e8ff50d/src/runtime/particle.ts#L72">runtime/particle.ts:72</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9de8fd1/src/runtime/particle.ts#L72">runtime/particle.ts:72</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1011,7 +1053,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="particle.html">Particle</a>.<a href="particle.html#onhandleupdate">onHandleUpdate</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/e8ff50d/src/runtime/particle.ts#L88">runtime/particle.ts:88</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9de8fd1/src/runtime/particle.ts#L88">runtime/particle.ts:88</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1071,7 +1113,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="particle.html">Particle</a>.<a href="particle.html#outputs">outputs</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/e8ff50d/src/runtime/particle.ts#L140">runtime/particle.ts:140</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9de8fd1/src/runtime/particle.ts#L140">runtime/particle.ts:140</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <a href="handleconnectionspec.html" class="tsd-signature-type">HandleConnectionSpec</a><span class="tsd-signature-symbol">[]</span></h4>
@@ -1089,7 +1131,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="particle.html">Particle</a>.<a href="particle.html#removeslotproxy">removeSlotProxy</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/e8ff50d/src/runtime/particle.ts#L152">runtime/particle.ts:152</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9de8fd1/src/runtime/particle.ts#L152">runtime/particle.ts:152</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1114,7 +1156,7 @@
 								<p>Inherited from <a href="transformationdomparticle.html">TransformationDomParticle</a>.<a href="transformationdomparticle.html#render">render</a></p>
 								<p>Overrides <a href="domparticlebase.html">DomParticleBase</a>.<a href="domparticlebase.html#render">render</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/e8ff50d/src/runtime/transformation-dom-particle.ts#L29">runtime/transformation-dom-particle.ts:29</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9de8fd1/src/runtime/transformation-dom-particle.ts#L29">runtime/transformation-dom-particle.ts:29</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1142,7 +1184,7 @@
 								<p>Inherited from <a href="transformationdomparticle.html">TransformationDomParticle</a>.<a href="transformationdomparticle.html#renderhostedslot">renderHostedSlot</a></p>
 								<p>Overrides <a href="particle.html">Particle</a>.<a href="particle.html#renderhostedslot">renderHostedSlot</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/e8ff50d/src/runtime/transformation-dom-particle.ts#L35">runtime/transformation-dom-particle.ts:35</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9de8fd1/src/runtime/transformation-dom-particle.ts#L35">runtime/transformation-dom-particle.ts:35</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1173,7 +1215,7 @@
 								<p>Inherited from <a href="domparticlebase.html">DomParticleBase</a>.<a href="domparticlebase.html#renderslot">renderSlot</a></p>
 								<p>Overrides <a href="particle.html">Particle</a>.<a href="particle.html#renderslot">renderSlot</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/e8ff50d/src/runtime/dom-particle-base.ts#L64">runtime/dom-particle-base.ts:64</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9de8fd1/src/runtime/dom-particle-base.ts#L64">runtime/dom-particle-base.ts:64</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1200,7 +1242,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="particle.html">Particle</a>.<a href="particle.html#setdescriptionpattern">setDescriptionPattern</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/e8ff50d/src/runtime/particle.ts#L188">runtime/particle.ts:188</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9de8fd1/src/runtime/particle.ts#L188">runtime/particle.ts:188</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1220,20 +1262,20 @@
 					<a name="sethandles" class="tsd-anchor"></a>
 					<h3>set<wbr>Handles</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
-						<li class="tsd-signature tsd-kind-icon">set<wbr>Handles<span class="tsd-signature-symbol">(</span>handles<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">set<wbr>Handles<span class="tsd-signature-symbol">(</span>handles<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Map</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">Handle</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<p>Overrides <a href="particle.html">Particle</a>.<a href="particle.html#sethandles">setHandles</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/e8ff50d/src/runtime/multiplexer-dom-particle.ts#L46">runtime/multiplexer-dom-particle.ts:46</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9de8fd1/src/runtime/multiplexer-dom-particle.ts#L56">runtime/multiplexer-dom-particle.ts:56</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>handles: <span class="tsd-signature-type">any</span></h5>
+									<h5>handles: <span class="tsd-signature-type">Map</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">Handle</span><span class="tsd-signature-symbol">&gt;</span></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -1252,7 +1294,7 @@
 								<p>Inherited from <a href="domparticlebase.html">DomParticleBase</a>.<a href="domparticlebase.html#setparticledescription">setParticleDescription</a></p>
 								<p>Overrides <a href="particle.html">Particle</a>.<a href="particle.html#setparticledescription">setParticleDescription</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/e8ff50d/src/runtime/dom-particle-base.ts#L160">runtime/dom-particle-base.ts:160</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9de8fd1/src/runtime/dom-particle-base.ts#L160">runtime/dom-particle-base.ts:160</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1276,7 +1318,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="particle.html">Particle</a>.<a href="particle.html#setviews">setViews</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/e8ff50d/src/runtime/particle.ts#L60">runtime/particle.ts:60</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9de8fd1/src/runtime/particle.ts#L60">runtime/particle.ts:60</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1308,7 +1350,7 @@
 								<p>Inherited from <a href="transformationdomparticle.html">TransformationDomParticle</a>.<a href="transformationdomparticle.html#shouldrender">shouldRender</a></p>
 								<p>Overrides <a href="domparticlebase.html">DomParticleBase</a>.<a href="domparticlebase.html#shouldrender">shouldRender</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/e8ff50d/src/runtime/transformation-dom-particle.ts#L32">runtime/transformation-dom-particle.ts:32</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9de8fd1/src/runtime/transformation-dom-particle.ts#L32">runtime/transformation-dom-particle.ts:32</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1335,7 +1377,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="particle.html">Particle</a>.<a href="particle.html#startbusy">startBusy</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/e8ff50d/src/runtime/particle.ts#L122">runtime/particle.ts:122</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9de8fd1/src/runtime/particle.ts#L122">runtime/particle.ts:122</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -1353,7 +1395,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="domparticlebase.html">DomParticleBase</a>.<a href="domparticlebase.html#updateset">updateSet</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/e8ff50d/src/runtime/dom-particle-base.ts#L253">runtime/dom-particle-base.ts:253</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9de8fd1/src/runtime/dom-particle-base.ts#L253">runtime/dom-particle-base.ts:253</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1386,7 +1428,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="domparticlebase.html">DomParticleBase</a>.<a href="domparticlebase.html#updatevariable">updateVariable</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/e8ff50d/src/runtime/dom-particle-base.ts#L234">runtime/dom-particle-base.ts:234</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9de8fd1/src/runtime/dom-particle-base.ts#L234">runtime/dom-particle-base.ts:234</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1418,7 +1460,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/e8ff50d/src/runtime/multiplexer-dom-particle.ts#L71">runtime/multiplexer-dom-particle.ts:71</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9de8fd1/src/runtime/multiplexer-dom-particle.ts#L84">runtime/multiplexer-dom-particle.ts:84</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1435,19 +1477,117 @@
 									<h5>__namedParameters: <span class="tsd-signature-type">object</span></h5>
 									<ul class="tsd-parameters">
 										<li class="tsd-parameter">
-											<h5>arc<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span></h5>
+											<h5>arc<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">object</span></h5>
+											<ul class="tsd-parameters">
+												<li class="tsd-parameter">
+													<h5>create<wbr>Handle<span class="tsd-signature-symbol">: </span>function</h5>
+													<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-type-literal tsd-is-not-exported">
+														<li class="tsd-signature tsd-kind-icon">create<wbr>Handle<span class="tsd-signature-symbol">(</span>type<span class="tsd-signature-symbol">: </span><a href="type.html" class="tsd-signature-type">Type</a>, name<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, hostParticle<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">Particle</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Handle</span><span class="tsd-signature-symbol">&gt;</span></li>
+													</ul>
+													<ul class="tsd-descriptions">
+														<li class="tsd-description">
+															<aside class="tsd-sources">
+																<ul>
+																	<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9de8fd1/src/runtime/particle-execution-context.ts#L27">runtime/particle-execution-context.ts:27</a></li>
+																</ul>
+															</aside>
+															<h4 class="tsd-parameters-title">Parameters</h4>
+															<ul class="tsd-parameters">
+																<li>
+																	<h5>type: <a href="type.html" class="tsd-signature-type">Type</a></h5>
+																</li>
+																<li>
+																	<h5>name: <span class="tsd-signature-type">string</span></h5>
+																</li>
+																<li>
+																	<h5><span class="tsd-flag ts-flagOptional">Optional</span> hostParticle: <span class="tsd-signature-type">Particle</span></h5>
+																</li>
+															</ul>
+															<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Handle</span><span class="tsd-signature-symbol">&gt;</span></h4>
+														</li>
+												</ul>        </li>
+												<li class="tsd-parameter">
+													<h5>create<wbr>Slot<span class="tsd-signature-symbol">: </span>function</h5>
+													<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-type-literal tsd-is-not-exported">
+														<li class="tsd-signature tsd-kind-icon">create<wbr>Slot<span class="tsd-signature-symbol">(</span>transformationParticle<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Particle</span>, transformationSlotName<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, handleId<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span></li>
+													</ul>
+													<ul class="tsd-descriptions">
+														<li class="tsd-description">
+															<aside class="tsd-sources">
+																<ul>
+																	<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9de8fd1/src/runtime/particle-execution-context.ts#L29">runtime/particle-execution-context.ts:29</a></li>
+																</ul>
+															</aside>
+															<h4 class="tsd-parameters-title">Parameters</h4>
+															<ul class="tsd-parameters">
+																<li>
+																	<h5>transformationParticle: <span class="tsd-signature-type">Particle</span></h5>
+																</li>
+																<li>
+																	<h5>transformationSlotName: <span class="tsd-signature-type">string</span></h5>
+																</li>
+																<li>
+																	<h5>handleId: <span class="tsd-signature-type">string</span></h5>
+																</li>
+															</ul>
+															<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span></h4>
+														</li>
+												</ul>        </li>
+												<li class="tsd-parameter">
+													<h5>load<wbr>Recipe<span class="tsd-signature-symbol">: </span>function</h5>
+													<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-type-literal tsd-is-not-exported">
+														<li class="tsd-signature tsd-kind-icon">load<wbr>Recipe<span class="tsd-signature-symbol">(</span>recipe<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">object</span><span class="tsd-signature-symbol">&gt;</span></li>
+													</ul>
+													<ul class="tsd-descriptions">
+														<li class="tsd-description">
+															<aside class="tsd-sources">
+																<ul>
+																	<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9de8fd1/src/runtime/particle-execution-context.ts#L30">runtime/particle-execution-context.ts:30</a></li>
+																</ul>
+															</aside>
+															<h4 class="tsd-parameters-title">Parameters</h4>
+															<ul class="tsd-parameters">
+																<li>
+																	<h5>recipe: <span class="tsd-signature-type">string</span></h5>
+																</li>
+															</ul>
+															<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">object</span><span class="tsd-signature-symbol">&gt;</span></h4>
+														</li>
+												</ul>        </li>
+												<li class="tsd-parameter">
+													<h5>map<wbr>Handle<span class="tsd-signature-symbol">: </span>function</h5>
+													<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-type-literal tsd-is-not-exported">
+														<li class="tsd-signature tsd-kind-icon">map<wbr>Handle<span class="tsd-signature-symbol">(</span>handle<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Handle</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span></li>
+													</ul>
+													<ul class="tsd-descriptions">
+														<li class="tsd-description">
+															<aside class="tsd-sources">
+																<ul>
+																	<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9de8fd1/src/runtime/particle-execution-context.ts#L28">runtime/particle-execution-context.ts:28</a></li>
+																</ul>
+															</aside>
+															<h4 class="tsd-parameters-title">Parameters</h4>
+															<ul class="tsd-parameters">
+																<li>
+																	<h5>handle: <span class="tsd-signature-type">Handle</span></h5>
+																</li>
+															</ul>
+															<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span></h4>
+														</li>
+												</ul>        </li>
+											</ul>
 										</li>
 										<li class="tsd-parameter">
-											<h5>hosted<wbr>Particle<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span></h5>
+											<h5>hosted<wbr>Particle<span class="tsd-signature-symbol">: </span><a href="particlespec.html" class="tsd-signature-type">ParticleSpec</a></h5>
 										</li>
 										<li class="tsd-parameter">
-											<h5>other<wbr>Connections<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span></h5>
+											<h5>other<wbr>Connections<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></h5>
 										</li>
 										<li class="tsd-parameter">
-											<h5>other<wbr>Mapped<wbr>Handles<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span></h5>
+											<h5>other<wbr>Mapped<wbr>Handles<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></h5>
 										</li>
 										<li class="tsd-parameter">
-											<h5>type<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span></h5>
+											<h5>type<span class="tsd-signature-symbol">: </span><a href="type.html" class="tsd-signature-type">Type</a></h5>
 										</li>
 									</ul>
 								</li>
@@ -1467,7 +1607,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="particle.html">Particle</a>.<a href="particle.html#buildmanifest">buildManifest</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/e8ff50d/src/runtime/particle.ts#L163">runtime/particle.ts:163</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9de8fd1/src/runtime/particle.ts#L163">runtime/particle.ts:163</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1494,7 +1634,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="transformationdomparticle.html">TransformationDomParticle</a>.<a href="transformationdomparticle.html#propstoitems">propsToItems</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/e8ff50d/src/runtime/transformation-dom-particle.ts#L45">runtime/transformation-dom-particle.ts:45</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9de8fd1/src/runtime/transformation-dom-particle.ts#L45">runtime/transformation-dom-particle.ts:45</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1524,11 +1664,20 @@
 					<li class="current tsd-kind-class">
 						<a href="multiplexerdomparticle.html" class="tsd-kind-icon">Multiplexer<wbr>Dom<wbr>Particle</a>
 						<ul>
-							<li class=" tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite">
+							<li class=" tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited">
 								<a href="multiplexerdomparticle.html#constructor" class="tsd-kind-icon">constructor</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
+								<a href="multiplexerdomparticle.html#_connbyhostedconn" class="tsd-kind-icon">_conn<wbr>ByHosted<wbr>Conn</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
+								<a href="multiplexerdomparticle.html#_itemsubidbyhostedslotid" class="tsd-kind-icon">_item<wbr>Sub<wbr>IdBy<wbr>Hosted<wbr>Slot<wbr>Id</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
 								<a href="multiplexerdomparticle.html#extradata" class="tsd-kind-icon">extra<wbr>Data</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="multiplexerdomparticle.html#handleids" class="tsd-kind-icon">handle<wbr>Ids</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
 								<a href="multiplexerdomparticle.html#handles" class="tsd-kind-icon">handles</a>

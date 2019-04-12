@@ -1,19 +1,28 @@
+import { ParticleSpec } from './particle-spec.js';
 import { TransformationDomParticle } from './transformation-dom-particle.js';
+import { Handle } from './handle.js';
+import { InnerArcHandle } from './particle-execution-context.js';
+import { Type } from './type.js';
+import { Content } from './slot-consumer.js';
 export declare class MultiplexerDomParticle extends TransformationDomParticle {
-    constructor();
-    _mapParticleConnections(listHandleName: any, particleHandleName: any, hostedParticle: any, handles: any, arc: any): Promise<any[][]>;
-    setHandles(handles: any): Promise<void>;
+    private _itemSubIdByHostedSlotId;
+    private _connByHostedConn;
+    handleIds: {
+        [key: string]: Promise<Handle>;
+    };
+    _mapParticleConnections(listHandleName: string, particleHandleName: string, hostedParticle: ParticleSpec, handles: Map<string, Handle>, arc: any): Promise<string[][]>;
+    setHandles(handles: Map<string, Handle>): Promise<void>;
     willReceiveProps({ list }: {
         list: any;
     }, { arc, type, hostedParticle, otherMappedHandles, otherConnections }: {
-        arc: any;
-        type: any;
-        hostedParticle: any;
-        otherMappedHandles: any;
-        otherConnections: any;
+        arc: InnerArcHandle;
+        type: Type;
+        hostedParticle: ParticleSpec;
+        otherMappedHandles: string[];
+        otherConnections: string[];
     }): Promise<void>;
-    combineHostedModel(slotName: any, hostedSlotId: any, content: any): void;
-    combineHostedTemplate(slotName: any, hostedSlotId: any, content: any): void;
-    constructInnerRecipe(hostedParticle: any, item: any, itemHandle: any, slot: any, other: any): void;
-    getListEntries(list: any): any;
+    combineHostedModel(slotName: string, hostedSlotId: string, content: Content): void;
+    combineHostedTemplate(slotName: string, hostedSlotId: string, content: Content): void;
+    constructInnerRecipe?(hostedParticle: any, item: any, itemHandle: any, slot: any, other: any): string;
+    getListEntries(list: any[]): IterableIterator<[number, any]>;
 }

@@ -19431,7 +19431,7 @@ class TransformationDomParticle extends DomParticle {
  */
 class MultiplexerDomParticle extends TransformationDomParticle {
     constructor() {
-        super();
+        super(...arguments);
         this._itemSubIdByHostedSlotId = new Map();
         this._connByHostedConn = new Map();
     }
@@ -19469,6 +19469,8 @@ class MultiplexerDomParticle extends TransformationDomParticle {
         let otherMappedHandles = [];
         let otherConnections = [];
         if (particleHandle) {
+            // Typecast to any; the get() method doesn't exist on raw Handles.
+            // tslint:disable-next-line: no-any
             hostedParticle = await particleHandle.get();
             if (hostedParticle) {
                 [otherMappedHandles, otherConnections] =
@@ -19492,6 +19494,7 @@ class MultiplexerDomParticle extends TransformationDomParticle {
             let resolvedHostedParticle = hostedParticle;
             if (this.handleIds[item.id]) {
                 const itemHandle = await this.handleIds[item.id];
+                // tslint:disable-next-line: no-any
                 itemHandle.set(item);
                 continue;
             }
@@ -19523,7 +19526,8 @@ class MultiplexerDomParticle extends TransformationDomParticle {
             this._itemSubIdByHostedSlotId.set(slotId, item.id);
             try {
                 const recipe = this.constructInnerRecipe(resolvedHostedParticle, item, itemHandle, { name: hostedSlotName, id: slotId }, { connections: otherConnections, handles: otherMappedHandles });
-                await arc.loadRecipe(recipe, this);
+                await arc.loadRecipe(recipe);
+                // tslint:disable-next-line: no-any
                 itemHandle.set(item);
             }
             catch (e) {
@@ -19568,17 +19572,11 @@ class MultiplexerDomParticle extends TransformationDomParticle {
             this.forceRenderTemplate();
         }
     }
-    // Abstract methods below.
-    // Called to produce a full interpolated recipe for loading into an inner
-    // arc for each item. Subclasses should override this method as by default
-    // it does nothing and so no recipe will be returned and content will not
-    // be loaded successfully into the inner arc.
-    constructInnerRecipe(hostedParticle, item, itemHandle, slot, other) {
-    }
     // Called with the list of items and by default returns the direct result of
     // `Array.entries()`. Subclasses can override this method to alter the item
     // order or otherwise permute the items as desired before their slots are
     // created and contents are rendered.
+    // tslint:disable-next-line: no-any
     getListEntries(list) {
         return list.entries();
     }
