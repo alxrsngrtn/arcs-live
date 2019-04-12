@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>ConnectionTarget | arcs</title>
+	<title>LiteralizerPropagatedException | arcs</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -56,10 +56,10 @@
 					<a href="../globals.html">Globals</a>
 				</li>
 				<li>
-					<a href="connectiontarget.html">ConnectionTarget</a>
+					<a href="literalizerpropagatedexception.html">LiteralizerPropagatedException</a>
 				</li>
 			</ul>
-			<h1>Interface ConnectionTarget</h1>
+			<h1>Interface LiteralizerPropagatedException</h1>
 		</div>
 	</div>
 </header>
@@ -70,12 +70,7 @@
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<a href="../classes/basenode.html" class="tsd-signature-type">BaseNode</a>
-						<ul class="tsd-hierarchy">
-							<li>
-								<span class="target">ConnectionTarget</span>
-							</li>
-						</ul>
+						<span class="target">LiteralizerPropagatedException</span>
 					</li>
 				</ul>
 			</section>
@@ -83,105 +78,78 @@
 				<h2>Index</h2>
 				<section class="tsd-panel tsd-index-panel">
 					<div class="tsd-index-content">
-						<section class="tsd-index-section ">
+						<section class="tsd-index-section tsd-is-not-exported">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-overwrite"><a href="connectiontarget.html#kind" class="tsd-kind-icon">kind</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-inherited"><a href="connectiontarget.html#location" class="tsd-kind-icon">location</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="connectiontarget.html#name" class="tsd-kind-icon">name</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="connectiontarget.html#param" class="tsd-kind-icon">param</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="connectiontarget.html#particle" class="tsd-kind-icon">particle</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="connectiontarget.html#tags" class="tsd-kind-icon">tags</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="connectiontarget.html#targettype" class="tsd-kind-icon">target<wbr>Type</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="connectiontarget.html#verbs" class="tsd-kind-icon">verbs</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported"><a href="literalizerpropagatedexception.html#fromliteral" class="tsd-kind-icon">from<wbr>Literal</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported"><a href="literalizerpropagatedexception.html#prototype" class="tsd-kind-icon">prototype</a></li>
 							</ul>
 						</section>
 					</div>
 				</section>
 			</section>
-			<section class="tsd-panel-group tsd-member-group ">
+			<section class="tsd-panel-group tsd-member-group tsd-is-not-exported">
 				<h2>Properties</h2>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-overwrite">
-					<a name="kind" class="tsd-anchor"></a>
-					<h3>kind</h3>
-					<div class="tsd-signature tsd-kind-icon">kind<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">"connection-target"</span></div>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported">
+					<a name="fromliteral" class="tsd-anchor"></a>
+					<h3>from<wbr>Literal</h3>
+					<div class="tsd-signature tsd-kind-icon">from<wbr>Literal<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">function</span></div>
 					<aside class="tsd-sources">
-						<p>Overrides <a href="../classes/basenode.html">BaseNode</a>.<a href="../classes/basenode.html#kind">kind</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/7d5e94b/src/runtime/manifest-ast-nodes.ts#L315">runtime/manifest-ast-nodes.ts:315</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/7d5e94b/src/runtime/api-channel.ts#L53">runtime/api-channel.ts:53</a></li>
 						</ul>
 					</aside>
+					<div class="tsd-type-declaration">
+						<h4>Type declaration</h4>
+						<ul class="tsd-parameters">
+							<li class="tsd-parameter-siganture">
+								<ul class="tsd-signatures tsd-kind-type-literal tsd-parent-kind-property tsd-is-not-exported">
+									<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>exception<span class="tsd-signature-symbol">: </span><a href="../globals.html#serializedpropagatedexception" class="tsd-signature-type">SerializedPropagatedException</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../classes/propagatedexception.html" class="tsd-signature-type">PropagatedException</a></li>
+								</ul>
+								<ul class="tsd-descriptions">
+									<li class="tsd-description">
+										<h4 class="tsd-parameters-title">Parameters</h4>
+										<ul class="tsd-parameters">
+											<li>
+												<h5>exception: <a href="../globals.html#serializedpropagatedexception" class="tsd-signature-type">SerializedPropagatedException</a></h5>
+											</li>
+										</ul>
+										<h4 class="tsd-returns-title">Returns <a href="../classes/propagatedexception.html" class="tsd-signature-type">PropagatedException</a></h4>
+									</li>
+								</ul>
+							</li>
+						</ul>
+					</div>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
-					<a name="location" class="tsd-anchor"></a>
-					<h3>location</h3>
-					<div class="tsd-signature tsd-kind-icon">location<span class="tsd-signature-symbol">:</span> <a href="sourcelocation.html" class="tsd-signature-type">SourceLocation</a></div>
-					<aside class="tsd-sources">
-						<p>Inherited from <a href="../classes/basenode.html">BaseNode</a>.<a href="../classes/basenode.html#location">location</a></p>
-						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/7d5e94b/src/runtime/manifest-ast-nodes.ts#L41">runtime/manifest-ast-nodes.ts:41</a></li>
-						</ul>
-					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="name" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagOptional">Optional</span> name</h3>
-					<div class="tsd-signature tsd-kind-icon">name<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported">
+					<a name="prototype" class="tsd-anchor"></a>
+					<h3>prototype</h3>
+					<div class="tsd-signature tsd-kind-icon">prototype<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/7d5e94b/src/runtime/manifest-ast-nodes.ts#L318">runtime/manifest-ast-nodes.ts:318</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/7d5e94b/src/runtime/api-channel.ts#L52">runtime/api-channel.ts:52</a></li>
 						</ul>
 					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="param" class="tsd-anchor"></a>
-					<h3>param</h3>
-					<div class="tsd-signature tsd-kind-icon">param<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/7d5e94b/src/runtime/manifest-ast-nodes.ts#L322">runtime/manifest-ast-nodes.ts:322</a></li>
+					<div class="tsd-type-declaration">
+						<h4>Type declaration</h4>
+						<ul class="tsd-parameters">
+							<li class="tsd-parameter">
+								<h5>to<wbr>Literal<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">function</span></h5>
+								<ul class="tsd-parameters">
+									<li class="tsd-parameter-siganture">
+										<ul class="tsd-signatures tsd-kind-type-literal tsd-parent-kind-variable tsd-is-not-exported">
+											<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../globals.html#serializedpropagatedexception" class="tsd-signature-type">SerializedPropagatedException</a></li>
+										</ul>
+										<ul class="tsd-descriptions">
+											<li class="tsd-description">
+												<h4 class="tsd-returns-title">Returns <a href="../globals.html#serializedpropagatedexception" class="tsd-signature-type">SerializedPropagatedException</a></h4>
+											</li>
+										</ul>
+									</li>
+								</ul>
+							</li>
 						</ul>
-					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="particle" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagOptional">Optional</span> particle</h3>
-					<div class="tsd-signature tsd-kind-icon">particle<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/7d5e94b/src/runtime/manifest-ast-nodes.ts#L319">runtime/manifest-ast-nodes.ts:319</a></li>
-						</ul>
-					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="tags" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagOptional">Optional</span> tags</h3>
-					<div class="tsd-signature tsd-kind-icon">tags<span class="tsd-signature-symbol">:</span> <a href="../globals.html#taglist" class="tsd-signature-type">TagList</a></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/7d5e94b/src/runtime/manifest-ast-nodes.ts#L323">runtime/manifest-ast-nodes.ts:323</a></li>
-						</ul>
-					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="targettype" class="tsd-anchor"></a>
-					<h3>target<wbr>Type</h3>
-					<div class="tsd-signature tsd-kind-icon">target<wbr>Type<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">"verb"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"tag"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"localName"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"particle"</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/7d5e94b/src/runtime/manifest-ast-nodes.ts#L316">runtime/manifest-ast-nodes.ts:316</a></li>
-						</ul>
-					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="verbs" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagOptional">Optional</span> verbs</h3>
-					<div class="tsd-signature tsd-kind-icon">verbs<span class="tsd-signature-symbol">:</span> <a href="../globals.html#verblist" class="tsd-signature-type">VerbList</a></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/7d5e94b/src/runtime/manifest-ast-nodes.ts#L321">runtime/manifest-ast-nodes.ts:321</a></li>
-						</ul>
-					</aside>
+					</div>
 				</section>
 			</section>
 		</div>
@@ -197,32 +165,14 @@
 				<ul class="before-current">
 				</ul>
 				<ul class="current">
-					<li class="current tsd-kind-interface">
-						<a href="connectiontarget.html" class="tsd-kind-icon">Connection<wbr>Target</a>
+					<li class="current tsd-kind-interface tsd-is-not-exported">
+						<a href="literalizerpropagatedexception.html" class="tsd-kind-icon">Literalizer<wbr>Propagated<wbr>Exception</a>
 						<ul>
-							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-overwrite">
-								<a href="connectiontarget.html#kind" class="tsd-kind-icon">kind</a>
+							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported">
+								<a href="literalizerpropagatedexception.html#fromliteral" class="tsd-kind-icon">from<wbr>Literal</a>
 							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
-								<a href="connectiontarget.html#location" class="tsd-kind-icon">location</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="connectiontarget.html#name" class="tsd-kind-icon">name</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="connectiontarget.html#param" class="tsd-kind-icon">param</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="connectiontarget.html#particle" class="tsd-kind-icon">particle</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="connectiontarget.html#tags" class="tsd-kind-icon">tags</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="connectiontarget.html#targettype" class="tsd-kind-icon">target<wbr>Type</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="connectiontarget.html#verbs" class="tsd-kind-icon">verbs</a>
+							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported">
+								<a href="literalizerpropagatedexception.html#prototype" class="tsd-kind-icon">prototype</a>
 							</li>
 						</ul>
 					</li>

@@ -1,5 +1,5 @@
-commit 9de8fd1df60701d129fff1410571b19561aacd67
-Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
-Date:   Fri Apr 12 17:18:27 2019 +1000
+commit 7d5e94bf7083c098d22f43bb5cc2f7ec2f835dd7
+Author: Paul Lindner <lindner@inuus.com>
+Date:   Fri Apr 12 16:28:33 2019 -0700
 
-    Added some types (#2888)
+    Ignore Typedoc compiler errors as it's still on Typescript 3.2.4 (#2892)

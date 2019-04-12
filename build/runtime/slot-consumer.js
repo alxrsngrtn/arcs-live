@@ -103,10 +103,11 @@ export class SlotConsumer {
     }
     startRender() {
         if (this.consumeConn && this.startRenderCallback) {
+            const providedSlots = new Map(this.allProvidedSlotContexts.map(context => [context.name, context.id]));
             this.startRenderCallback({
                 particle: this.consumeConn.particle,
                 slotName: this.consumeConn.name,
-                providedSlots: new Map(this.allProvidedSlotContexts.map(context => [context.name, context.id])),
+                providedSlots,
                 contentTypes: this.constructRenderRequest()
             });
         }

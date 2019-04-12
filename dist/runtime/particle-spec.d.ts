@@ -71,7 +71,7 @@ export declare class ProvideSlotConnectionSpec {
     handles: string[];
     constructor(slotModel: SerializedProvideSlotConnectionSpec);
 }
-declare type SerializedParticleSpec = {
+export declare type SerializedParticleSpec = {
     name: string;
     id?: string;
     verbs: string[];

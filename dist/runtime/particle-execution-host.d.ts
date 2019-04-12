@@ -11,6 +11,16 @@ import { Arc } from './arc.js';
 import { Particle } from './recipe/particle.js';
 import { SlotComposer } from './slot-composer.js';
 import { StorageProviderBase } from './storage/storage-provider-base.js';
+export declare type StartRenderOptions = {
+    particle: Particle;
+    slotName: string;
+    providedSlots: Map<string, string>;
+    contentTypes: string[];
+};
+export declare type StopRenderOptions = {
+    particle: Particle;
+    slotName: string;
+};
 export declare class ParticleExecutionHost {
     private _apiPort;
     close: () => void;
@@ -26,17 +36,7 @@ export declare class ParticleExecutionHost {
     readonly messageCount: number;
     sendEvent(particle: any, slotName: any, event: any): void;
     instantiate(particle: Particle, stores: Map<string, StorageProviderBase>): void;
-    startRender({ particle, slotName, providedSlots, contentTypes }: {
-        particle: Particle;
-        slotName: string;
-        providedSlots: {
-            [index: string]: string;
-        };
-        contentTypes: string[];
-    }): void;
-    stopRender({ particle, slotName }: {
-        particle: Particle;
-        slotName: string;
-    }): void;
+    startRender({ particle, slotName, providedSlots, contentTypes }: StartRenderOptions): void;
+    stopRender({ particle, slotName }: StopRenderOptions): void;
     innerArcRender(transformationParticle: Particle, transformationSlotName: string, hostedSlotId: string, content: any): void;
 }

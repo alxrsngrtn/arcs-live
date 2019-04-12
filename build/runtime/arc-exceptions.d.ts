@@ -7,7 +7,7 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-declare type SerializedPropagatedException = {
+export declare type SerializedPropagatedException = {
     exceptionType: string;
     cause: {
         name: string;

@@ -53,9 +53,7 @@ export declare abstract class PECOuterPort extends APIPort {
     UIEvent(particle: recipeParticle.Particle, slotName: string, event: {}): void;
     SimpleCallback(callback: number, data: {}): void;
     AwaitIdle(version: number): void;
-    StartRender(particle: recipeParticle.Particle, slotName: string, providedSlots: {
-        [index: string]: string;
-    }, contentTypes: string[]): void;
+    StartRender(particle: recipeParticle.Particle, slotName: string, providedSlots: Map<string, string>, contentTypes: string[]): void;
     StopRender(particle: recipeParticle.Particle, slotName: string): void;
     abstract onRender(particle: recipeParticle.Particle, slotName: string, content: string): any;
     abstract onInitializeProxy(handle: StorageProviderBase, callback: number): any;

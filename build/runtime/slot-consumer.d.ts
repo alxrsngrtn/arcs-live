@@ -11,6 +11,7 @@ import { Arc } from './arc.js';
 import { Description } from './description.js';
 import { SlotConnection } from './recipe/slot-connection.js';
 import { HostedSlotContext, ProvidedSlotContext, SlotContext } from './slot-context.js';
+import { StartRenderOptions, StopRenderOptions } from './particle-execution-host.js';
 export interface Content {
     templateName?: string | Map<string, string>;
     model?: {
@@ -30,8 +31,8 @@ export declare class SlotConsumer {
     slotContext: SlotContext;
     readonly directlyProvidedSlotContexts: ProvidedSlotContext[];
     readonly hostedSlotContexts: HostedSlotContext[];
-    startRenderCallback: ({}: {}) => void;
-    stopRenderCallback: ({}: {}) => void;
+    startRenderCallback: (options: StartRenderOptions) => void;
+    stopRenderCallback: (options: StopRenderOptions) => void;
     eventHandler: ({}: {}) => void;
     readonly containerKind?: string;
     private _renderingBySubId;
