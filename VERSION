@@ -1,5 +1,5 @@
-commit a050d2c1849298d98559417354eec4b28aafee32
+commit 781755574db7a7d040f7424f9ec8ffb97511e344
 Author: raulverag <42563960+raulverag@users.noreply.github.com>
-Date:   Thu Apr 11 20:34:54 2019 -0700
+Date:   Thu Apr 11 21:30:35 2019 -0700
 
-    Convert src/platform/crypto-node to ts. (#2883)
+    Convert src/platform/fetch-node to ts (#2885)

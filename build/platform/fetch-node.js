@@ -4,6 +4,6 @@
 // Code distributed by Google as part of this project is also
 // subject to an additional IP rights grant found at
 // http://polymer.github.io/PATENTS.txt
-
 import fetch from 'node-fetch';
-export {fetch};
+export { fetch };
+//# sourceMappingURL=fetch-node.js.map
