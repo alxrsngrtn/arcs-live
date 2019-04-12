@@ -1,0 +1,1 @@
+{"version":3,"file":"path-web.js","sourceRoot":"","sources":["../../src/platform/path-web.ts"],"names":[],"mappings":"AAAA,sDAAsD;AACtD,kEAAkE;AAClE,uCAAuC;AACvC,6DAA6D;AAC7D,oDAAoD;AACpD,uCAAuC;AAEvC,MAAM,CAAC,MAAM,IAAI,GAAG;IAElB,IAAI,CAAC,GAAY,EAAE,IAAa;QAC9B,MAAM,IAAI,KAAK,CAAC,iBAAiB,CAAC,CAAC,CAAC,6BAA6B;IACnE,CAAC;CACF,CAAC"}

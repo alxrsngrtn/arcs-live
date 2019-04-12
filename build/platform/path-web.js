@@ -4,5 +4,9 @@
 // Code distributed by Google as part of this project is also
 // subject to an additional IP rights grant found at
 // http://polymer.github.io/PATENTS.txt
-
-export const path = {};
+export const path = {
+    join(pth, name) {
+        throw new Error("Not implemented"); // We just want the interface
+    },
+};
+//# sourceMappingURL=path-web.js.map
