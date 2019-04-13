@@ -7,7 +7,7 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-import { VersionMap, CRDTChange, CRDTModel } from "./crdt.js";
+import { VersionMap, CRDTChange, CRDTModel, CRDTTypeRecord } from "./crdt.js";
 declare type RawCount = number;
 declare type CountData = {
     values: Map<string, number>;
@@ -31,8 +31,13 @@ export declare type CountOperation = {
     actor: string;
     version: VersionInfo;
 };
-declare type CountChange = CRDTChange<CountOperation, CountData>;
-declare type CountModel = CRDTModel<CountOperation, CountData, RawCount>;
+export interface CRDTCountTypeRecord extends CRDTTypeRecord {
+    data: CountData;
+    operation: CountOperation;
+    consumerType: RawCount;
+}
+declare type CountModel = CRDTModel<CRDTCountTypeRecord>;
+declare type CountChange = CRDTChange<CRDTCountTypeRecord>;
 export declare class CRDTCount implements CountModel {
     private model;
     merge(other: CountModel): {
@@ -41,6 +46,6 @@ export declare class CRDTCount implements CountModel {
     };
     applyOperation(op: CountOperation): boolean;
     getData(): CountData;
-    getParticleView(): RawCount;
+    getParticleView(): number;
 }
 export {};

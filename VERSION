@@ -1,5 +1,5 @@
-commit 7d5e94bf7083c098d22f43bb5cc2f7ec2f835dd7
-Author: Paul Lindner <lindner@inuus.com>
-Date:   Fri Apr 12 16:28:33 2019 -0700
+commit 51b350061545e8f9826071ccac3e3b474dfd3d0b
+Author: shans <shane.stephens@gmail.com>
+Date:   Sat Apr 13 14:59:27 2019 +1000
 
-    Ignore Typedoc compiler errors as it's still on Typescript 3.2.4 (#2892)
+    Adjust CRDT types to key all relevant type components from a single interface (#2887)

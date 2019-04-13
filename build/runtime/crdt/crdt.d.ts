@@ -10,23 +10,34 @@
 export declare type VersionMap = Map<string, number>;
 export declare class CRDTError extends Error {
 }
-export interface CRDTModel<Ops, Data, ConsumerType> {
-    merge(other: CRDTModel<Ops, Data, ConsumerType>): {
-        modelChange: CRDTChange<Ops, Data>;
-        otherChange: CRDTChange<Ops, Data>;
+export interface CRDTOperation {
+}
+export interface CRDTData {
+}
+export interface CRDTConsumerType {
+}
+export interface CRDTTypeRecord {
+    data: CRDTData;
+    operation: CRDTOperation;
+    consumerType: CRDTConsumerType;
+}
+export interface CRDTModel<T extends CRDTTypeRecord> {
+    merge(other: CRDTModel<T>): {
+        modelChange: CRDTChange<T>;
+        otherChange: CRDTChange<T>;
     };
-    applyOperation(op: Ops): boolean;
-    getData(): Data;
-    getParticleView(): ConsumerType;
+    applyOperation(op: T['operation']): boolean;
+    getData(): T['data'];
+    getParticleView(): T['consumerType'];
 }
 export declare enum ChangeType {
     Operations = 0,
     Model = 1
 }
-export declare type CRDTChange<Ops, Data> = {
+export declare type CRDTChange<T extends CRDTTypeRecord> = {
     changeType: ChangeType.Operations;
-    operations: Ops[];
+    operations: T['operation'][];
 } | {
     changeType: ChangeType.Model;
-    modelPostChange: Data;
+    modelPostChange: T['data'];
 };
