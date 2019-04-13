@@ -26338,6 +26338,7 @@ class SlotConsumer {
     formatContent(content, subId) { return null; }
     formatHostedContent(content) { return null; }
     static clear(container) { }
+    static findRootContainers(topContainer) { return {}; }
 }
 
 /**

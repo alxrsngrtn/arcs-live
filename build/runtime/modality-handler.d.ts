@@ -8,11 +8,11 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { DescriptionFormatter } from './description-formatter.js';
-import { SlotDomConsumer } from './slot-dom-consumer.js';
+import { SlotConsumer } from './slot-consumer.js';
 export declare class ModalityHandler {
-    readonly slotConsumerClass: typeof SlotDomConsumer;
+    readonly slotConsumerClass: typeof SlotConsumer;
     readonly descriptionFormatter?: typeof DescriptionFormatter;
-    constructor(slotConsumerClass: typeof SlotDomConsumer, descriptionFormatter?: typeof DescriptionFormatter);
+    constructor(slotConsumerClass: typeof SlotConsumer, descriptionFormatter?: typeof DescriptionFormatter);
     static createHeadlessHandler(): ModalityHandler;
     static readonly headlessHandler: ModalityHandler;
     static readonly domHandler: ModalityHandler;

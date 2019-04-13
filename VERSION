@@ -1,5 +1,5 @@
-commit 51b350061545e8f9826071ccac3e3b474dfd3d0b
-Author: shans <shane.stephens@gmail.com>
-Date:   Sat Apr 13 14:59:27 2019 +1000
+commit 6fc1893b13fae1c9ffd32aaaedeb0546a30a2c4c
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Sat Apr 13 12:36:21 2019 -0700
 
-    Adjust CRDT types to key all relevant type components from a single interface (#2887)
+    less slot-dom-consumer references (#2881)

@@ -8,7 +8,7 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { assert } from '../../platform/chai-web.js';
-import { SlotDomConsumer } from '../slot-dom-consumer.js';
+import { HeadlessSlotDomConsumer } from '../headless-slot-dom-consumer.js';
 import { InterfaceType } from '../type.js';
 import { FakeSlotComposer } from './fake-slot-composer.js';
 const logging = false;
@@ -38,7 +38,7 @@ export class MockSlotComposer extends FakeSlotComposer {
         this.logging = options.logging;
         this.debugMessages = [];
         // Clear all cached templates
-        SlotDomConsumer.clearCache();
+        HeadlessSlotDomConsumer.clearCache();
     }
     // Overriding this method to investigate AppVeyor failures.
     // TODO: get rid of it once the problem is fixed.

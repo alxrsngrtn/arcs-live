@@ -9,7 +9,7 @@
  */
 import { assert } from '../platform/chai-web.js';
 import { HostedSlotContext } from '../runtime/slot-context.js';
-import { SlotDomConsumer } from '../runtime/slot-dom-consumer.js';
+import { HeadlessSlotDomConsumer } from '../runtime/headless-slot-dom-consumer.js';
 import { PlanningTestHelper } from '../planning/testing/arcs-planning-testing.js';
 describe('Multiplexer', () => {
     it('renders polymorphic multiplexed slots', async () => {
@@ -66,10 +66,10 @@ describe('Multiplexer', () => {
             }
         }
         // verify template cache
-        SlotDomConsumer.hasTemplate('PostMuxer::item::ShowOne::item::default');
-        SlotDomConsumer.hasTemplate('PostMuxer::item::ShowTwo::item::default');
-        SlotDomConsumer.hasTemplate('PostMuxer::item::default');
-        SlotDomConsumer.hasTemplate('Root::item::ShowOne::item::default');
+        HeadlessSlotDomConsumer.hasTemplate('PostMuxer::item::ShowOne::item::default');
+        HeadlessSlotDomConsumer.hasTemplate('PostMuxer::item::ShowTwo::item::default');
+        HeadlessSlotDomConsumer.hasTemplate('PostMuxer::item::default');
+        HeadlessSlotDomConsumer.hasTemplate('Root::item::ShowOne::item::default');
     });
 });
 //# sourceMappingURL=multiplexer-integration-test.js.map

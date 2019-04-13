@@ -69,4 +69,5 @@ export declare class SlotConsumer {
     formatContent(content: Content, subId: any): Content;
     formatHostedContent(content: Content): {};
     static clear(container: any): void;
+    static findRootContainers(topContainer: any): {};
 }
