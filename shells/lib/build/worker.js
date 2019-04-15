@@ -3834,7 +3834,9 @@ class Variable extends Handle {
                 return;
             case 'update': {
                 try {
-                    await particle.onHandleUpdate(this, { data: this._restore(details.data) });
+                    const data = this._restore(details.data);
+                    const oldData = this._restore(details.oldData);
+                    await particle.onHandleUpdate(this, { data, oldData });
                 }
                 catch (e) {
                     this.reportUserExceptionInHost(e, particle, 'onHandleUpdate');
@@ -3867,7 +3869,7 @@ class Variable extends Handle {
         return this._restore(model);
     }
     _restore(model) {
-        if (model === null) {
+        if (model == null) {
             return null;
         }
         if (this.type instanceof _type_js__WEBPACK_IMPORTED_MODULE_4__["EntityType"]) {
@@ -4642,7 +4644,7 @@ class StorageProxy {
                 this.port.SynchronizeProxy(this, x => this._onSynchronize(x));
                 for (const { handle, particle } of this.observers) {
                     if (handle.options.notifyDesync) {
-                        this.scheduler.enqueue(particle, handle, ['desync', particle]);
+                        this.scheduler.enqueue(particle, handle, ['desync', particle, {}]);
                     }
                 }
             }
@@ -4845,8 +4847,9 @@ class VariableProxy extends StorageProxy {
             }
             return null;
         }
+        const oldData = this.model;
         this.model = update.data;
-        return update;
+        return Object.assign({}, update, { oldData });
     }
     // Read ops: if we're synchronized we can just return the local copy of the data.
     // Otherwise, send a request to the backing store.
@@ -4878,11 +4881,12 @@ class VariableProxy extends StorageProxy {
         else {
             barrier = null;
         }
+        const oldData = this.model;
         // TODO: is this already a clone?
         this.model = JSON.parse(JSON.stringify(entity));
         this.barrier = barrier;
         this.port.HandleSet(this, entity, particleId, barrier);
-        const update = { originatorId: particleId, data: entity };
+        const update = { originatorId: particleId, data: entity, oldData };
         this._notify('update', update, options => options.notifyUpdate);
     }
     clear(particleId) {
@@ -4890,10 +4894,11 @@ class VariableProxy extends StorageProxy {
             return;
         }
         const barrier = this.generateID( /* 'barrier' */);
+        const oldData = this.model;
         this.model = null;
         this.barrier = barrier;
         this.port.HandleClear(this, particleId, barrier);
-        const update = { originatorId: particleId, data: null };
+        const update = { originatorId: particleId, data: null, oldData };
         this._notify('update', update, options => options.notifyUpdate);
     }
 }
@@ -4905,7 +4910,6 @@ class BigCollectionProxy extends StorageProxy {
             this.scheduler.enqueue(particle, handle, ['sync', particle, {}]);
         }
     }
-    // tslint:disable-next-line: no-any
     _getModelForSync() {
         throw new Error("_getModelForSync not implemented for BigCollectionProxy");
     }
@@ -6256,6 +6260,7 @@ class Particle {
      * @param handle The Handle instance that was updated.
      * @param update An object containing one of the following fields:
      *  - data: The full Entity for a Variable-backed Handle.
+     *  - oldData: The previous value of a Variable before it was updated.
      *  - added: An Array of Entities added to a Collection-backed Handle.
      *  - removed: An Array of Entities removed from a Collection-backed Handle.
      */

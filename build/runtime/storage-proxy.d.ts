@@ -12,7 +12,7 @@ import { PropagatedException } from './arc-exceptions.js';
 import { Handle, HandleOptions } from './handle.js';
 import { ParticleExecutionContext } from './particle-execution-context.js';
 import { Particle } from './particle.js';
-import { SerializedModelEntry } from './storage/crdt-collection-model.js';
+import { SerializedModelEntry, ModelValue } from './storage/crdt-collection-model.js';
 import { Type } from './type.js';
 import { EntityRawData } from './entity.js';
 declare enum SyncState {
@@ -65,7 +65,9 @@ export declare abstract class StorageProxy {
     private readonly updates;
     protected barrier: string | null;
     constructor(id: string, type: Type, port: PECInnerPort, pec: ParticleExecutionContext, scheduler: any, name: string);
-    abstract _getModelForSync(): any;
+    abstract _getModelForSync(): {
+        id: string;
+    } | ModelValue[];
     abstract _synchronizeModel(version: number, model: SerializedModelEntry[]): boolean;
     abstract _processUpdate(update: {
         version: number;
@@ -74,7 +76,7 @@ export declare abstract class StorageProxy {
     /**
      *  Called by ParticleExecutionContext to associate (potentially multiple) particle/handle pairs with this proxy.
      */
-    register(particle: any, handle: any): void;
+    register(particle: Particle, handle: Handle): void;
     _onSynchronize({ version, model }: {
         version: number;
         model: SerializedModelEntry[];
@@ -82,7 +84,7 @@ export declare abstract class StorageProxy {
     _onUpdate(update: {
         version: number;
     }): void;
-    _notify(kind: any, details: any, predicate?: (ignored: HandleOptions) => boolean): void;
+    _notify(kind: string, details: any, predicate?: (ignored: HandleOptions) => boolean): void;
     _processUpdates(): void;
     generateID(): string;
     generateIDComponents(): {
@@ -108,7 +110,7 @@ export declare abstract class StorageProxy {
  */
 export declare class CollectionProxy extends StorageProxy {
     private model;
-    _getModelForSync(): import("./storage/crdt-collection-model.js").ModelValue[];
+    _getModelForSync(): ModelValue[];
     _synchronizeModel(version: number, model: SerializedModelEntry[]): boolean;
     _processUpdate(update: any, apply?: boolean): {
         add?: {}[];
@@ -145,7 +147,7 @@ export declare class VariableProxy extends StorageProxy {
 }
 export declare class BigCollectionProxy extends StorageProxy {
     register(particle: any, handle: any): void;
-    _getModelForSync(): any;
+    _getModelForSync(): never;
     _processUpdate(): {};
     _synchronizeModel(): boolean;
     store(value: any, keys: any, particleId: any): Promise<void>;
@@ -160,7 +162,7 @@ export declare class StorageProxyScheduler {
     private _idleResolver;
     private _idle;
     constructor();
-    enqueue(particle: any, handle: any, args: any): void;
+    enqueue(particle: Particle, handle: Handle, args: [string, Particle, {}]): void;
     readonly busy: boolean;
     _updateIdle(): void;
     readonly idle: Promise<void>;

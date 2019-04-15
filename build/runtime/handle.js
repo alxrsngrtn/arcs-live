@@ -215,7 +215,9 @@ export class Variable extends Handle {
                 return;
             case 'update': {
                 try {
-                    await particle.onHandleUpdate(this, { data: this._restore(details.data) });
+                    const data = this._restore(details.data);
+                    const oldData = this._restore(details.oldData);
+                    await particle.onHandleUpdate(this, { data, oldData });
                 }
                 catch (e) {
                     this.reportUserExceptionInHost(e, particle, 'onHandleUpdate');
@@ -248,7 +250,7 @@ export class Variable extends Handle {
         return this._restore(model);
     }
     _restore(model) {
-        if (model === null) {
+        if (model == null) {
             return null;
         }
         if (this.type instanceof EntityType) {

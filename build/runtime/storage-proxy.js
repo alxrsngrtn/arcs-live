@@ -191,7 +191,7 @@ export class StorageProxy {
                 this.port.SynchronizeProxy(this, x => this._onSynchronize(x));
                 for (const { handle, particle } of this.observers) {
                     if (handle.options.notifyDesync) {
-                        this.scheduler.enqueue(particle, handle, ['desync', particle]);
+                        this.scheduler.enqueue(particle, handle, ['desync', particle, {}]);
                     }
                 }
             }
@@ -394,8 +394,9 @@ export class VariableProxy extends StorageProxy {
             }
             return null;
         }
+        const oldData = this.model;
         this.model = update.data;
-        return update;
+        return Object.assign({}, update, { oldData });
     }
     // Read ops: if we're synchronized we can just return the local copy of the data.
     // Otherwise, send a request to the backing store.
@@ -427,11 +428,12 @@ export class VariableProxy extends StorageProxy {
         else {
             barrier = null;
         }
+        const oldData = this.model;
         // TODO: is this already a clone?
         this.model = JSON.parse(JSON.stringify(entity));
         this.barrier = barrier;
         this.port.HandleSet(this, entity, particleId, barrier);
-        const update = { originatorId: particleId, data: entity };
+        const update = { originatorId: particleId, data: entity, oldData };
         this._notify('update', update, options => options.notifyUpdate);
     }
     clear(particleId) {
@@ -439,10 +441,11 @@ export class VariableProxy extends StorageProxy {
             return;
         }
         const barrier = this.generateID( /* 'barrier' */);
+        const oldData = this.model;
         this.model = null;
         this.barrier = barrier;
         this.port.HandleClear(this, particleId, barrier);
-        const update = { originatorId: particleId, data: null };
+        const update = { originatorId: particleId, data: null, oldData };
         this._notify('update', update, options => options.notifyUpdate);
     }
 }
@@ -454,7 +457,6 @@ export class BigCollectionProxy extends StorageProxy {
             this.scheduler.enqueue(particle, handle, ['sync', particle, {}]);
         }
     }
-    // tslint:disable-next-line: no-any
     _getModelForSync() {
         throw new Error("_getModelForSync not implemented for BigCollectionProxy");
     }
