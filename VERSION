@@ -1,5 +1,5 @@
-commit 6fc1893b13fae1c9ffd32aaaedeb0546a30a2c4c
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Sat Apr 13 12:36:21 2019 -0700
+commit f3d355139f2bc742db4dfc7a712f40de832ed2f0
+Author: Piotr Swigon <piotr.swigon@gmail.com>
+Date:   Mon Apr 15 13:27:42 2019 +1000
 
-    less slot-dom-consumer references (#2881)
+    Stub Loader in Manifest Tests (#2890)
