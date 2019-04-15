@@ -120,6 +120,7 @@
 								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="entityinterface.html#dataclone" class="tsd-kind-icon">data<wbr>Clone</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="entityinterface.html#identify" class="tsd-kind-icon">identify</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="entityinterface.html#isidentified" class="tsd-kind-icon">is<wbr>Identified</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="entityinterface.html#mutate" class="tsd-kind-icon">mutate</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-interface tsd-is-inherited"><a href="entityinterface.html#serialize" class="tsd-kind-icon">serialize</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="entityinterface.html#tojson" class="tsd-kind-icon">toJSON</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="entityinterface.html#toliteral" class="tsd-kind-icon">to<wbr>Literal</a></li>
@@ -136,7 +137,7 @@
 					<div class="tsd-signature tsd-kind-icon">entity<wbr>Class<span class="tsd-signature-symbol">:</span> <a href="../globals.html#entityclass" class="tsd-signature-type">EntityClass</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/f3d3551/src/runtime/entity.ts#L38">runtime/entity.ts:38</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/f41a472/src/runtime/entity.ts#L41">runtime/entity.ts:41</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -146,7 +147,7 @@
 					<div class="tsd-signature tsd-kind-icon">id<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/f3d3551/src/runtime/entity.ts#L32">runtime/entity.ts:32</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/f41a472/src/runtime/entity.ts#L40">runtime/entity.ts:40</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -156,7 +157,7 @@
 					<div class="tsd-signature tsd-kind-icon">mutable<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/f3d3551/src/runtime/entity.ts#L39">runtime/entity.ts:39</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/f41a472/src/runtime/entity.ts#L39">runtime/entity.ts:39</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -173,7 +174,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/f3d3551/src/runtime/entity.ts#L34">runtime/entity.ts:34</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/f41a472/src/runtime/entity.ts#L33">runtime/entity.ts:33</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -196,7 +197,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/f3d3551/src/runtime/entity.ts#L37">runtime/entity.ts:37</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/f41a472/src/runtime/entity.ts#L36">runtime/entity.ts:36</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <a href="../globals.html#entityrawdata" class="tsd-signature-type">EntityRawData</a></h4>
@@ -213,7 +214,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/f3d3551/src/runtime/entity.ts#L33">runtime/entity.ts:33</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/f41a472/src/runtime/entity.ts#L32">runtime/entity.ts:32</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -236,10 +237,51 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/f3d3551/src/runtime/entity.ts#L31">runtime/entity.ts:31</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/f41a472/src/runtime/entity.ts#L31">runtime/entity.ts:31</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface">
+					<a name="mutate" class="tsd-anchor"></a>
+					<h3>mutate</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
+						<li class="tsd-signature tsd-kind-icon">mutate<span class="tsd-signature-symbol">(</span>mutationFn<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">function</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/f41a472/src/runtime/entity.ts#L37">runtime/entity.ts:37</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>mutationFn: <span class="tsd-signature-type">function</span></h5>
+									<ul class="tsd-parameters">
+										<li class="tsd-parameter-siganture">
+											<ul class="tsd-signatures tsd-kind-type-literal tsd-is-not-exported">
+												<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>data<span class="tsd-signature-symbol">: </span><a href="mutableentitydata.html" class="tsd-signature-type">MutableEntityData</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+											</ul>
+											<ul class="tsd-descriptions">
+												<li class="tsd-description">
+													<h4 class="tsd-parameters-title">Parameters</h4>
+													<ul class="tsd-parameters">
+														<li>
+															<h5>data: <a href="mutableentitydata.html" class="tsd-signature-type">MutableEntityData</a></h5>
+														</li>
+													</ul>
+													<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+												</li>
+											</ul>
+										</li>
+									</ul>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -254,7 +296,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="storable.html">Storable</a>.<a href="storable.html#serialize">serialize</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/f3d3551/src/runtime/handle.ts#L22">runtime/handle.ts:22</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/f41a472/src/runtime/handle.ts#L22">runtime/handle.ts:22</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <a href="../globals.html#serializedentity" class="tsd-signature-type">SerializedEntity</a></h4>
@@ -271,7 +313,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/f3d3551/src/runtime/entity.ts#L36">runtime/entity.ts:36</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/f41a472/src/runtime/entity.ts#L35">runtime/entity.ts:35</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <a href="../globals.html#entityrawdata" class="tsd-signature-type">EntityRawData</a></h4>
@@ -288,7 +330,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/f3d3551/src/runtime/entity.ts#L35">runtime/entity.ts:35</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/f41a472/src/runtime/entity.ts#L34">runtime/entity.ts:34</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <a href="../globals.html#entityrawdata" class="tsd-signature-type">EntityRawData</a></h4>
@@ -332,6 +374,9 @@
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-interface">
 								<a href="entityinterface.html#isidentified" class="tsd-kind-icon">is<wbr>Identified</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-interface">
+								<a href="entityinterface.html#mutate" class="tsd-kind-icon">mutate</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
 								<a href="entityinterface.html#serialize" class="tsd-kind-icon">serialize</a>

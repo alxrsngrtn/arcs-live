@@ -1,5 +1,5 @@
-commit f3d355139f2bc742db4dfc7a712f40de832ed2f0
-Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Mon Apr 15 13:27:42 2019 +1000
+commit f41a4728bd0ed6ead66be96757c38f58ed3582fb
+Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
+Date:   Mon Apr 15 16:09:57 2019 +1000
 
-    Stub Loader in Manifest Tests (#2890)
+    Added a mutate method to the Entity class (#2882)

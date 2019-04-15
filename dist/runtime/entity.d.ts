@@ -13,14 +13,22 @@ export declare type EntityRawData = {};
  */
 export interface EntityInterface extends Storable {
     isIdentified(): boolean;
-    id: string;
     identify(identifier: string): void;
     createIdentity(components: EntityIdComponents): void;
     toLiteral(): EntityRawData;
     toJSON(): EntityRawData;
     dataClone(): EntityRawData;
-    entityClass: EntityClass;
+    mutate(mutationFn: (data: MutableEntityData) => void): void;
     mutable: boolean;
+    readonly id: string;
+    readonly entityClass: EntityClass;
+    [index: string]: any;
+}
+/**
+ * Represents mutable entity data. Instances will have mutable properties defined on them for all of the fields defined in the schema for the
+ * entity. This type permits indexing by all strings, because we do not know what those fields are at compile time (since they're dynamic).
+ */
+export interface MutableEntityData {
     [index: string]: any;
 }
 /**
@@ -44,9 +52,10 @@ export interface EntityStaticInterface {
  */
 export declare type EntityClass = (new (data: any, userIDComponent?: string) => EntityInterface) & EntityStaticInterface;
 export declare abstract class Entity implements EntityInterface {
+    protected rawData: EntityRawData;
     private userIDComponent?;
     private schema;
-    protected rawData: EntityRawData;
+    private context;
     private _mutable;
     protected constructor(data: EntityRawData, schema: Schema, context: ParticleExecutionContext, userIDComponent?: string);
     /** Returns true if this Entity instance can have its fields mutated. */
@@ -56,6 +65,11 @@ export declare abstract class Entity implements EntityInterface {
     * malicious developers; they can reach in and modify the "private" backing field directly.
     */
     mutable: boolean;
+    /**
+     * Mutates the entity. The supplied mutation function will be called with a mutable copy of the entity's data. The mutations performed by that
+     * function will be reflected in the original entity instance (i.e. mutations applied in place).
+     */
+    mutate(mutationFn: (data: MutableEntityData) => void): void;
     getUserID(): string;
     isIdentified(): boolean;
     readonly id: string;

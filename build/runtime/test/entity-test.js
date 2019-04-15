@@ -14,15 +14,30 @@ describe('Entity', () => {
             const entity = newFooEntity('abc');
             assert.isTrue(entity.mutable);
             assert.equal(entity.bar, 'abc');
-            entity.bar = 'xyz';
+        });
+        it('allows mutations via the mutate method', () => {
+            const entity = newFooEntity('abc');
+            // TODO: Fix typing on Entity so that we can modify fields!
+            entity.mutate(e => {
+                e.bar = 'xyz';
+            });
             assert.equal(entity.bar, 'xyz');
+        });
+        it('forbids mutations via setters', () => {
+            const entity = newFooEntity('abc');
+            assert.throws(() => {
+                entity.bar = 'xyz';
+            }, "Tried to modify entity field 'bar'");
+            assert.equal(entity.bar, 'abc');
         });
         it('rejects mutations when immutable', () => {
             const entity = newFooEntity('abc');
             entity.mutable = false;
             assert.throws(() => {
-                entity.bar = 'xyz';
-            }, /Entity is immutable/);
+                entity.mutate(e => {
+                    e.bar = 'xyz';
+                });
+            }, 'Entity is immutable');
             assert.equal(entity.bar, 'abc');
         });
         it('stays immutable forever', () => {
@@ -30,7 +45,7 @@ describe('Entity', () => {
             entity.mutable = false;
             assert.throws(() => {
                 entity.mutable = true;
-            }, /You cannot make an immutable entity mutable again/);
+            }, 'You cannot make an immutable entity mutable again');
             assert.isFalse(entity.mutable);
         });
     });

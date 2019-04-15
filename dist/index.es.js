@@ -1008,14 +1008,9 @@ class Entity {
         setEntityId(this, undefined);
         this.userIDComponent = userIDComponent;
         this.schema = schema;
+        this.context = context;
         assert(data, `can't construct entity with null data`);
-        // TODO: figure out how to do this only on wire-created entities.
-        const rawData = {};
-        const sanitizedData = sanitizeData(data, schema, context);
-        for (const [name, value] of Object.entries(sanitizedData)) {
-            rawData[name] = value;
-        }
-        this.rawData = createRawDataProxy(rawData, schema, this);
+        this.rawData = createRawDataProxy(data, schema, context);
     }
     /** Returns true if this Entity instance can have its fields mutated. */
     get mutable() {
@@ -1032,6 +1027,19 @@ class Entity {
             throw new Error('You cannot make an immutable entity mutable again.');
         }
         this._mutable = mutable;
+    }
+    /**
+     * Mutates the entity. The supplied mutation function will be called with a mutable copy of the entity's data. The mutations performed by that
+     * function will be reflected in the original entity instance (i.e. mutations applied in place).
+     */
+    mutate(mutationFn) {
+        if (!this.mutable) {
+            throw new Error('Entity is immutable.');
+        }
+        const newData = this.dataClone();
+        mutationFn(newData);
+        this.rawData = createRawDataProxy(newData, this.schema, this.context);
+        // TODO: Send mutations to data store.
     }
     getUserID() {
         return this.userIDComponent;
@@ -1075,10 +1083,14 @@ class Entity {
         for (const name of Object.keys(fieldTypes)) {
             if (this.rawData[name] !== undefined) {
                 if (fieldTypes[name] && fieldTypes[name].kind === 'schema-reference') {
-                    clone[name] = this.rawData[name].dataClone();
+                    if (this.rawData[name]) {
+                        clone[name] = this.rawData[name].dataClone();
+                    }
                 }
                 else if (fieldTypes[name] && fieldTypes[name].kind === 'schema-collection') {
-                    clone[name] = [...this.rawData[name]].map(a => a.dataClone());
+                    if (this.rawData[name]) {
+                        clone[name] = [...this.rawData[name]].map(a => a.dataClone());
+                    }
                 }
                 else {
                     clone[name] = this.rawData[name];
@@ -1265,9 +1277,11 @@ function sanitizeEntry(type, value, name, context) {
     }
 }
 /** Constructs a Proxy object to use for entities' rawData objects. This proxy will perform type-checking when getting/setting fields. */
-function createRawDataProxy(rawData, schema, entity) {
+function createRawDataProxy(data, schema, context) {
     const classJunk = ['toJSON', 'prototype', 'toString', 'inspect'];
-    return new Proxy(rawData, {
+    // TODO: figure out how to do this only on wire-created entities.
+    const sanitizedData = sanitizeData(data, schema, context);
+    return new Proxy(sanitizedData, {
         get: (target, name) => {
             if (classJunk.includes(name) || name.constructor === Symbol) {
                 return undefined;
@@ -1277,14 +1291,7 @@ function createRawDataProxy(rawData, schema, entity) {
             return value;
         },
         set: (target, name, value) => {
-            // TODO: Disallow mutation via regular field properties, and add a new mutate method instead.
-            validateFieldAndTypes({ op: 'set', name, value, schema });
-            if (!entity.mutable) {
-                throw new Error('Entity is immutable.');
-            }
-            // TODO: If the given value is a JS object/list, make an immutable copy of it first before storing it.
-            target[name] = value;
-            return true;
+            throw new Error(`Tried to modify entity field '${name}'. Use the mutate method instead.`);
         }
     });
 }

@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>RecipeHandle | arcs</title>
+	<title>MutableEntityData | arcs</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -56,100 +56,41 @@
 					<a href="../globals.html">Globals</a>
 				</li>
 				<li>
-					<a href="recipehandle.html">RecipeHandle</a>
+					<a href="mutableentitydata.html">MutableEntityData</a>
 				</li>
 			</ul>
-			<h1>Interface RecipeHandle</h1>
+			<h1>Interface MutableEntityData</h1>
 		</div>
 	</div>
 </header>
 <div class="container container-main">
 	<div class="row">
 		<div class="col-8 col-content">
+			<section class="tsd-panel tsd-comment">
+				<div class="tsd-comment tsd-typography">
+					<div class="lead">
+						<p>Represents mutable entity data. Instances will have mutable properties defined on them for all of the fields defined in the schema for the
+						entity. This type permits indexing by all strings, because we do not know what those fields are at compile time (since they&#39;re dynamic).</p>
+					</div>
+				</div>
+			</section>
 			<section class="tsd-panel tsd-hierarchy">
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<a href="../classes/basenode.html" class="tsd-signature-type">BaseNode</a>
-						<ul class="tsd-hierarchy">
-							<li>
-								<span class="target">RecipeHandle</span>
-							</li>
-						</ul>
+						<span class="target">MutableEntityData</span>
 					</li>
 				</ul>
 			</section>
-			<section class="tsd-panel-group tsd-index-group">
-				<h2>Index</h2>
-				<section class="tsd-panel tsd-index-panel">
-					<div class="tsd-index-content">
-						<section class="tsd-index-section ">
-							<h3>Properties</h3>
-							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="recipehandle.html#fate" class="tsd-kind-icon">fate</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-overwrite"><a href="recipehandle.html#kind" class="tsd-kind-icon">kind</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-inherited"><a href="recipehandle.html#location" class="tsd-kind-icon">location</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="recipehandle.html#name" class="tsd-kind-icon">name</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="recipehandle.html#ref" class="tsd-kind-icon">ref</a></li>
-							</ul>
-						</section>
+			<section class="tsd-panel tsd-kind-interface">
+				<h3 class="tsd-before-signature">Indexable</h3>
+				<div class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">[</span>index: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">]: </span><span class="tsd-signature-type">any</span></div>
+				<div class="tsd-comment tsd-typography">
+					<div class="lead">
+						<p>Represents mutable entity data. Instances will have mutable properties defined on them for all of the fields defined in the schema for the
+						entity. This type permits indexing by all strings, because we do not know what those fields are at compile time (since they&#39;re dynamic).</p>
 					</div>
-				</section>
-			</section>
-			<section class="tsd-panel-group tsd-member-group ">
-				<h2>Properties</h2>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="fate" class="tsd-anchor"></a>
-					<h3>fate</h3>
-					<div class="tsd-signature tsd-kind-icon">fate<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/f41a472/src/runtime/manifest-ast-nodes.ts#L272">runtime/manifest-ast-nodes.ts:272</a></li>
-						</ul>
-					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-overwrite">
-					<a name="kind" class="tsd-anchor"></a>
-					<h3>kind</h3>
-					<div class="tsd-signature tsd-kind-icon">kind<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">"handle"</span></div>
-					<aside class="tsd-sources">
-						<p>Overrides <a href="../classes/basenode.html">BaseNode</a>.<a href="../classes/basenode.html#kind">kind</a></p>
-						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/f41a472/src/runtime/manifest-ast-nodes.ts#L269">runtime/manifest-ast-nodes.ts:269</a></li>
-						</ul>
-					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
-					<a name="location" class="tsd-anchor"></a>
-					<h3>location</h3>
-					<div class="tsd-signature tsd-kind-icon">location<span class="tsd-signature-symbol">:</span> <a href="sourcelocation.html" class="tsd-signature-type">SourceLocation</a></div>
-					<aside class="tsd-sources">
-						<p>Inherited from <a href="../classes/basenode.html">BaseNode</a>.<a href="../classes/basenode.html#location">location</a></p>
-						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/f41a472/src/runtime/manifest-ast-nodes.ts#L41">runtime/manifest-ast-nodes.ts:41</a></li>
-						</ul>
-					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="name" class="tsd-anchor"></a>
-					<h3>name</h3>
-					<div class="tsd-signature tsd-kind-icon">name<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/f41a472/src/runtime/manifest-ast-nodes.ts#L270">runtime/manifest-ast-nodes.ts:270</a></li>
-						</ul>
-					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="ref" class="tsd-anchor"></a>
-					<h3>ref</h3>
-					<div class="tsd-signature tsd-kind-icon">ref<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/f41a472/src/runtime/manifest-ast-nodes.ts#L271">runtime/manifest-ast-nodes.ts:271</a></li>
-						</ul>
-					</aside>
-				</section>
+				</div>
 			</section>
 		</div>
 		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
@@ -165,24 +106,7 @@
 				</ul>
 				<ul class="current">
 					<li class="current tsd-kind-interface">
-						<a href="recipehandle.html" class="tsd-kind-icon">Recipe<wbr>Handle</a>
-						<ul>
-							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="recipehandle.html#fate" class="tsd-kind-icon">fate</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-overwrite">
-								<a href="recipehandle.html#kind" class="tsd-kind-icon">kind</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
-								<a href="recipehandle.html#location" class="tsd-kind-icon">location</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="recipehandle.html#name" class="tsd-kind-icon">name</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="recipehandle.html#ref" class="tsd-kind-icon">ref</a>
-							</li>
-						</ul>
+						<a href="mutableentitydata.html" class="tsd-kind-icon">Mutable<wbr>Entity<wbr>Data</a>
 					</li>
 				</ul>
 				<ul class="after-current">
