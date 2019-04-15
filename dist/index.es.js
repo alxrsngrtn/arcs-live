@@ -21254,9 +21254,12 @@ class Walker {
     }
     onResult(result) {
         this.currentResult = result;
+        this.updateList = [];
     }
     onResultDone() {
+        this.runUpdateList(this.currentResult.result, this.updateList);
         this.currentResult = undefined;
+        this.updateList = undefined;
     }
     onActionDone() {
         this.currentAction = undefined;
@@ -21270,7 +21273,16 @@ class Walker {
         walker.onActionDone();
         return walker.descendants;
     }
-    _runUpdateList(start, updateList) {
+    visit(visitor, ...context) {
+        const continuation = visitor(this.currentResult.result, ...context);
+        if (!this.isEmptyResult(continuation)) {
+            this.updateList.push({
+                continuation: continuation,
+                context
+            });
+        }
+    }
+    runUpdateList(start, updateList) {
         const updated = [];
         if (updateList.length) {
             switch (this.tactic) {
@@ -21284,7 +21296,7 @@ class Walker {
                         continuation.forEach(f => {
                             permutations.forEach(p => {
                                 const newP = p.slice();
-                                newP.push({ f, context });
+                                newP.push({ continuation: f, context });
                                 newResults.push(newP);
                             });
                         });
@@ -21294,17 +21306,12 @@ class Walker {
                         const cloneMap = new Map();
                         const newResult = start.clone(cloneMap);
                         let score = 0;
-                        permutation = permutation.filter(p => p.f !== null);
+                        permutation = permutation.filter(p => p.continuation !== null);
                         if (permutation.length === 0) {
                             continue;
                         }
-                        permutation.forEach(({ f, context }) => {
-                            if (context) {
-                                score = f(newResult, ...context.map(c => cloneMap.get(c) || c));
-                            }
-                            else {
-                                score = f(newResult);
-                            }
+                        permutation.forEach(({ continuation, context }) => {
+                            score = continuation(newResult, ...context.map(c => cloneMap.get(c) || c));
                         });
                         updated.push({ result: newResult, score });
                     }
@@ -21322,12 +21329,7 @@ class Walker {
                             }
                             const cloneMap = new Map();
                             const newResult = start.clone(cloneMap);
-                            if (context) {
-                                score = f(newResult, ...context.map(c => cloneMap.get(c) || c));
-                            }
-                            else {
-                                score = f(newResult);
-                            }
+                            score = f(newResult, ...context.map(c => cloneMap.get(c) || c));
                             updated.push({ result: newResult, score });
                         });
                     });
@@ -21338,7 +21340,7 @@ class Walker {
         }
         // commit phase - output results.
         for (const newResult of updated) {
-            const result = this.createDescendant(newResult.result, newResult.score);
+            this.createDescendant(newResult.result, newResult.score);
         }
     }
     createWalkerDescendant(item, score, hash, valid) {
@@ -21376,23 +21378,12 @@ class RecipeWalker extends Walker {
     onResult(result) {
         super.onResult(result);
         const recipe = result.result;
-        const updateList = [];
-        // update phase - walk through recipe and call onRecipe,
-        // onHandle, etc.
-        // TODO overriding the argument with a local variable is very confusing.
         if (this.onRecipe) {
-            result = this.onRecipe(recipe, result);
-            if (!this.isEmptyResult(result)) {
-                updateList.push({ continuation: result });
-            }
+            this.visit(this.onRecipe.bind(this));
         }
         if (this.onParticle) {
             for (const particle of recipe.particles) {
-                const context = [particle];
-                const result = this.onParticle(recipe, ...context);
-                if (!this.isEmptyResult(result)) {
-                    updateList.push({ continuation: result, context });
-                }
+                this.visit(this.onParticle.bind(this), particle);
             }
         }
         if (this.onPotentialHandleConnection) {
@@ -21402,31 +21393,19 @@ class RecipeWalker extends Walker {
                         if (particle.connections[connectionSpec.name]) {
                             continue;
                         }
-                        const context = [particle, connectionSpec];
-                        const result = this.onPotentialHandleConnection(recipe, ...context);
-                        if (!this.isEmptyResult(result)) {
-                            updateList.push({ continuation: result, context });
-                        }
+                        this.visit(this.onPotentialHandleConnection.bind(this), particle, connectionSpec);
                     }
                 }
             }
         }
-        for (const handleConnection of recipe.handleConnections) {
-            if (this.onHandleConnection) {
-                const context = [handleConnection];
-                const result = this.onHandleConnection(recipe, ...context);
-                if (!this.isEmptyResult(result)) {
-                    updateList.push({ continuation: result, context });
-                }
+        if (this.onHandleConnection) {
+            for (const handleConnection of recipe.handleConnections) {
+                this.visit(this.onHandleConnection.bind(this), handleConnection);
             }
         }
         if (this.onHandle) {
             for (const handle of recipe.handles) {
-                const context = [handle];
-                const result = this.onHandle(recipe, ...context);
-                if (!this.isEmptyResult(result)) {
-                    updateList.push({ continuation: result, context });
-                }
+                this.visit(this.onHandle.bind(this), handle);
             }
         }
         if (this.onPotentialSlotConnection) {
@@ -21434,53 +21413,32 @@ class RecipeWalker extends Walker {
                 for (const [name, slotSpec] of particle.getSlotSpecs()) {
                     if (particle.getSlotConnectionByName(name))
                         continue;
-                    const context = [particle, slotSpec];
-                    const result = this.onPotentialSlotConnection(recipe, ...context);
-                    if (!this.isEmptyResult(result)) {
-                        updateList.push({ continuation: result, context });
-                    }
+                    this.visit(this.onPotentialSlotConnection.bind(this), particle, slotSpec);
                 }
             }
         }
         if (this.onSlotConnection) {
             for (const slotConnection of recipe.slotConnections) {
-                const context = [slotConnection];
-                const result = this.onSlotConnection(recipe, ...context);
-                if (!this.isEmptyResult(result)) {
-                    updateList.push({ continuation: result, context });
-                }
+                this.visit(this.onSlotConnection.bind(this), slotConnection);
             }
         }
         if (this.onSlot) {
             for (const slot of recipe.slots) {
-                const context = [slot];
-                const result = this.onSlot(recipe, ...context);
-                if (!this.isEmptyResult(result)) {
-                    updateList.push({ continuation: result, context });
-                }
+                this.visit(this.onSlot.bind(this), slot);
             }
         }
         if (this.onObligation) {
             for (const obligation of recipe.obligations) {
-                const context = [obligation];
-                const result = this.onObligation(recipe, ...context);
-                if (!this.isEmptyResult(result)) {
-                    updateList.push({ continuation: result, context });
-                }
+                this.visit(this.onObligation.bind(this), obligation);
             }
         }
         if (this.onRequiredParticle) {
             for (const require of recipe.requires) {
                 for (const particle of require.particles) {
-                    const context = [particle];
-                    const result = this.onRequiredParticle(recipe, ...context);
-                    if (!this.isEmptyResult(result)) {
-                        updateList.push({ continuation: result, context });
-                    }
+                    this.visit(this.onRequiredParticle.bind(this), particle);
                 }
             }
         }
-        this._runUpdateList(recipe, updateList);
     }
     createDescendant(recipe, score) {
         const valid = recipe.normalize();
@@ -21663,6 +21621,7 @@ class ResolveWalker extends RecipeWalker {
         if (mappable.length === 1) {
             return (recipe, handle) => {
                 handle.mapToStorage(mappable[0]);
+                return 0;
             };
         }
         return undefined;
@@ -23613,7 +23572,7 @@ class AddMissingHandles extends Strategy {
                 if (disconnectedConnections.length === 0) {
                     return undefined;
                 }
-                return recipe => {
+                return (recipe) => {
                     disconnectedConnections.forEach(({ particle, connSpec }) => {
                         const cloneParticle = recipe.updateToClone({ particle }).particle;
                         const handleConnection = cloneParticle.addConnectionName(connSpec.name);
@@ -24203,7 +24162,7 @@ class CreateDescriptionHandle extends Strategy {
 class CreateHandleGroup extends Strategy {
     async generate(inputParams) {
         return StrategizerWalker.over(this.getResults(inputParams), new class extends StrategizerWalker {
-            onRecipe(recipe, result) {
+            onRecipe(recipe) {
                 // Resolve constraints before assuming connections are free.
                 if (recipe.connectionConstraints.length > 0)
                     return undefined;
@@ -24248,6 +24207,7 @@ class CreateHandleGroup extends Strategy {
                             const conn = cloneParticle.addConnectionName(connSpec.name);
                             conn.connectToHandle(newHandle);
                         }
+                        return 0;
                     };
                 }
                 return undefined;
@@ -24319,16 +24279,16 @@ class FindRequiredParticle extends Strategy {
                 const particlesMatch = arc.activeRecipe.particles.filter(arcParticle => particle.matches(arcParticle));
                 return particlesMatch.map(particleMatch => ((recipe, particle) => {
                     if (!particle.matches(particleMatch))
-                        return;
+                        return undefined;
                     for (const [name, slotConn] of Object.entries(particle.consumedSlotConnections)) {
                         const oldSlot = slotConn.targetSlot;
                         const newSlot = particleMatch.consumedSlotConnections[name].targetSlot;
                         if (!SlotUtils.replaceOldSlot(recipe, oldSlot, newSlot))
-                            return;
+                            return undefined;
                         for (const [pname, oldPSlot] of Object.entries(slotConn.providedSlots)) {
                             const pslot = particleMatch.consumedSlotConnections[name].providedSlots[pname];
                             if (!SlotUtils.replaceOldSlot(recipe, oldPSlot, pslot))
-                                return;
+                                return undefined;
                         }
                         // remove particle from require section 
                         for (const requires of recipe.requires) {
@@ -24337,6 +24297,7 @@ class FindRequiredParticle extends Strategy {
                             }
                         }
                     }
+                    return 0;
                 }));
             }
         }(StrategizerWalker.Permuted), this);
@@ -24348,7 +24309,7 @@ class GroupHandleConnections extends Strategy {
     constructor(arc, args) {
         super(arc, args);
         this._walker = new class extends StrategizerWalker {
-            onRecipe(recipe, result) {
+            onRecipe(recipe) {
                 // Only apply this strategy if ALL handle connections are named and have types.
                 if (recipe.getUnnamedUntypedConnections()) {
                     return undefined;
@@ -24419,7 +24380,7 @@ class GroupHandleConnections extends Strategy {
                     }
                 }
                 if (groupsByType.size > 0) {
-                    return recipe => {
+                    return (recipe) => {
                         groupsByType.forEach((groups, type) => {
                             groups.forEach(({ group }) => {
                                 const recipeHandle = recipe.newHandle();
@@ -24433,7 +24394,7 @@ class GroupHandleConnections extends Strategy {
                                 }
                             });
                         });
-                        // TODO: score!
+                        return 0;
                     };
                 }
                 return undefined;
@@ -25061,6 +25022,7 @@ class SearchTokensToHandles extends Strategy {
                         handle.fate = match.fate;
                         handle.mapToStorage(match.store);
                         recipe.search.resolveToken(match.token);
+                        return 0;
                     };
                 });
             }

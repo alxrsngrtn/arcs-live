@@ -65,9 +65,12 @@ export class Walker {
     }
     onResult(result) {
         this.currentResult = result;
+        this.updateList = [];
     }
     onResultDone() {
+        this.runUpdateList(this.currentResult.result, this.updateList);
         this.currentResult = undefined;
+        this.updateList = undefined;
     }
     onActionDone() {
         this.currentAction = undefined;
@@ -81,7 +84,16 @@ export class Walker {
         walker.onActionDone();
         return walker.descendants;
     }
-    _runUpdateList(start, updateList) {
+    visit(visitor, ...context) {
+        const continuation = visitor(this.currentResult.result, ...context);
+        if (!this.isEmptyResult(continuation)) {
+            this.updateList.push({
+                continuation: continuation,
+                context
+            });
+        }
+    }
+    runUpdateList(start, updateList) {
         const updated = [];
         if (updateList.length) {
             switch (this.tactic) {
@@ -95,7 +107,7 @@ export class Walker {
                         continuation.forEach(f => {
                             permutations.forEach(p => {
                                 const newP = p.slice();
-                                newP.push({ f, context });
+                                newP.push({ continuation: f, context });
                                 newResults.push(newP);
                             });
                         });
@@ -105,17 +117,12 @@ export class Walker {
                         const cloneMap = new Map();
                         const newResult = start.clone(cloneMap);
                         let score = 0;
-                        permutation = permutation.filter(p => p.f !== null);
+                        permutation = permutation.filter(p => p.continuation !== null);
                         if (permutation.length === 0) {
                             continue;
                         }
-                        permutation.forEach(({ f, context }) => {
-                            if (context) {
-                                score = f(newResult, ...context.map(c => cloneMap.get(c) || c));
-                            }
-                            else {
-                                score = f(newResult);
-                            }
+                        permutation.forEach(({ continuation, context }) => {
+                            score = continuation(newResult, ...context.map(c => cloneMap.get(c) || c));
                         });
                         updated.push({ result: newResult, score });
                     }
@@ -133,12 +140,7 @@ export class Walker {
                             }
                             const cloneMap = new Map();
                             const newResult = start.clone(cloneMap);
-                            if (context) {
-                                score = f(newResult, ...context.map(c => cloneMap.get(c) || c));
-                            }
-                            else {
-                                score = f(newResult);
-                            }
+                            score = f(newResult, ...context.map(c => cloneMap.get(c) || c));
                             updated.push({ result: newResult, score });
                         });
                     });
@@ -149,7 +151,7 @@ export class Walker {
         }
         // commit phase - output results.
         for (const newResult of updated) {
-            const result = this.createDescendant(newResult.result, newResult.score);
+            this.createDescendant(newResult.result, newResult.score);
         }
     }
     createWalkerDescendant(item, score, hash, valid) {

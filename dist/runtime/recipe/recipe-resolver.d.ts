@@ -1,3 +1,4 @@
+import { Arc } from '../arc.js';
 import { ConsumeSlotConnectionSpec } from '../particle-spec.js';
 import { Handle } from '../recipe/handle';
 import { Particle } from '../recipe/particle.js';
@@ -8,7 +9,7 @@ import { Action } from '../recipe/walker.js';
 export declare class ResolveWalker extends RecipeWalker {
     private readonly arc;
     constructor(tactic: any, arc: any);
-    onHandle(recipe: Recipe, handle: Handle): (recipe: any, handle: any) => void;
+    onHandle(recipe: Recipe, handle: Handle): (recipe: any, handle: any) => number;
     onSlotConnection(recipe: Recipe, slotConnection: SlotConnection): (recipe: any, slotConnection: any) => number;
     onPotentialSlotConnection(recipe: Recipe, particle: Particle, slotSpec: ConsumeSlotConnectionSpec): (recipe: any, particle: any, slotSpec: any) => number;
     onObligation(recipe: Recipe, obligation: any): (recipe: any, obligation: any) => number;
@@ -18,6 +19,6 @@ export declare class ResolveRecipeAction extends Action<Recipe> {
 }
 export declare class RecipeResolver {
     private resolver;
-    constructor(arc: any);
+    constructor(arc: Arc);
     resolve(recipe: any): Promise<any>;
 }

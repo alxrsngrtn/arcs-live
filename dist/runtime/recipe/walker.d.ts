@@ -57,6 +57,8 @@ export declare abstract class Action<T extends Cloneable> {
     }): Descendant<T>[];
     generate(inputParams: any): Promise<Descendant<T>[]>;
 }
+export declare type Continuation<T extends Cloneable, Ctx extends object[]> = SingleContinuation<T, Ctx> | SingleContinuation<T, Ctx>[];
+declare type SingleContinuation<T extends Cloneable, Ctx extends object[]> = (obj: T, ...ctx: Ctx) => number;
 export declare abstract class Walker<T extends Cloneable> {
     static Permuted: WalkerTactic;
     static Independent: WalkerTactic;
@@ -64,15 +66,17 @@ export declare abstract class Walker<T extends Cloneable> {
     currentAction: Action<T>;
     currentResult: Descendant<T>;
     tactic: WalkerTactic;
+    private updateList;
     constructor(tactic: WalkerTactic);
     onAction(action: Action<T>): void;
     onResult(result: Descendant<T>): void;
     onResultDone(): void;
     onActionDone(): void;
     static walk<T extends Cloneable>(results: Descendant<T>[], walker: Walker<T>, action: Action<T>): Descendant<T>[];
-    _runUpdateList(start: T, updateList: any): void;
+    visit<Ctx extends object[]>(visitor: (obj: T, ...ctx: Ctx) => Continuation<T, Ctx>, ...context: Ctx): void;
+    private runUpdateList;
     abstract createDescendant(result: T, score: number): void;
     createWalkerDescendant(item: T, score: number, hash: Promise<string> | string, valid: boolean): void;
-    isEmptyResult(result: any): boolean;
+    isEmptyResult<Ctx extends object[]>(result: Continuation<T, Ctx>): boolean;
 }
 export {};

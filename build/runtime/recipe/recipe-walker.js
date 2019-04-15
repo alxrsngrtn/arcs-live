@@ -9,23 +9,12 @@ export class RecipeWalker extends Walker {
     onResult(result) {
         super.onResult(result);
         const recipe = result.result;
-        const updateList = [];
-        // update phase - walk through recipe and call onRecipe,
-        // onHandle, etc.
-        // TODO overriding the argument with a local variable is very confusing.
         if (this.onRecipe) {
-            result = this.onRecipe(recipe, result);
-            if (!this.isEmptyResult(result)) {
-                updateList.push({ continuation: result });
-            }
+            this.visit(this.onRecipe.bind(this));
         }
         if (this.onParticle) {
             for (const particle of recipe.particles) {
-                const context = [particle];
-                const result = this.onParticle(recipe, ...context);
-                if (!this.isEmptyResult(result)) {
-                    updateList.push({ continuation: result, context });
-                }
+                this.visit(this.onParticle.bind(this), particle);
             }
         }
         if (this.onPotentialHandleConnection) {
@@ -35,31 +24,19 @@ export class RecipeWalker extends Walker {
                         if (particle.connections[connectionSpec.name]) {
                             continue;
                         }
-                        const context = [particle, connectionSpec];
-                        const result = this.onPotentialHandleConnection(recipe, ...context);
-                        if (!this.isEmptyResult(result)) {
-                            updateList.push({ continuation: result, context });
-                        }
+                        this.visit(this.onPotentialHandleConnection.bind(this), particle, connectionSpec);
                     }
                 }
             }
         }
-        for (const handleConnection of recipe.handleConnections) {
-            if (this.onHandleConnection) {
-                const context = [handleConnection];
-                const result = this.onHandleConnection(recipe, ...context);
-                if (!this.isEmptyResult(result)) {
-                    updateList.push({ continuation: result, context });
-                }
+        if (this.onHandleConnection) {
+            for (const handleConnection of recipe.handleConnections) {
+                this.visit(this.onHandleConnection.bind(this), handleConnection);
             }
         }
         if (this.onHandle) {
             for (const handle of recipe.handles) {
-                const context = [handle];
-                const result = this.onHandle(recipe, ...context);
-                if (!this.isEmptyResult(result)) {
-                    updateList.push({ continuation: result, context });
-                }
+                this.visit(this.onHandle.bind(this), handle);
             }
         }
         if (this.onPotentialSlotConnection) {
@@ -67,53 +44,32 @@ export class RecipeWalker extends Walker {
                 for (const [name, slotSpec] of particle.getSlotSpecs()) {
                     if (particle.getSlotConnectionByName(name))
                         continue;
-                    const context = [particle, slotSpec];
-                    const result = this.onPotentialSlotConnection(recipe, ...context);
-                    if (!this.isEmptyResult(result)) {
-                        updateList.push({ continuation: result, context });
-                    }
+                    this.visit(this.onPotentialSlotConnection.bind(this), particle, slotSpec);
                 }
             }
         }
         if (this.onSlotConnection) {
             for (const slotConnection of recipe.slotConnections) {
-                const context = [slotConnection];
-                const result = this.onSlotConnection(recipe, ...context);
-                if (!this.isEmptyResult(result)) {
-                    updateList.push({ continuation: result, context });
-                }
+                this.visit(this.onSlotConnection.bind(this), slotConnection);
             }
         }
         if (this.onSlot) {
             for (const slot of recipe.slots) {
-                const context = [slot];
-                const result = this.onSlot(recipe, ...context);
-                if (!this.isEmptyResult(result)) {
-                    updateList.push({ continuation: result, context });
-                }
+                this.visit(this.onSlot.bind(this), slot);
             }
         }
         if (this.onObligation) {
             for (const obligation of recipe.obligations) {
-                const context = [obligation];
-                const result = this.onObligation(recipe, ...context);
-                if (!this.isEmptyResult(result)) {
-                    updateList.push({ continuation: result, context });
-                }
+                this.visit(this.onObligation.bind(this), obligation);
             }
         }
         if (this.onRequiredParticle) {
             for (const require of recipe.requires) {
                 for (const particle of require.particles) {
-                    const context = [particle];
-                    const result = this.onRequiredParticle(recipe, ...context);
-                    if (!this.isEmptyResult(result)) {
-                        updateList.push({ continuation: result, context });
-                    }
+                    this.visit(this.onRequiredParticle.bind(this), particle);
                 }
             }
         }
-        this._runUpdateList(recipe, updateList);
     }
     createDescendant(recipe, score) {
         const valid = recipe.normalize();

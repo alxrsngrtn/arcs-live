@@ -71,6 +71,7 @@ export class ResolveWalker extends RecipeWalker {
         if (mappable.length === 1) {
             return (recipe, handle) => {
                 handle.mapToStorage(mappable[0]);
+                return 0;
             };
         }
         return undefined;

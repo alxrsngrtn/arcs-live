@@ -10,7 +10,7 @@ export class GroupHandleConnections extends Strategy {
     constructor(arc, args) {
         super(arc, args);
         this._walker = new class extends StrategizerWalker {
-            onRecipe(recipe, result) {
+            onRecipe(recipe) {
                 // Only apply this strategy if ALL handle connections are named and have types.
                 if (recipe.getUnnamedUntypedConnections()) {
                     return undefined;
@@ -81,7 +81,7 @@ export class GroupHandleConnections extends Strategy {
                     }
                 }
                 if (groupsByType.size > 0) {
-                    return recipe => {
+                    return (recipe) => {
                         groupsByType.forEach((groups, type) => {
                             groups.forEach(({ group }) => {
                                 const recipeHandle = recipe.newHandle();
@@ -95,7 +95,7 @@ export class GroupHandleConnections extends Strategy {
                                 }
                             });
                         });
-                        // TODO: score!
+                        return 0;
                     };
                 }
                 return undefined;

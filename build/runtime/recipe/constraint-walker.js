@@ -9,16 +9,11 @@ export class ConstraintWalker extends RecipeWalker {
     onResult(result) {
         super.onResult(result);
         const recipe = result.result;
-        const updateList = [];
-        recipe.connectionConstraints.forEach(constraint => {
-            if (this.onConstraint) {
-                const result = this.onConstraint(recipe, constraint);
-                if (result) {
-                    updateList.push({ continuation: result, context: constraint });
-                }
+        if (this.onConstraint) {
+            for (const constraint of recipe.connectionConstraints) {
+                this.visit(this.onConstraint.bind(this), constraint);
             }
-        });
-        this._runUpdateList(recipe, updateList);
+        }
     }
 }
 //# sourceMappingURL=constraint-walker.js.map

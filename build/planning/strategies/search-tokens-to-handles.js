@@ -43,6 +43,7 @@ export class SearchTokensToHandles extends Strategy {
                         handle.fate = match.fate;
                         handle.mapToStorage(match.store);
                         recipe.search.resolveToken(match.token);
+                        return 0;
                     };
                 });
             }
