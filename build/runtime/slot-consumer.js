@@ -8,7 +8,6 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { assert } from '../platform/assert-web.js';
-import { Description } from './description.js';
 import { ProvidedSlotContext } from './slot-context.js';
 export class SlotConsumer {
     constructor(arc, consumeConn, containerKind) {
@@ -21,10 +20,6 @@ export class SlotConsumer {
         this.arc = arc;
         this.consumeConn = consumeConn;
         this.containerKind = containerKind;
-    }
-    get description() { return this._description; }
-    async resetDescription() {
-        this._description = await Description.create(this.arc);
     }
     getRendering(subId) { return this._renderingBySubId.get(subId); }
     get renderings() { return [...this._renderingBySubId.entries()]; }
@@ -119,14 +114,14 @@ export class SlotConsumer {
     }
     setContent(content, handler) {
         if (content && Object.keys(content).length > 0 && this.description) {
-            content.descriptions = this.populateHandleDescriptions();
+            content.descriptions = this._populateHandleDescriptions();
         }
         this.eventHandler = handler;
         for (const [subId, rendering] of this.renderings) {
             this.setContainerContent(rendering, this.formatContent(content, subId), subId);
         }
     }
-    populateHandleDescriptions() {
+    _populateHandleDescriptions() {
         if (!this.consumeConn)
             return null; // TODO: remove null ability
         const descriptions = new Map();

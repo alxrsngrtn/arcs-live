@@ -8,6 +8,7 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { assert } from '../platform/assert-web.js';
+import { Description } from './description.js';
 import { Modality } from './modality.js';
 import { HostedSlotContext, ProvidedSlotContext } from './slot-context.js';
 export class SlotComposer {
@@ -106,7 +107,17 @@ export class SlotComposer {
             assert(context, `No context found for ${consumer.consumeConn.getQualifiedName()}`);
             context.addSlotConsumer(consumer);
         });
-        await Promise.all(this.consumers.map(async (consumer) => await consumer.resetDescription()));
+        // Calculate the Descriptions only once per-Arc
+        const allArcs = this.consumers.map(consumer => consumer.arc);
+        const uniqueArcs = [...new Set(allArcs).values()];
+        // get arc -> description
+        const descriptions = await Promise.all(uniqueArcs.map(arc => Description.create(arc)));
+        // create a mapping from the zipped uniqueArcs and descriptions
+        const consumerByArc = new Map(descriptions.map((description, index) => [uniqueArcs[index], description]));
+        // ... and apply to each consumer
+        for (const consumer of this.consumers) {
+            consumer.description = consumerByArc.get(consumer.arc);
+        }
     }
     renderSlot(particle, slotName, content) {
         const slotConsumer = this.getSlotConsumer(particle, slotName);

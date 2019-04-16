@@ -8,11 +8,8 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { Arc } from './arc.js';
-import { DescriptionFormatter, DescriptionValue, ParticleDescription } from './description-formatter.js';
-import { Particle } from './recipe/particle.js';
+import { DescriptionFormatter } from './description-formatter.js';
 import { Relevance } from './relevance.js';
-import { StorageProviderBase } from './storage/storage-provider-base.js';
-import { StorageStub } from './manifest.js';
 import { Handle } from './recipe/handle.js';
 export declare class Description {
     private readonly particleDescriptions;
@@ -20,16 +17,18 @@ export declare class Description {
     private readonly arcRecipeName;
     private readonly arcRecipes;
     private constructor();
+    /**
+     * Create a new Description object for the given Arc with an
+     * optional Relevance object.
+     */
     static create(arc: Arc, relevance?: Relevance): Promise<Description>;
-    getArcDescription(formatterClass?: typeof DescriptionFormatter): any;
+    getArcDescription(formatterClass?: typeof DescriptionFormatter): string | undefined;
     getRecipeSuggestion(formatterClass?: typeof DescriptionFormatter): any;
-    getHandleDescription(recipeHandle: Handle): any;
-    static _getStoreDescById(arc: Arc): {};
-    static initDescriptionHandles(arc: Arc, relevance?: Relevance): Promise<ParticleDescription[]>;
-    static _createParticleDescription(particle: Particle, arc: Arc, relevance?: Relevance): Promise<ParticleDescription>;
-    static _getPatternByNameFromDescriptionHandle(particle: Particle, arc: Arc): Promise<{
-        [key: string]: string;
-    }>;
-    static _prepareStoreValue(store: StorageProviderBase | StorageStub): Promise<DescriptionValue>;
+    getHandleDescription(recipeHandle: Handle): string;
+    private static initDescriptionHandles;
+    private static _createParticleDescription;
+    private static _getPatternByNameFromDescriptionHandle;
+    private static _prepareStoreValue;
+    /** A fallback description if none other can be found */
     static defaultDescription: string;
 }

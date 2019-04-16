@@ -1,5 +1,13 @@
-commit f7742003d7f0197ee36c1a08f3c94b2ab7f6095c
-Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Tue Apr 16 13:23:22 2019 +1000
+commit 2b94c738e16768554a3954eb3d79e02135678395
+Author: Paul Lindner <lindner@inuus.com>
+Date:   Tue Apr 16 11:18:10 2019 -0700
 
-    Bundle tool to create a self-containing Arcs feature bundle (#2897)
+    Optimize Description Calculation (#2905)
+    
+    - In Slot Composer only calculate the Descriptions once per Arc.  This reduces storage calls by about 10x on the restaurant list.
+    - Add many more Typescript types.
+    - Refactor Description
+      - add private
+      - remove this usage for static methods
+      - move non-async init code to constructor.
+      - readability and docs.

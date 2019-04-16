@@ -47,7 +47,7 @@ export declare class DescriptionFormatter {
         particles: Particle[];
     }): any;
     _isSelectedDescription(desc: ParticleDescription): boolean;
-    getHandleDescription(recipeHandle: Handle): any;
+    getHandleDescription(recipeHandle: Handle): string;
     _combineSelectedDescriptions(selectedDescriptions: ParticleDescription[], options?: CombinedDescriptionsOptions): any;
     _joinDescriptions(strings: any): any;
     _joinTokens(tokens: any): any;
@@ -66,10 +66,10 @@ export declare class DescriptionFormatter {
     _formatCollection(handleName: any, values: any): any;
     _formatBigCollection(handleName: any, firstValue: any): any;
     _formatSingleton(handleName: string, value: DescriptionValue): any;
-    _formatDescription(handleConnection: any): any;
-    _formatDescriptionPattern(handleConnection: any): any;
+    _formatDescription(handleConnection: any): string;
+    _formatDescriptionPattern(handleConnection: any): string | undefined;
     _formatStoreDescription(handleConn: any): string | undefined;
-    _formatHandleType(handleConnection: any): any;
+    _formatHandleType(handleConnection: any): string;
     _selectHandleConnection(recipeHandle: any): any;
     static sort(p1: ParticleDescription, p2: ParticleDescription): number;
 }
