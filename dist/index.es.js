@@ -28025,11 +28025,29 @@ const defaultPlanningDebugListeners = [
  * http://polymer.github.io/PATENTS.txt
  */
 
+/*
+ * Copyright (c) 2019 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+
 // Debug-channel listeners are injected, so that the runtime need not know about them.
 const debugListeners = [
   ...defaultPlanningDebugListeners, // This should change for a shell w/out planning
   ...defaultCoreDebugListeners
   ];
+
+/*
+ * Copyright (c) 2019 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
 
 const log$1 = console.log.bind(console);
 const warn = console.warn.bind(console);
@@ -28106,6 +28124,15 @@ const Utils = {
   spawn
 };
 
+/*
+ * Copyright (c) 2019 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+
 //const stores = {};
 
 class SyntheticStores {
@@ -28146,15 +28173,14 @@ class SyntheticStores {
   }
 }
 
-/*
-@license
-Copyright (c) 2018 The Polymer Project Authors. All rights reserved.
-This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
-The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
-The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
-Code distributed by Google as part of the polymer project is also
-subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
-*/
+/**
+ * Copyright (c) 2019 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
 
 const log$2 = logFactory('ArcHost', '#cade57');
 const warn$1 = logFactory('ArcHost', '#cade57', 'warn');
@@ -28264,8 +28290,7 @@ class ArcHost {
 }
 
 /**
- * @license
- * Copyright (c) 2017 Google Inc. All rights reserved.
+ * Copyright (c) 2019 Google Inc. All rights reserved.
  * This code may only be used under the BSD style license found at
  * http://polymer.github.io/LICENSE.txt
  * Code distributed by Google as part of this project is also

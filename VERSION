@@ -1,13 +1,25 @@
-commit 2b94c738e16768554a3954eb3d79e02135678395
-Author: Paul Lindner <lindner@inuus.com>
-Date:   Tue Apr 16 11:18:10 2019 -0700
+commit 0fd7a7bc796e1ea0dc0ca63c577b64ea21116797
+Author: Scott J. Miles <sjmiles@google.com>
+Date:   Tue Apr 16 14:13:18 2019 -0700
 
-    Optimize Description Calculation (#2905)
+    Organizing shells/lib (#2904)
     
-    - In Slot Composer only calculate the Descriptions once per Arc.  This reduces storage calls by about 10x on the restaurant list.
-    - Add many more Typescript types.
-    - Refactor Description
-      - add private
-      - remove this usage for static methods
-      - move non-async init code to constructor.
-      - readability and docs.
+    * lib organization
+    
+    * more organization for shells/lib
+    
+    * adapt launcher for new entity api
+    
+    * didn't mean to commit these
+    
+    * didn't mean to commit these
+    
+    * fix path
+    
+    * fix path
+    
+    * fix another path
+    
+    * standardize license header (for lib/components anyway)
+    
+    * remove bogus space
