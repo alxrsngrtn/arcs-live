@@ -1,5 +1,11 @@
-commit 30edcfae052674ee6f832bf7b651b47d78871f9e
+commit c03631f40a453c3abae66268299cb2c3c43feb17
 Author: Scott J. Miles <sjmiles@google.com>
-Date:   Mon Apr 15 16:01:53 2019 -0700
+Date:   Mon Apr 15 18:22:06 2019 -0700
 
-    stop using default exports in Xen, restructure mixins (#2901)
+    Port-in animation support from external experiment (#2902)
+    
+    * add AnimatedTiles example
+    
+    * port dom-repeater and other layout stuff from experiment
+    
+    * whitelist dom-repeater
