@@ -17206,9 +17206,9 @@ ${e.message}
         let json;
         let source;
         if (item.origin === 'file') {
-            source = loader.join(manifest.fileName, item.source);
+            item.source = loader.join(manifest.fileName, item.source);
             // TODO: json5?
-            json = await loader.loadResource(source);
+            json = await loader.loadResource(item.source);
         }
         else if (item.origin === 'resource') {
             source = item.source;

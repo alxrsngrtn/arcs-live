@@ -30,3 +30,4 @@ pack-stats.json
 default.profraw
 # pouch local database
 user-test/
+test-output
