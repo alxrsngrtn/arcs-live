@@ -66,10 +66,11 @@ export declare abstract class Entity implements EntityInterface {
     */
     mutable: boolean;
     /**
-     * Mutates the entity. The supplied mutation function will be called with a mutable copy of the entity's data. The mutations performed by that
-     * function will be reflected in the original entity instance (i.e. mutations applied in place).
+     * Mutates the entity. Supply either the new data for the entity, which replaces the existing entity's data entirely, or a mutation function.
+     * The supplied mutation function will be called with a mutable copy of the entity's data. The mutations performed by that function will be
+     * reflected in the original entity instance (i.e. mutations applied in place).
      */
-    mutate(mutationFn: (data: MutableEntityData) => void): void;
+    mutate(mutation: ((data: MutableEntityData) => void) | {}): void;
     getUserID(): string;
     isIdentified(): boolean;
     readonly id: string;

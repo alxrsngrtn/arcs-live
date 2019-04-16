@@ -1,11 +1,5 @@
-commit c03631f40a453c3abae66268299cb2c3c43feb17
-Author: Scott J. Miles <sjmiles@google.com>
-Date:   Mon Apr 15 18:22:06 2019 -0700
+commit b45c0d6a7b765ab29fc6a9dd632d41c361d2ada6
+Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
+Date:   Tue Apr 16 11:45:22 2019 +1000
 
-    Port-in animation support from external experiment (#2902)
-    
-    * add AnimatedTiles example
-    
-    * port dom-repeater and other layout stuff from experiment
-    
-    * whitelist dom-repeater
+    Allows Entity.mutate() to be called with data instead of a function (#2903)
