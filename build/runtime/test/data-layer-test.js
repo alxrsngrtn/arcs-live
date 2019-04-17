@@ -22,9 +22,7 @@ describe('entity', async () => {
         const entity = new (schema.entityClass())({ value: 'hello world' });
         assert.isDefined(entity);
         const collectionType = new EntityType(schema).collectionOf();
-        // Get around incompatible types for handleFor()
-        let storage;
-        storage = await arc.createStore(collectionType);
+        const storage = await arc.createStore(collectionType);
         const handle = handleFor(storage);
         await handle.store(entity);
         const collection = arc.findStoresByType(collectionType)[0];

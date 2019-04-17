@@ -9,8 +9,9 @@
 import { ParticleSpec } from './particle-spec.js';
 import { Particle } from './particle.js';
 import { Reference } from './reference.js';
-import { BigCollectionProxy, CollectionProxy, StorageProxy, VariableProxy, SerializedEntity } from './storage-proxy.js';
+import { SerializedEntity } from './storage-proxy.js';
 import { EntityClass, Entity } from './entity.js';
+import { Store, VariableStore, CollectionStore, BigCollectionStore } from './store.js';
 /** An interface representing anything storable in a Handle. Concretely, this is the {@link Entity} and {@link ClientReference} classes. */
 export interface Storable {
     serialize(): SerializedEntity;
@@ -25,7 +26,7 @@ export interface HandleOptions {
  * Base class for Collections and Variables.
  */
 export declare abstract class Handle {
-    _proxy: StorageProxy;
+    storage: Store;
     name: string;
     canRead: boolean;
     canWrite: boolean;
@@ -33,7 +34,7 @@ export declare abstract class Handle {
     options: HandleOptions;
     entityClass: EntityClass | null;
     abstract _notify(kind: string, particle: Particle, details: {}): any;
-    constructor(proxy: StorageProxy, name: string, particleId: any, canRead: boolean, canWrite: boolean);
+    constructor(storage: Store, name: string, particleId: any, canRead: boolean, canWrite: boolean);
     protected reportUserExceptionInHost(exception: Error, particle: Particle, method: string): void;
     protected reportSystemExceptionInHost(exception: Error, method: string): void;
     configure(options: any): void;
@@ -50,7 +51,7 @@ export declare abstract class Handle {
  * which handles are connected.
  */
 export declare class Collection extends Handle {
-    _proxy: CollectionProxy;
+    storage: CollectionStore;
     _notify(kind: string, particle: Particle, details: any): void;
     /**
      * Returns the Entity specified by id contained by the handle, or null if this id is not
@@ -58,7 +59,7 @@ export declare class Collection extends Handle {
      * @throws {Error} if this handle is not configured as a readable handle (i.e. 'in' or 'inout')
      * in the particle's manifest.
      */
-    get(id: any): Promise<any>;
+    get(id: string): Promise<any>;
     /**
      * @returns a list of the Entities contained by the handle.
      * @throws {Error} if this handle is not configured as a readable handle (i.e. 'in' or 'inout')
@@ -91,7 +92,7 @@ export declare class Collection extends Handle {
  * the current recipe identifies which handles are connected.
  */
 export declare class Variable extends Handle {
-    _proxy: VariableProxy;
+    storage: VariableStore;
     _notify(kind: string, particle: Particle, details: any): Promise<void>;
     /**
      * @returns the Entity contained by the Variable, or undefined if the Variable
@@ -127,7 +128,7 @@ declare class Cursor {
      * Returns {value: [items], done: false} while there are items still available, or {done: true}
      * when the cursor has completed reading the collection.
      */
-    next(): Promise<import("./api-channel.js").CursorNextValue>;
+    next(): Promise<any>;
     /**
      * Terminates the streamed read. This must be called if a cursor is no longer needed but has not
      * yet completed streaming (i.e. next() hasn't returned {done: true}).
@@ -141,7 +142,7 @@ declare class Cursor {
  * trigger onHandleSync() or onHandleUpdate().
  */
 export declare class BigCollection extends Handle {
-    _proxy: BigCollectionProxy;
+    storage: BigCollectionStore;
     configure(options: any): void;
     _notify(kind: string, particle: Particle, details: any): Promise<void>;
     /**
@@ -173,5 +174,5 @@ export declare class BigCollection extends Handle {
         forward?: boolean;
     }): Promise<Cursor>;
 }
-export declare function handleFor(proxy: StorageProxy, name?: string, particleId?: string, canRead?: boolean, canWrite?: boolean): Handle;
+export declare function handleFor(storage: Store, name?: string, particleId?: string, canRead?: boolean, canWrite?: boolean): Handle;
 export {};

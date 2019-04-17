@@ -1,25 +1,10 @@
-commit 0fd7a7bc796e1ea0dc0ca63c577b64ea21116797
-Author: Scott J. Miles <sjmiles@google.com>
-Date:   Tue Apr 16 14:13:18 2019 -0700
+commit a9a52c78ae522f8aecc8330147e8fdb5a955d535
+Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
+Date:   Wed Apr 17 15:39:52 2019 +1000
 
-    Organizing shells/lib (#2904)
+    Adds a new Store interface. (#2907)
     
-    * lib organization
-    
-    * more organization for shells/lib
-    
-    * adapt launcher for new entity api
-    
-    * didn't mean to commit these
-    
-    * didn't mean to commit these
-    
-    * fix path
-    
-    * fix path
-    
-    * fix another path
-    
-    * standardize license header (for lib/components anyway)
-    
-    * remove bogus space
+    Store represents common functionality between StorageProxy and
+    StorageProviderBase. Now we no longer have to typecast all over the
+    place (in tests mainly) to pretend that a StorageProvider is actually a
+    proxy.

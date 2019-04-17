@@ -4,28 +4,26 @@ import { Type } from '../type.js';
 import { StorageStub } from '../manifest.js';
 import { SerializedModelEntry } from './crdt-collection-model.js';
 import { KeyBase } from './key-base.js';
+import { Store, VariableStore, CollectionStore } from '../store.js';
+import { PropagatedException } from '../arc-exceptions.js';
 declare type Callback = (v: {
     [index: string]: any;
 }) => void;
 /**
  * Methods that must be implemented by a Variable Storage Provider
  */
-export interface VariableStorageProvider extends StorageProviderBase {
-    get(): Promise<any>;
+export interface VariableStorageProvider extends StorageProviderBase, VariableStore {
     set(value: {}, originatorId?: string, barrier?: string): Promise<void>;
     clear(originatorId?: string, barrier?: string): Promise<void>;
 }
 /**
  * Methods that must be implemented by a Collection Storage Provider
  */
-export interface CollectionStorageProvider extends StorageProviderBase {
+export interface CollectionStorageProvider extends StorageProviderBase, CollectionStore {
     toList(): Promise<any[]>;
     getMultiple(ids: string[]): Promise<any[]>;
     storeMultiple(values: {}, keys: string[], originatorId?: string): Promise<void>;
     removeMultiple(items: any[], originatorId?: string): Promise<void>;
-    get(id: string): Promise<any>;
-    remove(id: string, keys: string[], originatorId?: string): any;
-    store(value: any, keys: string[], originatorId?: string): any;
 }
 export interface BigCollectionStorageProvider extends StorageProviderBase {
     get(id: string): any;
@@ -81,14 +79,14 @@ export declare class ChangeEvent {
 /**
  * Docs TBD
  */
-export declare abstract class StorageProviderBase implements Comparable<StorageProviderBase> {
+export declare abstract class StorageProviderBase implements Comparable<StorageProviderBase>, Store {
     private listeners;
     private nextLocalID;
     private readonly _type;
     protected readonly _storageKey: string;
     referenceMode: boolean;
     version: number | null;
-    id: string;
+    readonly id: string;
     originalId: string | null;
     name: string;
     source: string | null;
@@ -102,6 +100,7 @@ export declare abstract class StorageProviderBase implements Comparable<StorageP
         component: () => number;
     };
     readonly type: Type;
+    reportExceptionInHost(exception: PropagatedException): void;
     on(kindStr: string, callback: Callback, target: any): void;
     off(kindStr: string, callback: Callback): void;
     /**

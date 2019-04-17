@@ -32,10 +32,10 @@ function restore(entry, entityClass) {
  */
 export class Handle {
     // TODO type particleId, marked as string, but called with number
-    constructor(proxy, name, particleId, canRead, canWrite) {
-        assert(!(proxy instanceof Handle));
-        this._proxy = proxy;
-        this.name = name || this._proxy.name;
+    constructor(storage, name, particleId, canRead, canWrite) {
+        assert(!(storage instanceof Handle));
+        this.storage = storage;
+        this.name = name || this.storage.name;
         this.canRead = canRead;
         this.canWrite = canWrite;
         this._particleId = particleId;
@@ -47,10 +47,10 @@ export class Handle {
         };
     }
     reportUserExceptionInHost(exception, particle, method) {
-        this._proxy.reportExceptionInHost(new UserException(exception, method, this._particleId, particle.spec.name));
+        this.storage.reportExceptionInHost(new UserException(exception, method, this._particleId, particle.spec.name));
     }
     reportSystemExceptionInHost(exception, method) {
-        this._proxy.reportExceptionInHost(new SystemException(exception, method, this._particleId));
+        this.storage.reportExceptionInHost(new SystemException(exception, method, this._particleId));
     }
     // `options` may contain any of:
     // - keepSynced (bool): load full data on startup, maintain data in proxy and resync as required
@@ -76,16 +76,16 @@ export class Handle {
         assert(entity, 'can\'t serialize a null entity');
         if (entity instanceof Entity) {
             if (!entity.isIdentified()) {
-                entity.createIdentity(this._proxy.generateIDComponents());
+                entity.createIdentity(this.storage.generateIDComponents());
             }
         }
         return entity.serialize();
     }
     get type() {
-        return this._proxy.type;
+        return this.storage.type;
     }
     get _id() {
-        return this._proxy.id;
+        return this.storage.id;
     }
     toManifestString() {
         return `'${this._id}'`;
@@ -140,7 +140,7 @@ export class Collection extends Handle {
         if (!this.canRead) {
             throw new Error('Handle not readable');
         }
-        return this._restore([await this._proxy.get(id, this._particleId)])[0];
+        return this._restore([await this.storage.get(id)])[0];
     }
     /**
      * @returns a list of the Entities contained by the handle.
@@ -151,7 +151,7 @@ export class Collection extends Handle {
         if (!this.canRead) {
             throw new Error('Handle not readable');
         }
-        return this._restore(await this._proxy.toList());
+        return this._restore(await this.storage.toList());
     }
     _restore(list) {
         return (list !== null) ? list.map(a => restore(a, this.entityClass)) : null;
@@ -166,8 +166,8 @@ export class Collection extends Handle {
             throw new Error('Handle not writeable');
         }
         const serialization = this._serialize(entity);
-        const keys = [this._proxy.generateID() + 'key'];
-        return this._proxy.store(serialization, keys, this._particleId);
+        const keys = [this.storage.generateID() + 'key'];
+        return this.storage.store(serialization, keys, this._particleId);
     }
     /**
      * Removes all known entities from the Handle.
@@ -178,7 +178,12 @@ export class Collection extends Handle {
         if (!this.canWrite) {
             throw new Error('Handle not writeable');
         }
-        return this._proxy.clear(this._particleId);
+        if (this.storage.clear) {
+            return this.storage.clear(this._particleId);
+        }
+        else {
+            throw new Error('clear not implemented by storage');
+        }
     }
     /**
      * Removes an entity from the Handle.
@@ -192,7 +197,7 @@ export class Collection extends Handle {
         const serialization = this._serialize(entity);
         // Remove the keys that exist at storage/proxy.
         const keys = [];
-        this._proxy.remove(serialization.id, keys, this._particleId);
+        this.storage.remove(serialization.id, keys, this._particleId);
     }
 }
 /**
@@ -246,7 +251,7 @@ export class Variable extends Handle {
         if (!this.canRead) {
             throw new Error('Handle not readable');
         }
-        const model = await this._proxy.get();
+        const model = await this.storage.get();
         return this._restore(model);
     }
     _restore(model) {
@@ -260,7 +265,7 @@ export class Variable extends Handle {
             return ParticleSpec.fromLiteral(model);
         }
         if (this.type instanceof ReferenceType) {
-            return new Reference(model, this.type, this._proxy.pec);
+            return new Reference(model, this.type, this.storage.pec);
         }
         throw new Error(`Don't know how to deliver handle data of type ${this.type}`);
     }
@@ -275,7 +280,7 @@ export class Variable extends Handle {
                 throw new Error('Handle not writeable');
             }
             const serialization = this._serialize(entity);
-            return this._proxy.set(serialization, this._particleId);
+            return this.storage.set(serialization, this._particleId);
         }
         catch (e) {
             this.reportSystemExceptionInHost(e, 'Handle::set');
@@ -291,7 +296,7 @@ export class Variable extends Handle {
         if (!this.canWrite) {
             throw new Error('Handle not writeable');
         }
-        return this._proxy.clear(this._particleId);
+        return this.storage.clear(this._particleId);
     }
 }
 /**
@@ -309,7 +314,7 @@ class Cursor {
      * when the cursor has completed reading the collection.
      */
     async next() {
-        const data = await this._parent._proxy.cursorNext(this._cursorId);
+        const data = await this._parent.storage.cursorNext(this._cursorId);
         if (!data.done) {
             data.value = data.value.map(a => restore(a, this._parent.entityClass));
         }
@@ -320,7 +325,7 @@ class Cursor {
      * yet completed streaming (i.e. next() hasn't returned {done: true}).
      */
     close() {
-        this._parent._proxy.cursorClose(this._cursorId);
+        this._parent.storage.cursorClose(this._cursorId);
     }
 }
 /**
@@ -348,8 +353,8 @@ export class BigCollection extends Handle {
             throw new Error('Handle not writeable');
         }
         const serialization = this._serialize(entity);
-        const keys = [this._proxy.generateID() + 'key'];
-        return this._proxy.store(serialization, keys, this._particleId);
+        const keys = [this.storage.generateID() + 'key'];
+        return this.storage.store(serialization, keys, this._particleId);
     }
     /**
      * Removes an entity from the Handle.
@@ -361,7 +366,7 @@ export class BigCollection extends Handle {
             throw new Error('Handle not writeable');
         }
         const serialization = this._serialize(entity);
-        this._proxy.remove(serialization.id, this._particleId);
+        this.storage.remove(serialization.id, [], this._particleId);
     }
     /**
      * @returns a Cursor instance that iterates over the full set of entities, reading `pageSize`
@@ -382,24 +387,24 @@ export class BigCollection extends Handle {
         if (isNaN(pageSize) || pageSize < 1) {
             throw new Error('Streamed reads require a positive pageSize');
         }
-        const cursorId = await this._proxy.stream(pageSize, forward);
+        const cursorId = await this.storage.stream(pageSize, forward);
         return new Cursor(this, cursorId);
     }
 }
-export function handleFor(proxy, name = null, particleId = '', canRead = true, canWrite = true) {
+export function handleFor(storage, name = null, particleId = '', canRead = true, canWrite = true) {
     let handle;
-    if (proxy.type instanceof CollectionType) {
-        handle = new Collection(proxy, name, particleId, canRead, canWrite);
+    if (storage.type instanceof CollectionType) {
+        handle = new Collection(storage, name, particleId, canRead, canWrite);
     }
-    else if (proxy.type instanceof BigCollectionType) {
-        handle = new BigCollection(proxy, name, particleId, canRead, canWrite);
+    else if (storage.type instanceof BigCollectionType) {
+        handle = new BigCollection(storage, name, particleId, canRead, canWrite);
     }
     else {
-        handle = new Variable(proxy, name, particleId, canRead, canWrite);
+        handle = new Variable(storage, name, particleId, canRead, canWrite);
     }
-    const type = proxy.type.getContainedType() || proxy.type;
+    const type = storage.type.getContainedType() || storage.type;
     if (type instanceof EntityType) {
-        handle.entityClass = type.entitySchema.entityClass(proxy.pec);
+        handle.entityClass = type.entitySchema.entityClass(storage.pec);
     }
     return handle;
 }

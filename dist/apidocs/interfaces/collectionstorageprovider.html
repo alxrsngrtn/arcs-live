@@ -78,6 +78,9 @@
 				<ul class="tsd-hierarchy">
 					<li>
 						<a href="../classes/storageproviderbase.html" class="tsd-signature-type">StorageProviderBase</a>
+					</li>
+					<li>
+						<a href="collectionstore.html" class="tsd-signature-type">CollectionStore</a>
 						<ul class="tsd-hierarchy">
 							<li>
 								<span class="target">CollectionStorageProvider</span>
@@ -90,6 +93,7 @@
 				<h3>Implements</h3>
 				<ul class="tsd-hierarchy">
 					<li><a href="comparable.html" class="tsd-signature-type">Comparable</a><span class="tsd-signature-symbol">&lt;</span><a href="../classes/storageproviderbase.html" class="tsd-signature-type">StorageProviderBase</a><span class="tsd-signature-symbol">&gt;</span></li>
+					<li><a href="store.html" class="tsd-signature-type">Store</a></li>
 				</ul>
 			</section>
 			<section class="tsd-panel">
@@ -118,9 +122,10 @@
 								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-inherited tsd-is-protected"><a href="collectionstorageprovider.html#_storagekey" class="tsd-kind-icon">_storage<wbr>Key</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-inherited"><a href="collectionstorageprovider.html#backingstore" class="tsd-kind-icon">backing<wbr>Store</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-inherited"><a href="collectionstorageprovider.html#description" class="tsd-kind-icon">description</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-inherited"><a href="collectionstorageprovider.html#id" class="tsd-kind-icon">id</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-inherited"><a href="collectionstorageprovider.html#name" class="tsd-kind-icon">name</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-overwrite tsd-is-inherited"><a href="collectionstorageprovider.html#id" class="tsd-kind-icon">id</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-overwrite tsd-is-inherited"><a href="collectionstorageprovider.html#name" class="tsd-kind-icon">name</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-inherited"><a href="collectionstorageprovider.html#originalid" class="tsd-kind-icon">original<wbr>Id</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-inherited"><a href="collectionstorageprovider.html#pec" class="tsd-kind-icon">pec</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-inherited"><a href="collectionstorageprovider.html#referencemode" class="tsd-kind-icon">reference<wbr>Mode</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-inherited"><a href="collectionstorageprovider.html#source" class="tsd-kind-icon">source</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-inherited"><a href="collectionstorageprovider.html#version" class="tsd-kind-icon">version</a></li>
@@ -131,7 +136,7 @@
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-get-signature tsd-parent-kind-interface tsd-is-inherited"><a href="collectionstorageprovider.html#apichannelmappingid" class="tsd-kind-icon">api<wbr>Channel<wbr>Mapping<wbr>Id</a></li>
 								<li class="tsd-kind-get-signature tsd-parent-kind-interface tsd-is-inherited"><a href="collectionstorageprovider.html#storagekey" class="tsd-kind-icon">storage<wbr>Key</a></li>
-								<li class="tsd-kind-get-signature tsd-parent-kind-interface tsd-is-inherited"><a href="collectionstorageprovider.html#type" class="tsd-kind-icon">type</a></li>
+								<li class="tsd-kind-get-signature tsd-parent-kind-interface tsd-is-overwrite tsd-is-inherited"><a href="collectionstorageprovider.html#type" class="tsd-kind-icon">type</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
@@ -139,22 +144,24 @@
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-method tsd-parent-kind-interface tsd-is-inherited"><a href="collectionstorageprovider.html#_compareto" class="tsd-kind-icon">_compare<wbr>To</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-interface tsd-is-inherited tsd-is-protected"><a href="collectionstorageprovider.html#_fire" class="tsd-kind-icon">_fire</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-interface tsd-is-inherited"><a href="collectionstorageprovider.html#clear" class="tsd-kind-icon">clear</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-interface tsd-is-inherited"><a href="collectionstorageprovider.html#clonefrom" class="tsd-kind-icon">clone<wbr>From</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-interface tsd-is-inherited"><a href="collectionstorageprovider.html#dispose" class="tsd-kind-icon">dispose</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-interface tsd-is-inherited"><a href="collectionstorageprovider.html#enablereferencemode" class="tsd-kind-icon">enable<wbr>Reference<wbr>Mode</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-interface tsd-is-inherited"><a href="collectionstorageprovider.html#ensurebackingstore" class="tsd-kind-icon">ensure<wbr>Backing<wbr>Store</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-interface tsd-is-inherited"><a href="collectionstorageprovider.html#generateid" class="tsd-kind-icon">generateID</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-interface tsd-is-inherited"><a href="collectionstorageprovider.html#generateidcomponents" class="tsd-kind-icon">generateIDComponents</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="collectionstorageprovider.html#get" class="tsd-kind-icon">get</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-interface tsd-is-overwrite tsd-is-inherited"><a href="collectionstorageprovider.html#generateid" class="tsd-kind-icon">generateID</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-interface tsd-is-overwrite tsd-is-inherited"><a href="collectionstorageprovider.html#generateidcomponents" class="tsd-kind-icon">generateIDComponents</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-interface tsd-is-inherited"><a href="collectionstorageprovider.html#get" class="tsd-kind-icon">get</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="collectionstorageprovider.html#getmultiple" class="tsd-kind-icon">get<wbr>Multiple</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-interface tsd-is-inherited"><a href="collectionstorageprovider.html#modelforsynchronization" class="tsd-kind-icon">model<wbr>For<wbr>Synchronization</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-interface tsd-is-inherited"><a href="collectionstorageprovider.html#off" class="tsd-kind-icon">off</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-interface tsd-is-inherited"><a href="collectionstorageprovider.html#on" class="tsd-kind-icon">on</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="collectionstorageprovider.html#remove" class="tsd-kind-icon">remove</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-interface tsd-is-inherited"><a href="collectionstorageprovider.html#remove" class="tsd-kind-icon">remove</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="collectionstorageprovider.html#removemultiple" class="tsd-kind-icon">remove<wbr>Multiple</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="collectionstorageprovider.html#store" class="tsd-kind-icon">store</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-interface tsd-is-overwrite tsd-is-inherited"><a href="collectionstorageprovider.html#reportexceptioninhost" class="tsd-kind-icon">report<wbr>Exception<wbr>InHost</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-interface tsd-is-inherited"><a href="collectionstorageprovider.html#store" class="tsd-kind-icon">store</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="collectionstorageprovider.html#storemultiple" class="tsd-kind-icon">store<wbr>Multiple</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="collectionstorageprovider.html#tolist" class="tsd-kind-icon">to<wbr>List</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-interface tsd-is-overwrite"><a href="collectionstorageprovider.html#tolist" class="tsd-kind-icon">to<wbr>List</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-interface tsd-is-inherited"><a href="collectionstorageprovider.html#toliteral" class="tsd-kind-icon">to<wbr>Literal</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-interface tsd-is-inherited"><a href="collectionstorageprovider.html#tostring" class="tsd-kind-icon">to<wbr>String</a></li>
 							</ul>
@@ -175,7 +182,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="../classes/storageproviderbase.html">StorageProviderBase</a>.<a href="../classes/storageproviderbase.html#constructor">constructor</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/0fd7a7b/src/runtime/storage/storage-provider-base.ts#L127">runtime/storage/storage-provider-base.ts:127</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/a9a52c7/src/runtime/storage/storage-provider-base.ts#L122">runtime/storage/storage-provider-base.ts:122</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -207,7 +214,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="../classes/storageproviderbase.html">StorageProviderBase</a>.<a href="../classes/storageproviderbase.html#_storagekey">_storageKey</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/0fd7a7b/src/runtime/storage/storage-provider-base.ts#L119">runtime/storage/storage-provider-base.ts:119</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/a9a52c7/src/runtime/storage/storage-provider-base.ts#L114">runtime/storage/storage-provider-base.ts:114</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -218,7 +225,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="../classes/storageproviderbase.html">StorageProviderBase</a>.<a href="../classes/storageproviderbase.html#backingstore">backingStore</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/0fd7a7b/src/runtime/storage/storage-provider-base.ts#L261">runtime/storage/storage-provider-base.ts:261</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/a9a52c7/src/runtime/storage/storage-provider-base.ts#L261">runtime/storage/storage-provider-base.ts:261</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -229,29 +236,31 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="../classes/storageproviderbase.html">StorageProviderBase</a>.<a href="../classes/storageproviderbase.html#description">description</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/0fd7a7b/src/runtime/storage/storage-provider-base.ts#L127">runtime/storage/storage-provider-base.ts:127</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/a9a52c7/src/runtime/storage/storage-provider-base.ts#L122">runtime/storage/storage-provider-base.ts:122</a></li>
 						</ul>
 					</aside>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-overwrite tsd-is-inherited">
 					<a name="id" class="tsd-anchor"></a>
 					<h3>id</h3>
 					<div class="tsd-signature tsd-kind-icon">id<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="../classes/storageproviderbase.html">StorageProviderBase</a>.<a href="../classes/storageproviderbase.html#id">id</a></p>
+						<p>Overrides <a href="store.html">Store</a>.<a href="store.html#id">id</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/0fd7a7b/src/runtime/storage/storage-provider-base.ts#L123">runtime/storage/storage-provider-base.ts:123</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/a9a52c7/src/runtime/storage/storage-provider-base.ts#L118">runtime/storage/storage-provider-base.ts:118</a></li>
 						</ul>
 					</aside>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-overwrite tsd-is-inherited">
 					<a name="name" class="tsd-anchor"></a>
 					<h3>name</h3>
 					<div class="tsd-signature tsd-kind-icon">name<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="../classes/storageproviderbase.html">StorageProviderBase</a>.<a href="../classes/storageproviderbase.html#name">name</a></p>
+						<p>Overrides <a href="store.html">Store</a>.<a href="store.html#name">name</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/0fd7a7b/src/runtime/storage/storage-provider-base.ts#L125">runtime/storage/storage-provider-base.ts:125</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/a9a52c7/src/runtime/storage/storage-provider-base.ts#L120">runtime/storage/storage-provider-base.ts:120</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -262,7 +271,18 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="../classes/storageproviderbase.html">StorageProviderBase</a>.<a href="../classes/storageproviderbase.html#originalid">originalId</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/0fd7a7b/src/runtime/storage/storage-provider-base.ts#L124">runtime/storage/storage-provider-base.ts:124</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/a9a52c7/src/runtime/storage/storage-provider-base.ts#L119">runtime/storage/storage-provider-base.ts:119</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
+					<a name="pec" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> pec</h3>
+					<div class="tsd-signature tsd-kind-icon">pec<span class="tsd-signature-symbol">:</span> <a href="../classes/particleexecutioncontext.html" class="tsd-signature-type">ParticleExecutionContext</a></div>
+					<aside class="tsd-sources">
+						<p>Inherited from <a href="store.html">Store</a>.<a href="store.html#pec">pec</a></p>
+						<ul>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/a9a52c7/src/runtime/store.ts#L16">runtime/store.ts:16</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -273,7 +293,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="../classes/storageproviderbase.html">StorageProviderBase</a>.<a href="../classes/storageproviderbase.html#referencemode">referenceMode</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/0fd7a7b/src/runtime/storage/storage-provider-base.ts#L120">runtime/storage/storage-provider-base.ts:120</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/a9a52c7/src/runtime/storage/storage-provider-base.ts#L115">runtime/storage/storage-provider-base.ts:115</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -284,7 +304,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="../classes/storageproviderbase.html">StorageProviderBase</a>.<a href="../classes/storageproviderbase.html#source">source</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/0fd7a7b/src/runtime/storage/storage-provider-base.ts#L126">runtime/storage/storage-provider-base.ts:126</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/a9a52c7/src/runtime/storage/storage-provider-base.ts#L121">runtime/storage/storage-provider-base.ts:121</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -295,7 +315,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="../classes/storageproviderbase.html">StorageProviderBase</a>.<a href="../classes/storageproviderbase.html#version">version</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/0fd7a7b/src/runtime/storage/storage-provider-base.ts#L122">runtime/storage/storage-provider-base.ts:122</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/a9a52c7/src/runtime/storage/storage-provider-base.ts#L117">runtime/storage/storage-provider-base.ts:117</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -313,7 +333,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="../classes/storageproviderbase.html">StorageProviderBase</a>.<a href="../classes/storageproviderbase.html#apichannelmappingid">apiChannelMappingId</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/0fd7a7b/src/runtime/storage/storage-provider-base.ts#L243">runtime/storage/storage-provider-base.ts:243</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/a9a52c7/src/runtime/storage/storage-provider-base.ts#L243">runtime/storage/storage-provider-base.ts:243</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
@@ -331,25 +351,26 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="../classes/storageproviderbase.html">StorageProviderBase</a>.<a href="../classes/storageproviderbase.html#storagekey">storageKey</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/0fd7a7b/src/runtime/storage/storage-provider-base.ts#L146">runtime/storage/storage-provider-base.ts:146</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/a9a52c7/src/runtime/storage/storage-provider-base.ts#L141">runtime/storage/storage-provider-base.ts:141</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
 						</li>
 					</ul>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-interface tsd-is-inherited">
+				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-interface tsd-is-overwrite tsd-is-inherited">
 					<a name="type" class="tsd-anchor"></a>
 					<h3>type</h3>
-					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-interface tsd-is-inherited">
+					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-interface tsd-is-overwrite tsd-is-inherited">
 						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> type<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../classes/type.html" class="tsd-signature-type">Type</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="../classes/storageproviderbase.html">StorageProviderBase</a>.<a href="../classes/storageproviderbase.html#type">type</a></p>
+								<p>Overrides <a href="store.html">Store</a>.<a href="store.html#type">type</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/0fd7a7b/src/runtime/storage/storage-provider-base.ts#L158">runtime/storage/storage-provider-base.ts:158</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/a9a52c7/src/runtime/storage/storage-provider-base.ts#L153">runtime/storage/storage-provider-base.ts:153</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <a href="../classes/type.html" class="tsd-signature-type">Type</a></h4>
@@ -370,7 +391,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="../classes/storageproviderbase.html">StorageProviderBase</a>.<a href="../classes/storageproviderbase.html#_compareto">_compareTo</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/0fd7a7b/src/runtime/storage/storage-provider-base.ts#L206">runtime/storage/storage-provider-base.ts:206</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/a9a52c7/src/runtime/storage/storage-provider-base.ts#L206">runtime/storage/storage-provider-base.ts:206</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -394,7 +415,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="../classes/storageproviderbase.html">StorageProviderBase</a>.<a href="../classes/storageproviderbase.html#_fire">_fire</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/0fd7a7b/src/runtime/storage/storage-provider-base.ts#L187">runtime/storage/storage-provider-base.ts:187</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/a9a52c7/src/runtime/storage/storage-provider-base.ts#L187">runtime/storage/storage-provider-base.ts:187</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -422,6 +443,30 @@
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
+					<a name="clear" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> clear</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
+						<li class="tsd-signature tsd-kind-icon">clear<span class="tsd-signature-symbol">(</span>particleId<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from <a href="collectionstore.html">CollectionStore</a>.<a href="collectionstore.html#clear">clear</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/a9a52c7/src/runtime/store.ts#L40">runtime/store.ts:40</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>particleId: <span class="tsd-signature-type">string</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
 					<a name="clonefrom" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagAbstract">Abstract</span> clone<wbr>From</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
@@ -432,7 +477,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="../classes/storageproviderbase.html">StorageProviderBase</a>.<a href="../classes/storageproviderbase.html#clonefrom">cloneFrom</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/0fd7a7b/src/runtime/storage/storage-provider-base.ts#L255">runtime/storage/storage-provider-base.ts:255</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/a9a52c7/src/runtime/storage/storage-provider-base.ts#L255">runtime/storage/storage-provider-base.ts:255</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -456,7 +501,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="../classes/storageproviderbase.html">StorageProviderBase</a>.<a href="../classes/storageproviderbase.html#dispose">dispose</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/0fd7a7b/src/runtime/storage/storage-provider-base.ts#L248">runtime/storage/storage-provider-base.ts:248</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/a9a52c7/src/runtime/storage/storage-provider-base.ts#L248">runtime/storage/storage-provider-base.ts:248</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -474,7 +519,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="../classes/storageproviderbase.html">StorageProviderBase</a>.<a href="../classes/storageproviderbase.html#enablereferencemode">enableReferenceMode</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/0fd7a7b/src/runtime/storage/storage-provider-base.ts#L142">runtime/storage/storage-provider-base.ts:142</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/a9a52c7/src/runtime/storage/storage-provider-base.ts#L137">runtime/storage/storage-provider-base.ts:137</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -492,43 +537,45 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="../classes/storageproviderbase.html">StorageProviderBase</a>.<a href="../classes/storageproviderbase.html#ensurebackingstore">ensureBackingStore</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/0fd7a7b/src/runtime/storage/storage-provider-base.ts#L258">runtime/storage/storage-provider-base.ts:258</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/a9a52c7/src/runtime/storage/storage-provider-base.ts#L258">runtime/storage/storage-provider-base.ts:258</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">any</span></h4>
 						</li>
 					</ul>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface tsd-is-overwrite tsd-is-inherited">
 					<a name="generateid" class="tsd-anchor"></a>
 					<h3>generateID</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface tsd-is-overwrite tsd-is-inherited">
 						<li class="tsd-signature tsd-kind-icon">generateID<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="../classes/storageproviderbase.html">StorageProviderBase</a>.<a href="../classes/storageproviderbase.html#generateid">generateID</a></p>
+								<p>Overrides <a href="store.html">Store</a>.<a href="store.html#generateid">generateID</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/0fd7a7b/src/runtime/storage/storage-provider-base.ts#L150">runtime/storage/storage-provider-base.ts:150</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/a9a52c7/src/runtime/storage/storage-provider-base.ts#L145">runtime/storage/storage-provider-base.ts:145</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
 						</li>
 					</ul>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface tsd-is-overwrite tsd-is-inherited">
 					<a name="generateidcomponents" class="tsd-anchor"></a>
 					<h3>generateIDComponents</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface tsd-is-overwrite tsd-is-inherited">
 						<li class="tsd-signature tsd-kind-icon">generateIDComponents<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">object</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="../classes/storageproviderbase.html">StorageProviderBase</a>.<a href="../classes/storageproviderbase.html#generateidcomponents">generateIDComponents</a></p>
+								<p>Overrides <a href="store.html">Store</a>.<a href="store.html#generateidcomponents">generateIDComponents</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/0fd7a7b/src/runtime/storage/storage-provider-base.ts#L154">runtime/storage/storage-provider-base.ts:154</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/a9a52c7/src/runtime/storage/storage-provider-base.ts#L149">runtime/storage/storage-provider-base.ts:149</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">object</span></h4>
@@ -545,7 +592,7 @@
 										<li class="tsd-description">
 											<aside class="tsd-sources">
 												<ul>
-													<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/0fd7a7b/src/runtime/storage/storage-provider-base.ts#L155">runtime/storage/storage-provider-base.ts:155</a></li>
+													<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/a9a52c7/src/runtime/storage/storage-provider-base.ts#L150">runtime/storage/storage-provider-base.ts:150</a></li>
 												</ul>
 											</aside>
 											<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
@@ -555,17 +602,18 @@
 						</li>
 					</ul>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface">
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
 					<a name="get" class="tsd-anchor"></a>
 					<h3>get</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
 						<li class="tsd-signature tsd-kind-icon">get<span class="tsd-signature-symbol">(</span>id<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
+								<p>Inherited from <a href="collectionstore.html">CollectionStore</a>.<a href="collectionstore.html#get">get</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/0fd7a7b/src/runtime/storage/storage-provider-base.ts#L49">runtime/storage/storage-provider-base.ts:49</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/a9a52c7/src/runtime/store.ts#L35">runtime/store.ts:35</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -588,7 +636,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/0fd7a7b/src/runtime/storage/storage-provider-base.ts#L43">runtime/storage/storage-provider-base.ts:43</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/a9a52c7/src/runtime/storage/storage-provider-base.ts#L43">runtime/storage/storage-provider-base.ts:43</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -612,7 +660,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="../classes/storageproviderbase.html">StorageProviderBase</a>.<a href="../classes/storageproviderbase.html#modelforsynchronization">modelForSynchronization</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/0fd7a7b/src/runtime/storage/storage-provider-base.ts#L266">runtime/storage/storage-provider-base.ts:266</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/a9a52c7/src/runtime/storage/storage-provider-base.ts#L266">runtime/storage/storage-provider-base.ts:266</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -635,7 +683,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="../classes/storageproviderbase.html">StorageProviderBase</a>.<a href="../classes/storageproviderbase.html#off">off</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/0fd7a7b/src/runtime/storage/storage-provider-base.ts#L172">runtime/storage/storage-provider-base.ts:172</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/a9a52c7/src/runtime/storage/storage-provider-base.ts#L172">runtime/storage/storage-provider-base.ts:172</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -662,7 +710,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="../classes/storageproviderbase.html">StorageProviderBase</a>.<a href="../classes/storageproviderbase.html#on">on</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/0fd7a7b/src/runtime/storage/storage-provider-base.ts#L163">runtime/storage/storage-provider-base.ts:163</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/a9a52c7/src/runtime/storage/storage-provider-base.ts#L163">runtime/storage/storage-provider-base.ts:163</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -681,17 +729,18 @@
 						</li>
 					</ul>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface">
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
 					<a name="remove" class="tsd-anchor"></a>
 					<h3>remove</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
-						<li class="tsd-signature tsd-kind-icon">remove<span class="tsd-signature-symbol">(</span>id<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, keys<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span>, originatorId<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span></li>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
+						<li class="tsd-signature tsd-kind-icon">remove<span class="tsd-signature-symbol">(</span>id<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, keys<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span>, particleId<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
+								<p>Inherited from <a href="collectionstore.html">CollectionStore</a>.<a href="collectionstore.html#remove">remove</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/0fd7a7b/src/runtime/storage/storage-provider-base.ts#L50">runtime/storage/storage-provider-base.ts:50</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/a9a52c7/src/runtime/store.ts#L42">runtime/store.ts:42</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -703,10 +752,10 @@
 									<h5>keys: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></h5>
 								</li>
 								<li>
-									<h5><span class="tsd-flag ts-flagOptional">Optional</span> originatorId: <span class="tsd-signature-type">string</span></h5>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> particleId: <span class="tsd-signature-type">string</span></h5>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">any</span></h4>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -720,7 +769,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/0fd7a7b/src/runtime/storage/storage-provider-base.ts#L46">runtime/storage/storage-provider-base.ts:46</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/a9a52c7/src/runtime/storage/storage-provider-base.ts#L46">runtime/storage/storage-provider-base.ts:46</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -736,17 +785,43 @@
 						</li>
 					</ul>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface">
-					<a name="store" class="tsd-anchor"></a>
-					<h3>store</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
-						<li class="tsd-signature tsd-kind-icon">store<span class="tsd-signature-symbol">(</span>value<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, keys<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span>, originatorId<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span></li>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface tsd-is-overwrite tsd-is-inherited">
+					<a name="reportexceptioninhost" class="tsd-anchor"></a>
+					<h3>report<wbr>Exception<wbr>InHost</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface tsd-is-overwrite tsd-is-inherited">
+						<li class="tsd-signature tsd-kind-icon">report<wbr>Exception<wbr>InHost<span class="tsd-signature-symbol">(</span>exception<span class="tsd-signature-symbol">: </span><a href="../classes/propagatedexception.html" class="tsd-signature-type">PropagatedException</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
+								<p>Inherited from <a href="../classes/storageproviderbase.html">StorageProviderBase</a>.<a href="../classes/storageproviderbase.html#reportexceptioninhost">reportExceptionInHost</a></p>
+								<p>Overrides <a href="store.html">Store</a>.<a href="store.html#reportexceptioninhost">reportExceptionInHost</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/0fd7a7b/src/runtime/storage/storage-provider-base.ts#L51">runtime/storage/storage-provider-base.ts:51</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/a9a52c7/src/runtime/storage/storage-provider-base.ts#L157">runtime/storage/storage-provider-base.ts:157</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>exception: <a href="../classes/propagatedexception.html" class="tsd-signature-type">PropagatedException</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
+					<a name="store" class="tsd-anchor"></a>
+					<h3>store</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
+						<li class="tsd-signature tsd-kind-icon">store<span class="tsd-signature-symbol">(</span>value<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, keys<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span>, particleId<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from <a href="collectionstore.html">CollectionStore</a>.<a href="collectionstore.html#store">store</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/a9a52c7/src/runtime/store.ts#L38">runtime/store.ts:38</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -758,10 +833,10 @@
 									<h5>keys: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></h5>
 								</li>
 								<li>
-									<h5><span class="tsd-flag ts-flagOptional">Optional</span> originatorId: <span class="tsd-signature-type">string</span></h5>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> particleId: <span class="tsd-signature-type">string</span></h5>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">any</span></h4>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -775,7 +850,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/0fd7a7b/src/runtime/storage/storage-provider-base.ts#L44">runtime/storage/storage-provider-base.ts:44</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/a9a52c7/src/runtime/storage/storage-provider-base.ts#L44">runtime/storage/storage-provider-base.ts:44</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -794,17 +869,18 @@
 						</li>
 					</ul>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface">
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface tsd-is-overwrite">
 					<a name="tolist" class="tsd-anchor"></a>
 					<h3>to<wbr>List</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface tsd-is-overwrite">
 						<li class="tsd-signature tsd-kind-icon">to<wbr>List<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
+								<p>Overrides <a href="collectionstore.html">CollectionStore</a>.<a href="collectionstore.html#tolist">toList</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/0fd7a7b/src/runtime/storage/storage-provider-base.ts#L40">runtime/storage/storage-provider-base.ts:40</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/a9a52c7/src/runtime/storage/storage-provider-base.ts#L40">runtime/storage/storage-provider-base.ts:40</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -822,7 +898,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="../classes/storageproviderbase.html">StorageProviderBase</a>.<a href="../classes/storageproviderbase.html#toliteral">toLiteral</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/0fd7a7b/src/runtime/storage/storage-provider-base.ts#L253">runtime/storage/storage-provider-base.ts:253</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/a9a52c7/src/runtime/storage/storage-provider-base.ts#L253">runtime/storage/storage-provider-base.ts:253</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -843,7 +919,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="../classes/storageproviderbase.html">StorageProviderBase</a>.<a href="../classes/storageproviderbase.html#tostring">toString</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/0fd7a7b/src/runtime/storage/storage-provider-base.ts#L219">runtime/storage/storage-provider-base.ts:219</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/a9a52c7/src/runtime/storage/storage-provider-base.ts#L219">runtime/storage/storage-provider-base.ts:219</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -885,14 +961,17 @@
 							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
 								<a href="collectionstorageprovider.html#description" class="tsd-kind-icon">description</a>
 							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
+							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-overwrite tsd-is-inherited">
 								<a href="collectionstorageprovider.html#id" class="tsd-kind-icon">id</a>
 							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
+							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-overwrite tsd-is-inherited">
 								<a href="collectionstorageprovider.html#name" class="tsd-kind-icon">name</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
 								<a href="collectionstorageprovider.html#originalid" class="tsd-kind-icon">original<wbr>Id</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
+								<a href="collectionstorageprovider.html#pec" class="tsd-kind-icon">pec</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
 								<a href="collectionstorageprovider.html#referencemode" class="tsd-kind-icon">reference<wbr>Mode</a>
@@ -909,7 +988,7 @@
 							<li class=" tsd-kind-get-signature tsd-parent-kind-interface tsd-is-inherited">
 								<a href="collectionstorageprovider.html#storagekey" class="tsd-kind-icon">storage<wbr>Key</a>
 							</li>
-							<li class=" tsd-kind-get-signature tsd-parent-kind-interface tsd-is-inherited">
+							<li class=" tsd-kind-get-signature tsd-parent-kind-interface tsd-is-overwrite tsd-is-inherited">
 								<a href="collectionstorageprovider.html#type" class="tsd-kind-icon">type</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
@@ -917,6 +996,9 @@
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-interface tsd-is-inherited tsd-is-protected">
 								<a href="collectionstorageprovider.html#_fire" class="tsd-kind-icon">_fire</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
+								<a href="collectionstorageprovider.html#clear" class="tsd-kind-icon">clear</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
 								<a href="collectionstorageprovider.html#clonefrom" class="tsd-kind-icon">clone<wbr>From</a>
@@ -930,13 +1012,13 @@
 							<li class=" tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
 								<a href="collectionstorageprovider.html#ensurebackingstore" class="tsd-kind-icon">ensure<wbr>Backing<wbr>Store</a>
 							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
+							<li class=" tsd-kind-method tsd-parent-kind-interface tsd-is-overwrite tsd-is-inherited">
 								<a href="collectionstorageprovider.html#generateid" class="tsd-kind-icon">generateID</a>
 							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
+							<li class=" tsd-kind-method tsd-parent-kind-interface tsd-is-overwrite tsd-is-inherited">
 								<a href="collectionstorageprovider.html#generateidcomponents" class="tsd-kind-icon">generateIDComponents</a>
 							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-interface">
+							<li class=" tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
 								<a href="collectionstorageprovider.html#get" class="tsd-kind-icon">get</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-interface">
@@ -951,19 +1033,22 @@
 							<li class=" tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
 								<a href="collectionstorageprovider.html#on" class="tsd-kind-icon">on</a>
 							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-interface">
+							<li class=" tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
 								<a href="collectionstorageprovider.html#remove" class="tsd-kind-icon">remove</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-interface">
 								<a href="collectionstorageprovider.html#removemultiple" class="tsd-kind-icon">remove<wbr>Multiple</a>
 							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-interface">
+							<li class=" tsd-kind-method tsd-parent-kind-interface tsd-is-overwrite tsd-is-inherited">
+								<a href="collectionstorageprovider.html#reportexceptioninhost" class="tsd-kind-icon">report<wbr>Exception<wbr>InHost</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
 								<a href="collectionstorageprovider.html#store" class="tsd-kind-icon">store</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-interface">
 								<a href="collectionstorageprovider.html#storemultiple" class="tsd-kind-icon">store<wbr>Multiple</a>
 							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-interface">
+							<li class=" tsd-kind-method tsd-parent-kind-interface tsd-is-overwrite">
 								<a href="collectionstorageprovider.html#tolist" class="tsd-kind-icon">to<wbr>List</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">

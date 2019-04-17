@@ -3,7 +3,7 @@ import { Type } from './type.js';
 import { ParticleExecutionContext } from './particle-execution-context.js';
 import { Storable } from './handle.js';
 import { SerializedEntity } from './storage-proxy.js';
-declare type EntityIdComponents = {
+export declare type EntityIdComponents = {
     base: string;
     component: () => number;
 };
@@ -84,4 +84,3 @@ export declare abstract class Entity implements EntityInterface {
     /** Dynamically constructs a new JS class for the entity type represented by the given schema. */
     static createEntityClass(schema: Schema, context: ParticleExecutionContext): EntityClass;
 }
-export {};

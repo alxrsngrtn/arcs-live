@@ -289,7 +289,7 @@ export class CollectionProxy extends StorageProxy {
             return new Promise(resolve => this.port.HandleToList(this, resolve));
         }
     }
-    get(id, particleId) {
+    get(id) {
         if (this.synchronized === SyncState.full) {
             return Promise.resolve(this.model.getValue(id));
         }
@@ -297,18 +297,20 @@ export class CollectionProxy extends StorageProxy {
             return new Promise((resolve, reject) => this.port.HandleToList(this, r => resolve(r.find(entity => entity.id === id))));
         }
     }
+    // tslint:disable-next-line: no-any
     store(value, keys, particleId) {
         const id = value.id;
         const data = { value, keys };
         this.port.HandleStore(this, () => { }, data, particleId);
         if (this.synchronized !== SyncState.full) {
-            return;
+            return Promise.resolve();
         }
         if (!this.model.add(id, value, keys)) {
-            return;
+            return Promise.resolve();
         }
         const update = { originatorId: particleId, add: [value] };
         this._notify('update', update, options => options.notifyUpdate);
+        return Promise.resolve();
     }
     clear(particleId) {
         if (this.synchronized !== SyncState.full) {
@@ -321,16 +323,17 @@ export class CollectionProxy extends StorageProxy {
         if (items.length > 0) {
             this._notify('update', { originatorId: particleId, remove: items }, options => options.notifyUpdate);
         }
+        return Promise.resolve();
     }
     remove(id, keys, particleId) {
         if (this.synchronized !== SyncState.full) {
             const data = { id, keys: [] };
             this.port.HandleRemove(this, () => { }, data, particleId);
-            return;
+            return Promise.resolve();
         }
         const value = this.model.getValue(id);
         if (!value) {
-            return;
+            return Promise.resolve();
         }
         if (keys.length === 0) {
             keys = this.model.getKeys(id);
@@ -338,10 +341,11 @@ export class CollectionProxy extends StorageProxy {
         const data = { id, keys };
         this.port.HandleRemove(this, () => { }, data, particleId);
         if (!this.model.remove(id, keys)) {
-            return;
+            return Promise.resolve();
         }
         const update = { originatorId: particleId, remove: [value] };
         this._notify('update', update, options => options.notifyUpdate);
+        return Promise.resolve();
     }
 }
 /**
@@ -413,7 +417,7 @@ export class VariableProxy extends StorageProxy {
     set(entity, particleId) {
         assert(entity !== undefined);
         if (JSON.stringify(this.model) === JSON.stringify(entity)) {
-            return;
+            return Promise.resolve();
         }
         let barrier;
         // If we're setting to this handle but we aren't listening to firebase,
@@ -435,10 +439,11 @@ export class VariableProxy extends StorageProxy {
         this.port.HandleSet(this, entity, particleId, barrier);
         const update = { originatorId: particleId, data: entity, oldData };
         this._notify('update', update, options => options.notifyUpdate);
+        return Promise.resolve();
     }
     clear(particleId) {
         if (this.model == null) {
-            return;
+            return Promise.resolve();
         }
         const barrier = this.generateID( /* 'barrier' */);
         const oldData = this.model;
@@ -447,6 +452,7 @@ export class VariableProxy extends StorageProxy {
         this.port.HandleClear(this, particleId, barrier);
         const update = { originatorId: particleId, data: null, oldData };
         this._notify('update', update, options => options.notifyUpdate);
+        return Promise.resolve();
     }
 }
 // BigCollections are never synchronized. No local state is held and all operations are passed
@@ -470,17 +476,19 @@ export class BigCollectionProxy extends StorageProxy {
     async store(value, keys, particleId) {
         return new Promise(resolve => this.port.HandleStore(this, resolve, { value, keys }, particleId));
     }
-    async remove(id, particleId) {
+    async remove(id, keys, particleId) {
         return new Promise(resolve => this.port.HandleRemove(this, resolve, { id, keys: [] }, particleId));
     }
     async stream(pageSize, forward) {
         return new Promise(resolve => this.port.HandleStream(this, resolve, pageSize, forward));
     }
+    // tslint:disable-next-line: no-any
     async cursorNext(cursorId) {
         return new Promise(resolve => this.port.StreamCursorNext(this, resolve, cursorId));
     }
     cursorClose(cursorId) {
         this.port.StreamCursorClose(this, cursorId);
+        return Promise.resolve();
     }
 }
 export class StorageProxyScheduler {
@@ -548,7 +556,7 @@ export class StorageProxyScheduler {
                     }
                     catch (e) {
                         console.error('Error dispatching to particle', e);
-                        handle._proxy.reportExceptionInHost(new SystemException(e, handle._particleId, 'StorageProxyScheduler::_dispatch'));
+                        handle.storage.reportExceptionInHost(new SystemException(e, handle._particleId, 'StorageProxyScheduler::_dispatch'));
                     }
                 }
             }

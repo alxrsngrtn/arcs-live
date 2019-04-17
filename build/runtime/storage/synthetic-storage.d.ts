@@ -55,7 +55,7 @@ declare class SyntheticCollection extends StorageProviderBase implements Collect
     storeMultiple(values: any, keys: any, originatorId: any): Promise<void>;
     removeMultiple(items: any, originatorId: string): Promise<void>;
     get(id: string): Promise<{}>;
-    remove(id: string, keys: string[], originatorId: string): void;
-    store(value: any, keys: string[], originatorId?: string): void;
+    remove(id: string, keys: string[], originatorId: string): never;
+    store(value: any, keys: string[], originatorId?: string): never;
 }
 export {};

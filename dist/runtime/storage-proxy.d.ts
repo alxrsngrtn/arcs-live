@@ -7,7 +7,7 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-import { CursorNextValue, PECInnerPort } from './api-channel.js';
+import { PECInnerPort } from './api-channel.js';
 import { PropagatedException } from './arc-exceptions.js';
 import { Handle, HandleOptions } from './handle.js';
 import { ParticleExecutionContext } from './particle-execution-context.js';
@@ -15,6 +15,7 @@ import { Particle } from './particle.js';
 import { SerializedModelEntry, ModelValue } from './storage/crdt-collection-model.js';
 import { Type } from './type.js';
 import { EntityRawData } from './entity.js';
+import { Store, VariableStore, CollectionStore, BigCollectionStore } from './store.js';
 declare enum SyncState {
     none = 0,
     pending = 1,
@@ -43,7 +44,7 @@ export declare type SerializedEntity = {
  * - once the resync response is received, stale queued updates are discarded and any remaining ones
  *   are applied.
  */
-export declare abstract class StorageProxy {
+export declare abstract class StorageProxy implements Store {
     static newProxy(id: string, type: Type, port: PECInnerPort, pec: ParticleExecutionContext, scheduler: any, name: string): CollectionProxy | BigCollectionProxy | VariableProxy;
     storageKey: string;
     readonly id: string;
@@ -108,7 +109,7 @@ export declare abstract class StorageProxy {
  * of keys that exist at the storage object at the time it receives the
  * request.
  */
-export declare class CollectionProxy extends StorageProxy {
+export declare class CollectionProxy extends StorageProxy implements CollectionStore {
     private model;
     _getModelForSync(): ModelValue[];
     _synchronizeModel(version: number, model: SerializedModelEntry[]): boolean;
@@ -118,10 +119,10 @@ export declare class CollectionProxy extends StorageProxy {
         originatorId: string;
     };
     toList(): Promise<{}[]>;
-    get(id: any, particleId: any): Promise<{}>;
-    store(value: any, keys: any, particleId: any): void;
-    clear(particleId: any): void;
-    remove(id: any, keys: any, particleId: any): void;
+    get(id: string): Promise<{}>;
+    store(value: any, keys: string[], particleId: string): Promise<void>;
+    clear(particleId: any): Promise<void>;
+    remove(id: any, keys: any, particleId: any): Promise<void>;
 }
 /**
  * Variables are synchronized in a 'last-writer-wins' scheme. When the
@@ -130,7 +131,7 @@ export declare class CollectionProxy extends StorageProxy {
  * Between those two points in time updates are not applied or
  * notified about as these reflect concurrent writes that did not 'win'.
  */
-export declare class VariableProxy extends StorageProxy {
+export declare class VariableProxy extends StorageProxy implements VariableStore {
     model: {
         id: string;
     } | null;
@@ -142,19 +143,19 @@ export declare class VariableProxy extends StorageProxy {
     get(): Promise<{
         id: string;
     }>;
-    set(entity: any, particleId: string): void;
-    clear(particleId: any): void;
+    set(entity: {}, particleId: string): Promise<void>;
+    clear(particleId: string): Promise<void>;
 }
-export declare class BigCollectionProxy extends StorageProxy {
+export declare class BigCollectionProxy extends StorageProxy implements BigCollectionStore {
     register(particle: any, handle: any): void;
     _getModelForSync(): never;
     _processUpdate(): {};
     _synchronizeModel(): boolean;
     store(value: any, keys: any, particleId: any): Promise<void>;
-    remove(id: any, particleId: any): Promise<void>;
-    stream(pageSize: any, forward: any): Promise<{}>;
-    cursorNext(cursorId: any): Promise<CursorNextValue>;
-    cursorClose(cursorId: any): void;
+    remove(id: any, keys: any, particleId: any): Promise<void>;
+    stream(pageSize: any, forward: any): Promise<number>;
+    cursorNext(cursorId: any): Promise<any>;
+    cursorClose(cursorId: any): Promise<void>;
 }
 export declare class StorageProxyScheduler {
     private _scheduled;

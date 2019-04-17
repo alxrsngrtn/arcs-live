@@ -537,10 +537,10 @@ function restore(entry, entityClass) {
  */
 class Handle {
     // TODO type particleId, marked as string, but called with number
-    constructor(proxy, name, particleId, canRead, canWrite) {
-        assert(!(proxy instanceof Handle));
-        this._proxy = proxy;
-        this.name = name || this._proxy.name;
+    constructor(storage, name, particleId, canRead, canWrite) {
+        assert(!(storage instanceof Handle));
+        this.storage = storage;
+        this.name = name || this.storage.name;
         this.canRead = canRead;
         this.canWrite = canWrite;
         this._particleId = particleId;
@@ -552,10 +552,10 @@ class Handle {
         };
     }
     reportUserExceptionInHost(exception, particle, method) {
-        this._proxy.reportExceptionInHost(new UserException(exception, method, this._particleId, particle.spec.name));
+        this.storage.reportExceptionInHost(new UserException(exception, method, this._particleId, particle.spec.name));
     }
     reportSystemExceptionInHost(exception, method) {
-        this._proxy.reportExceptionInHost(new SystemException(exception, method, this._particleId));
+        this.storage.reportExceptionInHost(new SystemException(exception, method, this._particleId));
     }
     // `options` may contain any of:
     // - keepSynced (bool): load full data on startup, maintain data in proxy and resync as required
@@ -581,16 +581,16 @@ class Handle {
         assert(entity, 'can\'t serialize a null entity');
         if (entity instanceof Entity) {
             if (!entity.isIdentified()) {
-                entity.createIdentity(this._proxy.generateIDComponents());
+                entity.createIdentity(this.storage.generateIDComponents());
             }
         }
         return entity.serialize();
     }
     get type() {
-        return this._proxy.type;
+        return this.storage.type;
     }
     get _id() {
-        return this._proxy.id;
+        return this.storage.id;
     }
     toManifestString() {
         return `'${this._id}'`;
@@ -645,7 +645,7 @@ class Collection extends Handle {
         if (!this.canRead) {
             throw new Error('Handle not readable');
         }
-        return this._restore([await this._proxy.get(id, this._particleId)])[0];
+        return this._restore([await this.storage.get(id)])[0];
     }
     /**
      * @returns a list of the Entities contained by the handle.
@@ -656,7 +656,7 @@ class Collection extends Handle {
         if (!this.canRead) {
             throw new Error('Handle not readable');
         }
-        return this._restore(await this._proxy.toList());
+        return this._restore(await this.storage.toList());
     }
     _restore(list) {
         return (list !== null) ? list.map(a => restore(a, this.entityClass)) : null;
@@ -671,8 +671,8 @@ class Collection extends Handle {
             throw new Error('Handle not writeable');
         }
         const serialization = this._serialize(entity);
-        const keys = [this._proxy.generateID() + 'key'];
-        return this._proxy.store(serialization, keys, this._particleId);
+        const keys = [this.storage.generateID() + 'key'];
+        return this.storage.store(serialization, keys, this._particleId);
     }
     /**
      * Removes all known entities from the Handle.
@@ -683,7 +683,12 @@ class Collection extends Handle {
         if (!this.canWrite) {
             throw new Error('Handle not writeable');
         }
-        return this._proxy.clear(this._particleId);
+        if (this.storage.clear) {
+            return this.storage.clear(this._particleId);
+        }
+        else {
+            throw new Error('clear not implemented by storage');
+        }
     }
     /**
      * Removes an entity from the Handle.
@@ -697,7 +702,7 @@ class Collection extends Handle {
         const serialization = this._serialize(entity);
         // Remove the keys that exist at storage/proxy.
         const keys = [];
-        this._proxy.remove(serialization.id, keys, this._particleId);
+        this.storage.remove(serialization.id, keys, this._particleId);
     }
 }
 /**
@@ -751,7 +756,7 @@ class Variable extends Handle {
         if (!this.canRead) {
             throw new Error('Handle not readable');
         }
-        const model = await this._proxy.get();
+        const model = await this.storage.get();
         return this._restore(model);
     }
     _restore(model) {
@@ -765,7 +770,7 @@ class Variable extends Handle {
             return ParticleSpec.fromLiteral(model);
         }
         if (this.type instanceof ReferenceType) {
-            return new Reference(model, this.type, this._proxy.pec);
+            return new Reference(model, this.type, this.storage.pec);
         }
         throw new Error(`Don't know how to deliver handle data of type ${this.type}`);
     }
@@ -780,7 +785,7 @@ class Variable extends Handle {
                 throw new Error('Handle not writeable');
             }
             const serialization = this._serialize(entity);
-            return this._proxy.set(serialization, this._particleId);
+            return this.storage.set(serialization, this._particleId);
         }
         catch (e) {
             this.reportSystemExceptionInHost(e, 'Handle::set');
@@ -796,7 +801,7 @@ class Variable extends Handle {
         if (!this.canWrite) {
             throw new Error('Handle not writeable');
         }
-        return this._proxy.clear(this._particleId);
+        return this.storage.clear(this._particleId);
     }
 }
 /**
@@ -814,7 +819,7 @@ class Cursor {
      * when the cursor has completed reading the collection.
      */
     async next() {
-        const data = await this._parent._proxy.cursorNext(this._cursorId);
+        const data = await this._parent.storage.cursorNext(this._cursorId);
         if (!data.done) {
             data.value = data.value.map(a => restore(a, this._parent.entityClass));
         }
@@ -825,7 +830,7 @@ class Cursor {
      * yet completed streaming (i.e. next() hasn't returned {done: true}).
      */
     close() {
-        this._parent._proxy.cursorClose(this._cursorId);
+        this._parent.storage.cursorClose(this._cursorId);
     }
 }
 /**
@@ -853,8 +858,8 @@ class BigCollection extends Handle {
             throw new Error('Handle not writeable');
         }
         const serialization = this._serialize(entity);
-        const keys = [this._proxy.generateID() + 'key'];
-        return this._proxy.store(serialization, keys, this._particleId);
+        const keys = [this.storage.generateID() + 'key'];
+        return this.storage.store(serialization, keys, this._particleId);
     }
     /**
      * Removes an entity from the Handle.
@@ -866,7 +871,7 @@ class BigCollection extends Handle {
             throw new Error('Handle not writeable');
         }
         const serialization = this._serialize(entity);
-        this._proxy.remove(serialization.id, this._particleId);
+        this.storage.remove(serialization.id, [], this._particleId);
     }
     /**
      * @returns a Cursor instance that iterates over the full set of entities, reading `pageSize`
@@ -887,24 +892,24 @@ class BigCollection extends Handle {
         if (isNaN(pageSize) || pageSize < 1) {
             throw new Error('Streamed reads require a positive pageSize');
         }
-        const cursorId = await this._proxy.stream(pageSize, forward);
+        const cursorId = await this.storage.stream(pageSize, forward);
         return new Cursor(this, cursorId);
     }
 }
-function handleFor(proxy, name = null, particleId = '', canRead = true, canWrite = true) {
+function handleFor(storage, name = null, particleId = '', canRead = true, canWrite = true) {
     let handle;
-    if (proxy.type instanceof CollectionType) {
-        handle = new Collection(proxy, name, particleId, canRead, canWrite);
+    if (storage.type instanceof CollectionType) {
+        handle = new Collection(storage, name, particleId, canRead, canWrite);
     }
-    else if (proxy.type instanceof BigCollectionType) {
-        handle = new BigCollection(proxy, name, particleId, canRead, canWrite);
+    else if (storage.type instanceof BigCollectionType) {
+        handle = new BigCollection(storage, name, particleId, canRead, canWrite);
     }
     else {
-        handle = new Variable(proxy, name, particleId, canRead, canWrite);
+        handle = new Variable(storage, name, particleId, canRead, canWrite);
     }
-    const type = proxy.type.getContainedType() || proxy.type;
+    const type = storage.type.getContainedType() || storage.type;
     if (type instanceof EntityType) {
-        handle.entityClass = type.entitySchema.entityClass(proxy.pec);
+        handle.entityClass = type.entitySchema.entityClass(storage.pec);
     }
     return handle;
 }
@@ -3395,6 +3400,10 @@ class StorageProviderBase {
     }
     get type() {
         return this._type;
+    }
+    reportExceptionInHost(exception) {
+        // This class lives in the host, so it's safe to just rethrow the exception here.
+        throw exception;
     }
     // TODO: add 'once' which returns a promise.
     on(kindStr, callback, target) {
@@ -19467,7 +19476,7 @@ class MultiplexerDomParticle extends TransformationDomParticle {
             // TODO(wkorman): For items with embedded recipes we may need a map
             // (perhaps id to index) to make sure we don't map a handle into the inner
             // arc multiple times unnecessarily.
-            otherMappedHandles.push(`use '${await arc.mapHandle(otherHandle._proxy)}' as v${index}`);
+            otherMappedHandles.push(`use '${await arc.mapHandle(otherHandle.storage)}' as v${index}`);
             const hostedOtherConnection = hostedParticle.handleConnections.find(conn => conn.isCompatibleType(otherHandle.type));
             if (hostedOtherConnection) {
                 otherConnections.push(`${hostedOtherConnection.name} = v${index++}`);
@@ -20683,7 +20692,7 @@ class CollectionProxy extends StorageProxy {
             return new Promise(resolve => this.port.HandleToList(this, resolve));
         }
     }
-    get(id, particleId) {
+    get(id) {
         if (this.synchronized === SyncState.full) {
             return Promise.resolve(this.model.getValue(id));
         }
@@ -20691,18 +20700,20 @@ class CollectionProxy extends StorageProxy {
             return new Promise((resolve, reject) => this.port.HandleToList(this, r => resolve(r.find(entity => entity.id === id))));
         }
     }
+    // tslint:disable-next-line: no-any
     store(value, keys, particleId) {
         const id = value.id;
         const data = { value, keys };
         this.port.HandleStore(this, () => { }, data, particleId);
         if (this.synchronized !== SyncState.full) {
-            return;
+            return Promise.resolve();
         }
         if (!this.model.add(id, value, keys)) {
-            return;
+            return Promise.resolve();
         }
         const update = { originatorId: particleId, add: [value] };
         this._notify('update', update, options => options.notifyUpdate);
+        return Promise.resolve();
     }
     clear(particleId) {
         if (this.synchronized !== SyncState.full) {
@@ -20715,16 +20726,17 @@ class CollectionProxy extends StorageProxy {
         if (items.length > 0) {
             this._notify('update', { originatorId: particleId, remove: items }, options => options.notifyUpdate);
         }
+        return Promise.resolve();
     }
     remove(id, keys, particleId) {
         if (this.synchronized !== SyncState.full) {
             const data = { id, keys: [] };
             this.port.HandleRemove(this, () => { }, data, particleId);
-            return;
+            return Promise.resolve();
         }
         const value = this.model.getValue(id);
         if (!value) {
-            return;
+            return Promise.resolve();
         }
         if (keys.length === 0) {
             keys = this.model.getKeys(id);
@@ -20732,10 +20744,11 @@ class CollectionProxy extends StorageProxy {
         const data = { id, keys };
         this.port.HandleRemove(this, () => { }, data, particleId);
         if (!this.model.remove(id, keys)) {
-            return;
+            return Promise.resolve();
         }
         const update = { originatorId: particleId, remove: [value] };
         this._notify('update', update, options => options.notifyUpdate);
+        return Promise.resolve();
     }
 }
 /**
@@ -20807,7 +20820,7 @@ class VariableProxy extends StorageProxy {
     set(entity, particleId) {
         assert(entity !== undefined);
         if (JSON.stringify(this.model) === JSON.stringify(entity)) {
-            return;
+            return Promise.resolve();
         }
         let barrier;
         // If we're setting to this handle but we aren't listening to firebase,
@@ -20829,10 +20842,11 @@ class VariableProxy extends StorageProxy {
         this.port.HandleSet(this, entity, particleId, barrier);
         const update = { originatorId: particleId, data: entity, oldData };
         this._notify('update', update, options => options.notifyUpdate);
+        return Promise.resolve();
     }
     clear(particleId) {
         if (this.model == null) {
-            return;
+            return Promise.resolve();
         }
         const barrier = this.generateID( /* 'barrier' */);
         const oldData = this.model;
@@ -20841,6 +20855,7 @@ class VariableProxy extends StorageProxy {
         this.port.HandleClear(this, particleId, barrier);
         const update = { originatorId: particleId, data: null, oldData };
         this._notify('update', update, options => options.notifyUpdate);
+        return Promise.resolve();
     }
 }
 // BigCollections are never synchronized. No local state is held and all operations are passed
@@ -20864,17 +20879,19 @@ class BigCollectionProxy extends StorageProxy {
     async store(value, keys, particleId) {
         return new Promise(resolve => this.port.HandleStore(this, resolve, { value, keys }, particleId));
     }
-    async remove(id, particleId) {
+    async remove(id, keys, particleId) {
         return new Promise(resolve => this.port.HandleRemove(this, resolve, { id, keys: [] }, particleId));
     }
     async stream(pageSize, forward) {
         return new Promise(resolve => this.port.HandleStream(this, resolve, pageSize, forward));
     }
+    // tslint:disable-next-line: no-any
     async cursorNext(cursorId) {
         return new Promise(resolve => this.port.StreamCursorNext(this, resolve, cursorId));
     }
     cursorClose(cursorId) {
         this.port.StreamCursorClose(this, cursorId);
+        return Promise.resolve();
     }
 }
 class StorageProxyScheduler {
@@ -20942,7 +20959,7 @@ class StorageProxyScheduler {
                     }
                     catch (e) {
                         console.error('Error dispatching to particle', e);
-                        handle._proxy.reportExceptionInHost(new SystemException(e, handle._particleId, 'StorageProxyScheduler::_dispatch'));
+                        handle.storage.reportExceptionInHost(new SystemException(e, handle._particleId, 'StorageProxyScheduler::_dispatch'));
                     }
                 }
             }

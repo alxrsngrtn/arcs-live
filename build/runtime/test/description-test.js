@@ -689,16 +689,12 @@ recipe
         const arc = createTestArc(recipe, manifest);
         const fooStore = await arc.createStore(fooType, undefined, 'test:1');
         const descriptionStore = await arc.createStore(descriptionType.collectionOf(), undefined, 'test:2');
-        // Use an any variable to turn descriptionStore into a storageProxy
-        // tslint:disable-next-line: no-any
-        let descriptionStoreProxy;
-        descriptionStoreProxy = descriptionStore;
         return {
             arc,
             recipe,
             fooStore,
             DescriptionType: descriptionStore.type.getContainedType().entitySchema.entityClass(),
-            descriptionHandle: handleFor(descriptionStoreProxy),
+            descriptionHandle: handleFor(descriptionStore),
         };
     }
     tests.forEach((test) => {

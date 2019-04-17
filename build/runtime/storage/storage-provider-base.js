@@ -66,6 +66,10 @@ export class StorageProviderBase {
     get type() {
         return this._type;
     }
+    reportExceptionInHost(exception) {
+        // This class lives in the host, so it's safe to just rethrow the exception here.
+        throw exception;
+    }
     // TODO: add 'once' which returns a promise.
     on(kindStr, callback, target) {
         assert(target !== undefined, 'must provide a target to register a storage event handler');
