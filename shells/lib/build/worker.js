@@ -373,8 +373,10 @@ __webpack_require__.r(__webpack_exports__);
 // http://polymer.github.io/PATENTS.txt
 function assert(test, message) {
     if (!test) {
-        // tslint:disable-next-line: no-debugger
-        debugger; // eslint-disable-line no-debugger
+        if (typeof window !== 'object') {
+            // tslint:disable-next-line: no-debugger
+            debugger; // eslint-disable-line no-debugger
+        }
         throw new Error(message);
     }
 }
@@ -3226,9 +3228,8 @@ class Entity {
         Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(!this.isIdentified());
         setEntityId(this, identifier);
         const components = identifier.split(':');
-        if (components[components.length - 2] === 'uid') {
-            this.userIDComponent = components[components.length - 1];
-        }
+        const uid = components.lastIndexOf('uid');
+        this.userIDComponent = uid > 0 ? components.slice(uid + 1).join(':') : '';
     }
     createIdentity(parentId, idGenerator) {
         Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(!this.isIdentified());
@@ -6360,7 +6361,7 @@ class DomParticleBase extends _particle_js__WEBPACK_IMPORTED_MODULE_2__["Particl
      * Returns array of Entities found in BOXED data `box` that are owned by `userid`
      */
     boxQuery(box, userid) {
-        return box.filter(item => userid === item.getUserID().split('|')[0]);
+        return box && box.filter(item => userid === item.getUserID().split('|')[0]);
     }
 }
 //# sourceMappingURL=dom-particle-base.js.map

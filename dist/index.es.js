@@ -1209,9 +1209,8 @@ class Entity {
         assert(!this.isIdentified());
         setEntityId(this, identifier);
         const components = identifier.split(':');
-        if (components[components.length - 2] === 'uid') {
-            this.userIDComponent = components[components.length - 1];
-        }
+        const uid = components.lastIndexOf('uid');
+        this.userIDComponent = uid > 0 ? components.slice(uid + 1).join(':') : '';
     }
     createIdentity(parentId, idGenerator) {
         assert(!this.isIdentified());
@@ -17902,6 +17901,39 @@ commonjsGlobal.logLevel = 2;
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
+
+// Debugging is initialized either by /devtools/src/run-mark-connected.js, which is
+// injected by the devtools extension content script in the browser env,
+// or used directly when debugging nodeJS.
+
+// Data needs to be referenced via a global object, otherwise extension and
+// Arcs have different instances.
+const root = typeof window === 'object' ? window : global;
+
+if (!root._arcDebugPromise) {
+  root._arcDebugPromise = new Promise(resolve => {
+    root._arcDebugPromiseResolve = resolve;
+  });
+}
+
+class DevtoolsBroker {
+  static get onceConnected() {
+    return root._arcDebugPromise;
+  }
+  static markConnected() {
+    root._arcDebugPromiseResolve();
+  }
+}
+
+/**
+ * @license
+ * Copyright (c) 2018 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
 class AbstractDevtoolsChannel {
     constructor() {
         this.debouncedMessages = [];
@@ -17994,102 +18026,6 @@ class ArcDebugListener {
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-class ArcStoresFetcher extends ArcDebugListener {
-    constructor(arc, arcDevtoolsChannel) {
-        super(arc, arcDevtoolsChannel);
-        this.arc = arc;
-        arcDevtoolsChannel.listen('fetch-stores', async () => arcDevtoolsChannel.send({
-            messageType: 'fetch-stores-result',
-            messageBody: await this._listStores()
-        }));
-    }
-    async _listStores() {
-        const find = (manifest) => {
-            let tags = [...manifest.storeTags];
-            if (manifest.imports) {
-                manifest.imports.forEach(imp => tags = tags.concat(find(imp)));
-            }
-            return tags;
-        };
-        return {
-            arcStores: await this._digestStores([...this.arc.storeTags]),
-            contextStores: await this._digestStores(find(this.arc.context))
-        };
-    }
-    async _digestStores(stores) {
-        const result = [];
-        for (const [store, tags] of stores) {
-            // tslint:disable-next-line: no-any
-            let value;
-            if (store.toList) {
-                value = await store.toList();
-            }
-            else if (store.get) {
-                value = await store.get();
-            }
-            else {
-                value = `(don't know how to dereference)`;
-            }
-            // TODO: Fix issues with WebRTC message splitting.
-            if (JSON.stringify(value).length > 50000) {
-                value = 'too large for WebRTC';
-            }
-            result.push({
-                name: store.name,
-                tags: tags ? [...tags] : [],
-                id: store.id,
-                storage: store.storageKey,
-                type: store.type,
-                description: store.description,
-                value
-            });
-        }
-        return result;
-    }
-}
-
-/**
- * @license
- * Copyright (c) 2018 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-
-// Debugging is initialized either by /devtools/src/run-mark-connected.js, which is
-// injected by the devtools extension content script in the browser env,
-// or used directly when debugging nodeJS.
-
-// Data needs to be referenced via a global object, otherwise extension and
-// Arcs have different instances.
-const root = typeof window === 'object' ? window : global;
-
-if (!root._arcDebugPromise) {
-  root._arcDebugPromise = new Promise(resolve => {
-    root._arcDebugPromiseResolve = resolve;
-  });
-}
-
-class DevtoolsBroker {
-  static get onceConnected() {
-    return root._arcDebugPromise;
-  }
-  static markConnected() {
-    root._arcDebugPromiseResolve();
-  }
-}
-
-/**
- * @license
- * Copyright (c) 2018 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
 
 class DevtoolsChannel extends AbstractDevtoolsChannel {
   constructor() {
@@ -18155,6 +18091,69 @@ class DevtoolsConnection {
     static ensure() {
         if (!channel)
             channel = new DevtoolsChannel();
+    }
+}
+
+/**
+ * @license
+ * Copyright (c) 2018 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+class ArcStoresFetcher extends ArcDebugListener {
+    constructor(arc, arcDevtoolsChannel) {
+        super(arc, arcDevtoolsChannel);
+        this.arc = arc;
+        arcDevtoolsChannel.listen('fetch-stores', async () => arcDevtoolsChannel.send({
+            messageType: 'fetch-stores-result',
+            messageBody: await this._listStores()
+        }));
+    }
+    async _listStores() {
+        const find = (manifest) => {
+            let tags = [...manifest.storeTags];
+            if (manifest.imports) {
+                manifest.imports.forEach(imp => tags = tags.concat(find(imp)));
+            }
+            return tags;
+        };
+        return {
+            arcStores: await this._digestStores([...this.arc.storeTags]),
+            contextStores: await this._digestStores(find(this.arc.context))
+        };
+    }
+    async _digestStores(stores) {
+        const result = [];
+        for (const [store, tags] of stores) {
+            // tslint:disable-next-line: no-any
+            let value;
+            if (store.toList) {
+                value = await store.toList();
+            }
+            else if (store.get) {
+                value = await store.get();
+            }
+            else {
+                value = `(don't know how to dereference)`;
+            }
+            // TODO: Fix issues with WebRTC message splitting.
+            if (JSON.stringify(value).length > 50000) {
+                value = 'too large for WebRTC';
+            }
+            result.push({
+                name: store.name,
+                tags: tags ? [...tags] : [],
+                id: store.id,
+                storage: store.storageKey,
+                type: store.type,
+                description: store.description,
+                value
+            });
+        }
+        return result;
     }
 }
 
@@ -19235,7 +19234,7 @@ class DomParticleBase extends Particle$1 {
      * Returns array of Entities found in BOXED data `box` that are owned by `userid`
      */
     boxQuery(box, userid) {
-        return box.filter(item => userid === item.getUserID().split('|')[0]);
+        return box && box.filter(item => userid === item.getUserID().split('|')[0]);
     }
 }
 
@@ -28142,16 +28141,12 @@ const Utils = {
  * http://polymer.github.io/PATENTS.txt
  */
 
-//const stores = {};
-
 class SyntheticStores {
-  static init() {
-    if (!SyntheticStores.providerFactory) {
-      SyntheticStores.providerFactory = new StorageProviderFactory('shell');
-    }
+  static get providerFactory() {
+    return SyntheticStores._providerFactory || (SyntheticStores._providerFactory = new StorageProviderFactory('shell'));
   }
-  static async getArcsStore(storage, name) {
-    const handleStore = await SyntheticStores.getStore(storage, name);
+  static async getArcsStore(storage, arcid) {
+    const handleStore = await SyntheticStores.getStore(storage, arcid);
     if (handleStore) {
       const handles = await handleStore.toList();
       const handle = handles[0];
@@ -28160,12 +28155,14 @@ class SyntheticStores {
       }
     }
   }
-  static async getStore(storage, id) {
-    // cached stores can be incorrect?
-    //return stores[id] || (stores[id] = await SyntheticStores.syntheticConnectKind('handles', storage, id));
-    return await SyntheticStores.connectToKind('handles', storage, id);
+  static async getStore(storage, arcid) {
+    return await SyntheticStores.connectToKind('handles', storage, arcid);
   }
   static async connectToKind(kind, storage, arcid) {
+    // delimiter problems
+    if (storage[storage.length-1] === '/') {
+      storage = storage.slice(0, -1);
+    }
     return SyntheticStores.storeConnect(null, `synthetic://arc/${kind}/${storage}/${arcid}`);
   }
   static async getHandleStore(handle) {

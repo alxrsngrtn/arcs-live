@@ -1,9 +1,99 @@
-commit 4bebd6c6a4e70359babdebeebf00eb42c25e0e71
-Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
-Date:   Wed Apr 17 16:44:28 2019 +1000
+commit 8e5115e0e121652576c1cf4f267bdf5cd79ff233
+Author: Scott J. Miles <sjmiles@google.com>
+Date:   Wed Apr 17 10:38:07 2019 -0700
 
-    Updated StorageProxy to use IdGenerator. (#2910)
+    Context generator rebuild (#2906)
     
-    Also refactored things a little so that we don't need Store.generateID
-    anymore, so we can delete the extra implementation of it from
-    StorageProviderBase.
+    * shells for examining arcs functionality
+    
+    * shells for examining arcs functionality
+    
+    * standardize argument name
+    
+    * begin work on storage-query
+    
+    * cleanups
+    
+    * wip
+    
+    * fix title
+    
+    * remove dead code
+    
+    * just focus on list of arcs for now
+    
+    * add support libs
+    
+    * more exploring context
+    
+    * initiate firebase-tool
+    
+    * wip
+    
+    * add features to firebase-tool
+    
+    * begin encapsulation of launcher-arc
+    
+    * non-element version of web-arc
+    
+    * elementized arc-component (equivalent to web-arc)
+    
+    * specialization of arc-element
+    
+    * use launcher-arc in web-shell
+    
+    * wip
+    
+    * more work
+    
+    * update FriendsPicker
+    
+    * stop recording meta-data for null-arc, rename to planning-arc
+    
+    * fix description
+    
+    * wip
+    
+    * wip
+    
+    * still wip
+    
+    * factor context solution
+    
+    * cleanups
+    
+    * s/on-dbl-click/on-dblclick
+    
+    * start building actual context
+    
+    * organizing
+    
+    * remove unfinished files
+    
+    * restore package-lock
+    
+    * clean ups
+    
+    * remove vestigial particle def, fix paths
+    
+    * update paths and license headers
+    
+    * make boxQuery null-check
+    
+    * fix two traps
+    
+    * ensure clean path
+    
+    * don't block on context if launcher-arc doesn't exist
+    
+    * move planner-shell out of deprecated/ because server depends on it in some non-obvious way
+    
+    * bring back planner-shell dependencies so server can rollup
+    
+    * lib/deprecated are moved to planner-shell/*
+    
+    * clean up some comments
+    
+    * fix user-context diagnostic shell
+    
+    * remove future-facing stuff

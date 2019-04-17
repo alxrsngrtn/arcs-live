@@ -76,9 +76,8 @@ export class Entity {
         assert(!this.isIdentified());
         setEntityId(this, identifier);
         const components = identifier.split(':');
-        if (components[components.length - 2] === 'uid') {
-            this.userIDComponent = components[components.length - 1];
-        }
+        const uid = components.lastIndexOf('uid');
+        this.userIDComponent = uid > 0 ? components.slice(uid + 1).join(':') : '';
     }
     createIdentity(parentId, idGenerator) {
         assert(!this.isIdentified());

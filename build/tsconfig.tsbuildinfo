@@ -110,7 +110,7 @@
         "signature": "ff2c763c7895327196fd3eb358dcc775b25f27bdae513079cc287433af262427"
       },
       "/home/travis/build/PolymerLabs/arcs/src/platform/assert-web.ts": {
-        "version": "aa0a80a047e69a6a66166b6b9d23ca33a7fcf8c55ed2336bb4c3cdaab0e8895d",
+        "version": "57d5419ead6e413d26ea6371b31ce968e375887b5718cc77b3baf5b2bc690ebe",
         "signature": "801ad5faac360ca21e2507153de1b5394972ac04a1d0c188fd88e5a2e3a48841"
       },
       "/home/travis/build/PolymerLabs/arcs/src/platform/digest-web.ts": {
@@ -306,7 +306,7 @@
         "signature": "eeea1c9c185cbe2bdb73b2f7d2118f3645bbced097e835fc9c1c81454243d7cc"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/dom-particle-base.ts": {
-        "version": "631b298d12204a3cf294ee3eeb926282c8d39cbf7208ec49fe968604ec4753ce",
+        "version": "66fb523d2471ddb3a663cc9136d61737bb56b1e7079da627b5e5213f8c165f9f",
         "signature": "f6033f04967eb81689ab7936ca6ac6821c6b94e199ea4e1a75da728b9b8b38a9"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/dom-particle.ts": {
@@ -410,7 +410,7 @@
         "signature": "b3a5aae36d2e0e7ec3dd57e443b50ce286855bad07cce6d7e774ee28714c6755"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/entity.ts": {
-        "version": "f9e6ce422bbf6ce8b9d2342abd3d6eb1caa641f74078820b26f2144e435ec938",
+        "version": "6e7649b096b138941571699e75e29551085cb333c0c6ccdeb4c9bf2699ea5bc4",
         "signature": "25ed2983ce899b452053061236e1ccda9d5b1987afbf8c054dedaab14e19dd8b"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/schema.ts": {
@@ -1216,10 +1216,6 @@
       "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/constraint-walker.ts": {
         "version": "acbdab8805c8a1b1859b9b8316b2345895f21cc84507d7cc71ea4f419443aaba",
         "signature": "6a6c50386a76a608ad0bd42265a78c27d9d48523054a0804a6e6f704d74c22bb"
-      },
-      "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/pouchdb-provider.ts": {
-        "version": "e1f8c6870580c5cb7d28150be9e60b11efb087a47a01ce6c5bb1a268fffe2ca7",
-        "signature": "8e609bb71c20b858c77f0e9f90bb1319db8477b13f9f965f1a1e18524bf50881"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/test/akms-test.ts": {
         "version": "e00632e1153961aaad9df7307d1bba31816e8d89752b1f95c3144dbc7fa571f5",
@@ -3934,12 +3930,6 @@
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
       ],
-      "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/pouchdb-provider.ts": [
-        "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/storage-provider-factory.ts",
-        "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/pouchdb/pouch-db-storage.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
-      ],
       "/home/travis/build/PolymerLabs/arcs/src/runtime/test/akms-test.ts": [
         "/home/travis/build/PolymerLabs/arcs/src/platform/chai-web.d.ts",
         "/home/travis/build/PolymerLabs/arcs/src/platform/crypto-web.ts",
@@ -6529,7 +6519,6 @@
       "/home/travis/build/PolymerLabs/arcs/src/runtime/manual_tests/firebase-tests.ts",
       "/home/travis/build/PolymerLabs/arcs/src/runtime/manual_tests/loader-tests.ts",
       "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/constraint-walker.ts",
-      "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/pouchdb-provider.ts",
       "/home/travis/build/PolymerLabs/arcs/src/runtime/test/akms-test.ts",
       "/home/travis/build/PolymerLabs/arcs/src/runtime/testing/callback-tracker.ts",
       "/home/travis/build/PolymerLabs/arcs/src/runtime/testing/test-util.ts",
