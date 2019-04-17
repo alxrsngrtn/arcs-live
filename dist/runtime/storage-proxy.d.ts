@@ -52,9 +52,7 @@ export declare abstract class StorageProxy implements Store {
     protected readonly port: PECInnerPort;
     protected readonly scheduler: StorageProxyScheduler;
     name: string;
-    private readonly baseForNewID;
     pec: ParticleExecutionContext;
-    private localIDComponent;
     protected version: number | undefined;
     protected listenerAttached: boolean;
     private keepSynced;
@@ -87,7 +85,7 @@ export declare abstract class StorageProxy implements Store {
     }): void;
     _notify(kind: string, details: any, predicate?: (ignored: HandleOptions) => boolean): void;
     _processUpdates(): void;
-    generateID(): string;
+    protected generateBarrier(): string;
 }
 /**
  * Collections are synchronized in a CRDT Observed/Removed scheme.

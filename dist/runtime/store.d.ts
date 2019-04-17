@@ -13,7 +13,6 @@ export interface Store {
     readonly type: Type;
     readonly pec?: ParticleExecutionContext;
     reportExceptionInHost(exception: PropagatedException): void;
-    generateID(): string;
 }
 export interface VariableStore extends Store {
     get(): Promise<any>;

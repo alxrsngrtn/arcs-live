@@ -12,6 +12,7 @@ import { mapStackTrace } from '../platform/sourcemapped-stacktrace-web.js';
 import { SystemException } from './arc-exceptions.js';
 import { CrdtCollectionModel } from './storage/crdt-collection-model.js';
 import { BigCollectionType, CollectionType } from './type.js';
+import { Id } from './id.js';
 var SyncState;
 (function (SyncState) {
     SyncState[SyncState["none"] = 0] = "none";
@@ -39,7 +40,6 @@ var SyncState;
  */
 export class StorageProxy {
     constructor(id, type, port, pec, scheduler, name) {
-        this.localIDComponent = 0;
         this.version = undefined;
         this.listenerAttached = false;
         this.keepSynced = false;
@@ -52,7 +52,6 @@ export class StorageProxy {
         this.port = port;
         this.scheduler = scheduler;
         this.name = name;
-        this.baseForNewID = pec.generateID();
         this.updates = [];
         this.pec = pec;
     }
@@ -201,8 +200,8 @@ export class StorageProxy {
             this.synchronized = SyncState.full;
         }
     }
-    generateID() {
-        return `${this.baseForNewID}:${this.localIDComponent++}`;
+    generateBarrier() {
+        return this.pec.idGenerator.newChildId(Id.fromString(this.id), 'barrier').toString();
     }
 }
 /**
@@ -422,9 +421,7 @@ export class VariableProxy extends StorageProxy {
         // to the set comes back before a listener is registered then this proxy will
         // end up locked waiting for a barrier that will never arrive.
         if (this.listenerAttached) {
-            // TODO(shans): this.generateID() used to take a parameter. Is this the
-            // cause of some of the key collisions we're seeing?
-            barrier = this.generateID( /* 'barrier' */);
+            barrier = this.generateBarrier();
         }
         else {
             barrier = null;
@@ -442,7 +439,7 @@ export class VariableProxy extends StorageProxy {
         if (this.model == null) {
             return Promise.resolve();
         }
-        const barrier = this.generateID( /* 'barrier' */);
+        const barrier = this.generateBarrier();
         const oldData = this.model;
         this.model = null;
         this.barrier = barrier;

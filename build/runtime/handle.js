@@ -92,6 +92,9 @@ export class Handle {
     toManifestString() {
         return `'${this._id}'`;
     }
+    generateKey() {
+        return this.idGenerator.newChildId(Id.fromString(this._id), 'key').toString();
+    }
 }
 /**
  * A handle on a set of Entity data. Note that, as a set, a Collection can only
@@ -168,7 +171,7 @@ export class Collection extends Handle {
             throw new Error('Handle not writeable');
         }
         const serialization = this._serialize(entity);
-        const keys = [this.storage.generateID() + 'key'];
+        const keys = [this.generateKey()];
         return this.storage.store(serialization, keys, this._particleId);
     }
     /**
@@ -355,7 +358,7 @@ export class BigCollection extends Handle {
             throw new Error('Handle not writeable');
         }
         const serialization = this._serialize(entity);
-        const keys = [this.storage.generateID() + 'key'];
+        const keys = [this.generateKey()];
         return this.storage.store(serialization, keys, this._particleId);
     }
     /**

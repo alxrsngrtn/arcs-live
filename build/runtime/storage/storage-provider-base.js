@@ -57,9 +57,6 @@ export class StorageProviderBase {
     get storageKey() {
         return this._storageKey;
     }
-    generateID() {
-        return `${this.id}:${this.nextLocalID++}`;
-    }
     get type() {
         return this._type;
     }

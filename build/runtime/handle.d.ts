@@ -44,6 +44,7 @@ export declare abstract class Handle {
     readonly type: import("./type.js").Type;
     readonly _id: string;
     toManifestString(): string;
+    protected generateKey(): string;
 }
 /**
  * A handle on a set of Entity data. Note that, as a set, a Collection can only

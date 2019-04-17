@@ -177,13 +177,10 @@ class TestEngine {
         return new TestParticle('P' + this._idCounters[0]++, x => this._events.push(x));
     }
     newProxy(store) {
-        let id = 0;
         // tslint:disable-next-line: no-any
-        const pec = {
-            generateID() { return `${id++}`; }
-        };
+        const fakePec = { idGenerator: this._idGenerator };
         // tslint:disable-next-line: no-any
-        return StorageProxy.newProxy('X' + this._idCounters[1]++, store.type, this, pec, this._scheduler, store.name);
+        return StorageProxy.newProxy('X' + this._idCounters[1]++, store.type, this, fakePec, this._scheduler, store.name);
     }
     newHandle(store, proxy, particle, canRead, canWrite) {
         return handleFor(proxy, this._idGenerator, store.name, particle.id, canRead, canWrite);

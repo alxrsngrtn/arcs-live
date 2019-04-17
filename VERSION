@@ -1,8 +1,9 @@
-commit 8e92d479373b86159ff0266019ce6fae3f57d28b
+commit 4bebd6c6a4e70359babdebeebf00eb42c25e0e71
 Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
-Date:   Wed Apr 17 16:27:27 2019 +1000
+Date:   Wed Apr 17 16:44:28 2019 +1000
 
-    Added an IdGenerator to Handle. (#2909)
+    Updated StorageProxy to use IdGenerator. (#2910)
     
-    This lets us correctly generate new Entity IDs, rather than using the
-    bizarre EntityIDComponents construction.
+    Also refactored things a little so that we don't need Store.generateID
+    anymore, so we can delete the extra implementation of it from
+    StorageProviderBase.

@@ -94,7 +94,6 @@ export declare abstract class StorageProviderBase implements Comparable<StorageP
     protected constructor(type: Type, name: string, id: string, key: string);
     enableReferenceMode(): void;
     readonly storageKey: string;
-    generateID(): string;
     readonly type: Type;
     reportExceptionInHost(exception: PropagatedException): void;
     on(kindStr: string, callback: Callback, target: any): void;

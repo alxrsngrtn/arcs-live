@@ -3721,6 +3721,9 @@ class Handle {
     toManifestString() {
         return `'${this._id}'`;
     }
+    generateKey() {
+        return this.idGenerator.newChildId(_id_js__WEBPACK_IMPORTED_MODULE_6__["Id"].fromString(this._id), 'key').toString();
+    }
 }
 /**
  * A handle on a set of Entity data. Note that, as a set, a Collection can only
@@ -3797,7 +3800,7 @@ class Collection extends Handle {
             throw new Error('Handle not writeable');
         }
         const serialization = this._serialize(entity);
-        const keys = [this.storage.generateID() + 'key'];
+        const keys = [this.generateKey()];
         return this.storage.store(serialization, keys, this._particleId);
     }
     /**
@@ -3984,7 +3987,7 @@ class BigCollection extends Handle {
             throw new Error('Handle not writeable');
         }
         const serialization = this._serialize(entity);
-        const keys = [this.storage.generateID() + 'key'];
+        const keys = [this.generateKey()];
         return this.storage.store(serialization, keys, this._particleId);
     }
     /**
@@ -4622,6 +4625,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _arc_exceptions_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(22);
 /* harmony import */ var _storage_crdt_collection_model_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(30);
 /* harmony import */ var _type_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(15);
+/* harmony import */ var _id_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(23);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -4631,6 +4635,7 @@ __webpack_require__.r(__webpack_exports__);
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
+
 
 
 
@@ -4663,7 +4668,6 @@ var SyncState;
  */
 class StorageProxy {
     constructor(id, type, port, pec, scheduler, name) {
-        this.localIDComponent = 0;
         this.version = undefined;
         this.listenerAttached = false;
         this.keepSynced = false;
@@ -4676,7 +4680,6 @@ class StorageProxy {
         this.port = port;
         this.scheduler = scheduler;
         this.name = name;
-        this.baseForNewID = pec.generateID();
         this.updates = [];
         this.pec = pec;
     }
@@ -4825,8 +4828,8 @@ class StorageProxy {
             this.synchronized = SyncState.full;
         }
     }
-    generateID() {
-        return `${this.baseForNewID}:${this.localIDComponent++}`;
+    generateBarrier() {
+        return this.pec.idGenerator.newChildId(_id_js__WEBPACK_IMPORTED_MODULE_5__["Id"].fromString(this.id), 'barrier').toString();
     }
 }
 /**
@@ -5046,9 +5049,7 @@ class VariableProxy extends StorageProxy {
         // to the set comes back before a listener is registered then this proxy will
         // end up locked waiting for a barrier that will never arrive.
         if (this.listenerAttached) {
-            // TODO(shans): this.generateID() used to take a parameter. Is this the
-            // cause of some of the key collisions we're seeing?
-            barrier = this.generateID( /* 'barrier' */);
+            barrier = this.generateBarrier();
         }
         else {
             barrier = null;
@@ -5066,7 +5067,7 @@ class VariableProxy extends StorageProxy {
         if (this.model == null) {
             return Promise.resolve();
         }
-        const barrier = this.generateID( /* 'barrier' */);
+        const barrier = this.generateBarrier();
         const oldData = this.model;
         this.model = null;
         this.barrier = barrier;

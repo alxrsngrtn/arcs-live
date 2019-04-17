@@ -730,6 +730,9 @@ class Handle {
     toManifestString() {
         return `'${this._id}'`;
     }
+    generateKey() {
+        return this.idGenerator.newChildId(Id.fromString(this._id), 'key').toString();
+    }
 }
 /**
  * A handle on a set of Entity data. Note that, as a set, a Collection can only
@@ -806,7 +809,7 @@ class Collection extends Handle {
             throw new Error('Handle not writeable');
         }
         const serialization = this._serialize(entity);
-        const keys = [this.storage.generateID() + 'key'];
+        const keys = [this.generateKey()];
         return this.storage.store(serialization, keys, this._particleId);
     }
     /**
@@ -993,7 +996,7 @@ class BigCollection extends Handle {
             throw new Error('Handle not writeable');
         }
         const serialization = this._serialize(entity);
-        const keys = [this.storage.generateID() + 'key'];
+        const keys = [this.generateKey()];
         return this.storage.store(serialization, keys, this._particleId);
     }
     /**
@@ -3527,9 +3530,6 @@ class StorageProviderBase {
     }
     get storageKey() {
         return this._storageKey;
-    }
-    generateID() {
-        return `${this.id}:${this.nextLocalID++}`;
     }
     get type() {
         return this._type;
@@ -20441,7 +20441,6 @@ var SyncState;
  */
 class StorageProxy {
     constructor(id, type, port, pec, scheduler, name) {
-        this.localIDComponent = 0;
         this.version = undefined;
         this.listenerAttached = false;
         this.keepSynced = false;
@@ -20454,7 +20453,6 @@ class StorageProxy {
         this.port = port;
         this.scheduler = scheduler;
         this.name = name;
-        this.baseForNewID = pec.generateID();
         this.updates = [];
         this.pec = pec;
     }
@@ -20603,8 +20601,8 @@ class StorageProxy {
             this.synchronized = SyncState.full;
         }
     }
-    generateID() {
-        return `${this.baseForNewID}:${this.localIDComponent++}`;
+    generateBarrier() {
+        return this.pec.idGenerator.newChildId(Id.fromString(this.id), 'barrier').toString();
     }
 }
 /**
@@ -20824,9 +20822,7 @@ class VariableProxy extends StorageProxy {
         // to the set comes back before a listener is registered then this proxy will
         // end up locked waiting for a barrier that will never arrive.
         if (this.listenerAttached) {
-            // TODO(shans): this.generateID() used to take a parameter. Is this the
-            // cause of some of the key collisions we're seeing?
-            barrier = this.generateID( /* 'barrier' */);
+            barrier = this.generateBarrier();
         }
         else {
             barrier = null;
@@ -20844,7 +20840,7 @@ class VariableProxy extends StorageProxy {
         if (this.model == null) {
             return Promise.resolve();
         }
-        const barrier = this.generateID( /* 'barrier' */);
+        const barrier = this.generateBarrier();
         const oldData = this.model;
         this.model = null;
         this.barrier = barrier;
