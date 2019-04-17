@@ -12,6 +12,7 @@ import { ParticleSpec } from './particle-spec.js';
 import { Reference } from './reference.js';
 import { BigCollectionType, CollectionType, EntityType, InterfaceType, ReferenceType } from './type.js';
 import { Entity } from './entity.js';
+import { Id } from './id.js';
 // TODO: This won't be needed once runtime is transferred between contexts.
 function cloneData(data) {
     return data;
@@ -32,9 +33,10 @@ function restore(entry, entityClass) {
  */
 export class Handle {
     // TODO type particleId, marked as string, but called with number
-    constructor(storage, name, particleId, canRead, canWrite) {
+    constructor(storage, idGenerator, name, particleId, canRead, canWrite) {
         assert(!(storage instanceof Handle));
         this.storage = storage;
+        this.idGenerator = idGenerator;
         this.name = name || this.storage.name;
         this.canRead = canRead;
         this.canWrite = canWrite;
@@ -76,7 +78,7 @@ export class Handle {
         assert(entity, 'can\'t serialize a null entity');
         if (entity instanceof Entity) {
             if (!entity.isIdentified()) {
-                entity.createIdentity(this.storage.generateIDComponents());
+                entity.createIdentity(Id.fromString(this._id), this.idGenerator);
             }
         }
         return entity.serialize();
@@ -391,16 +393,16 @@ export class BigCollection extends Handle {
         return new Cursor(this, cursorId);
     }
 }
-export function handleFor(storage, name = null, particleId = '', canRead = true, canWrite = true) {
+export function handleFor(storage, idGenerator, name = null, particleId = '', canRead = true, canWrite = true) {
     let handle;
     if (storage.type instanceof CollectionType) {
-        handle = new Collection(storage, name, particleId, canRead, canWrite);
+        handle = new Collection(storage, idGenerator, name, particleId, canRead, canWrite);
     }
     else if (storage.type instanceof BigCollectionType) {
-        handle = new BigCollection(storage, name, particleId, canRead, canWrite);
+        handle = new BigCollection(storage, idGenerator, name, particleId, canRead, canWrite);
     }
     else {
-        handle = new Variable(storage, name, particleId, canRead, canWrite);
+        handle = new Variable(storage, idGenerator, name, particleId, canRead, canWrite);
     }
     const type = storage.type.getContainedType() || storage.type;
     if (type instanceof EntityType) {

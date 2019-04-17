@@ -204,9 +204,6 @@ export class StorageProxy {
     generateID() {
         return `${this.baseForNewID}:${this.localIDComponent++}`;
     }
-    generateIDComponents() {
-        return { base: this.baseForNewID, component: () => this.localIDComponent++ };
-    }
 }
 /**
  * Collections are synchronized in a CRDT Observed/Removed scheme.

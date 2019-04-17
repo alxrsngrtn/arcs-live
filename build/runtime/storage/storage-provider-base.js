@@ -60,9 +60,6 @@ export class StorageProviderBase {
     generateID() {
         return `${this.id}:${this.nextLocalID++}`;
     }
-    generateIDComponents() {
-        return { base: this.id, component: () => this.nextLocalID++ };
-    }
     get type() {
         return this._type;
     }

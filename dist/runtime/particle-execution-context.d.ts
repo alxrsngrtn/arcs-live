@@ -28,11 +28,11 @@ export declare class ParticleExecutionContext {
     private apiPort;
     private particles;
     private readonly pecId;
-    private readonly idGenerator;
     private loader;
     private pendingLoads;
     private scheduler;
     private keyedProxies;
+    readonly idGenerator: IdGenerator;
     constructor(port: any, pecId: Id, idGenerator: IdGenerator, loader: Loader);
     generateID(): string;
     innerArcHandle(arcId: string, particleId: string): InnerArcHandle;

@@ -17,7 +17,7 @@ import { Schema } from '../schema.js';
 import { FakeSlotComposer } from '../testing/fake-slot-composer.js';
 import { assertThrowsAsync } from '../testing/test-util.js';
 import { EntityType, InterfaceType } from '../type.js';
-import { Id, ArcId } from '../id.js';
+import { Id, ArcId, IdGenerator } from '../id.js';
 describe('Handle', () => {
     // Avoid initialising non-POD variables globally, since they would be constructed even when
     // these tests are not going to be executed (i.e. another test file uses 'only').
@@ -74,7 +74,7 @@ describe('Handle', () => {
         const arc = new Arc({ slotComposer: new FakeSlotComposer(), id: Id.fromString('test'), context: manifest, loader: new Loader() });
         // tslint:disable-next-line: variable-name
         const Foo = manifest.schemas.Foo.entityClass();
-        const fooHandle = handleFor(await arc.createStore(Foo.type.collectionOf()));
+        const fooHandle = handleFor(await arc.createStore(Foo.type.collectionOf()), IdGenerator.newSession());
         await fooHandle.store(new Foo({ value: 'a Foo' }, 'first'));
         await fooHandle.store(new Foo({ value: 'another Foo' }, 'second'));
         await fooHandle.store(new Foo({ value: 'a Foo, again' }, 'first'));
@@ -85,7 +85,7 @@ describe('Handle', () => {
         const arc = new Arc({ slotComposer: new FakeSlotComposer(), id: Id.fromString('test'), context: manifest, loader: new Loader() });
         // tslint:disable-next-line: variable-name
         const Foo = manifest.schemas.Foo.entityClass();
-        const fooHandle = handleFor(await arc.createStore(Foo.type.collectionOf()));
+        const fooHandle = handleFor(await arc.createStore(Foo.type.collectionOf()), IdGenerator.newSession());
         await fooHandle.store(new Foo({ value: '1' }, 'id1'));
         await fooHandle.store(new Foo({ value: '2' }, 'id1'));
         const stored = (await fooHandle.toList())[0];
@@ -96,7 +96,7 @@ describe('Handle', () => {
         const arc = new Arc({ slotComposer: new FakeSlotComposer(), id: Id.fromString('test'), context: manifest, loader: new Loader() });
         // tslint:disable-next-line: variable-name
         const Foo = manifest.schemas.Foo.entityClass();
-        const fooHandle = handleFor(await arc.createStore(Foo.type));
+        const fooHandle = handleFor(await arc.createStore(Foo.type), IdGenerator.newSession());
         await fooHandle.set(new Foo({ value: '1' }, 'id1'));
         await fooHandle.set(new Foo({ value: '2' }, 'id1'));
         const stored = await fooHandle.get();

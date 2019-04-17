@@ -1,10 +1,8 @@
-commit a9a52c78ae522f8aecc8330147e8fdb5a955d535
+commit 8e92d479373b86159ff0266019ce6fae3f57d28b
 Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
-Date:   Wed Apr 17 15:39:52 2019 +1000
+Date:   Wed Apr 17 16:27:27 2019 +1000
 
-    Adds a new Store interface. (#2907)
+    Added an IdGenerator to Handle. (#2909)
     
-    Store represents common functionality between StorageProxy and
-    StorageProviderBase. Now we no longer have to typecast all over the
-    place (in tests mainly) to pretend that a StorageProvider is actually a
-    proxy.
+    This lets us correctly generate new Entity IDs, rather than using the
+    bizarre EntityIDComponents construction.

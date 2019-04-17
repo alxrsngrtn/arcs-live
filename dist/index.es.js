@@ -509,6 +509,140 @@ registerSystemExceptionHandler((exception) => {
     throw exception;
 });
 
+/**
+ * @license
+ * Copyright (c) 2018 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+class RNG {
+}
+/**
+ * A basic random number generator using Math.random();
+ */
+class MathRandomRNG extends RNG {
+    next() {
+        return Math.random();
+    }
+}
+// Singleton Pattern
+const random = new MathRandomRNG();
+class Random {
+    static next() {
+        return random.next();
+    }
+}
+
+/**
+ * @license
+ * Copyright (c) 2017 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+/**
+ * Generates new IDs which are rooted in the current session. Only one IdGenerator should be instantiated for each running Arc, and all of the
+ * IDs created should be created using that same IdGenerator instance.
+ */
+class IdGenerator {
+    /** Use the newSession factory method instead. */
+    constructor(currentSessionId) {
+        this._nextComponentId = 0;
+        this._currentSessionId = currentSessionId;
+    }
+    /** Generates a new random session ID to use when creating new IDs. */
+    static newSession() {
+        const sessionId = Math.floor(Random.next() * Math.pow(2, 50)) + '';
+        return new IdGenerator(sessionId);
+    }
+    /**
+     * Intended only for testing the IdGenerator class itself. Lets you specify the session ID manually. Prefer using the real
+     * IdGenerator.newSession() method when testing other classes.
+     */
+    static createWithSessionIdForTesting(sessionId) {
+        return new IdGenerator(sessionId);
+    }
+    newArcId(name) {
+        return ArcId._newArcIdInternal(this._currentSessionId, name);
+    }
+    /**
+     * Creates a new ID, as a child of the given parentId. The given subcomponent will be appended to the component hierarchy of the given ID, but
+     * the generator's random session ID will be used as the ID's root.
+     */
+    newChildId(parentId, subcomponent = '') {
+        // Append (and increment) a counter to the subcomponent, to ensure that it is unique.
+        subcomponent += this._nextComponentId++;
+        return Id._newIdInternal(this._currentSessionId, [...parentId.idTree, subcomponent]);
+    }
+    get currentSessionIdForTesting() {
+        return this._currentSessionId;
+    }
+}
+/**
+ * An immutable object consisting of two components: a root, and an idTree. The root is the session ID from the particular session in which the
+ * ID was constructed (see the IdGenerator class). The idTree is a list of subcomponents, forming a hierarchy of IDs (child IDs are created by
+ * appending subcomponents to their parent ID's idTree).
+ */
+class Id {
+    /** Protected constructor. Use IdGenerator to create new IDs instead. */
+    constructor(root, idTree = []) {
+        /** The components of the idTree. */
+        this.idTree = [];
+        this.root = root;
+        this.idTree = idTree;
+    }
+    /** Creates a new ID. Use IdGenerator to create new IDs instead. */
+    static _newIdInternal(root, idTree = []) {
+        return new Id(root, idTree);
+    }
+    /** Parses a string representation of an ID (see toString). */
+    static fromString(str) {
+        const bits = str.split(':');
+        if (bits[0].startsWith('!')) {
+            const root = bits[0].slice(1);
+            const idTree = bits.slice(1).filter(component => component.length > 0);
+            return new Id(root, idTree);
+        }
+        else {
+            return new Id('', bits);
+        }
+    }
+    /** Returns the full ID string. */
+    toString() {
+        return `!${this.root}:${this.idTree.join(':')}`;
+    }
+    /** Returns the idTree as as string (without the root). */
+    idTreeAsString() {
+        return this.idTree.join(':');
+    }
+    equal(id) {
+        if (id.root !== this.root || id.idTree.length !== this.idTree.length) {
+            return false;
+        }
+        for (let i = 0; i < id.idTree.length; i++) {
+            if (id.idTree[i] !== this.idTree[i]) {
+                return false;
+            }
+        }
+        return true;
+    }
+}
+class ArcId extends Id {
+    /** Creates a new Arc ID. Use IdGenerator to create new IDs instead. */
+    static _newArcIdInternal(root, name) {
+        return new ArcId(root, [name]);
+    }
+    /** Creates a new Arc ID with the given name. For convenience in unit testing only; otherwise use IdGenerator to create new IDs instead. */
+    static newForTest(id) {
+        return IdGenerator.newSession().newArcId(id);
+    }
+}
+
 /** @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
  * This code may only be used under the BSD style license found at
@@ -537,9 +671,10 @@ function restore(entry, entityClass) {
  */
 class Handle {
     // TODO type particleId, marked as string, but called with number
-    constructor(storage, name, particleId, canRead, canWrite) {
+    constructor(storage, idGenerator, name, particleId, canRead, canWrite) {
         assert(!(storage instanceof Handle));
         this.storage = storage;
+        this.idGenerator = idGenerator;
         this.name = name || this.storage.name;
         this.canRead = canRead;
         this.canWrite = canWrite;
@@ -581,7 +716,7 @@ class Handle {
         assert(entity, 'can\'t serialize a null entity');
         if (entity instanceof Entity) {
             if (!entity.isIdentified()) {
-                entity.createIdentity(this.storage.generateIDComponents());
+                entity.createIdentity(Id.fromString(this._id), this.idGenerator);
             }
         }
         return entity.serialize();
@@ -896,16 +1031,16 @@ class BigCollection extends Handle {
         return new Cursor(this, cursorId);
     }
 }
-function handleFor(storage, name = null, particleId = '', canRead = true, canWrite = true) {
+function handleFor(storage, idGenerator, name = null, particleId = '', canRead = true, canWrite = true) {
     let handle;
     if (storage.type instanceof CollectionType) {
-        handle = new Collection(storage, name, particleId, canRead, canWrite);
+        handle = new Collection(storage, idGenerator, name, particleId, canRead, canWrite);
     }
     else if (storage.type instanceof BigCollectionType) {
-        handle = new BigCollection(storage, name, particleId, canRead, canWrite);
+        handle = new BigCollection(storage, idGenerator, name, particleId, canRead, canWrite);
     }
     else {
-        handle = new Variable(storage, name, particleId, canRead, canWrite);
+        handle = new Variable(storage, idGenerator, name, particleId, canRead, canWrite);
     }
     const type = storage.type.getContainedType() || storage.type;
     if (type instanceof EntityType) {
@@ -940,7 +1075,7 @@ class Reference {
     async ensureStorageProxy() {
         if (this.storageProxy == null) {
             this.storageProxy = await this.context.getStorageProxy(this.storageKey, this.type.referredType);
-            this.handle = handleFor(this.storageProxy);
+            this.handle = handleFor(this.storageProxy, this.context.idGenerator);
             if (this.storageKey) {
                 assert(this.storageKey === this.storageProxy.storageKey);
             }
@@ -1075,14 +1210,15 @@ class Entity {
             this.userIDComponent = components[components.length - 1];
         }
     }
-    createIdentity(components) {
+    createIdentity(parentId, idGenerator) {
         assert(!this.isIdentified());
         let id;
         if (this.userIDComponent) {
-            id = `${components.base}:uid:${this.userIDComponent}`;
+            // TODO: Stop creating IDs by manually concatenating strings.
+            id = `${parentId.toString()}:uid:${this.userIDComponent}`;
         }
         else {
-            id = `${components.base}:${components.component()}`;
+            id = idGenerator.newChildId(parentId).toString();
         }
         setEntityId(this, id);
     }
@@ -3394,9 +3530,6 @@ class StorageProviderBase {
     }
     generateID() {
         return `${this.id}:${this.nextLocalID++}`;
-    }
-    generateIDComponents() {
-        return { base: this.id, component: () => this.nextLocalID++ };
     }
     get type() {
         return this._type;
@@ -12820,140 +12953,6 @@ async function digest(str) {
 
 /**
  * @license
- * Copyright (c) 2018 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-class RNG {
-}
-/**
- * A basic random number generator using Math.random();
- */
-class MathRandomRNG extends RNG {
-    next() {
-        return Math.random();
-    }
-}
-// Singleton Pattern
-const random = new MathRandomRNG();
-class Random {
-    static next() {
-        return random.next();
-    }
-}
-
-/**
- * @license
- * Copyright (c) 2017 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-/**
- * Generates new IDs which are rooted in the current session. Only one IdGenerator should be instantiated for each running Arc, and all of the
- * IDs created should be created using that same IdGenerator instance.
- */
-class IdGenerator {
-    /** Use the newSession factory method instead. */
-    constructor(currentSessionId) {
-        this._nextComponentId = 0;
-        this._currentSessionId = currentSessionId;
-    }
-    /** Generates a new random session ID to use when creating new IDs. */
-    static newSession() {
-        const sessionId = Math.floor(Random.next() * Math.pow(2, 50)) + '';
-        return new IdGenerator(sessionId);
-    }
-    /**
-     * Intended only for testing the IdGenerator class itself. Lets you specify the session ID manually. Prefer using the real
-     * IdGenerator.newSession() method when testing other classes.
-     */
-    static createWithSessionIdForTesting(sessionId) {
-        return new IdGenerator(sessionId);
-    }
-    newArcId(name) {
-        return ArcId._newArcIdInternal(this._currentSessionId, name);
-    }
-    /**
-     * Creates a new ID, as a child of the given parentId. The given subcomponent will be appended to the component hierarchy of the given ID, but
-     * the generator's random session ID will be used as the ID's root.
-     */
-    newChildId(parentId, subcomponent = '') {
-        // Append (and increment) a counter to the subcomponent, to ensure that it is unique.
-        subcomponent += this._nextComponentId++;
-        return Id._newIdInternal(this._currentSessionId, [...parentId.idTree, subcomponent]);
-    }
-    get currentSessionIdForTesting() {
-        return this._currentSessionId;
-    }
-}
-/**
- * An immutable object consisting of two components: a root, and an idTree. The root is the session ID from the particular session in which the
- * ID was constructed (see the IdGenerator class). The idTree is a list of subcomponents, forming a hierarchy of IDs (child IDs are created by
- * appending subcomponents to their parent ID's idTree).
- */
-class Id {
-    /** Protected constructor. Use IdGenerator to create new IDs instead. */
-    constructor(root, idTree = []) {
-        /** The components of the idTree. */
-        this.idTree = [];
-        this.root = root;
-        this.idTree = idTree;
-    }
-    /** Creates a new ID. Use IdGenerator to create new IDs instead. */
-    static _newIdInternal(root, idTree = []) {
-        return new Id(root, idTree);
-    }
-    /** Parses a string representation of an ID (see toString). */
-    static fromString(str) {
-        const bits = str.split(':');
-        if (bits[0].startsWith('!')) {
-            const root = bits[0].slice(1);
-            const idTree = bits.slice(1).filter(component => component.length > 0);
-            return new Id(root, idTree);
-        }
-        else {
-            return new Id('', bits);
-        }
-    }
-    /** Returns the full ID string. */
-    toString() {
-        return `!${this.root}:${this.idTree.join(':')}`;
-    }
-    /** Returns the idTree as as string (without the root). */
-    idTreeAsString() {
-        return this.idTree.join(':');
-    }
-    equal(id) {
-        if (id.root !== this.root || id.idTree.length !== this.idTree.length) {
-            return false;
-        }
-        for (let i = 0; i < id.idTree.length; i++) {
-            if (id.idTree[i] !== this.idTree[i]) {
-                return false;
-            }
-        }
-        return true;
-    }
-}
-class ArcId extends Id {
-    /** Creates a new Arc ID. Use IdGenerator to create new IDs instead. */
-    static _newArcIdInternal(root, name) {
-        return new ArcId(root, [name]);
-    }
-    /** Creates a new Arc ID with the given name. For convenience in unit testing only; otherwise use IdGenerator to create new IDs instead. */
-    static newForTest(id) {
-        return IdGenerator.newSession().newArcId(id);
-    }
-}
-
-/**
- * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
  * This code may only be used under the BSD style license found at
  * http://polymer.github.io/LICENSE.txt
@@ -20607,9 +20606,6 @@ class StorageProxy {
     generateID() {
         return `${this.baseForNewID}:${this.localIDComponent++}`;
     }
-    generateIDComponents() {
-        return { base: this.baseForNewID, component: () => this.localIDComponent++ };
-    }
 }
 /**
  * Collections are synchronized in a CRDT Observed/Removed scheme.
@@ -21062,7 +21058,7 @@ class ParticleExecutionContext {
         return {
             createHandle(type, name, hostParticle) {
                 return new Promise((resolve, reject) => pec.apiPort.ArcCreateHandle(proxy => {
-                    const handle = handleFor(proxy, name, particleId);
+                    const handle = handleFor(proxy, pec.idGenerator, name, particleId);
                     resolve(handle);
                     if (hostParticle) {
                         proxy.register(hostParticle, handle);
@@ -21124,7 +21120,7 @@ class ParticleExecutionContext {
         const registerList = [];
         proxies.forEach((proxy, name) => {
             const connSpec = spec.handleConnectionMap.get(name);
-            const handle = handleFor(proxy, name, id, connSpec.isInput, connSpec.isOutput);
+            const handle = handleFor(proxy, this.idGenerator, name, id, connSpec.isInput, connSpec.isOutput);
             handleMap.set(name, handle);
             // Defer registration of handles with proxies until after particles have a chance to
             // configure them in setHandles.

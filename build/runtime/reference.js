@@ -27,7 +27,7 @@ export class Reference {
     async ensureStorageProxy() {
         if (this.storageProxy == null) {
             this.storageProxy = await this.context.getStorageProxy(this.storageKey, this.type.referredType);
-            this.handle = handleFor(this.storageProxy);
+            this.handle = handleFor(this.storageProxy, this.context.idGenerator);
             if (this.storageKey) {
                 assert(this.storageKey === this.storageProxy.storageKey);
             }

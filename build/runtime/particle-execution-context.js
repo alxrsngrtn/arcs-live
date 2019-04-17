@@ -97,7 +97,7 @@ export class ParticleExecutionContext {
         return {
             createHandle(type, name, hostParticle) {
                 return new Promise((resolve, reject) => pec.apiPort.ArcCreateHandle(proxy => {
-                    const handle = handleFor(proxy, name, particleId);
+                    const handle = handleFor(proxy, pec.idGenerator, name, particleId);
                     resolve(handle);
                     if (hostParticle) {
                         proxy.register(hostParticle, handle);
@@ -159,7 +159,7 @@ export class ParticleExecutionContext {
         const registerList = [];
         proxies.forEach((proxy, name) => {
             const connSpec = spec.handleConnectionMap.get(name);
-            const handle = handleFor(proxy, name, id, connSpec.isInput, connSpec.isOutput);
+            const handle = handleFor(proxy, this.idGenerator, name, id, connSpec.isInput, connSpec.isOutput);
             handleMap.set(name, handle);
             // Defer registration of handles with proxies until after particles have a chance to
             // configure them in setHandles.

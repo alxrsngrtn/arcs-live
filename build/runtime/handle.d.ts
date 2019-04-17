@@ -12,6 +12,7 @@ import { Reference } from './reference.js';
 import { SerializedEntity } from './storage-proxy.js';
 import { EntityClass, Entity } from './entity.js';
 import { Store, VariableStore, CollectionStore, BigCollectionStore } from './store.js';
+import { IdGenerator } from './id.js';
 /** An interface representing anything storable in a Handle. Concretely, this is the {@link Entity} and {@link ClientReference} classes. */
 export interface Storable {
     serialize(): SerializedEntity;
@@ -27,6 +28,7 @@ export interface HandleOptions {
  */
 export declare abstract class Handle {
     storage: Store;
+    private idGenerator;
     name: string;
     canRead: boolean;
     canWrite: boolean;
@@ -34,7 +36,7 @@ export declare abstract class Handle {
     options: HandleOptions;
     entityClass: EntityClass | null;
     abstract _notify(kind: string, particle: Particle, details: {}): any;
-    constructor(storage: Store, name: string, particleId: any, canRead: boolean, canWrite: boolean);
+    constructor(storage: Store, idGenerator: IdGenerator, name: string, particleId: any, canRead: boolean, canWrite: boolean);
     protected reportUserExceptionInHost(exception: Error, particle: Particle, method: string): void;
     protected reportSystemExceptionInHost(exception: Error, method: string): void;
     configure(options: any): void;
@@ -174,5 +176,5 @@ export declare class BigCollection extends Handle {
         forward?: boolean;
     }): Promise<Cursor>;
 }
-export declare function handleFor(storage: Store, name?: string, particleId?: string, canRead?: boolean, canWrite?: boolean): Handle;
+export declare function handleFor(storage: Store, idGenerator: IdGenerator, name?: string, particleId?: string, canRead?: boolean, canWrite?: boolean): Handle;
 export {};

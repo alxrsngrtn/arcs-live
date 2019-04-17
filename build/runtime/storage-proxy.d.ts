@@ -88,10 +88,6 @@ export declare abstract class StorageProxy implements Store {
     _notify(kind: string, details: any, predicate?: (ignored: HandleOptions) => boolean): void;
     _processUpdates(): void;
     generateID(): string;
-    generateIDComponents(): {
-        base: string;
-        component: () => number;
-    };
 }
 /**
  * Collections are synchronized in a CRDT Observed/Removed scheme.

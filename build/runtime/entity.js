@@ -80,14 +80,15 @@ export class Entity {
             this.userIDComponent = components[components.length - 1];
         }
     }
-    createIdentity(components) {
+    createIdentity(parentId, idGenerator) {
         assert(!this.isIdentified());
         let id;
         if (this.userIDComponent) {
-            id = `${components.base}:uid:${this.userIDComponent}`;
+            // TODO: Stop creating IDs by manually concatenating strings.
+            id = `${parentId.toString()}:uid:${this.userIDComponent}`;
         }
         else {
-            id = `${components.base}:${components.component()}`;
+            id = idGenerator.newChildId(parentId).toString();
         }
         setEntityId(this, id);
     }

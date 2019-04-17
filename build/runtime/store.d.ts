@@ -1,6 +1,5 @@
 import { PropagatedException } from "./arc-exceptions";
 import { Type } from "./type";
-import { EntityIdComponents } from "./entity";
 import { ParticleExecutionContext } from "./particle-execution-context";
 /**
  * Interface for a storage system. This is implemented by different classes depending on whether the code is running on the host or in a PEC.
@@ -15,7 +14,6 @@ export interface Store {
     readonly pec?: ParticleExecutionContext;
     reportExceptionInHost(exception: PropagatedException): void;
     generateID(): string;
-    generateIDComponents(): EntityIdComponents;
 }
 export interface VariableStore extends Store {
     get(): Promise<any>;

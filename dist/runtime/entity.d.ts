@@ -3,10 +3,7 @@ import { Type } from './type.js';
 import { ParticleExecutionContext } from './particle-execution-context.js';
 import { Storable } from './handle.js';
 import { SerializedEntity } from './storage-proxy.js';
-export declare type EntityIdComponents = {
-    base: string;
-    component: () => number;
-};
+import { Id, IdGenerator } from './id.js';
 export declare type EntityRawData = {};
 /**
  * Regular interface for Entities.
@@ -14,7 +11,7 @@ export declare type EntityRawData = {};
 export interface EntityInterface extends Storable {
     isIdentified(): boolean;
     identify(identifier: string): void;
-    createIdentity(components: EntityIdComponents): void;
+    createIdentity(parentId: Id, idGenerator: IdGenerator): void;
     toLiteral(): EntityRawData;
     toJSON(): EntityRawData;
     dataClone(): EntityRawData;
@@ -75,7 +72,7 @@ export declare abstract class Entity implements EntityInterface {
     isIdentified(): boolean;
     readonly id: string;
     identify(identifier: string): void;
-    createIdentity(components: EntityIdComponents): void;
+    createIdentity(parentId: Id, idGenerator: IdGenerator): void;
     toLiteral(): EntityRawData;
     toJSON(): EntityRawData;
     dataClone(): EntityRawData;

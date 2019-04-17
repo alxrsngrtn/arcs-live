@@ -210,16 +210,16 @@
         "signature": "8b76973e477f810f9e0c88f81a2dac07404b207e62d9d106fe2962c130b38f9e"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/storage-proxy.ts": {
-        "version": "7e20f2628c639c3fa083d76a34eb288e60f3ac51c366a0456d182f065757c083",
-        "signature": "fd7aeb279c1f068a094ebfb9492e027646d19a79ea19b7d41b9ac7479f8445fb"
+        "version": "2122699b434a271b6b7fcc678cbba97f941da5267f96ca17fbf53d2142e1382c",
+        "signature": "a8edb781f257cd2b77afecb7237ddcd674a416bd3481d0dab3892303a26b3ae4"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/reference.ts": {
-        "version": "c13980ddcdb176950034d1be8a58df729234e04241f15aed8147e57a7b63e6cf",
+        "version": "8b7c671f007fd9fe2c51c72a70a8987aeba7a3f465aff43cd7d86e9abfda53ed",
         "signature": "78370510d65789af9f243f54bcdaff14d9c6764e9b8422f56c1d32ae8363458d"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/handle.ts": {
-        "version": "7bc0077daa0d28f884790933e17c59cabd7a53fed69ecfbd09b6843cd7e9adcf",
-        "signature": "656ccf0e14322a74d09729f275fd83f7413ca75d26c3a20c7930c40eba5c0855"
+        "version": "a8282920981a1f8bed536b7ebea9fad4f948cedb2ab44abc2d3d130ce66f9839",
+        "signature": "cce624f395d02203da276cd6ec0ab584ec54eb0742da3620c6a561e5d2e625a4"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/relevance.ts": {
         "version": "dbec56f7a3a5bfafe552607c41b32815716ec4d3006dbc22a245f6afccdc2984",
@@ -238,12 +238,12 @@
         "signature": "2f595eda3940e2a40defcc4a16a948f7d989a9a3f45e74ba59d9a404e8c4edee"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/store.ts": {
-        "version": "571fec51cdcd5ed212c187c9d60bc5196153ea4cc0d9baccc9e4f6e7645c590d",
-        "signature": "9a6a8dbc9309d2bebab32f20015111e47516297fa72f92c070289493bf4a4e39"
+        "version": "f25ef1b542d9816c9ee3d38b41166c4cfc0c62804fd7bebd8784dfce87bd15db",
+        "signature": "0459ff0f3c6e2b5ca4c0aca29318ffa7578f253cc86d000dabc8e8b7ab5553d5"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/storage-provider-base.ts": {
-        "version": "8bf0d42762bf0d43dc3b6e4540c97d8e99d3f6ea2f787aa23caf6d44e02148a7",
-        "signature": "aa3ddf82e59ed8ef06a0979a9a8f1c3084ad0e0498434e472ef8121c04e21f40"
+        "version": "fe3019b6dca43afe9a59ffd27d5f227c6cc1aa3b01965b291dd17a5ea148da89",
+        "signature": "ff7bdefd1d034dbd06ee193a4e5279642b9de60210b16a48bbb219b7b429f918"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/handle.ts": {
         "version": "c2ac460c59d0ad29f7ff54168b8c9f9d710a6e0652fdbecac2580fbacddea1d8",
@@ -406,12 +406,12 @@
         "signature": "da373b8693a2f4b38d69266020e5cfa336ac0ea7f216b911b43866f07eba6d38"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/particle-execution-context.ts": {
-        "version": "f5dac7aaa38005c3226b3a74f5d4f39abd619661f7ba647347aad175b02df93d",
-        "signature": "3ce0f12707b7b26490fc31f5845285233aacb8be6026a7c6f08d75fd5b671b0f"
+        "version": "0b118ed6f21a745f255b8e12b8c8185dfc4a61f04cf94296acb09f896e3932df",
+        "signature": "b3a5aae36d2e0e7ec3dd57e443b50ce286855bad07cce6d7e774ee28714c6755"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/entity.ts": {
-        "version": "45bad1df4d9d640bdd08f14a0c05bf65f790db8871c43ac9ebc92d679fe2c9bd",
-        "signature": "a9fd7528b6e745ce38b65be9e91951a198c0698d555f26c2d48ba8fad483ee50"
+        "version": "f9e6ce422bbf6ce8b9d2342abd3d6eb1caa641f74078820b26f2144e435ec938",
+        "signature": "25ed2983ce899b452053061236e1ccda9d5b1987afbf8c054dedaab14e19dd8b"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/schema.ts": {
         "version": "aa0ba9d5d6c8cbd9aecf0c5fe408f883636076478ff08424b970bd0e195e5217",
@@ -1234,7 +1234,7 @@
         "signature": "469057d0e5addf914faa1f650c4273dca93f53d983210ec0e47969324afc0e26"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/test/arc-tests.ts": {
-        "version": "6b4e0f852c930ec6f5e7c3ae7919cf7c3ac0370da59749d77e9978b5c3c5671a",
+        "version": "dd96373c68c761714d273fa0f357894240cff25869929ebb6eb70972e102c9ad",
         "signature": "600636836c17982e77369e742e2b185b3a695f0407d06b57f41cbf45b0a11d8b"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/test/bytes-test.ts": {
@@ -1242,11 +1242,11 @@
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/test/data-layer-test.ts": {
-        "version": "bcc76f4d755c62ec4f3767b8a1bbdf20732752a92894c563661ff54d401fd2ee",
+        "version": "f2aef809f46f44b136c46c56d91e005ddedb119b8d1931b15039ac95d194c53a",
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/test/description-test.ts": {
-        "version": "35f491e99ebd6ba349a0bfa3c6429a0cc0bd0bc120d8fe706f4b2157ae29b80d",
+        "version": "a899c7b820e7b4dee92e67083375c4354288f3c9ecbc100e0b2c1632f7017e90",
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/test/entity-test.ts": {
@@ -1254,7 +1254,7 @@
         "signature": "8e609bb71c20b858c77f0e9f90bb1319db8477b13f9f965f1a1e18524bf50881"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/test/handle-test.ts": {
-        "version": "0611f9d760722a2270216f7fd2f99e95b1abb1c20c2f7584506a9ce28263a980",
+        "version": "e31925ff3e9b83ff0729248748fa1ed6de41f89b0ac7f81bfecf80028b0f8a50",
         "signature": "8e609bb71c20b858c77f0e9f90bb1319db8477b13f9f965f1a1e18524bf50881"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/test/id-test.ts": {
@@ -1306,7 +1306,7 @@
         "signature": "8bc1d39a3b8ec61064f9969316a088e314895e7ffd094468dcc0b238f33cb4a6"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/test/runtime-manifest-integration-test.ts": {
-        "version": "4300786bfca7c4130f8f769e829a4e8ccdda02a8fe38d0c65610ef690c9a6181",
+        "version": "067cb0bea91d813a5523762aed179edbbdf576ccecbce4e2480e67b027c69b7c",
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/test/runtime-tests.ts": {
@@ -1318,7 +1318,7 @@
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/test/storage-proxy-test.ts": {
-        "version": "bb1383ed89001c509251d07653e496c057714efb3f29b056789b14fea3ed691f",
+        "version": "8406bb7d8e4c0fdea2ff3635c7ab55ab349068e2f88903c0a35def6b316a52ba",
         "signature": "8e609bb71c20b858c77f0e9f90bb1319db8477b13f9f965f1a1e18524bf50881"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/test/synthetic-storage-test.ts": {
@@ -1874,6 +1874,7 @@
         "/home/travis/build/PolymerLabs/arcs/src/runtime/type.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/entity.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/store.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/id.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
       ],
@@ -1906,7 +1907,6 @@
       "/home/travis/build/PolymerLabs/arcs/src/runtime/store.ts": [
         "/home/travis/build/PolymerLabs/arcs/src/runtime/arc-exceptions.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/type.ts",
-        "/home/travis/build/PolymerLabs/arcs/src/runtime/entity.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/particle-execution-context.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
@@ -2317,6 +2317,7 @@
         "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/type-checker.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/handle.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/storage-proxy.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/id.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
       ],
@@ -4152,12 +4153,9 @@
       ],
       "/home/travis/build/PolymerLabs/arcs/src/runtime/test/runtime-manifest-integration-test.ts": [
         "/home/travis/build/PolymerLabs/arcs/src/platform/chai-web.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/handle.ts",
-        "/home/travis/build/PolymerLabs/arcs/src/runtime/loader.ts",
-        "/home/travis/build/PolymerLabs/arcs/src/runtime/manifest.ts",
-        "/home/travis/build/PolymerLabs/arcs/src/runtime/storage-proxy.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/testing/manifest-integration-test-setup.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/id.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
       ],
@@ -5147,29 +5145,21 @@
       ],
       "/home/travis/build/PolymerLabs/arcs/src/runtime/entity.ts": [
         "/home/travis/build/PolymerLabs/arcs/src/runtime/handle.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/id.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/type.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/schema.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/particle-execution-context.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/storage-proxy.ts"
       ],
-      "/home/travis/build/PolymerLabs/arcs/src/runtime/store.ts": [
+      "/home/travis/build/PolymerLabs/arcs/src/runtime/handle.ts": [
         "/home/travis/build/PolymerLabs/arcs/src/runtime/type.ts",
-        "/home/travis/build/PolymerLabs/arcs/src/runtime/particle-execution-context.ts",
-        "/home/travis/build/PolymerLabs/arcs/src/runtime/arc-exceptions.ts",
-        "/home/travis/build/PolymerLabs/arcs/src/runtime/entity.ts"
-      ],
-      "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/storage-provider-base.ts": [
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/entity.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/storage-proxy.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/store.ts",
-        "/home/travis/build/PolymerLabs/arcs/src/runtime/manifest.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/particle.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/id.ts",
-        "/home/travis/build/PolymerLabs/arcs/src/runtime/type.ts",
-        "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/key-base.ts",
-        "/home/travis/build/PolymerLabs/arcs/src/runtime/arc-exceptions.ts",
-        "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/crdt-collection-model.ts",
-        "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/comparable.ts"
-      ],
-      "/home/travis/build/PolymerLabs/arcs/src/runtime/testing/callback-tracker.ts": [
-        "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/storage-provider-base.ts"
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/reference.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/particle-spec.ts"
       ],
       "/home/travis/build/PolymerLabs/arcs/src/runtime/api-channel.ts": [
         "/home/travis/build/PolymerLabs/arcs/src/runtime/debug/outer-port-attachment.ts",
@@ -5343,42 +5333,18 @@
       "/home/travis/build/PolymerLabs/arcs/src/runtime/transformation-dom-particle.ts": [
         "/home/travis/build/PolymerLabs/arcs/src/runtime/dom-particle.ts"
       ],
-      "/home/travis/build/PolymerLabs/arcs/src/runtime/handle.ts": [
-        "/home/travis/build/PolymerLabs/arcs/src/runtime/type.ts",
-        "/home/travis/build/PolymerLabs/arcs/src/runtime/entity.ts",
-        "/home/travis/build/PolymerLabs/arcs/src/runtime/storage-proxy.ts",
+      "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/storage-provider-base.ts": [
         "/home/travis/build/PolymerLabs/arcs/src/runtime/store.ts",
-        "/home/travis/build/PolymerLabs/arcs/src/runtime/particle.ts",
-        "/home/travis/build/PolymerLabs/arcs/src/runtime/reference.ts",
-        "/home/travis/build/PolymerLabs/arcs/src/runtime/particle-spec.ts"
-      ],
-      "/home/travis/build/PolymerLabs/arcs/src/runtime/reference.ts": [
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/manifest.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/id.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/type.ts",
-        "/home/travis/build/PolymerLabs/arcs/src/runtime/particle-execution-context.ts",
-        "/home/travis/build/PolymerLabs/arcs/src/runtime/storage-proxy.ts",
-        "/home/travis/build/PolymerLabs/arcs/src/runtime/handle.ts",
-        "/home/travis/build/PolymerLabs/arcs/src/runtime/entity.ts"
-      ],
-      "/home/travis/build/PolymerLabs/arcs/src/runtime/storage-proxy.ts": [
-        "/home/travis/build/PolymerLabs/arcs/src/runtime/entity.ts",
-        "/home/travis/build/PolymerLabs/arcs/src/runtime/type.ts",
-        "/home/travis/build/PolymerLabs/arcs/src/runtime/api-channel.ts",
-        "/home/travis/build/PolymerLabs/arcs/src/runtime/particle-execution-context.ts",
-        "/home/travis/build/PolymerLabs/arcs/src/runtime/particle.ts",
-        "/home/travis/build/PolymerLabs/arcs/src/runtime/handle.ts",
-        "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/crdt-collection-model.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/key-base.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/arc-exceptions.ts",
-        "/home/travis/build/PolymerLabs/arcs/src/runtime/store.ts"
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/crdt-collection-model.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/comparable.ts"
       ],
-      "/home/travis/build/PolymerLabs/arcs/src/runtime/slot-proxy.ts": [
-        "/home/travis/build/PolymerLabs/arcs/src/runtime/particle.ts",
-        "/home/travis/build/PolymerLabs/arcs/src/runtime/api-channel.ts"
-      ],
-      "/home/travis/build/PolymerLabs/arcs/src/runtime/debug/abstract-devtools-channel.ts": [
-        "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts"
-      ],
-      "/home/travis/build/PolymerLabs/arcs/src/runtime/debug/tracing-adapter.ts": [
-        "/home/travis/build/PolymerLabs/arcs/src/runtime/debug/abstract-devtools-channel.ts"
+      "/home/travis/build/PolymerLabs/arcs/src/runtime/testing/callback-tracker.ts": [
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/storage-provider-base.ts"
       ],
       "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/handle.ts": [
         "/home/travis/build/PolymerLabs/arcs/src/runtime/type.ts",
@@ -5474,6 +5440,39 @@
         "/home/travis/build/PolymerLabs/arcs/src/runtime/type.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/storage-provider-base.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/key-base.ts"
+      ],
+      "/home/travis/build/PolymerLabs/arcs/src/runtime/store.ts": [
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/type.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/particle-execution-context.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/arc-exceptions.ts"
+      ],
+      "/home/travis/build/PolymerLabs/arcs/src/runtime/storage-proxy.ts": [
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/entity.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/type.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/api-channel.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/particle-execution-context.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/particle.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/handle.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/crdt-collection-model.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/arc-exceptions.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/store.ts"
+      ],
+      "/home/travis/build/PolymerLabs/arcs/src/runtime/reference.ts": [
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/type.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/particle-execution-context.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/storage-proxy.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/handle.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/entity.ts"
+      ],
+      "/home/travis/build/PolymerLabs/arcs/src/runtime/slot-proxy.ts": [
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/particle.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/api-channel.ts"
+      ],
+      "/home/travis/build/PolymerLabs/arcs/src/runtime/debug/abstract-devtools-channel.ts": [
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts"
+      ],
+      "/home/travis/build/PolymerLabs/arcs/src/runtime/debug/tracing-adapter.ts": [
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/debug/abstract-devtools-channel.ts"
       ],
       "/home/travis/build/PolymerLabs/arcs/src/runtime/synthetic-types.ts": [
         "/home/travis/build/PolymerLabs/arcs/src/runtime/id.ts",

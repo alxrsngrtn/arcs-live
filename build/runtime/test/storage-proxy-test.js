@@ -10,7 +10,7 @@
 'use strict';
 import { assert } from '../../platform/chai-web.js';
 import { handleFor } from '../handle.js';
-import { ArcId } from '../id.js';
+import { ArcId, IdGenerator } from '../id.js';
 import { Schema } from '../schema.js';
 import { StorageProxy, StorageProxyScheduler } from '../storage-proxy.js';
 import { CrdtCollectionModel } from '../storage/crdt-collection-model.js';
@@ -158,6 +158,7 @@ class TestEngine {
         this._syncCallbacks = new Map();
         this._events = [];
         this._scheduler = new StorageProxyScheduler();
+        this._idGenerator = IdGenerator.newSession();
         this._arcId = ArcId.newForTest(arcId);
     }
     newVariable(name) {
@@ -185,7 +186,7 @@ class TestEngine {
         return StorageProxy.newProxy('X' + this._idCounters[1]++, store.type, this, pec, this._scheduler, store.name);
     }
     newHandle(store, proxy, particle, canRead, canWrite) {
-        return handleFor(proxy, store.name, particle.id, canRead, canWrite);
+        return handleFor(proxy, this._idGenerator, store.name, particle.id, canRead, canWrite);
     }
     newEntity(value) {
         const entity = new (this.schema.entityClass())({ value });

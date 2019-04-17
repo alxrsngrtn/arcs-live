@@ -14,7 +14,7 @@ import { Loader } from '../loader.js';
 import { Schema } from '../schema.js';
 import { FakeSlotComposer } from '../testing/fake-slot-composer.js';
 import { EntityType } from '../type.js';
-import { ArcId } from '../id.js';
+import { ArcId, IdGenerator } from '../id.js';
 describe('entity', async () => {
     it('can be created, stored, and restored', async () => {
         const schema = new Schema(['TestSchema'], { value: 'Text' });
@@ -23,7 +23,7 @@ describe('entity', async () => {
         assert.isDefined(entity);
         const collectionType = new EntityType(schema).collectionOf();
         const storage = await arc.createStore(collectionType);
-        const handle = handleFor(storage);
+        const handle = handleFor(storage, IdGenerator.newSession());
         await handle.store(entity);
         const collection = arc.findStoresByType(collectionType)[0];
         const list = await collection.toList();

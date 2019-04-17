@@ -12,7 +12,7 @@ import '../storage/pouchdb/pouch-db-provider.js';
 import { assert } from '../../platform/chai-web.js';
 import { Arc } from '../arc.js';
 import { handleFor } from '../handle.js';
-import { Id, ArcId } from '../id.js';
+import { Id, ArcId, IdGenerator } from '../id.js';
 import { Loader } from '../loader.js';
 import { Manifest } from '../manifest.js';
 import { CallbackTracker } from '../testing/callback-tracker.js';
@@ -80,7 +80,7 @@ async function setupSlandlesWithOptional(cProvided, dProvided) {
     return { arc, recipe, aStore, bStore, cStore, dStore };
 }
 function getVariableHandle(store) {
-    return handleFor(store);
+    return handleFor(store, IdGenerator.newSession());
 }
 describe('Arc', () => {
     it('idle can safely be called multiple times', async () => {

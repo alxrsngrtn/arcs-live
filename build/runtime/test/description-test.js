@@ -16,7 +16,7 @@ import { Loader } from '../loader.js';
 import { Manifest } from '../manifest.js';
 import { Relevance } from '../relevance.js';
 import { FakeSlotComposer } from '../testing/fake-slot-composer.js';
-import { ArcId } from '../id.js';
+import { ArcId, IdGenerator } from '../id.js';
 function createTestArc(recipe, manifest) {
     const slotComposer = new FakeSlotComposer();
     const arc = new Arc({ slotComposer, id: ArcId.newForTest('test'), context: manifest, loader: new Loader() });
@@ -694,7 +694,7 @@ recipe
             recipe,
             fooStore,
             DescriptionType: descriptionStore.type.getContainedType().entitySchema.entityClass(),
-            descriptionHandle: handleFor(descriptionStore),
+            descriptionHandle: handleFor(descriptionStore, IdGenerator.newSession()),
         };
     }
     tests.forEach((test) => {
