@@ -94,8 +94,8 @@ describe('Bundle Tool', () => {
             'bundle-manifest.mf'
         ]);
         // Sanity check.
-        assert.include(await zip.file('Products/Recommend.recipes').async('string'), `particle Recommend in 'source/Recommend.js'`);
-        assert.equal(await zip.file('bundle-manifest.mf').async('string'), 'entry-point: Products/Products.recipes\n');
+        assert.include(await zip.file('Products/Recommend.recipes').async('text'), `particle Recommend in 'source/Recommend.js'`);
+        assert.equal(await zip.file('bundle-manifest.mf').async('text'), 'entry-point: Products/Products.recipes\n');
     });
 });
 //# sourceMappingURL=bundle-test.js.map
