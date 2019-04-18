@@ -26,7 +26,7 @@ export declare class SlotComposer {
     private readonly _containerKind;
     readonly modality: Modality;
     readonly modalityHandler: ModalityHandler;
-    private _consumers;
+    private readonly _consumers;
     protected _contexts: SlotContext[];
     /**
      * |options| must contain:

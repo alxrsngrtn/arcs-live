@@ -218,20 +218,20 @@
         "signature": "78370510d65789af9f243f54bcdaff14d9c6764e9b8422f56c1d32ae8363458d"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/handle.ts": {
-        "version": "dcdd7743285e6a6ea9c0139953130de3c6afd43924ac63ddf0cc1e79dc2837ba",
-        "signature": "d4683e022e804f3d112df52c5e185d77566a8d67c8655ffee1974bbfee9d3663"
+        "version": "d20ad8d256e353764560c9f691a6e45071a653aedba53d7f5e66f97c3c151cd3",
+        "signature": "f1e1fd3261bd6abfc2ea24e884dfe836d0015d0384317f115e5345f9f275d244"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/relevance.ts": {
         "version": "dbec56f7a3a5bfafe552607c41b32815716ec4d3006dbc22a245f6afccdc2984",
         "signature": "0d9ab0dd2cc4bc89f29ca087f4e6df54346c52eb6e19394d3797de0b32cdc91f"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/slot-proxy.ts": {
-        "version": "5904402d26c88344d4a652fbd5ed976d84aee95d4b4aadc6b474fdbade283752",
-        "signature": "478ba02864713ce231658919fa0e5a78c1d0be8c5d6bdbab4d58a968bd8e51c1"
+        "version": "3b0cfac76fc48500aa7459438fac646e0908d25cff6da08238f1018e21c75b33",
+        "signature": "713a645c022e57e4a9ca244781ddfa3cecc99a5d36658e51affe292bc8c34bdd"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/particle.ts": {
-        "version": "0dc7c690968717a4315bbfeb0dbb1f351cb3ee9717e21da0682533cd3cff9922",
-        "signature": "a08b3201402f2bea01687ecfbfaa8e6d1c391fa2b359204827433bce6b913721"
+        "version": "17220f1459f61d103a3c8c4d65795b13d9ca298cb0a47b4422f69f3f1824d77e",
+        "signature": "4b3de79b97ec3356cf35df4928993375070b8434d7d19a5da4e64be2d202fd92"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/arc-exceptions.ts": {
         "version": "85d8e5e89b32e75d68e6b35fa0b2ccfff2a7747d63c6f67cfb14c3a10ce1c435",
@@ -362,16 +362,16 @@
         "signature": "a511697b60c7530d2506696e87231eca6ad94dc543b911c7f9a4f7d7912f2e6d"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/slot-composer.ts": {
-        "version": "d08684fc812ab55b7c09ea6e55cce8b6e135142d43ab32c9e399ca22d0ff977b",
-        "signature": "513a1a67271e7ecaa19d5e0b8e68d940a928a496ece9a2463aeab2abea44f948"
+        "version": "47b57c0f060865448819bf4c810c27044916ec9e45fd87d0c34ab03d00b1ae37",
+        "signature": "2acde9aeb6b8025e3c6e7c3d9f5f148a9927ebf938c2dadfca62f728f986de9a"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/particle-execution-host.ts": {
-        "version": "fae345a0eada8e485d487df0abcd152390d7485e25f9eccc30a9382caa1576d3",
-        "signature": "9c3a68740541774c0c812e3a9b6092487d2ef81618a7ae23d712561c3e6c699f"
+        "version": "f18929a060f8264f986f7f832e17bbab8a896a3ea5b0d1802a31c00969d107dc",
+        "signature": "c919293cd0f40fe90c1a2a77b53cbf057d943d9b8a51b879ae2cf8afa919cc62"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/slot-consumer.ts": {
-        "version": "4e5d302d51493c4444af90f63557426b80983d6b18a6da66123663b0a379cdb5",
-        "signature": "b028f0273aeb99f88587642fd3288b762cda8ecd1c4c07bdc433da1376dd44b4"
+        "version": "2acdd34c01a66b78d84c7d2c92b9b57ae4fece7d2e9e899f2daa721e36f5fab8",
+        "signature": "6797ebed62ae18ef3970a93cd35d57d53f70e869b464584ba73b2b5def27597b"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/multiplexer-dom-particle.ts": {
         "version": "4d6180762d26f05447b8b4b5e08f5bffa3517db6d5630eea6975453ab0241062",
@@ -394,8 +394,8 @@
         "signature": "4537a2c67abb94916cb31c3d59055282b4532dad952e5650e69f1cf5ebc2e5dd"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts": {
-        "version": "8d5367e829a4767a4477115b0557a5c56a53f4932ccc6f87e294570d3bfcf58e",
-        "signature": "c7eb26df7ad057110dad53bc88238a88fdbfd1edf3ad5e1d3fb1c623c10acae3"
+        "version": "08307d0a656e8c725a823a0d84f1cabd7d36335eabb5cd6377a1a3ee620f1820",
+        "signature": "f1d76a2903ceca81c956ec1a465e5aa1f09d76ea574df9aea8ecd433daf81491"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/debug/outer-port-attachment.ts": {
         "version": "1880b92832eed443cbbda291334b51c112fd2859f10cfde7853172abf76ae211",
@@ -406,8 +406,8 @@
         "signature": "da373b8693a2f4b38d69266020e5cfa336ac0ea7f216b911b43866f07eba6d38"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/particle-execution-context.ts": {
-        "version": "0b118ed6f21a745f255b8e12b8c8185dfc4a61f04cf94296acb09f896e3932df",
-        "signature": "b3a5aae36d2e0e7ec3dd57e443b50ce286855bad07cce6d7e774ee28714c6755"
+        "version": "3ed4f7d3c413cfe0574c2914a692011b39de58f27f4179045d5afbd73f6b8a28",
+        "signature": "8407a8de1d349e7be6304193d8170ff096d25e5a82abb629a30559fab6bc14ac"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/entity.ts": {
         "version": "6e7649b096b138941571699e75e29551085cb333c0c6ccdeb4c9bf2699ea5bc4",
@@ -434,8 +434,8 @@
         "signature": "bb4a3ac63f5047d13687db5a064c4f2b48deddb469429d6b897e9b395ceb8874"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/recipe.ts": {
-        "version": "8b5d8a623f957812a3c7d1be5bda1aea730993d4a6a142943c9533d8af7da79f",
-        "signature": "2427b3ecbfbc615663855a5dc7cb53e14fe9dc96ce575fa250fb1e60688265bc"
+        "version": "7724e71c4134852904adc8fdb2ac5d27161958aabee6f557d687d4e79ac64a9d",
+        "signature": "529594f47b43a54fbc2f99a93f4a7d9606e4c6ad155fd3f1ac70cdb9678f81a2"
       },
       "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/flow-graph.ts": {
         "version": "cbc0c64c0b558bcac2009b9e8e0fc19d49c9e11334c7880aff9353a97bae86a8",

@@ -14292,7 +14292,7 @@ class Slot {
 
 // Copyright (c) 2017 Google Inc. All rights reserved.
 class Recipe {
-    constructor(name = undefined) {
+    constructor(name) {
         this._requires = [];
         this._particles = [];
         this._handles = [];
@@ -14338,7 +14338,7 @@ class Recipe {
         this._connectionConstraints.splice(idx, 1);
     }
     clearConnectionConstraints() {
-        this._connectionConstraints = [];
+        this._connectionConstraints.length = 0; // truncate
     }
     newRequireSection() {
         const require = new RequireSection(this);
@@ -21136,7 +21136,7 @@ class ParticleExecutionContext {
                 return;
             }
             rMap.set(p, p.relevances);
-            p.relevances = [];
+            p.relevances.length = 0; // truncate
         });
         return rMap;
     }
@@ -22050,7 +22050,7 @@ class Arc {
         for (const innerArc of this.innerArcs) {
             innerArc.dispose();
         }
-        this.instantiatePlanCallbacks = [];
+        this.instantiatePlanCallbacks.length = 0;
         // TODO: disconnect all associated store event handlers
         this.pec.stop();
         this.pec.close();
@@ -25509,7 +25509,7 @@ class SlotComposer {
             }
         });
         this._contexts = this._contexts.filter(c => !c.sourceSlotConsumer);
-        this._consumers = [];
+        this._consumers.length = 0;
     }
 }
 
@@ -26185,8 +26185,12 @@ class SlotConsumer {
         this.consumeConn = consumeConn;
         this.containerKind = containerKind;
     }
-    getRendering(subId) { return this._renderingBySubId.get(subId); }
-    get renderings() { return [...this._renderingBySubId.entries()]; }
+    getRendering(subId) {
+        return this._renderingBySubId.get(subId);
+    }
+    get renderings() {
+        return [...this._renderingBySubId.entries()];
+    }
     addRenderingBySubId(subId, rendering) {
         this._renderingBySubId.set(subId, rendering);
     }

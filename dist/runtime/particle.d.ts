@@ -18,14 +18,14 @@ import { SlotProxy } from './slot-proxy.js';
 export declare class Particle {
     static spec: ParticleSpec;
     spec: ParticleSpec;
-    extraData: boolean;
-    relevances: (Relevance | number)[];
+    readonly extraData: boolean;
+    readonly relevances: (Relevance | number)[];
     handles: Map<string, Handle>;
     private _idle;
     private _idleResolver;
     private _busy;
     protected slotProxiesByName: Map<string, SlotProxy>;
-    private capabilities;
+    private readonly capabilities;
     constructor(capabilities?: {
         constructInnerArc?: Function;
     });

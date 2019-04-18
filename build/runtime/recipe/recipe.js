@@ -15,7 +15,7 @@ import { Search } from './search.js';
 import { Slot } from './slot.js';
 import { compareComparables } from './comparable.js';
 export class Recipe {
-    constructor(name = undefined) {
+    constructor(name) {
         this._requires = [];
         this._particles = [];
         this._handles = [];
@@ -61,7 +61,7 @@ export class Recipe {
         this._connectionConstraints.splice(idx, 1);
     }
     clearConnectionConstraints() {
-        this._connectionConstraints = [];
+        this._connectionConstraints.length = 0; // truncate
     }
     newRequireSection() {
         const require = new RequireSection(this);

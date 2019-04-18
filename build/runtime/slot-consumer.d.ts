@@ -35,12 +35,12 @@ export declare class SlotConsumer {
     stopRenderCallback: (options: StopRenderOptions) => void;
     eventHandler: ({}: {}) => void;
     readonly containerKind?: string;
-    private _renderingBySubId;
+    private readonly _renderingBySubId;
     private innerContainerBySlotId;
     readonly arc: Arc;
     description: Description;
     constructor(arc: Arc, consumeConn?: SlotConnection, containerKind?: string);
-    getRendering(subId?: any): Rendering;
+    getRendering(subId?: string): Rendering;
     readonly renderings: [string, Rendering][];
     addRenderingBySubId(subId: string | undefined, rendering: Rendering): void;
     addHostedSlotContexts(context: HostedSlotContext): void;
@@ -48,7 +48,7 @@ export declare class SlotConsumer {
     findProvidedContext(predicate: (_: ProvidedSlotContext) => boolean): ProvidedSlotContext;
     private generateProvidedContexts;
     onContainerUpdate(newContainer: any, originalContainer: any): void;
-    createProvidedContexts(): ProvidedSlotContext[];
+    createProvidedContexts(): SlotContext | ConcatArray<SlotContext>;
     updateProvidedContexts(): void;
     startRender(): void;
     stopRender(): void;

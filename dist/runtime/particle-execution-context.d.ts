@@ -25,13 +25,13 @@ export declare type InnerArcHandle = {
     }>;
 };
 export declare class ParticleExecutionContext {
-    private apiPort;
-    private particles;
+    private readonly apiPort;
+    private readonly particles;
     private readonly pecId;
-    private loader;
-    private pendingLoads;
-    private scheduler;
-    private keyedProxies;
+    private readonly loader;
+    private readonly pendingLoads;
+    private readonly scheduler;
+    private readonly keyedProxies;
     readonly idGenerator: IdGenerator;
     constructor(port: any, pecId: Id, idGenerator: IdGenerator, loader: Loader);
     generateID(): string;

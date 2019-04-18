@@ -47,12 +47,6 @@ declare type DeserializeArcOptions = {
     listenerClasses?: ArcDebugListenerDerived[];
 };
 export declare type PlanCallback = (recipe: Recipe) => void;
-declare type SerializeContext = {
-    handles: string;
-    resources: string;
-    interfaces: string;
-    dataResources: Map<string, string>;
-};
 export declare class Arc {
     private readonly _context;
     private readonly pecFactory;
@@ -62,17 +56,17 @@ export declare class Arc {
     private _activeRecipe;
     private _recipeDeltas;
     readonly _loader: Loader;
-    private dataChangeCallbacks;
-    private storesById;
+    private readonly dataChangeCallbacks;
+    private readonly storesById;
     private storageKeys;
     readonly storageKey: string;
     storageProviderFactory: StorageProviderFactory;
-    storeTags: Map<StorageProviderBase, Set<string>>;
-    private storeDescriptions;
-    private instantiatePlanCallbacks;
+    readonly storeTags: Map<StorageProviderBase, Set<string>>;
+    private readonly storeDescriptions;
+    private readonly instantiatePlanCallbacks;
     private waitForIdlePromise;
-    private debugHandler;
-    private innerArcsByParticle;
+    private readonly debugHandler;
+    private readonly innerArcsByParticle;
     private readonly listenerClasses;
     readonly id: Id;
     private readonly idGenerator;
@@ -80,7 +74,7 @@ export declare class Arc {
         spec: ParticleSpec;
         stores: Map<string, StorageProviderBase>;
     }>;
-    pec: ParticleExecutionHost;
+    readonly pec: ParticleExecutionHost;
     constructor({ id, context, pecFactory, slotComposer, loader, storageKey, storageProviderFactory, speculative, innerArc, stub, listenerClasses }: ArcOptions);
     readonly loader: Loader;
     readonly modality: Modality;
@@ -93,10 +87,10 @@ export declare class Arc {
     readonly innerArcs: Arc[];
     readonly allDescendingArcs: Arc[];
     createInnerArc(transformationParticle: Particle): Arc;
-    _serializeHandle(handle: StorageProviderBase, context: SerializeContext, id: string): Promise<void>;
-    _serializeHandles(): Promise<string>;
-    _serializeParticles(): string;
-    _serializeStorageKey(): string;
+    private _serializeHandle;
+    private _serializeHandles;
+    private _serializeParticles;
+    private _serializeStorageKey;
     serialize(): Promise<string>;
     persistSerialization(serialization: string): Promise<void>;
     static deserialize({ serialization, pecFactory, slotComposer, loader, fileName, context, listenerClasses }: DeserializeArcOptions): Promise<Arc>;

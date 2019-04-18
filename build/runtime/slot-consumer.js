@@ -21,8 +21,12 @@ export class SlotConsumer {
         this.consumeConn = consumeConn;
         this.containerKind = containerKind;
     }
-    getRendering(subId) { return this._renderingBySubId.get(subId); }
-    get renderings() { return [...this._renderingBySubId.entries()]; }
+    getRendering(subId) {
+        return this._renderingBySubId.get(subId);
+    }
+    get renderings() {
+        return [...this._renderingBySubId.entries()];
+    }
     addRenderingBySubId(subId, rendering) {
         this._renderingBySubId.set(subId, rendering);
     }

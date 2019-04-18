@@ -1,5 +1,5 @@
-commit f33b0786e9bdfd243234324ffc95808a73104924
-Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Thu Apr 18 13:16:02 2019 +1000
+commit a6d247483c627e2167092963ced2c1574016d1f0
+Author: Paul Lindner <lindner@inuus.com>
+Date:   Wed Apr 17 21:17:13 2019 -0700
 
-    Adds @types/jszip for better type checking (#2914)
+    More typescript types, added readonly to various places (#2912)

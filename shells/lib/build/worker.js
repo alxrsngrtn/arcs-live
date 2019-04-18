@@ -308,7 +308,7 @@ class ParticleExecutionContext {
                 return;
             }
             rMap.set(p, p.relevances);
-            p.relevances = [];
+            p.relevances.length = 0; // truncate
         });
         return rMap;
     }

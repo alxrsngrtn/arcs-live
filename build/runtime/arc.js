@@ -85,7 +85,7 @@ export class Arc {
         for (const innerArc of this.innerArcs) {
             innerArc.dispose();
         }
-        this.instantiatePlanCallbacks = [];
+        this.instantiatePlanCallbacks.length = 0;
         // TODO: disconnect all associated store event handlers
         this.pec.stop();
         this.pec.close();

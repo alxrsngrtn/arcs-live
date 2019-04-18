@@ -163,7 +163,7 @@ export class SlotComposer {
             }
         });
         this._contexts = this._contexts.filter(c => !c.sourceSlotConsumer);
-        this._consumers = [];
+        this._consumers.length = 0;
     }
 }
 //# sourceMappingURL=slot-composer.js.map

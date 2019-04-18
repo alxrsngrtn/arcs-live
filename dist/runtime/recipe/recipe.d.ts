@@ -2,6 +2,7 @@ import { Modality } from '../modality.js';
 import { HandleConnectionSpec } from '../particle-spec.js';
 import { Type } from '../type.js';
 import { ConnectionConstraint, EndPoint } from './connection-constraint.js';
+import { Direction } from './handle-connection.js';
 import { HandleConnection } from './handle-connection.js';
 import { Handle } from './handle.js';
 import { Particle } from './particle.js';
@@ -18,7 +19,7 @@ export declare type ToStringOptions = {
     hideFields?: boolean;
 };
 export declare class Recipe {
-    private _requires;
+    private readonly _requires;
     private _particles;
     private _handles;
     private _slots;
@@ -26,25 +27,25 @@ export declare class Recipe {
     private _localName;
     private _cloneMap;
     annotation: string | undefined;
-    private _connectionConstraints;
-    private _obligations;
+    private readonly _connectionConstraints;
+    private readonly _obligations;
     private _verbs;
     private _search;
     private _patterns;
-    constructor(name?: any);
-    newConnectionConstraint(from: any, to: any, direction: any): ConnectionConstraint;
-    newObligation(from: any, to: any, direction: any): ConnectionConstraint;
-    removeObligation(obligation: any): void;
-    removeConstraint(constraint: any): void;
+    constructor(name?: string);
+    newConnectionConstraint(from: EndPoint, to: EndPoint, direction: Direction): ConnectionConstraint;
+    newObligation(from: EndPoint, to: EndPoint, direction: Direction): ConnectionConstraint;
+    removeObligation(obligation: ConnectionConstraint): void;
+    removeConstraint(constraint: ConnectionConstraint): void;
     clearConnectionConstraints(): void;
     newRequireSection(): RequireSection;
-    newParticle(name: any): Particle;
+    newParticle(name: string): Particle;
     removeParticle(particle: Particle): void;
     newHandle(): Handle;
-    removeHandle(handle: any): void;
-    newSlot(name: any): Slot;
+    removeHandle(handle: Handle): void;
+    newSlot(name: string): Slot;
     addSlot(slot: Slot): void;
-    removeSlot(slot: any): void;
+    removeSlot(slot: Slot): void;
     isResolved(): boolean;
     isCompatible(modality: Modality): boolean;
     readonly modality: Modality;
@@ -78,7 +79,7 @@ export declare class Recipe {
         slots: Slot[];
         cloneMap: Map<any, any>;
     };
-    _copyInto(recipe: any, cloneMap: any): void;
+    _copyInto(recipe: Recipe, cloneMap: any): void;
     updateToClone(dict: any): {
         [index: string]: any;
     };
@@ -99,7 +100,7 @@ export declare class Recipe {
     findSlotByID(id: any): Slot;
 }
 export declare class RequireSection extends Recipe {
-    parent: Recipe;
+    readonly parent: Recipe;
     constructor(parent?: any, name?: any);
     toString(nameMap?: any, options?: any): string;
 }

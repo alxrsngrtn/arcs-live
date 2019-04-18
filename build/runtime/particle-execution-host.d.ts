@@ -24,9 +24,9 @@ export declare type StopRenderOptions = {
 export declare class ParticleExecutionHost {
     private _apiPort;
     close: () => void;
-    private arc;
+    private readonly arc;
     private nextIdentifier;
-    slotComposer: SlotComposer;
+    readonly slotComposer: SlotComposer;
     private idleVersion;
     private idlePromise;
     private idleResolve;

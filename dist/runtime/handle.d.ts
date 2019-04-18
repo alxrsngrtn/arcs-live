@@ -27,16 +27,16 @@ export interface HandleOptions {
  * Base class for Collections and Variables.
  */
 export declare abstract class Handle {
-    storage: Store;
-    private idGenerator;
-    name: string;
-    canRead: boolean;
-    canWrite: boolean;
-    _particleId: string | null;
-    options: HandleOptions;
+    readonly storage: Store;
+    private readonly idGenerator;
+    readonly name: string;
+    readonly canRead: boolean;
+    readonly canWrite: boolean;
+    readonly _particleId: string | null;
+    readonly options: HandleOptions;
     entityClass: EntityClass | null;
     abstract _notify(kind: string, particle: Particle, details: {}): any;
-    constructor(storage: Store, idGenerator: IdGenerator, name: string, particleId: any, canRead: boolean, canWrite: boolean);
+    constructor(storage: Store, idGenerator: IdGenerator, name: string, particleId: string | null, canRead: boolean, canWrite: boolean);
     protected reportUserExceptionInHost(exception: Error, particle: Particle, method: string): void;
     protected reportSystemExceptionInHost(exception: Error, method: string): void;
     configure(options: any): void;
@@ -54,7 +54,7 @@ export declare abstract class Handle {
  * which handles are connected.
  */
 export declare class Collection extends Handle {
-    storage: CollectionStore;
+    readonly storage: CollectionStore;
     _notify(kind: string, particle: Particle, details: any): void;
     /**
      * Returns the Entity specified by id contained by the handle, or null if this id is not
@@ -95,7 +95,7 @@ export declare class Collection extends Handle {
  * the current recipe identifies which handles are connected.
  */
 export declare class Variable extends Handle {
-    storage: VariableStore;
+    readonly storage: VariableStore;
     _notify(kind: string, particle: Particle, details: any): Promise<void>;
     /**
      * @returns the Entity contained by the Variable, or undefined if the Variable
@@ -124,9 +124,9 @@ export declare class Variable extends Handle {
  * implicit iteration in Javascript.
  */
 declare class Cursor {
-    _parent: BigCollection;
-    _cursorId: number;
-    constructor(parent: any, cursorId: any);
+    private readonly _parent;
+    private readonly _cursorId;
+    constructor(parent: BigCollection, cursorId: number);
     /**
      * Returns {value: [items], done: false} while there are items still available, or {done: true}
      * when the cursor has completed reading the collection.
@@ -145,7 +145,7 @@ declare class Cursor {
  * trigger onHandleSync() or onHandleUpdate().
  */
 export declare class BigCollection extends Handle {
-    storage: BigCollectionStore;
+    readonly storage: BigCollectionStore;
     configure(options: any): void;
     _notify(kind: string, particle: Particle, details: any): Promise<void>;
     /**
