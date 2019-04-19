@@ -1,5 +1,5 @@
-commit a6d247483c627e2167092963ced2c1574016d1f0
+commit 79bc27dc78268244bb9baba2683cdda8aa757d57
 Author: Paul Lindner <lindner@inuus.com>
-Date:   Wed Apr 17 21:17:13 2019 -0700
+Date:   Fri Apr 19 16:30:48 2019 -0700
 
-    More typescript types, added readonly to various places (#2912)
+    Migrate spotify-importer to typescript (#2870)
