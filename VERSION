@@ -1,19 +1,15 @@
-commit cceadcde07e469182acddb3b41ff40e1fe631b25
+commit 91d1762b0ec9d4356dc73fe37d603eb3f3a83cfa
 Author: Scott J. Miles <sjmiles@google.com>
-Date:   Mon Apr 22 15:43:59 2019 -0700
+Date:   Mon Apr 22 16:37:10 2019 -0700
 
-    Use BlobUrls to cache Particle implementations (#2680)
+    declarative configuration system for web-shell (#2922)
     
-    * rebuild pec-cache impl on ToT
+    * begin making config declarable
     
-    * move details about spec.implBlobUrl from loader into arc
+    * finish declarative parameter handling
     
-    * `store.generateID` is gone
+    * adapt to config option change (s/plannerDebug/plannerNoDebug)
     
-    * plumb blobUrl properly, append sourceMap identifier to Blob string
+    * factor generic processing into a component
     
-    * cache worker.js as Blob
-    
-    * Fix lint issue in spotify importer (#2915)
-    
-    * add trap in reference-tests
+    * simplify
