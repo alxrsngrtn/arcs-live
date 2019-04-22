@@ -1,5 +1,19 @@
-commit 5b5439fb59f2edc96613b6cdb98a6890fb1a043a
-Author: Paul Lindner <lindner@inuus.com>
-Date:   Mon Apr 22 13:07:15 2019 -0700
+commit cceadcde07e469182acddb3b41ff40e1fe631b25
+Author: Scott J. Miles <sjmiles@google.com>
+Date:   Mon Apr 22 15:43:59 2019 -0700
 
-    Fix lint issue in spotify importer (#2915)
+    Use BlobUrls to cache Particle implementations (#2680)
+    
+    * rebuild pec-cache impl on ToT
+    
+    * move details about spec.implBlobUrl from loader into arc
+    
+    * `store.generateID` is gone
+    
+    * plumb blobUrl properly, append sourceMap identifier to Blob string
+    
+    * cache worker.js as Blob
+    
+    * Fix lint issue in spotify importer (#2915)
+    
+    * add trap in reference-tests

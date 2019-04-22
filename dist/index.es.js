@@ -2852,6 +2852,7 @@ class ParticleSpec {
             connectionSpec.pattern = model.description[connectionSpec.name];
         });
         this.implFile = model.implFile;
+        this.implBlobUrl = model.implBlobUrl;
         this.modality = Modality.create(model.modality || []);
         this.slotConnections = new Map();
         if (model.slotConnections) {
@@ -2894,17 +2895,20 @@ class ParticleSpec {
     isCompatible(modality) {
         return this.slotConnections.size === 0 || this.modality.intersection(modality).isResolved();
     }
+    setImplBlobUrl(url) {
+        this.model.implBlobUrl = this.implBlobUrl = url;
+    }
     toLiteral() {
-        const { args, name, verbs, description, implFile, modality, slotConnections } = this.model;
+        const { args, name, verbs, description, implFile, implBlobUrl, modality, slotConnections } = this.model;
         const connectionToLiteral = ({ type, direction, name, isOptional, dependentConnections }) => ({ type: asTypeLiteral(type), direction, name, isOptional, dependentConnections: dependentConnections.map(connectionToLiteral) });
         const argsLiteral = args.map(a => connectionToLiteral(a));
-        return { args: argsLiteral, name, verbs, description, implFile, modality, slotConnections };
+        return { args: argsLiteral, name, verbs, description, implFile, implBlobUrl, modality, slotConnections };
     }
     static fromLiteral(literal) {
-        let { args, name, verbs, description, implFile, modality, slotConnections } = literal;
+        let { args, name, verbs, description, implFile, implBlobUrl, modality, slotConnections } = literal;
         const connectionFromLiteral = ({ type, direction, name, isOptional, dependentConnections }) => ({ type: asType(type), direction, name, isOptional, dependentConnections: dependentConnections ? dependentConnections.map(connectionFromLiteral) : [] });
         args = args.map(connectionFromLiteral);
-        return new ParticleSpec({ args, name, verbs: verbs || [], description, implFile, modality, slotConnections });
+        return new ParticleSpec({ args, name, verbs: verbs || [], description, implFile, implBlobUrl, modality, slotConnections });
     }
     // Note: this method shouldn't be called directly.
     clone() {
@@ -22302,10 +22306,12 @@ ${this.activeRecipe.toString()}`;
     loadedParticleSpecs() {
         return [...this.loadedParticleInfo.values()].map(({ spec }) => spec);
     }
-    _instantiateParticle(recipeParticle) {
+    async _instantiateParticle(recipeParticle) {
         recipeParticle.id = this.generateID('particle');
         const info = { spec: recipeParticle.spec, stores: new Map() };
         this.loadedParticleInfo.set(recipeParticle.id.toString(), info);
+        // if supported, provide particle caching via a BloblUrl representing spec.implFile
+        await this._provisionSpecUrl(recipeParticle.spec);
         for (const [name, connection] of Object.entries(recipeParticle.connections)) {
             const store = this.findStoreById(connection.handle.id);
             assert(store, `can't find store of id ${connection.handle.id}`);
@@ -22313,6 +22319,14 @@ ${this.activeRecipe.toString()}`;
             info.stores.set(name, store);
         }
         this.pec.instantiate(recipeParticle, info.stores);
+    }
+    async _provisionSpecUrl(spec) {
+        if (!spec.implBlobUrl) {
+            // if supported, construct spec.implBlobUrl for spec.implFile
+            if (this.loader && this.loader['provisionObjectUrl']) {
+                spec.setImplBlobUrl(await this.loader['provisionObjectUrl'](spec.implFile));
+            }
+        }
     }
     generateID(component = '') {
         return this.idGenerator.newChildId(this.id, component);
@@ -22428,7 +22442,7 @@ ${this.activeRecipe.toString()}`;
             assert(store, `store '${recipeHandle.id}' was not found`);
             this._registerStore(store, recipeHandle.tags);
         }
-        particles.forEach(recipeParticle => this._instantiateParticle(recipeParticle));
+        await Promise.all(particles.map(recipeParticle => this._instantiateParticle(recipeParticle)));
         if (this.pec.slotComposer) {
             // TODO: pass slot-connections instead
             await this.pec.slotComposer.initializeRecipe(this, particles);

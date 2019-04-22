@@ -222,8 +222,8 @@
         "signature": "23c2a8882d3c839c8662b7709abba46326bf92b1cab9ac6e6160d6bb46f5a975"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/particle-spec.ts": {
-        "version": "f34bcf4aeaabef703ad2ffc2167ac04d3da51a2451a16daa025e0b3158307d12",
-        "signature": "bb4a3ac63f5047d13687db5a064c4f2b48deddb469429d6b897e9b395ceb8874"
+        "version": "d56f892979fd8892f281d90a4dbc242fa43f580414da4357bfce03fe5765f2aa",
+        "signature": "a556001740e34c177ebf9a4a65f515eb4eae2eca715e5c98843b27aa7c67c89a"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/particle.ts": {
         "version": "e9fe09eb69c10fe7ba8bd9d6841f3676e61122d8d7bef9a9619ca15a0c42c100",
@@ -386,8 +386,8 @@
         "signature": "fe2e16d95329f83d58193e2ff0ed6fd3d122e8cb89e2639e02d2be8cf281b2b2"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts": {
-        "version": "08307d0a656e8c725a823a0d84f1cabd7d36335eabb5cd6377a1a3ee620f1820",
-        "signature": "f1d76a2903ceca81c956ec1a465e5aa1f09d76ea574df9aea8ecd433daf81491"
+        "version": "4e24627941280ce694c3fa73826e6572cc3736403e073e09878ef7e8816a43cd",
+        "signature": "e82370a5d4d2426850fdf7955b592bb327dbf2dff434ec28c5cebd7be23bf828"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/debug/outer-port-attachment.ts": {
         "version": "1880b92832eed443cbbda291334b51c112fd2859f10cfde7853172abf76ae211",
@@ -1150,8 +1150,8 @@
         "signature": "4adb9d9051b01ed14f59e27c77023e8168dc20df65249fdb9a660f11b1d33055"
       },
       "/home/travis/build/PolymerLabs/arcs/src/platform/pec-industry-web.ts": {
-        "version": "17d90db209c50c1efc0c766dd0be81cdfa64c8f62621235ac76731087e8340ef",
-        "signature": "77f4d61c51c8f87cff3fb76e7e6db9a8b6c22ce2c6ecce8efe3f4cb6311d9910"
+        "version": "0bd160c687d6ccb286515b263a184e9777fa03ae1552d30850926ed12650178e",
+        "signature": "b602ae278e232684b681ad4ebce4d12b951356163e72cf378e31b7c26d71e74c"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/keymgmt/base64.ts": {
         "version": "06149fa576566b7262f082496641384162d4668a83f8d35fbd64be9053212398",
@@ -1302,7 +1302,7 @@
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/test/reference-test.ts": {
-        "version": "62f76cb8cd2321f4a67dc2ce177d8b33592364c3e6ffe4c3df1aedb5bd3d73a9",
+        "version": "9c9d6b45ec442b52257a8b3380ad9315e0880f4e7dee494b46fa47ed4fe6960b",
         "signature": "8bc1d39a3b8ec61064f9969316a088e314895e7ffd094468dcc0b238f33cb4a6"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/test/runtime-manifest-integration-test.ts": {
@@ -2246,7 +2246,6 @@
       ],
       "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts": [
         "/home/travis/build/PolymerLabs/arcs/src/platform/assert-web.ts",
-        "/home/travis/build/PolymerLabs/arcs/src/runtime/api-channel.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/debug/abstract-devtools-channel.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/debug/arc-debug-handler.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/fake-pec-factory.ts",

@@ -105,7 +105,8 @@ export declare class Arc {
         patterns: string[];
     }[];
     loadedParticleSpecs(): ParticleSpec[];
-    _instantiateParticle(recipeParticle: Particle): void;
+    _instantiateParticle(recipeParticle: Particle): Promise<void>;
+    _provisionSpecUrl(spec: ParticleSpec): Promise<void>;
     generateID(component?: string): Id;
     readonly _stores: (StorageProviderBase)[];
     cloneForSpeculativeExecution(): Promise<Arc>;

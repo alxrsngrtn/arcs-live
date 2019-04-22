@@ -80,6 +80,7 @@ export declare type SerializedParticleSpec = {
         pattern?: string;
     };
     implFile: string;
+    implBlobUrl: string | null;
     modality: string[];
     slotConnections: SerializedConsumeSlotConnectionSpec[];
 };
@@ -93,6 +94,7 @@ export declare class ParticleSpec {
     outputs: HandleConnectionSpec[];
     pattern: string;
     implFile: string;
+    implBlobUrl: string | null;
     modality: Modality;
     slotConnections: Map<string, ConsumeSlotConnectionSpec>;
     constructor(model: SerializedParticleSpec);
@@ -103,6 +105,7 @@ export declare class ParticleSpec {
     getSlotSpec(slotName: string): ConsumeSlotConnectionSpec;
     readonly primaryVerb: string;
     isCompatible(modality: Modality): boolean;
+    setImplBlobUrl(url: string): void;
     toLiteral(): SerializedParticleSpec;
     static fromLiteral(literal: SerializedParticleSpec): ParticleSpec;
     clone(): ParticleSpec;

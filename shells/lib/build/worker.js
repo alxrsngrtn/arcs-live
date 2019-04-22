@@ -1414,6 +1414,7 @@ class ParticleSpec {
             connectionSpec.pattern = model.description[connectionSpec.name];
         });
         this.implFile = model.implFile;
+        this.implBlobUrl = model.implBlobUrl;
         this.modality = _modality_js__WEBPACK_IMPORTED_MODULE_1__["Modality"].create(model.modality || []);
         this.slotConnections = new Map();
         if (model.slotConnections) {
@@ -1456,17 +1457,20 @@ class ParticleSpec {
     isCompatible(modality) {
         return this.slotConnections.size === 0 || this.modality.intersection(modality).isResolved();
     }
+    setImplBlobUrl(url) {
+        this.model.implBlobUrl = this.implBlobUrl = url;
+    }
     toLiteral() {
-        const { args, name, verbs, description, implFile, modality, slotConnections } = this.model;
+        const { args, name, verbs, description, implFile, implBlobUrl, modality, slotConnections } = this.model;
         const connectionToLiteral = ({ type, direction, name, isOptional, dependentConnections }) => ({ type: asTypeLiteral(type), direction, name, isOptional, dependentConnections: dependentConnections.map(connectionToLiteral) });
         const argsLiteral = args.map(a => connectionToLiteral(a));
-        return { args: argsLiteral, name, verbs, description, implFile, modality, slotConnections };
+        return { args: argsLiteral, name, verbs, description, implFile, implBlobUrl, modality, slotConnections };
     }
     static fromLiteral(literal) {
-        let { args, name, verbs, description, implFile, modality, slotConnections } = literal;
+        let { args, name, verbs, description, implFile, implBlobUrl, modality, slotConnections } = literal;
         const connectionFromLiteral = ({ type, direction, name, isOptional, dependentConnections }) => ({ type: asType(type), direction, name, isOptional, dependentConnections: dependentConnections ? dependentConnections.map(connectionFromLiteral) : [] });
         args = args.map(connectionFromLiteral);
-        return new ParticleSpec({ args, name, verbs: verbs || [], description, implFile, modality, slotConnections });
+        return new ParticleSpec({ args, name, verbs: verbs || [], description, implFile, implBlobUrl, modality, slotConnections });
     }
     // Note: this method shouldn't be called directly.
     clone() {
@@ -5362,16 +5366,16 @@ class PlatformLoader extends _runtime_loader_js__WEBPACK_IMPORTED_MODULE_0__["Lo
   flushCaches() {
     simpleCache = {};
   }
+  loadResource(name) {
+    // subclass impl differentiates paths and URLs,
+    // for browser env we can feed both kinds into _loadURL
+    return this._loadURL(name);
+  }
   _loadURL(url) {
     const resolved = this._resolve(url);
     const cacheKey = this.normalizeDots(url);
     const resource = simpleCache[cacheKey];
     return resource || (simpleCache[cacheKey] = super._loadURL(resolved));
-  }
-  loadResource(name) {
-    // subclass impl differentiates paths and URLs,
-    // for browser env we can feed both kinds into _loadURL
-    return this._loadURL(name);
   }
   _resolve(path) {
     let url = this._urlMap[path];
@@ -5386,18 +5390,28 @@ class PlatformLoader extends _runtime_loader_js__WEBPACK_IMPORTED_MODULE_0__["Lo
     //log(`resolve(${path}) = ${url}`);
     return url;
   }
+  async provisionObjectUrl(fileName) {
+    const raw = await this.loadResource(fileName);
+    const code = `${raw}\n//# sourceURL=${fileName}`;
+    return URL.createObjectURL(new Blob([code], {type: 'application/javascript'}));
+  }
   // Below here invoked from inside Worker
-  async requireParticle(fileName) {
+  async loadParticleClass(spec) {
+    const clazz = await this.requireParticle(spec.implFile, spec.implBlobUrl);
+    clazz.spec = spec;
+    return clazz;
+  }
+  async requireParticle(unresolvedPath, blobUrl) {
     // inject path to this particle into the UrlMap,
     // allows "foo.js" particle to invoke "importScripts(resolver('foo/othermodule.js'))"
-    this.mapParticleUrl(fileName);
-    // determine URL to load fileName
-    const url = this._resolve(fileName);
+    this.mapParticleUrl(unresolvedPath);
+    // resolved target
+    const url = blobUrl || this._resolve(unresolvedPath);
     // load wrapped particle
     const particle = this.loadWrappedParticle(url);
     // execute particle wrapper, if we have one
     if (particle) {
-      return this.unwrapParticle(particle, this.provisionLogger(fileName));
+      return this.unwrapParticle(particle, this.provisionLogger(unresolvedPath));
     }
   }
   loadWrappedParticle(url) {
@@ -5413,7 +5427,7 @@ class PlatformLoader extends _runtime_loader_js__WEBPACK_IMPORTED_MODULE_0__["Lo
       result = particleWrapper;
     };
     try {
-    // import (execute) particle code
+      // import (execute) particle code
       importScripts(url);
     } catch (x) {
       error(x);

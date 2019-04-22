@@ -18,7 +18,7 @@ describe('references', () => {
     it('can parse & validate a recipe containing references', async () => {
         const manifest = await Manifest.parse(`
         schema Result
-          Text value  
+          Text value
 
         particle Referencer in 'referencer.js'
           in Result inResult
@@ -27,7 +27,7 @@ describe('references', () => {
         particle Dereferencer in 'dereferencer.js'
           in Reference<Result> inResult
           out Result outResult
-        
+
         recipe
           create 'input:1' as handle0
           create 'reference:1' as handle1
@@ -52,11 +52,11 @@ describe('references', () => {
             manifest: `
         schema Result
           Text value
-        
+
         particle Dereferencer in 'dereferencer.js'
           in Reference<Result> inResult
           out Result outResult
-        
+
         recipe
           create 'input:1' as handle0
           create 'output:1' as handle1
@@ -103,11 +103,11 @@ describe('references', () => {
             manifest: `
         schema Result
           Text value
-        
+
         particle Referencer in 'referencer.js'
           in Result inResult
           out Reference<Result> outResult
-        
+
         recipe
           create 'input:1' as handle0
           create 'output:1' as handle1
@@ -154,11 +154,11 @@ describe('references', () => {
             manifest: `
         schema Result
           Text value
-        
+
         particle ExtractReference in 'extractReference.js'
           in Foo {Reference<Result> result} referenceIn
           out Result rawOut
-          
+
         recipe
           create 'input:1' as handle0
           create 'output:1' as handle1
@@ -217,12 +217,12 @@ describe('references', () => {
             manifest: `
         schema Result
           Text value
-        
+
         particle Referencer in 'referencer.js'
           in [Result] inResult
           in Foo {Reference<Result> result, Text shortForm} inFoo
           inout [Foo {Reference<Result> result, Text shortForm}] outResult
-        
+
         recipe
           create 'input:1' as handle0
           create 'input:2' as handle1
@@ -245,7 +245,9 @@ describe('references', () => {
               if (handle.name == 'inResult') {
                 update.added.forEach(item => this.models.push(item));
               } else {
-                update.added.forEach(item => this.foos.push(item));
+                if (update.added) {
+                  update.added.forEach(item => this.foos.push(item));
+                }
               }
               this.maybeGenerateOutput();
             }
@@ -319,11 +321,11 @@ describe('references', () => {
             manifest: `
         schema Result
           Text value
-        
+
         particle ExtractReferences in 'extractReferences.js'
           in Foo {[Reference<Result>] result} referenceIn
           out [Result] rawOut
-          
+
         recipe
           create 'input:1' as handle0
           create 'output:1' as handle1
@@ -383,11 +385,11 @@ describe('references', () => {
             manifest: `
         schema Result
           Text value
-        
+
         particle ConstructReferenceCollection in 'constructReferenceCollection.js'
           out Foo {[Reference<Result>] result} referenceOut
           in [Result] rawIn
-          
+
         recipe
           create 'input:1' as handle0
           create 'output:1' as handle1
