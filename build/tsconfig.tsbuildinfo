@@ -458,7 +458,7 @@
         "signature": "8e609bb71c20b858c77f0e9f90bb1319db8477b13f9f965f1a1e18524bf50881"
       },
       "/home/travis/build/PolymerLabs/arcs/src/cli/spotify-importer.ts": {
-        "version": "dd4b7fac3640cfa6607a80fcabd19ca9710ec7028d508c9a2d6987ae1c501180",
+        "version": "9aae484c66647d980204b94f0aba22364f16afa45eecf50514ceab79923c711e",
         "signature": "74b0fe35f5cadce1dcc19d5e93f21b31c387808566250dc8766480b9a320943d"
       },
       "/home/travis/build/PolymerLabs/arcs/src/gen/dataflow/analysis/assertion-parser.ts": {

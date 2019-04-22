@@ -1,5 +1,5 @@
-commit 79bc27dc78268244bb9baba2683cdda8aa757d57
+commit 5b5439fb59f2edc96613b6cdb98a6890fb1a043a
 Author: Paul Lindner <lindner@inuus.com>
-Date:   Fri Apr 19 16:30:48 2019 -0700
+Date:   Mon Apr 22 13:07:15 2019 -0700
 
-    Migrate spotify-importer to typescript (#2870)
+    Fix lint issue in spotify importer (#2915)
