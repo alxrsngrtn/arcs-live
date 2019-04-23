@@ -1,12 +1,5 @@
-commit eb0732e0bde092a64aae677e7cf7c3d347d7c38f
+commit 78aa05db795b8158810ec54efff123f046901536
 Author: Paul Lindner <lindner@inuus.com>
-Date:   Tue Apr 23 10:55:00 2019 -0700
+Date:   Tue Apr 23 12:20:03 2019 -0700
 
-    Improve toList and ModelValue type usage (#2916)
-    
-    - Returns ModelValue[] from toList
-    - Adjusts rawData to be a property object, adjusts tests to use it.
-    - Make SyntheticStorage compliant and fix more type issues
-    - Fix bad type usage in DescrptionFormatter
-    
-    Addresses:  #2863
+    Fix lint issue not caught due to #2919 (#2923)

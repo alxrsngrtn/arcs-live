@@ -1150,7 +1150,7 @@
         "signature": "4adb9d9051b01ed14f59e27c77023e8168dc20df65249fdb9a660f11b1d33055"
       },
       "/home/travis/build/PolymerLabs/arcs/src/platform/pec-industry-web.ts": {
-        "version": "0bd160c687d6ccb286515b263a184e9777fa03ae1552d30850926ed12650178e",
+        "version": "bfcb4fdee4a42762a6383eec2f420323dec341ef4df2d90b44cf1f114f28e9c1",
         "signature": "b602ae278e232684b681ad4ebce4d12b951356163e72cf378e31b7c26d71e74c"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/keymgmt/base64.ts": {
