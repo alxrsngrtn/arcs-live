@@ -1,6 +1,5 @@
-import { SerializedModelEntry } from './crdt-collection-model.js';
+import { ModelValue, SerializedModelEntry } from './crdt-collection-model.js';
 import { Id } from '../id.js';
-import { ArcHandle } from '../synthetic-types.js';
 import { Type } from '../type.js';
 import { KeyBase } from './key-base.js';
 import { CollectionStorageProvider, StorageBase, StorageProviderBase, VariableStorageProvider } from './storage-provider-base.js';
@@ -44,7 +43,7 @@ declare class SyntheticCollection extends StorageProviderBase implements Collect
     backingStore: any;
     constructor(type: Type, id: string, key: string, targetStore: VariableStorageProvider, storageFactory: StorageProviderFactory);
     private process;
-    toList(): Promise<ArcHandle[]>;
+    toList(): Promise<ModelValue[]>;
     toLiteral(): Promise<{
         version: number;
         model: SerializedModelEntry[];

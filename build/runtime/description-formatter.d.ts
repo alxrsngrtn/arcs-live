@@ -10,6 +10,7 @@
 import { HandleConnection } from './recipe/handle-connection.js';
 import { Handle } from './recipe/handle.js';
 import { Particle } from './recipe/particle.js';
+import { ModelValue } from './storage/crdt-collection-model.js';
 export declare type ParticleDescription = {
     _particle: Particle;
     pattern?: string;
@@ -26,7 +27,7 @@ export declare type HandleDescription = {
 export declare type DescriptionValue = {
     entityValue?: string | {};
     valueDescription?: string;
-    collectionValues?: string[];
+    collectionValues?: ModelValue[];
     bigCollectionValues?: string[];
     interfaceValue?: string | {};
 };

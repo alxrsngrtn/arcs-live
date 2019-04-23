@@ -1,6 +1,6 @@
 import { Id } from '../id.js';
 import { Type } from '../type.js';
-import { CrdtCollectionModel, SerializedModelEntry } from './crdt-collection-model.js';
+import { CrdtCollectionModel, ModelValue, SerializedModelEntry } from './crdt-collection-model.js';
 import { KeyBase } from './key-base.js';
 import { BigCollectionStorageProvider, CollectionStorageProvider, StorageBase, StorageProviderBase, VariableStorageProvider } from './storage-provider-base.js';
 export declare function resetVolatileStorageForTesting(): void;
@@ -48,16 +48,16 @@ declare class VolatileCollection extends VolatileStorageProvider implements Coll
     cloneFrom(handle: any): Promise<void>;
     modelForSynchronization(): Promise<{
         version: number;
-        model: any[];
+        model: SerializedModelEntry[];
     }>;
     toLiteral(): Promise<{
         version: number;
         model: SerializedModelEntry[];
     }>;
     private fromLiteral;
-    _toList(): Promise<any[]>;
-    toList(): Promise<any[]>;
-    getMultiple(ids: string[]): Promise<import("./crdt-collection-model.js").ModelValue[]>;
+    _toList(): Promise<SerializedModelEntry[]>;
+    toList(): Promise<ModelValue[]>;
+    getMultiple(ids: string[]): Promise<ModelValue[]>;
     storeMultiple(values: any, keys: string[], originatorId?: string): Promise<void>;
     get(id: string): any;
     traceInfo(): {

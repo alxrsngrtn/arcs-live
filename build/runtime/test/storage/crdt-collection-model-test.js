@@ -8,7 +8,7 @@ import { assert } from '../../../platform/chai-web.js';
 import { CrdtCollectionModel } from '../../storage/crdt-collection-model.js';
 describe('crdt-collection-model', () => {
     it('can add values', async () => {
-        const value = { id: 'id', rawData: 'value' };
+        const value = { id: 'id', rawData: { rawvalue: 1 } };
         const model = new CrdtCollectionModel();
         const effective = model.add('id', value, ['key1', 'key2']);
         assert.isTrue(effective);
@@ -18,14 +18,14 @@ describe('crdt-collection-model', () => {
     });
     it('can remove values', async () => {
         const model = new CrdtCollectionModel();
-        const value = { id: 'id', rawData: 'value' };
+        const value = { id: 'id', rawData: { rawvalue: 1 } };
         model.add('id', value, ['key1', 'key2']);
         const effective = model.remove('id', ['key1', 'key2']);
         assert.isTrue(effective);
         assert.equal(model.size, 0);
     });
     it('treats add with different keys as idempotent', async () => {
-        const value = { id: 'id', rawData: 'value' };
+        const value = { id: 'id', rawData: { rawValue: 1 } };
         const model = new CrdtCollectionModel();
         model.add('id', value, ['key1']);
         const effective = model.add('id', value, ['key2']);
@@ -36,7 +36,7 @@ describe('crdt-collection-model', () => {
     });
     it('treats remove as idempotent', async () => {
         const model = new CrdtCollectionModel();
-        const value = { id: 'id', rawData: 'value' };
+        const value = { id: 'id', rawData: { rawValue: 1 } };
         model.add('id', value, ['key1', 'key2']);
         model.remove('id', ['key1', 'key2']);
         const effective = model.remove('id', ['key1', 'key2']);
@@ -44,7 +44,7 @@ describe('crdt-collection-model', () => {
     });
     it('doesnt treat value as removed until all keys are removed', async () => {
         const model = new CrdtCollectionModel();
-        const value = { id: 'id', rawData: 'value' };
+        const value = { id: 'id', rawData: { rawValue: 1 } };
         model.add('id', value, ['key1', 'key2']);
         let effective = model.remove('id', ['key1']);
         assert.isFalse(effective);
@@ -55,8 +55,8 @@ describe('crdt-collection-model', () => {
         assert.equal(model.size, 0);
     });
     it('allows a value to be updated', async () => {
-        const value1 = { id: 'id1', rawData: 'value1' };
-        const value2 = { id: 'id2', rawData: 'value2' };
+        const value1 = { id: 'id1', rawData: { rawValue: 1 } };
+        const value2 = { id: 'id2', rawData: { rawValue: 2 } };
         const model = new CrdtCollectionModel();
         model.add('id', value1, ['key1', 'key2']);
         const effective = model.add('id', value2, ['key3']);
@@ -65,19 +65,19 @@ describe('crdt-collection-model', () => {
     });
     it('does not allow a value to be updated unless new keys are added', async () => {
         const model = new CrdtCollectionModel();
-        const value = { id: 'id', rawData: 'value' };
+        const value = { id: 'id', rawData: { rawValue: 1 } };
         model.add('id', value, ['key1', 'key2']);
-        assert.throws(() => model.add('id', { id: 'id2', rawData: 'value2' }, ['key1']), /cannot add without new keys/);
+        assert.throws(() => model.add('id', { id: 'id2', rawData: { rawValue: 2 } }, ['key1']), /cannot add without new keys/);
     });
     it('does not allow a value to be added without keys', async () => {
         const model = new CrdtCollectionModel();
-        const value = { id: 'id', rawData: 'value' };
+        const value = { id: 'id', rawData: { rawValue: 1 } };
         assert.throws(() => model.add('id', value, []), /add requires a list of keys/);
     });
     it('allows keys to be initialized empty', async () => {
         const model = new CrdtCollectionModel([
-            { id: 'nokeys', value: { id: 'id', rawData: 'value' }, keys: [] },
-            { id: 'keys', value: { id: 'id', rawData: 'value' }, keys: ['key1'] },
+            { id: 'nokeys', value: { id: 'id', rawData: { rawValue: 1 } }, keys: [] },
+            { id: 'keys', value: { id: 'id', rawData: { rawValue: 2 } }, keys: ['key1'] },
         ]);
         assert.equal(model.size, 2);
         assert.isEmpty(model.getKeys('nokeys'));

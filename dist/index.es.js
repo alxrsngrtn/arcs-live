@@ -1676,7 +1676,8 @@ class ArcInfo {
     }
 }
 class ArcHandle {
-    constructor(storageKey, type, tags) {
+    constructor(id, storageKey, type, tags) {
+        this.id = id;
         this.storageKey = storageKey;
         this.type = type;
         this.tags = tags;
@@ -16073,8 +16074,8 @@ class SyntheticCollection extends StorageProviderBase {
         const oldModel = this.model;
         this.model = [];
         for (const handle of handles || []) {
-            if (this.storageFactory.isPersistent(handle._storageKey)) {
-                this.model.push(new ArcHandle(handle.storageKey, handle.mappedType, handle.tags));
+            if (this.storageFactory.isPersistent(handle.storageKey)) {
+                this.model.push(new ArcHandle(handle.id, handle.storageKey, handle.mappedType, handle.tags));
             }
         }
         if (fireEvent) {

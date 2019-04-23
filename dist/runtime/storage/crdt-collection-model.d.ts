@@ -1,6 +1,8 @@
 export interface ModelValue {
     id: string;
-    rawData?: {};
+    rawData?: {
+        [index: string]: any;
+    };
     storageKey?: string;
 }
 export interface SerializedModelEntry {

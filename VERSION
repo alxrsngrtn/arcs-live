@@ -1,15 +1,12 @@
-commit 91d1762b0ec9d4356dc73fe37d603eb3f3a83cfa
-Author: Scott J. Miles <sjmiles@google.com>
-Date:   Mon Apr 22 16:37:10 2019 -0700
+commit eb0732e0bde092a64aae677e7cf7c3d347d7c38f
+Author: Paul Lindner <lindner@inuus.com>
+Date:   Tue Apr 23 10:55:00 2019 -0700
 
-    declarative configuration system for web-shell (#2922)
+    Improve toList and ModelValue type usage (#2916)
     
-    * begin making config declarable
+    - Returns ModelValue[] from toList
+    - Adjusts rawData to be a property object, adjusts tests to use it.
+    - Make SyntheticStorage compliant and fix more type issues
+    - Fix bad type usage in DescrptionFormatter
     
-    * finish declarative parameter handling
-    
-    * adapt to config option change (s/plannerDebug/plannerNoDebug)
-    
-    * factor generic processing into a component
-    
-    * simplify
+    Addresses:  #2863

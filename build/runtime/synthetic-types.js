@@ -19,7 +19,8 @@ export class ArcInfo {
     }
 }
 export class ArcHandle {
-    constructor(storageKey, type, tags) {
+    constructor(id, storageKey, type, tags) {
+        this.id = id;
         this.storageKey = storageKey;
         this.type = type;
         this.tags = tags;

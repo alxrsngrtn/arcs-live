@@ -74,6 +74,12 @@
 					</li>
 				</ul>
 			</section>
+			<section class="tsd-panel">
+				<h3>Implements</h3>
+				<ul class="tsd-hierarchy">
+					<li><a href="../interfaces/modelvalue.html" class="tsd-signature-type">ModelValue</a></li>
+				</ul>
+			</section>
 			<section class="tsd-panel-group tsd-index-group">
 				<h2>Index</h2>
 				<section class="tsd-panel tsd-index-panel">
@@ -87,6 +93,7 @@
 						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="archandle.html#id" class="tsd-kind-icon">id</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="archandle.html#storagekey" class="tsd-kind-icon">storage<wbr>Key</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="archandle.html#tags" class="tsd-kind-icon">tags</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="archandle.html#type" class="tsd-kind-icon">type</a></li>
@@ -101,25 +108,28 @@
 					<a name="constructor" class="tsd-anchor"></a>
 					<h3>constructor</h3>
 					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">new <wbr>Arc<wbr>Handle<span class="tsd-signature-symbol">(</span>storageKey<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, type<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, tags<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="archandle.html" class="tsd-signature-type">ArcHandle</a></li>
+						<li class="tsd-signature tsd-kind-icon">new <wbr>Arc<wbr>Handle<span class="tsd-signature-symbol">(</span>id<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, storageKey<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, type<span class="tsd-signature-symbol">: </span><a href="type.html" class="tsd-signature-type">Type</a>, tags<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="archandle.html" class="tsd-signature-type">ArcHandle</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/91d1762/src/runtime/synthetic-types.ts#L33">runtime/synthetic-types.ts:33</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/eb0732e/src/runtime/synthetic-types.ts#L35">runtime/synthetic-types.ts:35</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>storageKey: <span class="tsd-signature-type">any</span></h5>
+									<h5>id: <span class="tsd-signature-type">string</span></h5>
 								</li>
 								<li>
-									<h5>type: <span class="tsd-signature-type">any</span></h5>
+									<h5>storageKey: <span class="tsd-signature-type">string</span></h5>
 								</li>
 								<li>
-									<h5>tags: <span class="tsd-signature-type">any</span></h5>
+									<h5>type: <a href="type.html" class="tsd-signature-type">Type</a></h5>
+								</li>
+								<li>
+									<h5>tags: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <a href="archandle.html" class="tsd-signature-type">ArcHandle</a></h4>
@@ -130,12 +140,24 @@
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Properties</h2>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="id" class="tsd-anchor"></a>
+					<h3>id</h3>
+					<div class="tsd-signature tsd-kind-icon">id<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+					<aside class="tsd-sources">
+						<p>Implementation of <a href="../interfaces/modelvalue.html">ModelValue</a>.<a href="../interfaces/modelvalue.html#id">id</a></p>
+						<ul>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/eb0732e/src/runtime/synthetic-types.ts#L32">runtime/synthetic-types.ts:32</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
 					<a name="storagekey" class="tsd-anchor"></a>
 					<h3>storage<wbr>Key</h3>
 					<div class="tsd-signature tsd-kind-icon">storage<wbr>Key<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
+						<p>Implementation of <a href="../interfaces/modelvalue.html">ModelValue</a>.<a href="../interfaces/modelvalue.html#storagekey">storageKey</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/91d1762/src/runtime/synthetic-types.ts#L31">runtime/synthetic-types.ts:31</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/eb0732e/src/runtime/synthetic-types.ts#L33">runtime/synthetic-types.ts:33</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -145,7 +167,7 @@
 					<div class="tsd-signature tsd-kind-icon">tags<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/91d1762/src/runtime/synthetic-types.ts#L33">runtime/synthetic-types.ts:33</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/eb0732e/src/runtime/synthetic-types.ts#L35">runtime/synthetic-types.ts:35</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -155,7 +177,7 @@
 					<div class="tsd-signature tsd-kind-icon">type<span class="tsd-signature-symbol">:</span> <a href="type.html" class="tsd-signature-type">Type</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/91d1762/src/runtime/synthetic-types.ts#L32">runtime/synthetic-types.ts:32</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/eb0732e/src/runtime/synthetic-types.ts#L34">runtime/synthetic-types.ts:34</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -178,6 +200,9 @@
 						<ul>
 							<li class=" tsd-kind-constructor tsd-parent-kind-class">
 								<a href="archandle.html#constructor" class="tsd-kind-icon">constructor</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="archandle.html#id" class="tsd-kind-icon">id</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
 								<a href="archandle.html#storagekey" class="tsd-kind-icon">storage<wbr>Key</a>

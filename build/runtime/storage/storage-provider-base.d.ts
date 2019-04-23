@@ -2,7 +2,7 @@ import { Id } from '../id.js';
 import { Comparable } from '../recipe/comparable.js';
 import { Type } from '../type.js';
 import { StorageStub } from '../manifest.js';
-import { SerializedModelEntry } from './crdt-collection-model.js';
+import { ModelValue, SerializedModelEntry } from './crdt-collection-model.js';
 import { KeyBase } from './key-base.js';
 import { Store, VariableStore, CollectionStore } from '../store.js';
 import { PropagatedException } from '../arc-exceptions.js';
@@ -20,7 +20,7 @@ export interface VariableStorageProvider extends StorageProviderBase, VariableSt
  * Methods that must be implemented by a Collection Storage Provider
  */
 export interface CollectionStorageProvider extends StorageProviderBase, CollectionStore {
-    toList(): Promise<any[]>;
+    toList(): Promise<ModelValue[]>;
     getMultiple(ids: string[]): Promise<any[]>;
     storeMultiple(values: {}, keys: string[], originatorId?: string): Promise<void>;
     removeMultiple(items: any[], originatorId?: string): Promise<void>;
