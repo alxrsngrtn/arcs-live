@@ -38,25 +38,17 @@ export class ParticleExecutionHost {
                 this.SimpleCallback(callback, data);
             }
             async onHandleGet(handle, callback) {
-                // TODO(shans): fix typing once we have types for Singleton/Collection/etc
-                // tslint:disable-next-line: no-any
                 const data = await handle.get();
                 this.SimpleCallback(callback, data);
             }
             async onHandleToList(handle, callback) {
-                // TODO(shans): fix typing once we have types for Singleton/Collection/etc
-                // tslint:disable-next-line: no-any
                 const data = await handle.toList();
                 this.SimpleCallback(callback, data);
             }
             onHandleSet(handle, data, particleId, barrier) {
-                // TODO(shans): fix typing once we have types for Singleton/Collection/etc
-                // tslint:disable-next-line: no-any
                 handle.set(data, particleId, barrier);
             }
             onHandleClear(handle, particleId, barrier) {
-                // TODO(shans): fix typing once we have types for Singleton/Collection/etc
-                // tslint:disable-next-line: no-any
                 handle.clear(particleId, barrier);
             }
             async onHandleStore(handle, callback, data, particleId) {
@@ -72,24 +64,16 @@ export class ParticleExecutionHost {
                 this.SimpleCallback(callback, {});
             }
             async onHandleRemoveMultiple(handle, callback, data, particleId) {
-                // TODO(shans): fix typing once we have types for Singleton/Collection/etc
-                // tslint:disable-next-line: no-any
                 await handle.removeMultiple(data, particleId);
                 this.SimpleCallback(callback, {});
             }
             async onHandleStream(handle, callback, pageSize, forward) {
-                // TODO(shans): fix typing once we have types for Singleton/Collection/etc
-                // tslint:disable-next-line: no-any
                 this.SimpleCallback(callback, await handle.stream(pageSize, forward));
             }
             async onStreamCursorNext(handle, callback, cursorId) {
-                // TODO(shans): fix typing once we have types for Singleton/Collection/etc
-                // tslint:disable-next-line: no-any
                 this.SimpleCallback(callback, await handle.cursorNext(cursorId));
             }
             onStreamCursorClose(handle, cursorId) {
-                // TODO(shans): fix typing once we have types for Singleton/Collection/etc
-                // tslint:disable-next-line: no-any
                 handle.cursorClose(cursorId);
             }
             onIdle(version, relevance) {

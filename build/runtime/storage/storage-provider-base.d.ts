@@ -2,36 +2,36 @@ import { Id } from '../id.js';
 import { Comparable } from '../recipe/comparable.js';
 import { Type } from '../type.js';
 import { StorageStub } from '../manifest.js';
-import { ModelValue, SerializedModelEntry } from './crdt-collection-model.js';
+import { SerializedModelEntry } from './crdt-collection-model.js';
 import { KeyBase } from './key-base.js';
-import { Store, VariableStore, CollectionStore } from '../store.js';
+import { BigCollectionStore, CollectionStore, Store, VariableStore } from '../store.js';
 import { PropagatedException } from '../arc-exceptions.js';
 declare type Callback = (v: {
     [index: string]: any;
 }) => void;
 /**
  * Methods that must be implemented by a Variable Storage Provider
+ * that are not already defined in VariableStore.
  */
 export interface VariableStorageProvider extends StorageProviderBase, VariableStore {
     set(value: {}, originatorId?: string, barrier?: string): Promise<void>;
     clear(originatorId?: string, barrier?: string): Promise<void>;
 }
 /**
- * Methods that must be implemented by a Collection Storage Provider
+ * Methods that must be implemented by a Collection Storage Provider,
+ * that are not already defined in CollectionStore.
  */
 export interface CollectionStorageProvider extends StorageProviderBase, CollectionStore {
-    toList(): Promise<ModelValue[]>;
     getMultiple(ids: string[]): Promise<any[]>;
+    store(value: any, keys: string[], originatorId?: string): Promise<void>;
     storeMultiple(values: {}, keys: string[], originatorId?: string): Promise<void>;
     removeMultiple(items: any[], originatorId?: string): Promise<void>;
 }
-export interface BigCollectionStorageProvider extends StorageProviderBase {
-    get(id: string): any;
-    store(value: any, keys: string[], originatorId?: string): any;
-    remove(id: string, keys?: string[], originatorId?: string): any;
-    stream(pageSize: number, forward?: boolean): any;
-    cursorNext(cursorId: number): any;
-    cursorClose(cursorId: number): any;
+/**
+ * Methods that must be implemented by a BigCollection Storage Provider,
+ * that are not already defined in BigCollectionStore.
+ */
+export interface BigCollectionStorageProvider extends StorageProviderBase, BigCollectionStore {
     cursorVersion(cursorId: number): any;
     cloneFrom(store: StorageProviderBase | StorageStub): any;
     clearItemsForTesting(): void;

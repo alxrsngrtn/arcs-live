@@ -480,7 +480,7 @@ class VolatileBigCollection extends VolatileStorageProvider {
         }
         return data;
     }
-    cursorClose(cursorId) {
+    async cursorClose(cursorId) {
         const cursor = this.cursors.get(cursorId);
         if (cursor) {
             this.cursors.delete(cursorId);

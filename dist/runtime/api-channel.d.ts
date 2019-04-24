@@ -69,8 +69,8 @@ export declare abstract class PECOuterPort extends APIPort {
     abstract onHandleRemove(handle: StorageProviderBase, callback: number, data: {}, particleId: string): any;
     abstract onHandleRemoveMultiple(handle: StorageProviderBase, callback: number, data: {}, particleId: string): any;
     abstract onHandleStream(handle: StorageProviderBase, callback: number, pageSize: number, forward: boolean): any;
-    abstract onStreamCursorNext(handle: StorageProviderBase, callback: number, cursorId: string): any;
-    abstract onStreamCursorClose(handle: StorageProviderBase, cursorId: string): any;
+    abstract onStreamCursorNext(handle: StorageProviderBase, callback: number, cursorId: number): any;
+    abstract onStreamCursorClose(handle: StorageProviderBase, cursorId: number): any;
     abstract onIdle(version: number, relevance: Map<recipeParticle.Particle, number[]>): any;
     abstract onGetBackingStore(callback: number, storageKey: string, type: Type): any;
     GetBackingStoreCallback(store: StorageProviderBase, callback: number, type: Type, name: string, id: string, storageKey: string): void;

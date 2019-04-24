@@ -1,5 +1,10 @@
-commit 7800442f3369b61db3a715cd392925c45acb5d7b
+commit b4ae41cdeb1533d0be469da4536128d9fa8eaf1a
 Author: Paul Lindner <lindner@inuus.com>
-Date:   Wed Apr 24 10:42:30 2019 -0700
+Date:   Wed Apr 24 11:24:27 2019 -0700
 
-    Add usages of ReadonlyMap where it's allowed (#2928)
+    Clean up Store/StorageProvider APIs (#2924)
+    
+    - Make BigCollectionStorageProvider inherit from BigCollectionStore
+    - Remove methods from *StorageProvider that are already implemented in *Store
+    - use tighter casts in ParticleExecutionHost
+    - Fix incorrect string vs number usage in StreamCursorClose

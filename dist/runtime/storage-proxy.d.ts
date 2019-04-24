@@ -112,7 +112,7 @@ export declare class CollectionProxy extends StorageProxy implements CollectionS
         remove?: {}[];
         originatorId: string;
     };
-    toList(): Promise<{}[]>;
+    toList(): Promise<ModelValue[]>;
     get(id: string): Promise<{}>;
     store(value: any, keys: string[], particleId: string): Promise<void>;
     clear(particleId: any): Promise<void>;
@@ -145,6 +145,7 @@ export declare class BigCollectionProxy extends StorageProxy implements BigColle
     _getModelForSync(): never;
     _processUpdate(): {};
     _synchronizeModel(): boolean;
+    get(id: string): Promise<void>;
     store(value: any, keys: any, particleId: any): Promise<void>;
     remove(id: any, keys: any, particleId: any): Promise<void>;
     stream(pageSize: any, forward: any): Promise<number>;

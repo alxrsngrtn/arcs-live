@@ -7,9 +7,9 @@ export declare class PouchDbBigCollection extends PouchDbStorageProvider impleme
     get(id: string): Promise<void>;
     store(value: any, keys: string[], originatorId?: string): Promise<void>;
     remove(id: string, keys: string[], originatorId?: string): Promise<void>;
-    stream(pageSize: number, forward?: boolean): Promise<void>;
+    stream(pageSize: number, forward?: boolean): Promise<number>;
     cursorNext(cursorId: number): Promise<void>;
-    cursorClose(cursorId: number): void;
+    cursorClose(cursorId: number): Promise<void>;
     cursorVersion(cursorId: number): void;
     toLiteral(): Promise<{
         version: number;

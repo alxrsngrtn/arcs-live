@@ -5101,6 +5101,9 @@ class BigCollectionProxy extends StorageProxy {
         throw new Error("_synchronizeModel not implemented for BigCollectionProxy");
     }
     // TODO: surface get()
+    async get(id) {
+        throw new Error("unimplemented");
+    }
     async store(value, keys, particleId) {
         return new Promise(resolve => this.port.HandleStore(this, resolve, { value, keys }, particleId));
     }

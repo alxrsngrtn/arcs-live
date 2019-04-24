@@ -113,7 +113,7 @@ declare class VolatileBigCollection extends VolatileStorageProvider implements B
     } | {
         done: boolean;
     }>;
-    cursorClose(cursorId: number): void;
+    cursorClose(cursorId: number): Promise<void>;
     cursorVersion(cursorId: number): number;
     cloneFrom(handle: any): Promise<void>;
     toLiteral(): Promise<{
