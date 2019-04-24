@@ -1,8 +1,5 @@
-commit 77a18c54e886677fffe64deb3b998539d717cf3f
+commit 7d614f2df64026f607c4783a1c90ea02993330ca
 Author: Scott J. Miles <sjmiles@google.com>
-Date:   Tue Apr 23 14:15:36 2019 -0700
+Date:   Tue Apr 23 17:31:58 2019 -0700
 
-    experimental particle implemented via Worker + WASM (#2713)
-    
-    * experimental particle implemented via Worker + WASM
-    * add C source code
+    primitive settings dump (#2925)
