@@ -1,7 +1,7 @@
-commit 42943aeb8dfde44564d22e465e02c379212a20df
-Author: galganif <4754402+galganif@users.noreply.github.com>
-Date:   Wed Apr 24 11:02:40 2019 +1000
+commit fd6bae3f66a63cb3a81b619d391615b81c623814
+Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
+Date:   Wed Apr 24 14:57:02 2019 +1000
 
-    Initial implementation for CRDTCollection. (#2908)
+    Revert to using string ids for entities in firebase manual tests. (#2929)
     
-    * Initial implementation for CRDTCollection with tests.
+    The storage provider APIs haven't been updated to using Id objects yet, so the tests still need to pass in strings.

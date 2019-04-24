@@ -82,8 +82,8 @@ describe('firebase', function () {
             const key = newStoreKey('variable');
             const var1 = await storage.construct('test0', barType, key);
             const var2 = await storage.connect('test0', barType, key);
-            var1.set({ id: ArcId.newForTest('id1'), value: 'value1' });
-            var2.set({ id: ArcId.newForTest('id2'), value: 'value2' });
+            var1.set({ id: 'id1', value: 'value1' });
+            var2.set({ id: 'id2', value: 'value2' });
             await synchronized(var1, var2);
             assert.deepEqual(await var1.get(), await var2.get());
         });
@@ -97,7 +97,7 @@ describe('firebase', function () {
             const barType = new EntityType(manifest.schemas.Bar);
             const key1 = newStoreKey('varPtr');
             const var1 = await storage.construct('test0', barType, key1);
-            await var1.set({ id: ArcId.newForTest('id1'), value: 'underlying' });
+            await var1.set({ id: 'id1', value: 'underlying' });
             const result = await var1.get();
             assert.equal(result.value, 'underlying');
             assert.isTrue(var1.referenceMode);
@@ -114,7 +114,7 @@ describe('firebase', function () {
             const barType = new EntityType(manifest.schemas.Bar);
             const key1 = newStoreKey('varPtr');
             const var1 = await storage.construct('test0', new ReferenceType(barType), key1);
-            await var1.set({ id: ArcId.newForTest('id1'), storageKey: 'underlying' });
+            await var1.set({ id: 'id1', storageKey: 'underlying' });
             const result = await var1.get();
             assert.equal(result.storageKey, 'underlying');
             assert.isFalse(var1.referenceMode);
@@ -132,7 +132,7 @@ describe('firebase', function () {
             const storage = createStorage(arc.id);
             const var1 = await storage.construct('test1', barType, newStoreKey('variable'));
             const var2 = await storage.construct('test2', barType, newStoreKey('variable'));
-            const bar = n => ({ id: ArcId.newForTest('id') + n, data: 'd' + n });
+            const bar = n => ({ id: 'id' + n, data: 'd' + n });
             await var1.set(bar(1));
             await var2.set(bar(2));
             // The two variables have the same Type objects, so they should reference the same backing
@@ -164,12 +164,12 @@ describe('firebase', function () {
             const collection = await storage.construct('test1', barType.collectionOf(), newStoreKey('collection'));
             let events = 0;
             collection.on('change', () => events++, this);
-            await collection.store({ id: ArcId.newForTest('id0'), value: value1 }, ['key0']);
-            await collection.store({ id: ArcId.newForTest('id1'), value: value2 }, ['key1']);
+            await collection.store({ id: 'id0', value: value1 }, ['key0']);
+            await collection.store({ id: 'id1', value: value2 }, ['key1']);
             let result = await collection.get('id0');
             assert.equal(result.value, value1);
             result = await collection.toList();
-            assert.deepEqual(result, [{ id: ArcId.newForTest('id0'), value: value1 }, { id: ArcId.newForTest('id1'), value: value2 }]);
+            assert.deepEqual(result, [{ id: 'id0', value: value1 }, { id: 'id1', value: value2 }]);
             assert.equal(collection.version, 2);
             assert.equal(events, 2);
         });
@@ -184,8 +184,8 @@ describe('firebase', function () {
             const key = newStoreKey('collection');
             const collection1 = await storage.construct('test1', barType.collectionOf(), key);
             const collection2 = await storage.connect('test1', barType.collectionOf(), key);
-            collection1.store({ id: ArcId.newForTest('id1'), value: 'value' }, ['key1']);
-            await collection2.store({ id: ArcId.newForTest('id1'), value: 'value' }, ['key2']);
+            collection1.store({ id: 'id1', value: 'value' }, ['key1']);
+            await collection2.store({ id: 'id1', value: 'value' }, ['key2']);
             await synchronized(collection1, collection2);
             assert.deepEqual(await collection1.toList(), await collection2.toList());
         });
@@ -200,8 +200,8 @@ describe('firebase', function () {
             const key = newStoreKey('collection');
             const collection1 = await storage.construct('test1', barType.collectionOf(), key);
             const collection2 = await storage.connect('test1', barType.collectionOf(), key);
-            collection1.store({ id: ArcId.newForTest('id1'), value: 'value' }, ['key1']);
-            collection2.store({ id: ArcId.newForTest('id1'), value: 'value' }, ['key2']);
+            collection1.store({ id: 'id1', value: 'value' }, ['key1']);
+            collection2.store({ id: 'id1', value: 'value' }, ['key2']);
             collection1.remove('id1', ['key1']);
             collection2.remove('id1', ['key2']);
             await synchronized(collection1, collection2);
@@ -219,8 +219,8 @@ describe('firebase', function () {
             const key = newStoreKey('collection');
             const collection1 = await storage.construct('test1', barType.collectionOf(), key);
             const collection2 = await storage.connect('test1', barType.collectionOf(), key);
-            await collection1.store({ id: ArcId.newForTest('id1'), value: 'value1' }, ['key1']);
-            await collection2.store({ id: ArcId.newForTest('id2'), value: 'value2' }, ['key2']);
+            await collection1.store({ id: 'id1', value: 'value1' }, ['key1']);
+            await collection2.store({ id: 'id2', value: 'value2' }, ['key2']);
             await synchronized(collection1, collection2);
             assert.lengthOf(await collection1.toList(), 2);
             assert.sameDeepMembers(await collection1.toList(), await collection2.toList());
@@ -235,8 +235,8 @@ describe('firebase', function () {
             const barType = new EntityType(manifest.schemas.Bar);
             const key1 = newStoreKey('colPtr');
             const collection1 = await storage.construct('test0', barType.collectionOf(), key1);
-            await collection1.store({ id: ArcId.newForTest('id1'), value: 'value1' }, ['key1']);
-            await collection1.store({ id: ArcId.newForTest('id2'), value: 'value2' }, ['key2']);
+            await collection1.store({ id: 'id1', value: 'value1' }, ['key1']);
+            await collection1.store({ id: 'id2', value: 'value2' }, ['key2']);
             let result = await collection1.get('id1');
             assert.equal(result.value, 'value1');
             result = await collection1.get('id2');
@@ -256,8 +256,8 @@ describe('firebase', function () {
             const barType = new EntityType(manifest.schemas.Bar);
             const key1 = newStoreKey('colPtr');
             const collection1 = await storage.construct('test0', new ReferenceType(barType).collectionOf(), key1);
-            await collection1.store({ id: ArcId.newForTest('id1'), storageKey: 'value1' }, ['key1']);
-            await collection1.store({ id: ArcId.newForTest('id2'), storageKey: 'value2' }, ['key2']);
+            await collection1.store({ id: 'id1', storageKey: 'value1' }, ['key1']);
+            await collection1.store({ id: 'id2', storageKey: 'value2' }, ['key2']);
             let result = await collection1.get('id1');
             assert.equal(result.storageKey, 'value1');
             result = await collection1.get('id2');
@@ -275,11 +275,9 @@ describe('firebase', function () {
             const barType = new EntityType(manifest.schemas.Bar);
             const key = newStoreKey('collection');
             const collection = await storage.construct('test1', barType.collectionOf(), key);
-            await collection.store({ id: ArcId.newForTest('id1'), value: 'value' }, ['key1']);
-            await collection.store({ id: ArcId.newForTest('id2'), value: 'value' }, ['key2']);
-            await collection.removeMultiple([
-                { id: ArcId.newForTest('id1'), keys: ['key1'] }, { id: ArcId.newForTest('id2'), keys: ['key2'] }
-            ]);
+            await collection.store({ id: 'id1', value: 'value' }, ['key1']);
+            await collection.store({ id: 'id2', value: 'value' }, ['key2']);
+            await collection.removeMultiple([{ id: 'id1', keys: ['key1'] }, { id: 'id2', keys: ['key2'] }]);
             assert.isEmpty(await collection.toList());
         });
         it('multiple collections with the same backing store', async () => {
@@ -294,7 +292,7 @@ describe('firebase', function () {
             const storage = createStorage(arc.id);
             const col1 = await storage.construct('test1', barType.collectionOf(), newStoreKey('collection'));
             const col2 = await storage.construct('test2', barType.collectionOf(), newStoreKey('collection'));
-            const bar = n => ({ id: ArcId.newForTest('id') + n, data: 'd' + n });
+            const bar = n => ({ id: 'id' + n, data: 'd' + n });
             await col1.store(bar(1), ['key1']);
             await col2.store(bar(2), ['key2']);
             await col1.store(bar(3), ['key3']);
@@ -308,7 +306,7 @@ describe('firebase', function () {
             assert.sameDeepMembers(await col2.toList(), [bar(2)]);
             assert.sameDeepMembers(await backing.toList(), [bar(1), bar(2), bar(3)]);
             // Removing one of col2's ids from col1 should have no effect.
-            await col1.removeMultiple([{ id: ArcId.newForTest('id1'), keys: [] }, { id: ArcId.newForTest('id2'), keys: [] }]);
+            await col1.removeMultiple([{ id: 'id1', keys: [] }, { id: 'id2', keys: [] }]);
             assert.sameDeepMembers(await col1.toList(), [bar(3)]);
             assert.sameDeepMembers(await col2.toList(), [bar(2)]);
             // Remove ops are *not* currently propagated to the backing.
@@ -352,8 +350,8 @@ describe('firebase', function () {
             const collection2 = await storage.connect('test0', barType.bigCollectionOf(), key);
             // Concurrent writes to different ids.
             await Promise.all([
-                collection1.store({ id: ArcId.newForTest('id1'), data: 'ab' }, ['k34']),
-                collection2.store({ id: ArcId.newForTest('id2'), data: 'cd' }, ['k12'])
+                collection1.store({ id: 'id1', data: 'ab' }, ['k34']),
+                collection2.store({ id: 'id2', data: 'cd' }, ['k12'])
             ]);
             assert.equal((await collection2.get('id1')).data, 'ab');
             assert.equal((await collection1.get('id2')).data, 'cd');
@@ -361,8 +359,8 @@ describe('firebase', function () {
             assert.isNull(await collection2.get('id2'));
             // Concurrent writes to the same id.
             await Promise.all([
-                collection1.store({ id: ArcId.newForTest('id3'), data: 'xx' }, ['k65']),
-                collection2.store({ id: ArcId.newForTest('id3'), data: 'yy' }, ['k87'])
+                collection1.store({ id: 'id3', data: 'xx' }, ['k65']),
+                collection2.store({ id: 'id3', data: 'yy' }, ['k87'])
             ]);
             assert.include(['xx', 'yy'], (await collection1.get('id3')).data);
             assert.isNull(await collection1.get('non-existent'));
@@ -626,9 +624,9 @@ describe('firebase', function () {
             const colStore = await storage.construct('test1', dataType.collectionOf(), newStoreKey('collection'));
             const bigStore = await storage.construct('test2', dataType.bigCollectionOf(), newStoreKey('bigcollection'));
             // Populate the stores, run the arc and get its serialization.
-            await varStore.set({ id: ArcId.newForTest('i1'), rawData: { value: 'v1' } });
-            await colStore.store({ id: ArcId.newForTest('i2'), rawData: { value: 'v2' } }, ['k2']);
-            await bigStore.store({ id: ArcId.newForTest('i3'), rawData: { value: 'v3' } }, ['k3']);
+            await varStore.set({ id: 'i1', rawData: { value: 'v1' } });
+            await colStore.store({ id: 'i2', rawData: { value: 'v2' } }, ['k2']);
+            await bigStore.store({ id: 'i3', rawData: { value: 'v3' } }, ['k3']);
             const recipe = manifest.recipes[0];
             recipe.handles[0].mapToStorage(varStore);
             recipe.handles[1].mapToStorage(colStore);
@@ -639,9 +637,9 @@ describe('firebase', function () {
             const serialization = await arc.serialize();
             arc.dispose();
             // Update the stores between serializing and deserializing.
-            await varStore.set({ id: ArcId.newForTest('i4'), rawData: { value: 'v4' } });
-            await colStore.store({ id: ArcId.newForTest('i5'), rawData: { value: 'v5' } }, ['k5']);
-            await bigStore.store({ id: ArcId.newForTest('i6'), rawData: { value: 'v6' } }, ['k6']);
+            await varStore.set({ id: 'i4', rawData: { value: 'v4' } });
+            await colStore.store({ id: 'i5', rawData: { value: 'v5' } }, ['k5']);
+            await bigStore.store({ id: 'i6', rawData: { value: 'v6' } }, ['k6']);
             const arc2 = await Arc.deserialize({ serialization, loader, fileName: '', pecFactory: undefined, slotComposer: undefined, context: manifest });
             const varStore2 = arc2.findStoreById(varStore.id);
             const colStore2 = arc2.findStoreById(colStore.id);
@@ -674,7 +672,7 @@ describe('firebase', function () {
             const col = await storage.construct('test1', barType.collectionOf(), newStoreKey('collection'));
             const backing = await col.ensureBackingStore();
             backing.maxConcurrentRequests = 3;
-            const bar = n => ({ id: ArcId.newForTest('id') + n, data: 'd' + n });
+            const bar = n => ({ id: 'id' + n, data: 'd' + n });
             // store, storeMultiple
             await backing.store(bar(1), ['key1']);
             await backing.store(bar(2), ['key2a', 'key2b', 'key2c']);
@@ -702,18 +700,18 @@ describe('firebase', function () {
             assert.isNull(await backing.get('not-an-id'));
             // removeMultiple: safe to use non-existent keys and ids
             await backing.removeMultiple([
-                { id: ArcId.newForTest('id1'), keys: ['key1'] },
-                { id: ArcId.newForTest('id4'), keys: ['keyM'] },
-                { id: ArcId.newForTest('id5'), keys: ['not-a-key'] },
-                { id: ArcId.newForTest('not-an-id'), keys: [] }
+                { id: 'id1', keys: ['key1'] },
+                { id: 'id4', keys: ['keyM'] },
+                { id: 'id5', keys: ['not-a-key'] },
+                { id: 'not-an-id', keys: [] }
             ]);
             assert.sameDeepMembers(await backing.toList(), [bar(3), bar(5)]);
             // removeMultiple: empty key list deletes item, removing subset of keys does not
             await backing.store(bar(7), ['key7a', 'key7b', 'key7c']);
             await backing.store(bar(8), ['key8a', 'key8b', 'key8c']);
             await backing.removeMultiple([
-                { id: ArcId.newForTest('id7'), keys: [] },
-                { id: ArcId.newForTest('id8'), keys: ['key8b', 'key8c'] },
+                { id: 'id7', keys: [] },
+                { id: 'id8', keys: ['key8b', 'key8c'] },
             ]);
             assert.sameDeepMembers(await backing.toList(), [bar(3), bar(5), bar(8)]);
             // removeMultiple: empty item list deletes everything
