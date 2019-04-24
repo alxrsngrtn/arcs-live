@@ -28318,9 +28318,9 @@ class RamSlotComposer extends SlotComposer {
 }
 
 const version = '0_6_0';
-const volatile = 'volatile://';
 const firebase = `firebase://arcs-storage.firebaseio.com/AIzaSyBme42moeI-2k8WgXh-6YK_wYyjEXo4Oz8/${version}`;
-const pouchdb = `pouchdb://local/arcs`;
+const pouchdb = `pouchdb://local/arcs/${version}`;
+const volatile = 'volatile://';
 
 const Const = {
   version,
@@ -28414,7 +28414,7 @@ class UserArcs {
   }
   async fetchArcsStore(storage, userid) {
     // TODO(sjmiles): marshalling of arcs-store arc id from userid should be elsewhere
-    const store = await SyntheticStores.getArcsStore(storage, `${userid}${Const.launcherSuffix}`);
+    const store = await SyntheticStores.getArcsStore(storage, `${userid}${Const.DEFAULT.launcherSuffix}`);
     if (store) {
       log$3(`marshalled arcsStore for [${userid}]`);
       return store;
@@ -28808,7 +28808,7 @@ class UserContext {
   //   return arcsStore;
   // }
   // async fetchArcsStore(storage, userid) {
-  //   const store = await SyntheticStores.getArcsStore(storage, `${userid}${Const.launcherSuffix}`);
+  //   const store = await SyntheticStores.getArcsStore(storage, `${userid}${Const.DEFAULT.launcherSuffix}`);
   //   if (store) {
   //     log(`marshalled arcsStore for [${userid}]`); //[${storage}]`, store);
   //     return store;

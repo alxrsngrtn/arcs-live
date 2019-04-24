@@ -1,5 +1,15 @@
-commit a6b6fec39db0cc8228a8c52e867d72e29fd7c23d
+commit 20f3e041cf5fcc53c32558300d8ffdc6a9d1ba61
 Author: Scott J. Miles <sjmiles@google.com>
-Date:   Wed Apr 24 15:14:11 2019 -0700
+Date:   Wed Apr 24 15:59:27 2019 -0700
 
-    interpolate `typeStr` into `cacheStr` (#2933)
+    Repairs to declarative configuration system (web-shell) (#2932)
+    
+    * fix use of Const
+    
+    * use version for pouch too
+    
+    * take more care with persisting values
+    
+    * fix bug with bespoke config update
+    
+    * support storage macros
