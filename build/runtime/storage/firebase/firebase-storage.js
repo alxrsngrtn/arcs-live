@@ -129,7 +129,7 @@ export class FirebaseStorage extends StorageBase {
     }
     async baseStorageFor(type, key) {
         const typeStr = type.toString();
-        const cacheStr = `${new FirebaseKey(key).databaseUrl}!typeStr`;
+        const cacheStr = `${new FirebaseKey(key).databaseUrl}!${typeStr}`;
         let storage;
         if (storage = this.baseStores.get(cacheStr)) {
             return storage;

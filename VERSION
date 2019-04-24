@@ -1,5 +1,5 @@
-commit 8a086bf8983483d3cf317cbe106d8eda35b27d9e
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Wed Apr 24 12:59:39 2019 -0700
+commit a6b6fec39db0cc8228a8c52e867d72e29fd7c23d
+Author: Scott J. Miles <sjmiles@google.com>
+Date:   Wed Apr 24 15:14:11 2019 -0700
 
-    get rid of the deprecated "affordance" in manifests (#2926)
+    interpolate `typeStr` into `cacheStr` (#2933)
