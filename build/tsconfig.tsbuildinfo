@@ -118,7 +118,7 @@
         "signature": "3bd6165ec65d5ea2623e0a0fd00c91e8aa8ee7c510e9bf97a3afdee0fc042813"
       },
       "/home/travis/build/PolymerLabs/arcs/src/gen/runtime/manifest-parser.ts": {
-        "version": "27c9c9649c1a88148b2e754ce9c75bb62435b47b619717cdfde4abc73504ee0b",
+        "version": "8c146b389821e1aa23218b0f1e1dfa27a9ee5aa8b66d715c6736b7ef94e1c90a",
         "signature": "ff2c763c7895327196fd3eb358dcc775b25f27bdae513079cc287433af262427"
       },
       "/home/travis/build/PolymerLabs/arcs/src/platform/assert-web.ts": {
@@ -986,7 +986,7 @@
         "signature": "8e609bb71c20b858c77f0e9f90bb1319db8477b13f9f965f1a1e18524bf50881"
       },
       "/home/travis/build/PolymerLabs/arcs/src/planning/test/plan/plan-consumer-test.ts": {
-        "version": "fbed787c39d28f503be48bba8e48973b82b28a703e8a63e068b9ef833cf1e113",
+        "version": "1e1946649ff36f54e273effc16c59dd429ee11954a6de0d1f7d426601ab83f85",
         "signature": "de02016bff8df10c3a9e77f9ed8e56f6d786f1adbcddc74f4fa35b0250121cb2"
       },
       "/home/travis/build/PolymerLabs/arcs/src/planning/test/plan/plan-producer-test.ts": {

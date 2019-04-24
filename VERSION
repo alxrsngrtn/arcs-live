@@ -1,10 +1,5 @@
-commit b4ae41cdeb1533d0be469da4536128d9fa8eaf1a
-Author: Paul Lindner <lindner@inuus.com>
-Date:   Wed Apr 24 11:24:27 2019 -0700
+commit 8a086bf8983483d3cf317cbe106d8eda35b27d9e
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Wed Apr 24 12:59:39 2019 -0700
 
-    Clean up Store/StorageProvider APIs (#2924)
-    
-    - Make BigCollectionStorageProvider inherit from BigCollectionStore
-    - Remove methods from *StorageProvider that are already implemented in *Store
-    - use tighter casts in ParticleExecutionHost
-    - Fix incorrect string vs number usage in StreamCursorClose
+    get rid of the deprecated "affordance" in manifests (#2926)
