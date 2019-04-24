@@ -1,5 +1,7 @@
-commit 7d614f2df64026f607c4783a1c90ea02993330ca
-Author: Scott J. Miles <sjmiles@google.com>
-Date:   Tue Apr 23 17:31:58 2019 -0700
+commit 42943aeb8dfde44564d22e465e02c379212a20df
+Author: galganif <4754402+galganif@users.noreply.github.com>
+Date:   Wed Apr 24 11:02:40 2019 +1000
 
-    primitive settings dump (#2925)
+    Initial implementation for CRDTCollection. (#2908)
+    
+    * Initial implementation for CRDTCollection with tests.
