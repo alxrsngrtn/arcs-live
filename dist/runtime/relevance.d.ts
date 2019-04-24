@@ -15,7 +15,7 @@ export declare class Relevance {
     readonly relevanceMap: Map<Particle, number[]>;
     private constructor();
     static create(arc: Arc, recipe: Recipe): Relevance;
-    apply(relevance: Map<Particle, number[]>): void;
+    apply(relevance: ReadonlyMap<Particle, number[]>): void;
     calcRelevanceScore(): number;
     isRelevant(plan: Recipe): boolean;
     static scaleRelevance(relevance: number): number;

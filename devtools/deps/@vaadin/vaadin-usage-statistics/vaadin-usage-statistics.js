@@ -137,6 +137,18 @@ function maybeGatherAndSendStats() {
             return version;
           }
         },
+        'LitElement': function LitElement() {
+          var version = window.litElementVersions && window.litElementVersions[0];
+          if (version) {
+            return version;
+          }
+        },
+        'LitHtml': function LitHtml() {
+          var version = window.litHtmlVersions && window.litHtmlVersions[0];
+          if (version) {
+            return version;
+          }
+        },
         'Vue.js': function VueJs() {
           if (window.Vue) {
             return window.Vue.version;

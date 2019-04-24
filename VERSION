@@ -1,5 +1,5 @@
-commit af2a56b62ae8da80be60cc4eb292a90f21899066
-Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
-Date:   Wed Apr 24 15:16:46 2019 +1000
+commit 7800442f3369b61db3a715cd392925c45acb5d7b
+Author: Paul Lindner <lindner@inuus.com>
+Date:   Wed Apr 24 10:42:30 2019 -0700
 
-    Firebase base store cache needs to be database-url-aware (#2930)
+    Add usages of ReadonlyMap where it's allowed (#2928)

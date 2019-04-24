@@ -11,5 +11,5 @@ export declare class MatchRecipeByVerb extends Strategy {
     static connectionMatchesConstraint(connection: any, handleData: any): boolean;
     static satisfiesSlotConstraints(recipe: any, slotConstraints: any): boolean;
     static satisfiesSlotConnection(recipe: any, slotName: any, constraints: any): boolean;
-    static slotsMatchConstraint(particle: Particle, slotSpecs: Map<string, ConsumeSlotConnectionSpec>, name: any, constraints: any): boolean;
+    static slotsMatchConstraint(particle: Particle, slotSpecs: ReadonlyMap<string, ConsumeSlotConnectionSpec>, name: any, constraints: any): boolean;
 }

@@ -7,12 +7,12 @@ import { PECInnerPort } from './api-channel';
 export declare class SlotProxy {
     readonly slotName: string;
     readonly particle: Particle;
-    readonly providedSlots: Map<string, string>;
+    readonly providedSlots: ReadonlyMap<string, string>;
     private readonly apiPort;
     private readonly handlers;
     readonly requestedContentTypes: Set<string>;
     private _isRendered;
-    constructor(apiPort: PECInnerPort, particle: Particle, slotName: string, providedSlots: Map<string, string>);
+    constructor(apiPort: PECInnerPort, particle: Particle, slotName: string, providedSlots: ReadonlyMap<string, string>);
     readonly isRendered: boolean;
     /**
      * renders content to the slot.

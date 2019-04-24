@@ -10,8 +10,8 @@ export declare class MultiplexerDomParticle extends TransformationDomParticle {
     handleIds: {
         [key: string]: Promise<Handle>;
     };
-    _mapParticleConnections(listHandleName: string, particleHandleName: string, hostedParticle: ParticleSpec, handles: Map<string, Handle>, arc: any): Promise<string[][]>;
-    setHandles(handles: Map<string, Handle>): Promise<void>;
+    _mapParticleConnections(listHandleName: string, particleHandleName: string, hostedParticle: ParticleSpec, handles: ReadonlyMap<string, Handle>, arc: any): Promise<string[][]>;
+    setHandles(handles: ReadonlyMap<string, Handle>): Promise<void>;
     willReceiveProps({ list }: {
         list: any;
     }, { arc, type, hostedParticle, otherMappedHandles, otherConnections }: {

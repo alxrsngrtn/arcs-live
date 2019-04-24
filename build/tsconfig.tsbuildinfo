@@ -150,8 +150,8 @@
         "signature": "75c56e5364b4f2b3b0253952c3b0ddaa200134bed668ef04fd8a60a18761fb34"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/connection-constraint.ts": {
-        "version": "36fec4dc0e29aff16915ee2e99960ab809e5434250a4a8c789f0f93b6e654382",
-        "signature": "1db69c82b8c478f8e043483f0ce97cc3cefc4d44f7b8d2351ab1f54f0d50aed9"
+        "version": "2a24a344ee049e90dcbb59af748915f595b29aec408a2e40dfd6c0651721782b",
+        "signature": "0c2efab69f027da6ec04ef15a298096814382a668b4e563a063960e2b0189d95"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/search.ts": {
         "version": "ba5818d8f8f199fad9e02cae82deb7ca0c5a987426573dd76fc5df116db5bf3b",
@@ -190,12 +190,12 @@
         "signature": "f4ec9640fbaac7561fac52a1eb454e596c0638d5dc2cb2cb289ea615a568aafc"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/relevance.ts": {
-        "version": "dbec56f7a3a5bfafe552607c41b32815716ec4d3006dbc22a245f6afccdc2984",
-        "signature": "0d9ab0dd2cc4bc89f29ca087f4e6df54346c52eb6e19394d3797de0b32cdc91f"
+        "version": "3d31206aef607987b5ce9f03d0b65357526dc0b2131d91a2b71927345407886c",
+        "signature": "ebb72886b7ce28c415894342efe531c4d9e03707e36600e53a8124e7c9edb097"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/slot-proxy.ts": {
-        "version": "3b0cfac76fc48500aa7459438fac646e0908d25cff6da08238f1018e21c75b33",
-        "signature": "713a645c022e57e4a9ca244781ddfa3cecc99a5d36658e51affe292bc8c34bdd"
+        "version": "4a13d02ff8e6b847345cb967facebbbbcec1f14a13ebc285fb8995a038f6ccce",
+        "signature": "b4f0a5c1f34573788919ded121925bb325dd193aa3d96e75d79f4f4423aa605b"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/particle.ts": {
         "version": "17220f1459f61d103a3c8c4d65795b13d9ca298cb0a47b4422f69f3f1824d77e",
@@ -214,8 +214,8 @@
         "signature": "51a9f04b29a8f2046d0be2b615ace8ca911930e5757dc893c70eeb7a69144f11"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/handle.ts": {
-        "version": "c2ac460c59d0ad29f7ff54168b8c9f9d710a6e0652fdbecac2580fbacddea1d8",
-        "signature": "cb5dfe92ac491e4c87d6b322199f4ff02c3f765eab5328c1751d6721496229c7"
+        "version": "2571405368b965bc3aa8919fe0220a77f61f60eea77b35d07f3c1efcb320cb1e",
+        "signature": "5c10360309ca6e45b2ab89c400743979e9b15b4f19b7f0526e320e5e8477a08a"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/handle-connection.ts": {
         "version": "5e4d9b3a3a19cb141402cd1c9b979157d1b8909e6299f4b85322f413730b6064",
@@ -346,8 +346,8 @@
         "signature": "6797ebed62ae18ef3970a93cd35d57d53f70e869b464584ba73b2b5def27597b"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/multiplexer-dom-particle.ts": {
-        "version": "4d6180762d26f05447b8b4b5e08f5bffa3517db6d5630eea6975453ab0241062",
-        "signature": "f73b9dd364953b52530792fc085fe1f8914c8c8f053720162f176034ed91ba55"
+        "version": "0c05c8f6427d151388a2831dfe613379ccc4a1e09b69b00c3c4a6ebae75e70a2",
+        "signature": "4071bfcff08260a1b931b89d9e8ee9770495f599929b8a6fb3cbb7c6345b9d82"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/loader.ts": {
         "version": "e655ec2d2567e85baa70e4a45909a59a83843519c3f1376d6de57dcbc871680b",
@@ -398,8 +398,8 @@
         "signature": "da373b8693a2f4b38d69266020e5cfa336ac0ea7f216b911b43866f07eba6d38"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/particle-execution-context.ts": {
-        "version": "3ed4f7d3c413cfe0574c2914a692011b39de58f27f4179045d5afbd73f6b8a28",
-        "signature": "8407a8de1d349e7be6304193d8170ff096d25e5a82abb629a30559fab6bc14ac"
+        "version": "aaf399ebd4df6f3f81bd3dcf47689ebe133a3ec6c65fcd0bb52691ecec29b921",
+        "signature": "29e8325b6d20692ae5dacf79b8106e1c9b8d80e5bcc8020ac939a175d619e09e"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/entity.ts": {
         "version": "6e7649b096b138941571699e75e29551085cb333c0c6ccdeb4c9bf2699ea5bc4",
@@ -590,8 +590,8 @@
         "signature": "1e8e9e5f8323d3236fd5024110a793e0272d7be19be9190fb6a39d12f6b97bb4"
       },
       "/home/travis/build/PolymerLabs/arcs/src/planning/strategies/match-recipe-by-verb.ts": {
-        "version": "d3ee0c3e45ca4f187f45f84415694cb05d5e76057420326fa88b9cba104cd971",
-        "signature": "38752d36e8411e90c19ac98c569625b6e6fe0a27e320c04683497c8380590a14"
+        "version": "ac2d923ff4064626afba377caee4085182b16f3cc8a799152d0efec303ac6054",
+        "signature": "039b36bfdb089b4d11eec76870d89a81ee67fdc1b5bc40cb99fac941fb911baa"
       },
       "/home/travis/build/PolymerLabs/arcs/src/planning/strategies/search-tokens-to-particles.ts": {
         "version": "7838570cedfed34615d4f4ffe7ed05f526354e5390bef77b25282802524b0d71",

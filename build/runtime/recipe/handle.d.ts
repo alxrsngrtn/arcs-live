@@ -52,7 +52,7 @@ export declare class Handle {
     static resolveEffectiveType(handleType: Type, connections: HandleConnection[]): Type | import("../type.js").TypeVariable | import("../type.js").CollectionType<import("../type.js").TypeVariable> | import("../type.js").BigCollectionType<import("../type.js").TypeVariable>;
     _isValid(options: IsValidOptions): boolean;
     isResolved(options?: any): boolean;
-    toString(nameMap: Map<RecipeComponent, string>, options: ToStringOptions): string;
+    toString(nameMap: ReadonlyMap<RecipeComponent, string>, options: ToStringOptions): string;
     findConnectionByDirection(dir: string): HandleConnection;
 }
 export {};
