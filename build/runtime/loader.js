@@ -76,11 +76,26 @@ export class Loader {
         }
         return fetch(url).then(res => res.text());
     }
+    /**
+     * Returns a particle class implementation by loading and executing
+     * the code defined by a particle.  In the following example `x.js`
+     * will be loaded and executed:
+     *
+     * ```
+     * Particle foo in 'x.js'
+     * ```
+     */
     async loadParticleClass(spec) {
         const clazz = await this.requireParticle(spec.implFile);
         clazz.spec = spec;
         return clazz;
     }
+    /**
+     * Loads a particle class from the given filename by loading the
+     * script contained in `fileName` and executing it as a script.
+     *
+     * Protected for use in tests.
+     */
     async requireParticle(fileName) {
         if (fileName === null)
             fileName = '';
@@ -104,6 +119,9 @@ export class Loader {
     setParticleExecutionContext(pec) {
         this.pec = pec;
     }
+    /**
+     * executes the defineParticle() code and returns the results which should be a class definition.
+     */
     unwrapParticle(particleWrapper) {
         assert(this.pec);
         return particleWrapper({ Particle, DomParticle, TransformationDomParticle, MultiplexerDomParticle, Reference: ClientReference.newClientReference(this.pec), html });

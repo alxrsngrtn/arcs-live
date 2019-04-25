@@ -14,7 +14,7 @@ import { Collection } from './handle.js';
  * instead use DOMParticle.
  */
 export class Particle {
-    constructor(capabilities) {
+    constructor() {
         this.relevances = [];
         this._idle = Promise.resolve();
         this._busy = 0;
@@ -24,6 +24,16 @@ export class Particle {
         this.spec = this.constructor['spec'];
         if (this.spec.inputs.length === 0) {
             this.extraData = true;
+        }
+    }
+    /**
+     * This sets the capabilities for this particle.  This can only
+     * be called once.
+     */
+    setCapabilities(capabilities) {
+        if (this.capabilities) {
+            // Capabilities already set, throw an error.
+            throw new Error('capabilities should only be set once');
         }
         this.capabilities = capabilities || {};
     }

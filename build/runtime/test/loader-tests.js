@@ -10,6 +10,7 @@
 import { assert } from '../../platform/chai-web.js';
 import { Loader } from '../loader.js';
 import { Manifest } from '../manifest.js';
+import { Particle } from '../particle.js';
 describe('loader', () => {
     it('can extract a path', () => {
         assert.equal(new Loader().path('a/foo'), 'a/');
@@ -27,7 +28,8 @@ describe('loader', () => {
         const testLoader = new class extends Loader {
             async requireParticle(fileName) {
                 files.push(fileName);
-                return {};
+                return class extends Particle {
+                };
             }
         }();
         const options = {

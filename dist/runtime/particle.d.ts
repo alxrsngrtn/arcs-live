@@ -25,10 +25,15 @@ export declare class Particle {
     private _idleResolver;
     private _busy;
     protected slotProxiesByName: Map<string, SlotProxy>;
-    private readonly capabilities;
-    constructor(capabilities?: {
+    private capabilities;
+    constructor();
+    /**
+     * This sets the capabilities for this particle.  This can only
+     * be called once.
+     */
+    setCapabilities(capabilities: {
         constructInnerArc?: Function;
-    });
+    }): void;
     /**
      * This method is invoked with a handle for each store this particle
      * is registered to interact with, once those handles are ready for

@@ -145,15 +145,15 @@ export class ParticleExecutionContext {
             }
         };
     }
+    // tslint:disable-next-line: no-any
     async _instantiateParticle(id, spec, proxies) {
         let resolve = null;
         const p = new Promise(res => resolve = res);
         this.pendingLoads.push(p);
         const clazz = await this.loader.loadParticleClass(spec);
         const capabilities = this.defaultCapabilitySet();
-        const particle = new clazz(); // TODO: how can i add an argument to DomParticle ctor?
-        particle.id = id;
-        particle.capabilities = capabilities;
+        const particle = new clazz();
+        particle.setCapabilities(capabilities);
         this.particles.push(particle);
         const handleMap = new Map();
         const registerList = [];

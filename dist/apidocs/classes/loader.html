@@ -99,7 +99,7 @@
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="loader.html#loadresource" class="tsd-kind-icon">load<wbr>Resource</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="loader.html#normalizedots" class="tsd-kind-icon">normalize<wbr>Dots</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="loader.html#path" class="tsd-kind-icon">path</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="loader.html#requireparticle" class="tsd-kind-icon">require<wbr>Particle</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-protected"><a href="loader.html#requireparticle" class="tsd-kind-icon">require<wbr>Particle</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="loader.html#setparticleexecutioncontext" class="tsd-kind-icon">set<wbr>Particle<wbr>Execution<wbr>Context</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="loader.html#unwrapparticle" class="tsd-kind-icon">unwrap<wbr>Particle</a></li>
 							</ul>
@@ -115,7 +115,7 @@
 					<div class="tsd-signature tsd-kind-icon">pec<span class="tsd-signature-symbol">:</span> <a href="particleexecutioncontext.html" class="tsd-signature-type">ParticleExecutionContext</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/20f3e04/src/runtime/loader.ts#L30">runtime/loader.ts:30</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1423c50/src/runtime/loader.ts#L31">runtime/loader.ts:31</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -132,7 +132,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/20f3e04/src/runtime/loader.ts#L68">runtime/loader.ts:68</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1423c50/src/runtime/loader.ts#L69">runtime/loader.ts:69</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -155,7 +155,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/20f3e04/src/runtime/loader.ts#L80">runtime/loader.ts:80</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1423c50/src/runtime/loader.ts#L81">runtime/loader.ts:81</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -178,7 +178,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/20f3e04/src/runtime/loader.ts#L36">runtime/loader.ts:36</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1423c50/src/runtime/loader.ts#L37">runtime/loader.ts:37</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -198,22 +198,30 @@
 					<a name="loadparticleclass" class="tsd-anchor"></a>
 					<h3>load<wbr>Particle<wbr>Class</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">load<wbr>Particle<wbr>Class<span class="tsd-signature-symbol">(</span>spec<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">load<wbr>Particle<wbr>Class<span class="tsd-signature-symbol">(</span>spec<span class="tsd-signature-symbol">: </span><a href="particlespec.html" class="tsd-signature-type">ParticleSpec</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Particle</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/20f3e04/src/runtime/loader.ts#L90">runtime/loader.ts:90</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1423c50/src/runtime/loader.ts#L100">runtime/loader.ts:100</a></li>
 								</ul>
 							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Returns a particle class implementation by loading and executing
+										the code defined by a particle.  In the following example <code>x.js</code>
+									will be loaded and executed:</p>
+								</div>
+								<pre><code><span class="hljs-type">Particle</span> foo <span class="hljs-keyword">in</span> <span class="hljs-symbol">'x</span>.js'</code></pre>
+							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>spec: <span class="tsd-signature-type">any</span></h5>
+									<h5>spec: <a href="particlespec.html" class="tsd-signature-type">ParticleSpec</a></h5>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></h4>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Particle</span><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -227,7 +235,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/20f3e04/src/runtime/loader.ts#L61">runtime/loader.ts:61</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1423c50/src/runtime/loader.ts#L62">runtime/loader.ts:62</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -250,7 +258,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/20f3e04/src/runtime/loader.ts#L50">runtime/loader.ts:50</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1423c50/src/runtime/loader.ts#L51">runtime/loader.ts:51</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -273,7 +281,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/20f3e04/src/runtime/loader.ts#L32">runtime/loader.ts:32</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1423c50/src/runtime/loader.ts#L33">runtime/loader.ts:33</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -286,26 +294,33 @@
 						</li>
 					</ul>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-protected">
 					<a name="requireparticle" class="tsd-anchor"></a>
-					<h3>require<wbr>Particle</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">require<wbr>Particle<span class="tsd-signature-symbol">(</span>fileName<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></li>
+					<h3><span class="tsd-flag ts-flagProtected">Protected</span> require<wbr>Particle</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-protected">
+						<li class="tsd-signature tsd-kind-icon">require<wbr>Particle<span class="tsd-signature-symbol">(</span>fileName<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Particle</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/20f3e04/src/runtime/loader.ts#L96">runtime/loader.ts:96</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1423c50/src/runtime/loader.ts#L112">runtime/loader.ts:112</a></li>
 								</ul>
 							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Loads a particle class from the given filename by loading the
+									script contained in <code>fileName</code> and executing it as a script.</p>
+								</div>
+								<p>Protected for use in tests.</p>
+							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
 									<h5>fileName: <span class="tsd-signature-type">string</span></h5>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></h4>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Particle</span><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -319,7 +334,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/20f3e04/src/runtime/loader.ts#L116">runtime/loader.ts:116</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1423c50/src/runtime/loader.ts#L132">runtime/loader.ts:132</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -336,22 +351,27 @@
 					<a name="unwrapparticle" class="tsd-anchor"></a>
 					<h3>unwrap<wbr>Particle</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">unwrap<wbr>Particle<span class="tsd-signature-symbol">(</span>particleWrapper<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span></li>
+						<li class="tsd-signature tsd-kind-icon">unwrap<wbr>Particle<span class="tsd-signature-symbol">(</span>particleWrapper<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Particle</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/20f3e04/src/runtime/loader.ts#L120">runtime/loader.ts:120</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1423c50/src/runtime/loader.ts#L139">runtime/loader.ts:139</a></li>
 								</ul>
 							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>executes the defineParticle() code and returns the results which should be a class definition.</p>
+								</div>
+							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
 									<h5>particleWrapper: <span class="tsd-signature-type">any</span></h5>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">any</span></h4>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Particle</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -396,7 +416,7 @@
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="loader.html#path" class="tsd-kind-icon">path</a>
 							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class">
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-protected">
 								<a href="loader.html#requireparticle" class="tsd-kind-icon">require<wbr>Particle</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">

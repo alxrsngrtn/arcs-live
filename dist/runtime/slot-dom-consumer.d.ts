@@ -23,9 +23,9 @@ export declare class SlotDomConsumer extends SlotConsumer {
     createNewContainer(contextContainer: any, subId: any): ShadowRoot;
     deleteContainer(container: any): void;
     formatContent(content: Content, subId: string): Content | undefined;
-    _modelForSingletonSlot(model: any, subId: any): any;
-    _modelForSetSlotConsumedAsSetSlot(model: any, subId: any): any;
-    _modelForSetSlotConsumedAsSingletonSlot(model: any, subId: any): any;
+    private _modelForSingletonSlot;
+    private _modelForSetSlotConsumedAsSetSlot;
+    private _modelForSetSlotConsumedAsSingletonSlot;
     setContainerContent(rendering: DomRendering, content: Content, subId: any): void;
     clearContainer(rendering: DomRendering): void;
     dispose(): void;
@@ -46,5 +46,5 @@ export declare class SlotDomConsumer extends SlotConsumer {
     getNodeValue(node: any, name: any): any;
     isDirectInnerSlot(container: any, innerContainer: any): boolean;
     _initMutationObserver(): MutationObserver | null;
-    formatHostedContent(content: Content): {};
+    formatHostedContent(content: Content): Content;
 }

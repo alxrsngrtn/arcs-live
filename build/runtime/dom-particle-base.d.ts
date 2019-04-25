@@ -13,7 +13,6 @@ import { Particle } from './particle.js';
  */
 export declare class DomParticleBase extends Particle {
     private currentSlotName;
-    constructor();
     /**
      * Override to return a String defining primary markup.
      */

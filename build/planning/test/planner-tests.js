@@ -10,6 +10,7 @@
 'use strict';
 import { assert } from '../../platform/chai-web.js';
 import { Arc } from '../../runtime/arc.js';
+import { Particle } from '../../runtime/particle.js';
 import { Loader } from '../../runtime/loader.js';
 import { Manifest } from '../../runtime/manifest.js';
 import { StubLoader } from '../../runtime/testing/stub-loader.js';
@@ -40,8 +41,9 @@ class MyLoader extends StubLoader {
         this.manifest = manifest;
     }
     async requireParticle(fileName) {
-        const clazz = class {
+        const clazz = class extends Particle {
             constructor() {
+                super();
                 this.relevances = [1];
             }
             async setHandles(handles) {

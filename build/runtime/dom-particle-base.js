@@ -16,9 +16,6 @@ import { Particle } from './particle.js';
  * Particle that interoperates with DOM.
  */
 export class DomParticleBase extends Particle {
-    constructor() {
-        super();
-    }
     /**
      * Override to return a String defining primary markup.
      */

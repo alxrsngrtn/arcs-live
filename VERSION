@@ -1,15 +1,12 @@
-commit 20f3e041cf5fcc53c32558300d8ffdc6a9d1ba61
-Author: Scott J. Miles <sjmiles@google.com>
-Date:   Wed Apr 24 15:59:27 2019 -0700
+commit 1423c50fb3845af8ea01eca0105ff7291e3edf6b
+Author: Paul Lindner <plindner@google.com>
+Date:   Thu Apr 25 11:50:29 2019 -0700
 
-    Repairs to declarative configuration system (web-shell) (#2932)
+    Improve type handling in loading and particle execution (#2920)
     
-    * fix use of Const
-    
-    * use version for pouch too
-    
-    * take more care with persisting values
-    
-    * fix bug with bespoke config update
-    
-    * support storage macros
+    * Improve type handling in loading and particle execution
+    - Add documention to Loader to help describe the steps taken.
+    - Add types for load/require Particle, adjust callers and tests
+    - Add types to slot-dom-consumer, particle-execution-context etc.
+    - Identified a problematic issue with readonly properties.
+    - Removed capabilities from the Particle constructor and added a write-once method to set them.

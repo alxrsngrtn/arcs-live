@@ -24,7 +24,7 @@ declare class ThingMapper {
     _nextIdentifier: number;
     _idMap: Map<string, {}>;
     _reverseIdMap: Map<{}, string>;
-    constructor(prefix: any);
+    constructor(prefix: string);
     _newIdentifier(): string;
     createMappingForThing(thing: any, requestedId?: any): any;
     maybeCreateMappingForThing(thing: any): any;
@@ -39,14 +39,14 @@ export declare class APIPort {
     protected _debugAttachment: OuterPortAttachment;
     protected _attachStack: boolean;
     messageCount: number;
-    constructor(messagePort: any, prefix: any);
+    constructor(messagePort: MessagePort, prefix: string);
     _testingHook(): void;
     close(): void;
     _processMessage(e: any): Promise<void>;
     send(name: string, args: {}): void;
 }
 export declare abstract class PECOuterPort extends APIPort {
-    constructor(messagePort: any, arc: any);
+    constructor(messagePort: MessagePort, arc: Arc);
     Stop(): void;
     DefineHandle(store: StorageProviderBase, type: Type, name: string): void;
     InstantiateParticle(particle: recipeParticle.Particle, id: string, spec: ParticleSpec, stores: Map<string, StorageProviderBase>): void;
@@ -92,7 +92,7 @@ export interface CursorNextValue {
     done: boolean;
 }
 export declare abstract class PECInnerPort extends APIPort {
-    constructor(messagePort: any);
+    constructor(messagePort: MessagePort);
     abstract onStop(): any;
     abstract onDefineHandle(identifier: string, type: Type, name: string): any;
     abstract onInstantiateParticle(id: string, spec: ParticleSpec, proxies: Map<string, StorageProxy>): any;

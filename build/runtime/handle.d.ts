@@ -103,8 +103,8 @@ export declare class Variable extends Handle {
      * @throws {Error} if this variable is not configured as a readable handle (i.e. 'in' or 'inout')
      * in the particle's manifest.
      */
-    get(): Promise<Reference | import("./entity.js").EntityInterface | ParticleSpec>;
-    _restore(model: any): Reference | import("./entity.js").EntityInterface | ParticleSpec;
+    get(): Promise<ParticleSpec | import("./entity.js").EntityInterface | Reference>;
+    _restore(model: any): ParticleSpec | import("./entity.js").EntityInterface | Reference;
     /**
      * Stores a new entity into the Variable, replacing any existing entity.
      * @throws {Error} if this variable is not configured as a writeable handle (i.e. 'out' or 'inout')

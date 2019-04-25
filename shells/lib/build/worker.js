@@ -273,15 +273,15 @@ class ParticleExecutionContext {
             }
         };
     }
+    // tslint:disable-next-line: no-any
     async _instantiateParticle(id, spec, proxies) {
         let resolve = null;
         const p = new Promise(res => resolve = res);
         this.pendingLoads.push(p);
         const clazz = await this.loader.loadParticleClass(spec);
         const capabilities = this.defaultCapabilitySet();
-        const particle = new clazz(); // TODO: how can i add an argument to DomParticle ctor?
-        particle.id = id;
-        particle.capabilities = capabilities;
+        const particle = new clazz();
+        particle.setCapabilities(capabilities);
         this.particles.push(particle);
         const handleMap = new Map();
         const registerList = [];
@@ -5565,11 +5565,26 @@ class Loader {
         }
         return Object(_platform_fetch_web_js__WEBPACK_IMPORTED_MODULE_1__["fetch"])(url).then(res => res.text());
     }
+    /**
+     * Returns a particle class implementation by loading and executing
+     * the code defined by a particle.  In the following example `x.js`
+     * will be loaded and executed:
+     *
+     * ```
+     * Particle foo in 'x.js'
+     * ```
+     */
     async loadParticleClass(spec) {
         const clazz = await this.requireParticle(spec.implFile);
         clazz.spec = spec;
         return clazz;
     }
+    /**
+     * Loads a particle class from the given filename by loading the
+     * script contained in `fileName` and executing it as a script.
+     *
+     * Protected for use in tests.
+     */
     async requireParticle(fileName) {
         if (fileName === null)
             fileName = '';
@@ -5593,6 +5608,9 @@ class Loader {
     setParticleExecutionContext(pec) {
         this.pec = pec;
     }
+    /**
+     * executes the defineParticle() code and returns the results which should be a class definition.
+     */
     unwrapParticle(particleWrapper) {
         Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(this.pec);
         return particleWrapper({ Particle: _particle_js__WEBPACK_IMPORTED_MODULE_7__["Particle"], DomParticle: _dom_particle_js__WEBPACK_IMPORTED_MODULE_5__["DomParticle"], TransformationDomParticle: _transformation_dom_particle_js__WEBPACK_IMPORTED_MODULE_9__["TransformationDomParticle"], MultiplexerDomParticle: _multiplexer_dom_particle_js__WEBPACK_IMPORTED_MODULE_6__["MultiplexerDomParticle"], Reference: _reference_js__WEBPACK_IMPORTED_MODULE_8__["ClientReference"].newClientReference(this.pec), html });
@@ -6144,9 +6162,6 @@ __webpack_require__.r(__webpack_exports__);
  * Particle that interoperates with DOM.
  */
 class DomParticleBase extends _particle_js__WEBPACK_IMPORTED_MODULE_2__["Particle"] {
-    constructor() {
-        super();
-    }
     /**
      * Override to return a String defining primary markup.
      */
@@ -6408,7 +6423,7 @@ __webpack_require__.r(__webpack_exports__);
  * instead use DOMParticle.
  */
 class Particle {
-    constructor(capabilities) {
+    constructor() {
         this.relevances = [];
         this._idle = Promise.resolve();
         this._busy = 0;
@@ -6418,6 +6433,16 @@ class Particle {
         this.spec = this.constructor['spec'];
         if (this.spec.inputs.length === 0) {
             this.extraData = true;
+        }
+    }
+    /**
+     * This sets the capabilities for this particle.  This can only
+     * be called once.
+     */
+    setCapabilities(capabilities) {
+        if (this.capabilities) {
+            // Capabilities already set, throw an error.
+            throw new Error('capabilities should only be set once');
         }
         this.capabilities = capabilities || {};
     }
