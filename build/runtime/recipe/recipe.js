@@ -550,8 +550,7 @@ export class Recipe {
         return this.handles.filter(handle => handle.connections.length === 0);
     }
     get allSpecifiedConnections() {
-        return [].concat(...this.particles.filter(p => p.spec && p.spec.handleConnections.length > 0)
-            .map(particle => particle.spec.handleConnections.map(connSpec => ({ particle, connSpec }))));
+        return [].concat(...this.particles.filter(p => p.spec && p.spec.connections).map(particle => particle.spec.connections.map(connSpec => ({ particle, connSpec }))));
     }
     getFreeConnections(type) {
         return this.allSpecifiedConnections.filter(({ particle, connSpec }) => !connSpec.isOptional &&

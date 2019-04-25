@@ -270,7 +270,19 @@ export class Particle {
         return Object.values(this._consumedSlotConnections).find(slotConn => slotConn.getSlotSpec() === spec);
     }
     getSlotSpecByName(name) {
-        return this.spec && this.spec.slotConnections.get(name);
+        if (!this.spec)
+            return undefined;
+        const slot = this.spec.slotConnections.get(name);
+        if (slot)
+            return slot;
+        // TODO(jopra): Provided slots should always be listed in the particle spec.
+        for (const slot of this.spec.slotConnections.values()) {
+            for (const provided of slot.provideSlotConnections) {
+                if (provided.name === name)
+                    return provided;
+            }
+        }
+        return undefined;
     }
     getSlotConnectionByName(name) {
         return this._consumedSlotConnections[name];

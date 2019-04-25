@@ -1368,10 +1368,11 @@ class HandleConnectionSpec {
 class ConsumeSlotConnectionSpec {
     constructor(slotModel) {
         this.name = slotModel.name;
-        this.isRequired = slotModel.isRequired;
-        this.isSet = slotModel.isSet;
+        this.isRequired = slotModel.isRequired || false;
+        this.isSet = slotModel.isSet || false;
         this.tags = slotModel.tags || [];
         this.formFactor = slotModel.formFactor; // TODO: deprecate form factors?
+        this.handles = slotModel.handles || [];
         this.provideSlotConnections = [];
         if (!slotModel.provideSlotConnections) {
             return;
@@ -1380,19 +1381,13 @@ class ConsumeSlotConnectionSpec {
             this.provideSlotConnections.push(new ProvideSlotConnectionSpec(ps));
         });
     }
-    getProvidedSlotSpec(name) {
-        return this.provideSlotConnections.find(ps => ps.name === name);
-    }
+    // Getters to 'fake' being a Handle.
+    get isOptional() { return !this.isRequired; }
+    get direction() { return '`consume'; }
+    get type() { return _type_js__WEBPACK_IMPORTED_MODULE_3__["SlotType"].make(this.formFactor, null); } //TODO(jopra): FIX THIS NULL!
+    get dependentConnections() { return this.provideSlotConnections; }
 }
-class ProvideSlotConnectionSpec {
-    constructor(slotModel) {
-        this.name = slotModel.name;
-        this.isRequired = slotModel.isRequired || false;
-        this.isSet = slotModel.isSet || false;
-        this.tags = slotModel.tags || [];
-        this.formFactor = slotModel.formFactor; // TODO: deprecate form factors?
-        this.handles = slotModel.handles || [];
-    }
+class ProvideSlotConnectionSpec extends ConsumeSlotConnectionSpec {
 }
 class ParticleSpec {
     constructor(model) {
@@ -1400,18 +1395,14 @@ class ParticleSpec {
         this.name = model.name;
         this.verbs = model.verbs;
         const typeVarMap = new Map();
-        this.handleConnections = [];
-        model.args.forEach(arg => this.createConnection(arg, typeVarMap));
         this.handleConnectionMap = new Map();
-        this.handleConnections.forEach(a => this.handleConnectionMap.set(a.name, a));
-        this.inputs = this.handleConnections.filter(a => a.isInput);
-        this.outputs = this.handleConnections.filter(a => a.isOutput);
+        model.args.forEach(arg => this.createConnection(arg, typeVarMap));
         // initialize descriptions patterns.
         model.description = model.description || {};
         this.validateDescription(model.description);
         this.pattern = model.description['pattern'];
-        this.handleConnections.forEach(connectionSpec => {
-            connectionSpec.pattern = model.description[connectionSpec.name];
+        this.handleConnectionMap.forEach((connectionSpec, name) => {
+            connectionSpec.pattern = model.description[name];
         });
         this.implFile = model.implFile;
         this.implBlobUrl = model.implBlobUrl;
@@ -1429,21 +1420,29 @@ class ParticleSpec {
     }
     createConnection(arg, typeVarMap) {
         const connection = new HandleConnectionSpec(arg, typeVarMap);
-        this.handleConnections.push(connection);
+        this.handleConnectionMap.set(connection.name, connection);
         connection.instantiateDependentConnections(this, typeVarMap);
         return connection;
     }
+    get handleConnections() {
+        return this.connections;
+    }
+    get connections() {
+        return [...this.handleConnectionMap.values()];
+    }
+    get inputs() {
+        return this.connections.filter(a => a.isInput);
+    }
+    get outputs() {
+        return this.connections.filter(a => a.isOutput);
+    }
     isInput(param) {
-        for (const input of this.inputs)
-            if (input.name === param)
-                return true;
-        return false;
+        const connection = this.handleConnectionMap.get(param);
+        return connection && connection.isInput;
     }
     isOutput(param) {
-        for (const outputs of this.outputs)
-            if (outputs.name === param)
-                return true;
-        return false;
+        const connection = this.handleConnectionMap.get(param);
+        return connection && connection.isOutput;
     }
     getConnectionByName(name) {
         return this.handleConnectionMap.get(name);
@@ -1563,7 +1562,7 @@ class ParticleSpec {
         // Description
         if (this.pattern) {
             results.push(`  description \`${this.pattern}\``);
-            this.handleConnections.forEach(cs => {
+            this.handleConnectionMap.forEach(cs => {
                 if (cs.pattern) {
                     results.push(`    ${cs.name} \`${cs.pattern}\``);
                 }

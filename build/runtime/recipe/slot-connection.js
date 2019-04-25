@@ -155,7 +155,7 @@ export class SlotConnection {
             // Only assert that there's a spec for this provided slot if there's a spec for
             // the consumed slot .. otherwise this is just a constraint.
             if (this.getSlotSpec()) {
-                const providedSlotSpec = this.getSlotSpec().getProvidedSlotSpec(psName);
+                const providedSlotSpec = this.particle.getSlotSpecByName(psName);
                 assert(providedSlotSpec, `Cannot find providedSlotSpec for ${psName}`);
             }
             provideRes.push(`${psName} as ${(nameMap && nameMap.get(providedSlot)) || providedSlot}`);

@@ -20,7 +20,7 @@ export class RecipeWalker extends Walker {
         if (this.onPotentialHandleConnection) {
             for (const particle of recipe.particles) {
                 if (particle.spec) {
-                    for (const connectionSpec of particle.spec.handleConnections) {
+                    for (const connectionSpec of particle.spec.handleConnectionMap.values()) {
                         if (particle.connections[connectionSpec.name]) {
                             continue;
                         }

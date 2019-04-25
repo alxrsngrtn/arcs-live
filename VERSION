@@ -1,9 +1,9 @@
-commit 9669ed7307ca672450e2d2bdcbcc3dafb189bf24
-Author: Paul Lindner <plindner@google.com>
-Date:   Thu Apr 25 11:58:16 2019 -0700
+commit 742ebe793566a39e077791411422da153c8cff29
+Author: Joshua Pratt <jp10010101010000@gmail.com>
+Date:   Fri Apr 26 09:08:06 2019 +1000
 
-    Queue calls to Arc.instantiate to avoid handle corruption (#2927)
+    Slots are owned by their particles (#2758)
     
-    * Queue calls to Arc.instantiate to avoid handle corruption
+    This means that consume slots no longer own the provided slots associated with them, instead their particle owns all slots and dependencies are checked at instantiation time.
     
-    Addresses: #2863
+    Also, Typescript annotation improvements

@@ -158,15 +158,15 @@
         "signature": "8a37ccb251ab7cb2ac2d7694b44da96d21f7f145d6f1984c91850234043d3999"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/slot.ts": {
-        "version": "86144e5525599ac9431710b8359a8088699ff07ceee65de7680d33f0c52fdab4",
-        "signature": "759baa782f234c5cfafed68b5354952a9747d8b3f129bc624b26910be35d5d1d"
+        "version": "94d1693d5e5373038d5b4b0b1309f9c00e359ca809047e005fd02801f4ca5372",
+        "signature": "007d998dc8322143ed6d47c48cb4ae83040f84d515a85d19386483293c3dc6a8"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/slot-connection.ts": {
-        "version": "c8779d4c2fed01354c568824b9524aaeea61afd18f12111ef482f7fffee419a1",
+        "version": "7f5c70bec15be4bad30197474c0fccaa3b61e1e582e700a36a9e01580775cdd0",
         "signature": "178b756295d4856a6ad682f13c60c34bed0251f6e74f28733ee5a6d76134ed40"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/recipe.ts": {
-        "version": "7724e71c4134852904adc8fdb2ac5d27161958aabee6f557d687d4e79ac64a9d",
+        "version": "071e2dbe32f1af6ed1fda322e9a33bfe10bcbe9f58c66ad4b795844d608bed51",
         "signature": "529594f47b43a54fbc2f99a93f4a7d9606e4c6ad155fd3f1ac70cdb9678f81a2"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/crdt-collection-model.ts": {
@@ -222,12 +222,12 @@
         "signature": "23c2a8882d3c839c8662b7709abba46326bf92b1cab9ac6e6160d6bb46f5a975"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/particle-spec.ts": {
-        "version": "d56f892979fd8892f281d90a4dbc242fa43f580414da4357bfce03fe5765f2aa",
-        "signature": "a556001740e34c177ebf9a4a65f515eb4eae2eca715e5c98843b27aa7c67c89a"
+        "version": "0154bcaa0bbeff4aefe75a545e6959cba4e4a74cd1d300220188e45f37294963",
+        "signature": "3fe3727b1e430f7aa6d74fcb1463415d223b5a145c84ea83d95aaeda52ff0594"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/particle.ts": {
-        "version": "e9fe09eb69c10fe7ba8bd9d6841f3676e61122d8d7bef9a9619ca15a0c42c100",
-        "signature": "13740b54ad9419f0a1438784eef2863c0ac3940cde0d7bc020e620ce3b4f2709"
+        "version": "011b701cc9802051f56b5f93e56c569bcde0869ed4b1b0894abacdb8cdab50aa",
+        "signature": "a91060972df5bb3ddb0300fae41524034a9d210cbcda2a73cbd50785aefe09b8"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/debug/arc-stores-fetcher.ts": {
         "version": "460ffba5d951bef2068ecd4bea94e81f59a04e7833e3122d1a439eacca4780ca",
@@ -306,7 +306,7 @@
         "signature": "b9504d52d9f3a3219f51cde5e8099489c6b53ed66b3b459518e787d121726047"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/recipe-walker.ts": {
-        "version": "ce13196e00bf679b8b88c681bed4c631275e8fbdcbacf1d310bd55b3b45db94f",
+        "version": "4a3c5da9d5c18783fa6a2e7c73c1df5be794b66bf7e31c17afab4295f4e03ada",
         "signature": "e8597a9c193a641cc7053c171057c975067f73d20fdc344c16cb266a59d73d6c"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/slot-utils.ts": {
@@ -434,7 +434,7 @@
         "signature": "386225870fe7ff2b410dda3c36ac04396b8a67965f6edaa5f9fff1d1796548f6"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/manifest.ts": {
-        "version": "fcef813e0c9d24794dba0bcd1f2ce5611e77216c0c2a3d92ae5d580ad7ecad1b",
+        "version": "ba3ebe65da8987db7a01060319f125a78b4284fa585553775fb64e4633bdd1b6",
         "signature": "8b76973e477f810f9e0c88f81a2dac07404b207e62d9d106fe2962c130b38f9e"
       },
       "/home/travis/build/PolymerLabs/arcs/src/platform/atob-web.ts": {
@@ -558,7 +558,7 @@
         "signature": "30436996b338fa55d39b528b0a83ed2c518f3ee2d4dec900797077ffad31e915"
       },
       "/home/travis/build/PolymerLabs/arcs/src/planning/strategies/create-handle-group.ts": {
-        "version": "ef6c0817c8c6bb376c14217a5b220f75709d9331cb267c85055d9d8df6dc3731",
+        "version": "a24ed1395b49f7142c815983b68a3f2c180bf10b28310cd6738c160d39aedb97",
         "signature": "cc1925cc5d37879488314c3f6a4dd0439685252db643b3e963fecafac5d4861f"
       },
       "/home/travis/build/PolymerLabs/arcs/src/planning/strategies/match-free-handles-to-connections.ts": {

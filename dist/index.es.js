@@ -2807,10 +2807,11 @@ class HandleConnectionSpec {
 class ConsumeSlotConnectionSpec {
     constructor(slotModel) {
         this.name = slotModel.name;
-        this.isRequired = slotModel.isRequired;
-        this.isSet = slotModel.isSet;
+        this.isRequired = slotModel.isRequired || false;
+        this.isSet = slotModel.isSet || false;
         this.tags = slotModel.tags || [];
         this.formFactor = slotModel.formFactor; // TODO: deprecate form factors?
+        this.handles = slotModel.handles || [];
         this.provideSlotConnections = [];
         if (!slotModel.provideSlotConnections) {
             return;
@@ -2819,19 +2820,13 @@ class ConsumeSlotConnectionSpec {
             this.provideSlotConnections.push(new ProvideSlotConnectionSpec(ps));
         });
     }
-    getProvidedSlotSpec(name) {
-        return this.provideSlotConnections.find(ps => ps.name === name);
-    }
+    // Getters to 'fake' being a Handle.
+    get isOptional() { return !this.isRequired; }
+    get direction() { return '`consume'; }
+    get type() { return SlotType.make(this.formFactor, null); } //TODO(jopra): FIX THIS NULL!
+    get dependentConnections() { return this.provideSlotConnections; }
 }
-class ProvideSlotConnectionSpec {
-    constructor(slotModel) {
-        this.name = slotModel.name;
-        this.isRequired = slotModel.isRequired || false;
-        this.isSet = slotModel.isSet || false;
-        this.tags = slotModel.tags || [];
-        this.formFactor = slotModel.formFactor; // TODO: deprecate form factors?
-        this.handles = slotModel.handles || [];
-    }
+class ProvideSlotConnectionSpec extends ConsumeSlotConnectionSpec {
 }
 class ParticleSpec {
     constructor(model) {
@@ -2839,18 +2834,14 @@ class ParticleSpec {
         this.name = model.name;
         this.verbs = model.verbs;
         const typeVarMap = new Map();
-        this.handleConnections = [];
-        model.args.forEach(arg => this.createConnection(arg, typeVarMap));
         this.handleConnectionMap = new Map();
-        this.handleConnections.forEach(a => this.handleConnectionMap.set(a.name, a));
-        this.inputs = this.handleConnections.filter(a => a.isInput);
-        this.outputs = this.handleConnections.filter(a => a.isOutput);
+        model.args.forEach(arg => this.createConnection(arg, typeVarMap));
         // initialize descriptions patterns.
         model.description = model.description || {};
         this.validateDescription(model.description);
         this.pattern = model.description['pattern'];
-        this.handleConnections.forEach(connectionSpec => {
-            connectionSpec.pattern = model.description[connectionSpec.name];
+        this.handleConnectionMap.forEach((connectionSpec, name) => {
+            connectionSpec.pattern = model.description[name];
         });
         this.implFile = model.implFile;
         this.implBlobUrl = model.implBlobUrl;
@@ -2868,21 +2859,29 @@ class ParticleSpec {
     }
     createConnection(arg, typeVarMap) {
         const connection = new HandleConnectionSpec(arg, typeVarMap);
-        this.handleConnections.push(connection);
+        this.handleConnectionMap.set(connection.name, connection);
         connection.instantiateDependentConnections(this, typeVarMap);
         return connection;
     }
+    get handleConnections() {
+        return this.connections;
+    }
+    get connections() {
+        return [...this.handleConnectionMap.values()];
+    }
+    get inputs() {
+        return this.connections.filter(a => a.isInput);
+    }
+    get outputs() {
+        return this.connections.filter(a => a.isOutput);
+    }
     isInput(param) {
-        for (const input of this.inputs)
-            if (input.name === param)
-                return true;
-        return false;
+        const connection = this.handleConnectionMap.get(param);
+        return connection && connection.isInput;
     }
     isOutput(param) {
-        for (const outputs of this.outputs)
-            if (outputs.name === param)
-                return true;
-        return false;
+        const connection = this.handleConnectionMap.get(param);
+        return connection && connection.isOutput;
     }
     getConnectionByName(name) {
         return this.handleConnectionMap.get(name);
@@ -3002,7 +3001,7 @@ class ParticleSpec {
         // Description
         if (this.pattern) {
             results.push(`  description \`${this.pattern}\``);
-            this.handleConnections.forEach(cs => {
+            this.handleConnectionMap.forEach(cs => {
                 if (cs.pattern) {
                     results.push(`    ${cs.name} \`${cs.pattern}\``);
                 }
@@ -13732,7 +13731,7 @@ class SlotConnection {
             // Only assert that there's a spec for this provided slot if there's a spec for
             // the consumed slot .. otherwise this is just a constraint.
             if (this.getSlotSpec()) {
-                const providedSlotSpec = this.getSlotSpec().getProvidedSlotSpec(psName);
+                const providedSlotSpec = this.particle.getSlotSpecByName(psName);
                 assert(providedSlotSpec, `Cannot find providedSlotSpec for ${psName}`);
             }
             provideRes.push(`${psName} as ${(nameMap && nameMap.get(providedSlot)) || providedSlot}`);
@@ -14004,7 +14003,19 @@ class Particle {
         return Object.values(this._consumedSlotConnections).find(slotConn => slotConn.getSlotSpec() === spec);
     }
     getSlotSpecByName(name) {
-        return this.spec && this.spec.slotConnections.get(name);
+        if (!this.spec)
+            return undefined;
+        const slot = this.spec.slotConnections.get(name);
+        if (slot)
+            return slot;
+        // TODO(jopra): Provided slots should always be listed in the particle spec.
+        for (const slot of this.spec.slotConnections.values()) {
+            for (const provided of slot.provideSlotConnections) {
+                if (provided.name === name)
+                    return provided;
+            }
+        }
+        return undefined;
     }
     getSlotConnectionByName(name) {
         return this._consumedSlotConnections[name];
@@ -14163,12 +14174,12 @@ class Slot {
     get spec() {
         // TODO: should this return something that indicates this isn't available yet instead of
         // the constructed {isSet: false, tags: []}?
-        return (this.sourceConnection && this.sourceConnection.getSlotSpec()) ? this.sourceConnection.getSlotSpec().getProvidedSlotSpec(this.name) : { isSet: false, tags: [] };
+        return (this.sourceConnection && this.sourceConnection.getSlotSpec()) ? this.sourceConnection.particle.getSlotSpecByName(this.name) : { isSet: false, tags: [] };
     }
     get handles() {
         const handles = [];
         if (this.sourceConnection && this.sourceConnection.getSlotSpec()) {
-            for (const handleName of this.sourceConnection.getSlotSpec().getProvidedSlotSpec(this.name).handles) {
+            for (const handleName of this.sourceConnection.particle.getSlotSpecByName(this.name).handles) {
                 const handleConn = this.sourceConnection.particle.connections[handleName];
                 if (handleConn || handleConn.handle) {
                     handles.push(handleConn.handle);
@@ -14818,8 +14829,7 @@ class Recipe {
         return this.handles.filter(handle => handle.connections.length === 0);
     }
     get allSpecifiedConnections() {
-        return [].concat(...this.particles.filter(p => p.spec && p.spec.handleConnections.length > 0)
-            .map(particle => particle.spec.handleConnections.map(connSpec => ({ particle, connSpec }))));
+        return [].concat(...this.particles.filter(p => p.spec && p.spec.connections).map(particle => particle.spec.connections.map(connSpec => ({ particle, connSpec }))));
     }
     getFreeConnections(type) {
         return this.allSpecifiedConnections.filter(({ particle, connSpec }) => !connSpec.isOptional &&
@@ -16973,7 +16983,7 @@ ${e.message}
                             throw new ManifestError(slotConnectionItem.location, `Consumed slot '${slotConnectionItem.param}' is not defined by '${particle.name}'`);
                         }
                         slotConnectionItem.dependentSlotConnections.forEach(ps => {
-                            if (!particle.spec.slotConnections.get(slotConnectionItem.param).getProvidedSlotSpec(ps.param)) {
+                            if (!particle.getSlotSpecByName(ps.param)) {
                                 throw new ManifestError(ps.location, `Provided slot '${ps.param}' is not defined by '${particle.name}'`);
                             }
                         });
@@ -21431,7 +21441,7 @@ class RecipeWalker extends Walker {
         if (this.onPotentialHandleConnection) {
             for (const particle of recipe.particles) {
                 if (particle.spec) {
-                    for (const connectionSpec of particle.spec.handleConnections) {
+                    for (const connectionSpec of particle.spec.handleConnectionMap.values()) {
                         if (particle.connections[connectionSpec.name]) {
                             continue;
                         }
@@ -24313,19 +24323,19 @@ class CreateHandleGroup extends Strategy {
                         maximalGroup = compatibleConnections;
                     }
                 }
-                if (maximalGroup) {
-                    return recipe => {
-                        const newHandle = recipe.newHandle();
-                        newHandle.fate = 'create';
-                        for (const { particle, connSpec } of maximalGroup) {
-                            const cloneParticle = recipe.updateToClone({ particle }).particle;
-                            const conn = cloneParticle.addConnectionName(connSpec.name);
-                            conn.connectToHandle(newHandle);
-                        }
-                        return 0;
-                    };
+                if (!maximalGroup) {
+                    return undefined;
                 }
-                return undefined;
+                return (recipe) => {
+                    const newHandle = recipe.newHandle();
+                    newHandle.fate = 'create';
+                    for (const { particle, connSpec } of maximalGroup) {
+                        const cloneParticle = recipe.updateToClone({ particle }).particle;
+                        const conn = cloneParticle.addConnectionName(connSpec.name);
+                        conn.connectToHandle(newHandle);
+                    }
+                    return 0;
+                };
             }
         }(StrategizerWalker.Independent), this);
     }
