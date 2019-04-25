@@ -68,6 +68,7 @@ export declare class Arc {
     private readonly debugHandler;
     private readonly innerArcsByParticle;
     private readonly listenerClasses;
+    private readonly instantiateMutex;
     readonly id: Id;
     private readonly idGenerator;
     loadedParticleInfo: Map<string, {
@@ -110,7 +111,22 @@ export declare class Arc {
     generateID(component?: string): Id;
     readonly _stores: (StorageProviderBase)[];
     cloneForSpeculativeExecution(): Promise<Arc>;
+    /**
+     * Instantiates the given recipe in the Arc.
+     *
+     * Executes the following steps:
+     *
+     * - Merges the recipe into the Active Recipe
+     * - Populates missing slots.
+     * - Processes the Handles and creates stores for them.
+     * - Instantiates the new Particles
+     * - Passes these particles for initialization in the PEC
+     * - For non-speculative Arcs processes instantiatePlanCallbacks
+     *
+     * Waits for completion of an existing Instantiate before returning.
+     */
     instantiate(recipe: Recipe): Promise<void>;
+    private _doInstantiate;
     createStore(type: Type, name?: string, id?: string, tags?: string[], storageKey?: string): Promise<StorageProviderBase>;
     _registerStore(store: StorageProviderBase, tags?: string[]): void;
     _tagStore(store: StorageProviderBase, tags: Set<string>): void;

@@ -21979,6 +21979,60 @@ class ParticleExecutionHost {
 }
 
 /**
+ * A simmple Mutex to gate access to critical async code
+ * sections that should not execute concurrently.
+ *
+ * Sample usage:
+ *
+ * ```
+ *   class SampleClass {
+ *     private readonly mutex = new Mutex();
+ *
+ *     async instantiate() {
+ *       const release = await mutex.acquire();
+ *       try {
+ *         // Protected section with async execution.
+ *       } finally {
+ *         release();
+ *       }
+ *     }
+ *   }
+ */
+class Mutex {
+    constructor() {
+        this.next = Promise.resolve();
+        this.depth = 0; // tracks the number of blocked executions on this lock.
+    }
+    /**
+     * @return true if the mutex is already acquired.
+     */
+    get locked() {
+        return this.depth !== 0;
+    }
+    /**
+     * Call acquire and await it to lock the critical section for the Mutex.
+     *
+     * @return A Releaser which resolves to a function which releases the Mutex.
+     */
+    async acquire() {
+        let release;
+        const current = this.next.then(() => {
+            // external code is awaiting the result of acquire
+            this.depth++;
+            return () => {
+                // external code is calling the releaser
+                release();
+                this.depth--;
+            };
+        });
+        this.next = new Promise(resolve => {
+            release = resolve;
+        });
+        return current;
+    }
+}
+
+/**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
  * This code may only be used under the BSD style license found at
@@ -22002,6 +22056,7 @@ class Arc {
         this.storeDescriptions = new Map();
         this.instantiatePlanCallbacks = [];
         this.innerArcsByParticle = new Map();
+        this.instantiateMutex = new Mutex();
         this.idGenerator = IdGenerator.newSession();
         this.loadedParticleInfo = new Map();
         // TODO: context should not be optional.
@@ -22372,9 +22427,33 @@ ${this.activeRecipe.toString()}`;
         }
         return arc;
     }
+    /**
+     * Instantiates the given recipe in the Arc.
+     *
+     * Executes the following steps:
+     *
+     * - Merges the recipe into the Active Recipe
+     * - Populates missing slots.
+     * - Processes the Handles and creates stores for them.
+     * - Instantiates the new Particles
+     * - Passes these particles for initialization in the PEC
+     * - For non-speculative Arcs processes instantiatePlanCallbacks
+     *
+     * Waits for completion of an existing Instantiate before returning.
+     */
     async instantiate(recipe) {
         assert(recipe.isResolved(), `Cannot instantiate an unresolved recipe: ${recipe.toString({ showUnresolved: true })}`);
         assert(recipe.isCompatible(this.modality), `Cannot instantiate recipe ${recipe.toString()} with [${recipe.modality.names}] modalities in '${this.modality.names}' arc`);
+        const release = await this.instantiateMutex.acquire();
+        try {
+            await this._doInstantiate(recipe);
+        }
+        finally {
+            release();
+        }
+    }
+    // Critical section for instantiate,
+    async _doInstantiate(recipe) {
         const { handles, particles, slots } = recipe.mergeInto(this._activeRecipe);
         this._recipeDeltas.push({ particles, handles, slots, patterns: recipe.patterns });
         // TODO(mmandlis): Get rid of populating the missing local slot IDs here,

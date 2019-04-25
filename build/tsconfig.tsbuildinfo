@@ -385,9 +385,13 @@
         "version": "2b8f587686c6bd49a4beec77824fee3ba9c615aff6095ad4d8e0f63f1ae9c339",
         "signature": "fe2e16d95329f83d58193e2ff0ed6fd3d122e8cb89e2639e02d2be8cf281b2b2"
       },
+      "/home/travis/build/PolymerLabs/arcs/src/runtime/mutex.ts": {
+        "version": "75f93e9e05d1c11e783deb40c9dac8f5886ec895f0e8c8d60659ca5045d25161",
+        "signature": "96ed532e006f075d33e1d70c5c1a51aaaf133a5db7f5140e8ff7305c2b7a175a"
+      },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts": {
-        "version": "4e24627941280ce694c3fa73826e6572cc3736403e073e09878ef7e8816a43cd",
-        "signature": "e82370a5d4d2426850fdf7955b592bb327dbf2dff434ec28c5cebd7be23bf828"
+        "version": "105c0484f64a6b8c7b63487025198d45e9a632749ba2a47d4e9cf6d4f950c3c2",
+        "signature": "0a5e25f2b79c2eb74c2a6489de4ee19da91c5b5b1fc1374885c81a350f1a17c4"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/debug/outer-port-attachment.ts": {
         "version": "1880b92832eed443cbbda291334b51c112fd2859f10cfde7853172abf76ae211",
@@ -1284,6 +1288,10 @@
       "/home/travis/build/PolymerLabs/arcs/src/runtime/test/multiplexer-test.ts": {
         "version": "1a3ee5584c29dd5335db8dbad49bdf9a2e6ca8f636f888b063c16a8c4b6f8ef9",
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
+      },
+      "/home/travis/build/PolymerLabs/arcs/src/runtime/test/mutex-test.ts": {
+        "version": "fc4204849d0479d009bf1e65c03f317303a32ebaaeff253388753eb6562579cb",
+        "signature": "8bc1d39a3b8ec61064f9969316a088e314895e7ffd094468dcc0b238f33cb4a6"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/test/particle-api-test.ts": {
         "version": "d8c65388ac1f251e6fea1afd0b5b40e39aa0aa7df90ccc6d3301646f0dd119a0",
@@ -2254,6 +2262,10 @@
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
       ],
+      "/home/travis/build/PolymerLabs/arcs/src/runtime/mutex.ts": [
+        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
+        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
+      ],
       "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts": [
         "/home/travis/build/PolymerLabs/arcs/src/platform/assert-web.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/debug/abstract-devtools-channel.ts",
@@ -2276,6 +2288,7 @@
         "/home/travis/build/PolymerLabs/arcs/src/runtime/type.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/particle-execution-context.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/interface-info.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/mutex.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
       ],
@@ -4116,6 +4129,12 @@
         "/home/travis/build/PolymerLabs/arcs/src/runtime/testing/fake-slot-composer.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/testing/test-helper.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/id.ts",
+        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
+        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
+      ],
+      "/home/travis/build/PolymerLabs/arcs/src/runtime/test/mutex-test.ts": [
+        "/home/travis/build/PolymerLabs/arcs/src/platform/chai-web.d.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/mutex.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
       ],
@@ -6368,6 +6387,7 @@
       "/home/travis/build/PolymerLabs/arcs/src/runtime/util.ts",
       "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/synthetic-storage.ts",
       "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/storage-provider-factory.ts",
+      "/home/travis/build/PolymerLabs/arcs/src/runtime/mutex.ts",
       "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts",
       "/home/travis/build/PolymerLabs/arcs/src/runtime/debug/outer-port-attachment.ts",
       "/home/travis/build/PolymerLabs/arcs/src/runtime/api-channel.ts",
@@ -6593,6 +6613,7 @@
       "/home/travis/build/PolymerLabs/arcs/src/runtime/test/manifest-parser-test.ts",
       "/home/travis/build/PolymerLabs/arcs/src/runtime/test/manifest-test.ts",
       "/home/travis/build/PolymerLabs/arcs/src/runtime/test/multiplexer-test.ts",
+      "/home/travis/build/PolymerLabs/arcs/src/runtime/test/mutex-test.ts",
       "/home/travis/build/PolymerLabs/arcs/src/runtime/test/particle-api-test.ts",
       "/home/travis/build/PolymerLabs/arcs/src/runtime/test/particle-execution-context-test.ts",
       "/home/travis/build/PolymerLabs/arcs/src/runtime/test/recipe-resolver-test.ts",

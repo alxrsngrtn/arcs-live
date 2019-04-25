@@ -19,6 +19,7 @@ import { compareComparables } from './recipe/comparable.js';
 import { StorageProviderBase } from './storage/storage-provider-base.js';
 import { StorageProviderFactory } from './storage/storage-provider-factory.js';
 import { ArcType, CollectionType, EntityType, InterfaceType, RelationType, Type, TypeVariable } from './type.js';
+import { Mutex } from './mutex.js';
 export class Arc {
     constructor({ id, context, pecFactory, slotComposer, loader, storageKey, storageProviderFactory, speculative, innerArc, stub, listenerClasses }) {
         this._activeRecipe = new Recipe();
@@ -34,6 +35,7 @@ export class Arc {
         this.storeDescriptions = new Map();
         this.instantiatePlanCallbacks = [];
         this.innerArcsByParticle = new Map();
+        this.instantiateMutex = new Mutex();
         this.idGenerator = IdGenerator.newSession();
         this.loadedParticleInfo = new Map();
         // TODO: context should not be optional.
@@ -404,9 +406,33 @@ ${this.activeRecipe.toString()}`;
         }
         return arc;
     }
+    /**
+     * Instantiates the given recipe in the Arc.
+     *
+     * Executes the following steps:
+     *
+     * - Merges the recipe into the Active Recipe
+     * - Populates missing slots.
+     * - Processes the Handles and creates stores for them.
+     * - Instantiates the new Particles
+     * - Passes these particles for initialization in the PEC
+     * - For non-speculative Arcs processes instantiatePlanCallbacks
+     *
+     * Waits for completion of an existing Instantiate before returning.
+     */
     async instantiate(recipe) {
         assert(recipe.isResolved(), `Cannot instantiate an unresolved recipe: ${recipe.toString({ showUnresolved: true })}`);
         assert(recipe.isCompatible(this.modality), `Cannot instantiate recipe ${recipe.toString()} with [${recipe.modality.names}] modalities in '${this.modality.names}' arc`);
+        const release = await this.instantiateMutex.acquire();
+        try {
+            await this._doInstantiate(recipe);
+        }
+        finally {
+            release();
+        }
+    }
+    // Critical section for instantiate,
+    async _doInstantiate(recipe) {
         const { handles, particles, slots } = recipe.mergeInto(this._activeRecipe);
         this._recipeDeltas.push({ particles, handles, slots, patterns: recipe.patterns });
         // TODO(mmandlis): Get rid of populating the missing local slot IDs here,

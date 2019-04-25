@@ -1,12 +1,9 @@
-commit 1423c50fb3845af8ea01eca0105ff7291e3edf6b
+commit 9669ed7307ca672450e2d2bdcbcc3dafb189bf24
 Author: Paul Lindner <plindner@google.com>
-Date:   Thu Apr 25 11:50:29 2019 -0700
+Date:   Thu Apr 25 11:58:16 2019 -0700
 
-    Improve type handling in loading and particle execution (#2920)
+    Queue calls to Arc.instantiate to avoid handle corruption (#2927)
     
-    * Improve type handling in loading and particle execution
-    - Add documention to Loader to help describe the steps taken.
-    - Add types for load/require Particle, adjust callers and tests
-    - Add types to slot-dom-consumer, particle-execution-context etc.
-    - Identified a problematic issue with readonly properties.
-    - Removed capabilities from the Particle constructor and added a write-once method to set them.
+    * Queue calls to Arc.instantiate to avoid handle corruption
+    
+    Addresses: #2863
