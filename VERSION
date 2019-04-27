@@ -1,9 +1,5 @@
-commit 742ebe793566a39e077791411422da153c8cff29
-Author: Joshua Pratt <jp10010101010000@gmail.com>
-Date:   Fri Apr 26 09:08:06 2019 +1000
+commit 009e0217333a327fd26075d3fa52bb17e82f7341
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Fri Apr 26 16:52:04 2019 -0700
 
-    Slots are owned by their particles (#2758)
-    
-    This means that consume slots no longer own the provided slots associated with them, instead their particle owns all slots and dependencies are checked at instantiation time.
-    
-    Also, Typescript annotation improvements
+    add generations of empty planning result to strategy explorer (#2938)

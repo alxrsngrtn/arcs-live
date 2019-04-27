@@ -27417,9 +27417,10 @@ class PlanProducer {
         if (suggestions) {
             log(`[${this.arc.id.idTreeAsString()}] Produced ${suggestions.length} suggestions [elapsed=${timestr}s].`);
             this.isPlanning = false;
+            const serializedGenerations = this.debug ? PlanningResult.formatSerializableGenerations(generations) : [];
             if (this.result.merge({
                 suggestions,
-                generations: this.debug ? PlanningResult.formatSerializableGenerations(generations) : [],
+                generations: serializedGenerations,
                 contextual: this.replanOptions['contextual']
             }, this.arc)) {
                 // Store suggestions to store.
@@ -27429,6 +27430,9 @@ class PlanProducer {
             else {
                 // Add skipped result to devtools.
                 PlanningExplorerAdapter.updatePlanningAttempt(suggestions, options['metadata'], this.devtoolsChannel);
+                if (this.debug) {
+                    StrategyExplorerAdapter.processGenerations(serializedGenerations, this.devtoolsChannel, { label: 'Plan Producer', keep: true });
+                }
             }
         }
         else { // Suggestions are null, if planning was cancelled.

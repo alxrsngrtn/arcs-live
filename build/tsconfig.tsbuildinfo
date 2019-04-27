@@ -634,7 +634,7 @@
         "signature": "65e98fcecf22e7af7caad12e22f9a2a3e4c8333d3a2febc4782836f809d07123"
       },
       "/home/travis/build/PolymerLabs/arcs/src/planning/plan/plan-producer.ts": {
-        "version": "bfdff86c1ac425c1d065dc2b379b8f5b8615dbf73d3315a6663c4f8ff3ac4855",
+        "version": "9711371d3496054e3b96c0d6705b2c3ec68d3212b6df3840111fc63d8792826e",
         "signature": "5426ccc5dd634786057d3bf78611b37830ec4462b32815144f654cda00a33e52"
       },
       "/home/travis/build/PolymerLabs/arcs/src/planning/debug/planning-explorer-adapter.ts": {
@@ -2872,6 +2872,7 @@
         "/home/travis/build/PolymerLabs/arcs/src/runtime/debug/devtools-connection.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/storage-provider-base.ts",
         "/home/travis/build/PolymerLabs/arcs/src/planning/debug/planning-explorer-adapter.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/planning/debug/strategy-explorer-adapter.ts",
         "/home/travis/build/PolymerLabs/arcs/src/planning/planner.ts",
         "/home/travis/build/PolymerLabs/arcs/src/planning/recipe-index.ts",
         "/home/travis/build/PolymerLabs/arcs/src/planning/speculator.ts",
