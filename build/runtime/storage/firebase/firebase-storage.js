@@ -448,12 +448,10 @@ class FirebaseVariable extends FirebaseStorageProvider {
                 return;
             }
         }
-        this.version++;
-        const version = this.version;
+        const version = this.version + 1;
         let storageKey;
         if (this.referenceMode && value) {
             storageKey = this.storageEngine.baseStorageKey(this.type, this.storageKey);
-            this.value = { id: value.id, storageKey };
             this.pendingWrites.push({ value, storageKey });
         }
         else {
@@ -461,6 +459,10 @@ class FirebaseVariable extends FirebaseStorageProvider {
         }
         this.localModified = true;
         await this._persistChanges();
+        this.version = version;
+        if (this.referenceMode && value) {
+            this.value = { id: value.id, storageKey };
+        }
         this._fire('change', new ChangeEvent({ data: value, version, originatorId, barrier }));
     }
     async clear(originatorId = null, barrier = null) {
