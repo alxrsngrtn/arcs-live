@@ -544,7 +544,7 @@ function watch(args) {
     }
     const command = args.shift() || 'webpack';
     const watcher = chokidar.watch('.', {
-        ignored: new RegExp(`(node_modules|build/|.git|${eslintCache})`),
+        ignored: new RegExp(`(node_modules|build/|.git|user-test/|test-output/|${eslintCache})`),
         persistent: true
     });
     let timeout = null;
