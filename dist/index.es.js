@@ -18509,7 +18509,7 @@ class ArcDebugHandler {
             this.sendEnvironmentMessage(arc);
         });
     }
-    recipeInstantiated({ particles }) {
+    recipeInstantiated({ particles, activeRecipe }) {
         if (!this.arcDevtoolsChannel)
             return;
         const truncate = ({ id, name }) => ({ id, name });
@@ -18525,7 +18525,7 @@ class ArcDebugHandler {
         }));
         this.arcDevtoolsChannel.send({
             messageType: 'recipe-instantiated',
-            messageBody: { slotConnections }
+            messageBody: { slotConnections, activeRecipe }
         });
     }
     sendEnvironmentMessage(arc) {
@@ -22541,7 +22541,7 @@ ${this.activeRecipe.toString()}`;
         if (!this.isSpeculative) { // Note: callbacks not triggered for speculative arcs.
             this.instantiatePlanCallbacks.forEach(callback => callback(recipe));
         }
-        this.debugHandler.recipeInstantiated({ particles });
+        this.debugHandler.recipeInstantiated({ particles, activeRecipe: this.activeRecipe.toString() });
     }
     async createStore(type, name, id, tags, storageKey = undefined) {
         assert(type instanceof Type, `can't createStore with type ${type} that isn't a Type`);

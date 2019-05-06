@@ -42,7 +42,7 @@ export class ArcDebugHandler {
             this.sendEnvironmentMessage(arc);
         });
     }
-    recipeInstantiated({ particles }) {
+    recipeInstantiated({ particles, activeRecipe }) {
         if (!this.arcDevtoolsChannel)
             return;
         const truncate = ({ id, name }) => ({ id, name });
@@ -58,7 +58,7 @@ export class ArcDebugHandler {
         }));
         this.arcDevtoolsChannel.send({
             messageType: 'recipe-instantiated',
-            messageBody: { slotConnections }
+            messageBody: { slotConnections, activeRecipe }
         });
     }
     sendEnvironmentMessage(arc) {

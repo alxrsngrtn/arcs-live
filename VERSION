@@ -1,5 +1,5 @@
-commit 0b762edb61f288fc124300194ba85e14bb1fd3ce
+commit 83db3de59a883908379d584fa4c221d08d36a209
 Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Mon May 6 10:56:07 2019 +1000
+Date:   Mon May 6 13:36:50 2019 +1000
 
-    Event to clear Arcs Explorer for the Test Harness (#2951)
+    Add ActiveRecipe panel to Arcs Explorer (#2952)

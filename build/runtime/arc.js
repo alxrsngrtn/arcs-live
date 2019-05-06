@@ -507,7 +507,7 @@ ${this.activeRecipe.toString()}`;
         if (!this.isSpeculative) { // Note: callbacks not triggered for speculative arcs.
             this.instantiatePlanCallbacks.forEach(callback => callback(recipe));
         }
-        this.debugHandler.recipeInstantiated({ particles });
+        this.debugHandler.recipeInstantiated({ particles, activeRecipe: this.activeRecipe.toString() });
     }
     async createStore(type, name, id, tags, storageKey = undefined) {
         assert(type instanceof Type, `can't createStore with type ${type} that isn't a Type`);

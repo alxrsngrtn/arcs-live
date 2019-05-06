@@ -13,8 +13,9 @@ import { Particle } from '../recipe/particle.js';
 export declare class ArcDebugHandler {
     private arcDevtoolsChannel;
     constructor(arc: Arc, listenerClasses: ArcDebugListenerDerived[]);
-    recipeInstantiated({ particles }: {
+    recipeInstantiated({ particles, activeRecipe }: {
         particles: Particle[];
+        activeRecipe: string;
     }): void;
     sendEnvironmentMessage(arc: Arc): void;
 }
