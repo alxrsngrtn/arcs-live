@@ -434,8 +434,8 @@
         "signature": "386225870fe7ff2b410dda3c36ac04396b8a67965f6edaa5f9fff1d1796548f6"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/manifest.ts": {
-        "version": "ba3ebe65da8987db7a01060319f125a78b4284fa585553775fb64e4633bdd1b6",
-        "signature": "8b76973e477f810f9e0c88f81a2dac07404b207e62d9d106fe2962c130b38f9e"
+        "version": "e7b1112709c1ebc709a2071b360465e15a6e5a2ddfcbfc6ebac06c502a0ac4e1",
+        "signature": "8772a26644f3a49c9fadf49d685b586053b09bbb4023bda97d3c966c4308645a"
       },
       "/home/travis/build/PolymerLabs/arcs/src/platform/atob-web.ts": {
         "version": "90645cb4b86ad9af7926a29c3735dc6fd5afc41231588bab99424ba64f6a5266",

@@ -49,7 +49,7 @@ export declare class Manifest {
     private _meta;
     private _resources;
     private storeManifestUrls;
-    private warnings;
+    private errors;
     constructor({ id }: {
         id: any;
     });

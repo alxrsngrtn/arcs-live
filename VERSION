@@ -1,5 +1,5 @@
-commit 83db3de59a883908379d584fa4c221d08d36a209
-Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Mon May 6 13:36:50 2019 +1000
+commit 551f850d9b167ab067de3aeab5deed7694e58ad4
+Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
+Date:   Mon May 6 13:37:29 2019 +1000
 
-    Add ActiveRecipe panel to Arcs Explorer (#2952)
+    Developer Shell: execute arcs directly, always pick up file changes. (#2954)
