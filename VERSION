@@ -1,5 +1,9 @@
-commit 9c4cd44f163dad762c1724fabbd1208f4f60e25b
+commit e379c53cd27ad45b87e7bd169a8a53bcdd291896
 Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
-Date:   Mon May 6 16:05:20 2019 +1000
+Date:   Mon May 6 16:58:47 2019 +1000
 
-    DevShell: show arc description when available (#2957)
+    DevShell: readme link; add button to kill arcs (#2959)
+    
+    * DevShell: readme link; add button to kill arcs
+    
+    * Use unicode chars directly
