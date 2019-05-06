@@ -1,5 +1,5 @@
-commit a0314ab240ce9f9f314ee175f6b7b8006cf24b13
-Author: Scott J. Miles <sjmiles@google.com>
-Date:   Fri May 3 00:14:43 2019 -0700
+commit 0b762edb61f288fc124300194ba85e14bb1fd3ce
+Author: Piotr Swigon <piotr.swigon@gmail.com>
+Date:   Mon May 6 10:56:07 2019 +1000
 
-    Add default for plannerStorage (#2948)
+    Event to clear Arcs Explorer for the Test Harness (#2951)
