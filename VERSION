@@ -1,5 +1,5 @@
-commit 7d8b62de2ae70109b558e3e4fc75466c415dc561
-Author: Paul Lindner <plindner@google.com>
-Date:   Tue May 7 05:56:28 2019 +1000
+commit 559758eb662caba3ead2337e8339b83f05875daa
+Author: Scott J. Miles <sjmiles@google.com>
+Date:   Mon May 6 15:51:31 2019 -0700
 
-    Fix TicTacToe lint (#2960)
+    restore Words tests, manual only atm (#2946)
