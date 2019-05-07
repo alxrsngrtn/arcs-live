@@ -1,5 +1,8 @@
-commit 5a95575a594d798f7af3c7fa399f1f6707479611
-Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Tue May 7 15:19:59 2019 +1000
+commit 3f1e67026e90e001a8e8a361d3de1c055a1f0a5c
+Author: Paul Lindner <plindner@google.com>
+Date:   Wed May 8 03:26:07 2019 +1000
 
-    Fix the Bundle tool to work on Windows (#2967)
+    Upgrade type-checker from 1.10.0 to 2.0.1 (#2966)
+    
+    - Much faster
+    - Updated deps
