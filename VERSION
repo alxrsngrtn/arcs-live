@@ -1,16 +1,7 @@
-commit 973abaa48c59a22fd21ca5e95d8e493cec424c53
+commit 26d9756e43c3a494c5d119e3837897162e537d6e
 Author: Paul Lindner <plindner@google.com>
-Date:   Tue May 7 11:52:23 2019 -0700
+Date:   Tue May 7 12:46:45 2019 -0700
 
-    Type Cleanups, focused mostly on Slots and Particles (#2965)
+    Upgrade wdio-chromedriver-service and chromedriver to latest versions (#2968)
     
-    * Type Cleanups, focused mostly on Slots and Particles
-    
-    - Add return types in many places
-    - Convert some types to use Readonly<>
-    - Make private methods private
-    - Remove 'use strict' from typescript
-    - Remove non typedoc jsdoc (@class/@method)
-    - Remove vestigal sourceMappingURL comments
-    - Add missing async to setHandles/onHandleDesync/onHandleUpdate/etc in particle.ts and fix callers
-    - Add missing license boilerplate
+    - Observed 2x speed improvement running our wd tests
