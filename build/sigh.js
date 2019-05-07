@@ -637,7 +637,7 @@ function runSteps(command, args) {
         console.log('Available commands are:', Object.keys(steps).join(', '));
         process.exit(2);
     }
-    console.log('😌');
+    console.log(`😌 ${command}`);
     let result = false;
     try {
         for (const func of funcs) {
@@ -656,9 +656,7 @@ function runSteps(command, args) {
     finally {
         console.log(result ? '🎉' : '😱');
     }
-    process.on('exit', () => {
-        process.exit(result ? 0 : 1);
-    });
     return result;
 }
-runSteps(process.argv[2] || 'default', process.argv.slice(3));
+const result = runSteps(process.argv[2] || 'default', process.argv.slice(3));
+process.exit(result ? 0 : 1);

@@ -1290,7 +1290,7 @@
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/test/mutex-test.ts": {
-        "version": "fc4204849d0479d009bf1e65c03f317303a32ebaaeff253388753eb6562579cb",
+        "version": "ace6551f002d4bfa96d2f8b5dc6abe41e5eb268276ec8bf990ab2ce229dd8247",
         "signature": "8bc1d39a3b8ec61064f9969316a088e314895e7ffd094468dcc0b238f33cb4a6"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/test/particle-api-test.ts": {
