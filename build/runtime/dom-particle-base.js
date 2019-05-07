@@ -7,10 +7,7 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-import { assert } from '../platform/assert-web.js';
-import { BigCollection } from './handle.js';
-import { Collection } from './handle.js';
-import { Variable } from './handle.js';
+import { BigCollection, Collection, Variable } from './handle.js';
 import { Particle } from './particle.js';
 /**
  * Particle that interoperates with DOM.
@@ -141,10 +138,14 @@ export class DomParticleBase extends Particle {
         if (typeof pattern === 'string') {
             return super.setParticleDescription(pattern);
         }
-        assert(!!pattern.template && !!pattern.model, 'Description pattern must either be string or have template and model');
-        super.setDescriptionPattern('_template_', pattern.template);
-        super.setDescriptionPattern('_model_', JSON.stringify(pattern.model));
-        return undefined;
+        if (pattern.template && pattern.model) {
+            super.setDescriptionPattern('_template_', pattern.template);
+            super.setDescriptionPattern('_model_', JSON.stringify(pattern.model));
+            return undefined;
+        }
+        else {
+            throw new Error('Description pattern must either be string or have template and model');
+        }
     }
     /**
      * Remove all entities from named handle.

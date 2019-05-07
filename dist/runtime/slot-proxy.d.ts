@@ -1,3 +1,12 @@
+/**
+ * @license
+ * Copyright (c) 2017 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
 import { Particle } from './particle';
 import { PECInnerPort } from './api-channel';
 /**
@@ -18,10 +27,10 @@ export declare class SlotProxy {
      * renders content to the slot.
      */
     render(content: any): void;
-    /** @method registerEventHandler(name, f)
+    /**
      * registers a callback to be invoked when 'name' event happens.
      */
-    registerEventHandler(name: any, f: any): void;
-    clearEventHandlers(name: any): void;
+    registerEventHandler(name: string, f: any): void;
+    clearEventHandlers(name: string): void;
     fireEvent(event: any): void;
 }

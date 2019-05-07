@@ -13,9 +13,9 @@ import { EntityType, Type } from './type.js';
 export class Schema {
     // tslint:disable-next-line: no-any
     constructor(names, fields, description) {
+        this.description = {};
         this.names = names;
         this.fields = fields;
-        this.description = {};
         if (description) {
             description.description.forEach(desc => this.description[desc.name] = desc.pattern || desc.patterns[0]);
         }

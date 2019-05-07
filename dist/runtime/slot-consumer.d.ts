@@ -56,7 +56,7 @@ export declare class SlotConsumer {
     private _populateHandleDescriptions;
     getInnerContainer(slotId: any): any;
     _initInnerSlotContainer(slotId: any, subId: any, container: any): void;
-    _clearInnerSlotContainers(subIds: any): void;
+    protected _clearInnerSlotContainers(subIds: any): void;
     isSameContainer(container: any, contextContainer: any): boolean;
     constructRenderRequest(): string[];
     dispose(): void;

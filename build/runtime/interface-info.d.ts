@@ -70,7 +70,7 @@ export declare class InterfaceInfo {
     tryMergeTypeVariablesWith(other: InterfaceInfo): InterfaceInfo;
     resolvedType(): InterfaceInfo;
     equals(other: InterfaceInfo): boolean;
-    _equalHandle(handle: Handle, otherHandle: Handle): any;
+    _equalHandle(handle: Handle, otherHandle: Handle): boolean;
     _equalSlot(slot: Slot, otherSlot: Slot): boolean;
     _equalItems<T>(otherItems: T[], items: T[], compareItem: (a: T, b: T) => boolean): boolean;
     _cloneAndUpdate(update: (t: Type) => Type): InterfaceInfo;

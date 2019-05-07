@@ -34,7 +34,7 @@ export declare class HandleConnectionSpec {
     instantiateDependentConnections(particle: any, typeVarMap: Map<string, Type>): void;
     readonly isInput: boolean;
     readonly isOutput: boolean;
-    isCompatibleType(type: Type): any;
+    isCompatibleType(type: Type): boolean;
 }
 declare type SerializedSlotConnectionSpec = {
     name: string;
@@ -94,7 +94,7 @@ export declare class ParticleSpec {
     isOutput(param: string): boolean;
     getConnectionByName(name: string): HandleConnectionSpec;
     getSlotSpec(slotName: string): ConsumeSlotConnectionSpec;
-    readonly primaryVerb: string;
+    readonly primaryVerb: string | undefined;
     isCompatible(modality: Modality): boolean;
     setImplBlobUrl(url: string): void;
     toLiteral(): SerializedParticleSpec;

@@ -7,11 +7,10 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-'use strict';
 import { DomParticle } from './dom-particle.js';
 // Regex to separate style and template.
 const re = /<style>((?:.|[\r\n])*)<\/style>((?:.|[\r\n])*)/;
-/** @class TransformationDomParticle
+/**
  * Particle that does transformation stuff with DOM.
  */
 export class TransformationDomParticle extends DomParticle {

@@ -13,8 +13,8 @@ export class SlotInfo {
     toLiteral() {
         return this;
     }
-    static fromLiteral(data) {
-        return new SlotInfo(data.formFactor, data.handle);
+    static fromLiteral({ formFactor, handle }) {
+        return new SlotInfo(formFactor, handle);
     }
 }
 //# sourceMappingURL=slot-info.js.map

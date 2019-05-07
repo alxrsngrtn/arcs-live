@@ -45,7 +45,7 @@ export class Particle {
      *
      * @param handles a map from handle names to store handles.
      */
-    setHandles(handles) {
+    async setHandles(handles) {
     }
     /**
      * @deprecated Use setHandles instead.
@@ -77,7 +77,7 @@ export class Particle {
      *  - removed: An Array of Entities removed from a Collection-backed Handle.
      */
     // tslint:disable-next-line: no-any
-    onHandleUpdate(handle, update) {
+    async onHandleUpdate(handle, update) {
     }
     /**
      * Called for handles that are configured with both keepSynced and notifyDesync, when they are
@@ -88,9 +88,9 @@ export class Particle {
      *
      * @param handle The Handle instance that was desynchronized.
      */
-    onHandleDesync(handle) {
+    async onHandleDesync(handle) {
     }
-    constructInnerArc() {
+    async constructInnerArc() {
         if (!this.capabilities.constructInnerArc) {
             throw new Error('This particle is not allowed to construct inner arcs');
         }

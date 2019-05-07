@@ -8,9 +8,10 @@ export declare type TypeLiteral = {
     tag: string;
     data?: any;
 };
+export declare type Tag = 'Entity' | 'TypeVariable' | 'Collection' | 'BigCollection' | 'Relation' | 'Interface' | 'Slot' | 'Reference' | 'Arc' | 'Handle';
 export declare abstract class Type {
-    tag: 'Entity' | 'TypeVariable' | 'Collection' | 'BigCollection' | 'Relation' | 'Interface' | 'Slot' | 'Reference' | 'Arc' | 'Handle';
-    protected constructor(tag: any);
+    tag: Tag;
+    protected constructor(tag: Tag);
     static fromLiteral(literal: TypeLiteral): Type;
     abstract toLiteral(): TypeLiteral;
     static unwrapPair(type1: Type, type2: Type): [Type, Type];
@@ -20,8 +21,12 @@ export declare abstract class Type {
     static _canMergeCanWriteSuperset(type1: any, type2: any): boolean;
     isCollectionType<T extends Type>(): this is CollectionType<T>;
     isBigCollectionType<T extends Type>(): this is BigCollectionType<T>;
-    equals(type: any): any;
-    isResolved(): any;
+    /**
+     * @deprecated use the type checker instead (since they will have
+     * additional information about direction etc.)
+     */
+    equals(type: any): boolean;
+    isResolved(): boolean;
     mergeTypeVariablesByName(variableMap: Map<string, Type>): Type;
     _applyExistenceTypeTest(test: (type: Type) => boolean): boolean;
     readonly hasVariable: boolean;
@@ -53,30 +58,21 @@ export declare abstract class Type {
      * cloned.
      */
     _cloneWithResolutions(variableMap: any): Type;
-    hasProperty(property: any): any;
+    hasProperty(property: any): boolean;
     protected _hasProperty(property: any): boolean;
     toString(options?: any): string;
-    getEntitySchema(): any;
-    toPrettyString(): any;
+    getEntitySchema(): Schema | null;
+    toPrettyString(): string | null;
 }
 export declare class EntityType extends Type {
     readonly entitySchema: Schema;
     constructor(schema: Schema);
     static make(names: string[], fields: {}, description?: any): EntityType;
     readonly isEntity: boolean;
-    readonly canWriteSuperset: this;
-    readonly canReadSubset: this;
+    readonly canWriteSuperset: EntityType;
+    readonly canReadSubset: EntityType;
     _isMoreSpecificThan(type: any): boolean;
-    toLiteral(): {
-        tag: "Entity" | "TypeVariable" | "Collection" | "BigCollection" | "Relation" | "Interface" | "Slot" | "Reference" | "Arc" | "Handle";
-        data: {
-            names: string[];
-            fields: {};
-            description: {
-                [index: string]: string;
-            };
-        };
-    };
+    toLiteral(): TypeLiteral;
     toString(options?: any): string;
     getEntitySchema(): Schema;
     _cloneWithResolutions(variableMap: any): any;
@@ -97,8 +93,8 @@ export declare class TypeVariable extends Type {
     _cloneWithResolutions(variableMap: Map<TypeVariableInfo | Schema, TypeVariableInfo | Schema>): TypeVariable;
     toLiteral(): TypeLiteral;
     toString(options?: any): string;
-    getEntitySchema(): any;
-    toPrettyString(): any;
+    getEntitySchema(): Schema;
+    toPrettyString(): string;
 }
 export declare class CollectionType<T extends Type> extends Type {
     readonly collectionType: T;
@@ -113,10 +109,7 @@ export declare class CollectionType<T extends Type> extends Type {
     maybeEnsureResolved(): boolean;
     _clone(variableMap: any): Type;
     _cloneWithResolutions(variableMap: any): CollectionType<Type>;
-    toLiteral(): {
-        tag: "Entity" | "TypeVariable" | "Collection" | "BigCollection" | "Relation" | "Interface" | "Slot" | "Reference" | "Arc" | "Handle";
-        data: TypeLiteral;
-    };
+    toLiteral(): TypeLiteral;
     _hasProperty(property: any): boolean;
     toString(options?: any): string;
     getEntitySchema(): Schema;
@@ -135,23 +128,17 @@ export declare class BigCollectionType<T extends Type> extends Type {
     maybeEnsureResolved(): boolean;
     _clone(variableMap: any): Type;
     _cloneWithResolutions(variableMap: any): BigCollectionType<Type>;
-    toLiteral(): {
-        tag: "Entity" | "TypeVariable" | "Collection" | "BigCollection" | "Relation" | "Interface" | "Slot" | "Reference" | "Arc" | "Handle";
-        data: TypeLiteral;
-    };
+    toLiteral(): TypeLiteral;
     _hasProperty(property: any): boolean;
     toString(options?: any): string;
     getEntitySchema(): Schema;
     toPrettyString(): string;
 }
 export declare class RelationType extends Type {
-    readonly relationEntities: Type[];
+    private readonly relationEntities;
     constructor(relation: Type[]);
     readonly isRelation: boolean;
-    toLiteral(): {
-        tag: "Entity" | "TypeVariable" | "Collection" | "BigCollection" | "Relation" | "Interface" | "Slot" | "Reference" | "Arc" | "Handle";
-        data: TypeLiteral[];
-    };
+    toLiteral(): TypeLiteral;
     toPrettyString(): string;
 }
 export declare class InterfaceType extends Type {
@@ -169,25 +156,19 @@ export declare class InterfaceType extends Type {
     _isMoreSpecificThan(type: any): boolean;
     _clone(variableMap: any): Type;
     _cloneWithResolutions(variableMap: any): InterfaceType;
-    toLiteral(): {
-        tag: "Entity" | "TypeVariable" | "Collection" | "BigCollection" | "Relation" | "Interface" | "Slot" | "Reference" | "Arc" | "Handle";
-        data: import("./interface-info.js").InterfaceInfoLiteral;
-    };
+    toLiteral(): TypeLiteral;
     toString(options?: any): string;
     toPrettyString(): string;
 }
 export declare class SlotType extends Type {
-    readonly slot: SlotInfo;
+    private readonly slot;
     constructor(slot: SlotInfo);
     static make(formFactor: string, handle: string): SlotType;
     readonly isSlot: boolean;
-    readonly canWriteSuperset: this;
+    readonly canWriteSuperset: SlotType;
     readonly canReadSubset: this;
     _isMoreSpecificThan(type: any): boolean;
-    toLiteral(): {
-        tag: "Entity" | "TypeVariable" | "Collection" | "BigCollection" | "Relation" | "Interface" | "Slot" | "Reference" | "Arc" | "Handle";
-        data: SlotInfo;
-    };
+    toLiteral(): TypeLiteral;
     toString(options?: any): string;
     toPrettyString(): string;
 }
@@ -203,24 +184,17 @@ export declare class ReferenceType extends Type {
     readonly canReadSubset: Type;
     _clone(variableMap: any): Type;
     _cloneWithResolutions(variableMap: any): ReferenceType;
-    toLiteral(): {
-        tag: "Entity" | "TypeVariable" | "Collection" | "BigCollection" | "Relation" | "Interface" | "Slot" | "Reference" | "Arc" | "Handle";
-        data: TypeLiteral;
-    };
+    toLiteral(): TypeLiteral;
     toString(options?: any): string;
 }
 export declare class ArcType extends Type {
     constructor();
     readonly isArc: boolean;
     newInstance(arcId: Id, serialization: string): ArcInfo;
-    toLiteral(): {
-        tag: "Entity" | "TypeVariable" | "Collection" | "BigCollection" | "Relation" | "Interface" | "Slot" | "Reference" | "Arc" | "Handle";
-    };
+    toLiteral(): TypeLiteral;
 }
 export declare class HandleType extends Type {
     constructor();
     readonly isHandle: boolean;
-    toLiteral(): {
-        tag: "Entity" | "TypeVariable" | "Collection" | "BigCollection" | "Relation" | "Interface" | "Slot" | "Reference" | "Arc" | "Handle";
-    };
+    toLiteral(): TypeLiteral;
 }

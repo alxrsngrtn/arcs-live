@@ -18,7 +18,7 @@ export declare class SlotDomConsumer extends SlotConsumer {
     private readonly _observer;
     constructor(arc: Arc, consumeConn?: SlotConnection, containerKind?: string);
     constructRenderRequest(): string[];
-    static hasTemplate(templatePrefix: any): any;
+    static hasTemplate(templatePrefix: string): string;
     isSameContainer(container: any, contextContainer: any): boolean;
     createNewContainer(contextContainer: any, subId: any): ShadowRoot;
     deleteContainer(container: any): void;

@@ -1482,9 +1482,9 @@ function setEntityId(entity, id) {
 class Schema {
     // tslint:disable-next-line: no-any
     constructor(names, fields, description) {
+        this.description = {};
         this.names = names;
         this.fields = fields;
-        this.description = {};
         if (description) {
             description.description.forEach(desc => this.description[desc.name] = desc.pattern || desc.patterns[0]);
         }
@@ -1653,8 +1653,8 @@ class SlotInfo {
     toLiteral() {
         return this;
     }
-    static fromLiteral(data) {
-        return new SlotInfo(data.formFactor, data.handle);
+    static fromLiteral({ formFactor, handle }) {
+        return new SlotInfo(formFactor, handle);
     }
 }
 
@@ -1951,8 +1951,10 @@ class Type {
     isBigCollectionType() {
         return this instanceof BigCollectionType;
     }
-    // TODO: update call sites to use the type checker instead (since they will
-    // have additional information about direction etc.)
+    /**
+     * @deprecated use the type checker instead (since they will have
+     * additional information about direction etc.)
+     */
     equals(type) {
         return TypeChecker.compareTypes({ type: this }, { type });
     }
@@ -18869,7 +18871,7 @@ class Particle$1 {
      *
      * @param handles a map from handle names to store handles.
      */
-    setHandles(handles) {
+    async setHandles(handles) {
     }
     /**
      * @deprecated Use setHandles instead.
@@ -18901,7 +18903,7 @@ class Particle$1 {
      *  - removed: An Array of Entities removed from a Collection-backed Handle.
      */
     // tslint:disable-next-line: no-any
-    onHandleUpdate(handle, update) {
+    async onHandleUpdate(handle, update) {
     }
     /**
      * Called for handles that are configured with both keepSynced and notifyDesync, when they are
@@ -18912,9 +18914,9 @@ class Particle$1 {
      *
      * @param handle The Handle instance that was desynchronized.
      */
-    onHandleDesync(handle) {
+    async onHandleDesync(handle) {
     }
-    constructInnerArc() {
+    async constructInnerArc() {
         if (!this.capabilities.constructInnerArc) {
             throw new Error('This particle is not allowed to construct inner arcs');
         }
@@ -19141,10 +19143,14 @@ class DomParticleBase extends Particle$1 {
         if (typeof pattern === 'string') {
             return super.setParticleDescription(pattern);
         }
-        assert(!!pattern.template && !!pattern.model, 'Description pattern must either be string or have template and model');
-        super.setDescriptionPattern('_template_', pattern.template);
-        super.setDescriptionPattern('_model_', JSON.stringify(pattern.model));
-        return undefined;
+        if (pattern.template && pattern.model) {
+            super.setDescriptionPattern('_template_', pattern.template);
+            super.setDescriptionPattern('_model_', JSON.stringify(pattern.model));
+            return undefined;
+        }
+        else {
+            throw new Error('Description pattern must either be string or have template and model');
+        }
     }
     /**
      * Remove all entities from named handle.
@@ -19261,7 +19267,7 @@ class DomParticleBase extends Particle$1 {
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-/** @class DomParticle
+/**
  * Particle that interoperates with DOM and uses a simple state system
  * to handle updates.
  */
@@ -19272,37 +19278,37 @@ class DomParticle extends XenStateMixin(DomParticleBase) {
         this.state = this._state;
         this.props = this._props;
     }
-    /** @method willReceiveProps(props, state, oldProps, oldState)
+    /**
      * Override if necessary, to do things when props change.
      */
     willReceiveProps(...args) {
     }
-    /** @method update(props, state, oldProps, oldState)
+    /**
      * Override if necessary, to modify superclass config.
      */
     update(...args) {
     }
-    /** @method shouldRender(props, state, oldProps, oldState)
+    /**
      * Override to return false if the Particle won't use
      * it's slot.
      */
     shouldRender(...args) {
         return true;
     }
-    /** @method render(props, state, oldProps, oldState)
+    /**
      * Override to return a dictionary to map into the template.
      */
     render(...args) {
         return {};
     }
-    /** @method setState(state)
+    /**
      * Copy values from `state` into the particle's internal state,
      * triggering an update cycle unless currently updating.
      */
     setState(state) {
         return this._setState(state);
     }
-    /** @method configureHandles(handles)
+    /**
      * This is called once during particle setup. Override to control sync and update
      * configuration on specific handles (via their configure() method).
      * `handles` is a map from names to handle instances.
@@ -19310,7 +19316,7 @@ class DomParticle extends XenStateMixin(DomParticleBase) {
     configureHandles(handles) {
         // Example: handles.get('foo').configure({keepSynced: false});
     }
-    /** @method get config()
+    /**
      * Override if necessary, to modify superclass config.
      */
     get config() {
@@ -19428,7 +19434,7 @@ class DomParticle extends XenStateMixin(DomParticleBase) {
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-/** @class TransformationDomParticle
+/**
  * Particle that does transformation stuff with DOM.
  */
 class TransformationDomParticle extends DomParticle {
@@ -19488,7 +19494,10 @@ class MultiplexerDomParticle extends TransformationDomParticle {
             // TODO(wkorman): For items with embedded recipes we may need a map
             // (perhaps id to index) to make sure we don't map a handle into the inner
             // arc multiple times unnecessarily.
-            otherMappedHandles.push(`use '${await arc.mapHandle(otherHandle.storage)}' as v${index}`);
+            // TODO(lindner): type erasure to avoid mismatch of Store vs Handle in arc.mapHandle
+            let otherHandleStore;
+            otherHandleStore = otherHandle.storage;
+            otherMappedHandles.push(`use '${await arc.mapHandle(otherHandleStore)}' as v${index}`);
             const hostedOtherConnection = hostedParticle.handleConnections.find(conn => conn.isCompatibleType(otherHandle.type));
             if (hostedOtherConnection) {
                 otherConnections.push(`${hostedOtherConnection.name} = v${index++}`);
@@ -20394,6 +20403,15 @@ PECInnerPort = __decorate([
 ], PECInnerPort);
 
 /**
+ * @license
+ * Copyright (c) 2017 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+/**
  * A representation of a consumed slot. Retrieved from a particle using
  * particle.getSlot(name)
  */
@@ -20407,7 +20425,9 @@ class SlotProxy {
         this.particle = particle;
         this.providedSlots = providedSlots;
     }
-    get isRendered() { return this._isRendered; }
+    get isRendered() {
+        return this._isRendered;
+    }
     /**
      * renders content to the slot.
      */
@@ -20417,7 +20437,7 @@ class SlotProxy {
         // Slot is considered rendered, if a non-empty content was sent and all requested content types were fullfilled.
         this._isRendered = this.requestedContentTypes.size === 0 && (Object.keys(content).length > 0);
     }
-    /** @method registerEventHandler(name, f)
+    /**
      * registers a callback to be invoked when 'name' event happens.
      */
     registerEventHandler(name, f) {
@@ -21098,7 +21118,7 @@ class ParticleExecutionContext {
             mapHandle(handle) {
                 return new Promise((resolve, reject) => pec.apiPort.ArcMapHandle(id => {
                     resolve(id);
-                }, arcId, handle));
+                }, arcId, handle)); // recipe handle vs not?
             },
             createSlot(transformationParticle, transformationSlotName, handleId) {
                 // handleId: the ID of a handle (returned by `createHandle` above) this slot is rendering; null - if not applicable.
@@ -25421,8 +25441,12 @@ class ProvidedSlotContext extends SlotContext {
     onRenderSlot(consumer, content, handler) {
         consumer.setContent(content, handler);
     }
-    get container() { return this._container; }
-    get containerAvailable() { return !!this._container; }
+    get container() {
+        return this._container;
+    }
+    get containerAvailable() {
+        return Boolean(this._container);
+    }
     static createContextForContainer(id, name, container, tags) {
         return new ProvidedSlotContext(id, name, tags, container, null);
     }

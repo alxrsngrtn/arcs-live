@@ -24,7 +24,7 @@ import { StorageProviderFactory } from './storage/storage-provider-factory.js';
 import { Type } from './type.js';
 import { PecFactory } from './particle-execution-context.js';
 import { InterfaceInfo } from './interface-info.js';
-declare type ArcOptions = {
+declare type ArcOptions = Readonly<{
     id: Id;
     context: Manifest;
     pecFactory?: PecFactory;
@@ -36,8 +36,8 @@ declare type ArcOptions = {
     innerArc?: boolean;
     stub?: boolean;
     listenerClasses?: ArcDebugListenerDerived[];
-};
-declare type DeserializeArcOptions = {
+}>;
+declare type DeserializeArcOptions = Readonly<{
     serialization: string;
     pecFactory?: PecFactory;
     slotComposer?: SlotComposer;
@@ -45,7 +45,7 @@ declare type DeserializeArcOptions = {
     fileName: string;
     context: Manifest;
     listenerClasses?: ArcDebugListenerDerived[];
-};
+}>;
 export declare type PlanCallback = (recipe: Recipe) => void;
 export declare class Arc {
     private readonly _context;
@@ -107,7 +107,7 @@ export declare class Arc {
     }[];
     loadedParticleSpecs(): ParticleSpec[];
     _instantiateParticle(recipeParticle: Particle): Promise<void>;
-    _provisionSpecUrl(spec: ParticleSpec): Promise<void>;
+    private _provisionSpecUrl;
     generateID(component?: string): Id;
     readonly _stores: (StorageProviderBase)[];
     cloneForSpeculativeExecution(): Promise<Arc>;

@@ -12,7 +12,7 @@ import { ReferenceType } from './type.js';
 import { Entity } from './entity.js';
 import { SerializedEntity } from './storage-proxy.js';
 export declare class Reference implements Storable {
-    entity: any;
+    entity: Entity | null;
     type: ReferenceType;
     protected readonly id: string;
     private storageKey;
@@ -24,7 +24,7 @@ export declare class Reference implements Storable {
         storageKey: string | null;
     }, type: ReferenceType, context: ParticleExecutionContext);
     protected ensureStorageProxy(): Promise<void>;
-    dereference(): Promise<void>;
+    dereference(): Promise<Entity | null>;
     dataClone(): {
         storageKey: string;
         id: string;
@@ -38,7 +38,7 @@ export declare abstract class ClientReference extends Reference {
     /** Use the newClientReference factory method instead. */
     protected constructor(entity: Entity, context: ParticleExecutionContext);
     private storeReference;
-    dereference(): Promise<void>;
+    dereference(): Promise<Entity | null>;
     isIdentified(): boolean;
     static newClientReference(context: ParticleExecutionContext): typeof ClientReference;
 }

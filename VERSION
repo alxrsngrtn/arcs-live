@@ -1,8 +1,16 @@
-commit 3f1e67026e90e001a8e8a361d3de1c055a1f0a5c
+commit 973abaa48c59a22fd21ca5e95d8e493cec424c53
 Author: Paul Lindner <plindner@google.com>
-Date:   Wed May 8 03:26:07 2019 +1000
+Date:   Tue May 7 11:52:23 2019 -0700
 
-    Upgrade type-checker from 1.10.0 to 2.0.1 (#2966)
+    Type Cleanups, focused mostly on Slots and Particles (#2965)
     
-    - Much faster
-    - Updated deps
+    * Type Cleanups, focused mostly on Slots and Particles
+    
+    - Add return types in many places
+    - Convert some types to use Readonly<>
+    - Make private methods private
+    - Remove 'use strict' from typescript
+    - Remove non typedoc jsdoc (@class/@method)
+    - Remove vestigal sourceMappingURL comments
+    - Add missing async to setHandles/onHandleDesync/onHandleUpdate/etc in particle.ts and fix callers
+    - Add missing license boilerplate

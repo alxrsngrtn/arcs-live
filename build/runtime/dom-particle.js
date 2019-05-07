@@ -7,11 +7,10 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-'use strict';
 import { XenStateMixin } from '../../modalities/dom/components/xen/xen-state.js';
 import { DomParticleBase } from './dom-particle-base.js';
 import { Collection, Variable } from './handle.js';
-/** @class DomParticle
+/**
  * Particle that interoperates with DOM and uses a simple state system
  * to handle updates.
  */
@@ -22,37 +21,37 @@ export class DomParticle extends XenStateMixin(DomParticleBase) {
         this.state = this._state;
         this.props = this._props;
     }
-    /** @method willReceiveProps(props, state, oldProps, oldState)
+    /**
      * Override if necessary, to do things when props change.
      */
     willReceiveProps(...args) {
     }
-    /** @method update(props, state, oldProps, oldState)
+    /**
      * Override if necessary, to modify superclass config.
      */
     update(...args) {
     }
-    /** @method shouldRender(props, state, oldProps, oldState)
+    /**
      * Override to return false if the Particle won't use
      * it's slot.
      */
     shouldRender(...args) {
         return true;
     }
-    /** @method render(props, state, oldProps, oldState)
+    /**
      * Override to return a dictionary to map into the template.
      */
     render(...args) {
         return {};
     }
-    /** @method setState(state)
+    /**
      * Copy values from `state` into the particle's internal state,
      * triggering an update cycle unless currently updating.
      */
     setState(state) {
         return this._setState(state);
     }
-    /** @method configureHandles(handles)
+    /**
      * This is called once during particle setup. Override to control sync and update
      * configuration on specific handles (via their configure() method).
      * `handles` is a map from names to handle instances.
@@ -60,7 +59,7 @@ export class DomParticle extends XenStateMixin(DomParticleBase) {
     configureHandles(handles) {
         // Example: handles.get('foo').configure({keepSynced: false});
     }
-    /** @method get config()
+    /**
      * Override if necessary, to modify superclass config.
      */
     get config() {

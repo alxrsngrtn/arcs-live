@@ -89,8 +89,10 @@ export class Type {
     isBigCollectionType() {
         return this instanceof BigCollectionType;
     }
-    // TODO: update call sites to use the type checker instead (since they will
-    // have additional information about direction etc.)
+    /**
+     * @deprecated use the type checker instead (since they will have
+     * additional information about direction etc.)
+     */
     equals(type) {
         return TypeChecker.compareTypes({ type: this }, { type });
     }

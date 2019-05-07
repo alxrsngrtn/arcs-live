@@ -235,7 +235,7 @@ class ParticleExecutionContext {
             mapHandle(handle) {
                 return new Promise((resolve, reject) => pec.apiPort.ArcMapHandle(id => {
                     resolve(id);
-                }, arcId, handle));
+                }, arcId, handle)); // recipe handle vs not?
             },
             createSlot(transformationParticle, transformationSlotName, handleId) {
                 // handleId: the ID of a handle (returned by `createHandle` above) this slot is rendering; null - if not applicable.
@@ -2026,8 +2026,10 @@ class Type {
     isBigCollectionType() {
         return this instanceof BigCollectionType;
     }
-    // TODO: update call sites to use the type checker instead (since they will
-    // have additional information about direction etc.)
+    /**
+     * @deprecated use the type checker instead (since they will have
+     * additional information about direction etc.)
+     */
     equals(type) {
         return _recipe_type_checker_js__WEBPACK_IMPORTED_MODULE_1__["TypeChecker"].compareTypes({ type: this }, { type });
     }
@@ -2984,9 +2986,9 @@ __webpack_require__.r(__webpack_exports__);
 class Schema {
     // tslint:disable-next-line: no-any
     constructor(names, fields, description) {
+        this.description = {};
         this.names = names;
         this.fields = fields;
-        this.description = {};
         if (description) {
             description.description.forEach(desc => this.description[desc.name] = desc.pattern || desc.patterns[0]);
         }
@@ -4317,8 +4319,8 @@ class SlotInfo {
     toLiteral() {
         return this;
     }
-    static fromLiteral(data) {
-        return new SlotInfo(data.formFactor, data.handle);
+    static fromLiteral({ formFactor, handle }) {
+        return new SlotInfo(formFactor, handle);
     }
 }
 //# sourceMappingURL=slot-info.js.map
@@ -4574,6 +4576,15 @@ class TypeVariableInfo {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SlotProxy", function() { return SlotProxy; });
 /**
+ * @license
+ * Copyright (c) 2017 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+/**
  * A representation of a consumed slot. Retrieved from a particle using
  * particle.getSlot(name)
  */
@@ -4587,7 +4598,9 @@ class SlotProxy {
         this.particle = particle;
         this.providedSlots = providedSlots;
     }
-    get isRendered() { return this._isRendered; }
+    get isRendered() {
+        return this._isRendered;
+    }
     /**
      * renders content to the slot.
      */
@@ -4597,7 +4610,7 @@ class SlotProxy {
         // Slot is considered rendered, if a non-empty content was sent and all requested content types were fullfilled.
         this._isRendered = this.requestedContentTypes.size === 0 && (Object.keys(content).length > 0);
     }
-    /** @method registerEventHandler(name, f)
+    /**
      * registers a callback to be invoked when 'name' event happens.
      */
     registerEventHandler(name, f) {
@@ -5811,8 +5824,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-
-/** @class DomParticle
+/**
  * Particle that interoperates with DOM and uses a simple state system
  * to handle updates.
  */
@@ -5823,37 +5835,37 @@ class DomParticle extends Object(_modalities_dom_components_xen_xen_state_js__WE
         this.state = this._state;
         this.props = this._props;
     }
-    /** @method willReceiveProps(props, state, oldProps, oldState)
+    /**
      * Override if necessary, to do things when props change.
      */
     willReceiveProps(...args) {
     }
-    /** @method update(props, state, oldProps, oldState)
+    /**
      * Override if necessary, to modify superclass config.
      */
     update(...args) {
     }
-    /** @method shouldRender(props, state, oldProps, oldState)
+    /**
      * Override to return false if the Particle won't use
      * it's slot.
      */
     shouldRender(...args) {
         return true;
     }
-    /** @method render(props, state, oldProps, oldState)
+    /**
      * Override to return a dictionary to map into the template.
      */
     render(...args) {
         return {};
     }
-    /** @method setState(state)
+    /**
      * Copy values from `state` into the particle's internal state,
      * triggering an update cycle unless currently updating.
      */
     setState(state) {
         return this._setState(state);
     }
-    /** @method configureHandles(handles)
+    /**
      * This is called once during particle setup. Override to control sync and update
      * configuration on specific handles (via their configure() method).
      * `handles` is a map from names to handle instances.
@@ -5861,7 +5873,7 @@ class DomParticle extends Object(_modalities_dom_components_xen_xen_state_js__WE
     configureHandles(handles) {
         // Example: handles.get('foo').configure({keepSynced: false});
     }
-    /** @method get config()
+    /**
      * Override if necessary, to modify superclass config.
      */
     get config() {
@@ -6143,9 +6155,8 @@ const XenStateMixin = Base => class extends Base {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "DomParticleBase", function() { return DomParticleBase; });
-/* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
-/* harmony import */ var _handle_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(21);
-/* harmony import */ var _particle_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(40);
+/* harmony import */ var _handle_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(21);
+/* harmony import */ var _particle_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(40);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -6157,13 +6168,10 @@ __webpack_require__.r(__webpack_exports__);
  */
 
 
-
-
-
 /**
  * Particle that interoperates with DOM.
  */
-class DomParticleBase extends _particle_js__WEBPACK_IMPORTED_MODULE_2__["Particle"] {
+class DomParticleBase extends _particle_js__WEBPACK_IMPORTED_MODULE_1__["Particle"] {
     /**
      * Override to return a String defining primary markup.
      */
@@ -6289,17 +6297,21 @@ class DomParticleBase extends _particle_js__WEBPACK_IMPORTED_MODULE_2__["Particl
         if (typeof pattern === 'string') {
             return super.setParticleDescription(pattern);
         }
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(!!pattern.template && !!pattern.model, 'Description pattern must either be string or have template and model');
-        super.setDescriptionPattern('_template_', pattern.template);
-        super.setDescriptionPattern('_model_', JSON.stringify(pattern.model));
-        return undefined;
+        if (pattern.template && pattern.model) {
+            super.setDescriptionPattern('_template_', pattern.template);
+            super.setDescriptionPattern('_model_', JSON.stringify(pattern.model));
+            return undefined;
+        }
+        else {
+            throw new Error('Description pattern must either be string or have template and model');
+        }
     }
     /**
      * Remove all entities from named handle.
      */
     async clearHandle(handleName) {
         const handle = this.handles.get(handleName);
-        if (handle instanceof _handle_js__WEBPACK_IMPORTED_MODULE_1__["Variable"] || handle instanceof _handle_js__WEBPACK_IMPORTED_MODULE_1__["Collection"]) {
+        if (handle instanceof _handle_js__WEBPACK_IMPORTED_MODULE_0__["Variable"] || handle instanceof _handle_js__WEBPACK_IMPORTED_MODULE_0__["Collection"]) {
             handle.clear();
         }
         else {
@@ -6312,7 +6324,7 @@ class DomParticleBase extends _particle_js__WEBPACK_IMPORTED_MODULE_2__["Particl
     async mergeEntitiesToHandle(handleName, entities) {
         const idMap = {};
         const handle = this.handles.get(handleName);
-        if (handle instanceof _handle_js__WEBPACK_IMPORTED_MODULE_1__["Collection"]) {
+        if (handle instanceof _handle_js__WEBPACK_IMPORTED_MODULE_0__["Collection"]) {
             const handleEntities = await handle.toList();
             handleEntities.forEach(entity => idMap[entity.id] = entity);
             for (const entity of entities) {
@@ -6331,7 +6343,7 @@ class DomParticleBase extends _particle_js__WEBPACK_IMPORTED_MODULE_2__["Particl
     async appendEntitiesToHandle(handleName, entities) {
         const handle = this.handles.get(handleName);
         if (handle) {
-            if (handle instanceof _handle_js__WEBPACK_IMPORTED_MODULE_1__["Collection"] || handle instanceof _handle_js__WEBPACK_IMPORTED_MODULE_1__["BigCollection"]) {
+            if (handle instanceof _handle_js__WEBPACK_IMPORTED_MODULE_0__["Collection"] || handle instanceof _handle_js__WEBPACK_IMPORTED_MODULE_0__["BigCollection"]) {
                 Promise.all(entities.map(entity => handle.store(entity)));
             }
             else {
@@ -6345,7 +6357,7 @@ class DomParticleBase extends _particle_js__WEBPACK_IMPORTED_MODULE_2__["Particl
     async appendRawDataToHandle(handleName, rawDataArray) {
         const handle = this.handles.get(handleName);
         if (handle && handle.entityClass) {
-            if (handle instanceof _handle_js__WEBPACK_IMPORTED_MODULE_1__["Collection"] || handle instanceof _handle_js__WEBPACK_IMPORTED_MODULE_1__["BigCollection"]) {
+            if (handle instanceof _handle_js__WEBPACK_IMPORTED_MODULE_0__["Collection"] || handle instanceof _handle_js__WEBPACK_IMPORTED_MODULE_0__["BigCollection"]) {
                 const entityClass = handle.entityClass;
                 Promise.all(rawDataArray.map(raw => handle.store(new entityClass(raw))));
             }
@@ -6361,7 +6373,7 @@ class DomParticleBase extends _particle_js__WEBPACK_IMPORTED_MODULE_2__["Particl
     updateVariable(handleName, rawData) {
         const handle = this.handles.get(handleName);
         if (handle && handle.entityClass) {
-            if (handle instanceof _handle_js__WEBPACK_IMPORTED_MODULE_1__["Variable"]) {
+            if (handle instanceof _handle_js__WEBPACK_IMPORTED_MODULE_0__["Variable"]) {
                 const entityClass = handle.entityClass;
                 const entity = new entityClass(rawData);
                 handle.set(entity);
@@ -6383,7 +6395,7 @@ class DomParticleBase extends _particle_js__WEBPACK_IMPORTED_MODULE_2__["Particl
         // TODO(dstockwell): Replace this with happy entity mutation approach.
         const handle = this.handles.get(handleName);
         if (handle) {
-            if (handle instanceof _handle_js__WEBPACK_IMPORTED_MODULE_1__["Collection"] || handle instanceof _handle_js__WEBPACK_IMPORTED_MODULE_1__["BigCollection"]) {
+            if (handle instanceof _handle_js__WEBPACK_IMPORTED_MODULE_0__["Collection"] || handle instanceof _handle_js__WEBPACK_IMPORTED_MODULE_0__["BigCollection"]) {
                 await handle.remove(entity);
                 await handle.store(entity);
             }
@@ -6456,7 +6468,7 @@ class Particle {
      *
      * @param handles a map from handle names to store handles.
      */
-    setHandles(handles) {
+    async setHandles(handles) {
     }
     /**
      * @deprecated Use setHandles instead.
@@ -6488,7 +6500,7 @@ class Particle {
      *  - removed: An Array of Entities removed from a Collection-backed Handle.
      */
     // tslint:disable-next-line: no-any
-    onHandleUpdate(handle, update) {
+    async onHandleUpdate(handle, update) {
     }
     /**
      * Called for handles that are configured with both keepSynced and notifyDesync, when they are
@@ -6499,9 +6511,9 @@ class Particle {
      *
      * @param handle The Handle instance that was desynchronized.
      */
-    onHandleDesync(handle) {
+    async onHandleDesync(handle) {
     }
-    constructInnerArc() {
+    async constructInnerArc() {
         if (!this.capabilities.constructInnerArc) {
             throw new Error('This particle is not allowed to construct inner arcs');
         }
@@ -6613,7 +6625,6 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-
 class MultiplexerDomParticle extends _transformation_dom_particle_js__WEBPACK_IMPORTED_MODULE_2__["TransformationDomParticle"] {
     constructor() {
         super(...arguments);
@@ -6632,7 +6643,10 @@ class MultiplexerDomParticle extends _transformation_dom_particle_js__WEBPACK_IM
             // TODO(wkorman): For items with embedded recipes we may need a map
             // (perhaps id to index) to make sure we don't map a handle into the inner
             // arc multiple times unnecessarily.
-            otherMappedHandles.push(`use '${await arc.mapHandle(otherHandle.storage)}' as v${index}`);
+            // TODO(lindner): type erasure to avoid mismatch of Store vs Handle in arc.mapHandle
+            let otherHandleStore;
+            otherHandleStore = otherHandle.storage;
+            otherMappedHandles.push(`use '${await arc.mapHandle(otherHandleStore)}' as v${index}`);
             const hostedOtherConnection = hostedParticle.handleConnections.find(conn => conn.isCompatibleType(otherHandle.type));
             if (hostedOtherConnection) {
                 otherConnections.push(`${hostedOtherConnection.name} = v${index++}`);
@@ -6786,10 +6800,9 @@ __webpack_require__.r(__webpack_exports__);
  * http://polymer.github.io/PATENTS.txt
  */
 
-
 // Regex to separate style and template.
 const re = /<style>((?:.|[\r\n])*)<\/style>((?:.|[\r\n])*)/;
-/** @class TransformationDomParticle
+/**
  * Particle that does transformation stuff with DOM.
  */
 class TransformationDomParticle extends _dom_particle_js__WEBPACK_IMPORTED_MODULE_0__["DomParticle"] {

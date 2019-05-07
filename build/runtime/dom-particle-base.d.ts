@@ -7,6 +7,7 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
+import { Entity } from './entity.js';
 import { Particle } from './particle.js';
 /**
  * Particle that interoperates with DOM.
@@ -42,7 +43,10 @@ export declare class DomParticleBase extends Particle {
         handler: any;
         data: any;
     }): void;
-    setParticleDescription(pattern: any): boolean;
+    setParticleDescription(pattern: string | {
+        template: any;
+        model: {};
+    }): boolean | undefined;
     /**
      * Remove all entities from named handle.
      */
@@ -50,15 +54,15 @@ export declare class DomParticleBase extends Particle {
     /**
      * Merge entities from Array into named handle.
      */
-    mergeEntitiesToHandle(handleName: string, entities: any): Promise<void>;
+    mergeEntitiesToHandle(handleName: string, entities: Entity[]): Promise<void>;
     /**
      * Append entities from Array to named handle.
      */
-    appendEntitiesToHandle(handleName: string, entities: any): Promise<void>;
+    appendEntitiesToHandle(handleName: string, entities: Entity[]): Promise<void>;
     /**
      * Create an entity from each rawData, and append to named handle.
      */
-    appendRawDataToHandle(handleName: any, rawDataArray: any): Promise<void>;
+    appendRawDataToHandle(handleName: string, rawDataArray: any): Promise<void>;
     /**
      * Modify value of named handle. A new entity is created
      * from `rawData` (`new [EntityClass](rawData)`).
@@ -68,9 +72,9 @@ export declare class DomParticleBase extends Particle {
      * Modify or insert `entity` into named handle.
      * Modification is done by removing the old entity and reinserting the new one.
      */
-    updateSet(handleName: string, entity: any): Promise<void>;
+    updateSet(handleName: string, entity: Entity): Promise<void>;
     /**
      * Returns array of Entities found in BOXED data `box` that are owned by `userid`
      */
-    boxQuery(box: any, userid: any): any;
+    boxQuery(box: any, userid: string): any;
 }

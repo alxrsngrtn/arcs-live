@@ -7,7 +7,6 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-'use strict';
 import { assert } from '../platform/assert-web.js';
 import { ParticleSpec } from './particle-spec.js';
 import { TransformationDomParticle } from './transformation-dom-particle.js';
@@ -29,7 +28,10 @@ export class MultiplexerDomParticle extends TransformationDomParticle {
             // TODO(wkorman): For items with embedded recipes we may need a map
             // (perhaps id to index) to make sure we don't map a handle into the inner
             // arc multiple times unnecessarily.
-            otherMappedHandles.push(`use '${await arc.mapHandle(otherHandle.storage)}' as v${index}`);
+            // TODO(lindner): type erasure to avoid mismatch of Store vs Handle in arc.mapHandle
+            let otherHandleStore;
+            otherHandleStore = otherHandle.storage;
+            otherMappedHandles.push(`use '${await arc.mapHandle(otherHandleStore)}' as v${index}`);
             const hostedOtherConnection = hostedParticle.handleConnections.find(conn => conn.isCompatibleType(otherHandle.type));
             if (hostedOtherConnection) {
                 otherConnections.push(`${hostedOtherConnection.name} = v${index++}`);

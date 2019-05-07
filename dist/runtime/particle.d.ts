@@ -8,6 +8,7 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { Handle } from './handle.js';
+import { InnerArcHandle } from './particle-execution-context.js';
 import { HandleConnectionSpec, ParticleSpec } from './particle-spec.js';
 import { Relevance } from './relevance.js';
 import { SlotProxy } from './slot-proxy.js';
@@ -20,7 +21,7 @@ export declare class Particle {
     spec: ParticleSpec;
     readonly extraData: boolean;
     readonly relevances: (Relevance | number)[];
-    handles: Map<string, Handle>;
+    handles: ReadonlyMap<string, Handle>;
     private _idle;
     private _idleResolver;
     private _busy;
@@ -32,7 +33,7 @@ export declare class Particle {
      * be called once.
      */
     setCapabilities(capabilities: {
-        constructInnerArc?: Function;
+        constructInnerArc?: (particle: Particle) => Promise<InnerArcHandle>;
     }): void;
     /**
      * This method is invoked with a handle for each store this particle
@@ -42,7 +43,7 @@ export declare class Particle {
      *
      * @param handles a map from handle names to store handles.
      */
-    setHandles(handles: Map<string, Handle>): void;
+    setHandles(handles: ReadonlyMap<string, Handle>): Promise<void>;
     /**
      * @deprecated Use setHandles instead.
      */
@@ -76,7 +77,7 @@ export declare class Particle {
         added?: any;
         removed?: any;
         originator?: any;
-    }): void;
+    }): Promise<void>;
     /**
      * Called for handles that are configured with both keepSynced and notifyDesync, when they are
      * detected as being out-of-date against the backing store. For Variables, the event that triggers
@@ -86,8 +87,8 @@ export declare class Particle {
      *
      * @param handle The Handle instance that was desynchronized.
      */
-    onHandleDesync(handle: Handle): void;
-    constructInnerArc(): any;
+    onHandleDesync(handle: Handle): Promise<void>;
+    constructInnerArc(): Promise<InnerArcHandle>;
     readonly busy: boolean;
     readonly idle: Promise<void>;
     relevance: Relevance | number;
@@ -101,7 +102,7 @@ export declare class Particle {
     /**
      * Returns the slot with provided name.
      */
-    getSlot(name: any): SlotProxy;
+    getSlot(name: string): SlotProxy;
     static buildManifest(strings: string[], ...bits: any[]): string;
     setParticleDescription(pattern: any): boolean;
     setDescriptionPattern(connectionName: string, pattern: any): boolean;

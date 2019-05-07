@@ -12,6 +12,6 @@ export declare class TypeChecker {
     static _tryMergeConstraints(handleType: Type, { type, direction }: TypeListInfo): boolean;
     static _writeConstraintsApply(handleType: Type, connectionType: Type): boolean;
     static _readConstraintsApply(handleType: Type, connectionType: Type): boolean;
-    static compareTypes(left: TypeListInfo, right: TypeListInfo): any;
+    static compareTypes(left: TypeListInfo, right: TypeListInfo): boolean;
 }
 export {};

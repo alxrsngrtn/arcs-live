@@ -100,8 +100,12 @@ export class ProvidedSlotContext extends SlotContext {
     onRenderSlot(consumer, content, handler) {
         consumer.setContent(content, handler);
     }
-    get container() { return this._container; }
-    get containerAvailable() { return !!this._container; }
+    get container() {
+        return this._container;
+    }
+    get containerAvailable() {
+        return Boolean(this._container);
+    }
     static createContextForContainer(id, name, container, tags) {
         return new ProvidedSlotContext(id, name, tags, container, null);
     }
