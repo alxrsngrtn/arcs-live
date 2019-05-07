@@ -1,5 +1,5 @@
-commit 7127af3d630958ff5251ae52882161500a8f904f
+commit 5a95575a594d798f7af3c7fa399f1f6707479611
 Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Tue May 7 14:51:53 2019 +1000
+Date:   Tue May 7 15:19:59 2019 +1000
 
-    Explores AppVeyor not seeing errors (#2958)
+    Fix the Bundle tool to work on Windows (#2967)
