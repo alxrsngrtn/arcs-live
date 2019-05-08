@@ -1,5 +1,5 @@
-commit 1f7100c1c5ad22aebf1d543ecd4996f2942a3c88
-Author: Paul Lindner <plindner@google.com>
-Date:   Tue May 7 22:36:55 2019 -0700
+commit 76b36b840297afeb3bb57281b03c92e6c8c80bfe
+Author: Joshua Pratt <jp10010101010000@gmail.com>
+Date:   Wed May 8 16:21:53 2019 +1000
 
-    Remove deprecated setViews (#2971)
+    Hacky fix to sigh watch (#2976)
