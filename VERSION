@@ -1,5 +1,5 @@
-commit 76b36b840297afeb3bb57281b03c92e6c8c80bfe
-Author: Joshua Pratt <jp10010101010000@gmail.com>
-Date:   Wed May 8 16:21:53 2019 +1000
+commit 852dd031462fa1264adbbd4d96aa5759d605de79
+Author: Scott J. Miles <sjmiles@google.com>
+Date:   Wed May 8 15:12:50 2019 -0700
 
-    Hacky fix to sigh watch (#2976)
+    Set a default for `user` (#2981)
