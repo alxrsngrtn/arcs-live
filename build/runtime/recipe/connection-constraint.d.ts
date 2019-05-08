@@ -7,7 +7,7 @@ import { Particle } from './particle.js';
 export declare abstract class EndPoint implements Comparable<EndPoint> {
     abstract _compareTo(other: EndPoint): number;
     abstract _clone(cloneMap?: CloneMap): any;
-    abstract toString(nameMap?: ReadonlyMap<RecipeComponent, string>): any;
+    abstract toString(nameMap?: ReadonlyMap<RecipeComponent, string>): string;
 }
 export declare class ParticleEndPoint extends EndPoint {
     particle: ParticleSpec;

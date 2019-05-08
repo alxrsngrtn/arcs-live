@@ -49,7 +49,7 @@ export interface Descendant<T extends Cloneable> {
  */
 export declare abstract class Action<T extends Cloneable> {
     private readonly _arc?;
-    private _args?;
+    private readonly _args?;
     constructor(arc?: Arc, args?: any);
     readonly arc: Arc | undefined;
     getResults(inputParams: {

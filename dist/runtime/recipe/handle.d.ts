@@ -25,7 +25,7 @@ export declare class Handle {
     _mergedFate(fates: Fate[]): "use" | "create";
     _startNormalize(): void;
     _finishNormalize(): void;
-    _compareTo(other: Handle): any;
+    _compareTo(other: Handle): number;
     fate: Fate;
     readonly originalFate: Fate;
     readonly originalId: string | null;

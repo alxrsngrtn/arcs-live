@@ -9,10 +9,10 @@ import { Slot } from './slot.js';
 import { Id } from '../id.js';
 export declare class Particle {
     private readonly _recipe;
-    private _id;
+    private _id?;
     private _name;
-    private _localName;
-    spec: ParticleSpec | undefined;
+    private _localName?;
+    spec?: ParticleSpec;
     private _verbs;
     private _connections;
     _unnamedConnections: HandleConnection[];
@@ -24,7 +24,7 @@ export declare class Particle {
     _cloneConnectionRawTypes(variableMap: Map<TypeVariableInfo | Schema, TypeVariableInfo | Schema>): void;
     _startNormalize(): void;
     _finishNormalize(): void;
-    _compareTo(other: any): any;
+    _compareTo(other: Particle): number;
     /**
      * Param particle matches this particle if the names are the same and the slot and handle requirements this particle
      * is a subset of the slot and handle requirements of the param particle.
@@ -55,7 +55,7 @@ export declare class Particle {
     getUnboundConnections(type?: Type): import("../particle-spec.js").HandleConnectionSpec[];
     addSlotConnection(name: string): SlotConnection;
     addSlotConnectionAsCopy(name: string): SlotConnection;
-    removeSlotConnection(slotConnection: any): void;
+    removeSlotConnection(slotConnection: SlotConnection): void;
     remove(): void;
     getSlotConnectionBySpec(spec: ConsumeSlotConnectionSpec): SlotConnection;
     getSlotSpecByName(name: string): ConsumeSlotConnectionSpec;

@@ -87,12 +87,12 @@
 						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="handleconnection.html#_direction" class="tsd-kind-icon">_direction</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="handleconnection.html#_direction" class="tsd-kind-icon">_direction</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="handleconnection.html#_handle" class="tsd-kind-icon">_handle</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="handleconnection.html#_name" class="tsd-kind-icon">_name</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="handleconnection.html#_particle" class="tsd-kind-icon">_particle</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="handleconnection.html#_recipe" class="tsd-kind-icon">_recipe</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="handleconnection.html#_tags" class="tsd-kind-icon">_tags</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="handleconnection.html#_name" class="tsd-kind-icon">_name</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="handleconnection.html#_particle" class="tsd-kind-icon">_particle</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="handleconnection.html#_recipe" class="tsd-kind-icon">_recipe</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="handleconnection.html#_tags" class="tsd-kind-icon">_tags</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="handleconnection.html#resolvedtype" class="tsd-kind-icon">resolved<wbr>Type</a></li>
 							</ul>
 						</section>
@@ -119,7 +119,7 @@
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="handleconnection.html#_compareto" class="tsd-kind-icon">_compare<wbr>To</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="handleconnection.html#_isvalid" class="tsd-kind-icon">_is<wbr>Valid</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="handleconnection.html#_normalize" class="tsd-kind-icon">_normalize</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="handleconnection.html#_resethandletype" class="tsd-kind-icon">_reset<wbr>Handle<wbr>Type</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="handleconnection.html#_resethandletype" class="tsd-kind-icon">_reset<wbr>Handle<wbr>Type</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="handleconnection.html#clonetypewithresolutions" class="tsd-kind-icon">clone<wbr>Type<wbr>With<wbr>Resolutions</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="handleconnection.html#connecttohandle" class="tsd-kind-icon">connect<wbr>ToHandle</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="handleconnection.html#disconnecthandle" class="tsd-kind-icon">disconnect<wbr>Handle</a></li>
@@ -138,22 +138,22 @@
 					<a name="constructor" class="tsd-anchor"></a>
 					<h3>constructor</h3>
 					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">new <wbr>Handle<wbr>Connection<span class="tsd-signature-symbol">(</span>name<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, particle<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="handleconnection.html" class="tsd-signature-type">HandleConnection</a></li>
+						<li class="tsd-signature tsd-kind-icon">new <wbr>Handle<wbr>Connection<span class="tsd-signature-symbol">(</span>name<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, particle<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Particle</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="handleconnection.html" class="tsd-signature-type">HandleConnection</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/852dd03/src/runtime/recipe/handle-connection.ts#L26">runtime/recipe/handle-connection.ts:26</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/25b2840/src/runtime/recipe/handle-connection.ts#L26">runtime/recipe/handle-connection.ts:26</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>name: <span class="tsd-signature-type">any</span></h5>
+									<h5>name: <span class="tsd-signature-type">string</span></h5>
 								</li>
 								<li>
-									<h5>particle: <span class="tsd-signature-type">any</span></h5>
+									<h5>particle: <span class="tsd-signature-type">Particle</span></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <a href="handleconnection.html" class="tsd-signature-type">HandleConnection</a></h4>
@@ -163,13 +163,13 @@
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Properties</h2>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private">
 					<a name="_direction" class="tsd-anchor"></a>
-					<h3>_direction</h3>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> _direction</h3>
 					<div class="tsd-signature tsd-kind-icon">_direction<span class="tsd-signature-symbol">:</span> <a href="../globals.html#direction" class="tsd-signature-type">Direction</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> =&nbsp;undefined</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/852dd03/src/runtime/recipe/handle-connection.ts#L24">runtime/recipe/handle-connection.ts:24</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/25b2840/src/runtime/recipe/handle-connection.ts#L24">runtime/recipe/handle-connection.ts:24</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -179,47 +179,47 @@
 					<div class="tsd-signature tsd-kind-icon">_handle<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Handle</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> =&nbsp;undefined</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/852dd03/src/runtime/recipe/handle-connection.ts#L26">runtime/recipe/handle-connection.ts:26</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/25b2840/src/runtime/recipe/handle-connection.ts#L26">runtime/recipe/handle-connection.ts:26</a></li>
 						</ul>
 					</aside>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private">
 					<a name="_name" class="tsd-anchor"></a>
-					<h3>_name</h3>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> _name</h3>
 					<div class="tsd-signature tsd-kind-icon">_name<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/852dd03/src/runtime/recipe/handle-connection.ts#L21">runtime/recipe/handle-connection.ts:21</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/25b2840/src/runtime/recipe/handle-connection.ts#L21">runtime/recipe/handle-connection.ts:21</a></li>
 						</ul>
 					</aside>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private">
 					<a name="_particle" class="tsd-anchor"></a>
-					<h3>_particle</h3>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> _particle</h3>
 					<div class="tsd-signature tsd-kind-icon">_particle<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Particle</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/852dd03/src/runtime/recipe/handle-connection.ts#L25">runtime/recipe/handle-connection.ts:25</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/25b2840/src/runtime/recipe/handle-connection.ts#L25">runtime/recipe/handle-connection.ts:25</a></li>
 						</ul>
 					</aside>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private">
 					<a name="_recipe" class="tsd-anchor"></a>
-					<h3>_recipe</h3>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> _recipe</h3>
 					<div class="tsd-signature tsd-kind-icon">_recipe<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Recipe</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/852dd03/src/runtime/recipe/handle-connection.ts#L20">runtime/recipe/handle-connection.ts:20</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/25b2840/src/runtime/recipe/handle-connection.ts#L20">runtime/recipe/handle-connection.ts:20</a></li>
 						</ul>
 					</aside>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private">
 					<a name="_tags" class="tsd-anchor"></a>
-					<h3>_tags</h3>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> _tags</h3>
 					<div class="tsd-signature tsd-kind-icon">_tags<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> =&nbsp;[]</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/852dd03/src/runtime/recipe/handle-connection.ts#L22">runtime/recipe/handle-connection.ts:22</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/25b2840/src/runtime/recipe/handle-connection.ts#L22">runtime/recipe/handle-connection.ts:22</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -229,7 +229,7 @@
 					<div class="tsd-signature tsd-kind-icon">resolved<wbr>Type<span class="tsd-signature-symbol">:</span> <a href="type.html" class="tsd-signature-type">Type</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> =&nbsp;undefined</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/852dd03/src/runtime/recipe/handle-connection.ts#L23">runtime/recipe/handle-connection.ts:23</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/25b2840/src/runtime/recipe/handle-connection.ts#L23">runtime/recipe/handle-connection.ts:23</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -240,29 +240,25 @@
 					<a name="direction" class="tsd-anchor"></a>
 					<h3>direction</h3>
 					<ul class="tsd-signatures tsd-kind-accessor tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> direction<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">"in"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"out"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"inout"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"host"</span></li>
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> direction<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../globals.html#direction" class="tsd-signature-type">Direction</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">undefined</span></li>
 						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">set</span> direction<span class="tsd-signature-symbol">(</span>direction<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">"in"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"out"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"inout"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"host"</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/852dd03/src/runtime/recipe/handle-connection.ts#L92">runtime/recipe/handle-connection.ts:92</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/25b2840/src/runtime/recipe/handle-connection.ts#L94">runtime/recipe/handle-connection.ts:94</a></li>
 								</ul>
 							</aside>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">"in"</span>
+							<h4 class="tsd-returns-title">Returns <a href="../globals.html#direction" class="tsd-signature-type">Direction</a>
 								<span class="tsd-signature-symbol"> | </span>
-								<span class="tsd-signature-type">"out"</span>
-								<span class="tsd-signature-symbol"> | </span>
-								<span class="tsd-signature-type">"inout"</span>
-								<span class="tsd-signature-symbol"> | </span>
-								<span class="tsd-signature-type">"host"</span>
+								<span class="tsd-signature-type">undefined</span>
 							</h4>
 						</li>
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/852dd03/src/runtime/recipe/handle-connection.ts#L114">runtime/recipe/handle-connection.ts:114</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/25b2840/src/runtime/recipe/handle-connection.ts#L117">runtime/recipe/handle-connection.ts:117</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -279,16 +275,19 @@
 					<a name="handle" class="tsd-anchor"></a>
 					<h3>handle</h3>
 					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> handle<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Handle</span></li>
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> handle<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Handle</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">undefined</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/852dd03/src/runtime/recipe/handle-connection.ts#L105">runtime/recipe/handle-connection.ts:105</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/25b2840/src/runtime/recipe/handle-connection.ts#L108">runtime/recipe/handle-connection.ts:108</a></li>
 								</ul>
 							</aside>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Handle</span></h4>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Handle</span>
+								<span class="tsd-signature-symbol"> | </span>
+								<span class="tsd-signature-type">undefined</span>
+							</h4>
 						</li>
 					</ul>
 				</section>
@@ -302,7 +301,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/852dd03/src/runtime/recipe/handle-connection.ts#L99">runtime/recipe/handle-connection.ts:99</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/25b2840/src/runtime/recipe/handle-connection.ts#L102">runtime/recipe/handle-connection.ts:102</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
@@ -319,7 +318,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/852dd03/src/runtime/recipe/handle-connection.ts#L126">runtime/recipe/handle-connection.ts:126</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/25b2840/src/runtime/recipe/handle-connection.ts#L129">runtime/recipe/handle-connection.ts:129</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
@@ -336,7 +335,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/852dd03/src/runtime/recipe/handle-connection.ts#L102">runtime/recipe/handle-connection.ts:102</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/25b2840/src/runtime/recipe/handle-connection.ts#L105">runtime/recipe/handle-connection.ts:105</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
@@ -353,7 +352,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/852dd03/src/runtime/recipe/handle-connection.ts#L82">runtime/recipe/handle-connection.ts:82</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/25b2840/src/runtime/recipe/handle-connection.ts#L82">runtime/recipe/handle-connection.ts:82</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
@@ -370,7 +369,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/852dd03/src/runtime/recipe/handle-connection.ts#L106">runtime/recipe/handle-connection.ts:106</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/25b2840/src/runtime/recipe/handle-connection.ts#L109">runtime/recipe/handle-connection.ts:109</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Particle</span></h4>
@@ -387,7 +386,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/852dd03/src/runtime/recipe/handle-connection.ts#L81">runtime/recipe/handle-connection.ts:81</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/25b2840/src/runtime/recipe/handle-connection.ts#L81">runtime/recipe/handle-connection.ts:81</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Recipe</span></h4>
@@ -404,7 +403,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/852dd03/src/runtime/recipe/handle-connection.ts#L119">runtime/recipe/handle-connection.ts:119</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/25b2840/src/runtime/recipe/handle-connection.ts#L122">runtime/recipe/handle-connection.ts:122</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <a href="handleconnectionspec.html" class="tsd-signature-type">HandleConnectionSpec</a></h4>
@@ -422,7 +421,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/852dd03/src/runtime/recipe/handle-connection.ts#L84">runtime/recipe/handle-connection.ts:84</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/25b2840/src/runtime/recipe/handle-connection.ts#L84">runtime/recipe/handle-connection.ts:84</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></h4>
@@ -430,7 +429,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/852dd03/src/runtime/recipe/handle-connection.ts#L108">runtime/recipe/handle-connection.ts:108</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/25b2840/src/runtime/recipe/handle-connection.ts#L111">runtime/recipe/handle-connection.ts:111</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -454,7 +453,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/852dd03/src/runtime/recipe/handle-connection.ts#L85">runtime/recipe/handle-connection.ts:85</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/25b2840/src/runtime/recipe/handle-connection.ts#L86">runtime/recipe/handle-connection.ts:86</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <a href="type.html" class="tsd-signature-type">Type</a></h4>
@@ -462,7 +461,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/852dd03/src/runtime/recipe/handle-connection.ts#L109">runtime/recipe/handle-connection.ts:109</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/25b2840/src/runtime/recipe/handle-connection.ts#L112">runtime/recipe/handle-connection.ts:112</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -482,19 +481,19 @@
 					<a name="_clone" class="tsd-anchor"></a>
 					<h3>_clone</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">_clone<span class="tsd-signature-symbol">(</span>particle<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, cloneMap<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span></li>
+						<li class="tsd-signature tsd-kind-icon">_clone<span class="tsd-signature-symbol">(</span>particle<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Particle</span>, cloneMap<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/852dd03/src/runtime/recipe/handle-connection.ts#L36">runtime/recipe/handle-connection.ts:36</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/25b2840/src/runtime/recipe/handle-connection.ts#L36">runtime/recipe/handle-connection.ts:36</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>particle: <span class="tsd-signature-type">any</span></h5>
+									<h5>particle: <span class="tsd-signature-type">Particle</span></h5>
 								</li>
 								<li>
 									<h5>cloneMap: <span class="tsd-signature-type">any</span></h5>
@@ -508,19 +507,19 @@
 					<a name="_compareto" class="tsd-anchor"></a>
 					<h3>_compare<wbr>To</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">_compare<wbr>To<span class="tsd-signature-symbol">(</span>other<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></li>
+						<li class="tsd-signature tsd-kind-icon">_compare<wbr>To<span class="tsd-signature-symbol">(</span>other<span class="tsd-signature-symbol">: </span><a href="handleconnection.html" class="tsd-signature-type">HandleConnection</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/852dd03/src/runtime/recipe/handle-connection.ts#L69">runtime/recipe/handle-connection.ts:69</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/25b2840/src/runtime/recipe/handle-connection.ts#L69">runtime/recipe/handle-connection.ts:69</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>other: <span class="tsd-signature-type">any</span></h5>
+									<h5>other: <a href="handleconnection.html" class="tsd-signature-type">HandleConnection</a></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
@@ -537,7 +536,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/852dd03/src/runtime/recipe/handle-connection.ts#L133">runtime/recipe/handle-connection.ts:133</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/25b2840/src/runtime/recipe/handle-connection.ts#L136">runtime/recipe/handle-connection.ts:136</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -560,24 +559,24 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/852dd03/src/runtime/recipe/handle-connection.ts#L63">runtime/recipe/handle-connection.ts:63</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/25b2840/src/runtime/recipe/handle-connection.ts#L63">runtime/recipe/handle-connection.ts:63</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
 						</li>
 					</ul>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-private">
 					<a name="_resethandletype" class="tsd-anchor"></a>
-					<h3>_reset<wbr>Handle<wbr>Type</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> _reset<wbr>Handle<wbr>Type</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private">
 						<li class="tsd-signature tsd-kind-icon">_reset<wbr>Handle<wbr>Type<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/852dd03/src/runtime/recipe/handle-connection.ts#L212">runtime/recipe/handle-connection.ts:212</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/25b2840/src/runtime/recipe/handle-connection.ts#L215">runtime/recipe/handle-connection.ts:215</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -594,7 +593,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/852dd03/src/runtime/recipe/handle-connection.ts#L57">runtime/recipe/handle-connection.ts:57</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/25b2840/src/runtime/recipe/handle-connection.ts#L57">runtime/recipe/handle-connection.ts:57</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -611,19 +610,19 @@
 					<a name="connecttohandle" class="tsd-anchor"></a>
 					<h3>connect<wbr>ToHandle</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">connect<wbr>ToHandle<span class="tsd-signature-symbol">(</span>handle<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+						<li class="tsd-signature tsd-kind-icon">connect<wbr>ToHandle<span class="tsd-signature-symbol">(</span>handle<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Handle</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/852dd03/src/runtime/recipe/handle-connection.ts#L218">runtime/recipe/handle-connection.ts:218</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/25b2840/src/runtime/recipe/handle-connection.ts#L221">runtime/recipe/handle-connection.ts:221</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>handle: <span class="tsd-signature-type">any</span></h5>
+									<h5>handle: <span class="tsd-signature-type">Handle</span></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -640,7 +639,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/852dd03/src/runtime/recipe/handle-connection.ts#L225">runtime/recipe/handle-connection.ts:225</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/25b2840/src/runtime/recipe/handle-connection.ts#L228">runtime/recipe/handle-connection.ts:228</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -657,7 +656,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/852dd03/src/runtime/recipe/handle-connection.ts#L256">runtime/recipe/handle-connection.ts:256</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/25b2840/src/runtime/recipe/handle-connection.ts#L259">runtime/recipe/handle-connection.ts:259</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <a href="handleconnectionspec.html" class="tsd-signature-type">HandleConnectionSpec</a><span class="tsd-signature-symbol">[]</span></h4>
@@ -674,7 +673,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/852dd03/src/runtime/recipe/handle-connection.ts#L83">runtime/recipe/handle-connection.ts:83</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/25b2840/src/runtime/recipe/handle-connection.ts#L83">runtime/recipe/handle-connection.ts:83</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
@@ -691,7 +690,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/852dd03/src/runtime/recipe/handle-connection.ts#L169">runtime/recipe/handle-connection.ts:169</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/25b2840/src/runtime/recipe/handle-connection.ts#L172">runtime/recipe/handle-connection.ts:172</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -714,7 +713,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/852dd03/src/runtime/recipe/handle-connection.ts#L232">runtime/recipe/handle-connection.ts:232</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/25b2840/src/runtime/recipe/handle-connection.ts#L235">runtime/recipe/handle-connection.ts:235</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -750,22 +749,22 @@
 							<li class=" tsd-kind-constructor tsd-parent-kind-class">
 								<a href="handleconnection.html#constructor" class="tsd-kind-icon">constructor</a>
 							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class">
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
 								<a href="handleconnection.html#_direction" class="tsd-kind-icon">_direction</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
 								<a href="handleconnection.html#_handle" class="tsd-kind-icon">_handle</a>
 							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class">
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
 								<a href="handleconnection.html#_name" class="tsd-kind-icon">_name</a>
 							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class">
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
 								<a href="handleconnection.html#_particle" class="tsd-kind-icon">_particle</a>
 							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class">
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
 								<a href="handleconnection.html#_recipe" class="tsd-kind-icon">_recipe</a>
 							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class">
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
 								<a href="handleconnection.html#_tags" class="tsd-kind-icon">_tags</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
@@ -816,7 +815,7 @@
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="handleconnection.html#_normalize" class="tsd-kind-icon">_normalize</a>
 							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class">
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-private">
 								<a href="handleconnection.html#_resethandletype" class="tsd-kind-icon">_reset<wbr>Handle<wbr>Type</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">

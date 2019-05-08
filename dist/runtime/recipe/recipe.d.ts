@@ -66,8 +66,8 @@ export declare class Recipe {
     readonly slotConnections: SlotConnection[];
     readonly handleConnections: HandleConnection[];
     isEmpty(): boolean;
-    findHandle(id: any): Handle;
-    findSlot(id: any): Slot;
+    findHandle(id: string): Handle;
+    findSlot(id: string): Slot;
     patterns: string[];
     description: any;
     digest(): Promise<string>;
@@ -97,10 +97,10 @@ export declare class Recipe {
     findHandleByID(id: any): Handle;
     getUnnamedUntypedConnections(): HandleConnection;
     getParticlesByImplFile(files: Set<string>): Particle[];
-    findSlotByID(id: any): Slot;
+    findSlotByID(id: string): Slot;
 }
 export declare class RequireSection extends Recipe {
     readonly parent: Recipe;
-    constructor(parent?: any, name?: any);
+    constructor(parent?: Recipe, name?: string);
     toString(nameMap?: any, options?: any): string;
 }
