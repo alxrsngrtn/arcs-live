@@ -5901,11 +5901,6 @@ class DomParticle extends Object(_modalities_dom_components_xen_xen_state_js__WE
         console.warn(`Particle ${this.spec.name} uses deprecated _views getter.`);
         return this.handles;
     }
-    /** @deprecated */
-    async setViews(views) {
-        console.warn(`Particle ${this.spec.name} uses deprecated setViews method.`);
-        return this.setHandles(views);
-    }
     async setHandles(handles) {
         this.configureHandles(handles);
         this.handles = handles;
@@ -6469,11 +6464,6 @@ class Particle {
      * @param handles a map from handle names to store handles.
      */
     async setHandles(handles) {
-    }
-    /**
-     * @deprecated Use setHandles instead.
-     */
-    setViews(views) {
     }
     /**
      * Called for handles that are configured with both keepSynced and notifySync, when they are

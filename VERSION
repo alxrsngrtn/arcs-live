@@ -1,7 +1,5 @@
-commit 046a2cf613b79459bc45b9faeb5de376e90f2f0a
-Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
-Date:   Wed May 8 10:10:44 2019 +1000
+commit 1f7100c1c5ad22aebf1d543ecd4996f2942a3c88
+Author: Paul Lindner <plindner@google.com>
+Date:   Tue May 7 22:36:55 2019 -0700
 
-    'describe' functions in tests should not be async. (#2974)
-    
-    Awaiting anything inside the describe function (but not in a test function) interferes with some of the mocha invocation logic. When another test is marked '.only', the tests inside the awaited async describe are still executed (when they shouldn't be).
+    Remove deprecated setViews (#2971)

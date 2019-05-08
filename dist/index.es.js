@@ -18874,11 +18874,6 @@ class Particle$1 {
     async setHandles(handles) {
     }
     /**
-     * @deprecated Use setHandles instead.
-     */
-    setViews(views) {
-    }
-    /**
      * Called for handles that are configured with both keepSynced and notifySync, when they are
      * updated with the full model of their data. This will occur once after setHandles() and any time
      * thereafter if the handle is resynchronized.
@@ -19343,11 +19338,6 @@ class DomParticle extends XenStateMixin(DomParticleBase) {
     get _views() {
         console.warn(`Particle ${this.spec.name} uses deprecated _views getter.`);
         return this.handles;
-    }
-    /** @deprecated */
-    async setViews(views) {
-        console.warn(`Particle ${this.spec.name} uses deprecated setViews method.`);
-        return this.setHandles(views);
     }
     async setHandles(handles) {
         this.configureHandles(handles);

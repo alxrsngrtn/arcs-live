@@ -198,8 +198,8 @@
         "signature": "a28d8b7955dabd6e33687d099a009805afd4998238801a092dc0b0cb19eb98f3"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/particle.ts": {
-        "version": "75c244594843c36d36863cf281da718ea3f2edb1476f47be171799b6add277af",
-        "signature": "a7194f59cc98d826fc8bfb6c0702cd514cb8679cec46c3a5631ce11ce1c7ef03"
+        "version": "bbd76274bd119754eb19ba6958abe84d4b885008b0cc594dfdf5549090647645",
+        "signature": "d70b7e85e3ce8f4391290025d106b935d65730c5ecfad953d10755bb2ae04c4e"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/arc-exceptions.ts": {
         "version": "85d8e5e89b32e75d68e6b35fa0b2ccfff2a7747d63c6f67cfb14c3a10ce1c435",
@@ -278,8 +278,8 @@
         "signature": "1ed7c8899607bdfcb08bbbf16358e94fe9e372808bcf58f8a48af25e3ca9d7db"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/dom-particle.ts": {
-        "version": "d130a6cb67207f953b2809013c41e4c0f26a20485787deb36d59561fc3dd49a2",
-        "signature": "ee99ba27f5bf8da7f97bcfec2698cd82d15e133607c077c49981ee6b5d0efd73"
+        "version": "50a1a7eb5ff82c08f4ebf4430b3cefb51a2feae31fb03d34dbdb2a6a84a538f5",
+        "signature": "5ac1fd8fd0c4652f010f880181c095f52c526c720f7a4ca4af4e68be4608d5b9"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/transformation-dom-particle.ts": {
         "version": "c4f4c602924515bf0cf596b2c9609d0422514cdeab748c9e738fc33e3d02cdfe",

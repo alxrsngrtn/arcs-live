@@ -60,8 +60,6 @@ export declare class DomParticle extends DomParticle_base {
     _update(...args: any[]): void;
     /** @deprecated */
     readonly _views: ReadonlyMap<string, Handle>;
-    /** @deprecated */
-    setViews(views: any): Promise<void>;
     setHandles(handles: ReadonlyMap<string, Handle>): Promise<void>;
     onHandleSync(handle: Handle, model: any): Promise<void>;
     onHandleUpdate(handle: Handle, update: any): Promise<void>;
