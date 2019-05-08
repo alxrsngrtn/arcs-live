@@ -502,7 +502,7 @@ store MyThings of [Thing2] #mythings in 'things.json'`);
       */
     });
 });
-describe('Description', async () => {
+describe('Description', () => {
     it('description generated from speculative execution arc', async () => {
         const manifest = `
     schema Thing

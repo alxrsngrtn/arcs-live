@@ -15,7 +15,7 @@ import { Schema } from '../schema.js';
 import { FakeSlotComposer } from '../testing/fake-slot-composer.js';
 import { EntityType } from '../type.js';
 import { ArcId, IdGenerator } from '../id.js';
-describe('entity', async () => {
+describe('entity', () => {
     it('can be created, stored, and restored', async () => {
         const schema = new Schema(['TestSchema'], { value: 'Text' });
         const arc = new Arc({ slotComposer: new FakeSlotComposer(), id: ArcId.newForTest('test'), context: null, loader: new Loader() });

@@ -1,15 +1,18 @@
 import { assert } from '../../platform/chai-web.js';
 import { Manifest } from '../manifest.js';
 describe('Entity', () => {
-    describe('mutability', async () => {
-        const manifest = await Manifest.parse(`
-      schema Foo
-        Text bar
-    `);
-        const schema = manifest.findSchemaByName('Foo');
-        const entityClass = schema.entityClass();
-        // Helper function to create new Foo entities.
-        const newFooEntity = (bar) => new entityClass({ bar });
+    describe('mutability', () => {
+        let entityClass;
+        before(async () => {
+            const manifest = await Manifest.parse(`
+        schema Foo
+          Text bar
+      `);
+            entityClass = manifest.findSchemaByName('Foo').entityClass();
+        });
+        function newFooEntity(bar) {
+            return new entityClass({ bar });
+        }
         it('is mutable by default', () => {
             const entity = newFooEntity('abc');
             assert.isTrue(entity.mutable);

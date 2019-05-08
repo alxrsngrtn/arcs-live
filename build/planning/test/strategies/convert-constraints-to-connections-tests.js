@@ -15,7 +15,7 @@ import { Modality } from '../../../runtime/modality.js';
 import { FakeSlotComposer } from '../../../runtime/testing/fake-slot-composer.js';
 import { ConvertConstraintsToConnections } from '../../strategies/convert-constraints-to-connections.js';
 import { ArcId } from '../../../runtime/id.js';
-describe('ConvertConstraintsToConnections', async () => {
+describe('ConvertConstraintsToConnections', () => {
     const newArc = (manifest) => {
         return new Arc({
             id: ArcId.newForTest('test-plan-arc'),
