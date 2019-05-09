@@ -47,4 +47,12 @@ export declare class Schema {
         hideFields?: boolean;
     }): string;
     toManifestString(): string;
+    toProtoJSON(): {
+        nested: {
+            [x: string]: {
+                fields: {};
+            };
+        };
+    };
+    private jsonBaseType;
 }
