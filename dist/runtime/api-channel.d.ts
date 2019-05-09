@@ -85,6 +85,7 @@ export declare abstract class PECOuterPort extends APIPort {
     InnerArcRender(transformationParticle: recipeParticle.Particle, transformationSlotName: string, hostedSlotId: string, content: {}): void;
     abstract onArcLoadRecipe(arc: Arc, recipe: string, callback: number): any;
     abstract onReportExceptionInHost(exception: PropagatedException): any;
+    abstract onServiceRequest(particle: recipeParticle.Particle, request: {}, callback: number): any;
     DevToolsConnected(): void;
 }
 export interface CursorNextValue {
@@ -132,6 +133,7 @@ export declare abstract class PECInnerPort extends APIPort {
     abstract onCreateHandleCallback(callback: (proxy: StorageProxy) => void, type: Type, name: string, id: string): any;
     ArcMapHandle(callback: (value: string) => void, arc: {}, handle: Handle): void;
     abstract onMapHandleCallback(callback: (value: string) => void, id: string): any;
+    ServiceRequest(particle: Particle, content: {}, callback: Function): void;
     ArcCreateSlot(callback: (value: string) => void, arc: {}, transformationParticle: Particle, transformationSlotName: string, handleId: string): void;
     abstract onCreateSlotCallback(callback: (value: string) => void, hostedSlotId: string): any;
     abstract onInnerArcRender(transformationParticle: Particle, transformationSlotName: string, hostedSlotID: string, content: string): any;

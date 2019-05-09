@@ -142,6 +142,10 @@ export class ParticleExecutionContext {
         return {
             constructInnerArc: particle => {
                 return new Promise((resolve, reject) => this.apiPort.ConstructInnerArc(arcId => resolve(this.innerArcHandle(arcId, particle.id)), particle));
+            },
+            // TODO(sjmiles): experimental `services` impl
+            serviceRequest: (particle, args, callback) => {
+                this.apiPort.ServiceRequest(particle, args, callback);
             }
         };
     }

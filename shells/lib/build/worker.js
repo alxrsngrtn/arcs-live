@@ -270,6 +270,10 @@ class ParticleExecutionContext {
         return {
             constructInnerArc: particle => {
                 return new Promise((resolve, reject) => this.apiPort.ConstructInnerArc(arcId => resolve(this.innerArcHandle(arcId, particle.id)), particle));
+            },
+            // TODO(sjmiles): experimental `services` impl
+            serviceRequest: (particle, args, callback) => {
+                this.apiPort.ServiceRequest(particle, args, callback);
             }
         };
     }
@@ -601,7 +605,7 @@ function getArgs(func) {
     }).filter((arg) => arg);
 }
 // value is covariant with info, and errors will be found
-// at start of runtime. 
+// at start of runtime.
 // tslint:disable-next-line: no-any
 function convert(info, value, mapper) {
     switch (info.type) {
@@ -627,7 +631,7 @@ function convert(info, value, mapper) {
     }
 }
 // value is covariant with info, and errors will be found
-// at start of runtime. 
+// at start of runtime.
 // tslint:disable-next-line: no-any
 function unconvert(info, value, mapper) {
     switch (info.type) {
@@ -828,6 +832,8 @@ let PECInnerPort = class PECInnerPort extends APIPort {
     ConstructInnerArc(callback, particle) { }
     ArcCreateHandle(callback, arc, type, name) { }
     ArcMapHandle(callback, arc, handle) { }
+    // TODO(sjmiles): experimental `services` impl
+    ServiceRequest(particle, content, callback) { }
     ArcCreateSlot(callback, arc, transformationParticle, transformationSlotName, handleId) { }
     ArcLoadRecipe(arc, recipe, callback) { }
     ReportExceptionInHost(exception) { }
@@ -892,6 +898,9 @@ __decorate([
 __decorate([
     __param(0, LocalMapped), __param(1, RemoteMapped), __param(2, Mapped)
 ], PECInnerPort.prototype, "ArcMapHandle", null);
+__decorate([
+    __param(0, Mapped), __param(1, Direct), __param(2, LocalMapped)
+], PECInnerPort.prototype, "ServiceRequest", null);
 __decorate([
     __param(0, LocalMapped), __param(1, RemoteMapped), __param(2, Mapped), __param(3, Direct), __param(4, Direct)
 ], PECInnerPort.prototype, "ArcCreateSlot", null);
@@ -6595,6 +6604,19 @@ class Particle {
     }
     removeSlotProxy(name) {
         this.slotProxiesByName.delete(name);
+    }
+    /**
+     * Request (outerPEC) service invocations.
+     */
+    // TODO(sjmiles): experimental services impl
+    async service(request) {
+        if (!this.capabilities["serviceRequest"]) {
+            console.warn(`${this.spec.name} has no service support.`);
+            return null;
+        }
+        return new Promise(resolve => {
+            this.capabilities["serviceRequest"](this, request, response => resolve(response));
+        });
     }
     /**
      * Returns the slot with provided name.

@@ -12,6 +12,7 @@ import { PECOuterPort } from './api-channel.js';
 import { reportSystemException } from './arc-exceptions.js';
 import { Manifest, StorageStub } from './manifest.js';
 import { RecipeResolver } from './recipe/recipe-resolver.js';
+import { Services } from './services.js';
 export class ParticleExecutionHost {
     constructor(port, slotComposer, arc) {
         this.nextIdentifier = 0;
@@ -197,6 +198,11 @@ export class ParticleExecutionHost {
                     exception.particleName = pec.arc.loadedParticleInfo.get(exception.particleId).spec.name;
                 }
                 reportSystemException(exception);
+            }
+            // TODO(sjmiles): experimental `services` impl
+            async onServiceRequest(particle, request, callback) {
+                const response = await Services.request(request);
+                this.SimpleCallback(callback, response);
             }
         }(port, arc);
     }

@@ -19005,6 +19005,19 @@ class Particle$1 {
         this.slotProxiesByName.delete(name);
     }
     /**
+     * Request (outerPEC) service invocations.
+     */
+    // TODO(sjmiles): experimental services impl
+    async service(request) {
+        if (!this.capabilities["serviceRequest"]) {
+            console.warn(`${this.spec.name} has no service support.`);
+            return null;
+        }
+        return new Promise(resolve => {
+            this.capabilities["serviceRequest"](this, request, response => resolve(response));
+        });
+    }
+    /**
      * Returns the slot with provided name.
      */
     getSlot(name) {
@@ -20139,7 +20152,7 @@ function getArgs(func) {
     }).filter((arg) => arg);
 }
 // value is covariant with info, and errors will be found
-// at start of runtime. 
+// at start of runtime.
 // tslint:disable-next-line: no-any
 function convert(info, value, mapper) {
     switch (info.type) {
@@ -20165,7 +20178,7 @@ function convert(info, value, mapper) {
     }
 }
 // value is covariant with info, and errors will be found
-// at start of runtime. 
+// at start of runtime.
 // tslint:disable-next-line: no-any
 function unconvert(info, value, mapper) {
     switch (info.type) {
@@ -20366,6 +20379,8 @@ let PECInnerPort = class PECInnerPort extends APIPort {
     ConstructInnerArc(callback, particle) { }
     ArcCreateHandle(callback, arc, type, name) { }
     ArcMapHandle(callback, arc, handle) { }
+    // TODO(sjmiles): experimental `services` impl
+    ServiceRequest(particle, content, callback) { }
     ArcCreateSlot(callback, arc, transformationParticle, transformationSlotName, handleId) { }
     ArcLoadRecipe(arc, recipe, callback) { }
     ReportExceptionInHost(exception) { }
@@ -20430,6 +20445,9 @@ __decorate([
 __decorate([
     __param(0, LocalMapped), __param(1, RemoteMapped), __param(2, Mapped)
 ], PECInnerPort.prototype, "ArcMapHandle", null);
+__decorate([
+    __param(0, Mapped), __param(1, Direct), __param(2, LocalMapped)
+], PECInnerPort.prototype, "ServiceRequest", null);
 __decorate([
     __param(0, LocalMapped), __param(1, RemoteMapped), __param(2, Mapped), __param(3, Direct), __param(4, Direct)
 ], PECInnerPort.prototype, "ArcCreateSlot", null);
@@ -21194,6 +21212,10 @@ class ParticleExecutionContext {
         return {
             constructInnerArc: particle => {
                 return new Promise((resolve, reject) => this.apiPort.ConstructInnerArc(arcId => resolve(this.innerArcHandle(arcId, particle.id)), particle));
+            },
+            // TODO(sjmiles): experimental `services` impl
+            serviceRequest: (particle, args, callback) => {
+                this.apiPort.ServiceRequest(particle, args, callback);
             }
         };
     }
@@ -21823,6 +21845,39 @@ class RecipeResolver {
 }
 
 /**
+ * Copyright (c) 2019 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+class Services {
+    static register(name, service) {
+        Services.registry[name] = service;
+    }
+    static async request(request) {
+        let { service: name, invoke, call } = request;
+        if (call) {
+            [name, invoke] = call.split('.');
+        }
+        const service = Services.registry[name];
+        if (service) {
+            if (service[invoke]) {
+                return await service[invoke](request);
+            }
+        }
+        return null;
+    }
+}
+Services.registry = {};
+Services.register('test', {
+    async classify(request) {
+        return { data: `it's a pig, that don't fly straight` };
+    }
+});
+
+/**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
  * This code may only be used under the BSD style license found at
@@ -22016,6 +22071,11 @@ class ParticleExecutionHost {
                     exception.particleName = pec.arc.loadedParticleInfo.get(exception.particleId).spec.name;
                 }
                 reportSystemException(exception);
+            }
+            // TODO(sjmiles): experimental `services` impl
+            async onServiceRequest(particle, request, callback) {
+                const response = await Services.request(request);
+                this.SimpleCallback(callback, response);
             }
         }(port, arc);
     }

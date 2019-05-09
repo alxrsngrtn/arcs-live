@@ -1,5 +1,25 @@
-commit 1bef847a7667c666503fd8d01e37cb0f273222e1
-Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
-Date:   Thu May 9 18:51:13 2019 +1000
+commit 7837959dac86433806a900926018529d7a560b26
+Author: Scott J. Miles <sjmiles@google.com>
+Date:   Thu May 9 16:22:18 2019 -0700
 
-    Schema.toProtoJSON - first step for setting up wasm transport protocol (#2978)
+    First-draft of Services infrastructure (#2985)
+    
+    * begin services work
+    
+    * flesh out services impl
+    
+    * `service` method moved to Particle class
+    
+    * dump unused ServiceRequestCallback
+    
+    * better description
+    
+    * accommodate tslint
+    
+    * move `waltbird` into repo as particle asset
+    
+    * enable shorthand service invocation
+    
+    * do a fandango to appease lint
+    
+    * fix argument

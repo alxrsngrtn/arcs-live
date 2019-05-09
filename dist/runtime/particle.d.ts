@@ -96,6 +96,10 @@ export declare class Particle {
     addSlotProxy(slotlet: SlotProxy): void;
     removeSlotProxy(name: string): void;
     /**
+     * Request (outerPEC) service invocations.
+     */
+    service(request: any): Promise<{}>;
+    /**
      * Returns the slot with provided name.
      */
     getSlot(name: string): SlotProxy;

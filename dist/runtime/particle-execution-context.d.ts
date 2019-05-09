@@ -39,6 +39,7 @@ export declare class ParticleExecutionContext {
     getStorageProxy(storageKey: any, type: any): StorageProxy | Promise<StorageProxy>;
     defaultCapabilitySet(): {
         constructInnerArc: (particle: any) => Promise<InnerArcHandle>;
+        serviceRequest: (particle: any, args: any, callback: any) => void;
     };
     _instantiateParticle(id: string, spec: ParticleSpec, proxies: ReadonlyMap<string, StorageProxy>): Promise<[any, () => Promise<void>]>;
     readonly relevance: Map<any, any>;
