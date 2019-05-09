@@ -107,18 +107,17 @@
 						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-protected"><a href="pouchdbvariable.html#_rev" class="tsd-kind-icon">_rev</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-protected"><a href="pouchdbvariable.html#_storagekey" class="tsd-kind-icon">_storage<wbr>Key</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="pouchdbvariable.html#_stored" class="tsd-kind-icon">_stored</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited"><a href="pouchdbvariable.html#backingstore" class="tsd-kind-icon">backing<wbr>Store</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="pouchdbvariable.html#description" class="tsd-kind-icon">description</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="pouchdbvariable.html#id" class="tsd-kind-icon">id</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="pouchdbvariable.html#initialized" class="tsd-kind-icon">initialized</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-protected"><a href="pouchdbvariable.html#initialized" class="tsd-kind-icon">initialized</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="pouchdbvariable.html#localkeyid" class="tsd-kind-icon">local<wbr>Key<wbr>Id</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="pouchdbvariable.html#name" class="tsd-kind-icon">name</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="pouchdbvariable.html#originalid" class="tsd-kind-icon">original<wbr>Id</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-protected"><a href="pouchdbvariable.html#pouchdbkey" class="tsd-kind-icon">pouch<wbr>DbKey</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="pouchdbvariable.html#referencemode" class="tsd-kind-icon">reference<wbr>Mode</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-protected"><a href="pouchdbvariable.html#resolveinitialized" class="tsd-kind-icon">resolve<wbr>Initialized</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="pouchdbvariable.html#source" class="tsd-kind-icon">source</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-protected"><a href="pouchdbvariable.html#storageengine" class="tsd-kind-icon">storage<wbr>Engine</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="pouchdbvariable.html#version" class="tsd-kind-icon">version</a></li>
@@ -148,8 +147,6 @@
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited"><a href="pouchdbvariable.html#ensurebackingstore" class="tsd-kind-icon">ensure<wbr>Backing<wbr>Store</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="pouchdbvariable.html#fromliteral" class="tsd-kind-icon">from<wbr>Literal</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="pouchdbvariable.html#get" class="tsd-kind-icon">get</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="pouchdbvariable.html#getstored" class="tsd-kind-icon">get<wbr>Stored</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="pouchdbvariable.html#getstoredandupdate" class="tsd-kind-icon">get<wbr>Stored<wbr>And<wbr>Update</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="pouchdbvariable.html#modelforsynchronization" class="tsd-kind-icon">model<wbr>For<wbr>Synchronization</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="pouchdbvariable.html#off" class="tsd-kind-icon">off</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="pouchdbvariable.html#on" class="tsd-kind-icon">on</a></li>
@@ -158,6 +155,7 @@
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="pouchdbvariable.html#set" class="tsd-kind-icon">set</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="pouchdbvariable.html#toliteral" class="tsd-kind-icon">to<wbr>Literal</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="pouchdbvariable.html#tostring" class="tsd-kind-icon">to<wbr>String</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="pouchdbvariable.html#upsert" class="tsd-kind-icon">upsert</a></li>
 							</ul>
 						</section>
 					</div>
@@ -169,32 +167,65 @@
 					<a name="constructor" class="tsd-anchor"></a>
 					<h3>constructor</h3>
 					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite">
-						<li class="tsd-signature tsd-kind-icon">new <wbr>Pouch<wbr>DbVariable<span class="tsd-signature-symbol">(</span>type<span class="tsd-signature-symbol">: </span><a href="type.html" class="tsd-signature-type">Type</a>, storageEngine<span class="tsd-signature-symbol">: </span><a href="pouchdbstorage.html" class="tsd-signature-type">PouchDbStorage</a>, name<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, id<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, key<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="pouchdbvariable.html" class="tsd-signature-type">PouchDbVariable</a></li>
+						<li class="tsd-signature tsd-kind-icon">new <wbr>Pouch<wbr>DbVariable<span class="tsd-signature-symbol">(</span>type<span class="tsd-signature-symbol">: </span><a href="type.html" class="tsd-signature-type">Type</a>, storageEngine<span class="tsd-signature-symbol">: </span><a href="pouchdbstorage.html" class="tsd-signature-type">PouchDbStorage</a>, name<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, id<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, key<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, refMode<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="pouchdbvariable.html" class="tsd-signature-type">PouchDbVariable</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<p>Overrides <a href="pouchdbstorageprovider.html">PouchDbStorageProvider</a>.<a href="pouchdbstorageprovider.html#constructor">constructor</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/25b2840/src/runtime/storage/pouchdb/pouch-db-variable.ts#L53">runtime/storage/pouchdb/pouch-db-variable.ts:53</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/2c62e1c/src/runtime/storage/pouchdb/pouch-db-variable.ts#L41">runtime/storage/pouchdb/pouch-db-variable.ts:41</a></li>
 								</ul>
 							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Create a new PouchDbVariable.</p>
+								</div>
+							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
 									<h5>type: <a href="type.html" class="tsd-signature-type">Type</a></h5>
+									<div class="tsd-comment tsd-typography">
+										<div class="lead">
+											<p>the underlying type for this variable.</p>
+										</div>
+									</div>
 								</li>
 								<li>
 									<h5>storageEngine: <a href="pouchdbstorage.html" class="tsd-signature-type">PouchDbStorage</a></h5>
+									<div class="tsd-comment tsd-typography">
+										<div class="lead">
+											<p>a reference back to the PouchDbStorage, used for baseStorageKey calls.</p>
+										</div>
+									</div>
 								</li>
 								<li>
 									<h5>name: <span class="tsd-signature-type">string</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<div class="lead">
+											<p>appears unused.</p>
+										</div>
+									</div>
 								</li>
 								<li>
 									<h5>id: <span class="tsd-signature-type">string</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<div class="lead">
+											<p>see base class.</p>
+										</div>
+									</div>
 								</li>
 								<li>
 									<h5>key: <span class="tsd-signature-type">string</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<div class="lead">
+											<p>the storage key for this collection.</p>
+										</div>
+									</div>
+								</li>
+								<li>
+									<h5>refMode: <span class="tsd-signature-type">boolean</span></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <a href="pouchdbvariable.html" class="tsd-signature-type">PouchDbVariable</a></h4>
@@ -205,22 +236,6 @@
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Properties</h2>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-protected">
-					<a name="_rev" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagProtected">Protected</span> _rev</h3>
-					<div class="tsd-signature tsd-kind-icon">_rev<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">undefined</span></div>
-					<aside class="tsd-sources">
-						<p>Inherited from <a href="pouchdbstorageprovider.html">PouchDbStorageProvider</a>.<a href="pouchdbstorageprovider.html#_rev">_rev</a></p>
-						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/25b2840/src/runtime/storage/pouchdb/pouch-db-storage-provider.ts#L24">runtime/storage/pouchdb/pouch-db-storage-provider.ts:24</a></li>
-						</ul>
-					</aside>
-					<div class="tsd-comment tsd-typography">
-						<div class="lead">
-							<p>The Pouch revision of the data we have stored locally</p>
-						</div>
-					</div>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-protected">
 					<a name="_storagekey" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagProtected">Protected</span> _storage<wbr>Key</h3>
 					<div class="tsd-signature tsd-kind-icon">_storage<wbr>Key<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
@@ -228,17 +243,7 @@
 						<p>Implementation of <a href="../interfaces/variablestorageprovider.html">VariableStorageProvider</a>.<a href="../interfaces/variablestorageprovider.html#_storagekey">_storageKey</a></p>
 						<p>Inherited from <a href="storageproviderbase.html">StorageProviderBase</a>.<a href="storageproviderbase.html#_storagekey">_storageKey</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/25b2840/src/runtime/storage/storage-provider-base.ts#L112">runtime/storage/storage-provider-base.ts:112</a></li>
-						</ul>
-					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private">
-					<a name="_stored" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagPrivate">Private</span> _stored</h3>
-					<div class="tsd-signature tsd-kind-icon">_stored<span class="tsd-signature-symbol">:</span> <a href="../interfaces/valuestorage.html" class="tsd-signature-type">ValueStorage</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span><span class="tsd-signature-symbol"> =&nbsp;null</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/25b2840/src/runtime/storage/pouchdb/pouch-db-variable.ts#L49">runtime/storage/pouchdb/pouch-db-variable.ts:49</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/2c62e1c/src/runtime/storage/storage-provider-base.ts#L112">runtime/storage/storage-provider-base.ts:112</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -251,7 +256,7 @@
 						<p>Inherited from <a href="pouchdbstorageprovider.html">PouchDbStorageProvider</a>.<a href="pouchdbstorageprovider.html#backingstore">backingStore</a></p>
 						<p>Overrides <a href="storageproviderbase.html">StorageProviderBase</a>.<a href="storageproviderbase.html#backingstore">backingStore</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/25b2840/src/runtime/storage/pouchdb/pouch-db-storage-provider.ts#L18">runtime/storage/pouchdb/pouch-db-storage-provider.ts:18</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/2c62e1c/src/runtime/storage/pouchdb/pouch-db-storage-provider.ts#L28">runtime/storage/pouchdb/pouch-db-storage-provider.ts:28</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -263,7 +268,7 @@
 						<p>Implementation of <a href="../interfaces/variablestorageprovider.html">VariableStorageProvider</a>.<a href="../interfaces/variablestorageprovider.html#description">description</a></p>
 						<p>Inherited from <a href="storageproviderbase.html">StorageProviderBase</a>.<a href="storageproviderbase.html#description">description</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/25b2840/src/runtime/storage/storage-provider-base.ts#L120">runtime/storage/storage-provider-base.ts:120</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/2c62e1c/src/runtime/storage/storage-provider-base.ts#L120">runtime/storage/storage-provider-base.ts:120</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -275,17 +280,18 @@
 						<p>Implementation of <a href="../interfaces/variablestorageprovider.html">VariableStorageProvider</a>.<a href="../interfaces/variablestorageprovider.html#id">id</a></p>
 						<p>Inherited from <a href="storageproviderbase.html">StorageProviderBase</a>.<a href="storageproviderbase.html#id">id</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/25b2840/src/runtime/storage/storage-provider-base.ts#L116">runtime/storage/storage-provider-base.ts:116</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/2c62e1c/src/runtime/storage/storage-provider-base.ts#L116">runtime/storage/storage-provider-base.ts:116</a></li>
 						</ul>
 					</aside>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private">
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-protected">
 					<a name="initialized" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagPrivate">Private</span> initialized</h3>
+					<h3><span class="tsd-flag ts-flagProtected">Protected</span> initialized</h3>
 					<div class="tsd-signature tsd-kind-icon">initialized<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></div>
 					<aside class="tsd-sources">
+						<p>Inherited from <a href="pouchdbstorageprovider.html">PouchDbStorageProvider</a>.<a href="pouchdbstorageprovider.html#initialized">initialized</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/25b2840/src/runtime/storage/pouchdb/pouch-db-variable.ts#L53">runtime/storage/pouchdb/pouch-db-variable.ts:53</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/2c62e1c/src/runtime/storage/pouchdb/pouch-db-storage-provider.ts#L36">runtime/storage/pouchdb/pouch-db-storage-provider.ts:36</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -295,7 +301,7 @@
 					<div class="tsd-signature tsd-kind-icon">local<wbr>Key<wbr>Id<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> =&nbsp;0</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/25b2840/src/runtime/storage/pouchdb/pouch-db-variable.ts#L50">runtime/storage/pouchdb/pouch-db-variable.ts:50</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/2c62e1c/src/runtime/storage/pouchdb/pouch-db-variable.ts#L41">runtime/storage/pouchdb/pouch-db-variable.ts:41</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -307,7 +313,7 @@
 						<p>Implementation of <a href="../interfaces/variablestorageprovider.html">VariableStorageProvider</a>.<a href="../interfaces/variablestorageprovider.html#name">name</a></p>
 						<p>Inherited from <a href="storageproviderbase.html">StorageProviderBase</a>.<a href="storageproviderbase.html#name">name</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/25b2840/src/runtime/storage/storage-provider-base.ts#L118">runtime/storage/storage-provider-base.ts:118</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/2c62e1c/src/runtime/storage/storage-provider-base.ts#L118">runtime/storage/storage-provider-base.ts:118</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -319,7 +325,7 @@
 						<p>Implementation of <a href="../interfaces/variablestorageprovider.html">VariableStorageProvider</a>.<a href="../interfaces/variablestorageprovider.html#originalid">originalId</a></p>
 						<p>Inherited from <a href="storageproviderbase.html">StorageProviderBase</a>.<a href="storageproviderbase.html#originalid">originalId</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/25b2840/src/runtime/storage/storage-provider-base.ts#L117">runtime/storage/storage-provider-base.ts:117</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/2c62e1c/src/runtime/storage/storage-provider-base.ts#L117">runtime/storage/storage-provider-base.ts:117</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -330,7 +336,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="pouchdbstorageprovider.html">PouchDbStorageProvider</a>.<a href="pouchdbstorageprovider.html#pouchdbkey">pouchDbKey</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/25b2840/src/runtime/storage/pouchdb/pouch-db-storage-provider.ts#L22">runtime/storage/pouchdb/pouch-db-storage-provider.ts:22</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/2c62e1c/src/runtime/storage/pouchdb/pouch-db-storage-provider.ts#L32">runtime/storage/pouchdb/pouch-db-storage-provider.ts:32</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -347,9 +353,35 @@
 						<p>Implementation of <a href="../interfaces/variablestorageprovider.html">VariableStorageProvider</a>.<a href="../interfaces/variablestorageprovider.html#referencemode">referenceMode</a></p>
 						<p>Inherited from <a href="storageproviderbase.html">StorageProviderBase</a>.<a href="storageproviderbase.html#referencemode">referenceMode</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/25b2840/src/runtime/storage/storage-provider-base.ts#L113">runtime/storage/storage-provider-base.ts:113</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/2c62e1c/src/runtime/storage/storage-provider-base.ts#L113">runtime/storage/storage-provider-base.ts:113</a></li>
 						</ul>
 					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-protected">
+					<a name="resolveinitialized" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagProtected">Protected</span> resolve<wbr>Initialized</h3>
+					<div class="tsd-signature tsd-kind-icon">resolve<wbr>Initialized<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">function</span></div>
+					<aside class="tsd-sources">
+						<p>Inherited from <a href="pouchdbstorageprovider.html">PouchDbStorageProvider</a>.<a href="pouchdbstorageprovider.html#resolveinitialized">resolveInitialized</a></p>
+						<ul>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/2c62e1c/src/runtime/storage/pouchdb/pouch-db-storage-provider.ts#L37">runtime/storage/pouchdb/pouch-db-storage-provider.ts:37</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-type-declaration">
+						<h4>Type declaration</h4>
+						<ul class="tsd-parameters">
+							<li class="tsd-parameter-siganture">
+								<ul class="tsd-signatures tsd-kind-type-literal tsd-parent-kind-property tsd-is-not-exported">
+									<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+								</ul>
+								<ul class="tsd-descriptions">
+									<li class="tsd-description">
+										<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+									</li>
+								</ul>
+							</li>
+						</ul>
+					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
 					<a name="source" class="tsd-anchor"></a>
@@ -359,7 +391,7 @@
 						<p>Implementation of <a href="../interfaces/variablestorageprovider.html">VariableStorageProvider</a>.<a href="../interfaces/variablestorageprovider.html#source">source</a></p>
 						<p>Inherited from <a href="storageproviderbase.html">StorageProviderBase</a>.<a href="storageproviderbase.html#source">source</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/25b2840/src/runtime/storage/storage-provider-base.ts#L119">runtime/storage/storage-provider-base.ts:119</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/2c62e1c/src/runtime/storage/storage-provider-base.ts#L119">runtime/storage/storage-provider-base.ts:119</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -370,7 +402,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="pouchdbstorageprovider.html">PouchDbStorageProvider</a>.<a href="pouchdbstorageprovider.html#storageengine">storageEngine</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/25b2840/src/runtime/storage/pouchdb/pouch-db-storage-provider.ts#L15">runtime/storage/pouchdb/pouch-db-storage-provider.ts:15</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/2c62e1c/src/runtime/storage/pouchdb/pouch-db-storage-provider.ts#L25">runtime/storage/pouchdb/pouch-db-storage-provider.ts:25</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -387,7 +419,7 @@
 						<p>Implementation of <a href="../interfaces/variablestorageprovider.html">VariableStorageProvider</a>.<a href="../interfaces/variablestorageprovider.html#version">version</a></p>
 						<p>Inherited from <a href="storageproviderbase.html">StorageProviderBase</a>.<a href="storageproviderbase.html#version">version</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/25b2840/src/runtime/storage/storage-provider-base.ts#L115">runtime/storage/storage-provider-base.ts:115</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/2c62e1c/src/runtime/storage/storage-provider-base.ts#L115">runtime/storage/storage-provider-base.ts:115</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -405,7 +437,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="storageproviderbase.html">StorageProviderBase</a>.<a href="storageproviderbase.html#apichannelmappingid">apiChannelMappingId</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/25b2840/src/runtime/storage/storage-provider-base.ts#L233">runtime/storage/storage-provider-base.ts:233</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/2c62e1c/src/runtime/storage/storage-provider-base.ts#L232">runtime/storage/storage-provider-base.ts:232</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
@@ -423,7 +455,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="pouchdbstorageprovider.html">PouchDbStorageProvider</a>.<a href="pouchdbstorageprovider.html#db">db</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/25b2840/src/runtime/storage/pouchdb/pouch-db-storage-provider.ts#L56">runtime/storage/pouchdb/pouch-db-storage-provider.ts:56</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/2c62e1c/src/runtime/storage/pouchdb/pouch-db-storage-provider.ts#L71">runtime/storage/pouchdb/pouch-db-storage-provider.ts:71</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -446,7 +478,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="storageproviderbase.html">StorageProviderBase</a>.<a href="storageproviderbase.html#storagekey">storageKey</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/25b2840/src/runtime/storage/storage-provider-base.ts#L139">runtime/storage/storage-provider-base.ts:139</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/2c62e1c/src/runtime/storage/storage-provider-base.ts#L139">runtime/storage/storage-provider-base.ts:139</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
@@ -464,7 +496,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="storageproviderbase.html">StorageProviderBase</a>.<a href="storageproviderbase.html#type">type</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/25b2840/src/runtime/storage/storage-provider-base.ts#L143">runtime/storage/storage-provider-base.ts:143</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/2c62e1c/src/runtime/storage/storage-provider-base.ts#L143">runtime/storage/storage-provider-base.ts:143</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <a href="type.html" class="tsd-signature-type">Type</a></h4>
@@ -486,7 +518,7 @@
 								<p>Implementation of <a href="../interfaces/variablestorageprovider.html">VariableStorageProvider</a>.<a href="../interfaces/variablestorageprovider.html#_compareto">_compareTo</a></p>
 								<p>Inherited from <a href="storageproviderbase.html">StorageProviderBase</a>.<a href="storageproviderbase.html#_compareto">_compareTo</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/25b2840/src/runtime/storage/storage-provider-base.ts#L196">runtime/storage/storage-provider-base.ts:196</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/2c62e1c/src/runtime/storage/storage-provider-base.ts#L195">runtime/storage/storage-provider-base.ts:195</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -511,7 +543,7 @@
 								<p>Implementation of <a href="../interfaces/variablestorageprovider.html">VariableStorageProvider</a>.<a href="../interfaces/variablestorageprovider.html#_fire">_fire</a></p>
 								<p>Inherited from <a href="storageproviderbase.html">StorageProviderBase</a>.<a href="storageproviderbase.html#_fire">_fire</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/25b2840/src/runtime/storage/storage-provider-base.ts#L177">runtime/storage/storage-provider-base.ts:177</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/2c62e1c/src/runtime/storage/storage-provider-base.ts#L177">runtime/storage/storage-provider-base.ts:177</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -549,9 +581,15 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="pouchdbstorageprovider.html">PouchDbStorageProvider</a>.<a href="pouchdbstorageprovider.html#backingtype">backingType</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/25b2840/src/runtime/storage/pouchdb/pouch-db-variable.ts#L81">runtime/storage/pouchdb/pouch-db-variable.ts:81</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/2c62e1c/src/runtime/storage/pouchdb/pouch-db-variable.ts#L68">runtime/storage/pouchdb/pouch-db-variable.ts:68</a></li>
 								</ul>
 							</aside>
+							<div class="tsd-comment tsd-typography">
+								<dl class="tsd-comment-tags">
+									<dt>inheritdoc</dt>
+									<dd></dd>
+								</dl>
+							</div>
 							<h4 class="tsd-returns-title">Returns <a href="type.html" class="tsd-signature-type">Type</a></h4>
 						</li>
 					</ul>
@@ -560,14 +598,14 @@
 					<a name="bumpversion" class="tsd-anchor"></a>
 					<h3>bump<wbr>Version</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
-						<li class="tsd-signature tsd-kind-icon">bump<wbr>Version<span class="tsd-signature-symbol">(</span>otherVersion<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+						<li class="tsd-signature tsd-kind-icon">bump<wbr>Version<span class="tsd-signature-symbol">(</span>otherVersion<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="pouchdbstorageprovider.html">PouchDbStorageProvider</a>.<a href="pouchdbstorageprovider.html#bumpversion">bumpVersion</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/25b2840/src/runtime/storage/pouchdb/pouch-db-storage-provider.ts#L69">runtime/storage/pouchdb/pouch-db-storage-provider.ts:69</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/2c62e1c/src/runtime/storage/pouchdb/pouch-db-storage-provider.ts#L84">runtime/storage/pouchdb/pouch-db-storage-provider.ts:84</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -579,7 +617,7 @@
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>otherVersion: <span class="tsd-signature-type">number</span></h5>
+									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> otherVersion: <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> =&nbsp;0</span></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -597,7 +635,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/variablestorageprovider.html">VariableStorageProvider</a>.<a href="../interfaces/variablestorageprovider.html#clear">clear</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/25b2840/src/runtime/storage/pouchdb/pouch-db-variable.ts#L268">runtime/storage/pouchdb/pouch-db-variable.ts:268</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/2c62e1c/src/runtime/storage/pouchdb/pouch-db-variable.ts#L275">runtime/storage/pouchdb/pouch-db-variable.ts:275</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -634,7 +672,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/25b2840/src/runtime/storage/pouchdb/pouch-db-variable.ts#L85">runtime/storage/pouchdb/pouch-db-variable.ts:85</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/2c62e1c/src/runtime/storage/pouchdb/pouch-db-variable.ts#L72">runtime/storage/pouchdb/pouch-db-variable.ts:72</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="pouchdbvariable.html" class="tsd-signature-type">PouchDbVariable</a><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -652,7 +690,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="storageproviderbase.html">StorageProviderBase</a>.<a href="storageproviderbase.html#clonefrom">cloneFrom</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/25b2840/src/runtime/storage/pouchdb/pouch-db-variable.ts#L91">runtime/storage/pouchdb/pouch-db-variable.ts:91</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/2c62e1c/src/runtime/storage/pouchdb/pouch-db-variable.ts#L78">runtime/storage/pouchdb/pouch-db-variable.ts:78</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -677,7 +715,7 @@
 								<p>Implementation of <a href="../interfaces/variablestorageprovider.html">VariableStorageProvider</a>.<a href="../interfaces/variablestorageprovider.html#dispose">dispose</a></p>
 								<p>Inherited from <a href="storageproviderbase.html">StorageProviderBase</a>.<a href="storageproviderbase.html#dispose">dispose</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/25b2840/src/runtime/storage/storage-provider-base.ts#L238">runtime/storage/storage-provider-base.ts:238</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/2c62e1c/src/runtime/storage/storage-provider-base.ts#L237">runtime/storage/storage-provider-base.ts:237</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -696,7 +734,7 @@
 								<p>Implementation of <a href="../interfaces/variablestorageprovider.html">VariableStorageProvider</a>.<a href="../interfaces/variablestorageprovider.html#enablereferencemode">enableReferenceMode</a></p>
 								<p>Inherited from <a href="storageproviderbase.html">StorageProviderBase</a>.<a href="storageproviderbase.html#enablereferencemode">enableReferenceMode</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/25b2840/src/runtime/storage/storage-provider-base.ts#L135">runtime/storage/storage-provider-base.ts:135</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/2c62e1c/src/runtime/storage/storage-provider-base.ts#L135">runtime/storage/storage-provider-base.ts:135</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -716,7 +754,7 @@
 								<p>Inherited from <a href="pouchdbstorageprovider.html">PouchDbStorageProvider</a>.<a href="pouchdbstorageprovider.html#ensurebackingstore">ensureBackingStore</a></p>
 								<p>Overrides <a href="storageproviderbase.html">StorageProviderBase</a>.<a href="storageproviderbase.html#ensurebackingstore">ensureBackingStore</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/25b2840/src/runtime/storage/pouchdb/pouch-db-storage-provider.ts#L36">runtime/storage/pouchdb/pouch-db-storage-provider.ts:36</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/2c62e1c/src/runtime/storage/pouchdb/pouch-db-storage-provider.ts#L51">runtime/storage/pouchdb/pouch-db-storage-provider.ts:51</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="pouchdbcollection.html" class="tsd-signature-type">PouchDbCollection</a><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -733,13 +771,12 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/25b2840/src/runtime/storage/pouchdb/pouch-db-variable.ts#L164">runtime/storage/pouchdb/pouch-db-variable.ts:164</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/2c62e1c/src/runtime/storage/pouchdb/pouch-db-variable.ts#L160">runtime/storage/pouchdb/pouch-db-variable.ts:160</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>Updates the internal state of this variable with data and stores
-									the data in the underlying Pouch Database.</p>
+									<p>Updates the internal state of this variable with the supplied data.</p>
 								</div>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -764,92 +801,20 @@
 					<a name="get" class="tsd-anchor"></a>
 					<h3>get</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">get<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/valuestorage.html" class="tsd-signature-type">ValueStorage</a><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">get<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/modelvalue.html" class="tsd-signature-type">ModelValue</a><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/variablestorageprovider.html">VariableStorageProvider</a>.<a href="../interfaces/variablestorageprovider.html#get">get</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/25b2840/src/runtime/storage/pouchdb/pouch-db-variable.ts#L180">runtime/storage/pouchdb/pouch-db-variable.ts:180</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/2c62e1c/src/runtime/storage/pouchdb/pouch-db-variable.ts#L184">runtime/storage/pouchdb/pouch-db-variable.ts:184</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 							</div>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/valuestorage.html" class="tsd-signature-type">ValueStorage</a><span class="tsd-signature-symbol">&gt;</span></h4>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/modelvalue.html" class="tsd-signature-type">ModelValue</a><span class="tsd-signature-symbol">&gt;</span></h4>
 							<p>a promise containing the variable value or null if it does not exist.</p>
-						</li>
-					</ul>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-private">
-					<a name="getstored" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagPrivate">Private</span> get<wbr>Stored</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private">
-						<li class="tsd-signature tsd-kind-icon">get<wbr>Stored<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/valuestorage.html" class="tsd-signature-type">ValueStorage</a><span class="tsd-signature-symbol">&gt;</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/25b2840/src/runtime/storage/pouchdb/pouch-db-variable.ts#L318">runtime/storage/pouchdb/pouch-db-variable.ts:318</a></li>
-								</ul>
-							</aside>
-							<div class="tsd-comment tsd-typography">
-								<div class="lead">
-									<p>Pouch stored version of _stored.  Requests the value from the
-									database.</p>
-								</div>
-								<ul>
-									<li>If the fetched revision does not match update the local variable.</li>
-									<li>If the value does not exist store a null value.</li>
-								</ul>
-								<dl class="tsd-comment-tags">
-									<dt>throw</dt>
-									<dd><p>on misc pouch errors.</p>
-									</dd>
-								</dl>
-							</div>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/valuestorage.html" class="tsd-signature-type">ValueStorage</a><span class="tsd-signature-symbol">&gt;</span></h4>
-						</li>
-					</ul>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-private">
-					<a name="getstoredandupdate" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagPrivate">Private</span> get<wbr>Stored<wbr>And<wbr>Update</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private">
-						<li class="tsd-signature tsd-kind-icon">get<wbr>Stored<wbr>And<wbr>Update<span class="tsd-signature-symbol">(</span>variableStorageMutator<span class="tsd-signature-symbol">: </span><a href="../interfaces/valuestoragemutator.html" class="tsd-signature-type">ValueStorageMutator</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/valuestorage.html" class="tsd-signature-type">ValueStorage</a><span class="tsd-signature-symbol">&gt;</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/25b2840/src/runtime/storage/pouchdb/pouch-db-variable.ts#L357">runtime/storage/pouchdb/pouch-db-variable.ts:357</a></li>
-								</ul>
-							</aside>
-							<div class="tsd-comment tsd-typography">
-								<div class="lead">
-									<p>Provides a way to apply changes to the stored value in a way that
-										will result in the stored value being written to the underlying
-									PouchDB.</p>
-								</div>
-								<ul>
-									<li>A new entry is stored if it doesn&#39;t exists.</li>
-									<li>If the existing entry is available it is fetched</li>
-									<li>If revisions differ a new item is written.</li>
-									<li>The storage is potentially mutated and written.</li>
-								</ul>
-							</div>
-							<h4 class="tsd-parameters-title">Parameters</h4>
-							<ul class="tsd-parameters">
-								<li>
-									<h5>variableStorageMutator: <a href="../interfaces/valuestoragemutator.html" class="tsd-signature-type">ValueStorageMutator</a></h5>
-									<div class="tsd-comment tsd-typography">
-										<p>allows for changing the variable.</p>
-									</div>
-								</li>
-							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/valuestorage.html" class="tsd-signature-type">ValueStorage</a><span class="tsd-signature-symbol">&gt;</span></h4>
-							<p>the current value of _stored.</p>
 						</li>
 					</ul>
 				</section>
@@ -865,7 +830,7 @@
 								<p>Implementation of <a href="../interfaces/variablestorageprovider.html">VariableStorageProvider</a>.<a href="../interfaces/variablestorageprovider.html#modelforsynchronization">modelForSynchronization</a></p>
 								<p>Overrides <a href="storageproviderbase.html">StorageProviderBase</a>.<a href="storageproviderbase.html#modelforsynchronization">modelForSynchronization</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/25b2840/src/runtime/storage/pouchdb/pouch-db-variable.ts#L121">runtime/storage/pouchdb/pouch-db-variable.ts:121</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/2c62e1c/src/runtime/storage/pouchdb/pouch-db-variable.ts#L114">runtime/storage/pouchdb/pouch-db-variable.ts:114</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -890,7 +855,7 @@
 								<p>Implementation of <a href="../interfaces/variablestorageprovider.html">VariableStorageProvider</a>.<a href="../interfaces/variablestorageprovider.html#off">off</a></p>
 								<p>Inherited from <a href="storageproviderbase.html">StorageProviderBase</a>.<a href="storageproviderbase.html#off">off</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/25b2840/src/runtime/storage/storage-provider-base.ts#L162">runtime/storage/storage-provider-base.ts:162</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/2c62e1c/src/runtime/storage/storage-provider-base.ts#L162">runtime/storage/storage-provider-base.ts:162</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -918,7 +883,7 @@
 								<p>Implementation of <a href="../interfaces/variablestorageprovider.html">VariableStorageProvider</a>.<a href="../interfaces/variablestorageprovider.html#on">on</a></p>
 								<p>Inherited from <a href="storageproviderbase.html">StorageProviderBase</a>.<a href="storageproviderbase.html#on">on</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/25b2840/src/runtime/storage/storage-provider-base.ts#L153">runtime/storage/storage-provider-base.ts:153</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/2c62e1c/src/runtime/storage/storage-provider-base.ts#L153">runtime/storage/storage-provider-base.ts:153</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -948,7 +913,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="pouchdbstorageprovider.html">PouchDbStorageProvider</a>.<a href="pouchdbstorageprovider.html#onremotestatesynced">onRemoteStateSynced</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/25b2840/src/runtime/storage/pouchdb/pouch-db-variable.ts#L276">runtime/storage/pouchdb/pouch-db-variable.ts:276</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/2c62e1c/src/runtime/storage/pouchdb/pouch-db-variable.ts#L282">runtime/storage/pouchdb/pouch-db-variable.ts:282</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -978,7 +943,7 @@
 								<p>Implementation of <a href="../interfaces/variablestorageprovider.html">VariableStorageProvider</a>.<a href="../interfaces/variablestorageprovider.html#reportexceptioninhost">reportExceptionInHost</a></p>
 								<p>Inherited from <a href="storageproviderbase.html">StorageProviderBase</a>.<a href="storageproviderbase.html#reportexceptioninhost">reportExceptionInHost</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/25b2840/src/runtime/storage/storage-provider-base.ts#L147">runtime/storage/storage-provider-base.ts:147</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/2c62e1c/src/runtime/storage/storage-provider-base.ts#L147">runtime/storage/storage-provider-base.ts:147</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -995,14 +960,13 @@
 					<a name="set" class="tsd-anchor"></a>
 					<h3>set</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">set<span class="tsd-signature-symbol">(</span>value<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">__type</span>, originatorId<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span>, barrier<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">set<span class="tsd-signature-symbol">(</span>value<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, originatorId<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span>, barrier<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
-								<p>Implementation of <a href="../interfaces/variablestorageprovider.html">VariableStorageProvider</a>.<a href="../interfaces/variablestorageprovider.html#set">set</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/25b2840/src/runtime/storage/pouchdb/pouch-db-variable.ts#L205">runtime/storage/pouchdb/pouch-db-variable.ts:205</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/2c62e1c/src/runtime/storage/pouchdb/pouch-db-variable.ts#L213">runtime/storage/pouchdb/pouch-db-variable.ts:213</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1013,7 +977,7 @@
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>value: <span class="tsd-signature-type">__type</span></h5>
+									<h5>value: <span class="tsd-signature-type">any</span></h5>
 									<div class="tsd-comment tsd-typography">
 										<p>the value we want to set.  If null remove the variable from storage</p>
 									</div>
@@ -1025,7 +989,7 @@
 									</div>
 								</li>
 								<li>
-									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> barrier: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> =&nbsp;null</span></h5>
+									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> barrier: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span><span class="tsd-signature-symbol"> =&nbsp;null</span></h5>
 									<div class="tsd-comment tsd-typography">
 										<p>TBD</p>
 									</div>
@@ -1047,7 +1011,7 @@
 								<p>Implementation of <a href="../interfaces/variablestorageprovider.html">VariableStorageProvider</a>.<a href="../interfaces/variablestorageprovider.html#toliteral">toLiteral</a></p>
 								<p>Overrides <a href="storageproviderbase.html">StorageProviderBase</a>.<a href="storageproviderbase.html#toliteral">toLiteral</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/25b2840/src/runtime/storage/pouchdb/pouch-db-variable.ts#L141">runtime/storage/pouchdb/pouch-db-variable.ts:141</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/2c62e1c/src/runtime/storage/pouchdb/pouch-db-variable.ts#L135">runtime/storage/pouchdb/pouch-db-variable.ts:135</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1072,7 +1036,7 @@
 								<p>Implementation of <a href="../interfaces/variablestorageprovider.html">VariableStorageProvider</a>.<a href="../interfaces/variablestorageprovider.html#tostring">toString</a></p>
 								<p>Inherited from <a href="storageproviderbase.html">StorageProviderBase</a>.<a href="storageproviderbase.html#tostring">toString</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/25b2840/src/runtime/storage/storage-provider-base.ts#L209">runtime/storage/storage-provider-base.ts:209</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/2c62e1c/src/runtime/storage/storage-provider-base.ts#L208">runtime/storage/storage-provider-base.ts:208</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1082,6 +1046,34 @@
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-private">
+					<a name="upsert" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> upsert</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private">
+						<li class="tsd-signature tsd-kind-icon">upsert<span class="tsd-signature-symbol">(</span>mutatorFn<span class="tsd-signature-symbol">: </span><a href="../interfaces/upsertmutatorfn.html" class="tsd-signature-type">UpsertMutatorFn</a><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/variablestorage.html" class="tsd-signature-type">VariableStorage</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/variablestorage.html" class="tsd-signature-type">VariableStorage</a><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/2c62e1c/src/runtime/storage/pouchdb/pouch-db-variable.ts#L311">runtime/storage/pouchdb/pouch-db-variable.ts:311</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Get/Modify/Set the data stored for this variable.</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>mutatorFn: <a href="../interfaces/upsertmutatorfn.html" class="tsd-signature-type">UpsertMutatorFn</a><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/variablestorage.html" class="tsd-signature-type">VariableStorage</a><span class="tsd-signature-symbol">&gt;</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/variablestorage.html" class="tsd-signature-type">VariableStorage</a><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -1106,13 +1098,7 @@
 								<a href="pouchdbvariable.html#constructor" class="tsd-kind-icon">constructor</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-protected">
-								<a href="pouchdbvariable.html#_rev" class="tsd-kind-icon">_rev</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-protected">
 								<a href="pouchdbvariable.html#_storagekey" class="tsd-kind-icon">_storage<wbr>Key</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
-								<a href="pouchdbvariable.html#_stored" class="tsd-kind-icon">_stored</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited">
 								<a href="pouchdbvariable.html#backingstore" class="tsd-kind-icon">backing<wbr>Store</a>
@@ -1123,7 +1109,7 @@
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
 								<a href="pouchdbvariable.html#id" class="tsd-kind-icon">id</a>
 							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-protected">
 								<a href="pouchdbvariable.html#initialized" class="tsd-kind-icon">initialized</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
@@ -1140,6 +1126,9 @@
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
 								<a href="pouchdbvariable.html#referencemode" class="tsd-kind-icon">reference<wbr>Mode</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-protected">
+								<a href="pouchdbvariable.html#resolveinitialized" class="tsd-kind-icon">resolve<wbr>Initialized</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
 								<a href="pouchdbvariable.html#source" class="tsd-kind-icon">source</a>
@@ -1198,12 +1187,6 @@
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="pouchdbvariable.html#get" class="tsd-kind-icon">get</a>
 							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-private">
-								<a href="pouchdbvariable.html#getstored" class="tsd-kind-icon">get<wbr>Stored</a>
-							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-private">
-								<a href="pouchdbvariable.html#getstoredandupdate" class="tsd-kind-icon">get<wbr>Stored<wbr>And<wbr>Update</a>
-							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
 								<a href="pouchdbvariable.html#modelforsynchronization" class="tsd-kind-icon">model<wbr>For<wbr>Synchronization</a>
 							</li>
@@ -1227,6 +1210,9 @@
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
 								<a href="pouchdbvariable.html#tostring" class="tsd-kind-icon">to<wbr>String</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-private">
+								<a href="pouchdbvariable.html#upsert" class="tsd-kind-icon">upsert</a>
 							</li>
 						</ul>
 					</li>

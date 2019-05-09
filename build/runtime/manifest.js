@@ -1133,7 +1133,7 @@ ${e.message}
         else {
             model = entities.map(value => ({ id: value.id, value }));
         }
-        store.fromLiteral({ version, model });
+        await store.fromLiteral({ version, model });
     }
     static async _createStore(manifest, type, name, id, tags, item, originalId) {
         const store = await manifest.createStore(type, name, id, tags);

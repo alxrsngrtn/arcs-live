@@ -1,5 +1,11 @@
-commit 25b284049fd295846e0ae1e724c46ffaf7b2f8e8
+commit 2c62e1cf8dec4ad18d399f2237693efc1da30fd7
 Author: Paul Lindner <plindner@google.com>
-Date:   Wed May 8 16:12:34 2019 -0700
+Date:   Wed May 8 22:26:44 2019 -0700
 
-    Type Cleanups for Recipes (#2962)
+    Pouchdb Implementation Revamp (#2921)
+    
+    * Introduce a revamped PouchDB implementation that is largely state-free
+    
+    - Adds a generic Upsert function that abstracts the read-modify-write cycle for Pouch
+    - Revamps Arc tests to perform most in PouchDB, skip ones that don't
+    - Add more minor cleanups and tidiness.

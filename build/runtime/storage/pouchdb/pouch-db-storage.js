@@ -1,13 +1,15 @@
-// @
-// Copyright (c) 2017 Google Inc. All rights reserved.
-// This code may only be used under the BSD style license found at
-// http://polymer.github.io/LICENSE.txt
-// Code distributed by Google as part of this project is also
-// subject to an additional IP rights grant found at
-// http://polymer.github.io/PATENTS.txt
+/**
+ * @license
+ * Copyright (c) 2017 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
 import { assert } from '../../../platform/assert-web.js';
 import { PouchDB, PouchDbDebug, PouchDbMemory } from '../../../platform/pouchdb-web.js';
-import { BigCollectionType, CollectionType, ReferenceType } from '../../type.js';
+import { ArcType, BigCollectionType, CollectionType, EntityType, ReferenceType } from '../../type.js';
 import { StorageBase } from '../storage-provider-base.js';
 import { PouchDbBigCollection } from './pouch-db-big-collection.js';
 import { PouchDbCollection } from './pouch-db-collection.js';
@@ -37,22 +39,49 @@ export class PouchDbStorage extends StorageBase {
         }
     }
     /**
+     * Determines if the given type is Reference Mode and sets it
+     * accordingly.  Attempts to sidestep the hacky ways reference mode
+     * changes outside of the storage subsystem.  The following items
+     * will force reference mode to false:
+     *
+     * - ArcType, used for serialization
+     * - EntityType used for Search/Suggestions
+     * - ReferenceTypes
+     * - TypeContainers that contain Reference Types.
+     */
+    isTypeReferenceMode(type) {
+        if (type instanceof EntityType) {
+            // Suggestions and Search are non-referenceMode
+            const schema = type.getEntitySchema();
+            if (schema.name === 'Suggestions' || schema.name === 'Search') {
+                return false;
+            }
+        }
+        if (type instanceof ArcType) {
+            return false; // see arc.ts persistSerialization
+        }
+        if (type instanceof ReferenceType) {
+            return false;
+        }
+        if (type.isTypeContainer() && type.getContainedType() instanceof ReferenceType) {
+            return false;
+        }
+        return true;
+    }
+    /**
      * Instantiates a new key for id/type stored at keyFragment.
      */
     async construct(id, type, keyFragment) {
-        const provider = await this._construct(id, type, keyFragment);
-        if (type instanceof ReferenceType) {
-            return provider;
+        const refMode = this.isTypeReferenceMode(type);
+        const provider = await this._construct(id, type, keyFragment, refMode);
+        if (provider.referenceMode) {
+            await provider.ensureBackingStore();
         }
-        if (type.isTypeContainer() && type.getContainedType() instanceof ReferenceType) {
-            return provider;
-        }
-        provider.enableReferenceMode();
         return provider;
     }
-    async _construct(id, type, keyFragment) {
+    async _construct(id, type, keyFragment, refMode) {
         const key = new PouchDbKey(keyFragment);
-        const provider = this.newProvider(type, undefined, id, key.toString());
+        const provider = this.newProvider(type, undefined, id, key.toString(), refMode);
         // Used to track changes for the key.
         this.providerByLocationCache.set(key.location, provider);
         return provider;
@@ -76,6 +105,7 @@ export class PouchDbStorage extends StorageBase {
         }
         catch (err) {
             if (err.name && err.name === 'not_found') {
+                // connecting despite missing doc, returning null
                 return null;
             }
             throw err;
@@ -113,7 +143,8 @@ export class PouchDbStorage extends StorageBase {
         if (this.baseStorePromises.has(type)) {
             return this.baseStorePromises.get(type);
         }
-        const storagePromise = this._construct(type.toString(), type.collectionOf(), key);
+        // Base Storage is not using Reference Mode
+        const storagePromise = this._construct(type.toString(), type.collectionOf(), key, false);
         this.baseStorePromises.set(type, storagePromise);
         const storage = await storagePromise;
         assert(storage, 'baseStorageFor should not fail');
@@ -125,14 +156,14 @@ export class PouchDbStorage extends StorageBase {
         return new PouchDbKey(s);
     }
     /** Creates a new Variable or Collection given basic parameters */
-    newProvider(type, name, id, key) {
+    newProvider(type, name, id, key, refMode) {
         if (type instanceof CollectionType) {
-            return new PouchDbCollection(type, this, name, id, key);
+            return new PouchDbCollection(type, this, name, id, key, refMode);
         }
         if (type instanceof BigCollectionType) {
-            return new PouchDbBigCollection(type, this, name, id, key);
+            return new PouchDbBigCollection(type, this, name, id, key, refMode);
         }
-        return new PouchDbVariable(type, this, name, id, key);
+        return new PouchDbVariable(type, this, name, id, key, refMode);
     }
     /** Removes everything that a test could have created. */
     static async resetPouchDbStorageForTesting() {

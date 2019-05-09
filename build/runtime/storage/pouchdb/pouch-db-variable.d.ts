@@ -1,38 +1,45 @@
+/**
+ * @license
+ * Copyright (c) 2017 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
 /// <reference types="pouchdb-core" />
 import { Type } from '../../type.js';
 import { VariableStorageProvider } from '../storage-provider-base.js';
-import { SerializedModelEntry } from '../crdt-collection-model.js';
+import { SerializedModelEntry, ModelValue } from '../crdt-collection-model.js';
 import { PouchDbStorageProvider } from './pouch-db-storage-provider.js';
 import { PouchDbStorage } from './pouch-db-storage.js';
+import { UpsertDoc } from './pouch-db-upsert.js';
 /**
- * Loosely defines the value object stored.
+ * A representation of a Variable in Pouch storage.
  */
-interface ValueStorage {
-    /** The id of this Variable */
-    id: string;
-    /** A reference to another storage key, used for reference mode */
-    storageKey?: string;
-    /** The actual value of the data */
-    rawData?: {};
-}
-/**
- * A type definition for PouchDB to allow for direct access
- * to stored top-level fields in a doc.
- */
-interface VariableStorage {
-    value: ValueStorage;
-    version: number;
+interface VariableStorage extends UpsertDoc {
+    value: ModelValue;
     /** ReferenceMode state for this data */
     referenceMode: boolean;
+    /** Monotonically increasing version number */
+    version: number;
 }
 /**
  * The PouchDB-based implementation of a Variable.
  */
 export declare class PouchDbVariable extends PouchDbStorageProvider implements VariableStorageProvider {
-    private _stored;
     private localKeyId;
-    private readonly initialized;
-    constructor(type: Type, storageEngine: PouchDbStorage, name: string, id: string, key: string);
+    /**
+     * Create a new PouchDbVariable.
+     *
+     * @param type the underlying type for this variable.
+     * @param storageEngine a reference back to the PouchDbStorage, used for baseStorageKey calls.
+     * @param name appears unused.
+     * @param id see base class.
+     * @param key the storage key for this collection.
+     */
+    constructor(type: Type, storageEngine: PouchDbStorage, name: string, id: string, key: string, refMode: boolean);
+    /** @inheritDoc */
     backingType(): Type;
     clone(): Promise<PouchDbVariable>;
     cloneFrom(handle: any): Promise<void>;
@@ -53,8 +60,7 @@ export declare class PouchDbVariable extends PouchDbStorageProvider implements V
         model: SerializedModelEntry[];
     }>;
     /**
-     * Updates the internal state of this variable with data and stores
-     * the data in the underlying Pouch Database.
+     * Updates the internal state of this variable with the supplied data.
      */
     fromLiteral({ version, model }: {
         version: any;
@@ -63,14 +69,14 @@ export declare class PouchDbVariable extends PouchDbStorageProvider implements V
     /**
      * @return a promise containing the variable value or null if it does not exist.
      */
-    get(): Promise<ValueStorage>;
+    get(): Promise<ModelValue>;
     /**
      * Set the value for this variable.
      * @param value the value we want to set.  If null remove the variable from storage
      * @param originatorId TBD
      * @param barrier TBD
      */
-    set(value: {}, originatorId?: string, barrier?: string): Promise<void>;
+    set(value: any, originatorId?: string, barrier?: string | null): Promise<void>;
     /**
      * Clear a variable from storage.
      * @param originatorId TBD
@@ -82,27 +88,8 @@ export declare class PouchDbVariable extends PouchDbStorageProvider implements V
      */
     onRemoteStateSynced(doc: PouchDB.Core.ExistingDocument<VariableStorage>): void;
     /**
-     * Pouch stored version of _stored.  Requests the value from the
-     * database.
-     *
-     *  - If the fetched revision does not match update the local variable.
-     *  - If the value does not exist store a null value.
-     * @throw on misc pouch errors.
+     * Get/Modify/Set the data stored for this variable.
      */
-    private getStored;
-    /**
-     * Provides a way to apply changes to the stored value in a way that
-     * will result in the stored value being written to the underlying
-     * PouchDB.
-     *
-     * - A new entry is stored if it doesn't exists.
-     * - If the existing entry is available it is fetched
-     * - If revisions differ a new item is written.
-     * - The storage is potentially mutated and written.
-     *
-     * @param variableStorageMutator allows for changing the variable.
-     * @return the current value of _stored.
-     */
-    private getStoredAndUpdate;
+    private upsert;
 }
 export {};

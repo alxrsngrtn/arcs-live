@@ -1,22 +1,33 @@
+/**
+ * @license
+ * Copyright (c) 2017 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
 /// <reference types="pouchdb-core" />
 import { Type, TypeLiteral } from '../../type.js';
 import { SerializedModelEntry, ModelValue } from '../crdt-collection-model.js';
 import { CollectionStorageProvider } from '../storage-provider-base.js';
-import { PouchDbStorage } from './pouch-db-storage';
+import { UpsertDoc } from './pouch-db-upsert.js';
+import { PouchDbStorage } from './pouch-db-storage.js';
 import { PouchDbStorageProvider } from './pouch-db-storage-provider.js';
 /**
- * Contains the data that is stored within Pouch
+ * A representation of a Collection in Pouch storage.
  */
-interface CollectionStorage {
+interface CollectionStorage extends UpsertDoc {
     model: SerializedModelEntry[];
     version: number;
     referenceMode: boolean | null;
     type: TypeLiteral;
 }
+/**
+ * The PouchDB-based implementation of a Collection.
+ */
 export declare class PouchDbCollection extends PouchDbStorageProvider implements CollectionStorageProvider {
-    private readonly initialized;
-    /** The local synced model */
-    private _model;
+    private upsertMutex;
     /**
      * Create a new PouchDbCollection.
      *
@@ -26,10 +37,9 @@ export declare class PouchDbCollection extends PouchDbStorageProvider implements
      * @param id see base class.
      * @param key the storage key for this collection.
      */
-    constructor(type: Type, storageEngine: PouchDbStorage, name: string, id: string, key: string);
+    constructor(type: Type, storageEngine: PouchDbStorage, name: string, id: string, key: string, refMode: boolean);
     /** @inheritDoc */
     backingType(): Type;
-    clone(): PouchDbCollection;
     cloneFrom(handle: any): Promise<void>;
     /** @inheritDoc */
     modelForSynchronization(): Promise<{
@@ -69,8 +79,8 @@ export declare class PouchDbCollection extends PouchDbStorageProvider implements
      * @param keys The CRDT keys used to store this object
      * @param originatorId TBD passed to event listeners
      */
-    store(value: any, keys: string[], originatorId?: any): Promise<void>;
-    removeMultiple(items: any, originatorId?: any): Promise<void>;
+    store(value: any, keys: string[], originatorId?: string): Promise<void>;
+    removeMultiple(items: any, originatorId?: string): Promise<void>;
     /**
      * Remove ids from a collection for specific keys.
      * @param id the id to remove.
@@ -79,30 +89,17 @@ export declare class PouchDbCollection extends PouchDbStorageProvider implements
      */
     remove(id: string, keys?: string[], originatorId?: string): Promise<void>;
     /**
-     * Triggered when the storage key has been modified.  For now we
-     * just refetch and trigger listeners.  This is fast since the data
-     * is synced locally.
+     * Triggered when the storage key has been modified.
      */
     onRemoteStateSynced(doc: PouchDB.Core.ExistingDocument<CollectionStorage>): void;
     /**
-     * Updates the local model cache from PouchDB and returns the CRDT
-     * model for use.
+     * Gets the latest CrdtCollectionModel from storage.
      */
     private getModel;
     /**
-     * Provides a way to apply changes to the model in a way that will result in the
-     * crdt being written to the underlying PouchDB.
-     *
-     * - A new entry is stored if it doesn't exist.
-     * - If the existing entry is available it is fetched and the
-     *   internal state is updated.
-     * - A copy of the CRDT model is passed to the modelMutator, which may change it.
-     * - If the model is mutated by `modelMutator`, write a new revision and update the local
-     *   cached copy.
-     *
-     * @param modelMutator allows for modifying a copy of the underlying crdt model.
+     * Get/Modify/Set the data stored for this collection.
      */
-    private getModelAndUpdate;
+    private upsert;
     /**
      * Remove this item from the database for testing purposes.
      */

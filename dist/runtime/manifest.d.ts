@@ -100,13 +100,13 @@ export declare class Manifest {
         loadResource: any;
     }, options?: any): Promise<Manifest>;
     static parse(content: string, options?: any): Promise<Manifest>;
-    static _augmentAstWithTypes(manifest: any, items: any): void;
-    static _processSchema(manifest: any, schemaItem: any): void;
-    static _processResource(manifest: any, schemaItem: any): void;
-    static _processParticle(manifest: any, particleItem: any, loader: any): void;
-    static _processInterface(manifest: any, interfaceItem: any): void;
-    static _processRecipe(manifest: any, recipeItem: any, loader: any): void;
-    static _buildRecipe(manifest: Manifest, recipe: Recipe, recipeItem: any): void;
+    private static _augmentAstWithTypes;
+    private static _processSchema;
+    private static _processResource;
+    private static _processParticle;
+    private static _processInterface;
+    private static _processRecipe;
+    private static _buildRecipe;
     resolveTypeName(name: any): {
         schema: Schema;
         iface?: undefined;
@@ -114,9 +114,9 @@ export declare class Manifest {
         iface: InterfaceInfo;
         schema?: undefined;
     };
-    static _processStore(manifest: any, item: any, loader: any): Promise<void>;
-    static _createStore(manifest: any, type: any, name: any, id: any, tags: any, item: any, originalId: any): Promise<any>;
-    _newRecipe(name: any): Recipe;
+    private static _processStore;
+    private static _createStore;
+    private _newRecipe;
     toString(options?: any): string;
     readonly idGeneratorForTesting: IdGenerator;
 }

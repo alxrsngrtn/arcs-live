@@ -1,3 +1,12 @@
+/**
+ * @license
+ * Copyright (c) 2017 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
 import { StorageProviderBase } from '../storage-provider-base.js';
 import { PouchDbKey } from './pouch-db-key.js';
 /**
@@ -5,13 +14,14 @@ import { PouchDbKey } from './pouch-db-key.js';
  * (PouchDbVariable/PouchDbCollection)
  */
 export class PouchDbStorageProvider extends StorageProviderBase {
-    constructor(type, storageEngine, name, id, key) {
+    constructor(type, storageEngine, name, id, key, refMode) {
         super(type, name, id, key);
         // Manages backing store
         this.backingStore = null;
-        this.pendingBackingStore = null;
         this.storageEngine = storageEngine;
         this.pouchDbKey = new PouchDbKey(key);
+        this.referenceMode = refMode;
+        this.initialized = new Promise(resolve => this.resolveInitialized = resolve);
     }
     // A consequence of awaiting this function is that this.backingStore
     // is guaranteed to exist once the await completes. This is because
@@ -38,7 +48,7 @@ export class PouchDbStorageProvider extends StorageProviderBase {
      * Increments the local version to be one more than the maximum of
      * the local and remove versions.
      */
-    bumpVersion(otherVersion) {
+    bumpVersion(otherVersion = 0) {
         this.version = Math.max(this.version, otherVersion) + 1;
     }
 }
