@@ -1,5 +1,5 @@
-commit 8057f4c7c2d8a8876326d95061746c2ed47a958a
-Author: shans <shane.stephens@gmail.com>
-Date:   Fri May 10 14:04:44 2019 +1000
+commit 9861a6cb37798bf97f4993d4337d697b7dfe87ed
+Author: Piotr Swigon <piotr.swigon@gmail.com>
+Date:   Fri May 10 14:47:54 2019 +1000
 
-    Direct store object (#2953)
+    Adds no-floating-promises count to health metrics (#2995)
