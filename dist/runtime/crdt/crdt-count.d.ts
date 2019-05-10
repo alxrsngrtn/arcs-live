@@ -9,7 +9,7 @@
  */
 import { VersionMap, CRDTChange, CRDTModel, CRDTTypeRecord } from "./crdt.js";
 declare type RawCount = number;
-declare type CountData = {
+export declare type CountData = {
     values: Map<string, number>;
     version: VersionMap;
 };
@@ -40,7 +40,7 @@ declare type CountModel = CRDTModel<CRDTCountTypeRecord>;
 declare type CountChange = CRDTChange<CRDTCountTypeRecord>;
 export declare class CRDTCount implements CountModel {
     private model;
-    merge(other: CountModel): {
+    merge(other: CountData): {
         modelChange: CountChange;
         otherChange: CountChange;
     };

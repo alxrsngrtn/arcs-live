@@ -48,7 +48,7 @@ describe('CRDTCount', () => {
         const count2 = new CRDTCount();
         count1.applyOperation({ type: CountOpTypes.MultiIncrement, actor: 'me', value: 7, version: { from: 0, to: 1 } });
         count2.applyOperation({ type: CountOpTypes.MultiIncrement, actor: 'them', value: 4, version: { from: 0, to: 1 } });
-        const { modelChange, otherChange } = count1.merge(count2);
+        const { modelChange, otherChange } = count1.merge(count2.getData());
         assert.equal(count1.getParticleView(), 11);
         if (modelChange.changeType === ChangeType.Operations) {
             assert.equal(modelChange.operations.length, 1);
@@ -72,7 +72,7 @@ describe('CRDTCount', () => {
         const count2 = new CRDTCount();
         count1.applyOperation({ type: CountOpTypes.MultiIncrement, actor: 'me', value: 7, version: { from: 0, to: 2 } });
         count2.applyOperation({ type: CountOpTypes.MultiIncrement, actor: 'me', value: 4, version: { from: 0, to: 1 } });
-        const { modelChange, otherChange } = count1.merge(count2);
+        const { modelChange, otherChange } = count1.merge(count2.getData());
         assert.equal(count1.getParticleView(), 7);
         if (modelChange.changeType === ChangeType.Operations) {
             assert.equal(modelChange.operations.length, 0);
@@ -95,14 +95,14 @@ describe('CRDTCount', () => {
         const count2 = new CRDTCount();
         count1.applyOperation({ type: CountOpTypes.MultiIncrement, actor: 'me', value: 7, version: { from: 0, to: 1 } });
         count2.applyOperation({ type: CountOpTypes.MultiIncrement, actor: 'me', value: 4, version: { from: 0, to: 1 } });
-        assert.throws(() => count1.merge(count2), CRDTError);
+        assert.throws(() => count1.merge(count2.getData()), CRDTError);
     });
     it('throws when values appear to have been decremented', () => {
         const count1 = new CRDTCount();
         const count2 = new CRDTCount();
         count1.applyOperation({ type: CountOpTypes.MultiIncrement, actor: 'me', value: 7, version: { from: 0, to: 1 } });
         count2.applyOperation({ type: CountOpTypes.MultiIncrement, actor: 'me', value: 4, version: { from: 0, to: 2 } });
-        assert.throws(() => count1.merge(count2), CRDTError);
+        assert.throws(() => count1.merge(count2.getData()), CRDTError);
     });
     it('merges two models with counts from the multiple actors', () => {
         const count1 = new CRDTCount();
@@ -115,7 +115,7 @@ describe('CRDTCount', () => {
         count2.applyOperation({ type: CountOpTypes.MultiIncrement, actor: 'c', value: 9, version: { from: 0, to: 1 } });
         count2.applyOperation({ type: CountOpTypes.MultiIncrement, actor: 'd', value: 22, version: { from: 0, to: 1 } });
         count2.applyOperation({ type: CountOpTypes.MultiIncrement, actor: 'e', value: 14, version: { from: 0, to: 2 } });
-        const { modelChange, otherChange } = count1.merge(count2);
+        const { modelChange, otherChange } = count1.merge(count2.getData());
         assert.equal(count1.getParticleView(), 59); // expect 5 / 6 / 12 / 22 / 14
         if (modelChange.changeType === ChangeType.Operations) {
             assert.equal(modelChange.operations.length, 2);

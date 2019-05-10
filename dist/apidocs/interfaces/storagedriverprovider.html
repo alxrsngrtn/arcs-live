@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>Store | arcs</title>
+	<title>StorageDriverProvider | arcs</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -56,70 +56,28 @@
 					<a href="../globals.html">Globals</a>
 				</li>
 				<li>
-					<a href="store.html">Store</a>
+					<a href="storagedriverprovider.html">StorageDriverProvider</a>
 				</li>
 			</ul>
-			<h1>Interface Store</h1>
+			<h1>Interface StorageDriverProvider</h1>
 		</div>
 	</div>
 </header>
 <div class="container container-main">
 	<div class="row">
 		<div class="col-8 col-content">
-			<section class="tsd-panel tsd-comment">
-				<div class="tsd-comment tsd-typography">
-					<div class="lead">
-						<p>Interface for a storage system. This is implemented by different classes depending on whether the code is running on the host or in a PEC.
-							On the host, it is implemented by StorageProviderBase. In a PEC, by StorageProxy. The storage proxy essentially forwards its calls through to
-							the host over the API channel, to be run on a real storage provider instance. This interface provides an API for operating on storage,
-						without knowing whether you are talking to a storage provider or proxy.</p>
-					</div>
-				</div>
-			</section>
 			<section class="tsd-panel tsd-hierarchy">
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<span class="target">Store</span>
-						<ul class="tsd-hierarchy">
-							<li>
-								<a href="variablestore.html" class="tsd-signature-type">VariableStore</a>
-							</li>
-							<li>
-								<a href="collectionstore.html" class="tsd-signature-type">CollectionStore</a>
-							</li>
-							<li>
-								<a href="bigcollectionstore.html" class="tsd-signature-type">BigCollectionStore</a>
-							</li>
-						</ul>
+						<span class="target">StorageDriverProvider</span>
 					</li>
 				</ul>
 			</section>
 			<section class="tsd-panel">
 				<h3>Implemented by</h3>
 				<ul class="tsd-hierarchy">
-					<li><a href="../classes/bigcollectionproxy.html" class="tsd-signature-type">BigCollectionProxy</a></li>
-					<li><a href="bigcollectionstorageprovider.html" class="tsd-signature-type">BigCollectionStorageProvider</a></li>
-					<li><a href="../classes/collectionproxy.html" class="tsd-signature-type">CollectionProxy</a></li>
-					<li><a href="collectionstorageprovider.html" class="tsd-signature-type">CollectionStorageProvider</a></li>
-					<li><a href="../classes/firebasebackingstore.html" class="tsd-signature-type">FirebaseBackingStore</a></li>
-					<li><a href="../classes/firebasebigcollection.html" class="tsd-signature-type">FirebaseBigCollection</a></li>
-					<li><a href="../classes/firebasecollection.html" class="tsd-signature-type">FirebaseCollection</a></li>
-					<li><a href="../classes/firebasestorageprovider.html" class="tsd-signature-type">FirebaseStorageProvider</a></li>
-					<li><a href="../classes/firebasevariable.html" class="tsd-signature-type">FirebaseVariable</a></li>
-					<li><a href="../classes/pouchdbbigcollection.html" class="tsd-signature-type">PouchDbBigCollection</a></li>
-					<li><a href="../classes/pouchdbcollection.html" class="tsd-signature-type">PouchDbCollection</a></li>
-					<li><a href="../classes/pouchdbstorageprovider.html" class="tsd-signature-type">PouchDbStorageProvider</a></li>
-					<li><a href="../classes/pouchdbvariable.html" class="tsd-signature-type">PouchDbVariable</a></li>
-					<li><a href="../classes/storageproviderbase.html" class="tsd-signature-type">StorageProviderBase</a></li>
-					<li><a href="../classes/storageproxy.html" class="tsd-signature-type">StorageProxy</a></li>
-					<li><a href="../classes/syntheticcollection.html" class="tsd-signature-type">SyntheticCollection</a></li>
-					<li><a href="../classes/variableproxy.html" class="tsd-signature-type">VariableProxy</a></li>
-					<li><a href="variablestorageprovider.html" class="tsd-signature-type">VariableStorageProvider</a></li>
-					<li><a href="../classes/volatilebigcollection.html" class="tsd-signature-type">VolatileBigCollection</a></li>
-					<li><a href="../classes/volatilecollection.html" class="tsd-signature-type">VolatileCollection</a></li>
-					<li><a href="../classes/volatilestorageprovider.html" class="tsd-signature-type">VolatileStorageProvider</a></li>
-					<li><a href="../classes/volatilevariable.html" class="tsd-signature-type">VolatileVariable</a></li>
+					<li><a href="../classes/mockstoragedriverprovider.html" class="tsd-signature-type">MockStorageDriverProvider</a></li>
 				</ul>
 			</section>
 			<section class="tsd-panel-group tsd-index-group">
@@ -127,88 +85,69 @@
 				<section class="tsd-panel tsd-index-panel">
 					<div class="tsd-index-content">
 						<section class="tsd-index-section ">
-							<h3>Properties</h3>
-							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="store.html#id" class="tsd-kind-icon">id</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="store.html#name" class="tsd-kind-icon">name</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="store.html#pec" class="tsd-kind-icon">pec</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="store.html#type" class="tsd-kind-icon">type</a></li>
-							</ul>
-						</section>
-						<section class="tsd-index-section ">
 							<h3>Methods</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="store.html#reportexceptioninhost" class="tsd-kind-icon">report<wbr>Exception<wbr>InHost</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-interface tsd-has-type-parameter"><a href="storagedriverprovider.html#driver" class="tsd-kind-icon">driver</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="storagedriverprovider.html#willsupport" class="tsd-kind-icon">will<wbr>Support</a></li>
 							</ul>
 						</section>
 					</div>
 				</section>
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
-				<h2>Properties</h2>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="id" class="tsd-anchor"></a>
-					<h3>id</h3>
-					<div class="tsd-signature tsd-kind-icon">id<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/f0bccd2/src/runtime/store.ts#L14">runtime/store.ts:14</a></li>
-						</ul>
-					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="name" class="tsd-anchor"></a>
-					<h3>name</h3>
-					<div class="tsd-signature tsd-kind-icon">name<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/f0bccd2/src/runtime/store.ts#L13">runtime/store.ts:13</a></li>
-						</ul>
-					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="pec" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagOptional">Optional</span> pec</h3>
-					<div class="tsd-signature tsd-kind-icon">pec<span class="tsd-signature-symbol">:</span> <a href="../classes/particleexecutioncontext.html" class="tsd-signature-type">ParticleExecutionContext</a></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/f0bccd2/src/runtime/store.ts#L16">runtime/store.ts:16</a></li>
-						</ul>
-					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="type" class="tsd-anchor"></a>
-					<h3>type</h3>
-					<div class="tsd-signature tsd-kind-icon">type<span class="tsd-signature-symbol">:</span> <a href="../classes/type.html" class="tsd-signature-type">Type</a></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/f0bccd2/src/runtime/store.ts#L15">runtime/store.ts:15</a></li>
-						</ul>
-					</aside>
-				</section>
-			</section>
-			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Methods</h2>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface">
-					<a name="reportexceptioninhost" class="tsd-anchor"></a>
-					<h3>report<wbr>Exception<wbr>InHost</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
-						<li class="tsd-signature tsd-kind-icon">report<wbr>Exception<wbr>InHost<span class="tsd-signature-symbol">(</span>exception<span class="tsd-signature-symbol">: </span><a href="../classes/propagatedexception.html" class="tsd-signature-type">PropagatedException</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface tsd-has-type-parameter">
+					<a name="driver" class="tsd-anchor"></a>
+					<h3>driver</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface tsd-has-type-parameter">
+						<li class="tsd-signature tsd-kind-icon">driver&lt;Data&gt;<span class="tsd-signature-symbol">(</span>storageKey<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, exists<span class="tsd-signature-symbol">: </span><a href="../enums/exists.html" class="tsd-signature-type">Exists</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../classes/driver.html" class="tsd-signature-type">Driver</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Data</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/f0bccd2/src/runtime/store.ts#L18">runtime/store.ts:18</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/8057f4c/src/runtime/storageNG/drivers/driver-factory.ts#L19">runtime/storageNG/drivers/driver-factory.ts:19</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-type-parameters-title">Type parameters</h4>
+							<ul class="tsd-type-parameters">
+								<li>
+									<h4>Data</h4>
+								</li>
+							</ul>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>storageKey: <span class="tsd-signature-type">string</span></h5>
+								</li>
+								<li>
+									<h5>exists: <a href="../enums/exists.html" class="tsd-signature-type">Exists</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="../classes/driver.html" class="tsd-signature-type">Driver</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Data</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface">
+					<a name="willsupport" class="tsd-anchor"></a>
+					<h3>will<wbr>Support</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
+						<li class="tsd-signature tsd-kind-icon">will<wbr>Support<span class="tsd-signature-symbol">(</span>storageKey<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/8057f4c/src/runtime/storageNG/drivers/driver-factory.ts#L18">runtime/storageNG/drivers/driver-factory.ts:18</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>exception: <a href="../classes/propagatedexception.html" class="tsd-signature-type">PropagatedException</a></h5>
+									<h5>storageKey: <span class="tsd-signature-type">string</span></h5>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -227,22 +166,13 @@
 				</ul>
 				<ul class="current">
 					<li class="current tsd-kind-interface">
-						<a href="store.html" class="tsd-kind-icon">Store</a>
+						<a href="storagedriverprovider.html" class="tsd-kind-icon">Storage<wbr>Driver<wbr>Provider</a>
 						<ul>
-							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="store.html#id" class="tsd-kind-icon">id</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="store.html#name" class="tsd-kind-icon">name</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="store.html#pec" class="tsd-kind-icon">pec</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="store.html#type" class="tsd-kind-icon">type</a>
+							<li class=" tsd-kind-method tsd-parent-kind-interface tsd-has-type-parameter">
+								<a href="storagedriverprovider.html#driver" class="tsd-kind-icon">driver</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-interface">
-								<a href="store.html#reportexceptioninhost" class="tsd-kind-icon">report<wbr>Exception<wbr>InHost</a>
+								<a href="storagedriverprovider.html#willsupport" class="tsd-kind-icon">will<wbr>Support</a>
 							</li>
 						</ul>
 					</li>

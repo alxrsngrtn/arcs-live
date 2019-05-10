@@ -18,8 +18,8 @@ export class CRDTCollection {
         this.model = { values: new Map(), version: new Map() };
     }
     merge(other) {
-        const newValues = this.mergeItems(this.model, other.getData());
-        const newVersion = mergeVersions(this.model.version, other.getData().version);
+        const newValues = this.mergeItems(this.model, other);
+        const newVersion = mergeVersions(this.model.version, other.version);
         this.model.values = newValues;
         this.model.version = newVersion;
         // For now this is always returning a model change.

@@ -22,7 +22,7 @@ export interface CRDTTypeRecord {
     consumerType: CRDTConsumerType;
 }
 export interface CRDTModel<T extends CRDTTypeRecord> {
-    merge(other: CRDTModel<T>): {
+    merge(other: T['data']): {
         modelChange: CRDTChange<T>;
         otherChange: CRDTChange<T>;
     };

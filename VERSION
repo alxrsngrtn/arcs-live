@@ -1,7 +1,5 @@
-commit f0bccd202256afed2381328c8aa82ed3afb6da38
-Author: Paul Lindner <plindner@google.com>
-Date:   Thu May 9 17:46:11 2019 -0700
+commit 8057f4c7c2d8a8876326d95061746c2ed47a958a
+Author: shans <shane.stephens@gmail.com>
+Date:   Fri May 10 14:04:44 2019 +1000
 
-    Fix wasm lint issues (#2992)
-    
-    Might be related to #2919
+    Direct store object (#2953)

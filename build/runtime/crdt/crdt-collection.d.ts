@@ -37,7 +37,7 @@ declare type CollectionChange<T> = CRDTChange<CRDTCollectionTypeRecord<T>>;
 declare type CollectionModel<T> = CRDTModel<CRDTCollectionTypeRecord<T>>;
 export declare class CRDTCollection<T> implements CollectionModel<T> {
     private model;
-    merge(other: CollectionModel<T>): {
+    merge(other: CollectionData<T>): {
         modelChange: CollectionChange<T>;
         otherChange: CollectionChange<T>;
     };
