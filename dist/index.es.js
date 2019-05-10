@@ -18223,7 +18223,7 @@ function pushEvent(event) {
     // Only keep events in memory if we're not streaming them.
     if (streamingCallbacks.length === 0)
         events.push(event);
-    Promise.resolve().then(() => {
+    void Promise.resolve().then(() => {
         for (const { callback, predicate } of streamingCallbacks) {
             if (!predicate || predicate(event))
                 callback(event);
@@ -18484,7 +18484,7 @@ function enableTracingAdapter(devtoolsChannel) {
  * http://polymer.github.io/PATENTS.txt
  */
 // Arc-independent handlers for devtools logic.
-DevtoolsConnection.onceConnected.then(devtoolsChannel => {
+void DevtoolsConnection.onceConnected.then(devtoolsChannel => {
     enableTracingAdapter(devtoolsChannel);
 });
 class ArcDebugHandler {
@@ -18493,7 +18493,7 @@ class ArcDebugHandler {
         if (arc.isStub)
             return;
         const connectedOnInstantiate = DevtoolsConnection.isConnected;
-        DevtoolsConnection.onceConnected.then(devtoolsChannel => {
+        void DevtoolsConnection.onceConnected.then(devtoolsChannel => {
             if (!connectedOnInstantiate) {
                 devtoolsChannel.send({
                     messageType: 'warning',
@@ -19537,7 +19537,7 @@ class MultiplexerDomParticle extends TransformationDomParticle {
             otherMappedHandles,
             otherConnections
         });
-        super.setHandles(handles);
+        await super.setHandles(handles);
     }
     async willReceiveProps({ list }, { arc, type, hostedParticle, otherMappedHandles, otherConnections }) {
         if (list.length > 0) {

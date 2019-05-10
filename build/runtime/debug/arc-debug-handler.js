@@ -12,7 +12,7 @@ import { ArcStoresFetcher } from './arc-stores-fetcher.js';
 import { DevtoolsConnection } from './devtools-connection.js';
 import { enableTracingAdapter } from './tracing-adapter.js';
 // Arc-independent handlers for devtools logic.
-DevtoolsConnection.onceConnected.then(devtoolsChannel => {
+void DevtoolsConnection.onceConnected.then(devtoolsChannel => {
     enableTracingAdapter(devtoolsChannel);
 });
 export class ArcDebugHandler {
@@ -21,7 +21,7 @@ export class ArcDebugHandler {
         if (arc.isStub)
             return;
         const connectedOnInstantiate = DevtoolsConnection.isConnected;
-        DevtoolsConnection.onceConnected.then(devtoolsChannel => {
+        void DevtoolsConnection.onceConnected.then(devtoolsChannel => {
             if (!connectedOnInstantiate) {
                 devtoolsChannel.send({
                     messageType: 'warning',

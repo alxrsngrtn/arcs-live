@@ -6695,7 +6695,7 @@ class MultiplexerDomParticle extends _transformation_dom_particle_js__WEBPACK_IM
             otherMappedHandles,
             otherConnections
         });
-        super.setHandles(handles);
+        await super.setHandles(handles);
     }
     async willReceiveProps({ list }, { arc, type, hostedParticle, otherMappedHandles, otherConnections }) {
         if (list.length > 0) {

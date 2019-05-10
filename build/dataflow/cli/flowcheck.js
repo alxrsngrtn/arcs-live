@@ -12,7 +12,7 @@ import { Loader } from '../../runtime/loader.js';
 import { Manifest } from '../../runtime/manifest.js';
 const fs = require('fs');
 // TODO make this a function and test it; it's big enough now
-(async () => {
+void (async () => {
     const configFile = process.argv[1];
     const manifestFile = process.argv[2];
     if (configFile === undefined || manifestFile === undefined) {

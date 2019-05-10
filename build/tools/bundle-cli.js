@@ -35,5 +35,5 @@ Examples
   $ bundle -v -o mybundle.zip recipes/feature.recipes recipes/extra_stuff.manifest`);
     process.exit();
 }
-bundle(argv._, Array.isArray(argv.o) ? argv.o[0] : argv.o, argv.verbose);
+void bundle(argv._, Array.isArray(argv.o) ? argv.o[0] : argv.o, argv.verbose);
 //# sourceMappingURL=bundle-cli.js.map

@@ -68,7 +68,7 @@ export class MultiplexerDomParticle extends TransformationDomParticle {
             otherMappedHandles,
             otherConnections
         });
-        super.setHandles(handles);
+        await super.setHandles(handles);
     }
     async willReceiveProps({ list }, { arc, type, hostedParticle, otherMappedHandles, otherConnections }) {
         if (list.length > 0) {

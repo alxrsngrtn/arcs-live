@@ -1,5 +1,5 @@
-commit 9861a6cb37798bf97f4993d4337d697b7dfe87ed
+commit 01b09a0c085ba9bbfad9968059b77f8304e4a944
 Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Fri May 10 14:47:54 2019 +1000
+Date:   Fri May 10 15:57:27 2019 +1000
 
-    Adds no-floating-promises count to health metrics (#2995)
+    Fixes some easy floating promises (#2996)
