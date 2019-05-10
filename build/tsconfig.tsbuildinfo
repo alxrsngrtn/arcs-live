@@ -114,11 +114,11 @@
         "signature": "a855ef24384aa9052ccffe8fc2005e43f3bed515e2cbb01c97ed459b7768da22"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/manifest-ast-nodes.ts": {
-        "version": "7e296a2254d5d61a364ab3ae55eb84429e50214c061448c4741f06cb0087f2a4",
-        "signature": "3bd6165ec65d5ea2623e0a0fd00c91e8aa8ee7c510e9bf97a3afdee0fc042813"
+        "version": "1a9c570e6b4cd2109ad20e9d82f553501a47be0730da310c6c7824274adf998a",
+        "signature": "248106e482092b586ea5c19c80b6a60d67bbfdca65ec86db706a393e1904635c"
       },
       "/home/travis/build/PolymerLabs/arcs/src/gen/runtime/manifest-parser.ts": {
-        "version": "8c146b389821e1aa23218b0f1e1dfa27a9ee5aa8b66d715c6736b7ef94e1c90a",
+        "version": "4bcb8e263e7dc2b20b7925ec18646fc152765f31de72776082e94eca068ee4fa",
         "signature": "ff2c763c7895327196fd3eb358dcc775b25f27bdae513079cc287433af262427"
       },
       "/home/travis/build/PolymerLabs/arcs/src/platform/assert-web.ts": {
@@ -410,11 +410,11 @@
         "signature": "0ffb4846f45368f2b810ca2140189e23bc5c42b885642dd82ff031017eb69524"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/entity.ts": {
-        "version": "42b65be322b602ec53893019f65599d34d06a716f9a65d03deea267354cc080c",
+        "version": "5bae572eb54ef5235e34c7fc6d20892d21e4aae2d0ddfbb89f75fb37cf476336",
         "signature": "25ed2983ce899b452053061236e1ccda9d5b1987afbf8c054dedaab14e19dd8b"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/schema.ts": {
-        "version": "b00b410a9c8060712f445a7ab51007b4ce2004835507d0f81a179e1c5570e8bc",
+        "version": "cb5446af7f23f1971116a321d80c1e9a9eb317ba99c6cbdc92697b02187a3966",
         "signature": "c50a6f1f5c26b86d17078289f1dd10dd73e82d040af54136f3bb2da10d3db979"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/slot-info.ts": {
@@ -1182,7 +1182,7 @@
         "signature": "9aa529882bb6346e49221ffdf45238d45e4aeb5c7723ef1ba367c41fe4045ff8"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/wasm.ts": {
-        "version": "822d0bff00091af34690ce038752e5716caaa0d2f045f0545f90229a5684c5be",
+        "version": "30baf79293b9a4f1be6bbbb5e4e1ff9a55eda33c433496612d25af588cba1828",
         "signature": "f833c88c0817b2b4851ce47f9b855b2201a00d91465180cee2cdb38ae5874fdf"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/keymgmt/keys.ts": {
@@ -1314,7 +1314,7 @@
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/test/manifest-test.ts": {
-        "version": "e85c93871e63645d4e0e882c3599cd87dec053e250c6c8de5e0ed8c264fb3826",
+        "version": "035527e0f28905d81d96ec1b53b1305ec4448b4fdf0a3e3b20b816806da35e5a",
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/test/multiplexer-test.ts": {
@@ -1358,7 +1358,7 @@
         "signature": "8bc1d39a3b8ec61064f9969316a088e314895e7ffd094468dcc0b238f33cb4a6"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/test/schema-tests.ts": {
-        "version": "9002c73f91a4cdf1368a9f231280b8cededd269a7e1fabef514e3de5ee0d685b",
+        "version": "9fea1636567253ee32924a949b35c5f080db4ab0bb8df2f2b8c77341c76be229",
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/test/storage-proxy-test.ts": {
@@ -1382,7 +1382,7 @@
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/test/type-test.ts": {
-        "version": "745ab051fec3a84eafd789005b9d59c0bc8f736ba6ceb825fcc45397cb2418fa",
+        "version": "fc8cfd45a298f73b1dfcc0b11f5214bd702c1948b29653d413c013f71c0b02fd",
         "signature": "8e609bb71c20b858c77f0e9f90bb1319db8477b13f9f965f1a1e18524bf50881"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/test/volatile-storage-test.ts": {

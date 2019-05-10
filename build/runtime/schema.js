@@ -7,15 +7,24 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-import { assert } from '../platform/assert-web.js';
 import { Entity } from './entity.js';
 import { EntityType, Type } from './type.js';
 export class Schema {
+    // For convenience, primitive field types can be specified as {name: 'Type'}
+    // in `fields`; the constructor will convert these to the correct schema form.
     // tslint:disable-next-line: no-any
     constructor(names, fields, description) {
         this.description = {};
         this.names = names;
-        this.fields = fields;
+        this.fields = {};
+        for (const [name, field] of Object.entries(fields)) {
+            if (typeof (field) === 'string') {
+                this.fields[name] = { kind: 'schema-primitive', type: field };
+            }
+            else {
+                this.fields[name] = field;
+            }
+        }
         if (description) {
             description.description.forEach(desc => this.description[desc.name] = desc.pattern || desc.patterns[0]);
         }
@@ -69,15 +78,13 @@ export class Schema {
         return Schema._typeString(fieldType1) === Schema._typeString(fieldType2);
     }
     static _typeString(type) {
-        if (typeof (type) !== 'object') {
-            assert(typeof type === 'string');
-            return type;
-        }
         switch (type.kind) {
+            case 'schema-primitive':
+                return type.type;
             case 'schema-union':
-                return `(${type.types.join(' or ')})`;
+                return `(${type.types.map(t => t.type).join(' or ')})`;
             case 'schema-tuple':
-                return `(${type.types.join(', ')})`;
+                return `(${type.types.map(t => t.type).join(', ')})`;
             case 'schema-reference':
                 return `Reference<${Schema._typeString(type.schema)}>`;
             case 'type-name':

@@ -2977,9 +2977,8 @@ ${this._slotsToManifestString()}`;
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Schema", function() { return Schema; });
-/* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
-/* harmony import */ var _entity_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(18);
-/* harmony import */ var _type_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(15);
+/* harmony import */ var _entity_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(18);
+/* harmony import */ var _type_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(15);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -2991,13 +2990,22 @@ __webpack_require__.r(__webpack_exports__);
  */
 
 
-
 class Schema {
+    // For convenience, primitive field types can be specified as {name: 'Type'}
+    // in `fields`; the constructor will convert these to the correct schema form.
     // tslint:disable-next-line: no-any
     constructor(names, fields, description) {
         this.description = {};
         this.names = names;
-        this.fields = fields;
+        this.fields = {};
+        for (const [name, field] of Object.entries(fields)) {
+            if (typeof (field) === 'string') {
+                this.fields[name] = { kind: 'schema-primitive', type: field };
+            }
+            else {
+                this.fields[name] = field;
+            }
+        }
         if (description) {
             description.description.forEach(desc => this.description[desc.name] = desc.pattern || desc.patterns[0]);
         }
@@ -3026,7 +3034,7 @@ class Schema {
         const updateField = field => {
             if (field.kind === 'schema-reference') {
                 const schema = field.schema;
-                return { kind: 'schema-reference', schema: { kind: schema.kind, model: _type_js__WEBPACK_IMPORTED_MODULE_2__["Type"].fromLiteral(schema.model) } };
+                return { kind: 'schema-reference', schema: { kind: schema.kind, model: _type_js__WEBPACK_IMPORTED_MODULE_1__["Type"].fromLiteral(schema.model) } };
             }
             else if (field.kind === 'schema-collection') {
                 return { kind: 'schema-collection', schema: updateField(field.schema) };
@@ -3051,15 +3059,13 @@ class Schema {
         return Schema._typeString(fieldType1) === Schema._typeString(fieldType2);
     }
     static _typeString(type) {
-        if (typeof (type) !== 'object') {
-            Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(typeof type === 'string');
-            return type;
-        }
         switch (type.kind) {
+            case 'schema-primitive':
+                return type.type;
             case 'schema-union':
-                return `(${type.types.join(' or ')})`;
+                return `(${type.types.map(t => t.type).join(' or ')})`;
             case 'schema-tuple':
-                return `(${type.types.join(', ')})`;
+                return `(${type.types.map(t => t.type).join(', ')})`;
             case 'schema-reference':
                 return `Reference<${Schema._typeString(type.schema)}>`;
             case 'type-name':
@@ -3125,10 +3131,10 @@ class Schema {
         return true;
     }
     get type() {
-        return new _type_js__WEBPACK_IMPORTED_MODULE_2__["EntityType"](this);
+        return new _type_js__WEBPACK_IMPORTED_MODULE_1__["EntityType"](this);
     }
     entityClass(context = null) {
-        return _entity_js__WEBPACK_IMPORTED_MODULE_1__["Entity"].createEntityClass(this, context);
+        return _entity_js__WEBPACK_IMPORTED_MODULE_0__["Entity"].createEntityClass(this, context);
     }
     toInlineSchemaString(options) {
         const names = this.names.join(' ') || '*';
@@ -3330,8 +3336,8 @@ class Entity {
         return clazz;
     }
 }
-function convertToJsType(fieldType, schemaName) {
-    switch (fieldType) {
+function convertToJsType(primitiveType, schemaName) {
+    switch (primitiveType.type) {
         case 'Text':
             return 'string';
         case 'URL':
@@ -3345,7 +3351,7 @@ function convertToJsType(fieldType, schemaName) {
         case 'Object':
             return 'object';
         default:
-            throw new Error(`Unknown field type ${fieldType} in schema ${schemaName}`);
+            throw new Error(`Unknown field type ${primitiveType.type} in schema ${schemaName}`);
     }
 }
 // tslint:disable-next-line: no-any
@@ -3357,16 +3363,14 @@ function validateFieldAndTypes({ op, name, value, schema, fieldType }) {
     if (value === undefined || value === null) {
         return;
     }
-    if (typeof (fieldType) !== 'object') {
-        // Primitive fields.
-        const valueType = value.constructor.name === 'Uint8Array' ? 'Uint8Array' : typeof (value);
-        if (valueType !== convertToJsType(fieldType, schema.name)) {
-            throw new TypeError(`Type mismatch ${op}ting field ${name} (type ${fieldType}); ` +
-                `value '${value}' is type ${typeof (value)}`);
-        }
-        return;
-    }
     switch (fieldType.kind) {
+        case 'schema-primitive':
+            const valueType = value.constructor.name === 'Uint8Array' ? 'Uint8Array' : typeof (value);
+            if (valueType !== convertToJsType(fieldType, schema.name)) {
+                throw new TypeError(`Type mismatch ${op}ting field ${name} (type ${fieldType.type}); ` +
+                    `value '${value}' is type ${typeof (value)}`);
+            }
+            break;
         case 'schema-union':
             // Value must be a primitive that matches one of the union types.
             for (const innerType of fieldType.types) {

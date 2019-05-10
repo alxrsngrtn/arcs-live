@@ -1,8 +1,8 @@
 {
   "_from": "@vaadin/vaadin-lumo-styles@^1.1.0",
-  "_id": "@vaadin/vaadin-lumo-styles@1.4.2",
+  "_id": "@vaadin/vaadin-lumo-styles@1.5.0",
   "_inBundle": false,
-  "_integrity": "sha512-6JrmxxQRkDfght5JiViVtd9xoIEwFAHIZjgEwW5ygQw2Zbr++vz6+9oBe6l93nM5JjOMHjR/TXW/+md0FrAZ+w==",
+  "_integrity": "sha512-9e9n7rH5IlzsAhRWvBt6C8roXbdNILKyKMJPwbN9I6zsPwzFhG5y2y5IY59Q5Ijj8aXvHuLV+Icjogc+2KU5fg==",
   "_location": "/@vaadin/vaadin-lumo-styles",
   "_phantomChildren": {},
   "_requested": {
@@ -19,10 +19,10 @@
   "_requiredBy": [
     "/@vaadin/vaadin-split-layout"
   ],
-  "_resolved": "https://registry.npmjs.org/@vaadin/vaadin-lumo-styles/-/vaadin-lumo-styles-1.4.2.tgz",
-  "_shasum": "c0f8c6bfeccace2db3601b6f043912da65bdc6ee",
+  "_resolved": "https://registry.npmjs.org/@vaadin/vaadin-lumo-styles/-/vaadin-lumo-styles-1.5.0.tgz",
+  "_shasum": "8dec3c4aefea347431c8d184caf72406ea20c564",
   "_spec": "@vaadin/vaadin-lumo-styles@^1.1.0",
-  "_where": "/tmp/asset_stageNPLEHR/node_modules/@vaadin/vaadin-split-layout",
+  "_where": "/tmp/asset_stageDuwrL3/node_modules/@vaadin/vaadin-split-layout",
   "author": {
     "name": "Vaadin Ltd"
   },
@@ -63,6 +63,7 @@
   "files": [
     "*.js",
     "mixins/*.js",
+    "presets/*.js",
     "!wdio.conf.js"
   ],
   "homepage": "https://vaadin.com/components",
@@ -87,5 +88,5 @@
     "supports-color": "3.1.2",
     "type-detect": "1.0.0"
   },
-  "version": "1.4.2"
+  "version": "1.5.0"
 }

@@ -302,8 +302,11 @@ export interface SchemaField extends BaseNode {
     type: SchemaType;
     name: string;
 }
-export declare type SchemaPrimitiveType = 'Text' | 'URL' | 'Number' | 'Boolean' | 'Bytes' | 'Object';
 export declare type SchemaType = SchemaReferenceType | SchemaCollectionType | SchemaPrimitiveType | SchemaUnionType | SchemaTupleType;
+export interface SchemaPrimitiveType extends BaseNode {
+    kind: 'schema-primitive';
+    type: 'Text' | 'URL' | 'Number' | 'Boolean' | 'Bytes' | 'Object';
+}
 export interface SchemaCollectionType extends BaseNode {
     kind: 'schema-collection';
     schema: SchemaType;
