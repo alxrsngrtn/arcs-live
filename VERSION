@@ -1,25 +1,5 @@
-commit 7837959dac86433806a900926018529d7a560b26
-Author: Scott J. Miles <sjmiles@google.com>
-Date:   Thu May 9 16:22:18 2019 -0700
+commit 6c33a0af0b4effa47c5500e5b4a7360b87ae4655
+Author: Piotr Swigon <piotr.swigon@gmail.com>
+Date:   Fri May 10 09:59:34 2019 +1000
 
-    First-draft of Services infrastructure (#2985)
-    
-    * begin services work
-    
-    * flesh out services impl
-    
-    * `service` method moved to Particle class
-    
-    * dump unused ServiceRequestCallback
-    
-    * better description
-    
-    * accommodate tslint
-    
-    * move `waltbird` into repo as particle asset
-    
-    * enable shorthand service invocation
-    
-    * do a fandango to appease lint
-    
-    * fix argument
+    Add points for moving us towards --strictNullChecks to paydown (#2988)

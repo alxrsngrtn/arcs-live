@@ -381,16 +381,16 @@ function webpack() {
     }
     return result.success;
 }
-function spawnWasSuccessful(result) {
+function spawnWasSuccessful(result, opts = {}) {
     if (result.status === 0 && !result.error) {
         return true;
     }
     for (const x of [result.stdout, result.stderr]) {
-        if (x) {
+        if (x && !opts.dontWarnOnFailure) {
             console.warn(x.toString().trim());
         }
     }
-    if (result.error) {
+    if (result.error && !opts.dontWarnOnFailure) {
         console.warn(result.error);
     }
     return false;
@@ -402,7 +402,7 @@ function saneSpawn(cmd, args, opts) {
     opts.shell = true;
     // it's OK, I know what I'm doing
     const result = _DO_NOT_USE_spawn(cmd, args, opts);
-    return spawnWasSuccessful(result);
+    return spawnWasSuccessful(result, opts);
 }
 // make spawn work more or less the same way cross-platform
 function saneSpawnWithOutput(cmd, args, opts) {
@@ -411,10 +411,7 @@ function saneSpawnWithOutput(cmd, args, opts) {
     opts.shell = true;
     // it's OK, I know what I'm doing
     const result = _DO_NOT_USE_spawn(cmd, args, opts);
-    if (!spawnWasSuccessful(result)) {
-        return { success: false, stdout: '' };
-    }
-    return { success: true, stdout: result.stdout.toString() };
+    return { success: spawnWasSuccessful(result, opts), stdout: result.stdout.toString(), stderr: result.stderr.toString() };
 }
 function runTests(args) {
     const options = minimist(args, {
@@ -567,9 +564,7 @@ function watch(args) {
 }
 function health(args) {
     const options = minimist(args, {
-        migration: ['migration'],
-        types: ['types'],
-        tests: ['tests'],
+        boolean: ['migration', 'types', 'tests', 'nullChecks'],
     });
     if ((options.migration && 1 || 0) + (options.types && 1 || 0) + (options.tests && 1 || 0) > 1) {
         console.error('Please select only one detailed report at a time');
@@ -584,6 +579,9 @@ function health(args) {
         console.log('JS files to migrate:\n');
         return saneSpawn('node_modules/.bin/sloc', ['-details', '--keys source', ...migrationFiles()], { stdio: 'inherit' });
     }
+    if (options.nullChecks) {
+        return saneSpawn('node_modules/.bin/tsc', ['--strictNullChecks'], { stdio: 'inherit' });
+    }
     if (options.types) {
         return saneSpawn('node_modules/.bin/type-coverage', ['--strict', '--detail'], { stdio: 'inherit' });
     }
@@ -593,26 +591,31 @@ function health(args) {
     }
     // Generating coverage report from tests.
     runSteps('test', ['--coverage']);
-    const line = () => console.log('+---------------------+-----------+---------------------+');
-    const show = (a, b, c) => console.log(`| ${a.padEnd(20, ' ')}| ${b.padEnd(10, ' ')}| ${c.padEnd(20, ' ')}|`);
+    const line = () => console.log('+---------------------+--------+--------+---------------------+');
+    const show = (a, b, c, d) => console.log(`| ${String(a).padEnd(20, ' ')}| ${String(b).padEnd(7, ' ')}| ${String(c).padEnd(7, ' ')}| ${String(d).padEnd(20, ' ')}|`);
     line();
-    show('Category', 'Result', 'Detailed report');
+    show('Category', 'Result', 'Points', 'Detailed report');
     line();
     const slocOutput = saneSpawnWithOutput('node_modules/.bin/sloc', ['--detail', '--keys source', ...migrationFiles()]).stdout;
     const jsLocCount = String(slocOutput).match(/Source *: *(\d+)/)[1];
-    show('JS LOC to migrate', jsLocCount, 'health --migration');
+    const jsLocPoints = Number(jsLocCount) / 5;
+    show('JS LOC to migrate', jsLocCount, jsLocPoints.toFixed(1), 'health --migration');
     const c8Output = saneSpawnWithOutput('node_modules/.bin/c8', ['report']).stdout;
     const testCovPercent = String(c8Output).match(/All files *\| *([.\d]+)/)[1];
-    show('Test Coverage', testCovPercent + '%', 'health --tests');
+    const testCovPoints = (100 - Number(testCovPercent)) * 20;
+    show('Test Coverage', testCovPercent + '%', testCovPoints.toFixed(1), 'health --tests');
     const typeCoverageOutput = saneSpawnWithOutput('node_modules/.bin/type-coverage', ['--strict']).stdout;
     const typeCovPercent = String(typeCoverageOutput).match(/(\d+\.\d+)%/)[1];
-    show('Type Coverage', typeCovPercent + '%', 'health --types');
+    const typeCovPoints = (100 - Number(typeCovPercent)) * 30;
+    show('Type Coverage', typeCovPercent + '%', typeCovPoints.toFixed(1), 'health --types');
+    const nullChecksOutput = saneSpawnWithOutput('node_modules/.bin/tsc', ['--strictNullChecks'], { dontWarnOnFailure: true }).stdout;
+    const nullChecksErrors = (String(nullChecksOutput).match(/error TS/g) || []).length;
+    const nullChecksPoints = (nullChecksErrors / 10);
+    show('Null Errors', nullChecksErrors, nullChecksPoints.toFixed(1), 'health --nullChecks');
     line();
     // For go/arcs-paydown, team tech-debt paydown exercise.
-    const points = (100 - Number(testCovPercent)) * 20
-        + (100 - Number(typeCovPercent)) * 30
-        + Number(jsLocCount) / 10;
-    show('Points available', points.toFixed(2), 'go/arcs-paydown');
+    const points = testCovPoints + typeCovPoints + nullChecksPoints + jsLocPoints;
+    show('Points available', '', points.toFixed(1), 'go/arcs-paydown');
     line();
     return true;
 }
