@@ -1314,7 +1314,7 @@ class FirebaseBackingStore extends FirebaseStorageProvider {
             await Promise.all(chunk.map(value => this.storeSingle(value, keys)));
         }
     }
-    storeSingle(value, keys) {
+    async storeSingle(value, keys) {
         return this.childRef(value.id).transaction(data => {
             if (data === null) {
                 data = { value, keys: {} };
@@ -1344,7 +1344,7 @@ class FirebaseBackingStore extends FirebaseStorageProvider {
             }
         }
     }
-    removeSingle(id, keys) {
+    async removeSingle(id, keys) {
         return this.childRef(id).transaction(data => {
             if (data === null) {
                 return null;
@@ -1401,7 +1401,7 @@ class FirebaseBackingStore extends FirebaseStorageProvider {
     async toLiteral() {
         throw new Error('FirebaseBackingStore does not implement toLiteral');
     }
-    cloneFrom(store) {
+    async cloneFrom(store) {
         throw new Error('FirebaseBackingStore does not implement cloneFrom');
     }
 }

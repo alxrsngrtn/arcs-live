@@ -46,7 +46,7 @@ export class ParticleExecutionContext {
                     global['close']();
                 }
             }
-            onInstantiateParticle(id, spec, proxies) {
+            async onInstantiateParticle(id, spec, proxies) {
                 return pec._instantiateParticle(id, spec, proxies);
             }
             onSimpleCallback(callback, data) {
@@ -95,7 +95,7 @@ export class ParticleExecutionContext {
     innerArcHandle(arcId, particleId) {
         const pec = this;
         return {
-            createHandle(type, name, hostParticle) {
+            async createHandle(type, name, hostParticle) {
                 return new Promise((resolve, reject) => pec.apiPort.ArcCreateHandle(proxy => {
                     const handle = handleFor(proxy, pec.idGenerator, name, particleId);
                     resolve(handle);
@@ -104,17 +104,17 @@ export class ParticleExecutionContext {
                     }
                 }, arcId, type, name));
             },
-            mapHandle(handle) {
+            async mapHandle(handle) {
                 return new Promise((resolve, reject) => pec.apiPort.ArcMapHandle(id => {
                     resolve(id);
                 }, arcId, handle)); // recipe handle vs not?
             },
-            createSlot(transformationParticle, transformationSlotName, handleId) {
+            async createSlot(transformationParticle, transformationSlotName, handleId) {
                 // handleId: the ID of a handle (returned by `createHandle` above) this slot is rendering; null - if not applicable.
                 // TODO: support multiple handle IDs.
                 return new Promise((resolve, reject) => pec.apiPort.ArcCreateSlot(hostedSlotId => resolve(hostedSlotId), arcId, transformationParticle, transformationSlotName, handleId));
             },
-            loadRecipe(recipe) {
+            async loadRecipe(recipe) {
                 // TODO: do we want to return a promise on completion?
                 return new Promise((resolve, reject) => pec.apiPort.ArcLoadRecipe(arcId, recipe, response => {
                     if (response.error) {
@@ -140,7 +140,7 @@ export class ParticleExecutionContext {
     }
     defaultCapabilitySet() {
         return {
-            constructInnerArc: particle => {
+            constructInnerArc: async (particle) => {
                 return new Promise((resolve, reject) => this.apiPort.ConstructInnerArc(arcId => resolve(this.innerArcHandle(arcId, particle.id)), particle));
             },
             // TODO(sjmiles): experimental `services` impl
@@ -201,7 +201,7 @@ export class ParticleExecutionContext {
         if (!this.busy) {
             return Promise.resolve();
         }
-        const busyParticlePromises = this.particles.filter(particle => particle.busy).map(particle => particle.idle);
+        const busyParticlePromises = this.particles.filter(async (particle) => particle.busy).map(async (particle) => particle.idle);
         return Promise.all([this.scheduler.idle, ...this.pendingLoads, ...busyParticlePromises]).then(() => this.idle);
     }
 }

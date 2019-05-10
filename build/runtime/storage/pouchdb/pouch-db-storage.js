@@ -175,7 +175,7 @@ export class PouchDbStorage extends StorageBase {
                     return { _id: row.id, _rev: row.doc._rev, _deleted: true };
                 });
             })
-                .then(deleteDocs => {
+                .then(async (deleteDocs) => {
                 return db.bulkDocs(deleteDocs);
             });
         }

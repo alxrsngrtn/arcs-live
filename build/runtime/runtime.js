@@ -29,7 +29,7 @@ export class Runtime {
      * Parse a textual manifest and return a Manifest object. See the Manifest
      * class for the options accepted.
      */
-    static parseManifest(content, options) {
+    static async parseManifest(content, options) {
         return Manifest.parse(content, options);
     }
     /**
@@ -37,7 +37,7 @@ export class Runtime {
      * a Manifest object. The loader determines the semantics of the fileName. See
      * the Manifest class for details.
      */
-    static loadManifest(fileName, loader, options) {
+    static async loadManifest(fileName, loader, options) {
         return Manifest.load(fileName, loader, options);
     }
 }

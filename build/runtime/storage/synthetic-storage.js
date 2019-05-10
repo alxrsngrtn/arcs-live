@@ -152,7 +152,7 @@ class SyntheticCollection extends StorageProviderBase {
     async toLiteral() {
         throw new Error('unimplemented');
     }
-    cloneFrom() {
+    async cloneFrom() {
         throw new Error('cloneFrom should never be called on SyntheticCollection!');
     }
     async ensureBackingStore() {
@@ -165,7 +165,7 @@ class SyntheticCollection extends StorageProviderBase {
     async storeMultiple(values, keys, originatorId) {
         throw new Error('unimplemented');
     }
-    removeMultiple(items, originatorId) {
+    async removeMultiple(items, originatorId) {
         throw new Error('unimplemented');
     }
     async get(id) {

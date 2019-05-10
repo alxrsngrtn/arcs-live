@@ -33,7 +33,7 @@ export class PouchDbBigCollection extends PouchDbStorageProvider {
     async cursorNext(cursorId) {
         throw new Error('NotImplemented');
     }
-    cursorClose(cursorId) {
+    async cursorClose(cursorId) {
         throw new Error('NotImplemented');
     }
     cursorVersion(cursorId) {
@@ -42,7 +42,7 @@ export class PouchDbBigCollection extends PouchDbStorageProvider {
     async toLiteral() {
         throw new Error('NotImplemented');
     }
-    cloneFrom() {
+    async cloneFrom() {
         throw new Error('NotImplemented');
     }
     clearItemsForTesting() {

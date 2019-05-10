@@ -58,12 +58,10 @@ export class CRDTCollection {
         if (!this.model.values.has(value)) {
             return false;
         }
-        if (!version.get(key)) {
-            return false;
-        }
+        const clockValue = (version.get(key) || 0);
         // Removes do not increment the clock.
         const expectedClockValue = (this.model.version.get(key) || 0);
-        if (!(expectedClockValue === version.get(key))) {
+        if (!(expectedClockValue === clockValue)) {
             return false;
         }
         // Cannot remove an element unless version is higher for all other actors as
@@ -71,7 +69,7 @@ export class CRDTCollection {
         if (!dominates(version, this.model.values.get(value))) {
             return false;
         }
-        this.model.version.set(key, version.get(key));
+        this.model.version.set(key, clockValue);
         this.model.values.delete(value);
         return true;
     }

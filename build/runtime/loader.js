@@ -49,13 +49,13 @@ export class Loader {
             ;
         return path;
     }
-    loadResource(file) {
+    async loadResource(file) {
         if (/^https?:\/\//.test(file)) {
             return this._loadURL(file);
         }
         return this._loadFile(file);
     }
-    _loadFile(file) {
+    async _loadFile(file) {
         return new Promise((resolve, reject) => {
             fs.readFile(file, (err, data) => {
                 if (err) {
@@ -67,7 +67,7 @@ export class Loader {
             });
         });
     }
-    _loadURL(url) {
+    async _loadURL(url) {
         if (/\/\/schema.org\//.test(url)) {
             if (url.endsWith('/Thing')) {
                 return fetch('https://schema.org/Product.jsonld').then(res => res.text()).then(data => JsonldToManifest.convert(data, { '@id': 'schema:Thing' }));

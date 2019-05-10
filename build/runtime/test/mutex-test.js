@@ -10,7 +10,7 @@
 import { assert } from '../../platform/chai-web.js';
 import { Mutex } from '../mutex.js';
 describe('Mutex', () => {
-    const delay = (ms) => new Promise(r => setTimeout(r, ms));
+    const delay = async (ms) => new Promise(r => setTimeout(r, ms));
     it('correctly calculates lock status', async () => {
         const mutex = new Mutex();
         assert.isFalse(mutex.locked, 'unlocked before beginning');

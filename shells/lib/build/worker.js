@@ -174,7 +174,7 @@ class ParticleExecutionContext {
                     global['close']();
                 }
             }
-            onInstantiateParticle(id, spec, proxies) {
+            async onInstantiateParticle(id, spec, proxies) {
                 return pec._instantiateParticle(id, spec, proxies);
             }
             onSimpleCallback(callback, data) {
@@ -223,7 +223,7 @@ class ParticleExecutionContext {
     innerArcHandle(arcId, particleId) {
         const pec = this;
         return {
-            createHandle(type, name, hostParticle) {
+            async createHandle(type, name, hostParticle) {
                 return new Promise((resolve, reject) => pec.apiPort.ArcCreateHandle(proxy => {
                     const handle = Object(_handle_js__WEBPACK_IMPORTED_MODULE_2__["handleFor"])(proxy, pec.idGenerator, name, particleId);
                     resolve(handle);
@@ -232,17 +232,17 @@ class ParticleExecutionContext {
                     }
                 }, arcId, type, name));
             },
-            mapHandle(handle) {
+            async mapHandle(handle) {
                 return new Promise((resolve, reject) => pec.apiPort.ArcMapHandle(id => {
                     resolve(id);
                 }, arcId, handle)); // recipe handle vs not?
             },
-            createSlot(transformationParticle, transformationSlotName, handleId) {
+            async createSlot(transformationParticle, transformationSlotName, handleId) {
                 // handleId: the ID of a handle (returned by `createHandle` above) this slot is rendering; null - if not applicable.
                 // TODO: support multiple handle IDs.
                 return new Promise((resolve, reject) => pec.apiPort.ArcCreateSlot(hostedSlotId => resolve(hostedSlotId), arcId, transformationParticle, transformationSlotName, handleId));
             },
-            loadRecipe(recipe) {
+            async loadRecipe(recipe) {
                 // TODO: do we want to return a promise on completion?
                 return new Promise((resolve, reject) => pec.apiPort.ArcLoadRecipe(arcId, recipe, response => {
                     if (response.error) {
@@ -268,7 +268,7 @@ class ParticleExecutionContext {
     }
     defaultCapabilitySet() {
         return {
-            constructInnerArc: particle => {
+            constructInnerArc: async (particle) => {
                 return new Promise((resolve, reject) => this.apiPort.ConstructInnerArc(arcId => resolve(this.innerArcHandle(arcId, particle.id)), particle));
             },
             // TODO(sjmiles): experimental `services` impl
@@ -329,7 +329,7 @@ class ParticleExecutionContext {
         if (!this.busy) {
             return Promise.resolve();
         }
-        const busyParticlePromises = this.particles.filter(particle => particle.busy).map(particle => particle.idle);
+        const busyParticlePromises = this.particles.filter(async (particle) => particle.busy).map(async (particle) => particle.idle);
         return Promise.all([this.scheduler.idle, ...this.pendingLoads, ...busyParticlePromises]).then(() => this.idle);
     }
 }
@@ -3149,57 +3149,6 @@ class Schema {
         }
         return results.join('\n');
     }
-    // Returns a JSON representation that protobufjs can use to de/serialize entity data as protobufs.
-    toProtoJSON() {
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(this.names.length > 0, 'At least one schema name is required for proto-json conversion');
-        let id = 0;
-        let hasUrl = false;
-        const fields = {};
-        for (const [name, type] of Object.entries(this.fields).sort()) {
-            id++;
-            let field;
-            if (type.kind === 'schema-collection') {
-                field = { rule: 'repeated', type: this.jsonBaseType(type.schema), id };
-            }
-            else {
-                field = { type: this.jsonBaseType(type), id };
-            }
-            hasUrl = hasUrl || (field.type === 'Url');
-            fields[name] = field;
-        }
-        const json = {
-            nested: {
-                [this.name]: { fields }
-            }
-        };
-        if (hasUrl) {
-            json.nested.Url = { fields: { href: { type: 'string', id: 1 } } };
-        }
-        return json;
-    }
-    jsonBaseType(type) {
-        const kind = type.kind || type;
-        switch (kind) {
-            case 'Text':
-                return 'string';
-            case 'URL':
-                return 'Url';
-            case 'Number':
-                return 'double';
-            case 'Boolean':
-                return 'bool';
-            case 'Bytes':
-            case 'Object':
-            case 'schema-union':
-            case 'schema-tuple':
-            case 'schema-reference':
-                throw new Error(`'${kind}' not yet supported for schema to proto-json conversion`);
-            case 'schema-collection':
-                throw new Error(`Nested collections not yet supported for schema to proto-json conversion`);
-            default:
-                throw new Error(`Unknown type '${kind}' in schema ${this.name}`);
-        }
-    }
 }
 //# sourceMappingURL=schema.js.map
 
@@ -4984,7 +4933,7 @@ class CollectionProxy extends StorageProxy {
     }
     // Read ops: if we're synchronized we can just return the local copy of the data.
     // Otherwise, send a request to the backing store.
-    toList() {
+    async toList() {
         if (this.synchronized === SyncState.full) {
             return Promise.resolve(this.model.toList());
         }
@@ -4994,7 +4943,7 @@ class CollectionProxy extends StorageProxy {
             return new Promise(resolve => this.port.HandleToList(this, resolve));
         }
     }
-    get(id) {
+    async get(id) {
         if (this.synchronized === SyncState.full) {
             return Promise.resolve(this.model.getValue(id));
         }
@@ -5003,7 +4952,7 @@ class CollectionProxy extends StorageProxy {
         }
     }
     // tslint:disable-next-line: no-any
-    store(value, keys, particleId) {
+    async store(value, keys, particleId) {
         const id = value.id;
         const data = { value, keys };
         this.port.HandleStore(this, () => { }, data, particleId);
@@ -5017,7 +4966,7 @@ class CollectionProxy extends StorageProxy {
         this._notify('update', update, options => options.notifyUpdate);
         return Promise.resolve();
     }
-    clear(particleId) {
+    async clear(particleId) {
         if (this.synchronized !== SyncState.full) {
             this.port.HandleRemoveMultiple(this, () => { }, [], particleId);
         }
@@ -5030,7 +4979,7 @@ class CollectionProxy extends StorageProxy {
         }
         return Promise.resolve();
     }
-    remove(id, keys, particleId) {
+    async remove(id, keys, particleId) {
         if (this.synchronized !== SyncState.full) {
             const data = { id, keys: [] };
             this.port.HandleRemove(this, () => { }, data, particleId);
@@ -5111,7 +5060,7 @@ class VariableProxy extends StorageProxy {
     // Otherwise, send a request to the backing store.
     // TODO: in synchronized mode, these should integrate with SynchronizeProxy rather than
     //       sending a parallel request
-    get() {
+    async get() {
         if (this.synchronized === SyncState.full) {
             return Promise.resolve(this.model);
         }
@@ -5119,7 +5068,7 @@ class VariableProxy extends StorageProxy {
             return new Promise(resolve => this.port.HandleGet(this, resolve));
         }
     }
-    set(entity, particleId) {
+    async set(entity, particleId) {
         Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(entity !== undefined);
         if (JSON.stringify(this.model) === JSON.stringify(entity)) {
             return Promise.resolve();
@@ -5144,7 +5093,7 @@ class VariableProxy extends StorageProxy {
         this._notify('update', update, options => options.notifyUpdate);
         return Promise.resolve();
     }
-    clear(particleId) {
+    async clear(particleId) {
         if (this.model == null) {
             return Promise.resolve();
         }
@@ -5192,7 +5141,7 @@ class BigCollectionProxy extends StorageProxy {
     async cursorNext(cursorId) {
         return new Promise(resolve => this.port.StreamCursorNext(this, resolve, cursorId));
     }
-    cursorClose(cursorId) {
+    async cursorClose(cursorId) {
         this.port.StreamCursorClose(this, cursorId);
         return Promise.resolve();
     }
@@ -5613,13 +5562,13 @@ class Loader {
             ;
         return path;
     }
-    loadResource(file) {
+    async loadResource(file) {
         if (/^https?:\/\//.test(file)) {
             return this._loadURL(file);
         }
         return this._loadFile(file);
     }
-    _loadFile(file) {
+    async _loadFile(file) {
         return new Promise((resolve, reject) => {
             _platform_fs_web_js__WEBPACK_IMPORTED_MODULE_2__["fs"].readFile(file, (err, data) => {
                 if (err) {
@@ -5631,7 +5580,7 @@ class Loader {
             });
         });
     }
-    _loadURL(url) {
+    async _loadURL(url) {
         if (/\/\/schema.org\//.test(url)) {
             if (url.endsWith('/Thing')) {
                 return Object(_platform_fetch_web_js__WEBPACK_IMPORTED_MODULE_1__["fetch"])('https://schema.org/Product.jsonld').then(res => res.text()).then(data => _converters_jsonldToManifest_js__WEBPACK_IMPORTED_MODULE_4__["JsonldToManifest"].convert(data, { '@id': 'schema:Thing' }));

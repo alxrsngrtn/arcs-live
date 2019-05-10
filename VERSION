@@ -1,5 +1,7 @@
-commit 6c33a0af0b4effa47c5500e5b4a7360b87ae4655
-Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Fri May 10 09:59:34 2019 +1000
+commit f0bccd202256afed2381328c8aa82ed3afb6da38
+Author: Paul Lindner <plindner@google.com>
+Date:   Thu May 9 17:46:11 2019 -0700
 
-    Add points for moving us towards --strictNullChecks to paydown (#2988)
+    Fix wasm lint issues (#2992)
+    
+    Might be related to #2919

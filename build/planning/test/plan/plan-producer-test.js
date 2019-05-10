@@ -126,7 +126,7 @@ class TestPlanProducer extends PlanProducer {
                 this.produceSuggestionsCalled++;
                 this.options = options;
             }
-            setNextSearch(search) {
+            async setNextSearch(search) {
                 this.searchStore.set([{ arc: this.arc.id.idTreeAsString(), search }]);
                 return this.onSearchChanged();
             }

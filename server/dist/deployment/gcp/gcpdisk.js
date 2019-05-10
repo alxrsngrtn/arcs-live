@@ -85,7 +85,7 @@ class GCPDisk {
     type() {
         return GCE_PERSISTENT_DISK_TYPE;
     }
-    wrappedKeyFor(fingerprint) {
+    async wrappedKeyFor(fingerprint) {
         return Promise.resolve(JSON.parse(this.diskApi.metadata.description)[arcsKeyFor(fingerprint)]);
     }
 }

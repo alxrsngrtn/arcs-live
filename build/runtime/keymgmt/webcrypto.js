@@ -241,7 +241,7 @@ export class WebCryptoKeyGenerator {
             hash: { name: X509_CERTIFICATE_HASH_ALGORITHM }
         }, true, ["encrypt", "wrapKey"]).then(ikey => new WebCryptoPublicKey(ikey));
     }
-    importWrappedKey(wrappedKey, wrappedBy) {
+    async importWrappedKey(wrappedKey, wrappedBy) {
         const decodedKey = decode(wrappedKey);
         return Promise.resolve(new WebCryptoWrappedKey(decodedKey, wrappedBy));
     }
@@ -266,7 +266,7 @@ export class WebCryptoKeyIndexedDBStorage {
         }
     }
     async find(keyId) {
-        const result = await this.runOnStore(store => {
+        const result = await this.runOnStore(async (store) => {
             return store.get(keyId);
         });
         if (!result) {
@@ -287,7 +287,7 @@ export class WebCryptoKeyIndexedDBStorage {
     async write(keyFingerPrint, key) {
         if (key instanceof WebCryptoStorableKey) {
             const skey = key;
-            await this.runOnStore(store => {
+            await this.runOnStore(async (store) => {
                 return store.put({ keyFingerPrint, key: skey.storableKey() });
             });
             return keyFingerPrint;
@@ -295,7 +295,7 @@ export class WebCryptoKeyIndexedDBStorage {
         else if (key instanceof WebCryptoWrappedKey) {
             const wrappedKey = key;
             const wrappingKeyFingerprint = await wrappedKey.wrappedBy.fingerprint();
-            await this.runOnStore(store => {
+            await this.runOnStore(async (store) => {
                 return store.put({ keyFingerPrint, key: wrappedKey.wrappedKeyData,
                     wrappingKeyFingerprint });
             });

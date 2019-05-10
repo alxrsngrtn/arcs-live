@@ -275,7 +275,7 @@ export class CollectionProxy extends StorageProxy {
     }
     // Read ops: if we're synchronized we can just return the local copy of the data.
     // Otherwise, send a request to the backing store.
-    toList() {
+    async toList() {
         if (this.synchronized === SyncState.full) {
             return Promise.resolve(this.model.toList());
         }
@@ -285,7 +285,7 @@ export class CollectionProxy extends StorageProxy {
             return new Promise(resolve => this.port.HandleToList(this, resolve));
         }
     }
-    get(id) {
+    async get(id) {
         if (this.synchronized === SyncState.full) {
             return Promise.resolve(this.model.getValue(id));
         }
@@ -294,7 +294,7 @@ export class CollectionProxy extends StorageProxy {
         }
     }
     // tslint:disable-next-line: no-any
-    store(value, keys, particleId) {
+    async store(value, keys, particleId) {
         const id = value.id;
         const data = { value, keys };
         this.port.HandleStore(this, () => { }, data, particleId);
@@ -308,7 +308,7 @@ export class CollectionProxy extends StorageProxy {
         this._notify('update', update, options => options.notifyUpdate);
         return Promise.resolve();
     }
-    clear(particleId) {
+    async clear(particleId) {
         if (this.synchronized !== SyncState.full) {
             this.port.HandleRemoveMultiple(this, () => { }, [], particleId);
         }
@@ -321,7 +321,7 @@ export class CollectionProxy extends StorageProxy {
         }
         return Promise.resolve();
     }
-    remove(id, keys, particleId) {
+    async remove(id, keys, particleId) {
         if (this.synchronized !== SyncState.full) {
             const data = { id, keys: [] };
             this.port.HandleRemove(this, () => { }, data, particleId);
@@ -402,7 +402,7 @@ export class VariableProxy extends StorageProxy {
     // Otherwise, send a request to the backing store.
     // TODO: in synchronized mode, these should integrate with SynchronizeProxy rather than
     //       sending a parallel request
-    get() {
+    async get() {
         if (this.synchronized === SyncState.full) {
             return Promise.resolve(this.model);
         }
@@ -410,7 +410,7 @@ export class VariableProxy extends StorageProxy {
             return new Promise(resolve => this.port.HandleGet(this, resolve));
         }
     }
-    set(entity, particleId) {
+    async set(entity, particleId) {
         assert(entity !== undefined);
         if (JSON.stringify(this.model) === JSON.stringify(entity)) {
             return Promise.resolve();
@@ -435,7 +435,7 @@ export class VariableProxy extends StorageProxy {
         this._notify('update', update, options => options.notifyUpdate);
         return Promise.resolve();
     }
-    clear(particleId) {
+    async clear(particleId) {
         if (this.model == null) {
             return Promise.resolve();
         }
@@ -483,7 +483,7 @@ export class BigCollectionProxy extends StorageProxy {
     async cursorNext(cursorId) {
         return new Promise(resolve => this.port.StreamCursorNext(this, resolve, cursorId));
     }
-    cursorClose(cursorId) {
+    async cursorClose(cursorId) {
         this.port.StreamCursorClose(this, cursorId);
         return Promise.resolve();
     }
