@@ -1,9 +1,9 @@
-commit 4954670496e6984b2a1a3d7c8499421bca598294
-Author: Walter Korman <wkorman@chromium.org>
-Date:   Fri May 10 10:57:16 2019 -0700
+commit 9d2c04df9ffc680b9aa7ca254aa221ddd068c026
+Author: Ray Cromwell <cromwellian@gmail.com>
+Date:   Fri May 10 19:24:48 2019 -0700
 
-    Remove .prettierrc config and npm package dep. (#2983)
+    First example J2cl particle (#2999)
     
-    We've not standardized on JS (not TS) style/formatting. We were using
-    clang-format previously and it would provide a smoother path to
-    adopting some subset of Google style which would be more likely.
+    * First example J2cl particle
+    
+    * Capitalize Native,exclude from particle-tests, fix lint errors
