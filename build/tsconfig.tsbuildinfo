@@ -118,7 +118,7 @@
         "signature": "248106e482092b586ea5c19c80b6a60d67bbfdca65ec86db706a393e1904635c"
       },
       "/home/travis/build/PolymerLabs/arcs/src/gen/runtime/manifest-parser.ts": {
-        "version": "4bcb8e263e7dc2b20b7925ec18646fc152765f31de72776082e94eca068ee4fa",
+        "version": "cd1c3c1aad069bcd98f2bfead6f42e606dec016dfe3eaeab27f26c4572a01bb0",
         "signature": "ff2c763c7895327196fd3eb358dcc775b25f27bdae513079cc287433af262427"
       },
       "/home/travis/build/PolymerLabs/arcs/src/platform/assert-web.ts": {
@@ -165,9 +165,13 @@
         "version": "7754b98f898c71703ef34046a1f16cad52e542f34a5f9ba9f01cb7ff0fdddad3",
         "signature": "9c38ae08bd81a0ac1a3217e925c9707e618aed6cd68a0fe5183796dfe448633e"
       },
+      "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/walker.ts": {
+        "version": "bc49f0b02a184d4da473221408902274e8336eb0e2d490b82e2dc131b34448e1",
+        "signature": "deac3e159cca03cca1e8684924ae726bc5dcf75e2bb2aafc999f3a520337cb37"
+      },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/recipe.ts": {
-        "version": "47c4d0ca39320164ca8ae089444b9ef7563bc73fa72d7912222e89ed37117ca3",
-        "signature": "8360d56005d2f1270fc1ccc5bcb8741ce69d60d3325ca596615de808864e0ce6"
+        "version": "6a73e71c08727a0405d62c483e0818dd745f6989291be42c2b4b6dd3a7d990f8",
+        "signature": "3c78ebb958232f2467f8718661db64376cbfe2b4313c508769a847f413f487e0"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/crdt-collection-model.ts": {
         "version": "33e4d3614de7598f9571b2855c06b15a52bd2240fffb89381550e2728d102221",
@@ -300,10 +304,6 @@
       "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/recipe-util.ts": {
         "version": "d768a5b7ff03593b85773355771156b4eae80762e1d7b4da1b275ea1b17a2b9a",
         "signature": "4b6a0aa4260e5f2a9734a6b9d1b328bb5955cc4b55acb1534b7042ee6f27a0c5"
-      },
-      "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/walker.ts": {
-        "version": "19821a5ca14edb8ec0914f3a12dad2787158e480ef46040ee8a23d9f76efafc5",
-        "signature": "b6c748a96f9acf2d9ae7cd954ae16ac0efb305dbc06345e621aff91329003f31"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/recipe-walker.ts": {
         "version": "4a3c5da9d5c18783fa6a2e7c73c1df5be794b66bf7e31c17afab4295f4e03ada",
@@ -506,7 +506,7 @@
         "signature": "fd95df5d076cbfed143dc4904d376b5c6d9cb1091b630994ffe2366010afa6b3"
       },
       "/home/travis/build/PolymerLabs/arcs/src/dataflow/cli/flowcheck.ts": {
-        "version": "d76b4db194bb7a4be7c6261b6af6ec04bf06ca44ebf0f5c7c2c86f5682bb4648",
+        "version": "826c398c55f4b38ffe347cba433a15c75312b58c8c8e7f6604ad19e935f7d8a1",
         "signature": "fd95df5d076cbfed143dc4904d376b5c6d9cb1091b630994ffe2366010afa6b3"
       },
       "/home/travis/build/PolymerLabs/arcs/src/platform/date-web.ts": {
@@ -662,7 +662,7 @@
         "signature": "c61f7bca04038395a2e4eeb0b08db108477d0db521cf5db8abecc4387ba599a0"
       },
       "/home/travis/build/PolymerLabs/arcs/src/planning/debug/arc-planner-invoker.ts": {
-        "version": "dba15e49ceec4c6b6caa959af01fd866527cd9d42a751a21f7c7e40b3f2d09a9",
+        "version": "cffa36dc5549e05bd9fe48151032dba6e882a32e1a89f20c1660989656060234",
         "signature": "0848efef0323ae52fced0d0ead711fa2776677949997dc9ac1cdc8ce41ee5cd8"
       },
       "/home/travis/build/PolymerLabs/arcs/src/planning/arcs-planning.ts": {
@@ -1810,6 +1810,12 @@
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
       ],
+      "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/walker.ts": [
+        "/home/travis/build/PolymerLabs/arcs/src/platform/assert-web.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts",
+        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
+        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
+      ],
       "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/recipe.ts": [
         "/home/travis/build/PolymerLabs/arcs/src/platform/assert-web.ts",
         "/home/travis/build/PolymerLabs/arcs/src/platform/digest-web.ts",
@@ -1824,6 +1830,7 @@
         "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/slot-connection.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/slot.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/comparable.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/walker.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
       ],
@@ -2100,12 +2107,6 @@
         "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/particle.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/recipe.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/id.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
-      ],
-      "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/walker.ts": [
-        "/home/travis/build/PolymerLabs/arcs/src/platform/assert-web.ts",
-        "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
       ],
@@ -5575,7 +5576,8 @@
         "/home/travis/build/PolymerLabs/arcs/src/runtime/modality.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/search.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/particle-spec.ts",
-        "/home/travis/build/PolymerLabs/arcs/src/runtime/type.ts"
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/type.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/walker.ts"
       ],
       "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/flow-checker.ts": [
         "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/flow-config.ts",
@@ -5662,11 +5664,11 @@
       "/home/travis/build/PolymerLabs/arcs/src/runtime/debug/outer-port-attachment.ts": [
         "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts"
       ],
-      "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/walker.ts": [
-        "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts"
-      ],
       "/home/travis/build/PolymerLabs/arcs/src/runtime/debug/testing/devtools-channel-stub.ts": [
         "/home/travis/build/PolymerLabs/arcs/src/runtime/debug/abstract-devtools-channel.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts"
+      ],
+      "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/walker.ts": [
         "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts"
       ],
       "/home/travis/build/PolymerLabs/arcs/src/runtime/debug/abstract-devtools-channel.ts": [
@@ -6472,6 +6474,7 @@
       "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/search.ts",
       "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/slot.ts",
       "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/slot-connection.ts",
+      "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/walker.ts",
       "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/recipe.ts",
       "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/crdt-collection-model.ts",
       "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/key-base.ts",
@@ -6506,7 +6509,6 @@
       "/home/travis/build/PolymerLabs/arcs/src/runtime/description.ts",
       "/home/travis/build/PolymerLabs/arcs/src/runtime/slot-context.ts",
       "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/recipe-util.ts",
-      "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/walker.ts",
       "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/recipe-walker.ts",
       "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/slot-utils.ts",
       "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/recipe-resolver.ts",

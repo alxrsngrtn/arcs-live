@@ -388,16 +388,16 @@ export class Recipe {
         Object.freeze(this);
         return true;
     }
-    clone(cloneMap = undefined) {
+    clone(map = undefined) {
         // for now, just copy everything
         const recipe = new Recipe(this.name);
-        if (cloneMap == undefined) {
-            cloneMap = new Map();
+        if (map == undefined) {
+            map = new Map();
         }
-        this._copyInto(recipe, cloneMap);
+        this._copyInto(recipe, map);
         // TODO: figure out a better approach than stashing the cloneMap permanently
         // on the recipe
-        recipe._cloneMap = cloneMap;
+        recipe._cloneMap = map;
         return recipe;
     }
     // tslint:disable-next-line: no-any

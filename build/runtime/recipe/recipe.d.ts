@@ -9,6 +9,7 @@ import { Particle } from './particle.js';
 import { Search } from './search.js';
 import { SlotConnection } from './slot-connection.js';
 import { Slot } from './slot.js';
+import { Cloneable } from './walker.js';
 export declare type RecipeComponent = Particle | Handle | HandleConnection | Slot | SlotConnection | EndPoint;
 export declare type CloneMap = Map<RecipeComponent, RecipeComponent>;
 export declare type IsValidOptions = {
@@ -18,7 +19,7 @@ export declare type ToStringOptions = {
     showUnresolved?: boolean;
     hideFields?: boolean;
 };
-export declare class Recipe {
+export declare class Recipe implements Cloneable<Recipe> {
     private readonly _requires;
     private _particles;
     private _handles;
@@ -72,7 +73,7 @@ export declare class Recipe {
     description: any;
     digest(): Promise<string>;
     normalize(options?: IsValidOptions): boolean;
-    clone(cloneMap?: any): Recipe;
+    clone(map?: Map<RecipeComponent, RecipeComponent>): Recipe;
     mergeInto(recipe: Recipe): {
         handles: Handle[];
         particles: Particle[];
@@ -84,7 +85,7 @@ export declare class Recipe {
         [index: string]: any;
     };
     _makeLocalNameMap(): Map<any, any>;
-    toString(options?: any): string;
+    toString(options?: ToStringOptions): string;
     getFreeHandles(): Handle[];
     readonly allSpecifiedConnections: {
         particle: Particle;

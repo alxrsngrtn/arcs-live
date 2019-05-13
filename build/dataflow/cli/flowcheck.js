@@ -32,6 +32,8 @@ void (async () => {
     catch (e) {
         console.error(e);
         process.exit(1);
+        // Make the compiler happy that config is always initialized.
+        return;
     }
     const flowchecker = new FlowChecker(config);
     manifest.allRecipes.forEach(recipe => {

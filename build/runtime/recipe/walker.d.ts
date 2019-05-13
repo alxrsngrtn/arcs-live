@@ -28,14 +28,14 @@ export declare enum WalkerTactic {
     Permuted = "permuted",
     Independent = "independent"
 }
-interface Cloneable {
-    clone(map: Map<object, object>): this;
+export interface Cloneable<T> {
+    clone(map?: Map<object, object>): T;
 }
-export interface Descendant<T extends Cloneable> {
+export interface Descendant<T extends Cloneable<T>> {
     result: T;
     score: number;
     derivation: {
-        parent: Descendant<T>;
+        parent?: Descendant<T>;
         strategy: Action<T>;
     }[];
     hash: Promise<string> | string;
@@ -47,7 +47,7 @@ export interface Descendant<T extends Cloneable> {
  * An Action generates the list of Descendants by walking the object with a
  * Walker.
  */
-export declare abstract class Action<T extends Cloneable> {
+export declare abstract class Action<T extends Cloneable<T>> {
     private readonly _arc?;
     private readonly _args?;
     constructor(arc?: Arc, args?: any);
@@ -57,9 +57,9 @@ export declare abstract class Action<T extends Cloneable> {
     }): Descendant<T>[];
     generate(inputParams: any): Promise<Descendant<T>[]>;
 }
-export declare type Continuation<T extends Cloneable, Ctx extends object[]> = SingleContinuation<T, Ctx> | SingleContinuation<T, Ctx>[];
-declare type SingleContinuation<T extends Cloneable, Ctx extends object[]> = (obj: T, ...ctx: Ctx) => number;
-export declare abstract class Walker<T extends Cloneable> {
+export declare type Continuation<T extends Cloneable<T>, Ctx extends object[]> = SingleContinuation<T, Ctx> | SingleContinuation<T, Ctx>[];
+declare type SingleContinuation<T extends Cloneable<T>, Ctx extends object[]> = (obj: T, ...ctx: Ctx) => number;
+export declare abstract class Walker<T extends Cloneable<T>> {
     static Permuted: WalkerTactic;
     static Independent: WalkerTactic;
     descendants: Descendant<T>[];
@@ -72,7 +72,7 @@ export declare abstract class Walker<T extends Cloneable> {
     onResult(result: Descendant<T>): void;
     onResultDone(): void;
     onActionDone(): void;
-    static walk<T extends Cloneable>(results: Descendant<T>[], walker: Walker<T>, action: Action<T>): Descendant<T>[];
+    static walk<T extends Cloneable<T>>(results: Descendant<T>[], walker: Walker<T>, action: Action<T>): Descendant<T>[];
     visit<Ctx extends object[]>(visitor: (obj: T, ...ctx: Ctx) => Continuation<T, Ctx>, ...context: Ctx): void;
     private runUpdateList;
     abstract createDescendant(result: T, score: number): void;

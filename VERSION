@@ -1,5 +1,5 @@
-commit 963c63dde6f54deb31d5521676841c2c3f52484e
-Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
-Date:   Mon May 13 10:11:59 2019 +1000
+commit 4af09f96d987f082bcf4451b38db2e6609d54fc7
+Author: shans <shane.stephens@gmail.com>
+Date:   Mon May 13 11:13:22 2019 +1000
 
-    Tweak sigh to stop double output of errors from tsc (#3003)
+    Fix some null check errors (#2997)
