@@ -1,9 +1,5 @@
-commit 9d2c04df9ffc680b9aa7ca254aa221ddd068c026
-Author: Ray Cromwell <cromwellian@gmail.com>
-Date:   Fri May 10 19:24:48 2019 -0700
+commit 0a2061a1ca3ce078d6dc2a3c9d87dae05944e211
+Author: Piotr Swigon <piotr.swigon@gmail.com>
+Date:   Mon May 13 09:55:44 2019 +1000
 
-    First example J2cl particle (#2999)
-    
-    * First example J2cl particle
-    
-    * Capitalize Native,exclude from particle-tests, fix lint errors
+    Add @types/minimist for TS typing (#3001)
