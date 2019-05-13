@@ -1,5 +1,5 @@
-commit 27d44d5e452bfc23c24e07535635bca4991b881c
-Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
-Date:   Tue May 14 09:00:45 2019 +1000
+commit d02eff436b1ff4046a01001be4b446daf09d3adb
+Author: Piotr Swigon <piotr.swigon@gmail.com>
+Date:   Tue May 14 09:27:52 2019 +1000
 
-    s/affordance/modality in manifest parser. (#3002)
+    Webpack config for packaging src/tools with their deps (#3004)
