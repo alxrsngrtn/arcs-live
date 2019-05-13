@@ -1,5 +1,5 @@
-commit 0a2061a1ca3ce078d6dc2a3c9d87dae05944e211
-Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Mon May 13 09:55:44 2019 +1000
+commit 963c63dde6f54deb31d5521676841c2c3f52484e
+Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
+Date:   Mon May 13 10:11:59 2019 +1000
 
-    Add @types/minimist for TS typing (#3001)
+    Tweak sigh to stop double output of errors from tsc (#3003)

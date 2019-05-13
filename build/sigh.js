@@ -281,7 +281,7 @@ function build() {
 }
 function tsc() {
     const result = saneSpawnWithOutput('node_modules/.bin/tsc', ['--diagnostics']);
-    if (result.stdout) {
+    if (result.success) {
         console.log(result.stdout);
     }
     return result.success;
