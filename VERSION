@@ -1,9 +1,5 @@
-commit 99cb8fb36d9e5aa4cfb81bbd8605a5231602888a
+commit 27d44d5e452bfc23c24e07535635bca4991b881c
 Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
-Date:   Mon May 13 11:49:34 2019 +1000
+Date:   Tue May 14 09:00:45 2019 +1000
 
-    Add Loader.loadBinary: wasm modules will need to be fetched in binary format (#3005)
-    
-    * Add Loader.loadBinary: wasm modules will need to be fetched in binary format
-    
-    * Remove .only in test file
+    s/affordance/modality in manifest parser. (#3002)
