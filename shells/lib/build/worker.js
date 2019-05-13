@@ -5398,16 +5398,19 @@ class PlatformLoader extends _runtime_loader_js__WEBPACK_IMPORTED_MODULE_0__["Lo
   flushCaches() {
     simpleCache = {};
   }
-  loadResource(name) {
+  loadResource(url) {
     // subclass impl differentiates paths and URLs,
     // for browser env we can feed both kinds into _loadURL
-    return this._loadURL(name);
-  }
-  _loadURL(url) {
     const resolved = this._resolve(url);
     const cacheKey = this.normalizeDots(url);
     const resource = simpleCache[cacheKey];
     return resource || (simpleCache[cacheKey] = super._loadURL(resolved));
+  }
+  loadBinary(url) {
+    const resolved = this._resolve(url);
+    const cacheKey = this.normalizeDots(url);
+    const resource = simpleCache[cacheKey];
+    return resource || (simpleCache[cacheKey] = super.loadBinary(resolved));
   }
   _resolve(path) {
     let url = this._urlMap[path];
@@ -5570,16 +5573,24 @@ class Loader {
         if (/^https?:\/\//.test(file)) {
             return this._loadURL(file);
         }
-        return this._loadFile(file);
+        return this._loadFile(file, 'utf-8');
     }
-    async _loadFile(file) {
+    async loadBinary(file) {
+        if (/^https?:\/\//.test(file)) {
+            return Object(_platform_fetch_web_js__WEBPACK_IMPORTED_MODULE_1__["fetch"])(file).then(res => res.arrayBuffer());
+        }
+        else {
+            return this._loadFile(file, null);
+        }
+    }
+    async _loadFile(file, encoding) {
         return new Promise((resolve, reject) => {
-            _platform_fs_web_js__WEBPACK_IMPORTED_MODULE_2__["fs"].readFile(file, (err, data) => {
+            _platform_fs_web_js__WEBPACK_IMPORTED_MODULE_2__["fs"].readFile(file, { encoding }, (err, data) => {
                 if (err) {
                     reject(err);
                 }
                 else {
-                    resolve(data.toString('utf-8'));
+                    resolve(encoding ? data : data.buffer);
                 }
             });
         });

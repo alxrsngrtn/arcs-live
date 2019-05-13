@@ -19696,16 +19696,24 @@ class Loader {
         if (/^https?:\/\//.test(file)) {
             return this._loadURL(file);
         }
-        return this._loadFile(file);
+        return this._loadFile(file, 'utf-8');
     }
-    async _loadFile(file) {
+    async loadBinary(file) {
+        if (/^https?:\/\//.test(file)) {
+            return fetch(file).then(res => res.arrayBuffer());
+        }
+        else {
+            return this._loadFile(file, null);
+        }
+    }
+    async _loadFile(file, encoding) {
         return new Promise((resolve, reject) => {
-            fs.readFile(file, (err, data) => {
+            fs.readFile(file, { encoding }, (err, data) => {
                 if (err) {
                     reject(err);
                 }
                 else {
-                    resolve(data.toString('utf-8'));
+                    resolve(encoding ? data : data.buffer);
                 }
             });
         });

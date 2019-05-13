@@ -1,5 +1,9 @@
-commit 4af09f96d987f082bcf4451b38db2e6609d54fc7
-Author: shans <shane.stephens@gmail.com>
-Date:   Mon May 13 11:13:22 2019 +1000
+commit 99cb8fb36d9e5aa4cfb81bbd8605a5231602888a
+Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
+Date:   Mon May 13 11:49:34 2019 +1000
 
-    Fix some null check errors (#2997)
+    Add Loader.loadBinary: wasm modules will need to be fetched in binary format (#3005)
+    
+    * Add Loader.loadBinary: wasm modules will need to be fetched in binary format
+    
+    * Remove .only in test file

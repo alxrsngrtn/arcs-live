@@ -95,6 +95,7 @@
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="loader.html#_loadfile" class="tsd-kind-icon">_load<wbr>File</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="loader.html#_loadurl" class="tsd-kind-icon">_loadURL</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="loader.html#join" class="tsd-kind-icon">join</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="loader.html#loadbinary" class="tsd-kind-icon">load<wbr>Binary</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="loader.html#loadparticleclass" class="tsd-kind-icon">load<wbr>Particle<wbr>Class</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="loader.html#loadresource" class="tsd-kind-icon">load<wbr>Resource</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="loader.html#normalizedots" class="tsd-kind-icon">normalize<wbr>Dots</a></li>
@@ -115,7 +116,7 @@
 					<div class="tsd-signature tsd-kind-icon">pec<span class="tsd-signature-symbol">:</span> <a href="particleexecutioncontext.html" class="tsd-signature-type">ParticleExecutionContext</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/4af09f9/src/runtime/loader.ts#L31">runtime/loader.ts:31</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/99cb8fb/src/runtime/loader.ts#L31">runtime/loader.ts:31</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -126,13 +127,13 @@
 					<a name="_loadfile" class="tsd-anchor"></a>
 					<h3>_load<wbr>File</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">_load<wbr>File<span class="tsd-signature-symbol">(</span>file<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">_load<wbr>File<span class="tsd-signature-symbol">(</span>file<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, encoding<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">ArrayBuffer</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/4af09f9/src/runtime/loader.ts#L69">runtime/loader.ts:69</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/99cb8fb/src/runtime/loader.ts#L77">runtime/loader.ts:77</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -140,8 +141,11 @@
 								<li>
 									<h5>file: <span class="tsd-signature-type">string</span></h5>
 								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> encoding: <span class="tsd-signature-type">string</span></h5>
+								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span></h4>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">ArrayBuffer</span><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -155,7 +159,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/4af09f9/src/runtime/loader.ts#L81">runtime/loader.ts:81</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/99cb8fb/src/runtime/loader.ts#L89">runtime/loader.ts:89</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -178,7 +182,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/4af09f9/src/runtime/loader.ts#L37">runtime/loader.ts:37</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/99cb8fb/src/runtime/loader.ts#L37">runtime/loader.ts:37</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -195,6 +199,29 @@
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="loadbinary" class="tsd-anchor"></a>
+					<h3>load<wbr>Binary</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">load<wbr>Binary<span class="tsd-signature-symbol">(</span>file<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">ArrayBuffer</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/99cb8fb/src/runtime/loader.ts#L69">runtime/loader.ts:69</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>file: <span class="tsd-signature-type">string</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">ArrayBuffer</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
 					<a name="loadparticleclass" class="tsd-anchor"></a>
 					<h3>load<wbr>Particle<wbr>Class</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
@@ -204,7 +231,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/4af09f9/src/runtime/loader.ts#L100">runtime/loader.ts:100</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/99cb8fb/src/runtime/loader.ts#L108">runtime/loader.ts:108</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -235,7 +262,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/4af09f9/src/runtime/loader.ts#L62">runtime/loader.ts:62</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/99cb8fb/src/runtime/loader.ts#L62">runtime/loader.ts:62</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -258,7 +285,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/4af09f9/src/runtime/loader.ts#L51">runtime/loader.ts:51</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/99cb8fb/src/runtime/loader.ts#L51">runtime/loader.ts:51</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -281,7 +308,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/4af09f9/src/runtime/loader.ts#L33">runtime/loader.ts:33</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/99cb8fb/src/runtime/loader.ts#L33">runtime/loader.ts:33</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -304,7 +331,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/4af09f9/src/runtime/loader.ts#L112">runtime/loader.ts:112</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/99cb8fb/src/runtime/loader.ts#L120">runtime/loader.ts:120</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -334,7 +361,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/4af09f9/src/runtime/loader.ts#L132">runtime/loader.ts:132</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/99cb8fb/src/runtime/loader.ts#L140">runtime/loader.ts:140</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -357,7 +384,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/4af09f9/src/runtime/loader.ts#L139">runtime/loader.ts:139</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/99cb8fb/src/runtime/loader.ts#L147">runtime/loader.ts:147</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -403,6 +430,9 @@
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="loader.html#join" class="tsd-kind-icon">join</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="loader.html#loadbinary" class="tsd-kind-icon">load<wbr>Binary</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="loader.html#loadparticleclass" class="tsd-kind-icon">load<wbr>Particle<wbr>Class</a>
