@@ -13,6 +13,7 @@ export declare class CRDTError extends Error {
 export interface CRDTOperation {
 }
 export interface CRDTData {
+    version: VersionMap;
 }
 export interface CRDTConsumerType {
 }

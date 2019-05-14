@@ -1,5 +1,5 @@
-commit 81be51dd872de1594b14ad9145dcff6cbe6fb58b
-Author: Scott J. Miles <sjmiles@google.com>
-Date:   Tue May 14 15:23:14 2019 -0700
+commit b3adc9dd881df615ff867822dec89b2c1e1f11cb
+Author: galganif <4754402+galganif@users.noreply.github.com>
+Date:   Wed May 15 09:10:21 2019 +1000
 
-    use unpkg with ?module to avoid tfjs conflicting with ml5 (#3014)
+    start of NG storage-proxy and handle, with only a few methods (#2987)
