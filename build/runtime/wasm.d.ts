@@ -10,6 +10,13 @@
 import { Schema } from './schema.js';
 import { EntityInterface } from './entity.js';
 import protobufjs from 'protobufjs';
+export declare function toProtoJSON(schema: Schema): {
+    nested: {
+        [x: string]: {
+            fields: {};
+        };
+    };
+};
 export declare class EntityProtoConverter {
     readonly schema: Schema;
     readonly message: protobufjs.Type;

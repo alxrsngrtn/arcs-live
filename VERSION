@@ -1,5 +1,27 @@
-commit b3adc9dd881df615ff867822dec89b2c1e1f11cb
-Author: galganif <4754402+galganif@users.noreply.github.com>
-Date:   Wed May 15 09:10:21 2019 +1000
+commit f1e850a1ee7a1f979740700c89cc954465868632
+Author: Ray Cromwell <cromwellian@gmail.com>
+Date:   Tue May 14 16:17:23 2019 -0700
 
-    start of NG storage-proxy and handle, with only a few methods (#2987)
+    Adds schema2proto cli utility (#3007)
+    
+    * Adds schema2proto cli utility
+    
+    Usage: ./tools/schema2proto --out <destDir> <manifest files>
+    
+    e.g.
+    Run ./tools/schema2proto --out proto particles/canonical.manifest
+    from Arcs repo root.
+    
+    Limitations:
+    Currently only primitive fields.
+    Doesn't support overriding default package name (hardcoded 'arcs')
+    Should support .proto import directive to de-dup URL message and
+    other shared proto definitions.
+    
+    * add missing files
+    
+    * Move to using tools/sigh schema2proto, fix nits
+    
+    * Remove unused imports
+    
+    * Fix lint error
