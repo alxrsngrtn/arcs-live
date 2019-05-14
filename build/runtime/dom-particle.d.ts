@@ -20,6 +20,7 @@ declare const DomParticle_base: any;
  * to handle updates.
  */
 export declare class DomParticle extends DomParticle_base {
+    _handlesToSync: Set<string>;
     constructor();
     /**
      * Override if necessary, to do things when props change.
@@ -43,6 +44,11 @@ export declare class DomParticle extends DomParticle_base {
      * triggering an update cycle unless currently updating.
      */
     setState(state: any): any;
+    /**
+     * Added getters and setters to support usage of .state.
+     */
+    state: any;
+    readonly props: any;
     /**
      * This is called once during particle setup. Override to control sync and update
      * configuration on specific handles (via their configure() method).

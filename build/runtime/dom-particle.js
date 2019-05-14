@@ -17,9 +17,6 @@ import { Collection, Variable } from './handle.js';
 export class DomParticle extends XenStateMixin(DomParticleBase) {
     constructor() {
         super();
-        // alias properties to remove `_`
-        this.state = this._state;
-        this.props = this._props;
     }
     /**
      * Override if necessary, to do things when props change.
@@ -50,6 +47,18 @@ export class DomParticle extends XenStateMixin(DomParticleBase) {
      */
     setState(state) {
         return this._setState(state);
+    }
+    /**
+     * Added getters and setters to support usage of .state.
+     */
+    get state() {
+        return this._state;
+    }
+    set state(state) {
+        this.setState(state);
+    }
+    get props() {
+        return this._props;
     }
     /**
      * This is called once during particle setup. Override to control sync and update
@@ -99,7 +108,7 @@ export class DomParticle extends XenStateMixin(DomParticleBase) {
         }
         // TODO(sjmiles): we must invalidate at least once,
         // let's assume we will miss _handlesToProps if handlesToSync is empty
-        if (!this._handlesToSync.length) {
+        if (!this._handlesToSync.size) {
             this._invalidate();
         }
     }

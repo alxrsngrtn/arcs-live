@@ -8,7 +8,7 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { Modality } from './modality.js';
-import { Direction } from './recipe/handle-connection.js';
+import { Direction } from './manifest-ast-nodes.js';
 import { Schema } from './schema.js';
 import { TypeVariableInfo } from './type-variable-info.js';
 import { InterfaceType, SlotType, Type, TypeLiteral } from './type.js';

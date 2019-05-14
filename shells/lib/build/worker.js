@@ -5875,9 +5875,6 @@ __webpack_require__.r(__webpack_exports__);
 class DomParticle extends Object(_modalities_dom_components_xen_xen_state_js__WEBPACK_IMPORTED_MODULE_0__["XenStateMixin"])(_dom_particle_base_js__WEBPACK_IMPORTED_MODULE_1__["DomParticleBase"]) {
     constructor() {
         super();
-        // alias properties to remove `_`
-        this.state = this._state;
-        this.props = this._props;
     }
     /**
      * Override if necessary, to do things when props change.
@@ -5908,6 +5905,18 @@ class DomParticle extends Object(_modalities_dom_components_xen_xen_state_js__WE
      */
     setState(state) {
         return this._setState(state);
+    }
+    /**
+     * Added getters and setters to support usage of .state.
+     */
+    get state() {
+        return this._state;
+    }
+    set state(state) {
+        this.setState(state);
+    }
+    get props() {
+        return this._props;
     }
     /**
      * This is called once during particle setup. Override to control sync and update
@@ -5957,7 +5966,7 @@ class DomParticle extends Object(_modalities_dom_components_xen_xen_state_js__WE
         }
         // TODO(sjmiles): we must invalidate at least once,
         // let's assume we will miss _handlesToProps if handlesToSync is empty
-        if (!this._handlesToSync.length) {
+        if (!this._handlesToSync.size) {
             this._invalidate();
         }
     }

@@ -726,7 +726,7 @@ function peg$parse(input, options) {
             kind: 'handle',
             location: location(),
             name: optional(name, name => name[1], null),
-            ref: optional(ref, ref => ref[1], null),
+            ref: optional(ref, ref => ref[1], emptyRef()),
             fate: type
         };
     };
@@ -744,7 +744,7 @@ function peg$parse(input, options) {
             kind: 'requireHandle',
             location: location(),
             name: optional(name, name => name[1], null),
-            ref: optional(ref, ref => ref[1], null)
+            ref: optional(ref, ref => ref[1], emptyRef()),
         };
     };
     const peg$c196 = "#";
@@ -761,18 +761,21 @@ function peg$parse(input, options) {
     const peg$c207 = function (tags) { return tags; };
     const peg$c208 = function (name, tags) {
         return {
+            location: location(),
             name: name,
             tags: tags = optional(tags, list => list[1], [])
         };
     };
     const peg$c209 = function (name) {
         return {
+            location: location(),
             name: name,
             tags: []
         };
     };
     const peg$c210 = function (tags) {
         return {
+            location: location(),
             name: tags[0],
             tags: tags
         };
@@ -821,7 +824,7 @@ function peg$parse(input, options) {
         return {
             kind: 'slot',
             location: location(),
-            ref: optional(ref, ref => ref[1], null),
+            ref: optional(ref, ref => ref[1], emptyRef()),
             name: optional(name, name => name[1], '')
         };
     };
@@ -9121,6 +9124,7 @@ function peg$parse(input, options) {
     let indent = '';
     let startIndent = '';
     const indents = [];
+    const emptyRef = () => ({ kind: 'handle-ref', id: null, name: null, tags: [], location: location() });
     function extractIndented(items) {
         return items[1].map(item => item[1]);
     }

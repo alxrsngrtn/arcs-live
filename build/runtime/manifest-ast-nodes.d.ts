@@ -129,7 +129,7 @@ export interface ParticleModality extends BaseNode {
 }
 export interface ParticleArgument extends BaseNode {
     kind: 'particle-argument';
-    direction: string;
+    direction: Direction;
     type: ParticleArgumentType;
     isOptional: boolean;
     dependentConnections: string[];
@@ -180,6 +180,7 @@ export interface Recipe extends BaseNode {
     name: string;
     verbs: VerbList;
     items: RecipeItem[];
+    annotation: Annotation;
 }
 export interface RecipeParticle extends BaseNode {
     kind: 'particle';
@@ -192,10 +193,11 @@ export interface RequireHandleSection extends BaseNode {
     kind: 'requireHandle';
     name: string;
     ref: HandleRef;
+    fate: Fate;
 }
 export interface RecipeRequire extends BaseNode {
     kind: 'require';
-    items: RecipeItem;
+    items: RecipeItem[];
 }
 export declare type RecipeItem = RecipeParticle | RecipeHandle | RequireHandleSection | RecipeRequire | RecipeSlot | RecipeSearch | RecipeConnection | Description;
 export interface RecipeParticleConnection extends BaseNode {
@@ -219,29 +221,25 @@ export interface ParticleConnnectionTargetComponents extends BaseNode {
 export interface RecipeHandle extends BaseNode {
     kind: 'handle';
     name: string | null;
-    ref: string | null;
-    fate: string;
+    ref: HandleRef;
+    fate: Fate;
 }
 export interface RecipeParticleSlotConnection extends BaseNode {
     kind: 'slot-connection';
     param: string;
     tags: TagList;
     name: string;
-    dependentSlotConnections: RecipeParticleProvidedSlot[];
+    dependentSlotConnections: RecipeParticleSlotConnection[];
+    direction: SlotDirection;
 }
 export interface RecipeSlotConnectionRef extends BaseNode {
     kind: 'slot-connection-ref';
     param: string;
     tags: TagList;
 }
-export interface RecipeParticleProvidedSlot extends BaseNode {
-    kind: 'slot-connection-ref';
-    param: string;
-    name: string | null;
-}
 export interface RecipeConnection extends BaseNode {
     kind: 'connection';
-    direction: string;
+    direction: Direction;
     from: ConnectionTarget;
     to: ConnectionTarget;
 }
@@ -252,7 +250,7 @@ export interface RecipeSearch extends BaseNode {
 }
 export interface RecipeSlot extends BaseNode {
     kind: 'slot';
-    ref: string | null;
+    ref: HandleRef;
     name: string | null;
 }
 export interface ConnectionTarget extends BaseNode {
@@ -353,7 +351,7 @@ export interface Interface extends BaseNode {
 export declare type InterfaceItem = Interface | InterfaceArgument | InterfaceSlot;
 export interface InterfaceArgument extends BaseNode {
     kind: 'interface-argument';
-    direction: string;
+    direction: Direction;
     type: string;
     name: string;
 }
@@ -366,7 +364,7 @@ export interface InterfaceSlot extends BaseNode {
     kind: 'interface-slot';
     name: string | null;
     isRequired: boolean;
-    direction: string;
+    direction: Direction;
     isSet: boolean;
 }
 export interface SlotField extends BaseNode {
@@ -387,7 +385,6 @@ export interface NameAndTagList {
     tags: TagList;
 }
 export declare type Annotation = string;
-export declare type Direction = string;
 export declare type LocalName = string;
 export declare type Manifest = ManifestStorageItem[];
 export declare type ManifestStorageItem = string;
@@ -409,6 +406,9 @@ export declare type lowerIndent = string;
 export declare type whiteSpace = string;
 export declare type eolWhiteSpace = string;
 export declare type eol = string;
+export declare type Direction = 'in' | 'out' | 'inout' | 'host';
+export declare type SlotDirection = 'provide' | 'consume';
+export declare type Fate = 'use' | 'create' | 'map' | 'copy' | '?' | '`slot';
 export declare type ParticleArgumentType = TypeVariable | CollectionType | BigCollectionType | ReferenceType | SlotType | SchemaInline | TypeName;
 export declare type All = Import | Meta | MetaName | MetaStorageKey | Particle | ParticleArgument | ParticleInterface | RecipeHandle | Resource | Interface | InterfaceArgument | InterfaceInterface | InterfaceSlot;
 export declare type ManifestItem = Recipe | Particle | Import | Schema | ManifestStorage | Interface | Meta | Resource;

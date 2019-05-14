@@ -4512,7 +4512,7 @@ function peg$parse(input, options) {
             kind: 'handle',
             location: location(),
             name: optional(name, name => name[1], null),
-            ref: optional(ref, ref => ref[1], null),
+            ref: optional(ref, ref => ref[1], emptyRef()),
             fate: type
         };
     };
@@ -4530,7 +4530,7 @@ function peg$parse(input, options) {
             kind: 'requireHandle',
             location: location(),
             name: optional(name, name => name[1], null),
-            ref: optional(ref, ref => ref[1], null)
+            ref: optional(ref, ref => ref[1], emptyRef()),
         };
     };
     const peg$c196 = "#";
@@ -4547,18 +4547,21 @@ function peg$parse(input, options) {
     const peg$c207 = function (tags) { return tags; };
     const peg$c208 = function (name, tags) {
         return {
+            location: location(),
             name: name,
             tags: tags = optional(tags, list => list[1], [])
         };
     };
     const peg$c209 = function (name) {
         return {
+            location: location(),
             name: name,
             tags: []
         };
     };
     const peg$c210 = function (tags) {
         return {
+            location: location(),
             name: tags[0],
             tags: tags
         };
@@ -4607,7 +4610,7 @@ function peg$parse(input, options) {
         return {
             kind: 'slot',
             location: location(),
-            ref: optional(ref, ref => ref[1], null),
+            ref: optional(ref, ref => ref[1], emptyRef()),
             name: optional(name, name => name[1], '')
         };
     };
@@ -12900,6 +12903,7 @@ function peg$parse(input, options) {
     let indent = '';
     let startIndent = '';
     const indents = [];
+    const emptyRef = () => ({ kind: 'handle-ref', id: null, name: null, tags: [], location: location() });
     function extractIndented(items) {
         return items[1].map(item => item[1]);
     }
@@ -16862,41 +16866,41 @@ ${e.message}
         const ifaceInfo = new InterfaceInfo(interfaceItem.name, handles, slots);
         manifest._interfaces.push(ifaceInfo);
     }
+    // TODO(cypher): Remove loader dependency.
     static _processRecipe(manifest, recipeItem, loader) {
-        // TODO: annotate other things too
         const recipe = manifest._newRecipe(recipeItem.name);
-        this._buildRecipe(manifest, recipe, recipeItem);
-    }
-    static _buildRecipe(manifest, recipe, recipeItem) {
         if (recipeItem.annotation) {
             recipe.annotation = recipeItem.annotation;
         }
         if (recipeItem.verbs) {
             recipe.verbs = recipeItem.verbs;
         }
+        this._buildRecipe(manifest, recipe, recipeItem.items);
+    }
+    static _buildRecipe(manifest, recipe, recipeItems) {
         const items = {
-            require: recipeItem.items.filter(item => item.kind === 'require'),
-            handles: recipeItem.items.filter(item => item.kind === 'handle'),
+            require: recipeItems.filter(item => item.kind === 'require'),
+            handles: recipeItems.filter(item => item.kind === 'handle'),
             byHandle: new Map(),
             // requireHandles are handles constructed by the 'handle' keyword. This is intended to replace handles.
-            requireHandles: recipeItem.items.filter(item => item.kind === 'requireHandle'),
+            requireHandles: recipeItems.filter(item => item.kind === 'requireHandle'),
             byRequireHandle: new Map(),
-            particles: recipeItem.items.filter(item => item.kind === 'particle'),
+            particles: recipeItems.filter(item => item.kind === 'particle'),
             byParticle: new Map(),
-            slots: recipeItem.items.filter(item => item.kind === 'slot'),
+            slots: recipeItems.filter(item => item.kind === 'slot'),
             bySlot: new Map(),
             byName: new Map(),
-            connections: recipeItem.items.filter(item => item.kind === 'connection'),
-            search: recipeItem.items.find(item => item.kind === 'search'),
-            description: recipeItem.items.find(item => item.kind === 'description')
+            connections: recipeItems.filter(item => item.kind === 'connection'),
+            search: recipeItems.find(item => item.kind === 'search'),
+            description: recipeItems.find(item => item.kind === 'description')
         };
         // A recipe should either source handles by the 'handle' keyword (requireHandle item) or use fates (handle item).
         // A recipe should not use both methods.
         assert(!(items.handles.length > 0 && items.requireHandles.length > 0), `Inconsistent handle definitions`);
-        const itemHandles = items.handles.length > 0 ? items.handles : items.requireHandles;
+        const itemHandles = (items.handles.length > 0 ? items.handles : items.requireHandles);
         for (const item of itemHandles) {
             const handle = recipe.newHandle();
-            const ref = item.ref || { tags: [] };
+            const ref = item.ref;
             if (ref.id) {
                 handle.id = ref.id;
                 const targetStore = manifest.findStoreById(handle.id);
@@ -16959,7 +16963,6 @@ ${e.message}
         for (const item of items.slots) {
             // TODO(mmandlis): newSlot requires a name. What should the name be here?
             const slot = recipe.newSlot(undefined);
-            item.ref = item.ref || {};
             if (item.ref.id) {
                 slot.id = item.ref.id;
             }
@@ -16976,8 +16979,6 @@ ${e.message}
         // TODO: disambiguate.
         for (const item of items.particles) {
             const particle = recipe.newParticle(item.ref.name);
-            // TODO: particle doesn't have a tags member. Should we be setting this here?
-            particle['tags'] = item.ref.tags;
             particle.verbs = item.ref.verbs;
             if (!(recipe instanceof RequireSection)) {
                 if (item.ref.name) {
@@ -17207,7 +17208,7 @@ ${e.message}
         if (items.require) {
             for (const item of items.require) {
                 const requireSection = recipe.newRequireSection();
-                this._buildRecipe(manifest, requireSection, item);
+                this._buildRecipe(manifest, requireSection, item.items);
             }
         }
     }
@@ -19301,9 +19302,6 @@ class DomParticleBase extends Particle$1 {
 class DomParticle extends XenStateMixin(DomParticleBase) {
     constructor() {
         super();
-        // alias properties to remove `_`
-        this.state = this._state;
-        this.props = this._props;
     }
     /**
      * Override if necessary, to do things when props change.
@@ -19334,6 +19332,18 @@ class DomParticle extends XenStateMixin(DomParticleBase) {
      */
     setState(state) {
         return this._setState(state);
+    }
+    /**
+     * Added getters and setters to support usage of .state.
+     */
+    get state() {
+        return this._state;
+    }
+    set state(state) {
+        this.setState(state);
+    }
+    get props() {
+        return this._props;
     }
     /**
      * This is called once during particle setup. Override to control sync and update
@@ -19383,7 +19393,7 @@ class DomParticle extends XenStateMixin(DomParticleBase) {
         }
         // TODO(sjmiles): we must invalidate at least once,
         // let's assume we will miss _handlesToProps if handlesToSync is empty
-        if (!this._handlesToSync.length) {
+        if (!this._handlesToSync.size) {
             this._invalidate();
         }
     }

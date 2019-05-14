@@ -3,7 +3,7 @@ import { Type } from '../type.js';
 import { Handle } from './handle.js';
 import { Particle } from './particle.js';
 import { Recipe } from './recipe.js';
-export declare type Direction = 'in' | 'out' | 'inout' | 'host';
+import { Direction } from '../manifest-ast-nodes.js';
 export declare class HandleConnection {
     private readonly _recipe;
     private readonly _name;

@@ -159,8 +159,12 @@ export class MockSlotComposer extends FakeSlotComposer {
             const allArcs = this.consumers.reduce((arcs, consumer) => arcs.add(consumer.arc), new Set());
             const store = [...allArcs].map(arc => arc.findStoreById(conn.handle.id)).find(store => !!store);
             if (store.referenceMode) {
+                // TODO(cypher1): Unsafe. _stored does not exist on StorageProviderBase.
+                // tslint:disable-next-line: no-any
                 return store.backingStore._model.getValue(store._stored.id).name;
             }
+            // TODO(cypher1): Unsafe. _stored does not exist on StorageProviderBase.
+            // tslint:disable-next-line: no-any
             return store._stored.name;
         });
     }

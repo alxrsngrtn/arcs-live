@@ -4,7 +4,7 @@ import { TypeVariableInfo } from '../type-variable-info.js';
 import { Type } from '../type.js';
 import { HandleConnection } from './handle-connection.js';
 import { Recipe, CloneMap, RecipeComponent, IsValidOptions, ToStringOptions } from './recipe.js';
-declare type Fate = 'use' | 'create' | 'map' | 'copy' | '?' | '`slot';
+import { Fate } from '../manifest-ast-nodes.js';
 export declare class Handle {
     private readonly _recipe;
     private _id;
@@ -55,4 +55,3 @@ export declare class Handle {
     toString(nameMap: ReadonlyMap<RecipeComponent, string>, options: ToStringOptions): string;
     findConnectionByDirection(dir: string): HandleConnection;
 }
-export {};

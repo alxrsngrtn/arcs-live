@@ -1,5 +1,5 @@
 import { ParticleSpec } from '../particle-spec.js';
-import { Direction } from './handle-connection.js';
+import { Direction } from '../manifest-ast-nodes.js';
 import { Handle } from './handle.js';
 import { Comparable } from './comparable.js';
 import { Recipe, RecipeComponent, CloneMap, ToStringOptions } from './recipe.js';
