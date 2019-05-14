@@ -120,6 +120,7 @@ export class DomParticle extends XenStateMixin(DomParticleBase) {
     }
     async onHandleUpdate(handle, update) {
         // TODO(sjmiles): debounce handles updates
+        // TODO(alxr) Do we need `update`?
         const work = () => {
             //console.warn(handle, update);
             this._handlesToProps();

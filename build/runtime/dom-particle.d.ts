@@ -7,12 +7,16 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-import { DomParticleBase } from './dom-particle-base.js';
+import { DomParticleBase, RenderModel } from './dom-particle-base.js';
 import { Handle } from './handle.js';
-interface StatefulDomParticle extends DomParticleBase {
+export interface StatefulDomParticle extends DomParticleBase {
     _invalidate(): void;
 }
 export interface DomParticle extends StatefulDomParticle {
+}
+export interface DomParticleConfig {
+    handleNames: string[];
+    slotNames: string[];
 }
 declare const DomParticle_base: any;
 /**
@@ -38,12 +42,12 @@ export declare class DomParticle extends DomParticle_base {
     /**
      * Override to return a dictionary to map into the template.
      */
-    render(...args: any[]): {};
+    render(...args: any[]): RenderModel;
     /**
      * Copy values from `state` into the particle's internal state,
      * triggering an update cycle unless currently updating.
      */
-    setState(state: any): any;
+    setState(state: any): boolean | undefined;
     /**
      * Added getters and setters to support usage of .state.
      */
@@ -58,24 +62,21 @@ export declare class DomParticle extends DomParticle_base {
     /**
      * Override if necessary, to modify superclass config.
      */
-    readonly config: {
-        handleNames: string[];
-        slotNames: string[];
-    };
+    readonly config: DomParticleConfig;
     _willReceiveProps(...args: any[]): void;
     _update(...args: any[]): void;
     /** @deprecated */
     readonly _views: ReadonlyMap<string, Handle>;
     setHandles(handles: ReadonlyMap<string, Handle>): Promise<void>;
-    onHandleSync(handle: Handle, model: any): Promise<void>;
+    onHandleSync(handle: Handle, model: RenderModel): Promise<void>;
     onHandleUpdate(handle: Handle, update: any): Promise<void>;
-    _handlesToProps(): Promise<void>;
-    _addNamedHandleData(dictionary: any, handleName: any): Promise<void>;
-    _getHandleData(handle: Handle): Promise<any>;
+    private _handlesToProps;
+    private _addNamedHandleData;
+    private _getHandleData;
     fireEvent(slotName: string, { handler, data }: {
         handler: any;
         data: any;
     }): void;
-    _debounce(key: string, func: Function, delay: number): void;
+    private _debounce;
 }
 export {};

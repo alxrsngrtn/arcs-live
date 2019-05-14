@@ -1,5 +1,33 @@
-commit d2b745eb934a782e313393d23fee704957e12c81
-Author: Joshua Pratt <jp10010101010000@gmail.com>
-Date:   Tue May 14 14:19:45 2019 +1000
+commit 7a4674dfcb86a9fa322b65bd00d7c59ac83a1343
+Author: Alex Rosengarten <alxr@google.com>
+Date:   Tue May 14 10:44:52 2019 -0700
 
-    Add test and fix for incorrect parse of UpperIdent prefixed with keyword also fix string -> Direction typing (#3009)
+    Issue 2980: (Dom)Particle Types Enhancement (#2984)
+    
+    * making slot return types specific
+    
+    * fixing warning: making static
+    
+    * adding functional interfaces
+    
+    These are generic types for functions, conventions borrowed from Java 8+
+    
+    * updating particle types
+    
+    also fixed a static warning.
+    
+    * build fix: rm `abstract` from Particle
+    
+    * Not listening to IDE warnigns anymore.
+    
+    * config fields: optional --> required
+    
+    * Solved TODO --> ReadonlyMap
+    
+    * Solved TODO: abstract
+    
+    * rm static
+    
+    * Model --> RenderModel
+    
+    * more accurate xen type, functional --> hot

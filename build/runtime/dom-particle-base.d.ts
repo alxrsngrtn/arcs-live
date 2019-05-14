@@ -9,6 +9,7 @@
  */
 import { Entity } from './entity.js';
 import { Particle } from './particle.js';
+export declare type RenderModel = object;
 /**
  * Particle that interoperates with DOM.
  */
@@ -33,11 +34,11 @@ export declare class DomParticleBase extends Particle {
     /**
      * Override to return a dictionary to map into the template.
      */
-    render(stateArgs?: any): {};
+    render(stateArgs?: any): RenderModel;
     renderSlot(slotName: string, contentTypes: string[]): void;
     private slotNamesToModelReferences;
     private enhanceModelWithSlotIDs;
-    _getStateArgs(): any[];
+    protected _getStateArgs(): any[];
     forceRenderTemplate(slotName?: string): void;
     fireEvent(slotName: string, { handler, data }: {
         handler: any;

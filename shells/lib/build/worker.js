@@ -5978,6 +5978,7 @@ class DomParticle extends Object(_modalities_dom_components_xen_xen_state_js__WE
     }
     async onHandleUpdate(handle, update) {
         // TODO(sjmiles): debounce handles updates
+        // TODO(alxr) Do we need `update`?
         const work = () => {
             //console.warn(handle, update);
             this._handlesToProps();
@@ -6312,7 +6313,7 @@ class DomParticleBase extends _particle_js__WEBPACK_IMPORTED_MODULE_1__["Particl
     }
     // We put slot IDs at the top-level of the model as well as in models for sub-templates.
     // This is temporary and should go away when we move from sub-IDs to [(Entity, Slot)] constructs.
-    enhanceModelWithSlotIDs(model = {}, slotIDs, topLevel = true) {
+    enhanceModelWithSlotIDs(model, slotIDs, topLevel = true) {
         if (topLevel) {
             model = Object.assign({}, slotIDs, model);
         }
