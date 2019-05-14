@@ -12,6 +12,7 @@ import { Direction } from './manifest-ast-nodes.js';
 import { Schema } from './schema.js';
 import { TypeVariableInfo } from './type-variable-info.js';
 import { InterfaceType, SlotType, Type, TypeLiteral } from './type.js';
+import { Literal } from './hot.js';
 declare type SerializedHandleConnectionSpec = {
     direction: Direction;
     name: string;
@@ -61,7 +62,7 @@ export declare class ConsumeSlotConnectionSpec {
 }
 export declare class ProvideSlotConnectionSpec extends ConsumeSlotConnectionSpec {
 }
-export declare type SerializedParticleSpec = {
+export interface SerializedParticleSpec extends Literal {
     name: string;
     id?: string;
     verbs: string[];
@@ -73,7 +74,7 @@ export declare type SerializedParticleSpec = {
     implBlobUrl: string | null;
     modality: string[];
     slotConnections: SerializedSlotConnectionSpec[];
-};
+}
 export declare class ParticleSpec {
     private readonly model;
     name: string;

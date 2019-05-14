@@ -1,3 +1,4 @@
+import { Literal } from './hot.js';
 /**
  * @license
  * Copyright (c) 2018 Google Inc. All rights reserved.
@@ -7,7 +8,7 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-export declare type SerializedPropagatedException = {
+export interface SerializedPropagatedException extends Literal {
     exceptionType: string;
     cause: {
         name: string;
@@ -18,7 +19,7 @@ export declare type SerializedPropagatedException = {
     particleId: string;
     particleName: string;
     stack: string;
-};
+}
 /** An exception that is to be propagated back to the host. */
 export declare class PropagatedException extends Error {
     cause: Error;

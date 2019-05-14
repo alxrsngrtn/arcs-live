@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>RecipeSlot | arcs</title>
+	<title>Literal | arcs</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -56,89 +56,44 @@
 					<a href="../globals.html">Globals</a>
 				</li>
 				<li>
-					<a href="recipeslot.html">RecipeSlot</a>
+					<a href="literal.html">Literal</a>
 				</li>
 			</ul>
-			<h1>Interface RecipeSlot</h1>
+			<h1>Interface Literal</h1>
 		</div>
 	</div>
 </header>
 <div class="container container-main">
 	<div class="row">
 		<div class="col-8 col-content">
+			<section class="tsd-panel tsd-comment">
+				<div class="tsd-comment tsd-typography">
+					<div class="lead">
+						<p>The base type for Literals, i.e. objects that have been serialized into JSON.</p>
+					</div>
+					<h2 id="note">Note</h2>
+					<p><code>JSON.parse(...)</code> returns an <code>any</code> type. Our definition for literal types is stricter: we demand that values are at
+					least objects (they cannot be <code>null</code>, <code>undefined</code>, or primitive types).</p>
+				</div>
+			</section>
 			<section class="tsd-panel tsd-hierarchy">
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<a href="../classes/basenode.html" class="tsd-signature-type">BaseNode</a>
+						<span class="target">Literal</span>
 						<ul class="tsd-hierarchy">
 							<li>
-								<span class="target">RecipeSlot</span>
+								<a href="serializedparticlespec.html" class="tsd-signature-type">SerializedParticleSpec</a>
+							</li>
+							<li>
+								<a href="serializedpropagatedexception.html" class="tsd-signature-type">SerializedPropagatedException</a>
+							</li>
+							<li>
+								<a href="typeliteral.html" class="tsd-signature-type">TypeLiteral</a>
 							</li>
 						</ul>
 					</li>
 				</ul>
-			</section>
-			<section class="tsd-panel-group tsd-index-group">
-				<h2>Index</h2>
-				<section class="tsd-panel tsd-index-panel">
-					<div class="tsd-index-content">
-						<section class="tsd-index-section ">
-							<h3>Properties</h3>
-							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-overwrite"><a href="recipeslot.html#kind" class="tsd-kind-icon">kind</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-inherited"><a href="recipeslot.html#location" class="tsd-kind-icon">location</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="recipeslot.html#name" class="tsd-kind-icon">name</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="recipeslot.html#ref" class="tsd-kind-icon">ref</a></li>
-							</ul>
-						</section>
-					</div>
-				</section>
-			</section>
-			<section class="tsd-panel-group tsd-member-group ">
-				<h2>Properties</h2>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-overwrite">
-					<a name="kind" class="tsd-anchor"></a>
-					<h3>kind</h3>
-					<div class="tsd-signature tsd-kind-icon">kind<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">"slot"</span></div>
-					<aside class="tsd-sources">
-						<p>Overrides <a href="../classes/basenode.html">BaseNode</a>.<a href="../classes/basenode.html#kind">kind</a></p>
-						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/10b1471/src/runtime/manifest-ast-nodes.ts#L306">runtime/manifest-ast-nodes.ts:306</a></li>
-						</ul>
-					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
-					<a name="location" class="tsd-anchor"></a>
-					<h3>location</h3>
-					<div class="tsd-signature tsd-kind-icon">location<span class="tsd-signature-symbol">:</span> <a href="sourcelocation.html" class="tsd-signature-type">SourceLocation</a></div>
-					<aside class="tsd-sources">
-						<p>Inherited from <a href="../classes/basenode.html">BaseNode</a>.<a href="../classes/basenode.html#location">location</a></p>
-						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/10b1471/src/runtime/manifest-ast-nodes.ts#L41">runtime/manifest-ast-nodes.ts:41</a></li>
-						</ul>
-					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="name" class="tsd-anchor"></a>
-					<h3>name</h3>
-					<div class="tsd-signature tsd-kind-icon">name<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/10b1471/src/runtime/manifest-ast-nodes.ts#L308">runtime/manifest-ast-nodes.ts:308</a></li>
-						</ul>
-					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="ref" class="tsd-anchor"></a>
-					<h3>ref</h3>
-					<div class="tsd-signature tsd-kind-icon">ref<span class="tsd-signature-symbol">:</span> <a href="handleref.html" class="tsd-signature-type">HandleRef</a></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/10b1471/src/runtime/manifest-ast-nodes.ts#L307">runtime/manifest-ast-nodes.ts:307</a></li>
-						</ul>
-					</aside>
-				</section>
 			</section>
 		</div>
 		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
@@ -154,21 +109,7 @@
 				</ul>
 				<ul class="current">
 					<li class="current tsd-kind-interface">
-						<a href="recipeslot.html" class="tsd-kind-icon">Recipe<wbr>Slot</a>
-						<ul>
-							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-overwrite">
-								<a href="recipeslot.html#kind" class="tsd-kind-icon">kind</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
-								<a href="recipeslot.html#location" class="tsd-kind-icon">location</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="recipeslot.html#name" class="tsd-kind-icon">name</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="recipeslot.html#ref" class="tsd-kind-icon">ref</a>
-							</li>
-						</ul>
+						<a href="literal.html" class="tsd-kind-icon">Literal</a>
 					</li>
 				</ul>
 				<ul class="after-current">

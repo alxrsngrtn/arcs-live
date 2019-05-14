@@ -1,27 +1,28 @@
-commit f1e850a1ee7a1f979740700c89cc954465868632
-Author: Ray Cromwell <cromwellian@gmail.com>
-Date:   Tue May 14 16:17:23 2019 -0700
+commit 10b1471668b6983308ec92d0095056aa98264985
+Author: Alex Rosengarten <alxr@google.com>
+Date:   Tue May 14 16:47:43 2019 -0700
 
-    Adds schema2proto cli utility (#3007)
+    Cleaner Literalizer Interface (#3012)
     
-    * Adds schema2proto cli utility
+    * - Using higher order types (HOF + Generic Literalizer type)
+    - Renamed applications of Literalizer to follow better convention
     
-    Usage: ./tools/schema2proto --out <destDir> <manifest files>
+    * clearer definition of literalizer
     
-    e.g.
-    Run ./tools/schema2proto --out proto particles/canonical.manifest
-    from Arcs repo root.
+    * Literalizer --> Literalizable
     
-    Limitations:
-    Currently only primitive fields.
-    Doesn't support overriding default package name (hardcoded 'arcs')
-    Should support .proto import directive to de-dup URL message and
-    other shared proto definitions.
+    * attept 0: covariant by T and subclasses of Literal
     
-    * add missing files
+    * rm old type definitions
     
-    * Move to using tools/sigh schema2proto, fix nits
+    * minimize imports
     
-    * Remove unused imports
+    * moved `Literalizable` to HOT, added docs.
     
-    * Fix lint error
+    * Literal: type alias --> interface
+    
+    * reverted change: `toLiteral` on prototype
+    
+    * better definition of `Literal`
+    
+    * targets: `any` --> `unkown`

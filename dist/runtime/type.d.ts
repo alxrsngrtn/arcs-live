@@ -4,10 +4,11 @@ import { Schema } from './schema.js';
 import { SlotInfo } from './slot-info.js';
 import { ArcInfo } from './synthetic-types.js';
 import { TypeVariableInfo } from './type-variable-info.js';
-export declare type TypeLiteral = {
+import { Literal } from './hot.js';
+export interface TypeLiteral extends Literal {
     tag: string;
     data?: any;
-};
+}
 export declare type Tag = 'Entity' | 'TypeVariable' | 'Collection' | 'BigCollection' | 'Relation' | 'Interface' | 'Slot' | 'Reference' | 'Arc' | 'Handle';
 export declare abstract class Type {
     tag: Tag;

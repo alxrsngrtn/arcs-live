@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>LiteralizerPropagatedException | arcs</title>
+	<title>SerializedPropagatedException | arcs</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -56,21 +56,40 @@
 					<a href="../globals.html">Globals</a>
 				</li>
 				<li>
-					<a href="literalizerpropagatedexception.html">LiteralizerPropagatedException</a>
+					<a href="serializedpropagatedexception.html">SerializedPropagatedException</a>
 				</li>
 			</ul>
-			<h1>Interface LiteralizerPropagatedException</h1>
+			<h1>Interface SerializedPropagatedException</h1>
 		</div>
 	</div>
 </header>
 <div class="container container-main">
 	<div class="row">
 		<div class="col-8 col-content">
+			<section class="tsd-panel tsd-comment">
+				<div class="tsd-comment tsd-typography">
+					<dl class="tsd-comment-tags">
+						<dt>license</dt>
+						<dd><p>Copyright (c) 2018 Google Inc. All rights reserved.
+								This code may only be used under the BSD style license found at
+								<a href="http://polymer.github.io/LICENSE.txt">http://polymer.github.io/LICENSE.txt</a>
+								Code distributed by Google as part of this project is also
+								subject to an additional IP rights grant found at
+							<a href="http://polymer.github.io/PATENTS.txt">http://polymer.github.io/PATENTS.txt</a></p>
+						</dd>
+					</dl>
+				</div>
+			</section>
 			<section class="tsd-panel tsd-hierarchy">
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<span class="target">LiteralizerPropagatedException</span>
+						<a href="literal.html" class="tsd-signature-type">Literal</a>
+						<ul class="tsd-hierarchy">
+							<li>
+								<span class="target">SerializedPropagatedException</span>
+							</li>
+						</ul>
 					</li>
 				</ul>
 			</section>
@@ -78,78 +97,95 @@
 				<h2>Index</h2>
 				<section class="tsd-panel tsd-index-panel">
 					<div class="tsd-index-content">
-						<section class="tsd-index-section tsd-is-not-exported">
+						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported"><a href="literalizerpropagatedexception.html#fromliteral" class="tsd-kind-icon">from<wbr>Literal</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported"><a href="literalizerpropagatedexception.html#prototype" class="tsd-kind-icon">prototype</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="serializedpropagatedexception.html#cause" class="tsd-kind-icon">cause</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="serializedpropagatedexception.html#exceptiontype" class="tsd-kind-icon">exception<wbr>Type</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="serializedpropagatedexception.html#method" class="tsd-kind-icon">method</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="serializedpropagatedexception.html#particleid" class="tsd-kind-icon">particle<wbr>Id</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="serializedpropagatedexception.html#particlename" class="tsd-kind-icon">particle<wbr>Name</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="serializedpropagatedexception.html#stack-1" class="tsd-kind-icon">stack</a></li>
 							</ul>
 						</section>
 					</div>
 				</section>
 			</section>
-			<section class="tsd-panel-group tsd-member-group tsd-is-not-exported">
+			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Properties</h2>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported">
-					<a name="fromliteral" class="tsd-anchor"></a>
-					<h3>from<wbr>Literal</h3>
-					<div class="tsd-signature tsd-kind-icon">from<wbr>Literal<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">function</span></div>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="cause" class="tsd-anchor"></a>
+					<h3>cause</h3>
+					<div class="tsd-signature tsd-kind-icon">cause<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/f1e850a/src/runtime/api-channel.ts#L53">runtime/api-channel.ts:53</a></li>
-						</ul>
-					</aside>
-					<div class="tsd-type-declaration">
-						<h4>Type declaration</h4>
-						<ul class="tsd-parameters">
-							<li class="tsd-parameter-siganture">
-								<ul class="tsd-signatures tsd-kind-type-literal tsd-parent-kind-property tsd-is-not-exported">
-									<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>exception<span class="tsd-signature-symbol">: </span><a href="../globals.html#serializedpropagatedexception" class="tsd-signature-type">SerializedPropagatedException</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../classes/propagatedexception.html" class="tsd-signature-type">PropagatedException</a></li>
-								</ul>
-								<ul class="tsd-descriptions">
-									<li class="tsd-description">
-										<h4 class="tsd-parameters-title">Parameters</h4>
-										<ul class="tsd-parameters">
-											<li>
-												<h5>exception: <a href="../globals.html#serializedpropagatedexception" class="tsd-signature-type">SerializedPropagatedException</a></h5>
-											</li>
-										</ul>
-										<h4 class="tsd-returns-title">Returns <a href="../classes/propagatedexception.html" class="tsd-signature-type">PropagatedException</a></h4>
-									</li>
-								</ul>
-							</li>
-						</ul>
-					</div>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported">
-					<a name="prototype" class="tsd-anchor"></a>
-					<h3>prototype</h3>
-					<div class="tsd-signature tsd-kind-icon">prototype<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/f1e850a/src/runtime/api-channel.ts#L52">runtime/api-channel.ts:52</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/10b1471/src/runtime/arc-exceptions.ts#L16">runtime/arc-exceptions.ts:16</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-type-declaration">
 						<h4>Type declaration</h4>
 						<ul class="tsd-parameters">
 							<li class="tsd-parameter">
-								<h5>to<wbr>Literal<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">function</span></h5>
-								<ul class="tsd-parameters">
-									<li class="tsd-parameter-siganture">
-										<ul class="tsd-signatures tsd-kind-type-literal tsd-parent-kind-variable tsd-is-not-exported">
-											<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../globals.html#serializedpropagatedexception" class="tsd-signature-type">SerializedPropagatedException</a></li>
-										</ul>
-										<ul class="tsd-descriptions">
-											<li class="tsd-description">
-												<h4 class="tsd-returns-title">Returns <a href="../globals.html#serializedpropagatedexception" class="tsd-signature-type">SerializedPropagatedException</a></h4>
-											</li>
-										</ul>
-									</li>
-								</ul>
+								<h5>message<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></h5>
+							</li>
+							<li class="tsd-parameter">
+								<h5>name<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></h5>
+							</li>
+							<li class="tsd-parameter">
+								<h5>stack<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></h5>
 							</li>
 						</ul>
 					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="exceptiontype" class="tsd-anchor"></a>
+					<h3>exception<wbr>Type</h3>
+					<div class="tsd-signature tsd-kind-icon">exception<wbr>Type<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/10b1471/src/runtime/arc-exceptions.ts#L15">runtime/arc-exceptions.ts:15</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="method" class="tsd-anchor"></a>
+					<h3>method</h3>
+					<div class="tsd-signature tsd-kind-icon">method<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/10b1471/src/runtime/arc-exceptions.ts#L17">runtime/arc-exceptions.ts:17</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="particleid" class="tsd-anchor"></a>
+					<h3>particle<wbr>Id</h3>
+					<div class="tsd-signature tsd-kind-icon">particle<wbr>Id<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/10b1471/src/runtime/arc-exceptions.ts#L18">runtime/arc-exceptions.ts:18</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="particlename" class="tsd-anchor"></a>
+					<h3>particle<wbr>Name</h3>
+					<div class="tsd-signature tsd-kind-icon">particle<wbr>Name<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/10b1471/src/runtime/arc-exceptions.ts#L19">runtime/arc-exceptions.ts:19</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="stack-1" class="tsd-anchor"></a>
+					<h3>stack</h3>
+					<div class="tsd-signature tsd-kind-icon">stack<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/10b1471/src/runtime/arc-exceptions.ts#L20">runtime/arc-exceptions.ts:20</a></li>
+						</ul>
+					</aside>
 				</section>
 			</section>
 		</div>
@@ -165,14 +201,26 @@
 				<ul class="before-current">
 				</ul>
 				<ul class="current">
-					<li class="current tsd-kind-interface tsd-is-not-exported">
-						<a href="literalizerpropagatedexception.html" class="tsd-kind-icon">Literalizer<wbr>Propagated<wbr>Exception</a>
+					<li class="current tsd-kind-interface">
+						<a href="serializedpropagatedexception.html" class="tsd-kind-icon">Serialized<wbr>Propagated<wbr>Exception</a>
 						<ul>
-							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported">
-								<a href="literalizerpropagatedexception.html#fromliteral" class="tsd-kind-icon">from<wbr>Literal</a>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="serializedpropagatedexception.html#cause" class="tsd-kind-icon">cause</a>
 							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported">
-								<a href="literalizerpropagatedexception.html#prototype" class="tsd-kind-icon">prototype</a>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="serializedpropagatedexception.html#exceptiontype" class="tsd-kind-icon">exception<wbr>Type</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="serializedpropagatedexception.html#method" class="tsd-kind-icon">method</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="serializedpropagatedexception.html#particleid" class="tsd-kind-icon">particle<wbr>Id</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="serializedpropagatedexception.html#particlename" class="tsd-kind-icon">particle<wbr>Name</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="serializedpropagatedexception.html#stack-1" class="tsd-kind-icon">stack</a>
 							</li>
 						</ul>
 					</li>
