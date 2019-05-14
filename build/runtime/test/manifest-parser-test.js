@@ -292,5 +292,11 @@ describe('manifest parser', () => {
           input <- h0
     `);
     });
+    it('parses handle with type with prefix "Slot"', () => {
+        parse(`
+      particle P in './p.js'
+        in Sloturnicus s
+    `);
+    });
 });
 //# sourceMappingURL=manifest-parser-test.js.map

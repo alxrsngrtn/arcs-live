@@ -1,13 +1,5 @@
-commit 8c7adb052275416cf51d3017480b1783293b4ce2
+commit d2b745eb934a782e313393d23fee704957e12c81
 Author: Joshua Pratt <jp10010101010000@gmail.com>
-Date:   Tue May 14 12:51:29 2019 +1000
+Date:   Tue May 14 14:19:45 2019 +1000
 
-    Build recipe fix (#3006)
-    
-    * Update types in manifest and use handleRefs
-    
-    * Work around for _stored
-    
-    * Separate Manifest's construction of the recipe from its RecipeItems
-    
-    * Add tslint ignores for unsafe ops in test code
+    Add test and fix for incorrect parse of UpperIdent prefixed with keyword also fix string -> Direction typing (#3009)
