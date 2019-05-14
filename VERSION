@@ -1,9 +1,5 @@
-commit 27d164df8c067641f953ba3fbb99cc4910ee4e80
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Tue May 14 15:01:48 2019 -0700
+commit 81be51dd872de1594b14ad9145dcff6cbe6fb58b
+Author: Scott J. Miles <sjmiles@google.com>
+Date:   Tue May 14 15:23:14 2019 -0700
 
-    fix description for null entity property (#3018)
-    
-    * fix description for null entity property
-    
-    * fix lint
+    use unpkg with ?module to avoid tfjs conflicting with ml5 (#3014)
