@@ -19690,6 +19690,8 @@ class Loader {
         const norm = s => s.replace(/(?:^|\/)[^./]*\/\.\./g, '');
         for (let n = norm(path); n !== path; path = n, n = norm(path))
             ;
+        // remove '//' except after `:`
+        path = path.replace(/([^:])(\/\/)/g, '$1/');
         return path;
     }
     async loadResource(file) {
@@ -22813,21 +22815,16 @@ ${this.activeRecipe.toString()}`;
 
 const html$1 = (strings, ...values) => (strings[0] + values.map((v, i) => v + strings[i + 1]).join('')).trim();
 
-const dumbCache = {};
-
-class PlatformLoader extends Loader {
+class PlatformLoaderBase extends Loader {
   constructor(urlMap) {
     super();
     this._urlMap = urlMap || [];
   }
   loadResource(name) {
     const path = this._resolve(name);
-    const cacheKey = path; //new URL(url, document.URL).href;
-    const resource = dumbCache[cacheKey];
-    return resource || (dumbCache[cacheKey] = super.loadResource(path));
+    return super.loadResource(path);
   }
   _resolve(path) {
-    //return new URL(path, this._base).href;
     let url = this._urlMap[path];
     if (!url && path) {
       // TODO(sjmiles): inefficient!
@@ -22836,22 +22833,17 @@ class PlatformLoader extends Loader {
         url = this._urlMap[macro] + path.slice(macro.length);
       }
     }
-    url = url || path;
+    url = this.normalizeDots(url || path);
     return url;
-  }
-  async requireParticle(fileName) {
-    const path = this._resolve(fileName);
-    // inject path to this particle into the UrlMap,
-    // allows "foo.js" particle to invoke `importScripts(resolver('foo/othermodule.js'))`
-    this.mapParticleUrl(path);
-    return super.requireParticle(path);
   }
   mapParticleUrl(path) {
     const parts = path.split('/');
     const suffix = parts.pop();
     const folder = parts.join('/');
     const name = suffix.split('.').shift();
-    this._urlMap[name] = folder;
+    const resolved = this._resolve(folder);
+    this._urlMap[name] = resolved;
+    this._urlMap['$here'] = resolved;
   }
   unwrapParticle(particleWrapper, log) {
     // TODO(sjmiles): regarding `resolver`:
@@ -22866,8 +22858,28 @@ class PlatformLoader extends Loader {
       TransformationDomParticle,
       resolver,
       log: log || (() => {}),
-      html: html$1,
+      html: html$1
     });
+  }
+}
+
+/**
+ * @license
+ * Copyright (c) 2017 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+
+class PlatformLoader extends PlatformLoaderBase {
+  async requireParticle(fileName) {
+    const path = this._resolve(fileName);
+    // inject path to this particle into the UrlMap,
+    // allows "foo.js" particle to invoke `importScripts(resolver('foo/othermodule.js'))`
+    this.mapParticleUrl(path);
+    return super.requireParticle(path);
   }
 }
 

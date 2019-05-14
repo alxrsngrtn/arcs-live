@@ -1,5 +1,47 @@
-commit d02eff436b1ff4046a01001be4b446daf09d3adb
-Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Tue May 14 09:27:52 2019 +1000
+commit de3ce8b6675535a1e6f0e36870d066331d33e78d
+Author: Scott J. Miles <sjmiles@google.com>
+Date:   Mon May 13 18:43:46 2019 -0700
 
-    Webpack config for packaging src/tools with their deps (#3004)
+    Example TensorFlow service (#3000)
+    
+    * begin services work
+    
+    * flesh out services impl
+    
+    * `service` method moved to Particle class
+    
+    * move `waltbird` into repo as particle asset
+    
+    * enable shorthand service invocation
+    
+    * do a fandango to appease lint
+    
+    * wip
+    
+    * dead module
+    
+    * a TensorFlowJS service and a particle to exercise it
+    
+    * rename ServiceTest to Ml5, create new simpler ServiceTest
+    
+    * increase granularity
+    
+    * extract common base-class for platform loaders, add `$here` alias for use in workers, remove dumb/simpleCache
+    
+    * we need `unsafe-eval` for tsjs anyway, so restore it and ml5 unpkg affordance
+    
+    * restore ml5 service
+    
+    * fix dangling slash on init path
+    
+    * cleanups
+    
+    * buff out Tfjs service with example abstractions
+    
+    * clarify comment
+    
+    * undo unnecessary change to firebase-storage
+    
+    * missing semi!
+    
+    * s/let/const

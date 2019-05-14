@@ -354,7 +354,7 @@
         "signature": "dd4ef7cae22c074684d9b8711fc8da2611af927531d3e149f89f015113847f5e"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/loader.ts": {
-        "version": "7ccbb3e42f2eaac02e4590b17d2ee2020c036fd912f5002744351cc446399c20",
+        "version": "f857024735475cf408aee3e935885fbcd35231522e2aef3f783ac371652db5b5",
         "signature": "425e13836f06146213f49774699d66cfa73a520f47b6375a0d64741cfc09f0ff"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/message-channel.ts": {
@@ -458,7 +458,7 @@
         "signature": "26334e0732809d8374bb07bc87fc6ccb28957bdff74cde533f401f1c6ebba400"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/firebase/firebase-storage.ts": {
-        "version": "0a7fe3f455df5efc932f60c0fc4c82c5cd7c63b823cb57765c52c7df693a67e4",
+        "version": "78a2cfd0a63fa5a4846bee8384f4fe79b913355c106f296991d71542644a5213",
         "signature": "2697cb5f0b59c35ac462fe85287a3e7ac2db27f696871271fe718875b6c193fa"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/firebase/firebase-provider.ts": {

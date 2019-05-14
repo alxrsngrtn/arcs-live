@@ -47,6 +47,8 @@ export class Loader {
         const norm = s => s.replace(/(?:^|\/)[^./]*\/\.\./g, '');
         for (let n = norm(path); n !== path; path = n, n = norm(path))
             ;
+        // remove '//' except after `:`
+        path = path.replace(/([^:])(\/\/)/g, '$1/');
         return path;
     }
     async loadResource(file) {
