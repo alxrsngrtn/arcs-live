@@ -424,7 +424,7 @@ recipe
         });
     });
     tests.forEach((test) => {
-        it('sanisize description ' + test.name, async () => {
+        it('sanitize description ' + test.name, async () => {
             const { arc, recipe } = (await prepareRecipeAndArc(`
 ${schemaManifest}
 particle A
@@ -443,6 +443,35 @@ recipe
             const description = await test.verifySuggestion({ arc }, 'Create &lt;new> &lt;&lt;my-foo>>.');
             const handle = recipe.handleConnections.find(hc => hc.particle.name === 'A' && hc.name === 'ofoo').handle;
             assert.equal(description.getHandleDescription(handle), '&lt;my-foo>');
+        });
+    });
+    tests.forEach((test) => {
+        it('uses store value property ' + test.name, async () => {
+            const manifestStr = `
+      schema ScriptDate
+        Text date
+      particle Stardate in './source/Stardate.js'
+        inout ScriptDate stardate
+        consume root
+        description \`stardate \${stardate.date}\`
+      recipe
+        create as stardateHandle
+        slot 'slotid' as slot0
+        Stardate
+          stardate = stardateHandle
+          consume root as slot0
+      `;
+            const manifest = (await Manifest.parse(manifestStr));
+            const recipe = manifest.recipes[0];
+            const scriptDateType = manifest.findSchemaByName('ScriptDate').entityClass().type;
+            recipe.handles[0].mapToStorage({ id: 'test:1', type: scriptDateType });
+            assert.isTrue(recipe.normalize());
+            assert.isTrue(recipe.isResolved());
+            const arc = createTestArc(recipe, manifest);
+            const store = await arc.createStore(scriptDateType, undefined, 'test:1');
+            await test.verifySuggestion({ arc }, 'Stardate .');
+            await store.set({ id: 1, rawData: { date: 'June 31' } });
+            await test.verifySuggestion({ arc }, 'Stardate June 31.');
         });
     });
     tests.forEach((test) => {
@@ -634,7 +663,7 @@ schema GitHubDash`));
       recipe
         Foo
         description \`Hello \${Bar.things}\`
-    `, `Hello `);
+    `, `Hello .`);
         await verifyNoAssert(`
       particle Foo in 'foo.js'
         description \`\${bar}\`

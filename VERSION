@@ -1,33 +1,9 @@
-commit 7a4674dfcb86a9fa322b65bd00d7c59ac83a1343
-Author: Alex Rosengarten <alxr@google.com>
-Date:   Tue May 14 10:44:52 2019 -0700
+commit 27d164df8c067641f953ba3fbb99cc4910ee4e80
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Tue May 14 15:01:48 2019 -0700
 
-    Issue 2980: (Dom)Particle Types Enhancement (#2984)
+    fix description for null entity property (#3018)
     
-    * making slot return types specific
+    * fix description for null entity property
     
-    * fixing warning: making static
-    
-    * adding functional interfaces
-    
-    These are generic types for functions, conventions borrowed from Java 8+
-    
-    * updating particle types
-    
-    also fixed a static warning.
-    
-    * build fix: rm `abstract` from Particle
-    
-    * Not listening to IDE warnigns anymore.
-    
-    * config fields: optional --> required
-    
-    * Solved TODO --> ReadonlyMap
-    
-    * Solved TODO: abstract
-    
-    * rm static
-    
-    * Model --> RenderModel
-    
-    * more accurate xen type, functional --> hot
+    * fix lint

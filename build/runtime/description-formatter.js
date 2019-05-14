@@ -96,7 +96,7 @@ export class DescriptionFormatter {
         assert(sentence);
         // "Capitalize, punctuate." (if the sentence doesn't end with a punctuation character).
         const last = sentence.length - 1;
-        return `${sentence[0].toUpperCase()}${sentence.slice(1, last)}${sentence[last]}${sentence[last].match(/[a-z0-9()'>\]]/i) ? '.' : ''}`;
+        return `${sentence[0].toUpperCase()}${sentence.slice(1, last)}${sentence[last]}${sentence[last].match(/[a-z0-9()' >\]]/i) ? '.' : ''}`;
     }
     patternToSuggestion(pattern, particleDescription) {
         const tokens = this._initTokens(pattern, particleDescription);
@@ -284,6 +284,9 @@ export class DescriptionFormatter {
         return this._joinDescriptions(results);
     }
     _propertyTokenToString(handleName, value, properties) {
+        if (!value) {
+            return '';
+        }
         assert(value.entityValue, `Cannot return property ${properties.join(',')} for non EntityType.`);
         // Use singleton value's property (eg. "09/15" for person's birthday)
         const valueVar = value.entityValue;
