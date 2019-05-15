@@ -1,28 +1,17 @@
-commit 10b1471668b6983308ec92d0095056aa98264985
+commit 61a46a286dea8af2e9694db1062b5c0cb61533d7
 Author: Alex Rosengarten <alxr@google.com>
-Date:   Tue May 14 16:47:43 2019 -0700
+Date:   Tue May 14 17:00:34 2019 -0700
 
-    Cleaner Literalizer Interface (#3012)
+    Added minimal types to `services.ts` (#2998)
     
-    * - Using higher order types (HOF + Generic Literalizer type)
-    - Renamed applications of Literalizer to follow better convention
+    * added minimial types to services.ts. Froze services.
     
-    * clearer definition of literalizer
+    * updates to services.ts
     
-    * Literalizer --> Literalizable
+    - applied auto-fmt
+    - Simplified `Service` interface
+    - Flexible `ServiceRequest` interface
     
-    * attept 0: covariant by T and subclasses of Literal
+    * Dictionary: services.ts --> hot.ts
     
-    * rm old type definitions
-    
-    * minimize imports
-    
-    * moved `Literalizable` to HOT, added docs.
-    
-    * Literal: type alias --> interface
-    
-    * reverted change: `toLiteral` on prototype
-    
-    * better definition of `Literal`
-    
-    * targets: `any` --> `unkown`
+    - Also exported `Services` and ServiceRequest interfaces

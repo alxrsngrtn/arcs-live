@@ -6,8 +6,19 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-export declare class Services {
-    static registry: {};
-    static register(name: any, service: {}): void;
-    static request(request: any): Promise<any>;
+import { Dictionary } from './hot.js';
+export interface Service {
+    [name: string]: Function;
 }
+declare type Registry = Dictionary<Service>;
+export interface ServiceRequest {
+    service?: string;
+    invoke?: string;
+    call?: string;
+}
+export declare class Services {
+    static registry: Registry;
+    static register(name: string, service: Service): void;
+    static request(request: ServiceRequest): Promise<any>;
+}
+export {};

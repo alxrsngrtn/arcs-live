@@ -21880,6 +21880,7 @@ class Services {
     }
 }
 Services.registry = {};
+Object.freeze(Services);
 Services.register('test', {
     async classify(request) {
         return { data: `it's a pig, that don't fly straight` };

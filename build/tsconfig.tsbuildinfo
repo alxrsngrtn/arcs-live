@@ -146,8 +146,8 @@
         "signature": "23a689d2ca2ba95b9b553113d3b68020ed524aebb47cfef8090e5f249be6d257"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/hot.ts": {
-        "version": "1fb264d55f8462adfbae5e24656d082c47feb94af3eb7eecbe0d80d1132e5c13",
-        "signature": "2c8e7333a96eb2fea5b9ffa509b3f99aade7522c85e4a3b449eb6c68cc35a47c"
+        "version": "90aa68ddd35c6894c6b9e2f48760da36213351f7f38b5879141f6c9f68d52212",
+        "signature": "638d413c9f4a30ca4035c94a1bd58f8cbb83edd1b1fd8801abf54b895d35ee00"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/particle-spec.ts": {
         "version": "a35f596bc1db80057aa9fc175433219f1c72145c4c405e3a4115edc68d149c96",
@@ -342,8 +342,8 @@
         "signature": "2acde9aeb6b8025e3c6e7c3d9f5f148a9927ebf938c2dadfca62f728f986de9a"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/services.ts": {
-        "version": "2956a5bffdca8d0c6b9bf597c0b8155333cf9e79b102602f5525b83e77649f02",
-        "signature": "b69fbff09a421ade38f17088b19f2b29173d411c98a85f5fc7801fe253767b39"
+        "version": "8770c9eb5689c4e0907e1332788a1e3fc9eb3215a9225b9ad45267691eca939a",
+        "signature": "aa801c10c47dd3c9e9980078038e1f7e4767514869a06b967161bf2a17a43c16"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/particle-execution-host.ts": {
         "version": "9588edfd91085d4a2c039ebf43d9b6aa3fe7563c6098b8bfb848b58b01dba92d",
@@ -2227,6 +2227,7 @@
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
       ],
       "/home/travis/build/PolymerLabs/arcs/src/runtime/services.ts": [
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/hot.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
       ],
@@ -5768,6 +5769,9 @@
       ],
       "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/pouchdb/pouch-db-key.ts": [
         "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/key-base.ts"
+      ],
+      "/home/travis/build/PolymerLabs/arcs/src/runtime/services.ts": [
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/hot.ts"
       ],
       "/home/travis/build/PolymerLabs/arcs/src/platform/fs-web.d.ts": [
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/fs.d.ts",
