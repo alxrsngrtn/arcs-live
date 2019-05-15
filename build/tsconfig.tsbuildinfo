@@ -1218,16 +1218,16 @@
         "signature": "7dbe25e3c9c94f17fa78d77befceba05e253780cf0a54303e8fbd949b29f0020"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/crdt/crdt-collection.ts": {
-        "version": "03b912cb947b191cd2fc7a0a86e9e67106fcc9f19a0854c22da2c5cadc5b723a",
+        "version": "e8b702bd58c21cfb1eab044a3ea6ad98c1b1737210139d29f50485d15300cd8a",
         "signature": "4a22937e81e81772e4212e4bb6af9f6142d68c816caa96ccc7e9a0c70e019419"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/crdt/crdt-count.ts": {
-        "version": "0256467e199655fc007034015a6bb4883a6a98c21e942d14d45ccf58668b7608",
+        "version": "5d62b24ddeff5ad8dca57ea8e21840d10f4a7910614456a9713e737bd29cf5bd",
         "signature": "c482e289b7770469f41ca934a518ee222cab46f89f5f03cf13af46f8a42dd8d5"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/crdt/crdt-singleton.ts": {
-        "version": "1b66e1119b246bc79d16b31e9cccdf2be7cb5aa98cf69f17dd628800ca82a350",
-        "signature": "fd95df5d076cbfed143dc4904d376b5c6d9cb1091b630994ffe2366010afa6b3"
+        "version": "0c3d157a2632b1f9510c145a778d857424b3729d102fc98107a4f63b613e9c37",
+        "signature": "72d6d2cc9ca4c11e2d7cabc92fe214a190c7160b0fcb34f395a6307a3f97e96d"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/crdt/tests/crdt-collection-tests.ts": {
         "version": "9e67c7f2683b83793386ca9b9c814cd7726f4883b5ff269843a7c85f64c0d853",
@@ -1236,6 +1236,10 @@
       "/home/travis/build/PolymerLabs/arcs/src/runtime/crdt/tests/crdt-count-test.ts": {
         "version": "b49ff16495d4a242d7f2236fe6658d129de44de64e401952780276efd99ca831",
         "signature": "fd95df5d076cbfed143dc4904d376b5c6d9cb1091b630994ffe2366010afa6b3"
+      },
+      "/home/travis/build/PolymerLabs/arcs/src/runtime/crdt/tests/crdt-singleton-test.ts": {
+        "version": "a4a3473c012e119918a26b531214496f8c826bd1deee34fff33bdeb3933237e7",
+        "signature": "8bc1d39a3b8ec61064f9969316a088e314895e7ffd094468dcc0b238f33cb4a6"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/manual_tests/firebase-tests.ts": {
         "version": "6fdb95ccef418e0baaa41d3b7bdee5bf30e34936d0815b0771a6c94b46f68dbe",
@@ -4046,6 +4050,7 @@
       ],
       "/home/travis/build/PolymerLabs/arcs/src/runtime/crdt/crdt-singleton.ts": [
         "/home/travis/build/PolymerLabs/arcs/src/runtime/crdt/crdt.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/crdt/crdt-collection.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
       ],
@@ -4060,6 +4065,13 @@
         "/home/travis/build/PolymerLabs/arcs/src/platform/chai-web.d.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/crdt/crdt-count.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/crdt/crdt.ts",
+        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
+        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
+      ],
+      "/home/travis/build/PolymerLabs/arcs/src/runtime/crdt/tests/crdt-singleton-test.ts": [
+        "/home/travis/build/PolymerLabs/arcs/src/platform/chai-web.d.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/crdt/crdt.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/crdt/crdt-singleton.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
       ],
@@ -6482,6 +6494,9 @@
         "/home/travis/build/PolymerLabs/arcs/src/runtime/crdt/crdt.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/storageNG/handle.ts"
       ],
+      "/home/travis/build/PolymerLabs/arcs/src/runtime/crdt/crdt-singleton.ts": [
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/crdt/crdt.ts"
+      ],
       "/home/travis/build/PolymerLabs/arcs/src/runtime/crdt/crdt-count.ts": [
         "/home/travis/build/PolymerLabs/arcs/src/runtime/crdt/crdt.ts"
       ],
@@ -6845,6 +6860,7 @@
       "/home/travis/build/PolymerLabs/arcs/src/runtime/crdt/crdt-singleton.ts",
       "/home/travis/build/PolymerLabs/arcs/src/runtime/crdt/tests/crdt-collection-tests.ts",
       "/home/travis/build/PolymerLabs/arcs/src/runtime/crdt/tests/crdt-count-test.ts",
+      "/home/travis/build/PolymerLabs/arcs/src/runtime/crdt/tests/crdt-singleton-test.ts",
       "/home/travis/build/PolymerLabs/arcs/src/runtime/manual_tests/firebase-tests.ts",
       "/home/travis/build/PolymerLabs/arcs/src/runtime/manual_tests/loader-tests.ts",
       "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/constraint-walker.ts",

@@ -1,12 +1,7 @@
-commit ecca50dcf52cd9d9eb29e075169769581109538d
-Author: Paul Lindner <plindner@google.com>
-Date:   Tue May 14 17:22:47 2019 -0700
+commit f934400863f6028ca832c6410ec97f048266f216
+Author: galganif <4754402+galganif@users.noreply.github.com>
+Date:   Wed May 15 11:08:25 2019 +1000
 
-    Start the process of moving to eslint based tyepscript linting (#3015)
+    Implementation for crdt singleton, implemented on top of a collection… (#2939)
     
-    - Move main eslint config to config/eslintrc.json
-    - Convert js to json to help catch syntax errors
-    - Whitelist spacing and a few other minor issues.
-    - Adjust sigh to pass typescript files (and ignore gen/ directories)
-    - Fix sigh to check for directories explicitly
-    - bump lint package versions
+    * Implementation for crdt singleton, implemented on top of a collection. Also changed the merge method to take crtd data only.
