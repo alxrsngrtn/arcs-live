@@ -1,8 +1,5 @@
-commit 369808629de8e56c67b1224091ab4c83fd58175d
+commit 34ce0025a75503c6ca6df49615a02deee9001de7
 Author: Paul Lindner <plindner@google.com>
-Date:   Wed May 15 12:58:18 2019 -0700
+Date:   Wed May 15 14:12:33 2019 -0700
 
-    Migrate github pages to use https://live.arcs.dev (#3021)
-    
-    - Adds CNAME generation and top-level redirect to travis deploy
-    - Updates URLs in most places
+    Write CNAME and index.html to root level (#3029)
