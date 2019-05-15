@@ -46,7 +46,6 @@ declare type DeserializeArcOptions = Readonly<{
     context: Manifest;
     listenerClasses?: ArcDebugListenerDerived[];
 }>;
-export declare type PlanCallback = (recipe: Recipe) => void;
 export declare class Arc {
     private readonly _context;
     private readonly pecFactory;
@@ -63,7 +62,6 @@ export declare class Arc {
     storageProviderFactory: StorageProviderFactory;
     readonly storeTags: Map<StorageProviderBase, Set<string>>;
     private readonly storeDescriptions;
-    private readonly instantiatePlanCallbacks;
     private waitForIdlePromise;
     private readonly debugHandler;
     private readonly innerArcsByParticle;
@@ -79,8 +77,6 @@ export declare class Arc {
     constructor({ id, context, pecFactory, slotComposer, loader, storageKey, storageProviderFactory, speculative, innerArc, stub, listenerClasses }: ArcOptions);
     readonly loader: Loader;
     readonly modality: Modality;
-    registerInstantiatePlanCallback(callback: PlanCallback): void;
-    unregisterInstantiatePlanCallback(callback: PlanCallback): boolean;
     dispose(): void;
     _waitForIdle(): Promise<void>;
     readonly idle: Promise<void>;
@@ -121,7 +117,6 @@ export declare class Arc {
      * - Processes the Handles and creates stores for them.
      * - Instantiates the new Particles
      * - Passes these particles for initialization in the PEC
-     * - For non-speculative Arcs processes instantiatePlanCallbacks
      *
      * Waits for completion of an existing Instantiate before returning.
      */

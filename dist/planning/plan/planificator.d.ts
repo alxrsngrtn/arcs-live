@@ -8,7 +8,6 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { Arc } from '../../runtime/arc.js';
-import { Recipe } from '../../runtime/recipe/recipe.js';
 import { KeyBase } from "../../runtime/storage/key-base.js";
 import { VariableStorageProvider } from "../../runtime/storage/storage-provider-base.js";
 import { PlanConsumer } from './plan-consumer.js';
@@ -32,8 +31,6 @@ export declare class Planificator {
     dataChangeCallback: () => void;
     search: string | null;
     searchStore: VariableStorageProvider;
-    arcCallback: ({}: {}) => void;
-    lastActivatedPlan: Recipe | null;
     constructor(arc: Arc, userid: string, result: PlanningResult, searchStore: VariableStorageProvider, onlyConsumer?: boolean, debug?: boolean);
     requestPlanning(options?: {}): Promise<void>;
     readonly consumerOnly: boolean;
@@ -43,10 +40,6 @@ export declare class Planificator {
     registerVisibleSuggestionsChangedCallback(callback: any): void;
     dispose(): void;
     deleteAll(): Promise<void>;
-    getLastActivatedPlan(): {
-        plan: Recipe;
-    };
-    private _onPlanInstantiated;
     private _listenToArcStores;
     private _unlistenToArcStores;
     static constructSuggestionKey(arc: Arc, userid: string, storageKeyBase?: string): KeyBase;

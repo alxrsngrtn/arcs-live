@@ -398,8 +398,8 @@
         "signature": "96ed532e006f075d33e1d70c5c1a51aaaf133a5db7f5140e8ff7305c2b7a175a"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts": {
-        "version": "5e0a5f5eaa4898583f20bc4361142db3bc7353bd447568269e06c45fea5e309f",
-        "signature": "464d4e016c2fb94216f6448661eb42d4a11a0422f4ac45286ac93f000f837ad7"
+        "version": "10871208d03933974ac5586fc662cbc6d5c3c9a36b5121c097ffc21d7d747cfd",
+        "signature": "af41c55626e55dd57f6bfd7e235ef6684dd7287c178a4a8bc00b6207cc038b4f"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/debug/outer-port-attachment.ts": {
         "version": "1880b92832eed443cbbda291334b51c112fd2859f10cfde7853172abf76ae211",
@@ -662,8 +662,8 @@
         "signature": "e169cf8da62d592f5eebcb6bbb1139ae1db07ba431678f6da3e170246b44531d"
       },
       "/home/travis/build/PolymerLabs/arcs/src/planning/plan/planificator.ts": {
-        "version": "b6882d402c8e0002ac6bdfde6ceb990b25d3e86344aab14e9dd80c4975a4b648",
-        "signature": "c61f7bca04038395a2e4eeb0b08db108477d0db521cf5db8abecc4387ba599a0"
+        "version": "a4233a3ba70cca88f098e11229c0cab9d588ad00ad2f505dd76c8665031dc332",
+        "signature": "9c5aabfea205f2becab717bc437a375aece98e4b870f3029e09f611d6016ba12"
       },
       "/home/travis/build/PolymerLabs/arcs/src/planning/debug/arc-planner-invoker.ts": {
         "version": "cffa36dc5549e05bd9fe48151032dba6e882a32e1a89f20c1660989656060234",
@@ -5175,7 +5175,6 @@
         "/home/travis/build/PolymerLabs/arcs/src/planning/plan/plan-producer.ts",
         "/home/travis/build/PolymerLabs/arcs/src/planning/plan/replan-queue.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/storage-provider-base.ts",
-        "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/recipe.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/key-base.ts"
       ],
       "/home/travis/build/PolymerLabs/arcs/src/planning/debug/planning-explorer-adapter.ts": [
@@ -5300,7 +5299,6 @@
         "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts"
       ],
       "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts": [
-        "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/recipe.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/loader.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/storage-provider-factory.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/storage-provider-base.ts",
@@ -5310,6 +5308,7 @@
         "/home/travis/build/PolymerLabs/arcs/src/runtime/modality.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/particle.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/manifest.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/recipe.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/handle.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/slot.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/type.ts",

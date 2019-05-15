@@ -1,5 +1,5 @@
-commit 34ce0025a75503c6ca6df49615a02deee9001de7
+commit 26fc235c5cd5be63dbe937335155d3389c11dc76
 Author: Paul Lindner <plindner@google.com>
-Date:   Wed May 15 14:12:33 2019 -0700
+Date:   Wed May 15 14:13:15 2019 -0700
 
-    Write CNAME and index.html to root level (#3029)
+    Remove pre 0.6 shell workaround code (#3027)

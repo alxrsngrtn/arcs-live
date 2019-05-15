@@ -33,7 +33,6 @@ export class Arc {
         this.storeTags = new Map();
         // Map from each store to its description (originating in the manifest).
         this.storeDescriptions = new Map();
-        this.instantiatePlanCallbacks = [];
         this.innerArcsByParticle = new Map();
         this.instantiateMutex = new Mutex();
         this.idGenerator = IdGenerator.newSession();
@@ -72,22 +71,10 @@ export class Arc {
         }
         return this.activeRecipe.modality;
     }
-    registerInstantiatePlanCallback(callback) {
-        this.instantiatePlanCallbacks.push(callback);
-    }
-    unregisterInstantiatePlanCallback(callback) {
-        const index = this.instantiatePlanCallbacks.indexOf(callback);
-        if (index >= 0) {
-            this.instantiatePlanCallbacks.splice(index, 1);
-            return true;
-        }
-        return false;
-    }
     dispose() {
         for (const innerArc of this.innerArcs) {
             innerArc.dispose();
         }
-        this.instantiatePlanCallbacks.length = 0;
         // TODO: disconnect all associated store event handlers
         this.pec.stop();
         this.pec.close();
@@ -416,7 +403,6 @@ ${this.activeRecipe.toString()}`;
      * - Processes the Handles and creates stores for them.
      * - Instantiates the new Particles
      * - Passes these particles for initialization in the PEC
-     * - For non-speculative Arcs processes instantiatePlanCallbacks
      *
      * Waits for completion of an existing Instantiate before returning.
      */
@@ -503,9 +489,6 @@ ${this.activeRecipe.toString()}`;
         if (this.pec.slotComposer) {
             // TODO: pass slot-connections instead
             await this.pec.slotComposer.initializeRecipe(this, particles);
-        }
-        if (!this.isSpeculative) { // Note: callbacks not triggered for speculative arcs.
-            this.instantiatePlanCallbacks.forEach(callback => callback(recipe));
         }
         this.debugHandler.recipeInstantiated({ particles, activeRecipe: this.activeRecipe.toString() });
     }

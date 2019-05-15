@@ -18,11 +18,6 @@ import { ReplanQueue } from './replan-queue.js';
 export class Planificator {
     constructor(arc, userid, result, searchStore, onlyConsumer = false, debug = false) {
         this.search = null;
-        // In <0.6 shell, this is needed to backward compatibility, in order to (1)
-        // (1) trigger replanning with a local producer and (2) notify shell of the
-        // last activated plan, to allow serialization.
-        // TODO(mmandlis): Is this really needed in the >0.6 shell?
-        this.arcCallback = this._onPlanInstantiated.bind(this);
         this.arc = arc;
         this.userid = userid;
         this.searchStore = searchStore;
@@ -35,8 +30,6 @@ export class Planificator {
             this._listenToArcStores();
         }
         this.consumer = new PlanConsumer(this.arc, this.result);
-        this.lastActivatedPlan = null;
-        this.arc.registerInstantiatePlanCallback(this.arcCallback);
         PlanningExplorerAdapter.subscribeToForceReplan(this);
     }
     static async create(arc, { userid, storageKeyBase, onlyConsumer, debug = false }) {
@@ -79,7 +72,6 @@ export class Planificator {
         this.consumer.registerVisibleSuggestionsChangedCallback(callback);
     }
     dispose() {
-        this.arc.unregisterInstantiatePlanCallback(this.arcCallback);
         if (!this.consumerOnly) {
             this._unlistenToArcStores();
             this.producer.dispose();
@@ -90,16 +82,6 @@ export class Planificator {
     async deleteAll() {
         await this.producer.result.clear();
         this.setSearch(null);
-    }
-    getLastActivatedPlan() {
-        return { plan: this.lastActivatedPlan };
-    }
-    _onPlanInstantiated(plan) {
-        this.lastActivatedPlan = plan;
-        this.requestPlanning({ metadata: {
-                trigger: Trigger.PlanInstantiated,
-                particleNames: plan.particles.map(p => p.name).join(',')
-            } });
     }
     _listenToArcStores() {
         this.arc.onDataChange(this.dataChangeCallback, this);
