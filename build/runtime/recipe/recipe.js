@@ -11,6 +11,7 @@ import { InterfaceType } from '../type.js';
 import { ConnectionConstraint } from './connection-constraint.js';
 import { Handle } from './handle.js';
 import { Particle } from './particle.js';
+import { TypeChecker } from './type-checker.js';
 import { Search } from './search.js';
 import { Slot } from './slot.js';
 import { compareComparables } from './comparable.js';
@@ -557,7 +558,7 @@ export class Recipe {
             connSpec.name !== 'descriptions' &&
             connSpec.direction !== 'host' &&
             !particle.connections[connSpec.name] &&
-            (!type || type.equals(connSpec.type)));
+            (!type || TypeChecker.compareTypes({ type }, { type: connSpec.type })));
     }
     findHandleByID(id) {
         return this.handles.find(handle => handle.id === id);

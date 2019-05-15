@@ -1944,11 +1944,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ArcType", function() { return ArcType; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "HandleType", function() { return HandleType; });
 /* harmony import */ var _interface_info_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(16);
-/* harmony import */ var _recipe_type_checker_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(14);
-/* harmony import */ var _schema_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(17);
-/* harmony import */ var _slot_info_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(25);
-/* harmony import */ var _synthetic_types_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(26);
-/* harmony import */ var _type_variable_info_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(27);
+/* harmony import */ var _schema_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(17);
+/* harmony import */ var _slot_info_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(25);
+/* harmony import */ var _synthetic_types_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(26);
+/* harmony import */ var _type_variable_info_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(27);
 // @license
 // Copyright (c) 2017 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
@@ -1961,7 +1960,6 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-
 class Type {
     constructor(tag) {
         this.tag = tag;
@@ -1969,9 +1967,9 @@ class Type {
     static fromLiteral(literal) {
         switch (literal.tag) {
             case 'Entity':
-                return new EntityType(_schema_js__WEBPACK_IMPORTED_MODULE_2__["Schema"].fromLiteral(literal.data));
+                return new EntityType(_schema_js__WEBPACK_IMPORTED_MODULE_1__["Schema"].fromLiteral(literal.data));
             case 'TypeVariable':
-                return new TypeVariable(_type_variable_info_js__WEBPACK_IMPORTED_MODULE_5__["TypeVariableInfo"].fromLiteral(literal.data));
+                return new TypeVariable(_type_variable_info_js__WEBPACK_IMPORTED_MODULE_4__["TypeVariableInfo"].fromLiteral(literal.data));
             case 'Collection':
                 return new CollectionType(Type.fromLiteral(literal.data));
             case 'BigCollection':
@@ -1981,7 +1979,7 @@ class Type {
             case 'Interface':
                 return new InterfaceType(_interface_info_js__WEBPACK_IMPORTED_MODULE_0__["InterfaceInfo"].fromLiteral(literal.data));
             case 'Slot':
-                return new SlotType(_slot_info_js__WEBPACK_IMPORTED_MODULE_3__["SlotInfo"].fromLiteral(literal.data));
+                return new SlotType(_slot_info_js__WEBPACK_IMPORTED_MODULE_2__["SlotInfo"].fromLiteral(literal.data));
             case 'Reference':
                 return new ReferenceType(Type.fromLiteral(literal.data));
             case 'Arc':
@@ -2011,7 +2009,7 @@ class Type {
                 return false;
             }
             if (type1.canReadSubset instanceof EntityType) {
-                return _schema_js__WEBPACK_IMPORTED_MODULE_2__["Schema"].intersect(type1.canReadSubset.entitySchema, type2.canReadSubset.entitySchema) !== null;
+                return _schema_js__WEBPACK_IMPORTED_MODULE_1__["Schema"].intersect(type1.canReadSubset.entitySchema, type2.canReadSubset.entitySchema) !== null;
             }
             throw new Error(`_canMergeCanReadSubset not implemented for types tagged with ${type1.canReadSubset.tag}`);
         }
@@ -2023,7 +2021,7 @@ class Type {
                 return false;
             }
             if (type1.canWriteSuperset instanceof EntityType) {
-                return _schema_js__WEBPACK_IMPORTED_MODULE_2__["Schema"].union(type1.canWriteSuperset.entitySchema, type2.canWriteSuperset.entitySchema) !== null;
+                return _schema_js__WEBPACK_IMPORTED_MODULE_1__["Schema"].union(type1.canWriteSuperset.entitySchema, type2.canWriteSuperset.entitySchema) !== null;
             }
         }
         return true;
@@ -2039,13 +2037,6 @@ class Type {
     // because instanceof doesn't propagate generic restrictions.
     isBigCollectionType() {
         return this instanceof BigCollectionType;
-    }
-    /**
-     * @deprecated use the type checker instead (since they will have
-     * additional information about direction etc.)
-     */
-    equals(type) {
-        return _recipe_type_checker_js__WEBPACK_IMPORTED_MODULE_1__["TypeChecker"].compareTypes({ type: this }, { type });
     }
     isResolved() {
         // TODO: one of these should not exist.
@@ -2143,7 +2134,7 @@ class EntityType extends Type {
         this.entitySchema = schema;
     }
     static make(names, fields, description) {
-        return new EntityType(new _schema_js__WEBPACK_IMPORTED_MODULE_2__["Schema"](names, fields, description));
+        return new EntityType(new _schema_js__WEBPACK_IMPORTED_MODULE_1__["Schema"](names, fields, description));
     }
     // These type identifier methods are being left in place for non-runtime code.
     get isEntity() {
@@ -2195,7 +2186,7 @@ class TypeVariable extends Type {
         this.variable = variable;
     }
     static make(name, canWriteSuperset, canReadSubset) {
-        return new TypeVariable(new _type_variable_info_js__WEBPACK_IMPORTED_MODULE_5__["TypeVariableInfo"](name, canWriteSuperset, canReadSubset));
+        return new TypeVariable(new _type_variable_info_js__WEBPACK_IMPORTED_MODULE_4__["TypeVariableInfo"](name, canWriteSuperset, canReadSubset));
     }
     get isVariable() {
         return true;
@@ -2238,7 +2229,7 @@ class TypeVariable extends Type {
             return new TypeVariable(variableMap.get(name));
         }
         else {
-            const newTypeVariable = _type_variable_info_js__WEBPACK_IMPORTED_MODULE_5__["TypeVariableInfo"].fromLiteral(this.variable.toLiteral());
+            const newTypeVariable = _type_variable_info_js__WEBPACK_IMPORTED_MODULE_4__["TypeVariableInfo"].fromLiteral(this.variable.toLiteral());
             variableMap.set(name, newTypeVariable);
             return new TypeVariable(newTypeVariable);
         }
@@ -2248,7 +2239,7 @@ class TypeVariable extends Type {
             return new TypeVariable(variableMap.get(this.variable));
         }
         else {
-            const newTypeVariable = _type_variable_info_js__WEBPACK_IMPORTED_MODULE_5__["TypeVariableInfo"].fromLiteral(this.variable.toLiteralIgnoringResolutions());
+            const newTypeVariable = _type_variable_info_js__WEBPACK_IMPORTED_MODULE_4__["TypeVariableInfo"].fromLiteral(this.variable.toLiteralIgnoringResolutions());
             if (this.variable.resolution) {
                 newTypeVariable._resolution = this.variable._resolution._cloneWithResolutions(variableMap);
             }
@@ -2473,7 +2464,7 @@ class SlotType extends Type {
         this.slot = slot;
     }
     static make(formFactor, handle) {
-        return new SlotType(new _slot_info_js__WEBPACK_IMPORTED_MODULE_3__["SlotInfo"](formFactor, handle));
+        return new SlotType(new _slot_info_js__WEBPACK_IMPORTED_MODULE_2__["SlotInfo"](formFactor, handle));
     }
     get isSlot() {
         return true;
@@ -2568,7 +2559,7 @@ class ArcType extends Type {
         return true;
     }
     newInstance(arcId, serialization) {
-        return new _synthetic_types_js__WEBPACK_IMPORTED_MODULE_4__["ArcInfo"](arcId, serialization);
+        return new _synthetic_types_js__WEBPACK_IMPORTED_MODULE_3__["ArcInfo"](arcId, serialization);
     }
     toLiteral() {
         return { tag: this.tag };
@@ -2833,7 +2824,9 @@ ${this._slotsToManifestString()}`;
         return true;
     }
     _equalHandle(handle, otherHandle) {
-        return handle.name === otherHandle.name && handle.direction === otherHandle.direction && handle.type.equals(otherHandle.type);
+        return handle.name === otherHandle.name
+            && handle.direction === otherHandle.direction
+            && _recipe_type_checker_js__WEBPACK_IMPORTED_MODULE_1__["TypeChecker"].compareTypes({ type: handle.type }, { type: otherHandle.type });
     }
     _equalSlot(slot, otherSlot) {
         return slot.name === otherSlot.name && slot.direction === otherSlot.direction && slot.isRequired === otherSlot.isRequired && slot.isSet === otherSlot.isSet;
@@ -2885,7 +2878,7 @@ ${this._slotsToManifestString()}`;
             return [{ var: left, value: right, direction: interfaceHandle.direction }];
         }
         else {
-            return left.equals(right);
+            return _recipe_type_checker_js__WEBPACK_IMPORTED_MODULE_1__["TypeChecker"].compareTypes({ type: left }, { type: right });
         }
     }
     static slotsMatch(interfaceSlot, particleSlot) {
@@ -2966,8 +2959,9 @@ ${this._slotsToManifestString()}`;
                     return false;
             }
             else {
-                if (!constraint.var.variable.resolution.equals(constraint.value))
+                if (!_recipe_type_checker_js__WEBPACK_IMPORTED_MODULE_1__["TypeChecker"].compareTypes({ type: constraint.var.variable.resolution }, { type: constraint.value })) {
                     return false;
+                }
             }
         }
         return true;

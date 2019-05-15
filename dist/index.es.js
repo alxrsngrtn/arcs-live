@@ -287,7 +287,9 @@ ${this._slotsToManifestString()}`;
         return true;
     }
     _equalHandle(handle, otherHandle) {
-        return handle.name === otherHandle.name && handle.direction === otherHandle.direction && handle.type.equals(otherHandle.type);
+        return handle.name === otherHandle.name
+            && handle.direction === otherHandle.direction
+            && TypeChecker.compareTypes({ type: handle.type }, { type: otherHandle.type });
     }
     _equalSlot(slot, otherSlot) {
         return slot.name === otherSlot.name && slot.direction === otherSlot.direction && slot.isRequired === otherSlot.isRequired && slot.isSet === otherSlot.isSet;
@@ -339,7 +341,7 @@ ${this._slotsToManifestString()}`;
             return [{ var: left, value: right, direction: interfaceHandle.direction }];
         }
         else {
-            return left.equals(right);
+            return TypeChecker.compareTypes({ type: left }, { type: right });
         }
     }
     static slotsMatch(interfaceSlot, particleSlot) {
@@ -420,8 +422,9 @@ ${this._slotsToManifestString()}`;
                     return false;
             }
             else {
-                if (!constraint.var.variable.resolution.equals(constraint.value))
+                if (!TypeChecker.compareTypes({ type: constraint.var.variable.resolution }, { type: constraint.value })) {
                     return false;
+                }
             }
         }
         return true;
@@ -1957,13 +1960,6 @@ class Type {
     // because instanceof doesn't propagate generic restrictions.
     isBigCollectionType() {
         return this instanceof BigCollectionType;
-    }
-    /**
-     * @deprecated use the type checker instead (since they will have
-     * additional information about direction etc.)
-     */
-    equals(type) {
-        return TypeChecker.compareTypes({ type: this }, { type });
     }
     isResolved() {
         // TODO: one of these should not exist.
@@ -13636,7 +13632,7 @@ class HandleConnection {
         return this.particle.spec.handleConnections.filter(specConn => {
             // filter specs with matching types that don't have handles bound to the corresponding handle connection.
             return !specConn.isOptional &&
-                this.handle.type.equals(specConn.type) &&
+                TypeChecker.compareTypes({ type: this.handle.type }, { type: specConn.type }) &&
                 !this.particle.getConnectionByName(specConn.name);
         });
     }
@@ -14025,7 +14021,7 @@ class Particle {
     getUnboundConnections(type) {
         return this.spec.handleConnections.filter(connSpec => !connSpec.isOptional &&
             !this.getConnectionByName(connSpec.name) &&
-            (!type || type.equals(connSpec.type)));
+            (!type || TypeChecker.compareTypes({ type }, { type: connSpec.type })));
     }
     addSlotConnection(name) {
         assert(!(name in this._consumedSlotConnections), "slot connection already exists");
@@ -14896,7 +14892,7 @@ class Recipe {
             connSpec.name !== 'descriptions' &&
             connSpec.direction !== 'host' &&
             !particle.connections[connSpec.name] &&
-            (!type || type.equals(connSpec.type)));
+            (!type || TypeChecker.compareTypes({ type }, { type: connSpec.type })));
     }
     findHandleByID(id) {
         return this.handles.find(handle => handle.id === id);
@@ -16530,7 +16526,7 @@ class Manifest {
                 }
                 return false;
             }
-            return store.type.equals(type);
+            return TypeChecker.compareTypes({ type: store.type }, { type });
         }
         function tagPredicate(manifest, store) {
             return tags.filter(tag => !manifest.storeTags.get(store).includes(tag)).length === 0;
@@ -24610,7 +24606,7 @@ class GroupHandleConnections extends Strategy {
                 // Find all unique types used in the recipe that have unbound handle connections.
                 const types = new Set();
                 recipe.getFreeConnections().forEach(({ connSpec }) => {
-                    if (!Array.from(types).find(t => t.equals(connSpec.type))) {
+                    if (!Array.from(types).find(type => TypeChecker.compareTypes({ type }, { type: connSpec.type }))) {
                         types.add(connSpec.type);
                     }
                 });
@@ -24630,7 +24626,7 @@ class GroupHandleConnections extends Strategy {
                     let iteration = 0;
                     while (allTypeHandleConnections.length > 0) {
                         for (const connSpec of particleWithMostConnectionsOfType.spec.handleConnections) {
-                            if (!type.equals(connSpec.type)) {
+                            if (!TypeChecker.compareTypes({ type }, { type: connSpec.type })) {
                                 continue;
                             }
                             if (!groups.find(g => g.particle === particleWithMostConnectionsOfType && g.connSpec === connSpec)) {

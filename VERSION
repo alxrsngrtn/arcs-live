@@ -1,8 +1,5 @@
-commit f9e64172e69f772bb28389a0cb2785e33f5d07bf
+commit 4a956b05d9d10006e415ff32511ededbf560c86d
 Author: Paul Lindner <plindner@google.com>
-Date:   Wed May 15 09:25:12 2019 -0700
+Date:   Wed May 15 10:58:18 2019 -0700
 
-    Switch to es2018 output for Typescript (#2977)
-    
-    - Allows for native spread syntax in output
-    - Also bump to latest Typescript release
+    Remove deprecated Type equals method, fix callers (#3026)

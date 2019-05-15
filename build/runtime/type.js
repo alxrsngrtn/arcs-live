@@ -6,7 +6,6 @@
 // subject to an additional IP rights grant found at
 // http://polymer.github.io/PATENTS.txt
 import { InterfaceInfo } from './interface-info.js';
-import { TypeChecker } from './recipe/type-checker.js';
 import { Schema } from './schema.js';
 import { SlotInfo } from './slot-info.js';
 import { ArcInfo } from './synthetic-types.js';
@@ -88,13 +87,6 @@ export class Type {
     // because instanceof doesn't propagate generic restrictions.
     isBigCollectionType() {
         return this instanceof BigCollectionType;
-    }
-    /**
-     * @deprecated use the type checker instead (since they will have
-     * additional information about direction etc.)
-     */
-    equals(type) {
-        return TypeChecker.compareTypes({ type: this }, { type });
     }
     isResolved() {
         // TODO: one of these should not exist.

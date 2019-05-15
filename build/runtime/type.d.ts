@@ -22,11 +22,6 @@ export declare abstract class Type {
     static _canMergeCanWriteSuperset(type1: any, type2: any): boolean;
     isCollectionType<T extends Type>(): this is CollectionType<T>;
     isBigCollectionType<T extends Type>(): this is BigCollectionType<T>;
-    /**
-     * @deprecated use the type checker instead (since they will have
-     * additional information about direction etc.)
-     */
-    equals(type: any): boolean;
     isResolved(): boolean;
     mergeTypeVariablesByName(variableMap: Map<string, Type>): Type;
     _applyExistenceTypeTest(test: (type: Type) => boolean): boolean;

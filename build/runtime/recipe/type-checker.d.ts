@@ -1,5 +1,5 @@
 import { BigCollectionType, CollectionType, Type, TypeVariable } from '../type.js';
-interface TypeListInfo {
+export interface TypeListInfo {
     type: Type;
     direction?: string;
     connection?: {
@@ -14,4 +14,3 @@ export declare class TypeChecker {
     static _readConstraintsApply(handleType: Type, connectionType: Type): boolean;
     static compareTypes(left: TypeListInfo, right: TypeListInfo): boolean;
 }
-export {};

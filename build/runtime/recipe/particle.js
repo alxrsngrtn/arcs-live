@@ -7,6 +7,7 @@
 import { assert } from '../../platform/assert-web.js';
 import { HandleConnection } from './handle-connection.js';
 import { RequireSection } from './recipe.js';
+import { TypeChecker } from './type-checker.js';
 import { SlotConnection } from './slot-connection.js';
 import { compareArrays, compareComparables, compareStrings } from './comparable.js';
 export class Particle {
@@ -232,7 +233,7 @@ export class Particle {
     getUnboundConnections(type) {
         return this.spec.handleConnections.filter(connSpec => !connSpec.isOptional &&
             !this.getConnectionByName(connSpec.name) &&
-            (!type || type.equals(connSpec.type)));
+            (!type || TypeChecker.compareTypes({ type }, { type: connSpec.type })));
     }
     addSlotConnection(name) {
         assert(!(name in this._consumedSlotConnections), "slot connection already exists");

@@ -20,6 +20,7 @@ import { Handle } from './recipe/handle.js';
 import { RecipeUtil } from './recipe/recipe-util.js';
 import { Recipe, RequireSection } from './recipe/recipe.js';
 import { Search } from './recipe/search.js';
+import { TypeChecker } from './recipe/type-checker.js';
 import { Schema } from './schema.js';
 import { StorageProviderFactory } from './storage/storage-provider-factory.js';
 import { BigCollectionType, CollectionType, EntityType, InterfaceType, ReferenceType, SlotType, Type, TypeVariable } from './type.js';
@@ -298,7 +299,7 @@ export class Manifest {
                 }
                 return false;
             }
-            return store.type.equals(type);
+            return TypeChecker.compareTypes({ type: store.type }, { type });
         }
         function tagPredicate(manifest, store) {
             return tags.filter(tag => !manifest.storeTags.get(store).includes(tag)).length === 0;

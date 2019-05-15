@@ -234,7 +234,9 @@ ${this._slotsToManifestString()}`;
         return true;
     }
     _equalHandle(handle, otherHandle) {
-        return handle.name === otherHandle.name && handle.direction === otherHandle.direction && handle.type.equals(otherHandle.type);
+        return handle.name === otherHandle.name
+            && handle.direction === otherHandle.direction
+            && TypeChecker.compareTypes({ type: handle.type }, { type: otherHandle.type });
     }
     _equalSlot(slot, otherSlot) {
         return slot.name === otherSlot.name && slot.direction === otherSlot.direction && slot.isRequired === otherSlot.isRequired && slot.isSet === otherSlot.isSet;
@@ -286,7 +288,7 @@ ${this._slotsToManifestString()}`;
             return [{ var: left, value: right, direction: interfaceHandle.direction }];
         }
         else {
-            return left.equals(right);
+            return TypeChecker.compareTypes({ type: left }, { type: right });
         }
     }
     static slotsMatch(interfaceSlot, particleSlot) {
@@ -367,8 +369,9 @@ ${this._slotsToManifestString()}`;
                     return false;
             }
             else {
-                if (!constraint.var.variable.resolution.equals(constraint.value))
+                if (!TypeChecker.compareTypes({ type: constraint.var.variable.resolution }, { type: constraint.value })) {
                     return false;
+                }
             }
         }
         return true;

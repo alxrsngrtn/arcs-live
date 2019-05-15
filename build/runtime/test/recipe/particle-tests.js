@@ -9,6 +9,7 @@
  */
 import { assert } from '../../../platform/chai-web.js';
 import { Manifest } from '../../manifest.js';
+import { TypeChecker } from '../../recipe/type-checker.js';
 describe('Recipe Particle', () => {
     it('cloning maints type variable mapping', async () => {
         const manifest = await Manifest.parse(`
@@ -44,7 +45,7 @@ describe('Recipe Particle', () => {
             const ifaceVariable = type.interfaceInfo.handles[0].type;
             const listConnType = listConn.type;
             const listUnpackedVariable = listConnType.collectionType;
-            assert.isTrue(ifaceVariable.equals(listUnpackedVariable));
+            assert.isTrue(TypeChecker.compareTypes({ type: ifaceVariable }, { type: listUnpackedVariable }));
             assert.strictEqual(ifaceVariable.variable, listUnpackedVariable.variable);
         }
     });

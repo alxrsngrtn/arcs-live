@@ -5,6 +5,7 @@
 // subject to an additional IP rights grant found at
 // http://polymer.github.io/PATENTS.txt
 import { assert } from '../../platform/assert-web.js';
+import { TypeChecker } from '../../runtime/recipe/type-checker.js';
 import { StrategizerWalker, Strategy } from '../strategizer.js';
 export class GroupHandleConnections extends Strategy {
     constructor(arc, args) {
@@ -22,7 +23,7 @@ export class GroupHandleConnections extends Strategy {
                 // Find all unique types used in the recipe that have unbound handle connections.
                 const types = new Set();
                 recipe.getFreeConnections().forEach(({ connSpec }) => {
-                    if (!Array.from(types).find(t => t.equals(connSpec.type))) {
+                    if (!Array.from(types).find(type => TypeChecker.compareTypes({ type }, { type: connSpec.type }))) {
                         types.add(connSpec.type);
                     }
                 });
@@ -42,7 +43,7 @@ export class GroupHandleConnections extends Strategy {
                     let iteration = 0;
                     while (allTypeHandleConnections.length > 0) {
                         for (const connSpec of particleWithMostConnectionsOfType.spec.handleConnections) {
-                            if (!type.equals(connSpec.type)) {
+                            if (!TypeChecker.compareTypes({ type }, { type: connSpec.type })) {
                                 continue;
                             }
                             if (!groups.find(g => g.particle === particleWithMostConnectionsOfType && g.connSpec === connSpec)) {
