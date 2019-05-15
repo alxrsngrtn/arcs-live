@@ -543,7 +543,7 @@ function watch(args) {
     }
     const command = args.shift() || 'webpack';
     const watcher = chokidar.watch('.', {
-        ignored: new RegExp(`(node_modules|build/|.git|user-test/|test-output/|${eslintCache})`),
+        ignored: new RegExp(`(node_modules|build/|.git|user-test/|test-output/|${eslintCache}|bundle-cli.js)`),
         persistent: true
     });
     keepProcessAlive = true; // Tell the runner to not exit.

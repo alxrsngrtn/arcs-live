@@ -1,5 +1,5 @@
-commit 26fc235c5cd5be63dbe937335155d3389c11dc76
-Author: Paul Lindner <plindner@google.com>
-Date:   Wed May 15 14:13:15 2019 -0700
+commit df576570415670ff1aafcbd988651ff5774f74d1
+Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
+Date:   Thu May 16 08:42:55 2019 +1000
 
-    Remove pre 0.6 shell workaround code (#3027)
+    Fix sigh watch: webpack bundle-cli.js causes rebuild loop (#3024)
