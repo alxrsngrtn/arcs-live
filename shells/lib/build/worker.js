@@ -618,10 +618,11 @@ function convert(info, value, mapper) {
             return value;
         case MappingType.Direct:
             return value;
-        case MappingType.ObjectMap:
+        case MappingType.ObjectMap: {
             const r = {};
             value.forEach((childvalue, key) => r[convert(info.key, key, mapper)] = convert(info.value, childvalue, mapper));
             return r;
+        }
         case MappingType.List:
             return value.map(v => convert(info.value, v, mapper));
         case MappingType.ByLiteral:
@@ -644,12 +645,13 @@ function unconvert(info, value, mapper) {
             return mapper.thingForIdentifier(value);
         case MappingType.Direct:
             return value;
-        case MappingType.ObjectMap:
+        case MappingType.ObjectMap: {
             const r = new Map();
             for (const key of Object.keys(value)) {
                 r.set(unconvert(info.key, key, mapper), unconvert(info.value, value[key], mapper));
             }
             return r;
+        }
         case MappingType.List:
             return value.map(v => unconvert(info.value, v, mapper));
         case MappingType.ByLiteral:
@@ -3364,13 +3366,14 @@ function validateFieldAndTypes({ op, name, value, schema, fieldType }) {
         return;
     }
     switch (fieldType.kind) {
-        case 'schema-primitive':
+        case 'schema-primitive': {
             const valueType = value.constructor.name === 'Uint8Array' ? 'Uint8Array' : typeof (value);
             if (valueType !== convertToJsType(fieldType, schema.name)) {
                 throw new TypeError(`Type mismatch ${op}ting field ${name} (type ${fieldType.type}); ` +
                     `value '${value}' is type ${typeof (value)}`);
             }
             break;
+        }
         case 'schema-union':
             // Value must be a primitive that matches one of the union types.
             for (const innerType of fieldType.types) {
@@ -6701,8 +6704,8 @@ class MultiplexerDomParticle extends _transformation_dom_particle_js__WEBPACK_IM
             // (perhaps id to index) to make sure we don't map a handle into the inner
             // arc multiple times unnecessarily.
             // TODO(lindner): type erasure to avoid mismatch of Store vs Handle in arc.mapHandle
-            let otherHandleStore;
-            otherHandleStore = otherHandle.storage;
+            // tslint:disable-next-line: no-any
+            const otherHandleStore = otherHandle.storage;
             otherMappedHandles.push(`use '${await arc.mapHandle(otherHandleStore)}' as v${index}`);
             const hostedOtherConnection = hostedParticle.handleConnections.find(conn => conn.isCompatibleType(otherHandle.type));
             if (hostedOtherConnection) {

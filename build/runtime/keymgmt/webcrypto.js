@@ -213,7 +213,7 @@ export class WebCryptoKeyGenerator {
     }
     generateAndStoreRecoveryKey() {
         // TODO: Implement
-        return Promise.reject("Not implemented");
+        throw new Error("Not implemented");
     }
     generateDeviceKey() {
         const generatedKey = crypto.subtle.generateKey({
@@ -282,7 +282,7 @@ export class WebCryptoKeyIndexedDBStorage {
             const wrappedBy = await this.find(result.wrappingKeyFingerprint);
             return Promise.resolve(new WebCryptoWrappedKey(result.key, wrappedBy));
         }
-        return Promise.reject("Unrecognized key type found in keystore.");
+        throw new Error("Unrecognized key type found in keystore.");
     }
     async write(keyFingerPrint, key) {
         if (key instanceof WebCryptoStorableKey) {
@@ -301,7 +301,7 @@ export class WebCryptoKeyIndexedDBStorage {
             });
             return keyFingerPrint;
         }
-        return Promise.reject("Can't write key that isn't StorableKey or WrappedKey.");
+        throw new Error("Can't write key that isn't StorableKey or WrappedKey.");
     }
     static getInstance() {
         // TODO: If IndexDB open/close is expensive, we may want to reuse instances.

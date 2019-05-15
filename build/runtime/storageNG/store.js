@@ -112,10 +112,11 @@ export class DirectStore extends ActiveStore {
                 }
                 await this.processModelChange({ changeType: ChangeType.Operations, operations: message.operations }, null, false);
                 return true;
-            case ProxyMessageType.ModelUpdate:
+            case ProxyMessageType.ModelUpdate: {
                 const { modelChange, otherChange } = this.localModel.merge(message.model);
                 await this.processModelChange(modelChange, otherChange, false);
                 return true;
+            }
             default:
                 throw new CRDTError("Invalid operation provided to onProxyMessage");
         }

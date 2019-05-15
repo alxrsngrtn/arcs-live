@@ -192,13 +192,14 @@ function validateFieldAndTypes({ op, name, value, schema, fieldType }) {
         return;
     }
     switch (fieldType.kind) {
-        case 'schema-primitive':
+        case 'schema-primitive': {
             const valueType = value.constructor.name === 'Uint8Array' ? 'Uint8Array' : typeof (value);
             if (valueType !== convertToJsType(fieldType, schema.name)) {
                 throw new TypeError(`Type mismatch ${op}ting field ${name} (type ${fieldType.type}); ` +
                     `value '${value}' is type ${typeof (value)}`);
             }
             break;
+        }
         case 'schema-union':
             // Value must be a primitive that matches one of the union types.
             for (const innerType of fieldType.types) {

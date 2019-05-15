@@ -40,8 +40,7 @@ const tests = [
             const description = await Description.create(arc, relevance);
             // Use an any variable to override the default string return type
             // tslint:disable-next-line: no-any
-            let suggestion;
-            suggestion = description.getArcDescription(DescriptionDomFormatter);
+            const suggestion = description.getArcDescription(DescriptionDomFormatter);
             let result = suggestion.template.replace(/<[/]?span>/g, '').replace(/<[/]?b>/g, '');
             Object.keys(suggestion.model).forEach(m => {
                 assert.isTrue(result.indexOf(`{{${m}}}`) >= 0);

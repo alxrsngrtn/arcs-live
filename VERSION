@@ -1,17 +1,12 @@
-commit 61a46a286dea8af2e9694db1062b5c0cb61533d7
-Author: Alex Rosengarten <alxr@google.com>
-Date:   Tue May 14 17:00:34 2019 -0700
+commit ecca50dcf52cd9d9eb29e075169769581109538d
+Author: Paul Lindner <plindner@google.com>
+Date:   Tue May 14 17:22:47 2019 -0700
 
-    Added minimal types to `services.ts` (#2998)
+    Start the process of moving to eslint based tyepscript linting (#3015)
     
-    * added minimial types to services.ts. Froze services.
-    
-    * updates to services.ts
-    
-    - applied auto-fmt
-    - Simplified `Service` interface
-    - Flexible `ServiceRequest` interface
-    
-    * Dictionary: services.ts --> hot.ts
-    
-    - Also exported `Services` and ServiceRequest interfaces
+    - Move main eslint config to config/eslintrc.json
+    - Convert js to json to help catch syntax errors
+    - Whitelist spacing and a few other minor issues.
+    - Adjust sigh to pass typescript files (and ignore gen/ directories)
+    - Fix sigh to check for directories explicitly
+    - bump lint package versions
