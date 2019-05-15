@@ -1634,9 +1634,9 @@
       "strictFunctionTypes": true,
       "allowJs": false,
       "sourceMap": true,
-      "target": 4,
+      "target": 5,
       "lib": [
-        "lib.es2017.d.ts",
+        "lib.es2018.d.ts",
         "lib.dom.d.ts"
       ],
       "outDir": "/home/travis/build/PolymerLabs/arcs/build",
@@ -6968,5 +6968,5 @@
       "/home/travis/build/PolymerLabs/arcs/node_modules/@types/shelljs/index.d.ts"
     ]
   },
-  "version": "3.4.2"
+  "version": "3.4.5"
 }

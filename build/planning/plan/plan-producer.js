@@ -100,7 +100,7 @@ export class PlanProducer {
                 // with a new search phrase.
                 options.strategies = [InitSearch, ...Planner.ResolutionStrategies];
             }
-            this.produceSuggestions(Object.assign({}, options, { metadata }));
+            this.produceSuggestions({ ...options, metadata });
         }
     }
     dispose() {

@@ -20,7 +20,7 @@ async function assertRecipeParses(input, result) {
     assert.deepEqual((await Manifest.parse(input)).recipes[0].toString(), target);
 }
 function verifyPrimitiveType(field, type) {
-    const copy = Object.assign({}, field);
+    const copy = { ...field };
     delete copy.location;
     assert.deepEqual(copy, { kind: 'schema-primitive', type });
 }

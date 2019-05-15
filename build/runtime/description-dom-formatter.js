@@ -35,7 +35,7 @@ export class DescriptionDomFormatter extends DescriptionFormatter {
                         // Dom token.
                         template = template.replace(`{{${tokenKey}}}`, tokenValue.template);
                         delete model[tokenKey];
-                        model = Object.assign({}, model, tokenValue.model);
+                        model = { ...model, ...tokenValue.model };
                     }
                     else { // Text token.
                         // Replace tokenKey, in case multiple selected suggestions use the same key.
@@ -126,7 +126,7 @@ export class DescriptionDomFormatter extends DescriptionFormatter {
                 desc = { template: desc, model: {} };
             }
             result.template += desc.template;
-            result.model = Object.assign({}, result.model, desc.model);
+            result.model = { ...result.model, ...desc.model };
             let delim;
             if (i < count - 2) {
                 delim = ', ';
@@ -157,20 +157,20 @@ export class DescriptionDomFormatter extends DescriptionFormatter {
         const nonEmptyTokens = tokens.filter(token => token && !!token.template && !!token.model);
         return {
             template: nonEmptyTokens.map(token => token.template).join(''),
-            model: nonEmptyTokens.map(token => token.model).reduce((prev, curr) => (Object.assign({}, prev, curr)), {})
+            model: nonEmptyTokens.map(token => token.model).reduce((prev, curr) => ({ ...prev, ...curr }), {})
         };
     }
     _combineDescriptionAndValue(token, description, storeValue) {
         if (!!description.template && !!description.model) {
             return {
                 template: `${description.template} (${storeValue.template})`,
-                model: Object.assign({}, description.model, storeValue.model)
+                model: { ...description.model, ...storeValue.model }
             };
         }
         const descKey = `${token.handleName}Description${++this.nextID}`;
         return {
             template: `<span>{{${descKey}}}</span> (${storeValue.template})`,
-            model: Object.assign({ [descKey]: description }, storeValue.model)
+            model: { [descKey]: description, ...storeValue.model }
         };
     }
     _formatEntityProperty(handleName, properties, value) {

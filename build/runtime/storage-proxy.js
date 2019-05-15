@@ -396,7 +396,7 @@ export class VariableProxy extends StorageProxy {
         }
         const oldData = this.model;
         this.model = update.data;
-        return Object.assign({}, update, { oldData });
+        return { ...update, oldData };
     }
     // Read ops: if we're synchronized we can just return the local copy of the data.
     // Otherwise, send a request to the backing store.

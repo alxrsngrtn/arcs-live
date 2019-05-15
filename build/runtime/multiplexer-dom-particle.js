@@ -126,7 +126,7 @@ export class MultiplexerDomParticle extends TransformationDomParticle {
         }
         const items = this._state.renderModel ? this._state.renderModel.items : [];
         const listIndex = items.findIndex(item => item.subId === subId);
-        const item = Object.assign({}, content.model, { subId });
+        const item = { ...content.model, subId };
         if (listIndex >= 0 && listIndex < items.length) {
             items[listIndex] = item;
         }
@@ -141,7 +141,7 @@ export class MultiplexerDomParticle extends TransformationDomParticle {
             return;
         }
         assert(content.templateName, `Template name is missing for slot '${slotName}' (hosted slot ID: '${hostedSlotId}')`);
-        const templateName = Object.assign({}, this._state.templateName, { [subId]: `${content.templateName}` });
+        const templateName = { ...this._state.templateName, [subId]: `${content.templateName}` };
         this._setState({ templateName });
         if (content.template) {
             let template = content.template;
@@ -152,7 +152,7 @@ export class MultiplexerDomParticle extends TransformationDomParticle {
             this._connByHostedConn.forEach((conn, hostedConn) => {
                 template = template.replace(new RegExp(`{{${hostedConn}.description}}`, 'g'), `{{${conn}.description}}`);
             });
-            this._setState({ template: Object.assign({}, this._state.template, { [content.templateName]: template }) });
+            this._setState({ template: { ...this._state.template, [content.templateName]: template } });
             this.forceRenderTemplate();
         }
     }

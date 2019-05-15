@@ -17,7 +17,10 @@ export class FakeSlotComposer extends SlotComposer {
         if (options.modalityHandler === undefined) {
             options.modalityHandler = ModalityHandler.createHeadlessHandler();
         }
-        super(Object.assign({ rootContainer: { 'root': 'root-context' } }, options));
+        super({
+            rootContainer: { 'root': 'root-context' },
+            ...options
+        });
     }
     renderSlot(particle, slotName, content) {
         super.renderSlot(particle, slotName, content);

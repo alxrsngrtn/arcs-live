@@ -37,7 +37,7 @@ import { Strategizer } from './strategizer.js';
 export class Planner {
     // TODO: Use context.arc instead of arc
     init(arc, { strategies = Planner.AllStrategies, ruleset = Rulesets.Empty, strategyArgs = {}, blockDevtools = false } = {}) {
-        strategyArgs = Object.freeze(Object.assign({}, strategyArgs));
+        strategyArgs = Object.freeze({ ...strategyArgs });
         this._arc = arc;
         const strategyImpls = strategies.map(strategy => new strategy(arc, strategyArgs));
         this.strategizer = new Strategizer(strategyImpls, [], ruleset);

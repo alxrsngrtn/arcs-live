@@ -39,7 +39,7 @@ export class TransformationDomParticle extends DomParticle {
     }
     // Helper methods that may be reused in transformation particles to combine hosted content.
     static propsToItems(propsValues) {
-        return propsValues ? propsValues.map(({ rawData, id }) => (Object.assign({}, rawData, { subId: id }))) : [];
+        return propsValues ? propsValues.map(({ rawData, id }) => ({ ...rawData, subId: id })) : [];
     }
 }
 //# sourceMappingURL=transformation-dom-particle.js.map

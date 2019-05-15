@@ -24,7 +24,7 @@ export class StrategyTestHelper {
         });
     }
     static createTestStrategyArgs(arc, args) {
-        return Object.assign({ recipeIndex: RecipeIndex.create(arc) }, args);
+        return { recipeIndex: RecipeIndex.create(arc), ...args };
     }
     static run(arc, clazz, recipe) {
         return new clazz(arc).generate({ generated: [{ result: recipe, score: 1 }], terminal: [] });

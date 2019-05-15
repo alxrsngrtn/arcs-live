@@ -1146,7 +1146,10 @@ class ArcDevtoolsChannel {
         this.arcId = arc.id.toString();
     }
     send(message) {
-        this.channel.send(Object.assign({ meta: { arcId: this.arcId } }, message));
+        this.channel.send({
+            meta: { arcId: this.arcId },
+            ...message
+        });
     }
     listen(messageType, callback) {
         this.channel.listen(this.arcId, messageType, callback);
@@ -5061,7 +5064,7 @@ class VariableProxy extends StorageProxy {
         }
         const oldData = this.model;
         this.model = update.data;
-        return Object.assign({}, update, { oldData });
+        return { ...update, oldData };
     }
     // Read ops: if we're synchronized we can just return the local copy of the data.
     // Otherwise, send a request to the backing store.
@@ -6318,7 +6321,7 @@ class DomParticleBase extends _particle_js__WEBPACK_IMPORTED_MODULE_1__["Particl
     // This is temporary and should go away when we move from sub-IDs to [(Entity, Slot)] constructs.
     enhanceModelWithSlotIDs(model, slotIDs, topLevel = true) {
         if (topLevel) {
-            model = Object.assign({}, slotIDs, model);
+            model = { ...slotIDs, ...model };
         }
         if (model.hasOwnProperty('$template') && model.hasOwnProperty('models') && Array.isArray(model['models'])) {
             model['models'] = model['models'].map(m => this.enhanceModelWithSlotIDs(m, slotIDs));
@@ -6801,7 +6804,7 @@ class MultiplexerDomParticle extends _transformation_dom_particle_js__WEBPACK_IM
         }
         const items = this._state.renderModel ? this._state.renderModel.items : [];
         const listIndex = items.findIndex(item => item.subId === subId);
-        const item = Object.assign({}, content.model, { subId });
+        const item = { ...content.model, subId };
         if (listIndex >= 0 && listIndex < items.length) {
             items[listIndex] = item;
         }
@@ -6816,7 +6819,7 @@ class MultiplexerDomParticle extends _transformation_dom_particle_js__WEBPACK_IM
             return;
         }
         Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(content.templateName, `Template name is missing for slot '${slotName}' (hosted slot ID: '${hostedSlotId}')`);
-        const templateName = Object.assign({}, this._state.templateName, { [subId]: `${content.templateName}` });
+        const templateName = { ...this._state.templateName, [subId]: `${content.templateName}` };
         this._setState({ templateName });
         if (content.template) {
             let template = content.template;
@@ -6827,7 +6830,7 @@ class MultiplexerDomParticle extends _transformation_dom_particle_js__WEBPACK_IM
             this._connByHostedConn.forEach((conn, hostedConn) => {
                 template = template.replace(new RegExp(`{{${hostedConn}.description}}`, 'g'), `{{${conn}.description}}`);
             });
-            this._setState({ template: Object.assign({}, this._state.template, { [content.templateName]: template }) });
+            this._setState({ template: { ...this._state.template, [content.templateName]: template } });
             this.forceRenderTemplate();
         }
     }
@@ -6891,7 +6894,7 @@ class TransformationDomParticle extends _dom_particle_js__WEBPACK_IMPORTED_MODUL
     }
     // Helper methods that may be reused in transformation particles to combine hosted content.
     static propsToItems(propsValues) {
-        return propsValues ? propsValues.map(({ rawData, id }) => (Object.assign({}, rawData, { subId: id }))) : [];
+        return propsValues ? propsValues.map(({ rawData, id }) => ({ ...rawData, subId: id })) : [];
     }
 }
 //# sourceMappingURL=transformation-dom-particle.js.map

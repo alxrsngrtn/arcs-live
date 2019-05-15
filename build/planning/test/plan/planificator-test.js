@@ -35,7 +35,7 @@ describe('remote planificator', () => {
     // TODO: support arc storage key be in PouchDB as well.
     const storageKey = 'volatile://!123:demo^^abcdef';
     async function createArc(options, storageKey) {
-        return (await PlanningTestHelper.createAndPlan(Object.assign({}, options, { slotComposer: new FakeSlotComposer(), storageKey }))).arc;
+        return (await PlanningTestHelper.createAndPlan({ ...options, slotComposer: new FakeSlotComposer(), storageKey })).arc;
     }
     async function createConsumePlanificator(plannerStorageKeyBase, manifestFilename) {
         return Planificator.create(await createArc({ manifestFilename }, storageKey), { userid, storageKeyBase: plannerStorageKeyBase, onlyConsumer: true, debug: false });

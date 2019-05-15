@@ -855,10 +855,21 @@ function peg$parse(input, options) {
     const peg$c224 = "alias";
     const peg$c225 = peg$literalExpectation("alias", false);
     const peg$c226 = function (spec, alias, items) {
-        return Object.assign({ kind: 'schema', location: location(), items: optional(items, extractIndented, []), alias }, spec);
+        return {
+            kind: 'schema',
+            location: location(),
+            items: optional(items, extractIndented, []),
+            alias,
+            ...spec
+        };
     };
     const peg$c227 = function (spec, items) {
-        return Object.assign({ kind: 'schema', location: location(), items: optional(items, extractIndented, []) }, spec);
+        return {
+            kind: 'schema',
+            location: location(),
+            items: optional(items, extractIndented, []),
+            ...spec
+        };
     };
     const peg$c228 = "extends";
     const peg$c229 = peg$literalExpectation("extends", false);

@@ -737,11 +737,14 @@ function getVariableHandle(store) {
           slot 'rootslotid-root' as root
           A
             consume root as root`,
-                loader: new StubLoader(Object.assign({}, sources, { 'Z.js': `defineParticle(({DomParticle}) => {
+                loader: new StubLoader({
+                    ...sources,
+                    'Z.js': `defineParticle(({DomParticle}) => {
           return class extends DomParticle {
             getTemplate() { return 'Z'; }
           };
-        });` })),
+        });`,
+                }),
                 slotComposer: new MockSlotComposer({ strict: false }).newExpectations('debug')
             });
             const [recipe] = arc.context.recipes;

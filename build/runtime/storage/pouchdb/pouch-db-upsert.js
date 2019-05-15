@@ -41,13 +41,13 @@ export async function upsert(db, docId, mutatorFn, defaultValue) {
             if (err.name !== 'not_found') {
                 throw err;
             }
-            doc = Object.assign({ _rev: undefined, _id: docId }, defaultValue);
+            doc = { _rev: undefined, _id: docId, ...defaultValue };
         }
         // The following call shallow clones the existing document and passes it to the
         // mutatorFn.  This is required because we immediately deep compare the
         // old vs new and the mutatorFn can modify the inbound data.
         // TODO consider deepClone
-        const newDoc = await mutatorFn(Object.assign({}, doc));
+        const newDoc = await mutatorFn({ ...doc });
         // Just return if the doc exists and mutator didn't make any changes
         if (existingDoc && JSON.stringify(newDoc) === JSON.stringify(doc)) {
             return newDoc;

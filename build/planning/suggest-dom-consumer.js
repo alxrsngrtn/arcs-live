@@ -26,7 +26,7 @@ export class SuggestDomConsumer extends SlotDomConsumer {
         return {
             template: `<suggestion-element inline key="{{hash}}" on-click="">${content.template}</suggestion-element>`,
             templateName: 'suggestion',
-            model: Object.assign({ hash: this.suggestion.hash }, content.model)
+            model: { hash: this.suggestion.hash, ...content.model }
         };
     }
     onContainerUpdate(container, originalContainer) {

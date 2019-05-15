@@ -3719,7 +3719,7 @@ class Description {
             pDesc._rank = relevance.calcParticleRelevance(particle);
         }
         const descByName = await Description._getPatternByNameFromDescriptionHandle(particle, arc);
-        pDesc = Object.assign({}, pDesc, descByName);
+        pDesc = { ...pDesc, ...descByName };
         pDesc.pattern = pDesc.pattern || particle.spec.pattern;
         for (const handleConn of Object.values(particle.connections)) {
             const specConn = particle.spec.handleConnectionMap.get(handleConn.name);
@@ -4645,10 +4645,21 @@ function peg$parse(input, options) {
     const peg$c224 = "alias";
     const peg$c225 = peg$literalExpectation("alias", false);
     const peg$c226 = function (spec, alias, items) {
-        return Object.assign({ kind: 'schema', location: location(), items: optional(items, extractIndented, []), alias }, spec);
+        return {
+            kind: 'schema',
+            location: location(),
+            items: optional(items, extractIndented, []),
+            alias,
+            ...spec
+        };
     };
     const peg$c227 = function (spec, items) {
-        return Object.assign({ kind: 'schema', location: location(), items: optional(items, extractIndented, []) }, spec);
+        return {
+            kind: 'schema',
+            location: location(),
+            items: optional(items, extractIndented, []),
+            ...spec
+        };
     };
     const peg$c228 = "extends";
     const peg$c229 = peg$literalExpectation("extends", false);
@@ -18054,7 +18065,10 @@ class ArcDevtoolsChannel {
         this.arcId = arc.id.toString();
     }
     send(message) {
-        this.channel.send(Object.assign({ meta: { arcId: this.arcId } }, message));
+        this.channel.send({
+            meta: { arcId: this.arcId },
+            ...message
+        });
     }
     listen(messageType, callback) {
         this.channel.listen(this.arcId, messageType, callback);
@@ -18330,14 +18344,14 @@ function init() {
         const begin = now();
         return {
             addArgs(extraArgs) {
-                args = Object.assign({}, (args || {}), extraArgs);
+                args = { ...(args || {}), ...extraArgs };
             },
             end(endInfo = {}, flow) {
                 endInfo = parseInfo(endInfo);
                 if (endInfo.args) {
-                    args = Object.assign({}, (args || {}), endInfo.args);
+                    args = { ...(args || {}), ...endInfo.args };
                 }
-                endInfo = Object.assign({}, info, endInfo);
+                endInfo = { ...info, ...endInfo };
                 this.endTs = now();
                 pushEvent({
                     ph: 'X',
@@ -18367,7 +18381,7 @@ function init() {
                 }
                 trace.end(info, flow);
                 if (flowExisted) {
-                    flow.step(Object.assign({ ts: trace.beginTs }, baseInfo));
+                    flow.step({ ts: trace.beginTs, ...baseInfo });
                 }
                 else {
                     flow.start({ ts: trace.endTs });
@@ -19161,7 +19175,7 @@ class DomParticleBase extends Particle$1 {
     // This is temporary and should go away when we move from sub-IDs to [(Entity, Slot)] constructs.
     enhanceModelWithSlotIDs(model, slotIDs, topLevel = true) {
         if (topLevel) {
-            model = Object.assign({}, slotIDs, model);
+            model = { ...slotIDs, ...model };
         }
         if (model.hasOwnProperty('$template') && model.hasOwnProperty('models') && Array.isArray(model['models'])) {
             model['models'] = model['models'].map(m => this.enhanceModelWithSlotIDs(m, slotIDs));
@@ -19517,7 +19531,7 @@ class TransformationDomParticle extends DomParticle {
     }
     // Helper methods that may be reused in transformation particles to combine hosted content.
     static propsToItems(propsValues) {
-        return propsValues ? propsValues.map(({ rawData, id }) => (Object.assign({}, rawData, { subId: id }))) : [];
+        return propsValues ? propsValues.map(({ rawData, id }) => ({ ...rawData, subId: id })) : [];
     }
 }
 
@@ -19646,7 +19660,7 @@ class MultiplexerDomParticle extends TransformationDomParticle {
         }
         const items = this._state.renderModel ? this._state.renderModel.items : [];
         const listIndex = items.findIndex(item => item.subId === subId);
-        const item = Object.assign({}, content.model, { subId });
+        const item = { ...content.model, subId };
         if (listIndex >= 0 && listIndex < items.length) {
             items[listIndex] = item;
         }
@@ -19661,7 +19675,7 @@ class MultiplexerDomParticle extends TransformationDomParticle {
             return;
         }
         assert(content.templateName, `Template name is missing for slot '${slotName}' (hosted slot ID: '${hostedSlotId}')`);
-        const templateName = Object.assign({}, this._state.templateName, { [subId]: `${content.templateName}` });
+        const templateName = { ...this._state.templateName, [subId]: `${content.templateName}` };
         this._setState({ templateName });
         if (content.template) {
             let template = content.template;
@@ -19672,7 +19686,7 @@ class MultiplexerDomParticle extends TransformationDomParticle {
             this._connByHostedConn.forEach((conn, hostedConn) => {
                 template = template.replace(new RegExp(`{{${hostedConn}.description}}`, 'g'), `{{${conn}.description}}`);
             });
-            this._setState({ template: Object.assign({}, this._state.template, { [content.templateName]: template }) });
+            this._setState({ template: { ...this._state.template, [content.templateName]: template } });
             this.forceRenderTemplate();
         }
     }
@@ -20919,7 +20933,7 @@ class VariableProxy extends StorageProxy {
         }
         const oldData = this.model;
         this.model = update.data;
-        return Object.assign({}, update, { oldData });
+        return { ...update, oldData };
     }
     // Read ops: if we're synchronized we can just return the local copy of the data.
     // Otherwise, send a request to the backing store.
@@ -25309,7 +25323,7 @@ class SearchTokensToHandles extends Strategy {
 class Planner {
     // TODO: Use context.arc instead of arc
     init(arc, { strategies = Planner.AllStrategies, ruleset = Empty, strategyArgs = {}, blockDevtools = false } = {}) {
-        strategyArgs = Object.freeze(Object.assign({}, strategyArgs));
+        strategyArgs = Object.freeze({ ...strategyArgs });
         this._arc = arc;
         const strategyImpls = strategies.map(strategy => new strategy(arc, strategyArgs));
         this.strategizer = new Strategizer(strategyImpls, [], ruleset);
@@ -25804,7 +25818,7 @@ class DescriptionDomFormatter extends DescriptionFormatter {
                         // Dom token.
                         template = template.replace(`{{${tokenKey}}}`, tokenValue.template);
                         delete model[tokenKey];
-                        model = Object.assign({}, model, tokenValue.model);
+                        model = { ...model, ...tokenValue.model };
                     }
                     else { // Text token.
                         // Replace tokenKey, in case multiple selected suggestions use the same key.
@@ -25895,7 +25909,7 @@ class DescriptionDomFormatter extends DescriptionFormatter {
                 desc = { template: desc, model: {} };
             }
             result.template += desc.template;
-            result.model = Object.assign({}, result.model, desc.model);
+            result.model = { ...result.model, ...desc.model };
             let delim;
             if (i < count - 2) {
                 delim = ', ';
@@ -25926,20 +25940,20 @@ class DescriptionDomFormatter extends DescriptionFormatter {
         const nonEmptyTokens = tokens.filter(token => token && !!token.template && !!token.model);
         return {
             template: nonEmptyTokens.map(token => token.template).join(''),
-            model: nonEmptyTokens.map(token => token.model).reduce((prev, curr) => (Object.assign({}, prev, curr)), {})
+            model: nonEmptyTokens.map(token => token.model).reduce((prev, curr) => ({ ...prev, ...curr }), {})
         };
     }
     _combineDescriptionAndValue(token, description, storeValue) {
         if (!!description.template && !!description.model) {
             return {
                 template: `${description.template} (${storeValue.template})`,
-                model: Object.assign({}, description.model, storeValue.model)
+                model: { ...description.model, ...storeValue.model }
             };
         }
         const descKey = `${token.handleName}Description${++this.nextID}`;
         return {
             template: `<span>{{${descKey}}}</span> (${storeValue.template})`,
-            model: Object.assign({ [descKey]: description }, storeValue.model)
+            model: { [descKey]: description, ...storeValue.model }
         };
     }
     _formatEntityProperty(handleName, properties, value) {
@@ -26668,7 +26682,7 @@ class SlotDomConsumer extends SlotConsumer {
                 if (!formattedModel)
                     return undefined;
                 // Merge descriptions into model.
-                newContent.model = Object.assign({}, formattedModel, content.descriptions);
+                newContent.model = { ...formattedModel, ...content.descriptions };
             }
             else {
                 newContent.model = undefined;
@@ -27019,7 +27033,7 @@ class SuggestDomConsumer extends SlotDomConsumer {
         return {
             template: `<suggestion-element inline key="{{hash}}" on-click="">${content.template}</suggestion-element>`,
             templateName: 'suggestion',
-            model: Object.assign({ hash: this.suggestion.hash }, content.model)
+            model: { hash: this.suggestion.hash, ...content.model }
         };
     }
     onContainerUpdate(container, originalContainer) {
@@ -27543,7 +27557,7 @@ class PlanProducer {
                 // with a new search phrase.
                 options.strategies = [InitSearch, ...Planner.ResolutionStrategies];
             }
-            this.produceSuggestions(Object.assign({}, options, { metadata }));
+            this.produceSuggestions({ ...options, metadata });
         }
     }
     dispose() {
@@ -27671,7 +27685,7 @@ class PlanningExplorerAdapter {
     }
     static _formatSuggestions(suggestions) {
         return suggestions.map(s => {
-            const suggestionCopy = Object.assign({}, s);
+            const suggestionCopy = { ...s };
             suggestionCopy['particles'] = s.plan.particles.map(p => ({ name: p.name }));
             delete suggestionCopy.plan;
             return suggestionCopy;

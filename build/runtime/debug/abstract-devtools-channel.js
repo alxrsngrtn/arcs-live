@@ -78,7 +78,10 @@ export class ArcDevtoolsChannel {
         this.arcId = arc.id.toString();
     }
     send(message) {
-        this.channel.send(Object.assign({ meta: { arcId: this.arcId } }, message));
+        this.channel.send({
+            meta: { arcId: this.arcId },
+            ...message
+        });
     }
     listen(messageType, callback) {
         this.channel.listen(this.arcId, messageType, callback);

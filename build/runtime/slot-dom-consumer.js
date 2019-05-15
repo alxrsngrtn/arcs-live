@@ -73,7 +73,7 @@ export class SlotDomConsumer extends SlotConsumer {
                 if (!formattedModel)
                     return undefined;
                 // Merge descriptions into model.
-                newContent.model = Object.assign({}, formattedModel, content.descriptions);
+                newContent.model = { ...formattedModel, ...content.descriptions };
             }
             else {
                 newContent.model = undefined;

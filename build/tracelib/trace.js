@@ -121,14 +121,14 @@ function init() {
         const begin = now();
         return {
             addArgs(extraArgs) {
-                args = Object.assign({}, (args || {}), extraArgs);
+                args = { ...(args || {}), ...extraArgs };
             },
             end(endInfo = {}, flow) {
                 endInfo = parseInfo(endInfo);
                 if (endInfo.args) {
-                    args = Object.assign({}, (args || {}), endInfo.args);
+                    args = { ...(args || {}), ...endInfo.args };
                 }
-                endInfo = Object.assign({}, info, endInfo);
+                endInfo = { ...info, ...endInfo };
                 this.endTs = now();
                 pushEvent({
                     ph: 'X',
@@ -158,7 +158,7 @@ function init() {
                 }
                 trace.end(info, flow);
                 if (flowExisted) {
-                    flow.step(Object.assign({ ts: trace.beginTs }, baseInfo));
+                    flow.step({ ts: trace.beginTs, ...baseInfo });
                 }
                 else {
                     flow.start({ ts: trace.endTs });

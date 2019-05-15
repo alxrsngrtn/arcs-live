@@ -75,7 +75,7 @@ export class Description {
             pDesc._rank = relevance.calcParticleRelevance(particle);
         }
         const descByName = await Description._getPatternByNameFromDescriptionHandle(particle, arc);
-        pDesc = Object.assign({}, pDesc, descByName);
+        pDesc = { ...pDesc, ...descByName };
         pDesc.pattern = pDesc.pattern || particle.spec.pattern;
         for (const handleConn of Object.values(particle.connections)) {
             const specConn = particle.spec.handleConnectionMap.get(handleConn.name);

@@ -305,7 +305,7 @@ describe('schema', () => {
         const manifest = await Manifest.load('Product.schema', loader);
         const Person = manifest.findSchemaByName('Person');
         const Animal = manifest.findSchemaByName('Animal');
-        const fields = Object.assign({}, Person.fields, Animal.fields);
+        const fields = { ...Person.fields, ...Animal.fields };
         const expected = deleteLocations(new Schema(['Person', 'Animal', 'Thing'], fields));
         const actual = deleteLocations(Schema.union(Person, Animal));
         assert.deepEqual(actual, expected);
@@ -328,7 +328,7 @@ describe('schema', () => {
         const Thing = manifest.findSchemaByName('Thing');
         const Product = manifest.findSchemaByName('Product');
         const Animal = manifest.findSchemaByName('Animal');
-        const fields = Object.assign({}, Thing.fields, { isReal: 'Boolean' });
+        const fields = { ...Thing.fields, isReal: 'Boolean' };
         const expected = deleteLocations(new Schema(['Thing'], fields));
         const actual = deleteLocations(Schema.intersect(Animal, Product));
         assert.deepEqual(actual, expected);

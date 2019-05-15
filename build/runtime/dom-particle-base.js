@@ -107,7 +107,7 @@ export class DomParticleBase extends Particle {
     // This is temporary and should go away when we move from sub-IDs to [(Entity, Slot)] constructs.
     enhanceModelWithSlotIDs(model, slotIDs, topLevel = true) {
         if (topLevel) {
-            model = Object.assign({}, slotIDs, model);
+            model = { ...slotIDs, ...model };
         }
         if (model.hasOwnProperty('$template') && model.hasOwnProperty('models') && Array.isArray(model['models'])) {
             model['models'] = model['models'].map(m => this.enhanceModelWithSlotIDs(m, slotIDs));
