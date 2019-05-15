@@ -1,5 +1,7 @@
-commit 302fae64b7f3630d21709f9d31b48de7dc953dfa
-Author: Scott J. Miles <sjmiles@google.com>
-Date:   Tue May 14 21:12:58 2019 -0700
+commit 17b55475701408e3baa198a8a82abe697ecec120
+Author: galganif <4754402+galganif@users.noreply.github.com>
+Date:   Wed May 15 16:51:10 2019 +1000
 
-    move logic into render() (#3020)
+    add a singleton handle, modify storage proxy to apply updates and for… (#3023)
+    
+    * add a singleton handle, modify storage proxy to apply updates and forward them to the handle (with lots of TODOs)

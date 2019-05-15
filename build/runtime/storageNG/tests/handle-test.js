@@ -8,31 +8,58 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { assert } from '../../../platform/chai-web.js';
-import { CollectionHandle } from '../handle';
-import { StorageProxy } from '../storage-proxy';
 import { CRDTCollection } from '../../crdt/crdt-collection';
-describe('handleNG', () => {
+import { CRDTSingleton } from '../../crdt/crdt-singleton';
+import { CollectionHandle, SingletonHandle } from '../handle';
+import { StorageProxy } from '../storage-proxy';
+function getCollectionHandle() {
+    // tslint:disable-next-line: no-any
+    const fakePec = {};
+    // tslint:disable-next-line: no-any
+    const fakeParticle = {};
+    return new CollectionHandle('me', new StorageProxy(new CRDTCollection(), fakePec), fakeParticle);
+}
+function getSingletonHandle() {
+    // tslint:disable-next-line: no-any
+    const fakePec = {};
+    // tslint:disable-next-line: no-any
+    const fakeParticle = {};
+    return new SingletonHandle('me', new StorageProxy(new CRDTSingleton(), fakePec), fakeParticle);
+}
+describe('CollectionHandle', () => {
     it('can add and remove elements', () => {
-        const handle = new CollectionHandle("me", new StorageProxy(new CRDTCollection()));
+        const handle = getCollectionHandle();
         assert.isEmpty(handle.toList());
-        handle.add("A");
-        assert.sameMembers(handle.toList(), ["A"]);
-        handle.add("B");
-        assert.sameMembers(handle.toList(), ["A", "B"]);
-        handle.remove("A");
-        assert.sameMembers(handle.toList(), ["B"]);
+        handle.add('A');
+        assert.sameMembers(handle.toList(), ['A']);
+        handle.add('B');
+        assert.sameMembers(handle.toList(), ['A', 'B']);
+        handle.remove('A');
+        assert.sameMembers(handle.toList(), ['B']);
     });
     it('can clear', () => {
-        const handle = new CollectionHandle("me", new StorageProxy(new CRDTCollection()));
-        handle.add("A");
-        handle.add("B");
+        const handle = getCollectionHandle();
+        handle.add('A');
+        handle.add('B');
         handle.clear();
         assert.isEmpty(handle.toList());
     });
     it('can add multiple entities', () => {
-        const handle = new CollectionHandle("me", new StorageProxy(new CRDTCollection()));
-        handle.addMultiple(["A", "B"]);
-        assert.sameMembers(handle.toList(), ["A", "B"]);
+        const handle = getCollectionHandle();
+        handle.addMultiple(['A', 'B']);
+        assert.sameMembers(handle.toList(), ['A', 'B']);
+    });
+});
+describe('SingletonHandle', () => {
+    it('can set and clear elements', () => {
+        const handle = getSingletonHandle();
+        assert.equal(handle.get(), null);
+        handle.set('A');
+        assert.equal(handle.get(), 'A');
+        handle.set('B');
+        assert.equal(handle.get(), 'B');
+        handle.clear();
+        assert.equal(handle.get(), null);
     });
 });
 //# sourceMappingURL=handle-test.js.map

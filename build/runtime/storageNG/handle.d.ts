@@ -8,8 +8,16 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { CRDTTypeRecord, VersionMap } from '../crdt/crdt';
-import { CRDTCollectionTypeRecord } from '../crdt/crdt-collection';
+import { CollectionOperation, CRDTCollectionTypeRecord } from '../crdt/crdt-collection';
+import { CRDTSingletonTypeRecord, SingletonOperation } from '../crdt/crdt-singleton';
+import { Particle } from '../particle';
 import { StorageProxy } from './storage-proxy';
+export interface HandleOptions {
+    keepSynced: boolean;
+    notifySync: boolean;
+    notifyUpdate: boolean;
+    notifyDesync: boolean;
+}
 /**
  * Base class for Handles.
  */
@@ -17,7 +25,12 @@ export declare abstract class Handle<T extends CRDTTypeRecord> {
     storageProxy: StorageProxy<T>;
     key: string;
     clock: VersionMap;
-    constructor(key: string, storageProxy: StorageProxy<T>);
+    options: HandleOptions;
+    particle: Particle;
+    constructor(key: string, storageProxy: StorageProxy<T>, particle: Particle);
+    configure(options: HandleOptions): void;
+    abstract onUpdate(updates: T['operation'][]): void;
+    abstract onSync(): void;
 }
 /**
  * A handle on a set of Entity data. Note that, as a set, a Collection can only
@@ -30,4 +43,16 @@ export declare class CollectionHandle<T> extends Handle<CRDTCollectionTypeRecord
     remove(entity: T): boolean;
     clear(): boolean;
     toList(): T[];
+    onUpdate(ops: CollectionOperation<T>[]): void;
+    onSync(): void;
+}
+/**
+ * A handle on a single entity.
+ */
+export declare class SingletonHandle<T> extends Handle<CRDTSingletonTypeRecord<T>> {
+    set(entity: T): boolean;
+    clear(): boolean;
+    get(): T;
+    onUpdate(ops: SingletonOperation<T>[]): void;
+    onSync(): void;
 }

@@ -20,7 +20,7 @@ export declare enum ProxyMessageType {
     ModelUpdate = 1,
     Operations = 2
 }
-declare type ProxyMessage<T extends CRDTTypeRecord> = {
+export declare type ProxyMessage<T extends CRDTTypeRecord> = {
     type: ProxyMessageType.SyncRequest;
     id: number;
 } | {
