@@ -1,7 +1,5 @@
-commit f934400863f6028ca832c6410ec97f048266f216
-Author: galganif <4754402+galganif@users.noreply.github.com>
-Date:   Wed May 15 11:08:25 2019 +1000
+commit 302fae64b7f3630d21709f9d31b48de7dc953dfa
+Author: Scott J. Miles <sjmiles@google.com>
+Date:   Tue May 14 21:12:58 2019 -0700
 
-    Implementation for crdt singleton, implemented on top of a collection… (#2939)
-    
-    * Implementation for crdt singleton, implemented on top of a collection. Also changed the merge method to take crtd data only.
+    move logic into render() (#3020)
