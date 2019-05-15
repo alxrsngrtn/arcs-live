@@ -1,5 +1,8 @@
-commit 4a956b05d9d10006e415ff32511ededbf560c86d
+commit 369808629de8e56c67b1224091ab4c83fd58175d
 Author: Paul Lindner <plindner@google.com>
-Date:   Wed May 15 10:58:18 2019 -0700
+Date:   Wed May 15 12:58:18 2019 -0700
 
-    Remove deprecated Type equals method, fix callers (#3026)
+    Migrate github pages to use https://live.arcs.dev (#3021)
+    
+    - Adds CNAME generation and top-level redirect to travis deploy
+    - Updates URLs in most places
