@@ -1,4 +1,4 @@
-import { GCPCloud } from "./gcp/gcp";
+import { GCPCloud } from './gcp/gcp';
 /**
  * Offers implementations for various cloud providers, currently limited
  * to GCP.

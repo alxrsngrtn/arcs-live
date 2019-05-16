@@ -7,7 +7,7 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-import { CRDTError, ChangeType } from "./crdt.js";
+import { CRDTError, ChangeType } from './crdt.js';
 export var CountOpTypes;
 (function (CountOpTypes) {
     CountOpTypes[CountOpTypes["Increment"] = 0] = "Increment";

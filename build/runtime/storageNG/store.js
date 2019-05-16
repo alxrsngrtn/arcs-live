@@ -7,8 +7,8 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-import { ChangeType, CRDTError } from "../crdt/crdt.js";
-import { Exists, DriverFactory } from "./drivers/driver-factory.js";
+import { ChangeType, CRDTError } from '../crdt/crdt.js';
+import { Exists, DriverFactory } from './drivers/driver-factory.js';
 export var StorageMode;
 (function (StorageMode) {
     StorageMode[StorageMode["Direct"] = 0] = "Direct";
@@ -118,7 +118,7 @@ export class DirectStore extends ActiveStore {
                 return true;
             }
             default:
-                throw new CRDTError("Invalid operation provided to onProxyMessage");
+                throw new CRDTError('Invalid operation provided to onProxyMessage');
         }
     }
     on(callback) {

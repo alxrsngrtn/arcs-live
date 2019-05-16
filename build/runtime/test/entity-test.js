@@ -34,7 +34,7 @@ describe('Entity', () => {
             const entity = newFooEntity('abc');
             assert.throws(() => {
                 entity.bar = 'xyz';
-            }, "Tried to modify entity field 'bar'");
+            }, 'Tried to modify entity field \'bar\'');
             assert.equal(entity.bar, 'abc');
         });
         it('rejects mutations when immutable', () => {

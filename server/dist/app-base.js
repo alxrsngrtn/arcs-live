@@ -43,7 +43,7 @@ export class AppBase {
      */
     startBackgroundProcessing() {
         // optional method that starts background processing.
-        console.log("Running optional background process");
+        console.log('Running optional background process');
     }
     /**
      * Adds handlers for static content.  The public directory is

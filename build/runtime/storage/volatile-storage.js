@@ -228,11 +228,11 @@ class VolatileCollection extends VolatileStorageProvider {
         return (await this._toList()).map(item => item.value);
     }
     async getMultiple(ids) {
-        assert(!this.referenceMode, "getMultiple not implemented for referenceMode stores");
+        assert(!this.referenceMode, 'getMultiple not implemented for referenceMode stores');
         return ids.map(id => this._model.getValue(id));
     }
     async storeMultiple(values, keys, originatorId = null) {
-        assert(!this.referenceMode, "storeMultiple not implemented for referenceMode stores");
+        assert(!this.referenceMode, 'storeMultiple not implemented for referenceMode stores');
         values.map(value => this._model.add(value.id, value, keys));
         this.version++;
     }

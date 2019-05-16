@@ -7,9 +7,9 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-import { CRDTModel, CRDTTypeRecord } from "../crdt/crdt.js";
-import { Type } from "../type.js";
-import { Exists, Driver } from "./drivers/driver-factory.js";
+import { CRDTModel, CRDTTypeRecord } from '../crdt/crdt.js';
+import { Type } from '../type.js';
+import { Exists, Driver } from './drivers/driver-factory.js';
 export declare enum StorageMode {
     Direct = 0,
     Backing = 1,

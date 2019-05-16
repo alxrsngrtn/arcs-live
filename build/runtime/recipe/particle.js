@@ -236,8 +236,8 @@ export class Particle {
             (!type || TypeChecker.compareTypes({ type }, { type: connSpec.type })));
     }
     addSlotConnection(name) {
-        assert(!(name in this._consumedSlotConnections), "slot connection already exists");
-        assert(!this.spec || this.spec.slotConnections.has(name), "slot connection not in particle spec");
+        assert(!(name in this._consumedSlotConnections), 'slot connection already exists');
+        assert(!this.spec || this.spec.slotConnections.has(name), 'slot connection not in particle spec');
         const slotConn = new SlotConnection(name, this);
         this._consumedSlotConnections[name] = slotConn;
         const slotSpec = this.getSlotSpecByName(name);

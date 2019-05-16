@@ -12,13 +12,13 @@ import { Store, StorageMode, DirectStore, ProxyMessageType } from '../store.js';
 import { Exists, DriverFactory, Driver } from '../drivers/driver-factory.js';
 import { CRDTCount, CountOpTypes } from '../../crdt/crdt-count.js';
 class MockDriver extends Driver {
-    async read(key) { throw new Error("unimplemented"); }
-    async write(key, value) { throw new Error("unimplemented"); }
+    async read(key) { throw new Error('unimplemented'); }
+    async write(key, value) { throw new Error('unimplemented'); }
     registerReceiver(receiver) {
         this.receiver = receiver;
     }
     async send(model) {
-        throw new Error("send implementation required for testing");
+        throw new Error('send implementation required for testing');
     }
 }
 class MockStorageDriverProvider {
@@ -146,7 +146,7 @@ describe('Store', async () => {
         const remoteCount = new CRDTCount();
         remoteCount.applyOperation({ type: CountOpTypes.Increment, actor: 'them', version: { from: 0, to: 1 } });
         const driver = activeStore['driver'];
-        driver.send = async (model) => { throw new Error("Should not be invoked"); };
+        driver.send = async (model) => { throw new Error('Should not be invoked'); };
         // Note that this assumes no asynchrony inside store.ts. This is guarded by the following
         // test, which will fail if driver.receiver() doesn't synchronously invoke driver.send(). 
         await driver.receiver(remoteCount.getData());

@@ -39,7 +39,7 @@ Examples [Must be run from Arcs repository root]
         const visited = new Set();
         for (const path of paths) {
             try {
-                const manifest = await Utils.parse("import '" + path + "'");
+                const manifest = await Utils.parse('import \'' + path + '\'');
                 processManifest(manifest, visited, destDir);
             }
             catch (err) {

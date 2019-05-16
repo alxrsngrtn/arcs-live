@@ -6,7 +6,7 @@
 // http://polymer.github.io/PATENTS.txt
 export const path = {
     join(pth, name) {
-        throw new Error("Not implemented"); // We just want the interface
+        throw new Error('Not implemented'); // We just want the interface
     },
 };
 //# sourceMappingURL=path-web.js.map

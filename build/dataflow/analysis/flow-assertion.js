@@ -22,14 +22,14 @@ export class FlowAssertion {
         // This will throw if it fails
         const parsed = parse(s);
         this.source = s;
-        this.name = s.split(":")[0].trim();
+        this.name = s.split(':')[0].trim();
         // TODO Post-parse processing of this assertion. Alternatively, put js into
         // the peg file so that the parser returns the right stuff.
     }
     check(graph) {
         // TODO: implement
         return { result: false,
-            reason: 'Assertion ' + this.name + ' failed. reason: ' + "dunno why; just 'cause" };
+            reason: 'Assertion ' + this.name + ' failed. reason: ' + 'dunno why; just \'cause' };
     }
 }
 //# sourceMappingURL=flow-assertion.js.map

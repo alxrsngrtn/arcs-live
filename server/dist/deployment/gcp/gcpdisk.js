@@ -7,11 +7,11 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-import common from "@google-cloud/common";
+import common from '@google-cloud/common';
 import Compute from '@google-cloud/compute';
-import { CloudManager } from "../cloud";
-import { ARCS_NODE_LABEL, arcsKeyFor, waitForGcp } from "../utils";
-import { GCE_PERSISTENT_DISK_TYPE, GCP_ZONE } from "./gcp-constants";
+import { CloudManager } from '../cloud';
+import { ARCS_NODE_LABEL, arcsKeyFor, waitForGcp } from '../utils';
+import { GCE_PERSISTENT_DISK_TYPE, GCP_ZONE } from './gcp-constants';
 /**
  * Represents disk storage provisioned on a cloud provider.
  */
@@ -34,19 +34,19 @@ class GCPDisk {
             if (vms !== undefined) {
                 for (const vm of vms) {
                     if (vm.metadata.metadata.items.find(x => x.key === ARCS_NODE_LABEL) !== undefined) {
-                        console.log("Trying to detach " + vm.metadata.name + " from " + this.diskApi.name);
+                        console.log('Trying to detach ' + vm.metadata.name + ' from ' + this.diskApi.name);
                         const [operation, apiResponse] = await vm.detachDisk(this.diskApi);
                         if (operation.warnings) {
-                            console.log("Warnings: " + operation.warnings.join('\n'));
+                            console.log('Warnings: ' + operation.warnings.join('\n'));
                         }
                         return Promise.resolve(!apiResponse['httpErrorStatusCode'] || apiResponse['httpErrorStatusCode'] !== 200);
                     }
                 }
             }
-            return Promise.reject(new Error("Can't find arcs-node VM"));
+            return Promise.reject(new Error('Can\'t find arcs-node VM'));
         }
         catch (e) {
-            console.log("Error trying to dismount disk");
+            console.log('Error trying to dismount disk');
             return Promise.reject(e);
         }
     }
@@ -58,21 +58,21 @@ class GCPDisk {
                 for (const vm of vms) {
                     if (vm.metadata.name === node) {
                         const [operation, apiResponse] = await vm.attachDisk(this.diskApi, {
-                            "diskEncryptionKey": {
-                                "rsaEncryptedKey": rewrappedKey
+                            'diskEncryptionKey': {
+                                'rsaEncryptedKey': rewrappedKey
                             }
                         });
                         if (operation.warnings) {
-                            console.log("Warnings: " + operation.warnings.join('\n'));
+                            console.log('Warnings: ' + operation.warnings.join('\n'));
                         }
                         return Promise.resolve(!apiResponse['httpErrorStatusCode'] || apiResponse['httpErrorStatusCode'] !== 200);
                     }
                 }
             }
-            return Promise.reject(new Error("Can't find VM " + node));
+            return Promise.reject(new Error('Can\'t find VM ' + node));
         }
         catch (e) {
-            console.log("Error trying to mount disk");
+            console.log('Error trying to mount disk');
             return Promise.reject(e);
         }
     }
@@ -103,7 +103,7 @@ class BetaCompute extends Compute {
         common.Service.call(this, config, options);
     }
 }
-export const DEFAULT_GCP_DISK_SIZE = "10";
+export const DEFAULT_GCP_DISK_SIZE = '10';
 /**
  * Allows the provisioning of encrypted disk storage in a
  * cloud provider.
@@ -112,20 +112,20 @@ export class GCPDiskManager {
     async create(fingerprint, wrappedKey, rewrappedKey) {
         const arcskey = arcsKeyFor(fingerprint);
         const config = {
-            "type": "projects/arcs-project/zones/us-central1-a/diskTypes/pd-standard",
-            "sizeGb": DEFAULT_GCP_DISK_SIZE,
-            "name": arcskey,
-            "diskEncryptionKey": {
-                "rsaEncryptedKey": rewrappedKey
+            'type': 'projects/arcs-project/zones/us-central1-a/diskTypes/pd-standard',
+            'sizeGb': DEFAULT_GCP_DISK_SIZE,
+            'name': arcskey,
+            'diskEncryptionKey': {
+                'rsaEncryptedKey': rewrappedKey
             },
-            "description": {},
-            "labels": {}
+            'description': {},
+            'labels': {}
         };
         config['labels'][arcskey] = true;
         const keyDesc = {};
         keyDesc[arcskey] = wrappedKey;
         config['description'] = JSON.stringify(keyDesc);
-        console.log("putting description " + console.dir(keyDesc) + "\n as " + JSON.stringify(keyDesc));
+        console.log('putting description ' + console.dir(keyDesc) + '\n as ' + JSON.stringify(keyDesc));
         try {
             const compute = new BetaCompute();
             const zone = compute.zone(GCP_ZONE);
@@ -141,7 +141,7 @@ export class GCPDiskManager {
     }
     async delete(disk) {
         // TODO: this is a pretty dangerous, irreversible operation, leave unimplemented for now.
-        console.log("Operation not implemented, can't delete disks.");
+        console.log('Operation not implemented, can\'t delete disks.');
         return Promise.resolve();
     }
     async find(fingerprint) {

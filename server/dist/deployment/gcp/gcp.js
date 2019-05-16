@@ -1,5 +1,5 @@
-import { K18sContainerManager } from "../k18s/manager";
-import { GCPDiskManager } from "./gcpdisk";
+import { K18sContainerManager } from '../k18s/manager';
+import { GCPDiskManager } from './gcpdisk';
 /**
  * Implementation of Cloud interface for GCP.
  */

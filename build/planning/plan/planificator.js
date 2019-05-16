@@ -8,7 +8,7 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { assert } from '../../platform/assert-web.js';
-import { StorageProviderBase } from "../../runtime/storage/storage-provider-base.js";
+import { StorageProviderBase } from '../../runtime/storage/storage-provider-base.js';
 import { EntityType } from '../../runtime/type.js';
 import { PlanningExplorerAdapter } from '../debug/planning-explorer-adapter.js';
 import { PlanConsumer } from './plan-consumer.js';

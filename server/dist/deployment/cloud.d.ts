@@ -7,8 +7,8 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-import { ContainerManager } from "./containers";
-import { DiskManager } from "./disks";
+import { ContainerManager } from './containers';
+import { DiskManager } from './disks';
 /**
  * Top level interface representing a Cloud service provider capable
  * of provisioning storage and node deployments.

@@ -1,6 +1,6 @@
-import { PropagatedException } from "./arc-exceptions";
-import { Type } from "./type";
-import { ParticleExecutionContext } from "./particle-execution-context";
+import { PropagatedException } from './arc-exceptions';
+import { Type } from './type';
+import { ParticleExecutionContext } from './particle-execution-context';
 import { ModelValue } from './storage/crdt-collection-model.js';
 /**
  * Interface for a storage system. This is implemented by different classes depending on whether the code is running on the host or in a PEC.

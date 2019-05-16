@@ -13,6 +13,7 @@
  */
 export class SlotProxy {
     constructor(apiPort, particle, slotName, providedSlots) {
+        // eslint-disable-next-line func-call-spacing
         this.handlers = new Map();
         this.requestedContentTypes = new Set();
         this._isRendered = false;

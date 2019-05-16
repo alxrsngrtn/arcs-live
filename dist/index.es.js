@@ -1091,7 +1091,7 @@ class Reference {
         }
     }
     async dereference() {
-        assert(this.context, "Must have context to dereference");
+        assert(this.context, 'Must have context to dereference');
         if (this.entity) {
             return this.entity;
         }
@@ -2636,7 +2636,7 @@ class TypeChecker {
                 [primitiveHandleType, primitiveConnectionType] = unwrap;
                 if (!(primitiveHandleType instanceof TypeVariable)) {
                     // This should never happen, and the guard above is just here so we type-check.
-                    throw new TypeError("unwrapping a wrapped TypeVariable somehow didn't become a TypeVariable");
+                    throw new TypeError('unwrapping a wrapped TypeVariable somehow didn\'t become a TypeVariable');
                 }
             }
             if (direction === 'out' || direction === 'inout' || direction === '`provide') {
@@ -14024,8 +14024,8 @@ class Particle {
             (!type || TypeChecker.compareTypes({ type }, { type: connSpec.type })));
     }
     addSlotConnection(name) {
-        assert(!(name in this._consumedSlotConnections), "slot connection already exists");
-        assert(!this.spec || this.spec.slotConnections.has(name), "slot connection not in particle spec");
+        assert(!(name in this._consumedSlotConnections), 'slot connection already exists');
+        assert(!this.spec || this.spec.slotConnections.has(name), 'slot connection not in particle spec');
         const slotConn = new SlotConnection(name, this);
         this._consumedSlotConnections[name] = slotConn;
         const slotSpec = this.getSlotSpecByName(name);
@@ -15676,11 +15676,11 @@ class VolatileCollection extends VolatileStorageProvider {
         return (await this._toList()).map(item => item.value);
     }
     async getMultiple(ids) {
-        assert(!this.referenceMode, "getMultiple not implemented for referenceMode stores");
+        assert(!this.referenceMode, 'getMultiple not implemented for referenceMode stores');
         return ids.map(id => this._model.getValue(id));
     }
     async storeMultiple(values, keys, originatorId = null) {
-        assert(!this.referenceMode, "storeMultiple not implemented for referenceMode stores");
+        assert(!this.referenceMode, 'storeMultiple not implemented for referenceMode stores');
         values.map(value => this._model.add(value.id, value, keys));
         this.version++;
     }
@@ -17626,10 +17626,10 @@ function decode(str) {
  * http://polymer.github.io/PATENTS.txt
  */
 const DEVICE_KEY_ALGORITHM = 'RSA-OAEP';
-const X509_CERTIFICATE_ALGORITHM = "RSA-OAEP";
-const X509_CERTIFICATE_HASH_ALGORITHM = "SHA-1";
-const DEVICE_KEY_HASH_ALGORITHM = "SHA-512";
-const STORAGE_KEY_ALGORITHM = "AES-GCM";
+const X509_CERTIFICATE_ALGORITHM = 'RSA-OAEP';
+const X509_CERTIFICATE_HASH_ALGORITHM = 'SHA-1';
+const DEVICE_KEY_HASH_ALGORITHM = 'SHA-512';
+const STORAGE_KEY_ALGORITHM = 'AES-GCM';
 const ARCS_CRYPTO_STORE_NAME = 'ArcsKeyManagementStore';
 const ARCS_CRYPTO_INDEXDB_NAME = 'ArcsKeyManagement';
 /**
@@ -17669,11 +17669,11 @@ class WebCryptoWrappedKey {
     }
     unwrap(privKey) {
         const webPrivKey = privKey;
-        return crypto$1.subtle.unwrapKey("raw", this.wrappedKeyData, webPrivKey.cryptoKey(), {
+        return crypto$1.subtle.unwrapKey('raw', this.wrappedKeyData, webPrivKey.cryptoKey(), {
             name: privKey.algorithm()
         }, {
             name: STORAGE_KEY_ALGORITHM,
-        }, true, ["encrypt", "decrypt"]).then(key => new WebCryptoSessionKey(key));
+        }, true, ['encrypt', 'decrypt']).then(key => new WebCryptoSessionKey(key));
     }
     rewrap(privKey, pubKey) {
         return this.unwrap(privKey).then(skey => skey.disposeToWrappedKeyUsing(pubKey));
@@ -17723,15 +17723,15 @@ class WebCryptoPublicKey extends WebCryptoStorableKey {
             hexCodes.push(paddedValue);
         }
         // Join all the hex strings into one
-        return hexCodes.join("");
+        return hexCodes.join('');
     }
     static sha256(str) {
         // We transform the string into an arraybuffer.
         const buffer = new Uint8Array(str.split('').map(x => x.charCodeAt(0)));
-        return crypto$1.subtle.digest("SHA-256", buffer).then((hash) => WebCryptoPublicKey.hex(hash));
+        return crypto$1.subtle.digest('SHA-256', buffer).then((hash) => WebCryptoPublicKey.hex(hash));
     }
     fingerprint() {
-        return crypto$1.subtle.exportKey("jwk", this.cryptoKey())
+        return crypto$1.subtle.exportKey('jwk', this.cryptoKey())
             // Use the modulus 'n' as the fingerprint since 'e' is fixed
             .then(key => WebCryptoPublicKey.digest(key['n']));
     }
@@ -17760,9 +17760,9 @@ class WebCryptoSessionKey {
      * removed once the the key-blessing algorithm is implemented.
      */
     export() {
-        return crypto$1.subtle.exportKey("raw", this.sessionKey).then((raw) => {
+        return crypto$1.subtle.exportKey('raw', this.sessionKey).then((raw) => {
             const buf = new Uint8Array(raw);
-            let res = "";
+            let res = '';
             buf.forEach((x) => res += (x < 16 ? '0' : '') + x.toString(16));
             return res;
         });
@@ -17778,7 +17778,7 @@ class WebCryptoSessionKey {
     disposeToWrappedKeyUsing(pkey) {
         try {
             const webPkey = pkey;
-            const rawWrappedKey = crypto$1.subtle.wrapKey("raw", this.sessionKey, pkey.cryptoKey(), {
+            const rawWrappedKey = crypto$1.subtle.wrapKey('raw', this.sessionKey, pkey.cryptoKey(), {
                 name: webPkey.algorithm(),
             });
             return rawWrappedKey.then(rawKey => new WebCryptoWrappedKey(new Uint8Array(rawKey), pkey));
@@ -17817,7 +17817,7 @@ class WebCryptoDeviceKey extends WebCryptoStorableKey {
  */
 class WebCryptoKeyGenerator {
     generateWrappedStorageKey(deviceKey) {
-        const generatedKey = crypto$1.subtle.generateKey({ name: 'AES-GCM', length: 256 }, true, ["encrypt", "decrypt", "wrapKey", "unwrapKey"]);
+        const generatedKey = crypto$1.subtle.generateKey({ name: 'AES-GCM', length: 256 }, true, ['encrypt', 'decrypt', 'wrapKey', 'unwrapKey']);
         return generatedKey.then(key => new WebCryptoSessionKey(key))
             .then(skey => skey.disposeToWrappedKeyUsing(deviceKey.publicKey()));
     }
@@ -17827,7 +17827,7 @@ class WebCryptoKeyGenerator {
     }
     generateAndStoreRecoveryKey() {
         // TODO: Implement
-        throw new Error("Not implemented");
+        throw new Error('Not implemented');
     }
     generateDeviceKey() {
         const generatedKey = crypto$1.subtle.generateKey({
@@ -17840,7 +17840,7 @@ class WebCryptoKeyGenerator {
             publicExponent: new Uint8Array([0x01, 0x00, 0x01]),
         }, 
         // false means the key material is not visible to the application
-        false, ["encrypt", "decrypt", "wrapKey", "unwrapKey"]);
+        false, ['encrypt', 'decrypt', 'wrapKey', 'unwrapKey']);
         return generatedKey.then(key => new WebCryptoDeviceKey(key));
     }
     /**
@@ -17850,10 +17850,10 @@ class WebCryptoKeyGenerator {
     importKey(pemKey) {
         const key = rs.KEYUTIL.getKey(pemKey);
         const jwk = rs.KEYUTIL.getJWKFromKey(key);
-        return crypto$1.subtle.importKey("jwk", jwk, {
+        return crypto$1.subtle.importKey('jwk', jwk, {
             name: X509_CERTIFICATE_ALGORITHM,
             hash: { name: X509_CERTIFICATE_HASH_ALGORITHM }
-        }, true, ["encrypt", "wrapKey"]).then(ikey => new WebCryptoPublicKey(ikey));
+        }, true, ['encrypt', 'wrapKey']).then(ikey => new WebCryptoPublicKey(ikey));
     }
     async importWrappedKey(wrappedKey, wrappedBy) {
         const decodedKey = decode(wrappedKey);
@@ -17867,7 +17867,7 @@ class WebCryptoKeyGenerator {
 class WebCryptoKeyIndexedDBStorage {
     async runOnStore(fn) {
         try {
-            const db = await idb.open(ARCS_CRYPTO_INDEXDB_NAME, 1, upgradeDB => upgradeDB.createObjectStore(ARCS_CRYPTO_STORE_NAME, { keyPath: "keyFingerPrint" }));
+            const db = await idb.open(ARCS_CRYPTO_INDEXDB_NAME, 1, upgradeDB => upgradeDB.createObjectStore(ARCS_CRYPTO_STORE_NAME, { keyPath: 'keyFingerPrint' }));
             const tx = db.transaction(ARCS_CRYPTO_STORE_NAME, 'readwrite');
             const store = tx.objectStore(ARCS_CRYPTO_STORE_NAME);
             const result = await fn(store);
@@ -17896,7 +17896,7 @@ class WebCryptoKeyIndexedDBStorage {
             const wrappedBy = await this.find(result.wrappingKeyFingerprint);
             return Promise.resolve(new WebCryptoWrappedKey(result.key, wrappedBy));
         }
-        throw new Error("Unrecognized key type found in keystore.");
+        throw new Error('Unrecognized key type found in keystore.');
     }
     async write(keyFingerPrint, key) {
         if (key instanceof WebCryptoStorableKey) {
@@ -17915,7 +17915,7 @@ class WebCryptoKeyIndexedDBStorage {
             });
             return keyFingerPrint;
         }
-        throw new Error("Can't write key that isn't StorableKey or WrappedKey.");
+        throw new Error('Can\'t write key that isn\'t StorableKey or WrappedKey.');
     }
     static getInstance() {
         // TODO: If IndexDB open/close is expensive, we may want to reuse instances.
@@ -19009,12 +19009,12 @@ class Particle$1 {
      */
     // TODO(sjmiles): experimental services impl
     async service(request) {
-        if (!this.capabilities["serviceRequest"]) {
+        if (!this.capabilities['serviceRequest']) {
             console.warn(`${this.spec.name} has no service support.`);
             return null;
         }
         return new Promise(resolve => {
-            this.capabilities["serviceRequest"](this, request, response => resolve(response));
+            this.capabilities['serviceRequest'](this, request, response => resolve(response));
         });
     }
     /**
@@ -20500,6 +20500,7 @@ PECInnerPort = __decorate([
  */
 class SlotProxy {
     constructor(apiPort, particle, slotName, providedSlots) {
+        // eslint-disable-next-line func-call-spacing
         this.handlers = new Map();
         this.requestedContentTypes = new Set();
         this._isRendered = false;
@@ -20993,17 +20994,17 @@ class BigCollectionProxy extends StorageProxy {
         }
     }
     _getModelForSync() {
-        throw new Error("_getModelForSync not implemented for BigCollectionProxy");
+        throw new Error('_getModelForSync not implemented for BigCollectionProxy');
     }
     _processUpdate() {
-        throw new Error("_processUpdate not implemented for BigCollectionProxy");
+        throw new Error('_processUpdate not implemented for BigCollectionProxy');
     }
     _synchronizeModel() {
-        throw new Error("_synchronizeModel not implemented for BigCollectionProxy");
+        throw new Error('_synchronizeModel not implemented for BigCollectionProxy');
     }
     // TODO: surface get()
     async get(id) {
-        throw new Error("unimplemented");
+        throw new Error('unimplemented');
     }
     async store(value, keys, particleId) {
         return new Promise(resolve => this.port.HandleStore(this, resolve, { value, keys }, particleId));
@@ -24384,7 +24385,7 @@ class ConvertConstraintsToConnections extends Strategy {
                                 recipe.newObligation(from, to, obligation.direction);
                             }
                             else {
-                                throw new Error("constraints with a particle endpoint at one end but not at the other are not supported");
+                                throw new Error('constraints with a particle endpoint at one end but not at the other are not supported');
                             }
                         }
                         return score;

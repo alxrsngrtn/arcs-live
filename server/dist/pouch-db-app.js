@@ -10,7 +10,7 @@ import PouchDbServer from 'express-pouchdb';
 import PouchDB from 'pouchdb';
 import PouchDbAdapterMemory from 'pouchdb-adapter-memory';
 import { AppBase } from './app-base';
-import { ON_DISK_DB, VM_URL_PREFIX } from "./deployment/utils";
+import { ON_DISK_DB, VM_URL_PREFIX } from './deployment/utils';
 /**
  * An app server that additionally configures a pouchdb.
  * It also starts a remote planning thread (for now).
@@ -23,7 +23,7 @@ import { ON_DISK_DB, VM_URL_PREFIX } from "./deployment/utils";
 class PouchDbApp extends AppBase {
     startBackgroundProcessing() {
         try {
-            console.log("starting shell planning for " + PouchDbApp.userId + ' with storage Key ' + PouchDbApp.storageKeyBase);
+            console.log('starting shell planning for ' + PouchDbApp.userId + ' with storage Key ' + PouchDbApp.storageKeyBase);
             PlannerShellInterface.start('../', PouchDbApp.storageKeyBase, PouchDbApp.userId, process.env['DEBUG'] === 'true');
         }
         catch (err) {
@@ -43,14 +43,14 @@ class PouchDbApp extends AppBase {
         const urlPrefix = process.env[VM_URL_PREFIX] || '/';
         const config = {
             mode: 'fullCouchDB', inMemoryConfig: true,
-            "httpd": {
-                "enable_cors": true
+            'httpd': {
+                'enable_cors': true
             },
-            "cors": {
-                "origins": "https://skarabrae.org",
-                "credentials": true,
-                "headers": "accept, authorization, content-type, origin, referer",
-                "methods": "GET, PUT, POST, HEAD, DELETE"
+            'cors': {
+                'origins': 'https://skarabrae.org',
+                'credentials': true,
+                'headers': 'accept, authorization, content-type, origin, referer',
+                'methods': 'GET, PUT, POST, HEAD, DELETE'
             }
         };
         if (process.env[ON_DISK_DB]) {

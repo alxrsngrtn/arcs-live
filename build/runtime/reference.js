@@ -37,7 +37,7 @@ export class Reference {
         }
     }
     async dereference() {
-        assert(this.context, "Must have context to dereference");
+        assert(this.context, 'Must have context to dereference');
         if (this.entity) {
             return this.entity;
         }

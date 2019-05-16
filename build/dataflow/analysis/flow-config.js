@@ -33,7 +33,7 @@ export class FlowConfig {
         const lines = input.split('\n');
         for (const l of lines) {
             const line = l.trim();
-            if ((line.length === 0) || (line.startsWith("//"))) {
+            if ((line.length === 0) || (line.startsWith('//'))) {
                 continue;
             }
             // This will throw if the line does not parse; just let it propagate.

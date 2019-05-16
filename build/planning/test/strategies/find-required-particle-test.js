@@ -47,7 +47,7 @@ describe('FindRequiredParticles', () => {
         const inputParams = { generated: recipes.map(recipe => ({ result: recipe, score: 1 })) };
         const results = await strategy.generate(inputParams);
         const recipe = results[0].result;
-        assert.isTrue(recipe.slots[0].id === arc.activeRecipe.slots[1].id, "results recipe does not have the correct slot");
+        assert.isTrue(recipe.slots[0].id === arc.activeRecipe.slots[1].id, 'results recipe does not have the correct slot');
         assert.isTrue(recipe.isResolved());
         await arc.instantiate(recipe);
         assert.isTrue(arc.activeRecipe.normalize());
@@ -83,7 +83,7 @@ describe('FindRequiredParticles', () => {
         const inputParams = { generated: recipes.map(recipe => ({ result: recipe, score: 1 })) };
         const results = await strategy.generate(inputParams);
         const recipe = results[0].result;
-        assert.isTrue(recipe.slots[0].id === arc.activeRecipe.slots[0].id, "results recipe does not have the correct slot");
+        assert.isTrue(recipe.slots[0].id === arc.activeRecipe.slots[0].id, 'results recipe does not have the correct slot');
         assert.isTrue(recipe.isResolved());
         await arc.instantiate(recipe);
         assert.isTrue(arc.activeRecipe.normalize());
@@ -137,13 +137,13 @@ describe('FindRequiredParticles', () => {
         const inputParams = { generated: recipes.map(recipe => ({ result: recipe, score: 1 })) };
         const results = await strategy.generate(inputParams);
         const recipe = results[0].result;
-        assert.isTrue(recipe.slots[0].id === arc.activeRecipe.slots[0].id, "first slot in results recipe is not the correct slot");
-        assert.isTrue(recipe.slots[1].id === arc.activeRecipe.slots[1].id, "second slot in results recipe is not the correct slots");
+        assert.isTrue(recipe.slots[0].id === arc.activeRecipe.slots[0].id, 'first slot in results recipe is not the correct slot');
+        assert.isTrue(recipe.slots[1].id === arc.activeRecipe.slots[1].id, 'second slot in results recipe is not the correct slots');
         assert.isTrue(recipe.isResolved());
         await arc.instantiate(recipe);
         assert.isTrue(arc.activeRecipe.normalize());
     });
-    it("required particle can not provide a slot that's provided by the shell", async () => {
+    it('required particle can not provide a slot that\'s provided by the shell', async () => {
         const loader = new StubLoader({
             '*': `defineParticle(({Particle}) => class Noop extends Particle {});`
         });
@@ -192,9 +192,9 @@ describe('FindRequiredParticles', () => {
         const inputParams = { generated: recipes.map(recipe => ({ result: recipe, score: 1 })) };
         const results = await strategy.generate(inputParams);
         const recipe = results[0].result;
-        assert.isFalse(recipe.isResolved(), "recipe is resolved when it shouldn't be");
+        assert.isFalse(recipe.isResolved(), 'recipe is resolved when it shouldn\'t be');
     });
-    it("find two required particles that doesn't match the require section", async () => {
+    it('find two required particles that doesn\'t match the require section', async () => {
         const loader = new StubLoader({
             '*': `defineParticle(({Particle}) => class Noop extends Particle {});`
         });
@@ -245,7 +245,7 @@ describe('FindRequiredParticles', () => {
         const inputParams = { generated: recipes.map(recipe => ({ result: recipe, score: 1 })) };
         const results = await strategy.generate(inputParams);
         const recipe = results[0].result;
-        assert.isFalse(recipe.isResolved(), "recipe is resolved when it shouldn't be");
+        assert.isFalse(recipe.isResolved(), 'recipe is resolved when it shouldn\'t be');
     });
 });
 //# sourceMappingURL=find-required-particle-test.js.map

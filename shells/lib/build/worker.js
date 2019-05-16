@@ -1795,7 +1795,7 @@ class TypeChecker {
                 [primitiveHandleType, primitiveConnectionType] = unwrap;
                 if (!(primitiveHandleType instanceof _type_js__WEBPACK_IMPORTED_MODULE_0__["TypeVariable"])) {
                     // This should never happen, and the guard above is just here so we type-check.
-                    throw new TypeError("unwrapping a wrapped TypeVariable somehow didn't become a TypeVariable");
+                    throw new TypeError('unwrapping a wrapped TypeVariable somehow didn\'t become a TypeVariable');
                 }
             }
             if (direction === 'out' || direction === 'inout' || direction === '`provide') {
@@ -3578,7 +3578,7 @@ class Reference {
         }
     }
     async dereference() {
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(this.context, "Must have context to dereference");
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(this.context, 'Must have context to dereference');
         if (this.entity) {
             return this.entity;
         }
@@ -4605,6 +4605,7 @@ __webpack_require__.r(__webpack_exports__);
  */
 class SlotProxy {
     constructor(apiPort, particle, slotName, providedSlots) {
+        // eslint-disable-next-line func-call-spacing
         this.handlers = new Map();
         this.requestedContentTypes = new Set();
         this._isRendered = false;
@@ -5122,17 +5123,17 @@ class BigCollectionProxy extends StorageProxy {
         }
     }
     _getModelForSync() {
-        throw new Error("_getModelForSync not implemented for BigCollectionProxy");
+        throw new Error('_getModelForSync not implemented for BigCollectionProxy');
     }
     _processUpdate() {
-        throw new Error("_processUpdate not implemented for BigCollectionProxy");
+        throw new Error('_processUpdate not implemented for BigCollectionProxy');
     }
     _synchronizeModel() {
-        throw new Error("_synchronizeModel not implemented for BigCollectionProxy");
+        throw new Error('_synchronizeModel not implemented for BigCollectionProxy');
     }
     // TODO: surface get()
     async get(id) {
-        throw new Error("unimplemented");
+        throw new Error('unimplemented');
     }
     async store(value, keys, particleId) {
         return new Promise(resolve => this.port.HandleStore(this, resolve, { value, keys }, particleId));
@@ -6606,12 +6607,12 @@ class Particle {
      */
     // TODO(sjmiles): experimental services impl
     async service(request) {
-        if (!this.capabilities["serviceRequest"]) {
+        if (!this.capabilities['serviceRequest']) {
             console.warn(`${this.spec.name} has no service support.`);
             return null;
         }
         return new Promise(resolve => {
-            this.capabilities["serviceRequest"](this, request, response => resolve(response));
+            this.capabilities['serviceRequest'](this, request, response => resolve(response));
         });
     }
     /**

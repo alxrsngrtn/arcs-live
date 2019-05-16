@@ -37,7 +37,7 @@ export async function waitForGcp(func, waitCond, retries = 10, maxTimeout = 3000
         const [result] = await Promise.race([func(), rejectAfter(timeout)]);
         while (waiting && retries-- > 0) {
             try {
-                // if the timeout finishes first, it will reject and skip this
+                // if the timeout finishes first, it will reject and skip this
                 waiting = !await waitCond(result);
             }
             catch (e) {
@@ -72,5 +72,5 @@ class Timeout extends Error {
 export async function rejectAfter(duration) {
     return new Promise((resolve, reject) => setTimeout(() => reject(new Timeout()), duration));
 }
-export const ON_DISK_DB = "TARGET_DISK";
+export const ON_DISK_DB = 'TARGET_DISK';
 //# sourceMappingURL=utils.js.map

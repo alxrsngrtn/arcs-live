@@ -1,4 +1,4 @@
-import { Disk, DiskManager } from "../disks";
+import { Disk, DiskManager } from '../disks';
 export declare const DEFAULT_GCP_DISK_SIZE = "10";
 /**
  * Allows the provisioning of encrypted disk storage in a

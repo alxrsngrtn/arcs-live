@@ -218,7 +218,7 @@ export class ConvertConstraintsToConnections extends Strategy {
                                 recipe.newObligation(from, to, obligation.direction);
                             }
                             else {
-                                throw new Error("constraints with a particle endpoint at one end but not at the other are not supported");
+                                throw new Error('constraints with a particle endpoint at one end but not at the other are not supported');
                             }
                         }
                         return score;

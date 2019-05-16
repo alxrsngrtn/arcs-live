@@ -7,7 +7,7 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-import { VersionMap, CRDTChange, CRDTModel, CRDTTypeRecord } from "./crdt.js";
+import { VersionMap, CRDTChange, CRDTModel, CRDTTypeRecord } from './crdt.js';
 declare type RawCount = number;
 export declare type CountData = {
     values: Map<string, number>;
