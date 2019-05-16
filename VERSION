@@ -1,21 +1,5 @@
-commit 34048d52ede24c9afc9023a1e83f876788eebc9f
+commit e2038b89af1ac21eab6f011292ef5679fd7eed65
 Author: Paul Lindner <plindner@google.com>
-Date:   Wed May 15 21:07:25 2019 -0700
+Date:   Thu May 16 11:13:44 2019 -0700
 
-    Clean up all non-whitespace eslint rules for typescript (#3032)
-    
-    * Re-enable no-inner-declarations, fix api-channel.ts
-    
-    * Re-enable no-useless-escape, fix useless escapes
-    
-    * Re-enable no-unreachable
-    
-    * Re-enable no-empty
-    
-    * Re-enable no-extra-boolean-cast
-    
-    * Re-enable no-constant-condition, whitelist usage
-    
-    * Re-enable no-invalid-this, disable for all code in tests directories
-    
-    * revert package-lock.json
+    Use hot type Runnable (#3031)

@@ -12,6 +12,7 @@
 /// <reference types="pouchdb-mapreduce" />
 /// <reference types="pouchdb-replication" />
 import { Type } from '../../type.js';
+import { Runnable } from '../../hot.js';
 import { StorageProviderBase } from '../storage-provider-base.js';
 import { PouchDbCollection } from './pouch-db-collection.js';
 import { PouchDbKey } from './pouch-db-key.js';
@@ -28,7 +29,7 @@ export declare abstract class PouchDbStorageProvider extends StorageProviderBase
     /** The PouchDbKey for this Collection */
     protected readonly pouchDbKey: PouchDbKey;
     protected readonly initialized: Promise<void>;
-    protected resolveInitialized: () => void;
+    protected resolveInitialized: Runnable;
     protected constructor(type: Type, storageEngine: PouchDbStorage, name: string, id: string, key: string, refMode: boolean);
     ensureBackingStore(): Promise<PouchDbCollection>;
     /**

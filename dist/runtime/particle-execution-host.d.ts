@@ -8,6 +8,7 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { Arc } from './arc.js';
+import { Runnable } from './hot.js';
 import { Particle } from './recipe/particle.js';
 import { SlotComposer } from './slot-composer.js';
 import { Content } from './slot-consumer.js';
@@ -24,7 +25,7 @@ export declare type StopRenderOptions = {
 };
 export declare class ParticleExecutionHost {
     private readonly _apiPort;
-    close: () => void;
+    close: Runnable;
     private readonly arc;
     private nextIdentifier;
     readonly slotComposer: SlotComposer;

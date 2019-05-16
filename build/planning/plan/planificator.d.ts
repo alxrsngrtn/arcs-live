@@ -8,6 +8,7 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { Arc } from '../../runtime/arc.js';
+import { Runnable } from '../../runtime/hot.js';
 import { KeyBase } from "../../runtime/storage/key-base.js";
 import { VariableStorageProvider } from "../../runtime/storage/storage-provider-base.js";
 import { PlanConsumer } from './plan-consumer.js';
@@ -28,7 +29,7 @@ export declare class Planificator {
     consumer: PlanConsumer;
     producer?: PlanProducer;
     replanQueue?: ReplanQueue;
-    dataChangeCallback: () => void;
+    dataChangeCallback: Runnable;
     search: string | null;
     searchStore: VariableStorageProvider;
     constructor(arc: Arc, userid: string, result: PlanningResult, searchStore: VariableStorageProvider, onlyConsumer?: boolean, debug?: boolean);

@@ -151,7 +151,7 @@ export class ParticleExecutionContext {
     }
     // tslint:disable-next-line: no-any
     async _instantiateParticle(id, spec, proxies) {
-        let resolve = null;
+        let resolve;
         const p = new Promise(res => resolve = res);
         this.pendingLoads.push(p);
         const clazz = await this.loader.loadParticleClass(spec);

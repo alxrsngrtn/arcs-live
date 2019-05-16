@@ -10,6 +10,7 @@
 import { ArcDebugListenerDerived } from './debug/abstract-devtools-channel.js';
 import { Id, IdGenerator } from './id.js';
 import { Loader } from './loader.js';
+import { Runnable } from './hot.js';
 import { Manifest, StorageStub } from './manifest.js';
 import { Modality } from './modality.js';
 import { ParticleExecutionHost } from './particle-execution-host.js';
@@ -126,7 +127,7 @@ export declare class Arc {
     _registerStore(store: StorageProviderBase, tags?: string[]): void;
     _tagStore(store: StorageProviderBase, tags: Set<string>): void;
     _onDataChange(): void;
-    onDataChange(callback: () => void, registration: object): void;
+    onDataChange(callback: Runnable, registration: object): void;
     clearDataChange(registration: object): void;
     static _typeToKey(type: Type): string | InterfaceInfo | null;
     findStoresByType(type: Type, options?: {
