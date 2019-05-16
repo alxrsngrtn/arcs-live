@@ -50,7 +50,7 @@ export class Planificator {
             await this.producer.produceSuggestions(options);
         }
     }
-    get consumerOnly() { return !Boolean(this.producer); }
+    get consumerOnly() { return !this.producer; }
     async loadSuggestions() {
         return this.result.load();
     }

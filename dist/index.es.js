@@ -18552,7 +18552,7 @@ class ArcDebugHandler {
                 });
             }
             this.arcDevtoolsChannel = devtoolsChannel.forArc(arc);
-            if (!!listenerClasses) { // undefined -> false
+            if (listenerClasses) { // undefined -> false
                 listenerClasses.forEach(l => ArcDevtoolsChannel.instantiateListener(l, arc, this.arcDevtoolsChannel));
             }
             this.arcDevtoolsChannel.send({
@@ -19163,7 +19163,7 @@ class DomParticleBase extends Particle$1 {
             // TODO: This is a simple string replacement right now,
             // ensuring that 'slotid' is an attribute on an HTML element would be an improvement.
             // TODO(sjmiles): clone original id as `slotname` for human readability
-            template = template.replace(new RegExp(`slotid=\"${slotName}\"`, 'gi'), `slotname="${slotName}" slotid$="{{$${slotName}}}"`);
+            template = template.replace(new RegExp(`slotid="${slotName}"`, 'gi'), `slotname="${slotName}" slotid$="{{$${slotName}}}"`);
         });
         return template;
     }
@@ -20240,7 +20240,8 @@ function AutoConstruct(target) {
                 // If this descriptor records that this argument is the identifier, record it
                 // as the requestedId for mapping below.
                 const requestedId = descriptor.findIndex(d => d.identifier);
-                function impl(...args) {
+                /** @this APIPort */
+                const impl = function (...args) {
                     const messageBody = {};
                     for (let i = 0; i < descriptor.length; i++) {
                         if (i === initializer) {
@@ -20260,8 +20261,9 @@ function AutoConstruct(target) {
                         }
                     }
                     this.send(f, messageBody);
-                }
-                async function before(messageBody) {
+                };
+                /** @this APIPort */
+                const before = async function before(messageBody) {
                     const args = [];
                     const promises = [];
                     for (let i = 0; i < descriptor.length; i++) {
@@ -20291,7 +20293,7 @@ function AutoConstruct(target) {
                         assert(messageBody['identifier']);
                         await this._mapper.establishThingMapping(messageBody['identifier'], result);
                     }
-                }
+                };
                 Object.defineProperty(me.prototype, f, {
                     get() {
                         return impl;
@@ -22271,6 +22273,7 @@ class Arc {
     // Returns a promise that spins sending a single `AwaitIdle` message until it
     // sees no other messages were sent.
     async _waitForIdle() {
+        // eslint-disable-next-line no-constant-condition
         while (true) {
             const messageCount = this.pec.messageCount;
             const innerArcs = this.innerArcs;
@@ -27990,7 +27993,7 @@ class Planificator {
             await this.producer.produceSuggestions(options);
         }
     }
-    get consumerOnly() { return !Boolean(this.producer); }
+    get consumerOnly() { return !this.producer; }
     async loadSuggestions() {
         return this.result.load();
     }

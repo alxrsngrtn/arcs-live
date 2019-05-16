@@ -64,6 +64,7 @@ async function wait(timeout) {
         await rejectAfter(timeout);
     }
     catch (e) {
+        // ignored
     }
 }
 class Timeout extends Error {

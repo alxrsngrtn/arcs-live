@@ -270,7 +270,8 @@ function AutoConstruct(target) {
                 // If this descriptor records that this argument is the identifier, record it
                 // as the requestedId for mapping below.
                 const requestedId = descriptor.findIndex(d => d.identifier);
-                function impl(...args) {
+                /** @this APIPort */
+                const impl = function (...args) {
                     const messageBody = {};
                     for (let i = 0; i < descriptor.length; i++) {
                         if (i === initializer) {
@@ -290,8 +291,9 @@ function AutoConstruct(target) {
                         }
                     }
                     this.send(f, messageBody);
-                }
-                async function before(messageBody) {
+                };
+                /** @this APIPort */
+                const before = async function before(messageBody) {
                     const args = [];
                     const promises = [];
                     for (let i = 0; i < descriptor.length; i++) {
@@ -321,7 +323,7 @@ function AutoConstruct(target) {
                         assert(messageBody['identifier']);
                         await this._mapper.establishThingMapping(messageBody['identifier'], result);
                     }
-                }
+                };
                 Object.defineProperty(me.prototype, f, {
                     get() {
                         return impl;

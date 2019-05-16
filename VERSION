@@ -1,5 +1,21 @@
-commit df576570415670ff1aafcbd988651ff5774f74d1
-Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
-Date:   Thu May 16 08:42:55 2019 +1000
+commit 34048d52ede24c9afc9023a1e83f876788eebc9f
+Author: Paul Lindner <plindner@google.com>
+Date:   Wed May 15 21:07:25 2019 -0700
 
-    Fix sigh watch: webpack bundle-cli.js causes rebuild loop (#3024)
+    Clean up all non-whitespace eslint rules for typescript (#3032)
+    
+    * Re-enable no-inner-declarations, fix api-channel.ts
+    
+    * Re-enable no-useless-escape, fix useless escapes
+    
+    * Re-enable no-unreachable
+    
+    * Re-enable no-empty
+    
+    * Re-enable no-extra-boolean-cast
+    
+    * Re-enable no-constant-condition, whitelist usage
+    
+    * Re-enable no-invalid-this, disable for all code in tests directories
+    
+    * revert package-lock.json
