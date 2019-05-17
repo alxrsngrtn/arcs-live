@@ -1,5 +1,7 @@
-commit 50e78e6a665555693972ccd043ff962cbb8f2b36
+commit e2cd30610831e91f8ea59fe412318cf758288847
 Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
-Date:   Fri May 17 13:11:01 2019 +1000
+Date:   Fri May 17 14:11:01 2019 +1000
 
-    DevShell: option to toggle 'files' panel visibility (#3038)
+    Skeleton implementation of wasm particles in the runtime. (#3039)
+    
+    Very much a work-in-progess, especially in the C++ code.

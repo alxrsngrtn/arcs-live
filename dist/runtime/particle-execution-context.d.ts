@@ -10,7 +10,6 @@
 import { Handle } from './handle.js';
 import { Id, IdGenerator } from './id.js';
 import { Loader } from './loader.js';
-import { ParticleSpec } from './particle-spec.js';
 import { Particle } from './particle.js';
 import { StorageProxy } from './storage-proxy.js';
 import { Type } from './type.js';
@@ -41,7 +40,8 @@ export declare class ParticleExecutionContext {
         constructInnerArc: (particle: any) => Promise<InnerArcHandle>;
         serviceRequest: (particle: any, args: any, callback: any) => void;
     };
-    _instantiateParticle(id: string, spec: ParticleSpec, proxies: ReadonlyMap<string, StorageProxy>): Promise<[any, () => Promise<void>]>;
+    private instantiateParticle;
+    private loadWasmParticle;
     readonly relevance: Map<any, any>;
     readonly busy: boolean;
     readonly idle: Promise<any>;

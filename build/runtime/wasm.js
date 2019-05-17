@@ -8,7 +8,9 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { assert } from '../platform/assert-web.js';
-import protobufjs from 'protobufjs';
+import { protobufjs } from '../platform/protobufjs-web.js';
+import { Particle } from './particle.js';
+import { Variable } from './handle.js';
 function jsonBaseType(type) {
     const kind = (type.kind === 'schema-primitive') ? type.type : type.kind;
     switch (kind) {
@@ -95,6 +97,111 @@ export class EntityProtoConverter {
             }
         }
         return new (this.schema.entityClass())(data);
+    }
+}
+async function setVariable(handle, num) {
+    const entity = new handle.entityClass({ num });
+    await handle.set(entity);
+}
+function errFunc(label) {
+    return err => { throw new Error(label + ': ' + err); };
+}
+export class WasmParticle extends Particle {
+    constructor() {
+        super(...arguments);
+        this.handleMap = new Map();
+        this.revHandleMap = new Map();
+        this.converters = new Map();
+    }
+    async initialize(buffer) {
+        this.memory = new WebAssembly.Memory({ initial: 256, maximum: 256 });
+        this.heap = new Uint8Array(this.memory.buffer);
+        // SO MANY MAGIC NUMBERS
+        const env = {
+            // Memory setup
+            memory: this.memory,
+            __memory_base: 1024,
+            table: new WebAssembly.Table({ initial: 35, maximum: 35, element: 'anyfunc' }),
+            __table_base: 0,
+            DYNAMICTOP_PTR: 4096,
+            // Heap management
+            _emscripten_get_heap_size: () => this.heap.length,
+            _emscripten_resize_heap: size => false,
+            _emscripten_memcpy_big: (dst, src, cnt) => { this.heap.set(this.heap.subarray(src, src + cnt), dst); },
+            // Error handling
+            abort: errFunc('abort'),
+            _abort: errFunc('_abort'),
+            ___assert_fail: errFunc('assert'),
+            ___setErrNo: errFunc('setErrNo'),
+            abortOnCannotGrowMemory: errFunc('abortOnCannotGrowMemory'),
+            // Handle API
+            _handleSet: async (wasmHandle, num) => setVariable(this.revHandleMap.get(wasmHandle), num),
+            // Logging functions
+            _console: i => console.log(`<${this.spec.name}> ${this.readString(i)}`),
+            _consoleN: (i, n) => console.log(`<${this.spec.name}> ${this.readString(i)} ${n}`),
+        };
+        this.wasm = await WebAssembly.instantiate(buffer, { env });
+        this.exports = this.wasm.instance.exports;
+        this.innerParticle = this.exports._newParticle();
+        console.log('---------------------------------------------------');
+    }
+    async setHandles(handles) {
+        for (const [name, handle] of handles) {
+            // Currently only Variables with a 'Number num' field are supported.
+            assert(handle instanceof Variable);
+            assert(handle.entityClass.schema.fields.num.type === 'Number');
+            // Ownership of 'name' is passed to the inner particle.
+            const p = this.storeString(name);
+            const wasmHandle = this.exports._newHandle(this.innerParticle, p);
+            this.handleMap.set(handle, wasmHandle);
+            this.revHandleMap.set(wasmHandle, handle);
+        }
+        this.exports._initParticle(this.innerParticle);
+    }
+    async onHandleSync(handle, model) {
+        if (!model)
+            return;
+        let converter = this.converters.get(model.schema);
+        if (!converter) {
+            converter = new EntityProtoConverter(model.schema);
+            this.converters.set(model.schema, converter);
+        }
+        const buf = converter.encode(model);
+        // Encode and send the protobuf... but for now just stuff 'num' in as the first byte to be extracted wasm-side.
+        buf[0] = model.num & 0xff;
+        const p = this.storeBuffer(buf);
+        this.exports._syncHandle(this.innerParticle, this.handleMap.get(handle), p, buf.length);
+        this.exports._free(p);
+    }
+    // tslint:disable-next-line: no-any
+    async onHandleUpdate(handle, update) { }
+    async onHandleDesync(handle) { }
+    renderSlot(slotName, contentTypes) { }
+    renderHostedSlot(slotName, hostedSlotId, content) { }
+    fireEvent(slotName, event) { }
+    // Allocates memory in the wasm container.
+    storeBuffer(buf) {
+        const p = this.exports._malloc(buf.length);
+        for (let i = 0; i < buf.length; i++) {
+            this.heap[p + i] = buf[i];
+        }
+        return p;
+    }
+    // Allocates memory in the wasm container.
+    storeString(str) {
+        const p = this.exports._malloc(str.length + 1);
+        for (let i = 0; i < str.length; i++) {
+            this.heap[p + i] = str.charCodeAt(i);
+        }
+        this.heap[p + str.length] = 0;
+        return p;
+    }
+    readString(idx) {
+        let str = '';
+        while (idx < this.heap.length && this.heap[idx] !== 0) {
+            str += String.fromCharCode(this.heap[idx++]);
+        }
+        return str;
     }
 }
 //# sourceMappingURL=wasm.js.map

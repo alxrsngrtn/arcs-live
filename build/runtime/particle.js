@@ -56,7 +56,7 @@ export class Particle {
      * @param model For Variable-backed Handles, the Entity data or null if the Variable is not set.
      *        For Collection-backed Handles, the Array of Entities, which may be empty.
      */
-    onHandleSync(handle, model) {
+    async onHandleSync(handle, model) {
     }
     /**
      * Called for handles that are configued with notifyUpdate, when change events are received from

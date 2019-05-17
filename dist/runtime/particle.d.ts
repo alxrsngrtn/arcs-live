@@ -53,7 +53,7 @@ export declare class Particle {
      * @param model For Variable-backed Handles, the Entity data or null if the Variable is not set.
      *        For Collection-backed Handles, the Array of Entities, which may be empty.
      */
-    onHandleSync(handle: Handle, model: any): void;
+    onHandleSync(handle: Handle, model: any): Promise<void>;
     /**
      * Called for handles that are configued with notifyUpdate, when change events are received from
      * the backing store. For handles also configured with keepSynced these events will be correctly
