@@ -1,7 +1,9 @@
-commit e2cd30610831e91f8ea59fe412318cf758288847
+commit 4c2594d79a86291a258c56689fcbaf975c3c8f90
 Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
-Date:   Fri May 17 14:11:01 2019 +1000
+Date:   Fri May 17 14:46:46 2019 +1000
 
-    Skeleton implementation of wasm particles in the runtime. (#3039)
+    DevShell: add query param for seeding the manifest file (#3041)
     
-    Very much a work-in-progess, especially in the C++ code.
+    * DevShell: add query param for seeding the manifest file
+    
+    * Missing semi-colon
