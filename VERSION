@@ -1,5 +1,5 @@
-commit 92eeace932546f18959948db7b8cb7adb5cb2797
-Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Fri May 17 12:10:57 2019 +1000
+commit 50e78e6a665555693972ccd043ff962cbb8f2b36
+Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
+Date:   Fri May 17 13:11:01 2019 +1000
 
-    Handle errors (more) correctly in bundle-cli (#3034)
+    DevShell: option to toggle 'files' panel visibility (#3038)
