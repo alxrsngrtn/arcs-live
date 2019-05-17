@@ -1,9 +1,5 @@
-commit 7c56c94571c0a294ff6003bc27562f822895a9a0
-Author: Joshua Pratt <jp10010101010000@gmail.com>
-Date:   Fri May 17 10:08:05 2019 +1000
+commit 92eeace932546f18959948db7b8cb7adb5cb2797
+Author: Piotr Swigon <piotr.swigon@gmail.com>
+Date:   Fri May 17 12:10:57 2019 +1000
 
-    Parse type and resource (#3033)
-    
-    * Improve fix for ensuring appropriate Slot type vs Typename parse
-    
-    * Reduce non-standard parsing of comments in resource section
+    Handle errors (more) correctly in bundle-cli (#3034)

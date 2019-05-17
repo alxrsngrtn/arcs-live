@@ -35,5 +35,12 @@ Examples
   $ bundle -v -o mybundle.zip recipes/feature.recipes recipes/extra_stuff.manifest`);
     process.exit();
 }
-void bundle(argv._, Array.isArray(argv.o) ? argv.o[0] : argv.o, argv.verbose);
+if (Array.isArray(argv.output)) {
+    console.error('Only one output path can be specified');
+    process.exit(1);
+}
+void bundle(argv._, argv.output, argv.verbose).catch(e => {
+    console.error(e.message);
+    process.exit(1);
+});
 //# sourceMappingURL=bundle-cli.js.map
