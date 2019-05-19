@@ -3,6 +3,7 @@ export declare type TraceInfo = {
     name?: string;
     overview?: boolean;
     sequence?: string;
+    ts?: number;
     args?: {
         [index: string]: any;
     };
@@ -22,7 +23,7 @@ export declare type TraceEvent = {
     };
     id?: number;
     flowId?: number;
-    seq: string;
+    seq?: string;
 };
 export interface Trace {
     wait<T>(v: Promise<T>, info?: TraceInfo): T;

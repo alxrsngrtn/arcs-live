@@ -250,8 +250,8 @@
         "signature": "6c5a00567044ce365803eb2efb2dff5421fa118a456089fb8e7a90821c00cd66"
       },
       "/home/travis/build/PolymerLabs/arcs/src/tracelib/trace.ts": {
-        "version": "f2506f6d789d0a21be5034687a574564a63e8d29e941a84f06c599b7d34de472",
-        "signature": "b39f52bbfa29321b5626910f48885fe752620232e763ec8a7588fd9c0e0b89f3"
+        "version": "1392cf833d2b32f4b762fe0fc8bec07d4e20eceaad591ceefc4d72914991dea7",
+        "signature": "2313b4f3c9856bcb8a87c56591c5e46ccaa354cb92a6fa3ec1da13ee1ffd7a45"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/debug/tracing-adapter.ts": {
         "version": "d457e7173ddc900cdef5cf79cadbe2bfab4ee551a336a7add93dadfc8b936a77",

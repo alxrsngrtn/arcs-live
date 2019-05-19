@@ -1,9 +1,5 @@
-commit 4c2594d79a86291a258c56689fcbaf975c3c8f90
-Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
-Date:   Fri May 17 14:46:46 2019 +1000
+commit 8845243632d8ff97a96a08e4770d018e133bfc8f
+Author: Paul Lindner <plindner@google.com>
+Date:   Sat May 18 23:50:04 2019 -0700
 
-    DevShell: add query param for seeding the manifest file (#3041)
-    
-    * DevShell: add query param for seeding the manifest file
-    
-    * Missing semi-colon
+    typify more of src/tracelib, 5.7pts #paydown (#3044)

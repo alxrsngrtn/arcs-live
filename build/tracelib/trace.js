@@ -15,13 +15,13 @@ let pid;
 let now;
 if (typeof document === 'object') {
     pid = 42;
-    now = function () {
+    now = () => {
         return performance.now() * 1000;
     };
 }
 else {
     pid = process.pid;
-    now = function () {
+    now = () => {
         const t = process.hrtime();
         return t[0] * 1000000 + t[1] / 1000;
     };
@@ -66,7 +66,7 @@ const module_ = { exports: {} };
 // tslint:disable-next-line: variable-name
 export const Tracing = module_.exports;
 module_.exports.enabled = false;
-module_.exports.enable = function () {
+module_.exports.enable = () => {
     if (!module_.exports.enabled) {
         module_.exports.enabled = true;
         init();
@@ -92,20 +92,20 @@ function init() {
             return v;
         },
     };
-    module_.exports.wrap = function (info, fn) {
+    module_.exports.wrap = (info, fn) => {
         return fn;
     };
-    module_.exports.start = function (info) {
+    module_.exports.start = (info) => {
         return result;
     };
-    module_.exports.flow = function (info) {
+    module_.exports.flow = (info) => {
         return result;
     };
     if (!module_.exports.enabled) {
         return;
     }
-    module_.exports.wrap = function (info, fn) {
-        return function (...args) {
+    module_.exports.wrap = (info, fn) => {
+        return (...args) => {
             const t = module_.exports.start(info);
             try {
                 return fn(...args);
@@ -146,7 +146,7 @@ function init() {
             beginTs: begin
         };
     }
-    module_.exports.start = function (info) {
+    module_.exports.start = (info) => {
         let trace = startSyncTrace(info);
         let flow;
         const baseInfo = { cat: info.cat, name: info.name + ' (async)', overview: info.overview, sequence: info.sequence };
@@ -197,7 +197,7 @@ function init() {
             }
         };
     };
-    module_.exports.flow = function (info) {
+    module_.exports.flow = (info) => {
         info = parseInfo(info);
         const id = flowId++;
         let started = false;
@@ -255,22 +255,22 @@ function init() {
             id: () => id
         };
     };
-    module_.exports.save = function () {
+    module_.exports.save = () => {
         return { traceEvents: events };
     };
-    module_.exports.download = function () {
+    module_.exports.download = () => {
         const a = document.createElement('a');
         a.download = 'trace.json';
         a.href = 'data:text/plain;base64,' + btoa(JSON.stringify(module_.exports.save()));
         a.click();
     };
     module_.exports.now = now;
-    module_.exports.stream = function (callback, predicate) {
+    module_.exports.stream = (callback, predicate) => {
         // Once we start streaming we no longer keep events in memory.
         events.length = 0;
         streamingCallbacks.push({ callback, predicate });
     };
-    module_.exports.__clearForTests = function () {
+    module_.exports.__clearForTests = () => {
         events.length = 0;
         streamingCallbacks.length = 0;
     };
