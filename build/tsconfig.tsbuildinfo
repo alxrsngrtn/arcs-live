@@ -1514,7 +1514,7 @@
         "signature": "dec479adce6c2c753ce57e9d570378e097509f28d1e45155b5eed46e6d039830"
       },
       "/home/travis/build/PolymerLabs/arcs/src/tools/bundle.ts": {
-        "version": "f8a6184ea64f37c164e5a7d74247fb5e5202ec3c3335f5d86bcee905a376edcf",
+        "version": "465975a4b18108021c62381c1fbf9487365aa87a986e71f4745e27f4554ba526",
         "signature": "11df73d59f56ef4a81c23e02dc594afd1fda4870d3b4857103b0695734ce2dd5"
       },
       "/home/travis/build/PolymerLabs/arcs/src/tools/bundle-cli.ts": {

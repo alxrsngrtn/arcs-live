@@ -25,7 +25,10 @@ export async function bundle(entryPoints, bundleName, verbose) {
         listing.forEach(f => console.log(f.filePath));
     }
     return new Promise(resolve => {
-        fs.mkdirSync(path.dirname(bundleName), { recursive: true });
+        const dirname = path.dirname(bundleName);
+        if (!fs.existsSync(dirname)) {
+            fs.mkdirSync(dirname, { recursive: true });
+        }
         const archive = new JSZip();
         for (const file of listing) {
             archive.file(file.bundlePath, fs.readFileSync(file.filePath));

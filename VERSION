@@ -1,5 +1,5 @@
-commit 8845243632d8ff97a96a08e4770d018e133bfc8f
-Author: Paul Lindner <plindner@google.com>
-Date:   Sat May 18 23:50:04 2019 -0700
+commit 9e14e531447eabce157bfed0784199b206577ac3
+Author: Piotr Swigon <piotr.swigon@gmail.com>
+Date:   Mon May 20 10:17:00 2019 +1000
 
-    typify more of src/tracelib, 5.7pts #paydown (#3044)
+    Check that a directory does not exist before creating (#3011)
