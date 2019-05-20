@@ -4084,8 +4084,7 @@ function peg$parse(input, options) {
     };
     const peg$c68 = peg$otherExpectation("a particle item");
     const peg$c69 = function (arg, dependentConnections) {
-        dependentConnections = optional(dependentConnections, extractIndented, []);
-        arg.dependentConnections = dependentConnections;
+        arg.dependentConnections = optional(dependentConnections, extractIndented, []);
         return arg;
     };
     const peg$c70 = "?";
@@ -4575,6 +4574,7 @@ function peg$parse(input, options) {
             location: location(),
             name,
             verbs: [],
+            tags: []
         };
     };
     const peg$c214 = function (verb) {
@@ -4582,6 +4582,7 @@ function peg$parse(input, options) {
             kind: 'particle-ref',
             location: location(),
             verbs: [verb],
+            tags: []
         };
     };
     const peg$c215 = function (id, tags) {
@@ -7269,6 +7270,9 @@ function peg$parse(input, options) {
             if (s2 !== peg$FAILED) {
                 s3 = peg$currPos;
                 s4 = peg$parsewhiteSpace();
+                if (s4 === peg$FAILED) {
+                    s4 = null;
+                }
                 if (s4 !== peg$FAILED) {
                     if (input.charCodeAt(peg$currPos) === 123) {
                         s5 = peg$c106;
@@ -13817,6 +13821,7 @@ class Particle {
         this._localName = undefined;
         this.spec = undefined;
         this._verbs = [];
+        this._tags = [];
         this._connections = {};
         // TODO: replace with constraint connections on the recipe
         this._unnamedConnections = [];
@@ -13830,6 +13835,7 @@ class Particle {
         const particle = recipe.newParticle(this._name);
         particle._id = this._id;
         particle._verbs = [...this._verbs];
+        particle._tags = [...this._tags];
         particle.spec = this.spec ? this.spec.cloneWithResolutions(variableMap) : undefined;
         Object.keys(this._connections).forEach(key => {
             particle._connections[key] = this._connections[key]._clone(particle, cloneMap);
@@ -13871,6 +13877,7 @@ class Particle {
     _startNormalize() {
         this._localName = null;
         this._verbs.sort();
+        this._tags.sort();
         const normalizedConnections = {};
         for (const key of (Object.keys(this._connections).sort())) {
             normalizedConnections[key] = this._connections[key];
@@ -13896,6 +13903,8 @@ class Particle {
             return cmp;
         // TODO: spec?
         if ((cmp = compareArrays(this._verbs, other._verbs, compareStrings)) !== 0)
+            return cmp;
+        if ((cmp = compareArrays(this._tags, other._tags, compareStrings)) !== 0)
             return cmp;
         // TODO: slots
         return 0;
@@ -13997,6 +14006,7 @@ class Particle {
     get consumedSlotConnections() { return this._consumedSlotConnections; }
     get primaryVerb() { return (this._verbs.length > 0) ? this._verbs[0] : undefined; }
     set verbs(verbs) { this._verbs = verbs; }
+    set tags(tags) { this._tags = tags; }
     addUnnamedConnection() {
         const connection = new HandleConnection(undefined, this);
         this._unnamedConnections.push(connection);
@@ -15073,7 +15083,7 @@ class RecipeUtil {
                     if (shapeHC.name && shapeHC.name !== recipeConnSpec.name) {
                         continue;
                     }
-                    const acceptedDirections = { 'in': ['in', 'inout'], 'out': ['out', 'inout'], '=': ['in', 'out', 'inout'], 'inout': ['inout'], 'host': ['host'] };
+                    const acceptedDirections = { 'in': ['in', 'inout'], 'out': ['out', 'inout'], '=': ['in', 'out', 'inout'], 'inout': ['inout'], 'host': ['host'], '`consume': ['consume'], '`provide': ['provide'] };
                     if (recipeConnSpec.direction) {
                         assert(Object.keys(acceptedDirections).includes(shapeHC.direction), `${shapeHC.direction} not in ${Object.keys(acceptedDirections)}`);
                         if (!acceptedDirections[shapeHC.direction].includes(recipeConnSpec.direction)) {

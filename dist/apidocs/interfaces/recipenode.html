@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>ParticleConnnectionTargetComponents | arcs</title>
+	<title>RecipeNode | arcs</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -56,10 +56,10 @@
 					<a href="../globals.html">Globals</a>
 				</li>
 				<li>
-					<a href="particleconnnectiontargetcomponents.html">ParticleConnnectionTargetComponents</a>
+					<a href="recipenode.html">RecipeNode</a>
 				</li>
 			</ul>
-			<h1>Interface ParticleConnnectionTargetComponents</h1>
+			<h1>Interface RecipeNode</h1>
 		</div>
 	</div>
 </header>
@@ -73,7 +73,7 @@
 						<a href="../classes/basenode.html" class="tsd-signature-type">BaseNode</a>
 						<ul class="tsd-hierarchy">
 							<li>
-								<span class="target">ParticleConnnectionTargetComponents</span>
+								<span class="target">RecipeNode</span>
 							</li>
 						</ul>
 					</li>
@@ -86,11 +86,12 @@
 						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-overwrite"><a href="particleconnnectiontargetcomponents.html#kind" class="tsd-kind-icon">kind</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-inherited"><a href="particleconnnectiontargetcomponents.html#location" class="tsd-kind-icon">location</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="particleconnnectiontargetcomponents.html#name" class="tsd-kind-icon">name</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="particleconnnectiontargetcomponents.html#particle" class="tsd-kind-icon">particle</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="particleconnnectiontargetcomponents.html#tags" class="tsd-kind-icon">tags</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="recipenode.html#annotation" class="tsd-kind-icon">annotation</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="recipenode.html#items" class="tsd-kind-icon">items</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-overwrite"><a href="recipenode.html#kind" class="tsd-kind-icon">kind</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-inherited"><a href="recipenode.html#location" class="tsd-kind-icon">location</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="recipenode.html#name" class="tsd-kind-icon">name</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="recipenode.html#verbs" class="tsd-kind-icon">verbs</a></li>
 							</ul>
 						</section>
 					</div>
@@ -98,14 +99,34 @@
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Properties</h2>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="annotation" class="tsd-anchor"></a>
+					<h3>annotation</h3>
+					<div class="tsd-signature tsd-kind-icon">annotation<span class="tsd-signature-symbol">:</span> <a href="../globals.html#annotation" class="tsd-signature-type">Annotation</a></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/8148e46/src/runtime/manifest-ast-nodes.ts#L240">runtime/manifest-ast-nodes.ts:240</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="items" class="tsd-anchor"></a>
+					<h3>items</h3>
+					<div class="tsd-signature tsd-kind-icon">items<span class="tsd-signature-symbol">:</span> <a href="../globals.html#recipeitem" class="tsd-signature-type">RecipeItem</a><span class="tsd-signature-symbol">[]</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/8148e46/src/runtime/manifest-ast-nodes.ts#L239">runtime/manifest-ast-nodes.ts:239</a></li>
+						</ul>
+					</aside>
+				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-overwrite">
 					<a name="kind" class="tsd-anchor"></a>
 					<h3>kind</h3>
-					<div class="tsd-signature tsd-kind-icon">kind<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">"hanlde-connection-components"</span></div>
+					<div class="tsd-signature tsd-kind-icon">kind<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">"recipe"</span></div>
 					<aside class="tsd-sources">
 						<p>Overrides <a href="../classes/basenode.html">BaseNode</a>.<a href="../classes/basenode.html#kind">kind</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9e14e53/src/runtime/manifest-ast-nodes.ts#L264">runtime/manifest-ast-nodes.ts:264</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/8148e46/src/runtime/manifest-ast-nodes.ts#L236">runtime/manifest-ast-nodes.ts:236</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -116,37 +137,27 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="../classes/basenode.html">BaseNode</a>.<a href="../classes/basenode.html#location">location</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9e14e53/src/runtime/manifest-ast-nodes.ts#L41">runtime/manifest-ast-nodes.ts:41</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/8148e46/src/runtime/manifest-ast-nodes.ts#L41">runtime/manifest-ast-nodes.ts:41</a></li>
 						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
 					<a name="name" class="tsd-anchor"></a>
 					<h3>name</h3>
-					<div class="tsd-signature tsd-kind-icon">name<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span></div>
+					<div class="tsd-signature tsd-kind-icon">name<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9e14e53/src/runtime/manifest-ast-nodes.ts#L265">runtime/manifest-ast-nodes.ts:265</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/8148e46/src/runtime/manifest-ast-nodes.ts#L237">runtime/manifest-ast-nodes.ts:237</a></li>
 						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="particle" class="tsd-anchor"></a>
-					<h3>particle</h3>
-					<div class="tsd-signature tsd-kind-icon">particle<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span></div>
+					<a name="verbs" class="tsd-anchor"></a>
+					<h3>verbs</h3>
+					<div class="tsd-signature tsd-kind-icon">verbs<span class="tsd-signature-symbol">:</span> <a href="../globals.html#verblist" class="tsd-signature-type">VerbList</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9e14e53/src/runtime/manifest-ast-nodes.ts#L266">runtime/manifest-ast-nodes.ts:266</a></li>
-						</ul>
-					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="tags" class="tsd-anchor"></a>
-					<h3>tags</h3>
-					<div class="tsd-signature tsd-kind-icon">tags<span class="tsd-signature-symbol">:</span> <a href="../globals.html#taglist" class="tsd-signature-type">TagList</a></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9e14e53/src/runtime/manifest-ast-nodes.ts#L267">runtime/manifest-ast-nodes.ts:267</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/8148e46/src/runtime/manifest-ast-nodes.ts#L238">runtime/manifest-ast-nodes.ts:238</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -165,22 +176,25 @@
 				</ul>
 				<ul class="current">
 					<li class="current tsd-kind-interface">
-						<a href="particleconnnectiontargetcomponents.html" class="tsd-kind-icon">Particle<wbr>Connnection<wbr>Target<wbr>Components</a>
+						<a href="recipenode.html" class="tsd-kind-icon">Recipe<wbr>Node</a>
 						<ul>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="recipenode.html#annotation" class="tsd-kind-icon">annotation</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="recipenode.html#items" class="tsd-kind-icon">items</a>
+							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-overwrite">
-								<a href="particleconnnectiontargetcomponents.html#kind" class="tsd-kind-icon">kind</a>
+								<a href="recipenode.html#kind" class="tsd-kind-icon">kind</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
-								<a href="particleconnnectiontargetcomponents.html#location" class="tsd-kind-icon">location</a>
+								<a href="recipenode.html#location" class="tsd-kind-icon">location</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="particleconnnectiontargetcomponents.html#name" class="tsd-kind-icon">name</a>
+								<a href="recipenode.html#name" class="tsd-kind-icon">name</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="particleconnnectiontargetcomponents.html#particle" class="tsd-kind-icon">particle</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="particleconnnectiontargetcomponents.html#tags" class="tsd-kind-icon">tags</a>
+								<a href="recipenode.html#verbs" class="tsd-kind-icon">verbs</a>
 							</li>
 						</ul>
 					</li>

@@ -297,8 +297,7 @@ function peg$parse(input, options) {
     };
     const peg$c68 = peg$otherExpectation("a particle item");
     const peg$c69 = function (arg, dependentConnections) {
-        dependentConnections = optional(dependentConnections, extractIndented, []);
-        arg.dependentConnections = dependentConnections;
+        arg.dependentConnections = optional(dependentConnections, extractIndented, []);
         return arg;
     };
     const peg$c70 = "?";
@@ -788,6 +787,7 @@ function peg$parse(input, options) {
             location: location(),
             name,
             verbs: [],
+            tags: []
         };
     };
     const peg$c214 = function (verb) {
@@ -795,6 +795,7 @@ function peg$parse(input, options) {
             kind: 'particle-ref',
             location: location(),
             verbs: [verb],
+            tags: []
         };
     };
     const peg$c215 = function (id, tags) {
@@ -3489,6 +3490,9 @@ function peg$parse(input, options) {
             if (s2 !== peg$FAILED) {
                 s3 = peg$currPos;
                 s4 = peg$parsewhiteSpace();
+                if (s4 === peg$FAILED) {
+                    s4 = null;
+                }
                 if (s4 !== peg$FAILED) {
                     if (input.charCodeAt(peg$currPos) === 123) {
                         s5 = peg$c106;

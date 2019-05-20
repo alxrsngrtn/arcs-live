@@ -14,6 +14,7 @@ export declare class Particle {
     private _localName?;
     spec?: ParticleSpec;
     private _verbs;
+    private _tags;
     private _connections;
     _unnamedConnections: HandleConnection[];
     _consumedSlotConnections: {
@@ -46,6 +47,7 @@ export declare class Particle {
     };
     readonly primaryVerb: string;
     verbs: any;
+    tags: any;
     addUnnamedConnection(): HandleConnection;
     addConnectionName(name: string): HandleConnection;
     allConnections(): HandleConnection[];

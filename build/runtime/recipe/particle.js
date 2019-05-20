@@ -16,6 +16,7 @@ export class Particle {
         this._localName = undefined;
         this.spec = undefined;
         this._verbs = [];
+        this._tags = [];
         this._connections = {};
         // TODO: replace with constraint connections on the recipe
         this._unnamedConnections = [];
@@ -29,6 +30,7 @@ export class Particle {
         const particle = recipe.newParticle(this._name);
         particle._id = this._id;
         particle._verbs = [...this._verbs];
+        particle._tags = [...this._tags];
         particle.spec = this.spec ? this.spec.cloneWithResolutions(variableMap) : undefined;
         Object.keys(this._connections).forEach(key => {
             particle._connections[key] = this._connections[key]._clone(particle, cloneMap);
@@ -70,6 +72,7 @@ export class Particle {
     _startNormalize() {
         this._localName = null;
         this._verbs.sort();
+        this._tags.sort();
         const normalizedConnections = {};
         for (const key of (Object.keys(this._connections).sort())) {
             normalizedConnections[key] = this._connections[key];
@@ -95,6 +98,8 @@ export class Particle {
             return cmp;
         // TODO: spec?
         if ((cmp = compareArrays(this._verbs, other._verbs, compareStrings)) !== 0)
+            return cmp;
+        if ((cmp = compareArrays(this._tags, other._tags, compareStrings)) !== 0)
             return cmp;
         // TODO: slots
         return 0;
@@ -196,6 +201,7 @@ export class Particle {
     get consumedSlotConnections() { return this._consumedSlotConnections; }
     get primaryVerb() { return (this._verbs.length > 0) ? this._verbs[0] : undefined; }
     set verbs(verbs) { this._verbs = verbs; }
+    set tags(tags) { this._tags = tags; }
     addUnnamedConnection() {
         const connection = new HandleConnection(undefined, this);
         this._unnamedConnections.push(connection);
