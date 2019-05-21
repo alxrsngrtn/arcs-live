@@ -23,6 +23,7 @@ import { TestHelper } from '../testing/test-helper.js';
 import { assertThrowsAsync } from '../testing/test-util.js';
 import * as util from '../testing/test-util.js';
 import { ArcType } from '../type.js';
+import { Runtime } from '../runtime.js';
 async function setup(storageKeyPrefix) {
     const loader = new Loader();
     const manifest = await Manifest.parse(`
@@ -34,9 +35,8 @@ async function setup(storageKeyPrefix) {
         foo <- handle0
         bar -> handle1
   `, { loader, fileName: process.cwd() + '/input.manifest' });
-    const id = ArcId.newForTest('test');
-    const storageKey = storageKeyPrefix + id.toString();
-    const arc = new Arc({ slotComposer: new FakeSlotComposer(), loader, id, storageKey, context: manifest });
+    const runtime = new Runtime(loader, FakeSlotComposer, manifest);
+    const arc = runtime.newArc('test', storageKeyPrefix);
     return {
         arc,
         recipe: manifest.recipes[0],
@@ -53,13 +53,8 @@ function getVariableHandle(store) {
 ['volatile://', 'pouchdb://memory/user-test/'].forEach((storageKeyPrefix) => {
     describe('Arc ' + storageKeyPrefix, () => {
         it('idle can safely be called multiple times ', async () => {
-            const manifest = await Manifest.parse(`
-        schema Bar
-          Text value
-    `);
-            const id = ArcId.newForTest('test');
-            const storageKey = storageKeyPrefix + id.toString();
-            const arc = new Arc({ slotComposer: new FakeSlotComposer(), loader: new Loader(), id, storageKey, context: manifest });
+            const runtime = Runtime.newForNodeTesting();
+            const arc = runtime.newArc('test', storageKeyPrefix);
             const f = async () => { await arc.idle; };
             await Promise.all([f(), f()]);
         });

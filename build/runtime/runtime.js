@@ -9,12 +9,46 @@
  */
 import { Description } from './description.js';
 import { Manifest } from './manifest.js';
+import { Arc } from './arc.js';
+import { RuntimeCacheService } from './runtime-cache.js';
+import { IdGenerator } from './id.js';
+import { Loader } from './loader.js';
+import { FakeSlotComposer } from './testing/fake-slot-composer.js';
 // To start with, this class will simply hide the runtime classes that are
 // currently imported by ArcsLib.js. Once that refactoring is done, we can
 // think about what the api should actually look like.
 export class Runtime {
-    constructor() {
+    static getRuntime() {
+        if (runtime == null) {
+            runtime = new Runtime();
+        }
+        return runtime;
+    }
+    static clearRuntimeForTesting() {
+        if (runtime !== null) {
+            runtime.destroy();
+            runtime = null;
+        }
+    }
+    static newForNodeTesting(context) {
+        return new Runtime(new Loader(), FakeSlotComposer, context);
+    }
+    constructor(loader, composerClass, context) {
+        this.cacheService = new RuntimeCacheService();
+        this.loader = loader;
+        this.composerClass = composerClass;
+        this.context = context || new Manifest({ id: 'manifest:default' });
         // user information. One persona per runtime for now.
+    }
+    getCacheService() {
+        return this.cacheService;
+    }
+    destroy() {
+    }
+    newArc(name, storageKeyPrefix, options) {
+        const id = IdGenerator.newSession().newArcId(name);
+        const storageKey = storageKeyPrefix + id.toString();
+        return new Arc({ id, storageKey, loader: this.loader, slotComposer: new this.composerClass(), context: this.context, ...options });
     }
     // Stuff the shell needs
     /**
@@ -41,4 +75,5 @@ export class Runtime {
         return Manifest.load(fileName, loader, options);
     }
 }
+let runtime = null;
 //# sourceMappingURL=runtime.js.map

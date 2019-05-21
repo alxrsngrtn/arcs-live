@@ -10,9 +10,11 @@ import { BigCollectionType, CollectionType, ReferenceType } from '../type.js';
 import { CrdtCollectionModel } from './crdt-collection-model.js';
 import { KeyBase } from './key-base.js';
 import { ChangeEvent, StorageBase, StorageProviderBase } from './storage-provider-base.js';
+import { Runtime } from '../runtime.js';
 export function resetVolatileStorageForTesting() {
-    for (const key of Object.keys(__storageCache)) {
-        __storageCache[key]._memoryMap = {};
+    const cache = storageCache();
+    for (const value of cache.values()) {
+        value._memoryMap = {};
     }
 }
 class VolatileKey extends KeyBase {
@@ -51,8 +53,7 @@ class VolatileKey extends KeyBase {
         return `${this.protocol}`;
     }
 }
-// tslint:disable-next-line: variable-name
-const __storageCache = {};
+const storageCache = () => Runtime.getRuntime().getCacheService().getOrCreateCache('volatileStorageCache');
 export class VolatileStorage extends StorageBase {
     constructor(arcId) {
         super(arcId);
@@ -62,7 +63,7 @@ export class VolatileStorage extends StorageBase {
         this.typePromiseMap = {};
         // TODO(shans): re-add this assert once we have a runtime object to put it on.
         // assert(__storageCache[this._arc.id] == undefined, `${this._arc.id} already exists in local storage cache`);
-        __storageCache[this.arcId.toString()] = this;
+        storageCache().set(this.arcId.toString(), this);
     }
     async construct(id, type, keyFragment) {
         const provider = await this._construct(id, type, keyFragment);
@@ -94,10 +95,10 @@ export class VolatileStorage extends StorageBase {
     async connect(id, type, key) {
         const imKey = new VolatileKey(key);
         if (imKey.arcId !== this.arcId.toString()) {
-            if (__storageCache[imKey.arcId] == undefined) {
+            if (storageCache().get(imKey.arcId) == undefined) {
                 return null;
             }
-            return __storageCache[imKey.arcId].connect(id, type, key);
+            return storageCache().get(imKey.arcId).connect(id, type, key);
         }
         if (this._memoryMap[key] === undefined) {
             return null;

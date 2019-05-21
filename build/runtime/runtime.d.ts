@@ -9,8 +9,32 @@
  */
 import { Manifest } from './manifest.js';
 import { Arc } from './arc.js';
+import { RuntimeCacheService } from './runtime-cache.js';
+import { PecFactory } from './particle-execution-context.js';
+import { SlotComposer } from './slot-composer.js';
+import { Loader } from './loader.js';
+import { StorageProviderFactory } from './storage/storage-provider-factory.js';
+import { ArcDebugListenerDerived } from './debug/abstract-devtools-channel.js';
+export declare type RuntimeArcOptions = Readonly<{
+    pecFactory?: PecFactory;
+    storageProviderFactory?: StorageProviderFactory;
+    speculative?: boolean;
+    innerArc?: boolean;
+    stub?: boolean;
+    listenerClasses?: ArcDebugListenerDerived[];
+}>;
 export declare class Runtime {
-    constructor();
+    private cacheService;
+    private loader;
+    private composerClass;
+    private context;
+    static getRuntime(): Runtime;
+    static clearRuntimeForTesting(): void;
+    static newForNodeTesting(context?: Manifest): Runtime;
+    constructor(loader?: Loader, composerClass?: new () => SlotComposer, context?: Manifest);
+    getCacheService(): RuntimeCacheService;
+    destroy(): void;
+    newArc(name: string, storageKeyPrefix: string, options?: RuntimeArcOptions): Arc;
     /**
      * Given an arc, returns it's description as a string.
      */

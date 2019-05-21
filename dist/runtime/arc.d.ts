@@ -25,7 +25,7 @@ import { StorageProviderFactory } from './storage/storage-provider-factory.js';
 import { Type } from './type.js';
 import { PecFactory } from './particle-execution-context.js';
 import { InterfaceInfo } from './interface-info.js';
-declare type ArcOptions = Readonly<{
+export declare type ArcOptions = Readonly<{
     id: Id;
     context: Manifest;
     pecFactory?: PecFactory;
