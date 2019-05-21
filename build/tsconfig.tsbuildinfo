@@ -1358,7 +1358,7 @@
         "signature": "8bc1d39a3b8ec61064f9969316a088e314895e7ffd094468dcc0b238f33cb4a6"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/test/particle-api-test.ts": {
-        "version": "d8c65388ac1f251e6fea1afd0b5b40e39aa0aa7df90ccc6d3301646f0dd119a0",
+        "version": "2cda28811924c127ec49e9531eebcdc479e86df9ecb373a17eed330dc08c2681",
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/test/particle-execution-context-test.ts": {
@@ -4368,6 +4368,11 @@
         "/home/travis/build/PolymerLabs/arcs/src/runtime/testing/test-helper.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/testing/test-util.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/id.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/manifest.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/schema.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/type.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/store.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
       ],
