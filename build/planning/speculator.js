@@ -8,7 +8,7 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { assert } from '../platform/assert-web.js';
-import { DevtoolsConnection } from '../runtime/debug/devtools-connection.js';
+import { DevtoolsConnection } from '../devtools-connector/devtools-connection.js';
 import { Description } from '../runtime/description.js';
 import { Relevance } from '../runtime/relevance.js';
 import { Suggestion } from './plan/suggestion.js';

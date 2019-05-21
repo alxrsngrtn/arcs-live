@@ -8,7 +8,7 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { Arc } from './arc.js';
-import { OuterPortAttachment } from './debug/outer-port-attachment.js';
+import { ArcInspector } from './arc-inspector.js';
 import { Handle } from './handle.js';
 import { ParticleSpec } from './particle-spec.js';
 import { Particle } from './particle.js';
@@ -36,8 +36,8 @@ declare class ThingMapper {
 export declare class APIPort {
     private _port;
     _mapper: ThingMapper;
-    protected _debugAttachment: OuterPortAttachment;
-    protected _attachStack: boolean;
+    protected inspector: ArcInspector;
+    protected attachStack: boolean;
     messageCount: number;
     constructor(messagePort: MessagePort, prefix: string);
     _testingHook(): void;

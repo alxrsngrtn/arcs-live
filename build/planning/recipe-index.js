@@ -10,7 +10,7 @@
 import { Strategizer, Strategy } from '../planning/strategizer.js';
 import { assert } from '../platform/assert-web.js';
 import { Arc } from '../runtime/arc.js';
-import { DevtoolsConnection } from '../runtime/debug/devtools-connection.js';
+import { DevtoolsConnection } from '../devtools-connector/devtools-connection.js';
 import { Manifest } from '../runtime/manifest.js';
 import { Handle } from '../runtime/recipe/handle.js';
 import { RecipeUtil } from '../runtime/recipe/recipe-util.js';

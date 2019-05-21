@@ -1,6 +1,5 @@
 import assert from 'assert';
 import crypto from 'crypto';
-import WebSocket from 'ws';
 import fetch from 'node-fetch';
 import fs from 'fs';
 import vm from 'vm';
@@ -8,6 +7,7 @@ import protobufjs from 'protobufjs';
 import idb from 'idb';
 import rs from 'jsrsasign';
 import WebCrypto from 'node-webcrypto-ossl';
+import WebSocket from 'ws';
 import os from 'os';
 
 // Copyright (c) 2017 Google Inc. All rights reserved.
@@ -17428,669 +17428,6 @@ ${e.message}
     }
 }
 
-/**
- * @license
- * Copyright (c) 2018 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-class AbstractDevtoolsChannel {
-    constructor() {
-        this.debouncedMessages = [];
-        this.messageListeners = new Map();
-        this.timer = null;
-    }
-    send(message) {
-        this.ensureNoCycle(message);
-        this.debouncedMessages.push(message);
-        // Temporary workaround for WebRTC slicing messages above 2^18 characters.
-        // Need to find a proper fix. Is there some config in WebRTC to fix this?
-        // If not prefer to slice messages based on their serialized form.
-        // Maybe zip them for transport?
-        if (this.debouncedMessages.length > 10) {
-            this._empty();
-        }
-        else if (!this.timer) {
-            this.timer = setTimeout(() => this._empty(), 100);
-        }
-    }
-    listen(arcOrId, messageType, listener) {
-        assert(messageType);
-        assert(arcOrId);
-        const arcId = typeof arcOrId === 'string' ? arcOrId : arcOrId.id.toString();
-        const key = `${arcId}/${messageType}`;
-        let listeners = this.messageListeners.get(key);
-        if (!listeners) {
-            this.messageListeners.set(key, listeners = []);
-        }
-        listeners.push(listener);
-    }
-    forArc(arc) {
-        return new ArcDevtoolsChannel(arc, this);
-    }
-    _handleMessage(msg) {
-        const listeners = this.messageListeners.get(`${msg.arcId}/${msg.messageType}`);
-        if (!listeners) {
-            console.warn(`No one is listening to ${msg.messageType} message`);
-        }
-        else {
-            for (const listener of listeners) {
-                listener(msg);
-            }
-        }
-    }
-    _empty() {
-        this._flush(this.debouncedMessages);
-        this.debouncedMessages = [];
-        clearTimeout(this.timer);
-        this.timer = null;
-    }
-    _flush(_messages) {
-        throw new Error('Not implemented in an abstract class');
-    }
-    // tslint:disable-next-line: no-any
-    ensureNoCycle(object, objectPath = []) {
-        if (!object || typeof object !== 'object')
-            return;
-        assert(objectPath.indexOf(object) === -1, 'Message cannot contain a cycle');
-        objectPath.push(object);
-        (Array.isArray(object) ? object : Object.values(object)).forEach(element => this.ensureNoCycle(element, objectPath));
-        objectPath.pop();
-    }
-}
-class ArcDevtoolsChannel {
-    constructor(arc, channel) {
-        this.channel = channel;
-        this.arcId = arc.id.toString();
-    }
-    send(message) {
-        this.channel.send({
-            meta: { arcId: this.arcId },
-            ...message
-        });
-    }
-    listen(messageType, callback) {
-        this.channel.listen(this.arcId, messageType, callback);
-    }
-    static instantiateListener(listenerClass, arc, channel) {
-        return new listenerClass(arc, channel);
-    }
-}
-class ArcDebugListener {
-    constructor(_arc, _channel) { }
-}
-
-/**
- * @license
- * Copyright (c) 2018 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-class ArcStoresFetcher extends ArcDebugListener {
-    constructor(arc, arcDevtoolsChannel) {
-        super(arc, arcDevtoolsChannel);
-        this.arc = arc;
-        arcDevtoolsChannel.listen('fetch-stores', async () => arcDevtoolsChannel.send({
-            messageType: 'fetch-stores-result',
-            messageBody: await this._listStores()
-        }));
-    }
-    async _listStores() {
-        const find = (manifest) => {
-            let tags = [...manifest.storeTags];
-            if (manifest.imports) {
-                manifest.imports.forEach(imp => tags = tags.concat(find(imp)));
-            }
-            return tags;
-        };
-        return {
-            arcStores: await this._digestStores([...this.arc.storeTags]),
-            contextStores: await this._digestStores(find(this.arc.context))
-        };
-    }
-    async _digestStores(stores) {
-        const result = [];
-        for (const [store, tags] of stores) {
-            // tslint:disable-next-line: no-any
-            let value;
-            if (store.toList) {
-                value = await store.toList();
-            }
-            else if (store.get) {
-                value = await store.get();
-            }
-            else {
-                value = `(don't know how to dereference)`;
-            }
-            // TODO: Fix issues with WebRTC message splitting.
-            if (JSON.stringify(value).length > 50000) {
-                value = 'too large for WebRTC';
-            }
-            result.push({
-                name: store.name,
-                tags: tags ? [...tags] : [],
-                id: store.id,
-                storage: store.storageKey,
-                type: store.type,
-                description: store.description,
-                value
-            });
-        }
-        return result;
-    }
-}
-
-/**
- * @license
- * Copyright (c) 2018 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-
-// Debugging is initialized either by /devtools/src/run-mark-connected.js, which is
-// injected by the devtools extension content script in the browser env,
-// or used directly when debugging nodeJS.
-
-// Data needs to be referenced via a global object, otherwise extension and
-// Arcs have different instances.
-const root = typeof window === 'object' ? window : global;
-
-if (!root._arcDebugPromise) {
-  root._arcDebugPromise = new Promise(resolve => {
-    root._arcDebugPromiseResolve = resolve;
-  });
-}
-
-class DevtoolsBroker {
-  static get onceConnected() {
-    return root._arcDebugPromise;
-  }
-  static markConnected() {
-    root._arcDebugPromiseResolve();
-  }
-}
-
-/**
- * @license
- * Copyright (c) 2018 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-
-class DevtoolsChannel extends AbstractDevtoolsChannel {
-  constructor() {
-    super();
-    this.server = new WebSocket.Server({port: 8787});
-    this.server.on('connection', ws => {
-      this.socket = ws;
-      this.socket.on('message', msg => {
-        if (msg === 'init') {
-          DevtoolsBroker.markConnected();
-        } else {
-          this._handleMessage(JSON.parse(msg));
-        }
-      });
-    });
-  }
-
-  _flush(messages) {
-    if (this.socket) {
-      this.socket.send(JSON.stringify(messages));
-    }
-  }
-}
-
-/**
- * @license
- * Copyright (c) 2018 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-
-/**
- * @license
- * Copyright (c) 2018 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-let channel = null;
-let isConnected = false;
-let onceConnectedResolve = null;
-let onceConnected = new Promise(resolve => onceConnectedResolve = resolve);
-DevtoolsBroker.onceConnected.then(() => {
-    DevtoolsConnection.ensure();
-    onceConnectedResolve(channel);
-    isConnected = true;
-});
-class DevtoolsConnection {
-    static get isConnected() {
-        return isConnected;
-    }
-    static get onceConnected() {
-        return onceConnected;
-    }
-    static get() {
-        return channel;
-    }
-    static ensure() {
-        if (!channel)
-            channel = new DevtoolsChannel();
-    }
-}
-
-/*
-  Copyright 2015 Google Inc. All Rights Reserved.
-  Licensed under the Apache License, Version 2.0 (the "License");
-  you may not use this file except in compliance with the License.
-  You may obtain a copy of the License at
-      http://www.apache.org/licenses/LICENSE-2.0
-  Unless required by applicable law or agreed to in writing, software
-  distributed under the License is distributed on an "AS IS" BASIS,
-  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  See the License for the specific language governing permissions and
-  limitations under the License.
-*/
-const events = [];
-let pid;
-let now;
-if (typeof document === 'object') {
-    pid = 42;
-    now = () => {
-        return performance.now() * 1000;
-    };
-}
-else {
-    pid = process.pid;
-    now = () => {
-        const t = process.hrtime();
-        return t[0] * 1000000 + t[1] / 1000;
-    };
-}
-let flowId = 0;
-function parseInfo(info) {
-    if (!info) {
-        return {};
-    }
-    if (typeof info === 'function') {
-        return parseInfo(info());
-    }
-    if (info.toTraceInfo) {
-        return parseInfo(info.toTraceInfo());
-    }
-    return info;
-}
-const streamingCallbacks = [];
-function pushEvent(event) {
-    event.pid = pid;
-    event.tid = 0;
-    if (!event.args) {
-        delete event.args;
-    }
-    if (!event.ov) {
-        delete event.ov;
-    }
-    if (!event.cat) {
-        event.cat = '';
-    }
-    // Only keep events in memory if we're not streaming them.
-    if (streamingCallbacks.length === 0)
-        events.push(event);
-    void Promise.resolve().then(() => {
-        for (const { callback, predicate } of streamingCallbacks) {
-            if (!predicate || predicate(event))
-                callback(event);
-        }
-    });
-}
-const module_ = { exports: {} };
-// tslint:disable-next-line: variable-name
-const Tracing = module_.exports;
-module_.exports.enabled = false;
-module_.exports.enable = () => {
-    if (!module_.exports.enabled) {
-        module_.exports.enabled = true;
-        init();
-    }
-};
-function init() {
-    const result = {
-        async wait(v) {
-            return v;
-        },
-        start() {
-            return this;
-        },
-        end() {
-            return this;
-        },
-        step() {
-            return this;
-        },
-        addArgs() {
-        },
-        async endWith(v) {
-            return v;
-        },
-    };
-    module_.exports.wrap = (info, fn) => {
-        return fn;
-    };
-    module_.exports.start = (info) => {
-        return result;
-    };
-    module_.exports.flow = (info) => {
-        return result;
-    };
-    if (!module_.exports.enabled) {
-        return;
-    }
-    module_.exports.wrap = (info, fn) => {
-        return (...args) => {
-            const t = module_.exports.start(info);
-            try {
-                return fn(...args);
-            }
-            finally {
-                t.end();
-            }
-        };
-    };
-    function startSyncTrace(info) {
-        info = parseInfo(info);
-        let args = info.args;
-        const begin = now();
-        return {
-            addArgs(extraArgs) {
-                args = { ...(args || {}), ...extraArgs };
-            },
-            end(endInfo = {}, flow) {
-                endInfo = parseInfo(endInfo);
-                if (endInfo.args) {
-                    args = { ...(args || {}), ...endInfo.args };
-                }
-                endInfo = { ...info, ...endInfo };
-                this.endTs = now();
-                pushEvent({
-                    ph: 'X',
-                    ts: begin,
-                    dur: this.endTs - begin,
-                    cat: endInfo.cat,
-                    name: endInfo.name,
-                    ov: endInfo.overview,
-                    args,
-                    // Arcs Devtools Specific:
-                    flowId: flow && flow.id(),
-                    seq: endInfo.sequence
-                });
-            },
-            beginTs: begin
-        };
-    }
-    module_.exports.start = (info) => {
-        let trace = startSyncTrace(info);
-        let flow;
-        const baseInfo = { cat: info.cat, name: info.name + ' (async)', overview: info.overview, sequence: info.sequence };
-        return {
-            async wait(v, info) {
-                const flowExisted = !!flow;
-                if (!flowExisted) {
-                    flow = module_.exports.flow(baseInfo);
-                }
-                trace.end(info, flow);
-                if (flowExisted) {
-                    flow.step({ ts: trace.beginTs, ...baseInfo });
-                }
-                else {
-                    flow.start({ ts: trace.endTs });
-                }
-                trace = null;
-                try {
-                    return await v;
-                }
-                finally {
-                    trace = startSyncTrace(baseInfo);
-                }
-            },
-            addArgs(extraArgs) {
-                trace.addArgs(extraArgs);
-            },
-            end(endInfo) {
-                trace.end(endInfo, flow);
-                if (flow) {
-                    flow.end({ ts: trace.beginTs });
-                }
-            },
-            async endWith(v, endInfo) {
-                if (Promise.resolve(v) === v) { // If v is a promise.
-                    v = this.wait(v, null);
-                    try {
-                        return await v;
-                    }
-                    finally {
-                        this.end(endInfo);
-                    }
-                }
-                else { // If v is not a promise.
-                    this.end(endInfo);
-                    return v;
-                }
-            }
-        };
-    };
-    module_.exports.flow = (info) => {
-        info = parseInfo(info);
-        const id = flowId++;
-        let started = false;
-        return {
-            start(startInfo) {
-                const ts = (startInfo && startInfo.ts) || now();
-                started = true;
-                pushEvent({
-                    ph: 's',
-                    ts,
-                    cat: info.cat,
-                    name: info.name,
-                    ov: info.overview,
-                    args: info.args,
-                    id,
-                    seq: info.sequence
-                });
-                return this;
-            },
-            end(endInfo) {
-                if (!started)
-                    return this;
-                const ts = (endInfo && endInfo.ts) || now();
-                endInfo = parseInfo(endInfo);
-                pushEvent({
-                    ph: 'f',
-                    bp: 'e',
-                    ts,
-                    cat: info.cat,
-                    name: info.name,
-                    ov: info.overview,
-                    args: endInfo && endInfo.args,
-                    id,
-                    seq: info.sequence
-                });
-                return this;
-            },
-            step(stepInfo) {
-                if (!started)
-                    return this;
-                const ts = (stepInfo && stepInfo.ts) || now();
-                stepInfo = parseInfo(stepInfo);
-                pushEvent({
-                    ph: 't',
-                    ts,
-                    cat: info.cat,
-                    name: info.name,
-                    ov: info.overview,
-                    args: stepInfo && stepInfo.args,
-                    id,
-                    seq: info.sequence
-                });
-                return this;
-            },
-            id: () => id
-        };
-    };
-    module_.exports.save = () => {
-        return { traceEvents: events };
-    };
-    module_.exports.download = () => {
-        const a = document.createElement('a');
-        a.download = 'trace.json';
-        a.href = 'data:text/plain;base64,' + btoa(JSON.stringify(module_.exports.save()));
-        a.click();
-    };
-    module_.exports.now = now;
-    module_.exports.stream = (callback, predicate) => {
-        // Once we start streaming we no longer keep events in memory.
-        events.length = 0;
-        streamingCallbacks.push({ callback, predicate });
-    };
-    module_.exports.__clearForTests = () => {
-        events.length = 0;
-        streamingCallbacks.length = 0;
-    };
-}
-init();
-
-/**
- * @license
- * Copyright (c) 2018 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-let streamingToDevtools = false;
-function enableTracingAdapter(devtoolsChannel) {
-    if (!streamingToDevtools) {
-        Tracing.enable();
-        devtoolsChannel.send({
-            messageType: 'trace-time-sync',
-            messageBody: {
-                traceTime: Tracing.now(),
-                localTime: Date.now()
-            }
-        });
-        Tracing.stream(trace => devtoolsChannel.send({
-            messageType: 'trace',
-            messageBody: trace
-        }), trace => trace.ov // Overview events only.
-        );
-        streamingToDevtools = true;
-    }
-}
-
-/**
- * @license
- * Copyright (c) 2018 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-// Arc-independent handlers for devtools logic.
-void DevtoolsConnection.onceConnected.then(devtoolsChannel => {
-    enableTracingAdapter(devtoolsChannel);
-});
-class ArcDebugHandler {
-    constructor(arc, listenerClasses) {
-        this.arcDevtoolsChannel = null;
-        if (arc.isStub)
-            return;
-        const connectedOnInstantiate = DevtoolsConnection.isConnected;
-        void DevtoolsConnection.onceConnected.then(devtoolsChannel => {
-            if (!connectedOnInstantiate) {
-                devtoolsChannel.send({
-                    messageType: 'warning',
-                    messageBody: 'pre-existing-arc'
-                });
-            }
-            this.arcDevtoolsChannel = devtoolsChannel.forArc(arc);
-            if (listenerClasses) { // undefined -> false
-                listenerClasses.forEach(l => ArcDevtoolsChannel.instantiateListener(l, arc, this.arcDevtoolsChannel));
-            }
-            this.arcDevtoolsChannel.send({
-                messageType: 'arc-available',
-                messageBody: {
-                    speculative: arc.isSpeculative,
-                    inner: arc.isInnerArc
-                }
-            });
-            this.sendEnvironmentMessage(arc);
-        });
-    }
-    recipeInstantiated({ particles, activeRecipe }) {
-        if (!this.arcDevtoolsChannel)
-            return;
-        const truncate = ({ id, name }) => ({ id, name });
-        const slotConnections = [];
-        particles.forEach(p => Object.values(p.consumedSlotConnections).forEach(cs => {
-            if (cs.targetSlot) {
-                slotConnections.push({
-                    particleId: cs.particle.id.toString(),
-                    consumed: truncate(cs.targetSlot),
-                    provided: Object.values(cs.providedSlots).map(slot => truncate(slot)),
-                });
-            }
-        }));
-        this.arcDevtoolsChannel.send({
-            messageType: 'recipe-instantiated',
-            messageBody: { slotConnections, activeRecipe }
-        });
-    }
-    sendEnvironmentMessage(arc) {
-        const allManifests = [];
-        (function traverse(manifest) {
-            allManifests.push(manifest);
-            manifest.imports.forEach(traverse);
-        })(arc.context);
-        this.arcDevtoolsChannel.send({
-            messageType: 'arc-environment',
-            messageBody: {
-                recipes: arc.context.allRecipes.map(r => ({
-                    name: r.name,
-                    text: r.toString(),
-                    file: allManifests.find(m => m.recipes.includes(r)).fileName
-                })),
-                particles: arc.context.allParticles.map(p => ({
-                    name: p.name,
-                    spec: p.toString(),
-                    file: allManifests.find(m => m.particles.includes(p)).fileName
-                }))
-            }
-        });
-    }
-}
-// TODO: This should move to the core interface file when it exists. 
-const defaultCoreDebugListeners = [
-    ArcStoresFetcher
-];
-
 // Copyright (c) 2017 Google Inc. All rights reserved.
 
 // Copyright (c) 2017 Google Inc. All rights reserved.
@@ -19355,104 +18692,6 @@ class MessageChannel {
     }
 }
 
-// Copyright (c) 2018 Google Inc. All rights reserved.
-// This code may only be used under the BSD style license found at
-// http://polymer.github.io/LICENSE.txt
-// Code distributed by Google as part of this project is also
-// subject to an additional IP rights grant found at
-// http://polymer.github.io/PATENTS.txt
-
-// This is only relevant in the web devtools, but we need to
-// ensure that the stack trace is passed through on node
-// so that system exceptions are plumbed properly.
-const mapStackTrace = (x, f) => f([x]);
-
-/**
- * @license
- * Copyright (c) 2018 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-class OuterPortAttachment {
-    constructor(arc, devtoolsChannel) {
-        this.arcDevtoolsChannel = devtoolsChannel.forArc(arc);
-    }
-    handlePecMessage(name, pecMsgBody, pecMsgCount, stackString) {
-        const stack = this._extractStackFrames(stackString);
-        this.arcDevtoolsChannel.send({
-            messageType: 'PecLog',
-            messageBody: { name, pecMsgBody, pecMsgCount, timestamp: Date.now(), stack },
-        });
-    }
-    _extractStackFrames(stackString) {
-        const stack = [];
-        if (!stackString)
-            return stack;
-        // File refs should appear only in stack traces generated by tests run with
-        // --explore set.
-        if (stackString.includes('(file:///')) {
-            // The slice discards the 'Error' text and the the stack frame
-            // corresponding to the API channel function, which is already being
-            // displayed in the log entry.
-            for (const frameString of stackString.split('\n    at ').slice(2)) {
-                const match = frameString.match(/^(.*) \((.*)\)$/);
-                const method = match ? match[1] : '<unknown>';
-                let location = match ? match[2] : frameString;
-                location = location.replace(/:[0-9]+$/, '');
-                if (location.startsWith('file')) {
-                    // 'file:///<path>/arcs.*/runtime/file.js:84'
-                    // -> location: 'runtime/file.js:150'
-                    location = location.replace(/^.*\/arcs[^/]*\//, '');
-                }
-                stack.push({ method, location, target: null, targetClass: 'noLink' });
-            }
-            return stack;
-        }
-        // The slice discards the stack frame corresponding to the API channel
-        // function, which is already being displayed in the log entry.
-        if (mapStackTrace) {
-            mapStackTrace(stackString, (mapped) => mapped.slice(1).map(frameString => {
-                // Each frame has the form '    at function (source:line:column)'.
-                // Extract the function name and source:line:column text, then set up
-                // a frame object with the following fields:
-                //   location: text to display as the source in devtools Arcs panel
-                //   target: URL to open in devtools Sources panel
-                //   targetClass: CSS class specifier to attach to the location text
-                const match = frameString.match(/^ {4}at (.*) \((.*)\)$/);
-                const method = match ? match[1] : '<unknown>';
-                let source = match ? match[2] : frameString.replace(/^ *at */, '');
-                const frame = { method };
-                source = match[2].replace(/:[0-9]+$/, '');
-                if (source.startsWith('http')) {
-                    // 'http://<url>/arcs.*/shell/file.js:150'
-                    // -> location: 'shell/file.js:150', target: same as source
-                    frame.location = source.replace(/^.*\/arcs[^/]*\//, '');
-                    frame.target = source;
-                    frame.targetClass = 'link';
-                }
-                else if (source.startsWith('webpack')) {
-                    // 'webpack:///runtime/sub/file.js:18'
-                    // -> location: 'runtime/sub/file.js:18', target: 'webpack:///./runtime/sub/file.js:18'
-                    frame.location = source.slice(11);
-                    frame.target = `webpack:///./${frame.location}`;
-                    frame.targetClass = 'link';
-                }
-                else {
-                    // '<anonymous>' (or similar)
-                    frame.location = source;
-                    frame.target = null;
-                    frame.targetClass = 'noLink';
-                }
-                stack.push(frame);
-            }), { sync: false, cacheGlobally: true });
-        }
-        return stack;
-    }
-}
-
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -19611,8 +18850,8 @@ class APIPort {
         this._port = messagePort;
         this._mapper = new ThingMapper(prefix);
         this._port.onmessage = async (e) => this._processMessage(e);
-        this._debugAttachment = null;
-        this._attachStack = false;
+        this.inspector = null;
+        this.attachStack = false;
         this.messageCount = 0;
         this._testingHook();
     }
@@ -19625,16 +18864,16 @@ class APIPort {
     async _processMessage(e) {
         assert(this['before' + e.data.messageType] !== undefined);
         const count = this.messageCount++;
-        if (this._debugAttachment) {
-            this._debugAttachment.handlePecMessage('on' + e.data.messageType, e.data.messageBody, count, e.data.stack);
+        if (this.inspector) {
+            this.inspector.pecMessage('on' + e.data.messageType, e.data.messageBody, count, e.data.stack);
         }
         this['before' + e.data.messageType](e.data.messageBody);
     }
     send(name, args) {
-        const call = { messageType: name, messageBody: args, stack: this._attachStack ? new Error().stack : undefined };
+        const call = { messageType: name, messageBody: args, stack: this.attachStack ? new Error().stack : undefined };
         const count = this.messageCount++;
-        if (this._debugAttachment) {
-            this._debugAttachment.handlePecMessage(name, args, count, new Error().stack);
+        if (this.inspector) {
+            this.inspector.pecMessage(name, args, count, new Error().stack);
         }
         this._port.postMessage(call);
     }
@@ -19792,10 +19031,10 @@ function AutoConstruct(target) {
 class PECOuterPort extends APIPort {
     constructor(messagePort, arc) {
         super(messagePort, 'o');
-        DevtoolsConnection.onceConnected.then(devtoolsChannel => {
-            this.DevToolsConnected();
-            this._debugAttachment = new OuterPortAttachment(arc, devtoolsChannel);
-        });
+        this.inspector = arc.inspector;
+        if (this.inspector) {
+            this.inspector.onceActive.then(() => this.DevToolsConnected());
+        }
     }
     Stop() { }
     DefineHandle(store, type, name) { }
@@ -19891,7 +19130,7 @@ let PECInnerPort = class PECInnerPort extends APIPort {
     // send it along with the message. We only want to do this after a DevTools connection has been detected, which
     // we can't directly detect inside a worker context, so the PECOuterPort will send an API message instead.
     onDevToolsConnected() {
-        this._attachStack = true;
+        this.attachStack = true;
     }
 };
 __decorate([
@@ -20018,6 +19257,18 @@ class SlotProxy {
         }
     }
 }
+
+// Copyright (c) 2018 Google Inc. All rights reserved.
+// This code may only be used under the BSD style license found at
+// http://polymer.github.io/LICENSE.txt
+// Code distributed by Google as part of this project is also
+// subject to an additional IP rights grant found at
+// http://polymer.github.io/PATENTS.txt
+
+// This is only relevant in the web devtools, but we need to
+// ensure that the stack trace is passed through on node
+// so that system exceptions are plumbed properly.
+const mapStackTrace = (x, f) => f([x]);
 
 /**
  * @license
@@ -20688,6 +19939,7 @@ class WasmParticle extends Particle$1 {
         super(...arguments);
         this.handleMap = new Map();
         this.revHandleMap = new Map();
+        this.slotProxies = new Set();
         this.converters = new Map();
     }
     async initialize(buffer) {
@@ -20698,7 +19950,7 @@ class WasmParticle extends Particle$1 {
             // Memory setup
             memory: this.memory,
             __memory_base: 1024,
-            table: new WebAssembly.Table({ initial: 35, maximum: 35, element: 'anyfunc' }),
+            table: new WebAssembly.Table({ initial: 43, maximum: 43, element: 'anyfunc' }),
             __table_base: 0,
             DYNAMICTOP_PTR: 4096,
             // Heap management
@@ -20714,8 +19966,8 @@ class WasmParticle extends Particle$1 {
             // Handle API
             _handleSet: async (wasmHandle, num) => setVariable(this.revHandleMap.get(wasmHandle), num),
             // Logging functions
-            _console: i => console.log(`<${this.spec.name}> ${this.readString(i)}`),
-            _consoleN: (i, n) => console.log(`<${this.spec.name}> ${this.readString(i)} ${n}`),
+            __console: (line, strp) => console.log(`[${this.spec.name}:${line}] ${this.readString(strp)}`),
+            __consoleN: (line, strp, num) => console.log(`[${this.spec.name}:${line}] ${this.readString(strp)} ${num}`),
         };
         this.wasm = await WebAssembly.instantiate(buffer, { env });
         this.exports = this.wasm.instance.exports;
@@ -20753,15 +20005,30 @@ class WasmParticle extends Particle$1 {
     // tslint:disable-next-line: no-any
     async onHandleUpdate(handle, update) { }
     async onHandleDesync(handle) { }
-    renderSlot(slotName, contentTypes) { }
+    renderSlot(slotName, contentTypes) {
+        const slot = this.slotProxiesByName.get(slotName);
+        if (!slot)
+            return;
+        // We allocate space for the name and the particle allocates space for the content; we free them both.
+        const sp = this.storeString(slotName);
+        const cp = this.exports._renderSlot(this.innerParticle, sp);
+        contentTypes.forEach(ct => slot.requestedContentTypes.add(ct));
+        slot.render({ template: this.readString(cp), model: {}, templateName: 'default' });
+        this.exports._free(sp);
+        this.exports._free(cp);
+    }
     renderHostedSlot(slotName, hostedSlotId, content) { }
-    fireEvent(slotName, event) { }
+    fireEvent(slotName, event) {
+        const sp = this.storeString(slotName);
+        const hp = this.storeString(event.handler);
+        this.exports._fireEvent(this.innerParticle, sp, hp);
+        this.exports._free(sp);
+        this.exports._free(hp);
+    }
     // Allocates memory in the wasm container.
     storeBuffer(buf) {
         const p = this.exports._malloc(buf.length);
-        for (let i = 0; i < buf.length; i++) {
-            this.heap[p + i] = buf[i];
-        }
+        this.heap.set(buf, p);
         return p;
     }
     // Allocates memory in the wasm container.
@@ -20773,6 +20040,7 @@ class WasmParticle extends Particle$1 {
         this.heap[p + str.length] = 0;
         return p;
     }
+    // Currently only supports ASCII.
     readString(idx) {
         let str = '';
         while (idx < this.heap.length && this.heap[idx] !== 0) {
@@ -21906,7 +21174,7 @@ class Mutex {
  * http://polymer.github.io/PATENTS.txt
  */
 class Arc {
-    constructor({ id, context, pecFactory, slotComposer, loader, storageKey, storageProviderFactory, speculative, innerArc, stub, listenerClasses }) {
+    constructor({ id, context, pecFactory, slotComposer, loader, storageKey, storageProviderFactory, speculative, innerArc, stub, inspectorFactory }) {
         this._activeRecipe = new Recipe();
         this._recipeDeltas = [];
         this.dataChangeCallbacks = new Map();
@@ -21939,13 +21207,13 @@ class Arc {
         this.isInnerArc = !!innerArc; // undefined => false
         this.isStub = !!stub;
         this._loader = loader;
+        this.inspectorFactory = inspectorFactory;
+        this.inspector = inspectorFactory && inspectorFactory.create(this);
         this.storageKey = storageKey;
         const pecId = this.generateID();
         const innerPecPort = this.pecFactory(pecId, this.idGenerator);
         this.pec = new ParticleExecutionHost(innerPecPort, slotComposer, this);
         this.storageProviderFactory = storageProviderFactory || new StorageProviderFactory(this.id);
-        this.listenerClasses = listenerClasses;
-        this.debugHandler = new ArcDebugHandler(this, listenerClasses);
     }
     get loader() {
         return this._loader;
@@ -22014,7 +21282,7 @@ class Arc {
     }
     createInnerArc(transformationParticle) {
         const id = this.generateID('inner');
-        const innerArc = new Arc({ id, pecFactory: this.pecFactory, slotComposer: this.pec.slotComposer, loader: this._loader, context: this.context, innerArc: true, speculative: this.isSpeculative, listenerClasses: this.listenerClasses });
+        const innerArc = new Arc({ id, pecFactory: this.pecFactory, slotComposer: this.pec.slotComposer, loader: this._loader, context: this.context, innerArc: true, speculative: this.isSpeculative, inspectorFactory: this.inspectorFactory });
         let particleInnerArcs = this.innerArcsByParticle.get(transformationParticle);
         if (!particleInnerArcs) {
             particleInnerArcs = [];
@@ -22177,7 +21445,7 @@ ${this.activeRecipe.toString()}`;
         // TODO: storage refactor: make sure set() is available here (or wrap store in a Handle-like adaptor).
         await store.set(arcInfoType.newInstance(this.id, serialization));
     }
-    static async deserialize({ serialization, pecFactory, slotComposer, loader, fileName, context, listenerClasses }) {
+    static async deserialize({ serialization, pecFactory, slotComposer, loader, fileName, context, inspectorFactory }) {
         const manifest = await Manifest.parse(serialization, { loader, fileName, context });
         const arc = new Arc({
             id: Id.fromString(manifest.meta.name),
@@ -22187,7 +21455,7 @@ ${this.activeRecipe.toString()}`;
             loader,
             storageProviderFactory: manifest.storageProviderFactory,
             context,
-            listenerClasses
+            inspectorFactory
         });
         await Promise.all(manifest.stores.map(async (store) => {
             const tags = manifest.storeTags.get(store);
@@ -22248,7 +21516,7 @@ ${this.activeRecipe.toString()}`;
             loader: this._loader,
             speculative: true,
             innerArc: this.isInnerArc,
-            listenerClasses: this.listenerClasses });
+            inspectorFactory: this.inspectorFactory });
         const storeMap = new Map();
         for (const store of this._stores) {
             const clone = await arc.storageProviderFactory.construct(store.id, store.type, 'volatile');
@@ -22376,7 +21644,9 @@ ${this.activeRecipe.toString()}`;
             // TODO: pass slot-connections instead
             await this.pec.slotComposer.initializeRecipe(this, particles);
         }
-        this.debugHandler.recipeInstantiated({ particles, activeRecipe: this.activeRecipe.toString() });
+        if (this.inspector) {
+            this.inspector.recipeInstantiated(particles, this.activeRecipe.toString());
+        }
     }
     async createStore(type, name, id, tags, storageKey = undefined) {
         assert(type instanceof Type, `can't createStore with type ${type} that isn't a Type`);
@@ -24688,6 +23958,205 @@ commonjsGlobal.logLevel = 2;
 
 /**
  * @license
+ * Copyright (c) 2018 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+
+// Debugging is initialized either by /devtools/src/run-mark-connected.js, which is
+// injected by the devtools extension content script in the browser env,
+// or used directly when debugging nodeJS.
+
+// Data needs to be referenced via a global object, otherwise extension and
+// Arcs have different instances.
+const root = typeof window === 'object' ? window : global;
+
+if (!root._arcDebugPromise) {
+  root._arcDebugPromise = new Promise(resolve => {
+    root._arcDebugPromiseResolve = resolve;
+  });
+}
+
+class DevtoolsBroker {
+  static get onceConnected() {
+    return root._arcDebugPromise;
+  }
+  static markConnected() {
+    root._arcDebugPromiseResolve();
+  }
+}
+
+/**
+ * @license
+ * Copyright (c) 2018 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+class AbstractDevtoolsChannel {
+    constructor() {
+        this.debouncedMessages = [];
+        this.messageListeners = new Map();
+        this.timer = null;
+    }
+    send(message) {
+        this.ensureNoCycle(message);
+        this.debouncedMessages.push(message);
+        // Temporary workaround for WebRTC slicing messages above 2^18 characters.
+        // Need to find a proper fix. Is there some config in WebRTC to fix this?
+        // If not prefer to slice messages based on their serialized form.
+        // Maybe zip them for transport?
+        if (this.debouncedMessages.length > 10) {
+            this._empty();
+        }
+        else if (!this.timer) {
+            this.timer = setTimeout(() => this._empty(), 100);
+        }
+    }
+    listen(arcOrId, messageType, listener) {
+        assert(messageType);
+        assert(arcOrId);
+        const arcId = typeof arcOrId === 'string' ? arcOrId : arcOrId.id.toString();
+        const key = `${arcId}/${messageType}`;
+        let listeners = this.messageListeners.get(key);
+        if (!listeners) {
+            this.messageListeners.set(key, listeners = []);
+        }
+        listeners.push(listener);
+    }
+    forArc(arc) {
+        return new ArcDevtoolsChannel(arc, this);
+    }
+    _handleMessage(msg) {
+        const listeners = this.messageListeners.get(`${msg.arcId}/${msg.messageType}`);
+        if (!listeners) {
+            console.warn(`No one is listening to ${msg.messageType} message`);
+        }
+        else {
+            for (const listener of listeners) {
+                listener(msg);
+            }
+        }
+    }
+    _empty() {
+        this._flush(this.debouncedMessages);
+        this.debouncedMessages = [];
+        clearTimeout(this.timer);
+        this.timer = null;
+    }
+    _flush(_messages) {
+        throw new Error('Not implemented in an abstract class');
+    }
+    // tslint:disable-next-line: no-any
+    ensureNoCycle(object, objectPath = []) {
+        if (!object || typeof object !== 'object')
+            return;
+        assert(objectPath.indexOf(object) === -1, 'Message cannot contain a cycle');
+        objectPath.push(object);
+        (Array.isArray(object) ? object : Object.values(object)).forEach(element => this.ensureNoCycle(element, objectPath));
+        objectPath.pop();
+    }
+}
+class ArcDevtoolsChannel {
+    constructor(arc, channel) {
+        this.channel = channel;
+        this.arcId = arc.id.toString();
+    }
+    send(message) {
+        this.channel.send({
+            meta: { arcId: this.arcId },
+            ...message
+        });
+    }
+    listen(messageType, callback) {
+        this.channel.listen(this.arcId, messageType, callback);
+    }
+}
+
+/**
+ * @license
+ * Copyright (c) 2018 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+
+class DevtoolsChannel extends AbstractDevtoolsChannel {
+  constructor() {
+    super();
+    this.server = new WebSocket.Server({port: 8787});
+    this.server.on('connection', ws => {
+      this.socket = ws;
+      this.socket.on('message', msg => {
+        if (msg === 'init') {
+          DevtoolsBroker.markConnected();
+        } else {
+          this._handleMessage(JSON.parse(msg));
+        }
+      });
+    });
+  }
+
+  _flush(messages) {
+    if (this.socket) {
+      this.socket.send(JSON.stringify(messages));
+    }
+  }
+}
+
+/**
+ * @license
+ * Copyright (c) 2018 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+
+/**
+ * @license
+ * Copyright (c) 2018 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+let channel = null;
+let isConnected = false;
+let onceConnectedResolve = null;
+let onceConnected = new Promise(resolve => onceConnectedResolve = resolve);
+DevtoolsBroker.onceConnected.then(() => {
+    DevtoolsConnection.ensure();
+    onceConnectedResolve(channel);
+    isConnected = true;
+});
+class DevtoolsConnection {
+    static get isConnected() {
+        return isConnected;
+    }
+    static get onceConnected() {
+        return onceConnected;
+    }
+    static get() {
+        return channel;
+    }
+    static ensure() {
+        if (!channel)
+            channel = new DevtoolsChannel();
+    }
+}
+
+/**
+ * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
  * This code may only be used under the BSD style license found at
  * http://polymer.github.io/LICENSE.txt
@@ -24774,13 +24243,75 @@ const pecIndustry = loader => {
     };
 };
 
+/**
+ * @license
+ * Copyright (c) 2018 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+class ArcStoresFetcher {
+    constructor(arc, arcDevtoolsChannel) {
+        this.arc = arc;
+        arcDevtoolsChannel.listen('fetch-stores', async () => arcDevtoolsChannel.send({
+            messageType: 'fetch-stores-result',
+            messageBody: await this._listStores()
+        }));
+    }
+    async _listStores() {
+        const find = (manifest) => {
+            let tags = [...manifest.storeTags];
+            if (manifest.imports) {
+                manifest.imports.forEach(imp => tags = tags.concat(find(imp)));
+            }
+            return tags;
+        };
+        return {
+            arcStores: await this._digestStores([...this.arc.storeTags]),
+            contextStores: await this._digestStores(find(this.arc.context))
+        };
+    }
+    async _digestStores(stores) {
+        const result = [];
+        for (const [store, tags] of stores) {
+            // tslint:disable-next-line: no-any
+            let value;
+            if (store.toList) {
+                value = await store.toList();
+            }
+            else if (store.get) {
+                value = await store.get();
+            }
+            else {
+                value = `(don't know how to dereference)`;
+            }
+            // TODO: Fix issues with WebRTC message splitting.
+            if (JSON.stringify(value).length > 50000) {
+                value = 'too large for WebRTC';
+            }
+            result.push({
+                name: store.name,
+                tags: tags ? [...tags] : [],
+                id: store.id,
+                storage: store.storageKey,
+                type: store.type,
+                description: store.description,
+                value
+            });
+        }
+        return result;
+    }
+}
+
 // Copyright (c) 2018 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
 // http://polymer.github.io/LICENSE.txt
 // Code distributed by Google as part of this project is also
 // subject to an additional IP rights grant found at
 // http://polymer.github.io/PATENTS.txt
-function now$1() {
+function now() {
     const time = process.hrtime();
     return time[0] * 1000 + time[1] / 1000000;
 }
@@ -24798,6 +24329,285 @@ class DeviceInfo {
         return os.totalmem() / Math.pow(1024, 3);
     }
 }
+
+/*
+  Copyright 2015 Google Inc. All Rights Reserved.
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+      http://www.apache.org/licenses/LICENSE-2.0
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+*/
+const events = [];
+let pid;
+let now$1;
+if (typeof document === 'object') {
+    pid = 42;
+    now$1 = () => {
+        return performance.now() * 1000;
+    };
+}
+else {
+    pid = process.pid;
+    now$1 = () => {
+        const t = process.hrtime();
+        return t[0] * 1000000 + t[1] / 1000;
+    };
+}
+let flowId = 0;
+function parseInfo(info) {
+    if (!info) {
+        return {};
+    }
+    if (typeof info === 'function') {
+        return parseInfo(info());
+    }
+    if (info.toTraceInfo) {
+        return parseInfo(info.toTraceInfo());
+    }
+    return info;
+}
+const streamingCallbacks = [];
+function pushEvent(event) {
+    event.pid = pid;
+    event.tid = 0;
+    if (!event.args) {
+        delete event.args;
+    }
+    if (!event.ov) {
+        delete event.ov;
+    }
+    if (!event.cat) {
+        event.cat = '';
+    }
+    // Only keep events in memory if we're not streaming them.
+    if (streamingCallbacks.length === 0)
+        events.push(event);
+    void Promise.resolve().then(() => {
+        for (const { callback, predicate } of streamingCallbacks) {
+            if (!predicate || predicate(event))
+                callback(event);
+        }
+    });
+}
+const module_ = { exports: {} };
+// tslint:disable-next-line: variable-name
+const Tracing = module_.exports;
+module_.exports.enabled = false;
+module_.exports.enable = () => {
+    if (!module_.exports.enabled) {
+        module_.exports.enabled = true;
+        init();
+    }
+};
+function init() {
+    const result = {
+        async wait(v) {
+            return v;
+        },
+        start() {
+            return this;
+        },
+        end() {
+            return this;
+        },
+        step() {
+            return this;
+        },
+        addArgs() {
+        },
+        async endWith(v) {
+            return v;
+        },
+    };
+    module_.exports.wrap = (info, fn) => {
+        return fn;
+    };
+    module_.exports.start = (info) => {
+        return result;
+    };
+    module_.exports.flow = (info) => {
+        return result;
+    };
+    if (!module_.exports.enabled) {
+        return;
+    }
+    module_.exports.wrap = (info, fn) => {
+        return (...args) => {
+            const t = module_.exports.start(info);
+            try {
+                return fn(...args);
+            }
+            finally {
+                t.end();
+            }
+        };
+    };
+    function startSyncTrace(info) {
+        info = parseInfo(info);
+        let args = info.args;
+        const begin = now$1();
+        return {
+            addArgs(extraArgs) {
+                args = { ...(args || {}), ...extraArgs };
+            },
+            end(endInfo = {}, flow) {
+                endInfo = parseInfo(endInfo);
+                if (endInfo.args) {
+                    args = { ...(args || {}), ...endInfo.args };
+                }
+                endInfo = { ...info, ...endInfo };
+                this.endTs = now$1();
+                pushEvent({
+                    ph: 'X',
+                    ts: begin,
+                    dur: this.endTs - begin,
+                    cat: endInfo.cat,
+                    name: endInfo.name,
+                    ov: endInfo.overview,
+                    args,
+                    // Arcs Devtools Specific:
+                    flowId: flow && flow.id(),
+                    seq: endInfo.sequence
+                });
+            },
+            beginTs: begin
+        };
+    }
+    module_.exports.start = (info) => {
+        let trace = startSyncTrace(info);
+        let flow;
+        const baseInfo = { cat: info.cat, name: info.name + ' (async)', overview: info.overview, sequence: info.sequence };
+        return {
+            async wait(v, info) {
+                const flowExisted = !!flow;
+                if (!flowExisted) {
+                    flow = module_.exports.flow(baseInfo);
+                }
+                trace.end(info, flow);
+                if (flowExisted) {
+                    flow.step({ ts: trace.beginTs, ...baseInfo });
+                }
+                else {
+                    flow.start({ ts: trace.endTs });
+                }
+                trace = null;
+                try {
+                    return await v;
+                }
+                finally {
+                    trace = startSyncTrace(baseInfo);
+                }
+            },
+            addArgs(extraArgs) {
+                trace.addArgs(extraArgs);
+            },
+            end(endInfo) {
+                trace.end(endInfo, flow);
+                if (flow) {
+                    flow.end({ ts: trace.beginTs });
+                }
+            },
+            async endWith(v, endInfo) {
+                if (Promise.resolve(v) === v) { // If v is a promise.
+                    v = this.wait(v, null);
+                    try {
+                        return await v;
+                    }
+                    finally {
+                        this.end(endInfo);
+                    }
+                }
+                else { // If v is not a promise.
+                    this.end(endInfo);
+                    return v;
+                }
+            }
+        };
+    };
+    module_.exports.flow = (info) => {
+        info = parseInfo(info);
+        const id = flowId++;
+        let started = false;
+        return {
+            start(startInfo) {
+                const ts = (startInfo && startInfo.ts) || now$1();
+                started = true;
+                pushEvent({
+                    ph: 's',
+                    ts,
+                    cat: info.cat,
+                    name: info.name,
+                    ov: info.overview,
+                    args: info.args,
+                    id,
+                    seq: info.sequence
+                });
+                return this;
+            },
+            end(endInfo) {
+                if (!started)
+                    return this;
+                const ts = (endInfo && endInfo.ts) || now$1();
+                endInfo = parseInfo(endInfo);
+                pushEvent({
+                    ph: 'f',
+                    bp: 'e',
+                    ts,
+                    cat: info.cat,
+                    name: info.name,
+                    ov: info.overview,
+                    args: endInfo && endInfo.args,
+                    id,
+                    seq: info.sequence
+                });
+                return this;
+            },
+            step(stepInfo) {
+                if (!started)
+                    return this;
+                const ts = (stepInfo && stepInfo.ts) || now$1();
+                stepInfo = parseInfo(stepInfo);
+                pushEvent({
+                    ph: 't',
+                    ts,
+                    cat: info.cat,
+                    name: info.name,
+                    ov: info.overview,
+                    args: stepInfo && stepInfo.args,
+                    id,
+                    seq: info.sequence
+                });
+                return this;
+            },
+            id: () => id
+        };
+    };
+    module_.exports.save = () => {
+        return { traceEvents: events };
+    };
+    module_.exports.download = () => {
+        const a = document.createElement('a');
+        a.download = 'trace.json';
+        a.href = 'data:text/plain;base64,' + btoa(JSON.stringify(module_.exports.save()));
+        a.click();
+    };
+    module_.exports.now = now$1;
+    module_.exports.stream = (callback, predicate) => {
+        // Once we start streaming we no longer keep events in memory.
+        events.length = 0;
+        streamingCallbacks.push({ callback, predicate });
+    };
+    module_.exports.__clearForTests = () => {
+        events.length = 0;
+        streamingCallbacks.length = 0;
+    };
+}
+init();
 
 /**
  * @license
@@ -27168,7 +26978,7 @@ class Planner {
         const trace = Tracing.start({ cat: 'planning', name: 'Planner::plan', overview: true, args: { timeout } });
         timeout = timeout || -1;
         const allResolved = [];
-        const start = now$1();
+        const start = now();
         do {
             const record = await trace.wait(this.strategizer.generate());
             const generated = this.strategizer.generated;
@@ -27183,7 +26993,7 @@ class Planner {
                 .map(individual => individual.result)
                 .filter(recipe => recipe.isResolved());
             allResolved.push(...resolved);
-            const elapsed = now$1() - start;
+            const elapsed = now() - start;
             if (timeout >= 0 && elapsed > timeout) {
                 console.warn(`Planner.plan timed out [elapsed=${Math.floor(elapsed)}ms, timeout=${timeout}ms].`);
                 break;
@@ -27781,9 +27591,1262 @@ class RecipeIndex {
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
+class InitialRecipe extends Strategy {
+    constructor(recipe) {
+        super();
+        this.recipe = recipe;
+    }
+    async generate({ generation }) {
+        if (generation !== 0) {
+            return [];
+        }
+        return [{
+                result: this.recipe,
+                score: 1,
+                derivation: [{ strategy: this, parent: undefined }],
+                hash: this.recipe.digest(),
+                valid: Object.isFrozen(this.recipe),
+            }];
+    }
+}
+class ArcPlannerInvoker {
+    constructor(arc, arcDevtoolsChannel) {
+        this.arc = arc;
+        arcDevtoolsChannel.listen('fetch-strategies', () => arcDevtoolsChannel.send({
+            messageType: 'fetch-strategies-result',
+            messageBody: Planner.AllStrategies.map(s => s.name)
+        }));
+        arcDevtoolsChannel.listen('invoke-planner', async (msg) => arcDevtoolsChannel.send({
+            messageType: 'invoke-planner-result',
+            messageBody: await this.invokePlanner(msg.messageBody.manifest, msg.messageBody.method),
+            requestId: msg.requestId
+        }));
+    }
+    async invokePlanner(manifestString, method) {
+        if (!this.recipeIndex) {
+            this.recipeIndex = RecipeIndex.create(this.arc, { reportGenerations: false });
+            await this.recipeIndex.ready;
+        }
+        let manifest;
+        try {
+            manifest = await Manifest.parse(manifestString, { loader: this.arc._loader, fileName: 'manifest.manifest' });
+        }
+        catch (error) {
+            return this.processManifestError(error);
+        }
+        if (manifest.recipes.length === 0)
+            return { results: [] };
+        if (manifest.recipes.length > 1)
+            return { error: { message: `More than 1 recipe present, found ${manifest.recipes.length}.` } };
+        const recipe = manifest.recipes[0];
+        recipe.normalize();
+        if (method === 'arc' || method === 'arc_coalesce') {
+            return this.multiStrategyRun(recipe, method);
+        }
+        else {
+            return this.singleStrategyRun(recipe, method);
+        }
+    }
+    async multiStrategyRun(recipe, method) {
+        const strategies = method === 'arc_coalesce' ? Planner.ResolutionStrategies
+            : Planner.ResolutionStrategies.filter(s => s !== CoalesceRecipes);
+        const strategizer = new Strategizer([new InitialRecipe(recipe), ...strategies.map(S => this.instantiate(S))], [], Empty);
+        const terminal = [];
+        do {
+            await strategizer.generate();
+            terminal.push(...strategizer.terminal);
+        } while (strategizer.generated.length + strategizer.terminal.length > 0);
+        return this.processStrategyOutput(terminal);
+    }
+    async singleStrategyRun(recipe, strategyName) {
+        const strategy = Planner.AllStrategies.find(s => s.name === strategyName);
+        if (!strategy)
+            return { error: { message: `Strategy ${strategyName} not found` } };
+        return this.processStrategyOutput(await this.instantiate(strategy).generate({
+            generation: 0,
+            generated: [{ result: recipe, score: 1 }],
+            population: [{ result: recipe, score: 1 }],
+            terminal: [{ result: recipe, score: 1 }]
+        }));
+    }
+    instantiate(strategyClass) {
+        // TODO: Strategies should have access to the context that is a combination of arc context and
+        //       the entered manifest. Right now strategies only see arc context, which means that
+        //       various strategies will not see particles defined in the manifest entered in the
+        //       editor. This may bite us with verb substitution, hosted particle resolution etc.
+        return new strategyClass(this.arc, { recipeIndex: this.recipeIndex });
+    }
+    processStrategyOutput(inputs) {
+        return { results: inputs.map(result => {
+                const recipe = result.result;
+                const errors = new Map();
+                if (!Object.isFrozen(recipe)) {
+                    recipe.normalize({ errors });
+                }
+                let recipeString = '';
+                try {
+                    recipeString = recipe.toString({ showUnresolved: true });
+                }
+                catch (e) {
+                    console.warn(e);
+                }
+                return {
+                    recipe: recipeString,
+                    derivation: this.extractDerivation(result),
+                    errors: [...errors.values()].map(error => ({ error })),
+                };
+            }) };
+    }
+    extractDerivation(result) {
+        const found = [];
+        for (const deriv of result.derivation || []) {
+            if (!deriv.parent && deriv.strategy.constructor !== InitialRecipe) {
+                found.push(deriv.strategy.constructor.name);
+            }
+            else if (deriv.parent) {
+                const childDerivs = this.extractDerivation(deriv.parent);
+                for (const childDeriv of childDerivs) {
+                    found.push(childDeriv
+                        ? `${childDeriv} -> ${deriv.strategy.constructor.name}`
+                        : deriv.strategy.constructor.name);
+                }
+                if (childDerivs.length === 0)
+                    found.push(deriv.strategy.constructor.name);
+            }
+        }
+        return found;
+    }
+    processManifestError(error) {
+        let suggestion = null;
+        const errorTypes = [{
+                // TODO: Switch to declaring errors in a structured way in the error object, instead of message parsing.
+                pattern: /could not find particle ([A-Z][A-Za-z0-9_]*)\n/,
+                predicate: extracted => manifest => !!(manifest.particles.find(p => p.name === extracted))
+            }, {
+                pattern: /Could not resolve type reference to type name '([A-Z][A-Za-z0-9_]*)'\n/,
+                predicate: extracted => manifest => !!(manifest.schemas[extracted])
+            }];
+        for (const { pattern, predicate } of errorTypes) {
+            const match = pattern.exec(error.message);
+            if (match) {
+                const [_, extracted] = match;
+                const fileNames = this.findManifestNames(this.arc.context, predicate(extracted));
+                if (fileNames.length > 0)
+                    suggestion = { action: 'import', fileNames };
+            }
+        }
+        return { suggestion, error: ((({ location, message }) => ({ location, message }))(error)) };
+    }
+    findManifestNames(manifest, predicate) {
+        const map = new Map();
+        this.findManifestNamesRecursive(manifest, predicate, map);
+        return [...map.entries()].sort(([a, depthA], [b, depthB]) => (depthA - depthB)).map(v => v[0]);
+    }
+    findManifestNamesRecursive(manifest, predicate, fileNames) {
+        let depth = predicate(manifest) ? 0 : Number.MAX_SAFE_INTEGER;
+        for (const child of manifest.imports) {
+            depth = Math.min(depth, this.findManifestNamesRecursive(child, predicate, fileNames) + 1);
+        }
+        // http check to avoid listing shell created 'in-memory manifest'.
+        if (depth < Number.MAX_SAFE_INTEGER && manifest.fileName.startsWith('http')) {
+            fileNames.set(manifest.fileName, depth);
+        }
+        return depth;
+    }
+}
+
+/**
+ * @license
+ * Copyright (c) 2018 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+let streamingToDevtools = false;
+function enableTracingAdapter(devtoolsChannel) {
+    if (!streamingToDevtools) {
+        Tracing.enable();
+        devtoolsChannel.send({
+            messageType: 'trace-time-sync',
+            messageBody: {
+                traceTime: Tracing.now(),
+                localTime: Date.now()
+            }
+        });
+        Tracing.stream(trace => devtoolsChannel.send({
+            messageType: 'trace',
+            messageBody: trace
+        }), trace => trace.ov // Overview events only.
+        );
+        streamingToDevtools = true;
+    }
+}
+
+/**
+ * @license
+ * Copyright (c) 2018 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+// Arc-independent handlers for devtools logic.
+void DevtoolsConnection.onceConnected.then(devtoolsChannel => {
+    enableTracingAdapter(devtoolsChannel);
+});
+const devtoolsInspectorFactory = {
+    create(arc) {
+        return new DevtoolsInspector(arc);
+    }
+};
+class DevtoolsInspector {
+    constructor(arc) {
+        this.arcDevtoolsChannel = null;
+        this.onceActiveResolve = null;
+        this.onceActive = null;
+        if (arc.isStub)
+            return;
+        this.onceActive = new Promise(resolve => this.onceActiveResolve = resolve);
+        const connectedOnInstantiate = DevtoolsConnection.isConnected;
+        void DevtoolsConnection.onceConnected.then(devtoolsChannel => {
+            if (!connectedOnInstantiate) {
+                devtoolsChannel.send({
+                    messageType: 'warning',
+                    messageBody: 'pre-existing-arc'
+                });
+            }
+            this.arcDevtoolsChannel = devtoolsChannel.forArc(arc);
+            const unused1 = new ArcStoresFetcher(arc, this.arcDevtoolsChannel);
+            const unused2 = new ArcPlannerInvoker(arc, this.arcDevtoolsChannel);
+            this.arcDevtoolsChannel.send({
+                messageType: 'arc-available',
+                messageBody: {
+                    speculative: arc.isSpeculative,
+                    inner: arc.isInnerArc
+                }
+            });
+            this.sendEnvironmentMessage(arc);
+            this.onceActiveResolve();
+        });
+    }
+    recipeInstantiated(particles, activeRecipe) {
+        if (!DevtoolsConnection.isConnected)
+            return;
+        const truncate = ({ id, name }) => ({ id, name });
+        const slotConnections = [];
+        particles.forEach(p => Object.values(p.consumedSlotConnections).forEach(cs => {
+            if (cs.targetSlot) {
+                slotConnections.push({
+                    particleId: cs.particle.id.toString(),
+                    consumed: truncate(cs.targetSlot),
+                    provided: Object.values(cs.providedSlots).map(slot => truncate(slot)),
+                });
+            }
+        }));
+        this.arcDevtoolsChannel.send({
+            messageType: 'recipe-instantiated',
+            messageBody: { slotConnections, activeRecipe }
+        });
+    }
+    pecMessage(name, pecMsgBody, pecMsgCount, stackString) {
+        if (!DevtoolsConnection.isConnected)
+            return;
+        const stack = this._extractStackFrames(stackString);
+        this.arcDevtoolsChannel.send({
+            messageType: 'PecLog',
+            messageBody: { name, pecMsgBody, pecMsgCount, timestamp: Date.now(), stack },
+        });
+    }
+    _extractStackFrames(stackString) {
+        const stack = [];
+        if (!stackString)
+            return stack;
+        // File refs should appear only in stack traces generated by tests run with
+        // --explore set.
+        if (stackString.includes('(file:///')) {
+            // The slice discards the 'Error' text and the the stack frame
+            // corresponding to the API channel function, which is already being
+            // displayed in the log entry.
+            for (const frameString of stackString.split('\n    at ').slice(2)) {
+                const match = frameString.match(/^(.*) \((.*)\)$/);
+                const method = match ? match[1] : '<unknown>';
+                let location = match ? match[2] : frameString;
+                location = location.replace(/:[0-9]+$/, '');
+                if (location.startsWith('file')) {
+                    // 'file:///<path>/arcs.*/runtime/file.js:84'
+                    // -> location: 'runtime/file.js:150'
+                    location = location.replace(/^.*\/arcs[^/]*\//, '');
+                }
+                stack.push({ method, location, target: null, targetClass: 'noLink' });
+            }
+            return stack;
+        }
+        // The slice discards the stack frame corresponding to the API channel
+        // function, which is already being displayed in the log entry.
+        if (mapStackTrace) {
+            mapStackTrace(stackString, (mapped) => mapped.slice(1).map(frameString => {
+                // Each frame has the form '    at function (source:line:column)'.
+                // Extract the function name and source:line:column text, then set up
+                // a frame object with the following fields:
+                //   location: text to display as the source in devtools Arcs panel
+                //   target: URL to open in devtools Sources panel
+                //   targetClass: CSS class specifier to attach to the location text
+                const match = frameString.match(/^ {4}at (.*) \((.*)\)$/);
+                const method = match ? match[1] : '<unknown>';
+                let source = match ? match[2] : frameString.replace(/^ *at */, '');
+                const frame = { method };
+                source = match[2].replace(/:[0-9]+$/, '');
+                if (source.startsWith('http')) {
+                    // 'http://<url>/arcs.*/shell/file.js:150'
+                    // -> location: 'shell/file.js:150', target: same as source
+                    frame.location = source.replace(/^.*\/arcs[^/]*\//, '');
+                    frame.target = source;
+                    frame.targetClass = 'link';
+                }
+                else if (source.startsWith('webpack')) {
+                    // 'webpack:///runtime/sub/file.js:18'
+                    // -> location: 'runtime/sub/file.js:18', target: 'webpack:///./runtime/sub/file.js:18'
+                    frame.location = source.slice(11);
+                    frame.target = `webpack:///./${frame.location}`;
+                    frame.targetClass = 'link';
+                }
+                else {
+                    // '<anonymous>' (or similar)
+                    frame.location = source;
+                    frame.target = null;
+                    frame.targetClass = 'noLink';
+                }
+                stack.push(frame);
+            }), { sync: false, cacheGlobally: true });
+        }
+        return stack;
+    }
+    isActive() {
+        return DevtoolsConnection.isConnected;
+    }
+    sendEnvironmentMessage(arc) {
+        const allManifests = [];
+        (function traverse(manifest) {
+            allManifests.push(manifest);
+            manifest.imports.forEach(traverse);
+        })(arc.context);
+        this.arcDevtoolsChannel.send({
+            messageType: 'arc-environment',
+            messageBody: {
+                recipes: arc.context.allRecipes.map(r => ({
+                    name: r.name,
+                    text: r.toString(),
+                    file: allManifests.find(m => m.recipes.includes(r)).fileName
+                })),
+                particles: arc.context.allParticles.map(p => ({
+                    name: p.name,
+                    spec: p.toString(),
+                    file: allManifests.find(m => m.particles.includes(p)).fileName
+                }))
+            }
+        });
+    }
+}
+
+/*
+ * Copyright (c) 2019 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+
+const log = console.log.bind(console);
+const warn = console.warn.bind(console);
+const env = {};
+
+const createPathMap = root => ({
+  'https://$arcs/': `${root}/`,
+  'https://$shells/': `${root}/shells/`,
+  'https://$build/': `${root}/shells/lib/build/`,
+  'https://$particles/': `${root}/particles/`,
+});
+
+const init$1 = (root, urls) => {
+  const map = Object.assign(Utils.createPathMap(root), urls);
+  env.loader = new PlatformLoader(map);
+  env.pecFactory = pecIndustry(env.loader);
+  return env;
+};
+
+const parse$1 = async (content, options) => {
+  const id = `in-memory-${Math.floor((Math.random()+1)*1e6)}.manifest`;
+  const localOptions = {
+    id,
+    fileName: `./${id}`,
+    loader: env.loader
+  };
+  if (options) {
+    Object.assign(localOptions, options);
+  }
+  return Manifest.parse(content, localOptions);
+};
+
+const resolve = async (arc, recipe) =>{
+  if (!recipe.normalize()) {
+    warn('failed to normalize:\n', recipe.toString());
+  } else {
+    let plan = recipe;
+    if (!plan.isResolved()) {
+      const resolver = new RecipeResolver(arc);
+      plan = await resolver.resolve(recipe);
+      if (!plan || !plan.isResolved()) {
+        warn('failed to resolve:\n', (plan || recipe).toString({showUnresolved: true}));
+        log(arc.context, arc, arc.context.storeTags);
+        plan = null;
+      }
+    }
+    return plan;
+  }
+};
+
+const spawn = async ({id, serialization, context, composer, storage}) => {
+  const arcId = IdGenerator.newSession().newArcId(id);
+  const params = {
+    id: arcId,
+    fileName: './serialized.manifest',
+    serialization,
+    context,
+    storageKey: storage,
+    slotComposer: composer,
+    pecFactory: env.pecFactory,
+    loader: env.loader,
+    inspectorFactory: devtoolsInspectorFactory
+  };
+  Object.assign(params, env.params);
+  return serialization ? Arc.deserialize(params) : new Arc(params);
+};
+
+const Utils = {
+  createPathMap,
+  init: init$1,
+  env,
+  parse: parse$1,
+  resolve,
+  spawn
+};
+
+/*
+ * Copyright (c) 2019 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+
+class SyntheticStores {
+  static get providerFactory() {
+    return SyntheticStores._providerFactory || (SyntheticStores._providerFactory = new StorageProviderFactory('shell'));
+  }
+  static async getArcsStore(storage, arcid) {
+    const handleStore = await SyntheticStores.getStore(storage, arcid);
+    if (handleStore) {
+      const handles = await handleStore.toList();
+      const handle = handles[0];
+      if (handle) {
+        return await SyntheticStores.getHandleStore(handle);
+      }
+    }
+  }
+  static async getStore(storage, arcid) {
+    return await SyntheticStores.connectToKind('handles', storage, arcid);
+  }
+  static async connectToKind(kind, storage, arcid) {
+    // delimiter problems
+    if (storage[storage.length-1] === '/') {
+      storage = storage.slice(0, -1);
+    }
+    return SyntheticStores.storeConnect(null, `synthetic://arc/${kind}/${storage}/${arcid}`);
+  }
+  static async getHandleStore(handle) {
+    return await SyntheticStores.storeConnect(handle.type, handle.storageKey);
+  }
+  static async storeConnect(type, storageKey) {
+    return SyntheticStores.providerFactory.connect(SyntheticStores.makeId(), type, storageKey);
+  }
+  static makeId() {
+    return `id${Math.random()}`;
+  }
+  static snarfId(key) {
+    return key.split('/').pop();
+  }
+}
+
+/**
+ * Copyright (c) 2019 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+
+const log$1 = logFactory('ArcHost', '#cade57');
+const warn$1 = logFactory('ArcHost', '#cade57', 'warn');
+const error$1 = logFactory('ArcHost', '#cade57', 'error');
+
+class ArcHost {
+  constructor(context, storage, composer) {
+    this.context = context;
+    this.storage = storage;
+    this.composer = composer;
+  }
+  disposeArc() {
+    if (this.arc) {
+      this.arc.dispose();
+    }
+    this.arc = null;
+  }
+  // config = {id, [serialization], [manifest]}
+  async spawn(config) {
+    log$1('spawning arc', config);
+    this.config = config;
+    const context = this.context || await Utils.parse(``);
+    this.serialization = await this.computeSerialization(config, this.storage);
+    this.arc = await this._spawn(context, this.composer, this.storage, config.id, this.serialization);
+    if (config.manifest && !this.serialization) {
+      await this.instantiateDefaultRecipe(this.arc, config.manifest);
+    }
+    if (this.pendingPlan) {
+      const plan = this.pendingPlan;
+      this.pendingPlan = null;
+      await this.instantiatePlan(this.arc, plan);
+    }
+    return this.arc;
+  }
+  set manifest(manifest) {
+    this.instantiateDefaultRecipe(this.arc, manifest);
+  }
+  set plan(plan) {
+    if (this.arc) {
+      this.instantiatePlan(this.arc, plan);
+    } else {
+      this.pendingPlan = plan;
+    }
+  }
+  async computeSerialization(config, storage) {
+    let serialization;
+    if (config.serialization != null) {
+      serialization = config.serialization;
+    }
+    if (serialization == null) {
+      if (storage.includes('volatile')) {
+        serialization = '';
+      } else {
+        serialization = await this.fetchSerialization(storage, config.id) || '';
+      }
+    }
+    return serialization;
+  }
+  async _spawn(context, composer, storage, id, serialization) {
+    return await Utils.spawn({id, context, composer, serialization, storage: `${storage}/${id}`});
+  }
+  async instantiateDefaultRecipe(arc, manifest) {
+    log$1('instantiateDefaultRecipe');
+    try {
+      manifest = await Utils.parse(manifest);
+      const recipe = manifest.allRecipes[0];
+      const plan = await Utils.resolve(arc, recipe);
+      if (plan) {
+        await this.instantiatePlan(arc, plan);
+      }
+    } catch (x) {
+      error$1(x);
+    }
+  }
+  async instantiatePlan(arc, plan) {
+    log$1('instantiatePlan');
+    // TODO(sjmiles): pass suggestion all the way from web-shell
+    // and call suggestion.instantiate(arc).
+    if (!plan.isResolved()) {
+      log$1(`Suggestion plan ${plan.toString({showUnresolved: true})} is not resolved.`);
+    }
+    try {
+      await arc.instantiate(plan);
+    } catch (x) {
+      error$1(x);
+      //console.error(plan.toString());
+    }
+    await this.persistSerialization();
+  }
+  async fetchSerialization(storage, arcid) {
+    const key = `${storage}/${arcid}/arc-info`;
+    const store = await SyntheticStores.providerFactory.connect('id', new ArcType(), key);
+    if (store) {
+      log$1('loading stored serialization');
+      const info = await store.get();
+      return info && info.serialization;
+    }
+  }
+  async persistSerialization() {
+    const {arc, config: {id}, storage} = this;
+    if (!storage.includes('volatile')) {
+      log$1(`persisting serialization to [${id}/serialization]`);
+      const serialization = await arc.serialize();
+      await arc.persistSerialization(serialization);
+    }
+  }
+}
+
+/**
+ * Copyright (c) 2019 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+
+class RamSlotComposer extends SlotComposer {
+  constructor(options = {}) {
+    super({
+      rootContainer: options.rootContainer || {'root': 'root-context'},
+      modalityName: options.modalityName,
+      modalityHandler: ModalityHandler.createHeadlessHandler()
+    });
+  }
+  sendEvent(particleName, slotName, event, data) {
+    const particles = this.consumers.filter(s => s.consumeConn.particle.name == particleName).map(s => s.consumeConn.particle);
+    this.pec.sendEvent(particles[0], slotName, {handler: event, data});
+  }
+  renderSlot(particle, slotName, content) {
+    super.renderSlot(particle, slotName, content);
+    const slotConsumer = this.getSlotConsumer(particle, slotName);
+    if (slotConsumer) {
+      slotConsumer.updateProvidedContexts();
+    }
+  }
+}
+
+const version = '0_6_0';
+const firebase = `firebase://arcs-storage.firebaseio.com/AIzaSyBme42moeI-2k8WgXh-6YK_wYyjEXo4Oz8/${version}`;
+const pouchdb = `pouchdb://local/arcs/${version}`;
+const volatile = 'volatile://';
+
+const Const = {
+  version,
+  DEFAULT: {
+    userId: 'user',
+    firebaseStorageKey: firebase,
+    pouchdbStorageKey: pouchdb,
+    volatileStorageKey: volatile,
+    storageKey: pouchdb, //firebase,
+    plannerStorageKey: 'volatile',
+    manifest: `https://$particles/canonical.manifest`,
+    launcherSuffix: `-launcher`,
+  },
+  LOCALSTORAGE: {
+    user: `${version}-user`,
+    storage: `${version}-storage`,
+    plannerStorage: `${version}-plannerStorage`
+  },
+  SHARE: {
+    private: 1,
+    self: 2,
+    friends: 3
+  },
+  STORES: {
+    boxed: 'BOXED',
+    my: 'PROFILE',
+    shared: 'FRIEND'
+  }
+};
+
+/*
+@license
+Copyright (c) 2018 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+*/
+
+const log$2 = logFactory('UserArcs', '#4f0433');
+const warn$2 = logFactory('UserArcs', '#4f0433', 'warn');
+
+class UserArcs {
+  constructor(storage, userid) {
+    SyntheticStores.init();
+    this.values = [];
+    this.listeners = [];
+    this.contextWait = 3000;
+    this.updateArcsStore(storage, userid);
+  }
+  async subscribe(listener) {
+    if (this.listeners.indexOf(listener) < 0) {
+      await this.publishInitialChanges([listener]);
+      this.listeners.push(listener);
+      this.publish(this.values, [listener]);
+    }
+  }
+  publish(changes, listeners) {
+    // convert {add:[], remove:[]} to [{add, remove}]
+    if (changes.add) {
+      changes.add.forEach(add => this._publish({add: add.value}, listeners));
+    }
+    if (changes.remove) {
+      changes.remove.forEach(remove => this._publish({remove: remove.value}, listeners));
+    }
+  }
+  async publishInitialChanges(listeners) {
+    const changes = {add: []};
+    if (this.store) {
+      const values = await this.store.toList();
+      values.forEach(value => this._publish({add: value}, listeners));
+    }
+    return changes;
+  }
+  _publish(change, listeners) {
+    if (!change.add || !change.add.rawData.deleted) {
+      listeners.forEach(listener => listener(change));
+    }
+  }
+  async updateArcsStore(storage, userid) {
+    // attempt to marshal arcs-store for this user
+    this.store = await this.fetchArcsStore(storage, userid);
+    if (this.store) {
+      // TODO(sjmiles): plop arcsStore into state early for updateUserContext, usage is weird
+      this.foundArcsStore(this.store);
+    } else {
+      // retry after a bit
+      setTimeout(() => this.updateArcsStore(storage, userid), this.contextWait);
+    }
+  }
+  async fetchArcsStore(storage, userid) {
+    // TODO(sjmiles): marshalling of arcs-store arc id from userid should be elsewhere
+    const store = await SyntheticStores.getArcsStore(storage, `${userid}${Const.DEFAULT.launcherSuffix}`);
+    if (store) {
+      log$2(`marshalled arcsStore for [${userid}]`);
+      return store;
+    }
+    warn$2(`failed to marshal arcsStore for [${userid}][${storage}]`);
+  }
+  async foundArcsStore(store) {
+    log$2('foundArcsStore', Boolean(store));
+    await this.publishInitialChanges(this.listeners);
+    store.on('change', changes => this.arcsStoreChange(changes), this);
+  }
+  arcsStoreChange(changes) {
+    this.publish(changes, this.listeners);
+  }
+}
+
+/*
+@license
+Copyright (c) 2018 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+*/
+
+const log$3 = logFactory('SingleUserContext', '#f2ce14');
+const warn$3 = logFactory('SingleUserContext', '#f2ce14', 'warn');
+const error$2 = logFactory('SingleUserContext', '#f2ce14', 'error');
+
+// SoloContext (?)
+const SingleUserContext = class {
+  constructor(storage, context, userid, arcstore, isProfile) {
+    this.storage = storage;
+    this.context = context;
+    this.userid = userid;
+    this.arcstore = arcstore;
+    this.isProfile = isProfile;
+    // we observe `arcid`s and `storageKey`s
+    this.observers = {};
+    // when we remove an arc from consideration, we have to unobserve storageKeys from that arc
+    // `handles` maps an arcid to an array of storageKeys to unobserve
+    this.handles = {};
+    // promises for async store marshaling
+    this.pendingStores = [];
+    if (arcstore) {
+      this.attachArcStore(storage, arcstore);
+    }
+  }
+  async attachArcStore(storage, arcstore) {
+    this.observeStore(arcstore, arcstore.id, info => {
+      log$3('arcstore::observer', info);
+      if (info.add) {
+        info.add.forEach(({value}) => this._addArc(storage, value.rawData));
+      } else if (info.remove) {
+        info.remove.forEach(({value}) => {
+          // TODO(sjmiles): value should contain `rawData.key`, but sometimes there is no `rawData`
+          this.removeArc(value.id);
+        });
+      } else {
+        log$3('arcstore::observer info type not supported: ', info);
+      }
+    });
+  }
+  async dispose() {
+    // chuck all observers
+    Object.values(this.observers).forEach(({key}) => this.unobserve(key));
+    // chuck all data
+    await this.removeUserEntities(this.context, this.userid, this.isProfile);
+  }
+  removeArc(arcid) {
+    this.unobserve(arcid);
+    const handles = this.handles[arcid];
+    if (handles) {
+      handles.forEach(({storageKey}) => this.unobserve(storageKey));
+      this.handles[arcid] = null;
+    }
+  }
+  async _addArc(storage, arcmeta) {
+    const {deleted, key} = arcmeta;
+    if (!deleted) {
+      const store = await SyntheticStores.getStore(storage, key);
+      if (store) {
+        await this.observeStore(store, key, info => this.onArcStoreChanged(key, info));
+      }
+    }
+  }
+  async addArc(key) {
+    //if (!deleted) {
+      const store = await SyntheticStores.getStore(this.storage, key);
+      if (store) {
+        await this.observeStore(store, key, info => this.onArcStoreChanged(key, info));
+      } else {
+        warn$3(`failed to get SyntheticStore for arc at [${this.storage}, ${key}]\nhttps://github.com/PolymerLabs/arcs/issues/2304`);
+      }
+    //}
+  }
+  unobserve(key) {
+    const observer = this.observers[key];
+    if (observer) {
+      this.observers[key] = null;
+      //log(`UNobserving [${key}]`);
+      observer.store.off('change', observer.cb);
+    }
+  }
+  async observeStore(store, key, cb) {
+   if (!store) {
+      console.warn(`observeStore: store is null for [${key}]`);
+    } else {
+      if (!this.observers[key]) {
+        log$3(`observing [${key}]`);
+        // TODO(sjmiles): create synthetic store `change` records from the initial state
+        // SyntheticCollection has `toList` but is `!type.isCollection`,
+        if (store.toList) {
+          const data = await store.toList();
+          if (data && data.length) {
+            const add = data.map(value => ({value}));
+            cb({add});
+          } else log$3('...store is empty collection');
+        } else if (store.type.isEntity) {
+          const data = await store.get();
+          if (data) {
+            cb({data});
+          }
+        }
+        this.observers[key] = {key, store, cb: store.on('change', cb, this)};
+      }
+    }
+  }
+   onArcStoreChanged(arcid, info) {
+    log$3('Synthetic-store change event (onArcStoreChanged):', info);
+    // TODO(sjmiles): synthesize add/remove records from data record
+    //   this._patchArcDataInfo(arcid, info);
+    // process add/remove stream
+    if (info.add) {
+      info.add.forEach(async add => {
+        let handle = add.value;
+        if (!handle) {
+          error$2('`add` record has no `value`, applying workaround', add);
+          handle = add;
+        }
+        if (handle) { //} && handle.tags.length) {
+          //handle.tags.length && log('observing handle', handle.tags);
+          //log('fetching handle store', handle);
+          const store = await SyntheticStores.getHandleStore(handle);
+          await this.observeStore(store, handle.storageKey, info => this.updateHandle(arcid, handle, info));
+        }
+      });
+    }
+    if (info.remove) {
+      info.remove.forEach(async remove => {
+        const handle = remove.value;
+        if (handle) {
+          //log('UNobserving handle', handle);
+          this.unobserve(handle.storageKey);
+        }
+      });
+    }
+  }
+  async updateHandle(arcid, handle, info) {
+    const {context, userid, isProfile} = this;
+    const tags = handle.tags ? handle.tags.join('-') : '';
+    if (tags) {
+      log$3('updateHandle', tags/*, info*/);
+      const type = handle.type.isCollection ? handle.type : handle.type.collectionOf();
+      const id = SyntheticStores.snarfId(handle.storageKey);
+      //
+      const shareid = `${tags}|${id}|from|${userid}|${arcid}`;
+      const shortid = `${(isProfile ? `PROFILE` : `FRIEND`)}_${tags}`;
+      const storeName = shortid;
+      const storeId = isProfile ? shortid : shareid;
+      log$3('share id:', storeId);
+      const store = await this.getShareStore(context, type, storeName, storeId, ['shared']); //handle.tags);
+      //
+      const boxStoreId = `BOXED_${tags}`;
+      const boxDataId = `${userid}|${arcid}`;
+      //const boxId = `${tags}|${boxDataId}`;
+      log$3('box ids:', boxStoreId, boxDataId/*, boxId*/);
+      const boxStore = await this.getShareStore(context, type, boxStoreId, boxStoreId, ['shared']); //[boxStoreId]);
+      //
+      // TODO(sjmiles): no mutation
+      if (handle.type.isEntity) {
+        if (info.data) {
+          // TODO(sjmiles): in the absence of data mutation, when an entity changes
+          // it gets an entirely new id, so we cannot use ids to track entities
+          // in boxed stores. However as this entity is a Highlander for this
+          // user and arc (by virtue of not being in a Collection) we can synthesize
+          // a stable id.
+          info.data.id = boxDataId;
+          this.unshareEntities(userid, store, boxStore, info.data);
+          this.shareEntities(userid, store, boxStore, info.data);
+        }
+      } else if (info.add || info.remove) {
+        info.remove && info.remove.forEach(remove => this.unshareEntities(userid, store, boxStore, [remove.value]));
+        info.add && info.add.forEach(add => this.shareEntities(userid, store, boxStore, [add.value]));
+      } else if (info.data) {
+        this.shareEntities(userid, store, boxStore, info.data);
+      }
+    }
+  }
+  async getShareStore(context, type, name, id, tags) {
+    // TODO(sjmiles): cache and return promises in case of re-entrancy
+    let promise = this.pendingStores[id];
+    if (!promise) {
+      promise = new Promise(async (resolve) => {
+        const store = await context.findStoreById(id);
+        if (store) {
+          resolve(store);
+        } else {
+          const store = await context.createStore(type, name, id, tags);
+          resolve(store);
+        }
+      });
+      this.pendingStores[id] = promise;
+    }
+    return promise;
+  }
+  async shareEntities(userid, shareStore, boxStore, data) {
+    if (data) {
+      this.storeEntitiesWithUid(shareStore, data, userid);
+      boxStore.idMap = this.storeEntitiesWithUid(boxStore, data, userid);
+    }
+  }
+  async unshareEntities(userid, shareStore, boxStore, data) {
+    if (data) {
+      this.removeEntitiesWithUid(shareStore, data, userid);
+      this.removeEntitiesWithUid(boxStore, data, userid);
+    }
+  }
+  storeEntitiesWithUid(store, data, uid) {
+    const ids = [];
+    const storeDecoratedEntity = ({id, rawData}, uid) => {
+      const decoratedId = `${id}:uid:${uid}`;
+      ids.push({id: decoratedId, rawData});
+      //console.log('pushing data to store');
+      if (store.type.isCollection) {
+        // FIXME: store.generateID may not be safe (session scoped)?
+        store.store({id: decoratedId, rawData}, [store.generateID()]);
+      } else {
+        store.set({id: decoratedId, rawData});
+      }
+    };
+    if (data && data.id) {
+      storeDecoratedEntity(data, uid);
+    } else {
+      Object.values(data).forEach(entity => entity && storeDecoratedEntity(entity, uid));
+    }
+    return ids;
+  }
+  removeEntitiesWithUid(store, data, uid) {
+    const removeDecoratedEntity = ({id, rawData}, uid) => {
+      const decoratedId = `${id}:uid:${uid}`;
+      if (store.type.isCollection) {
+        store.remove(decoratedId);
+      }
+    };
+    if (store.type.isCollection) {
+      if (Array.isArray(data)) {
+        data.forEach(entity => entity && removeDecoratedEntity(entity, uid));
+      } else if (data && data.id) {
+        removeDecoratedEntity(data, uid);
+      }
+    } else {
+      store.clear();
+    }
+  }
+  async removeEntities(context) {
+    this.removeUserEntities(context, 'all', true);
+  }
+  async removeUserEntities(context, userid, isProfile) {
+    log$3(`removing entities for [${userid}]`);
+    const jobs = [];
+    for (let i=0, store; (store=context.stores[i]); i++) {
+      jobs.push(this.removeUserStoreEntities(userid, store, isProfile));
+    }
+    await Promise.all(jobs);
+  }
+  async removeUserStoreEntities(userid, store, isProfile) {
+   if (!store) {
+      console.warn(`removeUserStoreEntities: store is null for [${userid}]`);
+    } else {
+      log$3(`scanning [${userid}] [${store.id}] (${store.toList ? 'collection' : 'variable'})`);
+      //const tags = context.findStoreTags(store);
+      if (store.toList) {
+        const entities = await store.toList();
+        entities.forEach(entity => {
+          const uid = entity.id.split('uid:').pop().split('|').shift();
+          if (isProfile || uid === userid) {
+            log$3(`  REMOVE `, entity.id);
+            // TODO(sjmiles): _removeUserStoreEntities is strangely re-entering
+            //  (1) `remove` fires synchronous change events
+            //  (2) looks like there are double `remove` events in the queue. Bug?
+            // In general, to avoid interleaving we'll probably need to
+            // use a stack to process changes async to receiving them.
+            // Parallel processing works as of now ... feature?
+            store.remove(entity.id);
+          }
+        });
+      }
+      else {
+        const uid = store.id.split('|').slice(-2, -1).pop();
+        if (isProfile || uid === userid) {
+          log$3(`  CLEAR store`);
+          store.clear();
+        }
+      }
+    }
+  }
+};
+
+/*
+@license
+Copyright (c) 2018 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+*/
+
+const log$4 = logFactory('UserContext', '#4f0433');
+const warn$4 = logFactory('UserContext', '#4f0433', 'warn');
+
+class UserContext {
+  constructor() {
+  }
+  async init(storage, userid, context) {
+    await this.disposeUserContext(this.userContext);
+    const isProfile = true;
+    this.userContext = new SingleUserContext(storage, context, userid, null, isProfile);
+  }
+  async disposeUserContext(userContext) {
+    if (userContext) {
+      try {
+        await userContext.dispose();
+      } catch (x) {
+        //
+      }
+    }
+  }
+  onArc({add, remove}) {
+    if (add) {
+      this.userContext.addArc(add.id);
+    }
+    if (remove) {
+      this.userContext.removeArc(remove.id);
+    }
+  }
+  // _getInitialState() {
+  //   return {
+  //     // ms to wait until we think there is probably some context
+  //     contextWait: 3000,
+  //     // maps userid to SingleUserContext for friends
+  //     friends: {},
+  //     // TODO(sjmiles): workaround for missing data in `remove` records
+  //     // maps entityids to userids for friends
+  //     friendEntityIds: {},
+  //     // snapshot of BOXED_avatar for use by shell
+  //     avatars: {},
+  //   };
+  // }
+  // update(props, state) {
+  //   if (!state.env && props.env) {
+  //     state.env = props.env;
+  //     SyntheticStores.init(props.env);
+  //   }
+  //   if (props.context && state.context !== props.context) {
+  //     state.context = props.context;
+  //     this.updateFriends(props, state);
+  //   }
+  //   if (props.storage && props.context && props.userid !== state.userid) {
+  //     state.userid = props.userid;
+  //     this.awaitState('arcsStore', () => this.updateArcsStore(props, state));
+  //   }
+  // }
+  // async updateArcsStore(props, state) {
+  //   const {storage, userid} = props;
+  //   const arcsStore = await this.fetchArcsStore(storage, userid);
+  //   if (arcsStore) {
+  //     // TODO(sjmiles): plop arcsStore into state early for updateUserContext, usage is weird
+  //     state.arcsStore = arcsStore;
+  //     // TODO(sjmiles): props and state are suspect after await
+  //     await this.updateUserContext(props, state);
+  //   } else {
+  //     // retry after a bit
+  //     setTimeout(() => this.state = {userid: null}, state.contextWait);
+  //   }
+  //   // signal when user-decorated context is `ready`
+  //   // TODO(sjmiles): ideally we have a better signal than a timeout
+  //   setTimeout(() => this.fire('context', props.context), state.contextWait);
+  //   return arcsStore;
+  // }
+  // async fetchArcsStore(storage, userid) {
+  //   const store = await SyntheticStores.getArcsStore(storage, `${userid}${Const.DEFAULT.launcherSuffix}`);
+  //   if (store) {
+  //     log(`marshalled arcsStore for [${userid}]`); //[${storage}]`, store);
+  //     return store;
+  //   }
+  //   warn(`failed to marshal arcsStore for [${userid}][${storage}]`);
+  // }
+  // async updateSystemUser({userid, context}) {
+  //   const store = await context.findStoreById('SYSTEM_user');
+  //   if (store) {
+  //     const user = {
+  //       id: store.generateID(),
+  //       rawData: {
+  //         id: userid,
+  //       }
+  //     };
+  //     store.set(user);
+  //     log('installed SYSTEM_user');
+  //   }
+  // }
+  // async updateUserContext({storage, userid, context}, {userContext, arcsStore}) {
+  //   await this.disposeUserContext(userContext);
+  //   // do not operate on stale userid
+  //   if (!this.state.userContext && userid === this.state.userid) {
+  //     const isProfile = true;
+  //     this.state = {
+  //       userContext: new SingleUserContext(storage, context, userid, arcsStore, isProfile)
+  //     };
+  //   }
+  // }
+  // async disposeUserContext(userContext) {
+  //   if (userContext) {
+  //     this.state = {userContext: null};
+  //     try {
+  //       await userContext.dispose();
+  //     } catch (x) {
+  //       //
+  //     }
+  //   }
+  // }
+  // async updateFriends({storage, userid, context}, state) {
+  //   if (state.friendsStore) {
+  //     log('discarding old PROFILE_friends');
+  //     state.friendsStore.off('change', state.friendsStoreCb);
+  //     state.friendsStore = null;
+  //   }
+  //   const friendsStore = await context.findStoreById('PROFILE_friends');
+  //   if (friendsStore) {
+  //     log('found PROFILE_friends');
+  //     const friendsStoreCb = info => this.onFriendsChange(storage, context, info);
+  //     // get current data
+  //     const friends = await friendsStore.toList();
+  //     // listen for changes
+  //     friendsStore.on('change', friendsStoreCb, this);
+  //     // process friends already in store
+  //     this.onFriendsChange(storage, context, {add: friends.map(f => ({value: f}))});
+  //     this.state = {friendsStore, friendsStoreCb};
+  //   } else {
+  //     warn('PROFILE_friends missing');
+  //   }
+  // }
+  // onFriendsChange(storage, context, info) {
+  //   const {friends, friendEntityIds} = this._state;
+  //   if (info.add) {
+  //     info.add.forEach(({value}) => {
+  //       const entityId = value.id;
+  //       const friendId = value.rawData.id;
+  //       // TODO(sjmiles): friendEntityIds is a hack to workaround missing rawData in removal records
+  //       friendEntityIds[entityId] = friendId;
+  //       this.addFriend(storage, context, friends, friendId);
+  //     });
+  //   }
+  //   if (info.remove) {
+  //     info.remove.forEach(remove => this.removeFriend(friends, friendEntityIds[remove.value.id]));
+  //   }
+  // }
+  // async addFriend(storage, context, friends, friendId, attempts) {
+  //   log(`trying to addFriend [${friendId}]`);
+  //   if (!friends[friendId]) {
+  //     friends[friendId] = true;
+  //     const arcsStore = await this.fetchArcsStore(storage, friendId);
+  //     if (arcsStore) {
+  //       friends[friendId] = new SingleUserContext(storage, context, friendId, arcsStore, false);
+  //     } else {
+  //       friends[friendId] = null;
+  //       // retry a bit
+  //       attempts = (attempts || 0) + 1;
+  //       if (attempts < 11) {
+  //         const timeout = 1000*Math.pow(2.9076, attempts);
+  //         console.warn(`retry [${attempts}/10] to addFriend [${friendId}] in ${(timeout/1000/60).toFixed(2)}m`);
+  //         setTimeout(() => this.addFriend(storage, context, friends, friendId, attempts), timeout);
+  //       }
+  //     }
+  //   }
+  // }
+  // removeFriend(friends, friendId) {
+  //   log('removeFriend', friendId);
+  //   const friend = friends[friendId];
+  //   if (friend) {
+  //     friend.dispose && friend.dispose();
+  //     friends[friendId] = null;
+  //   }
+  // }
+  //async _boxedAvatarChanged(store) {
+  //   const avatars = await store.toList();
+  //   this._fire('avatars', avatars);
+  //   avatars.get = id => {
+  //     const avatar = avatars.find(avatar => {
+  //       const uid = avatar.id.split(':uid:').pop();
+  //       return uid === id;
+  //     });
+  //     return avatar && avatar.rawData;
+  //   };
+  // }
+}
+
+/**
+ * @license
+ * Copyright (c) 2018 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
 const defaultTimeoutMs = 5000;
-const log = logFactory('PlanProducer', '#ff0090', 'log');
-const error$1 = logFactory('PlanProducer', '#ff0090', 'error');
+const log$5 = logFactory('PlanProducer', '#ff0090', 'log');
+const error$3 = logFactory('PlanProducer', '#ff0090', 'error');
 var Trigger;
 (function (Trigger) {
     Trigger["Init"] = "init";
@@ -27879,7 +28942,7 @@ class PlanProducer {
             return;
         }
         this.isPlanning = true;
-        const time = now$1();
+        const time = now();
         let suggestions = [];
         let generations = [];
         while (this.needReplan) {
@@ -27887,9 +28950,9 @@ class PlanProducer {
             generations = [];
             suggestions = await this.runPlanner(this.replanOptions, generations);
         }
-        const timestr = ((now$1() - time) / 1000).toFixed(2);
+        const timestr = ((now() - time) / 1000).toFixed(2);
         if (suggestions) {
-            log(`[${this.arc.id.idTreeAsString()}] Produced ${suggestions.length} suggestions [elapsed=${timestr}s].`);
+            log$5(`[${this.arc.id.idTreeAsString()}] Produced ${suggestions.length} suggestions [elapsed=${timestr}s].`);
             this.isPlanning = false;
             const serializedGenerations = this.debug ? PlanningResult.formatSerializableGenerations(generations) : [];
             if (this.result.merge({
@@ -27942,7 +29005,7 @@ class PlanProducer {
         this.speculator.dispose();
         this.needReplan = false;
         this.isPlanning = false; // using the setter method to trigger callbacks.
-        log(`Cancel planning`);
+        log$5(`Cancel planning`);
     }
 }
 
@@ -28216,7 +29279,7 @@ class ReplanQueue {
         this.planProducer.registerStateChangedCallback(this._onPlanningStateChanged.bind(this));
     }
     addChange() {
-        this.changes.push(now$1());
+        this.changes.push(now());
         if (this.isReplanningScheduled()) {
             this._postponeReplan();
         }
@@ -28232,7 +29295,7 @@ class ReplanQueue {
         }
         else if (this.changes.length > 0) {
             // Schedule delayed planning.
-            const timeNow = now$1();
+            const timeNow = now();
             this.changes.forEach((ch, i) => this.changes[i] = timeNow);
             this._scheduleReplan(this.options.defaultReplanDelayMs);
         }
@@ -28257,8 +29320,8 @@ class ReplanQueue {
         if (this.changes.length <= 1) {
             return;
         }
-        const now = this.changes[this.changes.length - 1];
-        const sinceFirstChangeMs = now - this.changes[0];
+        const now$$1 = this.changes[this.changes.length - 1];
+        const sinceFirstChangeMs = now$$1 - this.changes[0];
         if (this._canPostponeReplan(sinceFirstChangeMs)) {
             this._cancelReplanIfScheduled();
             let nextReplanDelayMs = this.options.defaultReplanDelayMs;
@@ -28413,184 +29476,6 @@ class Planificator {
 
 /**
  * @license
- * Copyright (c) 2018 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-class InitialRecipe extends Strategy {
-    constructor(recipe) {
-        super();
-        this.recipe = recipe;
-    }
-    async generate({ generation }) {
-        if (generation !== 0) {
-            return [];
-        }
-        return [{
-                result: this.recipe,
-                score: 1,
-                derivation: [{ strategy: this, parent: undefined }],
-                hash: this.recipe.digest(),
-                valid: Object.isFrozen(this.recipe),
-            }];
-    }
-}
-class ArcPlannerInvoker extends ArcDebugListener {
-    constructor(arc, arcDevtoolsChannel) {
-        super(arc, arcDevtoolsChannel);
-        this.arc = arc;
-        arcDevtoolsChannel.listen('fetch-strategies', () => arcDevtoolsChannel.send({
-            messageType: 'fetch-strategies-result',
-            messageBody: Planner.AllStrategies.map(s => s.name)
-        }));
-        arcDevtoolsChannel.listen('invoke-planner', async (msg) => arcDevtoolsChannel.send({
-            messageType: 'invoke-planner-result',
-            messageBody: await this.invokePlanner(msg.messageBody.manifest, msg.messageBody.method),
-            requestId: msg.requestId
-        }));
-    }
-    async invokePlanner(manifestString, method) {
-        if (!this.recipeIndex) {
-            this.recipeIndex = RecipeIndex.create(this.arc, { reportGenerations: false });
-            await this.recipeIndex.ready;
-        }
-        let manifest;
-        try {
-            manifest = await Manifest.parse(manifestString, { loader: this.arc._loader, fileName: 'manifest.manifest' });
-        }
-        catch (error) {
-            return this.processManifestError(error);
-        }
-        if (manifest.recipes.length === 0)
-            return { results: [] };
-        if (manifest.recipes.length > 1)
-            return { error: { message: `More than 1 recipe present, found ${manifest.recipes.length}.` } };
-        const recipe = manifest.recipes[0];
-        recipe.normalize();
-        if (method === 'arc' || method === 'arc_coalesce') {
-            return this.multiStrategyRun(recipe, method);
-        }
-        else {
-            return this.singleStrategyRun(recipe, method);
-        }
-    }
-    async multiStrategyRun(recipe, method) {
-        const strategies = method === 'arc_coalesce' ? Planner.ResolutionStrategies
-            : Planner.ResolutionStrategies.filter(s => s !== CoalesceRecipes);
-        const strategizer = new Strategizer([new InitialRecipe(recipe), ...strategies.map(S => this.instantiate(S))], [], Empty);
-        const terminal = [];
-        do {
-            await strategizer.generate();
-            terminal.push(...strategizer.terminal);
-        } while (strategizer.generated.length + strategizer.terminal.length > 0);
-        return this.processStrategyOutput(terminal);
-    }
-    async singleStrategyRun(recipe, strategyName) {
-        const strategy = Planner.AllStrategies.find(s => s.name === strategyName);
-        if (!strategy)
-            return { error: { message: `Strategy ${strategyName} not found` } };
-        return this.processStrategyOutput(await this.instantiate(strategy).generate({
-            generation: 0,
-            generated: [{ result: recipe, score: 1 }],
-            population: [{ result: recipe, score: 1 }],
-            terminal: [{ result: recipe, score: 1 }]
-        }));
-    }
-    instantiate(strategyClass) {
-        // TODO: Strategies should have access to the context that is a combination of arc context and
-        //       the entered manifest. Right now strategies only see arc context, which means that
-        //       various strategies will not see particles defined in the manifest entered in the
-        //       editor. This may bite us with verb substitution, hosted particle resolution etc.
-        return new strategyClass(this.arc, { recipeIndex: this.recipeIndex });
-    }
-    processStrategyOutput(inputs) {
-        return { results: inputs.map(result => {
-                const recipe = result.result;
-                const errors = new Map();
-                if (!Object.isFrozen(recipe)) {
-                    recipe.normalize({ errors });
-                }
-                let recipeString = '';
-                try {
-                    recipeString = recipe.toString({ showUnresolved: true });
-                }
-                catch (e) {
-                    console.warn(e);
-                }
-                return {
-                    recipe: recipeString,
-                    derivation: this.extractDerivation(result),
-                    errors: [...errors.values()].map(error => ({ error })),
-                };
-            }) };
-    }
-    extractDerivation(result) {
-        const found = [];
-        for (const deriv of result.derivation || []) {
-            if (!deriv.parent && deriv.strategy.constructor !== InitialRecipe) {
-                found.push(deriv.strategy.constructor.name);
-            }
-            else if (deriv.parent) {
-                const childDerivs = this.extractDerivation(deriv.parent);
-                for (const childDeriv of childDerivs) {
-                    found.push(childDeriv
-                        ? `${childDeriv} -> ${deriv.strategy.constructor.name}`
-                        : deriv.strategy.constructor.name);
-                }
-                if (childDerivs.length === 0)
-                    found.push(deriv.strategy.constructor.name);
-            }
-        }
-        return found;
-    }
-    processManifestError(error) {
-        let suggestion = null;
-        const errorTypes = [{
-                // TODO: Switch to declaring errors in a structured way in the error object, instead of message parsing.
-                pattern: /could not find particle ([A-Z][A-Za-z0-9_]*)\n/,
-                predicate: extracted => manifest => !!(manifest.particles.find(p => p.name === extracted))
-            }, {
-                pattern: /Could not resolve type reference to type name '([A-Z][A-Za-z0-9_]*)'\n/,
-                predicate: extracted => manifest => !!(manifest.schemas[extracted])
-            }];
-        for (const { pattern, predicate } of errorTypes) {
-            const match = pattern.exec(error.message);
-            if (match) {
-                const [_, extracted] = match;
-                const fileNames = this.findManifestNames(this.arc.context, predicate(extracted));
-                if (fileNames.length > 0)
-                    suggestion = { action: 'import', fileNames };
-            }
-        }
-        return { suggestion, error: ((({ location, message }) => ({ location, message }))(error)) };
-    }
-    findManifestNames(manifest, predicate) {
-        const map = new Map();
-        this.findManifestNamesRecursive(manifest, predicate, map);
-        return [...map.entries()].sort(([a, depthA], [b, depthB]) => (depthA - depthB)).map(v => v[0]);
-    }
-    findManifestNamesRecursive(manifest, predicate, fileNames) {
-        let depth = predicate(manifest) ? 0 : Number.MAX_SAFE_INTEGER;
-        for (const child of manifest.imports) {
-            depth = Math.min(depth, this.findManifestNamesRecursive(child, predicate, fileNames) + 1);
-        }
-        // http check to avoid listing shell created 'in-memory manifest'.
-        if (depth < Number.MAX_SAFE_INTEGER && manifest.fileName.startsWith('http')) {
-            fileNames.set(manifest.fileName, depth);
-        }
-        return depth;
-    }
-}
-// TODO: This should move to the planning interface file when it exists. 
-const defaultPlanningDebugListeners = [
-    ArcPlannerInvoker
-];
-
-/**
- * @license
  * Copyright (c) 2019 Google Inc. All rights reserved.
  * This code may only be used under the BSD style license found at
  * http://polymer.github.io/LICENSE.txt
@@ -28598,905 +29483,6 @@ const defaultPlanningDebugListeners = [
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-
-/*
- * Copyright (c) 2019 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-
-// Debug-channel listeners are injected, so that the runtime need not know about them.
-const debugListeners = [
-  ...defaultPlanningDebugListeners, // This should change for a shell w/out planning
-  ...defaultCoreDebugListeners
-  ];
-
-/*
- * Copyright (c) 2019 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-
-const log$1 = console.log.bind(console);
-const warn = console.warn.bind(console);
-const env = {};
-
-const createPathMap = root => ({
-  'https://$arcs/': `${root}/`,
-  'https://$shells/': `${root}/shells/`,
-  'https://$build/': `${root}/shells/lib/build/`,
-  'https://$particles/': `${root}/particles/`,
-});
-
-const init$1 = (root, urls) => {
-  const map = Object.assign(Utils.createPathMap(root), urls);
-  env.loader = new PlatformLoader(map);
-  env.pecFactory = pecIndustry(env.loader);
-  return env;
-};
-
-const parse$1 = async (content, options) => {
-  const id = `in-memory-${Math.floor((Math.random()+1)*1e6)}.manifest`;
-  const localOptions = {
-    id,
-    fileName: `./${id}`,
-    loader: env.loader
-  };
-  if (options) {
-    Object.assign(localOptions, options);
-  }
-  return Manifest.parse(content, localOptions);
-};
-
-const resolve = async (arc, recipe) =>{
-  if (!recipe.normalize()) {
-    warn('failed to normalize:\n', recipe.toString());
-  } else {
-    let plan = recipe;
-    if (!plan.isResolved()) {
-      const resolver = new RecipeResolver(arc);
-      plan = await resolver.resolve(recipe);
-      if (!plan || !plan.isResolved()) {
-        warn('failed to resolve:\n', (plan || recipe).toString({showUnresolved: true}));
-        log$1(arc.context, arc, arc.context.storeTags);
-        plan = null;
-      }
-    }
-    return plan;
-  }
-};
-
-const spawn = async ({id, serialization, context, composer, storage}) => {
-  const arcId = IdGenerator.newSession().newArcId(id);
-  const params = {
-    id: arcId,
-    fileName: './serialized.manifest',
-    serialization,
-    context,
-    storageKey: storage,
-    slotComposer: composer,
-    pecFactory: env.pecFactory,
-    loader: env.loader,
-    listenerClasses: debugListeners
-  };
-  Object.assign(params, env.params);
-  return serialization ? Arc.deserialize(params) : new Arc(params);
-};
-
-const Utils = {
-  createPathMap,
-  init: init$1,
-  env,
-  parse: parse$1,
-  resolve,
-  spawn
-};
-
-/*
- * Copyright (c) 2019 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-
-class SyntheticStores {
-  static get providerFactory() {
-    return SyntheticStores._providerFactory || (SyntheticStores._providerFactory = new StorageProviderFactory('shell'));
-  }
-  static async getArcsStore(storage, arcid) {
-    const handleStore = await SyntheticStores.getStore(storage, arcid);
-    if (handleStore) {
-      const handles = await handleStore.toList();
-      const handle = handles[0];
-      if (handle) {
-        return await SyntheticStores.getHandleStore(handle);
-      }
-    }
-  }
-  static async getStore(storage, arcid) {
-    return await SyntheticStores.connectToKind('handles', storage, arcid);
-  }
-  static async connectToKind(kind, storage, arcid) {
-    // delimiter problems
-    if (storage[storage.length-1] === '/') {
-      storage = storage.slice(0, -1);
-    }
-    return SyntheticStores.storeConnect(null, `synthetic://arc/${kind}/${storage}/${arcid}`);
-  }
-  static async getHandleStore(handle) {
-    return await SyntheticStores.storeConnect(handle.type, handle.storageKey);
-  }
-  static async storeConnect(type, storageKey) {
-    return SyntheticStores.providerFactory.connect(SyntheticStores.makeId(), type, storageKey);
-  }
-  static makeId() {
-    return `id${Math.random()}`;
-  }
-  static snarfId(key) {
-    return key.split('/').pop();
-  }
-}
-
-/**
- * Copyright (c) 2019 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-
-const log$2 = logFactory('ArcHost', '#cade57');
-const warn$1 = logFactory('ArcHost', '#cade57', 'warn');
-const error$2 = logFactory('ArcHost', '#cade57', 'error');
-
-class ArcHost {
-  constructor(context, storage, composer) {
-    this.context = context;
-    this.storage = storage;
-    this.composer = composer;
-  }
-  disposeArc() {
-    if (this.arc) {
-      this.arc.dispose();
-    }
-    this.arc = null;
-  }
-  // config = {id, [serialization], [manifest]}
-  async spawn(config) {
-    log$2('spawning arc', config);
-    this.config = config;
-    const context = this.context || await Utils.parse(``);
-    this.serialization = await this.computeSerialization(config, this.storage);
-    this.arc = await this._spawn(context, this.composer, this.storage, config.id, this.serialization);
-    if (config.manifest && !this.serialization) {
-      await this.instantiateDefaultRecipe(this.arc, config.manifest);
-    }
-    if (this.pendingPlan) {
-      const plan = this.pendingPlan;
-      this.pendingPlan = null;
-      await this.instantiatePlan(this.arc, plan);
-    }
-    return this.arc;
-  }
-  set manifest(manifest) {
-    this.instantiateDefaultRecipe(this.arc, manifest);
-  }
-  set plan(plan) {
-    if (this.arc) {
-      this.instantiatePlan(this.arc, plan);
-    } else {
-      this.pendingPlan = plan;
-    }
-  }
-  async computeSerialization(config, storage) {
-    let serialization;
-    if (config.serialization != null) {
-      serialization = config.serialization;
-    }
-    if (serialization == null) {
-      if (storage.includes('volatile')) {
-        serialization = '';
-      } else {
-        serialization = await this.fetchSerialization(storage, config.id) || '';
-      }
-    }
-    return serialization;
-  }
-  async _spawn(context, composer, storage, id, serialization) {
-    return await Utils.spawn({id, context, composer, serialization, storage: `${storage}/${id}`});
-  }
-  async instantiateDefaultRecipe(arc, manifest) {
-    log$2('instantiateDefaultRecipe');
-    try {
-      manifest = await Utils.parse(manifest);
-      const recipe = manifest.allRecipes[0];
-      const plan = await Utils.resolve(arc, recipe);
-      if (plan) {
-        await this.instantiatePlan(arc, plan);
-      }
-    } catch (x) {
-      error$2(x);
-    }
-  }
-  async instantiatePlan(arc, plan) {
-    log$2('instantiatePlan');
-    // TODO(sjmiles): pass suggestion all the way from web-shell
-    // and call suggestion.instantiate(arc).
-    if (!plan.isResolved()) {
-      log$2(`Suggestion plan ${plan.toString({showUnresolved: true})} is not resolved.`);
-    }
-    try {
-      await arc.instantiate(plan);
-    } catch (x) {
-      error$2(x);
-      //console.error(plan.toString());
-    }
-    await this.persistSerialization();
-  }
-  async fetchSerialization(storage, arcid) {
-    const key = `${storage}/${arcid}/arc-info`;
-    const store = await SyntheticStores.providerFactory.connect('id', new ArcType(), key);
-    if (store) {
-      log$2('loading stored serialization');
-      const info = await store.get();
-      return info && info.serialization;
-    }
-  }
-  async persistSerialization() {
-    const {arc, config: {id}, storage} = this;
-    if (!storage.includes('volatile')) {
-      log$2(`persisting serialization to [${id}/serialization]`);
-      const serialization = await arc.serialize();
-      await arc.persistSerialization(serialization);
-    }
-  }
-}
-
-/**
- * Copyright (c) 2019 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-
-class RamSlotComposer extends SlotComposer {
-  constructor(options = {}) {
-    super({
-      rootContainer: options.rootContainer || {'root': 'root-context'},
-      modalityName: options.modalityName,
-      modalityHandler: ModalityHandler.createHeadlessHandler()
-    });
-  }
-  sendEvent(particleName, slotName, event, data) {
-    const particles = this.consumers.filter(s => s.consumeConn.particle.name == particleName).map(s => s.consumeConn.particle);
-    this.pec.sendEvent(particles[0], slotName, {handler: event, data});
-  }
-  renderSlot(particle, slotName, content) {
-    super.renderSlot(particle, slotName, content);
-    const slotConsumer = this.getSlotConsumer(particle, slotName);
-    if (slotConsumer) {
-      slotConsumer.updateProvidedContexts();
-    }
-  }
-}
-
-const version = '0_6_0';
-const firebase = `firebase://arcs-storage.firebaseio.com/AIzaSyBme42moeI-2k8WgXh-6YK_wYyjEXo4Oz8/${version}`;
-const pouchdb = `pouchdb://local/arcs/${version}`;
-const volatile = 'volatile://';
-
-const Const = {
-  version,
-  DEFAULT: {
-    userId: 'user',
-    firebaseStorageKey: firebase,
-    pouchdbStorageKey: pouchdb,
-    volatileStorageKey: volatile,
-    storageKey: pouchdb, //firebase,
-    plannerStorageKey: 'volatile',
-    manifest: `https://$particles/canonical.manifest`,
-    launcherSuffix: `-launcher`,
-  },
-  LOCALSTORAGE: {
-    user: `${version}-user`,
-    storage: `${version}-storage`,
-    plannerStorage: `${version}-plannerStorage`
-  },
-  SHARE: {
-    private: 1,
-    self: 2,
-    friends: 3
-  },
-  STORES: {
-    boxed: 'BOXED',
-    my: 'PROFILE',
-    shared: 'FRIEND'
-  }
-};
-
-/*
-@license
-Copyright (c) 2018 The Polymer Project Authors. All rights reserved.
-This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
-The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
-The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
-Code distributed by Google as part of the polymer project is also
-subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
-*/
-
-const log$3 = logFactory('UserArcs', '#4f0433');
-const warn$2 = logFactory('UserArcs', '#4f0433', 'warn');
-
-class UserArcs {
-  constructor(storage, userid) {
-    SyntheticStores.init();
-    this.values = [];
-    this.listeners = [];
-    this.contextWait = 3000;
-    this.updateArcsStore(storage, userid);
-  }
-  async subscribe(listener) {
-    if (this.listeners.indexOf(listener) < 0) {
-      await this.publishInitialChanges([listener]);
-      this.listeners.push(listener);
-      this.publish(this.values, [listener]);
-    }
-  }
-  publish(changes, listeners) {
-    // convert {add:[], remove:[]} to [{add, remove}]
-    if (changes.add) {
-      changes.add.forEach(add => this._publish({add: add.value}, listeners));
-    }
-    if (changes.remove) {
-      changes.remove.forEach(remove => this._publish({remove: remove.value}, listeners));
-    }
-  }
-  async publishInitialChanges(listeners) {
-    const changes = {add: []};
-    if (this.store) {
-      const values = await this.store.toList();
-      values.forEach(value => this._publish({add: value}, listeners));
-    }
-    return changes;
-  }
-  _publish(change, listeners) {
-    if (!change.add || !change.add.rawData.deleted) {
-      listeners.forEach(listener => listener(change));
-    }
-  }
-  async updateArcsStore(storage, userid) {
-    // attempt to marshal arcs-store for this user
-    this.store = await this.fetchArcsStore(storage, userid);
-    if (this.store) {
-      // TODO(sjmiles): plop arcsStore into state early for updateUserContext, usage is weird
-      this.foundArcsStore(this.store);
-    } else {
-      // retry after a bit
-      setTimeout(() => this.updateArcsStore(storage, userid), this.contextWait);
-    }
-  }
-  async fetchArcsStore(storage, userid) {
-    // TODO(sjmiles): marshalling of arcs-store arc id from userid should be elsewhere
-    const store = await SyntheticStores.getArcsStore(storage, `${userid}${Const.DEFAULT.launcherSuffix}`);
-    if (store) {
-      log$3(`marshalled arcsStore for [${userid}]`);
-      return store;
-    }
-    warn$2(`failed to marshal arcsStore for [${userid}][${storage}]`);
-  }
-  async foundArcsStore(store) {
-    log$3('foundArcsStore', Boolean(store));
-    await this.publishInitialChanges(this.listeners);
-    store.on('change', changes => this.arcsStoreChange(changes), this);
-  }
-  arcsStoreChange(changes) {
-    this.publish(changes, this.listeners);
-  }
-}
-
-/*
-@license
-Copyright (c) 2018 The Polymer Project Authors. All rights reserved.
-This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
-The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
-The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
-Code distributed by Google as part of the polymer project is also
-subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
-*/
-
-const log$4 = logFactory('SingleUserContext', '#f2ce14');
-const warn$3 = logFactory('SingleUserContext', '#f2ce14', 'warn');
-const error$3 = logFactory('SingleUserContext', '#f2ce14', 'error');
-
-// SoloContext (?)
-const SingleUserContext = class {
-  constructor(storage, context, userid, arcstore, isProfile) {
-    this.storage = storage;
-    this.context = context;
-    this.userid = userid;
-    this.arcstore = arcstore;
-    this.isProfile = isProfile;
-    // we observe `arcid`s and `storageKey`s
-    this.observers = {};
-    // when we remove an arc from consideration, we have to unobserve storageKeys from that arc
-    // `handles` maps an arcid to an array of storageKeys to unobserve
-    this.handles = {};
-    // promises for async store marshaling
-    this.pendingStores = [];
-    if (arcstore) {
-      this.attachArcStore(storage, arcstore);
-    }
-  }
-  async attachArcStore(storage, arcstore) {
-    this.observeStore(arcstore, arcstore.id, info => {
-      log$4('arcstore::observer', info);
-      if (info.add) {
-        info.add.forEach(({value}) => this._addArc(storage, value.rawData));
-      } else if (info.remove) {
-        info.remove.forEach(({value}) => {
-          // TODO(sjmiles): value should contain `rawData.key`, but sometimes there is no `rawData`
-          this.removeArc(value.id);
-        });
-      } else {
-        log$4('arcstore::observer info type not supported: ', info);
-      }
-    });
-  }
-  async dispose() {
-    // chuck all observers
-    Object.values(this.observers).forEach(({key}) => this.unobserve(key));
-    // chuck all data
-    await this.removeUserEntities(this.context, this.userid, this.isProfile);
-  }
-  removeArc(arcid) {
-    this.unobserve(arcid);
-    const handles = this.handles[arcid];
-    if (handles) {
-      handles.forEach(({storageKey}) => this.unobserve(storageKey));
-      this.handles[arcid] = null;
-    }
-  }
-  async _addArc(storage, arcmeta) {
-    const {deleted, key} = arcmeta;
-    if (!deleted) {
-      const store = await SyntheticStores.getStore(storage, key);
-      if (store) {
-        await this.observeStore(store, key, info => this.onArcStoreChanged(key, info));
-      }
-    }
-  }
-  async addArc(key) {
-    //if (!deleted) {
-      const store = await SyntheticStores.getStore(this.storage, key);
-      if (store) {
-        await this.observeStore(store, key, info => this.onArcStoreChanged(key, info));
-      } else {
-        warn$3(`failed to get SyntheticStore for arc at [${this.storage}, ${key}]\nhttps://github.com/PolymerLabs/arcs/issues/2304`);
-      }
-    //}
-  }
-  unobserve(key) {
-    const observer = this.observers[key];
-    if (observer) {
-      this.observers[key] = null;
-      //log(`UNobserving [${key}]`);
-      observer.store.off('change', observer.cb);
-    }
-  }
-  async observeStore(store, key, cb) {
-   if (!store) {
-      console.warn(`observeStore: store is null for [${key}]`);
-    } else {
-      if (!this.observers[key]) {
-        log$4(`observing [${key}]`);
-        // TODO(sjmiles): create synthetic store `change` records from the initial state
-        // SyntheticCollection has `toList` but is `!type.isCollection`,
-        if (store.toList) {
-          const data = await store.toList();
-          if (data && data.length) {
-            const add = data.map(value => ({value}));
-            cb({add});
-          } else log$4('...store is empty collection');
-        } else if (store.type.isEntity) {
-          const data = await store.get();
-          if (data) {
-            cb({data});
-          }
-        }
-        this.observers[key] = {key, store, cb: store.on('change', cb, this)};
-      }
-    }
-  }
-   onArcStoreChanged(arcid, info) {
-    log$4('Synthetic-store change event (onArcStoreChanged):', info);
-    // TODO(sjmiles): synthesize add/remove records from data record
-    //   this._patchArcDataInfo(arcid, info);
-    // process add/remove stream
-    if (info.add) {
-      info.add.forEach(async add => {
-        let handle = add.value;
-        if (!handle) {
-          error$3('`add` record has no `value`, applying workaround', add);
-          handle = add;
-        }
-        if (handle) { //} && handle.tags.length) {
-          //handle.tags.length && log('observing handle', handle.tags);
-          //log('fetching handle store', handle);
-          const store = await SyntheticStores.getHandleStore(handle);
-          await this.observeStore(store, handle.storageKey, info => this.updateHandle(arcid, handle, info));
-        }
-      });
-    }
-    if (info.remove) {
-      info.remove.forEach(async remove => {
-        const handle = remove.value;
-        if (handle) {
-          //log('UNobserving handle', handle);
-          this.unobserve(handle.storageKey);
-        }
-      });
-    }
-  }
-  async updateHandle(arcid, handle, info) {
-    const {context, userid, isProfile} = this;
-    const tags = handle.tags ? handle.tags.join('-') : '';
-    if (tags) {
-      log$4('updateHandle', tags/*, info*/);
-      const type = handle.type.isCollection ? handle.type : handle.type.collectionOf();
-      const id = SyntheticStores.snarfId(handle.storageKey);
-      //
-      const shareid = `${tags}|${id}|from|${userid}|${arcid}`;
-      const shortid = `${(isProfile ? `PROFILE` : `FRIEND`)}_${tags}`;
-      const storeName = shortid;
-      const storeId = isProfile ? shortid : shareid;
-      log$4('share id:', storeId);
-      const store = await this.getShareStore(context, type, storeName, storeId, ['shared']); //handle.tags);
-      //
-      const boxStoreId = `BOXED_${tags}`;
-      const boxDataId = `${userid}|${arcid}`;
-      //const boxId = `${tags}|${boxDataId}`;
-      log$4('box ids:', boxStoreId, boxDataId/*, boxId*/);
-      const boxStore = await this.getShareStore(context, type, boxStoreId, boxStoreId, ['shared']); //[boxStoreId]);
-      //
-      // TODO(sjmiles): no mutation
-      if (handle.type.isEntity) {
-        if (info.data) {
-          // TODO(sjmiles): in the absence of data mutation, when an entity changes
-          // it gets an entirely new id, so we cannot use ids to track entities
-          // in boxed stores. However as this entity is a Highlander for this
-          // user and arc (by virtue of not being in a Collection) we can synthesize
-          // a stable id.
-          info.data.id = boxDataId;
-          this.unshareEntities(userid, store, boxStore, info.data);
-          this.shareEntities(userid, store, boxStore, info.data);
-        }
-      } else if (info.add || info.remove) {
-        info.remove && info.remove.forEach(remove => this.unshareEntities(userid, store, boxStore, [remove.value]));
-        info.add && info.add.forEach(add => this.shareEntities(userid, store, boxStore, [add.value]));
-      } else if (info.data) {
-        this.shareEntities(userid, store, boxStore, info.data);
-      }
-    }
-  }
-  async getShareStore(context, type, name, id, tags) {
-    // TODO(sjmiles): cache and return promises in case of re-entrancy
-    let promise = this.pendingStores[id];
-    if (!promise) {
-      promise = new Promise(async (resolve) => {
-        const store = await context.findStoreById(id);
-        if (store) {
-          resolve(store);
-        } else {
-          const store = await context.createStore(type, name, id, tags);
-          resolve(store);
-        }
-      });
-      this.pendingStores[id] = promise;
-    }
-    return promise;
-  }
-  async shareEntities(userid, shareStore, boxStore, data) {
-    if (data) {
-      this.storeEntitiesWithUid(shareStore, data, userid);
-      boxStore.idMap = this.storeEntitiesWithUid(boxStore, data, userid);
-    }
-  }
-  async unshareEntities(userid, shareStore, boxStore, data) {
-    if (data) {
-      this.removeEntitiesWithUid(shareStore, data, userid);
-      this.removeEntitiesWithUid(boxStore, data, userid);
-    }
-  }
-  storeEntitiesWithUid(store, data, uid) {
-    const ids = [];
-    const storeDecoratedEntity = ({id, rawData}, uid) => {
-      const decoratedId = `${id}:uid:${uid}`;
-      ids.push({id: decoratedId, rawData});
-      //console.log('pushing data to store');
-      if (store.type.isCollection) {
-        // FIXME: store.generateID may not be safe (session scoped)?
-        store.store({id: decoratedId, rawData}, [store.generateID()]);
-      } else {
-        store.set({id: decoratedId, rawData});
-      }
-    };
-    if (data && data.id) {
-      storeDecoratedEntity(data, uid);
-    } else {
-      Object.values(data).forEach(entity => entity && storeDecoratedEntity(entity, uid));
-    }
-    return ids;
-  }
-  removeEntitiesWithUid(store, data, uid) {
-    const removeDecoratedEntity = ({id, rawData}, uid) => {
-      const decoratedId = `${id}:uid:${uid}`;
-      if (store.type.isCollection) {
-        store.remove(decoratedId);
-      }
-    };
-    if (store.type.isCollection) {
-      if (Array.isArray(data)) {
-        data.forEach(entity => entity && removeDecoratedEntity(entity, uid));
-      } else if (data && data.id) {
-        removeDecoratedEntity(data, uid);
-      }
-    } else {
-      store.clear();
-    }
-  }
-  async removeEntities(context) {
-    this.removeUserEntities(context, 'all', true);
-  }
-  async removeUserEntities(context, userid, isProfile) {
-    log$4(`removing entities for [${userid}]`);
-    const jobs = [];
-    for (let i=0, store; (store=context.stores[i]); i++) {
-      jobs.push(this.removeUserStoreEntities(userid, store, isProfile));
-    }
-    await Promise.all(jobs);
-  }
-  async removeUserStoreEntities(userid, store, isProfile) {
-   if (!store) {
-      console.warn(`removeUserStoreEntities: store is null for [${userid}]`);
-    } else {
-      log$4(`scanning [${userid}] [${store.id}] (${store.toList ? 'collection' : 'variable'})`);
-      //const tags = context.findStoreTags(store);
-      if (store.toList) {
-        const entities = await store.toList();
-        entities.forEach(entity => {
-          const uid = entity.id.split('uid:').pop().split('|').shift();
-          if (isProfile || uid === userid) {
-            log$4(`  REMOVE `, entity.id);
-            // TODO(sjmiles): _removeUserStoreEntities is strangely re-entering
-            //  (1) `remove` fires synchronous change events
-            //  (2) looks like there are double `remove` events in the queue. Bug?
-            // In general, to avoid interleaving we'll probably need to
-            // use a stack to process changes async to receiving them.
-            // Parallel processing works as of now ... feature?
-            store.remove(entity.id);
-          }
-        });
-      }
-      else {
-        const uid = store.id.split('|').slice(-2, -1).pop();
-        if (isProfile || uid === userid) {
-          log$4(`  CLEAR store`);
-          store.clear();
-        }
-      }
-    }
-  }
-};
-
-/*
-@license
-Copyright (c) 2018 The Polymer Project Authors. All rights reserved.
-This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
-The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
-The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
-Code distributed by Google as part of the polymer project is also
-subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
-*/
-
-const log$5 = logFactory('UserContext', '#4f0433');
-const warn$4 = logFactory('UserContext', '#4f0433', 'warn');
-
-class UserContext {
-  constructor() {
-  }
-  async init(storage, userid, context) {
-    await this.disposeUserContext(this.userContext);
-    const isProfile = true;
-    this.userContext = new SingleUserContext(storage, context, userid, null, isProfile);
-  }
-  async disposeUserContext(userContext) {
-    if (userContext) {
-      try {
-        await userContext.dispose();
-      } catch (x) {
-        //
-      }
-    }
-  }
-  onArc({add, remove}) {
-    if (add) {
-      this.userContext.addArc(add.id);
-    }
-    if (remove) {
-      this.userContext.removeArc(remove.id);
-    }
-  }
-  // _getInitialState() {
-  //   return {
-  //     // ms to wait until we think there is probably some context
-  //     contextWait: 3000,
-  //     // maps userid to SingleUserContext for friends
-  //     friends: {},
-  //     // TODO(sjmiles): workaround for missing data in `remove` records
-  //     // maps entityids to userids for friends
-  //     friendEntityIds: {},
-  //     // snapshot of BOXED_avatar for use by shell
-  //     avatars: {},
-  //   };
-  // }
-  // update(props, state) {
-  //   if (!state.env && props.env) {
-  //     state.env = props.env;
-  //     SyntheticStores.init(props.env);
-  //   }
-  //   if (props.context && state.context !== props.context) {
-  //     state.context = props.context;
-  //     this.updateFriends(props, state);
-  //   }
-  //   if (props.storage && props.context && props.userid !== state.userid) {
-  //     state.userid = props.userid;
-  //     this.awaitState('arcsStore', () => this.updateArcsStore(props, state));
-  //   }
-  // }
-  // async updateArcsStore(props, state) {
-  //   const {storage, userid} = props;
-  //   const arcsStore = await this.fetchArcsStore(storage, userid);
-  //   if (arcsStore) {
-  //     // TODO(sjmiles): plop arcsStore into state early for updateUserContext, usage is weird
-  //     state.arcsStore = arcsStore;
-  //     // TODO(sjmiles): props and state are suspect after await
-  //     await this.updateUserContext(props, state);
-  //   } else {
-  //     // retry after a bit
-  //     setTimeout(() => this.state = {userid: null}, state.contextWait);
-  //   }
-  //   // signal when user-decorated context is `ready`
-  //   // TODO(sjmiles): ideally we have a better signal than a timeout
-  //   setTimeout(() => this.fire('context', props.context), state.contextWait);
-  //   return arcsStore;
-  // }
-  // async fetchArcsStore(storage, userid) {
-  //   const store = await SyntheticStores.getArcsStore(storage, `${userid}${Const.DEFAULT.launcherSuffix}`);
-  //   if (store) {
-  //     log(`marshalled arcsStore for [${userid}]`); //[${storage}]`, store);
-  //     return store;
-  //   }
-  //   warn(`failed to marshal arcsStore for [${userid}][${storage}]`);
-  // }
-  // async updateSystemUser({userid, context}) {
-  //   const store = await context.findStoreById('SYSTEM_user');
-  //   if (store) {
-  //     const user = {
-  //       id: store.generateID(),
-  //       rawData: {
-  //         id: userid,
-  //       }
-  //     };
-  //     store.set(user);
-  //     log('installed SYSTEM_user');
-  //   }
-  // }
-  // async updateUserContext({storage, userid, context}, {userContext, arcsStore}) {
-  //   await this.disposeUserContext(userContext);
-  //   // do not operate on stale userid
-  //   if (!this.state.userContext && userid === this.state.userid) {
-  //     const isProfile = true;
-  //     this.state = {
-  //       userContext: new SingleUserContext(storage, context, userid, arcsStore, isProfile)
-  //     };
-  //   }
-  // }
-  // async disposeUserContext(userContext) {
-  //   if (userContext) {
-  //     this.state = {userContext: null};
-  //     try {
-  //       await userContext.dispose();
-  //     } catch (x) {
-  //       //
-  //     }
-  //   }
-  // }
-  // async updateFriends({storage, userid, context}, state) {
-  //   if (state.friendsStore) {
-  //     log('discarding old PROFILE_friends');
-  //     state.friendsStore.off('change', state.friendsStoreCb);
-  //     state.friendsStore = null;
-  //   }
-  //   const friendsStore = await context.findStoreById('PROFILE_friends');
-  //   if (friendsStore) {
-  //     log('found PROFILE_friends');
-  //     const friendsStoreCb = info => this.onFriendsChange(storage, context, info);
-  //     // get current data
-  //     const friends = await friendsStore.toList();
-  //     // listen for changes
-  //     friendsStore.on('change', friendsStoreCb, this);
-  //     // process friends already in store
-  //     this.onFriendsChange(storage, context, {add: friends.map(f => ({value: f}))});
-  //     this.state = {friendsStore, friendsStoreCb};
-  //   } else {
-  //     warn('PROFILE_friends missing');
-  //   }
-  // }
-  // onFriendsChange(storage, context, info) {
-  //   const {friends, friendEntityIds} = this._state;
-  //   if (info.add) {
-  //     info.add.forEach(({value}) => {
-  //       const entityId = value.id;
-  //       const friendId = value.rawData.id;
-  //       // TODO(sjmiles): friendEntityIds is a hack to workaround missing rawData in removal records
-  //       friendEntityIds[entityId] = friendId;
-  //       this.addFriend(storage, context, friends, friendId);
-  //     });
-  //   }
-  //   if (info.remove) {
-  //     info.remove.forEach(remove => this.removeFriend(friends, friendEntityIds[remove.value.id]));
-  //   }
-  // }
-  // async addFriend(storage, context, friends, friendId, attempts) {
-  //   log(`trying to addFriend [${friendId}]`);
-  //   if (!friends[friendId]) {
-  //     friends[friendId] = true;
-  //     const arcsStore = await this.fetchArcsStore(storage, friendId);
-  //     if (arcsStore) {
-  //       friends[friendId] = new SingleUserContext(storage, context, friendId, arcsStore, false);
-  //     } else {
-  //       friends[friendId] = null;
-  //       // retry a bit
-  //       attempts = (attempts || 0) + 1;
-  //       if (attempts < 11) {
-  //         const timeout = 1000*Math.pow(2.9076, attempts);
-  //         console.warn(`retry [${attempts}/10] to addFriend [${friendId}] in ${(timeout/1000/60).toFixed(2)}m`);
-  //         setTimeout(() => this.addFriend(storage, context, friends, friendId, attempts), timeout);
-  //       }
-  //     }
-  //   }
-  // }
-  // removeFriend(friends, friendId) {
-  //   log('removeFriend', friendId);
-  //   const friend = friends[friendId];
-  //   if (friend) {
-  //     friend.dispose && friend.dispose();
-  //     friends[friendId] = null;
-  //   }
-  // }
-  //async _boxedAvatarChanged(store) {
-  //   const avatars = await store.toList();
-  //   this._fire('avatars', avatars);
-  //   avatars.get = id => {
-  //     const avatar = avatars.find(avatar => {
-  //       const uid = avatar.id.split(':uid:').pop();
-  //       return uid === id;
-  //     });
-  //     return avatar && avatar.rawData;
-  //   };
-  // }
-}
 
 /*
 @license

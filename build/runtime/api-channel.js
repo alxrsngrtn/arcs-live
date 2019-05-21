@@ -17,8 +17,6 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
 import { assert } from '../platform/assert-web.js';
-import { DevtoolsConnection } from './debug/devtools-connection.js';
-import { OuterPortAttachment } from './debug/outer-port-attachment.js';
 import { ParticleSpec } from './particle-spec.js';
 import { Type } from './type.js';
 import { PropagatedException } from './arc-exceptions.js';
@@ -162,8 +160,8 @@ export class APIPort {
         this._port = messagePort;
         this._mapper = new ThingMapper(prefix);
         this._port.onmessage = async (e) => this._processMessage(e);
-        this._debugAttachment = null;
-        this._attachStack = false;
+        this.inspector = null;
+        this.attachStack = false;
         this.messageCount = 0;
         this._testingHook();
     }
@@ -176,16 +174,16 @@ export class APIPort {
     async _processMessage(e) {
         assert(this['before' + e.data.messageType] !== undefined);
         const count = this.messageCount++;
-        if (this._debugAttachment) {
-            this._debugAttachment.handlePecMessage('on' + e.data.messageType, e.data.messageBody, count, e.data.stack);
+        if (this.inspector) {
+            this.inspector.pecMessage('on' + e.data.messageType, e.data.messageBody, count, e.data.stack);
         }
         this['before' + e.data.messageType](e.data.messageBody);
     }
     send(name, args) {
-        const call = { messageType: name, messageBody: args, stack: this._attachStack ? new Error().stack : undefined };
+        const call = { messageType: name, messageBody: args, stack: this.attachStack ? new Error().stack : undefined };
         const count = this.messageCount++;
-        if (this._debugAttachment) {
-            this._debugAttachment.handlePecMessage(name, args, count, new Error().stack);
+        if (this.inspector) {
+            this.inspector.pecMessage(name, args, count, new Error().stack);
         }
         this._port.postMessage(call);
     }
@@ -343,10 +341,10 @@ function AutoConstruct(target) {
 export class PECOuterPort extends APIPort {
     constructor(messagePort, arc) {
         super(messagePort, 'o');
-        DevtoolsConnection.onceConnected.then(devtoolsChannel => {
-            this.DevToolsConnected();
-            this._debugAttachment = new OuterPortAttachment(arc, devtoolsChannel);
-        });
+        this.inspector = arc.inspector;
+        if (this.inspector) {
+            this.inspector.onceActive.then(() => this.DevToolsConnected());
+        }
     }
     Stop() { }
     DefineHandle(store, type, name) { }
@@ -442,7 +440,7 @@ let PECInnerPort = class PECInnerPort extends APIPort {
     // send it along with the message. We only want to do this after a DevTools connection has been detected, which
     // we can't directly detect inside a worker context, so the PECOuterPort will send an API message instead.
     onDevToolsConnected() {
-        this._attachStack = true;
+        this.attachStack = true;
     }
 };
 __decorate([

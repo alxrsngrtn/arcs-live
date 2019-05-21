@@ -14,14 +14,14 @@ import { PecFactory } from './particle-execution-context.js';
 import { SlotComposer } from './slot-composer.js';
 import { Loader } from './loader.js';
 import { StorageProviderFactory } from './storage/storage-provider-factory.js';
-import { ArcDebugListenerDerived } from './debug/abstract-devtools-channel.js';
+import { ArcInspectorFactory } from './arc-inspector.js';
 export declare type RuntimeArcOptions = Readonly<{
     pecFactory?: PecFactory;
     storageProviderFactory?: StorageProviderFactory;
     speculative?: boolean;
     innerArc?: boolean;
     stub?: boolean;
-    listenerClasses?: ArcDebugListenerDerived[];
+    listenerClasses?: ArcInspectorFactory[];
 }>;
 export declare class Runtime {
     private cacheService;

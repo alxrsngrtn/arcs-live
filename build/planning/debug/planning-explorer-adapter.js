@@ -7,7 +7,7 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-import { DevtoolsConnection } from '../../runtime/debug/devtools-connection.js';
+import { DevtoolsConnection } from '../../devtools-connector/devtools-connection.js';
 import { Trigger } from '../plan/plan-producer.js';
 export class PlanningExplorerAdapter {
     static updatePlanningResults(result, metadata, devtoolsChannel) {

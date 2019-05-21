@@ -10,5 +10,4 @@
 import { Planner } from './planner.js';
 import { Planificator } from './plan/planificator.js';
 import { PlanningModalityHandler } from './planning-modality-handler.js';
-import { defaultPlanningDebugListeners } from './debug/arc-planner-invoker.js';
-export { Planner, Planificator, PlanningModalityHandler, defaultPlanningDebugListeners };
+export { Planner, Planificator, PlanningModalityHandler };

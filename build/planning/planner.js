@@ -7,7 +7,7 @@
 import { assert } from '../platform/assert-web.js';
 import { now } from '../platform/date-web.js';
 import { DeviceInfo } from '../platform/deviceinfo-web.js';
-import { DevtoolsConnection } from '../runtime/debug/devtools-connection.js';
+import { DevtoolsConnection } from '../devtools-connector/devtools-connection.js';
 import { RecipeUtil } from '../runtime/recipe/recipe-util.js';
 import { Tracing } from '../tracelib/trace.js';
 import { StrategyExplorerAdapter } from './debug/strategy-explorer-adapter.js';

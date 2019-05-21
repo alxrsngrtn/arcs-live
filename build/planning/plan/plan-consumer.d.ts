@@ -8,7 +8,7 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { Arc } from '../../runtime/arc.js';
-import { ArcDevtoolsChannel } from '../../runtime/debug/abstract-devtools-channel.js';
+import { ArcDevtoolsChannel } from '../../devtools-connector/abstract-devtools-channel.js';
 import { SuggestionComposer } from '../suggestion-composer.js';
 import { PlanningResult } from './planning-result.js';
 import { Suggestion } from './suggestion.js';

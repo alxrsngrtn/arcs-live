@@ -8,7 +8,6 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { assert } from '../platform/assert-web.js';
-import { ArcDebugHandler } from './debug/arc-debug-handler.js';
 import { FakePecFactory } from './fake-pec-factory.js';
 import { Id, IdGenerator, ArcId } from './id.js';
 import { Manifest, StorageStub } from './manifest.js';
@@ -21,7 +20,7 @@ import { StorageProviderFactory } from './storage/storage-provider-factory.js';
 import { ArcType, CollectionType, EntityType, InterfaceType, RelationType, Type, TypeVariable } from './type.js';
 import { Mutex } from './mutex.js';
 export class Arc {
-    constructor({ id, context, pecFactory, slotComposer, loader, storageKey, storageProviderFactory, speculative, innerArc, stub, listenerClasses }) {
+    constructor({ id, context, pecFactory, slotComposer, loader, storageKey, storageProviderFactory, speculative, innerArc, stub, inspectorFactory }) {
         this._activeRecipe = new Recipe();
         this._recipeDeltas = [];
         this.dataChangeCallbacks = new Map();
@@ -54,13 +53,13 @@ export class Arc {
         this.isInnerArc = !!innerArc; // undefined => false
         this.isStub = !!stub;
         this._loader = loader;
+        this.inspectorFactory = inspectorFactory;
+        this.inspector = inspectorFactory && inspectorFactory.create(this);
         this.storageKey = storageKey;
         const pecId = this.generateID();
         const innerPecPort = this.pecFactory(pecId, this.idGenerator);
         this.pec = new ParticleExecutionHost(innerPecPort, slotComposer, this);
         this.storageProviderFactory = storageProviderFactory || new StorageProviderFactory(this.id);
-        this.listenerClasses = listenerClasses;
-        this.debugHandler = new ArcDebugHandler(this, listenerClasses);
     }
     get loader() {
         return this._loader;
@@ -129,7 +128,7 @@ export class Arc {
     }
     createInnerArc(transformationParticle) {
         const id = this.generateID('inner');
-        const innerArc = new Arc({ id, pecFactory: this.pecFactory, slotComposer: this.pec.slotComposer, loader: this._loader, context: this.context, innerArc: true, speculative: this.isSpeculative, listenerClasses: this.listenerClasses });
+        const innerArc = new Arc({ id, pecFactory: this.pecFactory, slotComposer: this.pec.slotComposer, loader: this._loader, context: this.context, innerArc: true, speculative: this.isSpeculative, inspectorFactory: this.inspectorFactory });
         let particleInnerArcs = this.innerArcsByParticle.get(transformationParticle);
         if (!particleInnerArcs) {
             particleInnerArcs = [];
@@ -292,7 +291,7 @@ ${this.activeRecipe.toString()}`;
         // TODO: storage refactor: make sure set() is available here (or wrap store in a Handle-like adaptor).
         await store.set(arcInfoType.newInstance(this.id, serialization));
     }
-    static async deserialize({ serialization, pecFactory, slotComposer, loader, fileName, context, listenerClasses }) {
+    static async deserialize({ serialization, pecFactory, slotComposer, loader, fileName, context, inspectorFactory }) {
         const manifest = await Manifest.parse(serialization, { loader, fileName, context });
         const arc = new Arc({
             id: Id.fromString(manifest.meta.name),
@@ -302,7 +301,7 @@ ${this.activeRecipe.toString()}`;
             loader,
             storageProviderFactory: manifest.storageProviderFactory,
             context,
-            listenerClasses
+            inspectorFactory
         });
         await Promise.all(manifest.stores.map(async (store) => {
             const tags = manifest.storeTags.get(store);
@@ -363,7 +362,7 @@ ${this.activeRecipe.toString()}`;
             loader: this._loader,
             speculative: true,
             innerArc: this.isInnerArc,
-            listenerClasses: this.listenerClasses });
+            inspectorFactory: this.inspectorFactory });
         const storeMap = new Map();
         for (const store of this._stores) {
             const clone = await arc.storageProviderFactory.construct(store.id, store.type, 'volatile');
@@ -491,7 +490,9 @@ ${this.activeRecipe.toString()}`;
             // TODO: pass slot-connections instead
             await this.pec.slotComposer.initializeRecipe(this, particles);
         }
-        this.debugHandler.recipeInstantiated({ particles, activeRecipe: this.activeRecipe.toString() });
+        if (this.inspector) {
+            this.inspector.recipeInstantiated(particles, this.activeRecipe.toString());
+        }
     }
     async createStore(type, name, id, tags, storageKey = undefined) {
         assert(type instanceof Type, `can't createStore with type ${type} that isn't a Type`);

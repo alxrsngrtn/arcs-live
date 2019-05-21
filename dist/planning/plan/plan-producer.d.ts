@@ -8,7 +8,7 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { Arc } from '../../runtime/arc.js';
-import { ArcDevtoolsChannel } from '../../runtime/debug/abstract-devtools-channel.js';
+import { ArcDevtoolsChannel } from '../../devtools-connector/abstract-devtools-channel.js';
 import { VariableStorageProvider } from '../../runtime/storage/storage-provider-base.js';
 import { Planner } from '../planner.js';
 import { RecipeIndex } from '../recipe-index.js';

@@ -7,7 +7,7 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-import { ArcDebugListenerDerived } from './debug/abstract-devtools-channel.js';
+import { ArcInspector, ArcInspectorFactory } from './arc-inspector.js';
 import { Id, IdGenerator } from './id.js';
 import { Loader } from './loader.js';
 import { Runnable } from './hot.js';
@@ -36,7 +36,7 @@ export declare type ArcOptions = Readonly<{
     speculative?: boolean;
     innerArc?: boolean;
     stub?: boolean;
-    listenerClasses?: ArcDebugListenerDerived[];
+    inspectorFactory?: ArcInspectorFactory;
 }>;
 declare type DeserializeArcOptions = Readonly<{
     serialization: string;
@@ -45,7 +45,7 @@ declare type DeserializeArcOptions = Readonly<{
     loader: Loader;
     fileName: string;
     context: Manifest;
-    listenerClasses?: ArcDebugListenerDerived[];
+    inspectorFactory?: ArcInspectorFactory;
 }>;
 export declare class Arc {
     private readonly _context;
@@ -64,9 +64,9 @@ export declare class Arc {
     readonly storeTags: Map<StorageProviderBase, Set<string>>;
     private readonly storeDescriptions;
     private waitForIdlePromise;
-    private readonly debugHandler;
+    private readonly inspectorFactory;
+    readonly inspector: ArcInspector;
     private readonly innerArcsByParticle;
-    private readonly listenerClasses;
     private readonly instantiateMutex;
     readonly id: Id;
     private readonly idGenerator;
@@ -75,7 +75,7 @@ export declare class Arc {
         stores: Map<string, StorageProviderBase>;
     }>;
     readonly pec: ParticleExecutionHost;
-    constructor({ id, context, pecFactory, slotComposer, loader, storageKey, storageProviderFactory, speculative, innerArc, stub, listenerClasses }: ArcOptions);
+    constructor({ id, context, pecFactory, slotComposer, loader, storageKey, storageProviderFactory, speculative, innerArc, stub, inspectorFactory }: ArcOptions);
     readonly loader: Loader;
     readonly modality: Modality;
     dispose(): void;
@@ -91,7 +91,7 @@ export declare class Arc {
     private _serializeStorageKey;
     serialize(): Promise<string>;
     persistSerialization(serialization: string): Promise<void>;
-    static deserialize({ serialization, pecFactory, slotComposer, loader, fileName, context, listenerClasses }: DeserializeArcOptions): Promise<Arc>;
+    static deserialize({ serialization, pecFactory, slotComposer, loader, fileName, context, inspectorFactory }: DeserializeArcOptions): Promise<Arc>;
     readonly context: Manifest;
     readonly activeRecipe: Recipe;
     readonly allRecipes: Recipe[];
