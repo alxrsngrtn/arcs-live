@@ -15,6 +15,7 @@ import { Loader } from '../../runtime/loader.js';
 import { Manifest } from '../../runtime/manifest.js';
 import { StubLoader } from '../../runtime/testing/stub-loader.js';
 import { Planner } from '../planner.js';
+import { Speculator } from '../speculator.js';
 import { StrategyTestHelper } from './strategies/strategy-test-helper.js';
 import { ArcId } from '../../runtime/id.js';
 async function planFromManifest(manifest, { arcFactory, testSteps } = {}) {
@@ -64,7 +65,7 @@ const loadTestArcAndRunSpeculation = async (manifest, manifestLoadedCallback) =>
     manifestLoadedCallback(loadedManifest);
     const arc = new Arc({ id: ArcId.newForTest('test-plan-arc'), context: loadedManifest, loader });
     const planner = new Planner();
-    const options = { strategyArgs: StrategyTestHelper.createTestStrategyArgs(arc) };
+    const options = { strategyArgs: StrategyTestHelper.createTestStrategyArgs(arc), speculator: new Speculator() };
     planner.init(arc, options);
     const plans = await planner.suggest(Infinity);
     return { plans, arc };

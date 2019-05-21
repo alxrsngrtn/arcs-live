@@ -10,13 +10,12 @@
 import { Arc } from '../runtime/arc.js';
 import { Recipe } from '../runtime/recipe/recipe.js';
 import { Relevance } from '../runtime/relevance.js';
-import { PlanningResult } from './plan/planning-result.js';
-import { Suggestion } from './plan/suggestion.js';
 export declare class Speculator {
-    private suggestionByHash;
     private speculativeArcs;
-    constructor(planningResult?: PlanningResult);
-    speculate(arc: Arc, plan: Recipe, hash: string): Promise<Suggestion | null>;
-    awaitCompletion(relevance: Relevance, speculativeArc: Arc): any;
+    speculate(arc: Arc, plan: Recipe, hash: string): Promise<{
+        speculativeArc: Arc;
+        relevance: Relevance;
+    } | null>;
+    private awaitCompletion;
     dispose(): void;
 }

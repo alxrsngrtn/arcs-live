@@ -11,12 +11,14 @@ import { Arc } from './arc.js';
 import { DescriptionFormatter } from './description-formatter.js';
 import { Relevance } from './relevance.js';
 import { Handle } from './recipe/handle.js';
+import { Recipe } from './recipe/recipe.js';
 export declare class Description {
-    private readonly particleDescriptions;
     private readonly storeDescById;
     private readonly arcRecipeName;
     private readonly arcRecipes;
+    private readonly particleDescriptions;
     private constructor();
+    static createForPlan(plan: Recipe): Promise<Description>;
     /**
      * Create a new Description object for the given Arc with an
      * optional Relevance object.

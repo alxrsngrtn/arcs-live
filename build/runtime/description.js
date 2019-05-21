@@ -12,19 +12,17 @@ import { DescriptionFormatter } from './description-formatter.js';
 import { BigCollectionType, CollectionType, EntityType, InterfaceType } from './type.js';
 import { StorageProviderBase } from './storage/storage-provider-base.js';
 export class Description {
-    constructor(arc, particleDescriptions = []) {
+    constructor(storeDescById = {}, arcRecipeName, 
+    // TODO(mmandlis): replace Particle[] with serializable json objects.
+    arcRecipes, particleDescriptions = []) {
+        this.storeDescById = storeDescById;
+        this.arcRecipeName = arcRecipeName;
+        this.arcRecipes = arcRecipes;
         this.particleDescriptions = particleDescriptions;
-        this.storeDescById = {};
-        // Populate store descriptions by ID.
-        for (const { id } of arc.activeRecipe.handles) {
-            const store = arc.findStoreById(id);
-            if (store && store instanceof StorageProviderBase) {
-                this.storeDescById[id] = arc.getStoreDescription(store);
-            }
-        }
-        // Retain specific details of the supplied Arc
-        this.arcRecipeName = arc.activeRecipe.name;
-        this.arcRecipes = arc.recipeDeltas;
+    }
+    static async createForPlan(plan) {
+        const particleDescriptions = await Description.initDescriptionHandles(plan.particles);
+        return new Description({}, plan.name, [{ patterns: plan.patterns, particles: plan.particles }], particleDescriptions);
     }
     /**
      * Create a new Description object for the given Arc with an
@@ -32,9 +30,17 @@ export class Description {
      */
     static async create(arc, relevance) {
         // Execute async related code here
-        const particleDescriptions = await Description.initDescriptionHandles(arc, relevance);
+        const allParticles = [].concat(...arc.allDescendingArcs.map(arc => arc.activeRecipe.particles));
+        const particleDescriptions = await Description.initDescriptionHandles(allParticles, arc, relevance);
+        const storeDescById = {};
+        for (const { id } of arc.activeRecipe.handles) {
+            const store = arc.findStoreById(id);
+            if (store && store instanceof StorageProviderBase) {
+                storeDescById[id] = arc.getStoreDescription(store);
+            }
+        }
         // ... and pass to the private constructor.
-        return new Description(arc, particleDescriptions);
+        return new Description(storeDescById, arc.activeRecipe.name, arc.recipeDeltas, particleDescriptions);
     }
     getArcDescription(formatterClass = DescriptionFormatter) {
         const patterns = [].concat(...this.arcRecipes.map(recipe => recipe.patterns));
@@ -62,8 +68,7 @@ export class Description {
         formatter.excludeValues = true;
         return formatter.getHandleDescription(recipeHandle);
     }
-    static async initDescriptionHandles(arc, relevance) {
-        const allParticles = [].concat(...arc.allDescendingArcs.map(arc => arc.activeRecipe.particles));
+    static async initDescriptionHandles(allParticles, arc, relevance) {
         return await Promise.all(allParticles.map(particle => Description._createParticleDescription(particle, arc, relevance)));
     }
     static async _createParticleDescription(particle, arc, relevance) {
@@ -80,7 +85,7 @@ export class Description {
         for (const handleConn of Object.values(particle.connections)) {
             const specConn = particle.spec.handleConnectionMap.get(handleConn.name);
             const pattern = descByName[handleConn.name] || specConn.pattern;
-            const store = arc.findStoreById(handleConn.handle.id);
+            const store = arc ? arc.findStoreById(handleConn.handle.id) : null;
             pDesc._connections[handleConn.name] = {
                 pattern,
                 _handleConn: handleConn,

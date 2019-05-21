@@ -3191,7 +3191,7 @@ class DescriptionFormatter {
         }
         const handleConn = particle.connections[handleNames[0]];
         if (handleConn) { // handle connection
-            assert(handleConn.handle && handleConn.handle.id, 'Missing id???');
+            assert(handleConn.handle, 'Missing handle???');
             return [{
                     fullName: valueTokens[0],
                     handleName: handleConn.name,
@@ -3252,6 +3252,9 @@ class DescriptionFormatter {
                 assert(!token.extra, `Unrecognized extra ${token.extra}`);
                 // Transformation's hosted particle.
                 if (token._handleConn.type instanceof InterfaceType) {
+                    if (!token.value) {
+                        return undefined;
+                    }
                     assert(token.value.interfaceValue, `Missing interface type value for '${token._handleConn.type}'.`);
                     const particleSpec = ParticleSpec.fromLiteral(token.value.interfaceValue);
                     // TODO: call this.patternToSuggestion(...) to resolved expressions in the pattern template.
@@ -3399,7 +3402,9 @@ class DescriptionFormatter {
     }
     _formatStoreDescription(handleConn) {
         if (handleConn.handle) {
-            assert(handleConn.handle.id, `no id for ${handleConn.name}?`);
+            if (!handleConn.handle.id) {
+                return undefined;
+            }
             const storeDescription = this.storeDescById[handleConn.handle.id];
             const handleType = this._formatHandleType(handleConn);
             // Use the handle description available in the arc (if it is different than type name).
@@ -3653,19 +3658,17 @@ class StorageProviderBase {
  * http://polymer.github.io/PATENTS.txt
  */
 class Description {
-    constructor(arc, particleDescriptions = []) {
+    constructor(storeDescById = {}, arcRecipeName, 
+    // TODO(mmandlis): replace Particle[] with serializable json objects.
+    arcRecipes, particleDescriptions = []) {
+        this.storeDescById = storeDescById;
+        this.arcRecipeName = arcRecipeName;
+        this.arcRecipes = arcRecipes;
         this.particleDescriptions = particleDescriptions;
-        this.storeDescById = {};
-        // Populate store descriptions by ID.
-        for (const { id } of arc.activeRecipe.handles) {
-            const store = arc.findStoreById(id);
-            if (store && store instanceof StorageProviderBase) {
-                this.storeDescById[id] = arc.getStoreDescription(store);
-            }
-        }
-        // Retain specific details of the supplied Arc
-        this.arcRecipeName = arc.activeRecipe.name;
-        this.arcRecipes = arc.recipeDeltas;
+    }
+    static async createForPlan(plan) {
+        const particleDescriptions = await Description.initDescriptionHandles(plan.particles);
+        return new Description({}, plan.name, [{ patterns: plan.patterns, particles: plan.particles }], particleDescriptions);
     }
     /**
      * Create a new Description object for the given Arc with an
@@ -3673,9 +3676,17 @@ class Description {
      */
     static async create(arc, relevance) {
         // Execute async related code here
-        const particleDescriptions = await Description.initDescriptionHandles(arc, relevance);
+        const allParticles = [].concat(...arc.allDescendingArcs.map(arc => arc.activeRecipe.particles));
+        const particleDescriptions = await Description.initDescriptionHandles(allParticles, arc, relevance);
+        const storeDescById = {};
+        for (const { id } of arc.activeRecipe.handles) {
+            const store = arc.findStoreById(id);
+            if (store && store instanceof StorageProviderBase) {
+                storeDescById[id] = arc.getStoreDescription(store);
+            }
+        }
         // ... and pass to the private constructor.
-        return new Description(arc, particleDescriptions);
+        return new Description(storeDescById, arc.activeRecipe.name, arc.recipeDeltas, particleDescriptions);
     }
     getArcDescription(formatterClass = DescriptionFormatter) {
         const patterns = [].concat(...this.arcRecipes.map(recipe => recipe.patterns));
@@ -3703,8 +3714,7 @@ class Description {
         formatter.excludeValues = true;
         return formatter.getHandleDescription(recipeHandle);
     }
-    static async initDescriptionHandles(arc, relevance) {
-        const allParticles = [].concat(...arc.allDescendingArcs.map(arc => arc.activeRecipe.particles));
+    static async initDescriptionHandles(allParticles, arc, relevance) {
         return await Promise.all(allParticles.map(particle => Description._createParticleDescription(particle, arc, relevance)));
     }
     static async _createParticleDescription(particle, arc, relevance) {
@@ -3721,7 +3731,7 @@ class Description {
         for (const handleConn of Object.values(particle.connections)) {
             const specConn = particle.spec.handleConnectionMap.get(handleConn.name);
             const pattern = descByName[handleConn.name] || specConn.pattern;
-            const store = arc.findStoreById(handleConn.handle.id);
+            const store = arc ? arc.findStoreById(handleConn.handle.id) : null;
             pDesc._connections[handleConn.name] = {
                 pattern,
                 _handleConn: handleConn,
@@ -24711,8 +24721,7 @@ class Suggestion {
     static create(plan, hash, relevance) {
         assert(plan, `plan cannot be null`);
         assert(hash, `hash cannot be null`);
-        assert(relevance, `relevance cannot be null`);
-        const suggestion = new Suggestion(plan, hash, relevance.calcRelevanceScore(), relevance.versionByStore);
+        const suggestion = new Suggestion(plan, hash, relevance ? relevance.calcRelevanceScore() : 0, relevance ? relevance.versionByStore : {});
         suggestion.setSearch(plan.search);
         return suggestion;
     }
@@ -25041,159 +25050,6 @@ class PlanningResult {
             lastUpdated: this.lastUpdated.toString(),
             contextual: this.contextual
         };
-    }
-}
-
-class Relevance {
-    constructor() {
-        // stores a copy of arc.getVersionByStore
-        this.versionByStore = {};
-        // public for testing
-        this.relevanceMap = new Map();
-    }
-    static create(arc, recipe) {
-        const relevance = new Relevance();
-        const versionByStore = arc.getVersionByStore({ includeArc: true, includeContext: true });
-        recipe.handles.forEach(handle => {
-            if (handle.id && versionByStore[handle.id] !== undefined) {
-                relevance.versionByStore[handle.id] = versionByStore[handle.id];
-            }
-        });
-        return relevance;
-    }
-    apply(relevance) {
-        for (const key of relevance.keys()) {
-            if (this.relevanceMap.has(key)) {
-                this.relevanceMap.set(key, this.relevanceMap.get(key).concat(relevance.get(key)));
-            }
-            else {
-                this.relevanceMap.set(key, relevance.get(key));
-            }
-        }
-    }
-    calcRelevanceScore() {
-        let relevance = 1;
-        let hasNegative = false;
-        for (const rList of this.relevanceMap.values()) {
-            const particleRelevance = Relevance.particleRelevance(rList);
-            if (particleRelevance < 0) {
-                hasNegative = true;
-            }
-            relevance *= Math.abs(particleRelevance);
-        }
-        return relevance * (hasNegative ? -1 : 1);
-    }
-    // Returns false, if at least one of the particles relevance lists ends with a negative score.
-    isRelevant(plan) {
-        const hasUi = plan.particles.some(p => Object.keys(p.consumedSlotConnections).length > 0);
-        let rendersUi = false;
-        for (const [particle, rList] of this.relevanceMap) {
-            if (rList[rList.length - 1] < 0) {
-                continue;
-            }
-            else if (Object.keys(particle.consumedSlotConnections).length) {
-                rendersUi = true;
-                break;
-            }
-        }
-        // If the recipe has UI rendering particles, at least one of the particles must render UI.
-        return hasUi === rendersUi;
-    }
-    static scaleRelevance(relevance) {
-        if (relevance == undefined) {
-            relevance = 5;
-        }
-        relevance = Math.max(-1, Math.min(relevance, 10));
-        // TODO: might want to make this geometric or something instead;
-        return relevance / 5;
-    }
-    static particleRelevance(relevanceList) {
-        let relevance = 1;
-        let hasNegative = false;
-        relevanceList.forEach(r => {
-            const scaledRelevance = Relevance.scaleRelevance(r);
-            if (scaledRelevance < 0) {
-                hasNegative = true;
-            }
-            relevance *= Math.abs(scaledRelevance);
-        });
-        return relevance * (hasNegative ? -1 : 1);
-    }
-    calcParticleRelevance(particle) {
-        if (this.relevanceMap.has(particle)) {
-            return Relevance.particleRelevance(this.relevanceMap.get(particle));
-        }
-        return -1;
-    }
-}
-
-/**
- * @license
- * Copyright (c) 2017 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-class Speculator {
-    constructor(planningResult) {
-        this.suggestionByHash = {};
-        this.speculativeArcs = [];
-        if (planningResult) {
-            for (const suggestion of planningResult.suggestions) {
-                this.suggestionByHash[suggestion.hash] = suggestion;
-            }
-        }
-    }
-    async speculate(arc, plan, hash) {
-        assert(plan.isResolved(), `Cannot speculate on an unresolved plan: ${plan.toString({ showUnresolved: true })}`);
-        let suggestion = this.suggestionByHash[hash];
-        if (suggestion) {
-            const arcVersionByStoreId = arc.getVersionByStore({ includeArc: true, includeContext: true });
-            if (plan.handles.every(handle => arcVersionByStoreId[handle.id] === suggestion.versionByStore[handle.id])) {
-                return suggestion;
-            }
-        }
-        const speculativeArc = await arc.cloneForSpeculativeExecution();
-        this.speculativeArcs.push(speculativeArc);
-        const relevance = Relevance.create(arc, plan);
-        await speculativeArc.instantiate(plan);
-        await this.awaitCompletion(relevance, speculativeArc);
-        if (!relevance.isRelevant(plan)) {
-            return null;
-        }
-        const description = await Description.create(speculativeArc, relevance);
-        suggestion = Suggestion.create(plan, hash, relevance);
-        suggestion.setDescription(description, arc.modality, arc.pec.slotComposer ? arc.pec.slotComposer.modalityHandler.descriptionFormatter : undefined);
-        this.suggestionByHash[hash] = suggestion;
-        // TODO: Find a better way to associate arcs with descriptions.
-        //       Ideally, a way that works also for non-speculative arcs.
-        if (DevtoolsConnection.isConnected) {
-            DevtoolsConnection.get().forArc(speculativeArc).send({
-                messageType: 'arc-description',
-                messageBody: suggestion.descriptionText
-            });
-        }
-        return suggestion;
-    }
-    async awaitCompletion(relevance, speculativeArc) {
-        const messageCount = speculativeArc.pec.messageCount;
-        relevance.apply(await speculativeArc.pec.idle);
-        // We expect two messages here, one requesting the idle status, and one answering it.
-        if (speculativeArc.pec.messageCount !== messageCount + 2) {
-            return this.awaitCompletion(relevance, speculativeArc);
-        }
-        else {
-            speculativeArc.dispose();
-            this.speculativeArcs.splice(this.speculativeArcs.indexOf(speculativeArc, 1));
-            return relevance;
-        }
-    }
-    dispose() {
-        for (const arc of this.speculativeArcs) {
-            arc.dispose();
-        }
     }
 }
 
@@ -26966,12 +26822,14 @@ class SearchTokensToHandles extends Strategy {
 // Copyright (c) 2017 Google Inc. All rights reserved.
 class Planner {
     // TODO: Use context.arc instead of arc
-    init(arc, { strategies = Planner.AllStrategies, ruleset = Empty, strategyArgs = {}, blockDevtools = false } = {}) {
+    init(arc, { strategies = Planner.AllStrategies, ruleset = Empty, strategyArgs = {}, suggestionCache = null, speculator = null, blockDevtools = false } = {}) {
         strategyArgs = Object.freeze({ ...strategyArgs });
         this._arc = arc;
         const strategyImpls = strategies.map(strategy => new strategy(arc, strategyArgs));
         this.strategizer = new Strategizer(strategyImpls, [], ruleset);
         this.blockDevtools = blockDevtools;
+        this.speculator = speculator;
+        this.suggestionCache = suggestionCache;
     }
     // Specify a timeout value less than zero to disable timeouts.
     async plan(timeout, generations = []) {
@@ -27041,10 +26899,9 @@ class Planner {
         }
         return groups;
     }
-    async suggest(timeout, generations = [], speculator) {
+    async suggest(timeout, generations = []) {
         const trace = Tracing.start({ cat: 'planning', name: 'Planner::suggest', overview: true, args: { timeout } });
         const plans = await trace.wait(this.plan(timeout, generations));
-        speculator = speculator || new Speculator();
         // We don't actually know how many threads the VM will decide to use to
         // handle the parallel speculation, but at least we know we won't kick off
         // more than this number and so can somewhat limit resource utilization.
@@ -27066,13 +26923,13 @@ class Planner {
                     overview: true,
                     args: { groupIndex }
                 });
-                const suggestion = await speculator.speculate(this._arc, plan, hash);
+                const suggestion = await this.retriveOrCreateSuggestion(hash, plan, this._arc);
                 if (!suggestion) {
                     this._updateGeneration(generations, hash, (g) => g.irrelevant = true);
                     planTrace.end({ name: '[Irrelevant suggestion]', args: { hash, groupIndex } });
                     continue;
                 }
-                this._updateGeneration(generations, hash, async (g) => g.description = suggestion.descriptionText);
+                this._updateGeneration(generations, hash, g => g.description = suggestion.descriptionText);
                 suggestion.groupIndex = groupIndex;
                 results.push(suggestion);
                 planTrace.end({ name: suggestion.descriptionText, args: { rank: suggestion.rank, hash, groupIndex } });
@@ -27081,6 +26938,34 @@ class Planner {
         })));
         results = [].concat(...results);
         return trace.endWith(results);
+    }
+    async retriveOrCreateSuggestion(hash, plan, arc) {
+        if (this.suggestionCache) {
+            const suggestion = this.suggestionCache.getSuggestion(hash, plan, arc);
+            if (suggestion) {
+                return suggestion;
+            }
+        }
+        let relevance = null;
+        let description = null;
+        if (this.speculator) {
+            const result = await this.speculator.speculate(this._arc, plan, hash);
+            if (!result) {
+                return undefined;
+            }
+            const speculativeArc = result.speculativeArc;
+            relevance = result.relevance;
+            description = await Description.create(speculativeArc, relevance);
+        }
+        else {
+            description = await Description.createForPlan(plan);
+        }
+        const suggestion = Suggestion.create(plan, hash, relevance);
+        suggestion.setDescription(description, this._arc.modality, this._arc.pec.slotComposer ? this._arc.pec.slotComposer.modalityHandler.descriptionFormatter : undefined);
+        if (this.suggestionCache) {
+            this.suggestionCache.setSuggestion(hash, suggestion);
+        }
+        return suggestion;
     }
     _updateGeneration(generations, hash, handler) {
         if (generations) {
@@ -28835,6 +28720,167 @@ class UserContext {
   // }
 }
 
+class Relevance {
+    constructor() {
+        // stores a copy of arc.getVersionByStore
+        this.versionByStore = {};
+        // public for testing
+        this.relevanceMap = new Map();
+    }
+    static create(arc, recipe) {
+        const relevance = new Relevance();
+        const versionByStore = arc.getVersionByStore({ includeArc: true, includeContext: true });
+        recipe.handles.forEach(handle => {
+            if (handle.id && versionByStore[handle.id] !== undefined) {
+                relevance.versionByStore[handle.id] = versionByStore[handle.id];
+            }
+        });
+        return relevance;
+    }
+    apply(relevance) {
+        for (const key of relevance.keys()) {
+            if (this.relevanceMap.has(key)) {
+                this.relevanceMap.set(key, this.relevanceMap.get(key).concat(relevance.get(key)));
+            }
+            else {
+                this.relevanceMap.set(key, relevance.get(key));
+            }
+        }
+    }
+    calcRelevanceScore() {
+        let relevance = 1;
+        let hasNegative = false;
+        for (const rList of this.relevanceMap.values()) {
+            const particleRelevance = Relevance.particleRelevance(rList);
+            if (particleRelevance < 0) {
+                hasNegative = true;
+            }
+            relevance *= Math.abs(particleRelevance);
+        }
+        return relevance * (hasNegative ? -1 : 1);
+    }
+    // Returns false, if at least one of the particles relevance lists ends with a negative score.
+    isRelevant(plan) {
+        const hasUi = plan.particles.some(p => Object.keys(p.consumedSlotConnections).length > 0);
+        let rendersUi = false;
+        for (const [particle, rList] of this.relevanceMap) {
+            if (rList[rList.length - 1] < 0) {
+                continue;
+            }
+            else if (Object.keys(particle.consumedSlotConnections).length) {
+                rendersUi = true;
+                break;
+            }
+        }
+        // If the recipe has UI rendering particles, at least one of the particles must render UI.
+        return hasUi === rendersUi;
+    }
+    static scaleRelevance(relevance) {
+        if (relevance == undefined) {
+            relevance = 5;
+        }
+        relevance = Math.max(-1, Math.min(relevance, 10));
+        // TODO: might want to make this geometric or something instead;
+        return relevance / 5;
+    }
+    static particleRelevance(relevanceList) {
+        let relevance = 1;
+        let hasNegative = false;
+        relevanceList.forEach(r => {
+            const scaledRelevance = Relevance.scaleRelevance(r);
+            if (scaledRelevance < 0) {
+                hasNegative = true;
+            }
+            relevance *= Math.abs(scaledRelevance);
+        });
+        return relevance * (hasNegative ? -1 : 1);
+    }
+    calcParticleRelevance(particle) {
+        if (this.relevanceMap.has(particle)) {
+            return Relevance.particleRelevance(this.relevanceMap.get(particle));
+        }
+        return -1;
+    }
+}
+
+/**
+ * @license
+ * Copyright (c) 2017 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+class Speculator {
+    constructor() {
+        this.speculativeArcs = [];
+    }
+    async speculate(arc, plan, hash) {
+        assert(plan.isResolved(), `Cannot speculate on an unresolved plan: ${plan.toString({ showUnresolved: true })}`);
+        const speculativeArc = await arc.cloneForSpeculativeExecution();
+        this.speculativeArcs.push(speculativeArc);
+        const relevance = Relevance.create(arc, plan);
+        await speculativeArc.instantiate(plan);
+        await this.awaitCompletion(relevance, speculativeArc);
+        if (!relevance.isRelevant(plan)) {
+            return null;
+        }
+        return { speculativeArc, relevance };
+    }
+    async awaitCompletion(relevance, speculativeArc) {
+        const messageCount = speculativeArc.pec.messageCount;
+        relevance.apply(await speculativeArc.pec.idle);
+        // We expect two messages here, one requesting the idle status, and one answering it.
+        if (speculativeArc.pec.messageCount !== messageCount + 2) {
+            return this.awaitCompletion(relevance, speculativeArc);
+        }
+        else {
+            speculativeArc.dispose();
+            this.speculativeArcs.splice(this.speculativeArcs.indexOf(speculativeArc, 1));
+            return relevance;
+        }
+    }
+    dispose() {
+        for (const arc of this.speculativeArcs) {
+            arc.dispose();
+        }
+    }
+}
+
+/**
+ * @license
+ * Copyright (c) 2019 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+class SuggestionCache {
+    constructor(planningResult) {
+        this.suggestionByHash = {};
+        if (planningResult) {
+            for (const suggestion of planningResult.suggestions) {
+                this.suggestionByHash[suggestion.hash] = suggestion;
+            }
+        }
+    }
+    getSuggestion(hash, plan, arc) {
+        const suggestion = this.suggestionByHash[hash];
+        if (suggestion) {
+            const arcVersionByStoreId = arc.getVersionByStore({ includeArc: true, includeContext: true });
+            if (plan.handles.every(handle => arcVersionByStoreId[handle.id] === suggestion.versionByStore[handle.id])) {
+                return suggestion;
+            }
+        }
+        return undefined;
+    }
+    setSuggestion(hash, suggestion) {
+        this.suggestionByHash[hash] = suggestion;
+    }
+}
+
 /**
  * @license
  * Copyright (c) 2018 Google Inc. All rights reserved.
@@ -28867,7 +28913,8 @@ class PlanProducer {
         this.arc = arc;
         this.result = result;
         this.recipeIndex = RecipeIndex.create(this.arc);
-        this.speculator = new Speculator(this.result);
+        this.speculator = new Speculator();
+        this.suggestionCache = new SuggestionCache(this.result);
         this.searchStore = searchStore;
         if (this.searchStore) {
             this.searchStoreCallback = () => this.onSearchChanged();
@@ -28988,9 +29035,11 @@ class PlanProducer {
                 search: options['search'],
                 recipeIndex: this.recipeIndex
             },
+            speculator: this.speculator,
+            suggestionCache: this.suggestionCache,
             blockDevtools: true // Devtools communication is handled by PlanConsumer in Producer+Consumer setup.
         });
-        suggestions = await this.planner.suggest(options['timeout'] || defaultTimeoutMs, generations, this.speculator);
+        suggestions = await this.planner.suggest(options['timeout'] || defaultTimeoutMs, generations);
         if (this.planner) {
             this.planner = null;
             return suggestions;

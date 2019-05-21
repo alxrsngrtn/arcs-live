@@ -9,6 +9,7 @@
  */
 import { Planner } from '../planner.js';
 import { RecipeIndex } from '../recipe-index.js';
+import { Speculator } from '../speculator.js';
 import { assert } from '../../platform/chai-web.js';
 import { InterfaceType } from '../../runtime/type.js';
 import { TestHelper } from '../../runtime/testing/test-helper.js';
@@ -47,12 +48,12 @@ export class PlanningTestHelper extends TestHelper {
      */
     async makePlans(options) {
         const planner = new Planner();
-        planner.init(this.arc, { strategyArgs: { recipeIndex: this.recipeIndex } });
+        planner.init(this.arc, { strategyArgs: { recipeIndex: this.recipeIndex }, speculator: new Speculator() });
         this.suggestions = await planner.suggest();
         if (options && options.includeInnerArcs) {
             for (const innerArc of this.arc.innerArcs) {
                 const innerPlanner = new Planner();
-                innerPlanner.init(innerArc, { strategyArgs: { recipeIndex: this.recipeIndex } });
+                innerPlanner.init(innerArc, { strategyArgs: { recipeIndex: this.recipeIndex }, speculator: new Speculator() });
                 this.suggestions = this.suggestions.concat(await innerPlanner.suggest());
             }
         }

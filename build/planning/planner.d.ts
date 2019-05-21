@@ -15,18 +15,23 @@ interface Generation {
 }
 export declare class Planner {
     private _arc;
+    private suggestionCache;
     strategizer: Strategizer;
+    speculator: Speculator;
     blockDevtools: boolean;
-    init(arc: Arc, { strategies, ruleset, strategyArgs, blockDevtools }?: {
+    init(arc: Arc, { strategies, ruleset, strategyArgs, suggestionCache, speculator, blockDevtools }?: {
         strategies?: StrategyDerived[];
         ruleset?: import("./strategizer.js").Ruleset;
         strategyArgs?: {};
+        suggestionCache?: any;
+        speculator?: any;
         blockDevtools?: boolean;
     }): void;
     plan(timeout?: number, generations?: Generation[]): Promise<Recipe[]>;
     _speculativeThreadCount(): number;
     _splitToGroups(items: Recipe[], groupCount: number): Recipe[][];
-    suggest(timeout?: number, generations?: Generation[], speculator?: Speculator): Promise<Suggestion[]>;
+    suggest(timeout?: number, generations?: Generation[]): Promise<Suggestion[]>;
+    private retriveOrCreateSuggestion;
     _updateGeneration(generations: Generation[], hash: string, handler: (_: AnnotatedDescendant) => void): void;
     static InitializationStrategies: StrategyDerived[];
     static ResolutionStrategies: StrategyDerived[];

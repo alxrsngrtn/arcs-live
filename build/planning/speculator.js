@@ -8,29 +8,13 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { assert } from '../platform/assert-web.js';
-import { DevtoolsConnection } from '../devtools-connector/devtools-connection.js';
-import { Description } from '../runtime/description.js';
 import { Relevance } from '../runtime/relevance.js';
-import { Suggestion } from './plan/suggestion.js';
 export class Speculator {
-    constructor(planningResult) {
-        this.suggestionByHash = {};
+    constructor() {
         this.speculativeArcs = [];
-        if (planningResult) {
-            for (const suggestion of planningResult.suggestions) {
-                this.suggestionByHash[suggestion.hash] = suggestion;
-            }
-        }
     }
     async speculate(arc, plan, hash) {
         assert(plan.isResolved(), `Cannot speculate on an unresolved plan: ${plan.toString({ showUnresolved: true })}`);
-        let suggestion = this.suggestionByHash[hash];
-        if (suggestion) {
-            const arcVersionByStoreId = arc.getVersionByStore({ includeArc: true, includeContext: true });
-            if (plan.handles.every(handle => arcVersionByStoreId[handle.id] === suggestion.versionByStore[handle.id])) {
-                return suggestion;
-            }
-        }
         const speculativeArc = await arc.cloneForSpeculativeExecution();
         this.speculativeArcs.push(speculativeArc);
         const relevance = Relevance.create(arc, plan);
@@ -39,19 +23,7 @@ export class Speculator {
         if (!relevance.isRelevant(plan)) {
             return null;
         }
-        const description = await Description.create(speculativeArc, relevance);
-        suggestion = Suggestion.create(plan, hash, relevance);
-        suggestion.setDescription(description, arc.modality, arc.pec.slotComposer ? arc.pec.slotComposer.modalityHandler.descriptionFormatter : undefined);
-        this.suggestionByHash[hash] = suggestion;
-        // TODO: Find a better way to associate arcs with descriptions.
-        //       Ideally, a way that works also for non-speculative arcs.
-        if (DevtoolsConnection.isConnected) {
-            DevtoolsConnection.get().forArc(speculativeArc).send({
-                messageType: 'arc-description',
-                messageBody: suggestion.descriptionText
-            });
-        }
-        return suggestion;
+        return { speculativeArc, relevance };
     }
     async awaitCompletion(relevance, speculativeArc) {
         const messageCount = speculativeArc.pec.messageCount;

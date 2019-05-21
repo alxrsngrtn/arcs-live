@@ -15,6 +15,7 @@ import { RecipeIndex } from '../recipe-index.js';
 import { Speculator } from '../speculator.js';
 import { PlanningResult } from './planning-result.js';
 import { Suggestion } from './suggestion.js';
+import { SuggestionCache } from './suggestion-cache.js';
 export declare enum Trigger {
     Init = "init",
     Search = "search",
@@ -28,6 +29,7 @@ export declare class PlanProducer {
     planner: Planner | null;
     recipeIndex: RecipeIndex;
     speculator: Speculator;
+    suggestionCache: SuggestionCache;
     needReplan: boolean;
     replanOptions: {};
     _isPlanning: boolean;
