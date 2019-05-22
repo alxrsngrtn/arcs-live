@@ -1,5 +1,5 @@
-commit 5fdf84c2c860c47f875557d05b2f6d36001ebf97
+commit 821ef415f65c611833f546ff6781558a96625b7a
 Author: Paul Lindner <plindner@google.com>
-Date:   Wed May 22 14:52:16 2019 -0700
+Date:   Wed May 22 15:05:53 2019 -0700
 
-    Remove obsolete global list of globals #3017 (#3061)
+    use Predicate for predicates #3030 (#3064)

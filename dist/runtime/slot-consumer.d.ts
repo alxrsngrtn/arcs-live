@@ -8,6 +8,7 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { Arc } from './arc.js';
+import { Predicate } from './hot.js';
 import { Description } from './description.js';
 import { SlotConnection } from './recipe/slot-connection.js';
 import { HostedSlotContext, ProvidedSlotContext, SlotContext } from './slot-context.js';
@@ -45,7 +46,7 @@ export declare class SlotConsumer {
     addRenderingBySubId(subId: string | undefined, rendering: Rendering): void;
     addHostedSlotContexts(context: HostedSlotContext): void;
     readonly allProvidedSlotContexts: ProvidedSlotContext[];
-    findProvidedContext(predicate: (_: ProvidedSlotContext) => boolean): ProvidedSlotContext;
+    findProvidedContext(predicate: Predicate<ProvidedSlotContext>): ProvidedSlotContext;
     private generateProvidedContexts;
     onContainerUpdate(newContainer: any, originalContainer: any): void;
     createProvidedContexts(): SlotContext | ConcatArray<SlotContext>;

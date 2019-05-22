@@ -4,7 +4,7 @@ import { Schema } from './schema.js';
 import { SlotInfo } from './slot-info.js';
 import { ArcInfo } from './synthetic-types.js';
 import { TypeVariableInfo } from './type-variable-info.js';
-import { Literal } from './hot.js';
+import { Predicate, Literal } from './hot.js';
 export interface TypeLiteral extends Literal {
     tag: string;
     data?: any;
@@ -24,7 +24,7 @@ export declare abstract class Type {
     isBigCollectionType<T extends Type>(): this is BigCollectionType<T>;
     isResolved(): boolean;
     mergeTypeVariablesByName(variableMap: Map<string, Type>): Type;
-    _applyExistenceTypeTest(test: (type: Type) => boolean): boolean;
+    _applyExistenceTypeTest(test: Predicate<Type>): boolean;
     readonly hasVariable: boolean;
     readonly hasUnresolvedVariable: boolean;
     getContainedType(): Type;
@@ -97,7 +97,7 @@ export declare class CollectionType<T extends Type> extends Type {
     constructor(collectionType: T);
     readonly isCollection: boolean;
     mergeTypeVariablesByName(variableMap: Map<string, Type>): CollectionType<Type>;
-    _applyExistenceTypeTest(test: (type: Type) => boolean): boolean;
+    _applyExistenceTypeTest(test: Predicate<Type>): boolean;
     getContainedType(): T;
     isTypeContainer(): boolean;
     resolvedType(): CollectionType<Type>;

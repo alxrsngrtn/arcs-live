@@ -7,6 +7,7 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
+import { Predicate } from '../runtime/hot.js';
 import { Type, TypeVariable, TypeLiteral } from './type.js';
 import { ParticleSpec } from './particle-spec.js';
 interface Handle {
@@ -56,7 +57,7 @@ export declare class InterfaceInfo {
     readonly canReadSubset: InterfaceInfo;
     readonly canWriteSuperset: InterfaceInfo;
     isMoreSpecificThan(other: InterfaceInfo): boolean;
-    _applyExistenceTypeTest(test: (t: TypeVarReference) => boolean): boolean;
+    _applyExistenceTypeTest(test: Predicate<TypeVarReference>): boolean;
     _handlesToManifestString(): string;
     _slotsToManifestString(): string;
     toString(): string;

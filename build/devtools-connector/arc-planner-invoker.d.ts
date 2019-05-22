@@ -8,6 +8,7 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { Arc } from '../runtime/arc.js';
+import { Predicate } from '../runtime/hot.js';
 import { ArcDevtoolsChannel } from './abstract-devtools-channel.js';
 import { Manifest } from '../runtime/manifest.js';
 import { Recipe } from '../runtime/recipe/recipe.js';
@@ -58,6 +59,6 @@ export declare class ArcPlannerInvoker {
             message: any;
         };
     };
-    findManifestNames(manifest: Manifest, predicate: (_: Manifest) => boolean): string[];
-    findManifestNamesRecursive(manifest: Manifest, predicate: (_: Manifest) => boolean, fileNames: Map<string, number>): number;
+    findManifestNames(manifest: Manifest, predicate: Predicate<Manifest>): string[];
+    findManifestNamesRecursive(manifest: Manifest, predicate: Predicate<Manifest>, fileNames: Map<string, number>): number;
 }
