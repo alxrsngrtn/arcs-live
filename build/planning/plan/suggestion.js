@@ -44,7 +44,6 @@ export class Suggestion {
         return this.getDescription('text');
     }
     getDescription(modality) {
-        assert(this.descriptionByModality[modality], `No description for modality '${modality}'`);
         return this.descriptionByModality[modality];
     }
     setDescription(description, modality, descriptionFormatter = DescriptionFormatter) {

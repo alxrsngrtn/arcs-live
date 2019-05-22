@@ -274,8 +274,8 @@
         "signature": "f2956d72f1de50686da2ae2f79a69730877b5c9d7ad1e3f0f0f06b0584203f06"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/description.ts": {
-        "version": "13cf1465ec767b35a368b71a1394e8a180f1f027e304bec9a381fadd9e99f844",
-        "signature": "cd8c618082d81b68873163c804c86b6f4776b5712ab5756c27dc99bbc85291c6"
+        "version": "06280cf18ba1a9a3a1d0edf9698794125c7d2dc144d55199ca42dbbcf0a0b147",
+        "signature": "4dee72ba1306e838497981ee944fd7b7d955ab193fab396b797f2518de6e7309"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/slot-context.ts": {
         "version": "fd48c50fca103f567aa97bdf56eb0504d3115408b46c8398b436b79db48a018b",
@@ -534,7 +534,7 @@
         "signature": "fe50c5f36263ff3f9c74002680154f4bf8d1ca17ed3ada64251a5bdeadde3971"
       },
       "/home/travis/build/PolymerLabs/arcs/src/planning/plan/suggestion.ts": {
-        "version": "991e85408cfdd6dadc2d8829cc4aca42cf7c2be20212b53a079ba876ef08c42d",
+        "version": "fb93ae3f4dd0dfa7035b25bba96bee06015c2ce7ec378fcb44518cf2e9673e49",
         "signature": "387e82a4092ea8161ecfd341d201d87641493851f157a8241fb9704b4f28d10e"
       },
       "/home/travis/build/PolymerLabs/arcs/src/planning/plan/planning-result.ts": {
@@ -682,7 +682,7 @@
         "signature": "55534ada5c9912c9301a9641e968b9978f1bce14e0647a5018231a458a5e4c8f"
       },
       "/home/travis/build/PolymerLabs/arcs/src/planning/plan/plan-consumer.ts": {
-        "version": "2ba009bb65ef7bf46ee87f715eb3746245a0a4eb09c143ffae667cf5f839a444",
+        "version": "3cee4131d36cc4a65864807d9fd54f4668cec476ff978d068acd86dfbf81c7a0",
         "signature": "806bcac6d816d0d816d4bf33818aaf7dc495c1448b70d2f92aa43eaa10d74694"
       },
       "/home/travis/build/PolymerLabs/arcs/src/planning/plan/replan-queue.ts": {
@@ -730,7 +730,7 @@
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "/home/travis/build/PolymerLabs/arcs/src/planning/testing/planning-test-helper.ts": {
-        "version": "c7fa66c8b1051570e4c7f86a01f0b7157cfe04a80780d84fb94a222f311a9c29",
+        "version": "57dc70c4372da6d3455af7f68914ca3430372911f64debaaf6a5f46f6de1397f",
         "signature": "8c4c6fa7633da4e904976fe952a0677898e86650671ebe69b373c2b846d8e56e"
       },
       "/home/travis/build/PolymerLabs/arcs/src/planning/test/suggestion-composer-tests.ts": {
@@ -1022,7 +1022,7 @@
         "signature": "8e609bb71c20b858c77f0e9f90bb1319db8477b13f9f965f1a1e18524bf50881"
       },
       "/home/travis/build/PolymerLabs/arcs/src/planning/test/plan/plan-consumer-test.ts": {
-        "version": "1e1946649ff36f54e273effc16c59dd429ee11954a6de0d1f7d426601ab83f85",
+        "version": "ce874bcae32840452c24a1b9ff3eac599300c46c047ab730fafdfa011f47646b",
         "signature": "de02016bff8df10c3a9e77f9ed8e56f6d786f1adbcddc74f4fa35b0250121cb2"
       },
       "/home/travis/build/PolymerLabs/arcs/src/planning/test/plan/plan-producer-test.ts": {
@@ -1030,7 +1030,7 @@
         "signature": "8e609bb71c20b858c77f0e9f90bb1319db8477b13f9f965f1a1e18524bf50881"
       },
       "/home/travis/build/PolymerLabs/arcs/src/planning/test/plan/planificator-test.ts": {
-        "version": "68b1699a6059470284b72e3ccd9f4b30a41fabc883fd88800395772c1fde7e2f",
+        "version": "c2c0bd3146a7dc20b9ff5cf77d996f5bebeb610f3a74c433a7c4ba0f6b2ebda4",
         "signature": "8e609bb71c20b858c77f0e9f90bb1319db8477b13f9f965f1a1e18524bf50881"
       },
       "/home/travis/build/PolymerLabs/arcs/src/planning/test/plan/planning-result-test.ts": {
@@ -1326,7 +1326,7 @@
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/test/description-test.ts": {
-        "version": "46c2f1e76c2e2058a63357a3f45164cd40a9c38836fda35925625e80dd7d6793",
+        "version": "2105e140218700c22c0a590783c0f9f2580a965a4d4b2f0263d19a9ff1376f95",
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/test/entity-test.ts": {

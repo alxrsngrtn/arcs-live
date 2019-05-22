@@ -1,5 +1,33 @@
-commit dd5afda4bdfeb153ecef03cc8f7a38236aaaec57
-Author: Joshua Pratt <jp10010101010000@gmail.com>
-Date:   Wed May 22 12:17:21 2019 +1000
+commit bbfa719770abadfe8d3956a86fb590bdfb8d9e84
+Author: yuangu-google <yuangu@google.com>
+Date:   Wed May 22 12:49:10 2019 -0700
 
-    Make use of more Higher Order Types (#3050)
+    Filter suggestion with fallback descriptions. (#3008)
+    
+    * Filter out suggestions with fallback descriptions but haven't updated dev tools.
+    
+    * Filter out suggestions with fallback descriptions but haven't updated dev tools.
+    
+    * Filter out suggestions with fallback descriptions but haven't updated dev tools.
+    
+    * Filter out suggestions with fallback descriptions but haven't updated dev tools.
+    
+    * Revert unnecessary changes.
+    
+    * Reinstall.
+    
+    * Filter out suggestions with fallback descriptions but haven't updated dev tools.
+    
+    * Test if we can just set desc to undefined.
+    
+    * Remove unnecessary comments.
+    
+    * Remove unnecessary comments and apply fixes to tests.
+    
+    * Revert changes to HelloWorld.recipe for testing purpose.
+    
+    * Fix tests.
+    
+    * Remove unused fields in description.ts.
+    
+    * Remove assert from getDescription().

@@ -14,7 +14,6 @@ import { Handle } from './recipe/handle.js';
 import { Recipe } from './recipe/recipe.js';
 export declare class Description {
     private readonly storeDescById;
-    private readonly arcRecipeName;
     private readonly arcRecipes;
     private readonly particleDescriptions;
     private constructor();
@@ -31,6 +30,4 @@ export declare class Description {
     private static _createParticleDescription;
     private static _getPatternByNameFromDescriptionHandle;
     private static _prepareStoreValue;
-    /** A fallback description if none other can be found */
-    static defaultDescription: string;
 }

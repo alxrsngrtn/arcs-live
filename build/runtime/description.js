@@ -12,17 +12,16 @@ import { DescriptionFormatter } from './description-formatter.js';
 import { BigCollectionType, CollectionType, EntityType, InterfaceType } from './type.js';
 import { StorageProviderBase } from './storage/storage-provider-base.js';
 export class Description {
-    constructor(storeDescById = {}, arcRecipeName, 
+    constructor(storeDescById = {}, 
     // TODO(mmandlis): replace Particle[] with serializable json objects.
     arcRecipes, particleDescriptions = []) {
         this.storeDescById = storeDescById;
-        this.arcRecipeName = arcRecipeName;
         this.arcRecipes = arcRecipes;
         this.particleDescriptions = particleDescriptions;
     }
     static async createForPlan(plan) {
         const particleDescriptions = await Description.initDescriptionHandles(plan.particles);
-        return new Description({}, plan.name, [{ patterns: plan.patterns, particles: plan.particles }], particleDescriptions);
+        return new Description({}, [{ patterns: plan.patterns, particles: plan.particles }], particleDescriptions);
     }
     /**
      * Create a new Description object for the given Arc with an
@@ -40,7 +39,7 @@ export class Description {
             }
         }
         // ... and pass to the private constructor.
-        return new Description(storeDescById, arc.activeRecipe.name, arc.recipeDeltas, particleDescriptions);
+        return new Description(storeDescById, arc.recipeDeltas, particleDescriptions);
     }
     getArcDescription(formatterClass = DescriptionFormatter) {
         const patterns = [].concat(...this.arcRecipes.map(recipe => recipe.patterns));
@@ -56,11 +55,7 @@ export class Description {
     }
     getRecipeSuggestion(formatterClass = DescriptionFormatter) {
         const formatter = new (formatterClass)(this.particleDescriptions, this.storeDescById);
-        const desc = formatter.getDescription(this.arcRecipes[this.arcRecipes.length - 1]);
-        if (desc) {
-            return desc;
-        }
-        return formatter._capitalizeAndPunctuate(this.arcRecipeName || Description.defaultDescription);
+        return formatter.getDescription(this.arcRecipes[this.arcRecipes.length - 1]);
     }
     getHandleDescription(recipeHandle) {
         assert(recipeHandle.connections.length > 0, 'handle has no connections?');
@@ -146,6 +141,4 @@ export class Description {
         return undefined;
     }
 }
-/** A fallback description if none other can be found */
-Description.defaultDescription = `i'm feeling lucky`;
 //# sourceMappingURL=description.js.map
