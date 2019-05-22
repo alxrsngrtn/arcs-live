@@ -4,6 +4,7 @@ import { ParticleExecutionContext } from './particle-execution-context.js';
 import { Storable } from './handle.js';
 import { SerializedEntity } from './storage-proxy.js';
 import { Id, IdGenerator } from './id.js';
+import { Dictionary, Consumer } from './hot.js';
 export declare type EntityRawData = {};
 /**
  * Regular interface for Entities.
@@ -15,7 +16,7 @@ export interface EntityInterface extends Storable {
     toLiteral(): EntityRawData;
     toJSON(): EntityRawData;
     dataClone(): EntityRawData;
-    mutate(mutationFn: (data: MutableEntityData) => void): void;
+    mutate(mutationFn: Consumer<MutableEntityData>): void;
     mutable: boolean;
     readonly id: string;
     readonly entityClass: EntityClass;
@@ -25,9 +26,7 @@ export interface EntityInterface extends Storable {
  * Represents mutable entity data. Instances will have mutable properties defined on them for all of the fields defined in the schema for the
  * entity. This type permits indexing by all strings, because we do not know what those fields are at compile time (since they're dynamic).
  */
-export interface MutableEntityData {
-    [index: string]: any;
-}
+export declare type MutableEntityData = Dictionary<any>;
 /**
  * A set of static methods used by Entity implementations.  These are
  * defined dynamically in Schema.  Required because Typescript does

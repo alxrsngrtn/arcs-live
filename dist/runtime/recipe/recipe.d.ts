@@ -10,6 +10,7 @@ import { Search } from './search.js';
 import { SlotConnection } from './slot-connection.js';
 import { Slot } from './slot.js';
 import { Cloneable } from './walker.js';
+import { Dictionary } from '../hot.js';
 export declare type RecipeComponent = Particle | Handle | HandleConnection | Slot | SlotConnection | EndPoint;
 export declare type CloneMap = Map<RecipeComponent, RecipeComponent>;
 export declare type IsValidOptions = {
@@ -81,9 +82,7 @@ export declare class Recipe implements Cloneable<Recipe> {
         cloneMap: Map<any, any>;
     };
     _copyInto(recipe: Recipe, cloneMap: any): void;
-    updateToClone(dict: any): {
-        [index: string]: any;
-    };
+    updateToClone(dict: Dictionary<any>): Dictionary<any>;
     _makeLocalNameMap(): Map<any, any>;
     toString(options?: ToStringOptions): string;
     getFreeHandles(): Handle[];

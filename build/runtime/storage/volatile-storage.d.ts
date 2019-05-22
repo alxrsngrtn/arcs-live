@@ -3,6 +3,7 @@ import { Type } from '../type.js';
 import { CrdtCollectionModel, ModelValue, SerializedModelEntry } from './crdt-collection-model.js';
 import { KeyBase } from './key-base.js';
 import { BigCollectionStorageProvider, CollectionStorageProvider, StorageBase, StorageProviderBase, VariableStorageProvider } from './storage-provider-base.js';
+import { Dictionary } from '../hot.js';
 export declare function resetVolatileStorageForTesting(): void;
 declare class VolatileKey extends KeyBase {
     _arcId: string;
@@ -16,12 +17,8 @@ declare class VolatileKey extends KeyBase {
     toString(): string;
 }
 export declare class VolatileStorage extends StorageBase {
-    _memoryMap: {
-        [index: string]: VolatileStorageProvider;
-    };
-    _typeMap: {
-        [index: string]: VolatileCollection;
-    };
+    _memoryMap: Dictionary<VolatileStorageProvider>;
+    _typeMap: Dictionary<VolatileCollection>;
     private readonly typePromiseMap;
     localIDBase: number;
     constructor(arcId: Id);

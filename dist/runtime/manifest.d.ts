@@ -16,6 +16,7 @@ import { Schema } from './schema.js';
 import { StorageProviderBase } from './storage/storage-provider-base.js';
 import { StorageProviderFactory } from './storage/storage-provider-factory.js';
 import { EntityType, InterfaceType, Type } from './type.js';
+import { Dictionary } from './hot.js';
 export declare class StorageStub {
     type: Type;
     id: string;
@@ -61,9 +62,7 @@ export declare class Manifest {
     readonly particles: ParticleSpec[];
     readonly allParticles: ParticleSpec[];
     readonly imports: Manifest[];
-    readonly schemas: {
-        [index: string]: Schema;
-    };
+    readonly schemas: Dictionary<Schema>;
     readonly fileName: string;
     readonly stores: (StorageStub | StorageProviderBase)[];
     readonly allStores: (StorageStub | StorageProviderBase)[];

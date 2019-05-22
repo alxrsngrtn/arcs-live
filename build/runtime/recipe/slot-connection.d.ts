@@ -1,6 +1,7 @@
 import { Particle } from './particle.js';
 import { Recipe } from './recipe.js';
 import { Slot } from './slot.js';
+import { Dictionary } from '../hot.js';
 export declare class SlotConnection {
     private readonly _recipe;
     private readonly _particle;
@@ -15,9 +16,7 @@ export declare class SlotConnection {
     readonly name: string;
     getQualifiedName(): string;
     targetSlot: Slot;
-    readonly providedSlots: {
-        [index: string]: Slot;
-    };
+    readonly providedSlots: Dictionary<Slot>;
     tags: string[];
     getSlotSpec(): import("../particle-spec.js").ConsumeSlotConnectionSpec;
     connectToSlot(targetSlot: Slot): void;

@@ -1,12 +1,11 @@
+import { Dictionary, Producer, Predicate } from '../runtime/hot.js';
 export declare type TraceInfo = {
     cat?: string;
     name?: string;
     overview?: boolean;
     sequence?: string;
     ts?: number;
-    args?: {
-        [index: string]: any;
-    };
+    args?: Dictionary<any>;
 };
 export declare type TraceEvent = {
     pid?: number;
@@ -18,9 +17,7 @@ export declare type TraceEvent = {
     cat: string;
     name: string;
     ov: boolean;
-    args: {
-        [index: string]: any;
-    };
+    args: Dictionary<any>;
     id?: number;
     flowId?: number;
     seq?: string;
@@ -28,17 +25,15 @@ export declare type TraceEvent = {
 export interface Trace {
     wait<T>(v: Promise<T>, info?: TraceInfo): T;
     start(info?: TraceInfo): any;
-    addArgs(extraArgs: {
-        [index: string]: any;
-    }): any;
+    addArgs(extraArgs: Dictionary<any>): any;
     step(info?: TraceInfo): any;
     end(info?: TraceInfo): any;
     endWith(v: any, info?: TraceInfo): any;
-    id: () => number;
+    id: Producer<number>;
 }
 export interface TracingInterface {
     enable(): void;
-    now: () => number;
+    now: Producer<number>;
     wrap(info: TraceInfo, fn: Function): Function;
     start(info: TraceInfo): Trace;
     flow(info: TraceInfo): Trace;
@@ -46,7 +41,7 @@ export interface TracingInterface {
         traceEvents: TraceEvent[];
     };
     download(): void;
-    stream(callback: (e: TraceEvent) => any, predicate?: (e: TraceEvent) => boolean): void;
+    stream(callback: (e: TraceEvent) => any, predicate?: Predicate<TraceEvent>): void;
     __clearForTests(): void;
 }
 export declare const Tracing: TracingInterface;

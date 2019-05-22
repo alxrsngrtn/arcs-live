@@ -8,11 +8,10 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { PlanProducer } from './plan-producer.js';
+import { Dictionary } from '../../runtime/hot.js';
 export declare class ReplanQueue {
     planProducer: PlanProducer;
-    options: {
-        [index: string]: number;
-    };
+    options: Dictionary<number>;
     changes: number[];
     private replanTimer;
     constructor(planProducer: PlanProducer, options?: {});

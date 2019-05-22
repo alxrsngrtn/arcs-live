@@ -11,12 +11,11 @@ import { HandleConnection } from './recipe/handle-connection.js';
 import { Handle } from './recipe/handle.js';
 import { Particle } from './recipe/particle.js';
 import { ModelValue } from './storage/crdt-collection-model.js';
+import { Dictionary } from './hot.js';
 export declare type ParticleDescription = {
     _particle: Particle;
     pattern?: string;
-    _connections: {
-        [index: string]: HandleDescription;
-    };
+    _connections: Dictionary<HandleDescription>;
     _rank?: number;
 };
 export declare type HandleDescription = {
@@ -40,9 +39,7 @@ export declare class DescriptionFormatter {
     private seenHandles;
     seenParticles: Set<Particle>;
     excludeValues: boolean;
-    constructor(particleDescriptions?: ParticleDescription[], storeDescById?: {
-        [id: string]: string;
-    });
+    constructor(particleDescriptions?: ParticleDescription[], storeDescById?: Dictionary<string>);
     getDescription(recipe: {
         patterns: string[];
         particles: Particle[];

@@ -8,6 +8,7 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { StorageProviderBase } from '../storage/storage-provider-base.js';
+import { Dictionary } from '../hot.js';
 /**
  * Simple class to verify callbacks used in the Arcs storage APIs.
  *
@@ -20,13 +21,9 @@ import { StorageProviderBase } from '../storage/storage-provider-base.js';
  */
 export declare class CallbackTracker {
     expectedEvents: number;
-    events: {
-        [index: string]: any;
-    }[];
+    events: Dictionary<any>[];
     constructor(storageProvider: StorageProviderBase, expectedEvents?: number);
-    changeEvent(c: {
-        [index: string]: any;
-    }): void;
+    changeEvent(c: Dictionary<any>): void;
     /**
      * Tests that the number of expected callbacks are executed.
      * If the DEBUG environment variable is set always display accumulated events

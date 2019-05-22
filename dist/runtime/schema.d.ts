@@ -10,24 +10,17 @@
 import { EntityClass } from './entity.js';
 import { ParticleExecutionContext } from './particle-execution-context.js';
 import { Type } from './type.js';
+import { Dictionary } from './hot.js';
 export declare class Schema {
     readonly names: string[];
-    readonly fields: {
-        [index: string]: any;
-    };
-    description: {
-        [index: string]: string;
-    };
+    readonly fields: Dictionary<any>;
+    description: Dictionary<string>;
     isAlias: boolean;
-    constructor(names: string[], fields: {
-        [index: string]: any;
-    }, description?: any);
+    constructor(names: string[], fields: Dictionary<any>, description?: any);
     toLiteral(): {
         names: string[];
         fields: {};
-        description: {
-            [index: string]: string;
-        };
+        description: Dictionary<string>;
     };
     static fromLiteral(data?: {
         fields: {};

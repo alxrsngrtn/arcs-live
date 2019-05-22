@@ -6,9 +6,8 @@ import { SerializedModelEntry } from './crdt-collection-model.js';
 import { KeyBase } from './key-base.js';
 import { BigCollectionStore, CollectionStore, Store, VariableStore } from '../store.js';
 import { PropagatedException } from '../arc-exceptions.js';
-declare type Callback = (v: {
-    [index: string]: any;
-}) => void;
+import { Dictionary, Consumer } from '../hot.js';
+declare type Callback = Consumer<Dictionary<any>>;
 /**
  * Methods that must be implemented by a Variable Storage Provider
  * that are not already defined in VariableStore.

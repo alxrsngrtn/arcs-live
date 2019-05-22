@@ -1,8 +1,7 @@
+import { Dictionary } from '../hot.js';
 export interface ModelValue {
     id: string;
-    rawData?: {
-        [index: string]: any;
-    };
+    rawData?: Dictionary<any>;
     storageKey?: string;
 }
 export interface SerializedModelEntry {

@@ -7,6 +7,7 @@ import { Recipe } from './recipe.js';
 import { SlotConnection } from './slot-connection.js';
 import { Slot } from './slot.js';
 import { Id } from '../id.js';
+import { Dictionary } from '../hot.js';
 export declare class Particle {
     private readonly _recipe;
     private _id?;
@@ -17,9 +18,7 @@ export declare class Particle {
     private _tags;
     private _connections;
     _unnamedConnections: HandleConnection[];
-    _consumedSlotConnections: {
-        [index: string]: SlotConnection;
-    };
+    _consumedSlotConnections: Dictionary<SlotConnection>;
     constructor(recipe: Recipe, name: string);
     _copyInto(recipe: Recipe, cloneMap: any, variableMap: Map<TypeVariableInfo | Schema, TypeVariableInfo | Schema>): Particle;
     _cloneConnectionRawTypes(variableMap: Map<TypeVariableInfo | Schema, TypeVariableInfo | Schema>): void;
@@ -38,13 +37,9 @@ export declare class Particle {
     localName: string;
     id: Id;
     name: string;
-    readonly connections: {
-        [index: string]: HandleConnection;
-    };
+    readonly connections: Dictionary<HandleConnection>;
     readonly unnamedConnections: HandleConnection[];
-    readonly consumedSlotConnections: {
-        [index: string]: SlotConnection;
-    };
+    readonly consumedSlotConnections: Dictionary<SlotConnection>;
     readonly primaryVerb: string;
     verbs: any;
     tags: any;

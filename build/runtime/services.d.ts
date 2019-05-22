@@ -7,9 +7,7 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { Dictionary } from './hot.js';
-export interface Service {
-    [name: string]: Function;
-}
+export declare type Service = Dictionary<Function>;
 declare type Registry = Dictionary<Service>;
 export interface ServiceRequest {
     service?: string;
