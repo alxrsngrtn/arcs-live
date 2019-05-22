@@ -1,8 +1,5 @@
-commit bf38c49511d885e042da4e43a8a17f67c73f4640
-Author: Paul Lindner <plindner@google.com>
-Date:   Tue May 21 17:44:45 2019 -0700
+commit 718773445bacfc4f69fda36ff2e725435023c46d
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Tue May 21 19:03:48 2019 -0700
 
-    Clean up unecessary usage of "use strict" (#3056)
-    
-    - Adds 'strict' eslint rule to typescript config
-    - Removes usages
+    2 test cases using startBusy in specex and setting descriptions (#3055)
