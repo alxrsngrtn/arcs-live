@@ -1,5 +1,8 @@
-commit 4f2aa8170b6fb692d8d0782620f023e630f90b2a
-Author: Walter Korman <wkorman@chromium.org>
-Date:   Tue May 21 10:25:17 2019 -0700
+commit bf38c49511d885e042da4e43a8a17f67c73f4640
+Author: Paul Lindner <plindner@google.com>
+Date:   Tue May 21 17:44:45 2019 -0700
 
-    Trivial stardate calculator for The Original Series. (#3013)
+    Clean up unecessary usage of "use strict" (#3056)
+    
+    - Adds 'strict' eslint rule to typescript config
+    - Removes usages
