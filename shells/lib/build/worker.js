@@ -5243,11 +5243,6 @@ class StringDecoder {
         }
     }
 }
-// TODO
-async function setVariable(handle, num) {
-    const entity = new handle.entityClass({ num });
-    await handle.set(entity);
-}
 function errFunc(label) {
     return err => { throw new Error(label + ': ' + err); };
 }
@@ -5288,7 +5283,7 @@ class WasmParticle extends _particle_js__WEBPACK_IMPORTED_MODULE_2__["Particle"]
             ___cxa_allocate_exception: errFunc('___cxa_allocate_exception'),
             ___cxa_uncaught_exception: errFunc('___cxa_uncaught_exception'),
             // API for inner particle operations
-            _handleSet: async (wasmHandle, num) => setVariable(this.revHandleMap.get(wasmHandle), num),
+            _handleSet: async (wasmHandle, encoded) => this.setVariable(wasmHandle, encoded),
             _render: (slotName, content) => this.renderImpl(slotName, content),
             // Logging
             __setLogInfo: (file, line) => this.logInfo = [this.readString(file), line],
@@ -5329,25 +5324,30 @@ class WasmParticle extends _particle_js__WEBPACK_IMPORTED_MODULE_2__["Particle"]
         this.exports._initParticle(this.innerParticle);
     }
     async onHandleSync(handle, model) {
-        if (!model) {
+        if (model) {
+            const converter = this.getOrCreateConverter(handle);
+            const p = this.storeString(converter.encode(model));
+            this.exports._syncHandle(this.innerParticle, this.handleMap.get(handle), p);
+            this.exports._free(p);
+        }
+        else {
             // Send a nullptr to indicate an empty model.
             this.exports._syncHandle(this.innerParticle, this.handleMap.get(handle), 0);
-            return;
         }
-        let converter = this.converters.get(model.schema);
-        if (!converter) {
-            converter = new EntityPackager(model.schema);
-            this.converters.set(model.schema, converter);
-        }
-        const p = this.storeString(converter.encode(model));
-        this.exports._syncHandle(this.innerParticle, this.handleMap.get(handle), p);
-        this.exports._free(p);
     }
     // TODO
     // tslint:disable-next-line: no-any
     async onHandleUpdate(handle, update) { }
     // TODO
     async onHandleDesync(handle) { }
+    async setVariable(wasmHandle, encoded) {
+        const handle = this.revHandleMap.get(wasmHandle);
+        const payload = this.readString(encoded);
+        const converter = this.getOrCreateConverter(handle);
+        console.log(`Received on '${handle.name}' handle: ${payload}`);
+        const entity = converter.decode(payload);
+        await handle.set(entity);
+    }
     // Called by the shell to initiate rendering; the particle will call env._render in response.
     // TODO: handle contentTypes
     renderSlot(slotName, contentTypes) {
@@ -5372,6 +5372,15 @@ class WasmParticle extends _particle_js__WEBPACK_IMPORTED_MODULE_2__["Particle"]
         this.exports._fireEvent(this.innerParticle, sp, hp);
         this.exports._free(sp);
         this.exports._free(hp);
+    }
+    getOrCreateConverter(handle) {
+        const schema = handle.entityClass.schema;
+        let converter = this.converters.get(schema);
+        if (!converter) {
+            converter = new EntityPackager(schema);
+            this.converters.set(schema, converter);
+        }
+        return converter;
     }
     // Allocates memory in the wasm container.
     storeBuffer(buf) {

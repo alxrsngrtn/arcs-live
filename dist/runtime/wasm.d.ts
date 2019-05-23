@@ -56,10 +56,12 @@ export declare class WasmParticle extends Particle {
         originator?: any;
     }): Promise<void>;
     onHandleDesync(handle: Handle): Promise<void>;
+    setVariable(wasmHandle: WasmAddress, encoded: WasmAddress): Promise<void>;
     renderSlot(slotName: string, contentTypes: string[]): void;
     renderHostedSlot(slotName: string, hostedSlotId: string, content: string): void;
     renderImpl(slotName: WasmAddress, content: WasmAddress): void;
     fireEvent(slotName: string, event: any): void;
+    private getOrCreateConverter;
     private storeBuffer;
     private storeString;
     private readString;
