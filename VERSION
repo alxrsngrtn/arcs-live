@@ -1,5 +1,12 @@
-commit 821ef415f65c611833f546ff6781558a96625b7a
+commit 539748bd26a10f309776ee4c7e664eacd433550b
 Author: Paul Lindner <plindner@google.com>
-Date:   Wed May 22 15:05:53 2019 -0700
+Date:   Wed May 22 18:12:21 2019 -0700
 
-    use Predicate for predicates #3030 (#3064)
+    Update c8 to latest 4.1.5 release (#3063)
+    
+    * Update c8 to latest 4.1.5 release
+    
+    - Update transitive deps to latest since c8 pulls them in anyway
+    - Tested health --coverage works as expected.
+    
+    Note new release: includes tests for experimental modules and should be more accurate.
