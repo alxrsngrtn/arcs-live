@@ -75,8 +75,13 @@ export class CRDTCount {
         this.model.version.set(op.actor, op.version.to);
         return true;
     }
+    cloneMap(map) {
+        const result = new Map();
+        map.forEach((value, key) => result.set(key, value));
+        return result;
+    }
     getData() {
-        return this.model;
+        return { values: this.cloneMap(this.model.values), version: this.cloneMap(this.model.version) };
     }
     getParticleView() {
         return [...this.model.values.values()].reduce((prev, current) => prev + current, 0);

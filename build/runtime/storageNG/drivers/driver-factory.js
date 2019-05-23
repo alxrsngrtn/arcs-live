@@ -20,6 +20,9 @@ export class Driver {
     }
 }
 export class DriverFactory {
+    static clearRegistrationsForTesting() {
+        this.providers = [];
+    }
     static driverInstance(storageKey, exists) {
         for (const provider of this.providers) {
             if (provider.willSupport(storageKey)) {
@@ -38,9 +41,6 @@ export class DriverFactory {
             }
         }
         return false;
-    }
-    static clearProvidersForTesting() {
-        this.providers = [];
     }
 }
 DriverFactory.providers = [];

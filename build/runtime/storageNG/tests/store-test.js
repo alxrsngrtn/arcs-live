@@ -30,8 +30,8 @@ class MockStorageDriverProvider {
     }
 }
 describe('Store', async () => {
-    afterEach(() => {
-        DriverFactory.clearProvidersForTesting();
+    beforeEach(() => {
+        DriverFactory.clearRegistrationsForTesting();
     });
     it(`will throw an exception if an appropriate driver can't be found`, async () => {
         const store = new Store('string', Exists.ShouldCreate, null, StorageMode.Direct, CRDTCount);

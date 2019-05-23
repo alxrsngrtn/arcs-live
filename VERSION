@@ -1,12 +1,5 @@
-commit 539748bd26a10f309776ee4c7e664eacd433550b
-Author: Paul Lindner <plindner@google.com>
-Date:   Wed May 22 18:12:21 2019 -0700
+commit 011e46ee2289125841aa463df7be044cdc870153
+Author: shans <shane.stephens@gmail.com>
+Date:   Thu May 23 13:39:56 2019 +1000
 
-    Update c8 to latest 4.1.5 release (#3063)
-    
-    * Update c8 to latest 4.1.5 release
-    
-    - Update transitive deps to latest since c8 pulls them in anyway
-    - Tested health --coverage works as expected.
-    
-    Note new release: includes tests for experimental modules and should be more accurate.
+    Sequence test infrastructure and some sequence tests for store.ts (#3022)

@@ -45,7 +45,11 @@ export declare class CRDTCount implements CountModel {
         otherChange: CountChange;
     };
     applyOperation(op: CountOperation): boolean;
-    getData(): CountData;
+    private cloneMap;
+    getData(): {
+        values: Map<string, number>;
+        version: Map<string, number>;
+    };
     getParticleView(): number;
 }
 export {};

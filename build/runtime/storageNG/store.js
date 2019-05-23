@@ -66,7 +66,7 @@ export class DirectStore extends ActiveStore {
     // The driver will invoke this method when it has an updated remote model
     async onReceive(model) {
         const { modelChange, otherChange } = this.localModel.merge(model);
-        this.processModelChange(modelChange, otherChange, true);
+        await this.processModelChange(modelChange, otherChange, true);
     }
     async processModelChange(thisChange, otherChange, messageFromDriver) {
         if (thisChange.changeType === ChangeType.Operations && thisChange.operations.length > 0) {
