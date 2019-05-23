@@ -26,6 +26,15 @@ export declare class EntityProtoConverter {
     encode(entity: EntityInterface): Uint8Array;
     decode(buffer: Uint8Array): EntityInterface;
 }
+export declare class EntityPackager {
+    readonly schema: Schema;
+    constructor(schema: Schema);
+    encode(entity: EntityInterface): string;
+    private encodeField;
+    private encodeValue;
+    decode(str: string): EntityInterface;
+}
+declare type WasmAddress = number;
 export declare class WasmParticle extends Particle {
     private memory;
     private heap;
@@ -34,8 +43,8 @@ export declare class WasmParticle extends Particle {
     private innerParticle;
     private handleMap;
     private revHandleMap;
-    private slotProxies;
     private converters;
+    private logInfo;
     initialize(buffer: ArrayBuffer): Promise<void>;
     setHandles(handles: ReadonlyMap<string, Handle>): Promise<void>;
     onHandleSync(handle: Handle, model: any): Promise<void>;
@@ -49,8 +58,11 @@ export declare class WasmParticle extends Particle {
     onHandleDesync(handle: Handle): Promise<void>;
     renderSlot(slotName: string, contentTypes: string[]): void;
     renderHostedSlot(slotName: string, hostedSlotId: string, content: string): void;
+    renderImpl(slotName: WasmAddress, content: WasmAddress): void;
     fireEvent(slotName: string, event: any): void;
     private storeBuffer;
     private storeString;
     private readString;
+    private sysWritev;
 }
+export {};

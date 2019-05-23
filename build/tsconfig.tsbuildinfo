@@ -398,8 +398,8 @@
         "signature": "74eef4e98d626da0313ab934c4f926bfb2590cff8fcf98d92a93bf5a51781fcc"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/wasm.ts": {
-        "version": "4fad9b54c6d33eeeef2fe4ef448fb0565e7f100f86421d7a8c8519f4493523e4",
-        "signature": "ac154ba8a8e0d8c9054949f9edec87d0ce8d8c174518930810331c9ce2711200"
+        "version": "01c24fab8e1986699f01c81a2fac838f136747eb4af643b18334208b587a41db",
+        "signature": "abe30d70c39252590360f2a98b881cd764a72d62f7564e8275c4a3db304a5d01"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/particle-execution-context.ts": {
         "version": "fae8df32f4ca95327ed2c5d30fc2270d5820ecb2ab3d37b23516f8adc10b5120",
@@ -1442,7 +1442,7 @@
         "signature": "fe08817fe1126c2cb61b3c224504e65d5fa305fb4ca4613a87b26bb01d110059"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/test/wasm-tests.ts": {
-        "version": "19d2a563b7797aa2fc6c807fb9b040925135274aa9620cbcfa0ff8ef5814d55e",
+        "version": "e28cb86b64ca7e55303dbefa1dc09566b20ae1c2cbc39d898e2a7d1ff56db481",
         "signature": "fd95df5d076cbfed143dc4904d376b5c6d9cb1091b630994ffe2366010afa6b3"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/test/debug/outer-port-attachments-tests.ts": {
@@ -1539,6 +1539,10 @@
       },
       "/home/travis/build/PolymerLabs/arcs/src/tools/bundle-cli.ts": {
         "version": "09927605bb7fc9432bc357b1157aac0770c2e424a45510ab6b55f6eda2ec56cd",
+        "signature": "fd95df5d076cbfed143dc4904d376b5c6d9cb1091b630994ffe2366010afa6b3"
+      },
+      "/home/travis/build/PolymerLabs/arcs/src/tools/schema2packager.ts": {
+        "version": "8c11b142f833f10ed754f21f93ec24aade16fe8e97a7a57615f173ee2ac30c5c",
         "signature": "fd95df5d076cbfed143dc4904d376b5c6d9cb1091b630994ffe2366010afa6b3"
       },
       "/home/travis/build/PolymerLabs/arcs/src/tools/schema2proto.ts": {
@@ -4806,6 +4810,14 @@
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
       ],
+      "/home/travis/build/PolymerLabs/arcs/src/tools/schema2packager.ts": [
+        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/fs.d.ts",
+        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/path.d.ts",
+        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/minimist/index.d.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/manifest.ts",
+        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
+        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
+      ],
       "/home/travis/build/PolymerLabs/arcs/src/tools/schema2proto.ts": [
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/fs.d.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/manifest.ts",
@@ -7135,6 +7147,7 @@
       "/home/travis/build/PolymerLabs/arcs/node_modules/@types/jszip/index.d.ts",
       "/home/travis/build/PolymerLabs/arcs/src/tools/bundle.ts",
       "/home/travis/build/PolymerLabs/arcs/src/tools/bundle-cli.ts",
+      "/home/travis/build/PolymerLabs/arcs/src/tools/schema2packager.ts",
       "/home/travis/build/PolymerLabs/arcs/src/tools/schema2proto.ts",
       "/home/travis/build/PolymerLabs/arcs/src/tools/tests/bundle-test.ts",
       "/home/travis/build/PolymerLabs/arcs/src/tracelib/tests/trace-test.ts",

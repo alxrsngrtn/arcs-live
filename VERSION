@@ -1,5 +1,17 @@
-commit 011e46ee2289125841aa463df7be044cdc870153
-Author: shans <shane.stephens@gmail.com>
-Date:   Thu May 23 13:39:56 2019 +1000
+commit fc9acccac061356066b402671abf060544c9c0da
+Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
+Date:   Thu May 23 13:57:46 2019 +1000
 
-    Sequence test infrastructure and some sequence tests for store.ts (#3022)
+    Wasm checkpoint CL (#3059)
+    
+    * Wasm checkpoint CL
+    
+    - added "entity packaging" replacement for proto as transfer protocol
+    - CLI tool for generating C++ code from schemas
+    - printf-style logging functions for C++ code
+    - allow particles to initiate rendering
+    - auto-detect required size for virtual function pointer table
+    
+    * Remove unnecessary 'this' uses in generated C++ code.
+    
+    * Replace stringstream with just string in encoding, fix some bugs

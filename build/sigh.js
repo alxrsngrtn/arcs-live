@@ -67,6 +67,7 @@ const steps = {
     health: [health],
     bundle: [build, bundle],
     schema2proto: [build, schema2proto],
+    schema2pkg: [build, schema2pkg],
     default: [check, peg, railroad, build, runTests, webpack, lint, tslint],
 };
 const eslintCache = '.eslint_sigh_cache';
@@ -543,7 +544,7 @@ function watch(args) {
     }
     const command = args.shift() || 'webpack';
     const watcher = chokidar.watch('.', {
-        ignored: new RegExp(`(node_modules|build/|.git|user-test/|test-output/|${eslintCache}|bundle-cli.js)`),
+        ignored: new RegExp(`(node_modules|build/|.git|user-test/|test-output/|${eslintCache}|bundle-cli.js|wasm/)`),
         persistent: true
     });
     keepProcessAlive = true; // Tell the runner to not exit.
@@ -646,32 +647,38 @@ function health(args) {
     line();
     return true;
 }
-// E.g. $ ./tools/sigh bundle -o restaurants.zip particles/Restaurants/Restaurants.recipes
-function bundle(args) {
+function spawnTool(toolPath, args) {
     return saneSpawn(`node`, [
         '--experimental-modules',
         '--loader',
         fixPathForWindows(path.join(__dirname, '../tools/custom-loader.mjs')),
-        `build/tools/bundle-cli.js`,
+        toolPath,
         ...args
     ], { stdio: 'inherit' });
 }
+// E.g. $ ./tools/sigh bundle -o restaurants.zip particles/Restaurants/Restaurants.recipes
+function bundle(args) {
+    return spawnTool('build/tools/bundle-cli.js', args);
+}
 // E.g. $ ./tools/sigh schema2proto -o particles/native/wasm/proto particles/Restaurants/Restaurants.recipes
 function schema2proto(args) {
-    return saneSpawn(`node`, [
-        '--experimental-modules',
-        '--loader',
-        fixPathForWindows(path.join(__dirname, '../tools/custom-loader.mjs')),
-        `build/tools/schema2proto.js`,
-        ...args
-    ], { stdio: 'inherit' });
+    return spawnTool('build/tools/schema2proto.js', args);
+}
+// E.g. $ ./tools/sigh schema2pkg particles/Products/Product.schema
+function schema2pkg(args) {
+    return spawnTool('build/tools/schema2packager.js', args);
 }
 // Looks up the steps for `command` and runs each with `args`.
 function runSteps(command, args) {
     const funcs = steps[command];
     if (funcs === undefined) {
         console.log(`Unknown command: '${command}'`);
-        console.log('Available commands are:', Object.keys(steps).join(', '));
+        console.log('Available commands are:');
+        const cmds = Object.keys(steps);
+        let chunk;
+        while ((chunk = cmds.splice(0, 8)).length) {
+            console.log(' ', chunk.join(', '));
+        }
         process.exit(2);
     }
     console.log(`😌 ${command}`);

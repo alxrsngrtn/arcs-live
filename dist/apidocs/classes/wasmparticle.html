@@ -99,10 +99,10 @@
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="wasmparticle.html#handles" class="tsd-kind-icon">handles</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="wasmparticle.html#heap" class="tsd-kind-icon">heap</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="wasmparticle.html#innerparticle" class="tsd-kind-icon">inner<wbr>Particle</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="wasmparticle.html#loginfo" class="tsd-kind-icon">log<wbr>Info</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="wasmparticle.html#memory" class="tsd-kind-icon">memory</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="wasmparticle.html#relevances" class="tsd-kind-icon">relevances</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="wasmparticle.html#revhandlemap" class="tsd-kind-icon">rev<wbr>Handle<wbr>Map</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="wasmparticle.html#slotproxies" class="tsd-kind-icon">slot<wbr>Proxies</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-protected"><a href="wasmparticle.html#slotproxiesbyname" class="tsd-kind-icon">slot<wbr>Proxies<wbr>ByName</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="wasmparticle.html#spec" class="tsd-kind-icon">spec</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="wasmparticle.html#wasm" class="tsd-kind-icon">wasm</a></li>
@@ -135,6 +135,7 @@
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="wasmparticle.html#readstring" class="tsd-kind-icon">read<wbr>String</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="wasmparticle.html#removeslotproxy" class="tsd-kind-icon">remove<wbr>Slot<wbr>Proxy</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="wasmparticle.html#renderhostedslot" class="tsd-kind-icon">render<wbr>Hosted<wbr>Slot</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="wasmparticle.html#renderimpl" class="tsd-kind-icon">render<wbr>Impl</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="wasmparticle.html#renderslot" class="tsd-kind-icon">render<wbr>Slot</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="wasmparticle.html#service" class="tsd-kind-icon">service</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="wasmparticle.html#setcapabilities" class="tsd-kind-icon">set<wbr>Capabilities</a></li>
@@ -144,6 +145,7 @@
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="wasmparticle.html#startbusy" class="tsd-kind-icon">start<wbr>Busy</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="wasmparticle.html#storebuffer" class="tsd-kind-icon">store<wbr>Buffer</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="wasmparticle.html#storestring" class="tsd-kind-icon">store<wbr>String</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="wasmparticle.html#syswritev" class="tsd-kind-icon">sys<wbr>Writev</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-static"><a href="wasmparticle.html#buildmanifest" class="tsd-kind-icon">build<wbr>Manifest</a></li>
 							</ul>
 						</section>
@@ -163,7 +165,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="particle.html">Particle</a>.<a href="particle.html#constructor">constructor</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/011e46e/src/runtime/particle.ts#L36">runtime/particle.ts:36</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/fc9accc/src/runtime/particle.ts#L36">runtime/particle.ts:36</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <a href="wasmparticle.html" class="tsd-signature-type">WasmParticle</a></h4>
@@ -176,10 +178,10 @@
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private">
 					<a name="converters" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagPrivate">Private</span> converters</h3>
-					<div class="tsd-signature tsd-kind-icon">converters<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Map</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Schema</span><span class="tsd-signature-symbol">, </span><a href="entityprotoconverter.html" class="tsd-signature-type">EntityProtoConverter</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> =&nbsp;new Map&lt;Schema, EntityProtoConverter&gt;()</span></div>
+					<div class="tsd-signature tsd-kind-icon">converters<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Map</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Schema</span><span class="tsd-signature-symbol">, </span><a href="entitypackager.html" class="tsd-signature-type">EntityPackager</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> =&nbsp;new Map&lt;Schema, EntityPackager&gt;()</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/011e46e/src/runtime/wasm.ts#L142">runtime/wasm.ts:142</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/fc9accc/src/runtime/wasm.ts#L308">runtime/wasm.ts:308</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -189,7 +191,7 @@
 					<div class="tsd-signature tsd-kind-icon">exports<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/011e46e/src/runtime/wasm.ts#L135">runtime/wasm.ts:135</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/fc9accc/src/runtime/wasm.ts#L303">runtime/wasm.ts:303</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -200,7 +202,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="particle.html">Particle</a>.<a href="particle.html#extradata">extraData</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/011e46e/src/runtime/particle.ts#L27">runtime/particle.ts:27</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/fc9accc/src/runtime/particle.ts#L27">runtime/particle.ts:27</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -210,7 +212,7 @@
 					<div class="tsd-signature tsd-kind-icon">handle<wbr>Map<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Map</span><span class="tsd-signature-symbol">&lt;</span><a href="handle.html" class="tsd-signature-type">Handle</a><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> =&nbsp;new Map&lt;Handle, WasmAddress&gt;()</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/011e46e/src/runtime/wasm.ts#L138">runtime/wasm.ts:138</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/fc9accc/src/runtime/wasm.ts#L306">runtime/wasm.ts:306</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -221,7 +223,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="particle.html">Particle</a>.<a href="particle.html#handles">handles</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/011e46e/src/runtime/particle.ts#L29">runtime/particle.ts:29</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/fc9accc/src/runtime/particle.ts#L29">runtime/particle.ts:29</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -231,7 +233,7 @@
 					<div class="tsd-signature tsd-kind-icon">heap<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Uint8Array</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/011e46e/src/runtime/wasm.ts#L132">runtime/wasm.ts:132</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/fc9accc/src/runtime/wasm.ts#L300">runtime/wasm.ts:300</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -241,7 +243,17 @@
 					<div class="tsd-signature tsd-kind-icon">inner<wbr>Particle<span class="tsd-signature-symbol">:</span> <a href="../globals.html#wasmaddress" class="tsd-signature-type">WasmAddress</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/011e46e/src/runtime/wasm.ts#L137">runtime/wasm.ts:137</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/fc9accc/src/runtime/wasm.ts#L305">runtime/wasm.ts:305</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private">
+					<a name="loginfo" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> log<wbr>Info</h3>
+					<div class="tsd-signature tsd-kind-icon">log<wbr>Info<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">[</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">]</span><span class="tsd-signature-symbol"> =&nbsp;null</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/fc9accc/src/runtime/wasm.ts#L309">runtime/wasm.ts:309</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -251,7 +263,7 @@
 					<div class="tsd-signature tsd-kind-icon">memory<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Memory</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/011e46e/src/runtime/wasm.ts#L131">runtime/wasm.ts:131</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/fc9accc/src/runtime/wasm.ts#L299">runtime/wasm.ts:299</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -262,7 +274,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="particle.html">Particle</a>.<a href="particle.html#relevances">relevances</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/011e46e/src/runtime/particle.ts#L28">runtime/particle.ts:28</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/fc9accc/src/runtime/particle.ts#L28">runtime/particle.ts:28</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -272,17 +284,7 @@
 					<div class="tsd-signature tsd-kind-icon">rev<wbr>Handle<wbr>Map<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Map</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">, </span><a href="handle.html" class="tsd-signature-type">Handle</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> =&nbsp;new Map&lt;WasmAddress, Handle&gt;()</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/011e46e/src/runtime/wasm.ts#L139">runtime/wasm.ts:139</a></li>
-						</ul>
-					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private">
-					<a name="slotproxies" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagPrivate">Private</span> slot<wbr>Proxies</h3>
-					<div class="tsd-signature tsd-kind-icon">slot<wbr>Proxies<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Set</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> =&nbsp;new Set&lt;string&gt;()</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/011e46e/src/runtime/wasm.ts#L140">runtime/wasm.ts:140</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/fc9accc/src/runtime/wasm.ts#L307">runtime/wasm.ts:307</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -293,7 +295,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="particle.html">Particle</a>.<a href="particle.html#slotproxiesbyname">slotProxiesByName</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/011e46e/src/runtime/particle.ts#L35">runtime/particle.ts:35</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/fc9accc/src/runtime/particle.ts#L35">runtime/particle.ts:35</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -304,7 +306,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="particle.html">Particle</a>.<a href="particle.html#spec">spec</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/011e46e/src/runtime/particle.ts#L26">runtime/particle.ts:26</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/fc9accc/src/runtime/particle.ts#L26">runtime/particle.ts:26</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -314,7 +316,7 @@
 					<div class="tsd-signature tsd-kind-icon">wasm<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">ResultObject</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/011e46e/src/runtime/wasm.ts#L133">runtime/wasm.ts:133</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/fc9accc/src/runtime/wasm.ts#L301">runtime/wasm.ts:301</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -325,7 +327,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="particle.html">Particle</a>.<a href="particle.html#spec-1">spec</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/011e46e/src/runtime/particle.ts#L25">runtime/particle.ts:25</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/fc9accc/src/runtime/particle.ts#L25">runtime/particle.ts:25</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -343,7 +345,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="particle.html">Particle</a>.<a href="particle.html#busy">busy</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/011e46e/src/runtime/particle.ts#L119">runtime/particle.ts:119</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/fc9accc/src/runtime/particle.ts#L119">runtime/particle.ts:119</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
@@ -361,7 +363,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="particle.html">Particle</a>.<a href="particle.html#idle">idle</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/011e46e/src/runtime/particle.ts#L123">runtime/particle.ts:123</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/fc9accc/src/runtime/particle.ts#L123">runtime/particle.ts:123</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -379,7 +381,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="particle.html">Particle</a>.<a href="particle.html#relevance">relevance</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/011e46e/src/runtime/particle.ts#L127">runtime/particle.ts:127</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/fc9accc/src/runtime/particle.ts#L127">runtime/particle.ts:127</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -406,7 +408,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="particle.html">Particle</a>.<a href="particle.html#addslotproxy">addSlotProxy</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/011e46e/src/runtime/particle.ts#L157">runtime/particle.ts:157</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/fc9accc/src/runtime/particle.ts#L157">runtime/particle.ts:157</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -430,7 +432,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="particle.html">Particle</a>.<a href="particle.html#constructinnerarc-1">constructInnerArc</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/011e46e/src/runtime/particle.ts#L112">runtime/particle.ts:112</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/fc9accc/src/runtime/particle.ts#L112">runtime/particle.ts:112</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../globals.html#innerarchandle" class="tsd-signature-type">InnerArcHandle</a><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -448,7 +450,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="particle.html">Particle</a>.<a href="particle.html#donebusy">doneBusy</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/011e46e/src/runtime/particle.ts#L138">runtime/particle.ts:138</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/fc9accc/src/runtime/particle.ts#L138">runtime/particle.ts:138</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -466,7 +468,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="particle.html">Particle</a>.<a href="particle.html#fireevent">fireEvent</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/011e46e/src/runtime/wasm.ts#L234">runtime/wasm.ts:234</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/fc9accc/src/runtime/wasm.ts#L432">runtime/wasm.ts:432</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -493,7 +495,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="particle.html">Particle</a>.<a href="particle.html#getslot">getSlot</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/011e46e/src/runtime/particle.ts#L182">runtime/particle.ts:182</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/fc9accc/src/runtime/particle.ts#L182">runtime/particle.ts:182</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -522,7 +524,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="particle.html">Particle</a>.<a href="particle.html#hasslotproxy">hasSlotProxy</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/011e46e/src/runtime/particle.ts#L153">runtime/particle.ts:153</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/fc9accc/src/runtime/particle.ts#L153">runtime/particle.ts:153</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -545,7 +547,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/011e46e/src/runtime/wasm.ts#L144">runtime/wasm.ts:144</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/fc9accc/src/runtime/wasm.ts#L311">runtime/wasm.ts:311</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -569,7 +571,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="particle.html">Particle</a>.<a href="particle.html#inputs">inputs</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/011e46e/src/runtime/particle.ts#L145">runtime/particle.ts:145</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/fc9accc/src/runtime/particle.ts#L145">runtime/particle.ts:145</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <a href="handleconnectionspec.html" class="tsd-signature-type">HandleConnectionSpec</a><span class="tsd-signature-symbol">[]</span></h4>
@@ -587,7 +589,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="particle.html">Particle</a>.<a href="particle.html#onhandledesync">onHandleDesync</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/011e46e/src/runtime/wasm.ts#L217">runtime/wasm.ts:217</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/fc9accc/src/runtime/wasm.ts#L409">runtime/wasm.ts:409</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -611,7 +613,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="particle.html">Particle</a>.<a href="particle.html#onhandlesync">onHandleSync</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/011e46e/src/runtime/wasm.ts#L197">runtime/wasm.ts:197</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/fc9accc/src/runtime/wasm.ts#L387">runtime/wasm.ts:387</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -638,7 +640,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="particle.html">Particle</a>.<a href="particle.html#onhandleupdate">onHandleUpdate</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/011e46e/src/runtime/wasm.ts#L216">runtime/wasm.ts:216</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/fc9accc/src/runtime/wasm.ts#L406">runtime/wasm.ts:406</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -682,7 +684,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="particle.html">Particle</a>.<a href="particle.html#outputs">outputs</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/011e46e/src/runtime/particle.ts#L149">runtime/particle.ts:149</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/fc9accc/src/runtime/particle.ts#L149">runtime/particle.ts:149</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <a href="handleconnectionspec.html" class="tsd-signature-type">HandleConnectionSpec</a><span class="tsd-signature-symbol">[]</span></h4>
@@ -699,7 +701,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/011e46e/src/runtime/wasm.ts#L260">runtime/wasm.ts:260</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/fc9accc/src/runtime/wasm.ts#L458">runtime/wasm.ts:458</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -723,7 +725,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="particle.html">Particle</a>.<a href="particle.html#removeslotproxy">removeSlotProxy</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/011e46e/src/runtime/particle.ts#L161">runtime/particle.ts:161</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/fc9accc/src/runtime/particle.ts#L161">runtime/particle.ts:161</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -747,7 +749,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="particle.html">Particle</a>.<a href="particle.html#renderhostedslot">renderHostedSlot</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/011e46e/src/runtime/wasm.ts#L232">runtime/wasm.ts:232</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/fc9accc/src/runtime/wasm.ts#L420">runtime/wasm.ts:420</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -766,6 +768,32 @@
 						</li>
 					</ul>
 				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="renderimpl" class="tsd-anchor"></a>
+					<h3>render<wbr>Impl</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">render<wbr>Impl<span class="tsd-signature-symbol">(</span>slotName<span class="tsd-signature-symbol">: </span><a href="../globals.html#wasmaddress" class="tsd-signature-type">WasmAddress</a>, content<span class="tsd-signature-symbol">: </span><a href="../globals.html#wasmaddress" class="tsd-signature-type">WasmAddress</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/fc9accc/src/runtime/wasm.ts#L424">runtime/wasm.ts:424</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>slotName: <a href="../globals.html#wasmaddress" class="tsd-signature-type">WasmAddress</a></h5>
+								</li>
+								<li>
+									<h5>content: <a href="../globals.html#wasmaddress" class="tsd-signature-type">WasmAddress</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
 					<a name="renderslot" class="tsd-anchor"></a>
 					<h3>render<wbr>Slot</h3>
@@ -777,7 +805,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="particle.html">Particle</a>.<a href="particle.html#renderslot">renderSlot</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/011e46e/src/runtime/wasm.ts#L219">runtime/wasm.ts:219</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/fc9accc/src/runtime/wasm.ts#L413">runtime/wasm.ts:413</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -804,7 +832,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="particle.html">Particle</a>.<a href="particle.html#service">service</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/011e46e/src/runtime/particle.ts#L169">runtime/particle.ts:169</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/fc9accc/src/runtime/particle.ts#L169">runtime/particle.ts:169</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -833,7 +861,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="particle.html">Particle</a>.<a href="particle.html#setcapabilities">setCapabilities</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/011e46e/src/runtime/particle.ts#L51">runtime/particle.ts:51</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/fc9accc/src/runtime/particle.ts#L51">runtime/particle.ts:51</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -886,7 +914,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="particle.html">Particle</a>.<a href="particle.html#setdescriptionpattern">setDescriptionPattern</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/011e46e/src/runtime/particle.ts#L211">runtime/particle.ts:211</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/fc9accc/src/runtime/particle.ts#L211">runtime/particle.ts:211</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -913,7 +941,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="particle.html">Particle</a>.<a href="particle.html#sethandles">setHandles</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/011e46e/src/runtime/wasm.ts#L182">runtime/wasm.ts:182</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/fc9accc/src/runtime/wasm.ts#L373">runtime/wasm.ts:373</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -937,7 +965,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="particle.html">Particle</a>.<a href="particle.html#setparticledescription">setParticleDescription</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/011e46e/src/runtime/particle.ts#L207">runtime/particle.ts:207</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/fc9accc/src/runtime/particle.ts#L207">runtime/particle.ts:207</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -961,7 +989,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="particle.html">Particle</a>.<a href="particle.html#startbusy">startBusy</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/011e46e/src/runtime/particle.ts#L131">runtime/particle.ts:131</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/fc9accc/src/runtime/particle.ts#L131">runtime/particle.ts:131</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -978,7 +1006,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/011e46e/src/runtime/wasm.ts#L243">runtime/wasm.ts:243</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/fc9accc/src/runtime/wasm.ts#L441">runtime/wasm.ts:441</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1001,7 +1029,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/011e46e/src/runtime/wasm.ts#L250">runtime/wasm.ts:250</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/fc9accc/src/runtime/wasm.ts#L448">runtime/wasm.ts:448</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1011,6 +1039,32 @@
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <a href="../globals.html#wasmaddress" class="tsd-signature-type">WasmAddress</a></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-private">
+					<a name="syswritev" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> sys<wbr>Writev</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private">
+						<li class="tsd-signature tsd-kind-icon">sys<wbr>Writev<span class="tsd-signature-symbol">(</span>which<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, varargs<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/fc9accc/src/runtime/wasm.ts#L467">runtime/wasm.ts:467</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>which: <span class="tsd-signature-type">any</span></h5>
+								</li>
+								<li>
+									<h5>varargs: <span class="tsd-signature-type">any</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -1025,7 +1079,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="particle.html">Particle</a>.<a href="particle.html#buildmanifest">buildManifest</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/011e46e/src/runtime/particle.ts#L186">runtime/particle.ts:186</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/fc9accc/src/runtime/particle.ts#L186">runtime/particle.ts:186</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1083,6 +1137,9 @@
 								<a href="wasmparticle.html#innerparticle" class="tsd-kind-icon">inner<wbr>Particle</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
+								<a href="wasmparticle.html#loginfo" class="tsd-kind-icon">log<wbr>Info</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
 								<a href="wasmparticle.html#memory" class="tsd-kind-icon">memory</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
@@ -1090,9 +1147,6 @@
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
 								<a href="wasmparticle.html#revhandlemap" class="tsd-kind-icon">rev<wbr>Handle<wbr>Map</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
-								<a href="wasmparticle.html#slotproxies" class="tsd-kind-icon">slot<wbr>Proxies</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-protected">
 								<a href="wasmparticle.html#slotproxiesbyname" class="tsd-kind-icon">slot<wbr>Proxies<wbr>ByName</a>
@@ -1160,6 +1214,9 @@
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
 								<a href="wasmparticle.html#renderhostedslot" class="tsd-kind-icon">render<wbr>Hosted<wbr>Slot</a>
 							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="wasmparticle.html#renderimpl" class="tsd-kind-icon">render<wbr>Impl</a>
+							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
 								<a href="wasmparticle.html#renderslot" class="tsd-kind-icon">render<wbr>Slot</a>
 							</li>
@@ -1186,6 +1243,9 @@
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-private">
 								<a href="wasmparticle.html#storestring" class="tsd-kind-icon">store<wbr>String</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-private">
+								<a href="wasmparticle.html#syswritev" class="tsd-kind-icon">sys<wbr>Writev</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-static">
 								<a href="wasmparticle.html#buildmanifest" class="tsd-kind-icon">build<wbr>Manifest</a>
