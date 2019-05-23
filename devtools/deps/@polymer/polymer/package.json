@@ -1,5 +1,5 @@
 {
-  "_from": "@polymer/polymer@^3.1.0",
+  "_from": "@polymer/polymer@^3.2.0",
   "_id": "@polymer/polymer@3.2.0",
   "_inBundle": false,
   "_integrity": "sha512-L6uV1oM6T6xbwbVx6t3biG5T2VSSB03LxnIrUd9M2pr6RkHVPFHJ37pC5MUwBAEhkGFJif7eks7fdMMSGZTeEQ==",
@@ -8,13 +8,13 @@
   "_requested": {
     "type": "range",
     "registry": true,
-    "raw": "@polymer/polymer@^3.1.0",
+    "raw": "@polymer/polymer@^3.2.0",
     "name": "@polymer/polymer",
     "escapedName": "@polymer%2fpolymer",
     "scope": "@polymer",
-    "rawSpec": "^3.1.0",
+    "rawSpec": "^3.2.0",
     "saveSpec": null,
-    "fetchSpec": "^3.1.0"
+    "fetchSpec": "^3.2.0"
   },
   "_requiredBy": [
     "/",
@@ -46,8 +46,8 @@
   ],
   "_resolved": "https://registry.npmjs.org/@polymer/polymer/-/polymer-3.2.0.tgz",
   "_shasum": "b41fddec4ecac63b12936b93726678d23add7afd",
-  "_spec": "@polymer/polymer@^3.1.0",
-  "_where": "/tmp/asset_stageXmFU2R",
+  "_spec": "@polymer/polymer@^3.2.0",
+  "_where": "/tmp/asset_stagep4havf",
   "author": {
     "name": "The Polymer Project Authors"
   },

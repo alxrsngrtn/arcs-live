@@ -8,6 +8,10 @@
  *   lib/mixins/properties-changed.js
  */
 
+
+// tslint:disable:variable-name Describing an API that's defined elsewhere.
+// tslint:disable:no-any describes the API as best we are able today
+
 import {dedupingMixin} from '../utils/mixin.js';
 
 import {microTask} from '../utils/async.js';
@@ -62,6 +66,7 @@ interface PropertiesChangedConstructor {
 export {PropertiesChangedConstructor};
 
 interface PropertiesChanged {
+  __dataEnabled: any;
 
   /**
    * Creates a setter/getter pair for the named property with its own
@@ -239,7 +244,7 @@ interface PropertiesChanged {
    * @param value New attribute value
    * @param namespace Attribute namespace.
    */
-  attributeChangedCallback(name: string, old: string|null, value: string|null, namespace: string|null): void;
+  attributeChangedCallback(name: string, old: string|null, value: string|null, namespace?: string|null): void;
 
   /**
    * Deserializes an attribute to its associated property.
