@@ -11222,7 +11222,7 @@ function peg$parse(input, options) {
                 s3 = peg$parsewhiteSpace();
             }
             if (s2 !== peg$FAILED) {
-                s3 = peg$parseSchemaType();
+                s3 = peg$parseSchemaReferenceType();
                 if (s3 !== peg$FAILED) {
                     s4 = [];
                     s5 = peg$parsewhiteSpace();

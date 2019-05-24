@@ -118,7 +118,7 @@
         "signature": "82f54732b06821a648d33a71488d51b6a9527494455199a4881c71d3574e31c9"
       },
       "/home/travis/build/PolymerLabs/arcs/src/gen/runtime/manifest-parser.ts": {
-        "version": "aa467058a54c776e57549148eb7ad386b1ceff2354794be3259bb42b59cad229",
+        "version": "ad4961fafd9b6fc684b8e2aea44d1f797423b3e97abe77706a161f0b82daf300",
         "signature": "ff2c763c7895327196fd3eb358dcc775b25f27bdae513079cc287433af262427"
       },
       "/home/travis/build/PolymerLabs/arcs/src/platform/assert-web.ts": {
@@ -1442,7 +1442,7 @@
         "signature": "fe08817fe1126c2cb61b3c224504e65d5fa305fb4ca4613a87b26bb01d110059"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/test/wasm-tests.ts": {
-        "version": "e28cb86b64ca7e55303dbefa1dc09566b20ae1c2cbc39d898e2a7d1ff56db481",
+        "version": "06050c95cb0297db8297dd6c4fb952810fdc71d522eebe3c1753e5c8df59151b",
         "signature": "fd95df5d076cbfed143dc4904d376b5c6d9cb1091b630994ffe2366010afa6b3"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/test/debug/outer-port-attachments-tests.ts": {
@@ -4623,6 +4623,8 @@
         "/home/travis/build/PolymerLabs/arcs/src/platform/chai-web.d.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/wasm.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/manifest.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/type.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/reference.ts",
         "/home/travis/build/PolymerLabs/arcs/src/tools/wasm-tools.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"

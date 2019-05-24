@@ -1,5 +1,14 @@
-commit 1a45aeb3eb0524ae995f4c45bc23428a80e97f25
-Author: shans <shane.stephens@gmail.com>
-Date:   Fri May 24 10:04:35 2019 +1000
+commit c9a5886fe0ae8b73318aa90ec7727ace00a48156
+Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
+Date:   Fri May 24 10:58:08 2019 +1000
 
-    Update sigh.ts health checks to work with Windows line endings. (#3076)
+    Only allow collections to hold references in manifest grammar (#3075)
+    
+    * Only allow collections to hold references in manifest grammar
+    
+    This was always the intent, but collections of any schema type would
+    parse, and the wasm schema handling was built accordingly.
+    
+    * Remove collections of primitives from wasm code
+    
+    * sigh, semi-colons
