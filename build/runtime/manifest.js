@@ -434,7 +434,7 @@ ${e.message}
                 for (const item of items) {
                     if (item.kind === kind) {
                         Manifest._augmentAstWithTypes(manifest, item);
-                        await f(item);
+                        await f(item); // TODO(cypher1): Use Promise.all here.
                     }
                 }
             };
@@ -924,7 +924,7 @@ ${e.message}
                         items.byHandle.set(handle, handle['item']);
                     }
                     else if (!entry.item) {
-                        throw new ManifestError(connectionItem.location, `did not expect ${entry} expected handle or particle`);
+                        throw new ManifestError(connectionItem.location, `did not expect '${entry}' expected handle or particle`);
                     }
                     if (entry.item.kind === 'handle' || entry.item.kind === 'requireHandle') {
                         targetHandle = entry.handle;

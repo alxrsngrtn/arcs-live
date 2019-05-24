@@ -146,7 +146,7 @@
         "signature": "23a689d2ca2ba95b9b553113d3b68020ed524aebb47cfef8090e5f249be6d257"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/particle-spec.ts": {
-        "version": "a35f596bc1db80057aa9fc175433219f1c72145c4c405e3a4115edc68d149c96",
+        "version": "a401cf24afc95fd1ac9132e8042d6217743a949979d8bbd9ce90fc7d44f48c05",
         "signature": "47b87d0a9cfdbc0c1e23dfafdb93383937e3b51ef0f5368d2c3404684c2fa9cc"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/comparable.ts": {
@@ -434,7 +434,7 @@
         "signature": "386225870fe7ff2b410dda3c36ac04396b8a67965f6edaa5f9fff1d1796548f6"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/manifest.ts": {
-        "version": "b638a86db9abbcd04eed0fce0865d38c88aed74319c7c2b0dfc9283f4a230a63",
+        "version": "dd727724bc8d7a44948c1f7e3b7a29b1f6ffc90082c3969570f98a2965b04f22",
         "signature": "1ba82758516fa9a3791a854155c2cb2a9a3515e1275012d83038db7edd6e46c6"
       },
       "/home/travis/build/PolymerLabs/arcs/src/platform/atob-web.ts": {
@@ -702,7 +702,7 @@
         "signature": "4fdd497ed0b9b4f94b4e808ee97fca198913cb496b1e4018c12a2f250bd372fd"
       },
       "/home/travis/build/PolymerLabs/arcs/src/planning/test/planner-tests.ts": {
-        "version": "2c996b9f4b91fc469f069709a270016b75c6bc93be7653365c0fcdd2163a99e0",
+        "version": "30f93be26dfa23ab4f4e1dcf7b4a03223b4ea92bb4556caf70f020fa43ca36df",
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/testing/manifest-integration-test-setup.ts": {
@@ -1362,7 +1362,7 @@
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/test/manifest-test.ts": {
-        "version": "91f03a5712e6d09c8bb211fc284b3ce93b63b01e6e4d9aaa29984e5757850504",
+        "version": "9b196039f458637dc95722c660903bc1ab83dde946956ee2d1a47139f10316dd",
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/test/multiplexer-test.ts": {
