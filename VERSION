@@ -1,8 +1,5 @@
-commit 38fb483abe4ad9a054aead8e2e4733586d6677c0
-Author: Joshua Pratt <jp10010101010000@gmail.com>
-Date:   Fri May 24 17:15:23 2019 +1000
+commit 719e824c12ab0316ab52c4a04fdef83e36a820d1
+Author: Alex Rosengarten <alxr@google.com>
+Date:   Fri May 24 14:48:35 2019 -0700
 
-    Hackathon: Tictactoe MoveApplier (#2943)
-    
-    * Possibly working TicTacToe MoveApplier
-    * Cleanup manifest and handle usage
+    fixing build in tic-tac-toe (#3078)

@@ -1526,7 +1526,7 @@
         "signature": "8bc1d39a3b8ec61064f9969316a088e314895e7ffd094468dcc0b238f33cb4a6"
       },
       "/home/travis/build/PolymerLabs/arcs/src/tests/particles/TicTacToe/moveapplier-test.ts": {
-        "version": "49c6d6096e68fcdbbd69f7f3f18d495e7592fdcf74182bb221676466b151f533",
+        "version": "b2b9277b5abf013a8ef694e01db0078719eeb978a5c94a0e61365cfbfb63b224",
         "signature": "8bc1d39a3b8ec61064f9969316a088e314895e7ffd094468dcc0b238f33cb4a6"
       },
       "/home/travis/build/PolymerLabs/arcs/node_modules/@types/minimist/index.d.ts": {
