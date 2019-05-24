@@ -1,13 +1,8 @@
-commit 60de4673aa3aa30d113833c13e74d4788dbaa1ec
+commit 38fb483abe4ad9a054aead8e2e4733586d6677c0
 Author: Joshua Pratt <jp10010101010000@gmail.com>
-Date:   Fri May 24 17:14:26 2019 +1000
+Date:   Fri May 24 17:15:23 2019 +1000
 
-    Slandles demos (#3057)
+    Hackathon: Tictactoe MoveApplier (#2943)
     
-    * Reduce duplication in particle spec for toString code
-    * Create new Slandles particles, manifests and recipes
-    * Annotate assertions for easier debugging and simplify some slandle tests
-    * Fixes for slandles particles and recipes
-    * Improve test coverage for non-slandles tags and field parsing
-    * Linting
-    * Workaround for tslint unused expression
+    * Possibly working TicTacToe MoveApplier
+    * Cleanup manifest and handle usage
