@@ -1,7 +1,5 @@
-commit 2f96d838b8d25a949c814af770fdffff12d75837
-Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
-Date:   Fri May 24 09:48:34 2019 +1000
+commit 1a45aeb3eb0524ae995f4c45bc23428a80e97f25
+Author: shans <shane.stephens@gmail.com>
+Date:   Fri May 24 10:04:35 2019 +1000
 
-    Wasm: implement output of full entities from wasm particles (#3074)
-    
-    Plus some clean ups in the C++ packager.
+    Update sigh.ts health checks to work with Windows line endings. (#3076)
