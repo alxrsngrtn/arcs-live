@@ -1,5 +1,7 @@
-commit 719e824c12ab0316ab52c4a04fdef83e36a820d1
-Author: Alex Rosengarten <alxr@google.com>
-Date:   Fri May 24 14:48:35 2019 -0700
+commit d12ac87749422143cbe3743f582c079532808735
+Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
+Date:   Mon May 27 11:58:46 2019 +1000
 
-    fixing build in tic-tac-toe (#3078)
+    DevShell: basic UI integration of arc-created stores. (#3083)
+    
+    Also updated the 'manifest' query option to accept multiple targets.
