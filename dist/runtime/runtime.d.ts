@@ -23,6 +23,7 @@ export declare type RuntimeArcOptions = Readonly<{
     innerArc?: boolean;
     stub?: boolean;
     listenerClasses?: ArcInspectorFactory[];
+    inspectorFactory?: ArcInspectorFactory;
 }>;
 export declare class Runtime {
     private cacheService;

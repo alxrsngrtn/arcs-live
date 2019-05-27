@@ -9,13 +9,13 @@
  */
 import { assert } from '../../platform/chai-web.js';
 import { Arc } from '../arc.js';
-import { Loader } from '../loader.js';
-import { FakeSlotComposer } from '../testing/fake-slot-composer.js';
-import { TestHelper } from '../testing/test-helper.js';
 import { ArcId } from '../id.js';
+import { Loader } from '../loader.js';
+import { Manifest } from '../manifest.js';
+import { FakeSlotComposer } from '../testing/fake-slot-composer.js';
 describe('Multiplexer', () => {
     it('Processes multiple inputs', async () => {
-        const manifest = await TestHelper.parseManifest(`
+        const manifest = await Manifest.parse(`
       import 'src/runtime/test/artifacts/Common/Multiplexer.manifest'
       import 'src/runtime/test/artifacts/test-particles.manifest'
 
@@ -26,7 +26,7 @@ describe('Multiplexer', () => {
           hostedParticle = ConsumerParticle
           consume annotation as slot0
           list <- handle0
-    `, new Loader());
+    `, { loader: new Loader(), fileName: '' });
         const recipe = manifest.recipes[0];
         const barType = manifest.findTypeByName('Bar');
         const slotComposer = new FakeSlotComposer({ rootContainer: { 'slotid': 'dummy-container' } });

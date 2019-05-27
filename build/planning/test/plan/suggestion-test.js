@@ -10,7 +10,8 @@
 import { assert } from '../../../platform/chai-web.js';
 import { Recipe } from '../../../runtime/recipe/recipe.js';
 import { Search } from '../../../runtime/recipe/search.js';
-import { TestHelper } from '../../../runtime/testing/test-helper.js';
+import { Loader } from '../../../runtime/loader.js';
+import { Manifest } from '../../../runtime/manifest.js';
 import { Suggestion } from '../../plan/suggestion.js';
 describe('suggestion', () => {
     function createSuggestion(hash, descriptionText) {
@@ -54,8 +55,7 @@ describe('suggestion', () => {
         assert.deepEqual(s2.searchGroups, [[''], ['one', 'three']]);
     });
     it('deserialize empty', async () => {
-        const helper = await TestHelper.create();
-        const envOptions = helper.envOptions;
+        const envOptions = { loader: new Loader(), context: new Manifest({ id: 'test' }) };
         const plan = new Recipe();
         const suggestion1 = await Suggestion.fromLiteral({ plan: plan.toString(), hash: '123', rank: 1 }, envOptions);
         assert.isTrue(Boolean(suggestion1.plan));
