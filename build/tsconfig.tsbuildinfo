@@ -546,8 +546,8 @@
         "signature": "fe50c5f36263ff3f9c74002680154f4bf8d1ca17ed3ada64251a5bdeadde3971"
       },
       "/home/travis/build/PolymerLabs/arcs/src/planning/plan/suggestion.ts": {
-        "version": "fb93ae3f4dd0dfa7035b25bba96bee06015c2ce7ec378fcb44518cf2e9673e49",
-        "signature": "387e82a4092ea8161ecfd341d201d87641493851f157a8241fb9704b4f28d10e"
+        "version": "9969261005ef7a3f870c7cbd127deb879935d75fb43e39800436e6aefdc4b709",
+        "signature": "e7e1c6159e269330cdaeb7b619bf2b4d800d298eab28a7f15f00dc219dc126e8"
       },
       "/home/travis/build/PolymerLabs/arcs/src/planning/plan/planning-result.ts": {
         "version": "0c299aa4af52be213e04ea628e82b6e67f294793aa4eefb6b5421db3386f4227",
@@ -657,13 +657,9 @@
         "version": "0b6d4dc0f059309633abc34946b4557e749cecd8beb253e7a288d244d82124a3",
         "signature": "c65cf34d84f78e4d6266cefbc91567e6fc57b28d135bb2e0a9c9ccaed55119f1"
       },
-      "/home/travis/build/PolymerLabs/arcs/src/planning/plan/suggestion-cache.ts": {
-        "version": "a859b0c4f19f25bd958eeb0271a8b55065d2657d17947dca3e129a270396ce56",
-        "signature": "afaf29d8f16bd75fff7abb0a2641d0e848cc19bc6a597db258f8e4b65a3e4ba5"
-      },
       "/home/travis/build/PolymerLabs/arcs/src/planning/planner.ts": {
-        "version": "9c9f616cd0f57f3e3f80b9b2e607a1cc01a69c7a8bdd83c5231a1a1fca532520",
-        "signature": "88fbcd99c387a0d2177c5a663f1bb7751fd074d45ff98552c1fd8d740850d1c4"
+        "version": "6e1217bde4e9f897ad6694baede6b40240f325242d063f3fa6e3378c0e5043e3",
+        "signature": "b10f7cac6e38162242685e50edaa008d293b287dd0ba769f6c88692f789e7b97"
       },
       "/home/travis/build/PolymerLabs/arcs/src/devtools-connector/arc-planner-invoker.ts": {
         "version": "a4cf472502c8dc0697f6febdf6cd892ac44e48e166529e1fd0cac20fa663bc2a",
@@ -682,8 +678,8 @@
         "signature": "cc95b2823746fe044347643ae5185bcbcc62a58c424531e2cebf1216872a8b80"
       },
       "/home/travis/build/PolymerLabs/arcs/src/planning/plan/plan-producer.ts": {
-        "version": "07ad79536056d2ac56b3fedfa99bff6d4cac7e33d0a7a5f03c9ed5574f7b8675",
-        "signature": "f8f3318a9bfdd6fa97e1fb3b5ca8afe42b5f1d5b29788b5bed4b38bfc5d49207"
+        "version": "72ae7aa82b2d208c2e337e72a945e1ef196a7f7f68ebc6b509788a2002c8537a",
+        "signature": "a1da6f9f3e05403d7ead9d7f1e52e35479f8925a05c97494e3bf1c55f4f7b208"
       },
       "/home/travis/build/PolymerLabs/arcs/src/planning/debug/planning-explorer-adapter.ts": {
         "version": "55a567be03e511b8ef83ad3f8e4c5876311a3310215acf51a62cf4b07d476edf",
@@ -742,7 +738,7 @@
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "/home/travis/build/PolymerLabs/arcs/src/planning/testing/planning-test-helper.ts": {
-        "version": "57dc70c4372da6d3455af7f68914ca3430372911f64debaaf6a5f46f6de1397f",
+        "version": "b902d3f9f888eca1a74e56f9f7750deb5954d138517afcda106a1db9dae1e3df",
         "signature": "8c4c6fa7633da4e904976fe952a0677898e86650671ebe69b373c2b846d8e56e"
       },
       "/home/travis/build/PolymerLabs/arcs/src/planning/test/suggestion-composer-tests.ts": {
@@ -3033,14 +3029,6 @@
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
       ],
-      "/home/travis/build/PolymerLabs/arcs/src/planning/plan/suggestion-cache.ts": [
-        "/home/travis/build/PolymerLabs/arcs/src/planning/plan/planning-result.ts",
-        "/home/travis/build/PolymerLabs/arcs/src/planning/plan/suggestion.ts",
-        "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts",
-        "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/recipe.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
-      ],
       "/home/travis/build/PolymerLabs/arcs/src/planning/planner.ts": [
         "/home/travis/build/PolymerLabs/arcs/src/platform/assert-web.ts",
         "/home/travis/build/PolymerLabs/arcs/src/platform/date-web.ts",
@@ -3078,7 +3066,7 @@
         "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/recipe.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/description.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/relevance.ts",
-        "/home/travis/build/PolymerLabs/arcs/src/planning/plan/suggestion-cache.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/runtime.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
       ],
@@ -3140,7 +3128,6 @@
         "/home/travis/build/PolymerLabs/arcs/src/planning/strategizer.ts",
         "/home/travis/build/PolymerLabs/arcs/src/planning/plan/planning-result.ts",
         "/home/travis/build/PolymerLabs/arcs/src/planning/plan/suggestion.ts",
-        "/home/travis/build/PolymerLabs/arcs/src/planning/plan/suggestion-cache.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
       ],
@@ -5343,7 +5330,6 @@
         "/home/travis/build/PolymerLabs/arcs/src/planning/planner.ts",
         "/home/travis/build/PolymerLabs/arcs/src/planning/recipe-index.ts",
         "/home/travis/build/PolymerLabs/arcs/src/planning/speculator.ts",
-        "/home/travis/build/PolymerLabs/arcs/src/planning/plan/suggestion-cache.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/storage-provider-base.ts",
         "/home/travis/build/PolymerLabs/arcs/src/devtools-connector/abstract-devtools-channel.ts",
         "/home/travis/build/PolymerLabs/arcs/src/planning/plan/suggestion.ts"
@@ -5471,12 +5457,6 @@
         "/home/travis/build/PolymerLabs/arcs/src/runtime/slot-composer.ts",
         "/home/travis/build/PolymerLabs/arcs/src/planning/planning-modality-handler.ts",
         "/home/travis/build/PolymerLabs/arcs/src/planning/plan/suggestion.ts"
-      ],
-      "/home/travis/build/PolymerLabs/arcs/src/planning/plan/suggestion-cache.ts": [
-        "/home/travis/build/PolymerLabs/arcs/src/planning/plan/suggestion.ts",
-        "/home/travis/build/PolymerLabs/arcs/src/planning/plan/planning-result.ts",
-        "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/recipe.ts",
-        "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts"
       ],
       "/home/travis/build/PolymerLabs/arcs/src/planning/headless-suggest-dom-consumer.ts": [
         "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts",
@@ -6980,7 +6960,6 @@
       "/home/travis/build/PolymerLabs/arcs/src/planning/strategies/find-required-particle.ts",
       "/home/travis/build/PolymerLabs/arcs/src/planning/strategies/name-unnamed-connections.ts",
       "/home/travis/build/PolymerLabs/arcs/src/planning/strategies/search-tokens-to-handles.ts",
-      "/home/travis/build/PolymerLabs/arcs/src/planning/plan/suggestion-cache.ts",
       "/home/travis/build/PolymerLabs/arcs/src/planning/planner.ts",
       "/home/travis/build/PolymerLabs/arcs/src/devtools-connector/arc-planner-invoker.ts",
       "/home/travis/build/PolymerLabs/arcs/src/devtools-connector/arc-stores-fetcher.ts",

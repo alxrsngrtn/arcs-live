@@ -23,6 +23,7 @@ import { TestHelper } from '../../runtime/testing/test-helper.js';
 export class PlanningTestHelper extends TestHelper {
     static async create(options = {}) {
         await TestHelper.setupOptions(options);
+        Planner.clearCache();
         const helper = new PlanningTestHelper();
         TestHelper.setupHelper(options, helper);
         helper.recipeIndex = RecipeIndex.create(helper.arc);

@@ -67,4 +67,5 @@ export declare class Suggestion {
     static fromLiteral({ plan, hash, rank, versionByStore, searchGroups, descriptionByModality }: FromLiteralOptions, { context, loader }: EnvOptions): Promise<Suggestion>;
     instantiate(arc: Arc): Promise<void>;
     getResolvedPlan(arc: Arc): Promise<Recipe>;
+    isUpToDate(arc: Arc, plan: Recipe): boolean;
 }

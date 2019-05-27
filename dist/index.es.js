@@ -25088,6 +25088,10 @@ class Suggestion {
         const recipeResolver = new RecipeResolver(arc);
         return recipeResolver.resolve(this.plan);
     }
+    isUpToDate(arc, plan) {
+        const arcVersionByStoreId = arc.getVersionByStore({ includeArc: true, includeContext: true });
+        return plan.handles.every(handle => arcVersionByStoreId[handle.id] === this.versionByStore[handle.id]);
+    }
 }
 
 /**
@@ -27066,16 +27070,16 @@ class SearchTokensToHandles extends Strategy {
 }
 
 // Copyright (c) 2017 Google Inc. All rights reserved.
+const suggestionByHash = () => Runtime.getRuntime().getCacheService().getOrCreateCache('suggestionByHash');
 class Planner {
     // TODO: Use context.arc instead of arc
-    init(arc, { strategies = Planner.AllStrategies, ruleset = Empty, strategyArgs = {}, suggestionCache = null, speculator = null, blockDevtools = false } = {}) {
+    init(arc, { strategies = Planner.AllStrategies, ruleset = Empty, strategyArgs = {}, speculator = null, blockDevtools = false } = {}) {
         strategyArgs = Object.freeze({ ...strategyArgs });
         this._arc = arc;
         const strategyImpls = strategies.map(strategy => new strategy(arc, strategyArgs));
         this.strategizer = new Strategizer(strategyImpls, [], ruleset);
         this.blockDevtools = blockDevtools;
         this.speculator = speculator;
-        this.suggestionCache = suggestionCache;
     }
     // Specify a timeout value less than zero to disable timeouts.
     async plan(timeout, generations = []) {
@@ -27185,12 +27189,13 @@ class Planner {
         results = [].concat(...results);
         return trace.endWith(results);
     }
+    static clearCache() {
+        suggestionByHash().clear();
+    }
     async retriveOrCreateSuggestion(hash, plan, arc) {
-        if (this.suggestionCache) {
-            const suggestion = this.suggestionCache.getSuggestion(hash, plan, arc);
-            if (suggestion) {
-                return suggestion;
-            }
+        const cachedSuggestion = suggestionByHash().get(hash);
+        if (cachedSuggestion && cachedSuggestion.isUpToDate(arc, plan)) {
+            return cachedSuggestion;
         }
         let relevance = null;
         let description = null;
@@ -27208,9 +27213,7 @@ class Planner {
         }
         const suggestion = Suggestion.create(plan, hash, relevance);
         suggestion.setDescription(description, this._arc.modality, this._arc.pec.slotComposer ? this._arc.pec.slotComposer.modalityHandler.descriptionFormatter : undefined);
-        if (this.suggestionCache) {
-            this.suggestionCache.setSuggestion(hash, suggestion);
-        }
+        suggestionByHash().set(hash, suggestion);
         return suggestion;
     }
     _updateGeneration(generations, hash, handler) {
@@ -29096,39 +29099,6 @@ class Speculator {
 
 /**
  * @license
- * Copyright (c) 2019 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-class SuggestionCache {
-    constructor(planningResult) {
-        this.suggestionByHash = {};
-        if (planningResult) {
-            for (const suggestion of planningResult.suggestions) {
-                this.suggestionByHash[suggestion.hash] = suggestion;
-            }
-        }
-    }
-    getSuggestion(hash, plan, arc) {
-        const suggestion = this.suggestionByHash[hash];
-        if (suggestion) {
-            const arcVersionByStoreId = arc.getVersionByStore({ includeArc: true, includeContext: true });
-            if (plan.handles.every(handle => arcVersionByStoreId[handle.id] === suggestion.versionByStore[handle.id])) {
-                return suggestion;
-            }
-        }
-        return undefined;
-    }
-    setSuggestion(hash, suggestion) {
-        this.suggestionByHash[hash] = suggestion;
-    }
-}
-
-/**
- * @license
  * Copyright (c) 2018 Google Inc. All rights reserved.
  * This code may only be used under the BSD style license found at
  * http://polymer.github.io/LICENSE.txt
@@ -29160,7 +29130,6 @@ class PlanProducer {
         this.result = result;
         this.recipeIndex = RecipeIndex.create(this.arc);
         this.speculator = new Speculator();
-        this.suggestionCache = new SuggestionCache(this.result);
         this.searchStore = searchStore;
         if (this.searchStore) {
             this.searchStoreCallback = () => this.onSearchChanged();
@@ -29282,7 +29251,6 @@ class PlanProducer {
                 recipeIndex: this.recipeIndex
             },
             speculator: this.speculator,
-            suggestionCache: this.suggestionCache,
             blockDevtools: true // Devtools communication is handled by PlanConsumer in Producer+Consumer setup.
         });
         suggestions = await this.planner.suggest(options['timeout'] || defaultTimeoutMs, generations);

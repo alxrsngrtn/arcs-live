@@ -156,5 +156,9 @@ export class Suggestion {
         const recipeResolver = new RecipeResolver(arc);
         return recipeResolver.resolve(this.plan);
     }
+    isUpToDate(arc, plan) {
+        const arcVersionByStoreId = arc.getVersionByStore({ includeArc: true, includeContext: true });
+        return plan.handles.every(handle => arcVersionByStoreId[handle.id] === this.versionByStore[handle.id]);
+    }
 }
 //# sourceMappingURL=suggestion.js.map
