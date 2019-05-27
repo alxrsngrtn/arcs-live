@@ -81,6 +81,9 @@
 						<span class="target">Driver</span>
 						<ul class="tsd-hierarchy">
 							<li>
+								<a href="volatiledriver.html" class="tsd-signature-type">VolatileDriver</a>
+							</li>
+							<li>
 								<a href="mockdriver.html" class="tsd-signature-type">MockDriver</a>
 							</li>
 							<li>
@@ -125,19 +128,19 @@
 					<a name="constructor" class="tsd-anchor"></a>
 					<h3>constructor</h3>
 					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">new <wbr>Driver<span class="tsd-signature-symbol">(</span>storageKey<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, exists<span class="tsd-signature-symbol">: </span><a href="../enums/exists.html" class="tsd-signature-type">Exists</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="driver.html" class="tsd-signature-type">Driver</a></li>
+						<li class="tsd-signature tsd-kind-icon">new <wbr>Driver<span class="tsd-signature-symbol">(</span>storageKey<span class="tsd-signature-symbol">: </span><a href="storagekey.html" class="tsd-signature-type">StorageKey</a>, exists<span class="tsd-signature-symbol">: </span><a href="../enums/exists.html" class="tsd-signature-type">Exists</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="driver.html" class="tsd-signature-type">Driver</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/979b273/src/runtime/storageNG/drivers/driver-factory.ts#L24">runtime/storageNG/drivers/driver-factory.ts:24</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/ad42429/src/runtime/storageNG/drivers/driver-factory.ts#L26">runtime/storageNG/drivers/driver-factory.ts:26</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>storageKey: <span class="tsd-signature-type">string</span></h5>
+									<h5>storageKey: <a href="storagekey.html" class="tsd-signature-type">StorageKey</a></h5>
 								</li>
 								<li>
 									<h5>exists: <a href="../enums/exists.html" class="tsd-signature-type">Exists</a></h5>
@@ -156,17 +159,17 @@
 					<div class="tsd-signature tsd-kind-icon">exists<span class="tsd-signature-symbol">:</span> <a href="../enums/exists.html" class="tsd-signature-type">Exists</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/979b273/src/runtime/storageNG/drivers/driver-factory.ts#L24">runtime/storageNG/drivers/driver-factory.ts:24</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/ad42429/src/runtime/storageNG/drivers/driver-factory.ts#L26">runtime/storageNG/drivers/driver-factory.ts:26</a></li>
 						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
 					<a name="storagekey" class="tsd-anchor"></a>
 					<h3>storage<wbr>Key</h3>
-					<div class="tsd-signature tsd-kind-icon">storage<wbr>Key<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+					<div class="tsd-signature tsd-kind-icon">storage<wbr>Key<span class="tsd-signature-symbol">:</span> <a href="storagekey.html" class="tsd-signature-type">StorageKey</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/979b273/src/runtime/storageNG/drivers/driver-factory.ts#L23">runtime/storageNG/drivers/driver-factory.ts:23</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/ad42429/src/runtime/storageNG/drivers/driver-factory.ts#L25">runtime/storageNG/drivers/driver-factory.ts:25</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -177,19 +180,19 @@
 					<a name="read" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagAbstract">Abstract</span> read</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">read<span class="tsd-signature-symbol">(</span>key<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">read<span class="tsd-signature-symbol">(</span>key<span class="tsd-signature-symbol">: </span><a href="storagekey.html" class="tsd-signature-type">StorageKey</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/979b273/src/runtime/storageNG/drivers/driver-factory.ts#L37">runtime/storageNG/drivers/driver-factory.ts:37</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/ad42429/src/runtime/storageNG/drivers/driver-factory.ts#L39">runtime/storageNG/drivers/driver-factory.ts:39</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>key: <span class="tsd-signature-type">string</span></h5>
+									<h5>key: <a href="storagekey.html" class="tsd-signature-type">StorageKey</a></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -206,7 +209,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/979b273/src/runtime/storageNG/drivers/driver-factory.ts#L29">runtime/storageNG/drivers/driver-factory.ts:29</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/ad42429/src/runtime/storageNG/drivers/driver-factory.ts#L31">runtime/storageNG/drivers/driver-factory.ts:31</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -223,19 +226,22 @@
 					<a name="send" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagAbstract">Abstract</span> send</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">send<span class="tsd-signature-symbol">(</span>model<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Data</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">send<span class="tsd-signature-symbol">(</span>model<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Data</span>, version<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/979b273/src/runtime/storageNG/drivers/driver-factory.ts#L30">runtime/storageNG/drivers/driver-factory.ts:30</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/ad42429/src/runtime/storageNG/drivers/driver-factory.ts#L32">runtime/storageNG/drivers/driver-factory.ts:32</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
 									<h5>model: <span class="tsd-signature-type">Data</span></h5>
+								</li>
+								<li>
+									<h5>version: <span class="tsd-signature-type">number</span></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -246,19 +252,19 @@
 					<a name="write" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagAbstract">Abstract</span> write</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">write<span class="tsd-signature-symbol">(</span>key<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, value<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">write<span class="tsd-signature-symbol">(</span>key<span class="tsd-signature-symbol">: </span><a href="storagekey.html" class="tsd-signature-type">StorageKey</a>, value<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/979b273/src/runtime/storageNG/drivers/driver-factory.ts#L35">runtime/storageNG/drivers/driver-factory.ts:35</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/ad42429/src/runtime/storageNG/drivers/driver-factory.ts#L37">runtime/storageNG/drivers/driver-factory.ts:37</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>key: <span class="tsd-signature-type">string</span></h5>
+									<h5>key: <a href="storagekey.html" class="tsd-signature-type">StorageKey</a></h5>
 								</li>
 								<li>
 									<h5>value: <span class="tsd-signature-type">any</span></h5>

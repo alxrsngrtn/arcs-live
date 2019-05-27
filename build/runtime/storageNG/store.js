@@ -56,6 +56,7 @@ export class DirectStore extends ActiveStore {
         this.callbacks = new Map();
         this.inSync = true;
         this.nextCallbackID = 1;
+        this.version = 0;
         this.localModel = new modelConstructor();
         this.driver = DriverFactory.driverInstance(storageKey, exists);
         if (this.driver == null) {
@@ -64,11 +65,11 @@ export class DirectStore extends ActiveStore {
         this.driver.registerReceiver(this.onReceive.bind(this));
     }
     // The driver will invoke this method when it has an updated remote model
-    async onReceive(model) {
+    async onReceive(model, version) {
         const { modelChange, otherChange } = this.localModel.merge(model);
-        await this.processModelChange(modelChange, otherChange, true);
+        await this.processModelChange(modelChange, otherChange, version, true);
     }
-    async processModelChange(thisChange, otherChange, messageFromDriver) {
+    async processModelChange(thisChange, otherChange, version, messageFromDriver) {
         if (thisChange.changeType === ChangeType.Operations && thisChange.operations.length > 0) {
             this.callbacks.forEach((cb, id) => cb({ type: ProxyMessageType.Operations, operations: thisChange.operations, id }));
         }
@@ -76,17 +77,18 @@ export class DirectStore extends ActiveStore {
             this.callbacks.forEach((cb, id) => cb({ type: ProxyMessageType.ModelUpdate, model: thisChange.modelPostChange, id }));
         }
         // Don't send to the driver if we're already in sync and there are no driver-side changes.
-        if (this.inSync && this.driverSideChanges(thisChange, otherChange, messageFromDriver)) {
+        if (this.inSync && this.noDriverSideChanges(thisChange, otherChange, messageFromDriver)) {
             return;
         }
-        this.inSync = await this.driver.send(this.localModel.getData());
+        this.version = version + 1;
+        this.inSync = await this.driver.send(this.localModel.getData(), this.version);
     }
     // Note that driver-side changes are stored in 'otherChange' when the merged operations/model is sent
     // from the driver, and 'thisChange' when the merged operations/model is sent from a storageProxy.
     // In the former case, we want to look at what has changed between what the driver sent us and what
     // we now have. In the latter, the driver is only as up-to-date as our local model before we've
     // applied the operations.
-    driverSideChanges(thisChange, otherChange, messageFromDriver) {
+    noDriverSideChanges(thisChange, otherChange, messageFromDriver) {
         if (messageFromDriver) {
             return otherChange.changeType === ChangeType.Operations && otherChange.operations.length === 0;
         }
@@ -110,11 +112,11 @@ export class DirectStore extends ActiveStore {
                         return false;
                     }
                 }
-                await this.processModelChange({ changeType: ChangeType.Operations, operations: message.operations }, null, false);
+                await this.processModelChange({ changeType: ChangeType.Operations, operations: message.operations }, null, this.version, false);
                 return true;
             case ProxyMessageType.ModelUpdate: {
                 const { modelChange, otherChange } = this.localModel.merge(message.model);
-                await this.processModelChange(modelChange, otherChange, false);
+                await this.processModelChange(modelChange, otherChange, this.version, false);
                 return true;
             }
             default:

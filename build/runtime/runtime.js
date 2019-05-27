@@ -14,6 +14,7 @@ import { RuntimeCacheService } from './runtime-cache.js';
 import { IdGenerator } from './id.js';
 import { Loader } from './loader.js';
 import { FakeSlotComposer } from './testing/fake-slot-composer.js';
+import { VolatileMemory } from './storageNG/drivers/volatile.js';
 // To start with, this class will simply hide the runtime classes that are
 // currently imported by ArcsLib.js. Once that refactoring is done, we can
 // think about what the api should actually look like.
@@ -38,10 +39,14 @@ export class Runtime {
         this.loader = loader;
         this.composerClass = composerClass;
         this.context = context || new Manifest({ id: 'manifest:default' });
+        this.volatileMemory = new VolatileMemory();
         // user information. One persona per runtime for now.
     }
     getCacheService() {
         return this.cacheService;
+    }
+    getVolatileMemory() {
+        return this.volatileMemory;
     }
     destroy() {
     }

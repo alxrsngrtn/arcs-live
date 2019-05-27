@@ -15,6 +15,7 @@ import { SlotComposer } from './slot-composer.js';
 import { Loader } from './loader.js';
 import { StorageProviderFactory } from './storage/storage-provider-factory.js';
 import { ArcInspectorFactory } from './arc-inspector.js';
+import { VolatileMemory } from './storageNG/drivers/volatile.js';
 export declare type RuntimeArcOptions = Readonly<{
     pecFactory?: PecFactory;
     storageProviderFactory?: StorageProviderFactory;
@@ -28,11 +29,13 @@ export declare class Runtime {
     private loader;
     private composerClass;
     private context;
+    private readonly volatileMemory;
     static getRuntime(): Runtime;
     static clearRuntimeForTesting(): void;
     static newForNodeTesting(context?: Manifest): Runtime;
     constructor(loader?: Loader, composerClass?: new () => SlotComposer, context?: Manifest);
     getCacheService(): RuntimeCacheService;
+    getVolatileMemory(): VolatileMemory;
     destroy(): void;
     newArc(name: string, storageKeyPrefix: string, options?: RuntimeArcOptions): Arc;
     /**

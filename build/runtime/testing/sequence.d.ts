@@ -29,8 +29,8 @@ export interface OutputResponseObject {
 }
 export interface SequenceChange {
     variable?: any;
-    input?: any;
-    inputFn?: () => any;
+    input?: any[];
+    inputFn?: () => any[];
     output?: {
         [index: string]: any;
     };

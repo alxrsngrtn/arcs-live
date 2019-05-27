@@ -10,6 +10,7 @@
 import { CRDTModel, CRDTTypeRecord } from '../crdt/crdt.js';
 import { Type } from '../type.js';
 import { Exists, Driver } from './drivers/driver-factory.js';
+import { StorageKey } from './storage-key.js';
 export declare enum StorageMode {
     Direct = 0,
     Backing = 1,
@@ -34,13 +35,13 @@ export declare type ProxyMessage<T extends CRDTTypeRecord> = {
 };
 declare type ProxyCallback<T extends CRDTTypeRecord> = (message: ProxyMessage<T>) => boolean;
 export declare class Store<T extends CRDTTypeRecord> {
-    readonly storageKey: string;
+    readonly storageKey: StorageKey;
     exists: Exists;
     readonly type: Type;
     readonly mode: StorageMode;
     readonly constructors: Map<StorageMode, typeof DirectStore>;
     modelConstructor: new () => CRDTModel<T>;
-    constructor(storageKey: string, exists: Exists, type: Type, mode: StorageMode, modelConstructor: new () => CRDTModel<T>);
+    constructor(storageKey: StorageKey, exists: Exists, type: Type, mode: StorageMode, modelConstructor: new () => CRDTModel<T>);
     activate(): ActiveStore<T>;
 }
 export declare abstract class ActiveStore<T extends CRDTTypeRecord> extends Store<T> {
@@ -54,10 +55,11 @@ export declare class DirectStore<T extends CRDTTypeRecord> extends ActiveStore<T
     driver: Driver<T['data']>;
     inSync: boolean;
     private nextCallbackID;
-    constructor(storageKey: string, exists: Exists, type: Type, mode: StorageMode, modelConstructor: new () => CRDTModel<T>);
-    onReceive(model: T['data']): Promise<void>;
+    private version;
+    constructor(storageKey: StorageKey, exists: Exists, type: Type, mode: StorageMode, modelConstructor: new () => CRDTModel<T>);
+    onReceive(model: T['data'], version: number): Promise<void>;
     private processModelChange;
-    private driverSideChanges;
+    private noDriverSideChanges;
     onProxyMessage(message: ProxyMessage<T>): Promise<boolean>;
     on(callback: ProxyCallback<T>): number;
     off(callback: number): void;

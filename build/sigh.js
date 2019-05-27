@@ -702,7 +702,7 @@ function runSteps(command, args) {
         console.error(e);
     }
     finally {
-        console.log(result ? '🎉' : '😱');
+        console.log(result ? '🎉 SUCCESS' : '😱 FAILURE');
     }
     return result;
 }
