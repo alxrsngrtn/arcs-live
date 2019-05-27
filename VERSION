@@ -1,7 +1,5 @@
-commit d12ac87749422143cbe3743f582c079532808735
-Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
-Date:   Mon May 27 11:58:46 2019 +1000
+commit 979b273f3e573efa3e8529709d7cf818c8941bcc
+Author: Piotr Swigon <piotr.swigon@gmail.com>
+Date:   Mon May 27 15:42:12 2019 +1000
 
-    DevShell: basic UI integration of arc-created stores. (#3083)
-    
-    Also updated the 'manifest' query option to accept multiple targets.
+    Separate tools webpacking from runtime webpacking (#3085)
