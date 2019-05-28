@@ -18213,11 +18213,6 @@ class DomParticle extends XenStateMixin(DomParticleBase) {
         }
         this.config.slotNames.forEach(s => this.renderSlot(s, ['model']));
     }
-    /** @deprecated */
-    get _views() {
-        console.warn(`Particle ${this.spec.name} uses deprecated _views getter.`);
-        return this.handles;
-    }
     async setHandles(handles) {
         this.configureHandles(handles);
         this.handles = handles;

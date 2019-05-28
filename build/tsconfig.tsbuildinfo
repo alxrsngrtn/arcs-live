@@ -262,8 +262,8 @@
         "signature": "01ab782433fbc982db7cd0161df059334a29c2860f93e8c5960886f895bef6e1"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/dom-particle.ts": {
-        "version": "b30bed98450f3656769ba6780ea77005e6b25abb086558daee894b94a06b4b12",
-        "signature": "b60fa9830937b26765c1759d1838ffa9ff6ac710b865ef9b9428b82a82d34b9f"
+        "version": "a6f2f44ede9da9c81cbe46e6df922892375df2e0a0674555ed26c6a9617104e4",
+        "signature": "495da94a2a6d0177a9f6b4c68cc743387fb7d30980fd11e8a416ed2b1dc6a955"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/transformation-dom-particle.ts": {
         "version": "d7249944772f2e789fe2217bec9480da5e99a0332a3a7fd082e854966c3fbf37",
