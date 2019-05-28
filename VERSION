@@ -1,13 +1,9 @@
-commit b3f7da164449b04b614416a478989014f005732a
-Author: Ray Cromwell <cromwellian@gmail.com>
-Date:   Tue May 28 13:42:07 2019 -0700
+commit ca10cb28e23f25c773d0962a4a19a6e940969201
+Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
+Date:   Wed May 29 09:05:35 2019 +1000
 
-    Youtube viewer (#3087)
+    DevShell: collapsible store panels (#3088)
     
-    * Add youtube-viewer component with captions
+    * DevShell: collapsible store panels
     
-    * Fix nits
-    
-    * fix date
-    
-    * fix dup template
+    * Add cursor: pointer to the collapse button
