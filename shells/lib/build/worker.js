@@ -16123,6 +16123,7 @@ const vm = {};
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "supportedTypes", function() { return supportedTypes; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "JsonldToManifest", function() { return JsonldToManifest; });
 /**
  * @license

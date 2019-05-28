@@ -1,9 +1,47 @@
-commit ca10cb28e23f25c773d0962a4a19a6e940969201
-Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
-Date:   Wed May 29 09:05:35 2019 +1000
+commit 1a22d145f2c0df3e00c8de82c813a4f745b0947e
+Author: Alex Rosengarten <alxr@google.com>
+Date:   Tue May 28 16:24:59 2019 -0700
 
-    DevShell: collapsible store panels (#3088)
+    Increased Test Coverage: Jsonld-To-Manifest Converter (#3081)
     
-    * DevShell: collapsible store panels
+    * created test file
     
-    * Add cursor: pointer to the collapse button
+    * dummy test
+    
+    * Health: write two simple tests for JsonldToManifest
+    
+    * increased coverage an incremental amount
+    
+    * increased coverage an incremental amount
+    
+    * WIP last test
+    
+    * fixed lint error -- too many spaces
+    
+    * rm change to integration tests script
+    
+    * rm change to integration tests script
+    
+    * pull from master + resolved first point of feedback.
+    
+    * converted constants to function
+    
+    * refactored tests to read jsonld from file
+    
+    * favoring await syntax instead of promises
+    
+    * fixed tsc/tslint error
+    
+    * added std license
+    
+    * !! --> Boolean()
+    
+    * proper syntax for skip
+    
+    * cleaner try..catch. Return in blocks
+    
+    * using promisify for cleaner syntax
+    
+    * chai test using more expressive assert
+    
+    * chai test using more expressive assert

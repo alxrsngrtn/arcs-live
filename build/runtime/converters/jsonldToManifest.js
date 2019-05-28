@@ -7,7 +7,7 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-const supportedTypes = ['Text', 'URL', 'Number', 'Boolean'];
+export const supportedTypes = ['Text', 'URL', 'Number', 'Boolean'];
 export class JsonldToManifest {
     static convert(jsonld, theClass = undefined) {
         const obj = JSON.parse(jsonld);
