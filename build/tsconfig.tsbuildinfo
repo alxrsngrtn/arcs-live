@@ -458,8 +458,8 @@
         "signature": "b1334352a91dad1cbb897669567689cbc97a8b02ac3f4bc1426278233ce5b620"
       },
       "/home/travis/build/PolymerLabs/arcs/node_modules/firebase/index.d.ts": {
-        "version": "605f61ea15a7c8937e59ee8f7ee5048d5fc2e2dad6033af04273e9e3351fe39a",
-        "signature": "605f61ea15a7c8937e59ee8f7ee5048d5fc2e2dad6033af04273e9e3351fe39a"
+        "version": "9d33eff8bde9ab93cc21f994048549305be65a4a5aab2876016580dc47c90110",
+        "signature": "9d33eff8bde9ab93cc21f994048549305be65a4a5aab2876016580dc47c90110"
       },
       "/home/travis/build/PolymerLabs/arcs/src/platform/firebase-web.d.ts": {
         "version": "26334e0732809d8374bb07bc87fc6ccb28957bdff74cde533f401f1c6ebba400",

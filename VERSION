@@ -1,5 +1,17 @@
-commit e304b4f3ec0257e972831a28333412aaba4f5387
-Author: shans <shane.stephens@gmail.com>
-Date:   Tue May 28 16:16:50 2019 +1000
+commit 7e3bfc36a0af4b21ac55f8d3219c0a6183708e6e
+Author: Paul Lindner <plindner@google.com>
+Date:   Mon May 27 23:21:38 2019 -0700
 
-    Volatile driver integration + sequence tests (#3086)
+    Upgrade Firebase to 6.0.4 (#3069)
+    
+    Changelog: https://firebase.google.com/support/release-notes/js
+    
+    v6 removes polyfills resulting in 53k size different for shells/lib/build/firebase.js
+    
+    ```
+    ls -l ../particles/shells/lib/build/firebase.js shells/lib/build/firebase.js
+    -rw-r--r--  1 plindner  eng  919839 May 17 13:34 ../main/shells/lib/build/firebase.js
+    -rw-r--r--  1 plindner  eng  866844 May 23 02:54 shells/lib/build/firebase.js
+    ```
+    
+    details: https://firebase.google.com/support/guides/environments_js-sdk
