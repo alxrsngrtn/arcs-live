@@ -338,11 +338,11 @@
         "signature": "662d01f3f4b30d6c7f7a53ff2f422134703280411f03ecc94d966ee30f79e615"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/storageNG/drivers/volatile.ts": {
-        "version": "cc96a8a4fc4565353dd2c7300186ba980145b2b34bdd5af36f6c392e5b23d36a",
-        "signature": "47192f4612e6fff3a7f4255cad60b4987a53ec584e0a458f1c704d68c1fee46f"
+        "version": "742f05b3b712ea09526b64d2dc99da920643e294082258fbabe5e2049ec7b124",
+        "signature": "5213ad6440ca8696bef124b8a1dbbc399909c761119d3a3814ef0de2004a4f0c"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/runtime.ts": {
-        "version": "702139834f8df99369f5af16c7bf8ca890c77e45c4cf3b27cda35933756e4a46",
+        "version": "cb3370f37c628b8705eb7eced858a2bf13827ef7671f25b2823811be3639fa6e",
         "signature": "09f2e7fd9a21838650b5d4b81f762dc966502721cf962b3458c5015bd239ed89"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/slot-dom-consumer.ts": {
@@ -1282,7 +1282,7 @@
         "signature": "6a6c50386a76a608ad0bd42265a78c27d9d48523054a0804a6e6f704d74c22bb"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/storageNG/store.ts": {
-        "version": "5404f5d1a804b5b482e03dad659967a62be6ba5b08e227fc04f56cfc55265a05",
+        "version": "5ea2c87d7e7d19ab9cbe26bc37aa1b4cbe32892d3d464c6558076ce0f4e911b9",
         "signature": "24ec4319c542a230dc60b49f98e68720d447e2e39f99d2d25d8a87ccd3847cd6"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/storageNG/storage-proxy.ts": {
@@ -1302,15 +1302,19 @@
         "signature": "fd95df5d076cbfed143dc4904d376b5c6d9cb1091b630994ffe2366010afa6b3"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/testing/sequence.ts": {
-        "version": "6a3c0392f14d7715c14f80dae2615dcfb9beb3bbe91fbd0b34a5a20a807507ac",
-        "signature": "e9ce3bfc99161b3a8cde34436d81c0e24d14c7405295d397a62cda96213c0f2c"
+        "version": "effa11c5bc7ec9bb35ebfe5eb1eb9d82530ccaf367e91c0945c40293dcef235d",
+        "signature": "24dc0562ef26f02fe16cd73f99132dc9f354b0ff817a6477bf04c7e35098b83b"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/storageNG/tests/store-sequence-test.ts": {
-        "version": "4e99e52719d55174c927985d80cdc668ff1b1cec1c2260dd8363a80bf7115be9",
+        "version": "97888c6a9c522284a9cb333fd0a54d495186a1258c7b157ed48dd7519adcb674",
         "signature": "fd95df5d076cbfed143dc4904d376b5c6d9cb1091b630994ffe2366010afa6b3"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/storageNG/tests/store-test.ts": {
-        "version": "9ffd0e59c1ceab36aec218fcc25d1d9de707c961eaf550f4bfc4a5d6edd55548",
+        "version": "c1753e53635ddb1fff1d226caf10c57206008b7ade09de4d02fa269b192138a5",
+        "signature": "fd95df5d076cbfed143dc4904d376b5c6d9cb1091b630994ffe2366010afa6b3"
+      },
+      "/home/travis/build/PolymerLabs/arcs/src/runtime/storageNG/tests/volatile-store-integration-test.ts": {
+        "version": "f65cbad39fbe5bec7a2e213f9596ec8ad17a2e282b0107267d54cbf5017b3153",
         "signature": "fd95df5d076cbfed143dc4904d376b5c6d9cb1091b630994ffe2366010afa6b3"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/test/akms-test.ts": {
@@ -2296,7 +2300,6 @@
         "/home/travis/build/PolymerLabs/arcs/src/runtime/loader.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/storage-provider-factory.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/arc-inspector.ts",
-        "/home/travis/build/PolymerLabs/arcs/src/platform/assert-web.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/testing/fake-slot-composer.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/storageNG/drivers/volatile.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
@@ -4294,6 +4297,9 @@
         "/home/travis/build/PolymerLabs/arcs/src/runtime/crdt/crdt-count.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/storageNG/drivers/driver-factory.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/storageNG/storage-key.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/runtime.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/storageNG/drivers/volatile.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/hot.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
       ],
@@ -4303,6 +4309,16 @@
         "/home/travis/build/PolymerLabs/arcs/src/runtime/storageNG/drivers/driver-factory.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/crdt/crdt-count.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/storageNG/storage-key.ts",
+        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
+        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
+      ],
+      "/home/travis/build/PolymerLabs/arcs/src/runtime/storageNG/tests/volatile-store-integration-test.ts": [
+        "/home/travis/build/PolymerLabs/arcs/src/platform/chai-web.d.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/storageNG/store.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/crdt/crdt-count.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/storageNG/drivers/volatile.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/storageNG/drivers/driver-factory.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/runtime.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
       ],
@@ -7131,6 +7147,7 @@
       "/home/travis/build/PolymerLabs/arcs/src/runtime/testing/sequence.ts",
       "/home/travis/build/PolymerLabs/arcs/src/runtime/storageNG/tests/store-sequence-test.ts",
       "/home/travis/build/PolymerLabs/arcs/src/runtime/storageNG/tests/store-test.ts",
+      "/home/travis/build/PolymerLabs/arcs/src/runtime/storageNG/tests/volatile-store-integration-test.ts",
       "/home/travis/build/PolymerLabs/arcs/src/runtime/test/akms-test.ts",
       "/home/travis/build/PolymerLabs/arcs/src/runtime/testing/callback-tracker.ts",
       "/home/travis/build/PolymerLabs/arcs/src/runtime/testing/test-util.ts",

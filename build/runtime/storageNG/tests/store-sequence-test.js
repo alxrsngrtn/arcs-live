@@ -13,6 +13,8 @@ import { SequenceTest, ExpectedResponse, SequenceOutput } from '../../testing/se
 import { CRDTCount, CountOpTypes } from '../../crdt/crdt-count.js';
 import { DriverFactory, Driver, Exists } from '../drivers/driver-factory.js';
 import { StorageKey } from '../storage-key.js';
+import { Runtime } from '../../runtime.js';
+import { VolatileStorageKey, VolatileStorageDriverProvider } from '../drivers/volatile.js';
 class MockDriver extends Driver {
     async read(key) { throw new Error('unimplemented'); }
     async write(key, value) { throw new Error('unimplemented'); }
@@ -37,6 +39,14 @@ class MockStorageKey extends StorageKey {
     }
 }
 let testKey;
+const incOp = (actor, from) => ({
+    type: ProxyMessageType.Operations,
+    operations: [{ type: CountOpTypes.Increment, actor, version: { from, to: from + 1 } }],
+    id: 1
+});
+const makeSimpleModel = (meCount, themCount, meVersion, themVersion) => ({ values: new Map([['me', meCount], ['them', themCount]]),
+    version: new Map([['me', meVersion], ['them', themVersion]]) });
+const makeModel = (countDict, versionDict) => ({ values: new Map(Object.entries(countDict)), version: new Map(Object.entries(versionDict)) });
 describe('Store Flow', async () => {
     before(() => { testKey = new MockStorageKey(); });
     // Tests a model resync request happening synchronously with model updates from the driver
@@ -82,17 +92,15 @@ describe('Store Flow', async () => {
         }, SequenceOutput.Register, idVar);
         const storageProxyChanges = [{ inputFn: () => [{ type: ProxyMessageType.SyncRequest, id: sequenceTest.getVariable(idVar) }],
                 variable: { [isSyncRequest]: true } }];
-        const makeModel = (meCount, themCount, meVersion, themVersion) => ({ values: new Map([['me', meCount], ['them', themCount]]),
-            version: new Map([['me', meVersion], ['them', themVersion]]) });
         const driverChanges = [
             { output: { [send]: false } },
-            { input: [makeModel(7, 12, 3, 4)], output: { [send]: true } },
+            { input: [makeSimpleModel(7, 12, 3, 4)], output: { [send]: true } },
             { output: { [send]: false } },
-            { input: [makeModel(8, 12, 4, 4)], output: { [send]: true } }
+            { input: [makeSimpleModel(8, 12, 4, 4)], output: { [send]: true } }
         ];
         sequenceTest.setChanges(onProxyMessage, storageProxyChanges);
         sequenceTest.setChanges(onReceive, driverChanges);
-        sequenceTest.test();
+        await sequenceTest.test();
     });
     // Tests 3 operation updates happening synchronously with 2 model updates from the driver 
     it('applies 3 operations and 2 models simultaneously', async () => {
@@ -118,28 +126,99 @@ describe('Store Flow', async () => {
         }, SequenceOutput.Replace);
         const model = sequenceTest.registerSensor('localModel');
         const inSync = sequenceTest.registerSensor('inSync');
-        const incOp = (actor, from) => ({
-            type: ProxyMessageType.Operations,
-            operations: [{ type: CountOpTypes.Increment, actor, version: { from, to: from + 1 } }],
-            id: 1
-        });
         const storageProxyChanges = [{ input: [incOp('me', 0)] }, { input: [incOp('me', 1)] }, { input: [incOp('me', 2)] }];
-        const makeModel = (meCount, themCount, meVersion, themVersion) => ({ values: new Map([['me', meCount], ['them', themCount]]),
-            version: new Map([['me', meVersion], ['them', themVersion]]) });
         const driverChanges = [
             { output: { [send]: false } },
             // the sendCount at driverChanges[0] is the inc count for ‘me’ 
-            { inputFn: () => [makeModel(sequenceTest.getVariable(meCount), 1, sequenceTest.getVariable(meCount), 1), 1], output: { [send]: true } },
+            { inputFn: () => [makeSimpleModel(sequenceTest.getVariable(meCount), 1, sequenceTest.getVariable(meCount), 1), 1], output: { [send]: true } },
             { output: { [send]: false } },
-            { inputFn: () => [makeModel(sequenceTest.getVariable(meCount), 2, sequenceTest.getVariable(meCount), 2), 2], output: { [send]: true } }
+            { inputFn: () => [makeSimpleModel(sequenceTest.getVariable(meCount), 2, sequenceTest.getVariable(meCount), 2), 2], output: { [send]: true } }
         ];
         sequenceTest.setChanges(onProxyMessage, storageProxyChanges);
         sequenceTest.setChanges(onReceive, driverChanges);
         sequenceTest.setEndInvariant(model, modelValue => {
-            assert.deepEqual(modelValue, { model: makeModel(3, 2, 3, 2) });
+            assert.deepEqual(modelValue, { model: makeSimpleModel(3, 2, 3, 2) });
         });
         sequenceTest.setEndInvariant(inSync, assert.isTrue);
-        sequenceTest.test();
+        await sequenceTest.test();
+    });
+    it('applies operations to two stores connected by a volatile driver', async () => {
+        const sequenceTest = new SequenceTest();
+        sequenceTest.setTestConstructor(() => {
+            const runtime = new Runtime();
+            DriverFactory.clearRegistrationsForTesting();
+            VolatileStorageDriverProvider.register();
+            const storageKey = new VolatileStorageKey('unique');
+            const store1 = new Store(storageKey, Exists.ShouldCreate, null, StorageMode.Direct, CRDTCount);
+            const activeStore1 = store1.activate();
+            const store2 = new Store(storageKey, Exists.ShouldExist, null, StorageMode.Direct, CRDTCount);
+            const activeStore2 = store2.activate();
+            return { store1: activeStore1, store2: activeStore2 };
+        });
+        const store1in = sequenceTest.registerInput('store1.onProxyMessage', 5, { type: ExpectedResponse.Constant, response: true });
+        const store2in = sequenceTest.registerInput('store2.onProxyMessage', 5, { type: ExpectedResponse.Constant, response: true });
+        const store1Model = sequenceTest.registerSensor('store1.localModel');
+        const store2Model = sequenceTest.registerSensor('store2.localModel');
+        const driverModel = sequenceTest.registerSensor('store1.driver.data.data');
+        const store1changes = [
+            { input: [incOp('me', 0)] },
+            { input: [incOp('them', 0)] },
+        ];
+        const store2changes = [
+            { input: [incOp('other', 0)] },
+            { input: [incOp('other', 1)] },
+        ];
+        sequenceTest.setChanges(store1in, store1changes);
+        sequenceTest.setChanges(store2in, store2changes);
+        sequenceTest.setEndInvariant(store1Model, model => {
+            assert.deepEqual(model.getData(), makeModel({ 'me': 1, 'them': 1, 'other': 2 }, { 'me': 1, 'them': 1, 'other': 2 }));
+        });
+        sequenceTest.setEndInvariant(store2Model, model => {
+            assert.deepEqual(model.getData(), makeModel({ 'me': 1, 'them': 1, 'other': 2 }, { 'me': 1, 'them': 1, 'other': 2 }));
+        });
+        sequenceTest.setEndInvariant(driverModel, model => {
+            assert.deepEqual(model, makeModel({ 'me': 1, 'them': 1, 'other': 2 }, { 'me': 1, 'them': 1, 'other': 2 }));
+        });
+        await sequenceTest.test();
+    });
+    it('applies model against operations to two stores connected by a volatile driver', async () => {
+        const sequenceTest = new SequenceTest();
+        sequenceTest.setTestConstructor(() => {
+            const runtime = new Runtime();
+            DriverFactory.clearRegistrationsForTesting();
+            VolatileStorageDriverProvider.register();
+            const storageKey = new VolatileStorageKey('unique');
+            const store1 = new Store(storageKey, Exists.ShouldCreate, null, StorageMode.Direct, CRDTCount);
+            const activeStore1 = store1.activate();
+            const store2 = new Store(storageKey, Exists.ShouldExist, null, StorageMode.Direct, CRDTCount);
+            const activeStore2 = store2.activate();
+            return { store1: activeStore1, store2: activeStore2 };
+        });
+        const store1in = sequenceTest.registerInput('store1.onProxyMessage', 5, { type: ExpectedResponse.Constant, response: true });
+        const store2in = sequenceTest.registerInput('store2.onProxyMessage', 5, { type: ExpectedResponse.Constant, response: true });
+        const store1Model = sequenceTest.registerSensor('store1.localModel');
+        const store2Model = sequenceTest.registerSensor('store2.localModel');
+        const driverModel = sequenceTest.registerSensor('store1.driver.data.data');
+        const store1changes = [
+            { input: [{ type: ProxyMessageType.ModelUpdate, model: makeModel({ 'me': 42 }, { 'me': 12 }) }] },
+            { input: [incOp('them', 0)] }
+        ];
+        const store2changes = [
+            { input: [incOp('other', 0)] },
+            { input: [incOp('other', 1)] },
+        ];
+        sequenceTest.setChanges(store1in, store1changes);
+        sequenceTest.setChanges(store2in, store2changes);
+        sequenceTest.setEndInvariant(store1Model, model => {
+            assert.deepEqual(model.getData(), makeModel({ 'me': 42, 'them': 1, 'other': 2 }, { 'me': 12, 'them': 1, 'other': 2 }));
+        });
+        sequenceTest.setEndInvariant(store2Model, model => {
+            assert.deepEqual(model.getData(), makeModel({ 'me': 42, 'them': 1, 'other': 2 }, { 'me': 12, 'them': 1, 'other': 2 }));
+        });
+        sequenceTest.setEndInvariant(driverModel, model => {
+            assert.deepEqual(model, makeModel({ 'me': 42, 'them': 1, 'other': 2 }, { 'me': 12, 'them': 1, 'other': 2 }));
+        });
+        await sequenceTest.test();
     });
 });
 //# sourceMappingURL=store-sequence-test.js.map

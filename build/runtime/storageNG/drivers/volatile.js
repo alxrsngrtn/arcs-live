@@ -87,7 +87,7 @@ export class VolatileDriver extends Driver {
         throw new Error('Method not implemented.');
     }
 }
-class VolatileStorageDriverProvider {
+export class VolatileStorageDriverProvider {
     willSupport(storageKey) {
         return storageKey.protocol === 'volatile';
     }
@@ -97,6 +97,13 @@ class VolatileStorageDriverProvider {
         }
         return new VolatileDriver(storageKey, exists);
     }
+    static register() {
+        DriverFactory.register(new VolatileStorageDriverProvider());
+    }
 }
-DriverFactory.register(new VolatileStorageDriverProvider());
+// Note that this will automatically register for any production code
+// that uses volatile drivers; but it won't automatically register in 
+// testing; for safety, call VolatileStorageDriverProvider.register()
+// from your test code somewhere.
+VolatileStorageDriverProvider.register();
 //# sourceMappingURL=volatile.js.map

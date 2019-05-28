@@ -7,7 +7,7 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-import { Driver, ReceiveMethod, Exists } from './driver-factory.js';
+import { Driver, ReceiveMethod, StorageDriverProvider, Exists } from './driver-factory.js';
 import { StorageKey } from '../storage-key.js';
 declare type VolatileEntry<Data> = {
     data: Data;
@@ -32,5 +32,10 @@ export declare class VolatileDriver<Data> extends Driver<Data> {
     send(model: Data, version: number): Promise<boolean>;
     write(key: StorageKey, value: Data): Promise<void>;
     read(key: StorageKey): Promise<Data>;
+}
+export declare class VolatileStorageDriverProvider implements StorageDriverProvider {
+    willSupport(storageKey: StorageKey): boolean;
+    driver<Data>(storageKey: StorageKey, exists: Exists): Driver<Data>;
+    static register(): void;
 }
 export {};

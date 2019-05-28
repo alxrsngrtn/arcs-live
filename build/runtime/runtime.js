@@ -40,6 +40,7 @@ export class Runtime {
         this.composerClass = composerClass;
         this.context = context || new Manifest({ id: 'manifest:default' });
         this.volatileMemory = new VolatileMemory();
+        runtime = this;
         // user information. One persona per runtime for now.
     }
     getCacheService() {

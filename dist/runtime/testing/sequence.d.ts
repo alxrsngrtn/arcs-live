@@ -185,6 +185,7 @@ export declare class SequenceTest<T> {
     private resetVariables;
     private resetResults;
     private awaitResults;
+    private objAndName;
     private setupOutputs;
     private interleavings_raw;
     private choosePoint;

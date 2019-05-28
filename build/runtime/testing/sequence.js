@@ -234,6 +234,13 @@ export class SequenceTest {
             input.results = results;
         }
     }
+    objAndName(obj, name) {
+        const parts = name.split('.');
+        for (let i = 0; i < parts.length - 1; i++) {
+            obj = obj[parts[i]];
+        }
+        return { object: obj, name: parts[parts.length - 1] };
+    }
     setupOutputs(obj) {
         for (const output of this.outputs.values()) {
             const responseChecker = value => {
@@ -254,16 +261,12 @@ export class SequenceTest {
             if (output.response.type === ExpectedResponse.Defer) {
                 output.value = output.response.default;
             }
-            const parts = output.name.split('.');
-            let theObject = obj;
-            for (let i = 0; i < parts.length - 1; i++) {
-                theObject = theObject[parts[i]];
-            }
+            const { object: theObject, name } = this.objAndName(obj, output.name);
             if (output.behavior === SequenceOutput.Replace) {
-                theObject[parts[parts.length - 1]] = responseChecker;
+                theObject[name] = responseChecker;
             }
             else if (output.behavior === SequenceOutput.Register) {
-                const result = theObject[parts[parts.length - 1]](responseChecker);
+                const result = theObject[name](responseChecker);
                 if (output.variable) {
                     this.setVariable(output.variable, result);
                 }
@@ -504,7 +507,8 @@ export class SequenceTest {
                     this.interleavingLog.push('<-');
                     this.interleavingLog = this.interleavingLog.concat(value);
                     this.interleavingLog.push(']');
-                    input.results.push(obj[input.name](...value));
+                    const { object: theObject, name } = this.objAndName(obj, input.name);
+                    input.results.push(theObject[name](...value));
                 }
                 this.interleavingLog.push('\n');
             }
@@ -524,14 +528,16 @@ export class SequenceTest {
             if (this.sensors.size > 0) {
                 this.interleavingLog.push('result:');
                 for (const sensor of this.sensors.values()) {
-                    this.interleavingLog.push(sensor.name, obj[sensor.name]);
+                    const { object: theObject, name } = this.objAndName(obj, sensor.name);
+                    this.interleavingLog.push(sensor.name, theObject[name]);
                 }
                 this.interleavingLog.push('\n');
             }
             for (const sensor of this.sensors.values()) {
                 for (const test of sensor.endInvariants) {
                     try {
-                        test(obj[sensor.name]);
+                        const { object: theObject, name } = this.objAndName(obj, sensor.name);
+                        test(theObject[name]);
                     }
                     catch (e) {
                         console.log(...this.interleavingLog);

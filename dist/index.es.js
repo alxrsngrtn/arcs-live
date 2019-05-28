@@ -23633,8 +23633,15 @@ class VolatileStorageDriverProvider {
         }
         return new VolatileDriver(storageKey, exists);
     }
+    static register() {
+        DriverFactory.register(new VolatileStorageDriverProvider());
+    }
 }
-DriverFactory.register(new VolatileStorageDriverProvider());
+// Note that this will automatically register for any production code
+// that uses volatile drivers; but it won't automatically register in 
+// testing; for safety, call VolatileStorageDriverProvider.register()
+// from your test code somewhere.
+VolatileStorageDriverProvider.register();
 
 /**
  * @license
@@ -23670,6 +23677,7 @@ class Runtime {
         this.composerClass = composerClass;
         this.context = context || new Manifest({ id: 'manifest:default' });
         this.volatileMemory = new VolatileMemory();
+        runtime = this;
         // user information. One persona per runtime for now.
     }
     getCacheService() {

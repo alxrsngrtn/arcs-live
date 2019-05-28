@@ -78,6 +78,8 @@ export class DirectStore extends ActiveStore {
         }
         // Don't send to the driver if we're already in sync and there are no driver-side changes.
         if (this.inSync && this.noDriverSideChanges(thisChange, otherChange, messageFromDriver)) {
+            // Need to record the driver version so that we can continue to send.
+            this.version = version;
             return;
         }
         this.version = version + 1;
