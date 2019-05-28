@@ -13,6 +13,7 @@ defineParticle(({DomParticle, log, html, resolver}) => {
 
   const template = html`
 <div>
+  <h2>Classification with ML5</h2>
   <img style="max-width: 240px;" src="{{imageUrl}}"><br>
   <div>
     <div>Label: </span><span>{{label}}</div>

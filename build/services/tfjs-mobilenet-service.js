@@ -1,0 +1,98 @@
+/**
+ * Copyright (c) 2019 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+import { dynamicScript } from '../platform/dynamic-script-web.js';
+import { requireTf } from './tfjs-service.js';
+import { ResourceManager } from './resource-manager.js';
+import { logFactory } from '../platform/log-web.js';
+import { Services } from '../runtime/services.js';
+import { loadImage } from '../platform/image-web.js';
+const log = logFactory('tfjs-mobilenet-service');
+const modelUrl = 'https://cdn.jsdelivr.net/npm/@tensorflow-models/mobilenet@1.0.0';
+/**
+ * Load the `MobileNet` image classifier.
+ *
+ * Dynamically loads MobileNet and its dependencies (e.g. `tfjs`).
+ *
+ * @param version Model version. Choose between 1 or 2. Default: 2
+ * @param alpha Model fidelity ratio. Choose between performant (~0) or highly accurate (~1). Default: 1
+ * @return a reference number to the model, maintained by the `ResourceManager`.
+ */
+const load = async ({ version = 1, alpha = 1.0 }) => {
+    log('Loading tfjs...');
+    const tf = await requireTf();
+    log('Loading MobileNet...');
+    await dynamicScript(modelUrl);
+    const model = await window['mobilenet'].load(version, alpha);
+    log('MobileNet Loaded.');
+    model.version = version;
+    model.alpha = alpha;
+    return ResourceManager.ref(model);
+};
+/**
+ * Find the top k images classes given an input image and a model.
+ *
+ * @param model A classification model reference
+ * @param image An image DOM element or 3D tensor
+ * @param imageUrl An image URL
+ * @param topK The number of predictions to return.
+ * @return A list (or single item) of `ClassificationPrediction`s, which are "label, confidence" tuples.
+ */
+const classify = async ({ model, image, imageUrl, topK = 1 }) => {
+    const model_ = ResourceManager.deref(model);
+    const img = await getImage(image, imageUrl);
+    log('classifying...');
+    const predictions = await model_.classify(img, topK);
+    log('classified.');
+    if (topK === 1) {
+        return predictions.shift();
+    }
+    return predictions;
+};
+/**
+ * Produce a concept vector or image embeddings given a model and an image.
+ *
+ * @param model A classification model reference
+ * @param image An image DOM element or 3D tensor
+ * @param imageUrl An image URL
+ * @return A `MobilenetEmbedding`
+ * @see MobilenetEmbedding
+ */
+const extractEmbeddings = async ({ model, image, imageUrl }) => {
+    const model_ = ResourceManager.deref(model);
+    const img = await getImage(image, imageUrl);
+    log('inferring...');
+    const inference = await model_.infer(img);
+    log('embedding inferred.');
+    return { version: model_.version, alpha: model_.alpha, feature: inference };
+};
+/** Clean up model resources. */
+const dispose = ({ reference }) => ResourceManager.dispose(reference);
+/**
+ * Helper method that uses a DOM image element or loads the image from a URL.
+ *
+ * @param image An image that Mobilnet will accept
+ * @param imageUrl A URL string to an image.
+ *
+ * @see MobilenetImageInput
+ * @throws Error if both parameters are falsy.
+ */
+const getImage = async (image, imageUrl) => {
+    if (!image && !imageUrl) {
+        throw new Error('Must specify at least one: a DOM Image element or Image URL!');
+    }
+    log('loading image...');
+    return !image && imageUrl ? await loadImage(imageUrl) : image;
+};
+Services.register('mobilenet', {
+    load,
+    classify,
+    extractEmbeddings,
+    dispose,
+});
+//# sourceMappingURL=tfjs-mobilenet-service.js.map

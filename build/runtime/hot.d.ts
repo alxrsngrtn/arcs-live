@@ -18,6 +18,8 @@ export declare type Consumer<T> = (input: T) => void;
 export declare type Runnable = () => void;
 /** A function that converts some input into a boolean, often use for calls like `filter`. */
 export declare type Predicate<T> = (input: T) => boolean;
+/** A function that maps an input to an output. */
+export declare type Mapper<I, O> = (input: I) => O;
 /**
  * The base type for Literals, i.e. objects that have been serialized into JSON.
  *
