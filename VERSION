@@ -1,9 +1,5 @@
-commit e45bddb636fb790414ba4a4bf671a7c04db45d16
-Author: Paul Lindner <plindner@google.com>
-Date:   Tue May 28 12:44:59 2019 -0700
+commit 501848d30ae3450f604292570aa76a75bef6fb38
+Author: Ray Cromwell <cromwellian@gmail.com>
+Date:   Tue May 28 13:35:57 2019 -0700
 
-    Remove deprecated/unused code (#3080)
-    
-    * Remove deprecated _views method from DomParticle
-    * Remove deprecated components
-    * Remove unused third-party code
+    Add mock textclassifier service (#3091)
