@@ -1,5 +1,13 @@
-commit 501848d30ae3450f604292570aa76a75bef6fb38
+commit b3f7da164449b04b614416a478989014f005732a
 Author: Ray Cromwell <cromwellian@gmail.com>
-Date:   Tue May 28 13:35:57 2019 -0700
+Date:   Tue May 28 13:42:07 2019 -0700
 
-    Add mock textclassifier service (#3091)
+    Youtube viewer (#3087)
+    
+    * Add youtube-viewer component with captions
+    
+    * Fix nits
+    
+    * fix date
+    
+    * fix dup template
