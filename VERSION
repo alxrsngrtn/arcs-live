@@ -1,47 +1,9 @@
-commit 1a22d145f2c0df3e00c8de82c813a4f745b0947e
-Author: Alex Rosengarten <alxr@google.com>
-Date:   Tue May 28 16:24:59 2019 -0700
+commit 2026b5689767b01ced18390182dd80df29d4c961
+Author: Paul Lindner <plindner@google.com>
+Date:   Wed May 29 11:33:00 2019 -0700
 
-    Increased Test Coverage: Jsonld-To-Manifest Converter (#3081)
+    Partial rollback of 17f565f (#3095)
     
-    * created test file
+    Tested manual firebase tests
     
-    * dummy test
-    
-    * Health: write two simple tests for JsonldToManifest
-    
-    * increased coverage an incremental amount
-    
-    * increased coverage an incremental amount
-    
-    * WIP last test
-    
-    * fixed lint error -- too many spaces
-    
-    * rm change to integration tests script
-    
-    * rm change to integration tests script
-    
-    * pull from master + resolved first point of feedback.
-    
-    * converted constants to function
-    
-    * refactored tests to read jsonld from file
-    
-    * favoring await syntax instead of promises
-    
-    * fixed tsc/tslint error
-    
-    * added std license
-    
-    * !! --> Boolean()
-    
-    * proper syntax for skip
-    
-    * cleaner try..catch. Return in blocks
-    
-    * using promisify for cleaner syntax
-    
-    * chai test using more expressive assert
-    
-    * chai test using more expressive assert
+    Fixes: #3040 #3068

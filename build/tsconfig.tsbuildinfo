@@ -466,7 +466,7 @@
         "signature": "26334e0732809d8374bb07bc87fc6ccb28957bdff74cde533f401f1c6ebba400"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/firebase/firebase-storage.ts": {
-        "version": "0605fcd25e941a444560b2e94bf31ad048d55a24706c0eb5ae94295ffebc6ef0",
+        "version": "222d3a4329a3c7901d587abe0a4a68936079eee75cb1eee5ec9ab5a90c8a8620",
         "signature": "2697cb5f0b59c35ac462fe85287a3e7ac2db27f696871271fe718875b6c193fa"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/firebase/firebase-provider.ts": {
