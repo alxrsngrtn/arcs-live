@@ -1,9 +1,13 @@
-commit 2026b5689767b01ced18390182dd80df29d4c961
+commit 08b9f55e56911c1bd643b277b7f047aed544b823
 Author: Paul Lindner <plindner@google.com>
-Date:   Wed May 29 11:33:00 2019 -0700
+Date:   Wed May 29 21:51:18 2019 -0700
 
-    Partial rollback of 17f565f (#3095)
+    Standardize and enforce License headers (#3079)
     
-    Tested manual firebase tests
-    
-    Fixes: #3040 #3068
+    * Introduce eslint-plugin-header v3.0.0
+    * Convert double-slash license comments to blocks
+    * Add missing @license
+    * Fix licenses with no indent
+    * Remove comments from LICENSE
+    * Add/Fix licenses
+    * Add the configuration for the license header check

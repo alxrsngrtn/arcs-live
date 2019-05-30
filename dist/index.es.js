@@ -10,7 +10,15 @@ import WebCrypto from 'node-webcrypto-ossl';
 import WebSocket from 'ws';
 import os from 'os';
 
-// Copyright (c) 2017 Google Inc. All rights reserved.
+/**
+ * @license
+ * Copyright (c) 2017 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
 
 /**
  * @license
@@ -432,13 +440,15 @@ ${this._slotsToManifestString()}`;
     }
 }
 
-// @license
-// Copyright (c) 2017 Google Inc. All rights reserved.
-// This code may only be used under the BSD style license found at
-// http://polymer.github.io/LICENSE.txt
-// Code distributed by Google as part of this project is also
-// subject to an additional IP rights grant found at
-// http://polymer.github.io/PATENTS.txt
+/**
+ * @license
+ * Copyright (c) 2017 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
 // tslint:disable-next-line: variable-name
 const Symbols = { identifier: Symbol('id') };
 
@@ -647,7 +657,8 @@ class ArcId extends Id {
     }
 }
 
-/** @license
+/**
+ * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
  * This code may only be used under the BSD style license found at
  * http://polymer.github.io/LICENSE.txt
@@ -1056,7 +1067,8 @@ function handleFor(storage, idGenerator, name = null, particleId = '', canRead =
     return handle;
 }
 
-/** @license
+/**
+ * @license
  * Copyright (c) 2018 Google Inc. All rights reserved.
  * This code may only be used under the BSD style license found at
  * http://polymer.github.io/LICENSE.txt
@@ -1146,7 +1158,15 @@ class ClientReference extends Reference {
     }
 }
 
-// @license
+/**
+ * @license
+ * Copyright (c) 2017 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
 class Entity {
     // Currently we need a ParticleExecutionContext to be injected here in order to construct entity References (done in the sanitizeEntry
     // function below).
@@ -1649,13 +1669,15 @@ class Schema {
     }
 }
 
-// @license
-// Copyright (c) 2017 Google Inc. All rights reserved.
-// This code may only be used under the BSD style license found at
-// http://polymer.github.io/LICENSE.txt
-// Code distributed by Google as part of this project is also
-// subject to an additional IP rights grant found at
-// http://polymer.github.io/PATENTS.txt
+/**
+ * @license
+ * Copyright (c) 2017 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
 class SlotInfo {
     constructor(formFactor, handle) {
         this.formFactor = formFactor;
@@ -1669,13 +1691,15 @@ class SlotInfo {
     }
 }
 
-// @license
-// Copyright (c) 2018 Google Inc. All rights reserved.
-// This code may only be used under the BSD style license found at
-// http://polymer.github.io/LICENSE.txt
-// Code distributed by Google as part of this project is also
-// subject to an additional IP rights grant found at
-// http://polymer.github.io/PATENTS.txt
+/**
+ * @license
+ * Copyright (c) 2018 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
 // Equivalent to an Entity with Schema { serialization Text }
 class ArcInfo {
     constructor(arcId, serialization) {
@@ -1698,7 +1722,15 @@ class ArcHandle {
     }
 }
 
-// @license
+/**
+ * @license
+ * Copyright (c) 2017 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
 class TypeVariableInfo {
     constructor(name, canWriteSuperset, canReadSubset) {
         this.name = name;
@@ -1883,7 +1915,15 @@ class TypeVariableInfo {
     }
 }
 
-// @license
+/**
+ * @license
+ * Copyright (c) 2017 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
 class Type {
     constructor(tag) {
         this.tag = tag;
@@ -2501,7 +2541,15 @@ class HandleType extends Type {
     }
 }
 
-// Copyright (c) 2017 Google Inc. All rights reserved.
+/**
+ * @license
+ * Copyright (c) 2017 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
 class TypeChecker {
     // resolve a list of handleConnection types against a handle
     // base type. This is the core type resolution mechanism, but should only
@@ -3451,7 +3499,15 @@ class DescriptionFormatter {
     }
 }
 
-// Copyright (c) 2017 Google Inc. All rights reserved.
+/**
+ * @license
+ * Copyright (c) 2017 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
 function compareNulls(o1, o2) {
     if (o1 === o2)
         return 0;
@@ -3487,7 +3543,15 @@ function compareComparables(o1, o2) {
     return o1._compareTo(o2);
 }
 
-// @
+/**
+ * @license
+ * Copyright (c) 2017 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
 var EventKind;
 (function (EventKind) {
     EventKind["change"] = "Change";
@@ -12995,7 +13059,15 @@ function peg$parse(input, options) {
 }
 const parse = peg$parse;
 
-// Copyright (c) 2017 Google Inc. All rights reserved.
+/**
+ * @license
+ * Copyright (c) 2017 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
 
 async function digest(str) {
   const sha = crypto.createHash('sha1');
@@ -13022,7 +13094,15 @@ class ManifestMeta {
     }
 }
 
-// Copyright (c) 2017 Google Inc. All rights reserved.
+/**
+ * @license
+ * Copyright (c) 2017 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
 class EndPoint {
 }
 class ParticleEndPoint extends EndPoint {
@@ -13152,7 +13232,15 @@ class ConnectionConstraint {
     }
 }
 
-// Copyright (c) 2017 Google Inc. All rights reserved.
+/**
+ * @license
+ * Copyright (c) 2017 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
 class Handle$1 {
     constructor(recipe) {
         this._id = null;
@@ -13416,7 +13504,15 @@ class Handle$1 {
     }
 }
 
-// Copyright (c) 2017 Google Inc. All rights reserved.
+/**
+ * @license
+ * Copyright (c) 2017 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
 class HandleConnection {
     constructor(name, particle) {
         this._tags = [];
@@ -13645,7 +13741,15 @@ class HandleConnection {
     }
 }
 
-// Copyright (c) 2017 Google Inc. All rights reserved.
+/**
+ * @license
+ * Copyright (c) 2017 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
 class SlotConnection {
     constructor(name, particle) {
         this._targetSlot = undefined;
@@ -13804,7 +13908,15 @@ class SlotConnection {
     }
 }
 
-// Copyright (c) 2017 Google Inc. All rights reserved.
+/**
+ * @license
+ * Copyright (c) 2017 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
 class Particle {
     constructor(recipe, name) {
         this._id = undefined;
@@ -14129,7 +14241,15 @@ class Particle {
     }
 }
 
-// Copyright (c) 2017 Google Inc. All rights reserved.
+/**
+ * @license
+ * Copyright (c) 2017 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
 class Search {
     constructor(phrase, unresolvedTokens = undefined) {
         assert(phrase);
@@ -14213,7 +14333,15 @@ class Search {
     }
 }
 
-// Copyright (c) 2017 Google Inc. All rights reserved.
+/**
+ * @license
+ * Copyright (c) 2017 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
 class Slot {
     constructor(recipe, name) {
         this._id = undefined;
@@ -14361,7 +14489,15 @@ class Slot {
     }
 }
 
-// Copyright (c) 2017 Google Inc. All rights reserved.
+/**
+ * @license
+ * Copyright (c) 2017 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
 class Recipe {
     constructor(name) {
         this._requires = [];
@@ -14991,7 +15127,15 @@ class RequireSection extends Recipe {
     }
 }
 
-// Copyright (c) 2017 Google Inc. All rights reserved.
+/**
+ * @license
+ * Copyright (c) 2017 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
 class Shape {
     constructor(recipe, particles, handles, hcs) {
         this.recipe = recipe;
@@ -15354,7 +15498,15 @@ class RecipeUtil {
     }
 }
 
-// @license
+/**
+ * @license
+ * Copyright (c) 2017 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
 class CrdtCollectionModel {
     constructor(model) {
         // id => {value, Set[keys]}
@@ -15465,17 +15617,27 @@ class CrdtCollectionModel {
     }
 }
 
-// @
-// Copyright (c) 2017 Google Inc. All rights reserved.
-// This code may only be used under the BSD style license found at
-// http://polymer.github.io/LICENSE.txt
-// Code distributed by Google as part of this project is also
-// subject to an additional IP rights grant found at
-// http://polymer.github.io/PATENTS.txt
+/**
+ * @license
+ * Copyright (c) 2017 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
 class KeyBase {
 }
 
-// @
+/**
+ * @license
+ * Copyright (c) 2017 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
 class VolatileKey extends KeyBase {
     constructor(key) {
         super();
@@ -15981,7 +16143,15 @@ class VolatileBigCollection extends VolatileStorageProvider {
     }
 }
 
-// @license
+/**
+ * @license
+ * Copyright (c) 2018 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
 /**
  * Returns the set delta between two lists based on custom object comparison.
  * `keyFn` takes type T and returns the value by which items should be compared.
@@ -16015,7 +16185,15 @@ function setDiffCustom(from, to, keyFn) {
     return result;
 }
 
-// @license
+/**
+ * @license
+ * Copyright (c) 2018 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
 var Scope;
 (function (Scope) {
     Scope[Scope["arc"] = 1] = "arc"; // target must be a storage key for an ArcInfo Variable
@@ -16183,7 +16361,15 @@ class SyntheticCollection extends StorageProviderBase {
     }
 }
 
-// @
+/**
+ * @license
+ * Copyright (c) 2017 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
 // TODO(sjmiles): StorageProviderFactory.register can be used
 // to install additional providers, as long as it's invoked
 // before any StorageProviderFactory objects are constructed.
@@ -17418,11 +17604,35 @@ ${e.message}
     }
 }
 
-// Copyright (c) 2017 Google Inc. All rights reserved.
+/**
+ * @license
+ * Copyright (c) 2017 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
 
-// Copyright (c) 2017 Google Inc. All rights reserved.
+/**
+ * @license
+ * Copyright (c) 2017 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
 
-// Copyright (c) 2017 Google Inc. All rights reserved.
+/**
+ * @license
+ * Copyright (c) 2017 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
 
 /**
  * @license
@@ -19243,12 +19453,15 @@ class SlotProxy {
     }
 }
 
-// Copyright (c) 2018 Google Inc. All rights reserved.
-// This code may only be used under the BSD style license found at
-// http://polymer.github.io/LICENSE.txt
-// Code distributed by Google as part of this project is also
-// subject to an additional IP rights grant found at
-// http://polymer.github.io/PATENTS.txt
+/**
+ * @license
+ * Copyright (c) 2018 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
 
 // This is only relevant in the web devtools, but we need to
 // ensure that the stack trace is passed through on node
@@ -19813,7 +20026,15 @@ class StorageProxyScheduler {
     }
 }
 
-// Copyright (c) 2019 Google Inc. All rights reserved.
+/**
+ * @license
+ * Copyright (c) 2019 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
 
 /**
  * @license
@@ -20420,7 +20641,15 @@ class StubLoader extends Loader {
     }
 }
 
-// @license
+/**
+ * @license
+ * Copyright (c) 2017 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
 // TODO: Make this generic so that it can also be used in-browser, or add a
 // separate in-process browser pec-factory.
 function FakePecFactory(loader) {
@@ -20434,7 +20663,15 @@ function FakePecFactory(loader) {
     };
 }
 
-// Copyright (c) 2017 Google Inc. All rights reserved.
+/**
+ * @license
+ * Copyright (c) 2017 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
 /**
  * Walkers traverse an object, calling methods based on the
  * features encountered on that object. For example, a RecipeWalker
@@ -20614,7 +20851,15 @@ Walker.Permuted = WalkerTactic.Permuted;
 // tslint:disable-next-line: variable-name
 Walker.Independent = WalkerTactic.Independent;
 
-// Copyright (c) 2017 Google Inc. All rights reserved.
+/**
+ * @license
+ * Copyright (c) 2017 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
 class RecipeWalker extends Walker {
     onResult(result) {
         super.onResult(result);
@@ -20688,7 +20933,15 @@ class RecipeWalker extends Walker {
     }
 }
 
-// Copyright (c) 2019 Google Inc. All rights reserved.
+/**
+ * @license
+ * Copyright 2019 Google LLC.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
 class SlotUtils {
     // Helper methods.
     static getClonedSlot(recipe, selectedSlot) {
@@ -20798,7 +21051,15 @@ class SlotUtils {
     }
 }
 
-// Copyright (c) 2018 Google Inc. All rights reserved.
+/**
+ * @license
+ * Copyright (c) 2018 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
 class ResolveWalker extends RecipeWalker {
     constructor(tactic, arc) {
         super(tactic);
@@ -20945,6 +21206,7 @@ class RecipeResolver {
 }
 
 /**
+ * @license
  * Copyright (c) 2019 Google Inc. All rights reserved.
  * This code may only be used under the BSD style license found at
  * http://polymer.github.io/LICENSE.txt
@@ -21216,6 +21478,15 @@ class ParticleExecutionHost {
     }
 }
 
+/**
+ * @license
+ * Copyright 2019 Google LLC.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
 /**
  * A simmple Mutex to gate access to critical async code
  * sections that should not execute concurrently.
@@ -21912,6 +22183,15 @@ ${this.activeRecipe.toString()}`;
     }
 }
 
+/**
+ * @license
+ * Copyright 2019 Google LLC.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
 class RuntimeCacheService {
     constructor() {
         this.map = new Map();
@@ -22142,6 +22422,15 @@ class DescriptionDomFormatter extends DescriptionFormatter {
     }
 }
 
+/**
+ * @license
+ * Copyright 2019 Google LLC.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
 var IconStyles = `
   icon {
     font-family: "Material Icons";
@@ -22165,15 +22454,15 @@ var IconStyles = `
   }
 `;
 
-/*
-@license
-Copyright (c) 2016 The Polymer Project Authors. All rights reserved.
-This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
-The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
-The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
-Code distributed by Google as part of the polymer project is also
-subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
-*/
+/**
+ * @license
+ * Copyright (c) 2016 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
 
 /* Annotator */
 // tree walker that generates arbitrary data using visitor function `cb`
@@ -23536,7 +23825,15 @@ class DriverFactory {
 }
 DriverFactory.providers = [];
 
-// @
+/**
+ * @license
+ * Copyright 2019 Google LLC.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
 
 /**
  * @license
@@ -23734,9 +24031,18 @@ class WebCryptoMemoryKeyStorage {
     }
 }
 
-// Copyright (c) 2018 Google Inc. All rights reserved.
+/**
+ * @license
+ * Copyright (c) 2018 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
 const crypto$1 = new WebCrypto();
 
+/* eslint-disable header/header */
 // ISC License (ISC)
 //
 // Copyright 2017 Rhett Robinson
@@ -24214,6 +24520,15 @@ class KeyManager {
 
 var commonjsGlobal = typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
 
+/**
+ * @license
+ * Copyright 2019 Google LLC.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
 commonjsGlobal.logLevel = 2;
 
 /**
@@ -24495,6 +24810,15 @@ class PlatformLoader extends PlatformLoaderBase {
   }
 }
 
+/**
+ * @license
+ * Copyright 2019 Google LLC.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
 const pecIndustry = loader => {
     return (pecId, idGenerator) => {
         const channel = new MessageChannel();
@@ -24565,18 +24889,29 @@ class ArcStoresFetcher {
     }
 }
 
-// Copyright (c) 2018 Google Inc. All rights reserved.
-// This code may only be used under the BSD style license found at
-// http://polymer.github.io/LICENSE.txt
-// Code distributed by Google as part of this project is also
-// subject to an additional IP rights grant found at
-// http://polymer.github.io/PATENTS.txt
+/**
+ * @license
+ * Copyright (c) 2018 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
 function now() {
     const time = process.hrtime();
     return time[0] * 1000 + time[1] / 1000000;
 }
 
-// Copyright (c) 2018 Google Inc. All rights reserved.
+/**
+ * @license
+ * Copyright (c) 2018 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
 // Provides access to device hardware resource metrics for a node process.
 class DeviceInfo {
     // Returns the number of logical cores.
@@ -24590,18 +24925,15 @@ class DeviceInfo {
     }
 }
 
-/*
-  Copyright 2015 Google Inc. All Rights Reserved.
-  Licensed under the Apache License, Version 2.0 (the "License");
-  you may not use this file except in compliance with the License.
-  You may obtain a copy of the License at
-      http://www.apache.org/licenses/LICENSE-2.0
-  Unless required by applicable law or agreed to in writing, software
-  distributed under the License is distributed on an "AS IS" BASIS,
-  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  See the License for the specific language governing permissions and
-  limitations under the License.
-*/
+/**
+ * @license
+ * Copyright 2015 Google LLC.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
 const events = [];
 let pid;
 let now$1;
@@ -24919,12 +25251,15 @@ class StrategyExplorerAdapter {
     }
 }
 
-// Copyright (c) 2018 Google Inc. All rights reserved.
-// This code may only be used under the BSD style license found at
-// http://polymer.github.io/LICENSE.txt
-// Code distributed by Google as part of this project is also
-// subject to an additional IP rights grant found at
-// http://polymer.github.io/PATENTS.txt
+/**
+ * @license
+ * Copyright (c) 2018 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
 
 // TODO(wkorman): Incorporate debug levels. Consider outputting
 // preamble in the specified color via ANSI escape codes. Consider
@@ -25306,7 +25641,15 @@ class PlanningResult {
     }
 }
 
-// Copyright (c) 2017 Google Inc. All rights reserved.
+/**
+ * @license
+ * Copyright (c) 2017 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
 class Strategizer {
     constructor(strategies, evaluators, ruleset) {
         this._generation = 0;
@@ -25594,7 +25937,15 @@ class Ruleset {
 // tslint:disable-next-line: variable-name
 Ruleset.Builder = RulesetBuilder;
 
-// Copyright (c) 2017 Google Inc. All rights reserved.
+/**
+ * @license
+ * Copyright (c) 2017 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
 class AddMissingHandles extends Strategy {
     // TODO: move generation to use an async generator.
     async generate(inputParams) {
@@ -25629,7 +25980,15 @@ class AddMissingHandles extends Strategy {
     }
 }
 
-// Copyright (c) 2017 Google Inc. All rights reserved.
+/**
+ * @license
+ * Copyright (c) 2017 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
 class AssignHandles extends Strategy {
     async generate(inputParams) {
         const self = this;
@@ -25710,7 +26069,15 @@ class AssignHandles extends Strategy {
     }
 }
 
-// Copyright (c) 2018 Google Inc. All rights reserved.
+/**
+ * @license
+ * Copyright (c) 2018 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
 // This strategy coalesces unresolved terminal recipes (i.e. those that cannot
 // be modified by any strategy apart from this one) by finding unresolved
 // use/? handle and finding a matching create/? handle in another recipe and
@@ -25943,7 +26310,15 @@ class CoalesceRecipes extends Strategy {
     }
 }
 
-// Copyright (c) 2017 Google Inc. All rights reserved.
+/**
+ * @license
+ * Copyright (c) 2017 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
 class ConvertConstraintsToConnections extends Strategy {
     async generate(inputParams) {
         const arcModality = this.arc.modality;
@@ -26167,7 +26542,15 @@ class ConvertConstraintsToConnections extends Strategy {
     }
 }
 
-// Copyright (c) 2017 Google Inc. All rights reserved.
+/**
+ * @license
+ * Copyright (c) 2017 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
 class CreateDescriptionHandle extends Strategy {
     async generate(inputParams) {
         return StrategizerWalker.over(this.getResults(inputParams), new class extends StrategizerWalker {
@@ -26200,7 +26583,15 @@ class CreateDescriptionHandle extends Strategy {
     }
 }
 
-// Copyright (c) 2017 Google Inc. All rights reserved.
+/**
+ * @license
+ * Copyright (c) 2017 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
 class CreateHandleGroup extends Strategy {
     async generate(inputParams) {
         return StrategizerWalker.over(this.getResults(inputParams), new class extends StrategizerWalker {
@@ -26258,7 +26649,15 @@ class CreateHandleGroup extends Strategy {
     }
 }
 
-// Copyright (c) 2018 Google Inc. All rights reserved.
+/**
+ * @license
+ * Copyright (c) 2018 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
 class FindHostedParticle extends Strategy {
     async generate(inputParams) {
         const arc = this.arc;
@@ -26310,7 +26709,15 @@ class FindHostedParticle extends Strategy {
     }
 }
 
-// Copyright (c) 2019 Google Inc. All rights reserved.
+/**
+ * @license
+ * Copyright (c) 2019 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
 class FindRequiredParticle extends Strategy {
     async generate(inputParams) {
         const arc = this.arc;
@@ -26346,7 +26753,15 @@ class FindRequiredParticle extends Strategy {
     }
 }
 
-// Copyright (c) 2017 Google Inc. All rights reserved.
+/**
+ * @license
+ * Copyright (c) 2017 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
 class GroupHandleConnections extends Strategy {
     constructor(arc, args) {
         super(arc, args);
@@ -26451,7 +26866,15 @@ class GroupHandleConnections extends Strategy {
     }
 }
 
-// Copyright (c) 2017 Google Inc. All rights reserved.
+/**
+ * @license
+ * Copyright (c) 2017 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
 class InitPopulation extends Strategy {
     constructor(arc, { contextual = false, recipeIndex }) {
         super(arc, { contextual });
@@ -26497,7 +26920,15 @@ class InitPopulation extends Strategy {
     }
 }
 
-// Copyright (c) 2017 Google Inc. All rights reserved.
+/**
+ * @license
+ * Copyright (c) 2017 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
 class InitSearch extends Strategy {
     constructor(arc, { search }) {
         super(arc, { search });
@@ -26521,7 +26952,15 @@ class InitSearch extends Strategy {
     }
 }
 
-// Copyright (c) 2017 Google Inc. All rights reserved.
+/**
+ * @license
+ * Copyright (c) 2017 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
 class MapSlots extends Strategy {
     async generate(inputParams) {
         const arc = this.arc;
@@ -26575,7 +27014,15 @@ class MapSlots extends Strategy {
     }
 }
 
-// Copyright (c) 2017 Google Inc. All rights reserved.
+/**
+ * @license
+ * Copyright (c) 2017 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
 /*
  * Match free handles (i.e. handles that aren't connected to any connections)
  * to connections.
@@ -26601,7 +27048,15 @@ class MatchFreeHandlesToConnections extends Strategy {
     }
 }
 
-// Copyright (c) 2017 Google Inc. All rights reserved.
+/**
+ * @license
+ * Copyright (c) 2017 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
 class MatchParticleByVerb extends Strategy {
     async generate(inputParams) {
         const arc = this.arc;
@@ -26627,7 +27082,15 @@ class MatchParticleByVerb extends Strategy {
     }
 }
 
-// Copyright (c) 2017 Google Inc. All rights reserved.
+/**
+ * @license
+ * Copyright (c) 2017 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
 // This strategy substitutes '&verb' declarations with recipes,
 // according to the following conditions:
 // 1) the recipe is named by the verb described in the particle
@@ -26866,7 +27329,15 @@ class MatchRecipeByVerb extends Strategy {
     }
 }
 
-// Copyright (c) 2017 Google Inc. All rights reserved.
+/**
+ * @license
+ * Copyright (c) 2017 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
 class NameUnnamedConnections extends Strategy {
     async generate(inputParams) {
         return StrategizerWalker.over(this.getResults(inputParams), new class extends StrategizerWalker {
@@ -26891,14 +27362,30 @@ class NameUnnamedConnections extends Strategy {
     }
 }
 
-// Copyright (c) 2018 Google Inc. All rights reserved.
+/**
+ * @license
+ * Copyright (c) 2018 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
 class ResolveRecipe extends Strategy {
     async generate(inputParams) {
         return StrategizerWalker.over(this.getResults(inputParams), new ResolveWalker(ResolveWalker.Permuted, this.arc), this);
     }
 }
 
-// Copyright (c) 2017 Google Inc. All rights reserved.
+/**
+ * @license
+ * Copyright (c) 2017 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
 class SearchTokensToParticles extends Strategy {
     constructor(arc, options) {
         super(arc, options);
@@ -27008,7 +27495,15 @@ class SearchTokensToParticles extends Strategy {
     }
 }
 
-// Copyright (c) 2018 Google Inc. All rights reserved.
+/**
+ * @license
+ * Copyright (c) 2018 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
 // tslint:disable-next-line: variable-name
 const Empty = new Ruleset.Builder().build();
 // tslint:disable-next-line: variable-name
@@ -27026,7 +27521,15 @@ const ExperimentalPhased = new Ruleset.Builder().order([
 // tslint:disable-next-line: variable-name
 const ExperimentalLinear = new Ruleset.Builder().order(InitPopulation, InitSearch, SearchTokensToParticles, MatchRecipeByVerb, MatchParticleByVerb, ConvertConstraintsToConnections, GroupHandleConnections, MatchFreeHandlesToConnections, AddMissingHandles, AssignHandles, MapSlots, CreateDescriptionHandle, ResolveRecipe).build();
 
-// Copyright (c) 2017 Google Inc. All rights reserved.
+/**
+ * @license
+ * Copyright (c) 2018 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
 class SearchTokensToHandles extends Strategy {
     async generate(inputParams) {
         const arc = this.arc;
@@ -27072,7 +27575,15 @@ class SearchTokensToHandles extends Strategy {
     }
 }
 
-// Copyright (c) 2017 Google Inc. All rights reserved.
+/**
+ * @license
+ * Copyright (c) 2017 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
 const suggestionByHash = () => Runtime.getRuntime().getCacheService().getOrCreateCache('suggestionByHash');
 class Planner {
     // TODO: Use context.arc instead of arc
@@ -28088,8 +28599,9 @@ class DevtoolsInspector {
     }
 }
 
-/*
- * Copyright (c) 2019 Google Inc. All rights reserved.
+/**
+ * @license
+ * Copyright 2019 Google LLC.
  * This code may only be used under the BSD style license found at
  * http://polymer.github.io/LICENSE.txt
  * Code distributed by Google as part of this project is also
@@ -28172,8 +28684,9 @@ const Utils = {
   spawn
 };
 
-/*
- * Copyright (c) 2019 Google Inc. All rights reserved.
+/**
+ * @license
+ * Copyright 2019 Google LLC.
  * This code may only be used under the BSD style license found at
  * http://polymer.github.io/LICENSE.txt
  * Code distributed by Google as part of this project is also
@@ -28220,7 +28733,8 @@ class SyntheticStores {
 }
 
 /**
- * Copyright (c) 2019 Google Inc. All rights reserved.
+ * @license
+ * Copyright 2019 Google LLC.
  * This code may only be used under the BSD style license found at
  * http://polymer.github.io/LICENSE.txt
  * Code distributed by Google as part of this project is also
@@ -28336,7 +28850,8 @@ class ArcHost {
 }
 
 /**
- * Copyright (c) 2019 Google Inc. All rights reserved.
+ * @license
+ * Copyright 2019 Google LLC.
  * This code may only be used under the BSD style license found at
  * http://polymer.github.io/LICENSE.txt
  * Code distributed by Google as part of this project is also
@@ -28365,6 +28880,15 @@ class RamSlotComposer extends SlotComposer {
   }
 }
 
+/**
+ * @license
+ * Copyright 2019 Google LLC.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
 const version = '0_6_0';
 const firebase = `firebase://arcs-storage.firebaseio.com/AIzaSyBme42moeI-2k8WgXh-6YK_wYyjEXo4Oz8/${version}`;
 const pouchdb = `pouchdb://local/arcs/${version}`;
@@ -28399,15 +28923,15 @@ const Const = {
   }
 };
 
-/*
-@license
-Copyright (c) 2018 The Polymer Project Authors. All rights reserved.
-This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
-The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
-The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
-Code distributed by Google as part of the polymer project is also
-subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
-*/
+/**
+ * @license
+ * Copyright (c) 2018 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
 
 const log$2 = logFactory('UserArcs', '#4f0433');
 const warn$2 = logFactory('UserArcs', '#4f0433', 'warn');
@@ -28479,15 +29003,15 @@ class UserArcs {
   }
 }
 
-/*
-@license
-Copyright (c) 2018 The Polymer Project Authors. All rights reserved.
-This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
-The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
-The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
-Code distributed by Google as part of the polymer project is also
-subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
-*/
+/**
+ * @license
+ * Copyright (c) 2018 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
 
 const log$3 = logFactory('SingleUserContext', '#f2ce14');
 const warn$3 = logFactory('SingleUserContext', '#f2ce14', 'warn');
@@ -28773,15 +29297,15 @@ const SingleUserContext = class {
   }
 };
 
-/*
-@license
-Copyright (c) 2018 The Polymer Project Authors. All rights reserved.
-This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
-The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
-The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
-Code distributed by Google as part of the polymer project is also
-subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
-*/
+/**
+ * @license
+ * Copyright (c) 2018 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
 
 const log$4 = logFactory('UserContext', '#4f0433');
 const warn$4 = logFactory('UserContext', '#4f0433', 'warn');
@@ -29751,15 +30275,15 @@ class Planificator {
  * http://polymer.github.io/PATENTS.txt
  */
 
-/*
-@license
-Copyright (c) 2018 The Polymer Project Authors. All rights reserved.
-This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
-The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
-The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
-Code distributed by Google as part of the polymer project is also
-subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
-*/
+/**
+ * @license
+ * Copyright (c) 2018 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
 
 const log$6 = logFactory('UserPlanner', '#4f0433');
 const warn$5 = logFactory('UserPlanner', '#4f0433', 'warn');
@@ -29833,9 +30357,9 @@ class UserPlanner {
   }
 }
 
-/*
+/**
  * @license
- * Copyright (c) 2019 Google Inc. All rights reserved.
+ * Copyright 2019 Google LLC.
  * This code may only be used under the BSD style license found at
  * http://polymer.github.io/LICENSE.txt
  * Code distributed by Google as part of this project is also

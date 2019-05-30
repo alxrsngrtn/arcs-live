@@ -364,6 +364,15 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var pouchdb__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(58);
 /* harmony import */ var pouchdb_adapter_memory__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(70);
 /* harmony import */ var pouchdb_debug__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(153);
+/**
+ * @license
+ * Copyright 2019 Google LLC.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
 
 
 

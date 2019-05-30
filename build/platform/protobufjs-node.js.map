@@ -1,1 +1,1 @@
-{"version":3,"file":"protobufjs-node.js","sourceRoot":"","sources":["../../src/platform/protobufjs-node.ts"],"names":[],"mappings":"AAAA,sDAAsD;AACtD,kEAAkE;AAClE,uCAAuC;AACvC,6DAA6D;AAC7D,oDAAoD;AACpD,uCAAuC;AAEvC,OAAO,UAAU,MAAM,YAAY,CAAC;AACpC,OAAO,EAAC,UAAU,EAAC,CAAC"}
+{"version":3,"file":"protobufjs-node.js","sourceRoot":"","sources":["../../src/platform/protobufjs-node.ts"],"names":[],"mappings":"AAAA;;;;;;;;GAQG;AAEH,OAAO,UAAU,MAAM,YAAY,CAAC;AACpC,OAAO,EAAC,UAAU,EAAC,CAAC"}
