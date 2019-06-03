@@ -14,7 +14,7 @@ import { StorageBase } from '../storage-provider-base.js';
 import { PouchDbBigCollection } from './pouch-db-big-collection.js';
 import { PouchDbCollection } from './pouch-db-collection.js';
 import { PouchDbKey } from './pouch-db-key.js';
-import { PouchDbVariable } from './pouch-db-variable.js';
+import { PouchDbSingleton } from './pouch-db-singleton.js';
 PouchDB.plugin(PouchDbDebug);
 PouchDB.debug.disable();
 export class PouchDbStorage extends StorageBase {
@@ -155,7 +155,7 @@ export class PouchDbStorage extends StorageBase {
     parseStringAsKey(s) {
         return new PouchDbKey(s);
     }
-    /** Creates a new Variable or Collection given basic parameters */
+    /** Creates a new Singleton or Collection given basic parameters */
     newProvider(type, name, id, key, refMode) {
         if (type instanceof CollectionType) {
             return new PouchDbCollection(type, this, name, id, key, refMode);
@@ -163,7 +163,7 @@ export class PouchDbStorage extends StorageBase {
         if (type instanceof BigCollectionType) {
             return new PouchDbBigCollection(type, this, name, id, key, refMode);
         }
-        return new PouchDbVariable(type, this, name, id, key, refMode);
+        return new PouchDbSingleton(type, this, name, id, key, refMode);
     }
     /** Removes everything that a test could have created. */
     static async resetPouchDbStorageForTesting() {

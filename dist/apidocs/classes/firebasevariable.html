@@ -69,10 +69,10 @@
 			<section class="tsd-panel tsd-comment">
 				<div class="tsd-comment tsd-typography">
 					<div class="lead">
-						<p>Models a Variable that is persisted to firebase in a
+						<p>Models a Singleton that is persisted to firebase in a
 						last-writer-wins scheme.</p>
 					</div>
-					<p>Initialization: After construct/connect the variable is
+					<p>Initialization: After construct/connect the singleton is
 						not fully initialized, calls to <code>get</code> and <code>toLiteral</code>
 					will not complete until either:</p>
 					<ul>
@@ -85,7 +85,7 @@
 					unless there is a pending local modification (see below).</p>
 					<p>Local modifications: When a local modification is applied
 						by a call to <code>set</code> we increment the version number,
-						mark this variable as locally modified, and start a
+						mark this singleton as locally modified, and start a
 						process to atomically persist the change to firebase.
 						Until this process has completed we suppress incoming
 						changes from firebase. The version that we have chosen
@@ -114,7 +114,7 @@
 				<ul class="tsd-hierarchy">
 					<li><a href="../interfaces/comparable.html" class="tsd-signature-type">Comparable</a><span class="tsd-signature-symbol">&lt;</span><a href="storageproviderbase.html" class="tsd-signature-type">StorageProviderBase</a><span class="tsd-signature-symbol">&gt;</span></li>
 					<li><a href="store.html" class="tsd-signature-type">Store</a></li>
-					<li><a href="../interfaces/variablestorageprovider.html" class="tsd-signature-type">VariableStorageProvider</a></li>
+					<li><a href="../interfaces/singletonstorageprovider.html" class="tsd-signature-type">SingletonStorageProvider</a></li>
 				</ul>
 			</section>
 			<section class="tsd-panel-group tsd-index-group">
@@ -205,7 +205,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="firebasestorageprovider.html">FirebaseStorageProvider</a>.<a href="firebasestorageprovider.html#constructor">constructor</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/08b9f55/src/runtime/storage/firebase/firebase-storage.ts#L382">runtime/storage/firebase/firebase-storage.ts:382</a></li>
+									<li>Defined in <a href="https://github.com/lindner/arcs/blob/4c5fb349/src/runtime/storage/firebase/firebase-storage.ts#L381">runtime/storage/firebase/firebase-storage.ts:381</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -241,10 +241,10 @@
 					<h3><span class="tsd-flag ts-flagProtected">Protected</span> _storage<wbr>Key</h3>
 					<div class="tsd-signature tsd-kind-icon">_storage<wbr>Key<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
-						<p>Implementation of <a href="../interfaces/variablestorageprovider.html">VariableStorageProvider</a>.<a href="../interfaces/variablestorageprovider.html#_storagekey">_storageKey</a></p>
+						<p>Implementation of <a href="../interfaces/singletonstorageprovider.html">SingletonStorageProvider</a>.<a href="../interfaces/singletonstorageprovider.html#_storagekey">_storageKey</a></p>
 						<p>Inherited from <a href="storageproviderbase.html">StorageProviderBase</a>.<a href="storageproviderbase.html#_storagekey">_storageKey</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/08b9f55/src/runtime/storage/storage-provider-base.ts#L114">runtime/storage/storage-provider-base.ts:114</a></li>
+							<li>Defined in <a href="https://github.com/lindner/arcs/blob/4c5fb349/src/runtime/storage/storage-provider-base.ts#L114">runtime/storage/storage-provider-base.ts:114</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -253,11 +253,11 @@
 					<h3>backing<wbr>Store</h3>
 					<div class="tsd-signature tsd-kind-icon">backing<wbr>Store<span class="tsd-signature-symbol">:</span> <a href="firebasebackingstore.html" class="tsd-signature-type">FirebaseBackingStore</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span></div>
 					<aside class="tsd-sources">
-						<p>Implementation of <a href="../interfaces/variablestorageprovider.html">VariableStorageProvider</a>.<a href="../interfaces/variablestorageprovider.html#backingstore">backingStore</a></p>
+						<p>Implementation of <a href="../interfaces/singletonstorageprovider.html">SingletonStorageProvider</a>.<a href="../interfaces/singletonstorageprovider.html#backingstore">backingStore</a></p>
 						<p>Inherited from <a href="firebasestorageprovider.html">FirebaseStorageProvider</a>.<a href="firebasestorageprovider.html#backingstore">backingStore</a></p>
 						<p>Overrides <a href="storageproviderbase.html">StorageProviderBase</a>.<a href="storageproviderbase.html#backingstore">backingStore</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/08b9f55/src/runtime/storage/firebase/firebase-storage.ts#L257">runtime/storage/firebase/firebase-storage.ts:257</a></li>
+							<li>Defined in <a href="https://github.com/lindner/arcs/blob/4c5fb349/src/runtime/storage/firebase/firebase-storage.ts#L256">runtime/storage/firebase/firebase-storage.ts:256</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -266,10 +266,10 @@
 					<h3>description</h3>
 					<div class="tsd-signature tsd-kind-icon">description<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
-						<p>Implementation of <a href="../interfaces/variablestorageprovider.html">VariableStorageProvider</a>.<a href="../interfaces/variablestorageprovider.html#description">description</a></p>
+						<p>Implementation of <a href="../interfaces/singletonstorageprovider.html">SingletonStorageProvider</a>.<a href="../interfaces/singletonstorageprovider.html#description">description</a></p>
 						<p>Inherited from <a href="storageproviderbase.html">StorageProviderBase</a>.<a href="storageproviderbase.html#description">description</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/08b9f55/src/runtime/storage/storage-provider-base.ts#L122">runtime/storage/storage-provider-base.ts:122</a></li>
+							<li>Defined in <a href="https://github.com/lindner/arcs/blob/4c5fb349/src/runtime/storage/storage-provider-base.ts#L122">runtime/storage/storage-provider-base.ts:122</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -278,10 +278,10 @@
 					<h3>id</h3>
 					<div class="tsd-signature tsd-kind-icon">id<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
-						<p>Implementation of <a href="../interfaces/variablestorageprovider.html">VariableStorageProvider</a>.<a href="../interfaces/variablestorageprovider.html#id">id</a></p>
+						<p>Implementation of <a href="../interfaces/singletonstorageprovider.html">SingletonStorageProvider</a>.<a href="../interfaces/singletonstorageprovider.html#id">id</a></p>
 						<p>Inherited from <a href="storageproviderbase.html">StorageProviderBase</a>.<a href="storageproviderbase.html#id">id</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/08b9f55/src/runtime/storage/storage-provider-base.ts#L118">runtime/storage/storage-provider-base.ts:118</a></li>
+							<li>Defined in <a href="https://github.com/lindner/arcs/blob/4c5fb349/src/runtime/storage/storage-provider-base.ts#L118">runtime/storage/storage-provider-base.ts:118</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -291,7 +291,7 @@
 					<div class="tsd-signature tsd-kind-icon">initialized<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/08b9f55/src/runtime/storage/firebase/firebase-storage.ts#L375">runtime/storage/firebase/firebase-storage.ts:375</a></li>
+							<li>Defined in <a href="https://github.com/lindner/arcs/blob/4c5fb349/src/runtime/storage/firebase/firebase-storage.ts#L374">runtime/storage/firebase/firebase-storage.ts:374</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -301,7 +301,7 @@
 					<div class="tsd-signature tsd-kind-icon">local<wbr>Key<wbr>Id<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> =&nbsp;Date.now()</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/08b9f55/src/runtime/storage/firebase/firebase-storage.ts#L378">runtime/storage/firebase/firebase-storage.ts:378</a></li>
+							<li>Defined in <a href="https://github.com/lindner/arcs/blob/4c5fb349/src/runtime/storage/firebase/firebase-storage.ts#L377">runtime/storage/firebase/firebase-storage.ts:377</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -311,7 +311,7 @@
 					<div class="tsd-signature tsd-kind-icon">local<wbr>Modified<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/08b9f55/src/runtime/storage/firebase/firebase-storage.ts#L374">runtime/storage/firebase/firebase-storage.ts:374</a></li>
+							<li>Defined in <a href="https://github.com/lindner/arcs/blob/4c5fb349/src/runtime/storage/firebase/firebase-storage.ts#L373">runtime/storage/firebase/firebase-storage.ts:373</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -320,10 +320,10 @@
 					<h3>name</h3>
 					<div class="tsd-signature tsd-kind-icon">name<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
-						<p>Implementation of <a href="../interfaces/variablestorageprovider.html">VariableStorageProvider</a>.<a href="../interfaces/variablestorageprovider.html#name">name</a></p>
+						<p>Implementation of <a href="../interfaces/singletonstorageprovider.html">SingletonStorageProvider</a>.<a href="../interfaces/singletonstorageprovider.html#name">name</a></p>
 						<p>Inherited from <a href="storageproviderbase.html">StorageProviderBase</a>.<a href="storageproviderbase.html#name">name</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/08b9f55/src/runtime/storage/storage-provider-base.ts#L120">runtime/storage/storage-provider-base.ts:120</a></li>
+							<li>Defined in <a href="https://github.com/lindner/arcs/blob/4c5fb349/src/runtime/storage/storage-provider-base.ts#L120">runtime/storage/storage-provider-base.ts:120</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -332,10 +332,10 @@
 					<h3>original<wbr>Id</h3>
 					<div class="tsd-signature tsd-kind-icon">original<wbr>Id<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span></div>
 					<aside class="tsd-sources">
-						<p>Implementation of <a href="../interfaces/variablestorageprovider.html">VariableStorageProvider</a>.<a href="../interfaces/variablestorageprovider.html#originalid">originalId</a></p>
+						<p>Implementation of <a href="../interfaces/singletonstorageprovider.html">SingletonStorageProvider</a>.<a href="../interfaces/singletonstorageprovider.html#originalid">originalId</a></p>
 						<p>Inherited from <a href="storageproviderbase.html">StorageProviderBase</a>.<a href="storageproviderbase.html#originalid">originalId</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/08b9f55/src/runtime/storage/storage-provider-base.ts#L119">runtime/storage/storage-provider-base.ts:119</a></li>
+							<li>Defined in <a href="https://github.com/lindner/arcs/blob/4c5fb349/src/runtime/storage/storage-provider-base.ts#L119">runtime/storage/storage-provider-base.ts:119</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -345,7 +345,7 @@
 					<div class="tsd-signature tsd-kind-icon">pending<wbr>Writes<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> =&nbsp;[]</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/08b9f55/src/runtime/storage/firebase/firebase-storage.ts#L379">runtime/storage/firebase/firebase-storage.ts:379</a></li>
+							<li>Defined in <a href="https://github.com/lindner/arcs/blob/4c5fb349/src/runtime/storage/firebase/firebase-storage.ts#L378">runtime/storage/firebase/firebase-storage.ts:378</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -356,7 +356,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="firebasestorageprovider.html">FirebaseStorageProvider</a>.<a href="firebasestorageprovider.html#persisting">persisting</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/08b9f55/src/runtime/storage/firebase/firebase-storage.ts#L255">runtime/storage/firebase/firebase-storage.ts:255</a></li>
+							<li>Defined in <a href="https://github.com/lindner/arcs/blob/4c5fb349/src/runtime/storage/firebase/firebase-storage.ts#L254">runtime/storage/firebase/firebase-storage.ts:254</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -367,7 +367,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="firebasestorageprovider.html">FirebaseStorageProvider</a>.<a href="firebasestorageprovider.html#reference">reference</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/08b9f55/src/runtime/storage/firebase/firebase-storage.ts#L256">runtime/storage/firebase/firebase-storage.ts:256</a></li>
+							<li>Defined in <a href="https://github.com/lindner/arcs/blob/4c5fb349/src/runtime/storage/firebase/firebase-storage.ts#L255">runtime/storage/firebase/firebase-storage.ts:255</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -376,10 +376,10 @@
 					<h3>reference<wbr>Mode</h3>
 					<div class="tsd-signature tsd-kind-icon">reference<wbr>Mode<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> =&nbsp;false</span></div>
 					<aside class="tsd-sources">
-						<p>Implementation of <a href="../interfaces/variablestorageprovider.html">VariableStorageProvider</a>.<a href="../interfaces/variablestorageprovider.html#referencemode">referenceMode</a></p>
+						<p>Implementation of <a href="../interfaces/singletonstorageprovider.html">SingletonStorageProvider</a>.<a href="../interfaces/singletonstorageprovider.html#referencemode">referenceMode</a></p>
 						<p>Inherited from <a href="storageproviderbase.html">StorageProviderBase</a>.<a href="storageproviderbase.html#referencemode">referenceMode</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/08b9f55/src/runtime/storage/storage-provider-base.ts#L115">runtime/storage/storage-provider-base.ts:115</a></li>
+							<li>Defined in <a href="https://github.com/lindner/arcs/blob/4c5fb349/src/runtime/storage/storage-provider-base.ts#L115">runtime/storage/storage-provider-base.ts:115</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -389,7 +389,7 @@
 					<div class="tsd-signature tsd-kind-icon">resolve<wbr>Initialized<span class="tsd-signature-symbol">:</span> <a href="../globals.html#runnable" class="tsd-signature-type">Runnable</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/08b9f55/src/runtime/storage/firebase/firebase-storage.ts#L381">runtime/storage/firebase/firebase-storage.ts:381</a></li>
+							<li>Defined in <a href="https://github.com/lindner/arcs/blob/4c5fb349/src/runtime/storage/firebase/firebase-storage.ts#L380">runtime/storage/firebase/firebase-storage.ts:380</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -398,10 +398,10 @@
 					<h3>source</h3>
 					<div class="tsd-signature tsd-kind-icon">source<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span></div>
 					<aside class="tsd-sources">
-						<p>Implementation of <a href="../interfaces/variablestorageprovider.html">VariableStorageProvider</a>.<a href="../interfaces/variablestorageprovider.html#source">source</a></p>
+						<p>Implementation of <a href="../interfaces/singletonstorageprovider.html">SingletonStorageProvider</a>.<a href="../interfaces/singletonstorageprovider.html#source">source</a></p>
 						<p>Inherited from <a href="storageproviderbase.html">StorageProviderBase</a>.<a href="storageproviderbase.html#source">source</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/08b9f55/src/runtime/storage/storage-provider-base.ts#L121">runtime/storage/storage-provider-base.ts:121</a></li>
+							<li>Defined in <a href="https://github.com/lindner/arcs/blob/4c5fb349/src/runtime/storage/storage-provider-base.ts#L121">runtime/storage/storage-provider-base.ts:121</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -412,7 +412,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="firebasestorageprovider.html">FirebaseStorageProvider</a>.<a href="firebasestorageprovider.html#storageengine">storageEngine</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/08b9f55/src/runtime/storage/firebase/firebase-storage.ts#L258">runtime/storage/firebase/firebase-storage.ts:258</a></li>
+							<li>Defined in <a href="https://github.com/lindner/arcs/blob/4c5fb349/src/runtime/storage/firebase/firebase-storage.ts#L257">runtime/storage/firebase/firebase-storage.ts:257</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -422,7 +422,7 @@
 					<div class="tsd-signature tsd-kind-icon">value<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/08b9f55/src/runtime/storage/firebase/firebase-storage.ts#L373">runtime/storage/firebase/firebase-storage.ts:373</a></li>
+							<li>Defined in <a href="https://github.com/lindner/arcs/blob/4c5fb349/src/runtime/storage/firebase/firebase-storage.ts#L372">runtime/storage/firebase/firebase-storage.ts:372</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -432,7 +432,7 @@
 					<div class="tsd-signature tsd-kind-icon">value<wbr>Change<wbr>Callback<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">function</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/08b9f55/src/runtime/storage/firebase/firebase-storage.ts#L382">runtime/storage/firebase/firebase-storage.ts:382</a></li>
+							<li>Defined in <a href="https://github.com/lindner/arcs/blob/4c5fb349/src/runtime/storage/firebase/firebase-storage.ts#L381">runtime/storage/firebase/firebase-storage.ts:381</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-type-declaration">
@@ -465,10 +465,10 @@
 					<h3>version</h3>
 					<div class="tsd-signature tsd-kind-icon">version<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span></div>
 					<aside class="tsd-sources">
-						<p>Implementation of <a href="../interfaces/variablestorageprovider.html">VariableStorageProvider</a>.<a href="../interfaces/variablestorageprovider.html#version">version</a></p>
+						<p>Implementation of <a href="../interfaces/singletonstorageprovider.html">SingletonStorageProvider</a>.<a href="../interfaces/singletonstorageprovider.html#version">version</a></p>
 						<p>Inherited from <a href="storageproviderbase.html">StorageProviderBase</a>.<a href="storageproviderbase.html#version">version</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/08b9f55/src/runtime/storage/storage-provider-base.ts#L117">runtime/storage/storage-provider-base.ts:117</a></li>
+							<li>Defined in <a href="https://github.com/lindner/arcs/blob/4c5fb349/src/runtime/storage/storage-provider-base.ts#L117">runtime/storage/storage-provider-base.ts:117</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -478,7 +478,7 @@
 					<div class="tsd-signature tsd-kind-icon">was<wbr>Connect<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/08b9f55/src/runtime/storage/firebase/firebase-storage.ts#L380">runtime/storage/firebase/firebase-storage.ts:380</a></li>
+							<li>Defined in <a href="https://github.com/lindner/arcs/blob/4c5fb349/src/runtime/storage/firebase/firebase-storage.ts#L379">runtime/storage/firebase/firebase-storage.ts:379</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -496,7 +496,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="firebasestorageprovider.html">FirebaseStorageProvider</a>.<a href="firebasestorageprovider.html#_haslocalchanges">_hasLocalChanges</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/08b9f55/src/runtime/storage/firebase/firebase-storage.ts#L454">runtime/storage/firebase/firebase-storage.ts:454</a></li>
+									<li>Defined in <a href="https://github.com/lindner/arcs/blob/4c5fb349/src/runtime/storage/firebase/firebase-storage.ts#L453">runtime/storage/firebase/firebase-storage.ts:453</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
@@ -514,7 +514,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="storageproviderbase.html">StorageProviderBase</a>.<a href="storageproviderbase.html#apichannelmappingid">apiChannelMappingId</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/08b9f55/src/runtime/storage/storage-provider-base.ts#L234">runtime/storage/storage-provider-base.ts:234</a></li>
+									<li>Defined in <a href="https://github.com/lindner/arcs/blob/4c5fb349/src/runtime/storage/storage-provider-base.ts#L234">runtime/storage/storage-provider-base.ts:234</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
@@ -532,7 +532,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="storageproviderbase.html">StorageProviderBase</a>.<a href="storageproviderbase.html#storagekey">storageKey</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/08b9f55/src/runtime/storage/storage-provider-base.ts#L141">runtime/storage/storage-provider-base.ts:141</a></li>
+									<li>Defined in <a href="https://github.com/lindner/arcs/blob/4c5fb349/src/runtime/storage/storage-provider-base.ts#L141">runtime/storage/storage-provider-base.ts:141</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
@@ -550,7 +550,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="storageproviderbase.html">StorageProviderBase</a>.<a href="storageproviderbase.html#type">type</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/08b9f55/src/runtime/storage/storage-provider-base.ts#L145">runtime/storage/storage-provider-base.ts:145</a></li>
+									<li>Defined in <a href="https://github.com/lindner/arcs/blob/4c5fb349/src/runtime/storage/storage-provider-base.ts#L145">runtime/storage/storage-provider-base.ts:145</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <a href="type.html" class="tsd-signature-type">Type</a></h4>
@@ -567,7 +567,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/08b9f55/src/runtime/storage/firebase/firebase-storage.ts#L509">runtime/storage/firebase/firebase-storage.ts:509</a></li>
+									<li>Defined in <a href="https://github.com/lindner/arcs/blob/4c5fb349/src/runtime/storage/firebase/firebase-storage.ts#L508">runtime/storage/firebase/firebase-storage.ts:508</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
@@ -586,10 +586,10 @@
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
-								<p>Implementation of <a href="../interfaces/variablestorageprovider.html">VariableStorageProvider</a>.<a href="../interfaces/variablestorageprovider.html#_compareto">_compareTo</a></p>
+								<p>Implementation of <a href="../interfaces/singletonstorageprovider.html">SingletonStorageProvider</a>.<a href="../interfaces/singletonstorageprovider.html#_compareto">_compareTo</a></p>
 								<p>Inherited from <a href="storageproviderbase.html">StorageProviderBase</a>.<a href="storageproviderbase.html#_compareto">_compareTo</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/08b9f55/src/runtime/storage/storage-provider-base.ts#L197">runtime/storage/storage-provider-base.ts:197</a></li>
+									<li>Defined in <a href="https://github.com/lindner/arcs/blob/4c5fb349/src/runtime/storage/storage-provider-base.ts#L197">runtime/storage/storage-provider-base.ts:197</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -611,10 +611,10 @@
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
-								<p>Implementation of <a href="../interfaces/variablestorageprovider.html">VariableStorageProvider</a>.<a href="../interfaces/variablestorageprovider.html#_fire">_fire</a></p>
+								<p>Implementation of <a href="../interfaces/singletonstorageprovider.html">SingletonStorageProvider</a>.<a href="../interfaces/singletonstorageprovider.html#_fire">_fire</a></p>
 								<p>Inherited from <a href="storageproviderbase.html">StorageProviderBase</a>.<a href="storageproviderbase.html#_fire">_fire</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/08b9f55/src/runtime/storage/storage-provider-base.ts#L179">runtime/storage/storage-provider-base.ts:179</a></li>
+									<li>Defined in <a href="https://github.com/lindner/arcs/blob/4c5fb349/src/runtime/storage/storage-provider-base.ts#L179">runtime/storage/storage-provider-base.ts:179</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -652,7 +652,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="firebasestorageprovider.html">FirebaseStorageProvider</a>.<a href="firebasestorageprovider.html#_persistchanges">_persistChanges</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/08b9f55/src/runtime/storage/firebase/firebase-storage.ts#L332">runtime/storage/firebase/firebase-storage.ts:332</a></li>
+									<li>Defined in <a href="https://github.com/lindner/arcs/blob/4c5fb349/src/runtime/storage/firebase/firebase-storage.ts#L331">runtime/storage/firebase/firebase-storage.ts:331</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -670,7 +670,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="firebasestorageprovider.html">FirebaseStorageProvider</a>.<a href="firebasestorageprovider.html#_persistchangesimpl">_persistChangesImpl</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/08b9f55/src/runtime/storage/firebase/firebase-storage.ts#L458">runtime/storage/firebase/firebase-storage.ts:458</a></li>
+									<li>Defined in <a href="https://github.com/lindner/arcs/blob/4c5fb349/src/runtime/storage/firebase/firebase-storage.ts#L457">runtime/storage/firebase/firebase-storage.ts:457</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -688,7 +688,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="firebasestorageprovider.html">FirebaseStorageProvider</a>.<a href="firebasestorageprovider.html#_transaction">_transaction</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/08b9f55/src/runtime/storage/firebase/firebase-storage.ts#L305">runtime/storage/firebase/firebase-storage.ts:305</a></li>
+									<li>Defined in <a href="https://github.com/lindner/arcs/blob/4c5fb349/src/runtime/storage/firebase/firebase-storage.ts#L304">runtime/storage/firebase/firebase-storage.ts:304</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -712,7 +712,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="firebasestorageprovider.html">FirebaseStorageProvider</a>.<a href="firebasestorageprovider.html#backingtype">backingType</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/08b9f55/src/runtime/storage/firebase/firebase-storage.ts#L419">runtime/storage/firebase/firebase-storage.ts:419</a></li>
+									<li>Defined in <a href="https://github.com/lindner/arcs/blob/4c5fb349/src/runtime/storage/firebase/firebase-storage.ts#L418">runtime/storage/firebase/firebase-storage.ts:418</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <a href="type.html" class="tsd-signature-type">Type</a></h4>
@@ -728,9 +728,9 @@
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
-								<p>Implementation of <a href="../interfaces/variablestorageprovider.html">VariableStorageProvider</a>.<a href="../interfaces/variablestorageprovider.html#clear">clear</a></p>
+								<p>Implementation of <a href="../interfaces/singletonstorageprovider.html">SingletonStorageProvider</a>.<a href="../interfaces/singletonstorageprovider.html#clear">clear</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/08b9f55/src/runtime/storage/firebase/firebase-storage.ts#L557">runtime/storage/firebase/firebase-storage.ts:557</a></li>
+									<li>Defined in <a href="https://github.com/lindner/arcs/blob/4c5fb349/src/runtime/storage/firebase/firebase-storage.ts#L556">runtime/storage/firebase/firebase-storage.ts:556</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -757,7 +757,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="storageproviderbase.html">StorageProviderBase</a>.<a href="storageproviderbase.html#clonefrom">cloneFrom</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/08b9f55/src/runtime/storage/firebase/firebase-storage.ts#L561">runtime/storage/firebase/firebase-storage.ts:561</a></li>
+									<li>Defined in <a href="https://github.com/lindner/arcs/blob/4c5fb349/src/runtime/storage/firebase/firebase-storage.ts#L560">runtime/storage/firebase/firebase-storage.ts:560</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -779,10 +779,10 @@
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
-								<p>Implementation of <a href="../interfaces/variablestorageprovider.html">VariableStorageProvider</a>.<a href="../interfaces/variablestorageprovider.html#dispose">dispose</a></p>
+								<p>Implementation of <a href="../interfaces/singletonstorageprovider.html">SingletonStorageProvider</a>.<a href="../interfaces/singletonstorageprovider.html#dispose">dispose</a></p>
 								<p>Overrides <a href="storageproviderbase.html">StorageProviderBase</a>.<a href="storageproviderbase.html#dispose">dispose</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/08b9f55/src/runtime/storage/firebase/firebase-storage.ts#L415">runtime/storage/firebase/firebase-storage.ts:415</a></li>
+									<li>Defined in <a href="https://github.com/lindner/arcs/blob/4c5fb349/src/runtime/storage/firebase/firebase-storage.ts#L414">runtime/storage/firebase/firebase-storage.ts:414</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -798,10 +798,10 @@
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
-								<p>Implementation of <a href="../interfaces/variablestorageprovider.html">VariableStorageProvider</a>.<a href="../interfaces/variablestorageprovider.html#enablereferencemode">enableReferenceMode</a></p>
+								<p>Implementation of <a href="../interfaces/singletonstorageprovider.html">SingletonStorageProvider</a>.<a href="../interfaces/singletonstorageprovider.html#enablereferencemode">enableReferenceMode</a></p>
 								<p>Inherited from <a href="storageproviderbase.html">StorageProviderBase</a>.<a href="storageproviderbase.html#enablereferencemode">enableReferenceMode</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/08b9f55/src/runtime/storage/storage-provider-base.ts#L137">runtime/storage/storage-provider-base.ts:137</a></li>
+									<li>Defined in <a href="https://github.com/lindner/arcs/blob/4c5fb349/src/runtime/storage/storage-provider-base.ts#L137">runtime/storage/storage-provider-base.ts:137</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -817,11 +817,11 @@
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
-								<p>Implementation of <a href="../interfaces/variablestorageprovider.html">VariableStorageProvider</a>.<a href="../interfaces/variablestorageprovider.html#ensurebackingstore">ensureBackingStore</a></p>
+								<p>Implementation of <a href="../interfaces/singletonstorageprovider.html">SingletonStorageProvider</a>.<a href="../interfaces/singletonstorageprovider.html#ensurebackingstore">ensureBackingStore</a></p>
 								<p>Inherited from <a href="firebasestorageprovider.html">FirebaseStorageProvider</a>.<a href="firebasestorageprovider.html#ensurebackingstore">ensureBackingStore</a></p>
 								<p>Overrides <a href="storageproviderbase.html">StorageProviderBase</a>.<a href="storageproviderbase.html#ensurebackingstore">ensureBackingStore</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/08b9f55/src/runtime/storage/firebase/firebase-storage.ts#L278">runtime/storage/firebase/firebase-storage.ts:278</a></li>
+									<li>Defined in <a href="https://github.com/lindner/arcs/blob/4c5fb349/src/runtime/storage/firebase/firebase-storage.ts#L277">runtime/storage/firebase/firebase-storage.ts:277</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="firebasebackingstore.html" class="tsd-signature-type">FirebaseBackingStore</a><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -838,7 +838,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/08b9f55/src/runtime/storage/firebase/firebase-storage.ts#L608">runtime/storage/firebase/firebase-storage.ts:608</a></li>
+									<li>Defined in <a href="https://github.com/lindner/arcs/blob/4c5fb349/src/runtime/storage/firebase/firebase-storage.ts#L607">runtime/storage/firebase/firebase-storage.ts:607</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -868,9 +868,9 @@
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
-								<p>Implementation of <a href="../interfaces/variablestorageprovider.html">VariableStorageProvider</a>.<a href="../interfaces/variablestorageprovider.html#get">get</a></p>
+								<p>Implementation of <a href="../interfaces/singletonstorageprovider.html">SingletonStorageProvider</a>.<a href="../interfaces/singletonstorageprovider.html#get">get</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/08b9f55/src/runtime/storage/firebase/firebase-storage.ts#L513">runtime/storage/firebase/firebase-storage.ts:513</a></li>
+									<li>Defined in <a href="https://github.com/lindner/arcs/blob/4c5fb349/src/runtime/storage/firebase/firebase-storage.ts#L512">runtime/storage/firebase/firebase-storage.ts:512</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -886,10 +886,10 @@
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
-								<p>Implementation of <a href="../interfaces/variablestorageprovider.html">VariableStorageProvider</a>.<a href="../interfaces/variablestorageprovider.html#modelforsynchronization">modelForSynchronization</a></p>
+								<p>Implementation of <a href="../interfaces/singletonstorageprovider.html">SingletonStorageProvider</a>.<a href="../interfaces/singletonstorageprovider.html#modelforsynchronization">modelForSynchronization</a></p>
 								<p>Overrides <a href="storageproviderbase.html">StorageProviderBase</a>.<a href="storageproviderbase.html#modelforsynchronization">modelForSynchronization</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/08b9f55/src/runtime/storage/firebase/firebase-storage.ts#L579">runtime/storage/firebase/firebase-storage.ts:579</a></li>
+									<li>Defined in <a href="https://github.com/lindner/arcs/blob/4c5fb349/src/runtime/storage/firebase/firebase-storage.ts#L578">runtime/storage/firebase/firebase-storage.ts:578</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">object</span><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -905,10 +905,10 @@
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
-								<p>Implementation of <a href="../interfaces/variablestorageprovider.html">VariableStorageProvider</a>.<a href="../interfaces/variablestorageprovider.html#off">off</a></p>
+								<p>Implementation of <a href="../interfaces/singletonstorageprovider.html">SingletonStorageProvider</a>.<a href="../interfaces/singletonstorageprovider.html#off">off</a></p>
 								<p>Inherited from <a href="storageproviderbase.html">StorageProviderBase</a>.<a href="storageproviderbase.html#off">off</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/08b9f55/src/runtime/storage/storage-provider-base.ts#L164">runtime/storage/storage-provider-base.ts:164</a></li>
+									<li>Defined in <a href="https://github.com/lindner/arcs/blob/4c5fb349/src/runtime/storage/storage-provider-base.ts#L164">runtime/storage/storage-provider-base.ts:164</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -933,10 +933,10 @@
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
-								<p>Implementation of <a href="../interfaces/variablestorageprovider.html">VariableStorageProvider</a>.<a href="../interfaces/variablestorageprovider.html#on">on</a></p>
+								<p>Implementation of <a href="../interfaces/singletonstorageprovider.html">SingletonStorageProvider</a>.<a href="../interfaces/singletonstorageprovider.html#on">on</a></p>
 								<p>Inherited from <a href="storageproviderbase.html">StorageProviderBase</a>.<a href="storageproviderbase.html#on">on</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/08b9f55/src/runtime/storage/storage-provider-base.ts#L155">runtime/storage/storage-provider-base.ts:155</a></li>
+									<li>Defined in <a href="https://github.com/lindner/arcs/blob/4c5fb349/src/runtime/storage/storage-provider-base.ts#L155">runtime/storage/storage-provider-base.ts:155</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -965,7 +965,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/08b9f55/src/runtime/storage/firebase/firebase-storage.ts#L423">runtime/storage/firebase/firebase-storage.ts:423</a></li>
+									<li>Defined in <a href="https://github.com/lindner/arcs/blob/4c5fb349/src/runtime/storage/firebase/firebase-storage.ts#L422">runtime/storage/firebase/firebase-storage.ts:422</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -987,10 +987,10 @@
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
-								<p>Implementation of <a href="../interfaces/variablestorageprovider.html">VariableStorageProvider</a>.<a href="../interfaces/variablestorageprovider.html#reportexceptioninhost">reportExceptionInHost</a></p>
+								<p>Implementation of <a href="../interfaces/singletonstorageprovider.html">SingletonStorageProvider</a>.<a href="../interfaces/singletonstorageprovider.html#reportexceptioninhost">reportExceptionInHost</a></p>
 								<p>Inherited from <a href="storageproviderbase.html">StorageProviderBase</a>.<a href="storageproviderbase.html#reportexceptioninhost">reportExceptionInHost</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/08b9f55/src/runtime/storage/storage-provider-base.ts#L149">runtime/storage/storage-provider-base.ts:149</a></li>
+									<li>Defined in <a href="https://github.com/lindner/arcs/blob/4c5fb349/src/runtime/storage/storage-provider-base.ts#L149">runtime/storage/storage-provider-base.ts:149</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1013,7 +1013,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/08b9f55/src/runtime/storage/firebase/firebase-storage.ts#L523">runtime/storage/firebase/firebase-storage.ts:523</a></li>
+									<li>Defined in <a href="https://github.com/lindner/arcs/blob/4c5fb349/src/runtime/storage/firebase/firebase-storage.ts#L522">runtime/storage/firebase/firebase-storage.ts:522</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1041,10 +1041,10 @@
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
-								<p>Implementation of <a href="../interfaces/variablestorageprovider.html">VariableStorageProvider</a>.<a href="../interfaces/variablestorageprovider.html#toliteral">toLiteral</a></p>
+								<p>Implementation of <a href="../interfaces/singletonstorageprovider.html">SingletonStorageProvider</a>.<a href="../interfaces/singletonstorageprovider.html#toliteral">toLiteral</a></p>
 								<p>Overrides <a href="storageproviderbase.html">StorageProviderBase</a>.<a href="storageproviderbase.html#toliteral">toLiteral</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/08b9f55/src/runtime/storage/firebase/firebase-storage.ts#L598">runtime/storage/firebase/firebase-storage.ts:598</a></li>
+									<li>Defined in <a href="https://github.com/lindner/arcs/blob/4c5fb349/src/runtime/storage/firebase/firebase-storage.ts#L597">runtime/storage/firebase/firebase-storage.ts:597</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">object</span><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -1060,10 +1060,10 @@
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
-								<p>Implementation of <a href="../interfaces/variablestorageprovider.html">VariableStorageProvider</a>.<a href="../interfaces/variablestorageprovider.html#tostring">toString</a></p>
+								<p>Implementation of <a href="../interfaces/singletonstorageprovider.html">SingletonStorageProvider</a>.<a href="../interfaces/singletonstorageprovider.html#tostring">toString</a></p>
 								<p>Inherited from <a href="storageproviderbase.html">StorageProviderBase</a>.<a href="storageproviderbase.html#tostring">toString</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/08b9f55/src/runtime/storage/storage-provider-base.ts#L210">runtime/storage/storage-provider-base.ts:210</a></li>
+									<li>Defined in <a href="https://github.com/lindner/arcs/blob/4c5fb349/src/runtime/storage/storage-provider-base.ts#L210">runtime/storage/storage-provider-base.ts:210</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1087,7 +1087,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="firebasestorageprovider.html">FirebaseStorageProvider</a>.<a href="firebasestorageprovider.html#newprovider">newProvider</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/08b9f55/src/runtime/storage/firebase/firebase-storage.ts#L292">runtime/storage/firebase/firebase-storage.ts:292</a></li>
+									<li>Defined in <a href="https://github.com/lindner/arcs/blob/4c5fb349/src/runtime/storage/firebase/firebase-storage.ts#L291">runtime/storage/firebase/firebase-storage.ts:291</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>

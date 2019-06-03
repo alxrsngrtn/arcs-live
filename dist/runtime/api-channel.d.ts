@@ -36,7 +36,7 @@ declare class ThingMapper {
 export declare class APIPort {
     private _port;
     _mapper: ThingMapper;
-    protected inspector: ArcInspector;
+    protected inspector: ArcInspector | null;
     protected attachStack: boolean;
     messageCount: number;
     constructor(messagePort: MessagePort, prefix: string);

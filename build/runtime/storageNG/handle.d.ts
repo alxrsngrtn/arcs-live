@@ -38,11 +38,11 @@ export declare abstract class Handle<T extends CRDTTypeRecord> {
  * implied by the set.
  */
 export declare class CollectionHandle<T> extends Handle<CRDTCollectionTypeRecord<T>> {
-    add(entity: T): boolean;
-    addMultiple(entities: T[]): boolean;
-    remove(entity: T): boolean;
-    clear(): boolean;
-    toList(): T[];
+    add(entity: T): Promise<boolean>;
+    addMultiple(entities: T[]): Promise<boolean>;
+    remove(entity: T): Promise<boolean>;
+    clear(): Promise<boolean>;
+    toList(): Promise<T[]>;
     onUpdate(ops: CollectionOperation<T>[]): void;
     onSync(): void;
 }
@@ -50,9 +50,9 @@ export declare class CollectionHandle<T> extends Handle<CRDTCollectionTypeRecord
  * A handle on a single entity.
  */
 export declare class SingletonHandle<T> extends Handle<CRDTSingletonTypeRecord<T>> {
-    set(entity: T): boolean;
-    clear(): boolean;
-    get(): T;
+    set(entity: T): Promise<boolean>;
+    clear(): Promise<boolean>;
+    get(): Promise<T>;
     onUpdate(ops: SingletonOperation<T>[]): void;
     onSync(): void;
 }

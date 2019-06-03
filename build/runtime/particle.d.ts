@@ -8,6 +8,7 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { Handle } from './handle.js';
+import { Consumer } from './hot.js';
 import { InnerArcHandle } from './particle-execution-context.js';
 import { HandleConnectionSpec, ParticleSpec } from './particle-spec.js';
 import { Relevance } from './relevance.js';
@@ -35,6 +36,8 @@ export declare class Particle {
     setCapabilities(capabilities: {
         constructInnerArc?: (particle: Particle) => Promise<InnerArcHandle>;
     }): void;
+    private invokeSafely;
+    callSetHandles(handles: ReadonlyMap<string, Handle>, onException: Consumer<Error>): Promise<void>;
     /**
      * This method is invoked with a handle for each store this particle
      * is registered to interact with, once those handles are ready for
@@ -43,17 +46,25 @@ export declare class Particle {
      *
      * @param handles a map from handle names to store handles.
      */
-    setHandles(handles: ReadonlyMap<string, Handle>): Promise<void>;
+    protected setHandles(handles: ReadonlyMap<string, Handle>): Promise<void>;
+    callOnHandleSync(handle: Handle, model: any, onException: Consumer<Error>): Promise<void>;
     /**
      * Called for handles that are configured with both keepSynced and notifySync, when they are
      * updated with the full model of their data. This will occur once after setHandles() and any time
      * thereafter if the handle is resynchronized.
      *
      * @param handle The Handle instance that was updated.
-     * @param model For Variable-backed Handles, the Entity data or null if the Variable is not set.
+     * @param model For Singleton-backed Handles, the Entity data or null if the Singleton is not set.
      *        For Collection-backed Handles, the Array of Entities, which may be empty.
      */
-    onHandleSync(handle: Handle, model: any): Promise<void>;
+    protected onHandleSync(handle: Handle, model: any): Promise<void>;
+    callOnHandleUpdate(handle: Handle, update: {
+        data?: any;
+        oldData?: any;
+        added?: any;
+        removed?: any;
+        originator?: any;
+    }, onException: Consumer<Error>): Promise<void>;
     /**
      * Called for handles that are configued with notifyUpdate, when change events are received from
      * the backing store. For handles also configured with keepSynced these events will be correctly
@@ -62,28 +73,29 @@ export declare class Particle {
      *
      * @param handle The Handle instance that was updated.
      * @param update An object containing one of the following fields:
-     *  - data: The full Entity for a Variable-backed Handle.
-     *  - oldData: The previous value of a Variable before it was updated.
+     *  - data: The full Entity for a Singleton-backed Handle.
+     *  - oldData: The previous value of a Singleton before it was updated.
      *  - added: An Array of Entities added to a Collection-backed Handle.
      *  - removed: An Array of Entities removed from a Collection-backed Handle.
      */
-    onHandleUpdate(handle: Handle, update: {
+    protected onHandleUpdate(handle: Handle, update: {
         data?: any;
         oldData?: any;
         added?: any;
         removed?: any;
         originator?: any;
     }): Promise<void>;
+    callOnHandleDesync(handle: Handle, onException: Consumer<Error>): Promise<void>;
     /**
      * Called for handles that are configured with both keepSynced and notifyDesync, when they are
-     * detected as being out-of-date against the backing store. For Variables, the event that triggers
+     * detected as being out-of-date against the backing store. For Singletons, the event that triggers
      * this will also resync the data and thus this call may usually be ignored. For Collections, the
      * underlying proxy will automatically request a full copy of the stored data to resynchronize.
      * onHandleSync will be invoked when that is received.
      *
      * @param handle The Handle instance that was desynchronized.
      */
-    onHandleDesync(handle: Handle): Promise<void>;
+    protected onHandleDesync(handle: Handle): Promise<void>;
     constructInnerArc(): Promise<InnerArcHandle>;
     readonly busy: boolean;
     readonly idle: Promise<void>;

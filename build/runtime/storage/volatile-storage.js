@@ -149,7 +149,7 @@ class VolatileStorageProvider extends StorageProviderBase {
         if (type instanceof BigCollectionType) {
             return new VolatileBigCollection(type, storageEngine, name, id, key);
         }
-        return new VolatileVariable(type, storageEngine, name, id, key);
+        return new VolatileSingleton(type, storageEngine, name, id, key);
     }
     // A consequence of awaiting this function is that this.backingStore
     // is guaranteed to exist once the await completes. This is because
@@ -302,7 +302,7 @@ class VolatileCollection extends VolatileStorageProvider {
         this._model = new CrdtCollectionModel();
     }
 }
-class VolatileVariable extends VolatileStorageProvider {
+class VolatileSingleton extends VolatileStorageProvider {
     constructor(type, storageEngine, name, id, key) {
         super(type, name, id, key);
         this.localKeyId = 0;
@@ -314,9 +314,9 @@ class VolatileVariable extends VolatileStorageProvider {
         return this.type;
     }
     clone() {
-        const variable = new VolatileVariable(this.type, this.storageEngine, this.name, this.id, null);
-        variable.cloneFrom(this);
-        return variable;
+        const singleton = new VolatileSingleton(this.type, this.storageEngine, this.name, this.id, null);
+        singleton.cloneFrom(this);
+        return singleton;
     }
     async cloneFrom(handle) {
         this.referenceMode = handle.referenceMode;

@@ -439,7 +439,7 @@ ${this.activeRecipe.toString()}`;
                     assert(type instanceof InterfaceType && type.interfaceInfo.particleMatches(particleSpec));
                     const particleClone = particleSpec.clone().toLiteral();
                     particleClone.id = newStore.id;
-                    // TODO(shans): clean this up when we have interfaces for Variable, Collection, etc.
+                    // TODO(shans): clean this up when we have interfaces for Singleton, Collection, etc.
                     // tslint:disable-next-line: no-any
                     await newStore.set(particleClone);
                 }

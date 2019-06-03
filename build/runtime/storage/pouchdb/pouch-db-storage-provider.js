@@ -11,7 +11,7 @@ import { StorageProviderBase } from '../storage-provider-base.js';
 import { PouchDbKey } from './pouch-db-key.js';
 /**
  * Base class for PouchDb related Storage classes
- * (PouchDbVariable/PouchDbCollection)
+ * (PouchDbSingleton/PouchDbCollection)
  */
 export class PouchDbStorageProvider extends StorageProviderBase {
     constructor(type, storageEngine, name, id, key, refMode) {

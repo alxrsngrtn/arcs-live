@@ -1,13 +1,11 @@
-commit 08b9f55e56911c1bd643b277b7f047aed544b823
-Author: Paul Lindner <plindner@google.com>
-Date:   Wed May 29 21:51:18 2019 -0700
+commit 4c5fb349ae7af36cfb6e7152a9f9685dbcbb9776
+Author: Scott J. Miles <sjmiles@google.com>
+Date:   Mon Jun 10 14:21:53 2019 -0700
 
-    Standardize and enforce License headers (#3079)
+    Skip 3ops x 2models test, > 10s timeout considered too long (#3160)
     
-    * Introduce eslint-plugin-header v3.0.0
-    * Convert double-slash license comments to blocks
-    * Add missing @license
-    * Fix licenses with no indent
-    * Remove comments from LICENSE
-    * Add/Fix licenses
-    * Add the configuration for the license header check
+    * Increase timeout for 3ops x 2models test
+    
+    * Increase timeout 10s => 20s
+    
+    * Skip long-running test

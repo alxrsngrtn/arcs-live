@@ -12,7 +12,7 @@ import { Particle } from './particle.js';
 import { Reference } from './reference.js';
 import { SerializedEntity } from './storage-proxy.js';
 import { EntityClass, Entity } from './entity.js';
-import { Store, VariableStore, CollectionStore, BigCollectionStore } from './store.js';
+import { Store, SingletonStore, CollectionStore, BigCollectionStore } from './store.js';
 import { IdGenerator } from './id.js';
 /** An interface representing anything storable in a Handle. Concretely, this is the {@link Entity} and {@link ClientReference} classes. */
 export interface Storable {
@@ -25,7 +25,7 @@ export interface HandleOptions {
     notifyDesync: boolean;
 }
 /**
- * Base class for Collections and Variables.
+ * Base class for Collections and Singletons.
  */
 export declare abstract class Handle {
     readonly storage: Store;
@@ -95,26 +95,25 @@ export declare class Collection extends Handle {
  * the types of handles that need to be connected to that particle, and
  * the current recipe identifies which handles are connected.
  */
-export declare class Variable extends Handle {
-    readonly storage: VariableStore;
+export declare class Singleton extends Handle {
+    readonly storage: SingletonStore;
     _notify(kind: string, particle: Particle, details: any): Promise<void>;
     /**
-     * @returns the Entity contained by the Variable, or undefined if the Variable
-     * is cleared.
-     * @throws {Error} if this variable is not configured as a readable handle (i.e. 'in' or 'inout')
+     * @returns the Entity contained by the Singleton, or undefined if the Singleton is cleared.
+     * @throws {Error} if this Singleton is not configured as a readable handle (i.e. 'in' or 'inout')
      * in the particle's manifest.
      */
     get(): Promise<ParticleSpec | import("./entity.js").EntityInterface | Reference>;
     _restore(model: any): ParticleSpec | import("./entity.js").EntityInterface | Reference;
     /**
-     * Stores a new entity into the Variable, replacing any existing entity.
-     * @throws {Error} if this variable is not configured as a writeable handle (i.e. 'out' or 'inout')
+     * Stores a new entity into the Singleton, replacing any existing entity.
+     * @throws {Error} if this Singleton is not configured as a writeable handle (i.e. 'out' or 'inout')
      * in the particle's manifest.
      */
     set(entity: Storable): Promise<void>;
     /**
-     * Clears any entity currently in the Variable.
-     * @throws {Error} if this variable is not configured as a writeable handle (i.e. 'out' or 'inout')
+     * Clears any entity currently in the Singleton.
+     * @throws {Error} if this Singleton is not configured as a writeable handle (i.e. 'out' or 'inout')
      * in the particle's manifest.
      */
     clear(): Promise<void>;
@@ -170,7 +169,7 @@ export declare class BigCollection extends Handle {
      * caveat that items removed during a streamed read may be returned at the end). Set `forward`
      * to false to return items in reverse insertion order.
      *
-     * @throws {Error} if this variable is not configured as a readable handle (i.e. 'in' or 'inout')
+     * @throws {Error} if this Singleton is not configured as a readable handle (i.e. 'in' or 'inout')
      * in the particle's manifest.
      */
     stream({ pageSize, forward }: {

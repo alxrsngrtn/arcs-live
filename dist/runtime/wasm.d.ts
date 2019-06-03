@@ -7,37 +7,24 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-import { protobufjs } from '../platform/protobufjs-web.js';
 import { Schema } from './schema.js';
 import { EntityInterface } from './entity.js';
 import { Particle } from './particle.js';
 import { Handle } from './handle.js';
-export declare function toProtoJSON(schema: Schema): {
-    nested: {
-        [x: string]: {
-            fields: {};
-        };
-    };
-};
-export declare class EntityProtoConverter {
-    readonly schema: Schema;
-    readonly message: protobufjs.Type;
-    constructor(schema: Schema);
-    encode(entity: EntityInterface): Uint8Array;
-    decode(buffer: Uint8Array): EntityInterface;
-}
 export declare class EntityPackager {
     readonly schema: Schema;
+    private encoder;
+    private decoder;
     constructor(schema: Schema);
-    encode(entity: EntityInterface): string;
-    private encodeField;
-    private encodeValue;
-    decode(str: string): EntityInterface;
+    encodeSingleton(entity: EntityInterface): string;
+    encodeCollection(entities: EntityInterface[]): string;
+    decodeSingleton(str: string): EntityInterface;
 }
 declare type WasmAddress = number;
 export declare class WasmParticle extends Particle {
     private memory;
-    private heap;
+    private heapU8;
+    private heap32;
     private wasm;
     private exports;
     private innerParticle;
@@ -56,15 +43,18 @@ export declare class WasmParticle extends Particle {
         originator?: any;
     }): Promise<void>;
     onHandleDesync(handle: Handle): Promise<void>;
-    setVariable(wasmHandle: WasmAddress, encoded: WasmAddress): Promise<void>;
+    singletonSet(wasmHandle: WasmAddress, encoded: WasmAddress): Promise<void>;
+    singletonClear(wasmHandle: WasmAddress): Promise<void>;
+    collectionStore(wasmHandle: WasmAddress, encoded: WasmAddress): Promise<void>;
+    collectionRemove(wasmHandle: WasmAddress, encoded: WasmAddress): Promise<void>;
+    collectionClear(wasmHandle: WasmAddress): Promise<void>;
+    private decodeEntity;
     renderSlot(slotName: string, contentTypes: string[]): void;
     renderHostedSlot(slotName: string, hostedSlotId: string, content: string): void;
     renderImpl(slotName: WasmAddress, content: WasmAddress): void;
     fireEvent(slotName: string, event: any): void;
-    private getOrCreateConverter;
-    private storeBuffer;
-    private storeString;
-    private readString;
+    private store;
+    private read;
     private sysWritev;
 }
 export {};

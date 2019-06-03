@@ -22,12 +22,13 @@ export class PlanningExplorerAdapter {
             });
         }
     }
-    static updateVisibleSuggestions(visibleSuggestions, devtoolsChannel) {
+    static updateVisibleSuggestions(visibleSuggestions, options, devtoolsChannel) {
         if (devtoolsChannel) {
             devtoolsChannel.send({
                 messageType: 'visible-suggestions-changed',
                 messageBody: {
-                    visibleSuggestionHashes: visibleSuggestions.map(s => s.hash)
+                    visibleSuggestionHashes: visibleSuggestions.map(s => s.hash),
+                    visibilityReasons: options ? [...options.reasons.entries()].map(e => ({ hash: e[0], ...e[1] })) : undefined
                 }
             });
         }

@@ -24,7 +24,7 @@ import { TypeChecker } from './recipe/type-checker.js';
 import { Schema } from './schema.js';
 import { StorageProviderFactory } from './storage/storage-provider-factory.js';
 import { BigCollectionType, CollectionType, EntityType, InterfaceType, ReferenceType, SlotType, Type, TypeVariable } from './type.js';
-class ManifestError extends Error {
+export class ManifestError extends Error {
     constructor(location, message) {
         super(message);
         this.location = location;
@@ -338,6 +338,9 @@ export class Manifest {
         })();
         return await registry[fileName];
     }
+    static getErrors(manifest) {
+        return manifest.errors;
+    }
     static async parse(content, options) {
         options = options || {};
         // TODO(sjmiles): allow `context` for including an existing manifest in the import list
@@ -358,10 +361,14 @@ export class Manifest {
                 console.warn(processError(error).message);
             }
         }
+        // tslint:disable-next-line: no-any
         function processError(e, parseError = undefined) {
             if (!((e instanceof ManifestError) || e.location)) {
                 return e;
             }
+            return processManifestError(e, parseError);
+        }
+        function processManifestError(e, parseError = undefined) {
             const lines = content.split('\n');
             const line = lines[e.location.start.line - 1];
             // TODO(sjmiles): see https://github.com/PolymerLabs/arcs/issues/2570
@@ -626,7 +633,7 @@ ${e.message}
         if (particleItem.hasParticleArgument) {
             const warning = new ManifestError(particleItem.location, `Particle uses deprecated argument body`);
             warning.key = 'hasParticleArgument';
-            manifest._warnings.push(warning);
+            manifest['_warnings'].push(warning);
         }
         // TODO: loader should not be optional.
         if (particleItem.implFile && loader) {
@@ -1083,7 +1090,7 @@ ${e.message}
             let hasSerializedId = false;
             entities = entities.map(entity => {
                 if (entity == null) {
-                    // FIXME: perhaps this happens when we have an empty variable?
+                    // FIXME: perhaps this happens when we have an empty singleton?
                     // we should just generate an empty list in that case.
                     return null;
                 }

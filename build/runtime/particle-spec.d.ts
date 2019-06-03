@@ -62,6 +62,14 @@ export declare class ConsumeSlotConnectionSpec {
 }
 export declare class ProvideSlotConnectionSpec extends ConsumeSlotConnectionSpec {
 }
+export interface SerializedParticleTrustClaimSpec extends Literal {
+    handle: string;
+    trustTag: string;
+}
+export interface SerializedParticleTrustCheckSpec extends Literal {
+    handle: string;
+    trustTag: string;
+}
 export interface SerializedParticleSpec extends Literal {
     name: string;
     id?: string;
@@ -74,6 +82,8 @@ export interface SerializedParticleSpec extends Literal {
     implBlobUrl: string | null;
     modality: string[];
     slotConnections: SerializedSlotConnectionSpec[];
+    trustClaims?: SerializedParticleTrustClaimSpec[];
+    trustChecks?: SerializedParticleTrustCheckSpec[];
 }
 export declare class ParticleSpec {
     private readonly model;
@@ -85,6 +95,8 @@ export declare class ParticleSpec {
     implBlobUrl: string | null;
     modality: Modality;
     slotConnections: Map<string, ConsumeSlotConnectionSpec>;
+    trustClaims: Map<string, string>;
+    trustChecks: Map<string, string>;
     constructor(model: SerializedParticleSpec);
     createConnection(arg: SerializedHandleConnectionSpec, typeVarMap: Map<string, Type>): HandleConnectionSpec;
     readonly handleConnections: HandleConnectionSpec[];
@@ -107,5 +119,7 @@ export declare class ParticleSpec {
     toInterface(): InterfaceType;
     toString(): string;
     toManifestString(): string;
+    private validateTrustClaims;
+    private validateTrustChecks;
 }
 export {};

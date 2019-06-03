@@ -12,7 +12,7 @@ import { Id } from '../../id.js';
 import { Type } from '../../type.js';
 import { ModelValue, SerializedModelEntry } from '../crdt-collection-model.js';
 import { KeyBase } from '../key-base.js';
-import { BigCollectionStorageProvider, CollectionStorageProvider, StorageBase, StorageProviderBase, VariableStorageProvider } from '../storage-provider-base.js';
+import { BigCollectionStorageProvider, CollectionStorageProvider, StorageBase, StorageProviderBase, SingletonStorageProvider } from '../storage-provider-base.js';
 export declare function resetStorageForTesting(key: any): Promise<void>;
 declare class FirebaseKey extends KeyBase {
     databaseUrl?: string;
@@ -66,10 +66,10 @@ declare abstract class FirebaseStorageProvider extends StorageProviderBase {
     _persistChanges(): Promise<void>;
 }
 /**
- * Models a Variable that is persisted to firebase in a
+ * Models a Singleton that is persisted to firebase in a
  * last-writer-wins scheme.
  *
- * Initialization: After construct/connect the variable is
+ * Initialization: After construct/connect the singleton is
  * not fully initialized, calls to `get` and `toLiteral`
  * will not complete until either:
  *  * The initial value is supplied via the firebase `.on`
@@ -82,7 +82,7 @@ declare abstract class FirebaseStorageProvider extends StorageProviderBase {
  *
  * Local modifications: When a local modification is applied
  * by a call to `set` we increment the version number,
- * mark this variable as locally modified, and start a
+ * mark this singleton as locally modified, and start a
  * process to atomically persist the change to firebase.
  * Until this process has completed we suppress incoming
  * changes from firebase. The version that we have chosen
@@ -92,7 +92,7 @@ declare abstract class FirebaseStorageProvider extends StorageProviderBase {
  * modifications), but the result will always be
  * monotonically increasing.
  */
-declare class FirebaseVariable extends FirebaseStorageProvider implements VariableStorageProvider {
+declare class FirebaseVariable extends FirebaseStorageProvider implements SingletonStorageProvider {
     private value;
     private localModified;
     private readonly initialized;

@@ -7,19 +7,24 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-import { PECInnerPort } from '../api-channel';
-import { CRDTModel, CRDTOperation, CRDTTypeRecord, VersionMap } from '../crdt/crdt';
-import { Handle } from './handle';
-import { ProxyMessage } from './store';
+import { CRDTModel, CRDTOperation, CRDTTypeRecord, VersionMap } from '../crdt/crdt.js';
+import { Handle } from './handle.js';
+import { ActiveStore, ProxyMessage } from './store.js';
 /**
- * TODO: describe this class. And add some tests.
+ * TODO: describe this class.
  */
 export declare class StorageProxy<T extends CRDTTypeRecord> {
     private handles;
     private crdt;
-    constructor(crdt: CRDTModel<T>, port: PECInnerPort);
+    private id;
+    private store;
+    constructor(crdt: CRDTModel<T>, store: ActiveStore<T>);
+    registerWithStore(store: ActiveStore<T>): void;
     registerHandle(h: Handle<T>): VersionMap;
-    applyOp(op: CRDTOperation): boolean;
-    getParticleView(): T['consumerType'];
+    applyOp(op: CRDTOperation): Promise<boolean>;
+    getParticleView(): Promise<T['consumerType']>;
     onMessage(message: ProxyMessage<T>): boolean;
+    private notifyUpdate;
+    private notifySync;
+    private synchronizeModel;
 }

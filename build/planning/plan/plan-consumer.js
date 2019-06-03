@@ -13,8 +13,10 @@ import { PlanningExplorerAdapter } from '../debug/planning-explorer-adapter.js';
 import { StrategyExplorerAdapter } from '../debug/strategy-explorer-adapter.js';
 import { SuggestionComposer } from '../suggestion-composer.js';
 import { PlanningResult } from './planning-result.js';
+import { SuggestFilter } from './suggest-filter.js';
 export class PlanConsumer {
     constructor(arc, result) {
+        this.suggestFilter = new SuggestFilter(false);
         // Callback is triggered when planning results have changed.
         this.suggestionsChangeCallbacks = [];
         // Callback is triggered when suggestions visible to the user have changed.
@@ -26,7 +28,6 @@ export class PlanConsumer {
         assert(result, 'result cannot be null');
         this.arc = arc;
         this.result = result;
-        this.suggestFilter = { showAll: false };
         this.suggestionsChangeCallbacks = [];
         this.visibleSuggestionsChangeCallbacks = [];
         this._initSuggestionComposer();
@@ -40,10 +41,10 @@ export class PlanConsumer {
     registerVisibleSuggestionsChangedCallback(callback) { this.visibleSuggestionsChangeCallbacks.push(callback); }
     setSuggestFilter(showAll, search) {
         assert(!showAll || !search);
-        if (this.suggestFilter['showAll'] === showAll && this.suggestFilter['search'] === search) {
+        if (this.suggestFilter.isEquivalent(showAll, search)) {
             return;
         }
-        this.suggestFilter = { showAll, search };
+        this.suggestFilter = new SuggestFilter(showAll, search);
         this._onMaybeSuggestionsChanged();
     }
     onSuggestionsChanged() {
@@ -51,35 +52,14 @@ export class PlanConsumer {
         this._onMaybeSuggestionsChanged();
         this._maybeUpdateStrategyExplorer();
     }
-    getCurrentSuggestions() {
-        const suggestions = this.result.suggestions.filter(suggestion => suggestion.plan.slots.length > 0
-            && !!suggestion.descriptionText
-            && this.arc.modality.isCompatible(suggestion.plan.modality.names));
-        // `showAll`: returns all suggestions that render into slots.
-        if (this.suggestFilter['showAll']) {
-            // Should filter out suggestions produced by search phrases?
-            return suggestions;
-        }
-        // search filter non empty: match plan search phrase or description text.
-        if (this.suggestFilter['search']) {
-            return suggestions.filter(suggestion => suggestion.descriptionText.toLowerCase().includes(this.suggestFilter['search']) ||
-                suggestion.hasSearch(this.suggestFilter['search']));
-        }
-        return suggestions.filter(suggestion => {
-            const usesHandlesFromActiveRecipe = suggestion.plan.handles.find(handle => {
-                // TODO(mmandlis): find a generic way to exlude system handles (eg Theme),
-                // either by tagging or by exploring connection directions etc.
-                return !!handle.id &&
-                    !!this.arc.activeRecipe.handles.find(activeHandle => activeHandle.id === handle.id);
-            });
-            const usesRemoteNonRootSlots = suggestion.plan.slots.find(slot => {
-                return !slot.name.includes('root') && !slot.tags.includes('root') &&
-                    slot.id && !slot.id.includes('root') &&
-                    Boolean(this.arc.pec.slotComposer.findContextById(slot.id));
-            });
-            const onlyUsesNonRootSlots = !suggestion.plan.slots.find(s => s.name.includes('root') || s.tags.includes('root')) &&
-                !((suggestion.plan.slotConnections || []).find(sc => sc.name === 'root'));
-            return (usesHandlesFromActiveRecipe && usesRemoteNonRootSlots) || onlyUsesNonRootSlots;
+    getCurrentSuggestions(options) {
+        return this.result.suggestions.filter(suggestion => {
+            const suggestOption = options && options.reasons ? { reasons: [] } : undefined;
+            const isVisible = suggestion.isVisible(this.arc, this.suggestFilter, suggestOption);
+            if (!isVisible && suggestOption) {
+                options.reasons.set(suggestion.hash, suggestOption);
+            }
+            return isVisible;
         });
     }
     dispose() {
@@ -94,11 +74,12 @@ export class PlanConsumer {
         PlanningExplorerAdapter.updatePlanningResults(this.result, {}, this.devtoolsChannel);
     }
     _onMaybeSuggestionsChanged() {
-        const suggestions = this.getCurrentSuggestions();
+        const options = this.devtoolsChannel ? { reasons: new Map() } : undefined;
+        const suggestions = this.getCurrentSuggestions(options);
         if (!PlanningResult.isEquivalent(this.currentSuggestions, suggestions)) {
             this.visibleSuggestionsChangeCallbacks.forEach(callback => callback(suggestions));
             this.currentSuggestions = suggestions;
-            PlanningExplorerAdapter.updateVisibleSuggestions(this.currentSuggestions, this.devtoolsChannel);
+            PlanningExplorerAdapter.updateVisibleSuggestions(this.currentSuggestions, options, this.devtoolsChannel);
         }
     }
     _initSuggestionComposer() {

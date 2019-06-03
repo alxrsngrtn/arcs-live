@@ -17,9 +17,10 @@ declare type VolatileEntry<Data> = {
 export declare class VolatileStorageKey extends StorageKey {
     readonly unique: string;
     constructor(unique: string);
+    toString(): string;
 }
 export declare class VolatileMemory {
-    entries: Map<StorageKey, VolatileEntry<unknown>>;
+    entries: Map<string, VolatileEntry<unknown>>;
 }
 export declare class VolatileDriver<Data> extends Driver<Data> {
     private memory;
@@ -35,7 +36,7 @@ export declare class VolatileDriver<Data> extends Driver<Data> {
 }
 export declare class VolatileStorageDriverProvider implements StorageDriverProvider {
     willSupport(storageKey: StorageKey): boolean;
-    driver<Data>(storageKey: StorageKey, exists: Exists): Driver<Data>;
+    driver<Data>(storageKey: StorageKey, exists: Exists): Promise<VolatileDriver<Data>>;
     static register(): void;
 }
 export {};

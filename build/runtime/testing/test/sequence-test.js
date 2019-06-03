@@ -67,7 +67,7 @@ describe('Sequence testing infrastructure', async () => {
             assert.fail();
         }
         catch (e) {
-            assert.equal(e.message, 'Additional async point found for input input number 0');
+            assert.equal(e.message, 'Additional async point found!');
         }
     });
 });

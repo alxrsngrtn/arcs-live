@@ -37,11 +37,11 @@ export class Store {
         this.mode = mode;
         this.modelConstructor = modelConstructor;
     }
-    activate() {
+    async activate() {
         if (this.constructors.get(this.mode) == null) {
             throw new Error(`StorageMode ${this.mode} not yet implemented`);
         }
-        const activeStore = new (this.constructors.get(this.mode))(this.storageKey, this.exists, this.type, this.mode, this.modelConstructor);
+        const activeStore = await this.constructors.get(this.mode).construct(this.storageKey, this.exists, this.type, this.mode, this.modelConstructor);
         this.exists = Exists.ShouldExist;
         return activeStore;
     }
@@ -51,18 +51,25 @@ export class Store {
 export class ActiveStore extends Store {
 }
 export class DirectStore extends ActiveStore {
+    /*
+     * This class should only ever be constructed via the static construct method
+     */
     constructor(storageKey, exists, type, mode, modelConstructor) {
         super(storageKey, exists, type, mode, modelConstructor);
         this.callbacks = new Map();
         this.inSync = true;
         this.nextCallbackID = 1;
         this.version = 0;
-        this.localModel = new modelConstructor();
-        this.driver = DriverFactory.driverInstance(storageKey, exists);
-        if (this.driver == null) {
+    }
+    static async construct(storageKey, exists, type, mode, modelConstructor) {
+        const me = new DirectStore(storageKey, exists, type, mode, modelConstructor);
+        me.localModel = new modelConstructor();
+        me.driver = await DriverFactory.driverInstance(storageKey, exists);
+        if (me.driver == null) {
             throw new CRDTError(`No driver exists to support storage key ${storageKey}`);
         }
-        this.driver.registerReceiver(this.onReceive.bind(this));
+        me.driver.registerReceiver(me.onReceive.bind(me));
+        return me;
     }
     // The driver will invoke this method when it has an updated remote model
     async onReceive(model, version) {

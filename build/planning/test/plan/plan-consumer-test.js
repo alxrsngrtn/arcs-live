@@ -19,6 +19,7 @@ import { Planificator } from '../../plan/planificator.js';
 import { PlanningResult } from '../../plan/planning-result.js';
 import { Suggestion } from '../../plan/suggestion.js';
 import { PlanningModalityHandler } from '../../planning-modality-handler.js';
+import { SuggestFilter } from '../../plan/suggest-filter.js';
 async function createPlanConsumer(userid, arcKey, storageKeyBase, helper) {
     helper.arc.storageKey = 'volatile://!158405822139616:demo^^volatile-0';
     const store = await Planificator['_initSuggestStore'](helper.arc, userid, storageKeyBase);
@@ -143,7 +144,7 @@ describe('plan consumer', () => {
             }));
             assert.lengthOf(consumer.result.suggestions, 4);
             assert.isEmpty(consumer.getCurrentSuggestions());
-            consumer.suggestFilter.showAll = true;
+            consumer.suggestFilter = new SuggestFilter(true);
             return consumer;
         };
         const consumerDom = await initConsumer(Modality.Name.Dom);

@@ -33,7 +33,7 @@ export declare type ProxyMessage<T extends CRDTTypeRecord> = {
     operations: T['operation'][];
     id: number;
 };
-declare type ProxyCallback<T extends CRDTTypeRecord> = (message: ProxyMessage<T>) => boolean;
+export declare type ProxyCallback<T extends CRDTTypeRecord> = (message: ProxyMessage<T>) => boolean;
 export declare class Store<T extends CRDTTypeRecord> {
     readonly storageKey: StorageKey;
     exists: Exists;
@@ -42,7 +42,7 @@ export declare class Store<T extends CRDTTypeRecord> {
     readonly constructors: Map<StorageMode, typeof DirectStore>;
     modelConstructor: new () => CRDTModel<T>;
     constructor(storageKey: StorageKey, exists: Exists, type: Type, mode: StorageMode, modelConstructor: new () => CRDTModel<T>);
-    activate(): ActiveStore<T>;
+    activate(): Promise<ActiveStore<T>>;
 }
 export declare abstract class ActiveStore<T extends CRDTTypeRecord> extends Store<T> {
     abstract on(callback: ProxyCallback<T>): number;
@@ -56,7 +56,8 @@ export declare class DirectStore<T extends CRDTTypeRecord> extends ActiveStore<T
     inSync: boolean;
     private nextCallbackID;
     private version;
-    constructor(storageKey: StorageKey, exists: Exists, type: Type, mode: StorageMode, modelConstructor: new () => CRDTModel<T>);
+    private constructor();
+    static construct<T extends CRDTTypeRecord>(storageKey: StorageKey, exists: Exists, type: Type, mode: StorageMode, modelConstructor: new () => CRDTModel<T>): Promise<DirectStore<T>>;
     onReceive(model: T['data'], version: number): Promise<void>;
     private processModelChange;
     private noDriverSideChanges;
@@ -64,4 +65,3 @@ export declare class DirectStore<T extends CRDTTypeRecord> extends ActiveStore<T
     on(callback: ProxyCallback<T>): number;
     off(callback: number): void;
 }
-export {};

@@ -802,6 +802,7 @@ describe('particle-api', () => {
               this.out = handles.get('far');
             }
             async onHandleSync(handle, model) {
+              await handle.get();
               this.startBusy();
               setTimeout(async () => {
                 await this.out.set(new this.out.entityClass({result: 'hi'}));
@@ -847,6 +848,7 @@ describe('particle-api', () => {
               this.out = handles.get('far');
             }
             async onHandleUpdate(handle, update) {
+              await handle.get();
               this.startBusy();
               setTimeout(async () => {
                 await this.out.set(new this.out.entityClass({result: 'hi'}));

@@ -9,14 +9,13 @@
  */
 import { now } from '../../platform/date-web.js';
 import { Trigger } from './plan-producer.js';
-const defaultDefaultReplanDelayMs = 3000;
+const defaultReplanDelayMs = 300;
 export class ReplanQueue {
     constructor(planProducer, options = {}) {
         this.options = {};
         this.planProducer = planProducer;
         this.options = options;
-        this.options.defaultReplanDelayMs =
-            this.options.defaultReplanDelayMs || defaultDefaultReplanDelayMs;
+        this.options.replanDelayMs = this.options.replanDelayMs || defaultReplanDelayMs;
         this.changes = [];
         this.replanTimer = null;
         this.planProducer.registerStateChangedCallback(this._onPlanningStateChanged.bind(this));
@@ -27,7 +26,7 @@ export class ReplanQueue {
             this._postponeReplan();
         }
         else if (!this.planProducer.isPlanning) {
-            this._scheduleReplan(this.options.defaultReplanDelayMs);
+            this._scheduleReplan(this.options.replanDelayMs);
         }
     }
     _onPlanningStateChanged(isPlanning) {
@@ -40,7 +39,7 @@ export class ReplanQueue {
             // Schedule delayed planning.
             const timeNow = now();
             this.changes.forEach((ch, i) => this.changes[i] = timeNow);
-            this._scheduleReplan(this.options.defaultReplanDelayMs);
+            this._scheduleReplan(this.options.replanDelayMs);
         }
     }
     isReplanningScheduled() {
@@ -67,7 +66,7 @@ export class ReplanQueue {
         const sinceFirstChangeMs = now - this.changes[0];
         if (this._canPostponeReplan(sinceFirstChangeMs)) {
             this._cancelReplanIfScheduled();
-            let nextReplanDelayMs = this.options.defaultReplanDelayMs;
+            let nextReplanDelayMs = this.options.replanDelayMs;
             if (this.options.maxNoReplanMs) {
                 nextReplanDelayMs = Math.min(nextReplanDelayMs, this.options.maxNoReplanMs - sinceFirstChangeMs);
             }

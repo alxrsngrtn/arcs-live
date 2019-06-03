@@ -62,7 +62,7 @@ export class StorageProxy {
         if (type instanceof BigCollectionType) {
             return new BigCollectionProxy(id, type, port, pec, scheduler, name);
         }
-        return new VariableProxy(id, type, port, pec, scheduler, name);
+        return new SingletonProxy(id, type, port, pec, scheduler, name);
     }
     reportExceptionInHost(exception) {
         // TODO: Encapsulate source-mapping of the stack trace once there are more users of the port.RaiseSystemException() call.
@@ -160,7 +160,7 @@ export class StorageProxy {
             }
             // Holy Layering Violation Batman
             //
-            // If we are a variable waiting for a barriered set response
+            // If we are a singleton waiting for a barriered set response
             // then that set response *is* the next thing we're waiting for,
             // regardless of version numbers.
             //
@@ -346,12 +346,12 @@ export class CollectionProxy extends StorageProxy {
 }
 /**
  * Variables are synchronized in a 'last-writer-wins' scheme. When the
- * VariableProxy mutates the model, it sets a barrier and expects to
+ * SingletonProxy mutates the model, it sets a barrier and expects to
  * receive the barrier value echoed back in a subsequent update event.
  * Between those two points in time updates are not applied or
  * notified about as these reflect concurrent writes that did not 'win'.
  */
-export class VariableProxy extends StorageProxy {
+export class SingletonProxy extends StorageProxy {
     constructor() {
         super(...arguments);
         this.model = null;

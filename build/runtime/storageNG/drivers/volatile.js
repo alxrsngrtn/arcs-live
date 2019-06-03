@@ -15,6 +15,9 @@ export class VolatileStorageKey extends StorageKey {
         super('volatile');
         this.unique = unique;
     }
+    toString() {
+        return `${this.protocol}://${this.unique}`;
+    }
 }
 export class VolatileMemory {
     constructor() {
@@ -26,23 +29,24 @@ export class VolatileDriver extends Driver {
         super(storageKey, exists);
         this.pendingVersion = 0;
         this.pendingModel = null;
+        const keyAsString = storageKey.toString();
         this.memory = Runtime.getRuntime().getVolatileMemory();
         switch (exists) {
             case Exists.ShouldCreate:
-                if (this.memory.entries.has(storageKey)) {
+                if (this.memory.entries.has(keyAsString)) {
                     throw new Error(`requested creation of memory location ${storageKey} can't proceed as location already exists`);
                 }
                 this.data = { data: null, version: 0, drivers: [] };
-                this.memory.entries.set(storageKey, this.data);
+                this.memory.entries.set(keyAsString, this.data);
                 break;
             case Exists.ShouldExist:
-                if (!this.memory.entries.has(storageKey)) {
+                if (!this.memory.entries.has(keyAsString)) {
                     throw new Error(`requested connection to memory location ${storageKey} can't proceed as location doesn't exist`);
                 }
             /* falls through */
             case Exists.MayExist:
                 {
-                    const data = this.memory.entries.get(storageKey);
+                    const data = this.memory.entries.get(keyAsString);
                     if (data) {
                         this.data = data;
                         this.pendingModel = data.data;
@@ -50,7 +54,7 @@ export class VolatileDriver extends Driver {
                     }
                     else {
                         this.data = { data: null, version: 0, drivers: [] };
-                        this.memory.entries.set(storageKey, this.data);
+                        this.memory.entries.set(keyAsString, this.data);
                     }
                     break;
                 }
@@ -91,7 +95,7 @@ export class VolatileStorageDriverProvider {
     willSupport(storageKey) {
         return storageKey.protocol === 'volatile';
     }
-    driver(storageKey, exists) {
+    async driver(storageKey, exists) {
         if (!this.willSupport(storageKey)) {
             throw new Error(`This provider does not support storageKey ${storageKey.toString()}`);
         }

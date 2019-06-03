@@ -13,6 +13,15 @@ export var Exists;
     Exists[Exists["ShouldCreate"] = 1] = "ShouldCreate";
     Exists[Exists["MayExist"] = 2] = "MayExist";
 })(Exists || (Exists = {}));
+// Interface that drivers must support.
+// 
+// Note the threading of a version number here; each model provided
+// by the driver to the Store (using the receiver) is paired with a version,
+// as is each model sent from the Store to the driver (using Driver.send()).
+// 
+// This threading is used to track whether driver state has changed while
+// the Store is processing a particular model. send() should always fail
+// if the version isn't exactly 1 greater than the current internal version.
 export class Driver {
     constructor(storageKey, exists) {
         this.storageKey = storageKey;
@@ -23,7 +32,7 @@ export class DriverFactory {
     static clearRegistrationsForTesting() {
         this.providers = [];
     }
-    static driverInstance(storageKey, exists) {
+    static async driverInstance(storageKey, exists) {
         for (const provider of this.providers) {
             if (provider.willSupport(storageKey)) {
                 return provider.driver(storageKey, exists);

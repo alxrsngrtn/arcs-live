@@ -20,7 +20,7 @@ export declare class MultiplexerDomParticle extends TransformationDomParticle {
     handleIds: Dictionary<Promise<Handle>>;
     _mapParticleConnections(listHandleName: string, particleHandleName: string, hostedParticle: ParticleSpec, handles: ReadonlyMap<string, Handle>, arc: InnerArcHandle): Promise<string[][]>;
     setHandles(handles: ReadonlyMap<string, Handle>): Promise<void>;
-    willReceiveProps({ list }: {
+    update({ list }: {
         list: any;
     }, { arc, type, hostedParticle, otherMappedHandles, otherConnections }: {
         arc: InnerArcHandle;
@@ -28,7 +28,7 @@ export declare class MultiplexerDomParticle extends TransformationDomParticle {
         hostedParticle: ParticleSpec;
         otherMappedHandles: string[];
         otherConnections: string[];
-    }): Promise<void>;
+    }, oldProps: any, oldState: any): Promise<void>;
     combineHostedModel(slotName: string, hostedSlotId: string, content: Content): void;
     combineHostedTemplate(slotName: string, hostedSlotId: string, content: Content): void;
     constructInnerRecipe?(hostedParticle: any, item: any, itemHandle: any, slot: any, other: any): string;

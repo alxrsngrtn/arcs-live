@@ -16,7 +16,7 @@ import { KeyBase } from './key-base.js';
 import { ChangeEvent, StorageBase, StorageProviderBase } from './storage-provider-base.js';
 var Scope;
 (function (Scope) {
-    Scope[Scope["arc"] = 1] = "arc"; // target must be a storage key for an ArcInfo Variable
+    Scope[Scope["arc"] = 1] = "arc"; // target must be a storage key for an ArcInfo Singleton
 })(Scope || (Scope = {}));
 var Category;
 (function (Category) {
@@ -105,7 +105,7 @@ export class SyntheticStorage extends StorageBase {
         return new SyntheticKey(s, this.storageFactory);
     }
 }
-// Currently hard-wired to parse serialized data in an ArcInfo Variable to provide a list of ArcHandles.
+// Currently hard-wired to parse serialized data in an ArcInfo Singleton to provide a list of ArcHandles.
 class SyntheticCollection extends StorageProviderBase {
     constructor(type, id, key, targetStore, storageFactory) {
         super(type, undefined, id, key);

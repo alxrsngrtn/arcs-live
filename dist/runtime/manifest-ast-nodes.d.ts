@@ -117,6 +117,7 @@ export interface MetaStorageKey extends BaseNode {
     value: string;
     kind: 'storageKey';
 }
+export declare type MetaItem = MetaStorageKey | MetaName;
 export interface Particle extends BaseNode {
     kind: 'particle';
     name: string;
@@ -127,9 +128,21 @@ export interface Particle extends BaseNode {
     slots?: ParticleSlot[];
     description?: Description;
     hasParticleArgument?: boolean;
+    trustChecks?: ParticleTrustCheck[];
+    trustClaims?: ParticleTrustClaim[];
     ref?: ParticleRef | '*';
     connections?: RecipeParticleConnection[];
     slotConnections?: RecipeParticleSlotConnection[];
+}
+export interface ParticleTrustClaim extends BaseNode {
+    kind: 'particle-trust-claim';
+    handle: string;
+    trustTag: string;
+}
+export interface ParticleTrustCheck extends BaseNode {
+    kind: 'particle-trust-check';
+    handle: string;
+    trustTag: string;
 }
 export interface ParticleModality extends BaseNode {
     kind: 'particle-modality';
@@ -145,6 +158,7 @@ export interface ParticleArgument extends BaseNode {
     tags: TagList;
 }
 export declare type ParticleHandle = ParticleArgument;
+export declare type ParticleItem = ParticleModality | ParticleSlot | Description | ParticleHandle;
 export interface ParticleHandleDescription extends BaseNode {
     kind: 'handle-description';
     name: string;
@@ -214,12 +228,14 @@ export interface RecipeParticleConnection extends BaseNode {
     dir: string;
     target: ParticleConnectionTargetComponents;
 }
+export declare type RecipeParticleItem = RecipeParticleSlotConnection | RecipeParticleConnection;
 export interface ParticleConnectionTargetComponents extends BaseNode {
     kind: 'handle-connection-components';
     name: string | null;
     particle: string | null;
     tags: TagList;
 }
+export declare type RecipeHandleFate = string;
 export interface RecipeHandle extends BaseNode {
     kind: 'handle';
     name: string | null;
@@ -270,7 +286,7 @@ export interface VerbConnectionTarget extends BaseNode {
 export interface TagConnectionTarget extends BaseNode {
     targetType: 'tag';
 }
-export interface LocalNameConnectionTarget extends BaseNode {
+export interface NameConnectionTarget extends BaseNode {
     name: string;
     targetType: 'localName';
 }
@@ -378,6 +394,7 @@ export interface SlotFormFactor extends BaseNode {
     kind: 'form-factor';
     formFactor: string;
 }
+export declare type ParticleSlotItem = SlotFormFactor | ParticleProvidedSlot;
 export interface TypeName extends BaseNode {
     kind: 'type-name';
     name: string;
@@ -387,14 +404,21 @@ export interface NameAndTagList {
     tags: TagList;
 }
 export declare type Annotation = string;
+export declare type Indent = number;
 export declare type LocalName = string;
 export declare type Manifest = ManifestItem[];
 export declare type ManifestStorageItem = string;
+export declare type ManifestStorageDescription = string;
+export declare type Modality = string;
 export declare type ParticleArgumentDirection = string;
+export declare type ReservedWord = string;
 export declare type ResourceStart = string;
 export declare type ResourceBody = string;
 export declare type ResourceLine = string;
+export declare type SameIndent = boolean;
+export declare type SameOrMoreIndent = string;
 export declare type SchemaExtends = string[];
+export declare type SpaceTagList = Tag[];
 export declare type Tag = string;
 export declare type TagList = Tag[];
 export declare type TopLevelAlias = string;
@@ -402,9 +426,10 @@ export declare type Verb = string;
 export declare type VerbList = Verb[];
 export declare type Version = number;
 export declare type backquotedString = string;
+export declare type fieldName = string;
 export declare type id = string;
-export declare type upperIndent = string;
-export declare type lowerIndent = string;
+export declare type upperIdent = string;
+export declare type lowerIdent = string;
 export declare type whiteSpace = string;
 export declare type eolWhiteSpace = string;
 export declare type eol = string;

@@ -61,7 +61,7 @@ export declare class PouchDbStorage extends StorageBase {
     baseStorageFor(type: Type, key: string): Promise<PouchDbCollection>;
     /** @inheritDoc */
     parseStringAsKey(s: string): PouchDbKey;
-    /** Creates a new Variable or Collection given basic parameters */
+    /** Creates a new Singleton or Collection given basic parameters */
     newProvider(type: Type, name: string, id: string, key: string, refMode: boolean): PouchDbStorageProvider;
     /** Removes everything that a test could have created. */
     static resetPouchDbStorageForTesting(): Promise<void>;

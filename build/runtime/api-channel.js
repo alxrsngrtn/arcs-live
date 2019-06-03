@@ -32,16 +32,34 @@ var MappingType;
 })(MappingType || (MappingType = {}));
 const targets = new Map();
 function setPropertyKey(target, propertyKey) {
-    if (!targets.has(target)) {
-        targets.set(target, new Map());
+    let map = targets.get(target);
+    if (map == undefined) {
+        map = new Map();
+        targets.set(target, map);
     }
-    if (!targets.get(target).has(propertyKey)) {
-        targets.get(target).set(propertyKey, []);
+    let list = map.get(propertyKey);
+    if (list == undefined) {
+        list = [];
+        map.set(propertyKey, list);
     }
+    return list;
+}
+function getPropertyKey(target, propertyKey, parameterIndex) {
+    const map = targets.get(target);
+    if (map) {
+        const list = map.get(propertyKey);
+        if (list) {
+            const result = list[parameterIndex];
+            if (result) {
+                return result;
+            }
+        }
+    }
+    throw new Error(`the target ${target}, propertyKey ${propertyKey} and parameterIndex ${parameterIndex} provided did not exist`);
 }
 function set(target, propertyKey, parameterIndex, info) {
-    setPropertyKey(target, propertyKey);
-    targets.get(target).get(propertyKey)[parameterIndex] = info;
+    const list = setPropertyKey(target, propertyKey);
+    list[parameterIndex] = info;
 }
 function Direct(target, propertyKey, parameterIndex) {
     set(target.constructor, propertyKey, parameterIndex, { type: MappingType.Direct });
@@ -83,16 +101,10 @@ function Initializer(target, propertyKey, parameterIndex) {
     set(target.constructor, propertyKey, parameterIndex, { type: MappingType.Direct, initializer: true });
 }
 function Identifier(target, propertyKey, parameterIndex) {
-    assert(targets.get(target.constructor));
-    assert(targets.get(target.constructor).get(propertyKey));
-    assert(targets.get(target.constructor).get(propertyKey)[parameterIndex]);
-    targets.get(target.constructor).get(propertyKey)[parameterIndex].identifier = true;
+    getPropertyKey(target.constructor, propertyKey, parameterIndex).identifier = true;
 }
 function RemoteIgnore(target, propertyKey, parameterIndex) {
-    assert(targets.get(target.constructor));
-    assert(targets.get(target.constructor).get(propertyKey));
-    assert(targets.get(target.constructor).get(propertyKey)[parameterIndex]);
-    targets.get(target.constructor).get(propertyKey)[parameterIndex].ignore = true;
+    getPropertyKey(target.constructor, propertyKey, parameterIndex).ignore = true;
 }
 class ThingMapper {
     constructor(prefix) {
@@ -183,7 +195,7 @@ export class APIPort {
         const call = { messageType: name, messageBody: args, stack: this.attachStack ? new Error().stack : undefined };
         const count = this.messageCount++;
         if (this.inspector) {
-            this.inspector.pecMessage(name, args, count, new Error().stack);
+            this.inspector.pecMessage(name, args, count, new Error().stack || '');
         }
         this._port.postMessage(call);
     }
@@ -203,6 +215,9 @@ function getArgs(func) {
 // at start of runtime.
 // tslint:disable-next-line: no-any
 function convert(info, value, mapper) {
+    if (info === undefined) {
+        return;
+    }
     switch (info.type) {
         case MappingType.Mapped:
             return mapper.identifierForThing(value);
@@ -230,6 +245,9 @@ function convert(info, value, mapper) {
 // at start of runtime.
 // tslint:disable-next-line: no-any
 function unconvert(info, value, mapper) {
+    if (info === undefined) {
+        return;
+    }
     switch (info.type) {
         case MappingType.Mapped:
             return mapper.thingForIdentifier(value);
@@ -250,6 +268,9 @@ function unconvert(info, value, mapper) {
         case MappingType.List:
             return value.map(v => unconvert(info.value, v, mapper));
         case MappingType.ByLiteral:
+            if (!info.converter) {
+                throw new Error(`Expected ${info.type} to have a converter but it doesn't`);
+            }
             return info.converter.fromLiteral(value);
         default:
             throw new Error(`Can't yet recieve MappingType ${info.type}`);
@@ -258,16 +279,16 @@ function unconvert(info, value, mapper) {
 function AutoConstruct(target) {
     return (constructor) => {
         const doConstruct = (me, other) => {
-            const functions = targets.get(me);
+            const functions = targets.get(me) || new Map();
             for (const f of functions.keys()) {
                 const argNames = getArgs(me.prototype[f]);
-                const descriptor = functions.get(f);
+                const descriptor = functions.get(f) || [];
                 // If this descriptor is for an initializer, record that fact and we'll process it after
                 // the rest of the arguments.
-                const initializer = descriptor.findIndex(d => d.initializer);
+                const initializer = descriptor.findIndex(d => d.initializer || false);
                 // If this descriptor records that this argument is the identifier, record it
                 // as the requestedId for mapping below.
-                const requestedId = descriptor.findIndex(d => d.identifier);
+                const requestedId = descriptor.findIndex(d => d.identifier || false);
                 /** @this APIPort */
                 const impl = function (...args) {
                     const messageBody = {};
@@ -311,8 +332,10 @@ function AutoConstruct(target) {
                         }
                     }
                     if (promises.length > 0) {
-                        await Promise.all(promises.map(a => a.promise));
-                        promises.forEach(a => args[a.position] = args[a.position]());
+                        await Promise.all(promises.map(async (a) => a.promise));
+                        promises.forEach(a => {
+                            args[a.position] = args[a.position]();
+                        });
                     }
                     const result = this['on' + f](...args);
                     // If this message is an initializer, need to establish a mapping

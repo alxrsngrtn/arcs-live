@@ -24,7 +24,7 @@ describe('Volatile + Store Integration', async () => {
         const runtime = new Runtime();
         const storageKey = new VolatileStorageKey('unique');
         const store = new Store(storageKey, Exists.ShouldCreate, null, StorageMode.Direct, CRDTCount);
-        const activeStore = store.activate();
+        const activeStore = await store.activate();
         const count = new CRDTCount();
         count.applyOperation({ type: CountOpTypes.MultiIncrement, actor: 'me', value: 42, version: { from: 0, to: 27 } });
         await activeStore.onProxyMessage({ type: ProxyMessageType.ModelUpdate, model: count.getData(), id: 1 });
@@ -34,7 +34,7 @@ describe('Volatile + Store Integration', async () => {
         await activeStore.onProxyMessage({ type: ProxyMessageType.Operations, operations: [
                 { type: CountOpTypes.Increment, actor: 'them', version: { from: 0, to: 1 } }
             ], id: 1 });
-        const volatileEntry = runtime.getVolatileMemory().entries.get(storageKey);
+        const volatileEntry = runtime.getVolatileMemory().entries.get(storageKey.toString());
         assert.deepEqual(volatileEntry.data, activeStore['localModel'].getData());
         assert.equal(volatileEntry.version, 3);
     });
@@ -42,9 +42,9 @@ describe('Volatile + Store Integration', async () => {
         const runtime = new Runtime();
         const storageKey = new VolatileStorageKey('unique');
         const store1 = new Store(storageKey, Exists.ShouldCreate, null, StorageMode.Direct, CRDTCount);
-        const activeStore1 = store1.activate();
+        const activeStore1 = await store1.activate();
         const store2 = new Store(storageKey, Exists.ShouldExist, null, StorageMode.Direct, CRDTCount);
-        const activeStore2 = store2.activate();
+        const activeStore2 = await store2.activate();
         const count1 = new CRDTCount();
         count1.applyOperation({ type: CountOpTypes.MultiIncrement, actor: 'me', value: 42, version: { from: 0, to: 27 } });
         const count2 = new CRDTCount();
@@ -63,7 +63,7 @@ describe('Volatile + Store Integration', async () => {
             ], id: 1 });
         const results = await Promise.all([modelReply1, modelReply2, opReply1, opReply2, opReply3]);
         assert.equal(results.filter(a => !a).length, 0);
-        const volatileEntry = runtime.getVolatileMemory().entries.get(storageKey);
+        const volatileEntry = runtime.getVolatileMemory().entries.get(storageKey.toString());
         assert.deepEqual(volatileEntry.data, activeStore1['localModel'].getData());
         assert.equal(volatileEntry.version, 5);
     });

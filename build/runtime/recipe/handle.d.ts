@@ -31,7 +31,7 @@ export declare class Handle {
     constructor(recipe: Recipe);
     _copyInto(recipe: Recipe, cloneMap: CloneMap, variableMap: Map<TypeVariableInfo | Schema, TypeVariableInfo | Schema>): Handle;
     mergeInto(handle: Handle): void;
-    _mergedFate(fates: Fate[]): "create" | "use";
+    _mergedFate(fates: Fate[]): "use" | "create";
     _startNormalize(): void;
     _finishNormalize(): void;
     _compareTo(other: Handle): number;

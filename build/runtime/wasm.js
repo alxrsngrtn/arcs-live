@@ -8,121 +8,56 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { assert } from '../platform/assert-web.js';
-import { protobufjs } from '../platform/protobufjs-web.js';
 import { Particle } from './particle.js';
-import { Variable } from './handle.js';
-function jsonBaseType(type) {
-    const kind = (type.kind === 'schema-primitive') ? type.type : type.kind;
-    switch (kind) {
-        case 'Text':
-            return 'string';
-        case 'URL':
-            return 'Url';
-        case 'Number':
-            return 'double';
-        case 'Boolean':
-            return 'bool';
-        case 'Bytes':
-        case 'Object':
-        case 'schema-union':
-        case 'schema-tuple':
-        case 'schema-reference':
-            throw new Error(`'${kind}' not yet supported for schema to proto-json conversion`);
-        case 'schema-collection':
-            throw new Error(`Nested collections not yet supported for schema to proto-json conversion`);
-        default:
-            throw new Error(`Unknown type '${kind}' in schema`);
-    }
-}
-// Returns a JSON representation that protobufjs can use to de/serialize entity data as protobufs.
-export function toProtoJSON(schema) {
-    let id = 0;
-    let hasUrl = false;
-    const fields = {};
-    for (const [name, type] of Object.entries(schema.fields).sort()) {
-        id++;
-        let field;
-        if (type.kind === 'schema-collection') {
-            field = { rule: 'repeated', type: jsonBaseType(type.schema), id };
-        }
-        else {
-            field = { type: jsonBaseType(type), id };
-        }
-        hasUrl = hasUrl || (field.type === 'Url');
-        fields[name] = field;
-    }
-    const json = {
-        nested: {
-            [schema.name]: { fields }
-        }
-    };
-    if (hasUrl) {
-        json.nested.Url = { fields: { href: { type: 'string', id: 1 } } };
-    }
-    return json;
-}
-export class EntityProtoConverter {
-    constructor(schema) {
-        assert(schema.names.length > 0, 'At least one schema name is required for proto conversion');
-        const protoRoot = protobufjs.Root.fromJSON(toProtoJSON(schema));
-        this.schema = schema;
-        this.message = protoRoot.lookupType(schema.name);
-    }
-    encode(entity) {
-        const proto = this.message.create();
-        const scalar = (field, value) => (field.type === 'URL') ? { href: value } : value;
-        for (const [name, value] of Object.entries(entity.toLiteral())) {
-            const field = this.schema.fields[name];
-            if (field.kind === 'schema-collection') {
-                // tslint:disable-next-line: no-any
-                proto[name] = [...value].map(v => scalar(field.schema, v));
-            }
-            else {
-                proto[name] = scalar(field, value);
-            }
-        }
-        return this.message.encode(proto).finish();
-    }
-    decode(buffer) {
-        const proto = this.message.decode(buffer);
-        const scalar = (field, value) => (field.type === 'URL') ? value.href : value;
-        const data = {};
-        for (const [name, value] of Object.entries(proto.toJSON())) {
-            const field = this.schema.fields[name];
-            if (field.kind === 'schema-collection') {
-                data[name] = value.map(v => scalar(field.schema, v));
-            }
-            else {
-                data[name] = scalar(field, value);
-            }
-        }
-        return new (this.schema.entityClass())(data);
-    }
-}
+import { Singleton } from './handle.js';
 // Encodes/decodes the wire format for transferring entities over the wasm boundary.
+// Note that entities must have an id before serializing for use in a wasm particle.
 //
-//  <encoded> = <name>:<value>|<name>:<value>| ... |
-//
+//  <singleton> = <id-length>:<id>|<name>:<value>|<name>:<value>| ... |
 //  <value> depends on the field type:
 //    Text       <name>:T<length>:<text>
 //    URL        <name>:U<length>:<text>
-//    Number     <name>:N<number>
+//    Number     <name>:N<number>:
 //    Boolean    <name>:B<zero-or-one>
 //
-//    [Text]     <name>:CT<num-items>:<length>:<text><length>:<text> ... <length>:<text>
-//    [URL]      <name>:CU<num-items>:<length>:<text><length>:<text> ... <length>:<text>
-//    [Number]   <name>:CN<num-items>:<number>:<number>: ... <number>:
-//    [Boolean]  <name>:CB<num-items>:<digits>
+//  <collection> = <num-entities>:<length>:<encoded><length>:<encoded> ...
 //
+// Examples:
+//   Singleton:   4:id05|txt:T3:abc|lnk:U10:http://def|num:N37:|flg:B1|
+//   Collection:  3:29:4:id12|txt:T4:qwer|num:N9.2:|18:6:id2670|num:N-7:|15:5:id501|flg:B0|
 export class EntityPackager {
     constructor(schema) {
+        this.encoder = new StringEncoder();
+        this.decoder = new StringDecoder();
         assert(schema.names.length > 0, 'At least one schema name is required for entity packaging');
         this.schema = schema;
     }
-    encode(entity) {
-        let encoded = '';
+    encodeSingleton(entity) {
+        return this.encoder.encodeSingleton(this.schema, entity);
+    }
+    encodeCollection(entities) {
+        return this.encoder.encodeCollection(this.schema, entities);
+    }
+    decodeSingleton(str) {
+        const { id, data } = this.decoder.decodeSingleton(str);
+        const entity = new (this.schema.entityClass())(data);
+        entity.identify(id);
+        return entity;
+    }
+}
+class StringEncoder {
+    encodeSingleton(schema, entity) {
+        let encoded = entity.id.length + ':' + entity.id + '|';
         for (const [name, value] of Object.entries(entity.toLiteral())) {
-            encoded += this.encodeField(this.schema.fields[name], name, value);
+            encoded += this.encodeField(schema.fields[name], name, value);
+        }
+        return encoded;
+    }
+    encodeCollection(schema, entities) {
+        let encoded = entities.length + ':';
+        for (const entity of entities) {
+            const str = this.encodeSingleton(schema, entity);
+            encoded += str.length + ':' + str;
         }
         return encoded;
     }
@@ -130,17 +65,7 @@ export class EntityPackager {
         switch (field.kind) {
             case 'schema-primitive':
                 return name + ':' + field.type.substr(0, 1) + this.encodeValue(field.type, value) + '|';
-            case 'schema-collection': {
-                if (field.schema.kind !== 'schema-primitive') {
-                    throw new Error(`Collections of type '${field.schema.kind}' not yet supported for entity packaging`);
-                }
-                assert(value instanceof Set);
-                let encoded = name + ':C' + field.schema.type.slice(0, 1) + value.size + ':';
-                for (const item of value) {
-                    encoded += this.encodeValue(field.schema.type, item);
-                }
-                return encoded + '|';
-            }
+            case 'schema-collection':
             case 'schema-union':
             case 'schema-tuple':
             case 'schema-reference':
@@ -165,38 +90,21 @@ export class EntityPackager {
                 throw new Error(`Unknown primitive value type '${type}' in schema`);
         }
     }
-    decode(str) {
-        const data = new StringDecoder(str).decode();
-        return new (this.schema.entityClass())(data);
-    }
 }
 class StringDecoder {
-    constructor(str) {
+    decodeSingleton(str) {
         this.str = str;
-    }
-    decode() {
+        const len = Number(this.upTo(':'));
+        const id = this.chomp(len);
+        this.validate('|');
         const data = {};
-        while (!this.done()) {
+        while (this.str.length > 0) {
             const name = this.upTo(':');
             const typeChar = this.chomp(1);
-            if (typeChar === 'C') {
-                const items = new Set();
-                const containedType = this.chomp(1);
-                const size = Number(this.upTo(':'));
-                for (let i = 0; i < size; i++) {
-                    items.add(this.decodeValue(containedType));
-                }
-                data[name] = items;
-            }
-            else {
-                data[name] = this.decodeValue(typeChar);
-            }
+            data[name] = this.decodeValue(typeChar);
             this.validate('|');
         }
-        return data;
-    }
-    done() {
-        return this.str.length === 0;
+        return { id, data };
     }
     upTo(char) {
         const i = this.str.indexOf(char);
@@ -236,11 +144,51 @@ class StringDecoder {
         }
     }
 }
-function errFunc(label) {
-    return err => { throw new Error(label + ': ' + err); };
-}
-function returnZero() {
-    return 0;
+// Wasm modules built by emscripten require some external memory configuration by the caller,
+// which is usually built into the glue code generated alongside the module. We're not using
+// the glue code, but if we set the EMIT_EMSCRIPTEN_METADATA flag when building, emscripten
+// will provide a custom section in the module itself with the required values.
+const EMSCRIPTEN_METADATA_MAJOR = 0;
+const EMSCRIPTEN_METADATA_MINOR = 1;
+const EMSCRIPTEN_ABI_MAJOR = 0;
+const EMSCRIPTEN_ABI_MINOR = 3;
+// TODO: reconcile with Kotlin-based particles
+function readEmscriptenMetadata(module) {
+    const customSections = WebAssembly.Module.customSections(module, 'emscripten_metadata');
+    assert(customSections.length === 1, 'wasm particles must be built with EMIT_EMSCRIPTEN_METADATA');
+    const buffer = new Uint8Array(customSections[0]);
+    const metadata = [];
+    let offset = 0;
+    while (offset < buffer.byteLength) {
+        let result = 0;
+        let shift = 0;
+        while (1) {
+            const byte = buffer[offset++];
+            result |= (byte & 0x7f) << shift;
+            if (!(byte & 0x80)) {
+                break;
+            }
+            shift += 7;
+        }
+        metadata.push(result);
+    }
+    // The specifics of the section are not published anywhere official (yet). The values here
+    // correspond to emscripten version 1.38.34:
+    //   https://github.com/emscripten-core/emscripten/blob/1.38.34/tools/shared.py#L3065
+    // TODO: use real errors (and handle them gracefully upstream)
+    assert(metadata.length === 10);
+    assert(metadata[0] === EMSCRIPTEN_METADATA_MAJOR);
+    assert(metadata[1] === EMSCRIPTEN_METADATA_MINOR);
+    assert(metadata[2] === EMSCRIPTEN_ABI_MAJOR);
+    assert(metadata[3] === EMSCRIPTEN_ABI_MINOR);
+    return {
+        memSize: metadata[4],
+        tableSize: metadata[5],
+        globalBase: metadata[6],
+        dynamicBase: metadata[7],
+        dynamictopPtr: metadata[8],
+        tempdoublePtr: metadata[9],
+    };
 }
 export class WasmParticle extends Particle {
     constructor() {
@@ -250,101 +198,140 @@ export class WasmParticle extends Particle {
         this.converters = new Map();
         this.logInfo = null;
     }
+    // TODO: errors in this call (e.g. missing import or failure in particle ctor) generate two console outputs
     async initialize(buffer) {
         assert(this.spec.name.length > 0);
-        // TODO: detect errors when this memory size doesn't match up with the wasm's declared values?
-        this.memory = new WebAssembly.Memory({ initial: 256, maximum: 256 });
-        this.heap = new Uint8Array(this.memory.buffer);
+        // TODO: vet the imports/exports on 'module'
+        const module = await WebAssembly.compile(buffer);
+        const emc = readEmscriptenMetadata(module);
+        this.memory = new WebAssembly.Memory({ initial: emc.memSize, maximum: emc.memSize });
+        this.heapU8 = new Uint8Array(this.memory.buffer);
+        this.heap32 = new Int32Array(this.memory.buffer);
+        // We need to poke the address of the heap base into the memory buffer prior to instantiating.
+        this.heap32[emc.dynamictopPtr >> 2] = emc.dynamicBase;
         const env = {
             // Memory setup
             memory: this.memory,
-            __memory_base: 1024,
-            table: new WebAssembly.Table({ initial: 1, maximum: 1, element: 'anyfunc' }),
+            __memory_base: emc.globalBase,
+            table: new WebAssembly.Table({ initial: emc.tableSize, maximum: emc.tableSize, element: 'anyfunc' }),
             __table_base: 0,
-            DYNAMICTOP_PTR: 4096,
+            DYNAMICTOP_PTR: emc.dynamictopPtr,
             // Heap management
-            _emscripten_get_heap_size: () => this.heap.length,
+            _emscripten_get_heap_size: () => this.heapU8.length,
             _emscripten_resize_heap: size => false,
-            _emscripten_memcpy_big: (dst, src, num) => this.heap.set(this.heap.subarray(src, src + num), dst),
+            _emscripten_memcpy_big: (dst, src, num) => this.heapU8.set(this.heapU8.subarray(src, src + num), dst),
             // Error handling
-            abort: errFunc('abort'),
-            _abort: errFunc('_abort'),
-            ___assert_fail: errFunc('___assert_fail'),
-            ___setErrNo: errFunc('___setErrNo'),
-            abortOnCannotGrowMemory: errFunc('abortOnCannotGrowMemory'),
-            ___cxa_throw: errFunc('___cxa_throw'),
-            ___cxa_allocate_exception: errFunc('___cxa_allocate_exception'),
-            ___cxa_uncaught_exception: errFunc('___cxa_uncaught_exception'),
-            // API for inner particle operations
-            _handleSet: async (wasmHandle, encoded) => this.setVariable(wasmHandle, encoded),
-            _render: (slotName, content) => this.renderImpl(slotName, content),
+            _systemError: msg => { throw new Error(this.read(msg)); },
+            // TODO: can't seem to embed these in the C++ code
+            abort: () => { throw new Error('abort'); },
+            abortOnCannotGrowMemory: size => { throw new Error(`abortOnCannotGrowMemory(${size})`); },
             // Logging
-            __setLogInfo: (file, line) => this.logInfo = [this.readString(file), line],
+            _setLogInfo: (file, line) => this.logInfo = [this.read(file), line],
             ___syscall146: (which, varargs) => this.sysWritev(which, varargs),
-            ___syscall140: returnZero,
-            ___syscall6: returnZero,
-            ___syscall54: returnZero,
+            // Inner particle API
+            _singletonSet: async (handle, encoded) => this.singletonSet(handle, encoded),
+            _singletonClear: async (handle) => this.singletonClear(handle),
+            _collectionStore: async (handle, encoded) => this.collectionStore(handle, encoded),
+            _collectionRemove: async (handle, encoded) => this.collectionRemove(handle, encoded),
+            _collectionClear: async (handle) => this.collectionClear(handle),
+            _render: (slotName, content) => this.renderImpl(slotName, content),
         };
         const global = { 'NaN': NaN, 'Infinity': Infinity };
-        // The size of the function pointer table is specified by the wasm binary but there doesn't
-        // seem to be a simple way to get it, so we'll just extract it from the error :-/
-        try {
-            this.wasm = await WebAssembly.instantiate(buffer, { env, global });
-        }
-        catch (err) {
-            const match = err.message.match(/table import .* initial ([0-9]+)/);
-            if (!match) {
-                throw err;
-            }
-            const n = Number(match[1]);
-            env.table = new WebAssembly.Table({ initial: n, maximum: n, element: 'anyfunc' });
-            this.wasm = await WebAssembly.instantiate(buffer, { env, global });
-        }
-        this.exports = this.wasm.instance.exports;
+        this.wasm = await WebAssembly.instantiate(module, { env, global });
+        this.exports = this.wasm.exports;
         this.innerParticle = this.exports[`_new${this.spec.name}`]();
-        console.clear(); // TODO: remove
     }
+    // TODO: for now we set up Handle objects with onDefineHandle and map them into the
+    // wasm container through this call, which creates corresponding Handle objects in there.
+    // That means entity transfer goes from the StorageProxy, deserializes at the outer Handle
+    // which then notifies this class (calling onHandle*), and we then serialize into the wasm
+    // transfer format. Obviously this can be improved.
     async setHandles(handles) {
         for (const [name, handle] of handles) {
-            // TODO: currently only Variables are supported.
-            assert(handle instanceof Variable);
-            // Ownership of 'name' is passed to the inner particle.
-            const p = this.storeString(name);
-            const wasmHandle = this.exports._newHandle(this.innerParticle, p);
+            const p = this.store(name);
+            const wasmHandle = this.exports._connectHandle(this.innerParticle, p, handle.canRead);
+            this.exports._free(p);
+            if (wasmHandle === 0) {
+                throw new Error(`Wasm particle failed to connect handle '${name}'`);
+            }
             this.handleMap.set(handle, wasmHandle);
             this.revHandleMap.set(wasmHandle, handle);
+            this.converters.set(handle, new EntityPackager(handle.entityClass.schema));
         }
-        this.exports._initParticle(this.innerParticle);
     }
     async onHandleSync(handle, model) {
-        if (model) {
-            const converter = this.getOrCreateConverter(handle);
-            const p = this.storeString(converter.encode(model));
-            this.exports._syncHandle(this.innerParticle, this.handleMap.get(handle), p);
-            this.exports._free(p);
+        const wasmHandle = this.handleMap.get(handle);
+        if (!model) {
+            this.exports._syncHandle(this.innerParticle, wasmHandle, 0);
+            return;
+        }
+        const converter = this.converters.get(handle);
+        let encoded;
+        if (handle instanceof Singleton) {
+            encoded = converter.encodeSingleton(model);
         }
         else {
-            // Send a nullptr to indicate an empty model.
-            this.exports._syncHandle(this.innerParticle, this.handleMap.get(handle), 0);
+            encoded = converter.encodeCollection(model);
         }
+        const p = this.store(encoded);
+        this.exports._syncHandle(this.innerParticle, wasmHandle, p);
+        this.exports._free(p);
     }
-    // TODO
     // tslint:disable-next-line: no-any
-    async onHandleUpdate(handle, update) { }
-    // TODO
+    async onHandleUpdate(handle, update) {
+        if (update.originator) {
+            return;
+        }
+        const wasmHandle = this.handleMap.get(handle);
+        const converter = this.converters.get(handle);
+        let p1 = 0;
+        let p2 = 0;
+        if (handle instanceof Singleton) {
+            if (update.data) {
+                p1 = this.store(converter.encodeSingleton(update.data));
+            }
+        }
+        else {
+            p1 = this.store(converter.encodeCollection(update.added || []));
+            p2 = this.store(converter.encodeCollection(update.removed || []));
+        }
+        this.exports._updateHandle(this.innerParticle, wasmHandle, p1, p2);
+        if (p1)
+            this.exports._free(p1);
+        if (p2)
+            this.exports._free(p2);
+    }
+    // Ignored for wasm particles.
     async onHandleDesync(handle) { }
-    async setVariable(wasmHandle, encoded) {
-        const handle = this.revHandleMap.get(wasmHandle);
-        const payload = this.readString(encoded);
-        const converter = this.getOrCreateConverter(handle);
-        console.log(`Received on '${handle.name}' handle: ${payload}`);
-        const entity = converter.decode(payload);
-        await handle.set(entity);
+    // Store API.
+    async singletonSet(wasmHandle, encoded) {
+        const singleton = this.revHandleMap.get(wasmHandle);
+        await singleton.set(this.decodeEntity(singleton, encoded));
+    }
+    async singletonClear(wasmHandle) {
+        const singleton = this.revHandleMap.get(wasmHandle);
+        await singleton.clear();
+    }
+    async collectionStore(wasmHandle, encoded) {
+        const collection = this.revHandleMap.get(wasmHandle);
+        await collection.store(this.decodeEntity(collection, encoded));
+    }
+    async collectionRemove(wasmHandle, encoded) {
+        const collection = this.revHandleMap.get(wasmHandle);
+        await collection.remove(this.decodeEntity(collection, encoded));
+    }
+    async collectionClear(wasmHandle) {
+        const collection = this.revHandleMap.get(wasmHandle);
+        await collection.clear();
+    }
+    decodeEntity(handle, encoded) {
+        const converter = this.converters.get(handle);
+        return converter.decodeSingleton(this.read(encoded));
     }
     // Called by the shell to initiate rendering; the particle will call env._render in response.
     // TODO: handle contentTypes
     renderSlot(slotName, contentTypes) {
-        const p = this.storeString(slotName);
+        const p = this.store(slotName);
         this.exports._requestRender(this.innerParticle, p);
         this.exports._free(p);
     }
@@ -353,57 +340,41 @@ export class WasmParticle extends Particle {
     // Actually renders the slot. May be invoked due to an external request via renderSlot(),
     // or directly from the wasm particle itself (e.g. in response to a data update).
     renderImpl(slotName, content) {
-        const slot = this.slotProxiesByName.get(this.readString(slotName));
+        const slot = this.slotProxiesByName.get(this.read(slotName));
         if (slot) {
             ['template', 'model'].forEach(ct => slot.requestedContentTypes.add(ct));
-            slot.render({ template: this.readString(content), model: {}, templateName: 'default' });
+            slot.render({ template: this.read(content), model: {}, templateName: 'default' });
         }
     }
     fireEvent(slotName, event) {
-        const sp = this.storeString(slotName);
-        const hp = this.storeString(event.handler);
+        const sp = this.store(slotName);
+        const hp = this.store(event.handler);
         this.exports._fireEvent(this.innerParticle, sp, hp);
         this.exports._free(sp);
         this.exports._free(hp);
     }
-    getOrCreateConverter(handle) {
-        const schema = handle.entityClass.schema;
-        let converter = this.converters.get(schema);
-        if (!converter) {
-            converter = new EntityPackager(schema);
-            this.converters.set(schema, converter);
-        }
-        return converter;
-    }
     // Allocates memory in the wasm container.
-    storeBuffer(buf) {
-        const p = this.exports._malloc(buf.length);
-        this.heap.set(buf, p);
-        return p;
-    }
-    // Allocates memory in the wasm container.
-    storeString(str) {
+    store(str) {
         const p = this.exports._malloc(str.length + 1);
         for (let i = 0; i < str.length; i++) {
-            this.heap[p + i] = str.charCodeAt(i);
+            this.heapU8[p + i] = str.charCodeAt(i);
         }
-        this.heap[p + str.length] = 0;
+        this.heapU8[p + str.length] = 0;
         return p;
     }
-    // Currently only supports ASCII. TODO: support unicode
-    readString(idx) {
+    // Currently only supports ASCII. TODO: unicode
+    read(idx) {
         let str = '';
-        while (idx < this.heap.length && this.heap[idx] !== 0) {
-            str += String.fromCharCode(this.heap[idx++]);
+        while (idx < this.heapU8.length && this.heapU8[idx] !== 0) {
+            str += String.fromCharCode(this.heapU8[idx++]);
         }
         return str;
     }
     // printf support cribbed from emscripten glue js - currently only supports ASCII
     sysWritev(which, varargs) {
-        const heap32 = new Int32Array(this.memory.buffer);
         const get = () => {
             varargs += 4;
-            return heap32[(((varargs) - (4)) >> 2)];
+            return this.heap32[(((varargs) - (4)) >> 2)];
         };
         const output = (get() === 1) ? console.log : console.error;
         const iov = get();
@@ -412,10 +383,10 @@ export class WasmParticle extends Particle {
         let str = this.logInfo ? `[${this.spec.name}|${this.logInfo[0]}:${this.logInfo[1]}] ` : '';
         let ret = 0;
         for (let i = 0; i < iovcnt; i++) {
-            const ptr = heap32[(((iov) + (i * 8)) >> 2)];
-            const len = heap32[(((iov) + (i * 8 + 4)) >> 2)];
+            const ptr = this.heap32[(((iov) + (i * 8)) >> 2)];
+            const len = this.heap32[(((iov) + (i * 8 + 4)) >> 2)];
             for (let j = 0; j < len; j++) {
-                const curr = this.heap[ptr + j];
+                const curr = this.heapU8[ptr + j];
                 if (curr === 0 || curr === 10) { // NUL or \n
                     output(str);
                     str = '';

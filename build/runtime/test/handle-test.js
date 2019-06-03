@@ -33,7 +33,7 @@ describe('Handle', () => {
         await barStore.clear();
         assert.isNull(await barStore.get());
     });
-    it('ignores duplicate stores of the same entity value (variable)', async () => {
+    it('ignores duplicate stores of the same entity value (singleton)', async () => {
         // NOTE: Until entity mutation is distinct from collection modification,
         // referenceMode stores *can't* ignore duplicate stores of the same
         // entity value.
@@ -90,7 +90,7 @@ describe('Handle', () => {
         const stored = (await fooHandle.toList())[0];
         assert.equal(stored.value, '2');
     });
-    it('allows updates with same user-provided ids but different value (variable)', async () => {
+    it('allows updates with same user-provided ids but different value (singleton)', async () => {
         const manifest = await Manifest.load(manifestFile, new Loader());
         const arc = new Arc({ slotComposer: new FakeSlotComposer(), id: Id.fromString('test'), context: manifest, loader: new Loader() });
         // tslint:disable-next-line: variable-name
@@ -138,8 +138,8 @@ describe('Handle', () => {
       Text value
     `);
         const arc = new Arc({ id: Id.fromString('test'), storageKey: 'pouchdb://memory/yyy/test', context: manifest, loader: new Loader() });
-        const variable = await arc.createStore(manifest.schemas.Bar.type, 'foo', 'test1');
-        assert.equal(variable.storageKey, 'pouchdb://memory/yyy/test/handles/test1');
+        const singleton = await arc.createStore(manifest.schemas.Bar.type, 'foo', 'test1');
+        assert.equal(singleton.storageKey, 'pouchdb://memory/yyy/test/handles/test1');
     });
 });
 //# sourceMappingURL=handle-test.js.map

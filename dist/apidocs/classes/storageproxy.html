@@ -70,7 +70,7 @@
 				<div class="tsd-comment tsd-typography">
 					<div class="lead">
 						<p>Mediates between one or more Handles and the backing store outside the PEC.
-						TODO: describe this class. And add some tests.</p>
+						TODO: describe this class.</p>
 					</div>
 					<p>This can operate in two modes, based on how observing handles are configured:</p>
 					<ul>
@@ -109,7 +109,7 @@
 								<a href="collectionproxy.html" class="tsd-signature-type">CollectionProxy</a>
 							</li>
 							<li>
-								<a href="variableproxy.html" class="tsd-signature-type">VariableProxy</a>
+								<a href="singletonproxy.html" class="tsd-signature-type">SingletonProxy</a>
 							</li>
 							<li>
 								<a href="bigcollectionproxy.html" class="tsd-signature-type">BigCollectionProxy</a>
@@ -149,6 +149,7 @@
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-protected"><a href="storageproxy.html#port" class="tsd-kind-icon">port</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-protected"><a href="storageproxy.html#scheduler" class="tsd-kind-icon">scheduler</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="storageproxy.html#storagekey" class="tsd-kind-icon">storage<wbr>Key</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="storageproxy.html#store" class="tsd-kind-icon">store</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-protected"><a href="storageproxy.html#synchronized" class="tsd-kind-icon">synchronized</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="storageproxy.html#type" class="tsd-kind-icon">type</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="storageproxy.html#updates" class="tsd-kind-icon">updates</a></li>
@@ -168,10 +169,14 @@
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="storageproxy.html#applyop" class="tsd-kind-icon">apply<wbr>Op</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-protected"><a href="storageproxy.html#generatebarrier" class="tsd-kind-icon">generate<wbr>Barrier</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="storageproxy.html#getparticleview" class="tsd-kind-icon">get<wbr>Particle<wbr>View</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="storageproxy.html#notifysync" class="tsd-kind-icon">notify<wbr>Sync</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="storageproxy.html#notifyupdate" class="tsd-kind-icon">notify<wbr>Update</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="storageproxy.html#onmessage" class="tsd-kind-icon">on<wbr>Message</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="storageproxy.html#register" class="tsd-kind-icon">register</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="storageproxy.html#registerhandle" class="tsd-kind-icon">register<wbr>Handle</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="storageproxy.html#registerwithstore" class="tsd-kind-icon">register<wbr>With<wbr>Store</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="storageproxy.html#reportexceptioninhost" class="tsd-kind-icon">report<wbr>Exception<wbr>InHost</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="storageproxy.html#synchronizemodel" class="tsd-kind-icon">synchronize<wbr>Model</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-static"><a href="storageproxy.html#newproxy" class="tsd-kind-icon">new<wbr>Proxy</a></li>
 							</ul>
 						</section>
@@ -190,7 +195,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/08b9f55/src/runtime/storage-proxy.ts#L74">runtime/storage-proxy.ts:74</a></li>
+									<li>Defined in <a href="https://github.com/lindner/arcs/blob/4c5fb349/src/runtime/storage-proxy.ts#L73">runtime/storage-proxy.ts:73</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -227,7 +232,7 @@
 					<div class="tsd-signature tsd-kind-icon">barrier<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span><span class="tsd-signature-symbol"> =&nbsp;null</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/08b9f55/src/runtime/storage-proxy.ts#L74">runtime/storage-proxy.ts:74</a></li>
+							<li>Defined in <a href="https://github.com/lindner/arcs/blob/4c5fb349/src/runtime/storage-proxy.ts#L73">runtime/storage-proxy.ts:73</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -237,7 +242,7 @@
 					<div class="tsd-signature tsd-kind-icon">crdt<span class="tsd-signature-symbol">:</span> <a href="../interfaces/crdtmodel.html" class="tsd-signature-type">CRDTModel</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/08b9f55/src/runtime/storageNG/storage-proxy.ts#L21">runtime/storageNG/storage-proxy.ts:21</a></li>
+							<li>Defined in <a href="https://github.com/lindner/arcs/blob/4c5fb349/src/runtime/storageNG/storage-proxy.ts#L21">runtime/storageNG/storage-proxy.ts:21</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -247,17 +252,18 @@
 					<div class="tsd-signature tsd-kind-icon">handles<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Handle</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> =&nbsp;[]</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/08b9f55/src/runtime/storageNG/storage-proxy.ts#L20">runtime/storageNG/storage-proxy.ts:20</a></li>
+							<li>Defined in <a href="https://github.com/lindner/arcs/blob/4c5fb349/src/runtime/storageNG/storage-proxy.ts#L20">runtime/storageNG/storage-proxy.ts:20</a></li>
 						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
 					<a name="id" class="tsd-anchor"></a>
 					<h3>id</h3>
-					<div class="tsd-signature tsd-kind-icon">id<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+					<div class="tsd-signature tsd-kind-icon">id<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/08b9f55/src/runtime/storage-proxy.ts#L61">runtime/storage-proxy.ts:61</a></li>
+							<li>Defined in <a href="https://github.com/lindner/arcs/blob/4c5fb349/src/runtime/storage-proxy.ts#L60">runtime/storage-proxy.ts:60</a></li>
+							<li>Defined in <a href="https://github.com/lindner/arcs/blob/4c5fb349/src/runtime/storageNG/storage-proxy.ts#L22">runtime/storageNG/storage-proxy.ts:22</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -267,7 +273,7 @@
 					<div class="tsd-signature tsd-kind-icon">keep<wbr>Synced<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> =&nbsp;false</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/08b9f55/src/runtime/storage-proxy.ts#L70">runtime/storage-proxy.ts:70</a></li>
+							<li>Defined in <a href="https://github.com/lindner/arcs/blob/4c5fb349/src/runtime/storage-proxy.ts#L69">runtime/storage-proxy.ts:69</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -277,7 +283,7 @@
 					<div class="tsd-signature tsd-kind-icon">listener<wbr>Attached<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> =&nbsp;false</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/08b9f55/src/runtime/storage-proxy.ts#L69">runtime/storage-proxy.ts:69</a></li>
+							<li>Defined in <a href="https://github.com/lindner/arcs/blob/4c5fb349/src/runtime/storage-proxy.ts#L68">runtime/storage-proxy.ts:68</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -287,7 +293,7 @@
 					<div class="tsd-signature tsd-kind-icon">name<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/08b9f55/src/runtime/storage-proxy.ts#L65">runtime/storage-proxy.ts:65</a></li>
+							<li>Defined in <a href="https://github.com/lindner/arcs/blob/4c5fb349/src/runtime/storage-proxy.ts#L64">runtime/storage-proxy.ts:64</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -297,7 +303,7 @@
 					<div class="tsd-signature tsd-kind-icon">observers<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> =&nbsp;[]</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/08b9f55/src/runtime/storage-proxy.ts#L72">runtime/storage-proxy.ts:72</a></li>
+							<li>Defined in <a href="https://github.com/lindner/arcs/blob/4c5fb349/src/runtime/storage-proxy.ts#L71">runtime/storage-proxy.ts:71</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -307,7 +313,7 @@
 					<div class="tsd-signature tsd-kind-icon">pec<span class="tsd-signature-symbol">:</span> <a href="particleexecutioncontext.html" class="tsd-signature-type">ParticleExecutionContext</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/08b9f55/src/runtime/storage-proxy.ts#L66">runtime/storage-proxy.ts:66</a></li>
+							<li>Defined in <a href="https://github.com/lindner/arcs/blob/4c5fb349/src/runtime/storage-proxy.ts#L65">runtime/storage-proxy.ts:65</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -317,7 +323,7 @@
 					<div class="tsd-signature tsd-kind-icon">port<span class="tsd-signature-symbol">:</span> <a href="pecinnerport.html" class="tsd-signature-type">PECInnerPort</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/08b9f55/src/runtime/storage-proxy.ts#L63">runtime/storage-proxy.ts:63</a></li>
+							<li>Defined in <a href="https://github.com/lindner/arcs/blob/4c5fb349/src/runtime/storage-proxy.ts#L62">runtime/storage-proxy.ts:62</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -327,7 +333,7 @@
 					<div class="tsd-signature tsd-kind-icon">scheduler<span class="tsd-signature-symbol">:</span> <a href="storageproxyscheduler.html" class="tsd-signature-type">StorageProxyScheduler</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/08b9f55/src/runtime/storage-proxy.ts#L64">runtime/storage-proxy.ts:64</a></li>
+							<li>Defined in <a href="https://github.com/lindner/arcs/blob/4c5fb349/src/runtime/storage-proxy.ts#L63">runtime/storage-proxy.ts:63</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -337,7 +343,17 @@
 					<div class="tsd-signature tsd-kind-icon">storage<wbr>Key<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/08b9f55/src/runtime/storage-proxy.ts#L60">runtime/storage-proxy.ts:60</a></li>
+							<li>Defined in <a href="https://github.com/lindner/arcs/blob/4c5fb349/src/runtime/storage-proxy.ts#L59">runtime/storage-proxy.ts:59</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private">
+					<a name="store" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> store</h3>
+					<div class="tsd-signature tsd-kind-icon">store<span class="tsd-signature-symbol">:</span> <a href="activestore.html" class="tsd-signature-type">ActiveStore</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/lindner/arcs/blob/4c5fb349/src/runtime/storageNG/storage-proxy.ts#L23">runtime/storageNG/storage-proxy.ts:23</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -347,7 +363,7 @@
 					<div class="tsd-signature tsd-kind-icon">synchronized<span class="tsd-signature-symbol">:</span> <a href="../enums/syncstate.html" class="tsd-signature-type">SyncState</a><span class="tsd-signature-symbol"> =&nbsp;SyncState.none</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/08b9f55/src/runtime/storage-proxy.ts#L71">runtime/storage-proxy.ts:71</a></li>
+							<li>Defined in <a href="https://github.com/lindner/arcs/blob/4c5fb349/src/runtime/storage-proxy.ts#L70">runtime/storage-proxy.ts:70</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -357,7 +373,7 @@
 					<div class="tsd-signature tsd-kind-icon">type<span class="tsd-signature-symbol">:</span> <a href="type.html" class="tsd-signature-type">Type</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/08b9f55/src/runtime/storage-proxy.ts#L62">runtime/storage-proxy.ts:62</a></li>
+							<li>Defined in <a href="https://github.com/lindner/arcs/blob/4c5fb349/src/runtime/storage-proxy.ts#L61">runtime/storage-proxy.ts:61</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -367,7 +383,7 @@
 					<div class="tsd-signature tsd-kind-icon">updates<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> =&nbsp;[]</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/08b9f55/src/runtime/storage-proxy.ts#L73">runtime/storage-proxy.ts:73</a></li>
+							<li>Defined in <a href="https://github.com/lindner/arcs/blob/4c5fb349/src/runtime/storage-proxy.ts#L72">runtime/storage-proxy.ts:72</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -377,7 +393,7 @@
 					<div class="tsd-signature tsd-kind-icon">version<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> =&nbsp;undefined</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/08b9f55/src/runtime/storage-proxy.ts#L68">runtime/storage-proxy.ts:68</a></li>
+							<li>Defined in <a href="https://github.com/lindner/arcs/blob/4c5fb349/src/runtime/storage-proxy.ts#L67">runtime/storage-proxy.ts:67</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -394,7 +410,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/08b9f55/src/runtime/storage-proxy.ts#L87">runtime/storage-proxy.ts:87</a></li>
+									<li>Defined in <a href="https://github.com/lindner/arcs/blob/4c5fb349/src/runtime/storage-proxy.ts#L86">runtime/storage-proxy.ts:86</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">object</span>
@@ -414,7 +430,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/08b9f55/src/runtime/storage-proxy.ts#L184">runtime/storage-proxy.ts:184</a></li>
+									<li>Defined in <a href="https://github.com/lindner/arcs/blob/4c5fb349/src/runtime/storage-proxy.ts#L183">runtime/storage-proxy.ts:183</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -443,7 +459,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/08b9f55/src/runtime/storage-proxy.ts#L136">runtime/storage-proxy.ts:136</a></li>
+									<li>Defined in <a href="https://github.com/lindner/arcs/blob/4c5fb349/src/runtime/storage-proxy.ts#L135">runtime/storage-proxy.ts:135</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -474,7 +490,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/08b9f55/src/runtime/storage-proxy.ts#L160">runtime/storage-proxy.ts:160</a></li>
+									<li>Defined in <a href="https://github.com/lindner/arcs/blob/4c5fb349/src/runtime/storage-proxy.ts#L159">runtime/storage-proxy.ts:159</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -502,7 +518,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/08b9f55/src/runtime/storage-proxy.ts#L89">runtime/storage-proxy.ts:89</a></li>
+									<li>Defined in <a href="https://github.com/lindner/arcs/blob/4c5fb349/src/runtime/storage-proxy.ts#L88">runtime/storage-proxy.ts:88</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -533,7 +549,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/08b9f55/src/runtime/storage-proxy.ts#L192">runtime/storage-proxy.ts:192</a></li>
+									<li>Defined in <a href="https://github.com/lindner/arcs/blob/4c5fb349/src/runtime/storage-proxy.ts#L191">runtime/storage-proxy.ts:191</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -550,7 +566,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/08b9f55/src/runtime/storage-proxy.ts#L88">runtime/storage-proxy.ts:88</a></li>
+									<li>Defined in <a href="https://github.com/lindner/arcs/blob/4c5fb349/src/runtime/storage-proxy.ts#L87">runtime/storage-proxy.ts:87</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -570,13 +586,13 @@
 					<a name="applyop" class="tsd-anchor"></a>
 					<h3>apply<wbr>Op</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">apply<wbr>Op<span class="tsd-signature-symbol">(</span>op<span class="tsd-signature-symbol">: </span><a href="../interfaces/crdtoperation.html" class="tsd-signature-type">CRDTOperation</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
+						<li class="tsd-signature tsd-kind-icon">apply<wbr>Op<span class="tsd-signature-symbol">(</span>op<span class="tsd-signature-symbol">: </span><a href="../interfaces/crdtoperation.html" class="tsd-signature-type">CRDTOperation</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/08b9f55/src/runtime/storageNG/storage-proxy.ts#L34">runtime/storageNG/storage-proxy.ts:34</a></li>
+									<li>Defined in <a href="https://github.com/lindner/arcs/blob/4c5fb349/src/runtime/storageNG/storage-proxy.ts#L40">runtime/storageNG/storage-proxy.ts:40</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -585,7 +601,7 @@
 									<h5>op: <a href="../interfaces/crdtoperation.html" class="tsd-signature-type">CRDTOperation</a></h5>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -599,7 +615,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/08b9f55/src/runtime/storage-proxy.ts#L243">runtime/storage-proxy.ts:243</a></li>
+									<li>Defined in <a href="https://github.com/lindner/arcs/blob/4c5fb349/src/runtime/storage-proxy.ts#L242">runtime/storage-proxy.ts:242</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
@@ -610,16 +626,56 @@
 					<a name="getparticleview" class="tsd-anchor"></a>
 					<h3>get<wbr>Particle<wbr>View</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">get<wbr>Particle<wbr>View<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">T[&quot;consumerType&quot;]</span></li>
+						<li class="tsd-signature tsd-kind-icon">get<wbr>Particle<wbr>View<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T[&quot;consumerType&quot;]</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/08b9f55/src/runtime/storageNG/storage-proxy.ts#L38">runtime/storageNG/storage-proxy.ts:38</a></li>
+									<li>Defined in <a href="https://github.com/lindner/arcs/blob/4c5fb349/src/runtime/storageNG/storage-proxy.ts#L54">runtime/storageNG/storage-proxy.ts:54</a></li>
 								</ul>
 							</aside>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">T[&quot;consumerType&quot;]</span></h4>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T[&quot;consumerType&quot;]</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-private">
+					<a name="notifysync" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> notify<wbr>Sync</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private">
+						<li class="tsd-signature tsd-kind-icon">notify<wbr>Sync<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/lindner/arcs/blob/4c5fb349/src/runtime/storageNG/storage-proxy.ts#L98">runtime/storageNG/storage-proxy.ts:98</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-private">
+					<a name="notifyupdate" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> notify<wbr>Update</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private">
+						<li class="tsd-signature tsd-kind-icon">notify<wbr>Update<span class="tsd-signature-symbol">(</span>operations<span class="tsd-signature-symbol">: </span><a href="../interfaces/crdtoperation.html" class="tsd-signature-type">CRDTOperation</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/lindner/arcs/blob/4c5fb349/src/runtime/storageNG/storage-proxy.ts#L87">runtime/storageNG/storage-proxy.ts:87</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>operations: <a href="../interfaces/crdtoperation.html" class="tsd-signature-type">CRDTOperation</a><span class="tsd-signature-symbol">[]</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -633,7 +689,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/08b9f55/src/runtime/storageNG/storage-proxy.ts#L42">runtime/storageNG/storage-proxy.ts:42</a></li>
+									<li>Defined in <a href="https://github.com/lindner/arcs/blob/4c5fb349/src/runtime/storageNG/storage-proxy.ts#L59">runtime/storageNG/storage-proxy.ts:59</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -656,7 +712,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/08b9f55/src/runtime/storage-proxy.ts#L106">runtime/storage-proxy.ts:106</a></li>
+									<li>Defined in <a href="https://github.com/lindner/arcs/blob/4c5fb349/src/runtime/storage-proxy.ts#L105">runtime/storage-proxy.ts:105</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -687,7 +743,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/08b9f55/src/runtime/storageNG/storage-proxy.ts#L29">runtime/storageNG/storage-proxy.ts:29</a></li>
+									<li>Defined in <a href="https://github.com/lindner/arcs/blob/4c5fb349/src/runtime/storageNG/storage-proxy.ts#L35">runtime/storageNG/storage-proxy.ts:35</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -701,6 +757,29 @@
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="registerwithstore" class="tsd-anchor"></a>
+					<h3>register<wbr>With<wbr>Store</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">register<wbr>With<wbr>Store<span class="tsd-signature-symbol">(</span>store<span class="tsd-signature-symbol">: </span><a href="activestore.html" class="tsd-signature-type">ActiveStore</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/lindner/arcs/blob/4c5fb349/src/runtime/storageNG/storage-proxy.ts#L30">runtime/storageNG/storage-proxy.ts:30</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>store: <a href="activestore.html" class="tsd-signature-type">ActiveStore</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
 					<a name="reportexceptioninhost" class="tsd-anchor"></a>
 					<h3>report<wbr>Exception<wbr>InHost</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
@@ -710,7 +789,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/08b9f55/src/runtime/storage-proxy.ts#L91">runtime/storage-proxy.ts:91</a></li>
+									<li>Defined in <a href="https://github.com/lindner/arcs/blob/4c5fb349/src/runtime/storage-proxy.ts#L90">runtime/storage-proxy.ts:90</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -723,17 +802,34 @@
 						</li>
 					</ul>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-static">
-					<a name="newproxy" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagStatic">Static</span> new<wbr>Proxy</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-static">
-						<li class="tsd-signature tsd-kind-icon">new<wbr>Proxy<span class="tsd-signature-symbol">(</span>id<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, type<span class="tsd-signature-symbol">: </span><a href="type.html" class="tsd-signature-type">Type</a>, port<span class="tsd-signature-symbol">: </span><a href="pecinnerport.html" class="tsd-signature-type">PECInnerPort</a>, pec<span class="tsd-signature-symbol">: </span><a href="particleexecutioncontext.html" class="tsd-signature-type">ParticleExecutionContext</a>, scheduler<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, name<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="collectionproxy.html" class="tsd-signature-type">CollectionProxy</a><span class="tsd-signature-symbol"> | </span><a href="bigcollectionproxy.html" class="tsd-signature-type">BigCollectionProxy</a><span class="tsd-signature-symbol"> | </span><a href="variableproxy.html" class="tsd-signature-type">VariableProxy</a></li>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-private">
+					<a name="synchronizemodel" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> synchronize<wbr>Model</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private">
+						<li class="tsd-signature tsd-kind-icon">synchronize<wbr>Model<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/08b9f55/src/runtime/storage-proxy.ts#L50">runtime/storage-proxy.ts:50</a></li>
+									<li>Defined in <a href="https://github.com/lindner/arcs/blob/4c5fb349/src/runtime/storageNG/storage-proxy.ts#L106">runtime/storageNG/storage-proxy.ts:106</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-static">
+					<a name="newproxy" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagStatic">Static</span> new<wbr>Proxy</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-static">
+						<li class="tsd-signature tsd-kind-icon">new<wbr>Proxy<span class="tsd-signature-symbol">(</span>id<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, type<span class="tsd-signature-symbol">: </span><a href="type.html" class="tsd-signature-type">Type</a>, port<span class="tsd-signature-symbol">: </span><a href="pecinnerport.html" class="tsd-signature-type">PECInnerPort</a>, pec<span class="tsd-signature-symbol">: </span><a href="particleexecutioncontext.html" class="tsd-signature-type">ParticleExecutionContext</a>, scheduler<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, name<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="collectionproxy.html" class="tsd-signature-type">CollectionProxy</a><span class="tsd-signature-symbol"> | </span><a href="bigcollectionproxy.html" class="tsd-signature-type">BigCollectionProxy</a><span class="tsd-signature-symbol"> | </span><a href="singletonproxy.html" class="tsd-signature-type">SingletonProxy</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/lindner/arcs/blob/4c5fb349/src/runtime/storage-proxy.ts#L49">runtime/storage-proxy.ts:49</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -761,7 +857,7 @@
 								<span class="tsd-signature-symbol"> | </span>
 								<a href="bigcollectionproxy.html" class="tsd-signature-type">BigCollectionProxy</a>
 								<span class="tsd-signature-symbol"> | </span>
-								<a href="variableproxy.html" class="tsd-signature-type">VariableProxy</a>
+								<a href="singletonproxy.html" class="tsd-signature-type">SingletonProxy</a>
 							</h4>
 						</li>
 					</ul>
@@ -822,6 +918,9 @@
 							<li class=" tsd-kind-property tsd-parent-kind-class">
 								<a href="storageproxy.html#storagekey" class="tsd-kind-icon">storage<wbr>Key</a>
 							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
+								<a href="storageproxy.html#store" class="tsd-kind-icon">store</a>
+							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-protected">
 								<a href="storageproxy.html#synchronized" class="tsd-kind-icon">synchronized</a>
 							</li>
@@ -864,6 +963,12 @@
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="storageproxy.html#getparticleview" class="tsd-kind-icon">get<wbr>Particle<wbr>View</a>
 							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-private">
+								<a href="storageproxy.html#notifysync" class="tsd-kind-icon">notify<wbr>Sync</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-private">
+								<a href="storageproxy.html#notifyupdate" class="tsd-kind-icon">notify<wbr>Update</a>
+							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="storageproxy.html#onmessage" class="tsd-kind-icon">on<wbr>Message</a>
 							</li>
@@ -874,7 +979,13 @@
 								<a href="storageproxy.html#registerhandle" class="tsd-kind-icon">register<wbr>Handle</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="storageproxy.html#registerwithstore" class="tsd-kind-icon">register<wbr>With<wbr>Store</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="storageproxy.html#reportexceptioninhost" class="tsd-kind-icon">report<wbr>Exception<wbr>InHost</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-private">
+								<a href="storageproxy.html#synchronizemodel" class="tsd-kind-icon">synchronize<wbr>Model</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-static">
 								<a href="storageproxy.html#newproxy" class="tsd-kind-icon">new<wbr>Proxy</a>

@@ -125,15 +125,15 @@ export class Description {
             }
         }
         else if (store.type instanceof EntityType) {
-            const variableStore = store;
-            const value = await variableStore.get();
+            const singletonStore = store;
+            const value = await singletonStore.get();
             if (value && value['rawData']) {
                 return { entityValue: value['rawData'], valueDescription: store.type.entitySchema.description.value };
             }
         }
         else if (store.type instanceof InterfaceType) {
-            const variableStore = store;
-            const interfaceValue = await variableStore.get();
+            const singletonStore = store;
+            const interfaceValue = await singletonStore.get();
             if (interfaceValue) {
                 return { interfaceValue };
             }

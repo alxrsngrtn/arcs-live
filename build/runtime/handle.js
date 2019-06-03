@@ -30,7 +30,7 @@ function restore(entry, entityClass) {
     return entity;
 }
 /**
- * Base class for Collections and Variables.
+ * Base class for Collections and Singletons.
  */
 export class Handle {
     // TODO type particleId, marked as string, but called with number
@@ -109,12 +109,7 @@ export class Collection extends Handle {
         assert(this.canRead, '_notify should not be called for non-readable handles');
         switch (kind) {
             case 'sync':
-                try {
-                    particle.onHandleSync(this, this._restore(details));
-                }
-                catch (e) {
-                    this.reportUserExceptionInHost(e, particle, 'onHandleSync');
-                }
+                particle.callOnHandleSync(this, this._restore(details), e => this.reportUserExceptionInHost(e, particle, 'onHandleSync'));
                 return;
             case 'update': {
                 // tslint:disable-next-line: no-any
@@ -126,11 +121,11 @@ export class Collection extends Handle {
                     update.removed = this._restore(details.remove);
                 }
                 update.originator = details.originatorId === this._particleId;
-                particle.onHandleUpdate(this, update);
+                particle.callOnHandleUpdate(this, update, e => this.reportUserExceptionInHost(e, particle, 'onHandleUpdate'));
                 return;
             }
             case 'desync':
-                particle.onHandleDesync(this);
+                particle.callOnHandleDesync(this, e => this.reportUserExceptionInHost(e, particle, 'onHandleUpdate'));
                 return;
             default:
                 throw new Error('unsupported');
@@ -211,46 +206,30 @@ export class Collection extends Handle {
  * the types of handles that need to be connected to that particle, and
  * the current recipe identifies which handles are connected.
  */
-export class Variable extends Handle {
+export class Singleton extends Handle {
     // Called by StorageProxy.
     async _notify(kind, particle, details) {
         assert(this.canRead, '_notify should not be called for non-readable handles');
         switch (kind) {
             case 'sync':
-                try {
-                    await particle.onHandleSync(this, this._restore(details));
-                }
-                catch (e) {
-                    this.reportUserExceptionInHost(e, particle, 'onHandleSync');
-                }
+                await particle.callOnHandleSync(this, this._restore(details), e => this.reportUserExceptionInHost(e, particle, 'onHandleSync'));
                 return;
             case 'update': {
-                try {
-                    const data = this._restore(details.data);
-                    const oldData = this._restore(details.oldData);
-                    await particle.onHandleUpdate(this, { data, oldData });
-                }
-                catch (e) {
-                    this.reportUserExceptionInHost(e, particle, 'onHandleUpdate');
-                }
+                const data = this._restore(details.data);
+                const oldData = this._restore(details.oldData);
+                await particle.callOnHandleUpdate(this, { data, oldData }, e => this.reportUserExceptionInHost(e, particle, 'onHandleUpdate'));
                 return;
             }
             case 'desync':
-                try {
-                    await particle.onHandleDesync(this);
-                }
-                catch (e) {
-                    this.reportUserExceptionInHost(e, particle, 'onHandleDesync');
-                }
+                await particle.callOnHandleDesync(this, e => this.reportUserExceptionInHost(e, particle, 'onHandleDesync'));
                 return;
             default:
                 throw new Error('unsupported');
         }
     }
     /**
-     * @returns the Entity contained by the Variable, or undefined if the Variable
-     * is cleared.
-     * @throws {Error} if this variable is not configured as a readable handle (i.e. 'in' or 'inout')
+     * @returns the Entity contained by the Singleton, or undefined if the Singleton is cleared.
+     * @throws {Error} if this Singleton is not configured as a readable handle (i.e. 'in' or 'inout')
      * in the particle's manifest.
      */
     async get() {
@@ -276,8 +255,8 @@ export class Variable extends Handle {
         throw new Error(`Don't know how to deliver handle data of type ${this.type}`);
     }
     /**
-     * Stores a new entity into the Variable, replacing any existing entity.
-     * @throws {Error} if this variable is not configured as a writeable handle (i.e. 'out' or 'inout')
+     * Stores a new entity into the Singleton, replacing any existing entity.
+     * @throws {Error} if this Singleton is not configured as a writeable handle (i.e. 'out' or 'inout')
      * in the particle's manifest.
      */
     async set(entity) {
@@ -294,8 +273,8 @@ export class Variable extends Handle {
         }
     }
     /**
-     * Clears any entity currently in the Variable.
-     * @throws {Error} if this variable is not configured as a writeable handle (i.e. 'out' or 'inout')
+     * Clears any entity currently in the Singleton.
+     * @throws {Error} if this Singleton is not configured as a writeable handle (i.e. 'out' or 'inout')
      * in the particle's manifest.
      */
     async clear() {
@@ -347,7 +326,7 @@ export class BigCollection extends Handle {
     async _notify(kind, particle, details) {
         assert(this.canRead, '_notify should not be called for non-readable handles');
         assert(kind === 'sync', 'BigCollection._notify only supports sync events');
-        await particle.onHandleSync(this, []);
+        await particle.callOnHandleSync(this, [], e => this.reportUserExceptionInHost(e, particle, 'onHandleSync'));
     }
     /**
      * Stores a new entity into the Handle.
@@ -383,7 +362,7 @@ export class BigCollection extends Handle {
      * caveat that items removed during a streamed read may be returned at the end). Set `forward`
      * to false to return items in reverse insertion order.
      *
-     * @throws {Error} if this variable is not configured as a readable handle (i.e. 'in' or 'inout')
+     * @throws {Error} if this Singleton is not configured as a readable handle (i.e. 'in' or 'inout')
      * in the particle's manifest.
      */
     async stream({ pageSize, forward = true }) {
@@ -406,7 +385,7 @@ export function handleFor(storage, idGenerator, name = null, particleId = '', ca
         handle = new BigCollection(storage, idGenerator, name, particleId, canRead, canWrite);
     }
     else {
-        handle = new Variable(storage, idGenerator, name, particleId, canRead, canWrite);
+        handle = new Singleton(storage, idGenerator, name, particleId, canRead, canWrite);
     }
     const type = storage.type.getContainedType() || storage.type;
     if (type instanceof EntityType) {

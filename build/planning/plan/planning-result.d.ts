@@ -8,7 +8,7 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { Arc } from '../../runtime/arc.js';
-import { VariableStorageProvider } from '../../runtime/storage/storage-provider-base.js';
+import { SingletonStorageProvider } from '../../runtime/storage/storage-provider-base.js';
 import { EnvOptions, Suggestion } from './suggestion.js';
 export declare type PlanningResultOptions = {
     suggestions: Suggestion[];
@@ -27,11 +27,11 @@ export declare class PlanningResult {
         record: {};
     }[];
     contextual: boolean;
-    store: VariableStorageProvider;
+    store: SingletonStorageProvider;
     private storeCallback;
     private changeCallbacks;
     private envOptions;
-    constructor(envOptions: EnvOptions, store?: VariableStorageProvider);
+    constructor(envOptions: EnvOptions, store?: SingletonStorageProvider);
     registerChangeCallback(callback: any): void;
     onChanged(): void;
     load(): Promise<boolean>;

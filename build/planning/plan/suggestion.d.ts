@@ -16,6 +16,7 @@ import { Modality } from '../../runtime/modality.js';
 import { Recipe } from '../../runtime/recipe/recipe.js';
 import { Search } from '../../runtime/recipe/search.js';
 import { Relevance } from '../../runtime/relevance.js';
+import { SuggestFilter } from './suggest-filter.js';
 /**
  * options for the fromLiteral() method.
  */
@@ -30,6 +31,9 @@ export declare type FromLiteralOptions = {
 export declare type EnvOptions = {
     context: Manifest;
     loader: Loader;
+};
+export declare type SuggestionVisibilityOptions = {
+    reasons?: string[];
 };
 export declare class Suggestion {
     plan: Recipe;
@@ -68,4 +72,5 @@ export declare class Suggestion {
     instantiate(arc: Arc): Promise<void>;
     getResolvedPlan(arc: Arc): Promise<Recipe>;
     isUpToDate(arc: Arc, plan: Recipe): boolean;
+    isVisible(arc: Arc, filter: SuggestFilter, options?: SuggestionVisibilityOptions): boolean;
 }

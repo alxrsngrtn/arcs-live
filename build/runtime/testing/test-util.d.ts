@@ -64,4 +64,6 @@ export declare class ResultInspector {
 }
 export declare function assertSingletonWillChangeTo(arc: Arc, store: any, field: string, expectation: any): Promise<void>;
 export declare function assertSingletonIs(store: any, field: string, expectation: any): Promise<void>;
-export declare function assertThrowsAsync(fn: any, ...args: any[]): Promise<void>;
+export declare function assertThrowsAsync(fn: Function, msg?: string): any;
+export declare function assertThrowsAsync(fn: Function, errType: Function | RegExp, msg?: string): any;
+export declare function assertThrowsAsync(fn: Function, errType: RegExp, regExp: RegExp): any;

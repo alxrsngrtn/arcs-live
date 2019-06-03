@@ -98,6 +98,8 @@ export class ParticleSpec {
                 ps.handles.forEach(v => assert(this.handleConnectionMap.has(v), 'Cannot provide slot for nonexistent handle constraint ' + v));
             });
         });
+        this.trustClaims = this.validateTrustClaims(model.trustClaims);
+        this.trustChecks = this.validateTrustChecks(model.trustChecks);
     }
     createConnection(arg, typeVarMap) {
         const connection = new HandleConnectionSpec(arg, typeVarMap);
@@ -141,16 +143,16 @@ export class ParticleSpec {
         this.model.implBlobUrl = this.implBlobUrl = url;
     }
     toLiteral() {
-        const { args, name, verbs, description, implFile, implBlobUrl, modality, slotConnections } = this.model;
+        const { args, name, verbs, description, implFile, implBlobUrl, modality, slotConnections, trustClaims, trustChecks } = this.model;
         const connectionToLiteral = ({ type, direction, name, isOptional, dependentConnections }) => ({ type: asTypeLiteral(type), direction, name, isOptional, dependentConnections: dependentConnections.map(connectionToLiteral) });
         const argsLiteral = args.map(a => connectionToLiteral(a));
-        return { args: argsLiteral, name, verbs, description, implFile, implBlobUrl, modality, slotConnections };
+        return { args: argsLiteral, name, verbs, description, implFile, implBlobUrl, modality, slotConnections, trustClaims, trustChecks };
     }
     static fromLiteral(literal) {
-        let { args, name, verbs, description, implFile, implBlobUrl, modality, slotConnections } = literal;
+        let { args, name, verbs, description, implFile, implBlobUrl, modality, slotConnections, trustClaims, trustChecks } = literal;
         const connectionFromLiteral = ({ type, direction, name, isOptional, dependentConnections }) => ({ type: asType(type), direction, name, isOptional, dependentConnections: dependentConnections ? dependentConnections.map(connectionFromLiteral) : [] });
         args = args.map(connectionFromLiteral);
-        return new ParticleSpec({ args, name, verbs: verbs || [], description, implFile, implBlobUrl, modality, slotConnections });
+        return new ParticleSpec({ args, name, verbs: verbs || [], description, implFile, implBlobUrl, modality, slotConnections, trustClaims, trustChecks });
     }
     // Note: this method shouldn't be called directly.
     clone() {
@@ -240,6 +242,30 @@ export class ParticleSpec {
     }
     toManifestString() {
         return this.toString();
+    }
+    validateTrustClaims(claims) {
+        const results = new Map();
+        if (claims) {
+            claims.forEach(claim => {
+                assert(this.handleConnectionMap.has(claim.handle), `Can't make a claim on unknown handle ${claim.handle}.`);
+                const handle = this.handleConnectionMap.get(claim.handle);
+                assert(handle.isOutput, `Can't make a claim on handle ${claim.handle} (not an output handle).`);
+                results.set(claim.handle, claim.trustTag);
+            });
+        }
+        return results;
+    }
+    validateTrustChecks(checks) {
+        const results = new Map();
+        if (checks) {
+            checks.forEach(check => {
+                assert(this.handleConnectionMap.has(check.handle), `Can't make a check on unknown handle ${check.handle}.`);
+                const handle = this.handleConnectionMap.get(check.handle);
+                assert(handle.isInput, `Can't make a check on handle ${check.handle} (not an input handle).`);
+                results.set(check.handle, check.trustTag);
+            });
+        }
+        return results;
     }
 }
 //# sourceMappingURL=particle-spec.js.map

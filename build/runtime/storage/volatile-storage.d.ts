@@ -11,7 +11,7 @@ import { Id } from '../id.js';
 import { Type } from '../type.js';
 import { CrdtCollectionModel, ModelValue, SerializedModelEntry } from './crdt-collection-model.js';
 import { KeyBase } from './key-base.js';
-import { BigCollectionStorageProvider, CollectionStorageProvider, StorageBase, StorageProviderBase, VariableStorageProvider } from './storage-provider-base.js';
+import { BigCollectionStorageProvider, CollectionStorageProvider, StorageBase, StorageProviderBase, SingletonStorageProvider } from './storage-provider-base.js';
 import { Dictionary } from '../hot.js';
 export declare function resetVolatileStorageForTesting(): void;
 declare class VolatileKey extends KeyBase {
@@ -32,7 +32,7 @@ export declare class VolatileStorage extends StorageBase {
     localIDBase: number;
     constructor(arcId: Id);
     construct(id: string, type: Type, keyFragment: string): Promise<VolatileStorageProvider>;
-    _construct(id: any, type: any, keyFragment: any): Promise<VolatileCollection | VolatileBigCollection | VolatileVariable>;
+    _construct(id: any, type: any, keyFragment: any): Promise<VolatileCollection | VolatileBigCollection | VolatileSingleton>;
     connect(id: string, type: Type, key: string): Promise<VolatileStorageProvider>;
     baseStorageKey(type: Type): string;
     baseStorageFor(type: Type, key: string): Promise<VolatileCollection>;
@@ -42,7 +42,7 @@ declare abstract class VolatileStorageProvider extends StorageProviderBase {
     backingStore: VolatileCollection | null;
     protected storageEngine: VolatileStorage;
     private pendingBackingStore;
-    static newProvider(type: any, storageEngine: any, name: any, id: any, key: any): VolatileCollection | VolatileBigCollection | VolatileVariable;
+    static newProvider(type: any, storageEngine: any, name: any, id: any, key: any): VolatileCollection | VolatileBigCollection | VolatileSingleton;
     ensureBackingStore(): Promise<VolatileCollection>;
     abstract backingType(): Type;
 }
@@ -74,7 +74,7 @@ declare class VolatileCollection extends VolatileStorageProvider implements Coll
     remove(id: any, keys?: string[], originatorId?: any): Promise<void>;
     clearItemsForTesting(): void;
 }
-declare class VolatileVariable extends VolatileStorageProvider implements VariableStorageProvider {
+declare class VolatileSingleton extends VolatileStorageProvider implements SingletonStorageProvider {
     _stored: {
         id: string;
         storageKey?: string;
@@ -82,7 +82,7 @@ declare class VolatileVariable extends VolatileStorageProvider implements Variab
     private localKeyId;
     constructor(type: any, storageEngine: any, name: any, id: any, key: any);
     backingType(): Type;
-    clone(): VolatileVariable;
+    clone(): VolatileSingleton;
     cloneFrom(handle: any): Promise<void>;
     modelForSynchronization(): Promise<{
         version: number;

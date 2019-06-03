@@ -10,6 +10,7 @@
 import { Id, IdGenerator } from './id.js';
 import { InterfaceInfo } from './interface-info.js';
 import { ManifestMeta } from './manifest-meta.js';
+import * as AstNode from './manifest-ast-nodes.js';
 import { ParticleSpec } from './particle-spec.js';
 import { Recipe } from './recipe/recipe.js';
 import { Schema } from './schema.js';
@@ -17,6 +18,11 @@ import { StorageProviderBase } from './storage/storage-provider-base.js';
 import { StorageProviderFactory } from './storage/storage-provider-factory.js';
 import { EntityType, InterfaceType, Type } from './type.js';
 import { Dictionary } from './hot.js';
+export declare class ManifestError extends Error {
+    location: AstNode.SourceLocation;
+    key: string;
+    constructor(location: AstNode.SourceLocation, message: string);
+}
 export declare class StorageStub {
     type: Type;
     id: string;
@@ -52,7 +58,7 @@ export declare class Manifest {
     private storeManifestUrls;
     private errors;
     constructor({ id }: {
-        id: any;
+        id: Id | string;
     });
     readonly id: Id;
     readonly storageProviderFactory: StorageProviderFactory;
@@ -97,7 +103,10 @@ export declare class Manifest {
     generateID(): Id;
     static load(fileName: string, loader: {
         loadResource: any;
+        path?: any;
+        join?: any;
     }, options?: any): Promise<Manifest>;
+    static getErrors(manifest: Manifest): ManifestError[];
     static parse(content: string, options?: any): Promise<Manifest>;
     private static _augmentAstWithTypes;
     private static _processSchema;
@@ -106,17 +115,18 @@ export declare class Manifest {
     private static _processInterface;
     private static _processRecipe;
     private static _buildRecipe;
-    resolveTypeName(name: any): {
-        schema: Schema;
-        iface?: undefined;
-    } | {
-        iface: InterfaceInfo;
-        schema?: undefined;
-    };
+    resolveTypeName(name: string): {
+        schema?: Schema;
+        iface?: InterfaceInfo;
+    } | null;
     private static _processStore;
     private static _createStore;
     private _newRecipe;
-    toString(options?: any): string;
+    toString(options?: {
+        recursive?: boolean;
+        showUnresolved?: boolean;
+        hideFields?: boolean;
+    }): string;
     readonly idGeneratorForTesting: IdGenerator;
 }
 export {};

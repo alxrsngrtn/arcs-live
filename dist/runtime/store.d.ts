@@ -24,7 +24,7 @@ export interface Store {
     readonly pec?: ParticleExecutionContext;
     reportExceptionInHost(exception: PropagatedException): void;
 }
-export interface VariableStore extends Store {
+export interface SingletonStore extends Store {
     get(): Promise<any>;
     set(entity: any, particleId: string): Promise<void>;
     clear(particleId: string): Promise<void>;

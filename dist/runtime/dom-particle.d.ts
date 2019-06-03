@@ -7,8 +7,10 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
+/// <reference types="node" />
 import { DomParticleBase, RenderModel } from './dom-particle-base.js';
 import { Handle } from './handle.js';
+import { Runnable } from './hot.js';
 export interface StatefulDomParticle extends DomParticleBase {
     _invalidate(): void;
 }
@@ -24,8 +26,6 @@ declare const DomParticle_base: any;
  * to handle updates.
  */
 export declare class DomParticle extends DomParticle_base {
-    _handlesToSync: Set<string>;
-    constructor();
     /**
      * Override if necessary, to do things when props change.
      */
@@ -49,32 +49,37 @@ export declare class DomParticle extends DomParticle_base {
      */
     setState(state: any): boolean | undefined;
     /**
-     * Added getters and setters to support usage of .state.
+     * Getters and setters for working with state/props.
      */
+    /**
+    * Syntactic sugar: `this.state = {state}` is equivalent to `this.setState(state)`.
+    */
     state: any;
     readonly props: any;
-    /**
-     * This is called once during particle setup. Override to control sync and update
-     * configuration on specific handles (via their configure() method).
-     * `handles` is a map from names to handle instances.
-     */
-    configureHandles(handles: ReadonlyMap<string, Handle>): void;
     /**
      * Override if necessary, to modify superclass config.
      */
     readonly config: DomParticleConfig;
     _willReceiveProps(...args: any[]): void;
     _update(...args: any[]): void;
+    _async(fn: any): NodeJS.Timeout;
     setHandles(handles: ReadonlyMap<string, Handle>): Promise<void>;
+    /**
+     * This is called once during particle setup. Override to control sync and update
+     * configuration on specific handles (via their configure() method).
+     * `handles` is a map from names to handle instances.
+     */
+    configureHandles(handles: ReadonlyMap<string, Handle>): void;
     onHandleSync(handle: Handle, model: RenderModel): Promise<void>;
-    onHandleUpdate(handle: Handle, update: any): Promise<void>;
-    private _handlesToProps;
-    private _addNamedHandleData;
-    private _getHandleData;
+    onHandleUpdate({ name }: Handle, { data, added, removed }: {
+        data: any;
+        added: any;
+        removed: any;
+    }): Promise<void>;
     fireEvent(slotName: string, { handler, data }: {
         handler: any;
         data: any;
     }): void;
-    private _debounce;
+    debounce(key: string, func: Runnable, delay: number): void;
 }
 export {};

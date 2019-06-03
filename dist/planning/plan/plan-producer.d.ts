@@ -9,7 +9,7 @@
  */
 import { Arc } from '../../runtime/arc.js';
 import { ArcDevtoolsChannel } from '../../devtools-connector/abstract-devtools-channel.js';
-import { VariableStorageProvider } from '../../runtime/storage/storage-provider-base.js';
+import { SingletonStorageProvider } from '../../runtime/storage/storage-provider-base.js';
 import { Planner } from '../planner.js';
 import { RecipeIndex } from '../recipe-index.js';
 import { Speculator } from '../speculator.js';
@@ -33,11 +33,11 @@ export declare class PlanProducer {
     _isPlanning: boolean;
     stateChangedCallbacks: ((isPlanning: boolean) => void)[];
     search: string;
-    searchStore?: VariableStorageProvider;
+    searchStore?: SingletonStorageProvider;
     searchStoreCallback: ({}: {}) => void;
     debug: boolean;
     devtoolsChannel: ArcDevtoolsChannel;
-    constructor(arc: Arc, result: PlanningResult, searchStore?: VariableStorageProvider, { debug }?: {
+    constructor(arc: Arc, result: PlanningResult, searchStore?: SingletonStorageProvider, { debug }?: {
         debug?: boolean;
     });
     isPlanning: boolean;

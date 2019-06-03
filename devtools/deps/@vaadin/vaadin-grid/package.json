@@ -1,0 +1,95 @@
+{
+  "_from": "@vaadin/vaadin-grid@^5.0.0-pre.5",
+  "_id": "@vaadin/vaadin-grid@5.1.0",
+  "_inBundle": false,
+  "_integrity": "sha512-LxF1y19yOFChJUhxsU7FWfEvzYIEQDIvV/GsjTECZuEv8MTlC6WxF0oMHEOaJP9V6PSfKnmloASZ5RcjkNhbxw==",
+  "_location": "/@vaadin/vaadin-grid",
+  "_phantomChildren": {},
+  "_requested": {
+    "type": "range",
+    "registry": true,
+    "raw": "@vaadin/vaadin-grid@^5.0.0-pre.5",
+    "name": "@vaadin/vaadin-grid",
+    "escapedName": "@vaadin%2fvaadin-grid",
+    "scope": "@vaadin",
+    "rawSpec": "^5.0.0-pre.5",
+    "saveSpec": null,
+    "fetchSpec": "^5.0.0-pre.5"
+  },
+  "_requiredBy": [
+    "/"
+  ],
+  "_resolved": "https://registry.npmjs.org/@vaadin/vaadin-grid/-/vaadin-grid-5.1.0.tgz",
+  "_shasum": "081ec449fcaaeb7f6af613d81e5a2a9a63089cbb",
+  "_spec": "@vaadin/vaadin-grid@^5.0.0-pre.5",
+  "_where": "/private/var/folders/xt/s0f6yl1x37b_2h5j2vsl60r8003nwk/T/asset_stageV5VEvi",
+  "author": {
+    "name": "Vaadin Ltd"
+  },
+  "bugs": {
+    "url": "https://github.com/vaadin/vaadin-grid/issues"
+  },
+  "bundleDependencies": false,
+  "dependencies": {
+    "@polymer/iron-a11y-announcer": "^3.0.0-pre.18",
+    "@polymer/iron-a11y-keys-behavior": "^3.0.0-pre.18",
+    "@polymer/iron-resizable-behavior": "^3.0.0-pre.18",
+    "@polymer/iron-scroll-target-behavior": "^3.0.0-pre.18",
+    "@polymer/polymer": "^3.0.0",
+    "@vaadin/vaadin-checkbox": "^2.2.1",
+    "@vaadin/vaadin-element-mixin": "^2.1.1",
+    "@vaadin/vaadin-lumo-styles": "^1.1.1",
+    "@vaadin/vaadin-material-styles": "^1.1.1",
+    "@vaadin/vaadin-text-field": "^2.1.1",
+    "@vaadin/vaadin-themable-mixin": "^1.2.1"
+  },
+  "deprecated": false,
+  "description": "A free, flexible and high-quality Web Component for showing large amounts of tabular data",
+  "devDependencies": {
+    "@polymer/app-localize-behavior": "^3.0.0-pre.18",
+    "@polymer/iron-ajax": "^3.0.0-pre.18",
+    "@polymer/iron-component-page": "^3.0.0-pre.18",
+    "@polymer/iron-demo-helpers": "^3.0.0-pre.18",
+    "@polymer/iron-flex-layout": "^3.0.0-pre.18",
+    "@polymer/iron-image": "^3.0.0-pre.18",
+    "@polymer/iron-list": "^3.0.0-pre.18",
+    "@polymer/iron-media-query": "^3.0.0-pre.18",
+    "@polymer/iron-test-helpers": "^3.0.0-pre.18",
+    "@polymer/paper-checkbox": "^3.0.0-pre.18",
+    "@polymer/paper-input": "^3.0.0-pre.18",
+    "@polymer/paper-slider": "^3.0.0-pre.18",
+    "@vaadin/vaadin-button": "^2.1.0",
+    "@vaadin/vaadin-demo-helpers": "^2.0.2",
+    "@webcomponents/webcomponentsjs": "^2.0.0",
+    "wct-browser-legacy": "^1.0.1"
+  },
+  "homepage": "https://vaadin.com/components",
+  "keywords": [
+    "vaadin",
+    "elements",
+    "components",
+    "webcomponents",
+    "web-components",
+    "gwt",
+    "grid",
+    "datagrid",
+    "datatable",
+    "data-grid",
+    "data-table"
+  ],
+  "license": "Apache-2.0",
+  "main": "vaadin-grid.js",
+  "name": "@vaadin/vaadin-grid",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vaadin/vaadin-grid.git"
+  },
+  "resolutions": {
+    "@webcomponents/webcomponentsjs": "2.0.0",
+    "inherits": "2.0.3",
+    "samsam": "1.1.3",
+    "supports-color": "3.1.2",
+    "type-detect": "1.0.0"
+  },
+  "version": "5.1.0"
+}

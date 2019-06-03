@@ -84,22 +84,17 @@ describe('Bundle Tool', () => {
         const data = fs.readFileSync('test-output/bundle/products.zip');
         const zip = await JSZip.loadAsync(data);
         assert.hasAllKeys(zip.files, [
-            'Common/',
             'Common/List.manifest',
             'Common/Multiplexer.manifest',
-            'Common/source/',
             'Common/source/List.js',
             'Common/source/Multiplexer.js',
             'Common/source/TileList.js',
-            'Demo/',
             'Demo/Browse.manifest',
             'Demo/ClairesWishlist.manifest',
             'Demo/people.json',
             'Demo/products.json',
             'Demo/wishlist.json',
-            'People/',
             'People/Person.schema',
-            'Products/',
             'Products/Gifts.recipes',
             'Products/Interests.recipes',
             'Products/Manufacturer.recipes',
@@ -107,7 +102,6 @@ describe('Bundle Tool', () => {
             'Products/Products.recipes',
             'Products/Recommend.recipes',
             'Products/ShowProducts.recipes',
-            'Products/source/',
             'Products/source/AlsoOn.js',
             'Products/source/AlternateShipping.js',
             'Products/source/Arrivinator.js',
@@ -117,7 +111,6 @@ describe('Bundle Tool', () => {
             'Products/source/ManufacturerInfo.js',
             'Products/source/Recommend.js',
             'Products/source/ShowProduct.js',
-            'Things/',
             'Things/Thing.schema',
             'bundle-manifest.mf'
         ]);

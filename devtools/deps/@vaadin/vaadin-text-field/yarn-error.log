@@ -1,0 +1,52 @@
+Arguments: 
+  /usr/bin/node /home/vlad/.npm-packages/bin/yarn
+
+PATH: 
+  /home/vlad/.npm-packages/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/mnt/c/Users/Vladimir Kovtun/.npm-packages:/mnt/c/PHP:/mnt/c/Program Files (x86)/Intel/iCLS Client:/mnt/c/Program Files/Intel/iCLS Client:/mnt/c/Windows/System32:/mnt/c/Windows:/mnt/c/Windows/System32/wbem:/mnt/c/Windows/System32/WindowsPowerShell/v1.0:/mnt/c/Program Files (x86)/Intel/Intel(R) Management Engine Components/DAL:/mnt/c/Program Files/Intel/Intel(R) Management Engine Components/DAL:/mnt/c/Program Files (x86)/Intel/Intel(R) Management Engine Components/IPT:/mnt/c/Program Files/Intel/Intel(R) Management Engine Components/IPT:/mnt/c/Windows/System32/OpenSSH:/mnt/c/Program Files/Intel/WiFi/bin:/mnt/c/Program Files/Common Files/Intel/WirelessCommon:/mnt/c/Program Files/nodejs:/mnt/c/Program Files/Microsoft VS Code/bin:/mnt/c/Program Files (x86)/Gow/bin:/mnt/c/Program Files/Git/cmd:/mnt/c/Users/Vladimir Kovtun/AppData/Local/Programs/Python/Python36/Scripts:/mnt/c/Users/Vladimir Kovtun/AppData/Local/Programs/Python/Python36:/mnt/c/Users/Vladimir Kovtun/AppData/Local/Microsoft/WindowsApps:/mnt/c/Program Files/Intel/WiFi/bin:/mnt/c/Program Files/Common Files/Intel/WirelessCommon:/mnt/c/Users/Vladimir Kovtun/AppData/Local/Microsoft/WindowsApps:/snap/bin
+
+Yarn version: 
+  1.9.4
+
+Node version: 
+  8.11.3
+
+Platform: 
+  linux x64
+
+Trace: 
+  Error: ENOENT: no such file or directory, copyfile '/home/vlad/.cache/yarn/v2/npm-@babel/traverse-7.0.0-rc.1-867b4b45ada2d51ae2d0076f1c1d5880f8557158/package.json' -> '/mnt/c/Users/Vladimir Kovtun/www/vaadin/vaadin-text-field/node_modules/@babel/traverse/package.json'
+
+npm manifest: 
+  {
+    "name": "@vaadin/vaadin-text-field",
+    "version": "2.1.0",
+    "description": "vaadin-text-field",
+    "main": "vaadin-text-field.html",
+    "repository": "vaadin/vaadin-text-field",
+    "keywords": [
+      "Vaadin",
+      "input",
+      "web-components",
+      "web-component",
+      "polymer"
+    ],
+    "author": "Vaadin Ltd",
+    "license": "Apache-2.0",
+    "bugs": {
+      "url": "https://github.com/vaadin/vaadin-text-field/issues"
+    },
+    "homepage": "https://vaadin.com/components",
+    "scripts": {
+      "test": "wct",
+      "preversion": "gulp version:update"
+    },
+    "devDependencies": {
+      "@vaadin/vaadin-component-dev-dependencies": "^1.0.0"
+    }
+  }
+
+yarn manifest: 
+  No manifest
+
+Lockfile: 
+  No lockfile

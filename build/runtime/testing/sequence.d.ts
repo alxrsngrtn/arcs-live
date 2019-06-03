@@ -80,7 +80,7 @@ export declare class SequenceTest<T> {
     /**
      * Set a function that constructs a fresh instance of the object under test for each ordering.
      */
-    setTestConstructor(prepareFunction: () => T): void;
+    setTestConstructor(prepareFunction: (() => T) | (() => Promise<T>)): void;
     /**
      * Register an input for the object under test. An input is a function that will be provided
      * with a series of data updates.

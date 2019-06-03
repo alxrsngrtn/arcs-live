@@ -7,14 +7,14 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-import { dynamicScript } from '../platform/dynamic-script-web.js';
-import { requireTf } from './tfjs-service.js';
 import { ResourceManager } from './resource-manager.js';
 import { logFactory } from '../platform/log-web.js';
 import { Services } from '../runtime/services.js';
 import { loadImage } from '../platform/image-web.js';
+import { requireMobilenet } from './mobilenet.js';
+// for actual code
+import { requireTf } from '../platform/tf-web.js';
 const log = logFactory('tfjs-mobilenet-service');
-const modelUrl = 'https://cdn.jsdelivr.net/npm/@tensorflow-models/mobilenet@1.0.0';
 /**
  * Load the `MobileNet` image classifier.
  *
@@ -26,11 +26,12 @@ const modelUrl = 'https://cdn.jsdelivr.net/npm/@tensorflow-models/mobilenet@1.0.
  */
 const load = async ({ version = 1, alpha = 1.0 }) => {
     log('Loading tfjs...');
-    const tf = await requireTf();
+    await requireTf();
     log('Loading MobileNet...');
-    await dynamicScript(modelUrl);
-    const model = await window['mobilenet'].load(version, alpha);
-    log('MobileNet Loaded.');
+    const mobilenet = await requireMobilenet();
+    log('Loading model...');
+    const model = await mobilenet.load(version, alpha);
+    log('Model loaded.');
     model.version = version;
     model.alpha = alpha;
     return ResourceManager.ref(model);

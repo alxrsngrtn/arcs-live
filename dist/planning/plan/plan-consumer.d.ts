@@ -11,14 +11,15 @@ import { Arc } from '../../runtime/arc.js';
 import { ArcDevtoolsChannel } from '../../devtools-connector/abstract-devtools-channel.js';
 import { SuggestionComposer } from '../suggestion-composer.js';
 import { PlanningResult } from './planning-result.js';
-import { Suggestion } from './suggestion.js';
+import { Suggestion, SuggestionVisibilityOptions } from './suggestion.js';
+import { SuggestFilter } from './suggest-filter.js';
+export declare type VisibilityOptions = {
+    reasons?: Map<string, SuggestionVisibilityOptions>;
+};
 export declare class PlanConsumer {
     arc: Arc;
     result: PlanningResult;
-    suggestFilter: {
-        showAll: boolean;
-        search?: any;
-    };
+    suggestFilter: SuggestFilter;
     private suggestionsChangeCallbacks;
     private visibleSuggestionsChangeCallbacks;
     suggestionComposer: SuggestionComposer | null;
@@ -29,7 +30,7 @@ export declare class PlanConsumer {
     registerVisibleSuggestionsChangedCallback(callback: any): void;
     setSuggestFilter(showAll: boolean, search?: string): void;
     onSuggestionsChanged(): void;
-    getCurrentSuggestions(): Suggestion[];
+    getCurrentSuggestions(options?: VisibilityOptions): Suggestion[];
     dispose(): void;
     _onSuggestionsChanged(): void;
     _onMaybeSuggestionsChanged(): void;

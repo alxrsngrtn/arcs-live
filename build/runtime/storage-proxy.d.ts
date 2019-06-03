@@ -15,7 +15,7 @@ import { Particle } from './particle.js';
 import { SerializedModelEntry, ModelValue } from './storage/crdt-collection-model.js';
 import { Type } from './type.js';
 import { EntityRawData } from './entity.js';
-import { Store, VariableStore, CollectionStore, BigCollectionStore } from './store.js';
+import { Store, SingletonStore, CollectionStore, BigCollectionStore } from './store.js';
 declare enum SyncState {
     none = 0,
     pending = 1,
@@ -45,7 +45,7 @@ export declare type SerializedEntity = {
  *   are applied.
  */
 export declare abstract class StorageProxy implements Store {
-    static newProxy(id: string, type: Type, port: PECInnerPort, pec: ParticleExecutionContext, scheduler: any, name: string): CollectionProxy | BigCollectionProxy | VariableProxy;
+    static newProxy(id: string, type: Type, port: PECInnerPort, pec: ParticleExecutionContext, scheduler: any, name: string): CollectionProxy | BigCollectionProxy | SingletonProxy;
     storageKey: string;
     readonly id: string;
     readonly type: Type;
@@ -120,12 +120,12 @@ export declare class CollectionProxy extends StorageProxy implements CollectionS
 }
 /**
  * Variables are synchronized in a 'last-writer-wins' scheme. When the
- * VariableProxy mutates the model, it sets a barrier and expects to
+ * SingletonProxy mutates the model, it sets a barrier and expects to
  * receive the barrier value echoed back in a subsequent update event.
  * Between those two points in time updates are not applied or
  * notified about as these reflect concurrent writes that did not 'win'.
  */
-export declare class VariableProxy extends StorageProxy implements VariableStore {
+export declare class SingletonProxy extends StorageProxy implements SingletonStore {
     model: {
         id: string;
     } | null;

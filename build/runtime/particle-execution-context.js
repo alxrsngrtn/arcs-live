@@ -13,6 +13,7 @@ import { handleFor } from './handle.js';
 import { SlotProxy } from './slot-proxy.js';
 import { StorageProxy, StorageProxyScheduler } from './storage-proxy.js';
 import { WasmParticle } from './wasm.js';
+import { UserException } from './arc-exceptions.js';
 export class ParticleExecutionContext {
     constructor(port, pecId, idGenerator, loader) {
         this.particles = [];
@@ -60,7 +61,7 @@ export class ParticleExecutionContext {
                 pec.idle.then(a => {
                     // TODO: dom-particles update is async, this is a workaround to allow dom-particles to
                     // update relevance, after handles are updated. Needs better idle signal.
-                    setTimeout(() => { this.Idle(version, pec.relevance); }, 0);
+                    setTimeout(() => this.Idle(version, pec.relevance), 0);
                 });
             }
             onUIEvent(particle, slotName, event) {
@@ -177,7 +178,10 @@ export class ParticleExecutionContext {
             registerList.push({ proxy, particle, handle });
         });
         return [particle, async () => {
-                await particle.setHandles(handleMap);
+                await particle.callSetHandles(handleMap, err => {
+                    const exc = new UserException(err, 'setHandles', id, spec.name);
+                    this.apiPort.ReportExceptionInHost(exc);
+                });
                 registerList.forEach(({ proxy, particle, handle }) => proxy.register(particle, handle));
                 const idx = this.pendingLoads.indexOf(p);
                 this.pendingLoads.splice(idx, 1);

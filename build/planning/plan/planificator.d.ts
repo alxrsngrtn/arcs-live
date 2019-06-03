@@ -10,7 +10,7 @@
 import { Arc } from '../../runtime/arc.js';
 import { Runnable } from '../../runtime/hot.js';
 import { KeyBase } from '../../runtime/storage/key-base.js';
-import { VariableStorageProvider } from '../../runtime/storage/storage-provider-base.js';
+import { SingletonStorageProvider } from '../../runtime/storage/storage-provider-base.js';
 import { PlanConsumer } from './plan-consumer.js';
 import { PlanProducer } from './plan-producer.js';
 import { PlanningResult } from './planning-result.js';
@@ -31,8 +31,8 @@ export declare class Planificator {
     replanQueue?: ReplanQueue;
     dataChangeCallback: Runnable;
     search: string | null;
-    searchStore: VariableStorageProvider;
-    constructor(arc: Arc, userid: string, result: PlanningResult, searchStore: VariableStorageProvider, onlyConsumer?: boolean, debug?: boolean);
+    searchStore: SingletonStorageProvider;
+    constructor(arc: Arc, userid: string, result: PlanningResult, searchStore: SingletonStorageProvider, onlyConsumer?: boolean, debug?: boolean);
     requestPlanning(options?: {}): Promise<void>;
     readonly consumerOnly: boolean;
     loadSuggestions(): Promise<boolean>;

@@ -286,10 +286,10 @@ class FirebaseStorageProvider extends StorageProviderBase {
     }
 }
 /**
- * Models a Variable that is persisted to firebase in a
+ * Models a Singleton that is persisted to firebase in a
  * last-writer-wins scheme.
  *
- * Initialization: After construct/connect the variable is
+ * Initialization: After construct/connect the singleton is
  * not fully initialized, calls to `get` and `toLiteral`
  * will not complete until either:
  *  * The initial value is supplied via the firebase `.on`
@@ -302,7 +302,7 @@ class FirebaseStorageProvider extends StorageProviderBase {
  *
  * Local modifications: When a local modification is applied
  * by a call to `set` we increment the version number,
- * mark this variable as locally modified, and start a
+ * mark this singleton as locally modified, and start a
  * process to atomically persist the change to firebase.
  * Until this process has completed we suppress incoming
  * changes from firebase. The version that we have chosen
@@ -320,7 +320,7 @@ class FirebaseVariable extends FirebaseStorageProvider {
         this.localKeyId = Date.now();
         this.pendingWrites = [];
         this.wasConnect = shouldExist;
-        // Current value stored in this variable. Reflects either a
+        // Current value stored in this singleton. Reflects either a
         // value that was stored in firebase, or a value that was
         // written locally.
         this.value = null;
@@ -336,7 +336,7 @@ class FirebaseVariable extends FirebaseStorageProvider {
         this.localModified = false;
         // Resolved when data is first available. The earlier of
         // * the initial value is supplied via firebase `reference.on`
-        // * a value is written to the variable by a call to `set`.
+        // * a value is written to the singleton by a call to `set`.
         this.initialized = new Promise(resolve => this.resolveInitialized = resolve);
         this.valueChangeCallback =
             this.reference.on('value', dataSnapshot => this.remoteStateChanged(dataSnapshot));
@@ -1168,7 +1168,7 @@ class FirebaseBigCollection extends FirebaseStorageProvider {
     enableReferenceMode() {
         assert(false, 'referenceMode is not supported for BigCollection');
     }
-    // TODO: rename this to avoid clashing with Variable and allow particles some way to specify the id
+    // TODO: rename this to avoid clashing with Singleton and allow particles some way to specify the id
     async get(id) {
         const encId = FirebaseStorage.encodeKey(id);
         const snapshot = await this.reference.child('items/' + encId).once('value');

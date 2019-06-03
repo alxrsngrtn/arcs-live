@@ -35,7 +35,7 @@ export class Handle {
  * implied by the set.
  */
 export class CollectionHandle extends Handle {
-    add(entity) {
+    async add(entity) {
         this.clock.set(this.key, (this.clock.get(this.key) || 0) + 1);
         const op = {
             type: CollectionOpTypes.Add,
@@ -45,15 +45,10 @@ export class CollectionHandle extends Handle {
         };
         return this.storageProxy.applyOp(op);
     }
-    addMultiple(entities) {
-        for (const e of entities) {
-            if (!this.add(e)) {
-                return false;
-            }
-        }
-        return true;
+    async addMultiple(entities) {
+        return Promise.all(entities.map(e => this.add(e))).then(array => array.every(Boolean));
     }
-    remove(entity) {
+    async remove(entity) {
         const op = {
             type: CollectionOpTypes.Remove,
             removed: entity,
@@ -62,8 +57,9 @@ export class CollectionHandle extends Handle {
         };
         return this.storageProxy.applyOp(op);
     }
-    clear() {
-        for (const value of this.toList()) {
+    async clear() {
+        const values = await this.toList();
+        for (const value of values) {
             const removeOp = {
                 type: CollectionOpTypes.Remove,
                 removed: value,
@@ -76,8 +72,8 @@ export class CollectionHandle extends Handle {
         }
         return true;
     }
-    toList() {
-        return [...this.storageProxy.getParticleView()];
+    async toList() {
+        return this.storageProxy.getParticleView().then(set => [...set]);
     }
     onUpdate(ops) {
         for (const op of ops) {
@@ -104,7 +100,7 @@ export class CollectionHandle extends Handle {
  * A handle on a single entity.
  */
 export class SingletonHandle extends Handle {
-    set(entity) {
+    async set(entity) {
         this.clock.set(this.key, (this.clock.get(this.key) || 0) + 1);
         const op = {
             type: SingletonOpTypes.Set,
@@ -114,7 +110,7 @@ export class SingletonHandle extends Handle {
         };
         return this.storageProxy.applyOp(op);
     }
-    clear() {
+    async clear() {
         const op = {
             type: SingletonOpTypes.Clear,
             actor: this.key,
@@ -122,7 +118,7 @@ export class SingletonHandle extends Handle {
         };
         return this.storageProxy.applyOp(op);
     }
-    get() {
+    async get() {
         return this.storageProxy.getParticleView();
     }
     onUpdate(ops) {

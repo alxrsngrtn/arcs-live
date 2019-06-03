@@ -68,14 +68,18 @@ export declare class DomParticleBase extends Particle {
      * Modify value of named handle. A new entity is created
      * from `rawData` (`new [EntityClass](rawData)`).
      */
-    updateVariable(handleName: string, rawData: any): import("./entity.js").EntityInterface;
+    updateSingleton(handleName: string, rawData: any): import("./entity.js").EntityInterface;
     /**
      * Modify or insert `entity` into named handle.
      * Modification is done by removing the old entity and reinserting the new one.
      */
-    updateSet(handleName: string, entity: Entity): Promise<void>;
+    updateCollection(handleName: string, entity: Entity): Promise<void>;
+    /**
+     * Return array of Entities dereferenced from array of Share-Type Entities
+     */
+    derefShares(shares: any): Promise<Entity[]>;
     /**
      * Returns array of Entities found in BOXED data `box` that are owned by `userid`
      */
-    boxQuery(box: any, userid: string): any;
+    boxQuery(box: any, userid: any): Promise<{}[]>;
 }

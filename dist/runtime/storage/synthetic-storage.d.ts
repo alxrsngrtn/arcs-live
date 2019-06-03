@@ -11,7 +11,7 @@ import { ModelValue, SerializedModelEntry } from './crdt-collection-model.js';
 import { Id } from '../id.js';
 import { Type } from '../type.js';
 import { KeyBase } from './key-base.js';
-import { CollectionStorageProvider, StorageBase, StorageProviderBase, VariableStorageProvider } from './storage-provider-base.js';
+import { CollectionStorageProvider, StorageBase, StorageProviderBase, SingletonStorageProvider } from './storage-provider-base.js';
 import { StorageProviderFactory } from './storage-provider-factory.js';
 declare enum Scope {
     arc = 1
@@ -50,7 +50,7 @@ declare class SyntheticCollection extends StorageProviderBase implements Collect
     private readonly initialized;
     private model;
     backingStore: any;
-    constructor(type: Type, id: string, key: string, targetStore: VariableStorageProvider, storageFactory: StorageProviderFactory);
+    constructor(type: Type, id: string, key: string, targetStore: SingletonStorageProvider, storageFactory: StorageProviderFactory);
     private process;
     toList(): Promise<ModelValue[]>;
     toLiteral(): Promise<{
