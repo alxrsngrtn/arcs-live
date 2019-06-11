@@ -118,7 +118,7 @@
         "signature": "008bdd717d957be8779d78b40844ee056d0665ca5057ab42aebffcaf0cbca855"
       },
       "/home/travis/build/PolymerLabs/arcs/src/gen/runtime/manifest-parser.ts": {
-        "version": "1ede57b22c33d5d715ff300f6a3fd4f15272dffc8a33fb65698fabc06e1cdd61",
+        "version": "7aca53d91a171394166bd66eaa3cfc01668669050fcae75ca80df3802fb813c2",
         "signature": "ff2c763c7895327196fd3eb358dcc775b25f27bdae513079cc287433af262427"
       },
       "/home/travis/build/PolymerLabs/arcs/src/platform/assert-web.ts": {
@@ -10994,7 +10994,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/gen/runtime/manifest-parser.ts",
-            "start": 30994,
+            "start": 31187,
             "length": 132,
             "code": 2352,
             "category": 1,
@@ -11021,7 +11021,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/gen/runtime/manifest-parser.ts",
-            "start": 36614,
+            "start": 36807,
             "length": 6,
             "code": 2322,
             "category": 1,
@@ -11038,7 +11038,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/gen/runtime/manifest-parser.ts",
-            "start": 36919,
+            "start": 37112,
             "length": 6,
             "code": 2322,
             "category": 1,
@@ -11055,7 +11055,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/gen/runtime/manifest-parser.ts",
-            "start": 237597,
+            "start": 238532,
             "length": 97,
             "code": 2352,
             "category": 1,
@@ -11077,7 +11077,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/gen/runtime/manifest-parser.ts",
-            "start": 238019,
+            "start": 238954,
             "length": 51,
             "code": 2322,
             "category": 1,
