@@ -70,8 +70,8 @@ export declare class Manifest {
     readonly imports: Manifest[];
     readonly schemas: Dictionary<Schema>;
     readonly fileName: string;
-    readonly stores: (StorageStub | StorageProviderBase)[];
-    readonly allStores: (StorageStub | StorageProviderBase)[];
+    readonly stores: (StorageProviderBase | StorageStub)[];
+    readonly allStores: (StorageProviderBase | StorageStub)[];
     readonly interfaces: InterfaceInfo[];
     readonly meta: ManifestMeta;
     readonly resources: {};
@@ -81,17 +81,17 @@ export declare class Manifest {
         key: string;
         value: string;
     }[]): void;
-    createStore(type: Type, name: string, id: string, tags: string[], storageKey?: string): Promise<StorageStub | StorageProviderBase>;
-    _addStore(store: StorageProviderBase | StorageStub, tags: string[]): StorageStub | StorageProviderBase;
-    newStorageStub(type: Type, name: string, id: string, storageKey: string, tags: string[], originalId: string): StorageStub | StorageProviderBase;
+    createStore(type: Type, name: string, id: string, tags: string[], storageKey?: string): Promise<StorageProviderBase | StorageStub>;
+    _addStore(store: StorageProviderBase | StorageStub, tags: string[]): StorageProviderBase | StorageStub;
+    newStorageStub(type: Type, name: string, id: string, storageKey: string, tags: string[], originalId: string): StorageProviderBase | StorageStub;
     _find<a>(manifestFinder: ManifestFinder<a>): a;
     _findAll<a>(manifestFinder: ManifestFinderGenerator<a>): IterableIterator<a>;
     findSchemaByName(name: string): Schema;
     findTypeByName(name: string): EntityType | InterfaceType | undefined;
     findParticleByName(name: string): ParticleSpec;
     findParticlesByVerb(verb: string): ParticleSpec[];
-    findStoreByName(name: string): StorageStub | StorageProviderBase;
-    findStoreById(id: string): StorageStub | StorageProviderBase;
+    findStoreByName(name: string): StorageProviderBase | StorageStub;
+    findStoreById(id: string): StorageProviderBase | StorageStub;
     findStoreTags(store: StorageProviderBase | StorageStub): string[];
     findManifestUrlForHandleId(id: string): string;
     findStoresByType(type: Type, options?: {

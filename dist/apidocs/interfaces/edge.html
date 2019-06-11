@@ -70,7 +70,12 @@
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<span class="target">Edge</span>
+						<a href="checkevaluator.html" class="tsd-signature-type">CheckEvaluator</a>
+						<ul class="tsd-hierarchy">
+							<li>
+								<span class="target">Edge</span>
+							</li>
+						</ul>
 					</li>
 				</ul>
 			</section>
@@ -96,10 +101,10 @@
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="edge.html#start" class="tsd-kind-icon">start</a></li>
 							</ul>
 						</section>
-						<section class="tsd-index-section ">
+						<section class="tsd-index-section tsd-is-inherited">
 							<h3>Methods</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="edge.html#ischecksatisfied" class="tsd-kind-icon">is<wbr>Check<wbr>Satisfied</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-interface tsd-is-inherited"><a href="edge.html#evaluatecheck" class="tsd-kind-icon">evaluate<wbr>Check</a></li>
 							</ul>
 						</section>
 					</div>
@@ -113,7 +118,7 @@
 					<div class="tsd-signature tsd-kind-icon">check<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/lindner/arcs/blob/4c5fb349/src/dataflow/flow-graph.ts#L207">dataflow/flow-graph.ts:207</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/d92f40f/src/dataflow/flow-graph.ts#L257">dataflow/flow-graph.ts:257</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -123,7 +128,7 @@
 					<div class="tsd-signature tsd-kind-icon">claim<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/lindner/arcs/blob/4c5fb349/src/dataflow/flow-graph.ts#L206">dataflow/flow-graph.ts:206</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/d92f40f/src/dataflow/flow-graph.ts#L256">dataflow/flow-graph.ts:256</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -133,7 +138,7 @@
 					<div class="tsd-signature tsd-kind-icon">end<span class="tsd-signature-symbol">:</span> <a href="../classes/node.html" class="tsd-signature-type">Node</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/lindner/arcs/blob/4c5fb349/src/dataflow/flow-graph.ts#L204">dataflow/flow-graph.ts:204</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/d92f40f/src/dataflow/flow-graph.ts#L254">dataflow/flow-graph.ts:254</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -143,7 +148,7 @@
 					<div class="tsd-signature tsd-kind-icon">label<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/lindner/arcs/blob/4c5fb349/src/dataflow/flow-graph.ts#L205">dataflow/flow-graph.ts:205</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/d92f40f/src/dataflow/flow-graph.ts#L255">dataflow/flow-graph.ts:255</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -153,29 +158,30 @@
 					<div class="tsd-signature tsd-kind-icon">start<span class="tsd-signature-symbol">:</span> <a href="../classes/node.html" class="tsd-signature-type">Node</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/lindner/arcs/blob/4c5fb349/src/dataflow/flow-graph.ts#L203">dataflow/flow-graph.ts:203</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/d92f40f/src/dataflow/flow-graph.ts#L253">dataflow/flow-graph.ts:253</a></li>
 						</ul>
 					</aside>
 				</section>
 			</section>
-			<section class="tsd-panel-group tsd-member-group ">
+			<section class="tsd-panel-group tsd-member-group tsd-is-inherited">
 				<h2>Methods</h2>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface">
-					<a name="ischecksatisfied" class="tsd-anchor"></a>
-					<h3>is<wbr>Check<wbr>Satisfied</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
-						<li class="tsd-signature tsd-kind-icon">is<wbr>Check<wbr>Satisfied<span class="tsd-signature-symbol">(</span>check<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../enums/checkresult.html" class="tsd-signature-type">CheckResult</a></li>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
+					<a name="evaluatecheck" class="tsd-anchor"></a>
+					<h3>evaluate<wbr>Check</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
+						<li class="tsd-signature tsd-kind-icon">evaluate<wbr>Check<span class="tsd-signature-symbol">(</span>check<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, path<span class="tsd-signature-symbol">: </span><a href="../classes/backwardspath.html" class="tsd-signature-type">BackwardsPath</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../globals.html#checkresult" class="tsd-signature-type">CheckResult</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
+								<p>Inherited from <a href="checkevaluator.html">CheckEvaluator</a>.<a href="checkevaluator.html#evaluatecheck">evaluateCheck</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/lindner/arcs/blob/4c5fb349/src/dataflow/flow-graph.ts#L210">dataflow/flow-graph.ts:210</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/d92f40f/src/dataflow/flow-graph.ts#L226">dataflow/flow-graph.ts:226</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>Returns true if this edge has a claim that satisfies the given check condition.</p>
+									<p>Evaluates the given check condition.</p>
 								</div>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -183,8 +189,11 @@
 								<li>
 									<h5>check: <span class="tsd-signature-type">string</span></h5>
 								</li>
+								<li>
+									<h5>path: <a href="../classes/backwardspath.html" class="tsd-signature-type">BackwardsPath</a></h5>
+								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <a href="../enums/checkresult.html" class="tsd-signature-type">CheckResult</a></h4>
+							<h4 class="tsd-returns-title">Returns <a href="../globals.html#checkresult" class="tsd-signature-type">CheckResult</a></h4>
 						</li>
 					</ul>
 				</section>
@@ -220,8 +229,8 @@
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
 								<a href="edge.html#start" class="tsd-kind-icon">start</a>
 							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-interface">
-								<a href="edge.html#ischecksatisfied" class="tsd-kind-icon">is<wbr>Check<wbr>Satisfied</a>
+							<li class=" tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
+								<a href="edge.html#evaluatecheck" class="tsd-kind-icon">evaluate<wbr>Check</a>
 							</li>
 						</ul>
 					</li>

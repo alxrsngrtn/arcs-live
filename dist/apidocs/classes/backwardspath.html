@@ -72,6 +72,7 @@
 						<p>A path that walks backwards through the graph, i.e. it walks along the directed edges in the reverse direction. The path is described by the
 						nodes in the path. Class is immutable.</p>
 					</div>
+					<p>The path can have an open or closed edge at the end. An open edge points to the final node in the path, but does not actually include it.</p>
 				</div>
 			</section>
 			<section class="tsd-panel tsd-hierarchy">
@@ -96,20 +97,24 @@
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="backwardspath.html#nodes" class="tsd-kind-icon">nodes</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="backwardspath.html#openedge" class="tsd-kind-icon">open<wbr>Edge</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
 							<h3>Accessors</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="backwardspath.html#endnode" class="tsd-kind-icon">end<wbr>Node</a></li>
+								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="backwardspath.html#end" class="tsd-kind-icon">end</a></li>
 								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="backwardspath.html#startnode" class="tsd-kind-icon">start<wbr>Node</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
 							<h3>Methods</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="backwardspath.html#newpathwithedge" class="tsd-kind-icon">new<wbr>Path<wbr>With<wbr>Edge</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-static"><a href="backwardspath.html#fromedge" class="tsd-kind-icon">from<wbr>Edge</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="backwardspath.html#withclosedend" class="tsd-kind-icon">with<wbr>Closed<wbr>End</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="backwardspath.html#withnewclosededge" class="tsd-kind-icon">with<wbr>New<wbr>Closed<wbr>Edge</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="backwardspath.html#withnewopenedge" class="tsd-kind-icon">with<wbr>New<wbr>Open<wbr>Edge</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-static"><a href="backwardspath.html#newpathwithclosededge" class="tsd-kind-icon">new<wbr>Path<wbr>With<wbr>Closed<wbr>Edge</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-static"><a href="backwardspath.html#newpathwithopenedge" class="tsd-kind-icon">new<wbr>Path<wbr>With<wbr>Open<wbr>Edge</a></li>
 							</ul>
 						</section>
 					</div>
@@ -121,13 +126,13 @@
 					<a name="constructor" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagPrivate">Private</span> constructor</h3>
 					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class tsd-is-private">
-						<li class="tsd-signature tsd-kind-icon">new <wbr>Backwards<wbr>Path<span class="tsd-signature-symbol">(</span>nodes<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">readonly</span>, Node<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, __namedParameters<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="backwardspath.html" class="tsd-signature-type">BackwardsPath</a></li>
+						<li class="tsd-signature tsd-kind-icon">new <wbr>Backwards<wbr>Path<span class="tsd-signature-symbol">(</span>nodes<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">readonly</span>, Node<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, __namedParameters<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">[]</span>, openEdge<span class="tsd-signature-symbol">?: </span><a href="../interfaces/edge.html" class="tsd-signature-type">Edge</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="backwardspath.html" class="tsd-signature-type">BackwardsPath</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/lindner/arcs/blob/4c5fb349/src/dataflow/flow-graph.ts#L119">dataflow/flow-graph.ts:119</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/d92f40f/src/dataflow/flow-graph.ts#L124">dataflow/flow-graph.ts:124</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -140,6 +145,9 @@
 								</li>
 								<li>
 									<h5>__namedParameters: <span class="tsd-signature-type">[]</span></h5>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> openEdge: <a href="../interfaces/edge.html" class="tsd-signature-type">Edge</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span><span class="tsd-signature-symbol"> =&nbsp;null</span></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <a href="backwardspath.html" class="tsd-signature-type">BackwardsPath</a></h4>
@@ -155,27 +163,51 @@
 					<div class="tsd-signature tsd-kind-icon">nodes<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">readonly</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/lindner/arcs/blob/4c5fb349/src/dataflow/flow-graph.ts#L120">dataflow/flow-graph.ts:120</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/d92f40f/src/dataflow/flow-graph.ts#L127">dataflow/flow-graph.ts:127</a></li>
 						</ul>
 					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Nodes in the path.</p>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="openedge" class="tsd-anchor"></a>
+					<h3>open<wbr>Edge</h3>
+					<div class="tsd-signature tsd-kind-icon">open<wbr>Edge<span class="tsd-signature-symbol">:</span> <a href="../interfaces/edge.html" class="tsd-signature-type">Edge</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/d92f40f/src/dataflow/flow-graph.ts#L132">dataflow/flow-graph.ts:132</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Optional open edge at the end of the path. If the path is closed, this will be null, and the end of the path is given by the last node
+							in the nodes list.</p>
+						</div>
+					</div>
 				</section>
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Accessors</h2>
 				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class">
-					<a name="endnode" class="tsd-anchor"></a>
-					<h3>end<wbr>Node</h3>
+					<a name="end" class="tsd-anchor"></a>
+					<h3>end</h3>
 					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> endNode<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="node.html" class="tsd-signature-type">Node</a></li>
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> end<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="node.html" class="tsd-signature-type">Node</a><span class="tsd-signature-symbol"> | </span><a href="../interfaces/edge.html" class="tsd-signature-type">Edge</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/lindner/arcs/blob/4c5fb349/src/dataflow/flow-graph.ts#L144">dataflow/flow-graph.ts:144</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/d92f40f/src/dataflow/flow-graph.ts#L179">dataflow/flow-graph.ts:179</a></li>
 								</ul>
 							</aside>
-							<h4 class="tsd-returns-title">Returns <a href="node.html" class="tsd-signature-type">Node</a></h4>
+							<h4 class="tsd-returns-title">Returns <a href="node.html" class="tsd-signature-type">Node</a>
+								<span class="tsd-signature-symbol"> | </span>
+								<a href="../interfaces/edge.html" class="tsd-signature-type">Edge</a>
+							</h4>
 						</li>
 					</ul>
 				</section>
@@ -189,7 +221,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/lindner/arcs/blob/4c5fb349/src/dataflow/flow-graph.ts#L140">dataflow/flow-graph.ts:140</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/d92f40f/src/dataflow/flow-graph.ts#L175">dataflow/flow-graph.ts:175</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <a href="node.html" class="tsd-signature-type">Node</a></h4>
@@ -200,16 +232,38 @@
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Methods</h2>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
-					<a name="newpathwithedge" class="tsd-anchor"></a>
-					<h3>new<wbr>Path<wbr>With<wbr>Edge</h3>
+					<a name="withclosedend" class="tsd-anchor"></a>
+					<h3>with<wbr>Closed<wbr>End</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">new<wbr>Path<wbr>With<wbr>Edge<span class="tsd-signature-symbol">(</span>edge<span class="tsd-signature-symbol">: </span><a href="../interfaces/edge.html" class="tsd-signature-type">Edge</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="backwardspath.html" class="tsd-signature-type">BackwardsPath</a></li>
+						<li class="tsd-signature tsd-kind-icon">with<wbr>Closed<wbr>End<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="backwardspath.html" class="tsd-signature-type">BackwardsPath</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/lindner/arcs/blob/4c5fb349/src/dataflow/flow-graph.ts#L126">dataflow/flow-graph.ts:126</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/d92f40f/src/dataflow/flow-graph.ts#L163">dataflow/flow-graph.ts:163</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Returns a copy of the current path, converting an open edge to a closed one. Fails if the path does not have an open edge.</p>
+								</div>
+							</div>
+							<h4 class="tsd-returns-title">Returns <a href="backwardspath.html" class="tsd-signature-type">BackwardsPath</a></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="withnewclosededge" class="tsd-anchor"></a>
+					<h3>with<wbr>New<wbr>Closed<wbr>Edge</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">with<wbr>New<wbr>Closed<wbr>Edge<span class="tsd-signature-symbol">(</span>edge<span class="tsd-signature-symbol">: </span><a href="../interfaces/edge.html" class="tsd-signature-type">Edge</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="backwardspath.html" class="tsd-signature-type">BackwardsPath</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/d92f40f/src/dataflow/flow-graph.ts#L171">dataflow/flow-graph.ts:171</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -222,19 +276,80 @@
 						</li>
 					</ul>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-static">
-					<a name="fromedge" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagStatic">Static</span> from<wbr>Edge</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-static">
-						<li class="tsd-signature tsd-kind-icon">from<wbr>Edge<span class="tsd-signature-symbol">(</span>edge<span class="tsd-signature-symbol">: </span><a href="../interfaces/edge.html" class="tsd-signature-type">Edge</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="backwardspath.html" class="tsd-signature-type">BackwardsPath</a></li>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="withnewopenedge" class="tsd-anchor"></a>
+					<h3>with<wbr>New<wbr>Open<wbr>Edge</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">with<wbr>New<wbr>Open<wbr>Edge<span class="tsd-signature-symbol">(</span>edge<span class="tsd-signature-symbol">: </span><a href="../interfaces/edge.html" class="tsd-signature-type">Edge</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="backwardspath.html" class="tsd-signature-type">BackwardsPath</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/lindner/arcs/blob/4c5fb349/src/dataflow/flow-graph.ts#L122">dataflow/flow-graph.ts:122</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/d92f40f/src/dataflow/flow-graph.ts#L147">dataflow/flow-graph.ts:147</a></li>
 								</ul>
 							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Returns a copy of the current path, with an open edge added to the end of it. Fails if the path already has an open edge.</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>edge: <a href="../interfaces/edge.html" class="tsd-signature-type">Edge</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="backwardspath.html" class="tsd-signature-type">BackwardsPath</a></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-static">
+					<a name="newpathwithclosededge" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagStatic">Static</span> new<wbr>Path<wbr>With<wbr>Closed<wbr>Edge</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-static">
+						<li class="tsd-signature tsd-kind-icon">new<wbr>Path<wbr>With<wbr>Closed<wbr>Edge<span class="tsd-signature-symbol">(</span>edge<span class="tsd-signature-symbol">: </span><a href="../interfaces/edge.html" class="tsd-signature-type">Edge</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="backwardspath.html" class="tsd-signature-type">BackwardsPath</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/d92f40f/src/dataflow/flow-graph.ts#L142">dataflow/flow-graph.ts:142</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Constructs a new path from the given edge with a closed end.</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>edge: <a href="../interfaces/edge.html" class="tsd-signature-type">Edge</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="backwardspath.html" class="tsd-signature-type">BackwardsPath</a></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-static">
+					<a name="newpathwithopenedge" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagStatic">Static</span> new<wbr>Path<wbr>With<wbr>Open<wbr>Edge</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-static">
+						<li class="tsd-signature tsd-kind-icon">new<wbr>Path<wbr>With<wbr>Open<wbr>Edge<span class="tsd-signature-symbol">(</span>edge<span class="tsd-signature-symbol">: </span><a href="../interfaces/edge.html" class="tsd-signature-type">Edge</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="backwardspath.html" class="tsd-signature-type">BackwardsPath</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/d92f40f/src/dataflow/flow-graph.ts#L135">dataflow/flow-graph.ts:135</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Constructs a new path from the given edge with an open end.</p>
+								</div>
+							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
@@ -268,17 +383,29 @@
 							<li class=" tsd-kind-property tsd-parent-kind-class">
 								<a href="backwardspath.html#nodes" class="tsd-kind-icon">nodes</a>
 							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="backwardspath.html#openedge" class="tsd-kind-icon">open<wbr>Edge</a>
+							</li>
 							<li class=" tsd-kind-get-signature tsd-parent-kind-class">
-								<a href="backwardspath.html#endnode" class="tsd-kind-icon">end<wbr>Node</a>
+								<a href="backwardspath.html#end" class="tsd-kind-icon">end</a>
 							</li>
 							<li class=" tsd-kind-get-signature tsd-parent-kind-class">
 								<a href="backwardspath.html#startnode" class="tsd-kind-icon">start<wbr>Node</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
-								<a href="backwardspath.html#newpathwithedge" class="tsd-kind-icon">new<wbr>Path<wbr>With<wbr>Edge</a>
+								<a href="backwardspath.html#withclosedend" class="tsd-kind-icon">with<wbr>Closed<wbr>End</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="backwardspath.html#withnewclosededge" class="tsd-kind-icon">with<wbr>New<wbr>Closed<wbr>Edge</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="backwardspath.html#withnewopenedge" class="tsd-kind-icon">with<wbr>New<wbr>Open<wbr>Edge</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-static">
-								<a href="backwardspath.html#fromedge" class="tsd-kind-icon">from<wbr>Edge</a>
+								<a href="backwardspath.html#newpathwithclosededge" class="tsd-kind-icon">new<wbr>Path<wbr>With<wbr>Closed<wbr>Edge</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-static">
+								<a href="backwardspath.html#newpathwithopenedge" class="tsd-kind-icon">new<wbr>Path<wbr>With<wbr>Open<wbr>Edge</a>
 							</li>
 						</ul>
 					</li>

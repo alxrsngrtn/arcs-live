@@ -1,11 +1,5 @@
-commit 4c5fb349ae7af36cfb6e7152a9f9685dbcbb9776
-Author: Scott J. Miles <sjmiles@google.com>
-Date:   Mon Jun 10 14:21:53 2019 -0700
+commit d92f40f042eb453991a32d9a81fb10a4f0c997a9
+Author: Paul Lindner <plindner@google.com>
+Date:   Tue Jun 11 15:47:36 2019 -0700
 
-    Skip 3ops x 2models test, > 10s timeout considered too long (#3160)
-    
-    * Increase timeout for 3ops x 2models test
-    
-    * Increase timeout 10s => 20s
-    
-    * Skip long-running test
+    blacklist more places where large data is showing up (#3168)

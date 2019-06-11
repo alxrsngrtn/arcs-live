@@ -28,37 +28,63 @@ export declare class FlowGraph {
     /** Validates a single check (on the given edge). Returns true if the check passes. */
     private validateSingleEdge;
 }
-export declare enum CheckResult {
+export declare enum CheckResultType {
     Success = 0,
     Failure = 1,
     KeepGoing = 2
 }
+export declare type CheckResult = {
+    type: CheckResultType.Success;
+} | {
+    type: CheckResultType.Failure;
+} | {
+    type: CheckResultType.KeepGoing;
+    checkNext: BackwardsPath[];
+};
 /**
  * A path that walks backwards through the graph, i.e. it walks along the directed edges in the reverse direction. The path is described by the
  * nodes in the path. Class is immutable.
+ *
+ * The path can have an open or closed edge at the end. An open edge points to the final node in the path, but does not actually include it.
  */
 export declare class BackwardsPath {
+    /** Nodes in the path. */
     readonly nodes: readonly Node[];
+    /**
+     * Optional open edge at the end of the path. If the path is closed, this will be null, and the end of the path is given by the last node
+     * in the nodes list.
+     */
+    readonly openEdge: Edge | null;
     private constructor();
-    static fromEdge(edge: Edge): BackwardsPath;
-    newPathWithEdge(edge: Edge): BackwardsPath;
+    /** Constructs a new path from the given edge with an open end. */
+    static newPathWithOpenEdge(edge: Edge): BackwardsPath;
+    /** Constructs a new path from the given edge with a closed end. */
+    static newPathWithClosedEdge(edge: Edge): BackwardsPath;
+    /** Returns a copy of the current path, with an open edge added to the end of it. Fails if the path already has an open edge. */
+    withNewOpenEdge(edge: Edge): BackwardsPath;
+    /** Returns a copy of the current path, converting an open edge to a closed one. Fails if the path does not have an open edge. */
+    withClosedEnd(): BackwardsPath;
+    withNewClosedEdge(edge: Edge): BackwardsPath;
     readonly startNode: Node;
-    readonly endNode: Node;
+    readonly end: Node | Edge;
 }
-export declare abstract class Node {
+interface CheckEvaluator {
+    /** Evaluates the given check condition. */
+    evaluateCheck(check: string, path: BackwardsPath): CheckResult;
+}
+export declare abstract class Node implements CheckEvaluator {
     abstract readonly inEdges: Edge[];
     abstract readonly outEdges: Edge[];
+    evaluateCheck(check: string, path: BackwardsPath): CheckResult;
     readonly inNodes: Node[];
     readonly outNodes: Node[];
 }
-export interface Edge {
+export interface Edge extends CheckEvaluator {
     readonly start: Node;
     readonly end: Node;
     readonly label: string;
     readonly claim?: string;
     readonly check?: string;
-    /** Returns true if this edge has a claim that satisfies the given check condition. */
-    isCheckSatisfied(check: string): CheckResult;
 }
 declare class ParticleNode extends Node {
     readonly inEdges: ParticleInput[];
@@ -74,7 +100,7 @@ declare class ParticleInput implements Edge {
     readonly label: string;
     readonly check?: string;
     constructor(particleNode: ParticleNode, otherEnd: Node, inputName: string);
-    isCheckSatisfied(check: string): CheckResult;
+    evaluateCheck(check: string, path: BackwardsPath): CheckResult;
 }
 declare class ParticleOutput implements Edge {
     readonly start: ParticleNode;
@@ -82,7 +108,7 @@ declare class ParticleOutput implements Edge {
     readonly label: string;
     readonly claim?: string;
     constructor(particleNode: ParticleNode, otherEnd: Node, outputName: string);
-    isCheckSatisfied(check: string): CheckResult;
+    evaluateCheck(check: string, path: BackwardsPath): CheckResult;
 }
 declare class HandleNode extends Node {
     readonly inEdges: ParticleOutput[];

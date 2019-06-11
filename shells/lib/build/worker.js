@@ -90,8 +90,8 @@
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _build_runtime_particle_execution_context_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1);
-/* harmony import */ var _build_platform_loader_web_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(28);
+/* WEBPACK VAR INJECTION */(function(global) {/* harmony import */ var _build_runtime_particle_execution_context_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(2);
+/* harmony import */ var _build_platform_loader_web_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(27);
 /* harmony import */ var _build_runtime_id_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(16);
 /**
  * @license
@@ -109,13 +109,43 @@ __webpack_require__.r(__webpack_exports__);
 
 self.onmessage = function(e) {
   self.onmessage = null;
-  const {id, base} = e.data;
+  const {id, base, logLevel} = e.data;
+  // TODO(sjmiles): happens too late for modules that immediately construct loggers, but
+  // soon enough for `log` injected into Particle.
+  global.logLevel = logLevel;
   new _build_runtime_particle_execution_context_js__WEBPACK_IMPORTED_MODULE_0__["ParticleExecutionContext"](e.ports[0], _build_runtime_id_js__WEBPACK_IMPORTED_MODULE_2__["Id"].fromString(id), _build_runtime_id_js__WEBPACK_IMPORTED_MODULE_2__["IdGenerator"].newSession(), new _build_platform_loader_web_js__WEBPACK_IMPORTED_MODULE_1__["PlatformLoader"](base));
 };
 
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(1)))
 
 /***/ }),
 /* 1 */
+/***/ (function(module, exports) {
+
+var g;
+
+// This works in non-strict mode
+g = (function() {
+	return this;
+})();
+
+try {
+	// This works if eval is allowed (see CSP)
+	g = g || new Function("return this")();
+} catch (e) {
+	// This works if the window reference is available
+	if (typeof window === "object") g = window;
+}
+
+// g can still be undefined, but nothing to do about it...
+// We return undefined, instead of nothing here, so it's
+// easier to handle this case. if(!global) { ...}
+
+module.exports = g;
+
+
+/***/ }),
+/* 2 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -191,7 +221,7 @@ class ParticleExecutionContext {
                 pec.idle.then(a => {
                     // TODO: dom-particles update is async, this is a workaround to allow dom-particles to
                     // update relevance, after handles are updated. Needs better idle signal.
-                    setTimeout(() => { this.Idle(version, pec.relevance); }, 0);
+                    setTimeout(() => this.Idle(version, pec.relevance), 0);
                 });
             }
             onUIEvent(particle, slotName, event) {
@@ -358,33 +388,7 @@ class ParticleExecutionContext {
     }
 }
 //# sourceMappingURL=particle-execution-context.js.map
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(2)))
-
-/***/ }),
-/* 2 */
-/***/ (function(module, exports) {
-
-var g;
-
-// This works in non-strict mode
-g = (function() {
-	return this;
-})();
-
-try {
-	// This works if eval is allowed (see CSP)
-	g = g || new Function("return this")();
-} catch (e) {
-	// This works if the window reference is available
-	if (typeof window === "object") g = window;
-}
-
-// g can still be undefined, but nothing to do about it...
-// We return undefined, instead of nothing here, so it's
-// easier to handle this case. if(!global) { ...}
-
-module.exports = g;
-
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(1)))
 
 /***/ }),
 /* 3 */
@@ -460,16 +464,34 @@ var MappingType;
 })(MappingType || (MappingType = {}));
 const targets = new Map();
 function setPropertyKey(target, propertyKey) {
-    if (!targets.has(target)) {
-        targets.set(target, new Map());
+    let map = targets.get(target);
+    if (map == undefined) {
+        map = new Map();
+        targets.set(target, map);
     }
-    if (!targets.get(target).has(propertyKey)) {
-        targets.get(target).set(propertyKey, []);
+    let list = map.get(propertyKey);
+    if (list == undefined) {
+        list = [];
+        map.set(propertyKey, list);
     }
+    return list;
+}
+function getPropertyKey(target, propertyKey, parameterIndex) {
+    const map = targets.get(target);
+    if (map) {
+        const list = map.get(propertyKey);
+        if (list) {
+            const result = list[parameterIndex];
+            if (result) {
+                return result;
+            }
+        }
+    }
+    throw new Error(`the target ${target}, propertyKey ${propertyKey} and parameterIndex ${parameterIndex} provided did not exist`);
 }
 function set(target, propertyKey, parameterIndex, info) {
-    setPropertyKey(target, propertyKey);
-    targets.get(target).get(propertyKey)[parameterIndex] = info;
+    const list = setPropertyKey(target, propertyKey);
+    list[parameterIndex] = info;
 }
 function Direct(target, propertyKey, parameterIndex) {
     set(target.constructor, propertyKey, parameterIndex, { type: MappingType.Direct });
@@ -511,16 +533,10 @@ function Initializer(target, propertyKey, parameterIndex) {
     set(target.constructor, propertyKey, parameterIndex, { type: MappingType.Direct, initializer: true });
 }
 function Identifier(target, propertyKey, parameterIndex) {
-    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(targets.get(target.constructor));
-    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(targets.get(target.constructor).get(propertyKey));
-    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(targets.get(target.constructor).get(propertyKey)[parameterIndex]);
-    targets.get(target.constructor).get(propertyKey)[parameterIndex].identifier = true;
+    getPropertyKey(target.constructor, propertyKey, parameterIndex).identifier = true;
 }
 function RemoteIgnore(target, propertyKey, parameterIndex) {
-    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(targets.get(target.constructor));
-    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(targets.get(target.constructor).get(propertyKey));
-    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(targets.get(target.constructor).get(propertyKey)[parameterIndex]);
-    targets.get(target.constructor).get(propertyKey)[parameterIndex].ignore = true;
+    getPropertyKey(target.constructor, propertyKey, parameterIndex).ignore = true;
 }
 class ThingMapper {
     constructor(prefix) {
@@ -611,7 +627,7 @@ class APIPort {
         const call = { messageType: name, messageBody: args, stack: this.attachStack ? new Error().stack : undefined };
         const count = this.messageCount++;
         if (this.inspector) {
-            this.inspector.pecMessage(name, args, count, new Error().stack);
+            this.inspector.pecMessage(name, args, count, new Error().stack || '');
         }
         this._port.postMessage(call);
     }
@@ -631,6 +647,9 @@ function getArgs(func) {
 // at start of runtime.
 // tslint:disable-next-line: no-any
 function convert(info, value, mapper) {
+    if (info === undefined) {
+        return;
+    }
     switch (info.type) {
         case MappingType.Mapped:
             return mapper.identifierForThing(value);
@@ -658,6 +677,9 @@ function convert(info, value, mapper) {
 // at start of runtime.
 // tslint:disable-next-line: no-any
 function unconvert(info, value, mapper) {
+    if (info === undefined) {
+        return;
+    }
     switch (info.type) {
         case MappingType.Mapped:
             return mapper.thingForIdentifier(value);
@@ -678,6 +700,9 @@ function unconvert(info, value, mapper) {
         case MappingType.List:
             return value.map(v => unconvert(info.value, v, mapper));
         case MappingType.ByLiteral:
+            if (!info.converter) {
+                throw new Error(`Expected ${info.type} to have a converter but it doesn't`);
+            }
             return info.converter.fromLiteral(value);
         default:
             throw new Error(`Can't yet recieve MappingType ${info.type}`);
@@ -686,16 +711,16 @@ function unconvert(info, value, mapper) {
 function AutoConstruct(target) {
     return (constructor) => {
         const doConstruct = (me, other) => {
-            const functions = targets.get(me);
+            const functions = targets.get(me) || new Map();
             for (const f of functions.keys()) {
                 const argNames = getArgs(me.prototype[f]);
-                const descriptor = functions.get(f);
+                const descriptor = functions.get(f) || [];
                 // If this descriptor is for an initializer, record that fact and we'll process it after
                 // the rest of the arguments.
-                const initializer = descriptor.findIndex(d => d.initializer);
+                const initializer = descriptor.findIndex(d => d.initializer || false);
                 // If this descriptor records that this argument is the identifier, record it
                 // as the requestedId for mapping below.
-                const requestedId = descriptor.findIndex(d => d.identifier);
+                const requestedId = descriptor.findIndex(d => d.identifier || false);
                 /** @this APIPort */
                 const impl = function (...args) {
                     const messageBody = {};
@@ -739,8 +764,10 @@ function AutoConstruct(target) {
                         }
                     }
                     if (promises.length > 0) {
-                        await Promise.all(promises.map(a => a.promise));
-                        promises.forEach(a => args[a.position] = args[a.position]());
+                        await Promise.all(promises.map(async (a) => a.promise));
+                        promises.forEach(a => {
+                            args[a.position] = args[a.position]();
+                        });
                     }
                     const result = this['on' + f](...args);
                     // If this message is an initializer, need to establish a mapping
@@ -1057,6 +1084,8 @@ class ParticleSpec {
                 ps.handles.forEach(v => Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(this.handleConnectionMap.has(v), 'Cannot provide slot for nonexistent handle constraint ' + v));
             });
         });
+        this.trustClaims = this.validateTrustClaims(model.trustClaims);
+        this.trustChecks = this.validateTrustChecks(model.trustChecks);
     }
     createConnection(arg, typeVarMap) {
         const connection = new HandleConnectionSpec(arg, typeVarMap);
@@ -1100,16 +1129,16 @@ class ParticleSpec {
         this.model.implBlobUrl = this.implBlobUrl = url;
     }
     toLiteral() {
-        const { args, name, verbs, description, implFile, implBlobUrl, modality, slotConnections } = this.model;
+        const { args, name, verbs, description, implFile, implBlobUrl, modality, slotConnections, trustClaims, trustChecks } = this.model;
         const connectionToLiteral = ({ type, direction, name, isOptional, dependentConnections }) => ({ type: asTypeLiteral(type), direction, name, isOptional, dependentConnections: dependentConnections.map(connectionToLiteral) });
         const argsLiteral = args.map(a => connectionToLiteral(a));
-        return { args: argsLiteral, name, verbs, description, implFile, implBlobUrl, modality, slotConnections };
+        return { args: argsLiteral, name, verbs, description, implFile, implBlobUrl, modality, slotConnections, trustClaims, trustChecks };
     }
     static fromLiteral(literal) {
-        let { args, name, verbs, description, implFile, implBlobUrl, modality, slotConnections } = literal;
+        let { args, name, verbs, description, implFile, implBlobUrl, modality, slotConnections, trustClaims, trustChecks } = literal;
         const connectionFromLiteral = ({ type, direction, name, isOptional, dependentConnections }) => ({ type: asType(type), direction, name, isOptional, dependentConnections: dependentConnections ? dependentConnections.map(connectionFromLiteral) : [] });
         args = args.map(connectionFromLiteral);
-        return new ParticleSpec({ args, name, verbs: verbs || [], description, implFile, implBlobUrl, modality, slotConnections });
+        return new ParticleSpec({ args, name, verbs: verbs || [], description, implFile, implBlobUrl, modality, slotConnections, trustClaims, trustChecks });
     }
     // Note: this method shouldn't be called directly.
     clone() {
@@ -1199,6 +1228,30 @@ class ParticleSpec {
     }
     toManifestString() {
         return this.toString();
+    }
+    validateTrustClaims(claims) {
+        const results = new Map();
+        if (claims) {
+            claims.forEach(claim => {
+                Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(this.handleConnectionMap.has(claim.handle), `Can't make a claim on unknown handle ${claim.handle}.`);
+                const handle = this.handleConnectionMap.get(claim.handle);
+                Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(handle.isOutput, `Can't make a claim on handle ${claim.handle} (not an output handle).`);
+                results.set(claim.handle, claim.trustTag);
+            });
+        }
+        return results;
+    }
+    validateTrustChecks(checks) {
+        const results = new Map();
+        if (checks) {
+            checks.forEach(check => {
+                Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(this.handleConnectionMap.has(check.handle), `Can't make a check on unknown handle ${check.handle}.`);
+                const handle = this.handleConnectionMap.get(check.handle);
+                Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(handle.isInput, `Can't make a check on handle ${check.handle} (not an input handle).`);
+                results.set(check.handle, check.trustTag);
+            });
+        }
+        return results;
     }
 }
 //# sourceMappingURL=particle-spec.js.map
@@ -4998,7 +5051,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
 /* harmony import */ var _particle_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(26);
 /* harmony import */ var _handle_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(14);
-/* harmony import */ var _wasm_config_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(27);
 /**
  * @license
  * Copyright (c) 2019 Google Inc. All rights reserved.
@@ -5008,7 +5060,6 @@ __webpack_require__.r(__webpack_exports__);
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-
 
 
 
@@ -5146,8 +5197,51 @@ class StringDecoder {
         }
     }
 }
-function errFunc(label) {
-    return err => { throw new Error(label + ': ' + err); };
+// Wasm modules built by emscripten require some external memory configuration by the caller,
+// which is usually built into the glue code generated alongside the module. We're not using
+// the glue code, but if we set the EMIT_EMSCRIPTEN_METADATA flag when building, emscripten
+// will provide a custom section in the module itself with the required values.
+const EMSCRIPTEN_METADATA_MAJOR = 0;
+const EMSCRIPTEN_METADATA_MINOR = 1;
+const EMSCRIPTEN_ABI_MAJOR = 0;
+const EMSCRIPTEN_ABI_MINOR = 3;
+// TODO: reconcile with Kotlin-based particles
+function readEmscriptenMetadata(module) {
+    const customSections = WebAssembly.Module.customSections(module, 'emscripten_metadata');
+    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(customSections.length === 1, 'wasm particles must be built with EMIT_EMSCRIPTEN_METADATA');
+    const buffer = new Uint8Array(customSections[0]);
+    const metadata = [];
+    let offset = 0;
+    while (offset < buffer.byteLength) {
+        let result = 0;
+        let shift = 0;
+        while (1) {
+            const byte = buffer[offset++];
+            result |= (byte & 0x7f) << shift;
+            if (!(byte & 0x80)) {
+                break;
+            }
+            shift += 7;
+        }
+        metadata.push(result);
+    }
+    // The specifics of the section are not published anywhere official (yet). The values here
+    // correspond to emscripten version 1.38.34:
+    //   https://github.com/emscripten-core/emscripten/blob/1.38.34/tools/shared.py#L3065
+    // TODO: use real errors (and handle them gracefully upstream)
+    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(metadata.length === 10);
+    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(metadata[0] === EMSCRIPTEN_METADATA_MAJOR);
+    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(metadata[1] === EMSCRIPTEN_METADATA_MINOR);
+    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(metadata[2] === EMSCRIPTEN_ABI_MAJOR);
+    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(metadata[3] === EMSCRIPTEN_ABI_MINOR);
+    return {
+        memSize: metadata[4],
+        tableSize: metadata[5],
+        globalBase: metadata[6],
+        dynamicBase: metadata[7],
+        dynamictopPtr: metadata[8],
+        tempdoublePtr: metadata[9],
+    };
 }
 class WasmParticle extends _particle_js__WEBPACK_IMPORTED_MODULE_1__["Particle"] {
     constructor() {
@@ -5157,36 +5251,36 @@ class WasmParticle extends _particle_js__WEBPACK_IMPORTED_MODULE_1__["Particle"]
         this.converters = new Map();
         this.logInfo = null;
     }
+    // TODO: errors in this call (e.g. missing import or failure in particle ctor) generate two console outputs
     async initialize(buffer) {
         Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(this.spec.name.length > 0);
-        // TODO: detect errors when this memory size doesn't match up with the wasm's declared values?
-        this.memory = new WebAssembly.Memory({ initial: 256, maximum: 256 });
-        this.heap = new Uint8Array(this.memory.buffer);
-        // TODO: find out how to calculate these values
-        const heap32 = new Int32Array(this.memory.buffer);
-        heap32[_wasm_config_js__WEBPACK_IMPORTED_MODULE_3__["WasmConfig"].DYNAMICTOP_PTR >> 2] = _wasm_config_js__WEBPACK_IMPORTED_MODULE_3__["WasmConfig"].DYNAMIC_BASE;
+        // TODO: vet the imports/exports on 'module'
+        const module = await WebAssembly.compile(buffer);
+        const emc = readEmscriptenMetadata(module);
+        this.memory = new WebAssembly.Memory({ initial: emc.memSize, maximum: emc.memSize });
+        this.heapU8 = new Uint8Array(this.memory.buffer);
+        this.heap32 = new Int32Array(this.memory.buffer);
+        // We need to poke the address of the heap base into the memory buffer prior to instantiating.
+        this.heap32[emc.dynamictopPtr >> 2] = emc.dynamicBase;
         const env = {
             // Memory setup
             memory: this.memory,
-            __memory_base: _wasm_config_js__WEBPACK_IMPORTED_MODULE_3__["WasmConfig"].MEMORY_BASE,
-            table: new WebAssembly.Table({ initial: 1, maximum: 1, element: 'anyfunc' }),
+            __memory_base: emc.globalBase,
+            table: new WebAssembly.Table({ initial: emc.tableSize, maximum: emc.tableSize, element: 'anyfunc' }),
             __table_base: 0,
-            DYNAMICTOP_PTR: _wasm_config_js__WEBPACK_IMPORTED_MODULE_3__["WasmConfig"].DYNAMICTOP_PTR,
+            DYNAMICTOP_PTR: emc.dynamictopPtr,
             // Heap management
-            _emscripten_get_heap_size: () => this.heap.length,
+            _emscripten_get_heap_size: () => this.heapU8.length,
             _emscripten_resize_heap: size => false,
-            _emscripten_memcpy_big: (dst, src, num) => this.heap.set(this.heap.subarray(src, src + num), dst),
+            _emscripten_memcpy_big: (dst, src, num) => this.heapU8.set(this.heapU8.subarray(src, src + num), dst),
             // Error handling
-            abort: errFunc('abort'),
-            _abort: errFunc('_abort'),
-            ___assert_fail: errFunc('assert_fail'),
-            ___setErrNo: errFunc('setErrNo'),
-            abortOnCannotGrowMemory: errFunc('abortOnCannotGrowMemory'),
-            ___cxa_allocate_exception: size => 0,
-            ___cxa_throw: (ptr, type, dtor) => { throw new Error('cxa_throw: ' + [ptr, type, dtor]); },
-            ___cxa_uncaught_exception: errFunc('cxa_uncaught_exception'),
-            ___cxa_pure_virtual: errFunc('cxa_pure_virtual'),
-            _llvm_trap: errFunc('llvm_trap'),
+            _systemError: msg => { throw new Error(this.read(msg)); },
+            // TODO: can't seem to embed these in the C++ code
+            abort: () => { throw new Error('abort'); },
+            abortOnCannotGrowMemory: size => { throw new Error(`abortOnCannotGrowMemory(${size})`); },
+            // Logging
+            _setLogInfo: (file, line) => this.logInfo = [this.read(file), line],
+            ___syscall146: (which, varargs) => this.sysWritev(which, varargs),
             // Inner particle API
             _singletonSet: async (handle, encoded) => this.singletonSet(handle, encoded),
             _singletonClear: async (handle) => this.singletonClear(handle),
@@ -5194,29 +5288,10 @@ class WasmParticle extends _particle_js__WEBPACK_IMPORTED_MODULE_1__["Particle"]
             _collectionRemove: async (handle, encoded) => this.collectionRemove(handle, encoded),
             _collectionClear: async (handle) => this.collectionClear(handle),
             _render: (slotName, content) => this.renderImpl(slotName, content),
-            // Logging
-            _setLogInfo: (file, line) => this.logInfo = [this.read(file), line],
-            ___syscall146: (which, varargs) => this.sysWritev(which, varargs),
-            ___syscall140: () => 0,
-            ___syscall6: () => 0,
-            ___syscall54: () => 0,
         };
         const global = { 'NaN': NaN, 'Infinity': Infinity };
-        // The size of the function pointer table is specified by the wasm binary but there doesn't
-        // seem to be a simple way to get it, so we'll just extract it from the error :-/
-        try {
-            this.wasm = await WebAssembly.instantiate(buffer, { env, global });
-        }
-        catch (err) {
-            const match = err.message.match(/table import .* initial ([0-9]+)/);
-            if (!match) {
-                throw err;
-            }
-            const n = Number(match[1]);
-            env.table = new WebAssembly.Table({ initial: n, maximum: n, element: 'anyfunc' });
-            this.wasm = await WebAssembly.instantiate(buffer, { env, global });
-        }
-        this.exports = this.wasm.instance.exports;
+        this.wasm = await WebAssembly.instantiate(module, { env, global });
+        this.exports = this.wasm.exports;
         this.innerParticle = this.exports[`_new${this.spec.name}`]();
     }
     // TODO: for now we set up Handle objects with onDefineHandle and map them into the
@@ -5227,7 +5302,7 @@ class WasmParticle extends _particle_js__WEBPACK_IMPORTED_MODULE_1__["Particle"]
     async setHandles(handles) {
         for (const [name, handle] of handles) {
             const p = this.store(name);
-            const wasmHandle = this.exports._connectHandle(this.innerParticle, p);
+            const wasmHandle = this.exports._connectHandle(this.innerParticle, p, handle.canRead);
             this.exports._free(p);
             if (wasmHandle === 0) {
                 throw new Error(`Wasm particle failed to connect handle '${name}'`);
@@ -5335,25 +5410,24 @@ class WasmParticle extends _particle_js__WEBPACK_IMPORTED_MODULE_1__["Particle"]
     store(str) {
         const p = this.exports._malloc(str.length + 1);
         for (let i = 0; i < str.length; i++) {
-            this.heap[p + i] = str.charCodeAt(i);
+            this.heapU8[p + i] = str.charCodeAt(i);
         }
-        this.heap[p + str.length] = 0;
+        this.heapU8[p + str.length] = 0;
         return p;
     }
     // Currently only supports ASCII. TODO: unicode
     read(idx) {
         let str = '';
-        while (idx < this.heap.length && this.heap[idx] !== 0) {
-            str += String.fromCharCode(this.heap[idx++]);
+        while (idx < this.heapU8.length && this.heapU8[idx] !== 0) {
+            str += String.fromCharCode(this.heapU8[idx++]);
         }
         return str;
     }
     // printf support cribbed from emscripten glue js - currently only supports ASCII
     sysWritev(which, varargs) {
-        const heap32 = new Int32Array(this.memory.buffer);
         const get = () => {
             varargs += 4;
-            return heap32[(((varargs) - (4)) >> 2)];
+            return this.heap32[(((varargs) - (4)) >> 2)];
         };
         const output = (get() === 1) ? console.log : console.error;
         const iov = get();
@@ -5362,10 +5436,10 @@ class WasmParticle extends _particle_js__WEBPACK_IMPORTED_MODULE_1__["Particle"]
         let str = this.logInfo ? `[${this.spec.name}|${this.logInfo[0]}:${this.logInfo[1]}] ` : '';
         let ret = 0;
         for (let i = 0; i < iovcnt; i++) {
-            const ptr = heap32[(((iov) + (i * 8)) >> 2)];
-            const len = heap32[(((iov) + (i * 8 + 4)) >> 2)];
+            const ptr = this.heap32[(((iov) + (i * 8)) >> 2)];
+            const len = this.heap32[(((iov) + (i * 8 + 4)) >> 2)];
             for (let j = 0; j < len; j++) {
-                const curr = this.heap[ptr + j];
+                const curr = this.heapU8[ptr + j];
                 if (curr === 0 || curr === 10) { // NUL or \n
                     output(str);
                     str = '';
@@ -5519,7 +5593,7 @@ class Particle {
     }
     startBusy() {
         if (this._busy === 0) {
-            this._idle = new Promise(resolve => this._idleResolver = resolve);
+            this._idle = new Promise(resolve => this._idleResolver = () => resolve());
         }
         this._busy++;
     }
@@ -5611,25 +5685,9 @@ class Particle {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "WasmConfig", function() { return WasmConfig; });
-// tslint:disable
-// Temporarily generated by the wasm build process (but needs to be checked into src)
-const WasmConfig = {
-    MEMORY_BASE: 1024,
-    DYNAMIC_BASE: 5250688,
-    DYNAMICTOP_PTR: 7552
-};
-//# sourceMappingURL=wasm-config.js.map
-
-/***/ }),
-/* 28 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "PlatformLoader", function() { return PlatformLoader; });
-/* harmony import */ var _loader_platform_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(29);
-/* harmony import */ var _platform_log_web_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(40);
+/* harmony import */ var _loader_platform_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(28);
+/* harmony import */ var _platform_log_web_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(39);
 /**
  * @license
  * Copyright 2019 Google LLC.
@@ -5713,17 +5771,17 @@ class PlatformLoader extends _loader_platform_js__WEBPACK_IMPORTED_MODULE_0__["P
 
 
 /***/ }),
-/* 29 */
+/* 28 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "PlatformLoaderBase", function() { return PlatformLoaderBase; });
-/* harmony import */ var _runtime_loader_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(30);
+/* harmony import */ var _runtime_loader_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(29);
 /* harmony import */ var _runtime_particle_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(26);
-/* harmony import */ var _runtime_dom_particle_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(35);
-/* harmony import */ var _runtime_multiplexer_dom_particle_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(38);
-/* harmony import */ var _runtime_transformation_dom_particle_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(39);
+/* harmony import */ var _runtime_dom_particle_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(34);
+/* harmony import */ var _runtime_multiplexer_dom_particle_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(37);
+/* harmony import */ var _runtime_transformation_dom_particle_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(38);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -5792,22 +5850,22 @@ class PlatformLoaderBase extends _runtime_loader_js__WEBPACK_IMPORTED_MODULE_0__
 
 
 /***/ }),
-/* 30 */
+/* 29 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Loader", function() { return Loader; });
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
-/* harmony import */ var _platform_fetch_web_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(31);
-/* harmony import */ var _platform_fs_web_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(32);
-/* harmony import */ var _platform_vm_web_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(33);
-/* harmony import */ var _converters_jsonldToManifest_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(34);
-/* harmony import */ var _dom_particle_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(35);
-/* harmony import */ var _multiplexer_dom_particle_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(38);
+/* harmony import */ var _platform_fetch_web_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(30);
+/* harmony import */ var _platform_fs_web_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(31);
+/* harmony import */ var _platform_vm_web_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(32);
+/* harmony import */ var _converters_jsonldToManifest_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(33);
+/* harmony import */ var _dom_particle_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(34);
+/* harmony import */ var _multiplexer_dom_particle_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(37);
 /* harmony import */ var _particle_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(26);
 /* harmony import */ var _reference_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(13);
-/* harmony import */ var _transformation_dom_particle_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(39);
+/* harmony import */ var _transformation_dom_particle_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(38);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -5950,7 +6008,7 @@ class Loader {
 //# sourceMappingURL=loader.js.map
 
 /***/ }),
-/* 31 */
+/* 30 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -5974,7 +6032,7 @@ const localFetch = fetch;
 //# sourceMappingURL=fetch-web.js.map
 
 /***/ }),
-/* 32 */
+/* 31 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -5994,7 +6052,7 @@ const fs = {};
 
 
 /***/ }),
-/* 33 */
+/* 32 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -6014,7 +6072,7 @@ const vm = {};
 
 
 /***/ }),
-/* 34 */
+/* 33 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -6129,14 +6187,14 @@ class JsonldToManifest {
 //# sourceMappingURL=jsonldToManifest.js.map
 
 /***/ }),
-/* 35 */
+/* 34 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "DomParticle", function() { return DomParticle; });
-/* harmony import */ var _modalities_dom_components_xen_xen_state_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(36);
-/* harmony import */ var _dom_particle_base_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(37);
+/* harmony import */ var _modalities_dom_components_xen_xen_state_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(35);
+/* harmony import */ var _dom_particle_base_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(36);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -6255,7 +6313,7 @@ class DomParticle extends Object(_modalities_dom_components_xen_xen_state_js__WE
         this._setProperty(handle.name, model);
     }
     async onHandleUpdate({ name }, { data, added, removed }) {
-        if (data) {
+        if (data !== undefined) {
             //console.log('update.data:', JSON.stringify(data, null, '  '));
             this._setProps({ [name]: data });
         }
@@ -6309,7 +6367,7 @@ class DomParticle extends Object(_modalities_dom_components_xen_xen_state_js__WE
 //# sourceMappingURL=dom-particle.js.map
 
 /***/ }),
-/* 36 */
+/* 35 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -6362,12 +6420,13 @@ const XenStateMixin = Base => class extends Base {
     }
   }
   _wouldChangeValue(map, name, value) {
-    // TODO(sjmiles): fundamental dirty-checking issue here. Can be overridden to change
-    // behavior, but the default implementation will use strict reference checking.
-    // To modify structured values one must create a new Object with the new values.
-    // See `_setImmutableState`.
+    // Important dirty-checking behavior controlled here,
+    // can be overridden.
+    // The default implementation will use strict reference checking.
+    // To modify structured values one must create a new Object to
+    // replace the old one.
     return (map[name] !== value);
-    // TODO(sjmiles): an example of dirty-checking that instead simply punts on structured data
+    // an example of dirty-checking that instead simply punts on structured data
     //return (typeof value === 'object') || (map[name] !== value);
   }
   _wouldChangeProp(name, value) {
@@ -6383,18 +6442,6 @@ const XenStateMixin = Base => class extends Base {
   }
   _invalidateProps() {
     this._propsInvalid = true;
-    this._invalidate();
-  }
-  _setImmutableState(name, value) {
-    if (typeof name === 'object') {
-      console.warn('Xen:: _setImmutableState takes name and value args for a single property, dictionaries not supported.');
-      value = Object.values(name)[0];
-      name = Object.names(name)[0];
-    }
-    if (typeof value === 'object') {
-      value = Object.assign(Object.create(null), value);
-    }
-    this._state[name] = value;
     this._invalidate();
   }
   _setState(object) {
@@ -6414,7 +6461,6 @@ const XenStateMixin = Base => class extends Base {
   }
   _async(fn) {
     return Promise.resolve().then(fn.bind(this));
-    //return setTimeout(fn.bind(this), 10);
   }
   _invalidate() {
     if (!this._validator) {
@@ -6474,7 +6520,7 @@ const XenStateMixin = Base => class extends Base {
 
 
 /***/ }),
-/* 37 */
+/* 36 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -6730,16 +6776,37 @@ class DomParticleBase extends _particle_js__WEBPACK_IMPORTED_MODULE_1__["Particl
         }
     }
     /**
+     * Return array of Entities dereferenced from array of Share-Type Entities
+     */
+    async derefShares(shares) {
+        let entities = [];
+        this.startBusy();
+        try {
+            const derefPromises = shares.map(async (share) => share.ref.dereference());
+            entities = await Promise.all(derefPromises);
+        }
+        finally {
+            this.doneBusy();
+        }
+        return entities;
+    }
+    /**
      * Returns array of Entities found in BOXED data `box` that are owned by `userid`
      */
-    boxQuery(box, userid) {
-        return box && box.filter(item => userid === item.getUserID().split('|')[0]);
+    async boxQuery(box, userid) {
+        if (!box) {
+            return [];
+        }
+        else {
+            const matches = box.filter(item => userid === item.fromKey);
+            return await this.derefShares(matches);
+        }
     }
 }
 //# sourceMappingURL=dom-particle-base.js.map
 
 /***/ }),
-/* 38 */
+/* 37 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -6747,7 +6814,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "MultiplexerDomParticle", function() { return MultiplexerDomParticle; });
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
 /* harmony import */ var _particle_spec_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(5);
-/* harmony import */ var _transformation_dom_particle_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(39);
+/* harmony import */ var _transformation_dom_particle_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(38);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -6925,13 +6992,13 @@ class MultiplexerDomParticle extends _transformation_dom_particle_js__WEBPACK_IM
 //# sourceMappingURL=multiplexer-dom-particle.js.map
 
 /***/ }),
-/* 39 */
+/* 38 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "TransformationDomParticle", function() { return TransformationDomParticle; });
-/* harmony import */ var _dom_particle_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(35);
+/* harmony import */ var _dom_particle_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(34);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -6979,12 +7046,12 @@ class TransformationDomParticle extends _dom_particle_js__WEBPACK_IMPORTED_MODUL
 //# sourceMappingURL=transformation-dom-particle.js.map
 
 /***/ }),
-/* 40 */
+/* 39 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "logFactory", function() { return logFactory; });
+/* WEBPACK VAR INJECTION */(function(global) {/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "logFactory", function() { return logFactory; });
 /**
  * @license
  * Copyright 2019 Google LLC.
@@ -6994,22 +7061,29 @@ __webpack_require__.r(__webpack_exports__);
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-const _factory = (preamble, color, log='log') => console[log].bind(console, `%c${preamble}`, `background: ${color || 'gray'}; color: white; padding: 1px 6px 2px 7px; border-radius: 6px;`);
+const _factory = (preamble, color, log = 'log') =>
+  console[log].bind(
+    console,
+    `%c${preamble}`,
+    `background: ${color || 'gray'}; color: white; padding: 1px 6px 2px 7px; border-radius: 6px;`
+  );
 
-// when punting, use full logging
-let logLevel = 2;
-// TODO(sjmiles): worker.js uses log-web, but has no Window; we need to plumb the
-// global configuration into the worker.
-// there should always be `window`, we are log-web; if not, use punt value above
+// don't spam the console for workers
 if (typeof window !== 'undefined') {
-  // use specified logLevel otherwise 0
-  logLevel = ('logLevel' in window) ? window.logLevel : 0;
-  console.log(`log-web: binding logFactory to level [${logLevel}]`);
+  console.log(`log-web: binding logFactory to level [${window.logLevel}]`);
 }
 
-const factory = logLevel > 0 ? _factory : () => () => {};
-const logFactory = (...args) => factory(...args);
+const logFactory = (...args) => {
+  // could be running in worker
+  const g = (typeof window !== 'undefined') ? window : global;
+  // use specified logLevel otherwise 0
+  const logLevel = ('logLevel' in g) ? g['logLevel'] : 0;
+  // modulate factory based on logLevel
+  const factory = logLevel > 0 ? _factory : () => () => {};
+  return factory(...args);
+};
 
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(1)))
 
 /***/ })
 /******/ ]);

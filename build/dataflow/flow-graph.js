@@ -1,3 +1,4 @@
+import { assert } from '../platform/assert-web';
 /**
  * Data structure for representing the connectivity graph of a recipe. Used to perform static analysis on a resolved recipe.
  */
@@ -43,73 +44,96 @@ export class FlowGraph {
         return true;
     }
     /** Validates a single check (on the given edge). Returns true if the check passes. */
-    validateSingleEdge(edge) {
-        if (!edge.check) {
-            throw new Error('Edge does not have any check conditions.');
-        }
-        const check = edge.check;
-        const startPath = BackwardsPath.fromEdge(edge);
-        const stack = [startPath];
-        while (stack.length) {
-            const path = stack.pop();
-            const nodeToCheck = path.endNode;
-            // TODO: Check the node itself too. The node might be untagged (e.g. if it has no input edges), so it could fail a check.
-            const edgesToCheck = nodeToCheck.inEdges;
-            for (const edge of edgesToCheck) {
-                const result = edge.isCheckSatisfied(check);
-                switch (result) {
-                    case CheckResult.Success:
-                        // Check was met. Continue checking other paths.
-                        continue;
-                    case CheckResult.Failure:
-                        // Check failed.
-                        return false;
-                    case CheckResult.KeepGoing:
-                        // Check has not failed yet for this path yet. Add it to the stack and keep going.
-                        stack.push(path.newPathWithEdge(edge));
-                        continue;
-                    default:
-                        throw new Error(`Unknown check result: ${result}`);
-                }
+    validateSingleEdge(edgeToCheck) {
+        assert(!!edgeToCheck.check, 'Edge does not have any check conditions.');
+        const check = edgeToCheck.check;
+        const startPath = BackwardsPath.newPathWithOpenEdge(edgeToCheck);
+        // Stack of paths that need to be checked (via DFS). Other paths will be added here to be checked as we explore the graph.
+        const pathStack = [startPath];
+        while (pathStack.length) {
+            const path = pathStack.pop();
+            // See if the end of the path satisfies the check condition.
+            const result = path.end.evaluateCheck(check, path);
+            switch (result.type) {
+                case CheckResultType.Success:
+                    // Check was met. Continue checking other paths.
+                    continue;
+                case CheckResultType.Failure:
+                    // Check failed. Stop.
+                    return false;
+                case CheckResultType.KeepGoing:
+                    // Check has not failed yet for this path yet. Add more paths to the stack and keep going.
+                    assert(result.checkNext.length > 0, 'Result was KeepGoing, but gave nothing else to check.');
+                    result.checkNext.forEach(p => pathStack.push(p));
+                    continue;
+                default:
+                    throw new Error(`Unknown check result: ${result}`);
             }
         }
         return true;
     }
 }
-export var CheckResult;
-(function (CheckResult) {
-    CheckResult[CheckResult["Success"] = 0] = "Success";
-    CheckResult[CheckResult["Failure"] = 1] = "Failure";
-    CheckResult[CheckResult["KeepGoing"] = 2] = "KeepGoing";
-})(CheckResult || (CheckResult = {}));
+export var CheckResultType;
+(function (CheckResultType) {
+    CheckResultType[CheckResultType["Success"] = 0] = "Success";
+    CheckResultType[CheckResultType["Failure"] = 1] = "Failure";
+    CheckResultType[CheckResultType["KeepGoing"] = 2] = "KeepGoing";
+})(CheckResultType || (CheckResultType = {}));
 /**
  * A path that walks backwards through the graph, i.e. it walks along the directed edges in the reverse direction. The path is described by the
  * nodes in the path. Class is immutable.
+ *
+ * The path can have an open or closed edge at the end. An open edge points to the final node in the path, but does not actually include it.
  */
 export class BackwardsPath {
-    constructor(nodes) {
+    constructor(
+    /** Nodes in the path. */
+    nodes, 
+    /**
+     * Optional open edge at the end of the path. If the path is closed, this will be null, and the end of the path is given by the last node
+     * in the nodes list.
+     */
+    openEdge = null) {
         this.nodes = nodes;
+        this.openEdge = openEdge;
     }
-    static fromEdge(edge) {
-        return new BackwardsPath([edge.end, edge.start]);
-    }
-    newPathWithEdge(edge) {
+    /** Constructs a new path from the given edge with an open end. */
+    static newPathWithOpenEdge(edge) {
         // Flip the edge around.
-        const edgeStart = edge.end;
-        const edgeEnd = edge.start;
-        if (edgeStart !== this.endNode) {
-            throw new Error('Edge must connect to end of path.');
+        const startNode = edge.end;
+        return new BackwardsPath([startNode], edge);
+    }
+    /** Constructs a new path from the given edge with a closed end. */
+    static newPathWithClosedEdge(edge) {
+        return BackwardsPath.newPathWithOpenEdge(edge).withClosedEnd();
+    }
+    /** Returns a copy of the current path, with an open edge added to the end of it. Fails if the path already has an open edge. */
+    withNewOpenEdge(edge) {
+        // Flip the edge around.
+        const startNode = edge.end;
+        const endNode = edge.start;
+        assert(!this.openEdge, 'Path already ends with an open edge.');
+        assert(startNode === this.end, 'Edge must connect to end of path.');
+        if (this.nodes.includes(endNode)) {
+            throw new Error('Graph must not include cycles.');
         }
-        if (this.nodes.includes(edgeEnd)) {
-            throw new Error('Path must not include cycles.');
-        }
-        return new BackwardsPath([...this.nodes, edgeEnd]);
+        return new BackwardsPath(this.nodes, edge);
+    }
+    /** Returns a copy of the current path, converting an open edge to a closed one. Fails if the path does not have an open edge. */
+    withClosedEnd() {
+        assert(!!this.openEdge, 'Path is already closed.');
+        // Flip edge around.
+        const endNode = this.openEdge.start;
+        return new BackwardsPath([...this.nodes, endNode]);
+    }
+    withNewClosedEdge(edge) {
+        return this.withNewOpenEdge(edge).withClosedEnd();
     }
     get startNode() {
         return this.nodes[0];
     }
-    get endNode() {
-        return this.nodes[this.nodes.length - 1];
+    get end() {
+        return this.openEdge || this.nodes[this.nodes.length - 1];
     }
 }
 /** Creates a new node for every given particle. */
@@ -150,6 +174,15 @@ function addHandleConnection(particleNode, handleNode, connection) {
     }
 }
 export class Node {
+    evaluateCheck(check, path) {
+        if (this.inEdges.length === 0) {
+            // Nodes without inputs are untagged, and so cannot satisfy checks.
+            return { type: CheckResultType.Failure };
+        }
+        // Nodes can't have claims themselves (yet). Keep going, and check the in-edges next.
+        const checkNext = this.inEdges.map(e => path.withNewOpenEdge(e));
+        return { type: CheckResultType.KeepGoing, checkNext };
+    }
     get inNodes() {
         return this.inEdges.map(e => e.start);
     }
@@ -174,9 +207,9 @@ class ParticleInput {
         this.label = `${particleNode.name}.${inputName}`;
         this.check = particleNode.checks.get(inputName);
     }
-    isCheckSatisfied(check) {
+    evaluateCheck(check, path) {
         // In-edges don't have claims. Keep checking.
-        return CheckResult.KeepGoing;
+        return { type: CheckResultType.KeepGoing, checkNext: [path.withClosedEnd()] };
     }
 }
 class ParticleOutput {
@@ -186,17 +219,17 @@ class ParticleOutput {
         this.label = `${particleNode.name}.${outputName}`;
         this.claim = particleNode.claims.get(outputName);
     }
-    isCheckSatisfied(check) {
+    evaluateCheck(check, path) {
         if (!this.claim) {
             // This out-edge has no claims. Keep checking.
-            return CheckResult.KeepGoing;
+            return { type: CheckResultType.KeepGoing, checkNext: [path.withClosedEnd()] };
         }
         if (this.claim === check) {
-            return CheckResult.Success;
+            return { type: CheckResultType.Success };
         }
         // The claim on this edge "clobbers" any claims that might have been made upstream. We won't check though, and will fail the check
         // completely.
-        return CheckResult.Failure;
+        return { type: CheckResultType.Failure };
     }
 }
 class HandleNode extends Node {
