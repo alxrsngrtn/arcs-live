@@ -30595,11 +30595,11 @@ class ReplanQueue {
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
+const planificatorId = 'plans';
 class Planificator {
-    constructor(arc, userid, result, searchStore, onlyConsumer = false, debug = false) {
+    constructor(arc, result, searchStore, onlyConsumer = false, debug = false) {
         this.search = null;
         this.arc = arc;
-        this.userid = userid;
         this.searchStore = searchStore;
         assert(result, 'Result cannot be null.');
         this.result = result;
@@ -30612,15 +30612,13 @@ class Planificator {
         this.consumer = new PlanConsumer(this.arc, this.result);
         PlanningExplorerAdapter.subscribeToForceReplan(this);
     }
-    static async create(arc, { userid, storageKeyBase, onlyConsumer, debug = false }) {
-        assert(arc, 'Arc cannot be null.');
-        assert(userid, 'User id cannot be null.');
+    static async create(arc, { storageKeyBase, onlyConsumer, debug = false }) {
         debug = debug || (storageKeyBase && storageKeyBase.startsWith('volatile'));
-        const store = await Planificator._initSuggestStore(arc, userid, storageKeyBase);
-        const searchStore = await Planificator._initSearchStore(arc, userid);
+        const store = await Planificator._initSuggestStore(arc, storageKeyBase);
+        const searchStore = await Planificator._initSearchStore(arc);
         const result = new PlanningResult({ context: arc.context, loader: arc.loader }, store);
         await result.load();
-        const planificator = new Planificator(arc, userid, result, searchStore, onlyConsumer, debug);
+        const planificator = new Planificator(arc, result, searchStore, onlyConsumer, debug);
         await planificator._storeSearch(); // Reset search value for the current arc.
         planificator.requestPlanning({ contextual: true, metadata: { trigger: Trigger.Init } });
         return planificator;
@@ -30679,22 +30677,22 @@ class Planificator {
             }
         });
     }
-    static constructSuggestionKey(arc, userid, storageKeyBase) {
+    static constructSuggestionKey(arc, storageKeyBase) {
         const arcStorageKey = arc.storageProviderFactory.parseStringAsKey(arc.storageKey);
         const keybase = arc.storageProviderFactory.parseStringAsKey(storageKeyBase || arcStorageKey.base());
-        return keybase.childKeyForSuggestions(userid, arcStorageKey.arcId);
+        return keybase.childKeyForSuggestions(planificatorId, arcStorageKey.arcId);
     }
-    static constructSearchKey(arc, userid) {
+    static constructSearchKey(arc) {
         const arcStorageKey = arc.storageProviderFactory.parseStringAsKey(arc.storageKey);
         const keybase = arc.storageProviderFactory.parseStringAsKey(arcStorageKey.base());
-        return keybase.childKeyForSearch(userid);
+        return keybase.childKeyForSearch(planificatorId);
     }
-    static async _initSuggestStore(arc, userid, storageKeyBase) {
-        const storageKey = Planificator.constructSuggestionKey(arc, userid, storageKeyBase);
+    static async _initSuggestStore(arc, storageKeyBase) {
+        const storageKey = Planificator.constructSuggestionKey(arc, storageKeyBase);
         return Planificator._initStore(arc, 'suggestions-id', EntityType.make(['Suggestions'], { current: 'Object' }), storageKey);
     }
-    static async _initSearchStore(arc, userid) {
-        const storageKey = Planificator.constructSearchKey(arc, userid);
+    static async _initSearchStore(arc) {
+        const storageKey = Planificator.constructSearchKey(arc);
         return Planificator._initStore(arc, 'search-id', EntityType.make(['Search'], { current: 'Object' }), storageKey);
     }
     static async _initStore(arc, id, type, storageKey) {

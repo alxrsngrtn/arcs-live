@@ -19,7 +19,7 @@ describe('planificator', () => {
         const helper = await PlanningTestHelper.create({ storageKey: 'firebase://arcs-storage.firebaseio.com/AIzaSyBme42moeI-2k8WgXh-6YK_wYyjEXo4Oz8/0_6_0/demo' });
         const arc = helper.arc;
         const verifySuggestion = (storageKeyBase) => {
-            const key = Planificator.constructSuggestionKey(arc, 'testuser', storageKeyBase);
+            const key = Planificator.constructSuggestionKey(arc, storageKeyBase);
             assert(key && key.protocol && key.location, `Cannot construct key for '${storageKeyBase}' planificator storage key base`);
             assert(key.protocol.length > 0, `Invalid protocol in key for '${storageKeyBase}' planificator storage key base`);
             assert(key.location.length > 0, `Invalid location in key for '${storageKeyBase}' planificator storage key base`);
@@ -27,7 +27,7 @@ describe('planificator', () => {
         verifySuggestion('volatile://!123:demo^^');
         verifySuggestion('firebase://arcs-test.firebaseio.com/123-456-7890-abcdef/1_2_3');
         verifySuggestion('pouchdb://local/testdb/');
-        assert.isTrue(Planificator.constructSearchKey(arc, 'testuser').toString().length > 0);
+        assert.isTrue(Planificator.constructSearchKey(arc).toString().length > 0);
     });
 });
 describe('remote planificator', () => {
@@ -38,14 +38,14 @@ describe('remote planificator', () => {
         return (await PlanningTestHelper.createAndPlan({ ...options, slotComposer: new FakeSlotComposer(), storageKey })).arc;
     }
     async function createConsumePlanificator(plannerStorageKeyBase, manifestFilename) {
-        return Planificator.create(await createArc({ manifestFilename }, storageKey), { userid, storageKeyBase: plannerStorageKeyBase, onlyConsumer: true, debug: false });
+        return Planificator.create(await createArc({ manifestFilename }, storageKey), { storageKeyBase: plannerStorageKeyBase, onlyConsumer: true, debug: false });
     }
     function createPlanningResult(arc, store) {
         return new PlanningResult({ context: arc.context, loader: arc.loader }, store);
     }
     async function createProducePlanificator(plannerStorageKeyBase, manifestFilename, store, searchStore) {
         const arc = await createArc({ manifestFilename }, storageKey);
-        return new Planificator(arc, userid, createPlanningResult(arc, store), searchStore);
+        return new Planificator(arc, createPlanningResult(arc, store), searchStore);
     }
     async function instantiateAndReplan(consumePlanificator, producePlanificator, suggestionIndex) {
         await consumePlanificator.consumer.result.suggestions[suggestionIndex].instantiate(consumePlanificator.arc);
@@ -59,7 +59,7 @@ describe('remote planificator', () => {
             fileName: '',
             pecFactory: undefined,
             context: consumePlanificator.arc.context });
-        producePlanificator = new Planificator(deserializedArc, consumePlanificator.userid, createPlanningResult(consumePlanificator.arc, consumePlanificator.result.store), consumePlanificator.searchStore, 
+        producePlanificator = new Planificator(deserializedArc, createPlanningResult(consumePlanificator.arc, consumePlanificator.result.store), consumePlanificator.searchStore, 
         /* onlyConsumer= */ false, 
         /* debug= */ false);
         producePlanificator.requestPlanning({ contextual: true });
@@ -132,7 +132,6 @@ describe('remote planificator', () => {
         });
     });
     it.skip(`merges remotely produced suggestions`, async () => {
-        const userid = 'test-user';
         const storageKey = 'volatile://!123:demo^^abcdef';
         // Planning with products manifest.
         const productsManifestString = `
@@ -148,7 +147,7 @@ import './src/runtime/test/artifacts/Events/Calendar.manifest'
 import './src/runtime/test/artifacts/Products/Products.recipes'
     `;
         const showProductsDescription = 'Show products from your browsing context';
-        const productsPlanificator = await Planificator.create(await createArc({ manifestString: productsManifestString }, storageKey), { userid, debug: false });
+        const productsPlanificator = await Planificator.create(await createArc({ manifestString: productsManifestString }, storageKey), { debug: false });
         await productsPlanificator.requestPlanning({ contextual: false });
         await verifyReplanning(productsPlanificator, 1, [showProductsDescription]);
         // Planning with restaurants manifest using the same arc - results are merged.
@@ -162,7 +161,7 @@ particle ShowProduct in 'show-product.js'
   in Product product
   consume item
   `;
-        const restaurantsPlanificator = new Planificator(await createArc({ manifestString: restaurantsManifestString }, storageKey), userid, createPlanningResult(productsPlanificator.arc, productsPlanificator.result.store), productsPlanificator.searchStore);
+        const restaurantsPlanificator = new Planificator(await createArc({ manifestString: restaurantsManifestString }, storageKey), createPlanningResult(productsPlanificator.arc, productsPlanificator.result.store), productsPlanificator.searchStore);
         assert.isTrue(restaurantsPlanificator.producer.result.contextual);
         await restaurantsPlanificator.loadSuggestions();
         assert.isFalse(restaurantsPlanificator.producer.result.contextual);

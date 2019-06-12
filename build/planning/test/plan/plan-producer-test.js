@@ -72,7 +72,7 @@ class TestPlanProducer extends PlanProducer {
                 manifestFilename: './src/runtime/test/artifacts/Products/Products.recipes',
                 storageKey: 'firebase://xxx.firebaseio.com/yyy/serialization/demo'
             });
-            const store = await Planificator['_initSuggestStore'](helper.arc, /* userid= */ 'TestUser', storageKeyBase);
+            const store = await Planificator['_initSuggestStore'](helper.arc, storageKeyBase);
             assert.isNotNull(store);
             const producer = new TestPlanProducer(helper.arc, store);
             return { helper, producer };
@@ -139,7 +139,7 @@ class TestPlanProducer extends PlanProducer {
     `);
             const arc = new Arc({ slotComposer: new FakeSlotComposer(), loader, context: manifest, id: ArcId.newForTest('test'),
                 storageKey: 'volatile://test^^123' });
-            const searchStore = await Planificator['_initSearchStore'](arc, /* userid= */ 'TestUser');
+            const searchStore = await Planificator['_initSearchStore'](arc);
             const producer = new TestSearchPlanProducer(arc, searchStore);
             assert.isUndefined(producer.search);
             assert.equal(producer.produceSuggestionsCalled, 0);

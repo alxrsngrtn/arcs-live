@@ -16,15 +16,13 @@ import { PlanProducer } from './plan-producer.js';
 import { PlanningResult } from './planning-result.js';
 import { ReplanQueue } from './replan-queue.js';
 export declare type PlanificatorOptions = {
-    userid: string;
     storageKeyBase?: string;
     debug?: boolean;
     onlyConsumer?: boolean;
 };
 export declare class Planificator {
-    static create(arc: Arc, { userid, storageKeyBase, onlyConsumer, debug }: PlanificatorOptions): Promise<Planificator>;
+    static create(arc: Arc, { storageKeyBase, onlyConsumer, debug }: PlanificatorOptions): Promise<Planificator>;
     arc: Arc;
-    userid: string;
     result: PlanningResult;
     consumer: PlanConsumer;
     producer?: PlanProducer;
@@ -32,7 +30,7 @@ export declare class Planificator {
     dataChangeCallback: Runnable;
     search: string | null;
     searchStore: SingletonStorageProvider;
-    constructor(arc: Arc, userid: string, result: PlanningResult, searchStore: SingletonStorageProvider, onlyConsumer?: boolean, debug?: boolean);
+    constructor(arc: Arc, result: PlanningResult, searchStore: SingletonStorageProvider, onlyConsumer?: boolean, debug?: boolean);
     requestPlanning(options?: {}): Promise<void>;
     readonly consumerOnly: boolean;
     loadSuggestions(): Promise<boolean>;
@@ -43,8 +41,8 @@ export declare class Planificator {
     deleteAll(): Promise<void>;
     private _listenToArcStores;
     private _unlistenToArcStores;
-    static constructSuggestionKey(arc: Arc, userid: string, storageKeyBase?: string): KeyBase;
-    static constructSearchKey(arc: Arc, userid: string): KeyBase;
+    static constructSuggestionKey(arc: Arc, storageKeyBase?: string): KeyBase;
+    static constructSearchKey(arc: Arc): KeyBase;
     private static _initSuggestStore;
     private static _initSearchStore;
     private static _initStore;

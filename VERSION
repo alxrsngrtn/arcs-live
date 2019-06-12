@@ -1,9 +1,11 @@
-commit 71e2c3cdd7415aeb2e7bd661dee2d5807721e840
-Author: Paul Lindner <plindner@google.com>
-Date:   Wed Jun 12 11:02:46 2019 -0700
+commit c63f01deb85d40d3360a4055909500c80cae5862
+Author: Scott J. Miles <sjmiles@google.com>
+Date:   Wed Jun 12 11:05:38 2019 -0700
 
-    Switch to lws from http-server, cleanup (#3170)
+    Store Planificator plans in `plans` database node (instead of node named for userid) (#3161)
     
-    - Actively managed project, not just some guy
-    - Also fixed misplaced eslint dev dependency
-    - Removed unused clang-format dep
+    * convert `userid` to a static constant
+    
+    * update tests
+    
+    * kebab-case variable name not allowed

@@ -702,8 +702,8 @@
         "signature": "a908026abe1b0a0d3c2b9967546f3e7548c3420b1f2d81af38af631158f74dba"
       },
       "/home/travis/build/PolymerLabs/arcs/src/planning/plan/planificator.ts": {
-        "version": "1ba1cb117bebc4b47feaf8d023f244233498e004db989457375fc02330baf656",
-        "signature": "82173e6aec7b616465d4af988bb9bbb764c2e879b07c30fc00e18d537743fdf5"
+        "version": "3e4ca11c077a4c36f0d4ceed752b5357fa72a4ae8eb3e48f90c1876077a27c30",
+        "signature": "6bcf2e298db1bb079085ce65cfe30ba74becdbd49b86ecda6cb69efd5fc9f850"
       },
       "/home/travis/build/PolymerLabs/arcs/src/planning/arcs-planning.ts": {
         "version": "365f67236c41f1e237ca58646a77b927911c07f3504d571625983bbae0d197dc",
@@ -1034,15 +1034,15 @@
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "/home/travis/build/PolymerLabs/arcs/src/planning/test/plan/plan-consumer-test.ts": {
-        "version": "33617caf0dbea797081ffeae2feb425a2fe99b5d116e6b34fb6aba56da89a3ff",
+        "version": "2f09293469635cc7962d8bfe95d07c296ae72cd9365a7fac862d14ebbbdc9675",
         "signature": "de02016bff8df10c3a9e77f9ed8e56f6d786f1adbcddc74f4fa35b0250121cb2"
       },
       "/home/travis/build/PolymerLabs/arcs/src/planning/test/plan/plan-producer-test.ts": {
-        "version": "54bf28190733d35feec57ed0d3fa0cb208bd30dd527803c2830aa200253b6adc",
+        "version": "f2da7c862df6ed41a598cb6451d51e4293ed7cf16397612311704c4c87302a49",
         "signature": "8e609bb71c20b858c77f0e9f90bb1319db8477b13f9f965f1a1e18524bf50881"
       },
       "/home/travis/build/PolymerLabs/arcs/src/planning/test/plan/planificator-test.ts": {
-        "version": "c2c0bd3146a7dc20b9ff5cf77d996f5bebeb610f3a74c433a7c4ba0f6b2ebda4",
+        "version": "d01452f40646f902da98a6434bf6d1a60162b1c0714a6c2a1ae2e853f226e51d",
         "signature": "8e609bb71c20b858c77f0e9f90bb1319db8477b13f9f965f1a1e18524bf50881"
       },
       "/home/travis/build/PolymerLabs/arcs/src/planning/test/plan/planning-result-test.ts": {
@@ -4122,7 +4122,6 @@
         "/home/travis/build/PolymerLabs/arcs/src/platform/assert-web.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/hot.ts",
-        "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/recipe.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/key-base.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/storage-provider-base.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/type.ts",
@@ -23412,7 +23411,7 @@
         [
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/planning/plan/planificator.ts",
-            "start": 1401,
+            "start": 1265,
             "length": 5,
             "code": 2322,
             "category": 1,
@@ -23429,7 +23428,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/planning/plan/planificator.ts",
-            "start": 2839,
+            "start": 2619,
             "length": 16,
             "messageText": "Object is possibly 'undefined'.",
             "category": 1,
@@ -23437,7 +23436,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/planning/plan/planificator.ts",
-            "start": 3115,
+            "start": 2895,
             "length": 13,
             "messageText": "Object is possibly 'undefined'.",
             "category": 1,
@@ -23445,7 +23444,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/planning/plan/planificator.ts",
-            "start": 3331,
+            "start": 3111,
             "length": 6,
             "code": 2322,
             "category": 1,
@@ -23462,7 +23461,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/planning/plan/planificator.ts",
-            "start": 3389,
+            "start": 3169,
             "length": 6,
             "code": 2322,
             "category": 1,
@@ -23479,7 +23478,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/planning/plan/planificator.ts",
-            "start": 3668,
+            "start": 3448,
             "length": 6,
             "code": 2345,
             "category": 1,
@@ -23496,7 +23495,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/planning/plan/planificator.ts",
-            "start": 4023,
+            "start": 3803,
             "length": 13,
             "messageText": "Object is possibly 'undefined'.",
             "category": 1,
@@ -23504,7 +23503,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/planning/plan/planificator.ts",
-            "start": 4147,
+            "start": 3927,
             "length": 13,
             "messageText": "Object is possibly 'undefined'.",
             "category": 1,
@@ -23512,7 +23511,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/planning/plan/planificator.ts",
-            "start": 4196,
+            "start": 3976,
             "length": 4,
             "code": 2345,
             "category": 1,
@@ -23520,7 +23519,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/planning/plan/planificator.ts",
-            "start": 6825,
+            "start": 6541,
             "length": 3,
             "code": 2322,
             "category": 1,
@@ -23528,7 +23527,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/planning/plan/planificator.ts",
-            "start": 6830,
+            "start": 6546,
             "length": 6,
             "code": 2322,
             "category": 1,
@@ -23536,7 +23535,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/planning/plan/planificator.ts",
-            "start": 6899,
+            "start": 6615,
             "length": 6,
             "code": 2322,
             "category": 1,
@@ -23544,7 +23543,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/planning/plan/planificator.ts",
-            "start": 6920,
+            "start": 6636,
             "length": 3,
             "code": 2322,
             "category": 1,
@@ -24982,7 +24981,7 @@
         [
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/planning/test/plan/plan-producer-test.ts",
-            "start": 1517,
+            "start": 1515,
             "length": 33,
             "code": 2345,
             "category": 1,
@@ -24990,7 +24989,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/planning/test/plan/plan-producer-test.ts",
-            "start": 1608,
+            "start": 1606,
             "length": 19,
             "messageText": "Cannot invoke an object which is possibly 'null'.",
             "category": 1,
@@ -24998,7 +24997,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/planning/test/plan/plan-producer-test.ts",
-            "start": 1916,
+            "start": 1914,
             "length": 7,
             "code": 2345,
             "category": 1,
@@ -25006,7 +25005,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/planning/test/plan/plan-producer-test.ts",
-            "start": 2003,
+            "start": 1997,
             "length": 11,
             "code": 2322,
             "category": 1,
@@ -25023,7 +25022,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/planning/test/plan/plan-producer-test.ts",
-            "start": 2181,
+            "start": 2175,
             "length": 19,
             "code": 2322,
             "category": 1,
@@ -25031,7 +25030,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/planning/test/plan/plan-producer-test.ts",
-            "start": 2422,
+            "start": 2416,
             "length": 19,
             "messageText": "Cannot invoke an object which is possibly 'null'.",
             "category": 1,
@@ -25039,7 +25038,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/planning/test/plan/plan-producer-test.ts",
-            "start": 4554,
+            "start": 4522,
             "length": 4,
             "code": 2339,
             "category": 1,
@@ -25047,7 +25046,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/planning/test/plan/plan-producer-test.ts",
-            "start": 4611,
+            "start": 4579,
             "length": 4,
             "code": 2339,
             "category": 1,
@@ -25055,7 +25054,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/planning/test/plan/plan-producer-test.ts",
-            "start": 5673,
+            "start": 5637,
             "length": 16,
             "messageText": "Object is possibly 'undefined'.",
             "category": 1,
@@ -25068,7 +25067,7 @@
         [
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/planning/test/plan/planificator-test.ts",
-            "start": 7406,
+            "start": 7332,
             "length": 44,
             "code": 2345,
             "category": 1,
@@ -25076,7 +25075,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/planning/test/plan/planificator-test.ts",
-            "start": 7710,
+            "start": 7636,
             "length": 52,
             "code": 2345,
             "category": 1,
@@ -25084,7 +25083,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/planning/test/plan/planificator-test.ts",
-            "start": 7788,
+            "start": 7714,
             "length": 28,
             "messageText": "Object is possibly 'undefined'.",
             "category": 1,
@@ -25092,7 +25091,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/planning/test/plan/planificator-test.ts",
-            "start": 7883,
+            "start": 7809,
             "length": 28,
             "messageText": "Object is possibly 'undefined'.",
             "category": 1,
@@ -25100,7 +25099,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/planning/test/plan/planificator-test.ts",
-            "start": 9561,
+            "start": 9447,
             "length": 25,
             "code": 2345,
             "category": 1,
@@ -25108,7 +25107,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/planning/test/plan/planificator-test.ts",
-            "start": 10422,
+            "start": 10301,
             "length": 32,
             "messageText": "Object is possibly 'undefined'.",
             "category": 1,
@@ -25116,7 +25115,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/planning/test/plan/planificator-test.ts",
-            "start": 10547,
+            "start": 10426,
             "length": 32,
             "messageText": "Object is possibly 'undefined'.",
             "category": 1,
@@ -25124,7 +25123,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/planning/test/plan/planificator-test.ts",
-            "start": 10986,
+            "start": 10865,
             "length": 32,
             "messageText": "Object is possibly 'undefined'.",
             "category": 1,
@@ -25132,7 +25131,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/planning/test/plan/planificator-test.ts",
-            "start": 11134,
+            "start": 11013,
             "length": 219,
             "code": 2345,
             "category": 1,
