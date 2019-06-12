@@ -2310,7 +2310,7 @@
         "signature": "fd95df5d076cbfed143dc4904d376b5c6d9cb1091b630994ffe2366010afa6b3"
       },
       "/home/travis/build/PolymerLabs/arcs/src/tools/schema2packager.ts": {
-        "version": "c4ddfed17b44d7288324b61d7439e7462fca30bd3252ace93b989ed92c7bd3de",
+        "version": "1b2a1073b9941c1915cf5ca79a5c0f0332b2b6d2b860880509aa314f10cc0066",
         "signature": "fd95df5d076cbfed143dc4904d376b5c6d9cb1091b630994ffe2366010afa6b3"
       },
       "/home/travis/build/PolymerLabs/arcs/src/tools/schema2proto.ts": {
@@ -31472,7 +31472,7 @@
         [
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/tools/schema2packager.ts",
-            "start": 1739,
+            "start": 2389,
             "length": 31,
             "code": 2345,
             "category": 1,
@@ -31480,15 +31480,15 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/tools/schema2packager.ts",
-            "start": 1855,
-            "length": 60,
+            "start": 2505,
+            "length": 66,
             "code": 2345,
             "category": 1,
             "messageText": "Argument of type 'string' is not assignable to parameter of type 'never'."
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/tools/schema2packager.ts",
-            "start": 2214,
+            "start": 2870,
             "length": 33,
             "code": 2345,
             "category": 1,
@@ -31496,7 +31496,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/tools/schema2packager.ts",
-            "start": 2428,
+            "start": 3084,
             "length": 27,
             "code": 2345,
             "category": 1,
@@ -31504,7 +31504,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/tools/schema2packager.ts",
-            "start": 2555,
+            "start": 3217,
             "length": 27,
             "code": 2345,
             "category": 1,
