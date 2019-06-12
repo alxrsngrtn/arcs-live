@@ -1,8 +1,5 @@
-commit c692127ee639c3becde37082c725390869d3d921
-Author: Joshua Pratt <jp10010101010000@gmail.com>
-Date:   Wed Jun 12 09:20:17 2019 +1000
+commit 1dfafec693de8d0221ea9766cc573327e16aaf80
+Author: Paul Lindner <plindner@google.com>
+Date:   Tue Jun 11 18:03:06 2019 -0700
 
-    Fix misreport due to backtracking3019 (#3166)
-    
-    * Fixed extract path manipulation
-    * Use a built in error functions to improve error messages
+    Lock appveyer to 10.15.3 until node-webcrypto-ossl module starts working again (#3171)
