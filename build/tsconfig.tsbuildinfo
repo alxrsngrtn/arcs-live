@@ -498,8 +498,8 @@
         "signature": "28f16ef40f510d965b6cb250d66a1ad5689f8b5c5da00332994fb28de16364e7"
       },
       "/home/travis/build/PolymerLabs/arcs/src/dataflow/flow-graph.ts": {
-        "version": "cf77cdb69a1c8010140c60d911b031add1bf45ae6af2eb1ebf1946f35d8db3ba",
-        "signature": "fa8bda369e36cae61cd703293eeaeb06635dc820407b09903e1db88d89a5c75e"
+        "version": "b9477a229f6f73fa0c94efb810deed4e4e6ac6030050ce4e03adb775cc3e3e2e",
+        "signature": "9c8cad8d19a4ef250fc433e296db6faa1eba8cc8d5e4ca59c2eecf2022abd296"
       },
       "/home/travis/build/PolymerLabs/arcs/node_modules/@types/chai/index.d.ts": {
         "version": "c465afa89ac28f74167a2ee7c3c6eb8dd1245c2b3bdaa4704d58d35b932de4b7",
@@ -2242,7 +2242,7 @@
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "/home/travis/build/PolymerLabs/arcs/src/tests/flow-graph-tests.ts": {
-        "version": "51b23b7fbf6f8c98f746ab6454f09770f8e49002b031912ad52d564eb0142f5e",
+        "version": "f520158f2acaec66b5322d51fc9a460ef069c0acf9959391a1df0b8671d7f764",
         "signature": "8e609bb71c20b858c77f0e9f90bb1319db8477b13f9f965f1a1e18524bf50881"
       },
       "/home/travis/build/PolymerLabs/arcs/src/tests/multiplexer-integration-test.ts": {
@@ -20399,7 +20399,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/dataflow/flow-graph.ts",
-            "start": 3095,
+            "start": 3225,
             "length": 4,
             "messageText": "Object is possibly 'undefined'.",
             "category": 1,
@@ -20407,7 +20407,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/dataflow/flow-graph.ts",
-            "start": 3118,
+            "start": 3248,
             "length": 5,
             "code": 2345,
             "category": 1,
@@ -20424,7 +20424,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/dataflow/flow-graph.ts",
-            "start": 6009,
+            "start": 6415,
             "length": 13,
             "messageText": "Object is possibly 'null'.",
             "category": 1,
@@ -20432,7 +20432,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/dataflow/flow-graph.ts",
-            "start": 9086,
+            "start": 9683,
             "length": 13,
             "messageText": "Object is possibly 'undefined'.",
             "category": 1,
@@ -20440,7 +20440,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/dataflow/flow-graph.ts",
-            "start": 9131,
+            "start": 9728,
             "length": 13,
             "messageText": "Object is possibly 'undefined'.",
             "category": 1,

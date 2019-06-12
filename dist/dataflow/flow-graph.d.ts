@@ -24,9 +24,14 @@ export declare class FlowGraph {
     /** Returns a list of all pairwise particle connections, in string form: 'P1.foo -> P2.bar'. */
     readonly connectionsAsStrings: string[];
     /** Returns true if all checks in the graph pass. */
-    validateGraph(): boolean;
+    validateGraph(): ValidationResult;
     /** Validates a single check (on the given edge). Returns true if the check passes. */
     private validateSingleEdge;
+}
+/** Result from validating an entire graph. */
+declare class ValidationResult {
+    failures: string[];
+    readonly isValid: boolean;
 }
 export declare enum CheckResultType {
     Success = 0,
@@ -37,6 +42,7 @@ export declare type CheckResult = {
     type: CheckResultType.Success;
 } | {
     type: CheckResultType.Failure;
+    reason: string;
 } | {
     type: CheckResultType.KeepGoing;
     checkNext: BackwardsPath[];
