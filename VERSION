@@ -1,5 +1,9 @@
-commit 762573b8c0a7d666bc39b6591a64928e8b64286a
-Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
-Date:   Wed Jun 12 09:37:53 2019 +0100
+commit 71e2c3cdd7415aeb2e7bd661dee2d5807721e840
+Author: Paul Lindner <plindner@google.com>
+Date:   Wed Jun 12 11:02:46 2019 -0700
 
-    Wasm: handle schema fields with names that are C++ keywords (#3174)
+    Switch to lws from http-server, cleanup (#3170)
+    
+    - Actively managed project, not just some guy
+    - Also fixed misplaced eslint dev dependency
+    - Removed unused clang-format dep
