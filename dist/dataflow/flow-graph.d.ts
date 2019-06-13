@@ -50,44 +50,34 @@ export declare type CheckResult = {
 /**
  * A path that walks backwards through the graph, i.e. it walks along the directed edges in the reverse direction. The path is described by the
  * nodes in the path. Class is immutable.
- *
- * The path can have an open or closed edge at the end. An open edge points to the final node in the path, but does not actually include it.
  */
 export declare class BackwardsPath {
     /** Nodes in the path. */
     readonly nodes: readonly Node[];
-    /**
-     * Optional open edge at the end of the path. If the path is closed, this will be null, and the end of the path is given by the last node
-     * in the nodes list.
-     */
-    readonly openEdge: Edge | null;
+    /** Edges in the path. */
+    readonly edges: readonly Edge[];
     private constructor();
-    /** Constructs a new path from the given edge with an open end. */
-    static newPathWithOpenEdge(edge: Edge): BackwardsPath;
-    /** Constructs a new path from the given edge with a closed end. */
-    static newPathWithClosedEdge(edge: Edge): BackwardsPath;
-    /** Returns a copy of the current path, with an open edge added to the end of it. Fails if the path already has an open edge. */
-    withNewOpenEdge(edge: Edge): BackwardsPath;
-    /** Returns a copy of the current path, converting an open edge to a closed one. Fails if the path does not have an open edge. */
-    withClosedEnd(): BackwardsPath;
-    withNewClosedEdge(edge: Edge): BackwardsPath;
+    /** Constructs a new path from the given edge. */
+    static fromEdge(edge: Edge): BackwardsPath;
+    /** Returns a copy of the current path, with an edge added to the end of it. */
+    withNewEdge(edge: Edge): BackwardsPath;
     readonly startNode: Node;
-    readonly end: Node | Edge;
+    readonly endNode: Node;
+    readonly endEdge: Edge;
 }
-interface CheckEvaluator {
-    /** Evaluates the given check condition. */
-    evaluateCheck(check: string, path: BackwardsPath): CheckResult;
-}
-export declare abstract class Node implements CheckEvaluator {
+export declare abstract class Node {
     abstract readonly inEdges: Edge[];
     abstract readonly outEdges: Edge[];
-    evaluateCheck(check: string, path: BackwardsPath): CheckResult;
+    abstract evaluateCheck(check: string, edgeToCheck: Edge, path: BackwardsPath): CheckResult;
     readonly inNodes: Node[];
     readonly outNodes: Node[];
 }
-export interface Edge extends CheckEvaluator {
+export interface Edge {
     readonly start: Node;
     readonly end: Node;
+    /** The name of the handle this edge represents, e.g. "output1". */
+    readonly handleName: string;
+    /** The qualified name of the handle this edge represents, e.g. "MyParticle.output1". */
     readonly label: string;
     readonly claim?: string;
     readonly check?: string;
@@ -99,22 +89,23 @@ declare class ParticleNode extends Node {
     readonly claims: Map<string, string>;
     readonly checks: Map<string, string>;
     constructor(particle: Particle);
+    evaluateCheck(check: string, edgeToCheck: ParticleOutput, path: BackwardsPath): CheckResult;
 }
 declare class ParticleInput implements Edge {
     readonly start: Node;
     readonly end: ParticleNode;
     readonly label: string;
+    readonly handleName: string;
     readonly check?: string;
     constructor(particleNode: ParticleNode, otherEnd: Node, inputName: string);
-    evaluateCheck(check: string, path: BackwardsPath): CheckResult;
 }
 declare class ParticleOutput implements Edge {
     readonly start: ParticleNode;
     readonly end: Node;
     readonly label: string;
+    readonly handleName: string;
     readonly claim?: string;
     constructor(particleNode: ParticleNode, otherEnd: Node, outputName: string);
-    evaluateCheck(check: string, path: BackwardsPath): CheckResult;
 }
 declare class HandleNode extends Node {
     readonly inEdges: ParticleOutput[];
@@ -122,5 +113,6 @@ declare class HandleNode extends Node {
     constructor(handle: Handle);
     /** Returns a list of all pairs of particles that are connected through this handle, in string form. */
     readonly connectionsAsStrings: string[];
+    evaluateCheck(check: string, edgeToCheck: ParticleInput, path: BackwardsPath): CheckResult;
 }
 export {};

@@ -1,8 +1,8 @@
 {
   "_from": "@polymer/iron-location@^3.0.0-pre.26",
-  "_id": "@polymer/iron-location@3.0.1",
+  "_id": "@polymer/iron-location@3.0.2",
   "_inBundle": false,
-  "_integrity": "sha512-almb+p/fdSi4bxG+vyXjY51fDZxHMxwiug51Lfvr86wZRXN/u21Y6BapxG5n9f0hPSy9fimjIAvaYmozi7VjyQ==",
+  "_integrity": "sha512-75XlPsrm6RQUPNzWWaA0TnTQaWZUYX8UB4Q6WCjikKWzmaSCCxlBrVVYf8WRqtCxw/PeCvLn5kGL6qhTlNTCEA==",
   "_location": "/@polymer/iron-location",
   "_phantomChildren": {},
   "_requested": {
@@ -19,10 +19,10 @@
   "_requiredBy": [
     "/@polymer/app-route"
   ],
-  "_resolved": "https://registry.npmjs.org/@polymer/iron-location/-/iron-location-3.0.1.tgz",
-  "_shasum": "43a59fced248ea71db5833116fcdefa186b79527",
+  "_resolved": "https://registry.npmjs.org/@polymer/iron-location/-/iron-location-3.0.2.tgz",
+  "_shasum": "7ca2df089c57deb8a6f54f5cc3722af0ff871441",
   "_spec": "@polymer/iron-location@^3.0.0-pre.26",
-  "_where": "/tmp/asset_stagegK3OgP/node_modules/@polymer/app-route",
+  "_where": "/tmp/asset_stageMJWMY1/node_modules/@polymer/app-route",
   "author": {
     "name": "The Polymer Authors"
   },
@@ -61,5 +61,5 @@
     "generate-types": "gen-typescript-declarations --deleteExisting --outDir . --verify",
     "prepare": "npm run generate-types"
   },
-  "version": "3.0.1"
+  "version": "3.0.2"
 }

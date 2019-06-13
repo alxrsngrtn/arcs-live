@@ -70,12 +70,7 @@
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<a href="checkevaluator.html" class="tsd-signature-type">CheckEvaluator</a>
-						<ul class="tsd-hierarchy">
-							<li>
-								<span class="target">Edge</span>
-							</li>
-						</ul>
+						<span class="target">Edge</span>
 					</li>
 				</ul>
 			</section>
@@ -97,14 +92,9 @@
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="edge.html#check" class="tsd-kind-icon">check</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="edge.html#claim" class="tsd-kind-icon">claim</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="edge.html#end" class="tsd-kind-icon">end</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="edge.html#handlename" class="tsd-kind-icon">handle<wbr>Name</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="edge.html#label" class="tsd-kind-icon">label</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="edge.html#start" class="tsd-kind-icon">start</a></li>
-							</ul>
-						</section>
-						<section class="tsd-index-section tsd-is-inherited">
-							<h3>Methods</h3>
-							<ul class="tsd-index-list">
-								<li class="tsd-kind-method tsd-parent-kind-interface tsd-is-inherited"><a href="edge.html#evaluatecheck" class="tsd-kind-icon">evaluate<wbr>Check</a></li>
 							</ul>
 						</section>
 					</div>
@@ -118,7 +108,7 @@
 					<div class="tsd-signature tsd-kind-icon">check<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c63f01d/src/dataflow/flow-graph.ts#L268">dataflow/flow-graph.ts:268</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/6ee2952/src/dataflow/flow-graph.ts#L239">dataflow/flow-graph.ts:239</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -128,7 +118,7 @@
 					<div class="tsd-signature tsd-kind-icon">claim<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c63f01d/src/dataflow/flow-graph.ts#L267">dataflow/flow-graph.ts:267</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/6ee2952/src/dataflow/flow-graph.ts#L238">dataflow/flow-graph.ts:238</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -138,9 +128,24 @@
 					<div class="tsd-signature tsd-kind-icon">end<span class="tsd-signature-symbol">:</span> <a href="../classes/node.html" class="tsd-signature-type">Node</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c63f01d/src/dataflow/flow-graph.ts#L265">dataflow/flow-graph.ts:265</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/6ee2952/src/dataflow/flow-graph.ts#L230">dataflow/flow-graph.ts:230</a></li>
 						</ul>
 					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="handlename" class="tsd-anchor"></a>
+					<h3>handle<wbr>Name</h3>
+					<div class="tsd-signature tsd-kind-icon">handle<wbr>Name<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/6ee2952/src/dataflow/flow-graph.ts#L233">dataflow/flow-graph.ts:233</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>The name of the handle this edge represents, e.g. &quot;output1&quot;.</p>
+						</div>
+					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
 					<a name="label" class="tsd-anchor"></a>
@@ -148,9 +153,14 @@
 					<div class="tsd-signature tsd-kind-icon">label<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c63f01d/src/dataflow/flow-graph.ts#L266">dataflow/flow-graph.ts:266</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/6ee2952/src/dataflow/flow-graph.ts#L236">dataflow/flow-graph.ts:236</a></li>
 						</ul>
 					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>The qualified name of the handle this edge represents, e.g. &quot;MyParticle.output1&quot;.</p>
+						</div>
+					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
 					<a name="start" class="tsd-anchor"></a>
@@ -158,44 +168,9 @@
 					<div class="tsd-signature tsd-kind-icon">start<span class="tsd-signature-symbol">:</span> <a href="../classes/node.html" class="tsd-signature-type">Node</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c63f01d/src/dataflow/flow-graph.ts#L264">dataflow/flow-graph.ts:264</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/6ee2952/src/dataflow/flow-graph.ts#L229">dataflow/flow-graph.ts:229</a></li>
 						</ul>
 					</aside>
-				</section>
-			</section>
-			<section class="tsd-panel-group tsd-member-group tsd-is-inherited">
-				<h2>Methods</h2>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
-					<a name="evaluatecheck" class="tsd-anchor"></a>
-					<h3>evaluate<wbr>Check</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
-						<li class="tsd-signature tsd-kind-icon">evaluate<wbr>Check<span class="tsd-signature-symbol">(</span>check<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, path<span class="tsd-signature-symbol">: </span><a href="../classes/backwardspath.html" class="tsd-signature-type">BackwardsPath</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../globals.html#checkresult" class="tsd-signature-type">CheckResult</a></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<p>Inherited from <a href="checkevaluator.html">CheckEvaluator</a>.<a href="checkevaluator.html#evaluatecheck">evaluateCheck</a></p>
-								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c63f01d/src/dataflow/flow-graph.ts#L236">dataflow/flow-graph.ts:236</a></li>
-								</ul>
-							</aside>
-							<div class="tsd-comment tsd-typography">
-								<div class="lead">
-									<p>Evaluates the given check condition.</p>
-								</div>
-							</div>
-							<h4 class="tsd-parameters-title">Parameters</h4>
-							<ul class="tsd-parameters">
-								<li>
-									<h5>check: <span class="tsd-signature-type">string</span></h5>
-								</li>
-								<li>
-									<h5>path: <a href="../classes/backwardspath.html" class="tsd-signature-type">BackwardsPath</a></h5>
-								</li>
-							</ul>
-							<h4 class="tsd-returns-title">Returns <a href="../globals.html#checkresult" class="tsd-signature-type">CheckResult</a></h4>
-						</li>
-					</ul>
 				</section>
 			</section>
 		</div>
@@ -224,13 +199,13 @@
 								<a href="edge.html#end" class="tsd-kind-icon">end</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="edge.html#handlename" class="tsd-kind-icon">handle<wbr>Name</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
 								<a href="edge.html#label" class="tsd-kind-icon">label</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
 								<a href="edge.html#start" class="tsd-kind-icon">start</a>
-							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
-								<a href="edge.html#evaluatecheck" class="tsd-kind-icon">evaluate<wbr>Check</a>
 							</li>
 						</ul>
 					</li>

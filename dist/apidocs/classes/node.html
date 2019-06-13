@@ -85,12 +85,6 @@
 					</li>
 				</ul>
 			</section>
-			<section class="tsd-panel">
-				<h3>Implements</h3>
-				<ul class="tsd-hierarchy">
-					<li><a href="../interfaces/checkevaluator.html" class="tsd-signature-type">CheckEvaluator</a></li>
-				</ul>
-			</section>
 			<section class="tsd-panel-group tsd-index-group">
 				<h2>Index</h2>
 				<section class="tsd-panel tsd-index-panel">
@@ -126,7 +120,7 @@
 					<div class="tsd-signature tsd-kind-icon">in<wbr>Edges<span class="tsd-signature-symbol">:</span> <a href="../interfaces/edge.html" class="tsd-signature-type">Edge</a><span class="tsd-signature-symbol">[]</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c63f01d/src/dataflow/flow-graph.ts#L240">dataflow/flow-graph.ts:240</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/6ee2952/src/dataflow/flow-graph.ts#L214">dataflow/flow-graph.ts:214</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -136,7 +130,7 @@
 					<div class="tsd-signature tsd-kind-icon">out<wbr>Edges<span class="tsd-signature-symbol">:</span> <a href="../interfaces/edge.html" class="tsd-signature-type">Edge</a><span class="tsd-signature-symbol">[]</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c63f01d/src/dataflow/flow-graph.ts#L241">dataflow/flow-graph.ts:241</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/6ee2952/src/dataflow/flow-graph.ts#L215">dataflow/flow-graph.ts:215</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -153,7 +147,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c63f01d/src/dataflow/flow-graph.ts#L254">dataflow/flow-graph.ts:254</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/6ee2952/src/dataflow/flow-graph.ts#L219">dataflow/flow-graph.ts:219</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <a href="node.html" class="tsd-signature-type">Node</a><span class="tsd-signature-symbol">[]</span></h4>
@@ -170,7 +164,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c63f01d/src/dataflow/flow-graph.ts#L258">dataflow/flow-graph.ts:258</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/6ee2952/src/dataflow/flow-graph.ts#L223">dataflow/flow-graph.ts:223</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <a href="node.html" class="tsd-signature-type">Node</a><span class="tsd-signature-symbol">[]</span></h4>
@@ -182,22 +176,24 @@
 				<h2>Methods</h2>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
 					<a name="evaluatecheck" class="tsd-anchor"></a>
-					<h3>evaluate<wbr>Check</h3>
+					<h3><span class="tsd-flag ts-flagAbstract">Abstract</span> evaluate<wbr>Check</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">evaluate<wbr>Check<span class="tsd-signature-symbol">(</span>check<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, path<span class="tsd-signature-symbol">: </span><a href="backwardspath.html" class="tsd-signature-type">BackwardsPath</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../globals.html#checkresult" class="tsd-signature-type">CheckResult</a></li>
+						<li class="tsd-signature tsd-kind-icon">evaluate<wbr>Check<span class="tsd-signature-symbol">(</span>check<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, edgeToCheck<span class="tsd-signature-symbol">: </span><a href="../interfaces/edge.html" class="tsd-signature-type">Edge</a>, path<span class="tsd-signature-symbol">: </span><a href="backwardspath.html" class="tsd-signature-type">BackwardsPath</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../globals.html#checkresult" class="tsd-signature-type">CheckResult</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
-								<p>Implementation of <a href="../interfaces/checkevaluator.html">CheckEvaluator</a>.<a href="../interfaces/checkevaluator.html#evaluatecheck">evaluateCheck</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c63f01d/src/dataflow/flow-graph.ts#L243">dataflow/flow-graph.ts:243</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/6ee2952/src/dataflow/flow-graph.ts#L217">dataflow/flow-graph.ts:217</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
 									<h5>check: <span class="tsd-signature-type">string</span></h5>
+								</li>
+								<li>
+									<h5>edgeToCheck: <a href="../interfaces/edge.html" class="tsd-signature-type">Edge</a></h5>
 								</li>
 								<li>
 									<h5>path: <a href="backwardspath.html" class="tsd-signature-type">BackwardsPath</a></h5>
