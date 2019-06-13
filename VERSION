@@ -1,8 +1,8 @@
-commit 5d341c8efb9f712c784b4d16bfd909f301a24931
+commit fca21ff71ec3435fc9cf381e715afce9a13d75f4
 Author: Alex Rosengarten <alxr@google.com>
-Date:   Thu Jun 13 14:42:15 2019 -0700
+Date:   Thu Jun 13 15:35:53 2019 -0700
 
-    Recipe for Image Classification (#3178)
+    Granular Image Classification Recipes (#3180)
     
     * image schema: blob + url subtypes
     
@@ -236,12 +236,32 @@ Date:   Thu Jun 13 14:42:15 2019 -0700
     
     * Simplfying PresentLabel particle
     
+    * fix whitespace
+    
+    * mv model to it's own directory
+    
+    * quick model selector particle
+    
+    * added labels input to model selector
+    
+    * fix: schema uses term "location"
+    
+    * Got granular inference working!
+    
+    * provide a results view slot
+    
+    * good enough slot handling
+    
+    * comment out old ml classification srvcs
+    
+    * dependenct slot approach
+    
+    * rename model artifact path
+    
+    * fixed: english
+    
+    * Added MobileNet v2 assets
+    
+    * Added MobNet v2 recipe
+    
     * Classify --> Infer
-    
-    * fixed bad merge
-    
-    * willReceiveProps --> update
-    
-    * rm uncessary clear handle calls
-    
-    * fix: whitespace
