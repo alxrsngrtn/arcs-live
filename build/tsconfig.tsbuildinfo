@@ -2226,7 +2226,7 @@
         "signature": "a4a4a0454c3d888e948591d814c2fd98da27353975afcc334d6eb694f790f0f9"
       },
       "/home/travis/build/PolymerLabs/arcs/src/services/tfjs-service.ts": {
-        "version": "343e7672226def1767a586f99f768003d31d085c71487fd820b863006ea8ff31",
+        "version": "741147e798d6dcfc4a79d6f8e1852d90fe7d354531f5be2d8fb71d8d3214315c",
         "signature": "46ebb8f80dbfc12df1ffc44a9af1584d167ecb8af65ca533d4c342958b4a37a2"
       },
       "/home/travis/build/PolymerLabs/arcs/src/services/tfjs-mobilenet-service.ts": {
@@ -30889,7 +30889,7 @@
         [
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/services/tfjs-service.ts",
-            "start": 8060,
+            "start": 8059,
             "length": 5,
             "code": 2322,
             "category": 1,
@@ -30897,7 +30897,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/services/tfjs-service.ts",
-            "start": 8078,
+            "start": 8077,
             "length": 5,
             "code": 2322,
             "category": 1,
@@ -30905,7 +30905,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/services/tfjs-service.ts",
-            "start": 8143,
+            "start": 8142,
             "length": 5,
             "code": 2339,
             "category": 1,
@@ -30913,7 +30913,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/services/tfjs-service.ts",
-            "start": 8153,
+            "start": 8152,
             "length": 5,
             "code": 2339,
             "category": 1,
@@ -30921,7 +30921,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/services/tfjs-service.ts",
-            "start": 8330,
+            "start": 8329,
             "length": 5,
             "code": 2339,
             "category": 1,
@@ -30929,7 +30929,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/services/tfjs-service.ts",
-            "start": 8378,
+            "start": 8377,
             "length": 5,
             "code": 2339,
             "category": 1,
@@ -30937,7 +30937,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/services/tfjs-service.ts",
-            "start": 8508,
+            "start": 8507,
             "length": 9,
             "code": 2322,
             "category": 1,
@@ -30945,7 +30945,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/services/tfjs-service.ts",
-            "start": 8549,
+            "start": 8548,
             "length": 11,
             "code": 2322,
             "category": 1,
