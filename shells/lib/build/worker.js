@@ -1248,7 +1248,7 @@ class ParticleSpec {
                 Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(this.handleConnectionMap.has(check.handle), `Can't make a check on unknown handle ${check.handle}.`);
                 const handle = this.handleConnectionMap.get(check.handle);
                 Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(handle.isInput, `Can't make a check on handle ${check.handle} (not an input handle).`);
-                results.set(check.handle, check.trustTag);
+                results.set(check.handle, check.trustTags);
             });
         }
         return results;

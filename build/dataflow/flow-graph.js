@@ -165,6 +165,26 @@ function addHandleConnection(particleNode, handleNode, connection) {
             throw new Error(`Unsupported connection type: ${connection.direction}`);
     }
 }
+/** Represents a check condition on an edge. */
+export class Check {
+    constructor(
+    /** A list of acceptable tags. The check will fail if a different claim is found that doesn't match any tag in this list. */
+    acceptedTags) {
+        this.acceptedTags = acceptedTags;
+    }
+    /** Returns true if the given claim satisfies the check condition. */
+    checkAgainstClaim(claim) {
+        for (const tag of this.acceptedTags) {
+            if (tag === claim) {
+                return true;
+            }
+        }
+        return false;
+    }
+    toString() {
+        return this.acceptedTags.join('|');
+    }
+}
 export class Node {
     get inNodes() {
         return this.inEdges.map(e => e.start);
@@ -178,16 +198,19 @@ class ParticleNode extends Node {
         super();
         this.inEdges = [];
         this.outEdges = [];
+        this.checks = new Map();
         this.name = particle.name;
         this.claims = particle.spec.trustClaims;
-        this.checks = particle.spec.trustChecks;
+        particle.spec.trustChecks.forEach((tags, handle) => {
+            this.checks.set(handle, new Check(tags));
+        });
     }
     evaluateCheck(check, edgeToCheck, path) {
         assert(this.outEdges.includes(edgeToCheck), 'Particles can only check their own out-edges.');
         // First check if this particle makes an explicit claim on this out-edge.
         const claim = this.claims.get(edgeToCheck.handleName);
         if (claim) {
-            if (claim === check) {
+            if (check.checkAgainstClaim(claim)) {
                 return { type: CheckResultType.Success };
             }
             else {

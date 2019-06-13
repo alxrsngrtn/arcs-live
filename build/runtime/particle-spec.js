@@ -262,7 +262,7 @@ export class ParticleSpec {
                 assert(this.handleConnectionMap.has(check.handle), `Can't make a check on unknown handle ${check.handle}.`);
                 const handle = this.handleConnectionMap.get(check.handle);
                 assert(handle.isInput, `Can't make a check on handle ${check.handle} (not an input handle).`);
-                results.set(check.handle, check.trustTag);
+                results.set(check.handle, check.trustTags);
             });
         }
         return results;

@@ -1,15 +1,5 @@
-commit 6ee2952a5db1c43e3e1dbe869fcea58286db26f1
+commit 48de208b18e358aa92b8b679c0318aa947a4ffed
 Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
-Date:   Thu Jun 13 13:18:20 2019 +1000
+Date:   Thu Jun 13 16:15:33 2019 +1000
 
-    Simplify dataflow algorithm, so only nodes can evaluate checks. (#3177)
-    
-    * Simplify dataflow algorithm, so only nodes can evaluate checks.
-    
-    Edges can no longer evaluate checks, only nodes. This means we don't
-    need the CheckEvaluator interface anymore, and simplifies BackwardsPath
-    a lot, since we don't need the open/closed edge distinction.
-    
-    I've kept the KeepGoing/checkNext idea though, because it'll be useful
-    later when we start allowing nodes to manipulate the DFS search (e.g.
-    "derives from" claims).
+    Support multiple check tags (#3179)

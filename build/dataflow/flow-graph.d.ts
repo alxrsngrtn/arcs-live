@@ -65,10 +65,21 @@ export declare class BackwardsPath {
     readonly endNode: Node;
     readonly endEdge: Edge;
 }
+/** Represents a check condition on an edge. */
+export declare class Check {
+    /** A list of acceptable tags. The check will fail if a different claim is found that doesn't match any tag in this list. */
+    readonly acceptedTags: readonly string[];
+    constructor(
+    /** A list of acceptable tags. The check will fail if a different claim is found that doesn't match any tag in this list. */
+    acceptedTags: readonly string[]);
+    /** Returns true if the given claim satisfies the check condition. */
+    checkAgainstClaim(claim: string): boolean;
+    toString(): string;
+}
 export declare abstract class Node {
     abstract readonly inEdges: Edge[];
     abstract readonly outEdges: Edge[];
-    abstract evaluateCheck(check: string, edgeToCheck: Edge, path: BackwardsPath): CheckResult;
+    abstract evaluateCheck(check: Check, edgeToCheck: Edge, path: BackwardsPath): CheckResult;
     readonly inNodes: Node[];
     readonly outNodes: Node[];
 }
@@ -80,23 +91,23 @@ export interface Edge {
     /** The qualified name of the handle this edge represents, e.g. "MyParticle.output1". */
     readonly label: string;
     readonly claim?: string;
-    readonly check?: string;
+    readonly check?: Check;
 }
 declare class ParticleNode extends Node {
     readonly inEdges: ParticleInput[];
     readonly outEdges: ParticleOutput[];
     readonly name: string;
     readonly claims: Map<string, string>;
-    readonly checks: Map<string, string>;
+    readonly checks: Map<string, Check>;
     constructor(particle: Particle);
-    evaluateCheck(check: string, edgeToCheck: ParticleOutput, path: BackwardsPath): CheckResult;
+    evaluateCheck(check: Check, edgeToCheck: ParticleOutput, path: BackwardsPath): CheckResult;
 }
 declare class ParticleInput implements Edge {
     readonly start: Node;
     readonly end: ParticleNode;
     readonly label: string;
     readonly handleName: string;
-    readonly check?: string;
+    readonly check?: Check;
     constructor(particleNode: ParticleNode, otherEnd: Node, inputName: string);
 }
 declare class ParticleOutput implements Edge {
@@ -113,6 +124,6 @@ declare class HandleNode extends Node {
     constructor(handle: Handle);
     /** Returns a list of all pairs of particles that are connected through this handle, in string form. */
     readonly connectionsAsStrings: string[];
-    evaluateCheck(check: string, edgeToCheck: ParticleInput, path: BackwardsPath): CheckResult;
+    evaluateCheck(check: Check, edgeToCheck: ParticleInput, path: BackwardsPath): CheckResult;
 }
 export {};

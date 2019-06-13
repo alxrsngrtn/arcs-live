@@ -68,7 +68,7 @@ export interface SerializedParticleTrustClaimSpec extends Literal {
 }
 export interface SerializedParticleTrustCheckSpec extends Literal {
     handle: string;
-    trustTag: string;
+    trustTags: string[];
 }
 export interface SerializedParticleSpec extends Literal {
     name: string;
@@ -96,7 +96,7 @@ export declare class ParticleSpec {
     modality: Modality;
     slotConnections: Map<string, ConsumeSlotConnectionSpec>;
     trustClaims: Map<string, string>;
-    trustChecks: Map<string, string>;
+    trustChecks: Map<string, string[]>;
     constructor(model: SerializedParticleSpec);
     createConnection(arg: SerializedHandleConnectionSpec, typeVarMap: Map<string, Type>): HandleConnectionSpec;
     readonly handleConnections: HandleConnectionSpec[];
