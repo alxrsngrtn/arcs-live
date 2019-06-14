@@ -1,5 +1,10 @@
-commit 8d7cbe32debe06b0c45d687d14067099e973c5ed
-Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Fri Jun 14 16:04:09 2019 +1000
+commit bf7e955e5cda4e51130fa163aba423af58cfc7db
+Author: Paul Lindner <plindner@google.com>
+Date:   Thu Jun 13 23:07:30 2019 -0700
 
-    Replace bundle-manifest.mf with __bundle_entry.manifest (#3165)
+    Improve nullability of Arcs code #paydown (#3182)
+    
+    - Introduce testing/preconditions.ts to allow inline checking of null/undefined.
+    - Introduce types in lots of local variables.
+    
+    1614 -> 1453 == 16.1 points

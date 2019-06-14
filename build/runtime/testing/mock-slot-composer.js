@@ -35,7 +35,7 @@ export class MockSlotComposer extends FakeSlotComposer {
         this.expectQueue = [];
         this.onExpectationsComplete = () => undefined;
         this.strict = options.strict != undefined ? options.strict : true;
-        this.logging = options.logging;
+        this.logging = Boolean(options.logging);
         this.debugMessages = [];
         // Clear all cached templates
         HeadlessSlotDomConsumer.clearCache();

@@ -25,7 +25,7 @@ interface Generation {
 export declare class Planner {
     private _arc;
     strategizer: Strategizer;
-    speculator: Speculator;
+    speculator: Speculator | null;
     blockDevtools: boolean;
     init(arc: Arc, { strategies, ruleset, strategyArgs, speculator, blockDevtools }?: {
         strategies?: StrategyDerived[];

@@ -15,7 +15,7 @@ const error = logFactory('PlanningResult', '#ff0090', 'error');
 export class PlanningResult {
     constructor(envOptions, store) {
         this.suggestions = [];
-        this.lastUpdated = new Date(null);
+        this.lastUpdated = new Date();
         this.generations = [];
         this.contextual = true;
         this.changeCallbacks = [];

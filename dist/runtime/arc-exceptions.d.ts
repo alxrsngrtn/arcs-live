@@ -17,8 +17,8 @@ export interface SerializedPropagatedException extends Literal {
     };
     method: string;
     particleId: string;
-    particleName: string;
-    stack: string;
+    particleName?: string;
+    stack?: string;
 }
 /** An exception that is to be propagated back to the host. */
 export declare class PropagatedException extends Error {

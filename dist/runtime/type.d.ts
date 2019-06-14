@@ -36,7 +36,7 @@ export declare abstract class Type {
     _applyExistenceTypeTest(test: Predicate<Type>): boolean;
     readonly hasVariable: boolean;
     readonly hasUnresolvedVariable: boolean;
-    getContainedType(): Type;
+    getContainedType(): Type | null;
     isTypeContainer(): boolean;
     collectionOf(): CollectionType<this>;
     bigCollectionOf(): BigCollectionType<this>;

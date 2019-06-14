@@ -50,8 +50,8 @@ export declare class DescriptionFormatter {
     _joinDescriptions(strings: any): any;
     _joinTokens(tokens: any): any;
     _capitalizeAndPunctuate(sentence: any): string;
-    patternToSuggestion(pattern: any, particleDescription: any): any;
-    _initTokens(pattern: any, particleDescription: any): any[];
+    patternToSuggestion(pattern: string, particleDescription: any): any;
+    _initTokens(pattern: string, particleDescription: any): any[];
     _initSubTokens(pattern: any, particleDescription: any): {}[];
     tokenToString(token: any): any;
     _particleTokenToString(token: any): any;

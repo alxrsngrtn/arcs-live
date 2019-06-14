@@ -17,7 +17,7 @@ export interface ArcInspectorFactory {
  */
 export interface ArcInspector {
     isActive(): boolean;
-    onceActive: Promise<void>;
+    onceActive: Promise<void> | null;
     /**
      * Notifies of a recipe instantiated in the arc.
      *

@@ -81,6 +81,9 @@ function dirPrefixForSortedPaths(paths) {
     return prefixLength;
 }
 function collectDependencies(manifest, dependencies) {
+    if (!manifest.fileName) {
+        throw new Error('Missing filename');
+    }
     dependencies.add(manifest.fileName);
     for (const particle of manifest.particles) {
         dependencies.add(particle.implFile);

@@ -266,6 +266,9 @@ export class WasmParticle extends Particle {
             return;
         }
         const converter = this.converters.get(handle);
+        if (!converter) {
+            throw new Error('cannot find handle ' + handle.name);
+        }
         let encoded;
         if (handle instanceof Singleton) {
             encoded = converter.encodeSingleton(model);
@@ -284,6 +287,9 @@ export class WasmParticle extends Particle {
         }
         const wasmHandle = this.handleMap.get(handle);
         const converter = this.converters.get(handle);
+        if (!converter) {
+            throw new Error('cannot find handle ' + handle.name);
+        }
         let p1 = 0;
         let p2 = 0;
         if (handle instanceof Singleton) {

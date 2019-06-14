@@ -33,7 +33,7 @@ export class Planificator {
         PlanningExplorerAdapter.subscribeToForceReplan(this);
     }
     static async create(arc, { storageKeyBase, onlyConsumer, debug = false }) {
-        debug = debug || (storageKeyBase && storageKeyBase.startsWith('volatile'));
+        debug = debug || (Boolean(storageKeyBase) && storageKeyBase.startsWith('volatile'));
         const store = await Planificator._initSuggestStore(arc, storageKeyBase);
         const searchStore = await Planificator._initSearchStore(arc);
         const result = new PlanningResult({ context: arc.context, loader: arc.loader }, store);
@@ -44,7 +44,7 @@ export class Planificator {
         return planificator;
     }
     async requestPlanning(options = {}) {
-        if (!this.consumerOnly) {
+        if (!this.consumerOnly && this.producer) {
             await this.producer.produceSuggestions(options);
         }
     }
@@ -72,13 +72,17 @@ export class Planificator {
     dispose() {
         if (!this.consumerOnly) {
             this._unlistenToArcStores();
-            this.producer.dispose();
+            if (this.producer) {
+                this.producer.dispose();
+            }
         }
         this.consumer.dispose();
         this.result.dispose();
     }
     async deleteAll() {
-        await this.producer.result.clear();
+        if (this.producer) {
+            await this.producer.result.clear();
+        }
         this.setSearch(null);
     }
     _listenToArcStores() {

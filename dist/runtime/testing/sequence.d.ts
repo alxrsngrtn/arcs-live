@@ -134,7 +134,7 @@ export declare class SequenceTest<T> {
      * to replace:
      * sequenceTest.registerOutput('foo.bar', {type: Void}, SequenceOutput.Replace);
      */
-    registerOutput(name: string, response: OutputResponseObject, behavior: SequenceOutput, variable?: string): string;
+    registerOutput(name: string, response: OutputResponseObject, behavior: SequenceOutput, variable?: string | null): string;
     /**
      * Register a sensor for the object under test. Sensors are values that will change as the object
      * is tested, and can be accessed as part of invariant specification.

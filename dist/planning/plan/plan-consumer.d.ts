@@ -24,7 +24,7 @@ export declare class PlanConsumer {
     private visibleSuggestionsChangeCallbacks;
     suggestionComposer: SuggestionComposer | null;
     currentSuggestions: Suggestion[];
-    devtoolsChannel: ArcDevtoolsChannel;
+    devtoolsChannel?: ArcDevtoolsChannel;
     constructor(arc: Arc, result: PlanningResult);
     registerSuggestionsChangedCallback(callback: any): void;
     registerVisibleSuggestionsChangedCallback(callback: any): void;

@@ -34,7 +34,7 @@ export declare class Planificator {
     requestPlanning(options?: {}): Promise<void>;
     readonly consumerOnly: boolean;
     loadSuggestions(): Promise<boolean>;
-    setSearch(search: string): Promise<void>;
+    setSearch(search: string | null): Promise<void>;
     registerSuggestionsChangedCallback(callback: any): void;
     registerVisibleSuggestionsChangedCallback(callback: any): void;
     dispose(): void;

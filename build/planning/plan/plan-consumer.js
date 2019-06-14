@@ -23,7 +23,6 @@ export class PlanConsumer {
         this.visibleSuggestionsChangeCallbacks = [];
         this.suggestionComposer = null;
         this.currentSuggestions = [];
-        this.devtoolsChannel = null;
         assert(arc, 'arc cannot be null');
         assert(result, 'result cannot be null');
         this.arc = arc;
@@ -56,7 +55,7 @@ export class PlanConsumer {
         return this.result.suggestions.filter(suggestion => {
             const suggestOption = options && options.reasons ? { reasons: [] } : undefined;
             const isVisible = suggestion.isVisible(this.arc, this.suggestFilter, suggestOption);
-            if (!isVisible && suggestOption) {
+            if (!isVisible && suggestOption && options) {
                 options.reasons.set(suggestion.hash, suggestOption);
             }
             return isVisible;

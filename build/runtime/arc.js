@@ -103,15 +103,16 @@ export class Arc {
         }
     }
     get idle() {
-        if (!this.waitForIdlePromise) {
-            // Store one active completion promise for use by any subsequent callers.
-            // We explicitly want to avoid, for example, multiple simultaneous
-            // attempts to identify idle state each sending their own `AwaitIdle`
-            // message and expecting settlement that will never arrive.
-            this.waitForIdlePromise =
-                this._waitForIdle().then(() => this.waitForIdlePromise = null);
+        if (this.waitForIdlePromise) {
+            return this.waitForIdlePromise;
         }
-        return this.waitForIdlePromise;
+        // Store one active completion promise for use by any subsequent callers.
+        // We explicitly want to avoid, for example, multiple simultaneous
+        // attempts to identify idle state each sending their own `AwaitIdle`
+        // message and expecting settlement that will never arrive.
+        const promise = this._waitForIdle().then(() => this.waitForIdlePromise = null);
+        this.waitForIdlePromise = promise;
+        return promise;
     }
     findInnerArcs(particle) {
         return this.innerArcsByParticle.get(particle) || [];
@@ -494,7 +495,7 @@ ${this.activeRecipe.toString()}`;
             this.inspector.recipeInstantiated(particles, this.activeRecipe.toString());
         }
     }
-    async createStore(type, name, id, tags, storageKey = undefined) {
+    async createStore(type, name, id, tags, storageKey) {
         assert(type instanceof Type, `can't createStore with type ${type} that isn't a Type`);
         if (type instanceof RelationType) {
             type = new CollectionType(type);

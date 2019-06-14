@@ -29,7 +29,7 @@ export declare class HandleConnectionSpec {
     isOptional: boolean;
     tags: string[];
     dependentConnections: HandleConnectionSpec[];
-    pattern: string;
+    pattern?: string;
     parentConnection: HandleConnectionSpec | null;
     constructor(rawData: SerializedHandleConnectionSpec, typeVarMap: Map<string, Type>);
     instantiateDependentConnections(particle: any, typeVarMap: Map<string, Type>): void;
@@ -105,7 +105,7 @@ export declare class ParticleSpec {
     readonly outputs: HandleConnectionSpec[];
     isInput(param: string): boolean;
     isOutput(param: string): boolean;
-    getConnectionByName(name: string): HandleConnectionSpec;
+    getConnectionByName(name: string): HandleConnectionSpec | undefined;
     getSlotSpec(slotName: string): ConsumeSlotConnectionSpec;
     readonly primaryVerb: string | undefined;
     isCompatible(modality: Modality): boolean;

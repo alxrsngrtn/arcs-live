@@ -27,7 +27,7 @@ export declare class PlanningResult {
         record: {};
     }[];
     contextual: boolean;
-    store: SingletonStorageProvider;
+    store?: SingletonStorageProvider;
     private storeCallback;
     private changeCallbacks;
     private envOptions;

@@ -15,9 +15,9 @@ interface TypeVariableInfoLiteral {
 }
 export declare class TypeVariableInfo {
     name: string;
-    _canWriteSuperset?: Type;
-    _canReadSubset?: Type;
-    _resolution?: Type;
+    _canWriteSuperset?: Type | null;
+    _canReadSubset?: Type | null;
+    _resolution?: Type | null;
     constructor(name: string, canWriteSuperset?: Type, canReadSubset?: Type);
     /**
      * Merge both the read subset (upper bound) and write superset (lower bound) constraints
@@ -36,7 +36,7 @@ export declare class TypeVariableInfo {
      */
     maybeMergeCanWriteSuperset(constraint: Type): boolean;
     isSatisfiedBy(type: Type): boolean;
-    resolution: Type;
+    resolution: Type | null;
     isValidResolutionCandidate(value: Type): {
         result: boolean;
         detail?: string;

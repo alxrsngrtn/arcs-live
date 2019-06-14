@@ -59,13 +59,13 @@ export declare class Arc {
     private readonly dataChangeCallbacks;
     private readonly storesById;
     private storageKeys;
-    readonly storageKey: string;
+    readonly storageKey?: string;
     storageProviderFactory: StorageProviderFactory;
     readonly storeTags: Map<StorageProviderBase, Set<string>>;
     private readonly storeDescriptions;
     private waitForIdlePromise;
-    private readonly inspectorFactory;
-    readonly inspector: ArcInspector;
+    private readonly inspectorFactory?;
+    readonly inspector?: ArcInspector;
     private readonly innerArcsByParticle;
     private readonly instantiateMutex;
     readonly id: Id;

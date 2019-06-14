@@ -12,6 +12,7 @@ import { assert } from '../../platform/chai-web.js';
 import { fs } from '../../platform/fs-web.js';
 import { path } from '../../platform/path-web.js';
 import { Manifest } from '../manifest.js';
+import { checkDefined, checkNotNull } from '../testing/preconditions.js';
 import { StubLoader } from '../testing/stub-loader.js';
 import { assertThrowsAsync } from '../testing/test-util.js';
 async function assertRecipeParses(input, result) {
@@ -579,7 +580,7 @@ ${particleStr1}
             assert.lengthOf(recipe.particles, 2);
             assert.lengthOf(recipe.handles, 4);
             assert.lengthOf(recipe.handleConnections, 7);
-            const mySlot = recipe.particles[1].connections['mySlot'].handle;
+            const mySlot = checkDefined(recipe.particles[1].connections['mySlot'].handle);
             assert.lengthOf(mySlot.connections, 2);
             assert.equal(mySlot.connections[0], recipe.particles[0].connections['mySlot']);
         };
@@ -684,8 +685,7 @@ ${particleStr1}
         assert.lengthOf(manifest.recipes, 1);
         const recipe = manifest.recipes[0];
         assert.lengthOf(recipe.slots, 2);
-        const recipeSlot = recipe.slots.find(s => s.id === 'slot-id0');
-        assert(recipeSlot);
+        const recipeSlot = checkDefined(recipe.slots.find(s => s.id === 'slot-id0'));
         assert.deepEqual(recipeSlot.tags, ['aa', 'aaa']);
         const slotConn = recipe.particles[0].consumedSlotConnections['slotA'];
         assert(slotConn);
@@ -716,11 +716,9 @@ ${particleStr1}
         assert.lengthOf(manifest.recipes, 1);
         const recipe = manifest.recipes[0];
         assert.lengthOf(recipe.handles, 1);
-        const recipeSlot = recipe.handles.find(s => s.id === 'slot-id0');
-        assert(recipeSlot);
+        const recipeSlot = checkDefined(recipe.handles.find(s => s.id === 'slot-id0'));
         assert.deepEqual(recipeSlot.tags, ['aa', 'aaa']);
-        const slotConn = recipe.particles[0].connections['slotA'];
-        assert(slotConn);
+        const slotConn = checkDefined(recipe.particles[0].connections['slotA']);
         assert.deepEqual(['aa', 'hello'], slotConn.tags);
     });
     it('recipe slots with different names', async () => {
@@ -831,7 +829,7 @@ ${particleStr1}
     `)).recipes[0];
         recipe.normalize();
         assert.lengthOf(recipe.slotConnections, 2);
-        const slotConnA = recipe.slotConnections.find(s => s.name === 'slotA');
+        const slotConnA = checkDefined(recipe.slotConnections.find(s => s.name === 'slotA'));
         // possible bogus assert?
         assert.isUndefined(slotConnA['sourceConnection']);
         assert.lengthOf(recipe.slots, 1);
@@ -1414,7 +1412,7 @@ resource SomeName
         const [recipe] = manifest.recipes;
         assert(recipe.normalize());
         assert(recipe.isResolved());
-        const schema = recipe.particles[0].connections.bar.type.getEntitySchema();
+        const schema = checkDefined(recipe.particles[0].connections.bar.type.getEntitySchema());
         const innerSchema = schema.fields.foo.schema.model.getEntitySchema();
         verifyPrimitiveType(innerSchema.fields.far, 'Text');
         assert.equal(manifest.particles[0].toString(), `particle P in 'null'
@@ -1625,7 +1623,7 @@ resource SomeName
       particle P in 'p.js'
         in Thing1 Thing2 Name3 {Text field1, Text field3} param
     `);
-        const paramSchema = manifest.findParticleByName('P').inputs[0].type.getEntitySchema();
+        const paramSchema = checkNotNull(manifest.findParticleByName('P').inputs[0].type.getEntitySchema());
         assert.sameMembers(paramSchema.names, ['Name1', 'Name2', 'Name3']);
         assert.sameMembers(Object.keys(paramSchema.fields), ['field1', 'field2', 'field3']);
     });

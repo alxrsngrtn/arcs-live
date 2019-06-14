@@ -36,7 +36,7 @@ export declare class PlanProducer {
     searchStore?: SingletonStorageProvider;
     searchStoreCallback: ({}: {}) => void;
     debug: boolean;
-    devtoolsChannel: ArcDevtoolsChannel;
+    devtoolsChannel?: ArcDevtoolsChannel;
     constructor(arc: Arc, result: PlanningResult, searchStore?: SingletonStorageProvider, { debug }?: {
         debug?: boolean;
     });

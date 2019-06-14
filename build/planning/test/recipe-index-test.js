@@ -12,6 +12,7 @@ import { Arc } from '../../runtime/arc.js';
 import { Loader } from '../../runtime/loader.js';
 import { Manifest } from '../../runtime/manifest.js';
 import { MockSlotComposer } from '../../runtime/testing/mock-slot-composer.js';
+import { checkDefined } from '../../runtime/testing/preconditions.js';
 import { RecipeIndex } from '../recipe-index.js';
 import { ArcId } from '../../runtime/id.js';
 describe('RecipeIndex', () => {
@@ -176,7 +177,7 @@ describe('RecipeIndex', () => {
         C
           thing = thing
     `);
-        const recipe = index.recipes.find(r => r.name === 'C');
+        const recipe = checkDefined(index.recipes.find(r => r.name === 'C'), 'missing recipe C');
         const handle = recipe.handles[0];
         assert.deepEqual(['A'], index.findHandleMatch(handle, ['map']).map(h => h.recipe.name));
         assert.deepEqual(['B'], index.findHandleMatch(handle, ['create']).map(h => h.recipe.name));
@@ -205,7 +206,7 @@ describe('RecipeIndex', () => {
         create as otherThing
         ProducerOtherThing
     `);
-        const recipe = index.recipes.find(r => r.name === 'Selector');
+        const recipe = checkDefined(index.recipes.find(r => r.name === 'Selector'), 'missing Selector');
         const handle = recipe.handles[0];
         assert.deepEqual(['ProducerThing'], index.findHandleMatch(handle).map(h => h.recipe.particles[0].name));
     });
@@ -238,7 +239,7 @@ describe('RecipeIndex', () => {
         use #loved #appreciated as thing
         Consumer
     `);
-        const recipe = index.recipes.find(r => r.name === 'Selector');
+        const recipe = checkDefined(index.recipes.find(r => r.name === 'Selector'), 'missing Selector');
         const handle = recipe.handles[0];
         assert.deepEqual(['TakeMe1', 'TakeMe2', 'TakeMe3'], index.findHandleMatch(handle).map(h => h.recipe.name));
     });
@@ -263,7 +264,7 @@ describe('RecipeIndex', () => {
         use as thing
         Consumer
     `);
-        const recipe = index.recipes.find(r => r.name === 'Selector');
+        const recipe = checkDefined(index.recipes.find(r => r.name === 'Selector'), 'Missing Selector');
         const handle = recipe.handles[0];
         assert.deepEqual(['TakeMe1', 'TakeMe2'], index.findHandleMatch(handle).map(h => h.recipe.name));
     });
@@ -296,7 +297,7 @@ describe('RecipeIndex', () => {
         create as thing
         ProducerConsumer
     `);
-        const recipe = index.recipes.find(r => r.name === 'Selector');
+        const recipe = checkDefined(index.recipes.find(r => r.name === 'Selector'), 'Missing Selector');
         const handle = recipe.handles[0];
         assert.deepEqual(['Producer', 'ProducerConsumer'], index.findHandleMatch(handle).map(h => h.recipe.particles[0].name));
     });
@@ -329,7 +330,7 @@ describe('RecipeIndex', () => {
         copy as thing
         ProducerConsumer
     `);
-        const recipe = index.recipes.find(r => r.name === 'Selector');
+        const recipe = checkDefined(index.recipes.find(r => r.name === 'Selector'), 'missing Selector');
         const handle = recipe.handles[0];
         assert.deepEqual(['Consumer2', 'Producer', 'ProducerConsumer'], index.findHandleMatch(handle).map(h => h.recipe.particles[0].name));
     });

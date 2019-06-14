@@ -8,6 +8,7 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { assert } from '../../platform/chai-web.js';
+import { checkDefined } from './preconditions.js';
 // tslint:disable: no-any
 export var ExpectedResponse;
 (function (ExpectedResponse) {
@@ -486,7 +487,7 @@ export class SequenceTest {
                     await 0;
                     continue;
                 }
-                const input = this.inputs.get(item.change.id);
+                const input = checkDefined(this.inputs.get(item.change.id));
                 this.interleavingLog.push(input.name);
                 if (item.change.output) {
                     for (const id of Object.keys(item.change.output)) {

@@ -20715,6 +20715,9 @@ class WasmParticle extends Particle$1 {
             return;
         }
         const converter = this.converters.get(handle);
+        if (!converter) {
+            throw new Error('cannot find handle ' + handle.name);
+        }
         let encoded;
         if (handle instanceof Singleton) {
             encoded = converter.encodeSingleton(model);
@@ -20733,6 +20736,9 @@ class WasmParticle extends Particle$1 {
         }
         const wasmHandle = this.handleMap.get(handle);
         const converter = this.converters.get(handle);
+        if (!converter) {
+            throw new Error('cannot find handle ' + handle.name);
+        }
         let p1 = 0;
         let p2 = 0;
         if (handle instanceof Singleton) {
@@ -22113,15 +22119,16 @@ class Arc {
         }
     }
     get idle() {
-        if (!this.waitForIdlePromise) {
-            // Store one active completion promise for use by any subsequent callers.
-            // We explicitly want to avoid, for example, multiple simultaneous
-            // attempts to identify idle state each sending their own `AwaitIdle`
-            // message and expecting settlement that will never arrive.
-            this.waitForIdlePromise =
-                this._waitForIdle().then(() => this.waitForIdlePromise = null);
+        if (this.waitForIdlePromise) {
+            return this.waitForIdlePromise;
         }
-        return this.waitForIdlePromise;
+        // Store one active completion promise for use by any subsequent callers.
+        // We explicitly want to avoid, for example, multiple simultaneous
+        // attempts to identify idle state each sending their own `AwaitIdle`
+        // message and expecting settlement that will never arrive.
+        const promise = this._waitForIdle().then(() => this.waitForIdlePromise = null);
+        this.waitForIdlePromise = promise;
+        return promise;
     }
     findInnerArcs(particle) {
         return this.innerArcsByParticle.get(particle) || [];
@@ -22504,7 +22511,7 @@ ${this.activeRecipe.toString()}`;
             this.inspector.recipeInstantiated(particles, this.activeRecipe.toString());
         }
     }
-    async createStore(type, name, id, tags, storageKey = undefined) {
+    async createStore(type, name, id, tags, storageKey) {
         assert(type instanceof Type, `can't createStore with type ${type} that isn't a Type`);
         if (type instanceof RelationType) {
             type = new CollectionType(type);
@@ -25992,7 +25999,7 @@ const error = logFactory('PlanningResult', '#ff0090', 'error');
 class PlanningResult {
     constructor(envOptions, store) {
         this.suggestions = [];
-        this.lastUpdated = new Date(null);
+        this.lastUpdated = new Date();
         this.generations = [];
         this.contextual = true;
         this.changeCallbacks = [];
@@ -30214,7 +30221,6 @@ class PlanProducer {
         this.needReplan = false;
         this._isPlanning = false;
         this.stateChangedCallbacks = [];
-        this.devtoolsChannel = null;
         assert(result, 'result cannot be null');
         assert(arc, 'arc cannot be null');
         this.arc = arc;
@@ -30283,7 +30289,9 @@ class PlanProducer {
         }
     }
     dispose() {
-        this.searchStore.off('change', this.searchStoreCallback);
+        if (this.searchStore) {
+            this.searchStore.off('change', this.searchStoreCallback);
+        }
     }
     async produceSuggestions(options = {}) {
         if (options['cancelOngoingPlanning'] && this.isPlanning) {
@@ -30540,7 +30548,6 @@ class PlanConsumer {
         this.visibleSuggestionsChangeCallbacks = [];
         this.suggestionComposer = null;
         this.currentSuggestions = [];
-        this.devtoolsChannel = null;
         assert(arc, 'arc cannot be null');
         assert(result, 'result cannot be null');
         this.arc = arc;
@@ -30573,7 +30580,7 @@ class PlanConsumer {
         return this.result.suggestions.filter(suggestion => {
             const suggestOption = options && options.reasons ? { reasons: [] } : undefined;
             const isVisible = suggestion.isVisible(this.arc, this.suggestFilter, suggestOption);
-            if (!isVisible && suggestOption) {
+            if (!isVisible && suggestOption && options) {
                 options.reasons.set(suggestion.hash, suggestOption);
             }
             return isVisible;
@@ -30718,7 +30725,7 @@ class Planificator {
         PlanningExplorerAdapter.subscribeToForceReplan(this);
     }
     static async create(arc, { storageKeyBase, onlyConsumer, debug = false }) {
-        debug = debug || (storageKeyBase && storageKeyBase.startsWith('volatile'));
+        debug = debug || (Boolean(storageKeyBase) && storageKeyBase.startsWith('volatile'));
         const store = await Planificator._initSuggestStore(arc, storageKeyBase);
         const searchStore = await Planificator._initSearchStore(arc);
         const result = new PlanningResult({ context: arc.context, loader: arc.loader }, store);
@@ -30729,7 +30736,7 @@ class Planificator {
         return planificator;
     }
     async requestPlanning(options = {}) {
-        if (!this.consumerOnly) {
+        if (!this.consumerOnly && this.producer) {
             await this.producer.produceSuggestions(options);
         }
     }
@@ -30757,13 +30764,17 @@ class Planificator {
     dispose() {
         if (!this.consumerOnly) {
             this._unlistenToArcStores();
-            this.producer.dispose();
+            if (this.producer) {
+                this.producer.dispose();
+            }
         }
         this.consumer.dispose();
         this.result.dispose();
     }
     async deleteAll() {
-        await this.producer.result.clear();
+        if (this.producer) {
+            await this.producer.result.clear();
+        }
         this.setSearch(null);
     }
     _listenToArcStores() {

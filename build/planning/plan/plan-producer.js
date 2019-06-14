@@ -35,7 +35,6 @@ export class PlanProducer {
         this.needReplan = false;
         this._isPlanning = false;
         this.stateChangedCallbacks = [];
-        this.devtoolsChannel = null;
         assert(result, 'result cannot be null');
         assert(arc, 'arc cannot be null');
         this.arc = arc;
@@ -104,7 +103,9 @@ export class PlanProducer {
         }
     }
     dispose() {
-        this.searchStore.off('change', this.searchStoreCallback);
+        if (this.searchStore) {
+            this.searchStore.off('change', this.searchStoreCallback);
+        }
     }
     async produceSuggestions(options = {}) {
         if (options['cancelOngoingPlanning'] && this.isPlanning) {

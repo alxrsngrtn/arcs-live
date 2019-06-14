@@ -23,7 +23,7 @@ function createReader(id, inS, outS, options, logger) {
     const service = new AmlService(reader, writer, options, logger);
 }
 export function serve(options) {
-    let logger = null;
+    let logger;
     switch (options.log) {
         case 'console':
             logger = console;

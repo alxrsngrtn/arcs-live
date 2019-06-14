@@ -5319,6 +5319,9 @@ class WasmParticle extends _particle_js__WEBPACK_IMPORTED_MODULE_1__["Particle"]
             return;
         }
         const converter = this.converters.get(handle);
+        if (!converter) {
+            throw new Error('cannot find handle ' + handle.name);
+        }
         let encoded;
         if (handle instanceof _handle_js__WEBPACK_IMPORTED_MODULE_2__["Singleton"]) {
             encoded = converter.encodeSingleton(model);
@@ -5337,6 +5340,9 @@ class WasmParticle extends _particle_js__WEBPACK_IMPORTED_MODULE_1__["Particle"]
         }
         const wasmHandle = this.handleMap.get(handle);
         const converter = this.converters.get(handle);
+        if (!converter) {
+            throw new Error('cannot find handle ' + handle.name);
+        }
         let p1 = 0;
         let p2 = 0;
         if (handle instanceof _handle_js__WEBPACK_IMPORTED_MODULE_2__["Singleton"]) {
