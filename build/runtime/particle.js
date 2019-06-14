@@ -50,7 +50,7 @@ export class Particle {
         }
     }
     async callSetHandles(handles, onException) {
-        this.invokeSafely(async (p) => p.setHandles(handles), onException);
+        await this.invokeSafely(async (p) => p.setHandles(handles), onException);
     }
     /**
      * This method is invoked with a handle for each store this particle
@@ -63,7 +63,7 @@ export class Particle {
     async setHandles(handles) {
     }
     async callOnHandleSync(handle, model, onException) {
-        this.invokeSafely(async (p) => p.onHandleSync(handle, model), onException);
+        await this.invokeSafely(async (p) => p.onHandleSync(handle, model), onException);
     }
     /**
      * Called for handles that are configured with both keepSynced and notifySync, when they are
@@ -78,7 +78,7 @@ export class Particle {
     }
     // tslint:disable-next-line: no-any
     async callOnHandleUpdate(handle, update, onException) {
-        this.invokeSafely(async (p) => p.onHandleUpdate(handle, update), onException);
+        await this.invokeSafely(async (p) => p.onHandleUpdate(handle, update), onException);
     }
     /**
      * Called for handles that are configued with notifyUpdate, when change events are received from
@@ -97,7 +97,7 @@ export class Particle {
     async onHandleUpdate(handle, update) {
     }
     async callOnHandleDesync(handle, onException) {
-        this.invokeSafely(async (p) => p.onHandleDesync(handle), onException);
+        await this.invokeSafely(async (p) => p.onHandleDesync(handle), onException);
     }
     /**
      * Called for handles that are configured with both keepSynced and notifyDesync, when they are
@@ -192,15 +192,15 @@ export class Particle {
         }
         return output.join('');
     }
-    setParticleDescription(pattern) {
+    async setParticleDescription(pattern) {
         return this.setDescriptionPattern('pattern', pattern);
     }
-    setDescriptionPattern(connectionName, pattern) {
+    async setDescriptionPattern(connectionName, pattern) {
         const descriptions = this.handles.get('descriptions');
         if (descriptions) {
             const entityClass = descriptions.entityClass;
             if (descriptions instanceof Collection || descriptions instanceof BigCollection) {
-                descriptions.store(new entityClass({ key: connectionName, value: pattern }, this.spec.name + '-' + connectionName));
+                await descriptions.store(new entityClass({ key: connectionName, value: pattern }, this.spec.name + '-' + connectionName));
             }
             return true;
         }

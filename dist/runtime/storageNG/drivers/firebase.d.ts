@@ -24,8 +24,8 @@ export declare class FirebaseAppCache {
     protected appCache: Map<string, firebase.app.App>;
     constructor(runtime: Runtime);
     getApp(key: FirebaseStorageKey): firebase.app.App;
-    stopAllApps(): void;
-    static stop(): void;
+    stopAllApps(): Promise<void>;
+    static stop(): Promise<void>;
 }
 export declare class FirebaseDriver<Data> extends Driver<Data> {
     private receiver;

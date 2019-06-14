@@ -27,18 +27,18 @@ describe('CollectionHandle', () => {
     it('can add and remove elements', async () => {
         const handle = getCollectionHandle();
         assert.isEmpty(handle.toList());
-        handle.add('A');
+        await handle.add('A');
         assert.sameMembers(await handle.toList(), ['A']);
-        handle.add('B');
+        await handle.add('B');
         assert.sameMembers(await handle.toList(), ['A', 'B']);
-        handle.remove('A');
+        await handle.remove('A');
         assert.sameMembers(await handle.toList(), ['B']);
     });
-    it('can clear', () => {
+    it('can clear', async () => {
         const handle = getCollectionHandle();
-        handle.add('A');
-        handle.add('B');
-        handle.clear();
+        await handle.add('A');
+        await handle.add('B');
+        await handle.clear();
         assert.isEmpty(handle.toList());
     });
     it('can add multiple entities', async () => {
@@ -51,11 +51,11 @@ describe('SingletonHandle', () => {
     it('can set and clear elements', async () => {
         const handle = getSingletonHandle();
         assert.equal(await handle.get(), null);
-        handle.set('A');
+        await handle.set('A');
         assert.equal(await handle.get(), 'A');
-        handle.set('B');
+        await handle.set('B');
         assert.equal(await handle.get(), 'B');
-        handle.clear();
+        await handle.clear();
         assert.equal(await handle.get(), null);
     });
 });

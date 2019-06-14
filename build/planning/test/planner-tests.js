@@ -161,9 +161,9 @@ ${particlesSpec}
 ${recipeManifest}
     `));
         const schema = manifest.findSchemaByName('Foo');
-        manifest.createStore(schema.type.collectionOf(), 'Test1', 'test-1', ['tag1']);
-        manifest.createStore(schema.type.collectionOf(), 'Test2', 'test-2', ['tag2']);
-        manifest.createStore(schema.type.collectionOf(), 'Test2', 'test-3', []);
+        await manifest.createStore(schema.type.collectionOf(), 'Test1', 'test-1', ['tag1']);
+        await manifest.createStore(schema.type.collectionOf(), 'Test2', 'test-2', ['tag2']);
+        await manifest.createStore(schema.type.collectionOf(), 'Test2', 'test-3', []);
         const arc = StrategyTestHelper.createTestArc(manifest);
         const planner = new Planner();
         const options = { strategyArgs: StrategyTestHelper.createTestStrategyArgs(arc) };

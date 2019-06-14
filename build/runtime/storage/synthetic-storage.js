@@ -113,14 +113,11 @@ class SyntheticCollection extends StorageProviderBase {
         this.backingStore = undefined;
         this.targetStore = targetStore;
         this.storageFactory = storageFactory;
-        let resolveInitialized;
-        this.initialized = new Promise(resolve => resolveInitialized = resolve);
-        const process = async (data) => {
+        this.initialized = (async () => {
+            const data = await targetStore.get();
             await this.process(data, false);
-            resolveInitialized();
             targetStore.on('change', details => this.process(details.data, true), this);
-        };
-        targetStore.get().then(data => process(data));
+        })();
     }
     async process(data, fireEvent) {
         let handles;
@@ -144,7 +141,7 @@ class SyntheticCollection extends StorageProviderBase {
             const diff = setDiffCustom(oldModel, this.model, JSON.stringify);
             const add = diff.add.map(arcHandle => ({ value: arcHandle }));
             const remove = diff.remove.map(arcHandle => ({ value: arcHandle }));
-            this._fire('change', new ChangeEvent({ add, remove }));
+            await this._fire('change', new ChangeEvent({ add, remove }));
         }
     }
     async toList() {

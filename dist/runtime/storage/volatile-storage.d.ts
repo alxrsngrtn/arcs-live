@@ -50,7 +50,7 @@ declare class VolatileCollection extends VolatileStorageProvider implements Coll
     _model: CrdtCollectionModel;
     constructor(type: any, storageEngine: any, name: any, id: any, key: any);
     backingType(): Type;
-    clone(): VolatileCollection;
+    clone(): Promise<VolatileCollection>;
     cloneFrom(handle: any): Promise<void>;
     modelForSynchronization(): Promise<{
         version: number;
@@ -82,7 +82,7 @@ declare class VolatileSingleton extends VolatileStorageProvider implements Singl
     private localKeyId;
     constructor(type: any, storageEngine: any, name: any, id: any, key: any);
     backingType(): Type;
-    clone(): VolatileSingleton;
+    clone(): Promise<VolatileSingleton>;
     cloneFrom(handle: any): Promise<void>;
     modelForSynchronization(): Promise<{
         version: number;

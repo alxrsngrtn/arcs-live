@@ -56,7 +56,7 @@ export declare abstract class Handle {
  */
 export declare class Collection extends Handle {
     readonly storage: CollectionStore;
-    _notify(kind: string, particle: Particle, details: any): void;
+    _notify(kind: string, particle: Particle, details: any): Promise<void>;
     /**
      * Returns the Entity specified by id contained by the handle, or null if this id is not
      * contained by the handle.

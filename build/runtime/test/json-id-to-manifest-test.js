@@ -13,15 +13,15 @@ import { Manifest } from '../manifest.js';
 import fs from 'fs';
 import { promisify } from 'util';
 describe('JsonldToManifest', () => {
-    const isValidManifest = (manifestStr) => {
+    async function isValidManifest(manifestStr) {
         try {
-            Manifest.parse(manifestStr);
+            await Manifest.parse(manifestStr);
             return true;
         }
         catch (error) {
             return false;
         }
-    };
+    }
     const getSchema = async (schema = 'Product') => {
         const readFileAsync = promisify(fs.readFile);
         return readFileAsync(`src/runtime/test/assets/${schema}.jsonld`, { encoding: 'utf8' });
@@ -42,17 +42,17 @@ describe('JsonldToManifest', () => {
         it('works on objects without @graph', async () => {
             const schema = await getSchema();
             const valids = JSON.parse(schema)['@graph'];
-            valids.map(obj => JSON.stringify(obj))
-                .map((s) => JsonldToManifest.convert(s, { '@id': 'schema:Thing' }))
-                .forEach((manifest) => {
-                assert.isTrue(isValidManifest(manifest));
-            });
+            for (const obj of valids) {
+                const str = JSON.stringify(obj);
+                const manifest = JsonldToManifest.convert(str, { '@id': 'schema:Thing' });
+                assert.isTrue(await isValidManifest(manifest));
+            }
         });
         it('should work on a real schema.org json linked-data file', async () => {
             //TODO(alxr): Parameterize these tests to work on a variety of schemas.
             const schema = await getSchema();
             const converted = JsonldToManifest.convert(schema, { '@id': 'schema:Thing' });
-            assert.isTrue(isValidManifest(converted));
+            assert.isTrue(await isValidManifest(converted));
         });
         it('should add schema.org imports given superclasses', async () => {
             const schema = await getSchema('LocalBusiness');
@@ -69,7 +69,7 @@ describe('JsonldToManifest', () => {
             omitKey(json, 'schema:domainIncludes');
             const testSchema = JSON.stringify(json);
             const converted = JsonldToManifest.convert(testSchema, { '@id': 'schema:LocalBusiness' });
-            assert.isTrue(isValidManifest(converted));
+            assert.isTrue(await isValidManifest(converted));
         });
         // TODO(alxr) get test to pass
         it.skip('should produce a manifest even if there are no relevant properties', async () => {
@@ -88,7 +88,7 @@ describe('JsonldToManifest', () => {
             });
             const data = JSON.stringify(json);
             const converted = JsonldToManifest.convert(data, { '@id': 'schema:LocalBusiness' });
-            assert.isTrue(isValidManifest(converted));
+            assert.isTrue(await isValidManifest(converted));
         });
     });
 });

@@ -3432,11 +3432,11 @@ class Handle {
  * which handles are connected.
  */
 class Collection extends Handle {
-    _notify(kind, particle, details) {
+    async _notify(kind, particle, details) {
         Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(this.canRead, '_notify should not be called for non-readable handles');
         switch (kind) {
             case 'sync':
-                particle.callOnHandleSync(this, this._restore(details), e => this.reportUserExceptionInHost(e, particle, 'onHandleSync'));
+                await particle.callOnHandleSync(this, this._restore(details), e => this.reportUserExceptionInHost(e, particle, 'onHandleSync'));
                 return;
             case 'update': {
                 // tslint:disable-next-line: no-any
@@ -3448,11 +3448,11 @@ class Collection extends Handle {
                     update.removed = this._restore(details.remove);
                 }
                 update.originator = details.originatorId === this._particleId;
-                particle.callOnHandleUpdate(this, update, e => this.reportUserExceptionInHost(e, particle, 'onHandleUpdate'));
+                await particle.callOnHandleUpdate(this, update, e => this.reportUserExceptionInHost(e, particle, 'onHandleUpdate'));
                 return;
             }
             case 'desync':
-                particle.callOnHandleDesync(this, e => this.reportUserExceptionInHost(e, particle, 'onHandleUpdate'));
+                await particle.callOnHandleDesync(this, e => this.reportUserExceptionInHost(e, particle, 'onHandleUpdate'));
                 return;
             default:
                 throw new Error('unsupported');
@@ -3525,7 +3525,7 @@ class Collection extends Handle {
         const serialization = this._serialize(entity);
         // Remove the keys that exist at storage/proxy.
         const keys = [];
-        this.storage.remove(serialization.id, keys, this._particleId);
+        await this.storage.remove(serialization.id, keys, this._particleId);
     }
 }
 /**
@@ -3678,7 +3678,7 @@ class BigCollection extends Handle {
             throw new Error('Handle not writeable');
         }
         const serialization = this._serialize(entity);
-        this.storage.remove(serialization.id, [], this._particleId);
+        await this.storage.remove(serialization.id, [], this._particleId);
     }
     /**
      * @returns a Cursor instance that iterates over the full set of entities, reading `pageSize`
@@ -5522,7 +5522,7 @@ class Particle {
         }
     }
     async callSetHandles(handles, onException) {
-        this.invokeSafely(async (p) => p.setHandles(handles), onException);
+        await this.invokeSafely(async (p) => p.setHandles(handles), onException);
     }
     /**
      * This method is invoked with a handle for each store this particle
@@ -5535,7 +5535,7 @@ class Particle {
     async setHandles(handles) {
     }
     async callOnHandleSync(handle, model, onException) {
-        this.invokeSafely(async (p) => p.onHandleSync(handle, model), onException);
+        await this.invokeSafely(async (p) => p.onHandleSync(handle, model), onException);
     }
     /**
      * Called for handles that are configured with both keepSynced and notifySync, when they are
@@ -5550,7 +5550,7 @@ class Particle {
     }
     // tslint:disable-next-line: no-any
     async callOnHandleUpdate(handle, update, onException) {
-        this.invokeSafely(async (p) => p.onHandleUpdate(handle, update), onException);
+        await this.invokeSafely(async (p) => p.onHandleUpdate(handle, update), onException);
     }
     /**
      * Called for handles that are configued with notifyUpdate, when change events are received from
@@ -5569,7 +5569,7 @@ class Particle {
     async onHandleUpdate(handle, update) {
     }
     async callOnHandleDesync(handle, onException) {
-        this.invokeSafely(async (p) => p.onHandleDesync(handle), onException);
+        await this.invokeSafely(async (p) => p.onHandleDesync(handle), onException);
     }
     /**
      * Called for handles that are configured with both keepSynced and notifyDesync, when they are
@@ -5664,15 +5664,15 @@ class Particle {
         }
         return output.join('');
     }
-    setParticleDescription(pattern) {
+    async setParticleDescription(pattern) {
         return this.setDescriptionPattern('pattern', pattern);
     }
-    setDescriptionPattern(connectionName, pattern) {
+    async setDescriptionPattern(connectionName, pattern) {
         const descriptions = this.handles.get('descriptions');
         if (descriptions) {
             const entityClass = descriptions.entityClass;
             if (descriptions instanceof _handle_js__WEBPACK_IMPORTED_MODULE_0__["Collection"] || descriptions instanceof _handle_js__WEBPACK_IMPORTED_MODULE_0__["BigCollection"]) {
-                descriptions.store(new entityClass({ key: connectionName, value: pattern }, this.spec.name + '-' + connectionName));
+                await descriptions.store(new entityClass({ key: connectionName, value: pattern }, this.spec.name + '-' + connectionName));
             }
             return true;
         }
@@ -6670,13 +6670,13 @@ class DomParticleBase extends _particle_js__WEBPACK_IMPORTED_MODULE_1__["Particl
             this[handler]({ data });
         }
     }
-    setParticleDescription(pattern) {
+    async setParticleDescription(pattern) {
         if (typeof pattern === 'string') {
             return super.setParticleDescription(pattern);
         }
         if (pattern.template && pattern.model) {
-            super.setDescriptionPattern('_template_', pattern.template);
-            super.setDescriptionPattern('_model_', JSON.stringify(pattern.model));
+            await super.setDescriptionPattern('_template_', pattern.template);
+            await super.setDescriptionPattern('_model_', JSON.stringify(pattern.model));
             return undefined;
         }
         else {
@@ -6689,7 +6689,7 @@ class DomParticleBase extends _particle_js__WEBPACK_IMPORTED_MODULE_1__["Particl
     async clearHandle(handleName) {
         const handle = this.handles.get(handleName);
         if (handle instanceof _handle_js__WEBPACK_IMPORTED_MODULE_0__["Singleton"] || handle instanceof _handle_js__WEBPACK_IMPORTED_MODULE_0__["Collection"]) {
-            handle.clear();
+            await handle.clear();
         }
         else {
             throw new Error('Singleton/Collection required');
@@ -6706,7 +6706,7 @@ class DomParticleBase extends _particle_js__WEBPACK_IMPORTED_MODULE_1__["Particl
             handleEntities.forEach(entity => idMap[entity.id] = entity);
             for (const entity of entities) {
                 if (!idMap[entity.id]) {
-                    handle.store(entity);
+                    await handle.store(entity);
                 }
             }
         }
@@ -6721,7 +6721,7 @@ class DomParticleBase extends _particle_js__WEBPACK_IMPORTED_MODULE_1__["Particl
         const handle = this.handles.get(handleName);
         if (handle) {
             if (handle instanceof _handle_js__WEBPACK_IMPORTED_MODULE_0__["Collection"] || handle instanceof _handle_js__WEBPACK_IMPORTED_MODULE_0__["BigCollection"]) {
-                Promise.all(entities.map(entity => handle.store(entity)));
+                await Promise.all(entities.map(entity => handle.store(entity)));
             }
             else {
                 throw new Error('Collection required');
@@ -6736,7 +6736,7 @@ class DomParticleBase extends _particle_js__WEBPACK_IMPORTED_MODULE_1__["Particl
         if (handle && handle.entityClass) {
             if (handle instanceof _handle_js__WEBPACK_IMPORTED_MODULE_0__["Collection"] || handle instanceof _handle_js__WEBPACK_IMPORTED_MODULE_0__["BigCollection"]) {
                 const entityClass = handle.entityClass;
-                Promise.all(rawDataArray.map(raw => handle.store(new entityClass(raw))));
+                await Promise.all(rawDataArray.map(raw => handle.store(new entityClass(raw))));
             }
             else {
                 throw new Error('Collection required');
@@ -6747,13 +6747,13 @@ class DomParticleBase extends _particle_js__WEBPACK_IMPORTED_MODULE_1__["Particl
      * Modify value of named handle. A new entity is created
      * from `rawData` (`new [EntityClass](rawData)`).
      */
-    updateSingleton(handleName, rawData) {
+    async updateSingleton(handleName, rawData) {
         const handle = this.handles.get(handleName);
         if (handle && handle.entityClass) {
             if (handle instanceof _handle_js__WEBPACK_IMPORTED_MODULE_0__["Singleton"]) {
                 const entityClass = handle.entityClass;
                 const entity = new entityClass(rawData);
-                handle.set(entity);
+                await handle.set(entity);
                 return entity;
             }
             else {

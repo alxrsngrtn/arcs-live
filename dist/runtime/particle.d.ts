@@ -116,8 +116,8 @@ export declare class Particle {
      */
     getSlot(name: string): SlotProxy;
     static buildManifest(strings: string[], ...bits: any[]): string;
-    setParticleDescription(pattern: any): boolean;
-    setDescriptionPattern(connectionName: string, pattern: any): boolean;
+    setParticleDescription(pattern: any): Promise<boolean>;
+    setDescriptionPattern(connectionName: string, pattern: any): Promise<boolean>;
     renderSlot(slotName: string, contentTypes: string[]): void;
     renderHostedSlot(slotName: string, hostedSlotId: string, content: string): void;
     fireEvent(slotName: string, event: {}): void;

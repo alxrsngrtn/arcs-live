@@ -1,10 +1,16 @@
-commit bf7e955e5cda4e51130fa163aba423af58cfc7db
-Author: Paul Lindner <plindner@google.com>
-Date:   Thu Jun 13 23:07:30 2019 -0700
+commit 0c423058d65e9f58ad4c1436902cfb6d594cd328
+Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
+Date:   Fri Jun 14 17:09:49 2019 +1000
 
-    Improve nullability of Arcs code #paydown (#3182)
+    Fixes a ton of floating promises. (#3183)
     
-    - Introduce testing/preconditions.ts to allow inline checking of null/undefined.
-    - Introduce types in lots of local variables.
+    * Fixes a ton of floating promises.
     
-    1614 -> 1453 == 16.1 points
+    Not all of them, but as many as I could, which didn't cause failing
+    tests.
+    
+    * Fixes miscellaneous other floating promises.
+    
+    * Restore tslint
+    
+    * Switch tslint disable comments to void

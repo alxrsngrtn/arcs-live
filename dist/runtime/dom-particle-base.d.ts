@@ -47,7 +47,7 @@ export declare class DomParticleBase extends Particle {
     setParticleDescription(pattern: string | {
         template: any;
         model: {};
-    }): boolean | undefined;
+    }): Promise<boolean | undefined>;
     /**
      * Remove all entities from named handle.
      */
@@ -68,7 +68,7 @@ export declare class DomParticleBase extends Particle {
      * Modify value of named handle. A new entity is created
      * from `rawData` (`new [EntityClass](rawData)`).
      */
-    updateSingleton(handleName: string, rawData: any): import("./entity.js").EntityInterface;
+    updateSingleton(handleName: string, rawData: any): Promise<import("./entity.js").EntityInterface>;
     /**
      * Modify or insert `entity` into named handle.
      * Modification is done by removing the old entity and reinserting the new one.

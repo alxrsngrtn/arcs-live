@@ -13,7 +13,7 @@ export declare class MessagePort {
     readonly _other: number;
     _onmessage: (e: MessageEvent) => void | undefined;
     constructor(channel: any, id: any, other: any);
-    postMessage(message: any): void;
+    postMessage(message: any): Promise<void>;
     onmessage: (e: MessageEvent) => void;
     close(): void;
 }

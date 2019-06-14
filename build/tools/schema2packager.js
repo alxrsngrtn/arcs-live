@@ -152,6 +152,6 @@ async function processFile(file) {
     }
 }
 for (const file of argv._) {
-    processFile(file);
+    void processFile(file);
 }
 //# sourceMappingURL=schema2packager.js.map

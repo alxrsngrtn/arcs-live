@@ -756,11 +756,11 @@ class Handle {
  * which handles are connected.
  */
 class Collection extends Handle {
-    _notify(kind, particle, details) {
+    async _notify(kind, particle, details) {
         assert(this.canRead, '_notify should not be called for non-readable handles');
         switch (kind) {
             case 'sync':
-                particle.callOnHandleSync(this, this._restore(details), e => this.reportUserExceptionInHost(e, particle, 'onHandleSync'));
+                await particle.callOnHandleSync(this, this._restore(details), e => this.reportUserExceptionInHost(e, particle, 'onHandleSync'));
                 return;
             case 'update': {
                 // tslint:disable-next-line: no-any
@@ -772,11 +772,11 @@ class Collection extends Handle {
                     update.removed = this._restore(details.remove);
                 }
                 update.originator = details.originatorId === this._particleId;
-                particle.callOnHandleUpdate(this, update, e => this.reportUserExceptionInHost(e, particle, 'onHandleUpdate'));
+                await particle.callOnHandleUpdate(this, update, e => this.reportUserExceptionInHost(e, particle, 'onHandleUpdate'));
                 return;
             }
             case 'desync':
-                particle.callOnHandleDesync(this, e => this.reportUserExceptionInHost(e, particle, 'onHandleUpdate'));
+                await particle.callOnHandleDesync(this, e => this.reportUserExceptionInHost(e, particle, 'onHandleUpdate'));
                 return;
             default:
                 throw new Error('unsupported');
@@ -849,7 +849,7 @@ class Collection extends Handle {
         const serialization = this._serialize(entity);
         // Remove the keys that exist at storage/proxy.
         const keys = [];
-        this.storage.remove(serialization.id, keys, this._particleId);
+        await this.storage.remove(serialization.id, keys, this._particleId);
     }
 }
 /**
@@ -1002,7 +1002,7 @@ class BigCollection extends Handle {
             throw new Error('Handle not writeable');
         }
         const serialization = this._serialize(entity);
-        this.storage.remove(serialization.id, [], this._particleId);
+        await this.storage.remove(serialization.id, [], this._particleId);
     }
     /**
      * @returns a Cursor instance that iterates over the full set of entities, reading `pageSize`
@@ -16133,7 +16133,7 @@ class VolatileStorageProvider extends StorageProviderBase {
         if (!this.pendingBackingStore) {
             const key = this.storageEngine.baseStorageKey(this.backingType());
             this.pendingBackingStore = this.storageEngine.baseStorageFor(this.backingType(), key);
-            this.pendingBackingStore.then(backingStore => this.backingStore = backingStore);
+            await this.pendingBackingStore.then(backingStore => this.backingStore = backingStore);
         }
         return this.pendingBackingStore;
     }
@@ -16148,9 +16148,9 @@ class VolatileCollection extends VolatileStorageProvider {
     backingType() {
         return this.type.getContainedType();
     }
-    clone() {
+    async clone() {
         const handle = new VolatileCollection(this.type, this.storageEngine, this.name, this.id, null);
-        handle.cloneFrom(this);
+        await handle.cloneFrom(this);
         return handle;
     }
     async cloneFrom(handle) {
@@ -16256,7 +16256,7 @@ class VolatileCollection extends VolatileStorageProvider {
             }
         });
         this.version++;
-        this._fire('change', new ChangeEvent({ remove: items, version: this.version, originatorId }));
+        await this._fire('change', new ChangeEvent({ remove: items, version: this.version, originatorId }));
     }
     async remove(id, keys = [], originatorId = null) {
         if (keys.length === 0) {
@@ -16284,9 +16284,9 @@ class VolatileSingleton extends VolatileStorageProvider {
     backingType() {
         return this.type;
     }
-    clone() {
+    async clone() {
         const singleton = new VolatileSingleton(this.type, this.storageEngine, this.name, this.id, null);
-        singleton.cloneFrom(this);
+        await singleton.cloneFrom(this);
         return singleton;
     }
     async cloneFrom(handle) {
@@ -16645,14 +16645,11 @@ class SyntheticCollection extends StorageProviderBase {
         this.backingStore = undefined;
         this.targetStore = targetStore;
         this.storageFactory = storageFactory;
-        let resolveInitialized;
-        this.initialized = new Promise(resolve => resolveInitialized = resolve);
-        const process = async (data) => {
+        this.initialized = (async () => {
+            const data = await targetStore.get();
             await this.process(data, false);
-            resolveInitialized();
             targetStore.on('change', details => this.process(details.data, true), this);
-        };
-        targetStore.get().then(data => process(data));
+        })();
     }
     async process(data, fireEvent) {
         let handles;
@@ -16676,7 +16673,7 @@ class SyntheticCollection extends StorageProviderBase {
             const diff = setDiffCustom(oldModel, this.model, JSON.stringify);
             const add = diff.add.map(arcHandle => ({ value: arcHandle }));
             const remove = diff.remove.map(arcHandle => ({ value: arcHandle }));
-            this._fire('change', new ChangeEvent({ add, remove }));
+            await this._fire('change', new ChangeEvent({ add, remove }));
         }
     }
     async toList() {
@@ -18290,7 +18287,7 @@ class Particle$1 {
         }
     }
     async callSetHandles(handles, onException) {
-        this.invokeSafely(async (p) => p.setHandles(handles), onException);
+        await this.invokeSafely(async (p) => p.setHandles(handles), onException);
     }
     /**
      * This method is invoked with a handle for each store this particle
@@ -18303,7 +18300,7 @@ class Particle$1 {
     async setHandles(handles) {
     }
     async callOnHandleSync(handle, model, onException) {
-        this.invokeSafely(async (p) => p.onHandleSync(handle, model), onException);
+        await this.invokeSafely(async (p) => p.onHandleSync(handle, model), onException);
     }
     /**
      * Called for handles that are configured with both keepSynced and notifySync, when they are
@@ -18318,7 +18315,7 @@ class Particle$1 {
     }
     // tslint:disable-next-line: no-any
     async callOnHandleUpdate(handle, update, onException) {
-        this.invokeSafely(async (p) => p.onHandleUpdate(handle, update), onException);
+        await this.invokeSafely(async (p) => p.onHandleUpdate(handle, update), onException);
     }
     /**
      * Called for handles that are configued with notifyUpdate, when change events are received from
@@ -18337,7 +18334,7 @@ class Particle$1 {
     async onHandleUpdate(handle, update) {
     }
     async callOnHandleDesync(handle, onException) {
-        this.invokeSafely(async (p) => p.onHandleDesync(handle), onException);
+        await this.invokeSafely(async (p) => p.onHandleDesync(handle), onException);
     }
     /**
      * Called for handles that are configured with both keepSynced and notifyDesync, when they are
@@ -18432,15 +18429,15 @@ class Particle$1 {
         }
         return output.join('');
     }
-    setParticleDescription(pattern) {
+    async setParticleDescription(pattern) {
         return this.setDescriptionPattern('pattern', pattern);
     }
-    setDescriptionPattern(connectionName, pattern) {
+    async setDescriptionPattern(connectionName, pattern) {
         const descriptions = this.handles.get('descriptions');
         if (descriptions) {
             const entityClass = descriptions.entityClass;
             if (descriptions instanceof Collection || descriptions instanceof BigCollection) {
-                descriptions.store(new entityClass({ key: connectionName, value: pattern }, this.spec.name + '-' + connectionName));
+                await descriptions.store(new entityClass({ key: connectionName, value: pattern }, this.spec.name + '-' + connectionName));
             }
             return true;
         }
@@ -18586,13 +18583,13 @@ class DomParticleBase extends Particle$1 {
             this[handler]({ data });
         }
     }
-    setParticleDescription(pattern) {
+    async setParticleDescription(pattern) {
         if (typeof pattern === 'string') {
             return super.setParticleDescription(pattern);
         }
         if (pattern.template && pattern.model) {
-            super.setDescriptionPattern('_template_', pattern.template);
-            super.setDescriptionPattern('_model_', JSON.stringify(pattern.model));
+            await super.setDescriptionPattern('_template_', pattern.template);
+            await super.setDescriptionPattern('_model_', JSON.stringify(pattern.model));
             return undefined;
         }
         else {
@@ -18605,7 +18602,7 @@ class DomParticleBase extends Particle$1 {
     async clearHandle(handleName) {
         const handle = this.handles.get(handleName);
         if (handle instanceof Singleton || handle instanceof Collection) {
-            handle.clear();
+            await handle.clear();
         }
         else {
             throw new Error('Singleton/Collection required');
@@ -18622,7 +18619,7 @@ class DomParticleBase extends Particle$1 {
             handleEntities.forEach(entity => idMap[entity.id] = entity);
             for (const entity of entities) {
                 if (!idMap[entity.id]) {
-                    handle.store(entity);
+                    await handle.store(entity);
                 }
             }
         }
@@ -18637,7 +18634,7 @@ class DomParticleBase extends Particle$1 {
         const handle = this.handles.get(handleName);
         if (handle) {
             if (handle instanceof Collection || handle instanceof BigCollection) {
-                Promise.all(entities.map(entity => handle.store(entity)));
+                await Promise.all(entities.map(entity => handle.store(entity)));
             }
             else {
                 throw new Error('Collection required');
@@ -18652,7 +18649,7 @@ class DomParticleBase extends Particle$1 {
         if (handle && handle.entityClass) {
             if (handle instanceof Collection || handle instanceof BigCollection) {
                 const entityClass = handle.entityClass;
-                Promise.all(rawDataArray.map(raw => handle.store(new entityClass(raw))));
+                await Promise.all(rawDataArray.map(raw => handle.store(new entityClass(raw))));
             }
             else {
                 throw new Error('Collection required');
@@ -18663,13 +18660,13 @@ class DomParticleBase extends Particle$1 {
      * Modify value of named handle. A new entity is created
      * from `rawData` (`new [EntityClass](rawData)`).
      */
-    updateSingleton(handleName, rawData) {
+    async updateSingleton(handleName, rawData) {
         const handle = this.handles.get(handleName);
         if (handle && handle.entityClass) {
             if (handle instanceof Singleton) {
                 const entityClass = handle.entityClass;
                 const entity = new entityClass(rawData);
-                handle.set(entity);
+                await handle.set(entity);
                 return entity;
             }
             else {
@@ -19252,14 +19249,14 @@ class MessagePort {
         this._onmessage = undefined;
     }
     // TODO appears to be {messageType, messageBody}
-    postMessage(message) {
-        this._channel._post(this._other, message);
+    async postMessage(message) {
+        await this._channel._post(this._other, message);
     }
     set onmessage(f) {
         this._onmessage = f;
     }
     close() {
-        this.postMessage = () => { };
+        this.postMessage = async () => { };
     }
 }
 class MessageEvent {
@@ -30266,7 +30263,7 @@ class PlanProducer {
         const metadata = { trigger: Trigger.Search, search: this.search };
         if (this.search === '*') { // Search for ALL (including non-contextual) suggestions.
             if (this.result.contextual) {
-                this.produceSuggestions({ contextual: false, metadata });
+                await this.produceSuggestions({ contextual: false, metadata });
             }
         }
         else { // Search by search term.
@@ -30285,7 +30282,7 @@ class PlanProducer {
                 // with a new search phrase.
                 options.strategies = [InitSearch, ...Planner.ResolutionStrategies];
             }
-            this.produceSuggestions({ ...options, metadata });
+            await this.produceSuggestions({ ...options, metadata });
         }
     }
     dispose() {
@@ -30732,7 +30729,7 @@ class Planificator {
         await result.load();
         const planificator = new Planificator(arc, result, searchStore, onlyConsumer, debug);
         await planificator._storeSearch(); // Reset search value for the current arc.
-        planificator.requestPlanning({ contextual: true, metadata: { trigger: Trigger.Init } });
+        await planificator.requestPlanning({ contextual: true, metadata: { trigger: Trigger.Init } });
         return planificator;
     }
     async requestPlanning(options = {}) {
@@ -30775,7 +30772,7 @@ class Planificator {
         if (this.producer) {
             await this.producer.result.clear();
         }
-        this.setSearch(null);
+        await this.setSearch(null);
     }
     _listenToArcStores() {
         this.arc.onDataChange(this.dataChangeCallback, this);

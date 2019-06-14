@@ -108,8 +108,7 @@ class MockFirebaseReference {
             const snapshot = await this.once('value');
             this.callbacks.forEach(callback => callback(snapshot));
         }
-        this.database.propagateUpdate(this.key, this);
-        await 0;
+        await this.database.propagateUpdate(this.key, this);
         this.value.value = clone(backingResult);
         await 0;
         if (onComplete) {
@@ -181,12 +180,12 @@ class MockFirebaseDatabase {
         this.refs = {};
         this.app = app;
     }
-    propagateUpdate(path, fromReference) {
+    async propagateUpdate(path, fromReference) {
         for (const reference of this.refs[path]) {
             if (reference === fromReference) {
                 continue;
             }
-            reference.remoteStateChanged();
+            await reference.remoteStateChanged();
         }
     }
     goOffline() {

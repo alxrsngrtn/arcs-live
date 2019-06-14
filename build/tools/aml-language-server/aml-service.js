@@ -24,7 +24,7 @@ export class AmlService {
                 if (response) {
                     writer.write(response);
                 }
-            });
+            }).catch(e => this.context.logger.error(e));
         });
         this.reader.onError(err => {
             this.context.logger.error(err);

@@ -23,7 +23,7 @@ export declare class StorageProxy<T extends CRDTTypeRecord> {
     registerHandle(h: Handle<T>): VersionMap;
     applyOp(op: CRDTOperation): Promise<boolean>;
     getParticleView(): Promise<T['consumerType']>;
-    onMessage(message: ProxyMessage<T>): boolean;
+    onMessage(message: ProxyMessage<T>): Promise<boolean>;
     private notifyUpdate;
     private notifySync;
     private synchronizeModel;

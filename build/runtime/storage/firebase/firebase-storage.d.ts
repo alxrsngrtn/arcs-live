@@ -104,7 +104,7 @@ declare class FirebaseVariable extends FirebaseStorageProvider implements Single
     constructor(type: any, storageEngine: any, id: any, reference: any, firebaseKey: any, shouldExist: any);
     dispose(): void;
     backingType(): Type;
-    remoteStateChanged(dataSnapshot: firebase.database.DataSnapshot): void;
+    remoteStateChanged(dataSnapshot: firebase.database.DataSnapshot): Promise<void>;
     readonly _hasLocalChanges: boolean;
     _persistChangesImpl(): Promise<void>;
     readonly versionForTesting: number;
@@ -168,7 +168,7 @@ declare class FirebaseCollection extends FirebaseStorageProvider implements Coll
     constructor(type: any, storageEngine: any, id: any, reference: any, firebaseKey: any);
     dispose(): void;
     backingType(): Type;
-    remoteStateChanged(dataSnapshot: any): void;
+    remoteStateChanged(dataSnapshot: any): Promise<void>;
     readonly versionForTesting: number;
     get(id: string): Promise<any>;
     removeMultiple(items: any, originatorId?: any): Promise<void>;

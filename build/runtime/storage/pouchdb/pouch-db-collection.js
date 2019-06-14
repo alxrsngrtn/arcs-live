@@ -63,7 +63,7 @@ export class PouchDbCollection extends PouchDbStorageProvider {
         // fire?
         const updatedCrdtModelLiteral = doc.model;
         const dataToFire = updatedCrdtModelLiteral.length === 0 ? null : updatedCrdtModelLiteral[0].value;
-        this._fire('change', new ChangeEvent({ data: dataToFire, version: this.version }));
+        await this._fire('change', new ChangeEvent({ data: dataToFire, version: this.version }));
     }
     /** @inheritDoc */
     async modelForSynchronization() {
@@ -185,7 +185,7 @@ export class PouchDbCollection extends PouchDbStorageProvider {
             // Update the referred data
             await this.initialized;
             const backingStore = await this.ensureBackingStore();
-            backingStore.store(value, keys);
+            await backingStore.store(value, keys);
             const doc = await this.upsert(async (doc) => {
                 const crdtmodel = new CrdtCollectionModel(doc.model);
                 item.effective = crdtmodel.add(value.id, { id: value.id, storageKey }, keys);
@@ -203,7 +203,7 @@ export class PouchDbCollection extends PouchDbStorageProvider {
             });
         }
         // Notify Listeners
-        this._fire('change', new ChangeEvent({ add: [item], version: this.version, originatorId }));
+        await this._fire('change', new ChangeEvent({ add: [item], version: this.version, originatorId }));
     }
     async removeMultiple(items, originatorId) {
         await this.initialized;
@@ -225,7 +225,7 @@ export class PouchDbCollection extends PouchDbStorageProvider {
             doc.model = crdtmodel.toLiteral();
             return doc;
         });
-        this._fire('change', new ChangeEvent({ remove: items, version: this.version, originatorId }));
+        await this._fire('change', new ChangeEvent({ remove: items, version: this.version, originatorId }));
     }
     /**
      * Remove ids from a collection for specific keys.
@@ -244,7 +244,7 @@ export class PouchDbCollection extends PouchDbStorageProvider {
             if (value !== null) {
                 const effective = crdtmodel.remove(id, keys);
                 // TODO(lindner): isolate side effects...
-                this._fire('change', new ChangeEvent({ remove: [{ value, keys, effective }], version: this.version, originatorId }));
+                await this._fire('change', new ChangeEvent({ remove: [{ value, keys, effective }], version: this.version, originatorId }));
             }
             doc.model = crdtmodel.toLiteral();
             return doc;

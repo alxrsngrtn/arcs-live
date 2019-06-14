@@ -15,14 +15,14 @@ export class MessagePort {
         this._onmessage = undefined;
     }
     // TODO appears to be {messageType, messageBody}
-    postMessage(message) {
-        this._channel._post(this._other, message);
+    async postMessage(message) {
+        await this._channel._post(this._other, message);
     }
     set onmessage(f) {
         this._onmessage = f;
     }
     close() {
-        this.postMessage = () => { };
+        this.postMessage = async () => { };
     }
 }
 class MessageEvent {

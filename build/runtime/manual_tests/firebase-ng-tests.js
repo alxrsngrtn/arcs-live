@@ -18,9 +18,9 @@ async function resetStorageKeyForTesting(key) {
     const app = firebase.initializeApp(key);
     const reference = firebase.database(app).ref(key.location);
     await new Promise(resolve => {
-        reference.remove(resolve);
+        void reference.remove(resolve);
     });
-    app.delete();
+    await app.delete();
 }
 describe('firebase-ng-driver', function () {
     this.timeout(10000);
@@ -37,8 +37,7 @@ describe('firebase-ng-driver', function () {
             output.registerReceiver((model, version) => {
                 assert.equal(model, 24);
                 assert.equal(version, 1);
-                FirebaseAppCache.stop();
-                resolve();
+                FirebaseAppCache.stop().then(() => resolve).catch(reject);
             });
         });
     });
@@ -59,7 +58,7 @@ describe('firebase-ng-driver', function () {
         const result = await Promise.all([driver1.send(13, 1), driver2.send(18, 1), receivedData]);
         assert.isTrue(result[0]);
         assert.isFalse(result[1]);
-        FirebaseAppCache.stop();
+        await FirebaseAppCache.stop();
     });
 });
 //# sourceMappingURL=firebase-ng-tests.js.map

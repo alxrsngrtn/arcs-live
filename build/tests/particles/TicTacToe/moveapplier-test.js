@@ -30,14 +30,14 @@ describe('TicTacToe MoveApplier tests', () => {
         const messageResultStore = arc.findStoreById(arc.activeRecipe.particles[0].connections['messageResult'].handle.id);
         const boardStore = arc.findStoreById(arc.activeRecipe.particles[0].connections['board'].handle.id);
         await stateStore.set({ id: 'startGame', rawData: { state: 0 } });
-        boardStore.set({ id: 'startBoard', rawData: {
+        await boardStore.set({ id: 'startBoard', rawData: {
                 p00: 0, p01: 0, p02: 0,
                 p10: 0, p11: 0, p12: 0,
                 p20: 0, p21: 0, p22: 0
             } });
         await nextMoveStore.set({ id: 'id0', rawData: { x: 1, y: 1, player: 1 } });
-        util.assertSingletonWillChangeTo(arc, boardResultStore, 'p11', 1);
-        util.assertSingletonWillChangeTo(arc, messageResultStore, 'msg', '(null)');
+        await util.assertSingletonWillChangeTo(arc, boardResultStore, 'p11', 1);
+        await util.assertSingletonWillChangeTo(arc, messageResultStore, 'msg', '(null)');
     });
     it('fails if nextMove and state has player mismatch', async () => {
         const loader = new Loader();
@@ -54,14 +54,14 @@ describe('TicTacToe MoveApplier tests', () => {
         const messageResultStore = arc.findStoreById(arc.activeRecipe.particles[0].connections['messageResult'].handle.id);
         const boardStore = arc.findStoreById(arc.activeRecipe.particles[0].connections['board'].handle.id);
         await stateStore.set({ id: 'startGame', rawData: { state: 1 } });
-        boardStore.set({ id: 'startBoard', rawData: {
+        await boardStore.set({ id: 'startBoard', rawData: {
                 p00: 0, p01: 0, p02: 0,
                 p10: 0, p11: 0, p12: 0,
                 p20: 0, p21: 0, p22: 0
             } });
         await nextMoveStore.set({ id: 'id0', rawData: { x: 1, y: 1, player: 1 } });
-        util.assertSingletonWillChangeTo(arc, boardResultStore, 'p11', '(null)');
-        util.assertSingletonWillChangeTo(arc, messageResultStore, 'msg', 'Incorrect player ID: 1 with state 1');
+        await util.assertSingletonWillChangeTo(arc, boardResultStore, 'p11', '(null)');
+        await util.assertSingletonWillChangeTo(arc, messageResultStore, 'msg', 'Incorrect player ID: 1 with state 1');
     });
 });
 //# sourceMappingURL=moveapplier-test.js.map

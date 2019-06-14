@@ -113,7 +113,7 @@ export class DirectStore extends ActiveStore {
     async onProxyMessage(message) {
         switch (message.type) {
             case ProxyMessageType.SyncRequest:
-                this.callbacks.get(message.id)({ type: ProxyMessageType.ModelUpdate, model: this.localModel.getData(), id: message.id });
+                await this.callbacks.get(message.id)({ type: ProxyMessageType.ModelUpdate, model: this.localModel.getData(), id: message.id });
                 return true;
             case ProxyMessageType.Operations:
                 for (const operation of message.operations) {

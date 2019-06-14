@@ -612,8 +612,8 @@ describe('particle-api', () => {
         });
         const result = arc.context.findSchemaByName('Result').entityClass();
         const inputsStore = await arc.createStore(result.type.collectionOf(), undefined, 'test:1');
-        inputsStore.store({ id: '1', rawData: { value: 'hello' } }, ['key1']);
-        inputsStore.store({ id: '2', rawData: { value: 'world' } }, ['key2']);
+        await inputsStore.store({ id: '1', rawData: { value: 'hello' } }, ['key1']);
+        await inputsStore.store({ id: '2', rawData: { value: 'world' } }, ['key2']);
         const resultsStore = await arc.createStore(result.type.collectionOf(), undefined, 'test:2');
         const inspector = new util.ResultInspector(arc, resultsStore, 'value');
         const recipe = arc.context.recipes[0];
@@ -777,7 +777,7 @@ describe('particle-api', () => {
         recipe.handles[1].mapToStorage(outStore);
         recipe.normalize();
         await arc.instantiate(recipe);
-        inStore.set({ id: '1', rawData: {} }, 'a');
+        await inStore.set({ id: '1', rawData: {} }, 'a');
         await arc.idle;
         await util.assertSingletonIs(outStore, 'result', 'hi');
     });
@@ -823,7 +823,7 @@ describe('particle-api', () => {
         recipe.handles[1].mapToStorage(outStore);
         recipe.normalize();
         await arc.instantiate(recipe);
-        inStore.set({ id: '1', rawData: {} }, 'a');
+        await inStore.set({ id: '1', rawData: {} }, 'a');
         await arc.idle;
         await util.assertSingletonIs(outStore, 'result', 'hi');
     });
@@ -870,7 +870,7 @@ describe('particle-api', () => {
         recipe.normalize();
         await arc.instantiate(recipe);
         await arc.idle;
-        inStore.set({ id: '1', rawData: {} }, 'a');
+        await inStore.set({ id: '1', rawData: {} }, 'a');
         await arc.idle;
         await util.assertSingletonIs(outStore, 'result', 'hi');
     });

@@ -105,11 +105,11 @@ export class Handle {
  * which handles are connected.
  */
 export class Collection extends Handle {
-    _notify(kind, particle, details) {
+    async _notify(kind, particle, details) {
         assert(this.canRead, '_notify should not be called for non-readable handles');
         switch (kind) {
             case 'sync':
-                particle.callOnHandleSync(this, this._restore(details), e => this.reportUserExceptionInHost(e, particle, 'onHandleSync'));
+                await particle.callOnHandleSync(this, this._restore(details), e => this.reportUserExceptionInHost(e, particle, 'onHandleSync'));
                 return;
             case 'update': {
                 // tslint:disable-next-line: no-any
@@ -121,11 +121,11 @@ export class Collection extends Handle {
                     update.removed = this._restore(details.remove);
                 }
                 update.originator = details.originatorId === this._particleId;
-                particle.callOnHandleUpdate(this, update, e => this.reportUserExceptionInHost(e, particle, 'onHandleUpdate'));
+                await particle.callOnHandleUpdate(this, update, e => this.reportUserExceptionInHost(e, particle, 'onHandleUpdate'));
                 return;
             }
             case 'desync':
-                particle.callOnHandleDesync(this, e => this.reportUserExceptionInHost(e, particle, 'onHandleUpdate'));
+                await particle.callOnHandleDesync(this, e => this.reportUserExceptionInHost(e, particle, 'onHandleUpdate'));
                 return;
             default:
                 throw new Error('unsupported');
@@ -198,7 +198,7 @@ export class Collection extends Handle {
         const serialization = this._serialize(entity);
         // Remove the keys that exist at storage/proxy.
         const keys = [];
-        this.storage.remove(serialization.id, keys, this._particleId);
+        await this.storage.remove(serialization.id, keys, this._particleId);
     }
 }
 /**
@@ -351,7 +351,7 @@ export class BigCollection extends Handle {
             throw new Error('Handle not writeable');
         }
         const serialization = this._serialize(entity);
-        this.storage.remove(serialization.id, [], this._particleId);
+        await this.storage.remove(serialization.id, [], this._particleId);
     }
     /**
      * @returns a Cursor instance that iterates over the full set of entities, reading `pageSize`

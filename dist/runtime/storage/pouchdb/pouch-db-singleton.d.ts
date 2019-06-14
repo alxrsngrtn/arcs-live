@@ -86,7 +86,7 @@ export declare class PouchDbSingleton extends PouchDbStorageProvider implements 
     /**
      * Triggered when the storage key has been modified or deleted.
      */
-    onRemoteStateSynced(doc: PouchDB.Core.ExistingDocument<SingletonStorage>): void;
+    onRemoteStateSynced(doc: PouchDB.Core.ExistingDocument<SingletonStorage>): Promise<void>;
     /**
      * Get/Modify/Set the data stored for this singleton.
      */

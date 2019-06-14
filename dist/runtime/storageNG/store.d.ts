@@ -33,7 +33,7 @@ export declare type ProxyMessage<T extends CRDTTypeRecord> = {
     operations: T['operation'][];
     id: number;
 };
-export declare type ProxyCallback<T extends CRDTTypeRecord> = (message: ProxyMessage<T>) => boolean;
+export declare type ProxyCallback<T extends CRDTTypeRecord> = (message: ProxyMessage<T>) => Promise<boolean>;
 export declare class Store<T extends CRDTTypeRecord> {
     readonly storageKey: StorageKey;
     exists: Exists;

@@ -83,8 +83,8 @@ describe('firebase', function () {
             const key = newStoreKey('variable');
             const var1 = await storage.construct('test0', barType, key);
             const var2 = await storage.connect('test0', barType, key);
-            var1.set({ id: 'id1', value: 'value1' });
-            var2.set({ id: 'id2', value: 'value2' });
+            await var1.set({ id: 'id1', value: 'value1' });
+            await var2.set({ id: 'id2', value: 'value2' });
             await synchronized(var1, var2);
             assert.deepEqual(await var1.get(), await var2.get());
         });
@@ -185,7 +185,7 @@ describe('firebase', function () {
             const key = newStoreKey('collection');
             const collection1 = await storage.construct('test1', barType.collectionOf(), key);
             const collection2 = await storage.connect('test1', barType.collectionOf(), key);
-            collection1.store({ id: 'id1', value: 'value' }, ['key1']);
+            await collection1.store({ id: 'id1', value: 'value' }, ['key1']);
             await collection2.store({ id: 'id1', value: 'value' }, ['key2']);
             await synchronized(collection1, collection2);
             assert.deepEqual(await collection1.toList(), await collection2.toList());
@@ -201,10 +201,10 @@ describe('firebase', function () {
             const key = newStoreKey('collection');
             const collection1 = await storage.construct('test1', barType.collectionOf(), key);
             const collection2 = await storage.connect('test1', barType.collectionOf(), key);
-            collection1.store({ id: 'id1', value: 'value' }, ['key1']);
-            collection2.store({ id: 'id1', value: 'value' }, ['key2']);
-            collection1.remove('id1', ['key1']);
-            collection2.remove('id1', ['key2']);
+            await collection1.store({ id: 'id1', value: 'value' }, ['key1']);
+            await collection2.store({ id: 'id1', value: 'value' }, ['key2']);
+            await collection1.remove('id1', ['key1']);
+            await collection2.remove('id1', ['key2']);
             await synchronized(collection1, collection2);
             assert.isEmpty(await collection1.toList());
             assert.isEmpty(await collection2.toList());
