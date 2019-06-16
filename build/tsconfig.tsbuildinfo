@@ -529,21 +529,9 @@
         "version": "c9b2903c5c9f2c184875ff2fddd1fe2b01b017c5421626b5ee3d23d18239893d",
         "signature": "47f15d34cf3b8cc417c6b5dd5d8e2bacd7b21d541c5357516120f287b11b05be"
       },
-      "/home/travis/build/PolymerLabs/arcs/src/devtools-connector/testing/devtools-channel-stub.ts": {
-        "version": "3f78cba881cb1f12f53500926d20da08c1522dd98d3c31cfa27c9bb164b33ce8",
-        "signature": "02e49be5a5301935149a362d68866fe34267f5f7a11d7f6c713af3c956e81807"
-      },
-      "/home/travis/build/PolymerLabs/arcs/src/devtools-connector/devtools-connection.ts": {
-        "version": "cfc980928c748b05f058e39e0243b42f1fd0233b4a1cd838673e01759b9f423c",
-        "signature": "79dfd6023c91a39283d17a43f36585ae0b7e9ad1621d76c0356412d931f569d3"
-      },
       "/home/travis/build/PolymerLabs/arcs/src/tracelib/trace.ts": {
         "version": "a98e5906b6498fa40caef4eec0293e935e884dc5fc8be55932bcc5409cb2b387",
         "signature": "6e844dfb124654a420421a44ec92d702e511bf1a3e10b3bc7a4170cbbcb89f9a"
-      },
-      "/home/travis/build/PolymerLabs/arcs/src/planning/debug/strategy-explorer-adapter.ts": {
-        "version": "88a26dbf6956d7503f1834c0845b9e9ae15a0cbb0f33b1c76e9ccb07e7286c1d",
-        "signature": "fe50c5f36263ff3f9c74002680154f4bf8d1ca17ed3ada64251a5bdeadde3971"
       },
       "/home/travis/build/PolymerLabs/arcs/src/planning/plan/suggest-filter.ts": {
         "version": "3af10cb2400583fb80050ae5449f8f5413ce6b79e8d15451a86be8922e7d626f",
@@ -554,11 +542,11 @@
         "signature": "22ba5754aac2fda1d26f925ad376111be0da368811b615a4988423bed575566a"
       },
       "/home/travis/build/PolymerLabs/arcs/src/planning/plan/planning-result.ts": {
-        "version": "fa6357cd761991eb89ac4aad2dba1a30a207ee79a9b2eff6eb278a7d13ee2b02",
-        "signature": "3320a7b5b1cc6809f86484a9b5dea4271f5136f7975f0595c4870fdaf6c93d30"
+        "version": "74016079f10c0d9aeb962ced5508f3261bd56be7a497f460fbf287f9c809d879",
+        "signature": "0199ca5a951679cb8d9ab5dd3eba61e843e6926d31f79908a3abff17cd4a3652"
       },
       "/home/travis/build/PolymerLabs/arcs/src/planning/speculator.ts": {
-        "version": "5422b4b2a75df6d6215beafccead4d52f659a435f6530c30f77ca15b18ff15bd",
+        "version": "cf41a3dd02d7089c7761782bdf95255b7e65c50785e0e63410125e62691e9e06",
         "signature": "659309dea86c2598407e72b108951dd2b6fd99ee27990dbda6f8fbcec98153ad"
       },
       "/home/travis/build/PolymerLabs/arcs/src/planning/strategizer.ts": {
@@ -638,8 +626,8 @@
         "signature": "b0c9adcc7d5a71be013d3271c5abef29188ddc581448a1610b1d911756fc84b3"
       },
       "/home/travis/build/PolymerLabs/arcs/src/planning/recipe-index.ts": {
-        "version": "795ff393fa80442756088f2b53f84c65b19b7443a116f4decbc9921ac66ab7c3",
-        "signature": "bc942b785c3f92b58141e4b1d5513535fed500850632cde9ad0d5499e9f406b8"
+        "version": "73485fc0f67466ca16ae2e1ddee1f82fc4e71e58bde5c88ed4180ce18c39a7f4",
+        "signature": "66ac45efa3361d6fbe8b9f06da876941955e5ef618bd7b507b2fd306402231d4"
       },
       "/home/travis/build/PolymerLabs/arcs/src/planning/strategies/coalesce-recipes.ts": {
         "version": "4153014d87053c7c5e6eab1459ae75ea39b1e8ba6661111cc17823293f0c0906",
@@ -661,49 +649,61 @@
         "version": "7d766383ad3b59b1b852b4c7d569a07795bd25d4a246aebdcd259dafd36e7adf",
         "signature": "53eeb6d3462642258398bab9918e6b967ea0da73ed236cd9815eb688a2b6e8b5"
       },
+      "/home/travis/build/PolymerLabs/arcs/src/planning/suggestion-composer.ts": {
+        "version": "d0b25b1c36e7e11ab2c3c25328ee59d068ecd867768aa8e0b3577656eb1d1b9a",
+        "signature": "55534ada5c9912c9301a9641e968b9978f1bce14e0647a5018231a458a5e4c8f"
+      },
+      "/home/travis/build/PolymerLabs/arcs/src/planning/plan/plan-consumer.ts": {
+        "version": "5203e0514c2f4b6a05e7feddc19bf1a8f200fac5852f7aa83b965148083a1dd6",
+        "signature": "6a5b13fae02fd0b0d5731a254641a84c9e904cddafd02fe0f744eada64d58744"
+      },
+      "/home/travis/build/PolymerLabs/arcs/src/planning/planner-inspector.ts": {
+        "version": "a8b66e17370f34fd98386a09160c038f7d271f62e9132fd61353bb0222064d72",
+        "signature": "95af2fded32899f009c4c044bee9b656bced36c2332be1aade0e2c65313e0c7a"
+      },
       "/home/travis/build/PolymerLabs/arcs/src/planning/planner.ts": {
-        "version": "1d3256630d65d06e2556093c142b1a209089d4a01fc559756b6d091f6636c1aa",
-        "signature": "2cdc9f9d403955229b52f437ccf2cfe84df2b38fbd6bb2e6b4775936543d6292"
+        "version": "507deea47e88de0913acc7202e4f011f6e158a7de62e100aad728048d754437d",
+        "signature": "fcfc8edc806fc5436af56d5fc9a15ea51390cd07ecefa2e86ec86115b37885d9"
       },
       "/home/travis/build/PolymerLabs/arcs/src/devtools-connector/arc-planner-invoker.ts": {
-        "version": "a4cf472502c8dc0697f6febdf6cd892ac44e48e166529e1fd0cac20fa663bc2a",
+        "version": "1f9fe58a281c53a4d0b4ae9a5dcff1630f6b3264be8606c56d491f4052947fe5",
         "signature": "261a969dd3d303a43bf7d510de0e5642118314c62275fe23ad98a206ffea4582"
       },
       "/home/travis/build/PolymerLabs/arcs/src/devtools-connector/arc-stores-fetcher.ts": {
         "version": "3eca1a98a176ad1cdb3f42f3566fde77a5cef84d3e0ee497847c5b985ad6773b",
         "signature": "eb2a954a60843cb794890544b0192d84609d5048f45c0a2c6242860a5f0a08cf"
       },
+      "/home/travis/build/PolymerLabs/arcs/src/devtools-connector/testing/devtools-channel-stub.ts": {
+        "version": "3f78cba881cb1f12f53500926d20da08c1522dd98d3c31cfa27c9bb164b33ce8",
+        "signature": "02e49be5a5301935149a362d68866fe34267f5f7a11d7f6c713af3c956e81807"
+      },
+      "/home/travis/build/PolymerLabs/arcs/src/devtools-connector/devtools-connection.ts": {
+        "version": "cfc980928c748b05f058e39e0243b42f1fd0233b4a1cd838673e01759b9f423c",
+        "signature": "79dfd6023c91a39283d17a43f36585ae0b7e9ad1621d76c0356412d931f569d3"
+      },
       "/home/travis/build/PolymerLabs/arcs/src/devtools-connector/tracing-adapter.ts": {
         "version": "0334ef41782baf30692fa831647dbf0a9d86235d5efe63d612f152f8a0612897",
         "signature": "12367c989f3e0ca81e94bcfb04747a52796e4913d72f71e29ea5caca4f1b078d"
       },
-      "/home/travis/build/PolymerLabs/arcs/src/devtools-connector/devtools-inspector.ts": {
-        "version": "adaa352c36b59709fee4ca8885596a396b8f18a80a5acc05a33d01f49c6f9f43",
-        "signature": "cc95b2823746fe044347643ae5185bcbcc62a58c424531e2cebf1216872a8b80"
+      "/home/travis/build/PolymerLabs/arcs/src/devtools-connector/devtools-arc-inspector.ts": {
+        "version": "ee44f936e85686fa16e42e00c4a342aa96103ccb3a1d31f616770afe806aa131",
+        "signature": "914efdd9819f19afa229ed6da2f106eba0d791e2a1f9f4dad415d477e7eeec63"
+      },
+      "/home/travis/build/PolymerLabs/arcs/src/devtools-connector/devtools-planner-inspector.ts": {
+        "version": "cd27b845857ff17f01aa24d4318af602190bf16c7298adeaead4b22f7021876e",
+        "signature": "32041b1f1cff1fc6b79747a6e2b45b9844eb8894776b4054e7c50c2a070a56bb"
       },
       "/home/travis/build/PolymerLabs/arcs/src/planning/plan/plan-producer.ts": {
-        "version": "6f1bc38a04eb1eab1bbbe5f73c0ab5b1cf46249d62df59ed15dd950ae1e98ad1",
-        "signature": "4bcc85c60b5bc77352775611b9e5ddb73d6c9b30907980a2cf59c3b1c8e91fb3"
-      },
-      "/home/travis/build/PolymerLabs/arcs/src/planning/suggestion-composer.ts": {
-        "version": "d0b25b1c36e7e11ab2c3c25328ee59d068ecd867768aa8e0b3577656eb1d1b9a",
-        "signature": "55534ada5c9912c9301a9641e968b9978f1bce14e0647a5018231a458a5e4c8f"
-      },
-      "/home/travis/build/PolymerLabs/arcs/src/planning/plan/plan-consumer.ts": {
-        "version": "a999b9e1b56af13077eef5a53031b925af12d4e685e9491e141426ff8445db76",
-        "signature": "43750966e29501bc0ea95e6e6d29004b21daaf29d905eb0d0e501cb2d7984ba2"
-      },
-      "/home/travis/build/PolymerLabs/arcs/src/planning/debug/planning-explorer-adapter.ts": {
-        "version": "1679148e614dd3423ac3fefebae03a9b37e1d01c2681cc7fe5ad517bac50193c",
-        "signature": "503f1fc43430f270bcac8272b644c9bc42af5618af85a9c6f4070c2b905fb62a"
+        "version": "960e8a11b4df34641e751111a6d61be430c1289d2864daaf722d799f16ae38c9",
+        "signature": "ce90fd622274a8da01e4653c54210458c0ff0ef451ec10b4167acaff61e9db8f"
       },
       "/home/travis/build/PolymerLabs/arcs/src/planning/plan/replan-queue.ts": {
         "version": "e95dba7b7d953b15121eed59ec42bedaeec0dbe167fc14069748a2b9e1a1244d",
         "signature": "a908026abe1b0a0d3c2b9967546f3e7548c3420b1f2d81af38af631158f74dba"
       },
       "/home/travis/build/PolymerLabs/arcs/src/planning/plan/planificator.ts": {
-        "version": "d8e4cb8613a5acd913cf1e6c00b287d174eaa4ac62dfb2a3a3fcac013237def5",
-        "signature": "d7ee73acfce6dfe6d269f2b6ef374839ecb7cfa7a2ac022143bda2d97ef9ad94"
+        "version": "296d023a2efb725249d6a7702d9b3d55e8a1faa2adb783c7bc2a5c309cf1f50e",
+        "signature": "f5f4eaae75f0dd65b3fcd9a496515d77ab83b1584b87888566a55e420dcabc7d"
       },
       "/home/travis/build/PolymerLabs/arcs/src/planning/arcs-planning.ts": {
         "version": "365f67236c41f1e237ca58646a77b927911c07f3504d571625983bbae0d197dc",
@@ -742,11 +742,11 @@
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/testing/test-helper.ts": {
-        "version": "0c834c75932834630c6b9a78a8850e15973ff22552350a8a079403f287069cf7",
+        "version": "741fa12922f05d28f66b4c9e29a38718dd2265295ad1f9e56f5614eb710be8b7",
         "signature": "6bfad1f3753847fb6865817f5c0ae615477d6963dee8912eb77f2c170ecf4113"
       },
       "/home/travis/build/PolymerLabs/arcs/src/planning/testing/planning-test-helper.ts": {
-        "version": "6f48de6c74f29e8543fa942832fd4fbe8ff12ab73790a933285fd03c28e784e9",
+        "version": "722bad3e1c09ded5f14c86e48c2078e916ca1ca6357ae07d668142d04f430f22",
         "signature": "8c4c6fa7633da4e904976fe952a0677898e86650671ebe69b373c2b846d8e56e"
       },
       "/home/travis/build/PolymerLabs/arcs/src/planning/test/suggestion-composer-tests.ts": {
@@ -2190,7 +2190,7 @@
         "signature": "fd95df5d076cbfed143dc4904d376b5c6d9cb1091b630994ffe2366010afa6b3"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/test/debug/outer-port-attachments-tests.ts": {
-        "version": "d0bf6896e8c773b53148a98630e0f60564e45603fb4eb241cbac92c540064da5",
+        "version": "9261a20c6522870640fdb5446c27332f67e07f3ce9f74bb44eb9b2da184390a1",
         "signature": "8bc1d39a3b8ec61064f9969316a088e314895e7ffd094468dcc0b238f33cb4a6"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/test/recipe/particle-tests.ts": {
@@ -3649,24 +3649,8 @@
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
       ],
-      "/home/travis/build/PolymerLabs/arcs/src/devtools-connector/testing/devtools-channel-stub.ts": [
-        "/home/travis/build/PolymerLabs/arcs/src/devtools-connector/abstract-devtools-channel.ts",
-        "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
-      ],
-      "/home/travis/build/PolymerLabs/arcs/src/devtools-connector/devtools-connection.ts": [
-        "/home/travis/build/PolymerLabs/arcs/src/platform/assert-web.ts",
-        "/home/travis/build/PolymerLabs/arcs/src/devtools-connector/testing/devtools-channel-stub.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
-      ],
       "/home/travis/build/PolymerLabs/arcs/src/tracelib/trace.ts": [
         "/home/travis/build/PolymerLabs/arcs/src/runtime/hot.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
-      ],
-      "/home/travis/build/PolymerLabs/arcs/src/planning/debug/strategy-explorer-adapter.ts": [
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
       ],
@@ -3705,8 +3689,6 @@
       "/home/travis/build/PolymerLabs/arcs/src/planning/speculator.ts": [
         "/home/travis/build/PolymerLabs/arcs/src/platform/assert-web.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts",
-        "/home/travis/build/PolymerLabs/arcs/src/devtools-connector/devtools-connection.ts",
-        "/home/travis/build/PolymerLabs/arcs/src/runtime/description.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/recipe.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/relevance.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
@@ -3899,7 +3881,6 @@
         "/home/travis/build/PolymerLabs/arcs/src/planning/strategizer.ts",
         "/home/travis/build/PolymerLabs/arcs/src/platform/assert-web.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts",
-        "/home/travis/build/PolymerLabs/arcs/src/devtools-connector/devtools-connection.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/manifest.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/modality.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/particle-spec.ts",
@@ -3908,14 +3889,11 @@
         "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/particle.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/recipe-util.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/recipe.ts",
-        "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/slot-connection.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/slot-utils.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/slot.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/walker.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/slot-composer.ts",
         "/home/travis/build/PolymerLabs/arcs/src/tracelib/trace.ts",
-        "/home/travis/build/PolymerLabs/arcs/src/planning/debug/strategy-explorer-adapter.ts",
-        "/home/travis/build/PolymerLabs/arcs/src/planning/plan/planning-result.ts",
         "/home/travis/build/PolymerLabs/arcs/src/planning/planning-modality-handler.ts",
         "/home/travis/build/PolymerLabs/arcs/src/planning/strategies/add-missing-handles.ts",
         "/home/travis/build/PolymerLabs/arcs/src/planning/strategies/convert-constraints-to-connections.ts",
@@ -3977,15 +3955,42 @@
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
       ],
+      "/home/travis/build/PolymerLabs/arcs/src/planning/suggestion-composer.ts": [
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/slot-composer.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/slot-context.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/planning/plan/suggestion.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/planning/planning-modality-handler.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/planning/suggest-dom-consumer.ts",
+        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
+        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
+      ],
+      "/home/travis/build/PolymerLabs/arcs/src/planning/plan/plan-consumer.ts": [
+        "/home/travis/build/PolymerLabs/arcs/src/platform/assert-web.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/planning/suggestion-composer.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/planning/plan/planning-result.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/planning/plan/suggestion.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/planning/plan/suggest-filter.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/planning/planner-inspector.ts",
+        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
+        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
+      ],
+      "/home/travis/build/PolymerLabs/arcs/src/planning/planner-inspector.ts": [
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/planning/plan/planning-result.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/planning/plan/suggestion.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/planning/plan/plan-consumer.ts",
+        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
+        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
+      ],
       "/home/travis/build/PolymerLabs/arcs/src/planning/planner.ts": [
         "/home/travis/build/PolymerLabs/arcs/src/platform/assert-web.ts",
         "/home/travis/build/PolymerLabs/arcs/src/platform/date-web.ts",
         "/home/travis/build/PolymerLabs/arcs/src/platform/deviceinfo-web.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts",
-        "/home/travis/build/PolymerLabs/arcs/src/devtools-connector/devtools-connection.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/recipe-util.ts",
         "/home/travis/build/PolymerLabs/arcs/src/tracelib/trace.ts",
-        "/home/travis/build/PolymerLabs/arcs/src/planning/debug/strategy-explorer-adapter.ts",
         "/home/travis/build/PolymerLabs/arcs/src/planning/plan/planning-result.ts",
         "/home/travis/build/PolymerLabs/arcs/src/planning/plan/suggestion.ts",
         "/home/travis/build/PolymerLabs/arcs/src/planning/speculator.ts",
@@ -4013,8 +4018,9 @@
         "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/walker.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/recipe.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/description.ts",
-        "/home/travis/build/PolymerLabs/arcs/src/runtime/relevance.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/runtime.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/relevance.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/planning/planner-inspector.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
       ],
@@ -4042,13 +4048,25 @@
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
       ],
+      "/home/travis/build/PolymerLabs/arcs/src/devtools-connector/testing/devtools-channel-stub.ts": [
+        "/home/travis/build/PolymerLabs/arcs/src/devtools-connector/abstract-devtools-channel.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts",
+        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
+        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
+      ],
+      "/home/travis/build/PolymerLabs/arcs/src/devtools-connector/devtools-connection.ts": [
+        "/home/travis/build/PolymerLabs/arcs/src/platform/assert-web.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/devtools-connector/testing/devtools-channel-stub.ts",
+        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
+        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
+      ],
       "/home/travis/build/PolymerLabs/arcs/src/devtools-connector/tracing-adapter.ts": [
         "/home/travis/build/PolymerLabs/arcs/src/tracelib/trace.ts",
         "/home/travis/build/PolymerLabs/arcs/src/devtools-connector/abstract-devtools-channel.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
       ],
-      "/home/travis/build/PolymerLabs/arcs/src/devtools-connector/devtools-inspector.ts": [
+      "/home/travis/build/PolymerLabs/arcs/src/devtools-connector/devtools-arc-inspector.ts": [
         "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/hot.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/manifest.ts",
@@ -4062,15 +4080,20 @@
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
       ],
+      "/home/travis/build/PolymerLabs/arcs/src/devtools-connector/devtools-planner-inspector.ts": [
+        "/home/travis/build/PolymerLabs/arcs/src/planning/planner-inspector.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/planning/plan/planning-result.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/devtools-connector/devtools-connection.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/planning/plan/suggestion.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/planning/plan/plan-consumer.ts",
+        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
+        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
+      ],
       "/home/travis/build/PolymerLabs/arcs/src/planning/plan/plan-producer.ts": [
         "/home/travis/build/PolymerLabs/arcs/src/platform/assert-web.ts",
         "/home/travis/build/PolymerLabs/arcs/src/platform/date-web.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts",
-        "/home/travis/build/PolymerLabs/arcs/src/devtools-connector/abstract-devtools-channel.ts",
-        "/home/travis/build/PolymerLabs/arcs/src/devtools-connector/devtools-connection.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/storage-provider-base.ts",
-        "/home/travis/build/PolymerLabs/arcs/src/planning/debug/planning-explorer-adapter.ts",
-        "/home/travis/build/PolymerLabs/arcs/src/planning/debug/strategy-explorer-adapter.ts",
         "/home/travis/build/PolymerLabs/arcs/src/planning/planner.ts",
         "/home/travis/build/PolymerLabs/arcs/src/planning/recipe-index.ts",
         "/home/travis/build/PolymerLabs/arcs/src/planning/speculator.ts",
@@ -4078,42 +4101,7 @@
         "/home/travis/build/PolymerLabs/arcs/src/planning/strategizer.ts",
         "/home/travis/build/PolymerLabs/arcs/src/planning/plan/planning-result.ts",
         "/home/travis/build/PolymerLabs/arcs/src/planning/plan/suggestion.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
-      ],
-      "/home/travis/build/PolymerLabs/arcs/src/planning/suggestion-composer.ts": [
-        "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts",
-        "/home/travis/build/PolymerLabs/arcs/src/runtime/slot-composer.ts",
-        "/home/travis/build/PolymerLabs/arcs/src/runtime/slot-context.ts",
-        "/home/travis/build/PolymerLabs/arcs/src/planning/plan/suggestion.ts",
-        "/home/travis/build/PolymerLabs/arcs/src/planning/planning-modality-handler.ts",
-        "/home/travis/build/PolymerLabs/arcs/src/planning/suggest-dom-consumer.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
-      ],
-      "/home/travis/build/PolymerLabs/arcs/src/planning/plan/plan-consumer.ts": [
-        "/home/travis/build/PolymerLabs/arcs/src/platform/assert-web.ts",
-        "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts",
-        "/home/travis/build/PolymerLabs/arcs/src/devtools-connector/abstract-devtools-channel.ts",
-        "/home/travis/build/PolymerLabs/arcs/src/devtools-connector/devtools-connection.ts",
-        "/home/travis/build/PolymerLabs/arcs/src/runtime/modality.ts",
-        "/home/travis/build/PolymerLabs/arcs/src/planning/debug/planning-explorer-adapter.ts",
-        "/home/travis/build/PolymerLabs/arcs/src/planning/debug/strategy-explorer-adapter.ts",
-        "/home/travis/build/PolymerLabs/arcs/src/planning/suggestion-composer.ts",
-        "/home/travis/build/PolymerLabs/arcs/src/planning/plan/planning-result.ts",
-        "/home/travis/build/PolymerLabs/arcs/src/planning/plan/suggestion.ts",
-        "/home/travis/build/PolymerLabs/arcs/src/planning/plan/suggest-filter.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
-      ],
-      "/home/travis/build/PolymerLabs/arcs/src/planning/debug/planning-explorer-adapter.ts": [
-        "/home/travis/build/PolymerLabs/arcs/src/devtools-connector/devtools-connection.ts",
-        "/home/travis/build/PolymerLabs/arcs/src/planning/plan/plan-producer.ts",
-        "/home/travis/build/PolymerLabs/arcs/src/planning/plan/planificator.ts",
-        "/home/travis/build/PolymerLabs/arcs/src/planning/plan/planning-result.ts",
-        "/home/travis/build/PolymerLabs/arcs/src/planning/plan/suggestion.ts",
-        "/home/travis/build/PolymerLabs/arcs/src/planning/plan/plan-consumer.ts",
-        "/home/travis/build/PolymerLabs/arcs/src/devtools-connector/abstract-devtools-channel.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/planning/planner-inspector.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
       ],
@@ -4131,11 +4119,11 @@
         "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/key-base.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/storage-provider-base.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/type.ts",
-        "/home/travis/build/PolymerLabs/arcs/src/planning/debug/planning-explorer-adapter.ts",
         "/home/travis/build/PolymerLabs/arcs/src/planning/plan/plan-consumer.ts",
         "/home/travis/build/PolymerLabs/arcs/src/planning/plan/plan-producer.ts",
         "/home/travis/build/PolymerLabs/arcs/src/planning/plan/planning-result.ts",
         "/home/travis/build/PolymerLabs/arcs/src/planning/plan/replan-queue.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/planning/planner-inspector.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
       ],
@@ -4234,7 +4222,7 @@
         "/home/travis/build/PolymerLabs/arcs/src/runtime/manifest.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/testing/mock-slot-composer.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/id.ts",
-        "/home/travis/build/PolymerLabs/arcs/src/devtools-connector/devtools-inspector.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/devtools-connector/devtools-arc-inspector.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
       ],
@@ -4244,13 +4232,10 @@
         "/home/travis/build/PolymerLabs/arcs/src/planning/recipe-index.ts",
         "/home/travis/build/PolymerLabs/arcs/src/planning/speculator.ts",
         "/home/travis/build/PolymerLabs/arcs/src/platform/chai-web.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts",
-        "/home/travis/build/PolymerLabs/arcs/src/runtime/headless-slot-dom-consumer.ts",
-        "/home/travis/build/PolymerLabs/arcs/src/runtime/loader.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/manifest.ts",
-        "/home/travis/build/PolymerLabs/arcs/src/runtime/testing/mock-slot-composer.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/type.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/testing/test-helper.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/devtools-connector/devtools-planner-inspector.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
       ],
@@ -6927,7 +6912,7 @@
       "/home/travis/build/PolymerLabs/arcs/src/runtime/test/debug/outer-port-attachments-tests.ts": [
         "/home/travis/build/PolymerLabs/arcs/src/platform/chai-web.d.ts",
         "/home/travis/build/PolymerLabs/arcs/src/devtools-connector/devtools-connection.ts",
-        "/home/travis/build/PolymerLabs/arcs/src/devtools-connector/devtools-inspector.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/devtools-connector/devtools-arc-inspector.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/testing/mock-slot-composer.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/testing/stub-loader.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts",
@@ -8343,10 +8328,6 @@
       "/home/travis/build/PolymerLabs/arcs/src/devtools-connector/abstract-devtools-channel.ts": [
         "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts"
       ],
-      "/home/travis/build/PolymerLabs/arcs/src/devtools-connector/testing/devtools-channel-stub.ts": [
-        "/home/travis/build/PolymerLabs/arcs/src/devtools-connector/abstract-devtools-channel.ts",
-        "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts"
-      ],
       "/home/travis/build/PolymerLabs/arcs/src/tracelib/trace.ts": [
         "/home/travis/build/PolymerLabs/arcs/src/runtime/hot.ts"
       ],
@@ -8481,9 +8462,31 @@
       "/home/travis/build/PolymerLabs/arcs/src/planning/strategies/search-tokens-to-handles.ts": [
         "/home/travis/build/PolymerLabs/arcs/src/planning/strategizer.ts"
       ],
+      "/home/travis/build/PolymerLabs/arcs/src/planning/suggestion-composer.ts": [
+        "/home/travis/build/PolymerLabs/arcs/src/planning/suggest-dom-consumer.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/slot-composer.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/planning/planning-modality-handler.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/planning/plan/suggestion.ts"
+      ],
+      "/home/travis/build/PolymerLabs/arcs/src/planning/plan/plan-consumer.ts": [
+        "/home/travis/build/PolymerLabs/arcs/src/planning/plan/suggestion.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/planning/plan/planning-result.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/planning/plan/suggest-filter.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/planning/suggestion-composer.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/planning/planner-inspector.ts"
+      ],
+      "/home/travis/build/PolymerLabs/arcs/src/planning/planner-inspector.ts": [
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/planning/plan/planning-result.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/planning/plan/suggestion.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/planning/plan/plan-consumer.ts"
+      ],
       "/home/travis/build/PolymerLabs/arcs/src/planning/planner.ts": [
         "/home/travis/build/PolymerLabs/arcs/src/planning/strategizer.ts",
         "/home/travis/build/PolymerLabs/arcs/src/planning/speculator.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/planning/planner-inspector.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/recipe.ts",
         "/home/travis/build/PolymerLabs/arcs/src/planning/plan/suggestion.ts",
@@ -8505,11 +8508,18 @@
         "/home/travis/build/PolymerLabs/arcs/src/runtime/manifest.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/type.ts"
       ],
+      "/home/travis/build/PolymerLabs/arcs/src/devtools-connector/testing/devtools-channel-stub.ts": [
+        "/home/travis/build/PolymerLabs/arcs/src/devtools-connector/abstract-devtools-channel.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts"
+      ],
       "/home/travis/build/PolymerLabs/arcs/src/devtools-connector/tracing-adapter.ts": [
         "/home/travis/build/PolymerLabs/arcs/src/devtools-connector/abstract-devtools-channel.ts"
       ],
-      "/home/travis/build/PolymerLabs/arcs/src/devtools-connector/devtools-inspector.ts": [
+      "/home/travis/build/PolymerLabs/arcs/src/devtools-connector/devtools-arc-inspector.ts": [
         "/home/travis/build/PolymerLabs/arcs/src/runtime/arc-inspector.ts"
+      ],
+      "/home/travis/build/PolymerLabs/arcs/src/devtools-connector/devtools-planner-inspector.ts": [
+        "/home/travis/build/PolymerLabs/arcs/src/planning/planner-inspector.ts"
       ],
       "/home/travis/build/PolymerLabs/arcs/src/planning/plan/plan-producer.ts": [
         "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts",
@@ -8518,36 +8528,15 @@
         "/home/travis/build/PolymerLabs/arcs/src/planning/recipe-index.ts",
         "/home/travis/build/PolymerLabs/arcs/src/planning/speculator.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/storage-provider-base.ts",
-        "/home/travis/build/PolymerLabs/arcs/src/devtools-connector/abstract-devtools-channel.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/planning/planner-inspector.ts",
         "/home/travis/build/PolymerLabs/arcs/src/planning/plan/suggestion.ts"
-      ],
-      "/home/travis/build/PolymerLabs/arcs/src/planning/suggestion-composer.ts": [
-        "/home/travis/build/PolymerLabs/arcs/src/planning/suggest-dom-consumer.ts",
-        "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts",
-        "/home/travis/build/PolymerLabs/arcs/src/runtime/slot-composer.ts",
-        "/home/travis/build/PolymerLabs/arcs/src/planning/planning-modality-handler.ts",
-        "/home/travis/build/PolymerLabs/arcs/src/planning/plan/suggestion.ts"
-      ],
-      "/home/travis/build/PolymerLabs/arcs/src/planning/plan/plan-consumer.ts": [
-        "/home/travis/build/PolymerLabs/arcs/src/planning/plan/suggestion.ts",
-        "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts",
-        "/home/travis/build/PolymerLabs/arcs/src/planning/plan/planning-result.ts",
-        "/home/travis/build/PolymerLabs/arcs/src/planning/plan/suggest-filter.ts",
-        "/home/travis/build/PolymerLabs/arcs/src/planning/suggestion-composer.ts",
-        "/home/travis/build/PolymerLabs/arcs/src/devtools-connector/abstract-devtools-channel.ts"
-      ],
-      "/home/travis/build/PolymerLabs/arcs/src/planning/debug/planning-explorer-adapter.ts": [
-        "/home/travis/build/PolymerLabs/arcs/src/planning/plan/planning-result.ts",
-        "/home/travis/build/PolymerLabs/arcs/src/devtools-connector/abstract-devtools-channel.ts",
-        "/home/travis/build/PolymerLabs/arcs/src/planning/plan/suggestion.ts",
-        "/home/travis/build/PolymerLabs/arcs/src/planning/plan/plan-consumer.ts",
-        "/home/travis/build/PolymerLabs/arcs/src/planning/plan/planificator.ts"
       ],
       "/home/travis/build/PolymerLabs/arcs/src/planning/plan/replan-queue.ts": [
         "/home/travis/build/PolymerLabs/arcs/src/planning/plan/plan-producer.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/hot.ts"
       ],
       "/home/travis/build/PolymerLabs/arcs/src/planning/plan/planificator.ts": [
+        "/home/travis/build/PolymerLabs/arcs/src/planning/planner-inspector.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts",
         "/home/travis/build/PolymerLabs/arcs/src/planning/plan/planning-result.ts",
         "/home/travis/build/PolymerLabs/arcs/src/planning/plan/plan-consumer.ts",
@@ -19930,8 +19919,6 @@
       ],
       "/home/travis/build/PolymerLabs/arcs/src/platform/date-web.ts",
       "/home/travis/build/PolymerLabs/arcs/src/platform/deviceinfo-web.ts",
-      "/home/travis/build/PolymerLabs/arcs/src/devtools-connector/testing/devtools-channel-stub.ts",
-      "/home/travis/build/PolymerLabs/arcs/src/devtools-connector/devtools-connection.ts",
       [
         "/home/travis/build/PolymerLabs/arcs/src/tracelib/trace.ts",
         [
@@ -20296,19 +20283,6 @@
           }
         ]
       ],
-      [
-        "/home/travis/build/PolymerLabs/arcs/src/planning/debug/strategy-explorer-adapter.ts",
-        [
-          {
-            "file": "/home/travis/build/PolymerLabs/arcs/src/planning/debug/strategy-explorer-adapter.ts",
-            "start": 1368,
-            "length": 27,
-            "code": 2345,
-            "category": 1,
-            "messageText": "Argument of type 'any' is not assignable to parameter of type 'never'."
-          }
-        ]
-      ],
       "/home/travis/build/PolymerLabs/arcs/src/planning/plan/suggest-filter.ts",
       [
         "/home/travis/build/PolymerLabs/arcs/src/planning/plan/suggestion.ts",
@@ -20392,7 +20366,7 @@
         [
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/planning/plan/planning-result.ts",
-            "start": 1923,
+            "start": 1992,
             "length": 10,
             "messageText": "Object is possibly 'undefined'.",
             "category": 1,
@@ -20400,7 +20374,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/planning/plan/planning-result.ts",
-            "start": 2117,
+            "start": 2186,
             "length": 10,
             "messageText": "Object is possibly 'undefined'.",
             "category": 1,
@@ -20408,7 +20382,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/planning/plan/planning-result.ts",
-            "start": 2272,
+            "start": 2341,
             "length": 10,
             "messageText": "Object is possibly 'undefined'.",
             "category": 1,
@@ -20416,7 +20390,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/planning/plan/planning-result.ts",
-            "start": 2346,
+            "start": 2415,
             "length": 10,
             "messageText": "Object is possibly 'undefined'.",
             "category": 1,
@@ -20424,7 +20398,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/planning/plan/planning-result.ts",
-            "start": 2396,
+            "start": 2465,
             "length": 10,
             "messageText": "Object is possibly 'undefined'.",
             "category": 1,
@@ -20432,7 +20406,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/planning/plan/planning-result.ts",
-            "start": 4775,
+            "start": 4870,
             "length": 8,
             "code": 2322,
             "category": 1,
@@ -20440,7 +20414,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/planning/plan/planning-result.ts",
-            "start": 7607,
+            "start": 7702,
             "length": 9,
             "messageText": "Type 'null' cannot be used as an index type.",
             "category": 1,
@@ -20448,7 +20422,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/planning/plan/planning-result.ts",
-            "start": 7681,
+            "start": 7776,
             "length": 9,
             "messageText": "Type 'null' cannot be used as an index type.",
             "category": 1,
@@ -20456,7 +20430,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/planning/plan/planning-result.ts",
-            "start": 8830,
+            "start": 8925,
             "length": 11,
             "code": 2345,
             "category": 1,
@@ -20478,7 +20452,7 @@
         [
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/planning/speculator.ts",
-            "start": 1503,
+            "start": 1367,
             "length": 29,
             "code": 2345,
             "category": 1,
@@ -21718,7 +21692,7 @@
         [
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/planning/recipe-index.ts",
-            "start": 4734,
+            "start": 4403,
             "length": 6,
             "code": 2322,
             "category": 1,
@@ -21726,7 +21700,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/planning/recipe-index.ts",
-            "start": 4742,
+            "start": 4411,
             "length": 9,
             "code": 2322,
             "category": 1,
@@ -21734,7 +21708,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/planning/recipe-index.ts",
-            "start": 8758,
+            "start": 8126,
             "length": 51,
             "code": 2345,
             "category": 1,
@@ -21766,7 +21740,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/planning/recipe-index.ts",
-            "start": 10090,
+            "start": 9458,
             "length": 24,
             "messageText": "Object is possibly 'undefined'.",
             "category": 1,
@@ -21774,7 +21748,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/planning/recipe-index.ts",
-            "start": 10437,
+            "start": 9805,
             "length": 14,
             "code": 2322,
             "category": 1,
@@ -21782,7 +21756,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/planning/recipe-index.ts",
-            "start": 10453,
+            "start": 9821,
             "length": 8,
             "code": 2322,
             "category": 1,
@@ -21790,7 +21764,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/planning/recipe-index.ts",
-            "start": 10463,
+            "start": 9831,
             "length": 15,
             "code": 2322,
             "category": 1,
@@ -21798,7 +21772,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/planning/recipe-index.ts",
-            "start": 11488,
+            "start": 10856,
             "length": 24,
             "messageText": "Object is possibly 'undefined'.",
             "category": 1,
@@ -21806,7 +21780,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/planning/recipe-index.ts",
-            "start": 11870,
+            "start": 11238,
             "length": 25,
             "messageText": "Object is possibly 'undefined'.",
             "category": 1,
@@ -21814,7 +21788,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/planning/recipe-index.ts",
-            "start": 11934,
+            "start": 11302,
             "length": 25,
             "messageText": "Object is possibly 'undefined'.",
             "category": 1,
@@ -21822,7 +21796,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/planning/recipe-index.ts",
-            "start": 11973,
+            "start": 11341,
             "length": 10,
             "code": 2322,
             "category": 1,
@@ -21830,7 +21804,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/planning/recipe-index.ts",
-            "start": 12156,
+            "start": 11524,
             "length": 6,
             "code": 2322,
             "category": 1,
@@ -21847,7 +21821,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/planning/recipe-index.ts",
-            "start": 12191,
+            "start": 11559,
             "length": 12,
             "code": 2322,
             "category": 1,
@@ -22401,317 +22375,6 @@
         ]
       ],
       [
-        "/home/travis/build/PolymerLabs/arcs/src/planning/planner.ts",
-        [
-          {
-            "file": "/home/travis/build/PolymerLabs/arcs/src/planning/planner.ts",
-            "start": 8837,
-            "length": 10,
-            "code": 2345,
-            "category": 1,
-            "messageText": {
-              "messageText": "Argument of type 'Suggestion[]' is not assignable to parameter of type 'ConcatArray<never>'.",
-              "category": 1,
-              "code": 2345,
-              "next": {
-                "messageText": "Types of property 'slice' are incompatible.",
-                "category": 1,
-                "code": 2326,
-                "next": {
-                  "messageText": "Type '(start?: number | undefined, end?: number | undefined) => Suggestion[]' is not assignable to type '(start?: number | undefined, end?: number | undefined) => never[]'.",
-                  "category": 1,
-                  "code": 2322,
-                  "next": {
-                    "messageText": "Type 'Suggestion[]' is not assignable to type 'never[]'.",
-                    "category": 1,
-                    "code": 2322,
-                    "next": {
-                      "messageText": "Type 'Suggestion' is not assignable to type 'never'.",
-                      "category": 1,
-                      "code": 2322
-                    }
-                  }
-                }
-              }
-            }
-          },
-          {
-            "file": "/home/travis/build/PolymerLabs/arcs/src/planning/planner.ts",
-            "start": 9771,
-            "length": 9,
-            "code": 2345,
-            "category": 1,
-            "messageText": {
-              "messageText": "Argument of type 'Relevance | null' is not assignable to parameter of type 'Relevance'.",
-              "category": 1,
-              "code": 2345,
-              "next": {
-                "messageText": "Type 'null' is not assignable to type 'Relevance'.",
-                "category": 1,
-                "code": 2322
-              }
-            }
-          }
-        ]
-      ],
-      [
-        "/home/travis/build/PolymerLabs/arcs/src/devtools-connector/arc-planner-invoker.ts",
-        [
-          {
-            "file": "/home/travis/build/PolymerLabs/arcs/src/devtools-connector/arc-planner-invoker.ts",
-            "start": 6799,
-            "length": 10,
-            "code": 2322,
-            "category": 1,
-            "messageText": "Type '{ action: string; fileNames: string[]; }' is not assignable to type 'null'."
-          },
-          {
-            "file": "/home/travis/build/PolymerLabs/arcs/src/devtools-connector/arc-planner-invoker.ts",
-            "start": 7705,
-            "length": 17,
-            "messageText": "Object is possibly 'null'.",
-            "category": 1,
-            "code": 2531
-          },
-          {
-            "file": "/home/travis/build/PolymerLabs/arcs/src/devtools-connector/arc-planner-invoker.ts",
-            "start": 7765,
-            "length": 17,
-            "code": 2345,
-            "category": 1,
-            "messageText": {
-              "messageText": "Argument of type 'string | null' is not assignable to parameter of type 'string'.",
-              "category": 1,
-              "code": 2345,
-              "next": {
-                "messageText": "Type 'null' is not assignable to type 'string'.",
-                "category": 1,
-                "code": 2322
-              }
-            }
-          }
-        ]
-      ],
-      "/home/travis/build/PolymerLabs/arcs/src/devtools-connector/arc-stores-fetcher.ts",
-      "/home/travis/build/PolymerLabs/arcs/src/devtools-connector/tracing-adapter.ts",
-      [
-        "/home/travis/build/PolymerLabs/arcs/src/devtools-connector/devtools-inspector.ts",
-        [
-          {
-            "file": "/home/travis/build/PolymerLabs/arcs/src/devtools-connector/devtools-inspector.ts",
-            "start": 2525,
-            "length": 22,
-            "messageText": "Cannot invoke an object which is possibly 'null'.",
-            "category": 1,
-            "code": 2721
-          },
-          {
-            "file": "/home/travis/build/PolymerLabs/arcs/src/devtools-connector/devtools-inspector.ts",
-            "start": 3108,
-            "length": 8,
-            "code": 2322,
-            "category": 1,
-            "messageText": {
-              "messageText": "Type '{ id: string | undefined; name: string; }' is not assignable to type 'TruncatedSlot'.",
-              "category": 1,
-              "code": 2322,
-              "next": {
-                "messageText": "Types of property 'id' are incompatible.",
-                "category": 1,
-                "code": 2326,
-                "next": {
-                  "messageText": "Type 'string | undefined' is not assignable to type 'string'.",
-                  "category": 1,
-                  "code": 2322,
-                  "next": {
-                    "messageText": "Type 'undefined' is not assignable to type 'string'.",
-                    "category": 1,
-                    "code": 2322
-                  }
-                }
-              }
-            },
-            "relatedInformation": [
-              {
-                "file": "/home/travis/build/PolymerLabs/arcs/src/devtools-connector/devtools-inspector.ts",
-                "start": 2849,
-                "length": 8,
-                "messageText": "The expected type comes from property 'consumed' which is declared here on type '{ particleId: string; consumed: TruncatedSlot; provided: TruncatedSlot[]; }'",
-                "category": 3,
-                "code": 6500
-              }
-            ]
-          },
-          {
-            "file": "/home/travis/build/PolymerLabs/arcs/src/devtools-connector/devtools-inspector.ts",
-            "start": 3153,
-            "length": 8,
-            "code": 2322,
-            "category": 1,
-            "messageText": {
-              "messageText": "Type '{ id: string | undefined; name: string; }[]' is not assignable to type 'TruncatedSlot[]'.",
-              "category": 1,
-              "code": 2322,
-              "next": {
-                "messageText": "Type '{ id: string | undefined; name: string; }' is not assignable to type 'TruncatedSlot'.",
-                "category": 1,
-                "code": 2322
-              }
-            },
-            "relatedInformation": [
-              {
-                "file": "/home/travis/build/PolymerLabs/arcs/src/devtools-connector/devtools-inspector.ts",
-                "start": 2874,
-                "length": 8,
-                "messageText": "The expected type comes from property 'provided' which is declared here on type '{ particleId: string; consumed: TruncatedSlot; provided: TruncatedSlot[]; }'",
-                "category": 3,
-                "code": 6500
-              }
-            ]
-          },
-          {
-            "file": "/home/travis/build/PolymerLabs/arcs/src/devtools-connector/devtools-inspector.ts",
-            "start": 4779,
-            "length": 6,
-            "code": 2322,
-            "category": 1,
-            "messageText": "Type 'null' is not assignable to type 'string | undefined'.",
-            "relatedInformation": [
-              {
-                "file": "/home/travis/build/PolymerLabs/arcs/src/devtools-connector/devtools-inspector.ts",
-                "start": 1087,
-                "length": 6,
-                "messageText": "The expected type comes from property 'target' which is declared here on type 'StackFrame'",
-                "category": 3,
-                "code": 6500
-              }
-            ]
-          },
-          {
-            "file": "/home/travis/build/PolymerLabs/arcs/src/devtools-connector/devtools-inspector.ts",
-            "start": 5799,
-            "length": 5,
-            "messageText": "Object is possibly 'null'.",
-            "category": 1,
-            "code": 2531
-          },
-          {
-            "file": "/home/travis/build/PolymerLabs/arcs/src/devtools-connector/devtools-inspector.ts",
-            "start": 6577,
-            "length": 12,
-            "code": 2322,
-            "category": 1,
-            "messageText": "Type 'null' is not assignable to type 'string | undefined'."
-          },
-          {
-            "file": "/home/travis/build/PolymerLabs/arcs/src/devtools-connector/devtools-inspector.ts",
-            "start": 7268,
-            "length": 45,
-            "messageText": "Object is possibly 'undefined'.",
-            "category": 1,
-            "code": 2532
-          },
-          {
-            "file": "/home/travis/build/PolymerLabs/arcs/src/devtools-connector/devtools-inspector.ts",
-            "start": 7462,
-            "length": 47,
-            "messageText": "Object is possibly 'undefined'.",
-            "category": 1,
-            "code": 2532
-          }
-        ]
-      ],
-      [
-        "/home/travis/build/PolymerLabs/arcs/src/planning/plan/plan-producer.ts",
-        [
-          {
-            "file": "/home/travis/build/PolymerLabs/arcs/src/planning/plan/plan-producer.ts",
-            "start": 3136,
-            "length": 16,
-            "messageText": "Object is possibly 'undefined'.",
-            "category": 1,
-            "code": 2532
-          },
-          {
-            "file": "/home/travis/build/PolymerLabs/arcs/src/planning/plan/plan-producer.ts",
-            "start": 6029,
-            "length": 20,
-            "code": 2345,
-            "category": 1,
-            "messageText": {
-              "messageText": "Argument of type 'ArcDevtoolsChannel | undefined' is not assignable to parameter of type 'ArcDevtoolsChannel'.",
-              "category": 1,
-              "code": 2345,
-              "next": {
-                "messageText": "Type 'undefined' is not assignable to type 'ArcDevtoolsChannel'.",
-                "category": 1,
-                "code": 2322
-              }
-            }
-          },
-          {
-            "file": "/home/travis/build/PolymerLabs/arcs/src/planning/plan/plan-producer.ts",
-            "start": 6198,
-            "length": 20,
-            "code": 2345,
-            "category": 1,
-            "messageText": {
-              "messageText": "Argument of type 'ArcDevtoolsChannel | undefined' is not assignable to parameter of type 'ArcDevtoolsChannel'.",
-              "category": 1,
-              "code": 2345,
-              "next": {
-                "messageText": "Type 'undefined' is not assignable to type 'ArcDevtoolsChannel'.",
-                "category": 1,
-                "code": 2322
-              }
-            }
-          },
-          {
-            "file": "/home/travis/build/PolymerLabs/arcs/src/planning/plan/plan-producer.ts",
-            "start": 6579,
-            "length": 4,
-            "code": 2345,
-            "category": 1,
-            "messageText": "Argument of type 'null' is not assignable to parameter of type 'Suggestion[]'."
-          },
-          {
-            "file": "/home/travis/build/PolymerLabs/arcs/src/planning/plan/plan-producer.ts",
-            "start": 6863,
-            "length": 337,
-            "code": 2345,
-            "category": 1,
-            "messageText": {
-              "messageText": "Argument of type '{ strategies: any; strategyArgs: { contextual: any; search: any; recipeIndex: RecipeIndex; }; speculator: Speculator; blockDevtools: true; }' is not assignable to parameter of type '{ strategies?: StrategyDerived[] | undefined; ruleset?: Ruleset | undefined; strategyArgs?: {} | undefined; speculator?: null | undefined; blockDevtools?: boolean | undefined; }'.",
-              "category": 1,
-              "code": 2345,
-              "next": {
-                "messageText": "Types of property 'speculator' are incompatible.",
-                "category": 1,
-                "code": 2326,
-                "next": {
-                  "messageText": "Type 'Speculator' is not assignable to type 'null | undefined'.",
-                  "category": 1,
-                  "code": 2322,
-                  "next": {
-                    "messageText": "Type 'Speculator' is not assignable to type 'null'.",
-                    "category": 1,
-                    "code": 2322
-                  }
-                }
-              }
-            }
-          },
-          {
-            "file": "/home/travis/build/PolymerLabs/arcs/src/planning/plan/plan-producer.ts",
-            "start": 7421,
-            "length": 12,
-            "code": 2322,
-            "category": 1,
-            "messageText": "Type 'null' is not assignable to type 'Suggestion[]'."
-          }
-        ]
-      ],
-      [
         "/home/travis/build/PolymerLabs/arcs/src/planning/suggestion-composer.ts",
         [
           {
@@ -22753,7 +22416,7 @@
         [
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/planning/plan/plan-consumer.ts",
-            "start": 3265,
+            "start": 2870,
             "length": 15,
             "messageText": "Object is possibly 'undefined'.",
             "category": 1,
@@ -22761,24 +22424,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/planning/plan/plan-consumer.ts",
-            "start": 3755,
-            "length": 20,
-            "code": 2345,
-            "category": 1,
-            "messageText": {
-              "messageText": "Argument of type 'ArcDevtoolsChannel | undefined' is not assignable to parameter of type 'ArcDevtoolsChannel'.",
-              "category": 1,
-              "code": 2345,
-              "next": {
-                "messageText": "Type 'undefined' is not assignable to type 'ArcDevtoolsChannel'.",
-                "category": 1,
-                "code": 2322
-              }
-            }
-          },
-          {
-            "file": "/home/travis/build/PolymerLabs/arcs/src/planning/plan/plan-consumer.ts",
-            "start": 4323,
+            "start": 3921,
             "length": 7,
             "code": 2345,
             "category": 1,
@@ -22795,7 +22441,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/planning/plan/plan-consumer.ts",
-            "start": 4675,
+            "start": 4259,
             "length": 23,
             "messageText": "Object is possibly 'null'.",
             "category": 1,
@@ -22803,16 +22449,293 @@
           }
         ]
       ],
+      "/home/travis/build/PolymerLabs/arcs/src/planning/planner-inspector.ts",
       [
-        "/home/travis/build/PolymerLabs/arcs/src/planning/debug/planning-explorer-adapter.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/planning/planner.ts",
         [
           {
-            "file": "/home/travis/build/PolymerLabs/arcs/src/planning/debug/planning-explorer-adapter.ts",
-            "start": 1690,
+            "file": "/home/travis/build/PolymerLabs/arcs/src/planning/planner.ts",
+            "start": 3584,
+            "length": 10,
+            "code": 2322,
+            "category": 1,
+            "messageText": "Type 'null' is not assignable to type 'Speculator'."
+          },
+          {
+            "file": "/home/travis/build/PolymerLabs/arcs/src/planning/planner.ts",
+            "start": 3603,
+            "length": 16,
+            "code": 2322,
+            "category": 1,
+            "messageText": "Type 'null' is not assignable to type 'PlannerInspectorFactory'."
+          },
+          {
+            "file": "/home/travis/build/PolymerLabs/arcs/src/planning/planner.ts",
+            "start": 8994,
+            "length": 10,
+            "code": 2345,
+            "category": 1,
+            "messageText": {
+              "messageText": "Argument of type 'Suggestion[]' is not assignable to parameter of type 'ConcatArray<never>'.",
+              "category": 1,
+              "code": 2345,
+              "next": {
+                "messageText": "Types of property 'slice' are incompatible.",
+                "category": 1,
+                "code": 2326,
+                "next": {
+                  "messageText": "Type '(start?: number | undefined, end?: number | undefined) => Suggestion[]' is not assignable to type '(start?: number | undefined, end?: number | undefined) => never[]'.",
+                  "category": 1,
+                  "code": 2322,
+                  "next": {
+                    "messageText": "Type 'Suggestion[]' is not assignable to type 'never[]'.",
+                    "category": 1,
+                    "code": 2322,
+                    "next": {
+                      "messageText": "Type 'Suggestion' is not assignable to type 'never'.",
+                      "category": 1,
+                      "code": 2322
+                    }
+                  }
+                }
+              }
+            }
+          },
+          {
+            "file": "/home/travis/build/PolymerLabs/arcs/src/planning/planner.ts",
+            "start": 9927,
+            "length": 9,
+            "code": 2345,
+            "category": 1,
+            "messageText": {
+              "messageText": "Argument of type 'Relevance | null' is not assignable to parameter of type 'Relevance'.",
+              "category": 1,
+              "code": 2345,
+              "next": {
+                "messageText": "Type 'null' is not assignable to type 'Relevance'.",
+                "category": 1,
+                "code": 2322
+              }
+            }
+          }
+        ]
+      ],
+      [
+        "/home/travis/build/PolymerLabs/arcs/src/devtools-connector/arc-planner-invoker.ts",
+        [
+          {
+            "file": "/home/travis/build/PolymerLabs/arcs/src/devtools-connector/arc-planner-invoker.ts",
+            "start": 6771,
+            "length": 10,
+            "code": 2322,
+            "category": 1,
+            "messageText": "Type '{ action: string; fileNames: string[]; }' is not assignable to type 'null'."
+          },
+          {
+            "file": "/home/travis/build/PolymerLabs/arcs/src/devtools-connector/arc-planner-invoker.ts",
+            "start": 7677,
+            "length": 17,
+            "messageText": "Object is possibly 'null'.",
+            "category": 1,
+            "code": 2531
+          },
+          {
+            "file": "/home/travis/build/PolymerLabs/arcs/src/devtools-connector/arc-planner-invoker.ts",
+            "start": 7737,
+            "length": 17,
+            "code": 2345,
+            "category": 1,
+            "messageText": {
+              "messageText": "Argument of type 'string | null' is not assignable to parameter of type 'string'.",
+              "category": 1,
+              "code": 2345,
+              "next": {
+                "messageText": "Type 'null' is not assignable to type 'string'.",
+                "category": 1,
+                "code": 2322
+              }
+            }
+          }
+        ]
+      ],
+      "/home/travis/build/PolymerLabs/arcs/src/devtools-connector/arc-stores-fetcher.ts",
+      "/home/travis/build/PolymerLabs/arcs/src/devtools-connector/testing/devtools-channel-stub.ts",
+      "/home/travis/build/PolymerLabs/arcs/src/devtools-connector/devtools-connection.ts",
+      "/home/travis/build/PolymerLabs/arcs/src/devtools-connector/tracing-adapter.ts",
+      [
+        "/home/travis/build/PolymerLabs/arcs/src/devtools-connector/devtools-arc-inspector.ts",
+        [
+          {
+            "file": "/home/travis/build/PolymerLabs/arcs/src/devtools-connector/devtools-arc-inspector.ts",
+            "start": 2534,
+            "length": 22,
+            "messageText": "Cannot invoke an object which is possibly 'null'.",
+            "category": 1,
+            "code": 2721
+          },
+          {
+            "file": "/home/travis/build/PolymerLabs/arcs/src/devtools-connector/devtools-arc-inspector.ts",
+            "start": 3117,
+            "length": 8,
+            "code": 2322,
+            "category": 1,
+            "messageText": {
+              "messageText": "Type '{ id: string | undefined; name: string; }' is not assignable to type 'TruncatedSlot'.",
+              "category": 1,
+              "code": 2322,
+              "next": {
+                "messageText": "Types of property 'id' are incompatible.",
+                "category": 1,
+                "code": 2326,
+                "next": {
+                  "messageText": "Type 'string | undefined' is not assignable to type 'string'.",
+                  "category": 1,
+                  "code": 2322,
+                  "next": {
+                    "messageText": "Type 'undefined' is not assignable to type 'string'.",
+                    "category": 1,
+                    "code": 2322
+                  }
+                }
+              }
+            },
+            "relatedInformation": [
+              {
+                "file": "/home/travis/build/PolymerLabs/arcs/src/devtools-connector/devtools-arc-inspector.ts",
+                "start": 2858,
+                "length": 8,
+                "messageText": "The expected type comes from property 'consumed' which is declared here on type '{ particleId: string; consumed: TruncatedSlot; provided: TruncatedSlot[]; }'",
+                "category": 3,
+                "code": 6500
+              }
+            ]
+          },
+          {
+            "file": "/home/travis/build/PolymerLabs/arcs/src/devtools-connector/devtools-arc-inspector.ts",
+            "start": 3162,
+            "length": 8,
+            "code": 2322,
+            "category": 1,
+            "messageText": {
+              "messageText": "Type '{ id: string | undefined; name: string; }[]' is not assignable to type 'TruncatedSlot[]'.",
+              "category": 1,
+              "code": 2322,
+              "next": {
+                "messageText": "Type '{ id: string | undefined; name: string; }' is not assignable to type 'TruncatedSlot'.",
+                "category": 1,
+                "code": 2322
+              }
+            },
+            "relatedInformation": [
+              {
+                "file": "/home/travis/build/PolymerLabs/arcs/src/devtools-connector/devtools-arc-inspector.ts",
+                "start": 2883,
+                "length": 8,
+                "messageText": "The expected type comes from property 'provided' which is declared here on type '{ particleId: string; consumed: TruncatedSlot; provided: TruncatedSlot[]; }'",
+                "category": 3,
+                "code": 6500
+              }
+            ]
+          },
+          {
+            "file": "/home/travis/build/PolymerLabs/arcs/src/devtools-connector/devtools-arc-inspector.ts",
+            "start": 4788,
+            "length": 6,
+            "code": 2322,
+            "category": 1,
+            "messageText": "Type 'null' is not assignable to type 'string | undefined'.",
+            "relatedInformation": [
+              {
+                "file": "/home/travis/build/PolymerLabs/arcs/src/devtools-connector/devtools-arc-inspector.ts",
+                "start": 1087,
+                "length": 6,
+                "messageText": "The expected type comes from property 'target' which is declared here on type 'StackFrame'",
+                "category": 3,
+                "code": 6500
+              }
+            ]
+          },
+          {
+            "file": "/home/travis/build/PolymerLabs/arcs/src/devtools-connector/devtools-arc-inspector.ts",
+            "start": 5808,
+            "length": 5,
+            "messageText": "Object is possibly 'null'.",
+            "category": 1,
+            "code": 2531
+          },
+          {
+            "file": "/home/travis/build/PolymerLabs/arcs/src/devtools-connector/devtools-arc-inspector.ts",
+            "start": 6586,
+            "length": 12,
+            "code": 2322,
+            "category": 1,
+            "messageText": "Type 'null' is not assignable to type 'string | undefined'."
+          },
+          {
+            "file": "/home/travis/build/PolymerLabs/arcs/src/devtools-connector/devtools-arc-inspector.ts",
+            "start": 7277,
+            "length": 45,
+            "messageText": "Object is possibly 'undefined'.",
+            "category": 1,
+            "code": 2532
+          },
+          {
+            "file": "/home/travis/build/PolymerLabs/arcs/src/devtools-connector/devtools-arc-inspector.ts",
+            "start": 7471,
+            "length": 47,
+            "messageText": "Object is possibly 'undefined'.",
+            "category": 1,
+            "code": 2532
+          }
+        ]
+      ],
+      [
+        "/home/travis/build/PolymerLabs/arcs/src/devtools-connector/devtools-planner-inspector.ts",
+        [
+          {
+            "file": "/home/travis/build/PolymerLabs/arcs/src/devtools-connector/devtools-planner-inspector.ts",
+            "start": 1394,
+            "length": 19,
+            "messageText": "Cannot invoke an object which is possibly 'undefined'.",
+            "category": 1,
+            "code": 2722
+          },
+          {
+            "file": "/home/travis/build/PolymerLabs/arcs/src/devtools-connector/devtools-planner-inspector.ts",
+            "start": 2394,
             "length": 15,
             "messageText": "Object is possibly 'undefined'.",
             "category": 1,
             "code": 2532
+          }
+        ]
+      ],
+      [
+        "/home/travis/build/PolymerLabs/arcs/src/planning/plan/plan-producer.ts",
+        [
+          {
+            "file": "/home/travis/build/PolymerLabs/arcs/src/planning/plan/plan-producer.ts",
+            "start": 2808,
+            "length": 16,
+            "messageText": "Object is possibly 'undefined'.",
+            "category": 1,
+            "code": 2532
+          },
+          {
+            "file": "/home/travis/build/PolymerLabs/arcs/src/planning/plan/plan-producer.ts",
+            "start": 6219,
+            "length": 4,
+            "code": 2345,
+            "category": 1,
+            "messageText": "Argument of type 'null' is not assignable to parameter of type 'Suggestion[]'."
+          },
+          {
+            "file": "/home/travis/build/PolymerLabs/arcs/src/planning/plan/plan-producer.ts",
+            "start": 6946,
+            "length": 12,
+            "code": 2322,
+            "category": 1,
+            "messageText": "Type 'null' is not assignable to type 'Suggestion[]'."
           }
         ]
       ],
@@ -22822,7 +22745,7 @@
         [
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/planning/plan/planificator.ts",
-            "start": 1310,
+            "start": 1398,
             "length": 14,
             "messageText": "Object is possibly 'undefined'.",
             "category": 1,
@@ -22830,7 +22753,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/planning/plan/planificator.ts",
-            "start": 2634,
+            "start": 2938,
             "length": 16,
             "messageText": "Object is possibly 'undefined'.",
             "category": 1,
@@ -22838,7 +22761,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/planning/plan/planificator.ts",
-            "start": 3485,
+            "start": 4006,
             "length": 6,
             "code": 2345,
             "category": 1,
@@ -22855,7 +22778,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/planning/plan/planificator.ts",
-            "start": 4766,
+            "start": 5287,
             "length": 14,
             "code": 2345,
             "category": 1,
@@ -22872,7 +22795,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/planning/plan/planificator.ts",
-            "start": 5092,
+            "start": 5613,
             "length": 14,
             "code": 2345,
             "category": 1,
@@ -22894,33 +22817,6 @@
       [
         "/home/travis/build/PolymerLabs/arcs/src/planning/test/planner-tests.ts",
         [
-          {
-            "file": "/home/travis/build/PolymerLabs/arcs/src/planning/test/planner-tests.ts",
-            "start": 2792,
-            "length": 7,
-            "code": 2345,
-            "category": 1,
-            "messageText": {
-              "messageText": "Argument of type '{ strategyArgs: any; speculator: Speculator; }' is not assignable to parameter of type '{ strategies?: StrategyDerived[] | undefined; ruleset?: Ruleset | undefined; strategyArgs?: {} | undefined; speculator?: null | undefined; blockDevtools?: boolean | undefined; }'.",
-              "category": 1,
-              "code": 2345,
-              "next": {
-                "messageText": "Types of property 'speculator' are incompatible.",
-                "category": 1,
-                "code": 2326,
-                "next": {
-                  "messageText": "Type 'Speculator' is not assignable to type 'null | undefined'.",
-                  "category": 1,
-                  "code": 2322,
-                  "next": {
-                    "messageText": "Type 'Speculator' is not assignable to type 'null'.",
-                    "category": 1,
-                    "code": 2322
-                  }
-                }
-              }
-            }
-          },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/planning/test/planner-tests.ts",
             "start": 21307,
@@ -23027,7 +22923,7 @@
         [
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/testing/test-helper.ts",
-            "start": 2145,
+            "start": 2152,
             "length": 6,
             "code": 2322,
             "category": 1,
@@ -23054,7 +22950,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/testing/test-helper.ts",
-            "start": 2174,
+            "start": 2181,
             "length": 7,
             "code": 2322,
             "category": 1,
@@ -23081,7 +22977,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/testing/test-helper.ts",
-            "start": 6022,
+            "start": 6032,
             "length": 20,
             "messageText": "Object is possibly 'undefined'.",
             "category": 1,
@@ -23089,7 +22985,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/testing/test-helper.ts",
-            "start": 6058,
+            "start": 6068,
             "length": 20,
             "messageText": "Object is possibly 'undefined'.",
             "category": 1,
@@ -23102,61 +22998,7 @@
         [
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/planning/testing/planning-test-helper.ts",
-            "start": 3015,
-            "length": 77,
-            "code": 2345,
-            "category": 1,
-            "messageText": {
-              "messageText": "Argument of type '{ strategyArgs: { recipeIndex: RecipeIndex; }; speculator: Speculator; }' is not assignable to parameter of type '{ strategies?: StrategyDerived[] | undefined; ruleset?: Ruleset | undefined; strategyArgs?: {} | undefined; speculator?: null | undefined; blockDevtools?: boolean | undefined; }'.",
-              "category": 1,
-              "code": 2345,
-              "next": {
-                "messageText": "Types of property 'speculator' are incompatible.",
-                "category": 1,
-                "code": 2326,
-                "next": {
-                  "messageText": "Type 'Speculator' is not assignable to type 'null | undefined'.",
-                  "category": 1,
-                  "code": 2322,
-                  "next": {
-                    "messageText": "Type 'Speculator' is not assignable to type 'null'.",
-                    "category": 1,
-                    "code": 2322
-                  }
-                }
-              }
-            }
-          },
-          {
-            "file": "/home/travis/build/PolymerLabs/arcs/src/planning/testing/planning-test-helper.ts",
-            "start": 3321,
-            "length": 77,
-            "code": 2345,
-            "category": 1,
-            "messageText": {
-              "messageText": "Argument of type '{ strategyArgs: { recipeIndex: RecipeIndex; }; speculator: Speculator; }' is not assignable to parameter of type '{ strategies?: StrategyDerived[] | undefined; ruleset?: Ruleset | undefined; strategyArgs?: {} | undefined; speculator?: null | undefined; blockDevtools?: boolean | undefined; }'.",
-              "category": 1,
-              "code": 2345,
-              "next": {
-                "messageText": "Types of property 'speculator' are incompatible.",
-                "category": 1,
-                "code": 2326,
-                "next": {
-                  "messageText": "Type 'Speculator' is not assignable to type 'null | undefined'.",
-                  "category": 1,
-                  "code": 2322,
-                  "next": {
-                    "messageText": "Type 'Speculator' is not assignable to type 'null'.",
-                    "category": 1,
-                    "code": 2322
-                  }
-                }
-              }
-            }
-          },
-          {
-            "file": "/home/travis/build/PolymerLabs/arcs/src/planning/testing/planning-test-helper.ts",
-            "start": 5217,
+            "start": 5143,
             "length": 23,
             "messageText": "Object is possibly 'undefined'.",
             "category": 1,

@@ -10,10 +10,8 @@
 import { assert } from '../platform/assert-web.js';
 import { now } from '../platform/date-web.js';
 import { DeviceInfo } from '../platform/deviceinfo-web.js';
-import { DevtoolsConnection } from '../devtools-connector/devtools-connection.js';
 import { RecipeUtil } from '../runtime/recipe/recipe-util.js';
 import { Tracing } from '../tracelib/trace.js';
-import { StrategyExplorerAdapter } from './debug/strategy-explorer-adapter.js';
 import { PlanningResult } from './plan/planning-result.js';
 import { Suggestion } from './plan/suggestion.js';
 import { AddMissingHandles } from './strategies/add-missing-handles.js';
@@ -42,13 +40,15 @@ import { Runtime } from '../runtime/runtime.js';
 const suggestionByHash = () => Runtime.getRuntime().getCacheService().getOrCreateCache('suggestionByHash');
 export class Planner {
     // TODO: Use context.arc instead of arc
-    init(arc, { strategies = Planner.AllStrategies, ruleset = Rulesets.Empty, strategyArgs = {}, speculator = null, blockDevtools = false } = {}) {
+    init(arc, { strategies = Planner.AllStrategies, ruleset = Rulesets.Empty, strategyArgs = {}, speculator = null, inspectorFactory = null }) {
         strategyArgs = Object.freeze({ ...strategyArgs });
-        this._arc = arc;
+        this.arc = arc;
         const strategyImpls = strategies.map(strategy => new strategy(arc, strategyArgs));
         this.strategizer = new Strategizer(strategyImpls, [], ruleset);
-        this.blockDevtools = blockDevtools;
         this.speculator = speculator;
+        if (inspectorFactory) {
+            this.inspector = inspectorFactory.create(this);
+        }
     }
     // Specify a timeout value less than zero to disable timeouts.
     async plan(timeout, generations = []) {
@@ -77,8 +77,8 @@ export class Planner {
             }
         } while (this.strategizer.generated.length + this.strategizer.terminal.length > 0);
         trace.end();
-        if (generations.length && !this.blockDevtools && DevtoolsConnection.isConnected) {
-            StrategyExplorerAdapter.processGenerations(PlanningResult.formatSerializableGenerations(generations), DevtoolsConnection.get().forArc(this._arc), { label: 'Planner', keep: true });
+        if (generations.length && this.inspector) {
+            this.inspector.strategizingRecord(PlanningResult.formatSerializableGenerations(generations), { label: 'Planner', keep: true });
         }
         return allResolved;
     }
@@ -132,7 +132,7 @@ export class Planner {
             const results = [];
             for (const plan of group) {
                 const hash = ((hash) => hash.substring(hash.length - 4))(await plan.digest());
-                if (RecipeUtil.matchesRecipe(this._arc.activeRecipe, plan)) {
+                if (RecipeUtil.matchesRecipe(this.arc.activeRecipe, plan)) {
                     this._updateGeneration(generations, hash, (g) => g.active = true);
                     continue;
                 }
@@ -142,7 +142,7 @@ export class Planner {
                     overview: true,
                     args: { groupIndex }
                 });
-                const suggestion = await this.retriveOrCreateSuggestion(hash, plan, this._arc);
+                const suggestion = await this.retriveOrCreateSuggestion(hash, plan, this.arc);
                 if (!suggestion) {
                     this._updateGeneration(generations, hash, (g) => g.irrelevant = true);
                     planTrace.end({ name: '[Irrelevant suggestion]', args: { hash, groupIndex } });
@@ -169,7 +169,7 @@ export class Planner {
         let relevance = null;
         let description = null;
         if (this.speculator) {
-            const result = await this.speculator.speculate(this._arc, plan, hash);
+            const result = await this.speculator.speculate(this.arc, plan, hash);
             if (!result) {
                 return undefined;
             }
@@ -181,7 +181,7 @@ export class Planner {
             description = await Description.createForPlan(plan);
         }
         const suggestion = Suggestion.create(plan, hash, relevance);
-        suggestion.setDescription(description, this._arc.modality, this._arc.pec.slotComposer ? this._arc.pec.slotComposer.modalityHandler.descriptionFormatter : undefined);
+        suggestion.setDescription(description, this.arc.modality, this.arc.pec.slotComposer ? this.arc.pec.slotComposer.modalityHandler.descriptionFormatter : undefined);
         suggestionByHash().set(hash, suggestion);
         return suggestion;
     }

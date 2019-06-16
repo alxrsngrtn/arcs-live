@@ -10,15 +10,12 @@
 import { Strategizer, Strategy } from '../planning/strategizer.js';
 import { assert } from '../platform/assert-web.js';
 import { Arc } from '../runtime/arc.js';
-import { DevtoolsConnection } from '../devtools-connector/devtools-connection.js';
 import { Manifest } from '../runtime/manifest.js';
 import { Handle } from '../runtime/recipe/handle.js';
 import { RecipeUtil } from '../runtime/recipe/recipe-util.js';
 import { SlotUtils } from '../runtime/recipe/slot-utils.js';
 import { SlotComposer } from '../runtime/slot-composer.js';
 import { Tracing } from '../tracelib/trace.js';
-import { StrategyExplorerAdapter } from './debug/strategy-explorer-adapter.js';
-import { PlanningResult } from './plan/planning-result.js';
 import { PlanningModalityHandler } from './planning-modality-handler.js';
 import { AddMissingHandles } from './strategies/add-missing-handles.js';
 import { ConvertConstraintsToConnections } from './strategies/convert-constraints-to-connections.js';
@@ -70,7 +67,7 @@ const IndexStrategies = [
     CreateHandleGroup
 ];
 export class RecipeIndex {
-    constructor(arc, { reportGenerations = false } = {}) {
+    constructor(arc) {
         this._isReady = false;
         const trace = Tracing.start({ cat: 'indexing', name: 'RecipeIndex::constructor', overview: true });
         const idGenerator = IdGenerator.newSession();
@@ -94,9 +91,6 @@ export class RecipeIndex {
                 const record = await strategizer.generate();
                 generations.push({ record, generated: strategizer.generated });
             } while (strategizer.generated.length + strategizer.terminal.length > 0);
-            if (reportGenerations && DevtoolsConnection.isConnected) {
-                StrategyExplorerAdapter.processGenerations(PlanningResult.formatSerializableGenerations(generations), DevtoolsConnection.get().forArc(arc), { label: 'Index', keep: true });
-            }
             const population = strategizer.population;
             const candidates = new Set(population);
             for (const result of population) {
@@ -110,8 +104,8 @@ export class RecipeIndex {
             resolve(true);
         }));
     }
-    static create(arc, options = {}) {
-        return new RecipeIndex(arc, options);
+    static create(arc) {
+        return new RecipeIndex(arc);
     }
     get recipes() {
         if (!this._isReady)

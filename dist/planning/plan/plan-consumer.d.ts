@@ -8,11 +8,11 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { Arc } from '../../runtime/arc.js';
-import { ArcDevtoolsChannel } from '../../devtools-connector/abstract-devtools-channel.js';
 import { SuggestionComposer } from '../suggestion-composer.js';
 import { PlanningResult } from './planning-result.js';
 import { Suggestion, SuggestionVisibilityOptions } from './suggestion.js';
 import { SuggestFilter } from './suggest-filter.js';
+import { PlannerInspector } from '../planner-inspector.js';
 export declare type VisibilityOptions = {
     reasons?: Map<string, SuggestionVisibilityOptions>;
 };
@@ -24,8 +24,8 @@ export declare class PlanConsumer {
     private visibleSuggestionsChangeCallbacks;
     suggestionComposer: SuggestionComposer | null;
     currentSuggestions: Suggestion[];
-    devtoolsChannel?: ArcDevtoolsChannel;
-    constructor(arc: Arc, result: PlanningResult);
+    inspector?: PlannerInspector;
+    constructor(arc: Arc, result: PlanningResult, inspector?: PlannerInspector);
     registerSuggestionsChangedCallback(callback: any): void;
     registerVisibleSuggestionsChangedCallback(callback: any): void;
     setSuggestFilter(showAll: boolean, search?: string): void;

@@ -7,8 +7,5 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-export declare class StrategyExplorerAdapter {
-    static processGenerations(generations: any, devtoolsChannel: any, options?: {}): void;
-    static printGenerations(generations: any): void;
-    static _collectDerivation(derivation: any, allResults: any): any;
-}
+import { ArcInspectorFactory } from '../runtime/arc-inspector.js';
+export declare const devtoolsArcInspectorFactory: ArcInspectorFactory;

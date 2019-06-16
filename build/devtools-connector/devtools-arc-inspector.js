@@ -16,12 +16,12 @@ import { enableTracingAdapter } from './tracing-adapter.js';
 void DevtoolsConnection.onceConnected.then(devtoolsChannel => {
     enableTracingAdapter(devtoolsChannel);
 });
-export const devtoolsInspectorFactory = {
+export const devtoolsArcInspectorFactory = {
     create(arc) {
-        return new DevtoolsInspector(arc);
+        return new DevtoolsArcInspector(arc);
     }
 };
-class DevtoolsInspector {
+class DevtoolsArcInspector {
     constructor(arc) {
         this.arcDevtoolsChannel = null;
         this.onceActiveResolve = null;
@@ -169,4 +169,4 @@ class DevtoolsInspector {
         });
     }
 }
-//# sourceMappingURL=devtools-inspector.js.map
+//# sourceMappingURL=devtools-arc-inspector.js.map

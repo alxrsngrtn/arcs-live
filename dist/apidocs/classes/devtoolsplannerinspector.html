@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>DevtoolsInspector | arcs</title>
+	<title>DevtoolsPlannerInspector | arcs</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -56,10 +56,10 @@
 					<a href="../globals.html">Globals</a>
 				</li>
 				<li>
-					<a href="devtoolsinspector.html">DevtoolsInspector</a>
+					<a href="devtoolsplannerinspector.html">DevtoolsPlannerInspector</a>
 				</li>
 			</ul>
-			<h1>Class DevtoolsInspector</h1>
+			<h1>Class DevtoolsPlannerInspector</h1>
 		</div>
 	</div>
 </header>
@@ -70,14 +70,14 @@
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<span class="target">DevtoolsInspector</span>
+						<span class="target">DevtoolsPlannerInspector</span>
 					</li>
 				</ul>
 			</section>
 			<section class="tsd-panel">
 				<h3>Implements</h3>
 				<ul class="tsd-hierarchy">
-					<li><a href="../interfaces/arcinspector.html" class="tsd-signature-type">ArcInspector</a></li>
+					<li><a href="../interfaces/plannerinspector.html" class="tsd-signature-type">PlannerInspector</a></li>
 				</ul>
 			</section>
 			<section class="tsd-panel-group tsd-index-group">
@@ -87,25 +87,23 @@
 						<section class="tsd-index-section tsd-is-not-exported">
 							<h3>Constructors</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-constructor tsd-parent-kind-class tsd-is-not-exported"><a href="devtoolsinspector.html#constructor" class="tsd-kind-icon">constructor</a></li>
+								<li class="tsd-kind-constructor tsd-parent-kind-class tsd-is-not-exported"><a href="devtoolsplannerinspector.html#constructor" class="tsd-kind-icon">constructor</a></li>
 							</ul>
 						</section>
-						<section class="tsd-index-section tsd-is-not-exported">
+						<section class="tsd-index-section tsd-is-private tsd-is-private-protected tsd-is-not-exported">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private tsd-is-not-exported"><a href="devtoolsinspector.html#arcdevtoolschannel" class="tsd-kind-icon">arc<wbr>Devtools<wbr>Channel</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-not-exported"><a href="devtoolsinspector.html#onceactive" class="tsd-kind-icon">once<wbr>Active</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private tsd-is-not-exported"><a href="devtoolsinspector.html#onceactiveresolve" class="tsd-kind-icon">once<wbr>Active<wbr>Resolve</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private tsd-is-not-exported"><a href="devtoolsplannerinspector.html#arcdevtoolschannel" class="tsd-kind-icon">arc<wbr>Devtools<wbr>Channel</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section tsd-is-not-exported">
 							<h3>Methods</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-not-exported"><a href="devtoolsinspector.html#_extractstackframes" class="tsd-kind-icon">_extract<wbr>Stack<wbr>Frames</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-not-exported"><a href="devtoolsinspector.html#isactive" class="tsd-kind-icon">is<wbr>Active</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-not-exported"><a href="devtoolsinspector.html#pecmessage" class="tsd-kind-icon">pec<wbr>Message</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-not-exported"><a href="devtoolsinspector.html#recipeinstantiated" class="tsd-kind-icon">recipe<wbr>Instantiated</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private tsd-is-not-exported"><a href="devtoolsinspector.html#sendenvironmentmessage" class="tsd-kind-icon">send<wbr>Environment<wbr>Message</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private tsd-is-not-exported"><a href="devtoolsplannerinspector.html#formatsuggestions" class="tsd-kind-icon">format<wbr>Suggestions</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-not-exported"><a href="devtoolsplannerinspector.html#strategizingrecord" class="tsd-kind-icon">strategizing<wbr>Record</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-not-exported"><a href="devtoolsplannerinspector.html#updateplanningattempt" class="tsd-kind-icon">update<wbr>Planning<wbr>Attempt</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-not-exported"><a href="devtoolsplannerinspector.html#updateplanningresults" class="tsd-kind-icon">update<wbr>Planning<wbr>Results</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-not-exported"><a href="devtoolsplannerinspector.html#updatevisiblesuggestions" class="tsd-kind-icon">update<wbr>Visible<wbr>Suggestions</a></li>
 							</ul>
 						</section>
 					</div>
@@ -117,180 +115,167 @@
 					<a name="constructor" class="tsd-anchor"></a>
 					<h3>constructor</h3>
 					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class tsd-is-not-exported">
-						<li class="tsd-signature tsd-kind-icon">new <wbr>Devtools<wbr>Inspector<span class="tsd-signature-symbol">(</span>arc<span class="tsd-signature-symbol">: </span><a href="arc.html" class="tsd-signature-type">Arc</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="devtoolsinspector.html" class="tsd-signature-type">DevtoolsInspector</a></li>
+						<li class="tsd-signature tsd-kind-icon">new <wbr>Devtools<wbr>Planner<wbr>Inspector<span class="tsd-signature-symbol">(</span>planner<span class="tsd-signature-symbol">: </span><a href="../interfaces/inspectableplanner.html" class="tsd-signature-type">InspectablePlanner</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="devtoolsplannerinspector.html" class="tsd-signature-type">DevtoolsPlannerInspector</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/0c42305/src/devtools-connector/devtools-inspector.ts#L42">devtools-connector/devtools-inspector.ts:42</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/363e55f/src/devtools-connector/devtools-planner-inspector.ts#L26">devtools-connector/devtools-planner-inspector.ts:26</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>arc: <a href="arc.html" class="tsd-signature-type">Arc</a></h5>
+									<h5>planner: <a href="../interfaces/inspectableplanner.html" class="tsd-signature-type">InspectablePlanner</a></h5>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <a href="devtoolsinspector.html" class="tsd-signature-type">DevtoolsInspector</a></h4>
+							<h4 class="tsd-returns-title">Returns <a href="devtoolsplannerinspector.html" class="tsd-signature-type">DevtoolsPlannerInspector</a></h4>
 						</li>
 					</ul>
 				</section>
 			</section>
-			<section class="tsd-panel-group tsd-member-group tsd-is-not-exported">
+			<section class="tsd-panel-group tsd-member-group tsd-is-private tsd-is-private-protected tsd-is-not-exported">
 				<h2>Properties</h2>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private tsd-is-not-exported">
 					<a name="arcdevtoolschannel" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagPrivate">Private</span> arc<wbr>Devtools<wbr>Channel</h3>
-					<div class="tsd-signature tsd-kind-icon">arc<wbr>Devtools<wbr>Channel<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">DevtoolsChannel</span><span class="tsd-signature-symbol"> =&nbsp;null</span></div>
+					<div class="tsd-signature tsd-kind-icon">arc<wbr>Devtools<wbr>Channel<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">DevtoolsChannel</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span><span class="tsd-signature-symbol"> =&nbsp;null</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/0c42305/src/devtools-connector/devtools-inspector.ts#L39">devtools-connector/devtools-inspector.ts:39</a></li>
-						</ul>
-					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-not-exported">
-					<a name="onceactive" class="tsd-anchor"></a>
-					<h3>once<wbr>Active</h3>
-					<div class="tsd-signature tsd-kind-icon">once<wbr>Active<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span><span class="tsd-signature-symbol"> =&nbsp;null</span></div>
-					<aside class="tsd-sources">
-						<p>Implementation of <a href="../interfaces/arcinspector.html">ArcInspector</a>.<a href="../interfaces/arcinspector.html#onceactive">onceActive</a></p>
-						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/0c42305/src/devtools-connector/devtools-inspector.ts#L42">devtools-connector/devtools-inspector.ts:42</a></li>
-						</ul>
-					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private tsd-is-not-exported">
-					<a name="onceactiveresolve" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagPrivate">Private</span> once<wbr>Active<wbr>Resolve</h3>
-					<div class="tsd-signature tsd-kind-icon">once<wbr>Active<wbr>Resolve<span class="tsd-signature-symbol">:</span> <a href="../globals.html#runnable" class="tsd-signature-type">Runnable</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span><span class="tsd-signature-symbol"> =&nbsp;null</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/0c42305/src/devtools-connector/devtools-inspector.ts#L41">devtools-connector/devtools-inspector.ts:41</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/363e55f/src/devtools-connector/devtools-planner-inspector.ts#L26">devtools-connector/devtools-planner-inspector.ts:26</a></li>
 						</ul>
 					</aside>
 				</section>
 			</section>
 			<section class="tsd-panel-group tsd-member-group tsd-is-not-exported">
 				<h2>Methods</h2>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
-					<a name="_extractstackframes" class="tsd-anchor"></a>
-					<h3>_extract<wbr>Stack<wbr>Frames</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
-						<li class="tsd-signature tsd-kind-icon">_extract<wbr>Stack<wbr>Frames<span class="tsd-signature-symbol">(</span>stackString<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../globals.html#stackframe" class="tsd-signature-type">StackFrame</a><span class="tsd-signature-symbol">[]</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/0c42305/src/devtools-connector/devtools-inspector.ts#L108">devtools-connector/devtools-inspector.ts:108</a></li>
-								</ul>
-							</aside>
-							<h4 class="tsd-parameters-title">Parameters</h4>
-							<ul class="tsd-parameters">
-								<li>
-									<h5>stackString: <span class="tsd-signature-type">string</span></h5>
-								</li>
-							</ul>
-							<h4 class="tsd-returns-title">Returns <a href="../globals.html#stackframe" class="tsd-signature-type">StackFrame</a><span class="tsd-signature-symbol">[]</span></h4>
-						</li>
-					</ul>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
-					<a name="isactive" class="tsd-anchor"></a>
-					<h3>is<wbr>Active</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
-						<li class="tsd-signature tsd-kind-icon">is<wbr>Active<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<p>Implementation of <a href="../interfaces/arcinspector.html">ArcInspector</a>.<a href="../interfaces/arcinspector.html#isactive">isActive</a></p>
-								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/0c42305/src/devtools-connector/devtools-inspector.ts#L173">devtools-connector/devtools-inspector.ts:173</a></li>
-								</ul>
-							</aside>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
-						</li>
-					</ul>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
-					<a name="pecmessage" class="tsd-anchor"></a>
-					<h3>pec<wbr>Message</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
-						<li class="tsd-signature tsd-kind-icon">pec<wbr>Message<span class="tsd-signature-symbol">(</span>name<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, pecMsgBody<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">object</span>, pecMsgCount<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, stackString<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<p>Implementation of <a href="../interfaces/arcinspector.html">ArcInspector</a>.<a href="../interfaces/arcinspector.html#pecmessage">pecMessage</a></p>
-								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/0c42305/src/devtools-connector/devtools-inspector.ts#L98">devtools-connector/devtools-inspector.ts:98</a></li>
-								</ul>
-							</aside>
-							<h4 class="tsd-parameters-title">Parameters</h4>
-							<ul class="tsd-parameters">
-								<li>
-									<h5>name: <span class="tsd-signature-type">string</span></h5>
-								</li>
-								<li>
-									<h5>pecMsgBody: <span class="tsd-signature-type">object</span></h5>
-								</li>
-								<li>
-									<h5>pecMsgCount: <span class="tsd-signature-type">number</span></h5>
-								</li>
-								<li>
-									<h5>stackString: <span class="tsd-signature-type">string</span></h5>
-								</li>
-							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
-						</li>
-					</ul>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
-					<a name="recipeinstantiated" class="tsd-anchor"></a>
-					<h3>recipe<wbr>Instantiated</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
-						<li class="tsd-signature tsd-kind-icon">recipe<wbr>Instantiated<span class="tsd-signature-symbol">(</span>particles<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Particle</span><span class="tsd-signature-symbol">[]</span>, activeRecipe<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<p>Implementation of <a href="../interfaces/arcinspector.html">ArcInspector</a>.<a href="../interfaces/arcinspector.html#recipeinstantiated">recipeInstantiated</a></p>
-								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/0c42305/src/devtools-connector/devtools-inspector.ts#L77">devtools-connector/devtools-inspector.ts:77</a></li>
-								</ul>
-							</aside>
-							<h4 class="tsd-parameters-title">Parameters</h4>
-							<ul class="tsd-parameters">
-								<li>
-									<h5>particles: <span class="tsd-signature-type">Particle</span><span class="tsd-signature-symbol">[]</span></h5>
-								</li>
-								<li>
-									<h5>activeRecipe: <span class="tsd-signature-type">string</span></h5>
-								</li>
-							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
-						</li>
-					</ul>
-				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-private tsd-is-not-exported">
-					<a name="sendenvironmentmessage" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagPrivate">Private</span> send<wbr>Environment<wbr>Message</h3>
+					<a name="formatsuggestions" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> format<wbr>Suggestions</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private tsd-is-not-exported">
-						<li class="tsd-signature tsd-kind-icon">send<wbr>Environment<wbr>Message<span class="tsd-signature-symbol">(</span>arc<span class="tsd-signature-symbol">: </span><a href="arc.html" class="tsd-signature-type">Arc</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+						<li class="tsd-signature tsd-kind-icon">format<wbr>Suggestions<span class="tsd-signature-symbol">(</span>suggestions<span class="tsd-signature-symbol">: </span><a href="suggestion.html" class="tsd-signature-type">Suggestion</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">__type</span><span class="tsd-signature-symbol">[]</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/0c42305/src/devtools-connector/devtools-inspector.ts#L177">devtools-connector/devtools-inspector.ts:177</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/363e55f/src/devtools-connector/devtools-planner-inspector.ts#L79">devtools-connector/devtools-planner-inspector.ts:79</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>arc: <a href="arc.html" class="tsd-signature-type">Arc</a></h5>
+									<h5>suggestions: <a href="suggestion.html" class="tsd-signature-type">Suggestion</a><span class="tsd-signature-symbol">[]</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">__type</span><span class="tsd-signature-symbol">[]</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
+					<a name="strategizingrecord" class="tsd-anchor"></a>
+					<h3>strategizing<wbr>Record</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
+						<li class="tsd-signature tsd-kind-icon">strategizing<wbr>Record<span class="tsd-signature-symbol">(</span>generations<span class="tsd-signature-symbol">: </span><a href="../globals.html#serializablegeneration" class="tsd-signature-type">SerializableGeneration</a><span class="tsd-signature-symbol">[]</span>, options<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">object</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/363e55f/src/devtools-connector/devtools-planner-inspector.ts#L37">devtools-connector/devtools-planner-inspector.ts:37</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>generations: <a href="../globals.html#serializablegeneration" class="tsd-signature-type">SerializableGeneration</a><span class="tsd-signature-symbol">[]</span></h5>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> options: <span class="tsd-signature-type">object</span><span class="tsd-signature-symbol"> =&nbsp;{}</span></h5>
+									<ul class="tsd-parameters">
+									</ul>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
+					<a name="updateplanningattempt" class="tsd-anchor"></a>
+					<h3>update<wbr>Planning<wbr>Attempt</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
+						<li class="tsd-signature tsd-kind-icon">update<wbr>Planning<wbr>Attempt<span class="tsd-signature-symbol">(</span>suggestions<span class="tsd-signature-symbol">: </span><a href="suggestion.html" class="tsd-signature-type">Suggestion</a><span class="tsd-signature-symbol">[]</span>, metadata<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">__type</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Implementation of <a href="../interfaces/plannerinspector.html">PlannerInspector</a>.<a href="../interfaces/plannerinspector.html#updateplanningattempt">updatePlanningAttempt</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/363e55f/src/devtools-connector/devtools-planner-inspector.ts#L68">devtools-connector/devtools-planner-inspector.ts:68</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>suggestions: <a href="suggestion.html" class="tsd-signature-type">Suggestion</a><span class="tsd-signature-symbol">[]</span></h5>
+								</li>
+								<li>
+									<h5>metadata: <span class="tsd-signature-type">__type</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
+					<a name="updateplanningresults" class="tsd-anchor"></a>
+					<h3>update<wbr>Planning<wbr>Results</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
+						<li class="tsd-signature tsd-kind-icon">update<wbr>Planning<wbr>Results<span class="tsd-signature-symbol">(</span>result<span class="tsd-signature-symbol">: </span><a href="planningresult.html" class="tsd-signature-type">PlanningResult</a>, metadata<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Implementation of <a href="../interfaces/plannerinspector.html">PlannerInspector</a>.<a href="../interfaces/plannerinspector.html#updateplanningresults">updatePlanningResults</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/363e55f/src/devtools-connector/devtools-planner-inspector.ts#L45">devtools-connector/devtools-planner-inspector.ts:45</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>result: <a href="planningresult.html" class="tsd-signature-type">PlanningResult</a></h5>
+								</li>
+								<li>
+									<h5>metadata: <span class="tsd-signature-type">any</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
+					<a name="updatevisiblesuggestions" class="tsd-anchor"></a>
+					<h3>update<wbr>Visible<wbr>Suggestions</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
+						<li class="tsd-signature tsd-kind-icon">update<wbr>Visible<wbr>Suggestions<span class="tsd-signature-symbol">(</span>visibleSuggestions<span class="tsd-signature-symbol">: </span><a href="suggestion.html" class="tsd-signature-type">Suggestion</a><span class="tsd-signature-symbol">[]</span>, options<span class="tsd-signature-symbol">: </span><a href="../globals.html#visibilityoptions" class="tsd-signature-type">VisibilityOptions</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Implementation of <a href="../interfaces/plannerinspector.html">PlannerInspector</a>.<a href="../interfaces/plannerinspector.html#updatevisiblesuggestions">updateVisibleSuggestions</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/363e55f/src/devtools-connector/devtools-planner-inspector.ts#L57">devtools-connector/devtools-planner-inspector.ts:57</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>visibleSuggestions: <a href="suggestion.html" class="tsd-signature-type">Suggestion</a><span class="tsd-signature-symbol">[]</span></h5>
+								</li>
+								<li>
+									<h5>options: <a href="../globals.html#visibilityoptions" class="tsd-signature-type">VisibilityOptions</a></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -312,34 +297,28 @@
 				</ul>
 				<ul class="current">
 					<li class="current tsd-kind-class tsd-is-not-exported">
-						<a href="devtoolsinspector.html" class="tsd-kind-icon">Devtools<wbr>Inspector</a>
+						<a href="devtoolsplannerinspector.html" class="tsd-kind-icon">Devtools<wbr>Planner<wbr>Inspector</a>
 						<ul>
 							<li class=" tsd-kind-constructor tsd-parent-kind-class tsd-is-not-exported">
-								<a href="devtoolsinspector.html#constructor" class="tsd-kind-icon">constructor</a>
+								<a href="devtoolsplannerinspector.html#constructor" class="tsd-kind-icon">constructor</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private tsd-is-not-exported">
-								<a href="devtoolsinspector.html#arcdevtoolschannel" class="tsd-kind-icon">arc<wbr>Devtools<wbr>Channel</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-not-exported">
-								<a href="devtoolsinspector.html#onceactive" class="tsd-kind-icon">once<wbr>Active</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private tsd-is-not-exported">
-								<a href="devtoolsinspector.html#onceactiveresolve" class="tsd-kind-icon">once<wbr>Active<wbr>Resolve</a>
-							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
-								<a href="devtoolsinspector.html#_extractstackframes" class="tsd-kind-icon">_extract<wbr>Stack<wbr>Frames</a>
-							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
-								<a href="devtoolsinspector.html#isactive" class="tsd-kind-icon">is<wbr>Active</a>
-							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
-								<a href="devtoolsinspector.html#pecmessage" class="tsd-kind-icon">pec<wbr>Message</a>
-							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
-								<a href="devtoolsinspector.html#recipeinstantiated" class="tsd-kind-icon">recipe<wbr>Instantiated</a>
+								<a href="devtoolsplannerinspector.html#arcdevtoolschannel" class="tsd-kind-icon">arc<wbr>Devtools<wbr>Channel</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-private tsd-is-not-exported">
-								<a href="devtoolsinspector.html#sendenvironmentmessage" class="tsd-kind-icon">send<wbr>Environment<wbr>Message</a>
+								<a href="devtoolsplannerinspector.html#formatsuggestions" class="tsd-kind-icon">format<wbr>Suggestions</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
+								<a href="devtoolsplannerinspector.html#strategizingrecord" class="tsd-kind-icon">strategizing<wbr>Record</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
+								<a href="devtoolsplannerinspector.html#updateplanningattempt" class="tsd-kind-icon">update<wbr>Planning<wbr>Attempt</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
+								<a href="devtoolsplannerinspector.html#updateplanningresults" class="tsd-kind-icon">update<wbr>Planning<wbr>Results</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
+								<a href="devtoolsplannerinspector.html#updatevisiblesuggestions" class="tsd-kind-icon">update<wbr>Visible<wbr>Suggestions</a>
 							</li>
 						</ul>
 					</li>

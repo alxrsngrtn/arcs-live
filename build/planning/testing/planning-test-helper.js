@@ -13,6 +13,7 @@ import { Speculator } from '../speculator.js';
 import { assert } from '../../platform/chai-web.js';
 import { InterfaceType } from '../../runtime/type.js';
 import { TestHelper } from '../../runtime/testing/test-helper.js';
+import { devtoolsPlannerInspectorFactory } from '../../devtools-connector/devtools-planner-inspector.js';
 /**
  * Helper class to recipe instantiation and replanning.
  * Usage example:
@@ -49,7 +50,11 @@ export class PlanningTestHelper extends TestHelper {
      */
     async makePlans(options) {
         const planner = new Planner();
-        planner.init(this.arc, { strategyArgs: { recipeIndex: this.recipeIndex }, speculator: new Speculator() });
+        planner.init(this.arc, {
+            strategyArgs: { recipeIndex: this.recipeIndex },
+            speculator: new Speculator(),
+            inspectorFactory: devtoolsPlannerInspectorFactory
+        });
         this.suggestions = await planner.suggest();
         if (options && options.includeInnerArcs) {
             for (const innerArc of this.arc.innerArcs) {

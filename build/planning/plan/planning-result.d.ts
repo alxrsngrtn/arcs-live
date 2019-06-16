@@ -19,13 +19,14 @@ export declare type PlanningResultOptions = {
     }[];
     contextual?: boolean;
 };
+export declare type SerializableGeneration = {
+    population: {}[];
+    record: {};
+};
 export declare class PlanningResult {
     suggestions: Suggestion[];
     lastUpdated: Date;
-    generations: {
-        population: {}[];
-        record: {};
-    }[];
+    generations: SerializableGeneration[];
     contextual: boolean;
     store?: SingletonStorageProvider;
     private storeCallback;
@@ -38,7 +39,7 @@ export declare class PlanningResult {
     flush(): Promise<void>;
     clear(): Promise<void>;
     dispose(): void;
-    static formatSerializableGenerations(generations: any): any;
+    static formatSerializableGenerations(generations: any): SerializableGeneration[];
     private _set;
     merge({ suggestions, lastUpdated, generations, contextual }: PlanningResultOptions, arc: Arc): boolean;
     private _isUpToDate;

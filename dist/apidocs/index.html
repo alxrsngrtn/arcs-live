@@ -527,6 +527,9 @@ ws://127.0.0.1:9229/..</code> as normally appears for <a href="https://nodejs.or
 					<li class=" tsd-kind-class">
 						<a href="classes/deviceinfo.html" class="tsd-kind-icon">Device<wbr>Info</a>
 					</li>
+					<li class=" tsd-kind-class tsd-is-not-exported">
+						<a href="classes/devtoolsarcinspector.html" class="tsd-kind-icon">Devtools<wbr>Arc<wbr>Inspector</a>
+					</li>
 					<li class=" tsd-kind-class">
 						<a href="classes/devtoolschannelstub.html" class="tsd-kind-icon">Devtools<wbr>Channel<wbr>Stub</a>
 					</li>
@@ -537,7 +540,7 @@ ws://127.0.0.1:9229/..</code> as normally appears for <a href="https://nodejs.or
 						<a href="classes/devtoolsfortests.html" class="tsd-kind-icon">Devtools<wbr>For<wbr>Tests</a>
 					</li>
 					<li class=" tsd-kind-class tsd-is-not-exported">
-						<a href="classes/devtoolsinspector.html" class="tsd-kind-icon">Devtools<wbr>Inspector</a>
+						<a href="classes/devtoolsplannerinspector.html" class="tsd-kind-icon">Devtools<wbr>Planner<wbr>Inspector</a>
 					</li>
 					<li class=" tsd-kind-class tsd-has-type-parameter">
 						<a href="classes/directstore.html" class="tsd-kind-icon">Direct<wbr>Store</a>
@@ -837,9 +840,6 @@ ws://127.0.0.1:9229/..</code> as normally appears for <a href="https://nodejs.or
 						<a href="classes/planner.html" class="tsd-kind-icon">Planner</a>
 					</li>
 					<li class=" tsd-kind-class">
-						<a href="classes/planningexploreradapter.html" class="tsd-kind-icon">Planning<wbr>Explorer<wbr>Adapter</a>
-					</li>
-					<li class=" tsd-kind-class">
 						<a href="classes/planningmodalityhandler.html" class="tsd-kind-icon">Planning<wbr>Modality<wbr>Handler</a>
 					</li>
 					<li class=" tsd-kind-class">
@@ -1042,9 +1042,6 @@ ws://127.0.0.1:9229/..</code> as normally appears for <a href="https://nodejs.or
 					</li>
 					<li class=" tsd-kind-class">
 						<a href="classes/strategy.html" class="tsd-kind-icon">Strategy</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/strategyexploreradapter.html" class="tsd-kind-icon">Strategy<wbr>Explorer<wbr>Adapter</a>
 					</li>
 					<li class=" tsd-kind-class">
 						<a href="classes/strategytesthelper.html" class="tsd-kind-icon">Strategy<wbr>Test<wbr>Helper</a>
@@ -1334,7 +1331,7 @@ ws://127.0.0.1:9229/..</code> as normally appears for <a href="https://nodejs.or
 					<li class=" tsd-kind-interface">
 						<a href="interfaces/fingerprintable.html" class="tsd-kind-icon">Fingerprintable</a>
 					</li>
-					<li class=" tsd-kind-interface tsd-is-not-exported">
+					<li class=" tsd-kind-interface">
 						<a href="interfaces/generation.html" class="tsd-kind-icon">Generation</a>
 					</li>
 					<li class=" tsd-kind-interface">
@@ -1393,6 +1390,9 @@ ws://127.0.0.1:9229/..</code> as normally appears for <a href="https://nodejs.or
 					</li>
 					<li class=" tsd-kind-interface">
 						<a href="interfaces/inputresponseobject.html" class="tsd-kind-icon">Input<wbr>Response<wbr>Object</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/inspectableplanner.html" class="tsd-kind-icon">Inspectable<wbr>Planner</a>
 					</li>
 					<li class=" tsd-kind-interface">
 						<a href="interfaces/interface.html" class="tsd-kind-icon">Interface</a>
@@ -1525,6 +1525,15 @@ ws://127.0.0.1:9229/..</code> as normally appears for <a href="https://nodejs.or
 					</li>
 					<li class=" tsd-kind-interface">
 						<a href="interfaces/particletrustclaim.html" class="tsd-kind-icon">Particle<wbr>Trust<wbr>Claim</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/plannerinitoptions.html" class="tsd-kind-icon">Planner<wbr>Init<wbr>Options</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/plannerinspector.html" class="tsd-kind-icon">Planner<wbr>Inspector</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/plannerinspectorfactory.html" class="tsd-kind-icon">Planner<wbr>Inspector<wbr>Factory</a>
 					</li>
 					<li class=" tsd-kind-interface">
 						<a href="interfaces/pluginsettings.html" class="tsd-kind-icon">Plugin<wbr>Settings</a>
@@ -2032,6 +2041,9 @@ ws://127.0.0.1:9229/..</code> as normally appears for <a href="https://nodejs.or
 					</li>
 					<li class=" tsd-kind-type-alias tsd-is-not-exported">
 						<a href="globals.html#scoredrecipe" class="tsd-kind-icon">Scored<wbr>Recipe</a>
+					</li>
+					<li class=" tsd-kind-type-alias">
+						<a href="globals.html#serializablegeneration" class="tsd-kind-icon">Serializable<wbr>Generation</a>
 					</li>
 					<li class=" tsd-kind-type-alias tsd-is-not-exported">
 						<a href="globals.html#serializecontext" class="tsd-kind-icon">Serialize<wbr>Context</a>
@@ -2865,7 +2877,10 @@ ws://127.0.0.1:9229/..</code> as normally appears for <a href="https://nodejs.or
 						<a href="globals.html#symbols" class="tsd-kind-icon">Symbols</a>
 					</li>
 					<li class=" tsd-kind-object-literal">
-						<a href="globals.html#devtoolsinspectorfactory" class="tsd-kind-icon">devtools<wbr>Inspector<wbr>Factory</a>
+						<a href="globals.html#devtoolsarcinspectorfactory" class="tsd-kind-icon">devtools<wbr>Arc<wbr>Inspector<wbr>Factory</a>
+					</li>
+					<li class=" tsd-kind-object-literal">
+						<a href="globals.html#devtoolsplannerinspectorfactory" class="tsd-kind-icon">devtools<wbr>Planner<wbr>Inspector<wbr>Factory</a>
 					</li>
 					<li class=" tsd-kind-object-literal">
 						<a href="globals.html#handlers" class="tsd-kind-icon">handlers</a>

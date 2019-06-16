@@ -10,9 +10,6 @@
 import { assert } from '../../platform/assert-web.js';
 import { now } from '../../platform/date-web.js';
 import { logFactory } from '../../platform/log-web.js';
-import { DevtoolsConnection } from '../../devtools-connector/devtools-connection.js';
-import { PlanningExplorerAdapter } from '../debug/planning-explorer-adapter.js';
-import { StrategyExplorerAdapter } from '../debug/strategy-explorer-adapter.js';
 import { Planner } from '../planner.js';
 import { RecipeIndex } from '../recipe-index.js';
 import { Speculator } from '../speculator.js';
@@ -30,7 +27,7 @@ export var Trigger;
     Trigger["Forced"] = "forced";
 })(Trigger || (Trigger = {}));
 export class PlanProducer {
-    constructor(arc, result, searchStore, { debug = false } = {}) {
+    constructor(arc, result, searchStore, inspector, { debug = false } = {}) {
         this.planner = null;
         this.needReplan = false;
         this._isPlanning = false;
@@ -42,14 +39,12 @@ export class PlanProducer {
         this.recipeIndex = RecipeIndex.create(this.arc);
         this.speculator = new Speculator();
         this.searchStore = searchStore;
+        this.inspector = inspector;
         if (this.searchStore) {
             this.searchStoreCallback = () => this.onSearchChanged();
             this.searchStore.on('change', this.searchStoreCallback, this);
         }
         this.debug = debug;
-        if (DevtoolsConnection.isConnected) {
-            this.devtoolsChannel = DevtoolsConnection.get().forArc(this.arc);
-        }
     }
     get isPlanning() { return this._isPlanning; }
     set isPlanning(isPlanning) {
@@ -137,19 +132,22 @@ export class PlanProducer {
             }, this.arc)) {
                 // Store suggestions to store.
                 await this.result.flush();
-                PlanningExplorerAdapter.updatePlanningResults(this.result, options['metadata'], this.devtoolsChannel);
+                if (this.inspector)
+                    this.inspector.updatePlanningResults(this.result, options['metadata']);
             }
             else {
                 // Add skipped result to devtools.
-                PlanningExplorerAdapter.updatePlanningAttempt(suggestions, options['metadata'], this.devtoolsChannel);
-                if (this.debug) {
-                    StrategyExplorerAdapter.processGenerations(serializedGenerations, this.devtoolsChannel, { label: 'Plan Producer', keep: true });
+                if (this.inspector) {
+                    this.inspector.updatePlanningAttempt(suggestions, options['metadata']);
+                    if (this.debug)
+                        this.inspector.strategizingRecord(serializedGenerations, { label: 'Plan Producer', keep: true });
                 }
             }
         }
         else { // Suggestions are null, if planning was cancelled.
             // Add cancelled attempt to devtools.
-            PlanningExplorerAdapter.updatePlanningAttempt(null, options['metadata'], this.devtoolsChannel);
+            if (this.inspector)
+                this.inspector.updatePlanningAttempt(null, options['metadata']);
         }
     }
     async runPlanner(options, generations) {
@@ -164,7 +162,6 @@ export class PlanProducer {
                 recipeIndex: this.recipeIndex
             },
             speculator: this.speculator,
-            blockDevtools: true // Devtools communication is handled by PlanConsumer in Producer+Consumer setup.
         });
         suggestions = await this.planner.suggest(options['timeout'] || defaultTimeoutMs, generations);
         if (this.planner) {

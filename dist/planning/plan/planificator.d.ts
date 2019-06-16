@@ -15,14 +15,16 @@ import { PlanConsumer } from './plan-consumer.js';
 import { PlanProducer } from './plan-producer.js';
 import { PlanningResult } from './planning-result.js';
 import { ReplanQueue } from './replan-queue.js';
+import { PlannerInspector, PlannerInspectorFactory } from '../planner-inspector.js';
 export declare type PlanificatorOptions = {
     storageKeyBase?: string;
     debug?: boolean;
     onlyConsumer?: boolean;
+    inspectorFactory?: PlannerInspectorFactory;
 };
 export declare class Planificator {
-    static create(arc: Arc, { storageKeyBase, onlyConsumer, debug }: PlanificatorOptions): Promise<Planificator>;
-    arc: Arc;
+    static create(arc: Arc, { storageKeyBase, onlyConsumer, debug, inspectorFactory }: PlanificatorOptions): Promise<Planificator>;
+    readonly arc: Arc;
     result: PlanningResult;
     consumer: PlanConsumer;
     producer?: PlanProducer;
@@ -30,7 +32,9 @@ export declare class Planificator {
     dataChangeCallback: Runnable;
     search: string | null;
     searchStore: SingletonStorageProvider;
-    constructor(arc: Arc, result: PlanningResult, searchStore: SingletonStorageProvider, onlyConsumer?: boolean, debug?: boolean);
+    inspector: PlannerInspector | undefined;
+    constructor(arc: Arc, result: PlanningResult, searchStore: SingletonStorageProvider, onlyConsumer?: boolean, debug?: boolean, inspectorFactory?: PlannerInspectorFactory);
+    forceReplan(): Promise<void>;
     requestPlanning(options?: {}): Promise<void>;
     readonly consumerOnly: boolean;
     loadSuggestions(): Promise<boolean>;

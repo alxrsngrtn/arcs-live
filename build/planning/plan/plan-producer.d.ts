@@ -8,13 +8,13 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { Arc } from '../../runtime/arc.js';
-import { ArcDevtoolsChannel } from '../../devtools-connector/abstract-devtools-channel.js';
 import { SingletonStorageProvider } from '../../runtime/storage/storage-provider-base.js';
-import { Planner } from '../planner.js';
+import { Planner, Generation } from '../planner.js';
 import { RecipeIndex } from '../recipe-index.js';
 import { Speculator } from '../speculator.js';
 import { PlanningResult } from './planning-result.js';
 import { Suggestion } from './suggestion.js';
+import { PlannerInspector } from '../planner-inspector.js';
 export declare enum Trigger {
     Init = "init",
     Search = "search",
@@ -36,8 +36,8 @@ export declare class PlanProducer {
     searchStore?: SingletonStorageProvider;
     searchStoreCallback: ({}: {}) => void;
     debug: boolean;
-    devtoolsChannel?: ArcDevtoolsChannel;
-    constructor(arc: Arc, result: PlanningResult, searchStore?: SingletonStorageProvider, { debug }?: {
+    inspector?: PlannerInspector;
+    constructor(arc: Arc, result: PlanningResult, searchStore?: SingletonStorageProvider, inspector?: PlannerInspector, { debug }?: {
         debug?: boolean;
     });
     isPlanning: boolean;
@@ -45,6 +45,6 @@ export declare class PlanProducer {
     onSearchChanged(): Promise<void>;
     dispose(): void;
     produceSuggestions(options?: {}): Promise<void>;
-    runPlanner(options: any, generations: any): Promise<Suggestion[]>;
+    runPlanner(options: any, generations: Generation[]): Promise<Suggestion[]>;
     protected _cancelPlanning(): void;
 }

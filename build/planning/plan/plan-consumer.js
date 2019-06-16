@@ -8,14 +8,11 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { assert } from '../../platform/assert-web.js';
-import { DevtoolsConnection } from '../../devtools-connector/devtools-connection.js';
-import { PlanningExplorerAdapter } from '../debug/planning-explorer-adapter.js';
-import { StrategyExplorerAdapter } from '../debug/strategy-explorer-adapter.js';
 import { SuggestionComposer } from '../suggestion-composer.js';
 import { PlanningResult } from './planning-result.js';
 import { SuggestFilter } from './suggest-filter.js';
 export class PlanConsumer {
-    constructor(arc, result) {
+    constructor(arc, result, inspector) {
         this.suggestFilter = new SuggestFilter(false);
         // Callback is triggered when planning results have changed.
         this.suggestionsChangeCallbacks = [];
@@ -29,11 +26,9 @@ export class PlanConsumer {
         this.result = result;
         this.suggestionsChangeCallbacks = [];
         this.visibleSuggestionsChangeCallbacks = [];
+        this.inspector = inspector;
         this._initSuggestionComposer();
         this.result.registerChangeCallback(() => this.onSuggestionsChanged());
-        if (DevtoolsConnection.isConnected) {
-            this.devtoolsChannel = DevtoolsConnection.get().forArc(this.arc);
-        }
         this._maybeUpdateStrategyExplorer();
     }
     registerSuggestionsChangedCallback(callback) { this.suggestionsChangeCallbacks.push(callback); }
@@ -70,15 +65,18 @@ export class PlanConsumer {
     }
     _onSuggestionsChanged() {
         this.suggestionsChangeCallbacks.forEach(callback => callback({ suggestions: this.result.suggestions }));
-        PlanningExplorerAdapter.updatePlanningResults(this.result, {}, this.devtoolsChannel);
+        if (this.inspector)
+            this.inspector.updatePlanningResults(this.result, {});
     }
     _onMaybeSuggestionsChanged() {
-        const options = this.devtoolsChannel ? { reasons: new Map() } : undefined;
+        const options = this.inspector ? { reasons: new Map() } : undefined;
         const suggestions = this.getCurrentSuggestions(options);
         if (!PlanningResult.isEquivalent(this.currentSuggestions, suggestions)) {
             this.visibleSuggestionsChangeCallbacks.forEach(callback => callback(suggestions));
             this.currentSuggestions = suggestions;
-            PlanningExplorerAdapter.updateVisibleSuggestions(this.currentSuggestions, options, this.devtoolsChannel);
+            if (this.inspector) {
+                this.inspector.updateVisibleSuggestions(this.currentSuggestions, options);
+            }
         }
     }
     _initSuggestionComposer() {
@@ -89,8 +87,8 @@ export class PlanConsumer {
         }
     }
     _maybeUpdateStrategyExplorer() {
-        if (this.result.generations.length) {
-            StrategyExplorerAdapter.processGenerations(this.result.generations, this.devtoolsChannel, { label: 'Plan Consumer', keep: true });
+        if (this.result.generations.length && this.inspector) {
+            this.inspector.strategizingRecord(this.result.generations, { label: 'Plan Consumer', keep: true });
         }
     }
 }

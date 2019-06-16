@@ -25703,56 +25703,6 @@ init();
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-class StrategyExplorerAdapter {
-    static processGenerations(generations, devtoolsChannel, options = {}) {
-        if (devtoolsChannel) {
-            devtoolsChannel.send({
-                messageType: 'generations',
-                messageBody: { results: generations, options },
-            });
-        }
-    }
-    // This is a helper method that logs all possible derivations of stratetegies that contributed
-    // to generating the resolved recipes.
-    static printGenerations(generations) {
-        for (let i = 0; i < generations.length; ++i) {
-            for (let j = 0; j < generations[i].generated.length; ++j) {
-                const gg = generations[i].generated[j];
-                if (!gg.result.isResolved()) {
-                    continue;
-                }
-                const results = StrategyExplorerAdapter._collectDerivation(gg.derivation, []);
-                console.log(results.map(r => `gen [${i}][${j}] ${r.reverse().join(' -> ')}`).join('\n'));
-            }
-        }
-    }
-    static _collectDerivation(derivation, allResults) {
-        for (const d of derivation) {
-            const results = [];
-            results.push(d.strategy.constructor.name);
-            if (d.parent) {
-                const innerResults = StrategyExplorerAdapter._collectDerivation(d.parent.derivation, []);
-                for (const ir of innerResults) {
-                    allResults.push([].concat(results, ir));
-                }
-            }
-            else {
-                allResults.push(results);
-            }
-        }
-        return allResults;
-    }
-}
-
-/**
- * @license
- * Copyright (c) 2018 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
 
 // TODO(wkorman): Incorporate debug levels. Consider outputting
 // preamble in the specified color via ANSI escape codes. Consider
@@ -28138,13 +28088,15 @@ class SearchTokensToHandles extends Strategy {
 const suggestionByHash = () => Runtime.getRuntime().getCacheService().getOrCreateCache('suggestionByHash');
 class Planner {
     // TODO: Use context.arc instead of arc
-    init(arc, { strategies = Planner.AllStrategies, ruleset = Empty, strategyArgs = {}, speculator = null, blockDevtools = false } = {}) {
+    init(arc, { strategies = Planner.AllStrategies, ruleset = Empty, strategyArgs = {}, speculator = null, inspectorFactory = null }) {
         strategyArgs = Object.freeze({ ...strategyArgs });
-        this._arc = arc;
+        this.arc = arc;
         const strategyImpls = strategies.map(strategy => new strategy(arc, strategyArgs));
         this.strategizer = new Strategizer(strategyImpls, [], ruleset);
-        this.blockDevtools = blockDevtools;
         this.speculator = speculator;
+        if (inspectorFactory) {
+            this.inspector = inspectorFactory.create(this);
+        }
     }
     // Specify a timeout value less than zero to disable timeouts.
     async plan(timeout, generations = []) {
@@ -28173,8 +28125,8 @@ class Planner {
             }
         } while (this.strategizer.generated.length + this.strategizer.terminal.length > 0);
         trace.end();
-        if (generations.length && !this.blockDevtools && DevtoolsConnection.isConnected) {
-            StrategyExplorerAdapter.processGenerations(PlanningResult.formatSerializableGenerations(generations), DevtoolsConnection.get().forArc(this._arc), { label: 'Planner', keep: true });
+        if (generations.length && this.inspector) {
+            this.inspector.strategizingRecord(PlanningResult.formatSerializableGenerations(generations), { label: 'Planner', keep: true });
         }
         return allResolved;
     }
@@ -28228,7 +28180,7 @@ class Planner {
             const results = [];
             for (const plan of group) {
                 const hash = ((hash) => hash.substring(hash.length - 4))(await plan.digest());
-                if (RecipeUtil.matchesRecipe(this._arc.activeRecipe, plan)) {
+                if (RecipeUtil.matchesRecipe(this.arc.activeRecipe, plan)) {
                     this._updateGeneration(generations, hash, (g) => g.active = true);
                     continue;
                 }
@@ -28238,7 +28190,7 @@ class Planner {
                     overview: true,
                     args: { groupIndex }
                 });
-                const suggestion = await this.retriveOrCreateSuggestion(hash, plan, this._arc);
+                const suggestion = await this.retriveOrCreateSuggestion(hash, plan, this.arc);
                 if (!suggestion) {
                     this._updateGeneration(generations, hash, (g) => g.irrelevant = true);
                     planTrace.end({ name: '[Irrelevant suggestion]', args: { hash, groupIndex } });
@@ -28265,7 +28217,7 @@ class Planner {
         let relevance = null;
         let description = null;
         if (this.speculator) {
-            const result = await this.speculator.speculate(this._arc, plan, hash);
+            const result = await this.speculator.speculate(this.arc, plan, hash);
             if (!result) {
                 return undefined;
             }
@@ -28277,7 +28229,7 @@ class Planner {
             description = await Description.createForPlan(plan);
         }
         const suggestion = Suggestion.create(plan, hash, relevance);
-        suggestion.setDescription(description, this._arc.modality, this._arc.pec.slotComposer ? this._arc.pec.slotComposer.modalityHandler.descriptionFormatter : undefined);
+        suggestion.setDescription(description, this.arc.modality, this.arc.pec.slotComposer ? this.arc.pec.slotComposer.modalityHandler.descriptionFormatter : undefined);
         suggestionByHash().set(hash, suggestion);
         return suggestion;
     }
@@ -28533,7 +28485,7 @@ const IndexStrategies = [
     CreateHandleGroup
 ];
 class RecipeIndex {
-    constructor(arc, { reportGenerations = false } = {}) {
+    constructor(arc) {
         this._isReady = false;
         const trace = Tracing.start({ cat: 'indexing', name: 'RecipeIndex::constructor', overview: true });
         const idGenerator = IdGenerator.newSession();
@@ -28552,14 +28504,9 @@ class RecipeIndex {
             ...IndexStrategies.map(S => new S(arcStub, { recipeIndex: this }))
         ], [], Empty);
         this.ready = trace.endWith(new Promise(async (resolve) => {
-            const generations = [];
             do {
                 const record = await strategizer.generate();
-                generations.push({ record, generated: strategizer.generated });
             } while (strategizer.generated.length + strategizer.terminal.length > 0);
-            if (reportGenerations && DevtoolsConnection.isConnected) {
-                StrategyExplorerAdapter.processGenerations(PlanningResult.formatSerializableGenerations(generations), DevtoolsConnection.get().forArc(arc), { label: 'Index', keep: true });
-            }
             const population = strategizer.population;
             const candidates = new Set(population);
             for (const result of population) {
@@ -28573,8 +28520,8 @@ class RecipeIndex {
             resolve(true);
         }));
     }
-    static create(arc, options = {}) {
-        return new RecipeIndex(arc, options);
+    static create(arc) {
+        return new RecipeIndex(arc);
     }
     get recipes() {
         if (!this._isReady)
@@ -28823,7 +28770,7 @@ class ArcPlannerInvoker {
     }
     async invokePlanner(manifestString, method) {
         if (!this.recipeIndex) {
-            this.recipeIndex = RecipeIndex.create(this.arc, { reportGenerations: false });
+            this.recipeIndex = RecipeIndex.create(this.arc);
             await this.recipeIndex.ready;
         }
         let manifest;
@@ -28996,12 +28943,12 @@ function enableTracingAdapter(devtoolsChannel) {
 void DevtoolsConnection.onceConnected.then(devtoolsChannel => {
     enableTracingAdapter(devtoolsChannel);
 });
-const devtoolsInspectorFactory = {
+const devtoolsArcInspectorFactory = {
     create(arc) {
-        return new DevtoolsInspector(arc);
+        return new DevtoolsArcInspector(arc);
     }
 };
-class DevtoolsInspector {
+class DevtoolsArcInspector {
     constructor(arc) {
         this.arcDevtoolsChannel = null;
         this.onceActiveResolve = null;
@@ -29220,7 +29167,7 @@ const spawn = async ({id, serialization, context, composer, storage}) => {
     slotComposer: composer,
     pecFactory: env.pecFactory,
     loader: env.loader,
-    inspectorFactory: devtoolsInspectorFactory
+    inspectorFactory: devtoolsArcInspectorFactory
   };
   Object.assign(params, env.params);
   return serialization ? Arc.deserialize(params) : new Arc(params);
@@ -30064,6 +30011,190 @@ class UserContext {
   // }
 }
 
+class SuggestionComposer {
+    constructor(arc, slotComposer) {
+        this._suggestions = [];
+        // used in tests
+        this._suggestConsumers = [];
+        this._container = slotComposer.findContainerByName('suggestions');
+        this._slotComposer = slotComposer;
+        this.arc = arc;
+    }
+    get modalityHandler() { return this._slotComposer.modalityHandler; }
+    clear() {
+        if (this._container) {
+            this.modalityHandler.slotConsumerClass.clear(this._container);
+        }
+        this._suggestConsumers.forEach(consumer => consumer.dispose());
+        this._suggestConsumers.length = 0;
+    }
+    setSuggestions(suggestions) {
+        this.clear();
+        this._suggestions = suggestions.sort(Suggestion.compare);
+        for (const suggestion of this._suggestions) {
+            if (this._container) {
+                if (!this.modalityHandler.suggestionConsumerClass.render(this.arc, this._container, suggestion)) {
+                    throw new Error(`Couldn't render suggestion for ${suggestion.hash}`);
+                }
+            }
+            this._addInlineSuggestion(suggestion);
+        }
+    }
+    _addInlineSuggestion(suggestion) {
+        const remoteSlots = suggestion.plan.slots.filter(s => !!s.id);
+        if (remoteSlots.length !== 1) {
+            return;
+        }
+        const remoteSlot = remoteSlots[0];
+        const context = this._slotComposer.findContextById(remoteSlot.id);
+        if (!context) {
+            throw new Error('Missing context for ' + remoteSlot.id);
+        }
+        if (context.spec.isSet) {
+            // TODO: Inline suggestion in a set slot is not supported yet. Implement!
+            return;
+        }
+        // Don't put suggestions in context that either (1) is a root context, (2) doesn't have
+        // an actual container or (3) is not restricted to specific handles.
+        if (!context.sourceSlotConsumer) {
+            return;
+        }
+        if (context.spec.handles.length === 0) {
+            return;
+        }
+        const handleIds = context.spec.handles.map(handleName => context.sourceSlotConsumer.consumeConn.particle.connections[handleName].handle.id);
+        if (!handleIds.find(handleId => suggestion.plan.handles.some(handle => handle.id === handleId))) {
+            // the suggestion doesn't use any of the handles that the context is restricted to.
+            return;
+        }
+        const suggestConsumer = new this.modalityHandler.suggestionConsumerClass(this.arc, this._slotComposer.containerKind, suggestion, (eventlet) => {
+            const suggestion = this._suggestions.find(s => s.hash === eventlet.data.key);
+            suggestConsumer.dispose();
+            if (suggestion) {
+                const index = this._suggestConsumers.findIndex(consumer => consumer === suggestConsumer);
+                if (index < 0) {
+                    throw new Error('cannot find suggest slot context');
+                }
+                this._suggestConsumers.splice(index, 1);
+                suggestion.instantiate(this.arc);
+            }
+        });
+        context.addSlotConsumer(suggestConsumer);
+        this._suggestConsumers.push(suggestConsumer);
+    }
+}
+
+/**
+ * @license
+ * Copyright (c) 2019 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+class SuggestFilter {
+    constructor(showAll, search) {
+        this.showAll = showAll;
+        this.search = search;
+        assert(!(showAll && search), `Cannot set search string for 'show-all' filter`);
+    }
+    isEquivalent(showAll, search) {
+        return (this.showAll === showAll) && (this.search === search);
+    }
+}
+
+/**
+ * @license
+ * Copyright (c) 2018 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+class PlanConsumer {
+    constructor(arc, result, inspector) {
+        this.suggestFilter = new SuggestFilter(false);
+        // Callback is triggered when planning results have changed.
+        this.suggestionsChangeCallbacks = [];
+        // Callback is triggered when suggestions visible to the user have changed.
+        this.visibleSuggestionsChangeCallbacks = [];
+        this.suggestionComposer = null;
+        this.currentSuggestions = [];
+        assert(arc, 'arc cannot be null');
+        assert(result, 'result cannot be null');
+        this.arc = arc;
+        this.result = result;
+        this.suggestionsChangeCallbacks = [];
+        this.visibleSuggestionsChangeCallbacks = [];
+        this.inspector = inspector;
+        this._initSuggestionComposer();
+        this.result.registerChangeCallback(() => this.onSuggestionsChanged());
+        this._maybeUpdateStrategyExplorer();
+    }
+    registerSuggestionsChangedCallback(callback) { this.suggestionsChangeCallbacks.push(callback); }
+    registerVisibleSuggestionsChangedCallback(callback) { this.visibleSuggestionsChangeCallbacks.push(callback); }
+    setSuggestFilter(showAll, search) {
+        assert(!showAll || !search);
+        if (this.suggestFilter.isEquivalent(showAll, search)) {
+            return;
+        }
+        this.suggestFilter = new SuggestFilter(showAll, search);
+        this._onMaybeSuggestionsChanged();
+    }
+    onSuggestionsChanged() {
+        this._onSuggestionsChanged();
+        this._onMaybeSuggestionsChanged();
+        this._maybeUpdateStrategyExplorer();
+    }
+    getCurrentSuggestions(options) {
+        return this.result.suggestions.filter(suggestion => {
+            const suggestOption = options && options.reasons ? { reasons: [] } : undefined;
+            const isVisible = suggestion.isVisible(this.arc, this.suggestFilter, suggestOption);
+            if (!isVisible && suggestOption && options) {
+                options.reasons.set(suggestion.hash, suggestOption);
+            }
+            return isVisible;
+        });
+    }
+    dispose() {
+        this.suggestionsChangeCallbacks = [];
+        this.visibleSuggestionsChangeCallbacks = [];
+        if (this.suggestionComposer) {
+            this.suggestionComposer.clear();
+        }
+    }
+    _onSuggestionsChanged() {
+        this.suggestionsChangeCallbacks.forEach(callback => callback({ suggestions: this.result.suggestions }));
+        if (this.inspector)
+            this.inspector.updatePlanningResults(this.result, {});
+    }
+    _onMaybeSuggestionsChanged() {
+        const options = this.inspector ? { reasons: new Map() } : undefined;
+        const suggestions = this.getCurrentSuggestions(options);
+        if (!PlanningResult.isEquivalent(this.currentSuggestions, suggestions)) {
+            this.visibleSuggestionsChangeCallbacks.forEach(callback => callback(suggestions));
+            this.currentSuggestions = suggestions;
+            if (this.inspector) {
+                this.inspector.updateVisibleSuggestions(this.currentSuggestions, options);
+            }
+        }
+    }
+    _initSuggestionComposer() {
+        const composer = this.arc.pec.slotComposer;
+        if (composer && composer.findContextById('rootslotid-suggestions')) {
+            this.suggestionComposer = new SuggestionComposer(this.arc, composer);
+            this.registerVisibleSuggestionsChangedCallback((suggestions) => this.suggestionComposer.setSuggestions(suggestions));
+        }
+    }
+    _maybeUpdateStrategyExplorer() {
+        if (this.result.generations.length && this.inspector) {
+            this.inspector.strategizingRecord(this.result.generations, { label: 'Plan Consumer', keep: true });
+        }
+    }
+}
+
 class Relevance {
     constructor() {
         // stores a copy of arc.getVersionByStore
@@ -30213,7 +30344,7 @@ var Trigger;
     Trigger["Forced"] = "forced";
 })(Trigger || (Trigger = {}));
 class PlanProducer {
-    constructor(arc, result, searchStore, { debug = false } = {}) {
+    constructor(arc, result, searchStore, inspector, { debug = false } = {}) {
         this.planner = null;
         this.needReplan = false;
         this._isPlanning = false;
@@ -30225,14 +30356,12 @@ class PlanProducer {
         this.recipeIndex = RecipeIndex.create(this.arc);
         this.speculator = new Speculator();
         this.searchStore = searchStore;
+        this.inspector = inspector;
         if (this.searchStore) {
             this.searchStoreCallback = () => this.onSearchChanged();
             this.searchStore.on('change', this.searchStoreCallback, this);
         }
         this.debug = debug;
-        if (DevtoolsConnection.isConnected) {
-            this.devtoolsChannel = DevtoolsConnection.get().forArc(this.arc);
-        }
     }
     get isPlanning() { return this._isPlanning; }
     set isPlanning(isPlanning) {
@@ -30320,19 +30449,22 @@ class PlanProducer {
             }, this.arc)) {
                 // Store suggestions to store.
                 await this.result.flush();
-                PlanningExplorerAdapter.updatePlanningResults(this.result, options['metadata'], this.devtoolsChannel);
+                if (this.inspector)
+                    this.inspector.updatePlanningResults(this.result, options['metadata']);
             }
             else {
                 // Add skipped result to devtools.
-                PlanningExplorerAdapter.updatePlanningAttempt(suggestions, options['metadata'], this.devtoolsChannel);
-                if (this.debug) {
-                    StrategyExplorerAdapter.processGenerations(serializedGenerations, this.devtoolsChannel, { label: 'Plan Producer', keep: true });
+                if (this.inspector) {
+                    this.inspector.updatePlanningAttempt(suggestions, options['metadata']);
+                    if (this.debug)
+                        this.inspector.strategizingRecord(serializedGenerations, { label: 'Plan Producer', keep: true });
                 }
             }
         }
         else { // Suggestions are null, if planning was cancelled.
             // Add cancelled attempt to devtools.
-            PlanningExplorerAdapter.updatePlanningAttempt(null, options['metadata'], this.devtoolsChannel);
+            if (this.inspector)
+                this.inspector.updatePlanningAttempt(null, options['metadata']);
         }
     }
     async runPlanner(options, generations) {
@@ -30347,7 +30479,6 @@ class PlanProducer {
                 recipeIndex: this.recipeIndex
             },
             speculator: this.speculator,
-            blockDevtools: true // Devtools communication is handled by PlanConsumer in Producer+Consumer setup.
         });
         suggestions = await this.planner.suggest(options['timeout'] || defaultTimeoutMs, generations);
         if (this.planner) {
@@ -30365,255 +30496,6 @@ class PlanProducer {
         this.needReplan = false;
         this.isPlanning = false; // using the setter method to trigger callbacks.
         log$5(`Cancel planning`);
-    }
-}
-
-/**
- * @license
- * Copyright (c) 2019 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-class PlanningExplorerAdapter {
-    static updatePlanningResults(result, metadata, devtoolsChannel) {
-        if (devtoolsChannel) {
-            devtoolsChannel.send({
-                messageType: 'suggestions-changed',
-                messageBody: {
-                    suggestions: PlanningExplorerAdapter._formatSuggestions(result.suggestions),
-                    lastUpdated: result.lastUpdated.getTime(),
-                    metadata
-                }
-            });
-        }
-    }
-    static updateVisibleSuggestions(visibleSuggestions, options, devtoolsChannel) {
-        if (devtoolsChannel) {
-            devtoolsChannel.send({
-                messageType: 'visible-suggestions-changed',
-                messageBody: {
-                    visibleSuggestionHashes: visibleSuggestions.map(s => s.hash),
-                    visibilityReasons: options ? [...options.reasons.entries()].map(e => ({ hash: e[0], ...e[1] })) : undefined
-                }
-            });
-        }
-    }
-    static updatePlanningAttempt(suggestions, metadata, devtoolsChannel) {
-        if (devtoolsChannel) {
-            devtoolsChannel.send({
-                messageType: 'planning-attempt',
-                messageBody: {
-                    suggestions: suggestions ? PlanningExplorerAdapter._formatSuggestions(suggestions) : null,
-                    metadata
-                }
-            });
-        }
-    }
-    static _formatSuggestions(suggestions) {
-        return suggestions.map(s => {
-            const suggestionCopy = { ...s };
-            suggestionCopy['particles'] = s.plan.particles.map(p => ({ name: p.name }));
-            delete suggestionCopy.plan;
-            return suggestionCopy;
-        });
-    }
-    static subscribeToForceReplan(planificator) {
-        if (DevtoolsConnection.isConnected) {
-            const devtoolsChannel = DevtoolsConnection.get().forArc(planificator.arc);
-            devtoolsChannel.listen('force-replan', async () => {
-                planificator.consumer.result.suggestions = [];
-                planificator.consumer.result.generations = [];
-                await planificator.consumer.result.flush();
-                await planificator.requestPlanning({ metadata: { trigger: Trigger.Forced } });
-                await planificator.loadSuggestions();
-            });
-        }
-    }
-}
-
-class SuggestionComposer {
-    constructor(arc, slotComposer) {
-        this._suggestions = [];
-        // used in tests
-        this._suggestConsumers = [];
-        this._container = slotComposer.findContainerByName('suggestions');
-        this._slotComposer = slotComposer;
-        this.arc = arc;
-    }
-    get modalityHandler() { return this._slotComposer.modalityHandler; }
-    clear() {
-        if (this._container) {
-            this.modalityHandler.slotConsumerClass.clear(this._container);
-        }
-        this._suggestConsumers.forEach(consumer => consumer.dispose());
-        this._suggestConsumers.length = 0;
-    }
-    setSuggestions(suggestions) {
-        this.clear();
-        this._suggestions = suggestions.sort(Suggestion.compare);
-        for (const suggestion of this._suggestions) {
-            if (this._container) {
-                if (!this.modalityHandler.suggestionConsumerClass.render(this.arc, this._container, suggestion)) {
-                    throw new Error(`Couldn't render suggestion for ${suggestion.hash}`);
-                }
-            }
-            this._addInlineSuggestion(suggestion);
-        }
-    }
-    _addInlineSuggestion(suggestion) {
-        const remoteSlots = suggestion.plan.slots.filter(s => !!s.id);
-        if (remoteSlots.length !== 1) {
-            return;
-        }
-        const remoteSlot = remoteSlots[0];
-        const context = this._slotComposer.findContextById(remoteSlot.id);
-        if (!context) {
-            throw new Error('Missing context for ' + remoteSlot.id);
-        }
-        if (context.spec.isSet) {
-            // TODO: Inline suggestion in a set slot is not supported yet. Implement!
-            return;
-        }
-        // Don't put suggestions in context that either (1) is a root context, (2) doesn't have
-        // an actual container or (3) is not restricted to specific handles.
-        if (!context.sourceSlotConsumer) {
-            return;
-        }
-        if (context.spec.handles.length === 0) {
-            return;
-        }
-        const handleIds = context.spec.handles.map(handleName => context.sourceSlotConsumer.consumeConn.particle.connections[handleName].handle.id);
-        if (!handleIds.find(handleId => suggestion.plan.handles.some(handle => handle.id === handleId))) {
-            // the suggestion doesn't use any of the handles that the context is restricted to.
-            return;
-        }
-        const suggestConsumer = new this.modalityHandler.suggestionConsumerClass(this.arc, this._slotComposer.containerKind, suggestion, (eventlet) => {
-            const suggestion = this._suggestions.find(s => s.hash === eventlet.data.key);
-            suggestConsumer.dispose();
-            if (suggestion) {
-                const index = this._suggestConsumers.findIndex(consumer => consumer === suggestConsumer);
-                if (index < 0) {
-                    throw new Error('cannot find suggest slot context');
-                }
-                this._suggestConsumers.splice(index, 1);
-                suggestion.instantiate(this.arc);
-            }
-        });
-        context.addSlotConsumer(suggestConsumer);
-        this._suggestConsumers.push(suggestConsumer);
-    }
-}
-
-/**
- * @license
- * Copyright (c) 2019 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-class SuggestFilter {
-    constructor(showAll, search) {
-        this.showAll = showAll;
-        this.search = search;
-        assert(!(showAll && search), `Cannot set search string for 'show-all' filter`);
-    }
-    isEquivalent(showAll, search) {
-        return (this.showAll === showAll) && (this.search === search);
-    }
-}
-
-/**
- * @license
- * Copyright (c) 2018 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-class PlanConsumer {
-    constructor(arc, result) {
-        this.suggestFilter = new SuggestFilter(false);
-        // Callback is triggered when planning results have changed.
-        this.suggestionsChangeCallbacks = [];
-        // Callback is triggered when suggestions visible to the user have changed.
-        this.visibleSuggestionsChangeCallbacks = [];
-        this.suggestionComposer = null;
-        this.currentSuggestions = [];
-        assert(arc, 'arc cannot be null');
-        assert(result, 'result cannot be null');
-        this.arc = arc;
-        this.result = result;
-        this.suggestionsChangeCallbacks = [];
-        this.visibleSuggestionsChangeCallbacks = [];
-        this._initSuggestionComposer();
-        this.result.registerChangeCallback(() => this.onSuggestionsChanged());
-        if (DevtoolsConnection.isConnected) {
-            this.devtoolsChannel = DevtoolsConnection.get().forArc(this.arc);
-        }
-        this._maybeUpdateStrategyExplorer();
-    }
-    registerSuggestionsChangedCallback(callback) { this.suggestionsChangeCallbacks.push(callback); }
-    registerVisibleSuggestionsChangedCallback(callback) { this.visibleSuggestionsChangeCallbacks.push(callback); }
-    setSuggestFilter(showAll, search) {
-        assert(!showAll || !search);
-        if (this.suggestFilter.isEquivalent(showAll, search)) {
-            return;
-        }
-        this.suggestFilter = new SuggestFilter(showAll, search);
-        this._onMaybeSuggestionsChanged();
-    }
-    onSuggestionsChanged() {
-        this._onSuggestionsChanged();
-        this._onMaybeSuggestionsChanged();
-        this._maybeUpdateStrategyExplorer();
-    }
-    getCurrentSuggestions(options) {
-        return this.result.suggestions.filter(suggestion => {
-            const suggestOption = options && options.reasons ? { reasons: [] } : undefined;
-            const isVisible = suggestion.isVisible(this.arc, this.suggestFilter, suggestOption);
-            if (!isVisible && suggestOption && options) {
-                options.reasons.set(suggestion.hash, suggestOption);
-            }
-            return isVisible;
-        });
-    }
-    dispose() {
-        this.suggestionsChangeCallbacks = [];
-        this.visibleSuggestionsChangeCallbacks = [];
-        if (this.suggestionComposer) {
-            this.suggestionComposer.clear();
-        }
-    }
-    _onSuggestionsChanged() {
-        this.suggestionsChangeCallbacks.forEach(callback => callback({ suggestions: this.result.suggestions }));
-        PlanningExplorerAdapter.updatePlanningResults(this.result, {}, this.devtoolsChannel);
-    }
-    _onMaybeSuggestionsChanged() {
-        const options = this.devtoolsChannel ? { reasons: new Map() } : undefined;
-        const suggestions = this.getCurrentSuggestions(options);
-        if (!PlanningResult.isEquivalent(this.currentSuggestions, suggestions)) {
-            this.visibleSuggestionsChangeCallbacks.forEach(callback => callback(suggestions));
-            this.currentSuggestions = suggestions;
-            PlanningExplorerAdapter.updateVisibleSuggestions(this.currentSuggestions, options, this.devtoolsChannel);
-        }
-    }
-    _initSuggestionComposer() {
-        const composer = this.arc.pec.slotComposer;
-        if (composer && composer.findContextById('rootslotid-suggestions')) {
-            this.suggestionComposer = new SuggestionComposer(this.arc, composer);
-            this.registerVisibleSuggestionsChangedCallback((suggestions) => this.suggestionComposer.setSuggestions(suggestions));
-        }
-    }
-    _maybeUpdateStrategyExplorer() {
-        if (this.result.generations.length) {
-            StrategyExplorerAdapter.processGenerations(this.result.generations, this.devtoolsChannel, { label: 'Plan Consumer', keep: true });
-        }
     }
 }
 
@@ -30706,31 +30588,40 @@ class ReplanQueue {
  */
 const planificatorId = 'plans';
 class Planificator {
-    constructor(arc, result, searchStore, onlyConsumer = false, debug = false) {
+    constructor(arc, result, searchStore, onlyConsumer = false, debug = false, inspectorFactory) {
         this.search = null;
         this.arc = arc;
         this.searchStore = searchStore;
+        if (inspectorFactory) {
+            this.inspector = inspectorFactory.create(this);
+        }
         assert(result, 'Result cannot be null.');
         this.result = result;
         if (!onlyConsumer) {
-            this.producer = new PlanProducer(this.arc, this.result, searchStore, { debug });
+            this.producer = new PlanProducer(this.arc, this.result, searchStore, this.inspector, { debug });
             this.replanQueue = new ReplanQueue(this.producer);
             this.dataChangeCallback = () => this.replanQueue.addChange();
             this._listenToArcStores();
         }
-        this.consumer = new PlanConsumer(this.arc, this.result);
-        PlanningExplorerAdapter.subscribeToForceReplan(this);
+        this.consumer = new PlanConsumer(this.arc, this.result, this.inspector);
     }
-    static async create(arc, { storageKeyBase, onlyConsumer, debug = false }) {
+    static async create(arc, { storageKeyBase, onlyConsumer, debug = false, inspectorFactory }) {
         debug = debug || (Boolean(storageKeyBase) && storageKeyBase.startsWith('volatile'));
         const store = await Planificator._initSuggestStore(arc, storageKeyBase);
         const searchStore = await Planificator._initSearchStore(arc);
         const result = new PlanningResult({ context: arc.context, loader: arc.loader }, store);
         await result.load();
-        const planificator = new Planificator(arc, result, searchStore, onlyConsumer, debug);
+        const planificator = new Planificator(arc, result, searchStore, onlyConsumer, debug, inspectorFactory);
         await planificator._storeSearch(); // Reset search value for the current arc.
         await planificator.requestPlanning({ contextual: true, metadata: { trigger: Trigger.Init } });
         return planificator;
+    }
+    async forceReplan() {
+        this.consumer.result.suggestions = [];
+        this.consumer.result.generations = [];
+        await this.consumer.result.flush();
+        await this.requestPlanning({ metadata: { trigger: Trigger.Forced } });
+        await this.loadSuggestions();
     }
     async requestPlanning(options = {}) {
         if (!this.consumerOnly && this.producer) {
@@ -30847,6 +30738,82 @@ class Planificator {
 
 /**
  * @license
+ * Copyright (c) 2019 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+const devtoolsPlannerInspectorFactory = {
+    create(planner) {
+        return new DevtoolsPlannerInspector(planner);
+    }
+};
+class DevtoolsPlannerInspector {
+    constructor(planner) {
+        this.arcDevtoolsChannel = null;
+        void DevtoolsConnection.onceConnected.then(devtoolsChannel => {
+            this.arcDevtoolsChannel = devtoolsChannel.forArc(planner.arc);
+            if (planner.forceReplan) {
+                this.arcDevtoolsChannel.listen('force-replan', () => void planner.forceReplan());
+            }
+        });
+    }
+    strategizingRecord(generations, options = {}) {
+        if (!this.arcDevtoolsChannel)
+            return;
+        this.arcDevtoolsChannel.send({
+            messageType: 'generations',
+            messageBody: { results: generations, options }
+        });
+    }
+    updatePlanningResults(result, metadata) {
+        if (!this.arcDevtoolsChannel)
+            return;
+        this.arcDevtoolsChannel.send({
+            messageType: 'suggestions-changed',
+            messageBody: {
+                suggestions: this.formatSuggestions(result.suggestions),
+                lastUpdated: result.lastUpdated.getTime(),
+                metadata
+            }
+        });
+    }
+    updateVisibleSuggestions(visibleSuggestions, options) {
+        if (!this.arcDevtoolsChannel)
+            return;
+        this.arcDevtoolsChannel.send({
+            messageType: 'visible-suggestions-changed',
+            messageBody: {
+                visibleSuggestionHashes: visibleSuggestions.map(s => s.hash),
+                visibilityReasons: options ? [...options.reasons.entries()].map(e => ({ hash: e[0], ...e[1] })) : undefined
+            }
+        });
+    }
+    updatePlanningAttempt(suggestions, metadata) {
+        if (!this.arcDevtoolsChannel)
+            return;
+        this.arcDevtoolsChannel.send({
+            messageType: 'planning-attempt',
+            messageBody: {
+                suggestions: suggestions ? this.formatSuggestions(suggestions) : null,
+                metadata
+            }
+        });
+    }
+    formatSuggestions(suggestions) {
+        return suggestions.map(s => {
+            const suggestionCopy = { ...s };
+            suggestionCopy['particles'] = s.plan.particles.map(p => ({ name: p.name }));
+            delete suggestionCopy.plan;
+            return suggestionCopy;
+        });
+    }
+}
+
+/**
+ * @license
  * Copyright (c) 2018 Google Inc. All rights reserved.
  * This code may only be used under the BSD style license found at
  * http://polymer.github.io/LICENSE.txt
@@ -30909,7 +30876,8 @@ class UserPlanner {
       storageKeyBase: this.options.plannerStorage,
       //onlyConsumer: config.plannerOnlyConsumer,
       debug: this.options.debug,
-      userid
+      userid,
+      inspectorFactory: devtoolsPlannerInspectorFactory
     };
     const planificator = await Planificator.create(arc, options);
     planificator.setSearch('*');
