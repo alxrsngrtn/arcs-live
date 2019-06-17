@@ -41,7 +41,7 @@ export class Particle {
         particle._unnamedConnections = this._unnamedConnections.map(connection => connection._clone(particle, cloneMap));
         particle._cloneConnectionRawTypes(variableMap);
         for (const [key, slotConn] of Object.entries(this.consumedSlotConnections)) {
-            particle.consumedSlotConnections[key] = slotConn._clone(particle, cloneMap);
+            particle._consumedSlotConnections[key] = slotConn._clone(particle, cloneMap);
             // if recipe is a requireSection, then slot may already exist in recipe.
             if (cloneMap.has(slotConn.targetSlot)) {
                 assert(recipe instanceof RequireSection);
@@ -82,8 +82,8 @@ export class Particle {
         }
         this._connections = normalizedConnections;
         const normalizedSlotConnections = {};
-        for (const key of (Object.keys(this._consumedSlotConnections).sort())) {
-            normalizedSlotConnections[key] = this._consumedSlotConnections[key];
+        for (const key of (Object.keys(this.consumedSlotConnections).sort())) {
+            normalizedSlotConnections[key] = this.consumedSlotConnections[key];
         }
         this._consumedSlotConnections = normalizedSlotConnections;
     }
@@ -152,7 +152,9 @@ export class Particle {
             }
             return false;
         }
-        if (this.spec.slotConnections.size > 0) {
+        const slandleConnections = Object.values(this.connections).filter(connection => connection.type.isSlot()
+            || (connection.type.isCollectionType() && connection.type.getContainedType().isSlot()));
+        if (slandleConnections.length === 0 && this.spec.slotConnections.size > 0) {
             const fulfilledSlotConnections = Object.values(this.consumedSlotConnections).filter(connection => connection.targetSlot !== undefined);
             if (fulfilledSlotConnections.length === 0) {
                 if (options && options.showUnresolved) {
@@ -245,10 +247,9 @@ export class Particle {
             (!type || TypeChecker.compareTypes({ type }, { type: connSpec.type })));
     }
     addSlotConnection(name) {
-        assert(!(name in this._consumedSlotConnections), 'slot connection already exists');
+        assert(!(name in this.consumedSlotConnections), 'slot connection already exists');
         assert(!this.spec || this.spec.slotConnections.has(name), 'slot connection not in particle spec');
-        const slotConn = new SlotConnection(name, this);
-        this._consumedSlotConnections[name] = slotConn;
+        const slotConn = this.addSlotConnectionAsCopy(name);
         const slotSpec = this.getSlotSpecByName(name);
         if (slotSpec) {
             slotSpec.provideSlotConnections.forEach(providedSlot => {
@@ -277,7 +278,10 @@ export class Particle {
         this.recipe.removeParticle(this);
     }
     getSlotConnectionBySpec(spec) {
-        return Object.values(this._consumedSlotConnections).find(slotConn => slotConn.getSlotSpec() === spec);
+        return Object.values(this.consumedSlotConnections).find(slotConn => slotConn.getSlotSpec() === spec);
+    }
+    getSlotConnections() {
+        return Object.values(this.consumedSlotConnections);
     }
     getSlotSpecByName(name) {
         if (!this.spec)
@@ -295,7 +299,7 @@ export class Particle {
         return undefined;
     }
     getSlotConnectionByName(name) {
-        return this._consumedSlotConnections[name];
+        return this.consumedSlotConnections[name];
     }
     getProvidedSlotByName(consumeName, name) {
         return this.consumedSlotConnections[consumeName] && this.consumedSlotConnections[consumeName].providedSlots[name];
@@ -330,7 +334,7 @@ export class Particle {
         for (const connection of Object.values(this.connections)) {
             result.push(connection.toString(nameMap, options).replace(/^|(\n)/g, '$1  '));
         }
-        for (const slotConnection of Object.values(this._consumedSlotConnections)) {
+        for (const slotConnection of Object.values(this.consumedSlotConnections)) {
             result.push(slotConnection.toString(nameMap, options).replace(/^|(\n)/g, '$1  '));
         }
         return result.join('\n');

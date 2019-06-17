@@ -57,10 +57,10 @@ export declare class Recipe implements Cloneable<Recipe> {
     newSlot(name: string): Slot;
     addSlot(slot: Slot): void;
     removeSlot(slot: Slot): void;
-    isResolved(): boolean;
+    isResolved(options?: any): boolean;
     isCompatible(modality: Modality): boolean;
     readonly modality: Modality;
-    allRequiredSlotsPresent(): boolean;
+    allRequiredSlotsPresent(options?: any): boolean;
     _findDuplicate(items: any, options: IsValidOptions): any;
     _isValid(options?: IsValidOptions): boolean;
     readonly requires: RequireSection[];

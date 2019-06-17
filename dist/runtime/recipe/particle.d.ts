@@ -64,6 +64,7 @@ export declare class Particle {
     removeSlotConnection(slotConnection: SlotConnection): void;
     remove(): void;
     getSlotConnectionBySpec(spec: ConsumeSlotConnectionSpec): SlotConnection;
+    getSlotConnections(): (SlotConnection | HandleConnection)[];
     getSlotSpecByName(name: string): ConsumeSlotConnectionSpec;
     getSlotConnectionByName(name: string): SlotConnection;
     getProvidedSlotByName(consumeName: string, name: string): Slot;

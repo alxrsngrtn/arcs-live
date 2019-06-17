@@ -1122,6 +1122,9 @@ class ParticleSpec {
     getSlotSpec(slotName) {
         return this.slotConnections.get(slotName);
     }
+    get slotConnectionNames() {
+        return [...this.slotConnections.keys()];
+    }
     get primaryVerb() {
         return (this.verbs.length > 0) ? this.verbs[0] : undefined;
     }
@@ -1700,8 +1703,11 @@ class Type {
         }
         return true;
     }
+    isSlot() {
+        return this instanceof SlotType;
+    }
     // If you want to type-check fully, this is an improvement over just using
-    // this instaneceof CollectionType,
+    // this instanceof CollectionType,
     // because instanceof doesn't propagate generic restrictions.
     isCollectionType() {
         return this instanceof CollectionType;
@@ -1974,6 +1980,12 @@ class CollectionType extends Type {
     maybeEnsureResolved() {
         return this.collectionType.maybeEnsureResolved();
     }
+    get canWriteSuperset() {
+        return InterfaceType.make(this.tag, [], []);
+    }
+    get canReadSubset() {
+        return InterfaceType.make(this.tag, [], []);
+    }
     _clone(variableMap) {
         const data = this.collectionType.clone(variableMap).toLiteral();
         return Type.fromLiteral({ tag: this.tag, data });
@@ -2033,6 +2045,12 @@ class BigCollectionType extends Type {
     }
     maybeEnsureResolved() {
         return this.bigCollectionType.maybeEnsureResolved();
+    }
+    get canWriteSuperset() {
+        return InterfaceType.make(this.tag, [], []);
+    }
+    get canReadSubset() {
+        return InterfaceType.make(this.tag, [], []);
     }
     _clone(variableMap) {
         const data = this.bigCollectionType.clone(variableMap).toLiteral();
@@ -2140,9 +2158,6 @@ class SlotType extends Type {
     static make(formFactor, handle) {
         return new SlotType(new _slot_info_js__WEBPACK_IMPORTED_MODULE_2__["SlotInfo"](formFactor, handle));
     }
-    get isSlot() {
-        return true;
-    }
     get canWriteSuperset() {
         return this;
     }
@@ -2207,6 +2222,10 @@ class ReferenceType extends Type {
     }
     maybeEnsureResolved() {
         return this.referredType.maybeEnsureResolved();
+    }
+    get canWriteSuperset() {
+        // TODO(cypher1): Possibly cannot write to references.
+        return this.referredType.canWriteSuperset;
     }
     get canReadSubset() {
         return this.referredType.canReadSubset;

@@ -133,6 +133,9 @@ export class ParticleSpec {
     getSlotSpec(slotName) {
         return this.slotConnections.get(slotName);
     }
+    get slotConnectionNames() {
+        return [...this.slotConnections.keys()];
+    }
     get primaryVerb() {
         return (this.verbs.length > 0) ? this.verbs[0] : undefined;
     }

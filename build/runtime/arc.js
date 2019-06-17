@@ -334,10 +334,12 @@ ${this.activeRecipe.toString()}`;
         // if supported, provide particle caching via a BloblUrl representing spec.implFile
         await this._provisionSpecUrl(recipeParticle.spec);
         for (const [name, connection] of Object.entries(recipeParticle.connections)) {
-            const store = this.findStoreById(connection.handle.id);
-            assert(store, `can't find store of id ${connection.handle.id}`);
-            assert(info.spec.handleConnectionMap.get(name) !== undefined, 'can\'t connect handle to a connection that doesn\'t exist');
-            info.stores.set(name, store);
+            if (connection.handle.fate !== '`slot') {
+                const store = this.findStoreById(connection.handle.id);
+                assert(store, `can't find store of id ${connection.handle.id}`);
+                assert(info.spec.handleConnectionMap.get(name) !== undefined, 'can\'t connect handle to a connection that doesn\'t exist');
+                info.stores.set(name, store);
+            }
         }
         this.pec.instantiate(recipeParticle, info.stores);
     }
@@ -475,16 +477,18 @@ ${this.activeRecipe.toString()}`;
             if (this.storesById.has(recipeHandle.id)) {
                 continue;
             }
-            let storageKey = recipeHandle.storageKey;
-            if (!storageKey) {
-                storageKey = this.keyForId(recipeHandle.id);
+            if (recipeHandle.fate !== '`slot') {
+                let storageKey = recipeHandle.storageKey;
+                if (!storageKey) {
+                    storageKey = this.keyForId(recipeHandle.id);
+                }
+                assert(storageKey, `couldn't find storage key for handle '${recipeHandle}'`);
+                const type = recipeHandle.type.resolvedType();
+                assert(type.isResolved(), `couldn't resolve type ${type.toString()}`);
+                const store = await this.storageProviderFactory.connect(recipeHandle.id, type, storageKey);
+                assert(store, `store '${recipeHandle.id}' was not found`);
+                this._registerStore(store, recipeHandle.tags);
             }
-            assert(storageKey, `couldn't find storage key for handle '${recipeHandle}'`);
-            const type = recipeHandle.type.resolvedType();
-            assert(type.isResolved());
-            const store = await this.storageProviderFactory.connect(recipeHandle.id, type, storageKey);
-            assert(store, `store '${recipeHandle.id}' was not found`);
-            this._registerStore(store, recipeHandle.tags);
         }
         await Promise.all(particles.map(recipeParticle => this._instantiateParticle(recipeParticle)));
         if (this.pec.slotComposer) {

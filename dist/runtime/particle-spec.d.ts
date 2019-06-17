@@ -107,6 +107,7 @@ export declare class ParticleSpec {
     isOutput(param: string): boolean;
     getConnectionByName(name: string): HandleConnectionSpec | undefined;
     getSlotSpec(slotName: string): ConsumeSlotConnectionSpec;
+    readonly slotConnectionNames: string[];
     readonly primaryVerb: string | undefined;
     isCompatible(modality: Modality): boolean;
     setImplBlobUrl(url: string): void;

@@ -89,7 +89,7 @@ export class SlotConnection {
         return true;
     }
     isResolved(options) {
-        assert(Object.isFrozen(this));
+        assert(Object.isFrozen(this), `slot connection ${this.name} must be frozen before it is resolved`);
         if (!this.name) {
             if (options) {
                 options.details = 'missing name';

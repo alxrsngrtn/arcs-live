@@ -1968,8 +1968,11 @@ class Type {
         }
         return true;
     }
+    isSlot() {
+        return this instanceof SlotType;
+    }
     // If you want to type-check fully, this is an improvement over just using
-    // this instaneceof CollectionType,
+    // this instanceof CollectionType,
     // because instanceof doesn't propagate generic restrictions.
     isCollectionType() {
         return this instanceof CollectionType;
@@ -2242,6 +2245,12 @@ class CollectionType extends Type {
     maybeEnsureResolved() {
         return this.collectionType.maybeEnsureResolved();
     }
+    get canWriteSuperset() {
+        return InterfaceType.make(this.tag, [], []);
+    }
+    get canReadSubset() {
+        return InterfaceType.make(this.tag, [], []);
+    }
     _clone(variableMap) {
         const data = this.collectionType.clone(variableMap).toLiteral();
         return Type.fromLiteral({ tag: this.tag, data });
@@ -2301,6 +2310,12 @@ class BigCollectionType extends Type {
     }
     maybeEnsureResolved() {
         return this.bigCollectionType.maybeEnsureResolved();
+    }
+    get canWriteSuperset() {
+        return InterfaceType.make(this.tag, [], []);
+    }
+    get canReadSubset() {
+        return InterfaceType.make(this.tag, [], []);
     }
     _clone(variableMap) {
         const data = this.bigCollectionType.clone(variableMap).toLiteral();
@@ -2408,9 +2423,6 @@ class SlotType extends Type {
     static make(formFactor, handle) {
         return new SlotType(new SlotInfo(formFactor, handle));
     }
-    get isSlot() {
-        return true;
-    }
     get canWriteSuperset() {
         return this;
     }
@@ -2475,6 +2487,10 @@ class ReferenceType extends Type {
     }
     maybeEnsureResolved() {
         return this.referredType.maybeEnsureResolved();
+    }
+    get canWriteSuperset() {
+        // TODO(cypher1): Possibly cannot write to references.
+        return this.referredType.canWriteSuperset;
     }
     get canReadSubset() {
         return this.referredType.canReadSubset;
@@ -2925,6 +2941,9 @@ class ParticleSpec {
     }
     getSlotSpec(slotName) {
         return this.slotConnections.get(slotName);
+    }
+    get slotConnectionNames() {
+        return [...this.slotConnections.keys()];
     }
     get primaryVerb() {
         return (this.verbs.length > 0) ? this.verbs[0] : undefined;
@@ -13660,7 +13679,20 @@ class Handle$1 {
     _startNormalize() {
         this._localName = null;
         this._tags.sort();
-        // TODO: type?
+        const resolvedType = this.type.resolvedType();
+        if (resolvedType.canWriteSuperset && resolvedType.canWriteSuperset.tag === 'Slot') {
+            this._fate = this._fate === '?' ? '`slot' : this._fate;
+        }
+        if (resolvedType.canReadSubset && resolvedType.canReadSubset.tag === 'Slot') {
+            this._fate = this._fate === '?' ? '`slot' : this._fate;
+        }
+        const collectionType = resolvedType && resolvedType.isCollectionType() && resolvedType.collectionType;
+        if (collectionType && collectionType.canWriteSuperset && collectionType.canWriteSuperset.tag === 'Slot') {
+            this._fate = this._fate === '?' ? '`slot' : this._fate;
+        }
+        if (collectionType && collectionType.canReadSubset && collectionType.canReadSubset.tag === 'Slot') {
+            this._fate = this._fate === '?' ? '`slot' : this._fate;
+        }
     }
     _finishNormalize() {
         for (const connection of this._connections) {
@@ -13749,18 +13781,21 @@ class Handle$1 {
             }
             connection.tags.forEach(tag => tags.add(tag));
         }
+        if (!this.mappedType && this.fate === '`slot') {
+            this._mappedType = new SlotType(new SlotInfo(undefined, undefined));
+        }
         const type = Handle$1.resolveEffectiveType(this._mappedType, this._connections);
-        if (type) {
-            this._type = type;
-            this._tags.forEach(tag => tags.add(tag));
-            this._tags = [...tags];
-            return true;
+        if (!type) {
+            if (options && options.errors) {
+                // TODO: pass options to TypeChecker.processTypeList for better error.
+                options.errors.set(this, `Type validations failed for handle '${this}' with type ${this._mappedType} and fate ${this.fate}`);
+            }
+            return false;
         }
-        if (options && options.errors) {
-            // TODO: pass options to TypeChecker.processTypeList for better error.
-            options.errors.set(this, `Type validations failed for handle '${this}'`);
-        }
-        return false;
+        this._type = type;
+        this._tags.forEach(tag => tags.add(tag));
+        this._tags = [...tags];
+        return true;
     }
     isResolved(options = undefined) {
         assert(Object.isFrozen(this));
@@ -13826,7 +13861,10 @@ class Handle$1 {
             result.push(`'${this.id}'`);
         }
         result.push(...this.tags.map(a => `#${a}`));
-        result.push(`as ${(nameMap && nameMap.get(this)) || this.localName}`);
+        const name = (nameMap && nameMap.get(this)) || this.localName;
+        if (name) {
+            result.push(`as ${(nameMap && nameMap.get(this)) || this.localName}`);
+        }
         if (this.type) {
             result.push('//');
             if (this.type.isResolved()) {
@@ -14181,7 +14219,7 @@ class SlotConnection {
         return true;
     }
     isResolved(options) {
-        assert(Object.isFrozen(this));
+        assert(Object.isFrozen(this), `slot connection ${this.name} must be frozen before it is resolved`);
         if (!this.name) {
             if (options) {
                 options.details = 'missing name';
@@ -14297,7 +14335,7 @@ class Particle {
         particle._unnamedConnections = this._unnamedConnections.map(connection => connection._clone(particle, cloneMap));
         particle._cloneConnectionRawTypes(variableMap);
         for (const [key, slotConn] of Object.entries(this.consumedSlotConnections)) {
-            particle.consumedSlotConnections[key] = slotConn._clone(particle, cloneMap);
+            particle._consumedSlotConnections[key] = slotConn._clone(particle, cloneMap);
             // if recipe is a requireSection, then slot may already exist in recipe.
             if (cloneMap.has(slotConn.targetSlot)) {
                 assert(recipe instanceof RequireSection);
@@ -14338,8 +14376,8 @@ class Particle {
         }
         this._connections = normalizedConnections;
         const normalizedSlotConnections = {};
-        for (const key of (Object.keys(this._consumedSlotConnections).sort())) {
-            normalizedSlotConnections[key] = this._consumedSlotConnections[key];
+        for (const key of (Object.keys(this.consumedSlotConnections).sort())) {
+            normalizedSlotConnections[key] = this.consumedSlotConnections[key];
         }
         this._consumedSlotConnections = normalizedSlotConnections;
     }
@@ -14408,7 +14446,9 @@ class Particle {
             }
             return false;
         }
-        if (this.spec.slotConnections.size > 0) {
+        const slandleConnections = Object.values(this.connections).filter(connection => connection.type.isSlot()
+            || (connection.type.isCollectionType() && connection.type.getContainedType().isSlot()));
+        if (slandleConnections.length === 0 && this.spec.slotConnections.size > 0) {
             const fulfilledSlotConnections = Object.values(this.consumedSlotConnections).filter(connection => connection.targetSlot !== undefined);
             if (fulfilledSlotConnections.length === 0) {
                 if (options && options.showUnresolved) {
@@ -14501,10 +14541,9 @@ class Particle {
             (!type || TypeChecker.compareTypes({ type }, { type: connSpec.type })));
     }
     addSlotConnection(name) {
-        assert(!(name in this._consumedSlotConnections), 'slot connection already exists');
+        assert(!(name in this.consumedSlotConnections), 'slot connection already exists');
         assert(!this.spec || this.spec.slotConnections.has(name), 'slot connection not in particle spec');
-        const slotConn = new SlotConnection(name, this);
-        this._consumedSlotConnections[name] = slotConn;
+        const slotConn = this.addSlotConnectionAsCopy(name);
         const slotSpec = this.getSlotSpecByName(name);
         if (slotSpec) {
             slotSpec.provideSlotConnections.forEach(providedSlot => {
@@ -14533,7 +14572,10 @@ class Particle {
         this.recipe.removeParticle(this);
     }
     getSlotConnectionBySpec(spec) {
-        return Object.values(this._consumedSlotConnections).find(slotConn => slotConn.getSlotSpec() === spec);
+        return Object.values(this.consumedSlotConnections).find(slotConn => slotConn.getSlotSpec() === spec);
+    }
+    getSlotConnections() {
+        return Object.values(this.consumedSlotConnections);
     }
     getSlotSpecByName(name) {
         if (!this.spec)
@@ -14551,7 +14593,7 @@ class Particle {
         return undefined;
     }
     getSlotConnectionByName(name) {
-        return this._consumedSlotConnections[name];
+        return this.consumedSlotConnections[name];
     }
     getProvidedSlotByName(consumeName, name) {
         return this.consumedSlotConnections[consumeName] && this.consumedSlotConnections[consumeName].providedSlots[name];
@@ -14586,7 +14628,7 @@ class Particle {
         for (const connection of Object.values(this.connections)) {
             result.push(connection.toString(nameMap, options).replace(/^|(\n)/g, '$1  '));
         }
-        for (const slotConnection of Object.values(this._consumedSlotConnections)) {
+        for (const slotConnection of Object.values(this.consumedSlotConnections)) {
             result.push(slotConnection.toString(nameMap, options).replace(/^|(\n)/g, '$1  '));
         }
         return result.join('\n');
@@ -14950,21 +14992,25 @@ class Recipe {
             }
         }
     }
-    isResolved() {
+    isResolved(options = undefined) {
         assert(Object.isFrozen(this), 'Recipe must be normalized to be resolved.');
-        if (this._obligations.length > 0) {
-            return false;
-        }
-        return this._connectionConstraints.length === 0
-            && this.requires.every(require => require.isEmpty())
-            && (this._search === null || this._search.isResolved())
-            && this._handles.every(handle => handle.isResolved())
-            && this._particles.every(particle => particle.isResolved())
-            && this.modality.isResolved()
-            && this.allRequiredSlotsPresent()
-            && this._slots.every(slot => slot.isResolved())
-            && this.handleConnections.every(connection => connection.isResolved())
-            && this.slotConnections.every(slotConnection => slotConnection.isResolved());
+        const checkThat = (check, label) => {
+            if (!check && options && options.errors) {
+                options.errors.set(this.name, label);
+            }
+            return check;
+        };
+        return checkThat(this._obligations.length === 0, 'unresolved obligations')
+            && checkThat(this._connectionConstraints.length === 0, 'unresolved constraints')
+            && checkThat(this.requires.every(require => require.isEmpty()), 'unresolved require')
+            && checkThat((this._search === null || this._search.isResolved()), 'unresolved search')
+            && checkThat(this._handles.every(handle => handle.isResolved()), 'unresolved handles')
+            && checkThat(this._particles.every(particle => particle.isResolved(options)), 'unresolved particles')
+            && checkThat(this.modality.isResolved(), 'unresolved modality')
+            && checkThat(this.allRequiredSlotsPresent(options), 'unresolved required slot')
+            && checkThat(this._slots.every(slot => slot.isResolved()), 'unresolved slots')
+            && checkThat(this.handleConnections.every(connection => connection.isResolved()), 'unresolved handle connections')
+            && checkThat(this.slotConnections.every(slotConnection => slotConnection.isResolved()), 'unresolved slot connections');
         // TODO: check recipe level resolution requirements, eg there is no slot loops.
     }
     isCompatible(modality) {
@@ -14974,31 +15020,45 @@ class Recipe {
         return this.particles.filter(p => Boolean(p.spec && p.spec.slotConnections.size > 0)).map(p => p.spec.modality)
             .reduce((modality, total) => modality.intersection(total), Modality.all);
     }
-    allRequiredSlotsPresent() {
+    allRequiredSlotsPresent(options = undefined) {
         // All required slots and at least one consume slot for each particle must be present in order for the 
-        // recipe to be considered resolved. 
+        // recipe to be considered resolved.
         for (const particle of this.particles) {
             if (particle.spec.slotConnections.size === 0) {
                 continue;
             }
             let atLeastOneSlotConnection = false;
+            let usesSlandles = false;
+            for (const handleSpec of Object.values(particle.spec.connections)) {
+                if (handleSpec.type.isSlot() ||
+                    (handleSpec.type.isCollectionType() && handleSpec.type.collectionType.isSlot())) {
+                    usesSlandles = true;
+                }
+            }
             for (const [name, slotSpec] of particle.spec.slotConnections) {
                 if (slotSpec.isRequired && !particle.consumedSlotConnections[name]) {
+                    if (options && options.errors) {
+                        options.errors.set(name, `required slot ${name} has no matching connection`);
+                    }
                     return false;
                 }
                 // required provided slots are only required when the corresponding consume slot connection is present
                 if (particle.consumedSlotConnections[name]) {
+                    atLeastOneSlotConnection = true;
                     for (const providedSlotSpec of slotSpec.provideSlotConnections) {
                         if (providedSlotSpec.isRequired && !particle.getProvidedSlotByName(name, providedSlotSpec.name)) {
+                            if (options && options.errors) {
+                                options.errors.set(name, `required provided slot ${providedSlotSpec.name} has no matching connection`);
+                            }
                             return false;
                         }
                     }
                 }
-                if (particle.consumedSlotConnections[name]) {
-                    atLeastOneSlotConnection = true;
-                }
             }
-            if (!atLeastOneSlotConnection) {
+            if (!usesSlandles && !atLeastOneSlotConnection) {
+                if (options && options.errors) {
+                    options.errors.set(`?`, `no slot connections`);
+                }
                 return false;
             }
         }
@@ -15252,9 +15312,9 @@ class Recipe {
     }
     _copyInto(recipe, cloneMap) {
         const variableMap = new Map();
-        function cloneTheThing(object) {
-            const clonedObject = object._copyInto(recipe, cloneMap, variableMap);
-            cloneMap.set(object, clonedObject);
+        function cloneTheThing(ob) {
+            const clonedObject = ob._copyInto(recipe, cloneMap, variableMap);
+            cloneMap.set(ob, clonedObject);
         }
         recipe._name = this.name;
         recipe._verbs = recipe._verbs.concat(...this._verbs);
@@ -21573,6 +21633,7 @@ class ResolveWalker extends RecipeWalker {
                     mappable = arc.context.findStoresByType(handle.type, { tags: handle.tags, subtype: true });
                     break;
                 case 'create':
+                case '`slot':
                 case '?':
                     mappable = [];
                     break;
@@ -21592,6 +21653,7 @@ class ResolveWalker extends RecipeWalker {
                     storeById = arc.context.findStoreById(handle.id);
                     break;
                 case 'create':
+                case '`slot':
                 case '?':
                     break;
                 default:
@@ -21616,7 +21678,7 @@ class ResolveWalker extends RecipeWalker {
         }
         return undefined;
     }
-    onSlotConnection(recipe, slotConnection) {
+    onSlotConnection(_recipe, slotConnection) {
         const arc = this.arc;
         if (slotConnection.isConnected()) {
             return undefined;
@@ -21635,7 +21697,7 @@ class ResolveWalker extends RecipeWalker {
             return 1;
         };
     }
-    onPotentialSlotConnection(recipe, particle, slotSpec) {
+    onPotentialSlotConnection(_recipe, particle, slotSpec) {
         const arc = this.arc;
         const { local, remote } = SlotUtils.findAllSlotCandidates(particle, slotSpec, arc);
         const allSlots = [...local, ...remote];
@@ -21644,7 +21706,7 @@ class ResolveWalker extends RecipeWalker {
             return undefined;
         }
         const selectedSlot = allSlots[0];
-        return (recipe, particle, slotSpec) => {
+        return (_recipe, particle, slotSpec) => {
             const newSlotConnection = particle.addSlotConnection(slotSpec.name);
             SlotUtils.connectSlotConnection(newSlotConnection, selectedSlot);
             return 1;
@@ -22358,10 +22420,12 @@ ${this.activeRecipe.toString()}`;
         // if supported, provide particle caching via a BloblUrl representing spec.implFile
         await this._provisionSpecUrl(recipeParticle.spec);
         for (const [name, connection] of Object.entries(recipeParticle.connections)) {
-            const store = this.findStoreById(connection.handle.id);
-            assert(store, `can't find store of id ${connection.handle.id}`);
-            assert(info.spec.handleConnectionMap.get(name) !== undefined, 'can\'t connect handle to a connection that doesn\'t exist');
-            info.stores.set(name, store);
+            if (connection.handle.fate !== '`slot') {
+                const store = this.findStoreById(connection.handle.id);
+                assert(store, `can't find store of id ${connection.handle.id}`);
+                assert(info.spec.handleConnectionMap.get(name) !== undefined, 'can\'t connect handle to a connection that doesn\'t exist');
+                info.stores.set(name, store);
+            }
         }
         this.pec.instantiate(recipeParticle, info.stores);
     }
@@ -22499,16 +22563,18 @@ ${this.activeRecipe.toString()}`;
             if (this.storesById.has(recipeHandle.id)) {
                 continue;
             }
-            let storageKey = recipeHandle.storageKey;
-            if (!storageKey) {
-                storageKey = this.keyForId(recipeHandle.id);
+            if (recipeHandle.fate !== '`slot') {
+                let storageKey = recipeHandle.storageKey;
+                if (!storageKey) {
+                    storageKey = this.keyForId(recipeHandle.id);
+                }
+                assert(storageKey, `couldn't find storage key for handle '${recipeHandle}'`);
+                const type = recipeHandle.type.resolvedType();
+                assert(type.isResolved(), `couldn't resolve type ${type.toString()}`);
+                const store = await this.storageProviderFactory.connect(recipeHandle.id, type, storageKey);
+                assert(store, `store '${recipeHandle.id}' was not found`);
+                this._registerStore(store, recipeHandle.tags);
             }
-            assert(storageKey, `couldn't find storage key for handle '${recipeHandle}'`);
-            const type = recipeHandle.type.resolvedType();
-            assert(type.isResolved());
-            const store = await this.storageProviderFactory.connect(recipeHandle.id, type, storageKey);
-            assert(store, `store '${recipeHandle.id}' was not found`);
-            this._registerStore(store, recipeHandle.tags);
         }
         await Promise.all(particles.map(recipeParticle => this._instantiateParticle(recipeParticle)));
         if (this.pec.slotComposer) {

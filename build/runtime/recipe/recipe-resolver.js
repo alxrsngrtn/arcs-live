@@ -7,10 +7,10 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-import { RecipeUtil } from '../recipe/recipe-util.js';
-import { RecipeWalker } from '../recipe/recipe-walker.js';
-import { SlotUtils } from '../recipe/slot-utils.js';
-import { Action } from '../recipe/walker.js';
+import { Action } from './walker.js';
+import { RecipeUtil } from './recipe-util.js';
+import { RecipeWalker } from './recipe-walker.js';
+import { SlotUtils } from './slot-utils.js';
 export class ResolveWalker extends RecipeWalker {
     constructor(tactic, arc) {
         super(tactic);
@@ -36,6 +36,7 @@ export class ResolveWalker extends RecipeWalker {
                     mappable = arc.context.findStoresByType(handle.type, { tags: handle.tags, subtype: true });
                     break;
                 case 'create':
+                case '`slot':
                 case '?':
                     mappable = [];
                     break;
@@ -55,6 +56,7 @@ export class ResolveWalker extends RecipeWalker {
                     storeById = arc.context.findStoreById(handle.id);
                     break;
                 case 'create':
+                case '`slot':
                 case '?':
                     break;
                 default:
@@ -79,7 +81,7 @@ export class ResolveWalker extends RecipeWalker {
         }
         return undefined;
     }
-    onSlotConnection(recipe, slotConnection) {
+    onSlotConnection(_recipe, slotConnection) {
         const arc = this.arc;
         if (slotConnection.isConnected()) {
             return undefined;
@@ -98,7 +100,7 @@ export class ResolveWalker extends RecipeWalker {
             return 1;
         };
     }
-    onPotentialSlotConnection(recipe, particle, slotSpec) {
+    onPotentialSlotConnection(_recipe, particle, slotSpec) {
         const arc = this.arc;
         const { local, remote } = SlotUtils.findAllSlotCandidates(particle, slotSpec, arc);
         const allSlots = [...local, ...remote];
@@ -107,7 +109,7 @@ export class ResolveWalker extends RecipeWalker {
             return undefined;
         }
         const selectedSlot = allSlots[0];
-        return (recipe, particle, slotSpec) => {
+        return (_recipe, particle, slotSpec) => {
             const newSlotConnection = particle.addSlotConnection(slotSpec.name);
             SlotUtils.connectSlotConnection(newSlotConnection, selectedSlot);
             return 1;

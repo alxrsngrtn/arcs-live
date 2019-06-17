@@ -29,6 +29,7 @@ export declare abstract class Type {
     static canMergeConstraints(type1: any, type2: any): boolean;
     static _canMergeCanReadSubset(type1: any, type2: any): boolean;
     static _canMergeCanWriteSuperset(type1: any, type2: any): boolean;
+    isSlot(): this is SlotType;
     isCollectionType<T extends Type>(): this is CollectionType<T>;
     isBigCollectionType<T extends Type>(): this is BigCollectionType<T>;
     isResolved(): boolean;
@@ -112,6 +113,8 @@ export declare class CollectionType<T extends Type> extends Type {
     resolvedType(): CollectionType<Type>;
     _canEnsureResolved(): boolean;
     maybeEnsureResolved(): boolean;
+    readonly canWriteSuperset: InterfaceType;
+    readonly canReadSubset: InterfaceType;
     _clone(variableMap: any): Type;
     _cloneWithResolutions(variableMap: any): CollectionType<Type>;
     toLiteral(): TypeLiteral;
@@ -131,6 +134,8 @@ export declare class BigCollectionType<T extends Type> extends Type {
     resolvedType(): BigCollectionType<Type>;
     _canEnsureResolved(): boolean;
     maybeEnsureResolved(): boolean;
+    readonly canWriteSuperset: InterfaceType;
+    readonly canReadSubset: InterfaceType;
     _clone(variableMap: any): Type;
     _cloneWithResolutions(variableMap: any): BigCollectionType<Type>;
     toLiteral(): TypeLiteral;
@@ -169,7 +174,6 @@ export declare class SlotType extends Type {
     private readonly slot;
     constructor(slot: SlotInfo);
     static make(formFactor: string, handle: string): SlotType;
-    readonly isSlot: boolean;
     readonly canWriteSuperset: SlotType;
     readonly canReadSubset: this;
     _isMoreSpecificThan(type: any): boolean;
@@ -186,6 +190,7 @@ export declare class ReferenceType extends Type {
     resolvedType(): ReferenceType;
     _canEnsureResolved(): boolean;
     maybeEnsureResolved(): boolean;
+    readonly canWriteSuperset: Type;
     readonly canReadSubset: Type;
     _clone(variableMap: any): Type;
     _cloneWithResolutions(variableMap: any): ReferenceType;

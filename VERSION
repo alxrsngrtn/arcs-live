@@ -1,15 +1,10 @@
-commit 82e3bdd2c98ea46ebdf53151fb604e8844615bd0
-Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
-Date:   Mon Jun 17 10:40:21 2019 +1000
+commit 3033f5d42b5abac2cac77014ffcdff099f0e51bb
+Author: Joshua Pratt <jp10010101010000@gmail.com>
+Date:   Mon Jun 17 14:20:28 2019 +1000
 
-    "Fixes" the rest of the floating promises. (#3184)
+    Improve resolution for Slandles (#3150)
     
-    * "Fixes" the rest of the floating promises.
-    
-    Also enables the no-floating-promises lint check.
-    
-    Some of the floating promises I was able to fix properly, but a few had
-    to be whitelisted via a new ignorePromiseHack() function. Someone who
-    knows what the code is doing needs to debug these...
-    
-    * Review comments
+    * Add missing slandles particle definitions and modify existing particles to  enable resolution for slandles
+    * Handle `slot fates better with type inference and improve debugging and type annotations
+    * Relax handle semantic requirements for slandles
+    * Cleanup distracting log

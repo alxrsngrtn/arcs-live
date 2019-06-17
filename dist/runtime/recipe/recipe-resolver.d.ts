@@ -8,20 +8,25 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { Arc } from '../arc.js';
+import { Action } from './walker.js';
 import { ConsumeSlotConnectionSpec } from '../particle-spec.js';
-import { Handle } from '../recipe/handle';
-import { Particle } from '../recipe/particle.js';
-import { RecipeWalker } from '../recipe/recipe-walker.js';
-import { Recipe } from '../recipe/recipe.js';
-import { SlotConnection } from '../recipe/slot-connection.js';
-import { Action } from '../recipe/walker.js';
+import { Direction } from '../manifest-ast-nodes.js';
+import { Handle } from './handle';
+import { Particle } from './particle.js';
+import { RecipeWalker } from './recipe-walker.js';
+import { Recipe } from './recipe.js';
+import { SlotConnection } from './slot-connection.js';
 export declare class ResolveWalker extends RecipeWalker {
     private readonly arc;
     constructor(tactic: any, arc: any);
     onHandle(recipe: Recipe, handle: Handle): (recipe: any, handle: any) => number;
-    onSlotConnection(recipe: Recipe, slotConnection: SlotConnection): (recipe: any, slotConnection: any) => number;
-    onPotentialSlotConnection(recipe: Recipe, particle: Particle, slotSpec: ConsumeSlotConnectionSpec): (recipe: any, particle: any, slotSpec: any) => number;
-    onObligation(recipe: Recipe, obligation: any): (recipe: any, obligation: any) => number;
+    onSlotConnection(_recipe: Recipe, slotConnection: SlotConnection): (recipe: any, slotConnection: any) => number;
+    onPotentialSlotConnection(_recipe: Recipe, particle: Particle, slotSpec: ConsumeSlotConnectionSpec): (_recipe: Recipe, particle: Particle, slotSpec: ConsumeSlotConnectionSpec) => number;
+    onObligation(recipe: Recipe, obligation: {
+        from: any;
+        to: any;
+        direction: Direction;
+    }): (recipe: any, obligation: any) => number;
 }
 export declare class ResolveRecipeAction extends Action<Recipe> {
     generate(inputParams: any): any;
