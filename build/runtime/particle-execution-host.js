@@ -13,6 +13,7 @@ import { reportSystemException } from './arc-exceptions.js';
 import { Manifest, StorageStub } from './manifest.js';
 import { RecipeResolver } from './recipe/recipe-resolver.js';
 import { Services } from './services.js';
+import { floatingPromiseToAudit } from './util.js';
 export class ParticleExecutionHost {
     constructor(port, slotComposer, arc) {
         this.nextIdentifier = 0;
@@ -47,10 +48,12 @@ export class ParticleExecutionHost {
                 this.SimpleCallback(callback, data);
             }
             onHandleSet(handle, data, particleId, barrier) {
-                handle.set(data, particleId, barrier);
+                // TODO: Awaiting this promise causes tests to fail...
+                floatingPromiseToAudit(handle.set(data, particleId, barrier));
             }
             onHandleClear(handle, particleId, barrier) {
-                handle.clear(particleId, barrier);
+                // TODO: Awaiting this promise causes tests to fail...
+                floatingPromiseToAudit(handle.clear(particleId, barrier));
             }
             async onHandleStore(handle, callback, data, particleId) {
                 // TODO(shans): fix typing once we have types for Singleton/Collection/etc
@@ -179,7 +182,8 @@ export class ParticleExecutionHost {
                                         pec.arc._registerStore(store, []);
                                     }
                                 });
-                                arc.instantiate(recipe0);
+                                // TODO: Awaiting this promise causes tests to fail...
+                                floatingPromiseToAudit(arc.instantiate(recipe0));
                             }
                             else {
                                 error = `Recipe is not resolvable:\n${recipe0.toString({ showUnresolved: true })}`;

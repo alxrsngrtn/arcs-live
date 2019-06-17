@@ -20,6 +20,7 @@ import { assert } from '../platform/assert-web.js';
 import { ParticleSpec } from './particle-spec.js';
 import { Type } from './type.js';
 import { PropagatedException } from './arc-exceptions.js';
+import { floatingPromiseToAudit } from './util.js';
 var MappingType;
 (function (MappingType) {
     MappingType[MappingType["Mapped"] = 0] = "Mapped";
@@ -129,7 +130,8 @@ class ThingMapper {
             id = this._newIdentifier();
         }
         assert(!this._idMap.has(id), `${requestedId ? 'requestedId' : (thing.apiChannelMappingId ? 'apiChannelMappingId' : 'newIdentifier()')} ${id} already in use`);
-        this.establishThingMapping(id, thing);
+        // TODO: Awaiting this promise causes tests to fail...
+        floatingPromiseToAudit(this.establishThingMapping(id, thing));
         return id;
     }
     maybeCreateMappingForThing(thing) {
@@ -366,7 +368,7 @@ export class PECOuterPort extends APIPort {
         super(messagePort, 'o');
         this.inspector = arc.inspector;
         if (this.inspector) {
-            this.inspector.onceActive.then(() => this.DevToolsConnected());
+            this.inspector.onceActive.then(() => this.DevToolsConnected(), e => console.error(e));
         }
     }
     Stop() { }

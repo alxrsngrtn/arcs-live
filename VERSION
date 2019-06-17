@@ -1,5 +1,15 @@
-commit 363e55f8e43455fc6b21d00243263d9e709b0fbb
-Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Sun Jun 16 20:07:05 2019 +1000
+commit 82e3bdd2c98ea46ebdf53151fb604e8844615bd0
+Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
+Date:   Mon Jun 17 10:40:21 2019 +1000
 
-    Extract DevTools code from src/planning (#3186)
+    "Fixes" the rest of the floating promises. (#3184)
+    
+    * "Fixes" the rest of the floating promises.
+    
+    Also enables the no-floating-promises lint check.
+    
+    Some of the floating promises I was able to fix properly, but a few had
+    to be whitelisted via a new ignorePromiseHack() function. Someone who
+    knows what the code is doing needs to debug these...
+    
+    * Review comments

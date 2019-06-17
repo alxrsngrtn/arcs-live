@@ -16536,6 +16536,13 @@ function setDiffCustom(from, to, keyFn) {
     }
     return result;
 }
+/**
+ * A hack to ignore a floating promise and bypass the linter. Promises should very rarely be left floating, and when such behaviour is intended,
+ * it should be clearly marked as such. See https://tsetse.info/must-use-promises.html for details.
+ *
+ * TODO: Remove all usages of this function and then delete it.
+ */
+function floatingPromiseToAudit(promise) { }
 
 /**
  * @license
@@ -19412,7 +19419,8 @@ class ThingMapper {
             id = this._newIdentifier();
         }
         assert(!this._idMap.has(id), `${requestedId ? 'requestedId' : (thing.apiChannelMappingId ? 'apiChannelMappingId' : 'newIdentifier()')} ${id} already in use`);
-        this.establishThingMapping(id, thing);
+        // TODO: Awaiting this promise causes tests to fail...
+        floatingPromiseToAudit(this.establishThingMapping(id, thing));
         return id;
     }
     maybeCreateMappingForThing(thing) {
@@ -19649,7 +19657,7 @@ class PECOuterPort extends APIPort {
         super(messagePort, 'o');
         this.inspector = arc.inspector;
         if (this.inspector) {
-            this.inspector.onceActive.then(() => this.DevToolsConnected());
+            this.inspector.onceActive.then(() => this.DevToolsConnected(), e => console.error(e));
         }
     }
     Stop() { }
@@ -21763,10 +21771,12 @@ class ParticleExecutionHost {
                 this.SimpleCallback(callback, data);
             }
             onHandleSet(handle, data, particleId, barrier) {
-                handle.set(data, particleId, barrier);
+                // TODO: Awaiting this promise causes tests to fail...
+                floatingPromiseToAudit(handle.set(data, particleId, barrier));
             }
             onHandleClear(handle, particleId, barrier) {
-                handle.clear(particleId, barrier);
+                // TODO: Awaiting this promise causes tests to fail...
+                floatingPromiseToAudit(handle.clear(particleId, barrier));
             }
             async onHandleStore(handle, callback, data, particleId) {
                 // TODO(shans): fix typing once we have types for Singleton/Collection/etc
@@ -21895,7 +21905,8 @@ class ParticleExecutionHost {
                                         pec.arc._registerStore(store, []);
                                     }
                                 });
-                                arc.instantiate(recipe0);
+                                // TODO: Awaiting this promise causes tests to fail...
+                                floatingPromiseToAudit(arc.instantiate(recipe0));
                             }
                             else {
                                 error = `Recipe is not resolvable:\n${recipe0.toString({ showUnresolved: true })}`;
@@ -30076,7 +30087,7 @@ class SuggestionComposer {
                     throw new Error('cannot find suggest slot context');
                 }
                 this._suggestConsumers.splice(index, 1);
-                suggestion.instantiate(this.arc);
+                suggestion.instantiate(this.arc).catch(e => console.error(e));
             }
         });
         context.addSlotConsumer(suggestConsumer);

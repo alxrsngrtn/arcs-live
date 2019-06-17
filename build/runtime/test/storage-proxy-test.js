@@ -15,6 +15,7 @@ import { StorageProxy, StorageProxyScheduler } from '../storage-proxy.js';
 import { CrdtCollectionModel } from '../storage/crdt-collection-model.js';
 import { VolatileStorage } from '../storage/volatile-storage.js';
 import { EntityType } from '../type.js';
+import { floatingPromiseToAudit } from '../util.js';
 const CAN_READ = true;
 const CAN_WRITE = true;
 // Test version of VolatileSingleton.
@@ -512,8 +513,9 @@ describe('storage-proxy', () => {
         barProxy.register(particle, barHandle);
         await engine.verify('InitializeProxy:foo', 'SynchronizeProxy:foo', 'InitializeProxy:bar', 'SynchronizeProxy:bar');
         // Reading should call through to the backing store.
-        fooHandle.get();
-        barHandle.toList();
+        // TODO: Awaiting this promise causes tests to fail...
+        floatingPromiseToAudit(fooHandle.get());
+        floatingPromiseToAudit(barHandle.toList());
         await engine.verify('HandleGet:foo', 'HandleToList:bar');
     });
     it('reading from a non-syncing proxy should call the backing store', async () => {
@@ -531,8 +533,9 @@ describe('storage-proxy', () => {
         barProxy.register(particle, barHandle);
         await engine.verify('InitializeProxy:foo', 'InitializeProxy:bar');
         // Reading should call through to the backing store.
-        fooHandle.get();
-        barHandle.toList();
+        // TODO: Awaiting this promise causes tests to fail...
+        floatingPromiseToAudit(fooHandle.get());
+        floatingPromiseToAudit(barHandle.toList());
         await engine.verify('HandleGet:foo', 'HandleToList:bar');
     });
     it('does not notify about redundant concurrent operations (collection)', async () => {

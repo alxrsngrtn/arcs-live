@@ -14,6 +14,7 @@ import { FakeSlotComposer } from '../../../runtime/testing/fake-slot-composer.js
 import { PlanningTestHelper } from '../../testing/planning-test-helper.js';
 import { Planificator } from '../../plan/planificator.js';
 import { PlanningResult } from '../../plan/planning-result.js';
+import { floatingPromiseToAudit } from '../../../runtime/util.js';
 describe('planificator', () => {
     it('constructs suggestion and search storage keys for fb arc', async () => {
         const helper = await PlanningTestHelper.create({ storageKey: 'firebase://arcs-storage.firebaseio.com/AIzaSyBme42moeI-2k8WgXh-6YK_wYyjEXo4Oz8/0_6_0/demo' });
@@ -88,7 +89,8 @@ describe('remote planificator', () => {
     async function init(plannerStorageKeyBase, manifestFilename) {
         const consumePlanificator = await createConsumePlanificator(plannerStorageKeyBase, manifestFilename);
         const producePlanificator = await createProducePlanificator(plannerStorageKeyBase, manifestFilename, consumePlanificator.consumer.result.store, consumePlanificator.searchStore);
-        producePlanificator.requestPlanning({ contextual: true });
+        // TODO: Awaiting this promise causes tests to fail...
+        floatingPromiseToAudit(producePlanificator.requestPlanning({ contextual: true }));
         return { consumePlanificator, producePlanificator };
     }
     ['volatile', 'pouchdb://memory/user-test/'].forEach(plannerStorageKeyBase => {

@@ -64,7 +64,7 @@ export class SuggestionComposer {
                     throw new Error('cannot find suggest slot context');
                 }
                 this._suggestConsumers.splice(index, 1);
-                suggestion.instantiate(this.arc);
+                suggestion.instantiate(this.arc).catch(e => console.error(e));
             }
         });
         context.addSlotConsumer(suggestConsumer);

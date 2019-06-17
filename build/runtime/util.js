@@ -61,4 +61,11 @@ export function setDiffCustom(from, to, keyFn) {
     }
     return result;
 }
+/**
+ * A hack to ignore a floating promise and bypass the linter. Promises should very rarely be left floating, and when such behaviour is intended,
+ * it should be clearly marked as such. See https://tsetse.info/must-use-promises.html for details.
+ *
+ * TODO: Remove all usages of this function and then delete it.
+ */
+export function floatingPromiseToAudit(promise) { }
 //# sourceMappingURL=util.js.map
