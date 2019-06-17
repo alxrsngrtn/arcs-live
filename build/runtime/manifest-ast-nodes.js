@@ -31,4 +31,10 @@ export function slandleType(arg) {
     }
     return undefined;
 }
+/** The different types of trust claims that particles can make. */
+export var ParticleTrustClaimType;
+(function (ParticleTrustClaimType) {
+    ParticleTrustClaimType[ParticleTrustClaimType["IsTag"] = 0] = "IsTag";
+    ParticleTrustClaimType[ParticleTrustClaimType["DerivesFrom"] = 1] = "DerivesFrom";
+})(ParticleTrustClaimType || (ParticleTrustClaimType = {}));
 //# sourceMappingURL=manifest-ast-nodes.js.map

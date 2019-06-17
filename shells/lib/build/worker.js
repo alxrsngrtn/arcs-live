@@ -1239,10 +1239,17 @@ class ParticleSpec {
         const results = new Map();
         if (claims) {
             claims.forEach(claim => {
-                Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(this.handleConnectionMap.has(claim.handle), `Can't make a claim on unknown handle ${claim.handle}.`);
+                if (results.has(claim.handle)) {
+                    throw new Error(`Can't make multiple claims on the same output (${claim.handle}).`);
+                }
+                if (!this.handleConnectionMap.has(claim.handle)) {
+                    throw new Error(`Can't make a claim on unknown handle ${claim.handle}.`);
+                }
                 const handle = this.handleConnectionMap.get(claim.handle);
-                Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(handle.isOutput, `Can't make a claim on handle ${claim.handle} (not an output handle).`);
-                results.set(claim.handle, claim.trustTag);
+                if (!handle.isOutput) {
+                    throw new Error(`Can't make a claim on handle ${claim.handle} (not an output handle).`);
+                }
+                results.set(claim.handle, claim);
             });
         }
         return results;
@@ -1251,9 +1258,16 @@ class ParticleSpec {
         const results = new Map();
         if (checks) {
             checks.forEach(check => {
-                Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(this.handleConnectionMap.has(check.handle), `Can't make a check on unknown handle ${check.handle}.`);
+                if (results.has(check.handle)) {
+                    throw new Error(`Can't make multiple checks on the same input (${check.handle}).`);
+                }
+                if (!this.handleConnectionMap.has(check.handle)) {
+                    throw new Error(`Can't make a check on unknown handle ${check.handle}.`);
+                }
                 const handle = this.handleConnectionMap.get(check.handle);
-                Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(handle.isInput, `Can't make a check on handle ${check.handle} (not an input handle).`);
+                if (!handle.isInput) {
+                    throw new Error(`Can't make a check on handle ${check.handle} (not an input handle).`);
+                }
                 results.set(check.handle, check.trustTags);
             });
         }

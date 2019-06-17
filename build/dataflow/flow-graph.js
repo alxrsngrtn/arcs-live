@@ -1,4 +1,5 @@
 import { assert } from '../platform/assert-web';
+import { ParticleTrustClaimType } from '../runtime/manifest-ast-nodes';
 /**
  * Data structure for representing the connectivity graph of a recipe. Used to perform static analysis on a resolved recipe.
  */
@@ -149,14 +150,14 @@ function addHandleConnection(particleNode, handleNode, connection) {
     switch (connection.direction) {
         case 'in': {
             const edge = new ParticleInput(particleNode, handleNode, connection.name);
-            particleNode.inEdges.push(edge);
-            handleNode.outEdges.push(edge);
+            particleNode.addInEdge(edge);
+            handleNode.addOutEdge(edge);
             return edge;
         }
         case 'out': {
             const edge = new ParticleOutput(particleNode, handleNode, connection.name);
-            particleNode.outEdges.push(edge);
-            handleNode.inEdges.push(edge);
+            particleNode.addOutEdge(edge);
+            handleNode.addInEdge(edge);
             return edge;
         }
         case 'inout': // TODO: Handle inout directions.
@@ -175,7 +176,7 @@ export class Check {
     /** Returns true if the given claim satisfies the check condition. */
     checkAgainstClaim(claim) {
         for (const tag of this.acceptedTags) {
-            if (tag === claim) {
+            if (tag === claim.tag) {
                 return true;
             }
         }
@@ -196,8 +197,8 @@ export class Node {
 class ParticleNode extends Node {
     constructor(particle) {
         super();
-        this.inEdges = [];
-        this.outEdges = [];
+        this.inEdgesByName = new Map();
+        this.outEdgesByName = new Map();
         this.checks = new Map();
         this.name = particle.name;
         this.claims = particle.spec.trustClaims;
@@ -205,16 +206,48 @@ class ParticleNode extends Node {
             this.checks.set(handle, new Check(tags));
         });
     }
+    addInEdge(edge) {
+        this.inEdgesByName.set(edge.handleName, edge);
+    }
+    addOutEdge(edge) {
+        this.outEdgesByName.set(edge.handleName, edge);
+    }
+    get inEdges() {
+        return [...this.inEdgesByName.values()];
+    }
+    get outEdges() {
+        return [...this.outEdgesByName.values()];
+    }
     evaluateCheck(check, edgeToCheck, path) {
         assert(this.outEdges.includes(edgeToCheck), 'Particles can only check their own out-edges.');
         // First check if this particle makes an explicit claim on this out-edge.
         const claim = this.claims.get(edgeToCheck.handleName);
         if (claim) {
-            if (check.checkAgainstClaim(claim)) {
-                return { type: CheckResultType.Success };
-            }
-            else {
-                return { type: CheckResultType.Failure, reason: `Check '${check}' failed: found claim '${claim}' on '${edgeToCheck.label}' instead.` };
+            switch (claim.claimType) {
+                case ParticleTrustClaimType.IsTag: {
+                    // The particle has claimed a specific tag for its output. Check if that tag passes the check, otherwise fail.
+                    if (check.checkAgainstClaim(claim)) {
+                        return { type: CheckResultType.Success };
+                    }
+                    else {
+                        return {
+                            type: CheckResultType.Failure,
+                            reason: `Check '${check}' failed: found claim '${claim.tag}' on '${edgeToCheck.label}' instead.`,
+                        };
+                    }
+                }
+                case ParticleTrustClaimType.DerivesFrom: {
+                    // The particle's output derives from some of its inputs. Continue searching the graph from those inputs.
+                    const checkNext = [];
+                    for (const handle of claim.parentHandles) {
+                        const edge = this.inEdgesByName.get(handle);
+                        assert(!!edge, `Claim derives from unknown handle: ${handle}.`);
+                        checkNext.push(path.withNewEdge(edge));
+                    }
+                    return { type: CheckResultType.KeepGoing, checkNext };
+                }
+                default:
+                    assert(false, 'Unknown claim type.');
             }
         }
         // Next check the node's in-edges.
@@ -260,6 +293,12 @@ class HandleNode extends Node {
             });
         });
         return connections;
+    }
+    addInEdge(edge) {
+        this.inEdges.push(edge);
+    }
+    addOutEdge(edge) {
+        this.outEdges.push(edge);
     }
     evaluateCheck(check, edgeToCheck, path) {
         assert(this.outEdges.includes(edgeToCheck), 'Handles can only check their own out-edges.');

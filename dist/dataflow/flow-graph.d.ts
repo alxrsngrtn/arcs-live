@@ -10,6 +10,7 @@
 import { Recipe } from '../runtime/recipe/recipe';
 import { Particle } from '../runtime/recipe/particle';
 import { Handle } from '../runtime/recipe/handle';
+import { ParticleTrustClaim, ParticleTrustClaimIsTag } from '../runtime/manifest-ast-nodes';
 /**
  * Data structure for representing the connectivity graph of a recipe. Used to perform static analysis on a resolved recipe.
  */
@@ -73,12 +74,14 @@ export declare class Check {
     /** A list of acceptable tags. The check will fail if a different claim is found that doesn't match any tag in this list. */
     acceptedTags: readonly string[]);
     /** Returns true if the given claim satisfies the check condition. */
-    checkAgainstClaim(claim: string): boolean;
+    checkAgainstClaim(claim: ParticleTrustClaimIsTag): boolean;
     toString(): string;
 }
 export declare abstract class Node {
-    abstract readonly inEdges: Edge[];
-    abstract readonly outEdges: Edge[];
+    abstract readonly inEdges: readonly Edge[];
+    abstract readonly outEdges: readonly Edge[];
+    abstract addInEdge(edge: Edge): void;
+    abstract addOutEdge(edge: Edge): void;
     abstract evaluateCheck(check: Check, edgeToCheck: Edge, path: BackwardsPath): CheckResult;
     readonly inNodes: Node[];
     readonly outNodes: Node[];
@@ -90,16 +93,20 @@ export interface Edge {
     readonly handleName: string;
     /** The qualified name of the handle this edge represents, e.g. "MyParticle.output1". */
     readonly label: string;
-    readonly claim?: string;
+    readonly claim?: ParticleTrustClaim;
     readonly check?: Check;
 }
 declare class ParticleNode extends Node {
-    readonly inEdges: ParticleInput[];
-    readonly outEdges: ParticleOutput[];
+    readonly inEdgesByName: Map<string, ParticleInput>;
+    readonly outEdgesByName: Map<string, ParticleOutput>;
     readonly name: string;
-    readonly claims: Map<string, string>;
+    readonly claims: Map<string, ParticleTrustClaim>;
     readonly checks: Map<string, Check>;
     constructor(particle: Particle);
+    addInEdge(edge: ParticleInput): void;
+    addOutEdge(edge: ParticleOutput): void;
+    readonly inEdges: readonly Edge[];
+    readonly outEdges: readonly Edge[];
     evaluateCheck(check: Check, edgeToCheck: ParticleOutput, path: BackwardsPath): CheckResult;
 }
 declare class ParticleInput implements Edge {
@@ -115,7 +122,7 @@ declare class ParticleOutput implements Edge {
     readonly end: Node;
     readonly label: string;
     readonly handleName: string;
-    readonly claim?: string;
+    readonly claim?: ParticleTrustClaim;
     constructor(particleNode: ParticleNode, otherEnd: Node, outputName: string);
 }
 declare class HandleNode extends Node {
@@ -124,6 +131,8 @@ declare class HandleNode extends Node {
     constructor(handle: Handle);
     /** Returns a list of all pairs of particles that are connected through this handle, in string form. */
     readonly connectionsAsStrings: string[];
+    addInEdge(edge: ParticleOutput): void;
+    addOutEdge(edge: ParticleInput): void;
     evaluateCheck(check: Check, edgeToCheck: ParticleInput, path: BackwardsPath): CheckResult;
 }
 export {};
