@@ -11,7 +11,7 @@ import { Manifest } from '../../../runtime/manifest.js';
 import { assert } from '../../../platform/chai-web.js';
 import { checkDefined } from '../../../runtime/testing/preconditions.js';
 import { FlowGraph, Node, CheckResultType, BackwardsPath, Check } from '../flow-graph.js';
-import { ParticleTrustClaimType } from '../../../runtime/manifest-ast-nodes.js';
+import { ClaimType } from '../../../runtime/particle-claim.js';
 async function buildFlowGraph(manifestContent) {
     const manifest = await Manifest.parse(manifestContent);
     assert.lengthOf(manifest.recipes, 1);
@@ -111,7 +111,7 @@ describe('FlowGraph', () => {
     `);
         const node = checkDefined(graph.particleMap.get('P'));
         assert.equal(node.claims.size, 1);
-        const expectedClaim = { claimType: ParticleTrustClaimType.IsTag, handle: 'foo', tag: 'trusted' };
+        const expectedClaim = { claimType: ClaimType.IsTag, handle: 'foo', tag: 'trusted' };
         assert.deepNestedInclude(node.claims.get('foo'), expectedClaim);
         assert.isEmpty(node.checks);
         assert.lengthOf(graph.edges, 1);

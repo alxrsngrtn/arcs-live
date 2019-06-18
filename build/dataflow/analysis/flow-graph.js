@@ -1,5 +1,5 @@
 import { assert } from '../../platform/assert-web';
-import { ParticleTrustClaimType } from '../../runtime/manifest-ast-nodes';
+import { ClaimType } from '../../runtime/particle-claim';
 /**
  * Data structure for representing the connectivity graph of a recipe. Used to perform static analysis on a resolved recipe.
  */
@@ -224,7 +224,7 @@ class ParticleNode extends Node {
         const claim = this.claims.get(edgeToCheck.handleName);
         if (claim) {
             switch (claim.claimType) {
-                case ParticleTrustClaimType.IsTag: {
+                case ClaimType.IsTag: {
                     // The particle has claimed a specific tag for its output. Check if that tag passes the check, otherwise fail.
                     if (check.checkAgainstClaim(claim)) {
                         return { type: CheckResultType.Success };
@@ -236,7 +236,7 @@ class ParticleNode extends Node {
                         };
                     }
                 }
-                case ParticleTrustClaimType.DerivesFrom: {
+                case ClaimType.DerivesFrom: {
                     // The particle's output derives from some of its inputs. Continue searching the graph from those inputs.
                     const checkNext = [];
                     for (const handle of claim.parentHandles) {

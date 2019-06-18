@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>ParticleTrustCheck | arcs</title>
+	<title>ParticleClaimDerivesFrom | arcs</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -56,16 +56,24 @@
 					<a href="../globals.html">Globals</a>
 				</li>
 				<li>
-					<a href="particletrustcheck.html">ParticleTrustCheck</a>
+					<a href="particleclaimderivesfrom.html">ParticleClaimDerivesFrom</a>
 				</li>
 			</ul>
-			<h1>Interface ParticleTrustCheck</h1>
+			<h1>Interface ParticleClaimDerivesFrom</h1>
 		</div>
 	</div>
 </header>
 <div class="container container-main">
 	<div class="row">
 		<div class="col-8 col-content">
+			<section class="tsd-panel tsd-comment">
+				<div class="tsd-comment tsd-typography">
+					<div class="lead">
+						<p>A claim made by a particle, saying that one of its outputs derives from one/some of its inputs (e.g. &quot;claim output derives from input1 and
+						input2&quot;).</p>
+					</div>
+				</div>
+			</section>
 			<section class="tsd-panel tsd-hierarchy">
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
@@ -73,7 +81,7 @@
 						<a href="../classes/basenode.html" class="tsd-signature-type">BaseNode</a>
 						<ul class="tsd-hierarchy">
 							<li>
-								<span class="target">ParticleTrustCheck</span>
+								<span class="target">ParticleClaimDerivesFrom</span>
 							</li>
 						</ul>
 					</li>
@@ -86,10 +94,11 @@
 						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="particletrustcheck.html#handle" class="tsd-kind-icon">handle</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-overwrite"><a href="particletrustcheck.html#kind" class="tsd-kind-icon">kind</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-inherited"><a href="particletrustcheck.html#location" class="tsd-kind-icon">location</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="particletrustcheck.html#trusttags" class="tsd-kind-icon">trust<wbr>Tags</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="particleclaimderivesfrom.html#claimtype" class="tsd-kind-icon">claim<wbr>Type</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="particleclaimderivesfrom.html#handle" class="tsd-kind-icon">handle</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-overwrite"><a href="particleclaimderivesfrom.html#kind" class="tsd-kind-icon">kind</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-inherited"><a href="particleclaimderivesfrom.html#location" class="tsd-kind-icon">location</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="particleclaimderivesfrom.html#parenthandles" class="tsd-kind-icon">parent<wbr>Handles</a></li>
 							</ul>
 						</section>
 					</div>
@@ -98,23 +107,33 @@
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Properties</h2>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="claimtype" class="tsd-anchor"></a>
+					<h3>claim<wbr>Type</h3>
+					<div class="tsd-signature tsd-kind-icon">claim<wbr>Type<span class="tsd-signature-symbol">:</span> <a href="../enums/claimtype.html#derivesfrom" class="tsd-signature-type">DerivesFrom</a></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/4a35aae/src/runtime/manifest-ast-nodes.ts#L192">runtime/manifest-ast-nodes.ts:192</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
 					<a name="handle" class="tsd-anchor"></a>
 					<h3>handle</h3>
 					<div class="tsd-signature tsd-kind-icon">handle<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/3e10403/src/runtime/manifest-ast-nodes.ts#L207">runtime/manifest-ast-nodes.ts:207</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/4a35aae/src/runtime/manifest-ast-nodes.ts#L193">runtime/manifest-ast-nodes.ts:193</a></li>
 						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-overwrite">
 					<a name="kind" class="tsd-anchor"></a>
 					<h3>kind</h3>
-					<div class="tsd-signature tsd-kind-icon">kind<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">"particle-trust-check"</span></div>
+					<div class="tsd-signature tsd-kind-icon">kind<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">"particle-trust-claim-derives-from"</span></div>
 					<aside class="tsd-sources">
 						<p>Overrides <a href="../classes/basenode.html">BaseNode</a>.<a href="../classes/basenode.html#kind">kind</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/3e10403/src/runtime/manifest-ast-nodes.ts#L206">runtime/manifest-ast-nodes.ts:206</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/4a35aae/src/runtime/manifest-ast-nodes.ts#L191">runtime/manifest-ast-nodes.ts:191</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -125,17 +144,17 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="../classes/basenode.html">BaseNode</a>.<a href="../classes/basenode.html#location">location</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/3e10403/src/runtime/manifest-ast-nodes.ts#L41">runtime/manifest-ast-nodes.ts:41</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/4a35aae/src/runtime/manifest-ast-nodes.ts#L42">runtime/manifest-ast-nodes.ts:42</a></li>
 						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="trusttags" class="tsd-anchor"></a>
-					<h3>trust<wbr>Tags</h3>
-					<div class="tsd-signature tsd-kind-icon">trust<wbr>Tags<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></div>
+					<a name="parenthandles" class="tsd-anchor"></a>
+					<h3>parent<wbr>Handles</h3>
+					<div class="tsd-signature tsd-kind-icon">parent<wbr>Handles<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/3e10403/src/runtime/manifest-ast-nodes.ts#L208">runtime/manifest-ast-nodes.ts:208</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/4a35aae/src/runtime/manifest-ast-nodes.ts#L194">runtime/manifest-ast-nodes.ts:194</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -154,19 +173,22 @@
 				</ul>
 				<ul class="current">
 					<li class="current tsd-kind-interface">
-						<a href="particletrustcheck.html" class="tsd-kind-icon">Particle<wbr>Trust<wbr>Check</a>
+						<a href="particleclaimderivesfrom.html" class="tsd-kind-icon">Particle<wbr>Claim<wbr>Derives<wbr>From</a>
 						<ul>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="particletrustcheck.html#handle" class="tsd-kind-icon">handle</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-overwrite">
-								<a href="particletrustcheck.html#kind" class="tsd-kind-icon">kind</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
-								<a href="particletrustcheck.html#location" class="tsd-kind-icon">location</a>
+								<a href="particleclaimderivesfrom.html#claimtype" class="tsd-kind-icon">claim<wbr>Type</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="particletrustcheck.html#trusttags" class="tsd-kind-icon">trust<wbr>Tags</a>
+								<a href="particleclaimderivesfrom.html#handle" class="tsd-kind-icon">handle</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-overwrite">
+								<a href="particleclaimderivesfrom.html#kind" class="tsd-kind-icon">kind</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
+								<a href="particleclaimderivesfrom.html#location" class="tsd-kind-icon">location</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="particleclaimderivesfrom.html#parenthandles" class="tsd-kind-icon">parent<wbr>Handles</a>
 							</li>
 						</ul>
 					</li>

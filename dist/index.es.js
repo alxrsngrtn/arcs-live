@@ -3876,23 +3876,13 @@ class Description {
     }
 }
 
-/**
- * @license
- * Copyright (c) 2019 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-/** The different types of trust claims that particles can make. */
-var ParticleTrustClaimType;
-(function (ParticleTrustClaimType) {
-    ParticleTrustClaimType[ParticleTrustClaimType["IsTag"] = 0] = "IsTag";
-    ParticleTrustClaimType[ParticleTrustClaimType["DerivesFrom"] = 1] = "DerivesFrom";
-})(ParticleTrustClaimType || (ParticleTrustClaimType = {}));
-
 // tslint:disable:no-any
+// tslint:disable: only-arrow-functions
+// tslint:disable: max-line-length
+// tslint:disable: trailing-comma
+// tslint:disable: interface-name
+// tslint:disable: switch-default
+// tslint:disable: object-literal-shorthand
 class SyntaxError extends Error {
     static buildMessage(expected, found) {
         function hex(ch) {
@@ -4201,7 +4191,7 @@ function peg$parse(input, options) {
     const peg$c73 = function (handle, tag) {
         return {
             kind: 'particle-trust-claim-is-tag',
-            claimType: ParticleTrustClaimType.IsTag,
+            claimType: 'is-tag',
             location: location(),
             handle,
             tag,
@@ -4215,7 +4205,7 @@ function peg$parse(input, options) {
         const parentHandles = [first, ...rest.map(item => item[3])];
         return {
             kind: 'particle-trust-claim-derives-from',
-            claimType: ParticleTrustClaimType.DerivesFrom,
+            claimType: 'derives-from',
             location: location(),
             handle,
             parentHandles,
@@ -6897,9 +6887,9 @@ function peg$parse(input, options) {
                 if (s0 === peg$FAILED) {
                     s0 = peg$parseParticleHandle();
                     if (s0 === peg$FAILED) {
-                        s0 = peg$parseParticleTrustClaim();
+                        s0 = peg$parseParticleClaimStatement();
                         if (s0 === peg$FAILED) {
-                            s0 = peg$parseParticleTrustCheck();
+                            s0 = peg$parseParticleCheckStatement();
                         }
                     }
                 }
@@ -6913,15 +6903,15 @@ function peg$parse(input, options) {
         }
         return s0;
     }
-    function peg$parseParticleTrustClaim() {
+    function peg$parseParticleClaimStatement() {
         let s0;
-        s0 = peg$parseParticleTrustClaimIsTag();
+        s0 = peg$parseParticleClaimIsTag();
         if (s0 === peg$FAILED) {
-            s0 = peg$parseParticleTrustClaimDerivesFrom();
+            s0 = peg$parseParticleClaimDerivesFrom();
         }
         return s0;
     }
-    function peg$parseParticleTrustClaimIsTag() {
+    function peg$parseParticleClaimIsTag() {
         let s0, s1, s2, s3, s4, s5, s6, s7, s8;
         s0 = peg$currPos;
         if (input.substr(peg$currPos, 5) === peg$c69) {
@@ -7003,7 +6993,7 @@ function peg$parse(input, options) {
         }
         return s0;
     }
-    function peg$parseParticleTrustClaimDerivesFrom() {
+    function peg$parseParticleClaimDerivesFrom() {
         let s0, s1, s2, s3, s4, s5, s6, s7, s8, s9, s10, s11, s12, s13;
         s0 = peg$currPos;
         if (input.substr(peg$currPos, 5) === peg$c69) {
@@ -7175,7 +7165,7 @@ function peg$parse(input, options) {
         }
         return s0;
     }
-    function peg$parseParticleTrustCheck() {
+    function peg$parseParticleCheckStatement() {
         let s0, s1, s2, s3, s4, s5, s6, s7, s8, s9, s10;
         s0 = peg$currPos;
         if (input.substr(peg$currPos, 5) === peg$c79) {
@@ -7195,7 +7185,7 @@ function peg$parse(input, options) {
                 if (s3 !== peg$FAILED) {
                     s4 = peg$parsewhiteSpace();
                     if (s4 !== peg$FAILED) {
-                        s5 = peg$parseParticleTrustCheckCondition();
+                        s5 = peg$parseParticleCheckCondition();
                         if (s5 !== peg$FAILED) {
                             s6 = [];
                             s7 = peg$currPos;
@@ -7212,7 +7202,7 @@ function peg$parse(input, options) {
                             if (s8 !== peg$FAILED) {
                                 s9 = peg$parsewhiteSpace();
                                 if (s9 !== peg$FAILED) {
-                                    s10 = peg$parseParticleTrustCheckCondition();
+                                    s10 = peg$parseParticleCheckCondition();
                                     if (s10 !== peg$FAILED) {
                                         s8 = [s8, s9, s10];
                                         s7 = s8;
@@ -7247,7 +7237,7 @@ function peg$parse(input, options) {
                                 if (s8 !== peg$FAILED) {
                                     s9 = peg$parsewhiteSpace();
                                     if (s9 !== peg$FAILED) {
-                                        s10 = peg$parseParticleTrustCheckCondition();
+                                        s10 = peg$parseParticleCheckCondition();
                                         if (s10 !== peg$FAILED) {
                                             s8 = [s8, s9, s10];
                                             s7 = s8;
@@ -7310,7 +7300,7 @@ function peg$parse(input, options) {
         }
         return s0;
     }
-    function peg$parseParticleTrustCheckCondition() {
+    function peg$parseParticleCheckCondition() {
         let s0, s1, s2, s3, s4;
         s0 = peg$currPos;
         if (input.substr(peg$currPos, 2) === peg$c71) {

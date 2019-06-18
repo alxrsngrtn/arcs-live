@@ -8,7 +8,7 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { Modality } from './modality.js';
-import { Direction, ParticleTrustClaim, ParticleTrustCheck } from './manifest-ast-nodes.js';
+import { Direction, ParticleClaimStatement, ParticleCheckStatement } from './manifest-ast-nodes.js';
 import { Schema } from './schema.js';
 import { TypeVariableInfo } from './type-variable-info.js';
 import { InterfaceType, SlotType, Type, TypeLiteral } from './type.js';
@@ -74,8 +74,8 @@ export interface SerializedParticleSpec extends Literal {
     implBlobUrl: string | null;
     modality: string[];
     slotConnections: SerializedSlotConnectionSpec[];
-    trustClaims?: ParticleTrustClaim[];
-    trustChecks?: ParticleTrustCheck[];
+    trustClaims?: ParticleClaimStatement[];
+    trustChecks?: ParticleCheckStatement[];
 }
 export declare class ParticleSpec {
     private readonly model;
@@ -87,7 +87,7 @@ export declare class ParticleSpec {
     implBlobUrl: string | null;
     modality: Modality;
     slotConnections: Map<string, ConsumeSlotConnectionSpec>;
-    trustClaims: Map<string, ParticleTrustClaim>;
+    trustClaims: Map<string, ParticleClaimStatement>;
     trustChecks: Map<string, string[]>;
     constructor(model: SerializedParticleSpec);
     createConnection(arg: SerializedHandleConnectionSpec, typeVarMap: Map<string, Type>): HandleConnectionSpec;

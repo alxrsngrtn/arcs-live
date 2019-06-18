@@ -15,7 +15,7 @@ import { Manifest } from '../manifest.js';
 import { checkDefined, checkNotNull } from '../testing/preconditions.js';
 import { StubLoader } from '../testing/stub-loader.js';
 import { assertThrowsAsync } from '../testing/test-util.js';
-import { ParticleTrustClaimType } from '../manifest-ast-nodes.js';
+import { ClaimType } from '../particle-claim.js';
 async function assertRecipeParses(input, result) {
     // Strip common leading whitespace.
     //result = result.replace(new Regex(`()^|\n)${result.match(/^ */)[0]}`), '$1'),
@@ -1885,12 +1885,12 @@ resource SomeName
             const particle = manifest.particles[0];
             assert.equal(particle.trustClaims.size, 2);
             assert.deepNestedInclude(particle.trustClaims.get('output1'), {
-                claimType: ParticleTrustClaimType.IsTag,
+                claimType: ClaimType.IsTag,
                 handle: 'output1',
                 tag: 'property1',
             });
             assert.deepNestedInclude(particle.trustClaims.get('output2'), {
-                claimType: ParticleTrustClaimType.IsTag,
+                claimType: ClaimType.IsTag,
                 handle: 'output2',
                 tag: 'property2',
             });
@@ -1908,7 +1908,7 @@ resource SomeName
             const particle = manifest.particles[0];
             assert.equal(particle.trustClaims.size, 1);
             assert.deepNestedInclude(particle.trustClaims.get('output'), {
-                claimType: ParticleTrustClaimType.DerivesFrom,
+                claimType: ClaimType.DerivesFrom,
                 handle: 'output',
                 parentHandles: ['input1', 'input2'],
             });

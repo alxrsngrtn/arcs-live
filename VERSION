@@ -1,5 +1,17 @@
-commit 3e10403330944903f19c156cf959bd7db7f92690
-Author: raulverag <42563960+raulverag@users.noreply.github.com>
-Date:   Tue Jun 18 13:48:01 2019 +1000
+commit 4a35aae42f8746cf3a4fbcd24e24af11587dd1dc
+Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
+Date:   Tue Jun 18 14:33:47 2019 +1000
 
-    Move new dataflow code/tests and cleanup old code/tests (#3193)
+    Renames the claim/check AST node classes (#3192)
+    
+    * Renames the claim/check AST nodes.
+    
+    These names are now a bit shorter, and should help make it easier to
+    disambiguate between the AST class names and the "real" classes that
+    we'll add shortly.
+    
+    Also moved the ClaimType enum to its own file, so that it can be shared
+    between the AST and real classes (real classes will be added to that
+    same file, particle-claim.ts)
+    
+    * Moved files

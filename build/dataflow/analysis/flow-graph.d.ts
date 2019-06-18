@@ -10,7 +10,7 @@
 import { Recipe } from '../../runtime/recipe/recipe';
 import { Particle } from '../../runtime/recipe/particle';
 import { Handle } from '../../runtime/recipe/handle';
-import { ParticleTrustClaim, ParticleTrustClaimIsTag } from '../../runtime/manifest-ast-nodes';
+import { ParticleClaimStatement, ParticleClaimIsTag } from '../../runtime/manifest-ast-nodes';
 /**
  * Data structure for representing the connectivity graph of a recipe. Used to perform static analysis on a resolved recipe.
  */
@@ -74,7 +74,7 @@ export declare class Check {
     /** A list of acceptable tags. The check will fail if a different claim is found that doesn't match any tag in this list. */
     acceptedTags: readonly string[]);
     /** Returns true if the given claim satisfies the check condition. */
-    checkAgainstClaim(claim: ParticleTrustClaimIsTag): boolean;
+    checkAgainstClaim(claim: ParticleClaimIsTag): boolean;
     toString(): string;
 }
 export declare abstract class Node {
@@ -93,14 +93,14 @@ export interface Edge {
     readonly handleName: string;
     /** The qualified name of the handle this edge represents, e.g. "MyParticle.output1". */
     readonly label: string;
-    readonly claim?: ParticleTrustClaim;
+    readonly claim?: ParticleClaimStatement;
     readonly check?: Check;
 }
 declare class ParticleNode extends Node {
     readonly inEdgesByName: Map<string, ParticleInput>;
     readonly outEdgesByName: Map<string, ParticleOutput>;
     readonly name: string;
-    readonly claims: Map<string, ParticleTrustClaim>;
+    readonly claims: Map<string, ParticleClaimStatement>;
     readonly checks: Map<string, Check>;
     constructor(particle: Particle);
     addInEdge(edge: ParticleInput): void;
@@ -122,7 +122,7 @@ declare class ParticleOutput implements Edge {
     readonly end: Node;
     readonly label: string;
     readonly handleName: string;
-    readonly claim?: ParticleTrustClaim;
+    readonly claim?: ParticleClaimStatement;
     constructor(particleNode: ParticleNode, otherEnd: Node, outputName: string);
 }
 declare class HandleNode extends Node {
