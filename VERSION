@@ -1,15 +1,5 @@
-commit 4040943b1fb10017b2e1d9e83dac59bf0b3f972e
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Mon Jun 17 22:20:28 2019 -0700
+commit a66438cb57c4c21860cf9c78e794bde326258379
+Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
+Date:   Tue Jun 18 16:17:18 2019 +1000
 
-    Declare stub storage interfaces and classes for Java PEC (#3187)
-    
-    * Declare stub storage interfaces and classes for Java PEC
-    
-    * address comments
-    
-    * remove redundant implements statement
-    
-    * address more comments
-    
-    * address comment: rewrite Tag.fromString method
+    Added Check object, put it on Handle Spec (#3194)

@@ -15,7 +15,6 @@ import { Manifest } from '../manifest.js';
 import { checkDefined, checkNotNull } from '../testing/preconditions.js';
 import { StubLoader } from '../testing/stub-loader.js';
 import { assertThrowsAsync } from '../testing/test-util.js';
-import { ClaimType } from '../particle-claim.js';
 async function assertRecipeParses(input, result) {
     // Strip common leading whitespace.
     //result = result.replace(new Regex(`()^|\n)${result.match(/^ */)[0]}`), '$1'),
@@ -1883,18 +1882,14 @@ resource SomeName
       `);
             assert.lengthOf(manifest.particles, 1);
             const particle = manifest.particles[0];
-            assert.equal(particle.trustClaims.size, 2);
-            assert.deepNestedInclude(particle.trustClaims.get('output1'), {
-                claimType: ClaimType.IsTag,
-                handle: 'output1',
-                tag: 'property1',
-            });
-            assert.deepNestedInclude(particle.trustClaims.get('output2'), {
-                claimType: ClaimType.IsTag,
-                handle: 'output2',
-                tag: 'property2',
-            });
             assert.isEmpty(particle.trustChecks);
+            assert.equal(particle.trustClaims.size, 2);
+            const claim1 = particle.trustClaims.get('output1');
+            assert.equal(claim1.handle.name, 'output1');
+            assert.equal(claim1.tag, 'property1');
+            const claim2 = particle.trustClaims.get('output2');
+            assert.equal(claim2.handle.name, 'output2');
+            assert.equal(claim2.tag, 'property2');
         });
         it('supports "derives from" claims with multiple parents', async () => {
             const manifest = await Manifest.parse(`
@@ -1906,13 +1901,11 @@ resource SomeName
       `);
             assert.lengthOf(manifest.particles, 1);
             const particle = manifest.particles[0];
-            assert.equal(particle.trustClaims.size, 1);
-            assert.deepNestedInclude(particle.trustClaims.get('output'), {
-                claimType: ClaimType.DerivesFrom,
-                handle: 'output',
-                parentHandles: ['input1', 'input2'],
-            });
             assert.isEmpty(particle.trustChecks);
+            assert.equal(particle.trustClaims.size, 1);
+            const claim = particle.trustClaims.get('output');
+            assert.equal(claim.handle.name, 'output');
+            assert.sameMembers(claim.parentHandles.map(h => h.name), ['input1', 'input2']);
         });
         it('supports multiple check statements', async () => {
             const manifest = await Manifest.parse(`
@@ -1925,8 +1918,8 @@ resource SomeName
             assert.lengthOf(manifest.particles, 1);
             const particle = manifest.particles[0];
             assert.equal(particle.trustChecks.size, 2);
-            assert.sameMembers(particle.trustChecks.get('input1'), ['property1']);
-            assert.sameMembers(particle.trustChecks.get('input2'), ['property2']);
+            assert.sameMembers(particle.trustChecks.get('input1').acceptedTags, ['property1']);
+            assert.sameMembers(particle.trustChecks.get('input2').acceptedTags, ['property2']);
             assert.isEmpty(particle.trustClaims);
         });
         it('supports checks with multiple tags', async () => {
@@ -1938,7 +1931,7 @@ resource SomeName
             assert.lengthOf(manifest.particles, 1);
             const particle = manifest.particles[0];
             assert.equal(particle.trustChecks.size, 1);
-            assert.sameMembers(particle.trustChecks.get('input'), ['property1', 'property2']);
+            assert.sameMembers(particle.trustChecks.get('input').acceptedTags, ['property1', 'property2']);
             assert.isEmpty(particle.trustClaims);
         });
         it('fails for unknown handle names', async () => {

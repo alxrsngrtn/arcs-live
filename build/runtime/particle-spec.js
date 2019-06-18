@@ -11,6 +11,8 @@ import { assert } from '../platform/assert-web.js';
 import { Modality } from './modality.js';
 import { TypeChecker } from './recipe/type-checker.js';
 import { InterfaceType, SlotType, Type } from './type.js';
+import { Check } from './particle-check.js';
+import { createClaim } from './particle-claim.js';
 function asType(t) {
     return (t instanceof Type) ? t : Type.fromLiteral(t);
 }
@@ -250,17 +252,18 @@ export class ParticleSpec {
         const results = new Map();
         if (claims) {
             claims.forEach(claim => {
-                if (results.has(claim.handle)) {
-                    throw new Error(`Can't make multiple claims on the same output (${claim.handle}).`);
-                }
-                if (!this.handleConnectionMap.has(claim.handle)) {
+                const handle = this.handleConnectionMap.get(claim.handle);
+                if (!handle) {
                     throw new Error(`Can't make a claim on unknown handle ${claim.handle}.`);
                 }
-                const handle = this.handleConnectionMap.get(claim.handle);
                 if (!handle.isOutput) {
                     throw new Error(`Can't make a claim on handle ${claim.handle} (not an output handle).`);
                 }
-                results.set(claim.handle, claim);
+                if (handle.claim) {
+                    throw new Error(`Can't make multiple claims on the same output (${claim.handle}).`);
+                }
+                handle.claim = createClaim(handle, claim, this.handleConnectionMap);
+                results.set(claim.handle, handle.claim);
             });
         }
         return results;
@@ -269,17 +272,18 @@ export class ParticleSpec {
         const results = new Map();
         if (checks) {
             checks.forEach(check => {
-                if (results.has(check.handle)) {
-                    throw new Error(`Can't make multiple checks on the same input (${check.handle}).`);
-                }
-                if (!this.handleConnectionMap.has(check.handle)) {
+                const handle = this.handleConnectionMap.get(check.handle);
+                if (!handle) {
                     throw new Error(`Can't make a check on unknown handle ${check.handle}.`);
                 }
-                const handle = this.handleConnectionMap.get(check.handle);
                 if (!handle.isInput) {
                     throw new Error(`Can't make a check on handle ${check.handle} (not an input handle).`);
                 }
-                results.set(check.handle, check.trustTags);
+                if (handle.check) {
+                    throw new Error(`Can't make multiple checks on the same input (${check.handle}).`);
+                }
+                handle.check = Check.fromASTNode(handle, check);
+                results.set(check.handle, handle.check);
             });
         }
         return results;

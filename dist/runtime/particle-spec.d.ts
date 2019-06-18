@@ -13,6 +13,8 @@ import { Schema } from './schema.js';
 import { TypeVariableInfo } from './type-variable-info.js';
 import { InterfaceType, SlotType, Type, TypeLiteral } from './type.js';
 import { Literal } from './hot.js';
+import { Check } from './particle-check.js';
+import { Claim } from './particle-claim.js';
 declare type SerializedHandleConnectionSpec = {
     direction: Direction;
     name: string;
@@ -20,6 +22,7 @@ declare type SerializedHandleConnectionSpec = {
     isOptional: boolean;
     tags?: string[];
     dependentConnections: SerializedHandleConnectionSpec[];
+    check?: string;
 };
 export declare class HandleConnectionSpec {
     rawData: SerializedHandleConnectionSpec;
@@ -31,6 +34,8 @@ export declare class HandleConnectionSpec {
     dependentConnections: HandleConnectionSpec[];
     pattern?: string;
     parentConnection: HandleConnectionSpec | null;
+    claim?: Claim;
+    check?: Check;
     constructor(rawData: SerializedHandleConnectionSpec, typeVarMap: Map<string, Type>);
     instantiateDependentConnections(particle: any, typeVarMap: Map<string, Type>): void;
     readonly isInput: boolean;
@@ -87,8 +92,8 @@ export declare class ParticleSpec {
     implBlobUrl: string | null;
     modality: Modality;
     slotConnections: Map<string, ConsumeSlotConnectionSpec>;
-    trustClaims: Map<string, ParticleClaimStatement>;
-    trustChecks: Map<string, string[]>;
+    trustClaims: Map<string, Claim>;
+    trustChecks: Map<string, Check>;
     constructor(model: SerializedParticleSpec);
     createConnection(arg: SerializedHandleConnectionSpec, typeVarMap: Map<string, Type>): HandleConnectionSpec;
     readonly handleConnections: HandleConnectionSpec[];

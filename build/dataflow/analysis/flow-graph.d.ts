@@ -10,7 +10,8 @@
 import { Recipe } from '../../runtime/recipe/recipe';
 import { Particle } from '../../runtime/recipe/particle';
 import { Handle } from '../../runtime/recipe/handle';
-import { ParticleClaimStatement, ParticleClaimIsTag } from '../../runtime/manifest-ast-nodes';
+import { Claim } from '../../runtime/particle-claim';
+import { Check } from '../../runtime/particle-check';
 /**
  * Data structure for representing the connectivity graph of a recipe. Used to perform static analysis on a resolved recipe.
  */
@@ -66,17 +67,6 @@ export declare class BackwardsPath {
     readonly endNode: Node;
     readonly endEdge: Edge;
 }
-/** Represents a check condition on an edge. */
-export declare class Check {
-    /** A list of acceptable tags. The check will fail if a different claim is found that doesn't match any tag in this list. */
-    readonly acceptedTags: readonly string[];
-    constructor(
-    /** A list of acceptable tags. The check will fail if a different claim is found that doesn't match any tag in this list. */
-    acceptedTags: readonly string[]);
-    /** Returns true if the given claim satisfies the check condition. */
-    checkAgainstClaim(claim: ParticleClaimIsTag): boolean;
-    toString(): string;
-}
 export declare abstract class Node {
     abstract readonly inEdges: readonly Edge[];
     abstract readonly outEdges: readonly Edge[];
@@ -93,14 +83,14 @@ export interface Edge {
     readonly handleName: string;
     /** The qualified name of the handle this edge represents, e.g. "MyParticle.output1". */
     readonly label: string;
-    readonly claim?: ParticleClaimStatement;
+    readonly claim?: Claim;
     readonly check?: Check;
 }
 declare class ParticleNode extends Node {
     readonly inEdgesByName: Map<string, ParticleInput>;
     readonly outEdgesByName: Map<string, ParticleOutput>;
     readonly name: string;
-    readonly claims: Map<string, ParticleClaimStatement>;
+    readonly claims: Map<string, Claim>;
     readonly checks: Map<string, Check>;
     constructor(particle: Particle);
     addInEdge(edge: ParticleInput): void;
@@ -122,7 +112,7 @@ declare class ParticleOutput implements Edge {
     readonly end: Node;
     readonly label: string;
     readonly handleName: string;
-    readonly claim?: ParticleClaimStatement;
+    readonly claim?: Claim;
     constructor(particleNode: ParticleNode, otherEnd: Node, outputName: string);
 }
 declare class HandleNode extends Node {

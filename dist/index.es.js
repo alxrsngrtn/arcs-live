@@ -2811,6 +2811,82 @@ class TypeChecker {
     }
 }
 
+class Check {
+    constructor(handle, acceptedTags) {
+        this.handle = handle;
+        this.acceptedTags = acceptedTags;
+    }
+    static fromASTNode(handle, astNode) {
+        return new Check(handle, astNode.trustTags);
+    }
+    toManifestString() {
+        return `check ${this.handle.name} is ${this.acceptedTags.join(' or is ')}`;
+    }
+    toShortString() {
+        return this.acceptedTags.join('|');
+    }
+}
+
+/**
+ * @license
+ * Copyright 2019 Google LLC.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+/** The different types of trust claims that particles can make. */
+var ClaimType;
+(function (ClaimType) {
+    ClaimType["IsTag"] = "is-tag";
+    ClaimType["DerivesFrom"] = "derives-from";
+})(ClaimType || (ClaimType = {}));
+class ClaimIsTag {
+    constructor(handle, tag) {
+        this.handle = handle;
+        this.tag = tag;
+        this.type = ClaimType.IsTag;
+    }
+    static fromASTNode(handle, astNode) {
+        return new ClaimIsTag(handle, astNode.tag);
+    }
+    toManifestString() {
+        return `claim ${this.handle.name} is ${this.tag}`;
+    }
+}
+class ClaimDerivesFrom {
+    constructor(handle, parentHandles) {
+        this.handle = handle;
+        this.parentHandles = parentHandles;
+        this.type = ClaimType.DerivesFrom;
+    }
+    static fromASTNode(handle, astNode, handleConnectionMap) {
+        // Convert handle names into HandleConnectionSpec objects.
+        const parentHandles = astNode.parentHandles.map(parentHandleName => {
+            const parentHandle = handleConnectionMap.get(parentHandleName);
+            if (!parentHandle) {
+                throw new Error(`Unknown "derives from" handle name: ${parentHandle}.`);
+            }
+            return parentHandle;
+        });
+        return new ClaimDerivesFrom(handle, parentHandles);
+    }
+    toManifestString() {
+        return `claim ${this.handle.name} derives from ${this.parentHandles.map(h => h.name).join(' and ')}`;
+    }
+}
+function createClaim(handle, astNode, handleConnectionMap) {
+    switch (astNode.claimType) {
+        case ClaimType.IsTag:
+            return ClaimIsTag.fromASTNode(handle, astNode);
+        case ClaimType.DerivesFrom:
+            return ClaimDerivesFrom.fromASTNode(handle, astNode, handleConnectionMap);
+        default:
+            throw new Error('Unknown claim type.');
+    }
+}
+
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -3059,17 +3135,18 @@ class ParticleSpec {
         const results = new Map();
         if (claims) {
             claims.forEach(claim => {
-                if (results.has(claim.handle)) {
-                    throw new Error(`Can't make multiple claims on the same output (${claim.handle}).`);
-                }
-                if (!this.handleConnectionMap.has(claim.handle)) {
+                const handle = this.handleConnectionMap.get(claim.handle);
+                if (!handle) {
                     throw new Error(`Can't make a claim on unknown handle ${claim.handle}.`);
                 }
-                const handle = this.handleConnectionMap.get(claim.handle);
                 if (!handle.isOutput) {
                     throw new Error(`Can't make a claim on handle ${claim.handle} (not an output handle).`);
                 }
-                results.set(claim.handle, claim);
+                if (handle.claim) {
+                    throw new Error(`Can't make multiple claims on the same output (${claim.handle}).`);
+                }
+                handle.claim = createClaim(handle, claim, this.handleConnectionMap);
+                results.set(claim.handle, handle.claim);
             });
         }
         return results;
@@ -3078,17 +3155,18 @@ class ParticleSpec {
         const results = new Map();
         if (checks) {
             checks.forEach(check => {
-                if (results.has(check.handle)) {
-                    throw new Error(`Can't make multiple checks on the same input (${check.handle}).`);
-                }
-                if (!this.handleConnectionMap.has(check.handle)) {
+                const handle = this.handleConnectionMap.get(check.handle);
+                if (!handle) {
                     throw new Error(`Can't make a check on unknown handle ${check.handle}.`);
                 }
-                const handle = this.handleConnectionMap.get(check.handle);
                 if (!handle.isInput) {
                     throw new Error(`Can't make a check on handle ${check.handle} (not an input handle).`);
                 }
-                results.set(check.handle, check.trustTags);
+                if (handle.check) {
+                    throw new Error(`Can't make multiple checks on the same input (${check.handle}).`);
+                }
+                handle.check = Check.fromASTNode(handle, check);
+                results.set(check.handle, handle.check);
             });
         }
         return results;
