@@ -1,9 +1,5 @@
-commit 22b58ab0cb5bb2ead2f3e5f6680dc19cf2bf98f5
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Tue Jun 18 14:54:56 2019 -0700
+commit 85001cc515a2d24acd47eab6e27ce805c434c375
+Author: Scott J. Miles <sjmiles@google.com>
+Date:   Tue Jun 18 14:59:50 2019 -0700
 
-    Add EntityType, CollectionType and Schema classes and deserialization (#3196)
-    
-    * Add EntityType, CollectionType and Schema classes and deserialization
-    
-    * address comments: use List instead of []
+    fix planificator problems (#3197)
