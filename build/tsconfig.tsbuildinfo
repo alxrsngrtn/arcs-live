@@ -473,33 +473,13 @@
         "version": "09bc78f549d87feec698bee9c8f0579e2ff130d2f773b11358ff04c5e784aa26",
         "signature": "74b0fe35f5cadce1dcc19d5e93f21b31c387808566250dc8766480b9a320943d"
       },
-      "/home/travis/build/PolymerLabs/arcs/src/gen/dataflow/analysis/assertion-parser.ts": {
-        "version": "8351ae97887203cbc054efe9c08a73d334400a9026b68c9b217143fb248a0867",
-        "signature": "ff2c763c7895327196fd3eb358dcc775b25f27bdae513079cc287433af262427"
-      },
       "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/flow-graph.ts": {
-        "version": "cbc0c64c0b558bcac2009b9e8e0fc19d49c9e11334c7880aff9353a97bae86a8",
-        "signature": "23b9b645ae9ffc652a2b8c44fcfb73a73becf2d9f8007f0b0e4f531fc8fff0e3"
-      },
-      "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/flow-assertion.ts": {
-        "version": "92090a440c4ee7ff7531243695a821b7ae1d6c607c5e63140fdbd5b29520e455",
-        "signature": "9bd2bfe8b5e6464cefd5ac185da15790a432d7104bd7f8bcd38c9ddec7ff6eb9"
-      },
-      "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/flow-config.ts": {
-        "version": "ce350ebea8a6ae077514ab811e4c5dd40a7bac7c88e6e879d8bef8d8351824ee",
-        "signature": "3fce53c4b72307356984555c923f95052f677de6853faa53d9ab109898f0f6a9"
-      },
-      "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/flow-checker.ts": {
-        "version": "9630da0e5fdd2c208613d76c11cbe1ff0b4bcab7c6c4270f9476d8543b9ead32",
-        "signature": "fe8539a35eab0cbf65049321e41acc6a90a05d2163cf9de7899e3c06d7810427"
+        "version": "5c805936e789f763c850f1e0b4843b3deab1d4ad03355acfb5366baf7b0147af",
+        "signature": "f841eb1a682b1abb659ee1618e925b9058ff0b8361c0266d2eeda01dcfcfc178"
       },
       "/home/travis/build/PolymerLabs/arcs/src/dataflow/arcs-dataflow.ts": {
-        "version": "8327f2653dc43e5c0d5f3f84e141ba2fa407957b9a2168bf0517f7ab40cbe013",
-        "signature": "28f16ef40f510d965b6cb250d66a1ad5689f8b5c5da00332994fb28de16364e7"
-      },
-      "/home/travis/build/PolymerLabs/arcs/src/dataflow/flow-graph.ts": {
-        "version": "77ac58491f47f62ada84f19712864ce55b41e9d7cedbf9b6db94f1ac39ea942c",
-        "signature": "1a218e0b800a51a525ecbbe308536740048a48638257fe1733bc0a7690758189"
+        "version": "df2b2da581f2d2be5c786e050ca651a81130f3b9cac9b66412a762bd30d2e627",
+        "signature": "dabab6767074af509bdfdf10456eab25c66f9cecb4a6ef7ad840b48fd707f38b"
       },
       "/home/travis/build/PolymerLabs/arcs/node_modules/@types/chai/index.d.ts": {
         "version": "c465afa89ac28f74167a2ee7c3c6eb8dd1245c2b3bdaa4704d58d35b932de4b7",
@@ -509,12 +489,16 @@
         "version": "10915c17c8b568deb4dfc74b9df1b02882cb4bba0df0bef2fdca2b86ebc3b41d",
         "signature": "10915c17c8b568deb4dfc74b9df1b02882cb4bba0df0bef2fdca2b86ebc3b41d"
       },
-      "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/tests/flow-checker-tests.ts": {
-        "version": "3ca18391709c438b96eeccc83b76d1cc3ecfe688b70812175a399dfa56563a64",
-        "signature": "fd95df5d076cbfed143dc4904d376b5c6d9cb1091b630994ffe2366010afa6b3"
+      "/home/travis/build/PolymerLabs/arcs/src/runtime/testing/preconditions.ts": {
+        "version": "7e1d86c060f9e4b175b1f90c5f45b5a014cf79eaa8570ef3de16be4c5a44e537",
+        "signature": "535087ae214f316cbb0a3a17fb44a767c4789b7b69c4bd2c8d37fa8d5845a81f"
+      },
+      "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/tests/flow-graph-tests.ts": {
+        "version": "0bafbcbfee86e58320990fc05a1dd5d75748b273f6a61c906188b275034f8929",
+        "signature": "8e609bb71c20b858c77f0e9f90bb1319db8477b13f9f965f1a1e18524bf50881"
       },
       "/home/travis/build/PolymerLabs/arcs/src/dataflow/cli/flowcheck.ts": {
-        "version": "cd85ef83416774f4cdcc2cd09ee6971658bc7ffd6d72978a222670a9d54d79c3",
+        "version": "1dfbc4024d11c5f1fc3b6fa264208ea5edd1de8c8ad2795555bf4f0a696810a5",
         "signature": "fd95df5d076cbfed143dc4904d376b5c6d9cb1091b630994ffe2366010afa6b3"
       },
       "/home/travis/build/PolymerLabs/arcs/src/devtools-connector/abstract-devtools-channel.ts": {
@@ -728,10 +712,6 @@
       "/home/travis/build/PolymerLabs/arcs/src/runtime/testing/mock-slot-composer.ts": {
         "version": "e26a22a5bb2444de1e6e90686e24bb5a2b2f7c0e079b1a050c5357154a35bba8",
         "signature": "575031df362a6cc7fff87191df8c887ee9ebbc362b2eacde0412554005b6c978"
-      },
-      "/home/travis/build/PolymerLabs/arcs/src/runtime/testing/preconditions.ts": {
-        "version": "7e1d86c060f9e4b175b1f90c5f45b5a014cf79eaa8570ef3de16be4c5a44e537",
-        "signature": "535087ae214f316cbb0a3a17fb44a767c4789b7b69c4bd2c8d37fa8d5845a81f"
       },
       "/home/travis/build/PolymerLabs/arcs/src/planning/test/recipe-index-test.ts": {
         "version": "2c95a020025891749a0d5b23db3353fcdc030e2c0c4dd9bab072bf57b5727061",
@@ -2245,10 +2225,6 @@
         "version": "abab9a74ff59721f175645dc56fdecf8dd3a019406fd5b463b96cb4e66105812",
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
-      "/home/travis/build/PolymerLabs/arcs/src/tests/flow-graph-tests.ts": {
-        "version": "bf9a7b604eedc327576a21e161d59b5fcfa047b99f5c6b2a9cae0488a4cd1c3a",
-        "signature": "8e609bb71c20b858c77f0e9f90bb1319db8477b13f9f965f1a1e18524bf50881"
-      },
       "/home/travis/build/PolymerLabs/arcs/src/tests/multiplexer-integration-test.ts": {
         "version": "e429087d8573a6845c917cef811328b2893065b074f7ad543af3354f6074c9eb",
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
@@ -3569,48 +3545,18 @@
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
       ],
-      "/home/travis/build/PolymerLabs/arcs/src/gen/dataflow/analysis/assertion-parser.ts": [
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
-      ],
       "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/flow-graph.ts": [
-        "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/recipe.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
-      ],
-      "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/flow-assertion.ts": [
-        "/home/travis/build/PolymerLabs/arcs/src/gen/dataflow/analysis/assertion-parser.ts",
-        "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/flow-graph.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
-      ],
-      "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/flow-config.ts": [
-        "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/flow-assertion.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
-      ],
-      "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/flow-checker.ts": [
-        "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/recipe.ts",
-        "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/flow-assertion.ts",
-        "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/flow-config.ts",
-        "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/flow-graph.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
-      ],
-      "/home/travis/build/PolymerLabs/arcs/src/dataflow/arcs-dataflow.ts": [
-        "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/flow-config.ts",
-        "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/flow-checker.ts",
-        "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/flow-assertion.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
-      ],
-      "/home/travis/build/PolymerLabs/arcs/src/dataflow/flow-graph.ts": [
         "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/recipe.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/particle.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/handle.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/handle-connection.ts",
         "/home/travis/build/PolymerLabs/arcs/src/platform/assert-web.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/manifest-ast-nodes.ts",
+        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
+        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
+      ],
+      "/home/travis/build/PolymerLabs/arcs/src/dataflow/arcs-dataflow.ts": [
+        "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/flow-graph.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
       ],
@@ -3623,12 +3569,16 @@
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
       ],
-      "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/tests/flow-checker-tests.ts": [
+      "/home/travis/build/PolymerLabs/arcs/src/runtime/testing/preconditions.ts": [
+        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
+        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
+      ],
+      "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/tests/flow-graph-tests.ts": [
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/manifest.ts",
         "/home/travis/build/PolymerLabs/arcs/src/platform/chai-web.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/recipe.ts",
-        "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/flow-assertion.ts",
-        "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/flow-config.ts",
-        "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/flow-checker.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/testing/preconditions.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/flow-graph.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/manifest-ast-nodes.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
       ],
@@ -4190,10 +4140,6 @@
         "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/testing/fake-slot-composer.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/storage-provider-base.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
-      ],
-      "/home/travis/build/PolymerLabs/arcs/src/runtime/testing/preconditions.ts": [
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
       ],
@@ -7031,15 +6977,6 @@
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
       ],
-      "/home/travis/build/PolymerLabs/arcs/src/tests/flow-graph-tests.ts": [
-        "/home/travis/build/PolymerLabs/arcs/src/runtime/manifest.ts",
-        "/home/travis/build/PolymerLabs/arcs/src/platform/chai-web.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/src/runtime/testing/preconditions.ts",
-        "/home/travis/build/PolymerLabs/arcs/src/dataflow/flow-graph.ts",
-        "/home/travis/build/PolymerLabs/arcs/src/runtime/manifest-ast-nodes.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
-      ],
       "/home/travis/build/PolymerLabs/arcs/src/tests/multiplexer-integration-test.ts": [
         "/home/travis/build/PolymerLabs/arcs/src/platform/chai-web.d.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts",
@@ -8304,29 +8241,13 @@
         "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/firebase/firebase-provider.ts"
       ],
       "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/flow-graph.ts": [
-        "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/recipe.ts"
-      ],
-      "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/flow-assertion.ts": [
-        "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/flow-graph.ts"
-      ],
-      "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/flow-config.ts": [
-        "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/flow-assertion.ts"
-      ],
-      "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/flow-checker.ts": [
-        "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/flow-config.ts",
-        "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/recipe.ts",
-        "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/flow-assertion.ts"
-      ],
-      "/home/travis/build/PolymerLabs/arcs/src/dataflow/arcs-dataflow.ts": [
-        "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/flow-config.ts",
-        "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/flow-checker.ts",
-        "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/flow-assertion.ts"
-      ],
-      "/home/travis/build/PolymerLabs/arcs/src/dataflow/flow-graph.ts": [
         "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/recipe.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/manifest-ast-nodes.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/particle.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/handle.ts"
+      ],
+      "/home/travis/build/PolymerLabs/arcs/src/dataflow/arcs-dataflow.ts": [
+        "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/flow-graph.ts"
       ],
       "/home/travis/build/PolymerLabs/arcs/node_modules/@types/chai/index.d.ts": [
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
@@ -19969,18 +19890,12 @@
       ],
       "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/firebase/firebase-provider.ts",
       "/home/travis/build/PolymerLabs/arcs/src/cli/spotify-importer.ts",
-      "/home/travis/build/PolymerLabs/arcs/src/gen/dataflow/analysis/assertion-parser.ts",
-      "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/flow-graph.ts",
-      "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/flow-assertion.ts",
-      "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/flow-config.ts",
-      "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/flow-checker.ts",
-      "/home/travis/build/PolymerLabs/arcs/src/dataflow/arcs-dataflow.ts",
       [
-        "/home/travis/build/PolymerLabs/arcs/src/dataflow/flow-graph.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/flow-graph.ts",
         [
           {
-            "file": "/home/travis/build/PolymerLabs/arcs/src/dataflow/flow-graph.ts",
-            "start": 1555,
+            "file": "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/flow-graph.ts",
+            "start": 1573,
             "length": 17,
             "code": 2345,
             "category": 1,
@@ -19996,8 +19911,8 @@
             }
           },
           {
-            "file": "/home/travis/build/PolymerLabs/arcs/src/dataflow/flow-graph.ts",
-            "start": 1614,
+            "file": "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/flow-graph.ts",
+            "start": 1632,
             "length": 12,
             "code": 2345,
             "category": 1,
@@ -20013,16 +19928,16 @@
             }
           },
           {
-            "file": "/home/travis/build/PolymerLabs/arcs/src/dataflow/flow-graph.ts",
-            "start": 3260,
+            "file": "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/flow-graph.ts",
+            "start": 3278,
             "length": 4,
             "messageText": "Object is possibly 'undefined'.",
             "category": 1,
             "code": 2532
           },
           {
-            "file": "/home/travis/build/PolymerLabs/arcs/src/dataflow/flow-graph.ts",
-            "start": 3381,
+            "file": "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/flow-graph.ts",
+            "start": 3399,
             "length": 5,
             "code": 2345,
             "category": 1,
@@ -20038,32 +19953,32 @@
             }
           },
           {
-            "file": "/home/travis/build/PolymerLabs/arcs/src/dataflow/flow-graph.ts",
-            "start": 3388,
+            "file": "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/flow-graph.ts",
+            "start": 3406,
             "length": 4,
             "messageText": "Object is possibly 'undefined'.",
             "category": 1,
             "code": 2532
           },
           {
-            "file": "/home/travis/build/PolymerLabs/arcs/src/dataflow/flow-graph.ts",
-            "start": 9000,
+            "file": "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/flow-graph.ts",
+            "start": 9025,
             "length": 13,
             "messageText": "Object is possibly 'undefined'.",
             "category": 1,
             "code": 2532
           },
           {
-            "file": "/home/travis/build/PolymerLabs/arcs/src/dataflow/flow-graph.ts",
-            "start": 9036,
+            "file": "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/flow-graph.ts",
+            "start": 9061,
             "length": 13,
             "messageText": "Object is possibly 'undefined'.",
             "category": 1,
             "code": 2532
           },
           {
-            "file": "/home/travis/build/PolymerLabs/arcs/src/dataflow/flow-graph.ts",
-            "start": 10849,
+            "file": "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/flow-graph.ts",
+            "start": 10874,
             "length": 4,
             "code": 2345,
             "category": 1,
@@ -20080,9 +19995,11 @@
           }
         ]
       ],
+      "/home/travis/build/PolymerLabs/arcs/src/dataflow/arcs-dataflow.ts",
       "/home/travis/build/PolymerLabs/arcs/node_modules/@types/chai/index.d.ts",
       "/home/travis/build/PolymerLabs/arcs/src/platform/chai-web.d.ts",
-      "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/tests/flow-checker-tests.ts",
+      "/home/travis/build/PolymerLabs/arcs/src/runtime/testing/preconditions.ts",
+      "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/tests/flow-graph-tests.ts",
       "/home/travis/build/PolymerLabs/arcs/src/dataflow/cli/flowcheck.ts",
       [
         "/home/travis/build/PolymerLabs/arcs/src/devtools-connector/abstract-devtools-channel.ts",
@@ -23083,7 +23000,6 @@
           }
         ]
       ],
-      "/home/travis/build/PolymerLabs/arcs/src/runtime/testing/preconditions.ts",
       "/home/travis/build/PolymerLabs/arcs/src/planning/test/recipe-index-test.ts",
       [
         "/home/travis/build/PolymerLabs/arcs/src/planning/test/speculator-tests.ts",
@@ -30180,7 +30096,6 @@
       ],
       "/home/travis/build/PolymerLabs/arcs/src/tests/arc-integration-tests.ts",
       "/home/travis/build/PolymerLabs/arcs/src/tests/demo-flow-test.ts",
-      "/home/travis/build/PolymerLabs/arcs/src/tests/flow-graph-tests.ts",
       [
         "/home/travis/build/PolymerLabs/arcs/src/tests/multiplexer-integration-test.ts",
         [

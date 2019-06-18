@@ -7,8 +7,6 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-import { FlowConfig } from './analysis/flow-config.js';
-import { FlowChecker } from './analysis/flow-checker.js';
-import { FlowAssertResult } from './analysis/flow-assertion.js';
-export { FlowConfig, FlowChecker, FlowAssertResult };
+import { FlowGraph, ValidationResult } from './analysis/flow-graph.js';
+export { FlowGraph, ValidationResult };
 //# sourceMappingURL=arcs-dataflow.js.map
