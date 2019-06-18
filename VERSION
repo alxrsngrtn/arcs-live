@@ -1,5 +1,9 @@
-commit a66438cb57c4c21860cf9c78e794bde326258379
-Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
-Date:   Tue Jun 18 16:17:18 2019 +1000
+commit 22b58ab0cb5bb2ead2f3e5f6680dc19cf2bf98f5
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Tue Jun 18 14:54:56 2019 -0700
 
-    Added Check object, put it on Handle Spec (#3194)
+    Add EntityType, CollectionType and Schema classes and deserialization (#3196)
+    
+    * Add EntityType, CollectionType and Schema classes and deserialization
+    
+    * address comments: use List instead of []
