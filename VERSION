@@ -1,9 +1,15 @@
-commit 27601bba988370dca2901405b505e6ef7bc19006
+commit 4040943b1fb10017b2e1d9e83dac59bf0b3f972e
 Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Mon Jun 17 22:02:09 2019 -0700
+Date:   Mon Jun 17 22:20:28 2019 -0700
 
-    add thingmapper class to java pec (#3190)
+    Declare stub storage interfaces and classes for Java PEC (#3187)
     
-    * add thingmapper
+    * Declare stub storage interfaces and classes for Java PEC
     
     * address comments
+    
+    * remove redundant implements statement
+    
+    * address more comments
+    
+    * address comment: rewrite Tag.fromString method
