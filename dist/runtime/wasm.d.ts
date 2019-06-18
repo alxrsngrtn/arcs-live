@@ -20,18 +20,37 @@ export declare class EntityPackager {
     encodeCollection(entities: EntityInterface[]): string;
     decodeSingleton(str: string): EntityInterface;
 }
+/**
+ * Per-language platform environment and startup specializations
+ * for Emscripten and Kotlin.
+ */
+interface WasmDriver {
+    /**
+     * Adds required import functions into env for a given language runtime. Also initalizes
+     * any fields needed on wasmParticle, such as memory, tables, etc.
+     */
+    configureEnvironment(module: WebAssembly.Module, wasmParticle: WasmParticle, env: {}): any;
+    /**
+     * Initializes the instantiated WebAssembly, runs any startup lifecycle, and if this
+     * runtime manages its own memory initialization, initializes the heap pointers on
+     * WasmParticle.
+     */
+    initializeInstance(wasmParticle: WasmParticle, instance: WebAssembly.Instance): any;
+}
 declare type WasmAddress = number;
 export declare class WasmParticle extends Particle {
-    private memory;
-    private heapU8;
-    private heap32;
+    memory: WebAssembly.Memory;
+    heapU8: Uint8Array;
+    heap32: Int32Array;
     private wasm;
-    private exports;
+    exports: any;
     private innerParticle;
     private handleMap;
     private revHandleMap;
     private converters;
-    private logInfo;
+    logInfo: [string, number] | null;
+    driverForModule(module: WebAssembly.Module): WasmDriver;
+    private wasmDrivers;
     initialize(buffer: ArrayBuffer): Promise<void>;
     setHandles(handles: ReadonlyMap<string, Handle>): Promise<void>;
     onHandleSync(handle: Handle, model: any): Promise<void>;
@@ -54,7 +73,7 @@ export declare class WasmParticle extends Particle {
     renderImpl(slotName: WasmAddress, content: WasmAddress): void;
     fireEvent(slotName: string, event: any): void;
     private store;
-    private read;
-    private sysWritev;
+    read(idx: WasmAddress): string;
+    sysWritev(which: any, varargs: any): number;
 }
 export {};

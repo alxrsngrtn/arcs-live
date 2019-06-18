@@ -5315,51 +5315,136 @@ class StringDecoder {
         }
     }
 }
-// Wasm modules built by emscripten require some external memory configuration by the caller,
-// which is usually built into the glue code generated alongside the module. We're not using
-// the glue code, but if we set the EMIT_EMSCRIPTEN_METADATA flag when building, emscripten
-// will provide a custom section in the module itself with the required values.
-const EMSCRIPTEN_METADATA_MAJOR = 0;
-const EMSCRIPTEN_METADATA_MINOR = 1;
-const EMSCRIPTEN_ABI_MAJOR = 0;
-const EMSCRIPTEN_ABI_MINOR = 3;
-// TODO: reconcile with Kotlin-based particles
-function readEmscriptenMetadata(module) {
-    const customSections = WebAssembly.Module.customSections(module, 'emscripten_metadata');
-    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(customSections.length === 1, 'wasm particles must be built with EMIT_EMSCRIPTEN_METADATA');
-    const buffer = new Uint8Array(customSections[0]);
-    const metadata = [];
-    let offset = 0;
-    while (offset < buffer.byteLength) {
-        let result = 0;
-        let shift = 0;
-        while (1) {
-            const byte = buffer[offset++];
-            result |= (byte & 0x7f) << shift;
-            if (!(byte & 0x80)) {
-                break;
-            }
-            shift += 7;
+class EmscriptenWasmDriver {
+    readEmscriptenMetadata(module) {
+        // Wasm modules built by emscripten require some external memory configuration by the caller,
+        // which is usually built into the glue code generated alongside the module. We're not using
+        // the glue code, but if we set the EMIT_EMSCRIPTEN_METADATA flag when building, emscripten
+        // will provide a custom section in the module itself with the required values.
+        const EMSCRIPTEN_METADATA_MAJOR = 0;
+        const EMSCRIPTEN_METADATA_MINOR = 1;
+        const EMSCRIPTEN_ABI_MAJOR = 0;
+        const EMSCRIPTEN_ABI_MINOR = 3;
+        const customSections = WebAssembly.Module.customSections(module, 'emscripten_metadata');
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(customSections.length === 1, 'wasm particles must be built with EMIT_EMSCRIPTEN_METADATA');
+        if (customSections.length === 0) {
+            return null;
         }
-        metadata.push(result);
+        const buffer = new Uint8Array(customSections[0]);
+        const metadata = [];
+        let offset = 0;
+        while (offset < buffer.byteLength) {
+            let result = 0;
+            let shift = 0;
+            while (1) {
+                const byte = buffer[offset++];
+                result |= (byte & 0x7f) << shift;
+                if (!(byte & 0x80)) {
+                    break;
+                }
+                shift += 7;
+            }
+            metadata.push(result);
+        }
+        // The specifics of the section are not published anywhere official (yet). The values here
+        // correspond to emscripten version 1.38.34:
+        //   https://github.com/emscripten-core/emscripten/blob/1.38.34/tools/shared.py#L3065
+        // TODO: use real errors (and handle them gracefully upstream)
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(metadata.length === 10);
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(metadata[0] === EMSCRIPTEN_METADATA_MAJOR);
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(metadata[1] === EMSCRIPTEN_METADATA_MINOR);
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(metadata[2] === EMSCRIPTEN_ABI_MAJOR);
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(metadata[3] === EMSCRIPTEN_ABI_MINOR);
+        return {
+            memSize: metadata[4],
+            tableSize: metadata[5],
+            globalBase: metadata[6],
+            dynamicBase: metadata[7],
+            dynamictopPtr: metadata[8],
+            tempdoublePtr: metadata[9],
+        };
     }
-    // The specifics of the section are not published anywhere official (yet). The values here
-    // correspond to emscripten version 1.38.34:
-    //   https://github.com/emscripten-core/emscripten/blob/1.38.34/tools/shared.py#L3065
-    // TODO: use real errors (and handle them gracefully upstream)
-    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(metadata.length === 10);
-    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(metadata[0] === EMSCRIPTEN_METADATA_MAJOR);
-    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(metadata[1] === EMSCRIPTEN_METADATA_MINOR);
-    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(metadata[2] === EMSCRIPTEN_ABI_MAJOR);
-    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(metadata[3] === EMSCRIPTEN_ABI_MINOR);
-    return {
-        memSize: metadata[4],
-        tableSize: metadata[5],
-        globalBase: metadata[6],
-        dynamicBase: metadata[7],
-        dynamictopPtr: metadata[8],
-        tempdoublePtr: metadata[9],
-    };
+    configureEnvironment(module, wasmParticle, env) {
+        const emc = this.readEmscriptenMetadata(module);
+        wasmParticle.memory = new WebAssembly.Memory({ initial: 100000000, maximum: 100000000 });
+        wasmParticle.heapU8 = new Uint8Array(wasmParticle.memory.buffer);
+        wasmParticle.heap32 = new Int32Array(wasmParticle.memory.buffer);
+        // We need to poke the address of the heap base into the memory buffer prior to instantiating.
+        wasmParticle.heap32[emc.dynamictopPtr >> 2] = emc.dynamicBase;
+        Object.assign(env, {
+            // Memory setup
+            memory: wasmParticle.memory,
+            __memory_base: emc.globalBase,
+            table: new WebAssembly.Table({ initial: emc.tableSize, maximum: emc.tableSize, element: 'anyfunc' }),
+            __table_base: 0,
+            DYNAMICTOP_PTR: emc.dynamictopPtr,
+            // Heap management
+            _emscripten_get_heap_size: () => wasmParticle.heapU8.length,
+            _emscripten_resize_heap: size => false,
+            _emscripten_memcpy_big: (dst, src, num) => wasmParticle.heapU8.set(wasmParticle.heapU8.subarray(src, src + num), dst),
+            // Error handling
+            _systemError: msg => { throw new Error(wasmParticle.read(msg)); },
+            abortOnCannotGrowMemory: size => { throw new Error(`abortOnCannotGrowMemory(${size})`); },
+            // Logging
+            _setLogInfo: (file, line) => wasmParticle.logInfo = [wasmParticle.read(file), line],
+            ___syscall146: (which, varargs) => wasmParticle.sysWritev(which, varargs),
+        });
+    }
+    initializeInstance(wasmParticle, instance) {
+        // Emscripten doesn't need main() invoked
+    }
+}
+class KotlinWasmDriver {
+    configureEnvironment(module, wasmParticle, env) {
+        Object.assign(env, {
+            // These two are used by launcher.cpp
+            Konan_js_arg_size: (index) => {
+                return 1;
+            },
+            Konan_js_fetch_arg: (index, ptr) => {
+                return 'dummyArg';
+            },
+            // These two are imported, but never used
+            Konan_js_allocateArena: (array) => {
+            },
+            Konan_js_freeArena: (arenaIndex) => {
+            },
+            // These two are used by logging functions
+            write: (ptr) => {
+                console.log(wasmParticle.read(ptr));
+            },
+            flush: () => {
+            },
+            // Apparently used by Kotlin Memory management
+            Konan_notify_memory_grow: () => {
+                wasmParticle.heapU8 = new Uint8Array(wasmParticle.exports.memory.buffer);
+            },
+            // Kotlin's own glue for abort and exit
+            Konan_abort: (pointer) => {
+                throw new Error('Konan_abort(' + wasmParticle.read(pointer) + ')');
+            },
+            Konan_exit: (status) => {
+            },
+            // Needed by some code that tries to get the current time in it's runtime
+            Konan_date_now: (pointer) => {
+                const now = Date.now();
+                const high = Math.floor(now / 0xffffffff);
+                const low = Math.floor(now % 0xffffffff);
+                wasmParticle.heap32[pointer] = low;
+                wasmParticle.heap32[pointer + 1] = high;
+            },
+        });
+    }
+    /**
+     * Kotlin manages its own heap construction, as well as tables.
+     */
+    initializeInstance(wasmParticle, instance) {
+        wasmParticle.memory = wasmParticle.exports.memory;
+        wasmParticle.heapU8 = new Uint8Array(wasmParticle.memory.buffer);
+        wasmParticle.heap32 = new Int32Array(wasmParticle.memory.buffer);
+        // Kotlin main() must be invoked before everything else.
+        instance.exports.Konan_js_main(1, 0);
+    }
 }
 class WasmParticle extends _particle_js__WEBPACK_IMPORTED_MODULE_1__["Particle"] {
     constructor() {
@@ -5368,37 +5453,25 @@ class WasmParticle extends _particle_js__WEBPACK_IMPORTED_MODULE_1__["Particle"]
         this.revHandleMap = new Map();
         this.converters = new Map();
         this.logInfo = null;
+        this.wasmDrivers = [new EmscriptenWasmDriver(), new KotlinWasmDriver()];
+    }
+    driverForModule(module) {
+        const customSections = WebAssembly.Module.customSections(module, 'emscripten_metadata');
+        if (customSections.length === 1) {
+            return new EmscriptenWasmDriver();
+        }
+        return new KotlinWasmDriver();
     }
     // TODO: errors in this call (e.g. missing import or failure in particle ctor) generate two console outputs
     async initialize(buffer) {
         Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(this.spec.name.length > 0);
         // TODO: vet the imports/exports on 'module'
         const module = await WebAssembly.compile(buffer);
-        const emc = readEmscriptenMetadata(module);
-        this.memory = new WebAssembly.Memory({ initial: emc.memSize, maximum: emc.memSize });
-        this.heapU8 = new Uint8Array(this.memory.buffer);
-        this.heap32 = new Int32Array(this.memory.buffer);
-        // We need to poke the address of the heap base into the memory buffer prior to instantiating.
-        this.heap32[emc.dynamictopPtr >> 2] = emc.dynamicBase;
+        const driver = this.driverForModule(module);
+        // Shared ENV between Emscripten and Kotlin
         const env = {
-            // Memory setup
-            memory: this.memory,
-            __memory_base: emc.globalBase,
-            table: new WebAssembly.Table({ initial: emc.tableSize, maximum: emc.tableSize, element: 'anyfunc' }),
-            __table_base: 0,
-            DYNAMICTOP_PTR: emc.dynamictopPtr,
-            // Heap management
-            _emscripten_get_heap_size: () => this.heapU8.length,
-            _emscripten_resize_heap: size => false,
-            _emscripten_memcpy_big: (dst, src, num) => this.heapU8.set(this.heapU8.subarray(src, src + num), dst),
-            // Error handling
-            _systemError: msg => { throw new Error(this.read(msg)); },
             // TODO: can't seem to embed these in the C++ code
-            abort: () => { throw new Error('abort'); },
-            abortOnCannotGrowMemory: size => { throw new Error(`abortOnCannotGrowMemory(${size})`); },
-            // Logging
-            _setLogInfo: (file, line) => this.logInfo = [this.read(file), line],
-            ___syscall146: (which, varargs) => this.sysWritev(which, varargs),
+            abort: () => { throw new Error('Abort!'); },
             // Inner particle API
             _singletonSet: async (handle, encoded) => this.singletonSet(handle, encoded),
             _singletonClear: async (handle) => this.singletonClear(handle),
@@ -5407,9 +5480,11 @@ class WasmParticle extends _particle_js__WEBPACK_IMPORTED_MODULE_1__["Particle"]
             _collectionClear: async (handle) => this.collectionClear(handle),
             _render: (slotName, content) => this.renderImpl(slotName, content),
         };
+        driver.configureEnvironment(module, this, env);
         const global = { 'NaN': NaN, 'Infinity': Infinity };
         this.wasm = await WebAssembly.instantiate(module, { env, global });
         this.exports = this.wasm.exports;
+        driver.initializeInstance(this, this.wasm);
         this.innerParticle = this.exports[`_new${this.spec.name}`]();
     }
     // TODO: for now we set up Handle objects with onDefineHandle and map them into the
