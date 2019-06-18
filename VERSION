@@ -1,17 +1,9 @@
-commit 4a35aae42f8746cf3a4fbcd24e24af11587dd1dc
-Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
-Date:   Tue Jun 18 14:33:47 2019 +1000
+commit 27601bba988370dca2901405b505e6ef7bc19006
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Mon Jun 17 22:02:09 2019 -0700
 
-    Renames the claim/check AST node classes (#3192)
+    add thingmapper class to java pec (#3190)
     
-    * Renames the claim/check AST nodes.
+    * add thingmapper
     
-    These names are now a bit shorter, and should help make it easier to
-    disambiguate between the AST class names and the "real" classes that
-    we'll add shortly.
-    
-    Also moved the ClaimType enum to its own file, so that it can be shared
-    between the AST and real classes (real classes will be added to that
-    same file, particle-claim.ts)
-    
-    * Moved files
+    * address comments
