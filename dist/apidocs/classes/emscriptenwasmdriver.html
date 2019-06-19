@@ -85,13 +85,83 @@
 				<section class="tsd-panel tsd-index-panel">
 					<div class="tsd-index-content">
 						<section class="tsd-index-section tsd-is-not-exported">
+							<h3>Constructors</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-constructor tsd-parent-kind-class tsd-is-not-exported"><a href="emscriptenwasmdriver.html#constructor" class="tsd-kind-icon">constructor</a></li>
+							</ul>
+						</section>
+						<section class="tsd-index-section tsd-is-private tsd-is-private-protected tsd-is-not-exported">
+							<h3>Properties</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private tsd-is-not-exported"><a href="emscriptenwasmdriver.html#cfg" class="tsd-kind-icon">cfg</a></li>
+							</ul>
+						</section>
+						<section class="tsd-index-section tsd-is-not-exported">
 							<h3>Methods</h3>
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-not-exported"><a href="emscriptenwasmdriver.html#configureenvironment" class="tsd-kind-icon">configure<wbr>Environment</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-not-exported"><a href="emscriptenwasmdriver.html#initializeinstance" class="tsd-kind-icon">initialize<wbr>Instance</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-not-exported"><a href="emscriptenwasmdriver.html#reademscriptenmetadata" class="tsd-kind-icon">read<wbr>Emscripten<wbr>Metadata</a></li>
 							</ul>
 						</section>
+					</div>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group tsd-is-not-exported">
+				<h2>Constructors</h2>
+				<section class="tsd-panel tsd-member tsd-kind-constructor tsd-parent-kind-class tsd-is-not-exported">
+					<a name="constructor" class="tsd-anchor"></a>
+					<h3>constructor</h3>
+					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class tsd-is-not-exported">
+						<li class="tsd-signature tsd-kind-icon">new <wbr>Emscripten<wbr>Wasm<wbr>Driver<span class="tsd-signature-symbol">(</span>customSection<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">ArrayBuffer</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="emscriptenwasmdriver.html" class="tsd-signature-type">EmscriptenWasmDriver</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/cca89bf/src/runtime/wasm.ts#L197">runtime/wasm.ts:197</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>customSection: <span class="tsd-signature-type">ArrayBuffer</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="emscriptenwasmdriver.html" class="tsd-signature-type">EmscriptenWasmDriver</a></h4>
+						</li>
+					</ul>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group tsd-is-private tsd-is-private-protected tsd-is-not-exported">
+				<h2>Properties</h2>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private tsd-is-not-exported">
+					<a name="cfg" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> cfg</h3>
+					<div class="tsd-signature tsd-kind-icon">cfg<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/cca89bf/src/runtime/wasm.ts#L197">runtime/wasm.ts:197</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-type-declaration">
+						<h4>Type declaration</h4>
+						<ul class="tsd-parameters">
+							<li class="tsd-parameter">
+								<h5>dynamic<wbr>Base<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></h5>
+							</li>
+							<li class="tsd-parameter">
+								<h5>dynamictop<wbr>Ptr<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></h5>
+							</li>
+							<li class="tsd-parameter">
+								<h5>global<wbr>Base<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></h5>
+							</li>
+							<li class="tsd-parameter">
+								<h5>mem<wbr>Size<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></h5>
+							</li>
+							<li class="tsd-parameter">
+								<h5>table<wbr>Size<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></h5>
+							</li>
+						</ul>
 					</div>
 				</section>
 			</section>
@@ -101,14 +171,14 @@
 					<a name="configureenvironment" class="tsd-anchor"></a>
 					<h3>configure<wbr>Environment</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
-						<li class="tsd-signature tsd-kind-icon">configure<wbr>Environment<span class="tsd-signature-symbol">(</span>module<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Module</span>, wasmParticle<span class="tsd-signature-symbol">: </span><a href="wasmparticle.html" class="tsd-signature-type">WasmParticle</a>, env<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">__type</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+						<li class="tsd-signature tsd-kind-icon">configure<wbr>Environment<span class="tsd-signature-symbol">(</span>module<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Module</span>, particle<span class="tsd-signature-symbol">: </span><a href="wasmparticle.html" class="tsd-signature-type">WasmParticle</a>, env<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">__type</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/wasmdriver.html">WasmDriver</a>.<a href="../interfaces/wasmdriver.html#configureenvironment">configureEnvironment</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/85001cc/src/runtime/wasm.ts#L251">runtime/wasm.ts:251</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/cca89bf/src/runtime/wasm.ts#L254">runtime/wasm.ts:254</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -117,7 +187,7 @@
 									<h5>module: <span class="tsd-signature-type">Module</span></h5>
 								</li>
 								<li>
-									<h5>wasmParticle: <a href="wasmparticle.html" class="tsd-signature-type">WasmParticle</a></h5>
+									<h5>particle: <a href="wasmparticle.html" class="tsd-signature-type">WasmParticle</a></h5>
 								</li>
 								<li>
 									<h5>env: <span class="tsd-signature-type">__type</span></h5>
@@ -131,69 +201,26 @@
 					<a name="initializeinstance" class="tsd-anchor"></a>
 					<h3>initialize<wbr>Instance</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
-						<li class="tsd-signature tsd-kind-icon">initialize<wbr>Instance<span class="tsd-signature-symbol">(</span>wasmParticle<span class="tsd-signature-symbol">: </span><a href="wasmparticle.html" class="tsd-signature-type">WasmParticle</a>, instance<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Instance</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+						<li class="tsd-signature tsd-kind-icon">initialize<wbr>Instance<span class="tsd-signature-symbol">(</span>particle<span class="tsd-signature-symbol">: </span><a href="wasmparticle.html" class="tsd-signature-type">WasmParticle</a>, instance<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Instance</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/wasmdriver.html">WasmDriver</a>.<a href="../interfaces/wasmdriver.html#initializeinstance">initializeInstance</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/85001cc/src/runtime/wasm.ts#L285">runtime/wasm.ts:285</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/cca89bf/src/runtime/wasm.ts#L285">runtime/wasm.ts:285</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>wasmParticle: <a href="wasmparticle.html" class="tsd-signature-type">WasmParticle</a></h5>
+									<h5>particle: <a href="wasmparticle.html" class="tsd-signature-type">WasmParticle</a></h5>
 								</li>
 								<li>
 									<h5>instance: <span class="tsd-signature-type">Instance</span></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
-						</li>
-					</ul>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
-					<a name="reademscriptenmetadata" class="tsd-anchor"></a>
-					<h3>read<wbr>Emscripten<wbr>Metadata</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
-						<li class="tsd-signature tsd-kind-icon">read<wbr>Emscripten<wbr>Metadata<span class="tsd-signature-symbol">(</span>module<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Module</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">object</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/85001cc/src/runtime/wasm.ts#L198">runtime/wasm.ts:198</a></li>
-								</ul>
-							</aside>
-							<h4 class="tsd-parameters-title">Parameters</h4>
-							<ul class="tsd-parameters">
-								<li>
-									<h5>module: <span class="tsd-signature-type">Module</span></h5>
-								</li>
-							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">object</span></h4>
-							<ul class="tsd-parameters">
-								<li class="tsd-parameter">
-									<h5>dynamic<wbr>Base<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></h5>
-								</li>
-								<li class="tsd-parameter">
-									<h5>dynamictop<wbr>Ptr<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></h5>
-								</li>
-								<li class="tsd-parameter">
-									<h5>global<wbr>Base<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></h5>
-								</li>
-								<li class="tsd-parameter">
-									<h5>mem<wbr>Size<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></h5>
-								</li>
-								<li class="tsd-parameter">
-									<h5>table<wbr>Size<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></h5>
-								</li>
-								<li class="tsd-parameter">
-									<h5>tempdouble<wbr>Ptr<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></h5>
-								</li>
-							</ul>
 						</li>
 					</ul>
 				</section>
@@ -214,14 +241,17 @@
 					<li class="current tsd-kind-class tsd-is-not-exported">
 						<a href="emscriptenwasmdriver.html" class="tsd-kind-icon">Emscripten<wbr>Wasm<wbr>Driver</a>
 						<ul>
+							<li class=" tsd-kind-constructor tsd-parent-kind-class tsd-is-not-exported">
+								<a href="emscriptenwasmdriver.html#constructor" class="tsd-kind-icon">constructor</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private tsd-is-not-exported">
+								<a href="emscriptenwasmdriver.html#cfg" class="tsd-kind-icon">cfg</a>
+							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
 								<a href="emscriptenwasmdriver.html#configureenvironment" class="tsd-kind-icon">configure<wbr>Environment</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
 								<a href="emscriptenwasmdriver.html#initializeinstance" class="tsd-kind-icon">initialize<wbr>Instance</a>
-							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
-								<a href="emscriptenwasmdriver.html#reademscriptenmetadata" class="tsd-kind-icon">read<wbr>Emscripten<wbr>Metadata</a>
 							</li>
 						</ul>
 					</li>

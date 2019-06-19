@@ -5417,21 +5417,18 @@ class StringDecoder {
     }
 }
 class EmscriptenWasmDriver {
-    readEmscriptenMetadata(module) {
+    constructor(customSection) {
         // Wasm modules built by emscripten require some external memory configuration by the caller,
         // which is usually built into the glue code generated alongside the module. We're not using
         // the glue code, but if we set the EMIT_EMSCRIPTEN_METADATA flag when building, emscripten
         // will provide a custom section in the module itself with the required values.
-        const EMSCRIPTEN_METADATA_MAJOR = 0;
-        const EMSCRIPTEN_METADATA_MINOR = 1;
-        const EMSCRIPTEN_ABI_MAJOR = 0;
-        const EMSCRIPTEN_ABI_MINOR = 3;
-        const customSections = WebAssembly.Module.customSections(module, 'emscripten_metadata');
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(customSections.length === 1, 'wasm particles must be built with EMIT_EMSCRIPTEN_METADATA');
-        if (customSections.length === 0) {
-            return null;
-        }
-        const buffer = new Uint8Array(customSections[0]);
+        const METADATA_SIZE = 10;
+        const METADATA_MAJOR = 0;
+        const METADATA_MINOR = 1;
+        const ABI_MAJOR = 0;
+        const ABI_MINOR = 3;
+        // The logic for reading metadata values here was copied from the emscripten source.
+        const buffer = new Uint8Array(customSection);
         const metadata = [];
         let offset = 0;
         while (offset < buffer.byteLength) {
@@ -5450,99 +5447,88 @@ class EmscriptenWasmDriver {
         // The specifics of the section are not published anywhere official (yet). The values here
         // correspond to emscripten version 1.38.34:
         //   https://github.com/emscripten-core/emscripten/blob/1.38.34/tools/shared.py#L3065
-        // TODO: use real errors (and handle them gracefully upstream)
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(metadata.length === 10);
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(metadata[0] === EMSCRIPTEN_METADATA_MAJOR);
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(metadata[1] === EMSCRIPTEN_METADATA_MINOR);
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(metadata[2] === EMSCRIPTEN_ABI_MAJOR);
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(metadata[3] === EMSCRIPTEN_ABI_MINOR);
-        return {
+        if (metadata.length !== METADATA_SIZE) {
+            throw new Error(`emscripten metadata section should have ${METADATA_SIZE} values; ` +
+                `got ${metadata.length}`);
+        }
+        if (metadata[0] !== METADATA_MAJOR || metadata[1] !== METADATA_MINOR) {
+            throw new Error(`emscripten metadata version should be ${METADATA_MAJOR}.${METADATA_MINOR}; ` +
+                `got ${metadata[0]}.${metadata[1]}`);
+        }
+        if (metadata[2] !== ABI_MAJOR || metadata[3] !== ABI_MINOR) {
+            throw new Error(`emscripten ABI version should be ${ABI_MAJOR}.${ABI_MINOR}; ` +
+                `got ${metadata[2]}.${metadata[3]}`);
+        }
+        // metadata[9] is 'tempdoublePtr'; appears to be related to pthreads and is not used here.
+        this.cfg = {
             memSize: metadata[4],
             tableSize: metadata[5],
             globalBase: metadata[6],
             dynamicBase: metadata[7],
             dynamictopPtr: metadata[8],
-            tempdoublePtr: metadata[9],
         };
     }
-    configureEnvironment(module, wasmParticle, env) {
-        const emc = this.readEmscriptenMetadata(module);
-        wasmParticle.memory = new WebAssembly.Memory({ initial: 100000000, maximum: 100000000 });
-        wasmParticle.heapU8 = new Uint8Array(wasmParticle.memory.buffer);
-        wasmParticle.heap32 = new Int32Array(wasmParticle.memory.buffer);
+    configureEnvironment(module, particle, env) {
+        particle.memory = new WebAssembly.Memory({ initial: this.cfg.memSize, maximum: this.cfg.memSize });
+        particle.heapU8 = new Uint8Array(particle.memory.buffer);
+        particle.heap32 = new Int32Array(particle.memory.buffer);
         // We need to poke the address of the heap base into the memory buffer prior to instantiating.
-        wasmParticle.heap32[emc.dynamictopPtr >> 2] = emc.dynamicBase;
+        particle.heap32[this.cfg.dynamictopPtr >> 2] = this.cfg.dynamicBase;
         Object.assign(env, {
             // Memory setup
-            memory: wasmParticle.memory,
-            __memory_base: emc.globalBase,
-            table: new WebAssembly.Table({ initial: emc.tableSize, maximum: emc.tableSize, element: 'anyfunc' }),
+            memory: particle.memory,
+            __memory_base: this.cfg.globalBase,
+            table: new WebAssembly.Table({ initial: this.cfg.tableSize, maximum: this.cfg.tableSize, element: 'anyfunc' }),
             __table_base: 0,
-            DYNAMICTOP_PTR: emc.dynamictopPtr,
+            DYNAMICTOP_PTR: this.cfg.dynamictopPtr,
             // Heap management
-            _emscripten_get_heap_size: () => wasmParticle.heapU8.length,
+            _emscripten_get_heap_size: () => particle.heapU8.length,
             _emscripten_resize_heap: size => false,
-            _emscripten_memcpy_big: (dst, src, num) => wasmParticle.heapU8.set(wasmParticle.heapU8.subarray(src, src + num), dst),
+            _emscripten_memcpy_big: (dst, src, num) => particle.heapU8.set(particle.heapU8.subarray(src, src + num), dst),
             // Error handling
-            _systemError: msg => { throw new Error(wasmParticle.read(msg)); },
+            _systemError: msg => { throw new Error(particle.read(msg)); },
             abortOnCannotGrowMemory: size => { throw new Error(`abortOnCannotGrowMemory(${size})`); },
             // Logging
-            _setLogInfo: (file, line) => wasmParticle.logInfo = [wasmParticle.read(file), line],
-            ___syscall146: (which, varargs) => wasmParticle.sysWritev(which, varargs),
+            _setLogInfo: (file, line) => particle.logInfo = [particle.read(file), line],
+            ___syscall146: (which, varargs) => particle.sysWritev(which, varargs),
         });
     }
-    initializeInstance(wasmParticle, instance) {
+    initializeInstance(particle, instance) {
         // Emscripten doesn't need main() invoked
     }
 }
 class KotlinWasmDriver {
-    configureEnvironment(module, wasmParticle, env) {
+    configureEnvironment(module, particle, env) {
         Object.assign(env, {
             // These two are used by launcher.cpp
-            Konan_js_arg_size: (index) => {
-                return 1;
-            },
-            Konan_js_fetch_arg: (index, ptr) => {
-                return 'dummyArg';
-            },
+            Konan_js_arg_size: (index) => 1,
+            Konan_js_fetch_arg: (index, ptr) => 'dummyArg',
             // These two are imported, but never used
-            Konan_js_allocateArena: (array) => {
-            },
-            Konan_js_freeArena: (arenaIndex) => {
-            },
+            Konan_js_allocateArena: (array) => { },
+            Konan_js_freeArena: (arenaIndex) => { },
             // These two are used by logging functions
-            write: (ptr) => {
-                console.log(wasmParticle.read(ptr));
-            },
-            flush: () => {
-            },
+            write: (ptr) => console.log(particle.read(ptr)),
+            flush: () => { },
             // Apparently used by Kotlin Memory management
-            Konan_notify_memory_grow: () => {
-                wasmParticle.heapU8 = new Uint8Array(wasmParticle.exports.memory.buffer);
-            },
+            Konan_notify_memory_grow: () => particle.heapU8 = new Uint8Array(particle.exports.memory.buffer),
             // Kotlin's own glue for abort and exit
-            Konan_abort: (pointer) => {
-                throw new Error('Konan_abort(' + wasmParticle.read(pointer) + ')');
-            },
-            Konan_exit: (status) => {
-            },
+            Konan_abort: (pointer) => { throw new Error('Konan_abort(' + particle.read(pointer) + ')'); },
+            Konan_exit: (status) => { },
             // Needed by some code that tries to get the current time in it's runtime
             Konan_date_now: (pointer) => {
                 const now = Date.now();
                 const high = Math.floor(now / 0xffffffff);
                 const low = Math.floor(now % 0xffffffff);
-                wasmParticle.heap32[pointer] = low;
-                wasmParticle.heap32[pointer + 1] = high;
+                particle.heap32[pointer] = low;
+                particle.heap32[pointer + 1] = high;
             },
         });
     }
-    /**
-     * Kotlin manages its own heap construction, as well as tables.
-     */
-    initializeInstance(wasmParticle, instance) {
-        wasmParticle.memory = wasmParticle.exports.memory;
-        wasmParticle.heapU8 = new Uint8Array(wasmParticle.memory.buffer);
-        wasmParticle.heap32 = new Int32Array(wasmParticle.memory.buffer);
+    // Kotlin manages its own heap construction, as well as tables.
+    initializeInstance(particle, instance) {
+        particle.memory = particle.exports.memory;
+        particle.heapU8 = new Uint8Array(particle.memory.buffer);
+        particle.heap32 = new Int32Array(particle.memory.buffer);
         // Kotlin main() must be invoked before everything else.
         instance.exports.Konan_js_main(1, 0);
     }
@@ -5554,16 +5540,14 @@ class WasmParticle extends _particle_js__WEBPACK_IMPORTED_MODULE_1__["Particle"]
         this.revHandleMap = new Map();
         this.converters = new Map();
         this.logInfo = null;
-        this.wasmDrivers = [new EmscriptenWasmDriver(), new KotlinWasmDriver()];
     }
     driverForModule(module) {
         const customSections = WebAssembly.Module.customSections(module, 'emscripten_metadata');
         if (customSections.length === 1) {
-            return new EmscriptenWasmDriver();
+            return new EmscriptenWasmDriver(customSections[0]);
         }
         return new KotlinWasmDriver();
     }
-    // TODO: errors in this call (e.g. missing import or failure in particle ctor) generate two console outputs
     async initialize(buffer) {
         Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(this.spec.name.length > 0);
         // TODO: vet the imports/exports on 'module'
@@ -5571,7 +5555,6 @@ class WasmParticle extends _particle_js__WEBPACK_IMPORTED_MODULE_1__["Particle"]
         const driver = this.driverForModule(module);
         // Shared ENV between Emscripten and Kotlin
         const env = {
-            // TODO: can't seem to embed these in the C++ code
             abort: () => { throw new Error('Abort!'); },
             // Inner particle API
             _singletonSet: async (handle, encoded) => this.singletonSet(handle, encoded),
@@ -5658,24 +5641,31 @@ class WasmParticle extends _particle_js__WEBPACK_IMPORTED_MODULE_1__["Particle"]
     async onHandleDesync(handle) { }
     // Store API.
     async singletonSet(wasmHandle, encoded) {
-        const singleton = this.revHandleMap.get(wasmHandle);
+        const singleton = this.getHandle(wasmHandle);
         await singleton.set(this.decodeEntity(singleton, encoded));
     }
     async singletonClear(wasmHandle) {
-        const singleton = this.revHandleMap.get(wasmHandle);
+        const singleton = this.getHandle(wasmHandle);
         await singleton.clear();
     }
     async collectionStore(wasmHandle, encoded) {
-        const collection = this.revHandleMap.get(wasmHandle);
+        const collection = this.getHandle(wasmHandle);
         await collection.store(this.decodeEntity(collection, encoded));
     }
     async collectionRemove(wasmHandle, encoded) {
-        const collection = this.revHandleMap.get(wasmHandle);
+        const collection = this.getHandle(wasmHandle);
         await collection.remove(this.decodeEntity(collection, encoded));
     }
     async collectionClear(wasmHandle) {
-        const collection = this.revHandleMap.get(wasmHandle);
+        const collection = this.getHandle(wasmHandle);
         await collection.clear();
+    }
+    getHandle(wasmHandle) {
+        const handle = this.revHandleMap.get(wasmHandle);
+        if (!handle) {
+            throw new Error(`wasm particle '${this.spec.name}' attempted to write to unconnected handle`);
+        }
+        return handle;
     }
     decodeEntity(handle, encoded) {
         const converter = this.converters.get(handle);

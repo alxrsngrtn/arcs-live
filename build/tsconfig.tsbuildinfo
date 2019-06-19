@@ -402,8 +402,8 @@
         "signature": "c3b4cfc8daba33b6fea17e7d239cd1347fcd50f347fbf9b70bb25682ae83f10d"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/wasm.ts": {
-        "version": "f805ddb3e9d5fdf08b517085ad6b5425a92fa6873ed7eed44fc97240a4d2fe04",
-        "signature": "d7aa6d7b5f9be8526ce121b042a96990c14150ee07033ac58a765c37be425322"
+        "version": "1a94db0c60b1c24cd9c7ca774ccedb983bee3dab6b5ce3bbc261429e64b3daf6",
+        "signature": "e06d597f290ef572ed94daf2911f1126aa64c6fe00735d38498f82e49c6e5a96"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/particle-execution-context.ts": {
         "version": "d7257e8b4224b3958b27f671ffc159bc26ba767a973efe41f23c1c228f90fe77",
@@ -17435,55 +17435,7 @@
         [
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/wasm.ts",
-            "start": 8573,
-            "length": 3,
-            "messageText": "Object is possibly 'null'.",
-            "category": 1,
-            "code": 2531
-          },
-          {
-            "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/wasm.ts",
-            "start": 8599,
-            "length": 3,
-            "messageText": "Object is possibly 'null'.",
-            "category": 1,
-            "code": 2531
-          },
-          {
-            "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/wasm.ts",
-            "start": 8718,
-            "length": 3,
-            "messageText": "Object is possibly 'null'.",
-            "category": 1,
-            "code": 2531
-          },
-          {
-            "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/wasm.ts",
-            "start": 8778,
-            "length": 3,
-            "messageText": "Object is possibly 'null'.",
-            "category": 1,
-            "code": 2531
-          },
-          {
-            "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/wasm.ts",
-            "start": 8802,
-            "length": 3,
-            "messageText": "Object is possibly 'null'.",
-            "category": 1,
-            "code": 2531
-          },
-          {
-            "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/wasm.ts",
-            "start": 8882,
-            "length": 3,
-            "messageText": "Object is possibly 'null'.",
-            "category": 1,
-            "code": 2531
-          },
-          {
-            "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/wasm.ts",
-            "start": 14817,
+            "start": 14574,
             "length": 18,
             "messageText": "Object is possibly 'null'.",
             "category": 1,
@@ -17491,7 +17443,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/wasm.ts",
-            "start": 17582,
+            "start": 17555,
             "length": 9,
             "messageText": "Object is possibly 'undefined'.",
             "category": 1,

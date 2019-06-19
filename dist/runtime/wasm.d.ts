@@ -21,8 +21,7 @@ export declare class EntityPackager {
     decodeSingleton(str: string): EntityInterface;
 }
 /**
- * Per-language platform environment and startup specializations
- * for Emscripten and Kotlin.
+ * Per-language platform environment and startup specializations for Emscripten and Kotlin.
  */
 interface WasmDriver {
     /**
@@ -50,7 +49,6 @@ export declare class WasmParticle extends Particle {
     private converters;
     logInfo: [string, number] | null;
     driverForModule(module: WebAssembly.Module): WasmDriver;
-    private wasmDrivers;
     initialize(buffer: ArrayBuffer): Promise<void>;
     setHandles(handles: ReadonlyMap<string, Handle>): Promise<void>;
     onHandleSync(handle: Handle, model: any): Promise<void>;
@@ -67,6 +65,7 @@ export declare class WasmParticle extends Particle {
     collectionStore(wasmHandle: WasmAddress, encoded: WasmAddress): Promise<void>;
     collectionRemove(wasmHandle: WasmAddress, encoded: WasmAddress): Promise<void>;
     collectionClear(wasmHandle: WasmAddress): Promise<void>;
+    private getHandle;
     private decodeEntity;
     renderSlot(slotName: string, contentTypes: string[]): void;
     renderHostedSlot(slotName: string, hostedSlotId: string, content: string): void;
