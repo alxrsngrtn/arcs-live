@@ -169,7 +169,7 @@ export class DomParticleBase extends Particle {
             const handleEntities = await handle.toList();
             handleEntities.forEach(entity => idMap[entity.id] = entity);
             for (const entity of entities) {
-                if (!idMap[entity.id]) {
+                if (!idMap[this.idFor(entity)]) {
                     await handle.store(entity);
                 }
             }

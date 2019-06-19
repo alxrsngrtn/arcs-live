@@ -8,6 +8,7 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { assert } from '../platform/assert-web.js';
+import { Entity } from './entity.js';
 import { Particle } from './particle.js';
 import { Singleton } from './handle.js';
 // Encodes/decodes the wire format for transferring entities over the wasm boundary.
@@ -41,14 +42,15 @@ export class EntityPackager {
     decodeSingleton(str) {
         const { id, data } = this.decoder.decodeSingleton(str);
         const entity = new (this.schema.entityClass())(data);
-        entity.identify(id);
+        Entity.identify(entity, id);
         return entity;
     }
 }
 class StringEncoder {
     encodeSingleton(schema, entity) {
-        let encoded = entity.id.length + ':' + entity.id + '|';
-        for (const [name, value] of Object.entries(entity.toLiteral())) {
+        const id = Entity.id(entity);
+        let encoded = id.length + ':' + id + '|';
+        for (const [name, value] of Object.entries(entity)) {
             encoded += this.encodeField(schema.fields[name], name, value);
         }
         return encoded;

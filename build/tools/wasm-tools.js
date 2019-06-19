@@ -59,7 +59,7 @@ class EntityProtoConverter {
     encode(entity) {
         const proto = this.message.create();
         const scalar = (field, value) => (field.type === 'URL') ? { href: value } : value;
-        for (const [name, value] of Object.entries(entity.toLiteral())) {
+        for (const [name, value] of Object.entries(entity)) {
             const field = this.schema.fields[name];
             if (field.kind === 'schema-collection') {
                 // tslint:disable-next-line: no-any

@@ -10,6 +10,7 @@
 import { assert } from '../platform/assert-web.js';
 import { ParticleSpec } from './particle-spec.js';
 import { TransformationDomParticle } from './transformation-dom-particle.js';
+import { Entity } from './entity.js';
 export class MultiplexerDomParticle extends TransformationDomParticle {
     constructor() {
         super(...arguments);
@@ -83,14 +84,15 @@ export class MultiplexerDomParticle extends TransformationDomParticle {
         }
         for (const [index, item] of this.getListEntries(list)) {
             let resolvedHostedParticle = hostedParticle;
-            if (this.handleIds[item.id]) {
-                const itemHandle = await this.handleIds[item.id];
+            const id = Entity.id(item);
+            if (this.handleIds[id]) {
+                const itemHandle = await this.handleIds[id];
                 // tslint:disable-next-line: no-any
                 itemHandle.set(item);
                 continue;
             }
             const itemHandlePromise = arc.createHandle(type.getContainedType(), `item${index}`);
-            this.handleIds[item.id] = itemHandlePromise;
+            this.handleIds[id] = itemHandlePromise;
             const itemHandle = await itemHandlePromise;
             if (!resolvedHostedParticle) {
                 // If we're muxing on behalf of an item with an embedded recipe, the
@@ -114,7 +116,7 @@ export class MultiplexerDomParticle extends TransformationDomParticle {
             if (!slotId) {
                 continue;
             }
-            this._itemSubIdByHostedSlotId.set(slotId, item.id);
+            this._itemSubIdByHostedSlotId.set(slotId, id);
             try {
                 const recipe = this.constructInnerRecipe(resolvedHostedParticle, item, itemHandle, { name: hostedSlotName, id: slotId }, { connections: otherConnections, handles: otherMappedHandles });
                 await arc.loadRecipe(recipe);

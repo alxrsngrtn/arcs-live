@@ -92,7 +92,7 @@
 __webpack_require__.r(__webpack_exports__);
 /* WEBPACK VAR INJECTION */(function(global) {/* harmony import */ var _build_runtime_particle_execution_context_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(2);
 /* harmony import */ var _build_platform_loader_web_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(30);
-/* harmony import */ var _build_runtime_id_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(16);
+/* harmony import */ var _build_runtime_id_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(15);
 /**
  * @license
  * Copyright 2019 Google LLC.
@@ -153,11 +153,11 @@ __webpack_require__.r(__webpack_exports__);
 /* WEBPACK VAR INJECTION */(function(global) {/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ParticleExecutionContext", function() { return ParticleExecutionContext; });
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
 /* harmony import */ var _api_channel_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(4);
-/* harmony import */ var _handle_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(14);
+/* harmony import */ var _handle_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(13);
 /* harmony import */ var _slot_proxy_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(24);
 /* harmony import */ var _storage_proxy_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(25);
 /* harmony import */ var _wasm_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(28);
-/* harmony import */ var _arc_exceptions_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(15);
+/* harmony import */ var _arc_exceptions_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(14);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -429,7 +429,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
 /* harmony import */ var _particle_spec_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(5);
 /* harmony import */ var _type_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(8);
-/* harmony import */ var _arc_exceptions_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(15);
+/* harmony import */ var _arc_exceptions_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(14);
 /* harmony import */ var _util_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(23);
 /**
  * @license
@@ -2878,10 +2878,10 @@ class Schema {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Entity", function() { return Entity; });
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
-/* harmony import */ var _symbols_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(12);
-/* harmony import */ var _type_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(8);
-/* harmony import */ var _reference_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(13);
-/* harmony import */ var _recipe_type_checker_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(7);
+/* harmony import */ var _type_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(8);
+/* harmony import */ var _reference_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(12);
+/* harmony import */ var _recipe_type_checker_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(7);
+/* harmony import */ var _symbols_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(17);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -2896,39 +2896,66 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-class Entity {
-    // Currently we need a ParticleExecutionContext to be injected here in order to construct entity References (done in the sanitizeEntry
-    // function below).
-    // TODO(shans): Remove this dependency on ParticleExecutionContext, so that you can construct entities without one.
-    constructor(data, schema, context, userIDComponent) {
-        this._mutable = true;
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(!userIDComponent || userIDComponent.indexOf(':') === -1, 'user IDs must not contain the \':\' character');
-        setEntityId(this, undefined);
-        this.userIDComponent = userIDComponent;
+// This class holds extra entity-related fields used by the runtime. Instances of this are stored
+// in their parent Entity via a Symbol-based key. This allows Entities to hold whatever field names
+// their Schemas describe without any possibility of names clashing. For example, an Entity can have
+// an 'id' field that is distinct (in both value and type) from the id field here. Access to this
+// class should be via the static helpers in Entity.
+class EntityInternals {
+    constructor(entity, entityClass, schema, context, userIDComponent) {
+        // TODO: Only the Arc that "owns" this Entity should be allowed to mutate it.
+        this.mutable = true;
+        this.entity = entity;
+        this.entityClass = entityClass;
         this.schema = schema;
         this.context = context;
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(data, `can't construct entity with null data`);
-        this.rawData = createRawDataProxy(data, schema, context);
+        this.userIDComponent = userIDComponent;
     }
-    /** Returns true if this Entity instance can have its fields mutated. */
-    get mutable() {
-        // TODO: Only the Arc that "owns" this Entity should be allowed to mutate it.
-        return this._mutable;
+    getId() {
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(this.isIdentified(), 'getId() called on unidentified entity');
+        return this.id;
     }
-    /**
-     * Prevents further mutation of this Entity instance. Note that calling this method only affects this particular Entity instance; the entity
-     * it represents (in a data store somewhere) can still be mutated by others. Also note that this field offers no security at all against
-     * malicious developers; they can reach in and modify the "private" backing field directly.
-     */
-    set mutable(mutable) {
-        if (!this.mutable && mutable) {
-            throw new Error('You cannot make an immutable entity mutable again.');
+    getEntityClass() {
+        return this.entityClass;
+    }
+    isIdentified() {
+        return this.id !== undefined;
+    }
+    identify(identifier) {
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(!this.isIdentified(), 'identify() called on already identified entity');
+        this.id = identifier;
+        const components = identifier.split(':');
+        const uid = components.lastIndexOf('uid');
+        this.userIDComponent = uid > 0 ? components.slice(uid + 1).join(':') : '';
+    }
+    createIdentity(parentId, idGenerator) {
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(!this.isIdentified(), 'createIdentity() called on already identified entity');
+        let id;
+        if (this.userIDComponent) {
+            // TODO: Stop creating IDs by manually concatenating strings.
+            id = `${parentId.toString()}:uid:${this.userIDComponent}`;
         }
-        this._mutable = mutable;
+        else {
+            id = idGenerator.newChildId(parentId).toString();
+        }
+        this.id = id;
+    }
+    isMutable() {
+        return this.mutable;
     }
     /**
-     * Mutates the entity. Supply either the new data for the entity, which replaces the existing entity's data entirely, or a mutation function.
-     * The supplied mutation function will be called with a mutable copy of the entity's data. The mutations performed by that function will be
+     * Prevents further mutation of this Entity instance. Note that calling this method only affects
+     * this particular Entity instance; the entity it represents (in a data store somewhere) can
+     * still be mutated by others. Also note that this doesn't necessarily offer any security against
+     * malicious developers.
+     */
+    makeImmutable() {
+        this.mutable = false;
+    }
+    /**
+     * Mutates the entity. Supply either the new data for the entity, which replaces the existing
+     * entity's data entirely, or a mutation function. The supplied mutation function will be called
+     * with a mutable copy of the entity's data. The mutations performed by that function will be
      * reflected in the original entity instance (i.e. mutations applied in place).
      */
     mutate(mutation) {
@@ -2944,86 +2971,84 @@ class Entity {
         else {
             newData = mutation;
         }
-        this.rawData = createRawDataProxy(newData, this.schema, this.context);
+        // Note that this does *not* trigger the error in the Entity's Proxy 'set' trap, because we're
+        // applying the field updates directly to the original Entity instance (this.entity), not the
+        // Proxied version returned by the Entity constructor. Not confusing at all!
+        sanitizeAndApply(this.entity, newData, this.schema, this.context);
         // TODO: Send mutations to data store.
     }
-    getUserID() {
-        return this.userIDComponent;
-    }
-    isIdentified() {
-        return getEntityId(this) !== undefined;
-    }
-    // TODO: entity should not be exposing its IDs.
-    get id() {
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(!!this.isIdentified());
-        return getEntityId(this);
-    }
-    identify(identifier) {
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(!this.isIdentified());
-        setEntityId(this, identifier);
-        const components = identifier.split(':');
-        const uid = components.lastIndexOf('uid');
-        this.userIDComponent = uid > 0 ? components.slice(uid + 1).join(':') : '';
-    }
-    createIdentity(parentId, idGenerator) {
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(!this.isIdentified());
-        let id;
-        if (this.userIDComponent) {
-            // TODO: Stop creating IDs by manually concatenating strings.
-            id = `${parentId.toString()}:uid:${this.userIDComponent}`;
-        }
-        else {
-            id = idGenerator.newChildId(parentId).toString();
-        }
-        setEntityId(this, id);
-    }
     toLiteral() {
-        return this.rawData;
-    }
-    toJSON() {
-        return this.rawData;
+        return JSON.parse(JSON.stringify(this.entity));
     }
     dataClone() {
         const clone = {};
         const fieldTypes = this.schema.fields;
         for (const name of Object.keys(fieldTypes)) {
-            if (this.rawData[name] !== undefined) {
+            if (this.entity[name] !== undefined) {
                 if (fieldTypes[name] && fieldTypes[name].kind === 'schema-reference') {
-                    if (this.rawData[name]) {
-                        clone[name] = this.rawData[name].dataClone();
+                    if (this.entity[name]) {
+                        clone[name] = this.entity[name].dataClone();
                     }
                 }
                 else if (fieldTypes[name] && fieldTypes[name].kind === 'schema-collection') {
-                    if (this.rawData[name]) {
-                        clone[name] = [...this.rawData[name]].map(a => a.dataClone());
+                    if (this.entity[name]) {
+                        clone[name] = [...this.entity[name]].map(a => a.dataClone());
                     }
                 }
                 else {
-                    clone[name] = this.rawData[name];
+                    clone[name] = this.entity[name];
                 }
             }
         }
         return clone;
     }
     serialize() {
-        const id = getEntityId(this);
-        const rawData = this.dataClone();
-        return { id, rawData };
+        return { id: this.id, rawData: this.dataClone() };
     }
-    /** Dynamically constructs a new JS class for the entity type represented by the given schema. */
+}
+class Entity {
+    toString() {
+        return this.constructor.name + JSON.stringify(this);
+    }
+    // TODO: remove ASAP, once we're satisfied there are no lingering direct accesses on these fields
+    // Note that this breaks any schemas that have an 'id' field (or rawData/dataClone).
+    get id() { throw new Error('entity.id is no longer valid; use Entity.id() or Particle.idFor()'); }
+    get rawData() { throw new Error('entity.rawData is no longer valid; use plain .field access or spread notation'); }
+    get dataClone() { throw new Error('entity.dataClone() is no longer valid; use use Entity.dataClone() or Particle.dataClone()'); }
+    // Dynamically constructs a new JS class for the entity type represented by the given schema.
+    // This creates a new class which extends the Entity base class and implements the required
+    // static properties, then returns a Proxy wrapping that to guard against incorrect field writes.
     static createEntityClass(schema, context) {
-        // Create a new class which extends the Entity base class, and implement all of the required static methods/properties.
         const clazz = class extends Entity {
             constructor(data, userIDComponent) {
-                super(data, schema, context, userIDComponent);
-            }
-            get entityClass() {
-                return clazz;
+                super();
+                Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(data, `can't construct entity with null data`);
+                Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(!userIDComponent || userIDComponent.indexOf(':') === -1, `user IDs must not contain the ':' character`);
+                // We want the SYMBOL_INTERNALS property to be non-enumerable so any copies made of this
+                // entity (e.g. via Object.assign) pick up only the plain data fields from the schema, and
+                // not the EntityInternals object (which should be unique to this instance).
+                Object.defineProperty(this, _symbols_js__WEBPACK_IMPORTED_MODULE_4__["SYMBOL_INTERNALS"], {
+                    value: new EntityInternals(this, clazz, schema, context, userIDComponent),
+                    enumerable: false
+                });
+                sanitizeAndApply(this, data, schema, context);
+                // We don't want a 'get' trap here because JS accesses various fields as part of routine
+                // system behaviour, and making sure we special case all of them is going to be brittle.
+                // For example: when returning an object from an async function, JS needs to check if the
+                // object is a 'thenable' (so it knows whether to wrap it in a Promise or not), and it does
+                // this by checking for the existence of a 'then' method. Not trapping 'get' is ok because
+                // callers who try to read fields that aren't in the schema will just get 'undefined', which
+                // is idiomatic for JS anyway.
+                return new Proxy(this, {
+                    set: (target, name, value) => {
+                        throw new Error(`Tried to modify entity field '${name}'. Use the mutate method instead.`);
+                    }
+                });
             }
             static get type() {
                 // TODO: should the entity's key just be its type?
                 // Should it just be called type in that case?
-                return new _type_js__WEBPACK_IMPORTED_MODULE_2__["EntityType"](schema);
+                return new _type_js__WEBPACK_IMPORTED_MODULE_1__["EntityType"](schema);
             }
             static get key() {
                 return { tag: 'entity', schema };
@@ -3034,20 +3059,52 @@ class Entity {
         };
         // Override the name property to use the name of the entity given in the schema.
         Object.defineProperty(clazz, 'name', { value: schema.name });
-        // Add convenience properties for all of the entity's fields. These just proxy everything to the rawData proxy, but offer a nice API for
-        // getting/setting fields.
-        // TODO: add query / getter functions for user properties
-        for (const name of Object.keys(schema.fields)) {
-            Object.defineProperty(clazz.prototype, name, {
-                get() {
-                    return this.rawData[name];
-                },
-                set(v) {
-                    this.rawData[name] = v;
-                }
-            });
-        }
         return clazz;
+    }
+    static id(entity) {
+        return getInternals(entity).getId();
+    }
+    static entityClass(entity) {
+        return getInternals(entity).getEntityClass();
+    }
+    static isIdentified(entity) {
+        return getInternals(entity).isIdentified();
+    }
+    static identify(entity, identifier) {
+        getInternals(entity).identify(identifier);
+    }
+    static createIdentity(entity, parentId, idGenerator) {
+        getInternals(entity).createIdentity(parentId, idGenerator);
+    }
+    static isMutable(entity) {
+        return getInternals(entity).isMutable();
+    }
+    static makeImmutable(entity) {
+        getInternals(entity).makeImmutable();
+    }
+    static mutate(entity, mutation) {
+        getInternals(entity).mutate(mutation);
+    }
+    static toLiteral(entity) {
+        return getInternals(entity).toLiteral();
+    }
+    static dataClone(entity) {
+        return getInternals(entity).dataClone();
+    }
+    static serialize(entity) {
+        return getInternals(entity).serialize();
+    }
+}
+function getInternals(entity) {
+    const internals = entity[_symbols_js__WEBPACK_IMPORTED_MODULE_4__["SYMBOL_INTERNALS"]];
+    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(internals !== undefined, 'SYMBOL_INTERNALS lookup on non-entity');
+    return internals;
+}
+function sanitizeAndApply(target, data, schema, context) {
+    for (const [name, value] of Object.entries(data)) {
+        const sanitizedValue = sanitizeEntry(schema.fields[name], value, name, context);
+        validateFieldAndTypes(name, sanitizedValue, schema);
+        target[name] = sanitizedValue;
     }
 }
 function convertToJsType(primitiveType, schemaName) {
@@ -3069,10 +3126,10 @@ function convertToJsType(primitiveType, schemaName) {
     }
 }
 // tslint:disable-next-line: no-any
-function validateFieldAndTypes({ op, name, value, schema, fieldType }) {
+function validateFieldAndTypes(name, value, schema, fieldType) {
     fieldType = fieldType || schema.fields[name];
     if (fieldType === undefined) {
-        throw new Error(`Can't ${op} field ${name}; not in schema ${schema.name}`);
+        throw new Error(`Can't set field ${name}; not in schema ${schema.name}`);
     }
     if (value === undefined || value === null) {
         return;
@@ -3081,7 +3138,7 @@ function validateFieldAndTypes({ op, name, value, schema, fieldType }) {
         case 'schema-primitive': {
             const valueType = value.constructor.name === 'Uint8Array' ? 'Uint8Array' : typeof (value);
             if (valueType !== convertToJsType(fieldType, schema.name)) {
-                throw new TypeError(`Type mismatch ${op}ting field ${name} (type ${fieldType.type}); ` +
+                throw new TypeError(`Type mismatch setting field ${name} (type ${fieldType.type}); ` +
                     `value '${value}' is type ${typeof (value)}`);
             }
             break;
@@ -3093,31 +3150,31 @@ function validateFieldAndTypes({ op, name, value, schema, fieldType }) {
                     return;
                 }
             }
-            throw new TypeError(`Type mismatch ${op}ting field ${name} (union [${fieldType.types}]); ` +
+            throw new TypeError(`Type mismatch setting field ${name} (union [${fieldType.types}]); ` +
                 `value '${value}' is type ${typeof (value)}`);
         case 'schema-tuple':
             // Value must be an array whose contents match each of the tuple types.
             if (!Array.isArray(value)) {
-                throw new TypeError(`Cannot ${op} tuple ${name} with non-array value '${value}'`);
+                throw new TypeError(`Cannot set tuple ${name} with non-array value '${value}'`);
             }
             if (value.length !== fieldType.types.length) {
-                throw new TypeError(`Length mismatch ${op}ting tuple ${name} ` +
+                throw new TypeError(`Length mismatch setting tuple ${name} ` +
                     `[${fieldType.types}] with value '${value}'`);
             }
             fieldType.types.map((innerType, i) => {
                 if (value[i] !== undefined && value[i] !== null &&
                     typeof (value[i]) !== convertToJsType(innerType, schema.name)) {
-                    throw new TypeError(`Type mismatch ${op}ting field ${name} (tuple [${fieldType.types}]); ` +
+                    throw new TypeError(`Type mismatch setting field ${name} (tuple [${fieldType.types}]); ` +
                         `value '${value}' has type ${typeof (value[i])} at index ${i}`);
                 }
             });
             break;
         case 'schema-reference':
-            if (!(value instanceof _reference_js__WEBPACK_IMPORTED_MODULE_3__["Reference"])) {
-                throw new TypeError(`Cannot ${op} reference ${name} with non-reference '${value}'`);
+            if (!(value instanceof _reference_js__WEBPACK_IMPORTED_MODULE_2__["Reference"])) {
+                throw new TypeError(`Cannot set reference ${name} with non-reference '${value}'`);
             }
-            if (!_recipe_type_checker_js__WEBPACK_IMPORTED_MODULE_4__["TypeChecker"].compareTypes({ type: value.type }, { type: new _type_js__WEBPACK_IMPORTED_MODULE_2__["ReferenceType"](fieldType.schema.model) })) {
-                throw new TypeError(`Cannot ${op} reference ${name} with value '${value}' of mismatched type`);
+            if (!_recipe_type_checker_js__WEBPACK_IMPORTED_MODULE_3__["TypeChecker"].compareTypes({ type: value.type }, { type: new _type_js__WEBPACK_IMPORTED_MODULE_1__["ReferenceType"](fieldType.schema.model) })) {
+                throw new TypeError(`Cannot set reference ${name} with value '${value}' of mismatched type`);
             }
             break;
         case 'schema-collection':
@@ -3125,24 +3182,15 @@ function validateFieldAndTypes({ op, name, value, schema, fieldType }) {
             // this environment (a native code constructor) isn't equal to the Set that the value
             // has been constructed with (another native code constructor)...
             if (value.constructor.name !== 'Set') {
-                throw new TypeError(`Cannot ${op} collection ${name} with non-Set '${value}'`);
+                throw new TypeError(`Cannot set collection ${name} with non-Set '${value}'`);
             }
             for (const element of value) {
-                validateFieldAndTypes({ op, name, value: element, schema, fieldType: fieldType.schema });
+                validateFieldAndTypes(name, element, schema, fieldType.schema);
             }
             break;
         default:
-            throw new Error(`Unknown kind ${fieldType.kind} in schema ${schema.name}`);
+            throw new Error(`Unknown kind '${fieldType.kind}' for field ${name} in schema ${schema.name}`);
     }
-}
-function sanitizeData(data, schema, context) {
-    const sanitizedData = {};
-    for (const [name, value] of Object.entries(data)) {
-        const sanitizedValue = sanitizeEntry(schema.fields[name], value, name, context);
-        validateFieldAndTypes({ op: 'set', name, value: sanitizedValue, schema });
-        sanitizedData[name] = sanitizedValue;
-    }
-    return sanitizedData;
 }
 function sanitizeEntry(type, value, name, context) {
     if (!type) {
@@ -3151,7 +3199,7 @@ function sanitizeEntry(type, value, name, context) {
         return value;
     }
     if (type.kind === 'schema-reference' && value) {
-        if (value instanceof _reference_js__WEBPACK_IMPORTED_MODULE_3__["Reference"]) {
+        if (value instanceof _reference_js__WEBPACK_IMPORTED_MODULE_2__["Reference"]) {
             // Setting value as Reference (Particle side). This will enforce that the type provided for
             // the handle matches the type of the reference.
             return value;
@@ -3160,7 +3208,7 @@ function sanitizeEntry(type, value, name, context) {
             // Setting value from raw data (Channel side).
             // TODO(shans): This can't enforce type safety here as there isn't any type data available.
             // Maybe this is OK because there's type checking on the other side of the channel?
-            return new _reference_js__WEBPACK_IMPORTED_MODULE_3__["Reference"](value, new _type_js__WEBPACK_IMPORTED_MODULE_2__["ReferenceType"](type.schema.model), context);
+            return new _reference_js__WEBPACK_IMPORTED_MODULE_2__["Reference"](value, new _type_js__WEBPACK_IMPORTED_MODULE_1__["ReferenceType"](type.schema.model), context);
         }
         else {
             throw new TypeError(`Cannot set reference ${name} with non-reference '${value}'`);
@@ -3184,43 +3232,6 @@ function sanitizeEntry(type, value, name, context) {
         return value;
     }
 }
-/** Constructs a Proxy object to use for entities' rawData objects. This proxy will perform type-checking when getting/setting fields. */
-function createRawDataProxy(data, schema, context) {
-    const classJunk = ['toJSON', 'prototype', 'toString', 'inspect'];
-    // TODO: figure out how to do this only on wire-created entities.
-    const sanitizedData = sanitizeData(data, schema, context);
-    return new Proxy(sanitizedData, {
-        get: (target, name) => {
-            if (classJunk.includes(name) || name.constructor === Symbol) {
-                return undefined;
-            }
-            const value = target[name];
-            validateFieldAndTypes({ op: 'get', name, value, schema });
-            return value;
-        },
-        set: (target, name, value) => {
-            throw new Error(`Tried to modify entity field '${name}'. Use the mutate method instead.`);
-        }
-    });
-}
-/**
- * Returns the ID of the given entity. This is a function private to this file instead of a method on the Entity class, so that developers can't
- * get access to it.
- */
-function getEntityId(entity) {
-    // Typescript doesn't let us use symbols as indexes, so cast to any first.
-    // tslint:disable-next-line: no-any
-    return entity[_symbols_js__WEBPACK_IMPORTED_MODULE_1__["Symbols"].identifier];
-}
-/**
- * Sets the ID of the given entity. This is a function private to this file instead of a method on the Entity class, so that developers can't
- * get access to it.
- */
-function setEntityId(entity, id) {
-    // Typescript doesn't let us use symbols as indexes, so cast to any first.
-    // tslint:disable-next-line: no-any
-    entity[_symbols_js__WEBPACK_IMPORTED_MODULE_1__["Symbols"].identifier] = id;
-}
 //# sourceMappingURL=entity.js.map
 
 /***/ }),
@@ -3229,31 +3240,13 @@ function setEntityId(entity, id) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Symbols", function() { return Symbols; });
-/**
- * @license
- * Copyright (c) 2017 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-// tslint:disable-next-line: variable-name
-const Symbols = { identifier: Symbol('id') };
-//# sourceMappingURL=symbols.js.map
-
-/***/ }),
-/* 13 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Reference", function() { return Reference; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ClientReference", function() { return ClientReference; });
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
-/* harmony import */ var _handle_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(14);
+/* harmony import */ var _handle_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(13);
 /* harmony import */ var _type_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(8);
+/* harmony import */ var _entity_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(11);
+/* harmony import */ var _symbols_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(17);
 /**
  * @license
  * Copyright (c) 2018 Google Inc. All rights reserved.
@@ -3263,6 +3256,8 @@ __webpack_require__.r(__webpack_exports__);
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
+
+
 
 
 
@@ -3280,6 +3275,9 @@ class Reference {
         this.storageKey = data.storageKey;
         this.context = context;
         this.type = type;
+        this[_symbols_js__WEBPACK_IMPORTED_MODULE_4__["SYMBOL_INTERNALS"]] = {
+            serialize: () => ({ id: this.id, rawData: this.dataClone() })
+        };
     }
     async ensureStorageProxy() {
         if (this.storageProxy == null) {
@@ -3305,19 +3303,13 @@ class Reference {
     dataClone() {
         return { storageKey: this.storageKey, id: this.id };
     }
-    serialize() {
-        return {
-            id: this.id,
-            rawData: this.dataClone(),
-        };
-    }
 }
 /** A subclass of Reference that clients can create. */
 class ClientReference extends Reference {
     /** Use the newClientReference factory method instead. */
     constructor(entity, context) {
         // TODO(shans): start carrying storageKey information around on Entity objects
-        super({ id: entity.id, storageKey: null }, new _type_js__WEBPACK_IMPORTED_MODULE_2__["ReferenceType"](entity.entityClass.type), context);
+        super({ id: _entity_js__WEBPACK_IMPORTED_MODULE_3__["Entity"].id(entity), storageKey: null }, new _type_js__WEBPACK_IMPORTED_MODULE_2__["ReferenceType"](_entity_js__WEBPACK_IMPORTED_MODULE_3__["Entity"].entityClass(entity).type), context);
         this.mode = ReferenceMode.Unstored;
         this.entity = entity;
         this.stored = new Promise(async (resolve, reject) => {
@@ -3337,7 +3329,7 @@ class ClientReference extends Reference {
         return super.dereference();
     }
     isIdentified() {
-        return this.entity.isIdentified();
+        return _entity_js__WEBPACK_IMPORTED_MODULE_3__["Entity"].isIdentified(this.entity);
     }
     static newClientReference(context) {
         return class extends ClientReference {
@@ -3350,7 +3342,7 @@ class ClientReference extends Reference {
 //# sourceMappingURL=reference.js.map
 
 /***/ }),
-/* 14 */
+/* 13 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -3361,12 +3353,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "BigCollection", function() { return BigCollection; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "handleFor", function() { return handleFor; });
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
-/* harmony import */ var _arc_exceptions_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(15);
+/* harmony import */ var _arc_exceptions_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(14);
 /* harmony import */ var _particle_spec_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(5);
-/* harmony import */ var _reference_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(13);
+/* harmony import */ var _reference_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(12);
 /* harmony import */ var _type_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(8);
 /* harmony import */ var _entity_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(11);
-/* harmony import */ var _id_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(16);
+/* harmony import */ var _id_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(15);
+/* harmony import */ var _symbols_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(17);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -3376,6 +3369,7 @@ __webpack_require__.r(__webpack_exports__);
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
+
 
 
 
@@ -3393,7 +3387,7 @@ function restore(entry, entityClass) {
     const { id, rawData } = entry;
     const entity = new entityClass(cloneData(rawData));
     if (entry.id) {
-        entity.identify(entry.id);
+        _entity_js__WEBPACK_IMPORTED_MODULE_5__["Entity"].identify(entity, entry.id);
     }
     // TODO some relation magic, somewhere, at some point.
     return entity;
@@ -3445,13 +3439,13 @@ class Handle {
         }
     }
     _serialize(entity) {
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(entity, 'can\'t serialize a null entity');
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(entity, `can't serialize a null entity`);
         if (entity instanceof _entity_js__WEBPACK_IMPORTED_MODULE_5__["Entity"]) {
-            if (!entity.isIdentified()) {
-                entity.createIdentity(_id_js__WEBPACK_IMPORTED_MODULE_6__["Id"].fromString(this._id), this.idGenerator);
+            if (!_entity_js__WEBPACK_IMPORTED_MODULE_5__["Entity"].isIdentified(entity)) {
+                _entity_js__WEBPACK_IMPORTED_MODULE_5__["Entity"].createIdentity(entity, _id_js__WEBPACK_IMPORTED_MODULE_6__["Id"].fromString(this._id), this.idGenerator);
             }
         }
-        return entity.serialize();
+        return entity[_symbols_js__WEBPACK_IMPORTED_MODULE_7__["SYMBOL_INTERNALS"]].serialize();
     }
     get type() {
         return this.storage.type;
@@ -3765,7 +3759,7 @@ function handleFor(storage, idGenerator, name = null, particleId = '', canRead =
 //# sourceMappingURL=handle.js.map
 
 /***/ }),
-/* 15 */
+/* 14 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -3855,7 +3849,7 @@ registerSystemExceptionHandler((exception) => {
 //# sourceMappingURL=arc-exceptions.js.map
 
 /***/ }),
-/* 16 */
+/* 15 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -3863,7 +3857,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "IdGenerator", function() { return IdGenerator; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Id", function() { return Id; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ArcId", function() { return ArcId; });
-/* harmony import */ var _random_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(17);
+/* harmony import */ var _random_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(16);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -3974,7 +3968,7 @@ class ArcId extends Id {
 //# sourceMappingURL=id.js.map
 
 /***/ }),
-/* 17 */
+/* 16 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -4007,6 +4001,28 @@ class Random {
     }
 }
 //# sourceMappingURL=random.js.map
+
+/***/ }),
+/* 17 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SYMBOL_INTERNALS", function() { return SYMBOL_INTERNALS; });
+/**
+ * @license
+ * Copyright (c) 2017 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+// TypeScript seems to lose the necessary type info if this symbol is wrapped in an object and then
+// used as an interface key (e.g. 'interface Foo { [Symbols.internals]: {...} }'), so we just have
+// to export it as a standard variable. See the EntityInternals class for the usage of this symbol.
+const SYMBOL_INTERNALS = Symbol('internals');
+//# sourceMappingURL=symbols.js.map
 
 /***/ }),
 /* 18 */
@@ -4538,10 +4554,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "StorageProxyScheduler", function() { return StorageProxyScheduler; });
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
 /* harmony import */ var _platform_sourcemapped_stacktrace_web_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(26);
-/* harmony import */ var _arc_exceptions_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(15);
+/* harmony import */ var _arc_exceptions_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(14);
 /* harmony import */ var _storage_crdt_collection_model_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(27);
 /* harmony import */ var _type_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(8);
-/* harmony import */ var _id_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(16);
+/* harmony import */ var _id_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(15);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -5268,8 +5284,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "EntityPackager", function() { return EntityPackager; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "WasmParticle", function() { return WasmParticle; });
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
-/* harmony import */ var _particle_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(29);
-/* harmony import */ var _handle_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(14);
+/* harmony import */ var _entity_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(11);
+/* harmony import */ var _particle_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(29);
+/* harmony import */ var _handle_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(13);
 /**
  * @license
  * Copyright (c) 2019 Google Inc. All rights reserved.
@@ -5279,6 +5296,7 @@ __webpack_require__.r(__webpack_exports__);
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
+
 
 
 
@@ -5313,14 +5331,15 @@ class EntityPackager {
     decodeSingleton(str) {
         const { id, data } = this.decoder.decodeSingleton(str);
         const entity = new (this.schema.entityClass())(data);
-        entity.identify(id);
+        _entity_js__WEBPACK_IMPORTED_MODULE_1__["Entity"].identify(entity, id);
         return entity;
     }
 }
 class StringEncoder {
     encodeSingleton(schema, entity) {
-        let encoded = entity.id.length + ':' + entity.id + '|';
-        for (const [name, value] of Object.entries(entity.toLiteral())) {
+        const id = _entity_js__WEBPACK_IMPORTED_MODULE_1__["Entity"].id(entity);
+        let encoded = id.length + ':' + id + '|';
+        for (const [name, value] of Object.entries(entity)) {
             encoded += this.encodeField(schema.fields[name], name, value);
         }
         return encoded;
@@ -5533,7 +5552,7 @@ class KotlinWasmDriver {
         instance.exports.Konan_js_main(1, 0);
     }
 }
-class WasmParticle extends _particle_js__WEBPACK_IMPORTED_MODULE_1__["Particle"] {
+class WasmParticle extends _particle_js__WEBPACK_IMPORTED_MODULE_2__["Particle"] {
     constructor() {
         super(...arguments);
         this.handleMap = new Map();
@@ -5600,7 +5619,7 @@ class WasmParticle extends _particle_js__WEBPACK_IMPORTED_MODULE_1__["Particle"]
             throw new Error('cannot find handle ' + handle.name);
         }
         let encoded;
-        if (handle instanceof _handle_js__WEBPACK_IMPORTED_MODULE_2__["Singleton"]) {
+        if (handle instanceof _handle_js__WEBPACK_IMPORTED_MODULE_3__["Singleton"]) {
             encoded = converter.encodeSingleton(model);
         }
         else {
@@ -5622,7 +5641,7 @@ class WasmParticle extends _particle_js__WEBPACK_IMPORTED_MODULE_1__["Particle"]
         }
         let p1 = 0;
         let p2 = 0;
-        if (handle instanceof _handle_js__WEBPACK_IMPORTED_MODULE_2__["Singleton"]) {
+        if (handle instanceof _handle_js__WEBPACK_IMPORTED_MODULE_3__["Singleton"]) {
             if (update.data) {
                 p1 = this.store(converter.encodeSingleton(update.data));
             }
@@ -5753,7 +5772,8 @@ class WasmParticle extends _particle_js__WEBPACK_IMPORTED_MODULE_1__["Particle"]
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Particle", function() { return Particle; });
-/* harmony import */ var _handle_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(14);
+/* harmony import */ var _handle_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(13);
+/* harmony import */ var _entity_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(11);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -5763,6 +5783,7 @@ __webpack_require__.r(__webpack_exports__);
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
+
 
 
 /**
@@ -5962,6 +5983,16 @@ class Particle {
         }
         throw new Error('A particle needs a description handle to set a decription pattern');
     }
+    // Entity functions.
+    idFor(entity) {
+        return _entity_js__WEBPACK_IMPORTED_MODULE_1__["Entity"].id(entity);
+    }
+    dataClone(entity) {
+        return _entity_js__WEBPACK_IMPORTED_MODULE_1__["Entity"].dataClone(entity);
+    }
+    mutate(entity, mutation) {
+        _entity_js__WEBPACK_IMPORTED_MODULE_1__["Entity"].mutate(entity, mutation);
+    }
     // abstract
     renderSlot(slotName, contentTypes) { }
     renderHostedSlot(slotName, hostedSlotId, content) { }
@@ -6154,7 +6185,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _dom_particle_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(37);
 /* harmony import */ var _multiplexer_dom_particle_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(40);
 /* harmony import */ var _particle_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(29);
-/* harmony import */ var _reference_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(13);
+/* harmony import */ var _reference_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(12);
 /* harmony import */ var _transformation_dom_particle_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(41);
 /**
  * @license
@@ -6620,7 +6651,7 @@ class DomParticle extends Object(_modalities_dom_components_xen_xen_state_js__WE
             if (Array.isArray(prop)) {
                 removed.forEach(removed => {
                     // TODO(sjmiles): linear search is inefficient
-                    const index = prop.findIndex(entry => entry.id === removed.id);
+                    const index = prop.findIndex(entry => this.idFor(entry) === this.idFor(removed));
                     if (index >= 0) {
                         prop.splice(index, 1);
                     }
@@ -6816,7 +6847,7 @@ const XenStateMixin = Base => class extends Base {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "DomParticleBase", function() { return DomParticleBase; });
-/* harmony import */ var _handle_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(14);
+/* harmony import */ var _handle_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(13);
 /* harmony import */ var _particle_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(29);
 /**
  * @license
@@ -6989,7 +7020,7 @@ class DomParticleBase extends _particle_js__WEBPACK_IMPORTED_MODULE_1__["Particl
             const handleEntities = await handle.toList();
             handleEntities.forEach(entity => idMap[entity.id] = entity);
             for (const entity of entities) {
-                if (!idMap[entity.id]) {
+                if (!idMap[this.idFor(entity)]) {
                     await handle.store(entity);
                 }
             }
@@ -7105,6 +7136,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
 /* harmony import */ var _particle_spec_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(5);
 /* harmony import */ var _transformation_dom_particle_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(41);
+/* harmony import */ var _entity_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(11);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -7114,6 +7146,7 @@ __webpack_require__.r(__webpack_exports__);
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
+
 
 
 
@@ -7190,14 +7223,15 @@ class MultiplexerDomParticle extends _transformation_dom_particle_js__WEBPACK_IM
         }
         for (const [index, item] of this.getListEntries(list)) {
             let resolvedHostedParticle = hostedParticle;
-            if (this.handleIds[item.id]) {
-                const itemHandle = await this.handleIds[item.id];
+            const id = _entity_js__WEBPACK_IMPORTED_MODULE_3__["Entity"].id(item);
+            if (this.handleIds[id]) {
+                const itemHandle = await this.handleIds[id];
                 // tslint:disable-next-line: no-any
                 itemHandle.set(item);
                 continue;
             }
             const itemHandlePromise = arc.createHandle(type.getContainedType(), `item${index}`);
-            this.handleIds[item.id] = itemHandlePromise;
+            this.handleIds[id] = itemHandlePromise;
             const itemHandle = await itemHandlePromise;
             if (!resolvedHostedParticle) {
                 // If we're muxing on behalf of an item with an embedded recipe, the
@@ -7221,7 +7255,7 @@ class MultiplexerDomParticle extends _transformation_dom_particle_js__WEBPACK_IM
             if (!slotId) {
                 continue;
             }
-            this._itemSubIdByHostedSlotId.set(slotId, item.id);
+            this._itemSubIdByHostedSlotId.set(slotId, id);
             try {
                 const recipe = this.constructInnerRecipe(resolvedHostedParticle, item, itemHandle, { name: hostedSlotName, id: slotId }, { connections: otherConnections, handles: otherMappedHandles });
                 await arc.loadRecipe(recipe);
@@ -7289,6 +7323,7 @@ class MultiplexerDomParticle extends _transformation_dom_particle_js__WEBPACK_IM
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "TransformationDomParticle", function() { return TransformationDomParticle; });
 /* harmony import */ var _dom_particle_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(37);
+/* harmony import */ var _entity_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(11);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -7298,6 +7333,7 @@ __webpack_require__.r(__webpack_exports__);
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
+
 
 // Regex to separate style and template.
 const re = /<style>((?:.|[\r\n])*)<\/style>((?:.|[\r\n])*)/;
@@ -7330,7 +7366,7 @@ class TransformationDomParticle extends _dom_particle_js__WEBPACK_IMPORTED_MODUL
     }
     // Helper methods that may be reused in transformation particles to combine hosted content.
     static propsToItems(propsValues) {
-        return propsValues ? propsValues.map(({ rawData, id }) => ({ ...rawData, subId: id })) : [];
+        return propsValues ? propsValues.map(e => ({ subId: _entity_js__WEBPACK_IMPORTED_MODULE_1__["Entity"].id(e), ...e })) : [];
     }
 }
 //# sourceMappingURL=transformation-dom-particle.js.map

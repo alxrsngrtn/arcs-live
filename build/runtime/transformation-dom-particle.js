@@ -8,6 +8,7 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { DomParticle } from './dom-particle.js';
+import { Entity } from './entity.js';
 // Regex to separate style and template.
 const re = /<style>((?:.|[\r\n])*)<\/style>((?:.|[\r\n])*)/;
 /**
@@ -39,7 +40,7 @@ export class TransformationDomParticle extends DomParticle {
     }
     // Helper methods that may be reused in transformation particles to combine hosted content.
     static propsToItems(propsValues) {
-        return propsValues ? propsValues.map(({ rawData, id }) => ({ ...rawData, subId: id })) : [];
+        return propsValues ? propsValues.map(e => ({ subId: Entity.id(e), ...e })) : [];
     }
 }
 //# sourceMappingURL=transformation-dom-particle.js.map

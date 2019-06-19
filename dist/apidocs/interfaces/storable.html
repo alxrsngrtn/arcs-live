@@ -69,7 +69,8 @@
 			<section class="tsd-panel tsd-comment">
 				<div class="tsd-comment tsd-typography">
 					<div class="lead">
-						<p>An interface representing anything storable in a Handle. Concretely, this is the <a href="../classes/entity.html">Entity</a> and <a href="../classes/clientreference.html">ClientReference</a> classes.</p>
+						<p>An interface representing anything storable in a Handle. Concretely, this is the <a href="../classes/entity.html">Entity</a>
+						and <a href="../classes/clientreference.html">ClientReference</a> classes.</p>
 					</div>
 				</div>
 			</section>
@@ -78,11 +79,6 @@
 				<ul class="tsd-hierarchy">
 					<li>
 						<span class="target">Storable</span>
-						<ul class="tsd-hierarchy">
-							<li>
-								<a href="entityinterface.html" class="tsd-signature-type">EntityInterface</a>
-							</li>
-						</ul>
 					</li>
 				</ul>
 			</section>
@@ -90,6 +86,7 @@
 				<h3>Implemented by</h3>
 				<ul class="tsd-hierarchy">
 					<li><a href="../classes/clientreference.html" class="tsd-signature-type">ClientReference</a></li>
+					<li><a href="../classes/entity.html" class="tsd-signature-type">Entity</a></li>
 					<li><a href="../classes/reference.html" class="tsd-signature-type">Reference</a></li>
 				</ul>
 			</section>
@@ -98,32 +95,45 @@
 				<section class="tsd-panel tsd-index-panel">
 					<div class="tsd-index-content">
 						<section class="tsd-index-section ">
-							<h3>Methods</h3>
+							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="storable.html#serialize" class="tsd-kind-icon">serialize</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="storable.html#__computed" class="tsd-kind-icon">__computed</a></li>
 							</ul>
 						</section>
 					</div>
 				</section>
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
-				<h2>Methods</h2>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface">
-					<a name="serialize" class="tsd-anchor"></a>
-					<h3>serialize</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
-						<li class="tsd-signature tsd-kind-icon">serialize<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../globals.html#serializedentity" class="tsd-signature-type">SerializedEntity</a></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/cca89bf/src/runtime/handle.ts#L24">runtime/handle.ts:24</a></li>
+				<h2>Properties</h2>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="__computed" class="tsd-anchor"></a>
+					<h3>__computed</h3>
+					<div class="tsd-signature tsd-kind-icon">__computed<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/75a5f8a/src/runtime/handle.ts#L28">runtime/handle.ts:28</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-type-declaration">
+						<h4>Type declaration</h4>
+						<ul class="tsd-parameters">
+							<li class="tsd-parameter">
+								<h5>serialize<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">function</span></h5>
+								<ul class="tsd-parameters">
+									<li class="tsd-parameter-siganture">
+										<ul class="tsd-signatures tsd-kind-type-literal tsd-parent-kind-variable tsd-is-not-exported">
+											<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../globals.html#serializedentity" class="tsd-signature-type">SerializedEntity</a></li>
+										</ul>
+										<ul class="tsd-descriptions">
+											<li class="tsd-description">
+												<h4 class="tsd-returns-title">Returns <a href="../globals.html#serializedentity" class="tsd-signature-type">SerializedEntity</a></h4>
+											</li>
+										</ul>
+									</li>
 								</ul>
-							</aside>
-							<h4 class="tsd-returns-title">Returns <a href="../globals.html#serializedentity" class="tsd-signature-type">SerializedEntity</a></h4>
-						</li>
-					</ul>
+							</li>
+						</ul>
+					</div>
 				</section>
 			</section>
 		</div>
@@ -142,8 +152,8 @@
 					<li class="current tsd-kind-interface">
 						<a href="storable.html" class="tsd-kind-icon">Storable</a>
 						<ul>
-							<li class=" tsd-kind-method tsd-parent-kind-interface">
-								<a href="storable.html#serialize" class="tsd-kind-icon">serialize</a>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="storable.html#__computed" class="tsd-kind-icon">__computed</a>
 							</li>
 						</ul>
 					</li>

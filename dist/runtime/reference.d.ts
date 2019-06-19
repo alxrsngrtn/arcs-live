@@ -12,6 +12,7 @@ import { ParticleExecutionContext } from './particle-execution-context.js';
 import { ReferenceType } from './type.js';
 import { Entity } from './entity.js';
 import { SerializedEntity } from './storage-proxy.js';
+import { SYMBOL_INTERNALS } from './symbols.js';
 export declare class Reference implements Storable {
     entity: Entity | null;
     type: ReferenceType;
@@ -20,6 +21,9 @@ export declare class Reference implements Storable {
     private readonly context;
     private storageProxy;
     protected handle: any;
+    [SYMBOL_INTERNALS]: {
+        serialize: () => SerializedEntity;
+    };
     constructor(data: {
         id: string;
         storageKey: string | null;
@@ -30,7 +34,6 @@ export declare class Reference implements Storable {
         storageKey: string;
         id: string;
     };
-    serialize(): SerializedEntity;
 }
 /** A subclass of Reference that clients can create. */
 export declare abstract class ClientReference extends Reference {

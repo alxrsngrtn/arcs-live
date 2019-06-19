@@ -8,7 +8,7 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { Schema } from './schema.js';
-import { EntityInterface } from './entity.js';
+import { Entity } from './entity.js';
 import { Particle } from './particle.js';
 import { Handle } from './handle.js';
 export declare class EntityPackager {
@@ -16,9 +16,9 @@ export declare class EntityPackager {
     private encoder;
     private decoder;
     constructor(schema: Schema);
-    encodeSingleton(entity: EntityInterface): string;
-    encodeCollection(entities: EntityInterface[]): string;
-    decodeSingleton(str: string): EntityInterface;
+    encodeSingleton(entity: Entity): string;
+    encodeCollection(entities: Entity[]): string;
+    decodeSingleton(str: string): Entity;
 }
 /**
  * Per-language platform environment and startup specializations for Emscripten and Kotlin.

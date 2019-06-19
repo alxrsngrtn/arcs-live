@@ -14,6 +14,7 @@ import { Reference } from './reference.js';
 import { BigCollectionType, CollectionType, EntityType, InterfaceType, ReferenceType } from './type.js';
 import { Entity } from './entity.js';
 import { Id } from './id.js';
+import { SYMBOL_INTERNALS } from './symbols.js';
 // TODO: This won't be needed once runtime is transferred between contexts.
 function cloneData(data) {
     return data;
@@ -24,7 +25,7 @@ function restore(entry, entityClass) {
     const { id, rawData } = entry;
     const entity = new entityClass(cloneData(rawData));
     if (entry.id) {
-        entity.identify(entry.id);
+        Entity.identify(entity, entry.id);
     }
     // TODO some relation magic, somewhere, at some point.
     return entity;
@@ -76,13 +77,13 @@ export class Handle {
         }
     }
     _serialize(entity) {
-        assert(entity, 'can\'t serialize a null entity');
+        assert(entity, `can't serialize a null entity`);
         if (entity instanceof Entity) {
-            if (!entity.isIdentified()) {
-                entity.createIdentity(Id.fromString(this._id), this.idGenerator);
+            if (!Entity.isIdentified(entity)) {
+                Entity.createIdentity(entity, Id.fromString(this._id), this.idGenerator);
             }
         }
-        return entity.serialize();
+        return entity[SYMBOL_INTERNALS].serialize();
     }
     get type() {
         return this.storage.type;

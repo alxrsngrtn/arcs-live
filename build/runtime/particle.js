@@ -9,6 +9,7 @@
  */
 import { BigCollection } from './handle.js';
 import { Collection } from './handle.js';
+import { Entity } from './entity.js';
 /**
  * A basic particle. For particles that provide UI, you may like to
  * instead use DOMParticle.
@@ -205,6 +206,16 @@ export class Particle {
             return true;
         }
         throw new Error('A particle needs a description handle to set a decription pattern');
+    }
+    // Entity functions.
+    idFor(entity) {
+        return Entity.id(entity);
+    }
+    dataClone(entity) {
+        return Entity.dataClone(entity);
+    }
+    mutate(entity, mutation) {
+        Entity.mutate(entity, mutation);
     }
     // abstract
     renderSlot(slotName, contentTypes) { }

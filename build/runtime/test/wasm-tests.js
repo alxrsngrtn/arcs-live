@@ -12,6 +12,7 @@ import { EntityPackager } from '../wasm.js';
 import { Manifest } from '../manifest.js';
 import { EntityType, ReferenceType } from '../type.js';
 import { Reference } from '../reference.js';
+import { Entity } from '../entity.js';
 import { toProtoFile } from '../../tools/wasm-tools.js';
 describe('wasm', () => {
     let manifest;
@@ -27,7 +28,7 @@ describe('wasm', () => {
         const schema = manifest.schemas.Foo;
         const entityClass = schema.entityClass();
         const foo = new entityClass({ txt: 'abc', lnk: 'http://def', num: 37, flg: true });
-        foo.identify('test');
+        Entity.identify(foo, 'test');
         const packager = new EntityPackager(schema);
         const encoded = packager.encodeSingleton(foo);
         assert.deepEqual(foo, packager.decodeSingleton(encoded));
@@ -36,7 +37,7 @@ describe('wasm', () => {
         const schema = manifest.schemas.Foo;
         const entityClass = schema.entityClass();
         const foo = new entityClass({ txt: 'abc', num: -5.1 });
-        foo.identify('!test:foo:bar|');
+        Entity.identify(foo, '!test:foo:bar|');
         const packager = new EntityPackager(schema);
         const encoded = packager.encodeSingleton(foo);
         assert.deepEqual(foo, packager.decodeSingleton(encoded));
@@ -45,7 +46,7 @@ describe('wasm', () => {
         const schema = manifest.schemas.Foo;
         const entityClass = schema.entityClass();
         const foo = new entityClass({ txt: '', lnk: '', num: 0, flg: false });
-        foo.identify('te|st');
+        Entity.identify(foo, 'te|st');
         const packager = new EntityPackager(schema);
         const encoded = packager.encodeSingleton(foo);
         assert.deepEqual(foo, packager.decodeSingleton(encoded));
@@ -54,7 +55,7 @@ describe('wasm', () => {
         const schema = manifest.schemas.Foo;
         const entityClass = schema.entityClass();
         const foo = new entityClass({});
-        foo.identify('te st');
+        Entity.identify(foo, 'te st');
         const packager = new EntityPackager(schema);
         const encoded = packager.encodeSingleton(foo);
         assert.deepEqual(foo, packager.decodeSingleton(encoded));
@@ -64,7 +65,7 @@ describe('wasm', () => {
         const entityClass = schema.entityClass();
         const make = (id, data) => {
             const foo = new entityClass(data);
-            foo.identify(id);
+            Entity.identify(foo, id);
             return foo;
         };
         const f1 = make('id1', { txt: 'abc', lnk: 'http://def', num: 9.2, flg: true });
@@ -91,7 +92,7 @@ describe('wasm', () => {
         Reference<Bar {Text val}> foo`);
         const verify = (schema, value) => {
             const entity = new (schema.entityClass())({ foo: value });
-            entity.identify('test');
+            Entity.identify(entity, 'test');
             assert.throws(() => new EntityPackager(schema).encodeSingleton(entity), 'not yet supported');
         };
         const makeRef = entityType => new Reference({ id: 'i', storageKey: 'k' }, new ReferenceType(entityType), null);

@@ -16,6 +16,7 @@ import { Reference } from '../reference.js';
 import { Schema } from '../schema.js';
 import { StubLoader } from '../testing/stub-loader.js';
 import { EntityType, ReferenceType } from '../type.js';
+import { Entity } from '../entity.js';
 // Modifies the schema in-place.
 function deleteLocations(schema) {
     for (const [name, type] of Object.entries(schema.fields)) {
@@ -103,7 +104,7 @@ describe('schema', () => {
         assert.equal(product.category, 'Terrible Food');
         assert.isUndefined(product.description);
     });
-    it('has accessors for all schema fields', async () => {
+    it('has getters for all schema fields', async () => {
         const manifest = await Manifest.load('Product.schema', loader);
         const Product = manifest.findSchemaByName('Product').entityClass();
         const product = new Product({
@@ -117,33 +118,23 @@ describe('schema', () => {
             price: '$3.50',
             shipDays: 1,
         });
-        assert.equal(product.rawData.name, 'Deep Fried Pizza');
-        assert.equal(product.rawData.description, 'Pizza, but fried, deeply');
-        assert.equal(product.rawData.image, 'http://www.example.com/dfp.jpg');
-        assert.equal(product.rawData.url, 'http://www.example.com/dfp.html');
-        assert.equal(product.rawData.identifier, 'dfp001');
-        assert.equal(product.rawData.category, 'Scottish Food');
-        assert.equal(product.rawData.seller, 'The chip shop on the corner');
-        assert.equal(product.rawData.price, '$3.50');
-        assert.equal(product.rawData.shipDays, 1);
-        assert.equal(product.name, product.rawData.name);
-        assert.equal(product.description, product.rawData.description);
-        assert.equal(product.image, product.rawData.image);
-        assert.equal(product.url, product.rawData.url);
-        assert.equal(product.identifier, product.rawData.identifier);
-        assert.equal(product.category, product.rawData.category);
-        assert.equal(product.seller, product.rawData.seller);
-        assert.equal(product.price, product.rawData.price);
-        assert.equal(product.shipDays, product.rawData.shipDays);
+        assert.equal(product.name, 'Deep Fried Pizza');
+        assert.equal(product.description, 'Pizza, but fried, deeply');
+        assert.equal(product.image, 'http://www.example.com/dfp.jpg');
+        assert.equal(product.url, 'http://www.example.com/dfp.html');
+        assert.equal(product.identifier, 'dfp001');
+        assert.equal(product.category, 'Scottish Food');
+        assert.equal(product.seller, 'The chip shop on the corner');
+        assert.equal(product.price, '$3.50');
+        assert.equal(product.shipDays, 1);
     });
-    it('has accessors for schema fields only', async () => {
+    it('has setters for schema fields only', async () => {
         const manifest = await Manifest.load('Product.schema', loader);
         const Product = manifest.findSchemaByName('Product').entityClass();
         assert.throws(() => { new Product({ sku: 'sku' }); }, 'not in schema');
         const product = new Product({});
-        assert.throws(() => product.rawData.sku, 'not in schema');
-        assert.throws(() => product.rawData.sku = 'sku', 'Use the mutate method instead');
-        assert.throws(() => product.mutate(p => p.sku = 'sku'), 'not in schema');
+        assert.throws(() => product.sku = 'sku', 'Use the mutate method instead');
+        assert.throws(() => Entity.mutate(product, p => p.sku = 'sku'), 'not in schema');
     });
     it('performs type checking', async () => {
         const manifest = await Manifest.load('Product.schema', loader);
@@ -152,15 +143,15 @@ describe('schema', () => {
         assert.throws(() => { new Product({ url: 7 }); }, TypeError, 'Type mismatch setting field url');
         assert.throws(() => { new Product({ shipDays: '2' }); }, TypeError, 'Type mismatch setting field shipDays');
         const product = new Product({});
-        assert.throws(() => product.mutate(p => p.name = 6), TypeError, 'Type mismatch setting field name');
-        assert.throws(() => product.mutate(p => p.url = ['url']), TypeError, 'Type mismatch setting field url');
-        assert.throws(() => product.mutate(p => p.shipDays = { two: 2 }), TypeError, 'Type mismatch setting field shipDays');
-        assert.throws(() => product.mutate(p => p.isReal = 1), TypeError, 'Type mismatch setting field isReal');
+        assert.throws(() => Entity.mutate(product, p => p.name = 6), TypeError, 'Type mismatch setting field name');
+        assert.throws(() => Entity.mutate(product, p => p.url = ['url']), TypeError, 'Type mismatch setting field url');
+        assert.throws(() => Entity.mutate(product, p => p.shipDays = { two: 2 }), TypeError, 'Type mismatch setting field shipDays');
+        assert.throws(() => Entity.mutate(product, p => p.isReal = 1), TypeError, 'Type mismatch setting field isReal');
         // Should be able to clear fields.
         assert.doesNotThrow(() => new Product({ name: null, shipDays: undefined }));
-        assert.doesNotThrow(() => product.mutate(p => p.image = null));
-        assert.doesNotThrow(() => product.mutate(p => p.url = undefined));
-        assert.doesNotThrow(() => product.mutate(p => p.isReal = true));
+        assert.doesNotThrow(() => Entity.mutate(product, p => p.image = null));
+        assert.doesNotThrow(() => Entity.mutate(product, p => p.url = undefined));
+        assert.doesNotThrow(() => Entity.mutate(product, p => p.isReal = true));
         assert.deepEqual(product.image, null);
         assert.deepEqual(product.url, undefined);
         assert.deepEqual(product.isReal, true);
@@ -172,9 +163,9 @@ describe('schema', () => {
             description: 'Soup that tastes like tomato',
             image: 'http://www.example.com/soup.jpg',
             category: 'Fluidic Food', shipDays: 4 });
-        const data = product.dataClone();
+        const data = Entity.dataClone(product);
         // Mutate product to ensure data has been copied.
-        product.mutate(p => {
+        Entity.mutate(product, p => {
             p.name = 'Potato Soup';
             p.category = undefined;
         });
@@ -191,17 +182,17 @@ describe('schema', () => {
         const unions = new Unions({ u1: 'foo', u2: true });
         assert.equal(unions.u1, 'foo');
         assert.equal(unions.u2, true);
-        unions.mutate(u => {
+        Entity.mutate(unions, u => {
             u.u1 = 45;
             u.u2 = 'http://bar.org';
         });
         assert.equal(unions.u1, 45);
         assert.equal(unions.u2, 'http://bar.org');
-        unions.mutate(u => {
+        Entity.mutate(unions, u => {
             u.u2 = { a: 12 };
         });
         assert.equal(unions.u2.a, 12);
-        unions.mutate(u => {
+        Entity.mutate(unions, u => {
             u.u1 = null;
             u.u2 = undefined;
         });
@@ -210,8 +201,8 @@ describe('schema', () => {
         assert.doesNotThrow(() => { new Unions({ u1: null, u2: undefined }); });
         assert.throws(() => { new Unions({ u1: false }); }, TypeError, 'Type mismatch setting field u1');
         assert.throws(() => { new Unions({ u2: 25 }); }, TypeError, 'Type mismatch setting field u2');
-        assert.throws(() => unions.mutate(u => u.u1 = { a: 12 }), TypeError, 'Type mismatch setting field u1');
-        assert.throws(() => unions.mutate(u => u.u2 = 25), TypeError, 'Type mismatch setting field u2');
+        assert.throws(() => Entity.mutate(unions, u => u.u1 = { a: 12 }), TypeError, 'Type mismatch setting field u1');
+        assert.throws(() => Entity.mutate(unions, u => u.u2 = 25), TypeError, 'Type mismatch setting field u2');
     });
     it('enforces rules when storing reference types', async () => {
         const manifest = await Manifest.parse(`
@@ -266,13 +257,13 @@ describe('schema', () => {
         const tuples = new Tuples({ t1: ['foo', 55], t2: [null, undefined, true] });
         assert.deepEqual(tuples.t1, ['foo', 55]);
         assert.deepEqual(tuples.t2, [null, undefined, true]);
-        tuples.mutate(t => {
+        Entity.mutate(tuples, t => {
             t.t1 = ['bar', 66];
             t.t2 = ['http://bar.org', { a: 77 }, null];
         });
         assert.deepEqual(tuples.t1, ['bar', 66]);
         assert.deepEqual(tuples.t2, ['http://bar.org', { a: 77 }, null]);
-        tuples.mutate(t => {
+        Entity.mutate(tuples, t => {
             t.t1 = null;
             t.t2 = undefined;
         });
@@ -280,11 +271,11 @@ describe('schema', () => {
         assert.isUndefined(tuples.t2);
         assert.doesNotThrow(() => { new Tuples({ t1: null, t2: undefined }); });
         assert.throws(() => { new Tuples({ t1: 'foo' }); }, TypeError, 'Cannot set tuple t1 with non-array value');
-        assert.throws(() => tuples.mutate(t => t.t2 = { a: 1 }), TypeError, 'Cannot set tuple t2 with non-array value');
+        assert.throws(() => Entity.mutate(tuples, t => t.t2 = { a: 1 }), TypeError, 'Cannot set tuple t2 with non-array value');
         assert.throws(() => { new Tuples({ t1: ['foo'] }); }, TypeError, 'Length mismatch setting tuple t1');
-        assert.throws(() => tuples.mutate(t => t.t2 = ['url', {}, true, 3]), TypeError, 'Length mismatch setting tuple t2');
+        assert.throws(() => Entity.mutate(tuples, t => t.t2 = ['url', {}, true, 3]), TypeError, 'Length mismatch setting tuple t2');
         assert.throws(() => { new Tuples({ t1: ['foo', '55'] }); }, TypeError, /Type mismatch setting field t1 .* at index 1/);
-        assert.throws(() => tuples.mutate(t => t.t2 = [12, {}, false]), TypeError, /Type mismatch setting field t2 .* at index 0/);
+        assert.throws(() => Entity.mutate(tuples, t => t.t2 = [12, {}, false]), TypeError, /Type mismatch setting field t2 .* at index 0/);
         // Tuple fields should not be accessible as standard Arrays.
         assert.throws(() => { tuples.t1.push(5); }, TypeError, 'Cannot read property');
         assert.throws(() => { tuples.t2.shift(); }, TypeError, 'Cannot read property');
@@ -296,10 +287,10 @@ describe('schema', () => {
         const SingleValueTuple = manifest.findSchemaByName('SingleValueTuple').entityClass();
         const svt = new SingleValueTuple({ t: [12] });
         assert.deepEqual(svt.t, [12]);
-        svt.mutate(s => s.t = [34]);
+        Entity.mutate(svt, s => s.t = [34]);
         assert.deepEqual(svt.t, [34]);
         assert.throws(() => { new SingleValueTuple({ t: 56 }); }, TypeError, 'Cannot set tuple t with non-array value');
-        assert.throws(() => { svt.mutate(s => s.t = 78); }, TypeError, 'Cannot set tuple t with non-array value');
+        assert.throws(() => { Entity.mutate(svt, s => s.t = 78); }, TypeError, 'Cannot set tuple t with non-array value');
     });
     it('handles schema unions', async () => {
         const manifest = await Manifest.load('Product.schema', loader);

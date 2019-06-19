@@ -14,9 +14,15 @@ import { SerializedEntity } from './storage-proxy.js';
 import { EntityClass, Entity } from './entity.js';
 import { Store, SingletonStore, CollectionStore, BigCollectionStore } from './store.js';
 import { IdGenerator } from './id.js';
-/** An interface representing anything storable in a Handle. Concretely, this is the {@link Entity} and {@link ClientReference} classes. */
+import { SYMBOL_INTERNALS } from './symbols.js';
+/**
+ * An interface representing anything storable in a Handle. Concretely, this is the {@link Entity}
+ * and {@link ClientReference} classes.
+ */
 export interface Storable {
-    serialize(): SerializedEntity;
+    [SYMBOL_INTERNALS]: {
+        serialize: () => SerializedEntity;
+    };
 }
 export interface HandleOptions {
     keepSynced: boolean;
@@ -103,8 +109,8 @@ export declare class Singleton extends Handle {
      * @throws {Error} if this Singleton is not configured as a readable handle (i.e. 'in' or 'inout')
      * in the particle's manifest.
      */
-    get(): Promise<ParticleSpec | import("./entity.js").EntityInterface | Reference>;
-    _restore(model: any): ParticleSpec | import("./entity.js").EntityInterface | Reference;
+    get(): Promise<ParticleSpec | Entity | Reference>;
+    _restore(model: any): ParticleSpec | Entity | Reference;
     /**
      * Stores a new entity into the Singleton, replacing any existing entity.
      * @throws {Error} if this Singleton is not configured as a writeable handle (i.e. 'out' or 'inout')

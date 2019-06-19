@@ -10,6 +10,8 @@
 import { assert } from '../platform/assert-web.js';
 import { handleFor } from './handle.js';
 import { ReferenceType } from './type.js';
+import { Entity } from './entity.js';
+import { SYMBOL_INTERNALS } from './symbols.js';
 var ReferenceMode;
 (function (ReferenceMode) {
     ReferenceMode[ReferenceMode["Unstored"] = 0] = "Unstored";
@@ -24,6 +26,9 @@ export class Reference {
         this.storageKey = data.storageKey;
         this.context = context;
         this.type = type;
+        this[SYMBOL_INTERNALS] = {
+            serialize: () => ({ id: this.id, rawData: this.dataClone() })
+        };
     }
     async ensureStorageProxy() {
         if (this.storageProxy == null) {
@@ -49,19 +54,13 @@ export class Reference {
     dataClone() {
         return { storageKey: this.storageKey, id: this.id };
     }
-    serialize() {
-        return {
-            id: this.id,
-            rawData: this.dataClone(),
-        };
-    }
 }
 /** A subclass of Reference that clients can create. */
 export class ClientReference extends Reference {
     /** Use the newClientReference factory method instead. */
     constructor(entity, context) {
         // TODO(shans): start carrying storageKey information around on Entity objects
-        super({ id: entity.id, storageKey: null }, new ReferenceType(entity.entityClass.type), context);
+        super({ id: Entity.id(entity), storageKey: null }, new ReferenceType(Entity.entityClass(entity).type), context);
         this.mode = ReferenceMode.Unstored;
         this.entity = entity;
         this.stored = new Promise(async (resolve, reject) => {
@@ -81,7 +80,7 @@ export class ClientReference extends Reference {
         return super.dereference();
     }
     isIdentified() {
-        return this.entity.isIdentified();
+        return Entity.isIdentified(this.entity);
     }
     static newClientReference(context) {
         return class extends ClientReference {

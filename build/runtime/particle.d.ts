@@ -13,6 +13,7 @@ import { InnerArcHandle } from './particle-execution-context.js';
 import { HandleConnectionSpec, ParticleSpec } from './particle-spec.js';
 import { Relevance } from './relevance.js';
 import { SlotProxy } from './slot-proxy.js';
+import { Entity, EntityRawData, MutableEntityData } from './entity.js';
 /**
  * A basic particle. For particles that provide UI, you may like to
  * instead use DOMParticle.
@@ -118,6 +119,9 @@ export declare class Particle {
     static buildManifest(strings: string[], ...bits: any[]): string;
     setParticleDescription(pattern: any): Promise<boolean>;
     setDescriptionPattern(connectionName: string, pattern: any): Promise<boolean>;
+    idFor(entity: Entity): string;
+    dataClone(entity: Entity): EntityRawData;
+    mutate(entity: Entity, mutation: Consumer<MutableEntityData> | {}): void;
     renderSlot(slotName: string, contentTypes: string[]): void;
     renderHostedSlot(slotName: string, hostedSlotId: string, content: string): void;
     fireEvent(slotName: string, event: {}): void;

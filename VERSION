@@ -1,5 +1,21 @@
-commit cca89bf05b1f4f387354b8ca718d21592ba1f730
+commit 75a5f8a8d60ccee49b0223c6ba3a9c76ccb4e45a
 Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
-Date:   Wed Jun 19 02:12:51 2019 +0100
+Date:   Wed Jun 19 02:56:44 2019 +0100
 
-    Wasm updates: better error handling, removed obsolete TODOS, general tidy up (#3191)
+    Rework the Entity interface (#3195)
+    
+    * Rework the Entity interface.
+    
+    Currently any fields or methods defined on Entity (like 'id' or
+    'identify') will clash with fields of the same name in a schema. To fix
+    this, we'll "hide" all such internal fields using a Symbol key, so only
+    schema-based fields are ever directly set on the Entity object itself.
+    
+    This complicates access to the internals. Entity now provides static
+    accessors to them, and Particle has a small number of helpers around
+    those. I've left a few trap getters to try and catch incorrect uses of
+    id, rawData and dataClone - these will be removed fairly soon.
+    
+    * Review comments
+    
+    * Updated comment
