@@ -14,7 +14,7 @@ import { Direction } from '../manifest-ast-nodes.js';
 import { Handle } from './handle';
 import { Particle } from './particle.js';
 import { RecipeWalker } from './recipe-walker.js';
-import { Recipe } from './recipe.js';
+import { Recipe, IsValidOptions } from './recipe.js';
 import { SlotConnection } from './slot-connection.js';
 export declare class ResolveWalker extends RecipeWalker {
     private readonly arc;
@@ -34,5 +34,5 @@ export declare class ResolveRecipeAction extends Action<Recipe> {
 export declare class RecipeResolver {
     private resolver;
     constructor(arc: Arc);
-    resolve(recipe: any): Promise<any>;
+    resolve(recipe: any, options?: IsValidOptions): Promise<any>;
 }

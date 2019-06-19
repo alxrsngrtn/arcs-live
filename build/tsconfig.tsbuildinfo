@@ -290,8 +290,8 @@
         "signature": "8cca63506a5b06bd6685172cfb968abe957345091b809c8ff2fc9a646cba7288"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/recipe-resolver.ts": {
-        "version": "551b565f497baf8fb12ce90ff8f9e0a09fa9dfb49f53e16d4157cf4170787e56",
-        "signature": "70bfc9f58e6537db807bb112738abc1e771d038a54d08600a9b4c25918a30319"
+        "version": "3d7dbe976983ff3b676d5cf194b08c69f83cfb79edd931ad81ca388c7cd35059",
+        "signature": "d556a2a771ba39e919811c3702e107bd51afeb54ea525afe2f74a7b46ffbcfdc"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/description-dom-formatter.ts": {
         "version": "cad6408e653b284476f5f56242493645f7f3f69077d8f9d58fd5bb41158fb265",
@@ -14556,7 +14556,7 @@
         [
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/recipe-resolver.ts",
-            "start": 975,
+            "start": 991,
             "length": 8,
             "code": 2416,
             "category": 1,
@@ -14583,7 +14583,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/recipe-resolver.ts",
-            "start": 2882,
+            "start": 2898,
             "length": 16,
             "code": 2416,
             "category": 1,
@@ -14610,7 +14610,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/recipe-resolver.ts",
-            "start": 3214,
+            "start": 3230,
             "length": 8,
             "code": 2345,
             "category": 1,
@@ -14627,7 +14627,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/recipe-resolver.ts",
-            "start": 3563,
+            "start": 3579,
             "length": 25,
             "code": 2416,
             "category": 1,
@@ -14654,7 +14654,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/recipe-resolver.ts",
-            "start": 4322,
+            "start": 4338,
             "length": 12,
             "code": 2416,
             "category": 1,
@@ -14678,6 +14678,22 @@
                 }
               }
             }
+          },
+          {
+            "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/recipe-resolver.ts",
+            "start": 5812,
+            "length": 7,
+            "messageText": "Object is possibly 'undefined'.",
+            "category": 1,
+            "code": 2532
+          },
+          {
+            "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/recipe-resolver.ts",
+            "start": 5812,
+            "length": 14,
+            "messageText": "Object is possibly 'undefined'.",
+            "category": 1,
+            "code": 2532
           }
         ]
       ],
