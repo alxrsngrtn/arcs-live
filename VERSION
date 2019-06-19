@@ -1,5 +1,9 @@
-commit 3bfd75dfe9cee3d3f4eb6ac3bbd7f0cdf5bd651c
-Author: Joshua Pratt <jp10010101010000@gmail.com>
-Date:   Wed Jun 19 16:28:33 2019 +1000
+commit 661dc9931c5f4d85819793e8770408268e649393
+Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
+Date:   Wed Jun 19 08:13:42 2019 +0100
 
-    Show errors in recipe resolution in the dev-shell (#3200)
+    Add Entity.logForTests for better console logging in Node. (#3201)
+    
+    * Add Entity.logForTests for better console logging in Node.
+    
+    * Keep Entity.toString() since that makes template literals play nice.

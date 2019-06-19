@@ -1253,6 +1253,29 @@ class EntityInternals {
     serialize() {
         return { id: this.id, rawData: this.dataClone() };
     }
+    logForTests() {
+        // Here be dragons! Create a copy of the entity class but with an enumerable version of this
+        // internals object so it will appear in the log output, with a few tweaks for better display.
+        const entity = this.entity;
+        // Strip the noisy-and-not-very-useful 'location' field from the schema.
+        const schema = JSON.parse(JSON.stringify(this.schema, (k, v) => (k !== 'location') ? v : undefined));
+        const copy = new EntityInternals(null, this.entityClass, schema, this.context, this.userIDComponent);
+        copy.id = this.id;
+        // Force 'entity' to show as '[Circular]'. The 'any' is required because 'entity' is readonly.
+        // tslint:disable-next-line: no-any
+        copy.entity = copy;
+        // Set up a class that looks the same as the real entity, copy the schema fields in, add an
+        // enumerable version of the copied internals, and use console.dir to show the full object.
+        const clazz = class extends Entity {
+            constructor() {
+                super();
+                Object.assign(this, entity);
+                this[SYMBOL_INTERNALS] = copy;
+            }
+        };
+        Object.defineProperty(clazz, 'name', { value: entity.constructor.name });
+        console.dir(new clazz(), { depth: null });
+    }
 }
 class Entity {
     toString() {
@@ -1341,6 +1364,12 @@ class Entity {
     }
     static serialize(entity) {
         return getInternals(entity).serialize();
+    }
+    // Because the internals object is non-enumerable, console.log(entity) in Node only shows the
+    // schema-based fields; use this function to log a more complete record of the entity in tests.
+    // Chrome's console.log already shows the internals object, so that can be used directly.
+    static logForTests(entity) {
+        getInternals(entity).logForTests();
     }
 }
 function getInternals(entity) {

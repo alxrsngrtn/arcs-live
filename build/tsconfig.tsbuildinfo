@@ -410,8 +410,8 @@
         "signature": "997bdb12bfc315934ef66f81c87f8a6390011853b6c5c8d56866786875973a5b"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/entity.ts": {
-        "version": "fad802fdba15d4d4d32ab478041d0e53988441fcf40870fe82260a86ab9d8e6f",
-        "signature": "f2a0daec2c782f8344b3971633f7b43942f5449e38982f4c956ff9e286734bbd"
+        "version": "c8f4e73525aff317702f828968d97a9be970ea23c57001e5aced75318258f142",
+        "signature": "e4aebab2807edb11a18333bcd4779c9470cee668f40503a871e8a580330060d2"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/schema.ts": {
         "version": "22fc7836729adba13cf4afad5171e374734db47898424ce0fa6f824a29f3fece",
@@ -2066,11 +2066,11 @@
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/test/entity-test.ts": {
-        "version": "84fc2e5e925b072c092a9e9eccf197aa35cc592f4367be591c0243c02381ed5a",
+        "version": "407e33d7400feee73ddb7bb8b79f4ad15efc69bcdd845696bacc06aaf7c27bb3",
         "signature": "8e609bb71c20b858c77f0e9f90bb1319db8477b13f9f965f1a1e18524bf50881"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/test/handle-test.ts": {
-        "version": "7d157b7b1751ff7650de5403fee1a09b5c7f1c9b7db275d95454c95e1e4d374d",
+        "version": "12e7530c7e9d5fcf0a5d2397f70bd5b91b0a523321dd4f1d72aee70f7628cd97",
         "signature": "8e609bb71c20b858c77f0e9f90bb1319db8477b13f9f965f1a1e18524bf50881"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/test/id-test.ts": {
@@ -6634,7 +6634,6 @@
         "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/storage-provider-base.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/type.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/id.ts",
-        "/home/travis/build/PolymerLabs/arcs/src/runtime/util.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
       ],
@@ -17620,6 +17619,14 @@
                 "code": 6500
               }
             ]
+          },
+          {
+            "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/entity.ts",
+            "start": 6931,
+            "length": 4,
+            "code": 2345,
+            "category": 1,
+            "messageText": "Argument of type 'null' is not assignable to parameter of type 'Entity'."
           }
         ]
       ],
