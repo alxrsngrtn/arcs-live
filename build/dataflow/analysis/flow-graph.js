@@ -1,5 +1,6 @@
 import { assert } from '../../platform/assert-web';
 import { ClaimType } from '../../runtime/particle-claim';
+import { CheckType } from '../../runtime/particle-check';
 /**
  * Data structure for representing the connectivity graph of a recipe. Used to perform static analysis on a resolved recipe.
  */
@@ -168,9 +169,18 @@ function addHandleConnection(particleNode, handleNode, connection) {
 }
 /** Returns true if the given claim satisfies the check condition. */
 function checkAgainstClaim(check, claim) {
-    for (const tag of check.acceptedTags) {
-        if (tag === claim.tag) {
-            return true;
+    for (const condition of check.conditions) {
+        switch (condition.type) {
+            case CheckType.HasTag:
+                if (condition.tag === claim.tag) {
+                    return true;
+                }
+                break;
+            case CheckType.IsFromHandle:
+            // TODO: Add support for checking IsFromHandle.
+            // Fallthrough.
+            default:
+                assert(false, 'Only HasTag checks are supported (for now...)');
         }
     }
     return false;
@@ -218,7 +228,7 @@ class ParticleNode extends Node {
                     else {
                         return {
                             type: CheckResultType.Failure,
-                            reason: `Check '${check.toShortString()}' failed: found claim '${claim.tag}' on '${edgeToCheck.label}' instead.`,
+                            reason: `'${check.toManifestString()}' failed: found claim '${claim.tag}' on '${edgeToCheck.label}' instead.`,
                         };
                     }
                 }
@@ -243,7 +253,7 @@ class ParticleNode extends Node {
             return { type: CheckResultType.KeepGoing, checkNext };
         }
         else {
-            return { type: CheckResultType.Failure, reason: `Check '${check.toShortString()}' failed: found untagged node.` };
+            return { type: CheckResultType.Failure, reason: `'${check.toManifestString()}' failed: found untagged node.` };
         }
     }
 }
@@ -295,7 +305,7 @@ class HandleNode extends Node {
             return { type: CheckResultType.KeepGoing, checkNext };
         }
         else {
-            return { type: CheckResultType.Failure, reason: `Check '${check.toShortString()}' failed: found untagged node.` };
+            return { type: CheckResultType.Failure, reason: `'${check.toManifestString()}' failed: found untagged node.` };
         }
     }
 }

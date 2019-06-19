@@ -8,6 +8,7 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { ClaimType } from './particle-claim';
+import { CheckType } from './particle-check';
 /**
  * Complete set of tokens used by `manifest-parser.peg`. To use this you
  * need to follow some simple guidelines:
@@ -157,7 +158,20 @@ export declare type ParticleClaimStatement = ParticleClaimIsTag | ParticleClaimD
 export interface ParticleCheckStatement extends BaseNode {
     kind: 'particle-trust-check';
     handle: string;
-    trustTags: string[];
+    conditions: ParticleCheckCondition[];
+}
+export declare type ParticleCheckCondition = ParticleCheckHasTag | ParticleCheckIsFromHandle;
+export interface ParticleCheckHasTag extends BaseNode {
+    kind: 'particle-trust-check-has-tag';
+    checkType: CheckType.HasTag;
+    handle: string;
+    tag: string;
+}
+export interface ParticleCheckIsFromHandle extends BaseNode {
+    kind: 'particle-trust-check-is-from-handle';
+    checkType: CheckType.IsFromHandle;
+    handle: string;
+    parentHandle: string;
 }
 export interface ParticleModality extends BaseNode {
     kind: 'particle-modality';

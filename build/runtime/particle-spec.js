@@ -11,7 +11,7 @@ import { assert } from '../platform/assert-web.js';
 import { Modality } from './modality.js';
 import { TypeChecker } from './recipe/type-checker.js';
 import { InterfaceType, SlotType, Type } from './type.js';
-import { Check } from './particle-check.js';
+import { createCheck } from './particle-check.js';
 import { createClaim } from './particle-claim.js';
 function asType(t) {
     return (t instanceof Type) ? t : Type.fromLiteral(t);
@@ -282,7 +282,7 @@ export class ParticleSpec {
                 if (handle.check) {
                     throw new Error(`Can't make multiple checks on the same input (${check.handle}).`);
                 }
-                handle.check = Check.fromASTNode(handle, check);
+                handle.check = createCheck(handle, check, this.handleConnectionMap);
                 results.set(check.handle, handle.check);
             });
         }

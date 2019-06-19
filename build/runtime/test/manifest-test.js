@@ -1917,10 +1917,18 @@ resource SomeName
       `);
             assert.lengthOf(manifest.particles, 1);
             const particle = manifest.particles[0];
-            assert.equal(particle.trustChecks.size, 2);
-            assert.sameMembers(particle.trustChecks.get('input1').acceptedTags, ['property1']);
-            assert.sameMembers(particle.trustChecks.get('input2').acceptedTags, ['property2']);
             assert.isEmpty(particle.trustClaims);
+            assert.equal(particle.trustChecks.size, 2);
+            const check1 = particle.trustChecks.get('input1');
+            assert.equal(check1.toManifestString(), 'check input1 is property1');
+            assert.equal(check1.handle.name, 'input1');
+            assert.lengthOf(check1.conditions, 1);
+            assert.equal(check1.conditions[0].tag, 'property1');
+            const check2 = particle.trustChecks.get('input2');
+            assert.equal(check2.toManifestString(), 'check input2 is property2');
+            assert.equal(check2.handle.name, 'input2');
+            assert.lengthOf(check2.conditions, 1);
+            assert.equal(check2.conditions[0].tag, 'property2');
         });
         it('supports checks with multiple tags', async () => {
             const manifest = await Manifest.parse(`
@@ -1930,9 +1938,14 @@ resource SomeName
       `);
             assert.lengthOf(manifest.particles, 1);
             const particle = manifest.particles[0];
-            assert.equal(particle.trustChecks.size, 1);
-            assert.sameMembers(particle.trustChecks.get('input').acceptedTags, ['property1', 'property2']);
             assert.isEmpty(particle.trustClaims);
+            assert.equal(particle.trustChecks.size, 1);
+            const check = particle.trustChecks.get('input');
+            assert.equal(check.toManifestString(), 'check input is property1 or is property2');
+            assert.equal(check.handle.name, 'input');
+            assert.lengthOf(check.conditions, 2);
+            assert.equal(check.conditions[0].tag, 'property1');
+            assert.equal(check.conditions[1].tag, 'property2');
         });
         it('fails for unknown handle names', async () => {
             assertThrowsAsync(async () => await Manifest.parse(`
