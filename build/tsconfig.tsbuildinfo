@@ -426,11 +426,11 @@
         "signature": "e36e04e3fb3fb6b5da73834fb22379ef2fc287e709ae3b340a900010c9b1ab3a"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/particle-check.ts": {
-        "version": "57972181a67b4c0ec46e846f0ed70acfa83b7103be1602ca9273b1229d0e8bf5",
+        "version": "249233ca90e604d185c7e071ce180e30050b0dad756ac14e898f218f33642eba",
         "signature": "2f2d0098e4a10383e56f66a216400730e4df37f51f74f8727fb9167a10e6835a"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/particle-spec.ts": {
-        "version": "6b3b9a3b87a82314fec091acd311587879d1a828cf9d3dfde75a826c84e9cf2e",
+        "version": "c584c96614ff4db44798c412aca2f364465807d5325a8efcfaeba34cb5e203ab",
         "signature": "95c73cfa9ba0234c0553c68c213fc9bd78362fbcb5b65ac003f3e17554622d75"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/particle-claim.ts": {
@@ -2094,7 +2094,7 @@
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/test/manifest-test.ts": {
-        "version": "dfdd72295368260731cb7af0533c86d58a9f6e2e91eb8035923d9f1ef8b1bab5",
+        "version": "723f6d15c4d364c43758e0ec09fe8142e154264b90319f9dcec4732b4da1e670",
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/test/multiplexer-test.ts": {
@@ -18062,7 +18062,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/particle-spec.ts",
-            "start": 11978,
+            "start": 12151,
             "length": 6,
             "messageText": "Object is possibly 'undefined'.",
             "category": 1,
@@ -18070,7 +18070,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/particle-spec.ts",
-            "start": 12019,
+            "start": 12192,
             "length": 6,
             "messageText": "Object is possibly 'undefined'.",
             "category": 1,
@@ -18078,7 +18078,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/particle-spec.ts",
-            "start": 12240,
+            "start": 12413,
             "length": 9,
             "messageText": "Object is possibly 'undefined'.",
             "category": 1,

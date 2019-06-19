@@ -47,7 +47,7 @@ export class CheckIsFromHandle {
         return new CheckIsFromHandle(parentHandle);
     }
     toManifestString() {
-        return `is from handle ${this.parentHandle}`;
+        return `is from handle ${this.parentHandle.name}`;
     }
 }
 export function createCheck(handle, astNode, handleConnectionMap) {

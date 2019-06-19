@@ -1198,6 +1198,8 @@ class ParticleSpec {
             }
             writeConnection(connection, indent);
         }
+        this.trustClaims.forEach(claim => results.push(`  ${claim.toManifestString()}`));
+        this.trustChecks.forEach(check => results.push(`  ${check.toManifestString()}`));
         this.modality.names.forEach(a => results.push(`  modality ${a}`));
         const slotToString = (s, direction, indent) => {
             const tokens = [];
@@ -4361,7 +4363,7 @@ class CheckIsFromHandle {
         return new CheckIsFromHandle(parentHandle);
     }
     toManifestString() {
-        return `is from handle ${this.parentHandle}`;
+        return `is from handle ${this.parentHandle.name}`;
     }
 }
 function createCheck(handle, astNode, handleConnectionMap) {
