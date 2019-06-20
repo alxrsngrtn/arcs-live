@@ -1,5 +1,5 @@
-commit b1aeebfa5f44a347d149323608d6ce922ddef6d0
+commit c5923e3f49306427890fa1cbea814ab05c09f123
 Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Thu Jun 20 13:06:02 2019 +1000
+Date:   Thu Jun 20 13:20:47 2019 +1000
 
-    Full Screen Arc view in Dev-Shell (#3207)
+    Allows fully resolved recipes in the Dev Shell (#3208)
