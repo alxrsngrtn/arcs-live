@@ -1,9 +1,5 @@
-commit 661dc9931c5f4d85819793e8770408268e649393
-Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
-Date:   Wed Jun 19 08:13:42 2019 +0100
+commit 5ff62468e2abe2f22d85982badfdd2fcf0b8b74d
+Author: Piotr Swigon <piotr.swigon@gmail.com>
+Date:   Thu Jun 20 11:44:46 2019 +1000
 
-    Add Entity.logForTests for better console logging in Node. (#3201)
-    
-    * Add Entity.logForTests for better console logging in Node.
-    
-    * Keep Entity.toString() since that makes template literals play nice.
+    Support for #toproot and #modal slots in dev-shell (#3206)
