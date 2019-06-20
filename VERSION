@@ -1,5 +1,13 @@
-commit 5ff62468e2abe2f22d85982badfdd2fcf0b8b74d
-Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Thu Jun 20 11:44:46 2019 +1000
+commit 047b7670fb789da0398c22d0ddffb53783e7d3d8
+Author: Joshua Pratt <jp10010101010000@gmail.com>
+Date:   Thu Jun 20 13:04:35 2019 +1000
 
-    Support for #toproot and #modal slots in dev-shell (#3206)
+    Make language server dependencies optional via parameter builds (#3137)
+    
+    * Move vscode libs to optional
+    * Exclude aml-language-server from core configs
+    * Split aml-language-server tsconfig and webpack config from tools
+    * Fixes for types in server
+    * Update config
+    * Fix paths
+    * Make build and webpack commands more reusable

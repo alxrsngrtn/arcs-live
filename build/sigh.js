@@ -45,8 +45,11 @@ import * as AstNode from '../../runtime/manifest-ast-nodes.js';
             }
         }]
 };
+const build = buildPath('.');
+const webpack = webpackPkg('webpack');
+const webpackTools = webpackPkg('webpack-tools');
 const steps = {
-    languageServer: [peg, build, webpackTools, languageServer],
+    languageServer: [peg, build, buildPath('./src/tools/aml-language-server', ['vscode-jsonrpc', 'vscode-languageserver']), webpackPkg('webpack-languageserver'), languageServer],
     peg: [peg, railroad],
     railroad: [railroad],
     test: [peg, railroad, build, runTests],
@@ -274,19 +277,24 @@ function railroad() {
     }
     return true;
 }
-function build() {
-    if (!tsc()) {
-        console.log('build::tsc failed');
-        return false;
-    }
-    if (!link(findProjectFiles('src', null, fullPath => /\.js$/.test(fullPath)))) {
-        console.log('build::link failed');
-        return false;
-    }
-    return true;
+function buildPath(path, deps) {
+    return () => {
+        if (!tsc(path)) {
+            console.log('build::tsc failed');
+            if (deps && deps.length > 0) {
+                console.log(`The following dependencies may be required${deps.map(s => ` ${s}`)}`);
+            }
+            return false;
+        }
+        if (!link(findProjectFiles('src', null, fullPath => /\.js$/.test(fullPath)))) {
+            console.log('build::link failed');
+            return false;
+        }
+        return true;
+    };
 }
-function tsc() {
-    const result = saneSpawnWithOutput('node_modules/.bin/tsc', ['--diagnostics']);
+function tsc(path) {
+    const result = saneSpawnWithOutput('node_modules/.bin/tsc', ['--diagnostics', '-p', path]);
     if (result.success) {
         console.log(result.stdout);
     }
@@ -388,15 +396,14 @@ function licenses() {
     }
     return result.success;
 }
-function webpack() {
-    const result = saneSpawnWithOutput('npm', ['run', 'build:webpack']);
-    if (result.stdout) {
-        console.log(result.stdout);
-    }
-    return result.success;
-}
-function webpackTools() {
-    return saneSpawn('npm', ['run', 'build:webpack-tools'], { stdio: 'inherit' });
+function webpackPkg(pkg) {
+    return () => {
+        const result = saneSpawnWithOutput('npm', ['run', `build:${pkg}`]);
+        if (result.stdout) {
+            console.log(result.stdout);
+        }
+        return result.success;
+    };
 }
 function spawnWasSuccessful(result, opts = {}) {
     if (result.status === 0 && !result.error) {
