@@ -1,7 +1,5 @@
-commit e39f10366937092a86777a60d93e62218816ef0e
-Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
-Date:   Fri Jun 21 01:40:20 2019 +0100
+commit 3a1f7982f1e2024ed758e640cc58505527f17eca
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Fri Jun 21 13:05:52 2019 -0700
 
-    s/Entity.logForTests/Entity.debugLog/ (#3212)
-    
-    Turns out this is useful for snapshotting an entity in Chrome's console as well. Tweaked the output a bit for this, and made Entity.toString() a bit prettier too.
+    fix stringification of PortableJsonJsImpl (#3215)
