@@ -19675,17 +19675,17 @@ class Loader {
         if (/^https?:\/\//.test(file)) {
             return this._loadURL(file);
         }
-        return this._loadFile(file, 'utf-8');
+        return this.loadFile(file, 'utf-8');
     }
     async loadBinary(file) {
         if (/^https?:\/\//.test(file)) {
             return fetch(file).then(res => res.arrayBuffer());
         }
         else {
-            return this._loadFile(file, null);
+            return this.loadFile(file, null);
         }
     }
-    async _loadFile(file, encoding) {
+    async loadFile(file, encoding) {
         return new Promise((resolve, reject) => {
             fs.readFile(file, { encoding }, (err, data) => {
                 if (err) {
@@ -19733,6 +19733,7 @@ class Loader {
         // Note. This is not real isolation.
         const script = new vm.Script(src, { filename: fileName, displayErrors: true });
         const result = [];
+        // TODO(lindner): restrict Math.random here.
         const self = {
             defineParticle(particleWrapper) {
                 result.push(particleWrapper);

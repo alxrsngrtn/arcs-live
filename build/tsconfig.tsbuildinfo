@@ -374,8 +374,8 @@
         "signature": "91eb49952d74ed32935a8e7cadd8aa7c610bdfa9bbf7f41aab4fca638a6f5e5d"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/loader.ts": {
-        "version": "f4dfa373617f57771a27b1a69eaf3326581404226dc12630c9a25615d5c6c898",
-        "signature": "425e13836f06146213f49774699d66cfa73a520f47b6375a0d64741cfc09f0ff"
+        "version": "4924a912da16fe98a41337523272c88a0779aa6ae2985017cd4447318ba4538d",
+        "signature": "5b5906b026c13efc2add5a8ce9fb576d0352a185f6a9fb9fc9f77597ac36c084"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/message-channel.ts": {
         "version": "96ccc99f9cbf555589e1c452c0ed9ded7111ebad03d941f2396de18475e46bc3",
@@ -2074,7 +2074,7 @@
         "signature": "8e609bb71c20b858c77f0e9f90bb1319db8477b13f9f965f1a1e18524bf50881"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/test/id-test.ts": {
-        "version": "51ae7f911313e347f6826495d6e5c7e67529e7913c2de852e0473eec53c0c125",
+        "version": "c7ccd67f1ecbd7eae7dfa9393aed1d13e211fb8069a60bb9ce2255ffb4d57eb0",
         "signature": "8bc1d39a3b8ec61064f9969316a088e314895e7ffd094468dcc0b238f33cb4a6"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/test/interface-info-test.ts": {
@@ -2213,6 +2213,10 @@
         "version": "2c6477b48baba420b54b1c01d542a2ccd687015c009cf7835e1aa0f6185de403",
         "signature": "89d41390d41a798de8a3f8ef3f5f34671c38662349042c6683e9048bba535de8"
       },
+      "/home/travis/build/PolymerLabs/arcs/src/services/random.ts": {
+        "version": "86a86ae3879ba750b1937c45cf7b33470ca5ac541ab026fee3b32b0e508b4503",
+        "signature": "43a5176681925d9f51b139647154e4a52c2eb1b1a64bb428595000952bcbc7f1"
+      },
       "/home/travis/build/PolymerLabs/arcs/src/services/resource-manager.ts": {
         "version": "58b9dbd7e9be29f3a61079206261c785401d50bcb8afecbdd1703fe6975600cf",
         "signature": "a4a4a0454c3d888e948591d814c2fd98da27353975afcc334d6eb694f790f0f9"
@@ -2224,6 +2228,10 @@
       "/home/travis/build/PolymerLabs/arcs/src/services/tfjs-mobilenet-service.ts": {
         "version": "c86aa3178ee473ae91a06e69d78ca5e71f19b47066f995413401d217dcae132b",
         "signature": "43a5176681925d9f51b139647154e4a52c2eb1b1a64bb428595000952bcbc7f1"
+      },
+      "/home/travis/build/PolymerLabs/arcs/src/services/test/random-test.ts": {
+        "version": "2c9f8f87235b5d218bb6325c20908d0894fefce25a410ca540290fd10a2a37e3",
+        "signature": "687ae77a55f4338bdbc2a6883232da8021d458e1756db7f367c53d292f9e69b7"
       },
       "/home/travis/build/PolymerLabs/arcs/src/tests/arc-integration-tests.ts": {
         "version": "95a6b868ee81186aca8a38ef2d42cfea35c0793c46c19078b4c8557441be5bdd",
@@ -6810,6 +6818,12 @@
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
       ],
+      "/home/travis/build/PolymerLabs/arcs/src/services/random.ts": [
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/services.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/random.ts",
+        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
+        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
+      ],
       "/home/travis/build/PolymerLabs/arcs/src/services/resource-manager.ts": [
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
@@ -6831,6 +6845,13 @@
         "/home/travis/build/PolymerLabs/arcs/src/services/mobilenet.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs/dist/index.d.ts",
         "/home/travis/build/PolymerLabs/arcs/src/platform/tf-web.ts",
+        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
+        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
+      ],
+      "/home/travis/build/PolymerLabs/arcs/src/services/test/random-test.ts": [
+        "/home/travis/build/PolymerLabs/arcs/src/platform/chai-web.d.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/services.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/services/random.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
       ],
@@ -9912,6 +9933,9 @@
       ],
       "/home/travis/build/PolymerLabs/arcs/src/tools/wasm-tools.ts": [
         "/home/travis/build/PolymerLabs/arcs/src/runtime/schema.ts"
+      ],
+      "/home/travis/build/PolymerLabs/arcs/src/services/test/random-test.ts": [
+        "/home/travis/build/PolymerLabs/arcs/src/services/random.ts"
       ],
       "/home/travis/build/PolymerLabs/arcs/node_modules/@types/minimatch/index.d.ts": [
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
@@ -16220,7 +16244,7 @@
         [
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/loader.ts",
-            "start": 2548,
+            "start": 2546,
             "length": 4,
             "code": 2345,
             "category": 1,
@@ -16228,7 +16252,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/loader.ts",
-            "start": 4405,
+            "start": 4460,
             "length": 15,
             "code": 2345,
             "category": 1,
@@ -16236,7 +16260,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/loader.ts",
-            "start": 5266,
+            "start": 5321,
             "length": 8,
             "code": 2345,
             "category": 1,
@@ -29389,6 +29413,7 @@
       "/home/travis/build/PolymerLabs/arcs/src/runtime/testing/test/sequence-test.ts",
       "/home/travis/build/PolymerLabs/arcs/src/services/ml5-service.ts",
       "/home/travis/build/PolymerLabs/arcs/src/services/mobilenet.ts",
+      "/home/travis/build/PolymerLabs/arcs/src/services/random.ts",
       "/home/travis/build/PolymerLabs/arcs/src/services/resource-manager.ts",
       [
         "/home/travis/build/PolymerLabs/arcs/src/services/tfjs-service.ts",
@@ -29481,6 +29506,7 @@
           }
         ]
       ],
+      "/home/travis/build/PolymerLabs/arcs/src/services/test/random-test.ts",
       "/home/travis/build/PolymerLabs/arcs/src/tests/arc-integration-tests.ts",
       "/home/travis/build/PolymerLabs/arcs/src/tests/demo-flow-test.ts",
       [

@@ -8,7 +8,7 @@ export declare class Loader {
     normalizeDots(path: string): string;
     loadResource(file: string): Promise<string>;
     loadBinary(file: string): Promise<ArrayBuffer>;
-    _loadFile(file: string, encoding?: string): Promise<string | ArrayBuffer>;
+    private loadFile;
     _loadURL(url: string): Promise<string>;
     /**
      * Returns a particle class implementation by loading and executing

@@ -6334,17 +6334,17 @@ class Loader {
         if (/^https?:\/\//.test(file)) {
             return this._loadURL(file);
         }
-        return this._loadFile(file, 'utf-8');
+        return this.loadFile(file, 'utf-8');
     }
     async loadBinary(file) {
         if (/^https?:\/\//.test(file)) {
             return Object(_platform_fetch_web_js__WEBPACK_IMPORTED_MODULE_1__["fetch"])(file).then(res => res.arrayBuffer());
         }
         else {
-            return this._loadFile(file, null);
+            return this.loadFile(file, null);
         }
     }
-    async _loadFile(file, encoding) {
+    async loadFile(file, encoding) {
         return new Promise((resolve, reject) => {
             _platform_fs_web_js__WEBPACK_IMPORTED_MODULE_2__["fs"].readFile(file, { encoding }, (err, data) => {
                 if (err) {
@@ -6392,6 +6392,7 @@ class Loader {
         // Note. This is not real isolation.
         const script = new _platform_vm_web_js__WEBPACK_IMPORTED_MODULE_3__["vm"].Script(src, { filename: fileName, displayErrors: true });
         const result = [];
+        // TODO(lindner): restrict Math.random here.
         const self = {
             defineParticle(particleWrapper) {
                 result.push(particleWrapper);
