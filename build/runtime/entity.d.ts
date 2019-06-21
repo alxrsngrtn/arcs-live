@@ -70,7 +70,7 @@ declare class EntityInternals {
     toLiteral(): EntityRawData;
     dataClone(): EntityRawData;
     serialize(): SerializedEntity;
-    logForTests(): void;
+    debugLog(): void;
 }
 export declare abstract class Entity implements Storable {
     [index: string]: any;
@@ -91,6 +91,6 @@ export declare abstract class Entity implements Storable {
     static toLiteral(entity: Entity): EntityRawData;
     static dataClone(entity: Entity): EntityRawData;
     static serialize(entity: Entity): SerializedEntity;
-    static logForTests(entity: Entity): void;
+    static debugLog(entity: Entity | Storable): void;
 }
 export {};

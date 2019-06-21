@@ -1,5 +1,7 @@
-commit 4b89c9eaa9041cac1ee9fb4bcaa64103fa2b1dba
+commit e39f10366937092a86777a60d93e62218816ef0e
 Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
-Date:   Thu Jun 20 19:06:15 2019 +0100
+Date:   Fri Jun 21 01:40:20 2019 +0100
 
-    Missing dash in 'no-switch-case-fall-through' rule name (#3210)
+    s/Entity.logForTests/Entity.debugLog/ (#3212)
+    
+    Turns out this is useful for snapshotting an entity in Chrome's console as well. Tweaked the output a bit for this, and made Entity.toString() a bit prettier too.
