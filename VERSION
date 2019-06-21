@@ -1,11 +1,8 @@
-commit 5a75a8651b8603b7f544cf9b5eaf224694dadc25
+commit 6a1b6eb754bca720cf848e33353ba26bdb0c77c1
 Author: Paul Lindner <plindner@google.com>
-Date:   Fri Jun 21 13:35:47 2019 -0700
+Date:   Fri Jun 21 15:44:32 2019 -0700
 
-    Add a Random service and Random Particle(#3176)
+    Upgrade PouchDB and update whitelisted licenses (#3214)
     
-    * Add a 'Random' service with a 'next' api
-    * Add a RandomParticle, convert Stardate to use it.  Add docs.
-    * Restore correct random value (and use correct range of random number) in id-test.ts
-    * make _loadFile private, rename, add TODO
-    * Update many particles to use Random Service, add TODOs elsewhere
+    - Updates PouchDB to 7.1.1 - [Release Notes](https://github.com/pouchdb/pouchdb/releases)
+    - Update green licenses whitelist based on packaage cleanups

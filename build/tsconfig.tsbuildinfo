@@ -742,8 +742,8 @@
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "/home/travis/build/PolymerLabs/arcs/node_modules/@types/debug/index.d.ts": {
-        "version": "f2c203110123df8de93f9405ffa9c235626294d6a24a03cfe0d3afb98e77d458",
-        "signature": "f2c203110123df8de93f9405ffa9c235626294d6a24a03cfe0d3afb98e77d458"
+        "version": "5e36986c4fc3c242013026c0cffdf95f138c25edfd05e80c23d634e5dca4cfef",
+        "signature": "5e36986c4fc3c242013026c0cffdf95f138c25edfd05e80c23d634e5dca4cfef"
       },
       "/home/travis/build/PolymerLabs/arcs/node_modules/@types/pouchdb-find/index.d.ts": {
         "version": "ecadf365dd1cb17c8a62eafcb73d9e28ca6492597284b05b08e767a8bcf3f369",
@@ -930,8 +930,8 @@
         "signature": "769d344b1ed1905797ca4a294e6b1dfaf3205ee95c42e16562037a6d4ae065d0"
       },
       "/home/travis/build/PolymerLabs/arcs/node_modules/@types/pouchdb-core/index.d.ts": {
-        "version": "86a3d45e1c0ddfd5c7f59838547f80166455d353cb5f9c8d797ea50d81947c8e",
-        "signature": "86a3d45e1c0ddfd5c7f59838547f80166455d353cb5f9c8d797ea50d81947c8e"
+        "version": "8340ab153b820a3410aa80beb76d0ac3d8cfde5ff0e677944a9c6b0fb7ba606f",
+        "signature": "8340ab153b820a3410aa80beb76d0ac3d8cfde5ff0e677944a9c6b0fb7ba606f"
       },
       "/home/travis/build/PolymerLabs/arcs/node_modules/@types/pouchdb-adapter-fruitdown/index.d.ts": {
         "version": "eaa52db1743cc9bbaf4132bcec47862c20f0d1a90c697928538717db348d04f2",
