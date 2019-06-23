@@ -1,5 +1,5 @@
-commit 55dbba485d9ac8dea5455acaaa5f6354a487649a
+commit 6a280ceb42eb1cf0864a6fc2fcbe280f4ccd616d
 Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
-Date:   Mon Jun 24 00:05:58 2019 +0100
+Date:   Mon Jun 24 00:07:08 2019 +0100
 
-    Wasm/kotlin: update all references to the memory buffer on grow notification (#3217)
+    Wasm: handle entity ids correctly. (#3216)

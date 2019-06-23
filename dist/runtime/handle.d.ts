@@ -48,6 +48,7 @@ export declare abstract class Handle {
     protected reportSystemExceptionInHost(exception: Error, method: string): void;
     configure(options: any): void;
     _serialize(entity: Storable): SerializedEntity;
+    createIdentityFor(entity: Entity): void;
     readonly type: import("./type.js").Type;
     readonly _id: string;
     toManifestString(): string;
