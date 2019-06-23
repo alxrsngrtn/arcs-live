@@ -1,9 +1,5 @@
-commit 98425ac873f8198b9998a7fe25cafd5118ed28ed
-Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
-Date:   Mon Jun 24 00:09:16 2019 +0100
+commit 3c33d3018f8514e299cdc53f6a24e6c7502aa0f6
+Author: Scott J. Miles <sjmiles@google.com>
+Date:   Sun Jun 23 16:30:32 2019 -0700
 
-    Move wasm build script a bit closer to production usage (#3213)
-    
-    * Move wasm build script a bit closer to production usage
-    
-    * Typo
+    fix path to random service (#3219)
