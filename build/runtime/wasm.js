@@ -240,7 +240,7 @@ class KotlinWasmDriver {
             write: (ptr) => console.log(particle.read(ptr)),
             flush: () => { },
             // Apparently used by Kotlin Memory management
-            Konan_notify_memory_grow: () => particle.heapU8 = new Uint8Array(particle.exports.memory.buffer),
+            Konan_notify_memory_grow: () => this.updateMemoryViews(particle),
             // Kotlin's own glue for abort and exit
             Konan_abort: (pointer) => { throw new Error('Konan_abort(' + particle.read(pointer) + ')'); },
             Konan_exit: (status) => { },
@@ -256,11 +256,14 @@ class KotlinWasmDriver {
     }
     // Kotlin manages its own heap construction, as well as tables.
     initializeInstance(particle, instance) {
+        this.updateMemoryViews(particle);
+        // Kotlin main() must be invoked before everything else.
+        instance.exports.Konan_js_main(1, 0);
+    }
+    updateMemoryViews(particle) {
         particle.memory = particle.exports.memory;
         particle.heapU8 = new Uint8Array(particle.memory.buffer);
         particle.heap32 = new Int32Array(particle.memory.buffer);
-        // Kotlin main() must be invoked before everything else.
-        instance.exports.Konan_js_main(1, 0);
     }
 }
 export class WasmParticle extends Particle {

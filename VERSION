@@ -1,8 +1,5 @@
-commit 6a1b6eb754bca720cf848e33353ba26bdb0c77c1
-Author: Paul Lindner <plindner@google.com>
-Date:   Fri Jun 21 15:44:32 2019 -0700
+commit 55dbba485d9ac8dea5455acaaa5f6354a487649a
+Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
+Date:   Mon Jun 24 00:05:58 2019 +0100
 
-    Upgrade PouchDB and update whitelisted licenses (#3214)
-    
-    - Updates PouchDB to 7.1.1 - [Release Notes](https://github.com/pouchdb/pouchdb/releases)
-    - Update green licenses whitelist based on packaage cleanups
+    Wasm/kotlin: update all references to the memory buffer on grow notification (#3217)
