@@ -1,11 +1,13 @@
-commit c2ca83b9e7e4e8be401c8b4332a9e1009e955c16
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Mon Jun 24 14:26:25 2019 -0700
+commit 65b41361b9de4631e096e38c0ae7746a8ed675c4
+Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
+Date:   Mon Jun 24 23:53:50 2019 +0100
 
-    preliminary and incomplete implementation of java pec methods: InstantiateParticle and DefineHandle (#3205)
+    DevShell: collapse all button for stores. (#3222)
     
-    * preliminary and incomplete implementation of java pec methods: InstantiateParticle and DefineHandle
+    * DevShell: collapse all button for stores.
     
-    * address comments
+    This also makes store panels persistent, so their layout is stable when hidden.
     
-    * address remaining comment
+    * Missing space
+    
+    * Rename ArcPanel.display to improve clarity
