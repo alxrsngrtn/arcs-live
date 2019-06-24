@@ -1,5 +1,11 @@
-commit 3c33d3018f8514e299cdc53f6a24e6c7502aa0f6
-Author: Scott J. Miles <sjmiles@google.com>
-Date:   Sun Jun 23 16:30:32 2019 -0700
+commit c2ca83b9e7e4e8be401c8b4332a9e1009e955c16
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Mon Jun 24 14:26:25 2019 -0700
 
-    fix path to random service (#3219)
+    preliminary and incomplete implementation of java pec methods: InstantiateParticle and DefineHandle (#3205)
+    
+    * preliminary and incomplete implementation of java pec methods: InstantiateParticle and DefineHandle
+    
+    * address comments
+    
+    * address remaining comment
