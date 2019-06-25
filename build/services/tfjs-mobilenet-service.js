@@ -7,7 +7,7 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-import { ResourceManager } from './resource-manager.js';
+import { ReferenceManager } from './reference-manager.js';
 import { logFactory } from '../platform/log-web.js';
 import { Services } from '../runtime/services.js';
 import { loadImage } from '../platform/image-web.js';
@@ -22,7 +22,7 @@ const log = logFactory('tfjs-mobilenet-service');
  *
  * @param version Model version. Choose between 1 or 2. Default: 2
  * @param alpha Model fidelity ratio. Choose between performant (~0) or highly accurate (~1). Default: 1
- * @return a reference number to the model, maintained by the `ResourceManager`.
+ * @return a reference number to the model, maintained by the `ReferenceManager`.
  */
 const load = async ({ version = 1, alpha = 1.0 }) => {
     log('Loading tfjs...');
@@ -34,7 +34,7 @@ const load = async ({ version = 1, alpha = 1.0 }) => {
     log('Model loaded.');
     model.version = version;
     model.alpha = alpha;
-    return ResourceManager.ref(model);
+    return ReferenceManager.ref(model);
 };
 /**
  * Find the top k images classes given an input image and a model.
@@ -46,7 +46,7 @@ const load = async ({ version = 1, alpha = 1.0 }) => {
  * @return A list (or single item) of `ClassificationPrediction`s, which are "label, confidence" tuples.
  */
 const classify = async ({ model, image, imageUrl, topK = 1 }) => {
-    const model_ = ResourceManager.deref(model);
+    const model_ = ReferenceManager.deref(model);
     const img = await getImage(image, imageUrl);
     log('classifying...');
     const predictions = await model_.classify(img, topK);
@@ -66,7 +66,7 @@ const classify = async ({ model, image, imageUrl, topK = 1 }) => {
  * @see MobilenetEmbedding
  */
 const extractEmbeddings = async ({ model, image, imageUrl }) => {
-    const model_ = ResourceManager.deref(model);
+    const model_ = ReferenceManager.deref(model);
     const img = await getImage(image, imageUrl);
     log('inferring...');
     const inference = await model_.infer(img);
@@ -74,7 +74,7 @@ const extractEmbeddings = async ({ model, image, imageUrl }) => {
     return { version: model_.version, alpha: model_.alpha, feature: inference };
 };
 /** Clean up model resources. */
-const dispose = ({ reference }) => ResourceManager.dispose(reference);
+const dispose = ({ reference }) => ReferenceManager.dispose(reference);
 /**
  * Helper method that uses a DOM image element or loads the image from a URL.
  *

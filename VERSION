@@ -1,29 +1,35 @@
-commit 284594ce2e2c405948ba5d465c835c9a19ca10e6
+commit 4f6e55cb67e9da48575724f5b1580283c91adca5
 Author: Scott J. Miles <sjmiles@google.com>
-Date:   Tue Jun 25 14:05:10 2019 -0700
+Date:   Tue Jun 25 14:32:43 2019 -0700
 
-    pipes-shell-2: performance improvements (#3226)
+    Suggested refactor for Processing artifacts (#3204)
     
-    * disable speculative execution, but support resolved handles in descriptions
+    * rejiggered processing recipes
     
-    * s/weasel.dev/unknown ... hope the former wasn't load-bearing
+    * wip
     
-    * match autofill using type instead of source
+    * wip
     
-    * minor buff-up for Utils.resolve
+    * wip
     
-    * implement autofill without planner
+    * use tf.js for everything, fixup various names
     
-    * allow planner to exist without specex, and support descriptions on resolved handles
+    * revert changes to StardateTOS
     
-    * no-planner autofill
+    * comment-out descriptions unused by the machine (keep them for humans)
     
-    * plumb a 'caption' message-verb
+    * revert changes to StardateTOS
     
-    * fix smoke-test timing
+    * slightly better api
     
-    * remove dead code
+    * YHat is a TfTensor
     
-    * promote ready signaling to pipe.js, it's platform agnostic
+    * Actually apply the mixin
     
-    * add the list of loaded recipes to the `ready` message
+    * remove dead space
+    
+    * s/resource-manager/reference-manager
+    
+    * remove null test
+    
+    * fix handle name in description

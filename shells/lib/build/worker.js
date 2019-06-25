@@ -6170,7 +6170,11 @@ class PlatformLoader extends _loader_platform_js__WEBPACK_IMPORTED_MODULE_0__["P
   // Below here invoked from inside Worker
   async loadParticleClass(spec) {
     const clazz = await this.requireParticle(spec.implFile, spec.implBlobUrl);
-    clazz.spec = spec;
+    if (clazz) {
+      clazz.spec = spec;
+    } else {
+      warn(`[spec.implFile]::defineParticle() returned no particle.`);
+    }
     return clazz;
   }
   async requireParticle(unresolvedPath, blobUrl) {
@@ -7191,8 +7195,7 @@ class DomParticleBase extends _particle_js__WEBPACK_IMPORTED_MODULE_1__["Particl
         const handle = this.handles.get(handleName);
         if (handle && handle.entityClass) {
             if (handle instanceof _handle_js__WEBPACK_IMPORTED_MODULE_0__["Singleton"]) {
-                const entityClass = handle.entityClass;
-                const entity = new entityClass(rawData);
+                const entity = new handle.entityClass(rawData);
                 await handle.set(entity);
                 return entity;
             }
