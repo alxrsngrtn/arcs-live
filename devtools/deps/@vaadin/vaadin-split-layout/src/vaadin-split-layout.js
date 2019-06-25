@@ -229,7 +229,7 @@ class SplitLayoutElement extends ElementMixin(ThemableMixin(GestureEventListener
   }
 
   static get version() {
-    return '4.1.0';
+    return '4.1.1';
   }
 
   static get properties() {
@@ -277,6 +277,9 @@ class SplitLayoutElement extends ElementMixin(ThemableMixin(GestureEventListener
   }
 
   _setPointerEventsNone(event) {
+    if (!this._primaryChild || !this._secondaryChild) {
+      return;
+    }
     this._previousPrimaryPointerEvents = this._primaryChild.style.pointerEvents;
     this._previousSecondaryPointerEvents = this._secondaryChild.style.pointerEvents;
     this._primaryChild.style.pointerEvents = 'none';
@@ -286,6 +289,9 @@ class SplitLayoutElement extends ElementMixin(ThemableMixin(GestureEventListener
   }
 
   _restorePointerEvents() {
+    if (!this._primaryChild || !this._secondaryChild) {
+      return;
+    }
     this._primaryChild.style.pointerEvents = this._previousPrimaryPointerEvents;
     this._secondaryChild.style.pointerEvents = this._previousSecondaryPointerEvents;
   }

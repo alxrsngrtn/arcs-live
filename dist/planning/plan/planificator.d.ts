@@ -21,9 +21,10 @@ export declare type PlanificatorOptions = {
     debug?: boolean;
     onlyConsumer?: boolean;
     inspectorFactory?: PlannerInspectorFactory;
+    noSpecEx?: boolean;
 };
 export declare class Planificator {
-    static create(arc: Arc, { storageKeyBase, onlyConsumer, debug, inspectorFactory }: PlanificatorOptions): Promise<Planificator>;
+    static create(arc: Arc, { storageKeyBase, onlyConsumer, debug, inspectorFactory, noSpecEx }: PlanificatorOptions): Promise<Planificator>;
     readonly arc: Arc;
     result: PlanningResult;
     consumer: PlanConsumer;
@@ -33,7 +34,8 @@ export declare class Planificator {
     search: string | null;
     searchStore: SingletonStorageProvider;
     inspector: PlannerInspector | undefined;
-    constructor(arc: Arc, result: PlanningResult, searchStore: SingletonStorageProvider, onlyConsumer?: boolean, debug?: boolean, inspectorFactory?: PlannerInspectorFactory);
+    noSpecEx: boolean;
+    constructor(arc: Arc, result: PlanningResult, searchStore: SingletonStorageProvider, onlyConsumer?: boolean, debug?: boolean, inspectorFactory?: PlannerInspectorFactory, noSpecEx?: boolean);
     forceReplan(): Promise<void>;
     requestPlanning(options?: {}): Promise<void>;
     readonly consumerOnly: boolean;

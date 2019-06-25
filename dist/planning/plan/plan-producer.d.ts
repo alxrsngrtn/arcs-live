@@ -36,9 +36,11 @@ export declare class PlanProducer {
     searchStore?: SingletonStorageProvider;
     searchStoreCallback: ({}: {}) => void;
     debug: boolean;
+    noSpecEx: boolean;
     inspector?: PlannerInspector;
-    constructor(arc: Arc, result: PlanningResult, searchStore?: SingletonStorageProvider, inspector?: PlannerInspector, { debug }?: {
+    constructor(arc: Arc, result: PlanningResult, searchStore?: SingletonStorageProvider, inspector?: PlannerInspector, { debug, noSpecEx }?: {
         debug?: boolean;
+        noSpecEx?: boolean;
     });
     isPlanning: boolean;
     registerStateChangedCallback(callback: any): void;

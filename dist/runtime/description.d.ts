@@ -17,7 +17,8 @@ export declare class Description {
     private readonly arcRecipes;
     private readonly particleDescriptions;
     private constructor();
-    static createForPlan(plan: Recipe): Promise<Description>;
+    static XcreateForPlan(plan: Recipe): Promise<Description>;
+    static createForPlan(arc: Arc, plan: Recipe): Promise<Description>;
     /**
      * Create a new Description object for the given Arc with an
      * optional Relevance object.

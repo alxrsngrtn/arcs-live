@@ -53,7 +53,7 @@ export class DescriptionFormatter {
     }
     // TODO(mmandlis): the override of this function in subclasses also overrides the output. We'll need to unify
     // this into an output type hierarchy before we can assign a useful type to the output of this function.
-    // tslint:disable-next-line: no-any 
+    // tslint:disable-next-line: no-any
     _combineSelectedDescriptions(selectedDescriptions, options = {}) {
         const suggestions = [];
         selectedDescriptions.map(particle => {
@@ -74,7 +74,7 @@ export class DescriptionFormatter {
     }
     // TODO(mmandlis): the override of this function in subclasses also overrides the output. We'll need to unify
     // this into an output type hierarchy before we can assign a useful type to the output of this function.
-    // tslint:disable-next-line: no-any 
+    // tslint:disable-next-line: no-any
     _joinDescriptions(strings) {
         const nonEmptyStrings = strings.filter(str => str);
         const count = nonEmptyStrings.length;
@@ -336,7 +336,7 @@ export class DescriptionFormatter {
     }
     // TODO(mmandlis): the override of this function in subclasses also overrides the output. We'll need to unify
     // this into an output type hierarchy before we can assign a useful type to the output of this function.
-    // tslint:disable-next-line: no-any 
+    // tslint:disable-next-line: no-any
     _formatBigCollection(handleName, firstValue) {
         return `collection of items like ${firstValue.rawData.name}`;
     }
@@ -401,7 +401,10 @@ export class DescriptionFormatter {
             // Choose connections with patterns (manifest-based or dynamic).
             const connectionSpec = connection.spec;
             const particleDescription = this.particleDescriptions.find(desc => desc._particle === connection.particle);
-            return !!connectionSpec.pattern || !!particleDescription._connections[connection.name].pattern;
+            // TODO(sjmiles): added particleDescription null-check for
+            // the moment, but we need to root cause this problem
+            return !!connectionSpec.pattern ||
+                (!!particleDescription && !!particleDescription._connections[connection.name].pattern);
         });
         possibleConnections.sort((c1, c2) => {
             const isOutput1 = c1.spec.isOutput;

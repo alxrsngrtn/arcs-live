@@ -16,30 +16,31 @@ import { PlanningResult } from './planning-result.js';
 import { ReplanQueue } from './replan-queue.js';
 const planificatorId = 'plans';
 export class Planificator {
-    constructor(arc, result, searchStore, onlyConsumer = false, debug = false, inspectorFactory) {
+    constructor(arc, result, searchStore, onlyConsumer = false, debug = false, inspectorFactory, noSpecEx = false) {
         this.search = null;
         this.arc = arc;
         this.searchStore = searchStore;
+        this.noSpecEx = noSpecEx;
         if (inspectorFactory) {
             this.inspector = inspectorFactory.create(this);
         }
         assert(result, 'Result cannot be null.');
         this.result = result;
         if (!onlyConsumer) {
-            this.producer = new PlanProducer(this.arc, this.result, searchStore, this.inspector, { debug });
+            this.producer = new PlanProducer(this.arc, this.result, searchStore, this.inspector, { debug, noSpecEx });
             this.replanQueue = new ReplanQueue(this.producer);
             this.dataChangeCallback = () => this.replanQueue.addChange();
             this._listenToArcStores();
         }
         this.consumer = new PlanConsumer(this.arc, this.result, this.inspector);
     }
-    static async create(arc, { storageKeyBase, onlyConsumer, debug = false, inspectorFactory }) {
+    static async create(arc, { storageKeyBase, onlyConsumer, debug = false, inspectorFactory, noSpecEx }) {
         debug = debug || (Boolean(storageKeyBase) && storageKeyBase.startsWith('volatile'));
         const store = await Planificator._initSuggestStore(arc, storageKeyBase);
         const searchStore = await Planificator._initSearchStore(arc);
         const result = new PlanningResult({ context: arc.context, loader: arc.loader }, store);
         await result.load();
-        const planificator = new Planificator(arc, result, searchStore, onlyConsumer, debug, inspectorFactory);
+        const planificator = new Planificator(arc, result, searchStore, onlyConsumer, debug, inspectorFactory, noSpecEx);
         await planificator._storeSearch(); // Reset search value for the current arc.
         await planificator.requestPlanning({ contextual: true, metadata: { trigger: Trigger.Init } });
         return planificator;

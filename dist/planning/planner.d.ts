@@ -29,13 +29,15 @@ export interface PlannerInitOptions {
     strategyArgs?: {};
     speculator?: Speculator;
     inspectorFactory?: PlannerInspectorFactory;
+    noSpecEx?: boolean;
 }
 export declare class Planner implements InspectablePlanner {
     arc: Arc;
     strategizer: Strategizer;
     speculator: Speculator | null;
     inspector?: PlannerInspector;
-    init(arc: Arc, { strategies, ruleset, strategyArgs, speculator, inspectorFactory }: PlannerInitOptions): void;
+    noSpecEx: boolean;
+    init(arc: Arc, { strategies, ruleset, strategyArgs, speculator, inspectorFactory, noSpecEx }: PlannerInitOptions): void;
     plan(timeout?: number, generations?: Generation[]): Promise<Recipe[]>;
     _speculativeThreadCount(): number;
     _splitToGroups(items: Recipe[], groupCount: number): Recipe[][];

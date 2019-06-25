@@ -3,9 +3,9 @@ import '../../../vaadin-lumo-styles/color.js';
 import '../../../vaadin-lumo-styles/sizing.js';
 import '../../../vaadin-lumo-styles/spacing.js';
 import '../../../vaadin-lumo-styles/style.js';
-const $_documentContainer = document.createElement('template');
+import { html } from '../../../../@polymer/polymer/lib/utils/html-tag.js';
 
-$_documentContainer.innerHTML = `<dom-module id="lumo-split-layout" theme-for="vaadin-split-layout">
+const $_documentContainer = html`<dom-module id="lumo-split-layout" theme-for="vaadin-split-layout">
   <template>
     <style>
       [part="splitter"] {

@@ -27,7 +27,7 @@ export var Trigger;
     Trigger["Forced"] = "forced";
 })(Trigger || (Trigger = {}));
 export class PlanProducer {
-    constructor(arc, result, searchStore, inspector, { debug = false } = {}) {
+    constructor(arc, result, searchStore, inspector, { debug = false, noSpecEx = false } = {}) {
         this.planner = null;
         this.needReplan = false;
         this._isPlanning = false;
@@ -45,6 +45,7 @@ export class PlanProducer {
             this.searchStore.on('change', this.searchStoreCallback, this);
         }
         this.debug = debug;
+        this.noSpecEx = noSpecEx;
     }
     get isPlanning() { return this._isPlanning; }
     set isPlanning(isPlanning) {
@@ -162,6 +163,7 @@ export class PlanProducer {
                 recipeIndex: this.recipeIndex
             },
             speculator: this.speculator,
+            noSpecEx: this.noSpecEx
         });
         suggestions = await this.planner.suggest(options['timeout'] || defaultTimeoutMs, generations);
         if (this.planner) {

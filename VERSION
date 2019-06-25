@@ -1,5 +1,29 @@
-commit 1af979aa44dd8de2b44d736e948aa1f6c91cd7ed
-Author: Joshua Pratt <jp10010101010000@gmail.com>
-Date:   Tue Jun 25 10:04:43 2019 +1000
+commit 284594ce2e2c405948ba5d465c835c9a19ca10e6
+Author: Scott J. Miles <sjmiles@google.com>
+Date:   Tue Jun 25 14:05:10 2019 -0700
 
-    Make sigh work in more places (#3223)
+    pipes-shell-2: performance improvements (#3226)
+    
+    * disable speculative execution, but support resolved handles in descriptions
+    
+    * s/weasel.dev/unknown ... hope the former wasn't load-bearing
+    
+    * match autofill using type instead of source
+    
+    * minor buff-up for Utils.resolve
+    
+    * implement autofill without planner
+    
+    * allow planner to exist without specex, and support descriptions on resolved handles
+    
+    * no-planner autofill
+    
+    * plumb a 'caption' message-verb
+    
+    * fix smoke-test timing
+    
+    * remove dead code
+    
+    * promote ready signaling to pipe.js, it's platform agnostic
+    
+    * add the list of loaded recipes to the `ready` message

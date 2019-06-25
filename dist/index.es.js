@@ -3324,7 +3324,7 @@ class DescriptionFormatter {
     }
     // TODO(mmandlis): the override of this function in subclasses also overrides the output. We'll need to unify
     // this into an output type hierarchy before we can assign a useful type to the output of this function.
-    // tslint:disable-next-line: no-any 
+    // tslint:disable-next-line: no-any
     _combineSelectedDescriptions(selectedDescriptions, options = {}) {
         const suggestions = [];
         selectedDescriptions.map(particle => {
@@ -3345,7 +3345,7 @@ class DescriptionFormatter {
     }
     // TODO(mmandlis): the override of this function in subclasses also overrides the output. We'll need to unify
     // this into an output type hierarchy before we can assign a useful type to the output of this function.
-    // tslint:disable-next-line: no-any 
+    // tslint:disable-next-line: no-any
     _joinDescriptions(strings) {
         const nonEmptyStrings = strings.filter(str => str);
         const count = nonEmptyStrings.length;
@@ -3607,7 +3607,7 @@ class DescriptionFormatter {
     }
     // TODO(mmandlis): the override of this function in subclasses also overrides the output. We'll need to unify
     // this into an output type hierarchy before we can assign a useful type to the output of this function.
-    // tslint:disable-next-line: no-any 
+    // tslint:disable-next-line: no-any
     _formatBigCollection(handleName, firstValue) {
         return `collection of items like ${firstValue.rawData.name}`;
     }
@@ -3672,7 +3672,10 @@ class DescriptionFormatter {
             // Choose connections with patterns (manifest-based or dynamic).
             const connectionSpec = connection.spec;
             const particleDescription = this.particleDescriptions.find(desc => desc._particle === connection.particle);
-            return !!connectionSpec.pattern || !!particleDescription._connections[connection.name].pattern;
+            // TODO(sjmiles): added particleDescription null-check for
+            // the moment, but we need to root cause this problem
+            return !!connectionSpec.pattern ||
+                (!!particleDescription && !!particleDescription._connections[connection.name].pattern);
         });
         possibleConnections.sort((c1, c2) => {
             const isOutput1 = c1.spec.isOutput;
@@ -3930,9 +3933,22 @@ class Description {
         this.arcRecipes = arcRecipes;
         this.particleDescriptions = particleDescriptions;
     }
-    static async createForPlan(plan) {
+    static async XcreateForPlan(plan) {
         const particleDescriptions = await Description.initDescriptionHandles(plan.particles);
         return new Description({}, [{ patterns: plan.patterns, particles: plan.particles }], particleDescriptions);
+    }
+    static async createForPlan(arc, plan) {
+        const allParticles = plan.particles;
+        const particleDescriptions = await Description.initDescriptionHandles(allParticles, arc);
+        const storeDescById = {};
+        for (const { id } of plan.handles) {
+            const store = arc.findStoreById(id);
+            if (store && store instanceof StorageProviderBase) {
+                storeDescById[id] = arc.getStoreDescription(store);
+            }
+        }
+        // ... and pass to the private constructor.
+        return new Description(storeDescById, [{ patterns: plan.patterns, particles: plan.particles }], particleDescriptions);
     }
     /**
      * Create a new Description object for the given Arc with an
@@ -28724,7 +28740,7 @@ class SearchTokensToHandles extends Strategy {
 const suggestionByHash = () => Runtime.getRuntime().getCacheService().getOrCreateCache('suggestionByHash');
 class Planner {
     // TODO: Use context.arc instead of arc
-    init(arc, { strategies = Planner.AllStrategies, ruleset = Empty, strategyArgs = {}, speculator = null, inspectorFactory = null }) {
+    init(arc, { strategies = Planner.AllStrategies, ruleset = Empty, strategyArgs = {}, speculator = null, inspectorFactory = null, noSpecEx = false }) {
         strategyArgs = Object.freeze({ ...strategyArgs });
         this.arc = arc;
         const strategyImpls = strategies.map(strategy => new strategy(arc, strategyArgs));
@@ -28733,6 +28749,7 @@ class Planner {
         if (inspectorFactory) {
             this.inspector = inspectorFactory.create(this);
         }
+        this.noSpecEx = noSpecEx;
     }
     // Specify a timeout value less than zero to disable timeouts.
     async plan(timeout, generations = []) {
@@ -28852,7 +28869,7 @@ class Planner {
         }
         let relevance = null;
         let description = null;
-        if (this.speculator) {
+        if (this.speculator && !this.noSpecEx) {
             const result = await this.speculator.speculate(this.arc, plan, hash);
             if (!result) {
                 return undefined;
@@ -28862,10 +28879,12 @@ class Planner {
             description = await Description.create(speculativeArc, relevance);
         }
         else {
-            description = await Description.createForPlan(plan);
+            description = await Description.createForPlan(arc, plan);
         }
         const suggestion = Suggestion.create(plan, hash, relevance);
-        suggestion.setDescription(description, this.arc.modality, this.arc.pec.slotComposer ? this.arc.pec.slotComposer.modalityHandler.descriptionFormatter : undefined);
+        suggestion.setDescription(description, this.arc.modality, this.arc.pec.slotComposer ?
+            this.arc.pec.slotComposer.modalityHandler.descriptionFormatter
+            : undefined);
         suggestionByHash().set(hash, suggestion);
         return suggestion;
     }
@@ -29775,21 +29794,31 @@ const parse$1 = async (content, options) => {
 };
 
 const resolve = async (arc, recipe) =>{
-  if (!recipe.normalize()) {
-    warn('failed to normalize:\n', recipe.toString());
-  } else {
+  if (normalize(recipe)) {
     let plan = recipe;
     if (!plan.isResolved()) {
       const resolver = new RecipeResolver(arc);
       plan = await resolver.resolve(recipe);
       if (!plan || !plan.isResolved()) {
         warn('failed to resolve:\n', (plan || recipe).toString({showUnresolved: true}));
-        log(arc.context, arc, arc.context.storeTags);
+        //log(arc.context, arc, arc.context.storeTags);
         plan = null;
       }
     }
     return plan;
   }
+};
+
+const normalize = async (recipe) =>{
+  if (isNormalized(recipe) || recipe.normalize()) {
+    return true;
+  }
+  warn('failed to normalize:\n', recipe.toString());
+  return false;
+};
+
+const isNormalized = recipe => {
+  return Object.isFrozen(recipe);
 };
 
 const spawn = async ({id, serialization, context, composer, storage}) => {
@@ -30980,7 +31009,7 @@ var Trigger;
     Trigger["Forced"] = "forced";
 })(Trigger || (Trigger = {}));
 class PlanProducer {
-    constructor(arc, result, searchStore, inspector, { debug = false } = {}) {
+    constructor(arc, result, searchStore, inspector, { debug = false, noSpecEx = false } = {}) {
         this.planner = null;
         this.needReplan = false;
         this._isPlanning = false;
@@ -30998,6 +31027,7 @@ class PlanProducer {
             this.searchStore.on('change', this.searchStoreCallback, this);
         }
         this.debug = debug;
+        this.noSpecEx = noSpecEx;
     }
     get isPlanning() { return this._isPlanning; }
     set isPlanning(isPlanning) {
@@ -31115,6 +31145,7 @@ class PlanProducer {
                 recipeIndex: this.recipeIndex
             },
             speculator: this.speculator,
+            noSpecEx: this.noSpecEx
         });
         suggestions = await this.planner.suggest(options['timeout'] || defaultTimeoutMs, generations);
         if (this.planner) {
@@ -31224,30 +31255,31 @@ class ReplanQueue {
  */
 const planificatorId = 'plans';
 class Planificator {
-    constructor(arc, result, searchStore, onlyConsumer = false, debug = false, inspectorFactory) {
+    constructor(arc, result, searchStore, onlyConsumer = false, debug = false, inspectorFactory, noSpecEx = false) {
         this.search = null;
         this.arc = arc;
         this.searchStore = searchStore;
+        this.noSpecEx = noSpecEx;
         if (inspectorFactory) {
             this.inspector = inspectorFactory.create(this);
         }
         assert(result, 'Result cannot be null.');
         this.result = result;
         if (!onlyConsumer) {
-            this.producer = new PlanProducer(this.arc, this.result, searchStore, this.inspector, { debug });
+            this.producer = new PlanProducer(this.arc, this.result, searchStore, this.inspector, { debug, noSpecEx });
             this.replanQueue = new ReplanQueue(this.producer);
             this.dataChangeCallback = () => this.replanQueue.addChange();
             this._listenToArcStores();
         }
         this.consumer = new PlanConsumer(this.arc, this.result, this.inspector);
     }
-    static async create(arc, { storageKeyBase, onlyConsumer, debug = false, inspectorFactory }) {
+    static async create(arc, { storageKeyBase, onlyConsumer, debug = false, inspectorFactory, noSpecEx }) {
         debug = debug || (Boolean(storageKeyBase) && storageKeyBase.startsWith('volatile'));
         const store = await Planificator._initSuggestStore(arc, storageKeyBase);
         const searchStore = await Planificator._initSearchStore(arc);
         const result = new PlanningResult({ context: arc.context, loader: arc.loader }, store);
         await result.load();
-        const planificator = new Planificator(arc, result, searchStore, onlyConsumer, debug, inspectorFactory);
+        const planificator = new Planificator(arc, result, searchStore, onlyConsumer, debug, inspectorFactory, noSpecEx);
         await planificator._storeSearch(); // Reset search value for the current arc.
         await planificator.requestPlanning({ contextual: true, metadata: { trigger: Trigger.Init } });
         return planificator;

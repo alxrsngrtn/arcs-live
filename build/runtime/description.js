@@ -19,9 +19,22 @@ export class Description {
         this.arcRecipes = arcRecipes;
         this.particleDescriptions = particleDescriptions;
     }
-    static async createForPlan(plan) {
+    static async XcreateForPlan(plan) {
         const particleDescriptions = await Description.initDescriptionHandles(plan.particles);
         return new Description({}, [{ patterns: plan.patterns, particles: plan.particles }], particleDescriptions);
+    }
+    static async createForPlan(arc, plan) {
+        const allParticles = plan.particles;
+        const particleDescriptions = await Description.initDescriptionHandles(allParticles, arc);
+        const storeDescById = {};
+        for (const { id } of plan.handles) {
+            const store = arc.findStoreById(id);
+            if (store && store instanceof StorageProviderBase) {
+                storeDescById[id] = arc.getStoreDescription(store);
+            }
+        }
+        // ... and pass to the private constructor.
+        return new Description(storeDescById, [{ patterns: plan.patterns, particles: plan.particles }], particleDescriptions);
     }
     /**
      * Create a new Description object for the given Arc with an

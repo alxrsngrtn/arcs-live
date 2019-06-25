@@ -1,8 +1,8 @@
 /// BareSpecifier=@vaadin/vaadin-split-layout/theme/material/vaadin-split-layout-styles
 import '../../../vaadin-material-styles/color.js';
-const $_documentContainer = document.createElement('template');
+import { html } from '../../../../@polymer/polymer/lib/utils/html-tag.js';
 
-$_documentContainer.innerHTML = `<dom-module id="material-split-layout" theme-for="vaadin-split-layout">
+const $_documentContainer = html`<dom-module id="material-split-layout" theme-for="vaadin-split-layout">
   <template>
     <style>
       [part="splitter"] {

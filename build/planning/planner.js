@@ -40,7 +40,7 @@ import { Runtime } from '../runtime/runtime.js';
 const suggestionByHash = () => Runtime.getRuntime().getCacheService().getOrCreateCache('suggestionByHash');
 export class Planner {
     // TODO: Use context.arc instead of arc
-    init(arc, { strategies = Planner.AllStrategies, ruleset = Rulesets.Empty, strategyArgs = {}, speculator = null, inspectorFactory = null }) {
+    init(arc, { strategies = Planner.AllStrategies, ruleset = Rulesets.Empty, strategyArgs = {}, speculator = null, inspectorFactory = null, noSpecEx = false }) {
         strategyArgs = Object.freeze({ ...strategyArgs });
         this.arc = arc;
         const strategyImpls = strategies.map(strategy => new strategy(arc, strategyArgs));
@@ -49,6 +49,7 @@ export class Planner {
         if (inspectorFactory) {
             this.inspector = inspectorFactory.create(this);
         }
+        this.noSpecEx = noSpecEx;
     }
     // Specify a timeout value less than zero to disable timeouts.
     async plan(timeout, generations = []) {
@@ -168,7 +169,7 @@ export class Planner {
         }
         let relevance = null;
         let description = null;
-        if (this.speculator) {
+        if (this.speculator && !this.noSpecEx) {
             const result = await this.speculator.speculate(this.arc, plan, hash);
             if (!result) {
                 return undefined;
@@ -178,10 +179,12 @@ export class Planner {
             description = await Description.create(speculativeArc, relevance);
         }
         else {
-            description = await Description.createForPlan(plan);
+            description = await Description.createForPlan(arc, plan);
         }
         const suggestion = Suggestion.create(plan, hash, relevance);
-        suggestion.setDescription(description, this.arc.modality, this.arc.pec.slotComposer ? this.arc.pec.slotComposer.modalityHandler.descriptionFormatter : undefined);
+        suggestion.setDescription(description, this.arc.modality, this.arc.pec.slotComposer ?
+            this.arc.pec.slotComposer.modalityHandler.descriptionFormatter
+            : undefined);
         suggestionByHash().set(hash, suggestion);
         return suggestion;
     }
