@@ -1,13 +1,5 @@
-commit 65b41361b9de4631e096e38c0ae7746a8ed675c4
-Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
-Date:   Mon Jun 24 23:53:50 2019 +0100
+commit 1af979aa44dd8de2b44d736e948aa1f6c91cd7ed
+Author: Joshua Pratt <jp10010101010000@gmail.com>
+Date:   Tue Jun 25 10:04:43 2019 +1000
 
-    DevShell: collapse all button for stores. (#3222)
-    
-    * DevShell: collapse all button for stores.
-    
-    This also makes store panels persistent, so their layout is stable when hidden.
-    
-    * Missing space
-    
-    * Rename ArcPanel.display to improve clarity
+    Make sigh work in more places (#3223)
