@@ -1,13 +1,9 @@
-commit ed3402251ba0009386e7c427ab86ac1d0a7b7a49
-Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
-Date:   Wed Jun 26 10:31:31 2019 +1000
+commit 9a9970cff86d07f70f52f5ce30dce1cddc7ae02d
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Tue Jun 25 18:08:33 2019 -0700
 
-    Removes dataflow tag clobbering. (#3224)
+    Java PEC: create PECs per arc ID; add callback to InitializeProxy method (#3225)
     
-    Instead of tags clobbering other tags made upstream, instead they will
-    coexist peacefully together. If you want to remove an earlier tag,
-    you'll need to make a specific claim about it ("claim x is not foo"),
-    which we'll add support for later on.
+    * Java PEC: create PECs per arc ID; add callback to InitializeProxy method
     
-    Also rejiggered the error messages slightly, because the existing ones
-    don't scale for more complex boolean expressions.
+    * address comments: replace Function with Consumer, define constants for message names and fields and add final keyword to data members
