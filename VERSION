@@ -1,35 +1,13 @@
-commit 4f6e55cb67e9da48575724f5b1580283c91adca5
-Author: Scott J. Miles <sjmiles@google.com>
-Date:   Tue Jun 25 14:32:43 2019 -0700
+commit ed3402251ba0009386e7c427ab86ac1d0a7b7a49
+Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
+Date:   Wed Jun 26 10:31:31 2019 +1000
 
-    Suggested refactor for Processing artifacts (#3204)
+    Removes dataflow tag clobbering. (#3224)
     
-    * rejiggered processing recipes
+    Instead of tags clobbering other tags made upstream, instead they will
+    coexist peacefully together. If you want to remove an earlier tag,
+    you'll need to make a specific claim about it ("claim x is not foo"),
+    which we'll add support for later on.
     
-    * wip
-    
-    * wip
-    
-    * wip
-    
-    * use tf.js for everything, fixup various names
-    
-    * revert changes to StardateTOS
-    
-    * comment-out descriptions unused by the machine (keep them for humans)
-    
-    * revert changes to StardateTOS
-    
-    * slightly better api
-    
-    * YHat is a TfTensor
-    
-    * Actually apply the mixin
-    
-    * remove dead space
-    
-    * s/resource-manager/reference-manager
-    
-    * remove null test
-    
-    * fix handle name in description
+    Also rejiggered the error messages slightly, because the existing ones
+    don't scale for more complex boolean expressions.

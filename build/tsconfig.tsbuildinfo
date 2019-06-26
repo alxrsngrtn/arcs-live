@@ -482,8 +482,8 @@
         "signature": "74b0fe35f5cadce1dcc19d5e93f21b31c387808566250dc8766480b9a320943d"
       },
       "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/flow-graph.ts": {
-        "version": "3d2afd3321c952ac7dbe56fb93ba667c54f4310df5dfa19b33e36c3a9b1e9a3f",
-        "signature": "328c43155f93cbe67e9582afcd238d5beda7f6f3809e322f8fb10e7663a9c8af"
+        "version": "d52cca5860c96307ab8cb7a3565e07778e13208014eb57c64dd4faa4a62f9f15",
+        "signature": "eed564ce9a9504eb0a85dc4f9432fd666647d6f2977002b9ff517ce3b005d445"
       },
       "/home/travis/build/PolymerLabs/arcs/src/dataflow/arcs-dataflow.ts": {
         "version": "df2b2da581f2d2be5c786e050ca651a81130f3b9cac9b66412a762bd30d2e627",
@@ -502,7 +502,7 @@
         "signature": "535087ae214f316cbb0a3a17fb44a767c4789b7b69c4bd2c8d37fa8d5845a81f"
       },
       "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/tests/flow-graph-tests.ts": {
-        "version": "da8e70364ef58b9a21ed19cb5e4b73c49050c30de4d77b7d6885f4e9b7274e95",
+        "version": "c92c715eab950a339b9ade761cd1a7c2374db113a3c73064a11b240ae59c4ee3",
         "signature": "8e609bb71c20b858c77f0e9f90bb1319db8477b13f9f965f1a1e18524bf50881"
       },
       "/home/travis/build/PolymerLabs/arcs/src/dataflow/cli/flowcheck.ts": {
@@ -19395,7 +19395,15 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/flow-graph.ts",
-            "start": 8984,
+            "start": 3900,
+            "length": 5,
+            "messageText": "Object is possibly 'undefined'.",
+            "category": 1,
+            "code": 2532
+          },
+          {
+            "file": "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/flow-graph.ts",
+            "start": 9190,
             "length": 13,
             "messageText": "Object is possibly 'undefined'.",
             "category": 1,
@@ -19403,7 +19411,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/flow-graph.ts",
-            "start": 9029,
+            "start": 9235,
             "length": 13,
             "messageText": "Object is possibly 'undefined'.",
             "category": 1,
@@ -19411,7 +19419,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/flow-graph.ts",
-            "start": 10747,
+            "start": 10791,
             "length": 4,
             "code": 2345,
             "category": 1,

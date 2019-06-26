@@ -44,7 +44,7 @@ export declare type CheckResult = {
     type: CheckResultType.Success;
 } | {
     type: CheckResultType.Failure;
-    reason: string;
+    path: BackwardsPath;
 } | {
     type: CheckResultType.KeepGoing;
     checkNext: BackwardsPath[];
@@ -98,6 +98,7 @@ declare class ParticleNode extends Node {
     readonly inEdges: readonly Edge[];
     readonly outEdges: readonly Edge[];
     evaluateCheck(check: Check, edgeToCheck: ParticleOutput, path: BackwardsPath): CheckResult;
+    keepGoingWithInEdges(check: Check, path: BackwardsPath): CheckResult;
 }
 declare class ParticleInput implements Edge {
     readonly start: Node;
