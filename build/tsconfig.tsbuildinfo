@@ -402,7 +402,7 @@
         "signature": "c3b4cfc8daba33b6fea17e7d239cd1347fcd50f347fbf9b70bb25682ae83f10d"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/wasm.ts": {
-        "version": "2a309d9ce61dd17198c763c5aef8c63e0b28e854d71a7258c47b795a33b7c359",
+        "version": "4d1845a0122e561fbf8eef1c8eafb8112163b30c4a086cc7c43532b3d285240b",
         "signature": "4c2d252843c4d7d31f5d53f83b9ad36493426d9f40879665239885214606f29a"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/particle-execution-context.ts": {
@@ -16893,7 +16893,7 @@
         [
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/wasm.ts",
-            "start": 14598,
+            "start": 14615,
             "length": 18,
             "messageText": "Object is possibly 'null'.",
             "category": 1,
@@ -16901,7 +16901,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/wasm.ts",
-            "start": 18636,
+            "start": 18653,
             "length": 9,
             "messageText": "Object is possibly 'undefined'.",
             "category": 1,

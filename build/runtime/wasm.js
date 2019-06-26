@@ -314,7 +314,7 @@ export class WasmParticle extends Particle {
     async setHandles(handles) {
         for (const [name, handle] of handles) {
             const p = this.store(name);
-            const wasmHandle = this.exports._connectHandle(this.innerParticle, p, handle.canRead);
+            const wasmHandle = this.exports._connectHandle(this.innerParticle, p, handle.canRead, handle.canWrite);
             this.exports._free(p);
             if (wasmHandle === 0) {
                 throw new Error(`Wasm particle failed to connect handle '${name}'`);

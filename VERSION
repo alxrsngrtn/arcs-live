@@ -1,5 +1,5 @@
-commit 174575d52be8a58023c82d6709b27f2c778e326e
-Author: shans <shane.stephens@gmail.com>
-Date:   Wed Jun 26 07:03:14 2019 +0100
+commit 07a0a97f5518348951f61dd66dea37aa91b07c50
+Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
+Date:   Wed Jun 26 16:09:46 2019 +1000
 
-    Firebase testing (#3218)
+    Wasm: track and enforce in/out directionality on handles (#3220)
