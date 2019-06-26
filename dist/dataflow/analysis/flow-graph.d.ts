@@ -10,8 +10,10 @@
 import { Recipe } from '../../runtime/recipe/recipe';
 import { Particle } from '../../runtime/recipe/particle';
 import { Handle } from '../../runtime/recipe/handle';
+import { HandleConnection } from '../../runtime/recipe/handle-connection';
 import { Claim } from '../../runtime/particle-claim';
 import { Check } from '../../runtime/particle-check';
+import { HandleConnectionSpec } from '../../runtime/particle-spec';
 /**
  * Data structure for representing the connectivity graph of a recipe. Used to perform static analysis on a resolved recipe.
  */
@@ -105,20 +107,23 @@ declare class ParticleInput implements Edge {
     readonly end: ParticleNode;
     readonly label: string;
     readonly handleName: string;
+    readonly connectionSpec: HandleConnectionSpec;
     readonly check?: Check;
-    constructor(particleNode: ParticleNode, otherEnd: Node, inputName: string);
+    constructor(particleNode: ParticleNode, otherEnd: Node, connection: HandleConnection);
 }
 declare class ParticleOutput implements Edge {
     readonly start: ParticleNode;
     readonly end: Node;
     readonly label: string;
     readonly handleName: string;
+    readonly connectionSpec: HandleConnectionSpec;
     readonly claim?: Claim;
-    constructor(particleNode: ParticleNode, otherEnd: Node, outputName: string);
+    constructor(particleNode: ParticleNode, otherEnd: Node, connection: HandleConnection);
 }
 declare class HandleNode extends Node {
     readonly inEdges: ParticleOutput[];
     readonly outEdges: ParticleInput[];
+    readonly outConnectionSpecs: Set<HandleConnectionSpec>;
     constructor(handle: Handle);
     /** Returns a list of all pairs of particles that are connected through this handle, in string form. */
     readonly connectionsAsStrings: string[];

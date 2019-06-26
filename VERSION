@@ -1,5 +1,7 @@
-commit 0160b9823df966d933b3647a031b67c2149320f6
-Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
-Date:   Wed Jun 26 13:56:57 2019 +1000
+commit dc84c7f5e60ea4ac6936b6a10beb62d68176a5e1
+Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
+Date:   Wed Jun 26 14:00:37 2019 +1000
 
-    sigh: clean obsolete build outputs; tidy up findProjectFiles usage (#3228)
+    Add support for analysing 'is from handle' checks. (#3229)
+    
+    Syntax was already supported, but analyser didn't handle those checks.
