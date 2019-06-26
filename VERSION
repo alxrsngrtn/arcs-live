@@ -1,8 +1,15 @@
-commit 2015db92c16f4e56b260d1ddf48c15f1a240f400
-Author: Paul Lindner <plindner@google.com>
-Date:   Wed Jun 26 10:53:21 2019 -0700
+commit c65f384d6e68ea5a42ca98b2ce7281dd630f9393
+Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
+Date:   Thu Jun 27 08:26:22 2019 +1000
 
-    Remove incorrect/ineffective calls to Manifest.parse (#3233)
+    Wasm: updates to generated entity classes plus some tidying (#3232)
     
-    - Options is an object, calling with loader causes issues.
-    - Passing loader causes issues with filenames, so omit unused arg.
+    * Wasm: updates to generated entity classes plus some tidying
+    
+    - Entities: support for comparisons and use in STL containers
+    - Better technique for forcing a compiler error in misused templates
+    - Internal-ized the encode/decode helpers
+    
+    * Review update
+    
+    * Fixed review update :-/
