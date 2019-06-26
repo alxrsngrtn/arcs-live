@@ -14,16 +14,17 @@ export var ClaimType;
     ClaimType["DerivesFrom"] = "derives-from";
 })(ClaimType || (ClaimType = {}));
 export class ClaimIsTag {
-    constructor(handle, tag) {
+    constructor(handle, isNot, tag) {
         this.handle = handle;
+        this.isNot = isNot;
         this.tag = tag;
         this.type = ClaimType.IsTag;
     }
     static fromASTNode(handle, astNode) {
-        return new ClaimIsTag(handle, astNode.tag);
+        return new ClaimIsTag(handle, astNode.isNot, astNode.tag);
     }
     toManifestString() {
-        return `claim ${this.handle.name} is ${this.tag}`;
+        return `claim ${this.handle.name} is ${this.isNot ? 'not ' : ''}${this.tag}`;
     }
 }
 export class ClaimDerivesFrom {

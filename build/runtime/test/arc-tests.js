@@ -738,7 +738,7 @@ function getSingletonHandle(store) {
           slot 'rootslotid-root' as root
           A
             consume root as root
-    `, loader);
+    `);
             const arc = new Arc({ id: IdGenerator.newSession().newArcId('arcid'),
                 storageKey: 'key', loader, slotComposer, context });
             const [recipe] = arc.context.recipes;

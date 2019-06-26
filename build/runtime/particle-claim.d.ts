@@ -17,9 +17,10 @@ export declare enum ClaimType {
 export declare type Claim = ClaimIsTag | ClaimDerivesFrom;
 export declare class ClaimIsTag {
     readonly handle: HandleConnectionSpec;
+    readonly isNot: boolean;
     readonly tag: string;
     readonly type: ClaimType.IsTag;
-    constructor(handle: HandleConnectionSpec, tag: string);
+    constructor(handle: HandleConnectionSpec, isNot: boolean, tag: string);
     static fromASTNode(handle: HandleConnectionSpec, astNode: ParticleClaimIsTag): ClaimIsTag;
     toManifestString(): string;
 }

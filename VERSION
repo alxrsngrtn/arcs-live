@@ -1,5 +1,8 @@
-commit 07a0a97f5518348951f61dd66dea37aa91b07c50
-Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
-Date:   Wed Jun 26 16:09:46 2019 +1000
+commit 2015db92c16f4e56b260d1ddf48c15f1a240f400
+Author: Paul Lindner <plindner@google.com>
+Date:   Wed Jun 26 10:53:21 2019 -0700
 
-    Wasm: track and enforce in/out directionality on handles (#3220)
+    Remove incorrect/ineffective calls to Manifest.parse (#3233)
+    
+    - Options is an object, calling with loader causes issues.
+    - Passing loader causes issues with filenames, so omit unused arg.
