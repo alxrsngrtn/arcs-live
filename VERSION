@@ -1,5 +1,5 @@
-commit c9d5be0631b5593a2d3e2424307301b6b84828ea
-Author: raulverag <42563960+raulverag@users.noreply.github.com>
-Date:   Wed Jun 26 12:00:07 2019 +1000
+commit 0160b9823df966d933b3647a031b67c2149320f6
+Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
+Date:   Wed Jun 26 13:56:57 2019 +1000
 
-    Fix syntax of multiple 'derives from' claims (#3227)
+    sigh: clean obsolete build outputs; tidy up findProjectFiles usage (#3228)
