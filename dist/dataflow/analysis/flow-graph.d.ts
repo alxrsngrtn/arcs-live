@@ -12,7 +12,7 @@ import { Particle } from '../../runtime/recipe/particle';
 import { Handle } from '../../runtime/recipe/handle';
 import { HandleConnection } from '../../runtime/recipe/handle-connection';
 import { Claim } from '../../runtime/particle-claim';
-import { Check } from '../../runtime/particle-check';
+import { Check, CheckCondition } from '../../runtime/particle-check';
 import { HandleConnectionSpec } from '../../runtime/particle-spec';
 /**
  * Data structure for representing the connectivity graph of a recipe. Used to perform static analysis on a resolved recipe.
@@ -37,20 +37,6 @@ export declare class ValidationResult {
     failures: string[];
     readonly isValid: boolean;
 }
-export declare enum CheckResultType {
-    Success = 0,
-    Failure = 1,
-    KeepGoing = 2
-}
-export declare type CheckResult = {
-    type: CheckResultType.Success;
-} | {
-    type: CheckResultType.Failure;
-    path: BackwardsPath;
-} | {
-    type: CheckResultType.KeepGoing;
-    checkNext: BackwardsPath[];
-};
 /**
  * A path that walks backwards through the graph, i.e. it walks along the directed edges in the reverse direction. The path is described by the
  * nodes in the path. Class is immutable.
@@ -74,9 +60,10 @@ export declare abstract class Node {
     abstract readonly outEdges: readonly Edge[];
     abstract addInEdge(edge: Edge): void;
     abstract addOutEdge(edge: Edge): void;
-    abstract evaluateCheck(check: Check, edgeToCheck: Edge, path: BackwardsPath): CheckResult;
+    abstract evaluateCheckCondition(condition: CheckCondition, edgeToCheck: Edge): boolean;
     readonly inNodes: Node[];
     readonly outNodes: Node[];
+    abstract inEdgesFromOutEdge(outEdge: Edge): readonly Edge[];
 }
 export interface Edge {
     readonly start: Node;
@@ -97,10 +84,14 @@ declare class ParticleNode extends Node {
     constructor(particle: Particle);
     addInEdge(edge: ParticleInput): void;
     addOutEdge(edge: ParticleOutput): void;
-    readonly inEdges: readonly Edge[];
-    readonly outEdges: readonly Edge[];
-    evaluateCheck(check: Check, edgeToCheck: ParticleOutput, path: BackwardsPath): CheckResult;
-    keepGoingWithInEdges(check: Check, path: BackwardsPath): CheckResult;
+    readonly inEdges: readonly ParticleInput[];
+    readonly outEdges: readonly ParticleOutput[];
+    /**
+     * Iterates through all of the relevant in-edges leading into this particle, that flow out into the given out-edge. The out-edge may have a
+     * 'derives from' claim that restricts which edges flow into it.
+     */
+    inEdgesFromOutEdge(outEdge: ParticleOutput): readonly ParticleInput[];
+    evaluateCheckCondition(condition: CheckCondition, edgeToCheck: ParticleOutput): boolean;
 }
 declare class ParticleInput implements Edge {
     readonly start: Node;
@@ -129,6 +120,7 @@ declare class HandleNode extends Node {
     readonly connectionsAsStrings: string[];
     addInEdge(edge: ParticleOutput): void;
     addOutEdge(edge: ParticleInput): void;
-    evaluateCheck(check: Check, edgeToCheck: ParticleInput, path: BackwardsPath): CheckResult;
+    inEdgesFromOutEdge(outEdge: ParticleInput): readonly ParticleOutput[];
+    evaluateCheckCondition(condition: CheckCondition, edgeToCheck: ParticleInput): boolean;
 }
 export {};

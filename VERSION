@@ -1,7 +1,11 @@
-commit dc84c7f5e60ea4ac6936b6a10beb62d68176a5e1
+commit 16dea11c8beb3bd01145d792b9edd89396213ce4
 Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
-Date:   Wed Jun 26 14:00:37 2019 +1000
+Date:   Wed Jun 26 15:02:30 2019 +1000
 
-    Add support for analysing 'is from handle' checks. (#3229)
+    Replaces the complex DFS stack checking code with a simple path (#3230)
     
-    Syntax was already supported, but analyser didn't handle those checks.
+    enumeration.
+    
+    This new code is less efficient, but is SO MUCH simpler. All the tests
+    still pass :-) I'll add more tests specifically to check the path
+    enumeration in a follow up PR.

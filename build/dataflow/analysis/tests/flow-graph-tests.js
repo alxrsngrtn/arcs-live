@@ -10,7 +10,7 @@
 import { Manifest } from '../../../runtime/manifest.js';
 import { assert } from '../../../platform/chai-web.js';
 import { checkDefined } from '../../../runtime/testing/preconditions.js';
-import { FlowGraph, Node, CheckResultType, BackwardsPath } from '../flow-graph.js';
+import { FlowGraph, Node, BackwardsPath } from '../flow-graph.js';
 async function buildFlowGraph(manifestContent) {
     const manifest = await Manifest.parse(manifestContent);
     assert.lengthOf(manifest.recipes, 1);
@@ -589,7 +589,10 @@ class TestNode extends Node {
     addOutEdge() {
         throw new Error('Unimplemented.');
     }
-    evaluateCheck(check, edge) {
+    evaluateCheckCondition(condition, edge) {
+        throw new Error('Unimplemented.');
+    }
+    inEdgesFromOutEdge(outEdge) {
         throw new Error('Unimplemented.');
     }
 }
@@ -599,9 +602,6 @@ class TestEdge {
         this.end = end;
         this.label = label;
         this.handleName = 'handleName';
-    }
-    evaluateCheck(check, path) {
-        return { type: CheckResultType.Success };
     }
 }
 describe('BackwardsPath', () => {

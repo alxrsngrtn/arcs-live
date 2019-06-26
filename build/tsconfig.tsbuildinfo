@@ -482,8 +482,8 @@
         "signature": "74b0fe35f5cadce1dcc19d5e93f21b31c387808566250dc8766480b9a320943d"
       },
       "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/flow-graph.ts": {
-        "version": "470b9b88f11a46b4766b9b2b2dbbc917d2370fef4e4f162ca1e622039843d9f4",
-        "signature": "8dbcd4f117470086f2865d0a1de337a58a24b0efa6d07d68549a0f5b688c8e8e"
+        "version": "3e102929b129f766a18644a9d9359b081f87ec412f4fde5bc9847ce6b01f0fa4",
+        "signature": "9e36e0745eb2c651f57add65fcbf17fa44bfed7170e32d0858be01fc240cbf2f"
       },
       "/home/travis/build/PolymerLabs/arcs/src/dataflow/arcs-dataflow.ts": {
         "version": "df2b2da581f2d2be5c786e050ca651a81130f3b9cac9b66412a762bd30d2e627",
@@ -502,7 +502,7 @@
         "signature": "535087ae214f316cbb0a3a17fb44a767c4789b7b69c4bd2c8d37fa8d5845a81f"
       },
       "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/tests/flow-graph-tests.ts": {
-        "version": "193b00a687db710f9d6173804204f1708a3e7ce28c89e287d2010c9a482d73b8",
+        "version": "cab0c24017e7bb9b4ddbb7946935ee42b5f0da0833d8b56c5bd8e08f9677d829",
         "signature": "8e609bb71c20b858c77f0e9f90bb1319db8477b13f9f965f1a1e18524bf50881"
       },
       "/home/travis/build/PolymerLabs/arcs/src/dataflow/cli/flowcheck.ts": {
@@ -19331,7 +19331,7 @@
         [
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/flow-graph.ts",
-            "start": 1672,
+            "start": 1675,
             "length": 17,
             "code": 2345,
             "category": 1,
@@ -19348,7 +19348,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/flow-graph.ts",
-            "start": 1731,
+            "start": 1734,
             "length": 12,
             "code": 2345,
             "category": 1,
@@ -19365,15 +19365,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/flow-graph.ts",
-            "start": 3377,
-            "length": 4,
-            "messageText": "Object is possibly 'undefined'.",
-            "category": 1,
-            "code": 2532
-          },
-          {
-            "file": "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/flow-graph.ts",
-            "start": 3498,
+            "start": 3322,
             "length": 5,
             "code": 2345,
             "category": 1,
@@ -19391,14 +19383,6 @@
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/flow-graph.ts",
             "start": 3505,
-            "length": 4,
-            "messageText": "Object is possibly 'undefined'.",
-            "category": 1,
-            "code": 2532
-          },
-          {
-            "file": "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/flow-graph.ts",
-            "start": 3966,
             "length": 5,
             "messageText": "Object is possibly 'undefined'.",
             "category": 1,
@@ -19406,32 +19390,90 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/flow-graph.ts",
-            "start": 9044,
-            "length": 13,
-            "messageText": "Object is possibly 'undefined'.",
-            "category": 1,
-            "code": 2532
-          },
-          {
-            "file": "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/flow-graph.ts",
-            "start": 9089,
-            "length": 13,
-            "messageText": "Object is possibly 'undefined'.",
-            "category": 1,
-            "code": 2532
-          },
-          {
-            "file": "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/flow-graph.ts",
-            "start": 10648,
+            "start": 4238,
             "length": 4,
+            "messageText": "Object is possibly 'undefined'.",
+            "category": 1,
+            "code": 2532
+          },
+          {
+            "file": "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/flow-graph.ts",
+            "start": 4270,
+            "length": 4,
+            "messageText": "Object is possibly 'undefined'.",
+            "category": 1,
+            "code": 2532
+          },
+          {
+            "file": "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/flow-graph.ts",
+            "start": 4366,
+            "length": 4,
+            "code": 2322,
+            "category": 1,
+            "messageText": {
+              "messageText": "Type 'BackwardsPath | undefined' is not assignable to type 'BackwardsPath'.",
+              "category": 1,
+              "code": 2322,
+              "next": {
+                "messageText": "Type 'undefined' is not assignable to type 'BackwardsPath'.",
+                "category": 1,
+                "code": 2322
+              }
+            }
+          },
+          {
+            "file": "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/flow-graph.ts",
+            "start": 4519,
+            "length": 4,
+            "messageText": "Object is possibly 'undefined'.",
+            "category": 1,
+            "code": 2532
+          },
+          {
+            "file": "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/flow-graph.ts",
+            "start": 9532,
+            "length": 13,
+            "messageText": "Object is possibly 'undefined'.",
+            "category": 1,
+            "code": 2532
+          },
+          {
+            "file": "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/flow-graph.ts",
+            "start": 9577,
+            "length": 13,
+            "messageText": "Object is possibly 'undefined'.",
+            "category": 1,
+            "code": 2532
+          },
+          {
+            "file": "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/flow-graph.ts",
+            "start": 10726,
+            "length": 6,
             "code": 2345,
             "category": 1,
             "messageText": {
-              "messageText": "Argument of type 'ParticleInput | undefined' is not assignable to parameter of type 'Edge'.",
+              "messageText": "Argument of type 'ParticleInput | undefined' is not assignable to parameter of type 'ParticleInput'.",
               "category": 1,
               "code": 2345,
               "next": {
-                "messageText": "Type 'undefined' is not assignable to type 'Edge'.",
+                "messageText": "Type 'undefined' is not assignable to type 'ParticleInput'.",
+                "category": 1,
+                "code": 2322
+              }
+            }
+          },
+          {
+            "file": "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/flow-graph.ts",
+            "start": 11234,
+            "length": 78,
+            "code": 2322,
+            "category": 1,
+            "messageText": {
+              "messageText": "Type 'boolean | undefined' is not assignable to type 'boolean'.",
+              "category": 1,
+              "code": 2322,
+              "next": {
+                "messageText": "Type 'undefined' is not assignable to type 'boolean'.",
                 "category": 1,
                 "code": 2322
               }
@@ -19448,7 +19490,7 @@
         [
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/tests/flow-graph-tests.ts",
-            "start": 4401,
+            "start": 4380,
             "length": 5,
             "messageText": "Object is possibly 'undefined'.",
             "category": 1,
@@ -19456,7 +19498,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/tests/flow-graph-tests.ts",
-            "start": 4448,
+            "start": 4427,
             "length": 5,
             "messageText": "Object is possibly 'undefined'.",
             "category": 1,
@@ -19464,7 +19506,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/tests/flow-graph-tests.ts",
-            "start": 4488,
+            "start": 4467,
             "length": 5,
             "messageText": "Object is possibly 'undefined'.",
             "category": 1,

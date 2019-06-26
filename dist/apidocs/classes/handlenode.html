@@ -97,6 +97,7 @@
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-not-exported"><a href="handlenode.html#edge" class="tsd-kind-icon">Edge</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-not-exported"><a href="handlenode.html#particleoutput" class="tsd-kind-icon">Particle<wbr>Output</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-overwrite tsd-is-not-exported"><a href="handlenode.html#inedges" class="tsd-kind-icon">in<wbr>Edges</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-not-exported"><a href="handlenode.html#outconnectionspecs" class="tsd-kind-icon">out<wbr>Connection<wbr>Specs</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-overwrite tsd-is-not-exported"><a href="handlenode.html#outedges" class="tsd-kind-icon">out<wbr>Edges</a></li>
@@ -115,7 +116,8 @@
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-not-exported"><a href="handlenode.html#addinedge" class="tsd-kind-icon">add<wbr>InEdge</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-not-exported"><a href="handlenode.html#addoutedge" class="tsd-kind-icon">add<wbr>Out<wbr>Edge</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-not-exported"><a href="handlenode.html#evaluatecheck" class="tsd-kind-icon">evaluate<wbr>Check</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-not-exported"><a href="handlenode.html#evaluatecheckcondition" class="tsd-kind-icon">evaluate<wbr>Check<wbr>Condition</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-not-exported"><a href="handlenode.html#inedgesfromoutedge" class="tsd-kind-icon">in<wbr>Edges<wbr>From<wbr>Out<wbr>Edge</a></li>
 							</ul>
 						</section>
 					</div>
@@ -133,7 +135,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/dc84c7f/src/dataflow/analysis/flow-graph.ts#L383">dataflow/analysis/flow-graph.ts:383</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/16dea11/src/dataflow/analysis/flow-graph.ts#L385">dataflow/analysis/flow-graph.ts:385</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -156,8 +158,19 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="node.html">Node</a>.<a href="node.html#edge">Edge</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/dc84c7f/src/dataflow/analysis/flow-graph.ts#L232">dataflow/analysis/flow-graph.ts:232</a></li>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/dc84c7f/src/dataflow/analysis/flow-graph.ts#L233">dataflow/analysis/flow-graph.ts:233</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/16dea11/src/dataflow/analysis/flow-graph.ts#L242">dataflow/analysis/flow-graph.ts:242</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/16dea11/src/dataflow/analysis/flow-graph.ts#L243">dataflow/analysis/flow-graph.ts:243</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/16dea11/src/dataflow/analysis/flow-graph.ts#L258">dataflow/analysis/flow-graph.ts:258</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-not-exported">
+					<a name="particleoutput" class="tsd-anchor"></a>
+					<h3>Particle<wbr>Output</h3>
+					<div class="tsd-signature tsd-kind-icon">Particle<wbr>Output<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/16dea11/src/dataflow/analysis/flow-graph.ts#L411">dataflow/analysis/flow-graph.ts:411</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -168,7 +181,7 @@
 					<aside class="tsd-sources">
 						<p>Overrides <a href="node.html">Node</a>.<a href="node.html#inedges">inEdges</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/dc84c7f/src/dataflow/analysis/flow-graph.ts#L381">dataflow/analysis/flow-graph.ts:381</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/16dea11/src/dataflow/analysis/flow-graph.ts#L383">dataflow/analysis/flow-graph.ts:383</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -178,7 +191,7 @@
 					<div class="tsd-signature tsd-kind-icon">out<wbr>Connection<wbr>Specs<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Set</span><span class="tsd-signature-symbol">&lt;</span><a href="handleconnectionspec.html" class="tsd-signature-type">HandleConnectionSpec</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> =&nbsp;new Set()</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/dc84c7f/src/dataflow/analysis/flow-graph.ts#L383">dataflow/analysis/flow-graph.ts:383</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/16dea11/src/dataflow/analysis/flow-graph.ts#L385">dataflow/analysis/flow-graph.ts:385</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -189,7 +202,7 @@
 					<aside class="tsd-sources">
 						<p>Overrides <a href="node.html">Node</a>.<a href="node.html#outedges">outEdges</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/dc84c7f/src/dataflow/analysis/flow-graph.ts#L382">dataflow/analysis/flow-graph.ts:382</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/16dea11/src/dataflow/analysis/flow-graph.ts#L384">dataflow/analysis/flow-graph.ts:384</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -206,7 +219,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/dc84c7f/src/dataflow/analysis/flow-graph.ts#L390">dataflow/analysis/flow-graph.ts:390</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/16dea11/src/dataflow/analysis/flow-graph.ts#L392">dataflow/analysis/flow-graph.ts:392</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -229,7 +242,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="node.html">Node</a>.<a href="node.html#innodes">inNodes</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/dc84c7f/src/dataflow/analysis/flow-graph.ts#L240">dataflow/analysis/flow-graph.ts:240</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/16dea11/src/dataflow/analysis/flow-graph.ts#L250">dataflow/analysis/flow-graph.ts:250</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <a href="node.html" class="tsd-signature-type">Node</a><span class="tsd-signature-symbol">[]</span></h4>
@@ -247,7 +260,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="node.html">Node</a>.<a href="node.html#outnodes">outNodes</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/dc84c7f/src/dataflow/analysis/flow-graph.ts#L244">dataflow/analysis/flow-graph.ts:244</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/16dea11/src/dataflow/analysis/flow-graph.ts#L254">dataflow/analysis/flow-graph.ts:254</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <a href="node.html" class="tsd-signature-type">Node</a><span class="tsd-signature-symbol">[]</span></h4>
@@ -268,7 +281,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="node.html">Node</a>.<a href="node.html#addinedge">addInEdge</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/dc84c7f/src/dataflow/analysis/flow-graph.ts#L400">dataflow/analysis/flow-graph.ts:400</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/16dea11/src/dataflow/analysis/flow-graph.ts#L402">dataflow/analysis/flow-graph.ts:402</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -292,7 +305,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="node.html">Node</a>.<a href="node.html#addoutedge">addOutEdge</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/dc84c7f/src/dataflow/analysis/flow-graph.ts#L404">dataflow/analysis/flow-graph.ts:404</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/16dea11/src/dataflow/analysis/flow-graph.ts#L406">dataflow/analysis/flow-graph.ts:406</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -305,33 +318,54 @@
 						</li>
 					</ul>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-not-exported">
-					<a name="evaluatecheck" class="tsd-anchor"></a>
-					<h3>evaluate<wbr>Check</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-not-exported">
-						<li class="tsd-signature tsd-kind-icon">evaluate<wbr>Check<span class="tsd-signature-symbol">(</span>check<span class="tsd-signature-symbol">: </span><a href="check.html" class="tsd-signature-type">Check</a>, edgeToCheck<span class="tsd-signature-symbol">: </span><a href="particleinput.html" class="tsd-signature-type">ParticleInput</a>, path<span class="tsd-signature-symbol">: </span><a href="backwardspath.html" class="tsd-signature-type">BackwardsPath</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../globals.html#checkresult" class="tsd-signature-type">CheckResult</a></li>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-not-exported">
+					<a name="evaluatecheckcondition" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagAbstract">Abstract</span> evaluate<wbr>Check<wbr>Condition</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-not-exported">
+						<li class="tsd-signature tsd-kind-icon">evaluate<wbr>Check<wbr>Condition<span class="tsd-signature-symbol">(</span>condition<span class="tsd-signature-symbol">: </span><a href="" class="tsd-signature-type">CheckCondition</a>, edgeToCheck<span class="tsd-signature-symbol">: </span><a href="../interfaces/edge.html" class="tsd-signature-type">Edge</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
-								<p>Overrides <a href="node.html">Node</a>.<a href="node.html#evaluatecheck">evaluateCheck</a></p>
+								<p>Inherited from <a href="node.html">Node</a>.<a href="node.html#evaluatecheckcondition">evaluateCheckCondition</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/dc84c7f/src/dataflow/analysis/flow-graph.ts#L409">dataflow/analysis/flow-graph.ts:409</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/16dea11/src/dataflow/analysis/flow-graph.ts#L248">dataflow/analysis/flow-graph.ts:248</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>check: <a href="check.html" class="tsd-signature-type">Check</a></h5>
+									<h5>condition: <a href="" class="tsd-signature-type">CheckCondition</a></h5>
 								</li>
 								<li>
-									<h5>edgeToCheck: <a href="particleinput.html" class="tsd-signature-type">ParticleInput</a></h5>
-								</li>
-								<li>
-									<h5>path: <a href="backwardspath.html" class="tsd-signature-type">BackwardsPath</a></h5>
+									<h5>edgeToCheck: <a href="../interfaces/edge.html" class="tsd-signature-type">Edge</a></h5>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <a href="../globals.html#checkresult" class="tsd-signature-type">CheckResult</a></h4>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-not-exported">
+					<a name="inedgesfromoutedge" class="tsd-anchor"></a>
+					<h3>in<wbr>Edges<wbr>From<wbr>Out<wbr>Edge</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-not-exported">
+						<li class="tsd-signature tsd-kind-icon">in<wbr>Edges<wbr>From<wbr>Out<wbr>Edge<span class="tsd-signature-symbol">(</span>outEdge<span class="tsd-signature-symbol">: </span><a href="particleinput.html" class="tsd-signature-type">ParticleInput</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">readonly</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Overrides <a href="node.html">Node</a>.<a href="node.html#inedgesfromoutedge">inEdgesFromOutEdge</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/16dea11/src/dataflow/analysis/flow-graph.ts#L411">dataflow/analysis/flow-graph.ts:411</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>outEdge: <a href="particleinput.html" class="tsd-signature-type">ParticleInput</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">readonly</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -358,6 +392,9 @@
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-not-exported">
 								<a href="handlenode.html#edge" class="tsd-kind-icon">Edge</a>
 							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-not-exported">
+								<a href="handlenode.html#particleoutput" class="tsd-kind-icon">Particle<wbr>Output</a>
+							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-overwrite tsd-is-not-exported">
 								<a href="handlenode.html#inedges" class="tsd-kind-icon">in<wbr>Edges</a>
 							</li>
@@ -382,8 +419,11 @@
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-not-exported">
 								<a href="handlenode.html#addoutedge" class="tsd-kind-icon">add<wbr>Out<wbr>Edge</a>
 							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-not-exported">
+								<a href="handlenode.html#evaluatecheckcondition" class="tsd-kind-icon">evaluate<wbr>Check<wbr>Condition</a>
+							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-not-exported">
-								<a href="handlenode.html#evaluatecheck" class="tsd-kind-icon">evaluate<wbr>Check</a>
+								<a href="handlenode.html#inedgesfromoutedge" class="tsd-kind-icon">in<wbr>Edges<wbr>From<wbr>Out<wbr>Edge</a>
 							</li>
 						</ul>
 					</li>
