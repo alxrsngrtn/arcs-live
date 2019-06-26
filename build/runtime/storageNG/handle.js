@@ -36,7 +36,7 @@ export class Handle {
  */
 export class CollectionHandle extends Handle {
     async add(entity) {
-        this.clock.set(this.key, (this.clock.get(this.key) || 0) + 1);
+        this.clock[this.key] = (this.clock[this.key] || 0) + 1;
         const op = {
             type: CollectionOpTypes.Add,
             added: entity,
@@ -101,7 +101,7 @@ export class CollectionHandle extends Handle {
  */
 export class SingletonHandle extends Handle {
     async set(entity) {
-        this.clock.set(this.key, (this.clock.get(this.key) || 0) + 1);
+        this.clock[this.key] = (this.clock[this.key] || 0) + 1;
         const op = {
             type: SingletonOpTypes.Set,
             value: entity,

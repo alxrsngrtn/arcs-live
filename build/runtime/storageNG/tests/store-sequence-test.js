@@ -15,6 +15,8 @@ import { DriverFactory, Driver, Exists } from '../drivers/driver-factory.js';
 import { StorageKey } from '../storage-key.js';
 import { Runtime } from '../../runtime.js';
 import { VolatileStorageKey, VolatileStorageDriverProvider } from '../drivers/volatile.js';
+import { MockFirebaseStorageDriverProvider } from '../testing/mock-firebase.js';
+import { FirebaseStorageKey } from '../drivers/firebase.js';
 class MockDriver extends Driver {
     async read(key) { throw new Error('unimplemented'); }
     async write(key, value) { throw new Error('unimplemented'); }
@@ -47,10 +49,16 @@ const incOp = (actor, from) => ({
     operations: [{ type: CountOpTypes.Increment, actor, version: { from, to: from + 1 } }],
     id: 1
 });
-const makeSimpleModel = (meCount, themCount, meVersion, themVersion) => ({ values: new Map([['me', meCount], ['them', themCount]]),
-    version: new Map([['me', meVersion], ['them', themVersion]]) });
-const makeModel = (countDict, versionDict) => ({ values: new Map(Object.entries(countDict)), version: new Map(Object.entries(versionDict)) });
-describe('Store Flow', async () => {
+const makeSimpleModel = (meCount, themCount, meVersion, themVersion) => ({ values: { me: meCount, them: themCount }, version: { me: meVersion, them: themVersion } });
+function cloneDict(inDict) {
+    const result = {};
+    for (const [k, v] of Object.entries(inDict)) {
+        result[k] = v;
+    }
+    return result;
+}
+const makeModel = (countDict, versionDict) => ({ values: cloneDict(countDict), version: cloneDict(versionDict) });
+describe('Store Sequence', async () => {
     before(() => { testKey = new MockStorageKey(); });
     // Tests a model resync request happening synchronously with model updates from the driver
     it('services a model request and applies 2 models', async () => {
@@ -105,11 +113,9 @@ describe('Store Flow', async () => {
         sequenceTest.setChanges(onReceive, driverChanges);
         await sequenceTest.test();
     });
-    // TODO(sjmiles): empirically, 10s timeout isn't long enough for Travis to complete regularly, skipping 
-    // next test for now
     // Tests 3 operation updates happening synchronously with 2 model updates from the driver
-    it.skip('applies 3 operations and 2 models simultaneously', async function () {
-        this.timeout(10000);
+    it('applies 3 operations and 2 models simultaneously', async function () {
+        this.timeout(20000);
         const sequenceTest = new SequenceTest();
         sequenceTest.setTestConstructor(async () => {
             DriverFactory.clearRegistrationsForTesting();
@@ -118,7 +124,7 @@ describe('Store Flow', async () => {
             const activeStore = store.activate();
             return activeStore;
         });
-        const onProxyMessage = sequenceTest.registerInput('onProxyMessage', 3, { type: ExpectedResponse.Constant, response: true });
+        const onProxyMessage = sequenceTest.registerInput('onProxyMessage', 4, { type: ExpectedResponse.Constant, response: true });
         const onReceive = sequenceTest.registerInput('onReceive', 3, { type: ExpectedResponse.Void });
         const meCount = sequenceTest.registerVariable(0);
         const send = sequenceTest.registerOutput('driver.send', {
@@ -126,12 +132,11 @@ describe('Store Flow', async () => {
             default: true,
             onOutput: (model => {
                 if (sequenceTest.getOutput(send)) {
-                    sequenceTest.setVariable(meCount, model.values.get('me'));
+                    sequenceTest.setVariable(meCount, model.values['me']);
                 }
             })
         }, SequenceOutput.Replace);
         const model = sequenceTest.registerSensor('localModel');
-        const inSync = sequenceTest.registerSensor('inSync');
         const storageProxyChanges = [{ input: [incOp('me', 0)] }, { input: [incOp('me', 1)] }, { input: [incOp('me', 2)] }];
         const driverChanges = [
             { output: { [send]: false } },
@@ -142,10 +147,10 @@ describe('Store Flow', async () => {
         ];
         sequenceTest.setChanges(onProxyMessage, storageProxyChanges);
         sequenceTest.setChanges(onReceive, driverChanges);
-        sequenceTest.setEndInvariant(model, modelValue => {
+        sequenceTest.setEndInvariant(model, async (modelValue) => {
+            await sequenceTest.testObject().idle();
             assert.deepEqual(modelValue, { model: makeSimpleModel(3, 2, 3, 2) });
         });
-        sequenceTest.setEndInvariant(inSync, assert.isTrue);
         await sequenceTest.test();
     });
     it('applies operations to two stores connected by a volatile driver', async () => {
@@ -176,7 +181,9 @@ describe('Store Flow', async () => {
         ];
         sequenceTest.setChanges(store1in, store1changes);
         sequenceTest.setChanges(store2in, store2changes);
-        sequenceTest.setEndInvariant(store1Model, model => {
+        sequenceTest.setEndInvariant(store1Model, async (model) => {
+            await sequenceTest.testObject().store1.idle();
+            await sequenceTest.testObject().store2.idle();
             assert.deepEqual(model.getData(), makeModel({ 'me': 1, 'them': 1, 'other': 2 }, { 'me': 1, 'them': 1, 'other': 2 }));
         });
         sequenceTest.setEndInvariant(store2Model, model => {
@@ -184,6 +191,48 @@ describe('Store Flow', async () => {
         });
         sequenceTest.setEndInvariant(driverModel, model => {
             assert.deepEqual(model, makeModel({ 'me': 1, 'them': 1, 'other': 2 }, { 'me': 1, 'them': 1, 'other': 2 }));
+        });
+        await sequenceTest.test();
+    });
+    it('applies operations to two stores connected by a firebase driver', async function () {
+        this.timeout(40000);
+        const sequenceTest = new SequenceTest();
+        sequenceTest.setTestConstructor(async () => {
+            const runtime = new Runtime();
+            DriverFactory.clearRegistrationsForTesting();
+            MockFirebaseStorageDriverProvider.register();
+            const storageKey = new FirebaseStorageKey('test', 'test.domain', 'testKey', 'foo');
+            const store1 = new Store(storageKey, Exists.ShouldCreate, null, StorageMode.Direct, CRDTCount);
+            const activeStore1 = await store1.activate();
+            const store2 = new Store(storageKey, Exists.ShouldExist, null, StorageMode.Direct, CRDTCount);
+            const activeStore2 = await store2.activate();
+            sequenceTest.setVariable(store1V, activeStore1);
+            sequenceTest.setVariable(store2V, activeStore2);
+            return { store1: activeStore1, store2: activeStore2 };
+        });
+        const store1in = sequenceTest.registerInput('store1.onProxyMessage', 19, { type: ExpectedResponse.Constant, response: true });
+        const store2in = sequenceTest.registerInput('store2.onProxyMessage', 19, { type: ExpectedResponse.Constant, response: true });
+        const store1Model = sequenceTest.registerSensor('store1.localModel');
+        const store2Model = sequenceTest.registerSensor('store2.localModel');
+        const store1V = sequenceTest.registerVariable('store1');
+        const store2V = sequenceTest.registerVariable('store2');
+        const store1changes = [
+            { input: [incOp('me', 0)] },
+            { input: [incOp('them', 0)] },
+        ];
+        const store2changes = [
+            { input: [incOp('other', 0)] },
+            { input: [incOp('other', 1)] },
+        ];
+        sequenceTest.setChanges(store1in, store1changes);
+        sequenceTest.setChanges(store2in, store2changes);
+        sequenceTest.setEndInvariant(store1Model, async (model) => {
+            await sequenceTest.getVariable(store1V).idle();
+            await sequenceTest.getVariable(store2V).idle();
+            assert.deepEqual(model.getData(), makeModel({ 'me': 1, 'them': 1, 'other': 2 }, { 'me': 1, 'them': 1, 'other': 2 }));
+        });
+        sequenceTest.setEndInvariant(store2Model, model => {
+            assert.deepEqual(model.getData(), makeModel({ 'me': 1, 'them': 1, 'other': 2 }, { 'me': 1, 'them': 1, 'other': 2 }));
         });
         await sequenceTest.test();
     });

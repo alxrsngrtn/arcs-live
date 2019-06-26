@@ -49,7 +49,17 @@ export class Store {
 // A representation of an active store. Subclasses of this class provide specific
 // behaviour as controlled by the provided StorageMode.
 export class ActiveStore extends Store {
+    async idle() {
+        return Promise.resolve();
+    }
 }
+var DirectStoreState;
+(function (DirectStoreState) {
+    DirectStoreState["Idle"] = "Idle";
+    DirectStoreState["AwaitingResponse"] = "AwaitingResponse";
+    DirectStoreState["AwaitingResponseDirty"] = "AwaitingResponseDirty";
+    DirectStoreState["AwaitingDriverModel"] = "AwaitingDriverModel";
+})(DirectStoreState || (DirectStoreState = {}));
 export class DirectStore extends ActiveStore {
     /*
      * This class should only ever be constructed via the static construct method
@@ -57,9 +67,42 @@ export class DirectStore extends ActiveStore {
     constructor(storageKey, exists, type, mode, modelConstructor) {
         super(storageKey, exists, type, mode, modelConstructor);
         this.callbacks = new Map();
-        this.inSync = true;
         this.nextCallbackID = 1;
         this.version = 0;
+        this.pendingException = null;
+        this.pendingResolves = [];
+        this.pendingRejects = [];
+        this.pendingDriverModels = [];
+        this.state = DirectStoreState.Idle;
+    }
+    async idle() {
+        if (this.pendingException) {
+            return Promise.reject(this.pendingException);
+        }
+        if (this.state === DirectStoreState.Idle) {
+            return Promise.resolve();
+        }
+        return new Promise((resolve, reject) => {
+            this.pendingResolves.push(resolve);
+            this.pendingRejects.push(reject);
+        });
+    }
+    setState(state) {
+        this.state = state;
+        if (state === DirectStoreState.Idle) {
+            // If we are already idle, this won't notify external parties.
+            this.notifyIdle();
+        }
+    }
+    notifyIdle() {
+        if (this.pendingException) {
+            // this is termination.
+            this.pendingRejects.forEach(reject => reject(this.pendingException));
+        }
+        else {
+            this.pendingResolves.forEach(resolve => resolve());
+            this.pendingResolves = [];
+        }
     }
     static async construct(storageKey, exists, type, mode, modelConstructor) {
         const me = new DirectStore(storageKey, exists, type, mode, modelConstructor);
@@ -73,24 +116,111 @@ export class DirectStore extends ActiveStore {
     }
     // The driver will invoke this method when it has an updated remote model
     async onReceive(model, version) {
-        const { modelChange, otherChange } = this.localModel.merge(model);
-        await this.processModelChange(modelChange, otherChange, version, true);
+        this.pendingDriverModels.push({ model, version });
+        if (this.state === DirectStoreState.AwaitingResponse || this.state === DirectStoreState.AwaitingResponseDirty) {
+            return;
+        }
+        this.applyPendingDriverModels();
     }
-    async processModelChange(thisChange, otherChange, version, messageFromDriver) {
+    deliverCallbacks(thisChange) {
         if (thisChange.changeType === ChangeType.Operations && thisChange.operations.length > 0) {
             this.callbacks.forEach((cb, id) => cb({ type: ProxyMessageType.Operations, operations: thisChange.operations, id }));
         }
         else if (thisChange.changeType === ChangeType.Model) {
             this.callbacks.forEach((cb, id) => cb({ type: ProxyMessageType.ModelUpdate, model: thisChange.modelPostChange, id }));
         }
+    }
+    async processModelChange(modelChange, otherChange, version) {
+        this.deliverCallbacks(modelChange);
+        await this.updateStateAndAct(this.noDriverSideChanges(modelChange, otherChange, false), version, false);
+    }
+    // This function implements a state machine that controls when data is sent to the driver.
+    // You can see the state machine in all its glory at the following URL:
+    //
+    // https://github.com/PolymerLabs/arcs/wiki/Store-object-State-Machine
+    //
+    async updateStateAndAct(noDriverSideChanges, version, messageFromDriver) {
         // Don't send to the driver if we're already in sync and there are no driver-side changes.
-        if (this.inSync && this.noDriverSideChanges(thisChange, otherChange, messageFromDriver)) {
+        if (noDriverSideChanges) {
             // Need to record the driver version so that we can continue to send.
+            this.setState(DirectStoreState.Idle);
             this.version = version;
             return;
         }
-        this.version = version + 1;
-        this.inSync = await this.driver.send(this.localModel.getData(), this.version);
+        switch (this.state) {
+            case DirectStoreState.AwaitingDriverModel:
+                if (!messageFromDriver) {
+                    return;
+                }
+            /* falls through */
+            case DirectStoreState.Idle:
+                // This loop implements sending -> AwaitingResponse -> AwaitingResponseDirty -> sending.
+                // Breakouts happen if:
+                //  (1) a response arrives while still AwaitingResponse. This returns the store to Idle.
+                //  (2) a negative response arrives. This means we're now waiting for driver models
+                //      (AwaitingDriverModel). Note that in this case we are likely to end up back in
+                //      this loop when a driver model arrives.
+                while (true) {
+                    this.setState(DirectStoreState.AwaitingResponse);
+                    // Work around a typescript compiler bug. Apparently typescript won't guarantee that
+                    // a Map key you've just set will exist, but is happy to assure you that a private
+                    // member variable couldn't possibly change in any function outside the local scope
+                    // when within a switch statement. 
+                    this.state = DirectStoreState.AwaitingResponse;
+                    version += 1;
+                    this.version = version;
+                    const response = await this.driver.send(this.localModel.getData(), version);
+                    if (response) {
+                        if (this.state === DirectStoreState.AwaitingResponse) {
+                            this.setState(DirectStoreState.Idle);
+                            this.applyPendingDriverModels();
+                            break;
+                        }
+                        if (this.state !== DirectStoreState.AwaitingResponseDirty) {
+                            // This shouldn't be possible as only a 'nack' should put us into
+                            // AwaitingDriverModel, and only the above code should put us back
+                            // into Idle.
+                            throw new Error('reached impossible state in store state machine');
+                        }
+                        // fallthrough to re-execute the loop.
+                    }
+                    else {
+                        this.setState(DirectStoreState.AwaitingDriverModel);
+                        this.applyPendingDriverModels();
+                        break;
+                    }
+                }
+                return;
+            case DirectStoreState.AwaitingResponse:
+                this.setState(DirectStoreState.AwaitingResponseDirty);
+                return;
+            case DirectStoreState.AwaitingResponseDirty:
+                return;
+            default:
+                throw new Error('reached impossible default state in switch statement');
+        }
+    }
+    applyPendingDriverModels() {
+        if (this.pendingDriverModels.length > 0) {
+            const models = this.pendingDriverModels;
+            this.pendingDriverModels = [];
+            let noDriverSideChanges = true;
+            let theVersion = 0;
+            for (const { model, version } of models) {
+                try {
+                    const { modelChange, otherChange } = this.localModel.merge(model);
+                    this.deliverCallbacks(modelChange);
+                    noDriverSideChanges = noDriverSideChanges && this.noDriverSideChanges(modelChange, otherChange, true);
+                    theVersion = version;
+                }
+                catch (e) {
+                    this.pendingException = e;
+                    this.notifyIdle();
+                    return;
+                }
+            }
+            void this.updateStateAndAct(noDriverSideChanges, theVersion, true);
+        }
     }
     // Note that driver-side changes are stored in 'otherChange' when the merged operations/model is sent
     // from the driver, and 'thisChange' when the merged operations/model is sent from a storageProxy.
@@ -111,21 +241,26 @@ export class DirectStore extends ActiveStore {
     // a return value of true implies that the message was accepted, a
     // return value of false requires that the proxy send a model sync 
     async onProxyMessage(message) {
+        if (this.pendingException) {
+            throw this.pendingException;
+        }
         switch (message.type) {
             case ProxyMessageType.SyncRequest:
                 await this.callbacks.get(message.id)({ type: ProxyMessageType.ModelUpdate, model: this.localModel.getData(), id: message.id });
                 return true;
-            case ProxyMessageType.Operations:
+            case ProxyMessageType.Operations: {
                 for (const operation of message.operations) {
                     if (!this.localModel.applyOperation(operation)) {
                         return false;
                     }
                 }
-                await this.processModelChange({ changeType: ChangeType.Operations, operations: message.operations }, null, this.version, false);
+                const change = { changeType: ChangeType.Operations, operations: message.operations };
+                void this.processModelChange(change, null, this.version);
                 return true;
+            }
             case ProxyMessageType.ModelUpdate: {
                 const { modelChange, otherChange } = this.localModel.merge(message.model);
-                await this.processModelChange(modelChange, otherChange, this.version, false);
+                void this.processModelChange(modelChange, otherChange, this.version);
                 return true;
             }
             default:

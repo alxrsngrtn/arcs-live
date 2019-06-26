@@ -19,58 +19,58 @@ describe('CRDTCollection', () => {
         const set = new CRDTCollection();
         set.applyOperation({
             type: CollectionOpTypes.Add,
-            added: 'one',
-            clock: new Map([['me', 1]]),
+            added: { id: 'one' },
+            clock: { me: 1 },
             actor: 'me'
         });
         assert.isTrue(set.applyOperation({
             type: CollectionOpTypes.Add,
-            added: 'two',
-            clock: new Map([['me', 2]]),
+            added: { id: 'two' },
+            clock: { me: 2 },
             actor: 'me'
         }));
-        assert.sameMembers([...set.getParticleView()], ['one', 'two']);
+        assert.sameMembers([...set.getParticleView()].map(a => a.id), ['one', 'two']);
     });
     it('can add the same value from two actors', () => {
         const set = new CRDTCollection();
         set.applyOperation({
             type: CollectionOpTypes.Add,
-            added: 'one',
-            clock: new Map([['me', 1]]),
+            added: { id: 'one' },
+            clock: { me: 1 },
             actor: 'me'
         });
         set.applyOperation({
             type: CollectionOpTypes.Add,
-            added: 'one',
-            clock: new Map([['them', 1]]),
+            added: { id: 'one' },
+            clock: { them: 1 },
             actor: 'them'
         });
-        assert.sameMembers([...set.getParticleView()], ['one']);
+        assert.sameMembers([...set.getParticleView()].map(a => a.id), ['one']);
     });
     it('rejects add operations not in sequence', () => {
         const set = new CRDTCollection();
         set.applyOperation({
             type: CollectionOpTypes.Add,
-            added: 'one',
-            clock: new Map([['me', 1]]),
+            added: { id: 'one' },
+            clock: { me: 1 },
             actor: 'me'
         });
         assert.isFalse(set.applyOperation({
             type: CollectionOpTypes.Add,
-            added: 'two',
-            clock: new Map([['me', 0]]),
+            added: { id: 'two' },
+            clock: { me: 0 },
             actor: 'me'
         }));
         assert.isFalse(set.applyOperation({
             type: CollectionOpTypes.Add,
-            added: 'two',
-            clock: new Map([['me', 1]]),
+            added: { id: 'two' },
+            clock: { me: 1 },
             actor: 'me'
         }));
         assert.isFalse(set.applyOperation({
             type: CollectionOpTypes.Add,
-            added: 'two',
-            clock: new Map([['me', 3]]),
+            added: { id: 'two' },
+            clock: { me: 3 },
             actor: 'me'
         }));
     });
@@ -78,14 +78,14 @@ describe('CRDTCollection', () => {
         const set = new CRDTCollection();
         set.applyOperation({
             type: CollectionOpTypes.Add,
-            added: 'one',
-            clock: new Map([['me', 1]]),
+            added: { id: 'one' },
+            clock: { me: 1 },
             actor: 'me'
         });
         assert.isTrue(set.applyOperation({
             type: CollectionOpTypes.Remove,
-            removed: 'one',
-            clock: new Map([['me', 1]]),
+            removed: { id: 'one' },
+            clock: { me: 1 },
             actor: 'me'
         }));
         assert.equal(set.getParticleView().size, 0);
@@ -94,20 +94,20 @@ describe('CRDTCollection', () => {
         const set = new CRDTCollection();
         set.applyOperation({
             type: CollectionOpTypes.Add,
-            added: 'one',
-            clock: new Map([['me', 1]]),
+            added: { id: 'one' },
+            clock: { me: 1 },
             actor: 'me'
         });
         assert.isFalse(set.applyOperation({
             type: CollectionOpTypes.Remove,
-            removed: 'one',
-            clock: new Map([['me', 2]]),
+            removed: { id: 'one' },
+            clock: { me: 2 },
             actor: 'me'
         }));
         assert.isFalse(set.applyOperation({
             type: CollectionOpTypes.Remove,
-            removed: 'one',
-            clock: new Map([['me', 0]]),
+            removed: { id: 'one' },
+            clock: { me: 0 },
             actor: 'me'
         }));
     });
@@ -115,14 +115,14 @@ describe('CRDTCollection', () => {
         const set = new CRDTCollection();
         set.applyOperation({
             type: CollectionOpTypes.Add,
-            added: 'one',
-            clock: new Map([['me', 1]]),
+            added: { id: 'one' },
+            clock: { me: 1 },
             actor: 'me'
         });
         assert.isFalse(set.applyOperation({
             type: CollectionOpTypes.Remove,
-            removed: 'two',
-            clock: new Map([['me', 1]]),
+            removed: { id: 'two' },
+            clock: { me: 1 },
             actor: 'me'
         }));
     });
@@ -130,28 +130,28 @@ describe('CRDTCollection', () => {
         const set = new CRDTCollection();
         set.applyOperation({
             type: CollectionOpTypes.Add,
-            added: 'one',
-            clock: new Map([['me', 1]]),
+            added: { id: 'one' },
+            clock: { me: 1 },
             actor: 'me'
         });
         set.applyOperation({
             type: CollectionOpTypes.Add,
-            added: 'two',
-            clock: new Map([['you', 1]]),
+            added: { id: 'two' },
+            clock: { you: 1 },
             actor: 'you'
         });
         // This succeeds because the op clock is up to date wrt to the value "one" (whose version is me:1).
         assert.isTrue(set.applyOperation({
             type: CollectionOpTypes.Remove,
-            removed: 'one',
-            clock: new Map([['me', 1]]),
+            removed: { id: 'one' },
+            clock: { me: 1 },
             actor: 'them'
         }));
         // This fails because the op clock is not up to date wrt to the actor "you" (whose version is you:1).
         assert.isFalse(set.applyOperation({
             type: CollectionOpTypes.Remove,
-            removed: 'two',
-            clock: new Map([['me', 1]]),
+            removed: { id: 'two' },
+            clock: { me: 1 },
             actor: 'them'
         }));
     });
@@ -159,37 +159,37 @@ describe('CRDTCollection', () => {
         const set1 = new CRDTCollection();
         set1.applyOperation({
             type: CollectionOpTypes.Add,
-            added: 'one',
-            clock: new Map([['me', 1]]),
+            added: { id: 'one' },
+            clock: { me: 1 },
             actor: 'me'
         });
         set1.applyOperation({
             type: CollectionOpTypes.Add,
-            added: 'two',
-            clock: new Map([['me', 2]]),
+            added: { id: 'two' },
+            clock: { me: 2 },
             actor: 'me'
         });
         const set2 = new CRDTCollection();
         set2.applyOperation({
             type: CollectionOpTypes.Add,
-            added: 'three',
-            clock: new Map([['you', 1]]),
+            added: { id: 'three' },
+            clock: { you: 1 },
             actor: 'you'
         });
         set2.applyOperation({
             type: CollectionOpTypes.Add,
-            added: 'one',
-            clock: new Map([['you', 2]]),
+            added: { id: 'one' },
+            clock: { you: 2 },
             actor: 'you'
         });
         const { modelChange, otherChange } = set1.merge(set2.getData());
-        const expectedValues = new Map([
-            ['one', new Map([['me', 1], ['you', 2]])],
-            ['two', new Map([['me', 2]])],
-            ['three', new Map([['you', 1]])],
-        ]);
+        const expectedValues = {
+            one: { value: { id: 'one' }, version: { me: 1, you: 2 } },
+            two: { value: { id: 'two' }, version: { me: 2 } },
+            three: { value: { id: 'three' }, version: { you: 1 } }
+        };
         if (modelChange.changeType === ChangeType.Model) {
-            assert.deepEqual(modelChange.modelPostChange, { values: expectedValues, version: new Map([['you', 2], ['me', 2]]) });
+            assert.deepEqual(modelChange.modelPostChange, { values: expectedValues, version: { you: 2, me: 2 } });
         }
         else {
             assert.fail('modelChange.changeType should be ChangeType.Model');
@@ -198,17 +198,17 @@ describe('CRDTCollection', () => {
         // Test removes also work in merge.
         set1.applyOperation({
             type: CollectionOpTypes.Remove,
-            removed: 'one',
-            clock: new Map([['me', 2], ['you', 2]]),
+            removed: { id: 'one' },
+            clock: { me: 2, you: 2 },
             actor: 'me'
         });
         const { modelChange: modelChange2, otherChange: otherChange2 } = set1.merge(set2.getData());
-        const expectedValues2 = new Map([
-            ['two', new Map([['me', 2]])],
-            ['three', new Map([['you', 1]])],
-        ]);
+        const expectedValues2 = {
+            two: { value: { id: 'two' }, version: { me: 2 } },
+            three: { value: { id: 'three' }, version: { you: 1 } }
+        };
         if (modelChange2.changeType === ChangeType.Model) {
-            assert.deepEqual(modelChange2.modelPostChange, { values: expectedValues2, version: new Map([['you', 2], ['me', 2]]) });
+            assert.deepEqual(modelChange2.modelPostChange, { values: expectedValues2, version: { you: 2, me: 2 } });
         }
         else {
             assert.fail('modelChange.changeType should be ChangeType.Model');

@@ -7,10 +7,17 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-import { CRDTChange, CRDTModel, CRDTTypeRecord, VersionMap } from './crdt';
+import { CRDTChange, CRDTModel, CRDTTypeRecord, VersionMap } from './crdt.js';
+import { Dictionary } from '../hot.js';
 declare type RawCollection<T> = Set<T>;
-declare type CollectionData<T> = {
-    values: Map<T, VersionMap>;
+export interface Referenceable {
+    id: string;
+}
+declare type CollectionData<T extends Referenceable> = {
+    values: Dictionary<{
+        value: T;
+        version: VersionMap;
+    }>;
     version: VersionMap;
 };
 export declare enum CollectionOpTypes {
@@ -28,14 +35,14 @@ export declare type CollectionOperation<T> = {
     actor: string;
     clock: VersionMap;
 };
-export interface CRDTCollectionTypeRecord<T> extends CRDTTypeRecord {
+export interface CRDTCollectionTypeRecord<T extends Referenceable> extends CRDTTypeRecord {
     data: CollectionData<T>;
     operation: CollectionOperation<T>;
     consumerType: RawCollection<T>;
 }
-declare type CollectionChange<T> = CRDTChange<CRDTCollectionTypeRecord<T>>;
-declare type CollectionModel<T> = CRDTModel<CRDTCollectionTypeRecord<T>>;
-export declare class CRDTCollection<T> implements CollectionModel<T> {
+declare type CollectionChange<T extends Referenceable> = CRDTChange<CRDTCollectionTypeRecord<T>>;
+declare type CollectionModel<T extends Referenceable> = CRDTModel<CRDTCollectionTypeRecord<T>>;
+export declare class CRDTCollection<T extends Referenceable> implements CollectionModel<T> {
     private model;
     merge(other: CollectionData<T>): {
         modelChange: CollectionChange<T>;

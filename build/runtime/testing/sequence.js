@@ -61,6 +61,7 @@ export class SequenceTest {
         this.variables = new Map();
         this.sensors = new Map();
         this.outputs = new Map();
+        this.currentTestObject = null;
     }
     /**
      * Set a function that constructs a fresh instance of the object under test for each ordering.
@@ -203,6 +204,9 @@ export class SequenceTest {
     setEndInvariant(id, test) {
         this.sensors.get(id).endInvariants.push(test);
     }
+    testObject() {
+        return this.currentTestObject;
+    }
     resetVariables() {
         for (const variable of this.variables.values()) {
             if (variable.initialFn) {
@@ -231,9 +235,13 @@ export class SequenceTest {
         }
     }
     objAndName(obj, name) {
+        const initialObj = obj;
         const parts = name.split('.');
         for (let i = 0; i < parts.length - 1; i++) {
             obj = obj[parts[i]];
+            if (obj === undefined) {
+                throw new Error(`name ${name} invalid for ${initialObj}`);
+            }
         }
         return { object: obj, name: parts[parts.length - 1] };
     }
@@ -480,6 +488,7 @@ export class SequenceTest {
                 obj = await obj;
             }
             this.setupOutputs(obj);
+            this.currentTestObject = obj;
             this.interleavingLog = ['--', description, '\n'];
             for (const item of interleaving) {
                 if (item.index === -1) {
@@ -536,7 +545,7 @@ export class SequenceTest {
                 for (const test of sensor.endInvariants) {
                     try {
                         const { object: theObject, name } = this.objAndName(obj, sensor.name);
-                        test(theObject[name]);
+                        await test(theObject[name]);
                     }
                     catch (e) {
                         console.log(...this.interleavingLog);

@@ -7,7 +7,7 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-import { FirebaseStorageDriverProvider, FirebaseDriver, FirebaseAppCache } from '../drivers/firebase.js';
+import { FirebaseStorageKey, FirebaseStorageDriverProvider, FirebaseDriver, FirebaseAppCache } from '../drivers/firebase.js';
 import { DriverFactory } from '../drivers/driver-factory.js';
 import { Runtime } from '../../runtime.js';
 import { assert } from '../../../platform/chai-web.js';
@@ -188,6 +188,9 @@ class MockFirebaseDatabase {
             await reference.remoteStateChanged();
         }
     }
+    getValueForTesting(path) {
+        return this.values[path].value;
+    }
     goOffline() {
         throw new Error('Method not implemented.');
     }
@@ -231,6 +234,9 @@ class MockFirebaseApp {
         }
         return this.databases[url];
     }
+    getValueForTesting(url, path) {
+        return this.databases[url].getValueForTesting(path);
+    }
     async delete() {
         throw new Error('Method not implemented.');
     }
@@ -263,12 +269,12 @@ class MockFirebaseAppCache extends FirebaseAppCache {
         return this.appCache.get(keyAsString);
     }
 }
-export class FakeFirebaseStorageDriverProvider extends FirebaseStorageDriverProvider {
+export class MockFirebaseStorageDriverProvider extends FirebaseStorageDriverProvider {
     async driver(storageKey, exists) {
         if (!this.willSupport(storageKey)) {
             throw new Error(`This provider does not support storageKey ${storageKey.toString()}`);
         }
-        return FakeFirebaseStorageDriverProvider.newDriverForTesting(storageKey, exists);
+        return MockFirebaseStorageDriverProvider.newDriverForTesting(storageKey, exists);
     }
     static async newDriverForTesting(storageKey, exists) {
         const driver = new FirebaseDriver(storageKey, exists);
@@ -277,7 +283,17 @@ export class FakeFirebaseStorageDriverProvider extends FirebaseStorageDriverProv
         return driver;
     }
     static register() {
-        DriverFactory.register(new FakeFirebaseStorageDriverProvider());
+        DriverFactory.register(new MockFirebaseStorageDriverProvider());
+    }
+    static getValueForTesting(storageKey) {
+        const appCache = new MockFirebaseAppCache(Runtime.getRuntime());
+        const app = appCache.getApp(storageKey);
+        return app.getValueForTesting('', storageKey.location);
+    }
+}
+export class MockFirebaseStorageKey extends FirebaseStorageKey {
+    constructor(location) {
+        super('test-project', 'test.domain', 'testKey', location);
     }
 }
 //# sourceMappingURL=mock-firebase.js.map

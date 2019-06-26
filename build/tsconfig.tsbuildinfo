@@ -334,7 +334,7 @@
         "signature": "1d932b30af183258cd51b88d8f58e8413dd4a1cd0ee3ba14181b7a58a74f8f8a"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/storageNG/drivers/volatile.ts": {
-        "version": "408500e4bf407851184d0d3a572640f0c4da4e15f0804a2f6f16f7531c79d138",
+        "version": "d280e1e8b4a942fb5283c758ca6bc29749bb5d57efe6f794071acf932cec0f5a",
         "signature": "f6b8a2a12d20beb1d8fa01714f0b5f72e00fd13302a4d4866627b5b591f4b834"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/runtime.ts": {
@@ -1942,23 +1942,23 @@
         "signature": "f7da0f8f9dfe8c0fc06a51cb8d840e54e1b4b8f0c64985075c4a81a7158fb84f"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/crdt/crdt.ts": {
-        "version": "b0a046fe81cbec5421a5f8d0d6acebb3139e80f7b8e960d56b4496523467b998",
-        "signature": "7dbe25e3c9c94f17fa78d77befceba05e253780cf0a54303e8fbd949b29f0020"
+        "version": "6e4ff2e347b54b98c87ee80da8cdcd0e2e1a44f662dfea02b57cbd5748d684b4",
+        "signature": "3b5f0271525b93678f631cb72cd1f4a694594b28006f68e55055b58e5b4cb794"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/crdt/crdt-collection.ts": {
-        "version": "e56e526442e12fc9506a2af5fc620743dba8ed638135f4a13076e86af9c5db67",
-        "signature": "4a22937e81e81772e4212e4bb6af9f6142d68c816caa96ccc7e9a0c70e019419"
+        "version": "036a71d6a3ff71a435cceb290039c12bdcef67abc7dd7eabda962313090bb65d",
+        "signature": "7a7aa82fa727861a7a9639f218510f53eba4060897f7ed4f4b67047e435407b1"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/crdt/crdt-count.ts": {
-        "version": "a570f099088ecf97f54f55f8d30e00c8fb6c66a38c98fb4d6c1eb74d8bb78a46",
-        "signature": "68ea9e26f1dcf04c123401b863b284f5f6d31dd0f70238d39f1ef448c1fae4b2"
+        "version": "612998865bcd38ba54ea48a37877d4b305aa54f132aaadf4d25e2b53b2c1f138",
+        "signature": "50f22c6414d93bc2b5f52da8ecccca67927c7b89aabb4e86903900a576ab1356"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/crdt/crdt-singleton.ts": {
-        "version": "414c52f4f1979a4c37e4cecbee4b8c3a3d7df62f71134d33911521142a6b71ba",
-        "signature": "12d269356c980c61967645ff2037452610cb6f4c8eef782ffc1a733b3e3af0b8"
+        "version": "1953f42c894f0084d489b1da8403aff7eeb17fedeb911d21649acefa0667d01b",
+        "signature": "434ac226ed5a2d21323856d368fd2b3c947bfe4111ff443efd16b2098595e405"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/crdt/tests/crdt-collection-tests.ts": {
-        "version": "9e67c7f2683b83793386ca9b9c814cd7726f4883b5ff269843a7c85f64c0d853",
+        "version": "954ef7471b264c5d55343216bf9db98802870cb25df90a2a66c6b7ee05d67f9c",
         "signature": "8bc1d39a3b8ec61064f9969316a088e314895e7ffd094468dcc0b238f33cb4a6"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/crdt/tests/crdt-count-test.ts": {
@@ -1966,11 +1966,11 @@
         "signature": "fd95df5d076cbfed143dc4904d376b5c6d9cb1091b630994ffe2366010afa6b3"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/crdt/tests/crdt-singleton-test.ts": {
-        "version": "4eef15203884bb138083620ed8f35bc66832db5945b18e268265bbd60f55f3ad",
+        "version": "a61a688799f512818bb4064396b72146fa2e090082c77b69f01ad67612e776d3",
         "signature": "8bc1d39a3b8ec61064f9969316a088e314895e7ffd094468dcc0b238f33cb4a6"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/storageNG/drivers/firebase.ts": {
-        "version": "bf6418d3d42b3931a0e4b709de97e6aaf2df552c527d65f8f714d37c64dd2b53",
+        "version": "019d2b75743a9fb4bb0e1f02fcfb211141a703f97daa6cfabedb98112b6d1d3a",
         "signature": "1e8ae6e98d771170bc0725d8c3a73e3e997b1112318459113f0b52549f7c17a0"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/manual_tests/firebase-ng-tests.ts": {
@@ -1990,55 +1990,59 @@
         "signature": "5406f2b5b660359a22c32b8503f291bbb78f3360b140e9004b96850b20953d4e"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/storageNG/store.ts": {
-        "version": "d76f6bd9f88b8f3722f4a44739781ea3304af1140ea99fcc08452f8dbcc1cf6d",
-        "signature": "03ea764f2252ffceed699d19e84586f605b267379e708a2a53c0694c6074f743"
+        "version": "1ba46817395c0b4a40db57adfb7f68fb71c9b33356d22a0e913aac76b0a1217e",
+        "signature": "4b4f668f610f9a58a6345cc1c609efe683abb9ba6412a599ffb3e347b977f09c"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/storageNG/storage-proxy.ts": {
-        "version": "349ac206e5edd64b773798a74ee64cf59e883b22e83d6e32f28b5a4740b896ff",
+        "version": "565fcb8c8cc5e2b47a167ebfbb4be47604f6e0fa694d7a0ae72f6f744397c5c9",
         "signature": "c9a913cfab01c305f96f3d961ea51704cbfecdd8081fc2e8831ea364cec8aa82"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/storageNG/handle.ts": {
-        "version": "cdb47c4ffa994e9772d9ad6e091f4b86174df559fa33323bdabff50ebd5e6cd9",
-        "signature": "3eb23830f4ce50cfb606af9fc06070b128f40a56ea23bbb90b52ac86f8b29597"
+        "version": "867690683e69928e485ee032a635ae9142ba7bab1e018ae0fc44de91994ecc90",
+        "signature": "187f58cb5cf9dd06c83cb13ea69cd60c858cf162194683bbee115a7fc63c7c2b"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/storageNG/testing/mock-firebase.ts": {
-        "version": "e82779e159b299d4e30db71b195e50d6c5d80131cc93c97dad7cefc1c7e7c300",
-        "signature": "965dbbf56451421cf5ac1859f1f34c27f7be3d973746dfc906fc8fb5357177b6"
+        "version": "5fd71819be05d08245e9ace9b218acbcceefe7cda89da7bb8333689558b77f3b",
+        "signature": "8f5a620739fe50aeaf57d49ad4ea706c68679355ccf9ee65c43b078ba6f26ced"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/testing/test-util.ts": {
         "version": "d5ade4c866a2972ce30ccece11d6a66c1435e9ddae98ee9b66fee70034010f5a",
         "signature": "4c86e04bcbc0a95e6fce540fb1151f3b9e07ffca1f2630061dfc8de54a7c63b3"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/storageNG/drivers/tests/firebase-test.ts": {
-        "version": "3e189af9ad1693f350a2ef028dd7b60153c08b675392f0dab118accd469c3411",
+        "version": "aea0212bb91fb7ac908a1a67c4f21d8b2ceb00bc545727dedba09721955f9d60",
         "signature": "fd95df5d076cbfed143dc4904d376b5c6d9cb1091b630994ffe2366010afa6b3"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/storageNG/drivers/tests/volatile-test.ts": {
         "version": "8ef80d15b8ead41e401f77662d2e0439b5f697844eeedb22e4a9d5597dfbfa14",
         "signature": "fd95df5d076cbfed143dc4904d376b5c6d9cb1091b630994ffe2366010afa6b3"
       },
+      "/home/travis/build/PolymerLabs/arcs/src/runtime/storageNG/tests/firebase-store-integration-test.ts": {
+        "version": "2fb1dea3e52cc8c44647ed14128654cd65a7c214c9864d71e47af7387eabeac7",
+        "signature": "fd95df5d076cbfed143dc4904d376b5c6d9cb1091b630994ffe2366010afa6b3"
+      },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/storageNG/tests/storage-proxy-test.ts": {
-        "version": "0dcc9e8b26259ce24203a3a466bc1f47a6699097ad3d89daff418a3e2577b4f0",
+        "version": "f954ebf73de7a546f4cfe217d6f19665c70aa53b487e613b0b2bdfb76a3ea854",
         "signature": "4590e0183fdf2381f71faf3854c42a69d011be3c19238e2d0a01e207e7116046"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/storageNG/tests/handle-test.ts": {
-        "version": "68ff6f768b7363686ad1a5ed1cc5b11f0c818e59c42d6b963043753a89c956d4",
+        "version": "5758c374e650dee647c825fda8f3b3166f90d55778784efb354299130d732c3d",
         "signature": "fd95df5d076cbfed143dc4904d376b5c6d9cb1091b630994ffe2366010afa6b3"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/testing/sequence.ts": {
-        "version": "a7b7e189f30929e13f1a1a75760352f31051d84a8109c47d7836d70c343155c1",
-        "signature": "34ae8e46e29ded662e6709b3a8c93a66f809a370e6b4a7ddcf267e02e0585c9e"
+        "version": "6c430ca04631dee815a8a5f7aa295cc610ade63037813b756f8d9ec648a15c2f",
+        "signature": "e973bf7b87271e563ce851f08dca65f575c5cb88e8210c55b6605365ee38ee87"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/storageNG/tests/store-sequence-test.ts": {
-        "version": "31a7a3e0463035d28a823163148f3d7c4a8357fdf55d5f9322a16964333b2739",
+        "version": "0ee3c894986dce98391752de4a41c266448b79e0626bb776aa988289583aabac",
         "signature": "fd95df5d076cbfed143dc4904d376b5c6d9cb1091b630994ffe2366010afa6b3"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/storageNG/tests/store-test.ts": {
-        "version": "c7d443cb5572cf6e6bedc7e1b834e4ad1962308d8791a2175b644f4321d4d250",
+        "version": "f6c5272a9a727adeeea959123db27caf1d4d48db3e2062b2ef9d9672645cd9a7",
         "signature": "fd95df5d076cbfed143dc4904d376b5c6d9cb1091b630994ffe2366010afa6b3"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/storageNG/tests/volatile-store-integration-test.ts": {
-        "version": "442870c03ca805cec5581610e1cb323d40f77caf84c7dd58bde4684f32b5db7a",
+        "version": "60f5885f5596b6bcb9552ef606edd36f72351f524ee6a630d0013fb91088a865",
         "signature": "fd95df5d076cbfed143dc4904d376b5c6d9cb1091b630994ffe2366010afa6b3"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/test/akms-test.ts": {
@@ -6180,22 +6184,26 @@
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
       ],
       "/home/travis/build/PolymerLabs/arcs/src/runtime/crdt/crdt.ts": [
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/hot.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
       ],
       "/home/travis/build/PolymerLabs/arcs/src/runtime/crdt/crdt-collection.ts": [
         "/home/travis/build/PolymerLabs/arcs/src/runtime/crdt/crdt.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/hot.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
       ],
       "/home/travis/build/PolymerLabs/arcs/src/runtime/crdt/crdt-count.ts": [
         "/home/travis/build/PolymerLabs/arcs/src/runtime/crdt/crdt.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/hot.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
       ],
       "/home/travis/build/PolymerLabs/arcs/src/runtime/crdt/crdt-singleton.ts": [
         "/home/travis/build/PolymerLabs/arcs/src/runtime/crdt/crdt.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/crdt/crdt-collection.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/hot.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
       ],
@@ -6314,7 +6322,6 @@
       ],
       "/home/travis/build/PolymerLabs/arcs/src/runtime/storageNG/drivers/tests/firebase-test.ts": [
         "/home/travis/build/PolymerLabs/arcs/src/runtime/runtime.ts",
-        "/home/travis/build/PolymerLabs/arcs/src/runtime/storageNG/drivers/firebase.ts",
         "/home/travis/build/PolymerLabs/arcs/src/platform/chai-web.d.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/storageNG/drivers/driver-factory.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/storageNG/testing/mock-firebase.ts",
@@ -6327,6 +6334,16 @@
         "/home/travis/build/PolymerLabs/arcs/src/runtime/storageNG/drivers/volatile.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/storageNG/drivers/driver-factory.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/runtime.ts",
+        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
+        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
+      ],
+      "/home/travis/build/PolymerLabs/arcs/src/runtime/storageNG/tests/firebase-store-integration-test.ts": [
+        "/home/travis/build/PolymerLabs/arcs/src/platform/chai-web.d.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/storageNG/store.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/crdt/crdt-count.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/storageNG/drivers/driver-factory.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/runtime.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/storageNG/testing/mock-firebase.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
       ],
@@ -6369,6 +6386,8 @@
         "/home/travis/build/PolymerLabs/arcs/src/runtime/runtime.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/storageNG/drivers/volatile.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/hot.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/storageNG/testing/mock-firebase.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/storageNG/drivers/firebase.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
       ],
@@ -9872,14 +9891,21 @@
         "/home/travis/build/PolymerLabs/arcs/src/runtime/keymgmt/keys.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/keymgmt/manager.ts"
       ],
+      "/home/travis/build/PolymerLabs/arcs/src/runtime/crdt/crdt.ts": [
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/hot.ts"
+      ],
       "/home/travis/build/PolymerLabs/arcs/src/runtime/crdt/crdt-collection.ts": [
-        "/home/travis/build/PolymerLabs/arcs/src/runtime/crdt/crdt.ts"
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/crdt/crdt.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/hot.ts"
       ],
       "/home/travis/build/PolymerLabs/arcs/src/runtime/crdt/crdt-count.ts": [
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/hot.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/crdt/crdt.ts"
       ],
       "/home/travis/build/PolymerLabs/arcs/src/runtime/crdt/crdt-singleton.ts": [
-        "/home/travis/build/PolymerLabs/arcs/src/runtime/crdt/crdt.ts"
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/crdt/crdt.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/crdt/crdt-collection.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/hot.ts"
       ],
       "/home/travis/build/PolymerLabs/arcs/src/runtime/storageNG/drivers/firebase.ts": [
         "/home/travis/build/PolymerLabs/arcs/src/runtime/storageNG/storage-key.ts",
@@ -24597,91 +24623,14 @@
       "/home/travis/build/PolymerLabs/arcs/src/runtime/keymgmt/manager.ts",
       "/home/travis/build/PolymerLabs/arcs/src/runtime/webmain.ts",
       "/home/travis/build/PolymerLabs/arcs/src/runtime/crdt/crdt.ts",
-      [
-        "/home/travis/build/PolymerLabs/arcs/src/runtime/crdt/crdt-collection.ts",
-        [
-          {
-            "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/crdt/crdt-collection.ts",
-            "start": 2641,
-            "length": 16,
-            "code": 2345,
-            "category": 1,
-            "messageText": {
-              "messageText": "Argument of type 'number | undefined' is not assignable to parameter of type 'number'.",
-              "category": 1,
-              "code": 2345,
-              "next": {
-                "messageText": "Type 'undefined' is not assignable to type 'number'.",
-                "category": 1,
-                "code": 2322
-              }
-            }
-          },
-          {
-            "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/crdt/crdt-collection.ts",
-            "start": 3276,
-            "length": 28,
-            "code": 2345,
-            "category": 1,
-            "messageText": {
-              "messageText": "Argument of type 'Map<string, number> | undefined' is not assignable to parameter of type 'Map<string, number>'.",
-              "category": 1,
-              "code": 2345,
-              "next": {
-                "messageText": "Type 'undefined' is not assignable to type 'Map<string, number>'.",
-                "category": 1,
-                "code": 2322
-              }
-            }
-          }
-        ]
-      ],
-      [
-        "/home/travis/build/PolymerLabs/arcs/src/runtime/crdt/crdt-count.ts",
-        [
-          {
-            "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/crdt/crdt-count.ts",
-            "start": 2913,
-            "length": 2,
-            "code": 2322,
-            "category": 1,
-            "messageText": {
-              "messageText": "Type 'number | undefined' is not assignable to type 'number'.",
-              "category": 1,
-              "code": 2322,
-              "next": {
-                "messageText": "Type 'undefined' is not assignable to type 'number'.",
-                "category": 1,
-                "code": 2322
-              }
-            },
-            "relatedInformation": [
-              {
-                "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/crdt/crdt-count.ts",
-                "start": 575,
-                "length": 2,
-                "messageText": "The expected type comes from property 'to' which is declared here on type 'VersionInfo'",
-                "category": 3,
-                "code": 6500
-              }
-            ]
-          }
-        ]
-      ],
+      "/home/travis/build/PolymerLabs/arcs/src/runtime/crdt/crdt-collection.ts",
+      "/home/travis/build/PolymerLabs/arcs/src/runtime/crdt/crdt-count.ts",
       [
         "/home/travis/build/PolymerLabs/arcs/src/runtime/crdt/crdt-singleton.ts",
         [
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/crdt/crdt-singleton.ts",
-            "start": 2145,
-            "length": 22,
-            "messageText": "Object is possibly 'undefined'.",
-            "category": 1,
-            "code": 2532
-          },
-          {
-            "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/crdt/crdt-singleton.ts",
-            "start": 2606,
+            "start": 2875,
             "length": 15,
             "code": 2416,
             "category": 1,
@@ -24748,7 +24697,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/storageNG/drivers/firebase.ts",
-            "start": 4840,
+            "start": 4983,
             "length": 36,
             "code": 2345,
             "category": 1,
@@ -24772,14 +24721,6 @@
                 }
               }
             }
-          },
-          {
-            "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/storageNG/drivers/firebase.ts",
-            "start": 4944,
-            "length": 12,
-            "code": 2322,
-            "category": 1,
-            "messageText": "Type 'null' is not assignable to type 'number'."
           }
         ]
       ],
@@ -24921,7 +24862,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/storageNG/store.ts",
-            "start": 3698,
+            "start": 5017,
             "length": 9,
             "code": 2322,
             "category": 1,
@@ -24938,7 +24879,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/storageNG/store.ts",
-            "start": 6573,
+            "start": 11530,
             "length": 30,
             "messageText": "Cannot invoke an object which is possibly 'undefined'.",
             "category": 1,
@@ -24946,7 +24887,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/storageNG/store.ts",
-            "start": 7023,
+            "start": 12027,
             "length": 4,
             "code": 2345,
             "category": 1,
@@ -25084,7 +25025,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/storageNG/testing/mock-firebase.ts",
-            "start": 8180,
+            "start": 8262,
             "length": 17,
             "code": 2322,
             "category": 1,
@@ -25108,11 +25049,72 @@
       "/home/travis/build/PolymerLabs/arcs/src/runtime/storageNG/drivers/tests/firebase-test.ts",
       "/home/travis/build/PolymerLabs/arcs/src/runtime/storageNG/drivers/tests/volatile-test.ts",
       [
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/storageNG/tests/firebase-store-integration-test.ts",
+        [
+          {
+            "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/storageNG/tests/firebase-store-integration-test.ts",
+            "start": 1281,
+            "length": 4,
+            "code": 2345,
+            "category": 1,
+            "messageText": "Argument of type 'null' is not assignable to parameter of type 'Type'."
+          },
+          {
+            "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/storageNG/tests/firebase-store-integration-test.ts",
+            "start": 2496,
+            "length": 4,
+            "code": 2345,
+            "category": 1,
+            "messageText": "Argument of type 'null' is not assignable to parameter of type 'Type'."
+          },
+          {
+            "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/storageNG/tests/firebase-store-integration-test.ts",
+            "start": 2667,
+            "length": 4,
+            "code": 2345,
+            "category": 1,
+            "messageText": "Argument of type 'null' is not assignable to parameter of type 'Type'."
+          },
+          {
+            "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/storageNG/tests/firebase-store-integration-test.ts",
+            "start": 4705,
+            "length": 4,
+            "code": 2345,
+            "category": 1,
+            "messageText": "Argument of type 'null' is not assignable to parameter of type 'Type'."
+          },
+          {
+            "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/storageNG/tests/firebase-store-integration-test.ts",
+            "start": 4876,
+            "length": 4,
+            "code": 2345,
+            "category": 1,
+            "messageText": "Argument of type 'null' is not assignable to parameter of type 'Type'."
+          },
+          {
+            "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/storageNG/tests/firebase-store-integration-test.ts",
+            "start": 6401,
+            "length": 4,
+            "code": 2345,
+            "category": 1,
+            "messageText": "Argument of type 'null' is not assignable to parameter of type 'Type'."
+          },
+          {
+            "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/storageNG/tests/firebase-store-integration-test.ts",
+            "start": 6572,
+            "length": 4,
+            "code": 2345,
+            "category": 1,
+            "messageText": "Argument of type 'null' is not assignable to parameter of type 'Type'."
+          }
+        ]
+      ],
+      [
         "/home/travis/build/PolymerLabs/arcs/src/runtime/storageNG/tests/storage-proxy-test.ts",
         [
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/storageNG/tests/storage-proxy-test.ts",
-            "start": 990,
+            "start": 989,
             "length": 19,
             "code": 2322,
             "category": 1,
@@ -25120,7 +25122,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/storageNG/tests/storage-proxy-test.ts",
-            "start": 1106,
+            "start": 1105,
             "length": 4,
             "code": 2345,
             "category": 1,
@@ -25128,7 +25130,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/storageNG/tests/storage-proxy-test.ts",
-            "start": 1663,
+            "start": 1662,
             "length": 10,
             "code": 2322,
             "category": 1,
@@ -25136,12 +25138,12 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/storageNG/tests/storage-proxy-test.ts",
-            "start": 2026,
-            "length": 27,
+            "start": 2031,
+            "length": 33,
             "code": 2345,
             "category": 1,
             "messageText": {
-              "messageText": "Argument of type 'CRDTSingleton<string>' is not assignable to parameter of type 'CRDTModel<CRDTSingletonTypeRecord<string>>'.",
+              "messageText": "Argument of type 'CRDTSingleton<{ id: string; }>' is not assignable to parameter of type 'CRDTModel<CRDTSingletonTypeRecord<{ id: string; }>>'.",
               "category": 1,
               "code": 2345,
               "next": {
@@ -25149,15 +25151,15 @@
                 "category": 1,
                 "code": 2326,
                 "next": {
-                  "messageText": "Type '() => string | null' is not assignable to type '() => string'.",
+                  "messageText": "Type '() => { id: string; } | null' is not assignable to type '() => { id: string; }'.",
                   "category": 1,
                   "code": 2322,
                   "next": {
-                    "messageText": "Type 'string | null' is not assignable to type 'string'.",
+                    "messageText": "Type '{ id: string; } | null' is not assignable to type '{ id: string; }'.",
                     "category": 1,
                     "code": 2322,
                     "next": {
-                      "messageText": "Type 'null' is not assignable to type 'string'.",
+                      "messageText": "Type 'null' is not assignable to type '{ id: string; }'.",
                       "category": 1,
                       "code": 2322
                     }
@@ -25168,11 +25170,35 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/storageNG/tests/storage-proxy-test.ts",
-            "start": 2884,
-            "length": 27,
+            "start": 2905,
+            "length": 33,
             "code": 2345,
             "category": 1,
-            "messageText": "Argument of type 'CRDTSingleton<string>' is not assignable to parameter of type 'CRDTModel<CRDTSingletonTypeRecord<string>>'."
+            "messageText": {
+              "messageText": "Argument of type 'CRDTSingleton<{ id: string; }>' is not assignable to parameter of type 'CRDTModel<CRDTSingletonTypeRecord<{ id: string; }>>'.",
+              "category": 1,
+              "code": 2345,
+              "next": {
+                "messageText": "Types of property 'getParticleView' are incompatible.",
+                "category": 1,
+                "code": 2326,
+                "next": {
+                  "messageText": "Type '() => { id: string; } | null' is not assignable to type '() => { id: string; }'.",
+                  "category": 1,
+                  "code": 2322,
+                  "next": {
+                    "messageText": "Type '{ id: string; } | null' is not assignable to type '{ id: string; }'.",
+                    "category": 1,
+                    "code": 2322,
+                    "next": {
+                      "messageText": "Type 'null' is not assignable to type '{ id: string; }'.",
+                      "category": 1,
+                      "code": 2322
+                    }
+                  }
+                }
+              }
+            }
           }
         ]
       ],
@@ -25181,11 +25207,35 @@
         [
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/storageNG/tests/handle-test.ts",
-            "start": 1257,
-            "length": 27,
+            "start": 1293,
+            "length": 33,
             "code": 2345,
             "category": 1,
-            "messageText": "Argument of type 'CRDTSingleton<string>' is not assignable to parameter of type 'CRDTModel<CRDTSingletonTypeRecord<string>>'."
+            "messageText": {
+              "messageText": "Argument of type 'CRDTSingleton<{ id: string; }>' is not assignable to parameter of type 'CRDTModel<CRDTSingletonTypeRecord<{ id: string; }>>'.",
+              "category": 1,
+              "code": 2345,
+              "next": {
+                "messageText": "Types of property 'getParticleView' are incompatible.",
+                "category": 1,
+                "code": 2326,
+                "next": {
+                  "messageText": "Type '() => { id: string; } | null' is not assignable to type '() => { id: string; }'.",
+                  "category": 1,
+                  "code": 2322,
+                  "next": {
+                    "messageText": "Type '{ id: string; } | null' is not assignable to type '{ id: string; }'.",
+                    "category": 1,
+                    "code": 2322,
+                    "next": {
+                      "messageText": "Type 'null' is not assignable to type '{ id: string; }'.",
+                      "category": 1,
+                      "code": 2322
+                    }
+                  }
+                }
+              }
+            }
           }
         ]
       ],
@@ -25194,7 +25244,7 @@
         [
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/testing/sequence.ts",
-            "start": 7760,
+            "start": 7806,
             "length": 8,
             "code": 2322,
             "category": 1,
@@ -25221,7 +25271,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/testing/sequence.ts",
-            "start": 9052,
+            "start": 9098,
             "length": 22,
             "messageText": "Object is possibly 'undefined'.",
             "category": 1,
@@ -25229,7 +25279,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/testing/sequence.ts",
-            "start": 9185,
+            "start": 9231,
             "length": 22,
             "messageText": "Object is possibly 'undefined'.",
             "category": 1,
@@ -25237,7 +25287,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/testing/sequence.ts",
-            "start": 9331,
+            "start": 9377,
             "length": 20,
             "messageText": "Object is possibly 'undefined'.",
             "category": 1,
@@ -25245,7 +25295,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/testing/sequence.ts",
-            "start": 10338,
+            "start": 10384,
             "length": 20,
             "messageText": "Object is possibly 'undefined'.",
             "category": 1,
@@ -25253,7 +25303,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/testing/sequence.ts",
-            "start": 16291,
+            "start": 16533,
             "length": 6,
             "code": 2322,
             "category": 1,
@@ -25271,7 +25321,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/testing/sequence.ts",
-            "start": 20109,
+            "start": 20352,
             "length": 11,
             "code": 2345,
             "category": 1,
@@ -25288,7 +25338,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/testing/sequence.ts",
-            "start": 20173,
+            "start": 20416,
             "length": 11,
             "code": 2345,
             "category": 1,
@@ -25305,7 +25355,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/testing/sequence.ts",
-            "start": 20732,
+            "start": 21011,
             "length": 14,
             "code": 2345,
             "category": 1,
@@ -25322,7 +25372,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/testing/sequence.ts",
-            "start": 20970,
+            "start": 21249,
             "length": 20,
             "messageText": "Object is possibly 'undefined'.",
             "category": 1,
@@ -25330,7 +25380,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/testing/sequence.ts",
-            "start": 21046,
+            "start": 21325,
             "length": 20,
             "messageText": "Object is possibly 'undefined'.",
             "category": 1,
@@ -25338,7 +25388,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/testing/sequence.ts",
-            "start": 21340,
+            "start": 21619,
             "length": 22,
             "messageText": "Object is possibly 'undefined'.",
             "category": 1,
@@ -25346,7 +25396,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/testing/sequence.ts",
-            "start": 21540,
+            "start": 21819,
             "length": 19,
             "messageText": "Cannot invoke an object which is possibly 'undefined'.",
             "category": 1,
@@ -25354,7 +25404,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/testing/sequence.ts",
-            "start": 22318,
+            "start": 22597,
             "length": 28,
             "messageText": "Cannot invoke an object which is possibly 'undefined'.",
             "category": 1,
@@ -25367,7 +25417,7 @@
         [
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/storageNG/tests/store-sequence-test.ts",
-            "start": 3038,
+            "start": 3289,
             "length": 4,
             "code": 2345,
             "category": 1,
@@ -25375,7 +25425,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/storageNG/tests/store-sequence-test.ts",
-            "start": 5887,
+            "start": 6000,
             "length": 4,
             "code": 2345,
             "category": 1,
@@ -25383,7 +25433,15 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/storageNG/tests/store-sequence-test.ts",
-            "start": 8199,
+            "start": 7627,
+            "length": 25,
+            "messageText": "Object is possibly 'null'.",
+            "category": 1,
+            "code": 2531
+          },
+          {
+            "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/storageNG/tests/store-sequence-test.ts",
+            "start": 8331,
             "length": 4,
             "code": 2345,
             "category": 1,
@@ -25391,7 +25449,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/storageNG/tests/store-sequence-test.ts",
-            "start": 8376,
+            "start": 8508,
             "length": 4,
             "code": 2345,
             "category": 1,
@@ -25399,7 +25457,23 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/storageNG/tests/store-sequence-test.ts",
-            "start": 10402,
+            "start": 9547,
+            "length": 25,
+            "messageText": "Object is possibly 'null'.",
+            "category": 1,
+            "code": 2531
+          },
+          {
+            "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/storageNG/tests/store-sequence-test.ts",
+            "start": 9600,
+            "length": 25,
+            "messageText": "Object is possibly 'null'.",
+            "category": 1,
+            "code": 2531
+          },
+          {
+            "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/storageNG/tests/store-sequence-test.ts",
+            "start": 10698,
             "length": 4,
             "code": 2345,
             "category": 1,
@@ -25407,7 +25481,23 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/storageNG/tests/store-sequence-test.ts",
-            "start": 10579,
+            "start": 10875,
+            "length": 4,
+            "code": 2345,
+            "category": 1,
+            "messageText": "Argument of type 'null' is not assignable to parameter of type 'Type'."
+          },
+          {
+            "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/storageNG/tests/store-sequence-test.ts",
+            "start": 12994,
+            "length": 4,
+            "code": 2345,
+            "category": 1,
+            "messageText": "Argument of type 'null' is not assignable to parameter of type 'Type'."
+          },
+          {
+            "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/storageNG/tests/store-sequence-test.ts",
+            "start": 13171,
             "length": 4,
             "code": 2345,
             "category": 1,
@@ -25513,6 +25603,22 @@
             "code": 2322,
             "category": 1,
             "messageText": "Type 'null' is not assignable to type 'CountData'."
+          },
+          {
+            "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/storageNG/tests/store-test.ts",
+            "start": 9781,
+            "length": 4,
+            "code": 2345,
+            "category": 1,
+            "messageText": "Argument of type 'null' is not assignable to parameter of type 'Type'."
+          },
+          {
+            "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/storageNG/tests/store-test.ts",
+            "start": 9994,
+            "length": 9,
+            "code": 2322,
+            "category": 1,
+            "messageText": "Type 'CountData' is not assignable to type 'null'."
           }
         ]
       ],
@@ -25561,7 +25667,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/storageNG/tests/volatile-store-integration-test.ts",
-            "start": 4158,
+            "start": 4221,
             "length": 13,
             "messageText": "Object is possibly 'undefined'.",
             "category": 1,
@@ -25569,7 +25675,39 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/storageNG/tests/volatile-store-integration-test.ts",
-            "start": 4234,
+            "start": 4297,
+            "length": 13,
+            "messageText": "Object is possibly 'undefined'.",
+            "category": 1,
+            "code": 2532
+          },
+          {
+            "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/storageNG/tests/volatile-store-integration-test.ts",
+            "start": 4778,
+            "length": 4,
+            "code": 2345,
+            "category": 1,
+            "messageText": "Argument of type 'null' is not assignable to parameter of type 'Type'."
+          },
+          {
+            "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/storageNG/tests/volatile-store-integration-test.ts",
+            "start": 4949,
+            "length": 4,
+            "code": 2345,
+            "category": 1,
+            "messageText": "Argument of type 'null' is not assignable to parameter of type 'Type'."
+          },
+          {
+            "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/storageNG/tests/volatile-store-integration-test.ts",
+            "start": 6214,
+            "length": 13,
+            "messageText": "Object is possibly 'undefined'.",
+            "category": 1,
+            "code": 2532
+          },
+          {
+            "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/storageNG/tests/volatile-store-integration-test.ts",
+            "start": 6290,
             "length": 13,
             "messageText": "Object is possibly 'undefined'.",
             "category": 1,

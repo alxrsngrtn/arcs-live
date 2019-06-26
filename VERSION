@@ -1,11 +1,5 @@
-commit 16dea11c8beb3bd01145d792b9edd89396213ce4
-Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
-Date:   Wed Jun 26 15:02:30 2019 +1000
+commit 174575d52be8a58023c82d6709b27f2c778e326e
+Author: shans <shane.stephens@gmail.com>
+Date:   Wed Jun 26 07:03:14 2019 +0100
 
-    Replaces the complex DFS stack checking code with a simple path (#3230)
-    
-    enumeration.
-    
-    This new code is less efficient, but is SO MUCH simpler. All the tests
-    still pass :-) I'll add more tests specifically to check the path
-    enumeration in a follow up PR.
+    Firebase testing (#3218)

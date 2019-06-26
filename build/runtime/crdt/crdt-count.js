@@ -15,16 +15,16 @@ export var CountOpTypes;
 })(CountOpTypes || (CountOpTypes = {}));
 export class CRDTCount {
     constructor() {
-        this.model = { values: new Map(), version: new Map() };
+        this.model = { values: {}, version: {} };
     }
     merge(other) {
         const otherChanges = [];
         const thisChanges = [];
-        for (const key of other.values.keys()) {
-            const thisValue = this.model.values.get(key) || 0;
-            const otherValue = other.values.get(key) || 0;
-            const thisVersion = this.model.version.get(key) || 0;
-            const otherVersion = other.version.get(key) || 0;
+        for (const key of Object.keys(other.values)) {
+            const thisValue = this.model.values[key] || 0;
+            const otherValue = other.values[key] || 0;
+            const thisVersion = this.model.version[key] || 0;
+            const otherVersion = other.version[key] || 0;
             if (thisValue > otherValue) {
                 if (otherVersion >= thisVersion) {
                     throw new CRDTError('Divergent versions encountered when merging CRDTCount models');
@@ -38,25 +38,25 @@ export class CRDTCount {
                 }
                 thisChanges.push({ type: CountOpTypes.MultiIncrement, value: otherValue - thisValue, actor: key,
                     version: { from: thisVersion, to: otherVersion } });
-                this.model.values.set(key, otherValue);
-                this.model.version.set(key, otherVersion);
+                this.model.values[key] = otherValue;
+                this.model.version[key] = otherVersion;
             }
         }
-        for (const key of this.model.values.keys()) {
-            if (other.values.has(key)) {
+        for (const key of Object.keys(this.model.values)) {
+            if (other.values[key]) {
                 continue;
             }
-            if (other.version.has(key)) {
+            if (other.version[key]) {
                 throw new CRDTError(`CRDTCount model has version but no value for key ${key}`);
             }
-            otherChanges.push({ type: CountOpTypes.MultiIncrement, value: this.model.values.get(key), actor: key,
-                version: { from: 0, to: this.model.version.get(key) } });
+            otherChanges.push({ type: CountOpTypes.MultiIncrement, value: this.model.values[key], actor: key,
+                version: { from: 0, to: this.model.version[key] } });
         }
         return { modelChange: { changeType: ChangeType.Operations, operations: thisChanges }, otherChange: { changeType: ChangeType.Operations, operations: otherChanges } };
     }
     applyOperation(op) {
         let value;
-        if (op.version.from !== (this.model.version.get(op.actor) || 0)) {
+        if (op.version.from !== (this.model.version[op.actor] || 0)) {
             return false;
         }
         if (op.version.to <= op.version.from) {
@@ -66,25 +66,25 @@ export class CRDTCount {
             if (op.value < 0) {
                 return false;
             }
-            value = (this.model.values.get(op.actor) || 0) + op.value;
+            value = (this.model.values[op.actor] || 0) + op.value;
         }
         else {
-            value = (this.model.values.get(op.actor) || 0) + 1;
+            value = (this.model.values[op.actor] || 0) + 1;
         }
-        this.model.values.set(op.actor, value);
-        this.model.version.set(op.actor, op.version.to);
+        this.model.values[op.actor] = value;
+        this.model.version[op.actor] = op.version.to;
         return true;
     }
     cloneMap(map) {
-        const result = new Map();
-        map.forEach((value, key) => result.set(key, value));
+        const result = {};
+        Object.keys(map).forEach(key => result[key] = map[key]);
         return result;
     }
     getData() {
         return { values: this.cloneMap(this.model.values), version: this.cloneMap(this.model.version) };
     }
     getParticleView() {
-        return [...this.model.values.values()].reduce((prev, current) => prev + current, 0);
+        return Object.values(this.model.values).reduce((prev, current) => prev + current, 0);
     }
 }
 //# sourceMappingURL=crdt-count.js.map

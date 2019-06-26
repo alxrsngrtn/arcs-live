@@ -60,9 +60,9 @@ describe('StorageProxy', async () => {
         storageProxy.registerHandle(handle);
         const op = {
             type: SingletonOpTypes.Set,
-            value: '1',
+            value: { id: '1' },
             actor: 'A',
-            clock: new Map([['A', 1]]),
+            clock: { A: 1 }
         };
         const result = await storageProxy.applyOp(op);
         assert.isTrue(result);
@@ -82,12 +82,12 @@ describe('StorageProxy', async () => {
         // When requested a sync, store will send back a model.
         mockStore.onProxyMessage = async (message) => {
             mockStore.lastCapturedMessage = message;
-            const crdtData = { values: new Map([['1', new Map([['A', 1]])]]), version: new Map([['A', 1]]) };
+            const crdtData = { values: { '1': { value: { id: '1' }, version: { A: 1 } } }, version: { A: 1 } };
             await storageProxy.onMessage({ type: ProxyMessageType.ModelUpdate, model: crdtData, id: 1 });
             return true;
         };
         const result = await storageProxy.getParticleView();
-        assert.equal(result, '1');
+        assert.deepEqual(result, { id: '1' });
         assert.deepEqual(mockStore.lastCapturedMessage, { type: ProxyMessageType.SyncRequest, id: 1 });
         assert.isTrue(handle.onSyncCalled);
     });

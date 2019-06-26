@@ -7,8 +7,8 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-import { ChangeType } from './crdt';
-import { CollectionOpTypes, CRDTCollection } from './crdt-collection';
+import { ChangeType } from './crdt.js';
+import { CollectionOpTypes, CRDTCollection } from './crdt-collection.js';
 export var SingletonOpTypes;
 (function (SingletonOpTypes) {
     SingletonOpTypes[SingletonOpTypes["Set"] = 0] = "Set";
@@ -34,7 +34,11 @@ export class CRDTSingleton {
         if (op.type === SingletonOpTypes.Set) {
             // Remove does not require an increment, but the caller of this method will have incremented
             // its version, so we hack a version with t-1 for this actor.
-            const removeClock = (new Map(op.clock)).set(op.actor, op.clock.get(op.actor) - 1);
+            const removeClock = {};
+            for (const [k, v] of Object.entries(op.clock)) {
+                removeClock[k] = v;
+            }
+            removeClock[op.actor] = op.clock[op.actor] - 1;
             if (!this.clear(op.actor, removeClock)) {
                 return false;
             }
@@ -59,10 +63,10 @@ export class CRDTSingleton {
     }
     clear(actor, clock) {
         // Clear all existing values if our clock allows it.
-        for (const value of this.collection.getData().values.keys()) {
+        for (const value of Object.values(this.collection.getData().values)) {
             const removeOp = {
                 type: CollectionOpTypes.Remove,
-                removed: value,
+                removed: value.value,
                 actor,
                 clock,
             };

@@ -104,11 +104,15 @@
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="directstore.html#constructors" class="tsd-kind-icon">constructors</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="directstore.html#driver" class="tsd-kind-icon">driver</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="directstore.html#exists" class="tsd-kind-icon">exists</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="directstore.html#insync" class="tsd-kind-icon">in<wbr>Sync</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="directstore.html#localmodel" class="tsd-kind-icon">local<wbr>Model</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="directstore.html#mode" class="tsd-kind-icon">mode</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="directstore.html#modelconstructor" class="tsd-kind-icon">model<wbr>Constructor</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="directstore.html#nextcallbackid" class="tsd-kind-icon">next<wbr>CallbackID</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="directstore.html#pendingdrivermodels" class="tsd-kind-icon">pending<wbr>Driver<wbr>Models</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="directstore.html#pendingexception" class="tsd-kind-icon">pending<wbr>Exception</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="directstore.html#pendingrejects" class="tsd-kind-icon">pending<wbr>Rejects</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="directstore.html#pendingresolves" class="tsd-kind-icon">pending<wbr>Resolves</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="directstore.html#state" class="tsd-kind-icon">state</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="directstore.html#storagekey" class="tsd-kind-icon">storage<wbr>Key</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="directstore.html#type" class="tsd-kind-icon">type</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="directstore.html#version" class="tsd-kind-icon">version</a></li>
@@ -118,12 +122,18 @@
 							<h3>Methods</h3>
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="directstore.html#activate" class="tsd-kind-icon">activate</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="directstore.html#applypendingdrivermodels" class="tsd-kind-icon">apply<wbr>Pending<wbr>Driver<wbr>Models</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="directstore.html#delivercallbacks" class="tsd-kind-icon">deliver<wbr>Callbacks</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="directstore.html#idle" class="tsd-kind-icon">idle</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="directstore.html#nodriversidechanges" class="tsd-kind-icon">no<wbr>Driver<wbr>Side<wbr>Changes</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="directstore.html#notifyidle" class="tsd-kind-icon">notify<wbr>Idle</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="directstore.html#off" class="tsd-kind-icon">off</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="directstore.html#on" class="tsd-kind-icon">on</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="directstore.html#onproxymessage" class="tsd-kind-icon">on<wbr>Proxy<wbr>Message</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="directstore.html#onreceive" class="tsd-kind-icon">on<wbr>Receive</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="directstore.html#processmodelchange" class="tsd-kind-icon">process<wbr>Model<wbr>Change</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="directstore.html#setstate" class="tsd-kind-icon">set<wbr>State</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="directstore.html#updatestateandact" class="tsd-kind-icon">update<wbr>State<wbr>And<wbr>Act</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter tsd-is-static"><a href="directstore.html#construct" class="tsd-kind-icon">construct</a></li>
 							</ul>
 						</section>
@@ -143,7 +153,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="store.html">Store</a>.<a href="store.html#constructor">constructor</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/16dea11/src/runtime/storageNG/store.ts#L73">runtime/storageNG/store.ts:73</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/174575d/src/runtime/storageNG/store.ts#L84">runtime/storageNG/store.ts:84</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -179,7 +189,7 @@
 					<div class="tsd-signature tsd-kind-icon">callbacks<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Map</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">function</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> =&nbsp;new Map&lt;number, ProxyCallback&lt;T&gt;&gt;()</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/16dea11/src/runtime/storageNG/store.ts#L69">runtime/storageNG/store.ts:69</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/174575d/src/runtime/storageNG/store.ts#L76">runtime/storageNG/store.ts:76</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -190,7 +200,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="store.html">Store</a>.<a href="store.html#constructors">constructors</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/16dea11/src/runtime/storageNG/store.ts#L37">runtime/storageNG/store.ts:37</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/174575d/src/runtime/storageNG/store.ts#L37">runtime/storageNG/store.ts:37</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -200,7 +210,7 @@
 					<div class="tsd-signature tsd-kind-icon">driver<span class="tsd-signature-symbol">:</span> <a href="driver.html" class="tsd-signature-type">Driver</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T[&quot;data&quot;]</span><span class="tsd-signature-symbol">&gt;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/16dea11/src/runtime/storageNG/store.ts#L70">runtime/storageNG/store.ts:70</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/174575d/src/runtime/storageNG/store.ts#L77">runtime/storageNG/store.ts:77</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -211,17 +221,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="store.html">Store</a>.<a href="store.html#exists">exists</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/16dea11/src/runtime/storageNG/store.ts#L33">runtime/storageNG/store.ts:33</a></li>
-						</ul>
-					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
-					<a name="insync" class="tsd-anchor"></a>
-					<h3>in<wbr>Sync</h3>
-					<div class="tsd-signature tsd-kind-icon">in<wbr>Sync<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> =&nbsp;true</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/16dea11/src/runtime/storageNG/store.ts#L71">runtime/storageNG/store.ts:71</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/174575d/src/runtime/storageNG/store.ts#L33">runtime/storageNG/store.ts:33</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -231,7 +231,7 @@
 					<div class="tsd-signature tsd-kind-icon">local<wbr>Model<span class="tsd-signature-symbol">:</span> <a href="../interfaces/crdtmodel.html" class="tsd-signature-type">CRDTModel</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/16dea11/src/runtime/storageNG/store.ts#L68">runtime/storageNG/store.ts:68</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/174575d/src/runtime/storageNG/store.ts#L75">runtime/storageNG/store.ts:75</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -242,7 +242,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="store.html">Store</a>.<a href="store.html#mode">mode</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/16dea11/src/runtime/storageNG/store.ts#L35">runtime/storageNG/store.ts:35</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/174575d/src/runtime/storageNG/store.ts#L35">runtime/storageNG/store.ts:35</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -253,7 +253,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="store.html">Store</a>.<a href="store.html#modelconstructor">modelConstructor</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/16dea11/src/runtime/storageNG/store.ts#L40">runtime/storageNG/store.ts:40</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/174575d/src/runtime/storageNG/store.ts#L40">runtime/storageNG/store.ts:40</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-type-declaration">
@@ -268,7 +268,57 @@
 					<div class="tsd-signature tsd-kind-icon">next<wbr>CallbackID<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> =&nbsp;1</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/16dea11/src/runtime/storageNG/store.ts#L72">runtime/storageNG/store.ts:72</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/174575d/src/runtime/storageNG/store.ts#L78">runtime/storageNG/store.ts:78</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private">
+					<a name="pendingdrivermodels" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> pending<wbr>Driver<wbr>Models</h3>
+					<div class="tsd-signature tsd-kind-icon">pending<wbr>Driver<wbr>Models<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> =&nbsp;[]</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/174575d/src/runtime/storageNG/store.ts#L83">runtime/storageNG/store.ts:83</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private">
+					<a name="pendingexception" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> pending<wbr>Exception</h3>
+					<div class="tsd-signature tsd-kind-icon">pending<wbr>Exception<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Error</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span><span class="tsd-signature-symbol"> =&nbsp;null</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/174575d/src/runtime/storageNG/store.ts#L80">runtime/storageNG/store.ts:80</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private">
+					<a name="pendingrejects" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> pending<wbr>Rejects</h3>
+					<div class="tsd-signature tsd-kind-icon">pending<wbr>Rejects<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Function</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> =&nbsp;[]</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/174575d/src/runtime/storageNG/store.ts#L82">runtime/storageNG/store.ts:82</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private">
+					<a name="pendingresolves" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> pending<wbr>Resolves</h3>
+					<div class="tsd-signature tsd-kind-icon">pending<wbr>Resolves<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Function</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> =&nbsp;[]</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/174575d/src/runtime/storageNG/store.ts#L81">runtime/storageNG/store.ts:81</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private">
+					<a name="state" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> state</h3>
+					<div class="tsd-signature tsd-kind-icon">state<span class="tsd-signature-symbol">:</span> <a href="../enums/directstorestate.html" class="tsd-signature-type">DirectStoreState</a><span class="tsd-signature-symbol"> =&nbsp;DirectStoreState.Idle</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/174575d/src/runtime/storageNG/store.ts#L84">runtime/storageNG/store.ts:84</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -279,7 +329,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="store.html">Store</a>.<a href="store.html#storagekey">storageKey</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/16dea11/src/runtime/storageNG/store.ts#L32">runtime/storageNG/store.ts:32</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/174575d/src/runtime/storageNG/store.ts#L32">runtime/storageNG/store.ts:32</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -290,7 +340,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from Store.type</p>
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/16dea11/src/runtime/storageNG/store.ts#L34">runtime/storageNG/store.ts:34</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/174575d/src/runtime/storageNG/store.ts#L34">runtime/storageNG/store.ts:34</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -300,7 +350,7 @@
 					<div class="tsd-signature tsd-kind-icon">version<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> =&nbsp;0</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/16dea11/src/runtime/storageNG/store.ts#L73">runtime/storageNG/store.ts:73</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/174575d/src/runtime/storageNG/store.ts#L79">runtime/storageNG/store.ts:79</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -318,10 +368,68 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="store.html">Store</a>.<a href="store.html#activate">activate</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/16dea11/src/runtime/storageNG/store.ts#L49">runtime/storageNG/store.ts:49</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/174575d/src/runtime/storageNG/store.ts#L49">runtime/storageNG/store.ts:49</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="activestore.html" class="tsd-signature-type">ActiveStore</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-private">
+					<a name="applypendingdrivermodels" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> apply<wbr>Pending<wbr>Driver<wbr>Models</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private">
+						<li class="tsd-signature tsd-kind-icon">apply<wbr>Pending<wbr>Driver<wbr>Models<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/174575d/src/runtime/storageNG/store.ts#L225">runtime/storageNG/store.ts:225</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-private">
+					<a name="delivercallbacks" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> deliver<wbr>Callbacks</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private">
+						<li class="tsd-signature tsd-kind-icon">deliver<wbr>Callbacks<span class="tsd-signature-symbol">(</span>thisChange<span class="tsd-signature-symbol">: </span><a href="../globals.html#crdtchange" class="tsd-signature-type">CRDTChange</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/174575d/src/runtime/storageNG/store.ts#L144">runtime/storageNG/store.ts:144</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>thisChange: <a href="../globals.html#crdtchange" class="tsd-signature-type">CRDTChange</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
+					<a name="idle" class="tsd-anchor"></a>
+					<h3>idle</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
+						<li class="tsd-signature tsd-kind-icon">idle<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Overrides <a href="activestore.html">ActiveStore</a>.<a href="activestore.html#idle">idle</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/174575d/src/runtime/storageNG/store.ts#L94">runtime/storageNG/store.ts:94</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -335,7 +443,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/16dea11/src/runtime/storageNG/store.ts#L121">runtime/storageNG/store.ts:121</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/174575d/src/runtime/storageNG/store.ts#L252">runtime/storageNG/store.ts:252</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -354,6 +462,23 @@
 						</li>
 					</ul>
 				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-private">
+					<a name="notifyidle" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> notify<wbr>Idle</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private">
+						<li class="tsd-signature tsd-kind-icon">notify<wbr>Idle<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/174575d/src/runtime/storageNG/store.ts#L115">runtime/storageNG/store.ts:115</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
 					<a name="off" class="tsd-anchor"></a>
 					<h3>off</h3>
@@ -365,7 +490,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="activestore.html">ActiveStore</a>.<a href="activestore.html#off">off</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/16dea11/src/runtime/storageNG/store.ts#L163">runtime/storageNG/store.ts:163</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/174575d/src/runtime/storageNG/store.ts#L299">runtime/storageNG/store.ts:299</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -389,7 +514,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="activestore.html">ActiveStore</a>.<a href="activestore.html#on">on</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/16dea11/src/runtime/storageNG/store.ts#L157">runtime/storageNG/store.ts:157</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/174575d/src/runtime/storageNG/store.ts#L293">runtime/storageNG/store.ts:293</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -413,7 +538,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="activestore.html">ActiveStore</a>.<a href="activestore.html#onproxymessage">onProxyMessage</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/16dea11/src/runtime/storageNG/store.ts#L134">runtime/storageNG/store.ts:134</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/174575d/src/runtime/storageNG/store.ts#L265">runtime/storageNG/store.ts:265</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -436,7 +561,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/16dea11/src/runtime/storageNG/store.ts#L93">runtime/storageNG/store.ts:93</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/174575d/src/runtime/storageNG/store.ts#L136">runtime/storageNG/store.ts:136</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -456,22 +581,71 @@
 					<a name="processmodelchange" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagPrivate">Private</span> process<wbr>Model<wbr>Change</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private">
-						<li class="tsd-signature tsd-kind-icon">process<wbr>Model<wbr>Change<span class="tsd-signature-symbol">(</span>thisChange<span class="tsd-signature-symbol">: </span><a href="../globals.html#crdtchange" class="tsd-signature-type">CRDTChange</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span>, otherChange<span class="tsd-signature-symbol">: </span><a href="../globals.html#crdtchange" class="tsd-signature-type">CRDTChange</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span>, version<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, messageFromDriver<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">process<wbr>Model<wbr>Change<span class="tsd-signature-symbol">(</span>modelChange<span class="tsd-signature-symbol">: </span><a href="../globals.html#crdtchange" class="tsd-signature-type">CRDTChange</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span>, otherChange<span class="tsd-signature-symbol">: </span><a href="../globals.html#crdtchange" class="tsd-signature-type">CRDTChange</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span>, version<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/16dea11/src/runtime/storageNG/store.ts#L98">runtime/storageNG/store.ts:98</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/174575d/src/runtime/storageNG/store.ts#L152">runtime/storageNG/store.ts:152</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>thisChange: <a href="../globals.html#crdtchange" class="tsd-signature-type">CRDTChange</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span></h5>
+									<h5>modelChange: <a href="../globals.html#crdtchange" class="tsd-signature-type">CRDTChange</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span></h5>
 								</li>
 								<li>
 									<h5>otherChange: <a href="../globals.html#crdtchange" class="tsd-signature-type">CRDTChange</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span></h5>
+								</li>
+								<li>
+									<h5>version: <span class="tsd-signature-type">number</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-private">
+					<a name="setstate" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> set<wbr>State</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private">
+						<li class="tsd-signature tsd-kind-icon">set<wbr>State<span class="tsd-signature-symbol">(</span>state<span class="tsd-signature-symbol">: </span><a href="../enums/directstorestate.html" class="tsd-signature-type">DirectStoreState</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/174575d/src/runtime/storageNG/store.ts#L107">runtime/storageNG/store.ts:107</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>state: <a href="../enums/directstorestate.html" class="tsd-signature-type">DirectStoreState</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-private">
+					<a name="updatestateandact" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> update<wbr>State<wbr>And<wbr>Act</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private">
+						<li class="tsd-signature tsd-kind-icon">update<wbr>State<wbr>And<wbr>Act<span class="tsd-signature-symbol">(</span>noDriverSideChanges<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span>, version<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, messageFromDriver<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/174575d/src/runtime/storageNG/store.ts#L162">runtime/storageNG/store.ts:162</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>noDriverSideChanges: <span class="tsd-signature-type">boolean</span></h5>
 								</li>
 								<li>
 									<h5>version: <span class="tsd-signature-type">number</span></h5>
@@ -494,7 +668,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/16dea11/src/runtime/storageNG/store.ts#L82">runtime/storageNG/store.ts:82</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/174575d/src/runtime/storageNG/store.ts#L125">runtime/storageNG/store.ts:125</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -560,9 +734,6 @@
 								<a href="directstore.html#exists" class="tsd-kind-icon">exists</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
-								<a href="directstore.html#insync" class="tsd-kind-icon">in<wbr>Sync</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class">
 								<a href="directstore.html#localmodel" class="tsd-kind-icon">local<wbr>Model</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
@@ -573,6 +744,21 @@
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
 								<a href="directstore.html#nextcallbackid" class="tsd-kind-icon">next<wbr>CallbackID</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
+								<a href="directstore.html#pendingdrivermodels" class="tsd-kind-icon">pending<wbr>Driver<wbr>Models</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
+								<a href="directstore.html#pendingexception" class="tsd-kind-icon">pending<wbr>Exception</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
+								<a href="directstore.html#pendingrejects" class="tsd-kind-icon">pending<wbr>Rejects</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
+								<a href="directstore.html#pendingresolves" class="tsd-kind-icon">pending<wbr>Resolves</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
+								<a href="directstore.html#state" class="tsd-kind-icon">state</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
 								<a href="directstore.html#storagekey" class="tsd-kind-icon">storage<wbr>Key</a>
@@ -587,7 +773,19 @@
 								<a href="directstore.html#activate" class="tsd-kind-icon">activate</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-private">
+								<a href="directstore.html#applypendingdrivermodels" class="tsd-kind-icon">apply<wbr>Pending<wbr>Driver<wbr>Models</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-private">
+								<a href="directstore.html#delivercallbacks" class="tsd-kind-icon">deliver<wbr>Callbacks</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
+								<a href="directstore.html#idle" class="tsd-kind-icon">idle</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-private">
 								<a href="directstore.html#nodriversidechanges" class="tsd-kind-icon">no<wbr>Driver<wbr>Side<wbr>Changes</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-private">
+								<a href="directstore.html#notifyidle" class="tsd-kind-icon">notify<wbr>Idle</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
 								<a href="directstore.html#off" class="tsd-kind-icon">off</a>
@@ -603,6 +801,12 @@
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-private">
 								<a href="directstore.html#processmodelchange" class="tsd-kind-icon">process<wbr>Model<wbr>Change</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-private">
+								<a href="directstore.html#setstate" class="tsd-kind-icon">set<wbr>State</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-private">
+								<a href="directstore.html#updatestateandact" class="tsd-kind-icon">update<wbr>State<wbr>And<wbr>Act</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter tsd-is-static">
 								<a href="directstore.html#construct" class="tsd-kind-icon">construct</a>

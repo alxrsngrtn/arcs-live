@@ -8,14 +8,10 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { Runtime } from '../../../runtime.js';
-import { FirebaseStorageKey } from '../firebase.js';
 import { assert } from '../../../../platform/chai-web.js';
 import { Exists } from '../driver-factory.js';
-import { FakeFirebaseStorageDriverProvider } from '../../testing/mock-firebase.js';
+import { MockFirebaseStorageDriverProvider, MockFirebaseStorageKey } from '../../testing/mock-firebase.js';
 import { assertThrowsAsync } from '../../../testing/test-util.js';
-const projectId = 'test-project';
-const testDomain = 'test.domain';
-const testKey = 'test-key';
 describe('Firebase Driver', async () => {
     beforeEach(() => {
         Runtime.clearRuntimeForTesting();
@@ -24,45 +20,45 @@ describe('Firebase Driver', async () => {
         Runtime.clearRuntimeForTesting();
     });
     it('can be multiply instantiated against the same storage location', async () => {
-        const firebaseKey = new FirebaseStorageKey(projectId, testDomain, testKey, 'test-location');
-        const firebase1 = await FakeFirebaseStorageDriverProvider.newDriverForTesting(firebaseKey, Exists.ShouldCreate);
-        const firebase2 = await FakeFirebaseStorageDriverProvider.newDriverForTesting(firebaseKey, Exists.ShouldExist);
+        const firebaseKey = new MockFirebaseStorageKey('test-location');
+        const firebase1 = await MockFirebaseStorageDriverProvider.newDriverForTesting(firebaseKey, Exists.ShouldCreate);
+        const firebase2 = await MockFirebaseStorageDriverProvider.newDriverForTesting(firebaseKey, Exists.ShouldExist);
     });
     it('treats keys constructed separately as the same if the details are the same', async () => {
-        const key1 = new FirebaseStorageKey(projectId, testDomain, testKey, 'test-location');
-        const key2 = new FirebaseStorageKey(projectId, testDomain, testKey, 'test-location');
-        const firebase1 = await FakeFirebaseStorageDriverProvider.newDriverForTesting(key1, Exists.ShouldCreate);
-        const firebase2 = await FakeFirebaseStorageDriverProvider.newDriverForTesting(key2, Exists.ShouldExist);
+        const key1 = new MockFirebaseStorageKey('test-location');
+        const key2 = new MockFirebaseStorageKey('test-location');
+        const firebase1 = await MockFirebaseStorageDriverProvider.newDriverForTesting(key1, Exists.ShouldCreate);
+        const firebase2 = await MockFirebaseStorageDriverProvider.newDriverForTesting(key2, Exists.ShouldExist);
     });
     it(`can't be instantiated as ShouldExist if the storage location doesn't yet exist`, async () => {
-        const firebaseKey = new FirebaseStorageKey(projectId, testDomain, testKey, 'test-location');
-        await assertThrowsAsync(() => FakeFirebaseStorageDriverProvider.newDriverForTesting(firebaseKey, Exists.ShouldExist), `location doesn't exist`);
+        const firebaseKey = new MockFirebaseStorageKey('test-location');
+        await assertThrowsAsync(() => MockFirebaseStorageDriverProvider.newDriverForTesting(firebaseKey, Exists.ShouldExist), `location doesn't exist`);
     });
     it(`can't be instantiated as ShouldCreate if the storage location already exists`, async () => {
-        const firebaseKey = new FirebaseStorageKey(projectId, testDomain, testKey, 'test-location');
-        const firebase1 = await FakeFirebaseStorageDriverProvider.newDriverForTesting(firebaseKey, Exists.ShouldCreate);
-        await assertThrowsAsync(() => FakeFirebaseStorageDriverProvider.newDriverForTesting(firebaseKey, Exists.ShouldCreate), `location already exists`);
+        const firebaseKey = new MockFirebaseStorageKey('test-location');
+        const firebase1 = await MockFirebaseStorageDriverProvider.newDriverForTesting(firebaseKey, Exists.ShouldCreate);
+        await assertThrowsAsync(() => MockFirebaseStorageDriverProvider.newDriverForTesting(firebaseKey, Exists.ShouldCreate), `location already exists`);
     });
     it('can be instantiated either as a creation or as a connection using MayExist', async () => {
-        const firebaseKey = new FirebaseStorageKey(projectId, testDomain, testKey, 'test-location');
-        const firebase1 = await FakeFirebaseStorageDriverProvider.newDriverForTesting(firebaseKey, Exists.MayExist);
-        const firebase2 = await FakeFirebaseStorageDriverProvider.newDriverForTesting(firebaseKey, Exists.MayExist);
+        const firebaseKey = new MockFirebaseStorageKey('test-location');
+        const firebase1 = await MockFirebaseStorageDriverProvider.newDriverForTesting(firebaseKey, Exists.MayExist);
+        const firebase2 = await MockFirebaseStorageDriverProvider.newDriverForTesting(firebaseKey, Exists.MayExist);
     });
     it('transmits a write to a connected driver', async () => {
-        const firebaseKey = new FirebaseStorageKey(projectId, testDomain, testKey, 'test-location');
-        const firebase1 = await FakeFirebaseStorageDriverProvider.newDriverForTesting(firebaseKey, Exists.ShouldCreate);
+        const firebaseKey = new MockFirebaseStorageKey('test-location');
+        const firebase1 = await MockFirebaseStorageDriverProvider.newDriverForTesting(firebaseKey, Exists.ShouldCreate);
         const recvQueue1 = [];
         firebase1.registerReceiver((model, version) => recvQueue1.push({ model, version }));
         await firebase1.send(3, 1);
-        const firebase2 = await FakeFirebaseStorageDriverProvider.newDriverForTesting(firebaseKey, Exists.ShouldExist);
+        const firebase2 = await MockFirebaseStorageDriverProvider.newDriverForTesting(firebaseKey, Exists.ShouldExist);
         const recvQueue2 = [];
         firebase2.registerReceiver((model, version) => recvQueue2.push({ model, version }));
         assert.isEmpty(recvQueue1);
         assert.deepEqual(recvQueue2, [{ model: 3, version: 1 }]);
     });
     it(`won't accept out-of-date writes`, async () => {
-        const firebaseKey = new FirebaseStorageKey(projectId, testDomain, testKey, 'test-location');
-        const firebase1 = await FakeFirebaseStorageDriverProvider.newDriverForTesting(firebaseKey, Exists.ShouldCreate);
+        const firebaseKey = new MockFirebaseStorageKey('test-location');
+        const firebase1 = await MockFirebaseStorageDriverProvider.newDriverForTesting(firebaseKey, Exists.ShouldCreate);
         assert.isTrue(await firebase1.send(3, 1));
         assert.isFalse(await firebase1.send(4, 0));
         assert.isFalse(await firebase1.send(4, 1));
@@ -70,11 +66,11 @@ describe('Firebase Driver', async () => {
         assert.isTrue(await firebase1.send(4, 2));
     });
     it('will only accept a given version from one connected driver', async () => {
-        const firebaseKey = new FirebaseStorageKey(projectId, testDomain, testKey, 'test-location');
-        const firebase1 = await FakeFirebaseStorageDriverProvider.newDriverForTesting(firebaseKey, Exists.ShouldCreate);
+        const firebaseKey = new MockFirebaseStorageKey('test-location');
+        const firebase1 = await MockFirebaseStorageDriverProvider.newDriverForTesting(firebaseKey, Exists.ShouldCreate);
         const recvQueue1 = [];
         firebase1.registerReceiver((model, version) => recvQueue1.push({ model, version }));
-        const firebase2 = await FakeFirebaseStorageDriverProvider.newDriverForTesting(firebaseKey, Exists.ShouldExist);
+        const firebase2 = await MockFirebaseStorageDriverProvider.newDriverForTesting(firebaseKey, Exists.ShouldExist);
         const recvQueue2 = [];
         firebase2.registerReceiver((model, version) => recvQueue2.push({ model, version }));
         const promise1 = firebase1.send(3, 1);

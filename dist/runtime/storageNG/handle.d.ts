@@ -8,7 +8,7 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { CRDTTypeRecord, VersionMap } from '../crdt/crdt';
-import { CollectionOperation, CRDTCollectionTypeRecord } from '../crdt/crdt-collection';
+import { CollectionOperation, CRDTCollectionTypeRecord, Referenceable } from '../crdt/crdt-collection';
 import { CRDTSingletonTypeRecord, SingletonOperation } from '../crdt/crdt-singleton';
 import { Particle } from '../particle';
 import { StorageProxy } from './storage-proxy';
@@ -37,7 +37,7 @@ export declare abstract class Handle<T extends CRDTTypeRecord> {
  * contain a single version of an Entity for each given ID. Further, no order is
  * implied by the set.
  */
-export declare class CollectionHandle<T> extends Handle<CRDTCollectionTypeRecord<T>> {
+export declare class CollectionHandle<T extends Referenceable> extends Handle<CRDTCollectionTypeRecord<T>> {
     add(entity: T): Promise<boolean>;
     addMultiple(entities: T[]): Promise<boolean>;
     remove(entity: T): Promise<boolean>;
@@ -49,7 +49,7 @@ export declare class CollectionHandle<T> extends Handle<CRDTCollectionTypeRecord
 /**
  * A handle on a single entity.
  */
-export declare class SingletonHandle<T> extends Handle<CRDTSingletonTypeRecord<T>> {
+export declare class SingletonHandle<T extends Referenceable> extends Handle<CRDTSingletonTypeRecord<T>> {
     set(entity: T): Promise<boolean>;
     clear(): Promise<boolean>;
     get(): Promise<T>;

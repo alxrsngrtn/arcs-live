@@ -7,10 +7,15 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-import { CRDTChange, CRDTModel, CRDTTypeRecord, VersionMap } from './crdt';
+import { CRDTChange, CRDTModel, CRDTTypeRecord, VersionMap } from './crdt.js';
+import { Referenceable } from './crdt-collection.js';
+import { Dictionary } from '../hot.js';
 declare type RawSingleton<T> = T;
-declare type SingletonData<T> = {
-    values: Map<T, VersionMap>;
+declare type SingletonData<T extends Referenceable> = {
+    values: Dictionary<{
+        value: T;
+        version: VersionMap;
+    }>;
     version: VersionMap;
 };
 export declare enum SingletonOpTypes {
@@ -27,14 +32,14 @@ export declare type SingletonOperation<T> = {
     actor: string;
     clock: VersionMap;
 };
-export interface CRDTSingletonTypeRecord<T> extends CRDTTypeRecord {
+export interface CRDTSingletonTypeRecord<T extends Referenceable> extends CRDTTypeRecord {
     data: SingletonData<T>;
     operation: SingletonOperation<T>;
     consumerType: RawSingleton<T>;
 }
-declare type SingletonChange<T> = CRDTChange<CRDTSingletonTypeRecord<T>>;
-declare type SingletonModel<T> = CRDTModel<CRDTSingletonTypeRecord<T>>;
-export declare class CRDTSingleton<T> implements SingletonModel<T> {
+declare type SingletonChange<T extends Referenceable> = CRDTChange<CRDTSingletonTypeRecord<T>>;
+declare type SingletonModel<T extends Referenceable> = CRDTModel<CRDTSingletonTypeRecord<T>>;
+export declare class CRDTSingleton<T extends Referenceable> implements SingletonModel<T> {
     private collection;
     merge(other: SingletonData<T>): {
         modelChange: SingletonChange<T>;

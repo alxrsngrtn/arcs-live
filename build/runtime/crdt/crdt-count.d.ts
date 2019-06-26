@@ -8,9 +8,10 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { VersionMap, CRDTChange, CRDTModel, CRDTTypeRecord } from './crdt.js';
+import { Dictionary } from '../hot.js';
 declare type RawCount = number;
 export declare type CountData = {
-    values: Map<string, number>;
+    values: Dictionary<number>;
     version: VersionMap;
 };
 declare type VersionInfo = {
@@ -47,8 +48,8 @@ export declare class CRDTCount implements CountModel {
     applyOperation(op: CountOperation): boolean;
     private cloneMap;
     getData(): {
-        values: Map<string, number>;
-        version: Map<string, number>;
+        values: Dictionary<number>;
+        version: Dictionary<number>;
     };
     getParticleView(): number;
 }

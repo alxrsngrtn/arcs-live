@@ -77,6 +77,7 @@ export declare class SequenceTest<T> {
     private sensors;
     private outputs;
     private interleavingLog;
+    private currentTestObject;
     /**
      * Set a function that constructs a fresh instance of the object under test for each ordering.
      */
@@ -182,6 +183,7 @@ export declare class SequenceTest<T> {
      * @param test a function that takes the final sensor value and asserts properties
      */
     setEndInvariant(id: string, test: (t: any) => void): void;
+    testObject(): T;
     private resetVariables;
     private resetResults;
     private awaitResults;

@@ -45,6 +45,7 @@ export declare class Store<T extends CRDTTypeRecord> {
     activate(): Promise<ActiveStore<T>>;
 }
 export declare abstract class ActiveStore<T extends CRDTTypeRecord> extends Store<T> {
+    idle(): Promise<void>;
     abstract on(callback: ProxyCallback<T>): number;
     abstract off(callback: number): void;
     abstract onProxyMessage(message: ProxyMessage<T>): Promise<boolean>;
@@ -53,13 +54,23 @@ export declare class DirectStore<T extends CRDTTypeRecord> extends ActiveStore<T
     localModel: CRDTModel<T>;
     callbacks: Map<number, ProxyCallback<T>>;
     driver: Driver<T['data']>;
-    inSync: boolean;
     private nextCallbackID;
     private version;
+    private pendingException;
+    private pendingResolves;
+    private pendingRejects;
+    private pendingDriverModels;
+    private state;
     private constructor();
+    idle(): Promise<void>;
+    private setState;
+    private notifyIdle;
     static construct<T extends CRDTTypeRecord>(storageKey: StorageKey, exists: Exists, type: Type, mode: StorageMode, modelConstructor: new () => CRDTModel<T>): Promise<DirectStore<T>>;
     onReceive(model: T['data'], version: number): Promise<void>;
+    private deliverCallbacks;
     private processModelChange;
+    private updateStateAndAct;
+    private applyPendingDriverModels;
     private noDriverSideChanges;
     onProxyMessage(message: ProxyMessage<T>): Promise<boolean>;
     on(callback: ProxyCallback<T>): number;

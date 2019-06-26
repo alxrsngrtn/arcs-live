@@ -7,11 +7,15 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-import { FirebaseStorageDriverProvider, FirebaseDriver } from '../drivers/firebase.js';
+import { FirebaseStorageKey, FirebaseStorageDriverProvider, FirebaseDriver } from '../drivers/firebase.js';
 import { StorageKey } from '../storage-key.js';
 import { Exists } from '../drivers/driver-factory.js';
-export declare class FakeFirebaseStorageDriverProvider extends FirebaseStorageDriverProvider {
+export declare class MockFirebaseStorageDriverProvider extends FirebaseStorageDriverProvider {
     driver<Data>(storageKey: StorageKey, exists: Exists): Promise<FirebaseDriver<Data>>;
     static newDriverForTesting<Data>(storageKey: StorageKey, exists: Exists): Promise<FirebaseDriver<Data>>;
     static register(): void;
+    static getValueForTesting(storageKey: MockFirebaseStorageKey): any;
+}
+export declare class MockFirebaseStorageKey extends FirebaseStorageKey {
+    constructor(location: any);
 }

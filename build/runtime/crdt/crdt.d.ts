@@ -7,7 +7,8 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-export declare type VersionMap = Map<string, number>;
+import { Dictionary } from '../hot.js';
+export declare type VersionMap = Dictionary<number>;
 export declare class CRDTError extends Error {
 }
 export interface CRDTOperation {

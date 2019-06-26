@@ -7,7 +7,7 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-import { ChangeType, CRDTError } from './crdt';
+import { ChangeType, CRDTError } from './crdt.js';
 export var CollectionOpTypes;
 (function (CollectionOpTypes) {
     CollectionOpTypes[CollectionOpTypes["Add"] = 0] = "Add";
@@ -15,7 +15,7 @@ export var CollectionOpTypes;
 })(CollectionOpTypes || (CollectionOpTypes = {}));
 export class CRDTCollection {
     constructor() {
-        this.model = { values: new Map(), version: new Map() };
+        this.model = { values: {}, version: {} };
     }
     merge(other) {
         const newValues = this.mergeItems(this.model, other);
@@ -42,66 +42,69 @@ export class CRDTCollection {
         return this.model;
     }
     getParticleView() {
-        return new Set([...this.model.values.keys()]);
+        return new Set(Object.values(this.model.values).map(entry => entry.value));
     }
     add(value, key, version) {
         // Only accept an add if it is immediately consecutive to the clock for that actor.
-        const expectedClockValue = (this.model.version.get(key) || 0) + 1;
-        if (!(expectedClockValue === version.get(key) || 0)) {
+        const expectedClockValue = (this.model.version[key] || 0) + 1;
+        if (!(expectedClockValue === version[key] || 0)) {
             return false;
         }
-        this.model.version.set(key, version.get(key));
-        this.model.values.set(value, mergeVersions(version, this.model.values.get(value) || new Map()));
+        this.model.version[key] = version[key];
+        const previousVersion = this.model.values[value.id] ? this.model.values[value.id].version : {};
+        this.model.values[value.id] = { value, version: mergeVersions(version, previousVersion) };
         return true;
     }
     remove(value, key, version) {
-        if (!this.model.values.has(value)) {
+        if (!this.model.values[value.id]) {
             return false;
         }
-        const clockValue = (version.get(key) || 0);
+        const clockValue = (version[key] || 0);
         // Removes do not increment the clock.
-        const expectedClockValue = (this.model.version.get(key) || 0);
+        const expectedClockValue = (this.model.version[key] || 0);
         if (!(expectedClockValue === clockValue)) {
             return false;
         }
         // Cannot remove an element unless version is higher for all other actors as
         // well.
-        if (!dominates(version, this.model.values.get(value))) {
+        if (!dominates(version, this.model.values[value.id].version)) {
             return false;
         }
-        this.model.version.set(key, clockValue);
-        this.model.values.delete(value);
+        this.model.version[key] = clockValue;
+        delete this.model.values[value.id];
         return true;
     }
     mergeItems(data1, data2) {
-        const merged = new Map();
-        for (const [value, version2] of data2.values) {
-            const version1 = data1.values.get(value);
-            if (version1) {
-                merged.set(value, mergeVersions(version1, version2));
+        const merged = {};
+        for (const { value, version: version2 } of Object.values(data2.values)) {
+            if (this.model.values[value.id]) {
+                merged[value.id] = { value, version: mergeVersions(this.model.values[value.id].version, version2) };
             }
             else if (!dominates(data1.version, version2)) {
-                merged.set(value, version2);
+                merged[value.id] = { value, version: version2 };
             }
         }
-        for (const [value, version1] of data1.values) {
-            if (!data2.values.get(value) && !dominates(data2.version, version1)) {
-                merged.set(value, version1);
+        for (const { value, version: version1 } of Object.values(data1.values)) {
+            if (!data2.values[value.id] && !dominates(data2.version, version1)) {
+                merged[value.id] = { value, version: version1 };
             }
         }
         return merged;
     }
 }
 function mergeVersions(version1, version2) {
-    const merged = new Map(version1);
-    for (const [k, v] of version2) {
-        merged.set(k, Math.max(v, version1.get(k) || 0));
+    const merged = {};
+    for (const [k, v] of Object.entries(version1)) {
+        merged[k] = v;
+    }
+    for (const [k, v] of Object.entries(version2)) {
+        merged[k] = Math.max(v, version1[k] || 0);
     }
     return merged;
 }
 function dominates(map1, map2) {
-    for (const [k, v] of map2) {
-        if ((map1.get(k) || 0) < v) {
+    for (const [k, v] of Object.entries(map2)) {
+        if ((map1[k] || 0) < v) {
             return false;
         }
     }

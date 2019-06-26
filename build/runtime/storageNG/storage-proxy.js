@@ -25,7 +25,11 @@ export class StorageProxy {
     }
     registerHandle(h) {
         this.handles.push(h);
-        return new Map(this.crdt.getData().version);
+        const version = {};
+        for (const [k, v] of Object.entries(this.crdt.getData().version)) {
+            version[k] = v;
+        }
+        return version;
     }
     async applyOp(op) {
         if (!this.crdt.applyOperation(op)) {
