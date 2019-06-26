@@ -321,8 +321,8 @@ function peg$parse(input, options) {
     };
     const peg$c74 = "derives from";
     const peg$c75 = peg$literalExpectation("derives from", false);
-    const peg$c76 = "and";
-    const peg$c77 = peg$literalExpectation("and", false);
+    const peg$c76 = "and derives from";
+    const peg$c77 = peg$literalExpectation("and derives from", false);
     const peg$c78 = function (handle, first, rest) {
         const parentHandles = [first, ...rest.map(item => item[3])];
         return {
@@ -3170,9 +3170,9 @@ function peg$parse(input, options) {
                                     s9 = peg$currPos;
                                     s10 = peg$parsewhiteSpace();
                                     if (s10 !== peg$FAILED) {
-                                        if (input.substr(peg$currPos, 3) === peg$c76) {
+                                        if (input.substr(peg$currPos, 16) === peg$c76) {
                                             s11 = peg$c76;
-                                            peg$currPos += 3;
+                                            peg$currPos += 16;
                                         }
                                         else {
                                             s11 = peg$FAILED;
@@ -3212,9 +3212,9 @@ function peg$parse(input, options) {
                                         s9 = peg$currPos;
                                         s10 = peg$parsewhiteSpace();
                                         if (s10 !== peg$FAILED) {
-                                            if (input.substr(peg$currPos, 3) === peg$c76) {
+                                            if (input.substr(peg$currPos, 16) === peg$c76) {
                                                 s11 = peg$c76;
-                                                peg$currPos += 3;
+                                                peg$currPos += 16;
                                             }
                                             else {
                                                 s11 = peg$FAILED;

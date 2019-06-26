@@ -1,9 +1,5 @@
-commit 9a9970cff86d07f70f52f5ce30dce1cddc7ae02d
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Tue Jun 25 18:08:33 2019 -0700
+commit c9d5be0631b5593a2d3e2424307301b6b84828ea
+Author: raulverag <42563960+raulverag@users.noreply.github.com>
+Date:   Wed Jun 26 12:00:07 2019 +1000
 
-    Java PEC: create PECs per arc ID; add callback to InitializeProxy method (#3225)
-    
-    * Java PEC: create PECs per arc ID; add callback to InitializeProxy method
-    
-    * address comments: replace Function with Consumer, define constants for message names and fields and add final keyword to data members
+    Fix syntax of multiple 'derives from' claims (#3227)
