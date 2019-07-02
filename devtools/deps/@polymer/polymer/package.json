@@ -18,7 +18,6 @@
   },
   "_requiredBy": [
     "/",
-    "/@polymer/app-route",
     "/@polymer/iron-a11y-keys-behavior",
     "/@polymer/iron-autogrow-textarea",
     "/@polymer/iron-behaviors",
@@ -29,10 +28,8 @@
     "/@polymer/iron-icons",
     "/@polymer/iron-iconset-svg",
     "/@polymer/iron-list",
-    "/@polymer/iron-location",
     "/@polymer/iron-meta",
     "/@polymer/iron-overlay-behavior",
-    "/@polymer/iron-pages",
     "/@polymer/iron-resizable-behavior",
     "/@polymer/iron-scroll-target-behavior",
     "/@polymer/iron-selector",
@@ -47,7 +44,7 @@
   "_resolved": "https://registry.npmjs.org/@polymer/polymer/-/polymer-3.3.0.tgz",
   "_shasum": "52a0665ac29654728e8f46e8ee178c02c49efdd0",
   "_spec": "@polymer/polymer@^3.2.0",
-  "_where": "/tmp/asset_stageHZRDJa",
+  "_where": "/tmp/asset_stagellvb6w",
   "author": {
     "name": "The Polymer Project Authors"
   },

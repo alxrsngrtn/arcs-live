@@ -1,5 +1,5 @@
 {
-  "_from": "@polymer/iron-selector@^3.0.1",
+  "_from": "@polymer/iron-selector@^3.0.0-pre.26",
   "_id": "@polymer/iron-selector@3.0.1",
   "_inBundle": false,
   "_integrity": "sha512-sBVk2uas6prW0glUe2xEJJYlvxmYzM40Au9OKbfDK2Qekou/fLKcBRyIYI39kuI8zWRaip8f3CI8qXcUHnKb1A==",
@@ -8,23 +8,21 @@
   "_requested": {
     "type": "range",
     "registry": true,
-    "raw": "@polymer/iron-selector@^3.0.1",
+    "raw": "@polymer/iron-selector@^3.0.0-pre.26",
     "name": "@polymer/iron-selector",
     "escapedName": "@polymer%2firon-selector",
     "scope": "@polymer",
-    "rawSpec": "^3.0.1",
+    "rawSpec": "^3.0.0-pre.26",
     "saveSpec": null,
-    "fetchSpec": "^3.0.1"
+    "fetchSpec": "^3.0.0-pre.26"
   },
   "_requiredBy": [
-    "/",
-    "/@polymer/iron-pages",
     "/@polymer/neon-animation"
   ],
   "_resolved": "https://registry.npmjs.org/@polymer/iron-selector/-/iron-selector-3.0.1.tgz",
   "_shasum": "e845bec58489c96b4e7609525532437869ad5a88",
-  "_spec": "@polymer/iron-selector@^3.0.1",
-  "_where": "/tmp/asset_stageHZRDJa",
+  "_spec": "@polymer/iron-selector@^3.0.0-pre.26",
+  "_where": "/tmp/asset_stagellvb6w/node_modules/@polymer/neon-animation",
   "author": {
     "name": "The Polymer Authors"
   },

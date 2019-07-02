@@ -9,7 +9,7 @@
  */
 import { assert } from '../../platform/chai-web.js';
 import { Services } from '../../runtime/services.js';
-import '../random.js';
+import '../random-service.js';
 describe('services: random', () => {
     it('gets a random number from the random service', async () => {
         const randomValue = await Services.request({ call: 'random.next' });

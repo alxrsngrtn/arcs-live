@@ -1,5 +1,5 @@
-commit 1560b0a6a38aa2b9b1ab767886856fa4d51f34fc
-Author: Paul Lindner <plindner@google.com>
-Date:   Tue Jul 2 04:29:28 2019 -0700
+commit 3cca40a4851e483f7d2da937fb9db20ea7b67768
+Author: Piotr Swigon <piotr.swigon@gmail.com>
+Date:   Wed Jul 3 07:55:11 2019 +1000
 
-    Deal with more large filenames in the tfjs node_modules directory (#3266)
+    Multi-tool 'Docker' layout for Arcs Explorer (#3261)

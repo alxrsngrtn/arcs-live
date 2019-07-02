@@ -7,4 +7,4 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-import '../random.js';
+import '../random-service.js';
