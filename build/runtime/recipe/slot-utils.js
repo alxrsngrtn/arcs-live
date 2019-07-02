@@ -13,19 +13,21 @@ export class SlotUtils {
     // Helper methods.
     static getClonedSlot(recipe, selectedSlot) {
         let clonedSlot = recipe.updateToClone({ selectedSlot }).selectedSlot;
-        if (!clonedSlot) {
-            if (selectedSlot.id) {
-                clonedSlot = recipe.findSlotByID(selectedSlot.id);
+        if (clonedSlot) {
+            return clonedSlot;
+        }
+        if (selectedSlot.id) {
+            clonedSlot = recipe.findSlotByID(selectedSlot.id);
+        }
+        if (clonedSlot === undefined) {
+            if (recipe instanceof RequireSection) {
+                clonedSlot = recipe.parent.newSlot(selectedSlot.name);
             }
-            if (clonedSlot == undefined) {
-                if (recipe instanceof RequireSection) {
-                    clonedSlot = recipe.parent.newSlot(selectedSlot.name);
-                }
-                else {
-                    clonedSlot = recipe.newSlot(selectedSlot.name);
-                }
-                clonedSlot.id = selectedSlot.id;
+            else {
+                clonedSlot = recipe.newSlot(selectedSlot.name);
             }
+            clonedSlot.id = selectedSlot.id;
+            return clonedSlot;
         }
         return clonedSlot;
     }
@@ -35,6 +37,9 @@ export class SlotUtils {
         if (!slotConnection.targetSlot) {
             const clonedSlot = SlotUtils.getClonedSlot(recipe, selectedSlot);
             slotConnection.connectToSlot(clonedSlot);
+        }
+        if (!slotConnection.targetSlot) {
+            throw new Error('missing targetSlot');
         }
         assert(!selectedSlot.id || !slotConnection.targetSlot.id || (selectedSlot.id === slotConnection.targetSlot.id), `Cannot override slot id '${slotConnection.targetSlot.id}' with '${selectedSlot.id}'`);
         slotConnection.targetSlot.id = selectedSlot.id || slotConnection.targetSlot.id;
@@ -92,7 +97,7 @@ export class SlotUtils {
                 (handleConn.handle && handleConn.handle.id && slot.handles.map(sh => sh.id).includes(handleConn.handle.id));
         });
     }
-    static tagsOrNameMatch(consumeSlotSpec, provideSlotSpec, consumeSlotConn = undefined, provideSlot = undefined) {
+    static tagsOrNameMatch(consumeSlotSpec, provideSlotSpec, consumeSlotConn, provideSlot) {
         const consumeTags = [].concat(consumeSlotSpec.tags || [], consumeSlotConn ? consumeSlotConn.tags : [], consumeSlotConn && consumeSlotConn.targetSlot ? consumeSlotConn.targetSlot.tags : []);
         const provideTags = [].concat(provideSlotSpec.tags || [], provideSlot ? provideSlot.tags : [], provideSlot ? provideSlot.name : (provideSlotSpec.name ? provideSlotSpec.name : []));
         if (consumeTags.length > 0 && consumeTags.some(t => provideTags.includes(t))) {

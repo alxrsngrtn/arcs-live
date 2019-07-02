@@ -13,7 +13,7 @@ import {Arc} from '../runtime/arc.js';
 import {Recipe} from '../runtime/recipe/recipe.js';
 import {RecipeWalker} from '../runtime/recipe/recipe-walker.js';
 import {WalkerTactic} from '../runtime/recipe/walker.js';
-import {Action, Descendant} from '../runtime/recipe/walker.js';
+import {Action, GenerateParams, Descendant} from '../runtime/recipe/walker.js';
 import {Dictionary} from '../runtime/hot.js';
 
 export interface GenerationRecord {
@@ -94,7 +94,7 @@ export class Strategizer {
       record.generatedDerivationsByStrategy[this._strategies[i].constructor.name] = generatedResults[i].length;
     }
 
-    let generated: Descendant<Recipe>[] = [].concat(...generatedResults);
+    let generated: Descendant<Recipe>[] = ([] as Descendant<Recipe>[]).concat(...generatedResults);
 
     // TODO: get rid of this additional asynchrony
     generated = await Promise.all(generated.map(async result => {
@@ -246,6 +246,8 @@ export class StrategizerWalker extends RecipeWalker {
     return super.walk(results, walker, strategy);
   }
 }
+
+export type StrategyParams = GenerateParams<Recipe>;
 
 // TODO: Doc call convention, incl strategies are stateful.
 export abstract class Strategy extends Action<Recipe> {

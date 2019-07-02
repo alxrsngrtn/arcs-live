@@ -9,6 +9,7 @@
  */
 import { Id, IdGenerator } from './id.js';
 import { InterfaceInfo } from './interface-info.js';
+import { Loader } from './loader.js';
 import { ManifestMeta } from './manifest-meta.js';
 import * as AstNode from './manifest-ast-nodes.js';
 import { ParticleSpec } from './particle-spec.js';
@@ -31,9 +32,9 @@ export declare class StorageStub {
     storageProviderFactory: StorageProviderFactory;
     referenceMode: boolean;
     originalId: string;
+    description: string;
     constructor(type: Type, id: string, name: string, storageKey: string, storageProviderFactory: StorageProviderFactory, originalId: string);
     readonly version: number;
-    readonly description: string;
     inflate(): Promise<StorageProviderBase>;
     toLiteral(): any;
     toString(handleTags: string[]): string;
@@ -41,6 +42,16 @@ export declare class StorageStub {
 }
 declare type ManifestFinder<a> = (manifest: Manifest) => a;
 declare type ManifestFinderGenerator<a> = ((manifest: Manifest) => IterableIterator<a>) | ((manifest: Manifest) => a[]);
+interface ManifestParseOptions {
+    fileName?: string;
+    loader?: Loader;
+    registry?: Dictionary<Promise<Manifest>>;
+    context?: Manifest;
+    throwImportErrors?: boolean;
+}
+interface ManifestLoadOptions {
+    registry?: Dictionary<Promise<Manifest>>;
+}
 export declare class Manifest {
     private _recipes;
     private _imports;
@@ -101,13 +112,9 @@ export declare class Manifest {
     findInterfaceByName(name: string): InterfaceInfo;
     findRecipesByVerb(verb: string): Recipe[];
     generateID(): Id;
-    static load(fileName: string, loader: {
-        loadResource: any;
-        path?: any;
-        join?: any;
-    }, options?: any): Promise<Manifest>;
+    static load(fileName: string, loader: Loader, options?: ManifestLoadOptions): Promise<Manifest>;
     static getErrors(manifest: Manifest): ManifestError[];
-    static parse(content: string, options?: any): Promise<Manifest>;
+    static parse(content: string, options?: ManifestParseOptions): Promise<Manifest>;
     private static _augmentAstWithTypes;
     private static _processSchema;
     private static _processResource;

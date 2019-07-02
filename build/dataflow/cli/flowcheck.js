@@ -10,6 +10,7 @@
 import { FlowGraph } from '../arcs-dataflow.js';
 import { Loader } from '../../runtime/loader.js';
 import { Manifest } from '../../runtime/manifest.js';
+import { validateGraph } from '../analysis/analysis.js';
 // TODO make this a function and test it; it's big enough now
 void (async () => {
     const manifestFile = process.argv[1];
@@ -29,11 +30,11 @@ void (async () => {
         return;
     }
     manifest.allRecipes.forEach(recipe => {
-        const flowgraph = new FlowGraph(recipe);
+        const graph = new FlowGraph(recipe);
         console.log('Checking recipe ' + recipe.name);
-        const res = flowgraph.validateGraph();
-        if (!res.isValid) {
-            console.error('Data-flow check failed. Reasons: ' + res.failures);
+        const result = validateGraph(graph);
+        if (!result.isValid) {
+            console.error('Data-flow check failed. Reasons: ' + result.failures);
             process.exit(1);
         }
         else {

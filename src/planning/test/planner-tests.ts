@@ -43,6 +43,18 @@ const assertRecipeResolved = recipe => {
   assert.isTrue(recipe.isResolved());
 };
 
+class NullLoader extends StubLoader {
+  constructor() {
+    super({});
+  }
+  join(prefix: string) {
+    return '';
+  }
+  async loadResource(path: string): Promise<string> {
+    return '[]';
+  }
+}
+
 class MyLoader extends StubLoader {
   private manifest;
 
@@ -349,10 +361,7 @@ ${recipeManifest}
 
 describe('Type variable resolution', () => {
   const loadAndPlan = async (manifestStr) => {
-    const loader = {
-      join: (() => ''),
-      loadResource: (() => '[]')
-    };
+    const loader = new NullLoader();
     const manifest = (await Manifest.parse(manifestStr, {loader}));
     const arc = StrategyTestHelper.createTestArc(manifest);
     const planner = new Planner();
@@ -669,7 +678,7 @@ describe('Automatic resolution', () => {
       recipe
         ? as location
         D
-          location = location
+          location <-> location
 `);
 
     assert.equal(`recipe
@@ -685,7 +694,7 @@ describe('Automatic resolution', () => {
     location <- handle2
     something <- handle1
   D as particle3
-    location = handle2`, result.toString({hideFields: false}));
+    location <-> handle2`, result.toString({hideFields: false}));
   });
 
   it('uses existing handle from the arc', async () => {
@@ -740,8 +749,8 @@ describe('Automatic resolution', () => {
     list <- handle0
     consume item as slot0
   SelectableList as particle1
-    items = handle0
-    selected = handle1
+    items <-> handle0
+    selected <-> handle1
     consume root as slot1
       provide action as slot2
       provide annotation as slot3
@@ -778,8 +787,8 @@ describe('Automatic resolution', () => {
     list <- handle0
     consume item as slot0
   SelectableList as particle1
-    items = handle0
-    selected = handle1
+    items <-> handle0
+    selected <-> handle1
     consume root as slot1
       provide action as slot2
       provide annotation as slot3

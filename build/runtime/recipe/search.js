@@ -9,7 +9,7 @@
  */
 import { assert } from '../../platform/assert-web.js';
 export class Search {
-    constructor(phrase, unresolvedTokens = undefined) {
+    constructor(phrase, unresolvedTokens) {
         assert(phrase);
         this._phrase = phrase;
         const tokens = this.phrase.toLowerCase().split(/[^a-z0-9]/g);

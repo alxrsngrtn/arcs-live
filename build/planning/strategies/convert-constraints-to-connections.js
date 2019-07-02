@@ -10,6 +10,7 @@
 import { HandleEndPoint, InstanceEndPoint, ParticleEndPoint, TagEndPoint } from '../../runtime/recipe/connection-constraint.js';
 import { RecipeUtil } from '../../runtime/recipe/recipe-util.js';
 import { StrategizerWalker, Strategy } from '../strategizer.js';
+import { reverseArrow } from '../../runtime/recipe/recipe-util.js';
 export class ConvertConstraintsToConnections extends Strategy {
     async generate(inputParams) {
         const arcModality = this.arc.modality;
@@ -57,7 +58,6 @@ export class ConvertConstraintsToConnections extends Strategy {
                         && (!from.particle.isCompatible(modality) || !to.particle.isCompatible(modality))) {
                         return undefined;
                     }
-                    const reverse = { '->': '<-', '=': '=', '<-': '->' };
                     // Set up initial mappings & input to RecipeUtil.
                     let handle;
                     let handleIsConcrete = false;
@@ -77,7 +77,7 @@ export class ConvertConstraintsToConnections extends Strategy {
                         }
                     }
                     if (from instanceof HandleEndPoint) {
-                        handle = { handle: nameForHandle(from.handle, handleNames), direction: reverse[constraint.direction], localName: from.handle.localName };
+                        handle = { handle: nameForHandle(from.handle, handleNames), direction: reverseArrow(constraint.direction), localName: from.handle.localName };
                         handles.add(handle.handle);
                     }
                     if (to instanceof ParticleEndPoint) {
@@ -146,7 +146,7 @@ export class ConvertConstraintsToConnections extends Strategy {
                             map[from.particle.name][connection] = { handle: handle.handle, direction, tags: handle.tags, localName: handle.localName };
                         }
                     }
-                    direction = reverse[constraint.direction];
+                    direction = reverseArrow(constraint.direction);
                     if (to instanceof ParticleEndPoint) {
                         const connection = to.connection;
                         if (connection) {

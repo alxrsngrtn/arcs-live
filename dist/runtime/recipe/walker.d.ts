@@ -43,14 +43,20 @@ export interface Cloneable<T> {
 export interface Descendant<T extends Cloneable<T>> {
     result: T;
     score: number;
-    derivation: {
+    derivation?: {
         parent?: Descendant<T>;
         strategy: Action<T>;
     }[];
-    hash: Promise<string> | string;
-    valid: boolean;
-    errors?: any;
-    normalized?: any;
+    hash?: Promise<string> | string;
+    valid?: boolean;
+    errors?: string[];
+    normalized?: boolean;
+}
+export interface GenerateParams<T extends Cloneable<T>> {
+    generated: Descendant<T>[];
+    population: Descendant<T>[];
+    terminal: Descendant<T>[];
+    generation: number;
 }
 /**
  * An Action generates the list of Descendants by walking the object with a
@@ -61,10 +67,9 @@ export declare abstract class Action<T extends Cloneable<T>> {
     private readonly _args?;
     constructor(arc?: Arc, args?: any);
     readonly arc: Arc | undefined;
-    getResults(inputParams: {
-        generated: Descendant<T>[];
-    }): Descendant<T>[];
-    generate(inputParams: any): Promise<Descendant<T>[]>;
+    getResults({ generated }: GenerateParams<T>): Descendant<T>[];
+    generateFrom(generated: Descendant<T>[]): Promise<Descendant<T>[]>;
+    abstract generate(inputParams: GenerateParams<T>): Promise<Descendant<T>[]>;
 }
 export declare type Continuation<T extends Cloneable<T>, Ctx extends object[]> = SingleContinuation<T, Ctx> | SingleContinuation<T, Ctx>[];
 declare type SingleContinuation<T extends Cloneable<T>, Ctx extends object[]> = (obj: T, ...ctx: Ctx) => number;
@@ -72,10 +77,10 @@ export declare abstract class Walker<T extends Cloneable<T>> {
     static Permuted: WalkerTactic;
     static Independent: WalkerTactic;
     descendants: Descendant<T>[];
-    currentAction: Action<T>;
-    currentResult: Descendant<T>;
+    currentAction?: Action<T>;
+    currentResult?: Descendant<T>;
     tactic: WalkerTactic;
-    private updateList;
+    private updateList?;
     constructor(tactic: WalkerTactic);
     onAction(action: Action<T>): void;
     onResult(result: Descendant<T>): void;

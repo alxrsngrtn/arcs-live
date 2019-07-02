@@ -12,7 +12,7 @@ import { PECInnerPort } from './api-channel.js';
 import { handleFor } from './handle.js';
 import { SlotProxy } from './slot-proxy.js';
 import { StorageProxy, StorageProxyScheduler } from './storage-proxy.js';
-import { WasmParticle } from './wasm.js';
+import { WasmContainer, WasmParticle } from './wasm.js';
 import { UserException } from './arc-exceptions.js';
 export class ParticleExecutionContext {
     constructor(port, pecId, idGenerator, loader) {
@@ -20,6 +20,7 @@ export class ParticleExecutionContext {
         this.pendingLoads = [];
         this.scheduler = new StorageProxyScheduler();
         this.keyedProxies = {};
+        this.wasmContainers = {};
         const pec = this;
         this.apiPort = new class extends PECInnerPort {
             onDefineHandle(identifier, type, name) {
@@ -189,13 +190,21 @@ export class ParticleExecutionContext {
             }];
     }
     async loadWasmParticle(spec) {
-        // TODO: use instantiateStreaming? requires passing the fetch() Response, not its ArrayBuffer
-        const buffer = await this.loader.loadBinary(spec.implFile);
-        assert(buffer && buffer.byteLength > 0);
-        // Particle constructor expects spec to be attached to the class object.
+        assert(spec.name.length > 0);
+        let container = this.wasmContainers[spec.implFile];
+        if (!container) {
+            const buffer = await this.loader.loadBinary(spec.implFile);
+            if (!buffer || buffer.byteLength === 0) {
+                throw new Error(`Failed to load binary file '${spec.implFile}'`);
+            }
+            container = new WasmContainer();
+            await container.initialize(buffer);
+            this.wasmContainers[spec.implFile] = container;
+        }
+        // Particle constructor expects spec to be attached to the class object (and attaches it to
+        // the particle instance at that time).
         WasmParticle.spec = spec;
-        const particle = new WasmParticle();
-        await particle.initialize(buffer);
+        const particle = new WasmParticle(container);
         WasmParticle.spec = null;
         return particle;
     }

@@ -50,11 +50,16 @@ export class Action {
     get arc() {
         return this._arc;
     }
-    getResults(inputParams) {
-        return inputParams.generated;
+    getResults({ generated }) {
+        return generated;
     }
-    async generate(inputParams) {
-        return [];
+    async generateFrom(generated) {
+        return this.generate({
+            generated,
+            population: [],
+            terminal: [],
+            generation: 0,
+        });
     }
 }
 export class Walker {

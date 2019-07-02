@@ -62,7 +62,7 @@ export class Loader {
             return fetch(file).then(res => res.arrayBuffer());
         }
         else {
-            return this.loadFile(file, null);
+            return this.loadFile(file);
         }
     }
     async loadFile(file, encoding) {

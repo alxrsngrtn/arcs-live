@@ -8,7 +8,7 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { Id } from './id.js';
-import { InterfaceInfo } from './interface-info.js';
+import { InterfaceInfo, Handle, Slot } from './interface-info.js';
 import { Schema } from './schema.js';
 import { SlotInfo } from './slot-info.js';
 import { ArcInfo } from './synthetic-types.js';
@@ -26,9 +26,9 @@ export declare abstract class Type {
     abstract toLiteral(): TypeLiteral;
     static unwrapPair(type1: Type, type2: Type): [Type, Type];
     /** Tests whether two types' constraints are compatible with each other. */
-    static canMergeConstraints(type1: any, type2: any): boolean;
-    static _canMergeCanReadSubset(type1: any, type2: any): boolean;
-    static _canMergeCanWriteSuperset(type1: any, type2: any): boolean;
+    static canMergeConstraints(type1: Type, type2: Type): boolean;
+    static _canMergeCanReadSubset(type1: Type, type2: Type): boolean;
+    static _canMergeCanWriteSuperset(type1: Type, type2: Type): boolean;
     isSlot(): this is SlotType;
     isCollectionType<T extends Type>(): this is CollectionType<T>;
     isBigCollectionType<T extends Type>(): this is BigCollectionType<T>;
@@ -48,7 +48,7 @@ export declare abstract class Type {
     readonly canWriteSuperset: Type;
     readonly canReadSubset: Type;
     isMoreSpecificThan(type: Type): boolean;
-    protected _isMoreSpecificThan(type: any): boolean;
+    protected _isMoreSpecificThan(type: Type): boolean;
     /**
      * Clone a type object.
      * When cloning multiple types, variables that were associated with the same name
@@ -56,7 +56,7 @@ export declare abstract class Type {
      * property, create a Map() and pass it into all clone calls in the group.
      */
     clone(variableMap: Map<string, Type>): Type;
-    protected _clone(variableMap: any): Type;
+    protected _clone(variableMap: Map<string, Type>): Type;
     /**
      * Clone a type object, maintaining resolution information.
      * This function SHOULD NOT BE USED at the type level. In order for type variable
@@ -77,11 +77,11 @@ export declare class EntityType extends Type {
     readonly isEntity: boolean;
     readonly canWriteSuperset: EntityType;
     readonly canReadSubset: EntityType;
-    _isMoreSpecificThan(type: any): boolean;
+    _isMoreSpecificThan(type: EntityType): boolean;
     toLiteral(): TypeLiteral;
     toString(options?: any): string;
     getEntitySchema(): Schema;
-    _cloneWithResolutions(variableMap: any): any;
+    _cloneWithResolutions(variableMap: any): EntityType;
     toPrettyString(): string;
 }
 export declare class TypeVariable extends Type {
@@ -115,8 +115,8 @@ export declare class CollectionType<T extends Type> extends Type {
     maybeEnsureResolved(): boolean;
     readonly canWriteSuperset: InterfaceType;
     readonly canReadSubset: InterfaceType;
-    _clone(variableMap: any): Type;
-    _cloneWithResolutions(variableMap: any): CollectionType<Type>;
+    _clone(variableMap: Map<string, Type>): Type;
+    _cloneWithResolutions(variableMap: Map<TypeVariableInfo | Schema, TypeVariableInfo | Schema>): CollectionType<Type>;
     toLiteral(): TypeLiteral;
     _hasProperty(property: any): boolean;
     toString(options?: any): string;
@@ -136,8 +136,8 @@ export declare class BigCollectionType<T extends Type> extends Type {
     maybeEnsureResolved(): boolean;
     readonly canWriteSuperset: InterfaceType;
     readonly canReadSubset: InterfaceType;
-    _clone(variableMap: any): Type;
-    _cloneWithResolutions(variableMap: any): BigCollectionType<Type>;
+    _clone(variableMap: Map<string, Type>): Type;
+    _cloneWithResolutions(variableMap: Map<TypeVariableInfo | Schema, TypeVariableInfo | Schema>): BigCollectionType<Type>;
     toLiteral(): TypeLiteral;
     _hasProperty(property: any): boolean;
     toString(options?: any): string;
@@ -154,7 +154,7 @@ export declare class RelationType extends Type {
 export declare class InterfaceType extends Type {
     readonly interfaceInfo: InterfaceInfo;
     constructor(iface: InterfaceInfo);
-    static make(name: string, handles: any, slots: any): InterfaceType;
+    static make(name: string, handles: Handle[], slots: Slot[]): InterfaceType;
     readonly isInterface: boolean;
     mergeTypeVariablesByName(variableMap: Map<string, Type>): InterfaceType;
     _applyExistenceTypeTest(test: any): boolean;
@@ -163,8 +163,8 @@ export declare class InterfaceType extends Type {
     maybeEnsureResolved(): boolean;
     readonly canWriteSuperset: InterfaceType;
     readonly canReadSubset: InterfaceType;
-    _isMoreSpecificThan(type: any): boolean;
-    _clone(variableMap: any): Type;
+    _isMoreSpecificThan(type: InterfaceType): boolean;
+    _clone(variableMap: Map<string, Type>): Type;
     _cloneWithResolutions(variableMap: any): InterfaceType;
     toLiteral(): TypeLiteral;
     toString(options?: any): string;
@@ -176,7 +176,7 @@ export declare class SlotType extends Type {
     static make(formFactor: string, handle: string): SlotType;
     readonly canWriteSuperset: SlotType;
     readonly canReadSubset: this;
-    _isMoreSpecificThan(type: any): boolean;
+    _isMoreSpecificThan(type: SlotType): boolean;
     toLiteral(): TypeLiteral;
     toString(options?: any): string;
     toPrettyString(): string;
@@ -192,8 +192,8 @@ export declare class ReferenceType extends Type {
     maybeEnsureResolved(): boolean;
     readonly canWriteSuperset: Type;
     readonly canReadSubset: Type;
-    _clone(variableMap: any): Type;
-    _cloneWithResolutions(variableMap: any): ReferenceType;
+    _clone(variableMap: Map<string, Type>): Type;
+    _cloneWithResolutions(variableMap: Map<TypeVariableInfo | Schema, TypeVariableInfo | Schema>): ReferenceType;
     toLiteral(): TypeLiteral;
     toString(options?: any): string;
 }

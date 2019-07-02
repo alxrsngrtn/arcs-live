@@ -127,7 +127,6 @@
 							<h3>Methods</h3>
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="requiresection.html#_copyinto" class="tsd-kind-icon">_copy<wbr>Into</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="requiresection.html#_findduplicate" class="tsd-kind-icon">_find<wbr>Duplicate</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="requiresection.html#_isvalid" class="tsd-kind-icon">_is<wbr>Valid</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="requiresection.html#_makelocalnamemap" class="tsd-kind-icon">_make<wbr>Local<wbr>Name<wbr>Map</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="requiresection.html#addslot" class="tsd-kind-icon">add<wbr>Slot</a></li>
@@ -138,7 +137,7 @@
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="requiresection.html#findhandle" class="tsd-kind-icon">find<wbr>Handle</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="requiresection.html#findhandlebyid" class="tsd-kind-icon">find<wbr>Handle<wbr>ByID</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="requiresection.html#findslot" class="tsd-kind-icon">find<wbr>Slot</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="requiresection.html#findslotbyid" class="tsd-kind-icon">find<wbr>Slot<wbr>ByID</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="requiresection.html#findslotbyid" class="tsd-kind-icon">find<wbr>Slot<wbr>ByID</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="requiresection.html#getfreeconnections" class="tsd-kind-icon">get<wbr>Free<wbr>Connections</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="requiresection.html#getfreehandles" class="tsd-kind-icon">get<wbr>Free<wbr>Handles</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="requiresection.html#getparticlesbyimplfile" class="tsd-kind-icon">get<wbr>Particles<wbr>ByImpl<wbr>File</a></li>
@@ -173,23 +172,23 @@
 					<a name="constructor" class="tsd-anchor"></a>
 					<h3>constructor</h3>
 					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite">
-						<li class="tsd-signature tsd-kind-icon">new <wbr>Require<wbr>Section<span class="tsd-signature-symbol">(</span>parent<span class="tsd-signature-symbol">?: </span><a href="recipe.html" class="tsd-signature-type">Recipe</a>, name<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="requiresection.html" class="tsd-signature-type">RequireSection</a></li>
+						<li class="tsd-signature tsd-kind-icon">new <wbr>Require<wbr>Section<span class="tsd-signature-symbol">(</span>parent<span class="tsd-signature-symbol">: </span><a href="recipe.html" class="tsd-signature-type">Recipe</a>, name<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="requiresection.html" class="tsd-signature-type">RequireSection</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<p>Overrides <a href="recipe.html">Recipe</a>.<a href="recipe.html#constructor">constructor</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c65f384/src/runtime/recipe/recipe.ts#L707">runtime/recipe/recipe.ts:707</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1560b0a/src/runtime/recipe/recipe.ts#L712">src/runtime/recipe/recipe.ts:712</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> parent: <a href="recipe.html" class="tsd-signature-type">Recipe</a><span class="tsd-signature-symbol"> =&nbsp;undefined</span></h5>
+									<h5>parent: <a href="recipe.html" class="tsd-signature-type">Recipe</a></h5>
 								</li>
 								<li>
-									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> name: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> =&nbsp;undefined</span></h5>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> name: <span class="tsd-signature-type">string</span></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <a href="requiresection.html" class="tsd-signature-type">RequireSection</a></h4>
@@ -206,7 +205,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="recipe.html">Recipe</a>.<a href="recipe.html#annotation">annotation</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c65f384/src/runtime/recipe/recipe.ts#L45">runtime/recipe/recipe.ts:45</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1560b0a/src/runtime/recipe/recipe.ts#L49">src/runtime/recipe/recipe.ts:49</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -216,7 +215,7 @@
 					<div class="tsd-signature tsd-kind-icon">parent<span class="tsd-signature-symbol">:</span> <a href="recipe.html" class="tsd-signature-type">Recipe</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c65f384/src/runtime/recipe/recipe.ts#L707">runtime/recipe/recipe.ts:707</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1560b0a/src/runtime/recipe/recipe.ts#L712">src/runtime/recipe/recipe.ts:712</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -234,7 +233,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="recipe.html">Recipe</a>.<a href="recipe.html#allspecifiedconnections">allSpecifiedConnections</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c65f384/src/runtime/recipe/recipe.ts#L664">runtime/recipe/recipe.ts:664</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1560b0a/src/runtime/recipe/recipe.ts#L669">src/runtime/recipe/recipe.ts:669</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">object</span><span class="tsd-signature-symbol">[]</span></h4>
@@ -252,7 +251,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="recipe.html">Recipe</a>.<a href="recipe.html#connectionconstraints">connectionConstraints</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c65f384/src/runtime/recipe/recipe.ts#L274">runtime/recipe/recipe.ts:274</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1560b0a/src/runtime/recipe/recipe.ts#L278">src/runtime/recipe/recipe.ts:278</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <a href="connectionconstraint.html" class="tsd-signature-type">ConnectionConstraint</a><span class="tsd-signature-symbol">[]</span></h4>
@@ -270,7 +269,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="recipe.html">Recipe</a>.<a href="recipe.html#description">description</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c65f384/src/runtime/recipe/recipe.ts#L341">runtime/recipe/recipe.ts:341</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1560b0a/src/runtime/recipe/recipe.ts#L345">src/runtime/recipe/recipe.ts:345</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -294,7 +293,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="recipe.html">Recipe</a>.<a href="recipe.html#handleconnections">handleConnections</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c65f384/src/runtime/recipe/recipe.ts#L298">runtime/recipe/recipe.ts:298</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1560b0a/src/runtime/recipe/recipe.ts#L302">src/runtime/recipe/recipe.ts:302</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <a href="handleconnection.html" class="tsd-signature-type">HandleConnection</a><span class="tsd-signature-symbol">[]</span></h4>
@@ -313,7 +312,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="recipe.html">Recipe</a>.<a href="recipe.html#handles">handles</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c65f384/src/runtime/recipe/recipe.ts#L270">runtime/recipe/recipe.ts:270</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1560b0a/src/runtime/recipe/recipe.ts#L274">src/runtime/recipe/recipe.ts:274</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Handle</span><span class="tsd-signature-symbol">[]</span></h4>
@@ -322,7 +321,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="recipe.html">Recipe</a>.<a href="recipe.html#handles">handles</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c65f384/src/runtime/recipe/recipe.ts#L271">runtime/recipe/recipe.ts:271</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1560b0a/src/runtime/recipe/recipe.ts#L275">src/runtime/recipe/recipe.ts:275</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -347,7 +346,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="recipe.html">Recipe</a>.<a href="recipe.html#localname">localName</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c65f384/src/runtime/recipe/recipe.ts#L266">runtime/recipe/recipe.ts:266</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1560b0a/src/runtime/recipe/recipe.ts#L270">src/runtime/recipe/recipe.ts:270</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
@@ -356,7 +355,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="recipe.html">Recipe</a>.<a href="recipe.html#localname">localName</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c65f384/src/runtime/recipe/recipe.ts#L267">runtime/recipe/recipe.ts:267</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1560b0a/src/runtime/recipe/recipe.ts#L271">src/runtime/recipe/recipe.ts:271</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -380,7 +379,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="recipe.html">Recipe</a>.<a href="recipe.html#modality">modality</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c65f384/src/runtime/recipe/recipe.ts#L185">runtime/recipe/recipe.ts:185</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1560b0a/src/runtime/recipe/recipe.ts#L189">src/runtime/recipe/recipe.ts:189</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <a href="modality.html" class="tsd-signature-type">Modality</a></h4>
@@ -399,7 +398,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="recipe.html">Recipe</a>.<a href="recipe.html#name">name</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c65f384/src/runtime/recipe/recipe.ts#L264">runtime/recipe/recipe.ts:264</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1560b0a/src/runtime/recipe/recipe.ts#L268">src/runtime/recipe/recipe.ts:268</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span>
@@ -411,7 +410,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="recipe.html">Recipe</a>.<a href="recipe.html#name">name</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c65f384/src/runtime/recipe/recipe.ts#L265">runtime/recipe/recipe.ts:265</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1560b0a/src/runtime/recipe/recipe.ts#L269">src/runtime/recipe/recipe.ts:269</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -435,7 +434,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="recipe.html">Recipe</a>.<a href="recipe.html#obligations">obligations</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c65f384/src/runtime/recipe/recipe.ts#L275">runtime/recipe/recipe.ts:275</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1560b0a/src/runtime/recipe/recipe.ts#L279">src/runtime/recipe/recipe.ts:279</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <a href="connectionconstraint.html" class="tsd-signature-type">ConnectionConstraint</a><span class="tsd-signature-symbol">[]</span></h4>
@@ -454,7 +453,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="recipe.html">Recipe</a>.<a href="recipe.html#particles">particles</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c65f384/src/runtime/recipe/recipe.ts#L268">runtime/recipe/recipe.ts:268</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1560b0a/src/runtime/recipe/recipe.ts#L272">src/runtime/recipe/recipe.ts:272</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <a href="particle.html" class="tsd-signature-type">Particle</a><span class="tsd-signature-symbol">[]</span></h4>
@@ -463,7 +462,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="recipe.html">Recipe</a>.<a href="recipe.html#particles">particles</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c65f384/src/runtime/recipe/recipe.ts#L269">runtime/recipe/recipe.ts:269</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1560b0a/src/runtime/recipe/recipe.ts#L273">src/runtime/recipe/recipe.ts:273</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -488,7 +487,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="recipe.html">Recipe</a>.<a href="recipe.html#patterns">patterns</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c65f384/src/runtime/recipe/recipe.ts#L333">runtime/recipe/recipe.ts:333</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1560b0a/src/runtime/recipe/recipe.ts#L337">src/runtime/recipe/recipe.ts:337</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></h4>
@@ -497,7 +496,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="recipe.html">Recipe</a>.<a href="recipe.html#patterns">patterns</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c65f384/src/runtime/recipe/recipe.ts#L337">runtime/recipe/recipe.ts:337</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1560b0a/src/runtime/recipe/recipe.ts#L341">src/runtime/recipe/recipe.ts:341</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -521,7 +520,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="recipe.html">Recipe</a>.<a href="recipe.html#requires">requires</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c65f384/src/runtime/recipe/recipe.ts#L263">runtime/recipe/recipe.ts:263</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1560b0a/src/runtime/recipe/recipe.ts#L267">src/runtime/recipe/recipe.ts:267</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <a href="requiresection.html" class="tsd-signature-type">RequireSection</a><span class="tsd-signature-symbol">[]</span></h4>
@@ -540,7 +539,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="recipe.html">Recipe</a>.<a href="recipe.html#search">search</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c65f384/src/runtime/recipe/recipe.ts#L278">runtime/recipe/recipe.ts:278</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1560b0a/src/runtime/recipe/recipe.ts#L282">src/runtime/recipe/recipe.ts:282</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <a href="search.html" class="tsd-signature-type">Search</a>
@@ -552,7 +551,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="recipe.html">Recipe</a>.<a href="recipe.html#search">search</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c65f384/src/runtime/recipe/recipe.ts#L279">runtime/recipe/recipe.ts:279</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1560b0a/src/runtime/recipe/recipe.ts#L283">src/runtime/recipe/recipe.ts:283</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -576,7 +575,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="recipe.html">Recipe</a>.<a href="recipe.html#slotconnections">slotConnections</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c65f384/src/runtime/recipe/recipe.ts#L290">runtime/recipe/recipe.ts:290</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1560b0a/src/runtime/recipe/recipe.ts#L294">src/runtime/recipe/recipe.ts:294</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <a href="slotconnection.html" class="tsd-signature-type">SlotConnection</a><span class="tsd-signature-symbol">[]</span></h4>
@@ -595,7 +594,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="recipe.html">Recipe</a>.<a href="recipe.html#slots">slots</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c65f384/src/runtime/recipe/recipe.ts#L272">runtime/recipe/recipe.ts:272</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1560b0a/src/runtime/recipe/recipe.ts#L276">src/runtime/recipe/recipe.ts:276</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Slot</span><span class="tsd-signature-symbol">[]</span></h4>
@@ -604,7 +603,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="recipe.html">Recipe</a>.<a href="recipe.html#slots">slots</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c65f384/src/runtime/recipe/recipe.ts#L273">runtime/recipe/recipe.ts:273</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1560b0a/src/runtime/recipe/recipe.ts#L277">src/runtime/recipe/recipe.ts:277</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -629,7 +628,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="recipe.html">Recipe</a>.<a href="recipe.html#verbs">verbs</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c65f384/src/runtime/recipe/recipe.ts#L276">runtime/recipe/recipe.ts:276</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1560b0a/src/runtime/recipe/recipe.ts#L280">src/runtime/recipe/recipe.ts:280</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></h4>
@@ -638,7 +637,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="recipe.html">Recipe</a>.<a href="recipe.html#verbs">verbs</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c65f384/src/runtime/recipe/recipe.ts#L277">runtime/recipe/recipe.ts:277</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1560b0a/src/runtime/recipe/recipe.ts#L281">src/runtime/recipe/recipe.ts:281</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -658,14 +657,14 @@
 					<a name="_copyinto" class="tsd-anchor"></a>
 					<h3>_copy<wbr>Into</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
-						<li class="tsd-signature tsd-kind-icon">_copy<wbr>Into<span class="tsd-signature-symbol">(</span>recipe<span class="tsd-signature-symbol">: </span><a href="recipe.html" class="tsd-signature-type">Recipe</a>, cloneMap<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+						<li class="tsd-signature tsd-kind-icon">_copy<wbr>Into<span class="tsd-signature-symbol">(</span>recipe<span class="tsd-signature-symbol">: </span><a href="recipe.html" class="tsd-signature-type">Recipe</a>, cloneMap<span class="tsd-signature-symbol">: </span><a href="../globals.html#clonemap" class="tsd-signature-type">CloneMap</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="recipe.html">Recipe</a>.<a href="recipe.html#_copyinto">_copyInto</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c65f384/src/runtime/recipe/recipe.ts#L519">runtime/recipe/recipe.ts:519</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1560b0a/src/runtime/recipe/recipe.ts#L523">src/runtime/recipe/recipe.ts:523</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -674,37 +673,10 @@
 									<h5>recipe: <a href="recipe.html" class="tsd-signature-type">Recipe</a></h5>
 								</li>
 								<li>
-									<h5>cloneMap: <span class="tsd-signature-type">any</span></h5>
+									<h5>cloneMap: <a href="../globals.html#clonemap" class="tsd-signature-type">CloneMap</a></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
-						</li>
-					</ul>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
-					<a name="_findduplicate" class="tsd-anchor"></a>
-					<h3>_find<wbr>Duplicate</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
-						<li class="tsd-signature tsd-kind-icon">_find<wbr>Duplicate<span class="tsd-signature-symbol">(</span>items<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, options<span class="tsd-signature-symbol">: </span><a href="../globals.html#isvalidoptions" class="tsd-signature-type">IsValidOptions</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<p>Inherited from <a href="recipe.html">Recipe</a>.<a href="recipe.html#_findduplicate">_findDuplicate</a></p>
-								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c65f384/src/runtime/recipe/recipe.ts#L236">runtime/recipe/recipe.ts:236</a></li>
-								</ul>
-							</aside>
-							<h4 class="tsd-parameters-title">Parameters</h4>
-							<ul class="tsd-parameters">
-								<li>
-									<h5>items: <span class="tsd-signature-type">any</span></h5>
-								</li>
-								<li>
-									<h5>options: <a href="../globals.html#isvalidoptions" class="tsd-signature-type">IsValidOptions</a></h5>
-								</li>
-							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">any</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -719,7 +691,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="recipe.html">Recipe</a>.<a href="recipe.html#_isvalid">_isValid</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c65f384/src/runtime/recipe/recipe.ts#L252">runtime/recipe/recipe.ts:252</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1560b0a/src/runtime/recipe/recipe.ts#L256">src/runtime/recipe/recipe.ts:256</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -736,17 +708,17 @@
 					<a name="_makelocalnamemap" class="tsd-anchor"></a>
 					<h3>_make<wbr>Local<wbr>Name<wbr>Map</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
-						<li class="tsd-signature tsd-kind-icon">_make<wbr>Local<wbr>Name<wbr>Map<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Map</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">_make<wbr>Local<wbr>Name<wbr>Map<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Map</span><span class="tsd-signature-symbol">&lt;</span><a href="../globals.html#recipecomponent" class="tsd-signature-type">RecipeComponent</a><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="recipe.html">Recipe</a>.<a href="recipe.html#_makelocalnamemap">_makeLocalNameMap</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c65f384/src/runtime/recipe/recipe.ts#L553">runtime/recipe/recipe.ts:553</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1560b0a/src/runtime/recipe/recipe.ts#L558">src/runtime/recipe/recipe.ts:558</a></li>
 								</ul>
 							</aside>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Map</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></h4>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Map</span><span class="tsd-signature-symbol">&lt;</span><a href="../globals.html#recipecomponent" class="tsd-signature-type">RecipeComponent</a><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -761,7 +733,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="recipe.html">Recipe</a>.<a href="recipe.html#addslot">addSlot</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c65f384/src/runtime/recipe/recipe.ts#L139">runtime/recipe/recipe.ts:139</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1560b0a/src/runtime/recipe/recipe.ts#L143">src/runtime/recipe/recipe.ts:143</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -785,7 +757,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="recipe.html">Recipe</a>.<a href="recipe.html#allrequiredslotspresent">allRequiredSlotsPresent</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c65f384/src/runtime/recipe/recipe.ts#L190">runtime/recipe/recipe.ts:190</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1560b0a/src/runtime/recipe/recipe.ts#L194">src/runtime/recipe/recipe.ts:194</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -809,7 +781,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="recipe.html">Recipe</a>.<a href="recipe.html#clearconnectionconstraints">clearConnectionConstraints</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c65f384/src/runtime/recipe/recipe.ts#L94">runtime/recipe/recipe.ts:94</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1560b0a/src/runtime/recipe/recipe.ts#L98">src/runtime/recipe/recipe.ts:98</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -828,7 +800,7 @@
 								<p>Implementation of <a href="../interfaces/cloneable.html">Cloneable</a>.<a href="../interfaces/cloneable.html#clone">clone</a></p>
 								<p>Inherited from <a href="recipe.html">Recipe</a>.<a href="recipe.html#clone">clone</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c65f384/src/runtime/recipe/recipe.ts#L486">runtime/recipe/recipe.ts:486</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1560b0a/src/runtime/recipe/recipe.ts#L490">src/runtime/recipe/recipe.ts:490</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -852,7 +824,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="recipe.html">Recipe</a>.<a href="recipe.html#digest">digest</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c65f384/src/runtime/recipe/recipe.ts#L355">runtime/recipe/recipe.ts:355</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1560b0a/src/runtime/recipe/recipe.ts#L359">src/runtime/recipe/recipe.ts:359</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -870,7 +842,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="recipe.html">Recipe</a>.<a href="recipe.html#findhandle">findHandle</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c65f384/src/runtime/recipe/recipe.ts#L314">runtime/recipe/recipe.ts:314</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1560b0a/src/runtime/recipe/recipe.ts#L318">src/runtime/recipe/recipe.ts:318</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -887,23 +859,26 @@
 					<a name="findhandlebyid" class="tsd-anchor"></a>
 					<h3>find<wbr>Handle<wbr>ByID</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
-						<li class="tsd-signature tsd-kind-icon">find<wbr>Handle<wbr>ByID<span class="tsd-signature-symbol">(</span>id<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Handle</span></li>
+						<li class="tsd-signature tsd-kind-icon">find<wbr>Handle<wbr>ByID<span class="tsd-signature-symbol">(</span>id<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Handle</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">undefined</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="recipe.html">Recipe</a>.<a href="recipe.html#findhandlebyid">findHandleByID</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c65f384/src/runtime/recipe/recipe.ts#L678">runtime/recipe/recipe.ts:678</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1560b0a/src/runtime/recipe/recipe.ts#L686">src/runtime/recipe/recipe.ts:686</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>id: <span class="tsd-signature-type">any</span></h5>
+									<h5>id: <span class="tsd-signature-type">string</span></h5>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Handle</span></h4>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Handle</span>
+								<span class="tsd-signature-symbol"> | </span>
+								<span class="tsd-signature-type">undefined</span>
+							</h4>
 						</li>
 					</ul>
 				</section>
@@ -918,7 +893,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="recipe.html">Recipe</a>.<a href="recipe.html#findslot">findSlot</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c65f384/src/runtime/recipe/recipe.ts#L323">runtime/recipe/recipe.ts:323</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1560b0a/src/runtime/recipe/recipe.ts#L327">src/runtime/recipe/recipe.ts:327</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -931,18 +906,18 @@
 						</li>
 					</ul>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
 					<a name="findslotbyid" class="tsd-anchor"></a>
 					<h3>find<wbr>Slot<wbr>ByID</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
-						<li class="tsd-signature tsd-kind-icon">find<wbr>Slot<wbr>ByID<span class="tsd-signature-symbol">(</span>id<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Slot</span></li>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
+						<li class="tsd-signature tsd-kind-icon">find<wbr>Slot<wbr>ByID<span class="tsd-signature-symbol">(</span>id<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Slot</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">undefined</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
-								<p>Inherited from <a href="recipe.html">Recipe</a>.<a href="recipe.html#findslotbyid">findSlotByID</a></p>
+								<p>Overrides <a href="recipe.html">Recipe</a>.<a href="recipe.html#findslotbyid">findSlotByID</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c65f384/src/runtime/recipe/recipe.ts#L690">runtime/recipe/recipe.ts:690</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1560b0a/src/runtime/recipe/recipe.ts#L719">src/runtime/recipe/recipe.ts:719</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -951,7 +926,10 @@
 									<h5>id: <span class="tsd-signature-type">string</span></h5>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Slot</span></h4>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Slot</span>
+								<span class="tsd-signature-symbol"> | </span>
+								<span class="tsd-signature-type">undefined</span>
+							</h4>
 						</li>
 					</ul>
 				</section>
@@ -966,7 +944,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="recipe.html">Recipe</a>.<a href="recipe.html#getfreeconnections">getFreeConnections</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c65f384/src/runtime/recipe/recipe.ts#L669">runtime/recipe/recipe.ts:669</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1560b0a/src/runtime/recipe/recipe.ts#L675">src/runtime/recipe/recipe.ts:675</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -990,7 +968,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="recipe.html">Recipe</a>.<a href="recipe.html#getfreehandles">getFreeHandles</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c65f384/src/runtime/recipe/recipe.ts#L660">runtime/recipe/recipe.ts:660</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1560b0a/src/runtime/recipe/recipe.ts#L665">src/runtime/recipe/recipe.ts:665</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Handle</span><span class="tsd-signature-symbol">[]</span></h4>
@@ -1008,7 +986,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="recipe.html">Recipe</a>.<a href="recipe.html#getparticlesbyimplfile">getParticlesByImplFile</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c65f384/src/runtime/recipe/recipe.ts#L686">runtime/recipe/recipe.ts:686</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1560b0a/src/runtime/recipe/recipe.ts#L694">src/runtime/recipe/recipe.ts:694</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1025,17 +1003,20 @@
 					<a name="getunnameduntypedconnections" class="tsd-anchor"></a>
 					<h3>get<wbr>Unnamed<wbr>Untyped<wbr>Connections</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
-						<li class="tsd-signature tsd-kind-icon">get<wbr>Unnamed<wbr>Untyped<wbr>Connections<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="handleconnection.html" class="tsd-signature-type">HandleConnection</a></li>
+						<li class="tsd-signature tsd-kind-icon">get<wbr>Unnamed<wbr>Untyped<wbr>Connections<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="handleconnection.html" class="tsd-signature-type">HandleConnection</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">undefined</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="recipe.html">Recipe</a>.<a href="recipe.html#getunnameduntypedconnections">getUnnamedUntypedConnections</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c65f384/src/runtime/recipe/recipe.ts#L682">runtime/recipe/recipe.ts:682</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1560b0a/src/runtime/recipe/recipe.ts#L690">src/runtime/recipe/recipe.ts:690</a></li>
 								</ul>
 							</aside>
-							<h4 class="tsd-returns-title">Returns <a href="handleconnection.html" class="tsd-signature-type">HandleConnection</a></h4>
+							<h4 class="tsd-returns-title">Returns <a href="handleconnection.html" class="tsd-signature-type">HandleConnection</a>
+								<span class="tsd-signature-symbol"> | </span>
+								<span class="tsd-signature-type">undefined</span>
+							</h4>
 						</li>
 					</ul>
 				</section>
@@ -1050,7 +1031,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="recipe.html">Recipe</a>.<a href="recipe.html#iscompatible">isCompatible</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c65f384/src/runtime/recipe/recipe.ts#L181">runtime/recipe/recipe.ts:181</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1560b0a/src/runtime/recipe/recipe.ts#L185">src/runtime/recipe/recipe.ts:185</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1074,7 +1055,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="recipe.html">Recipe</a>.<a href="recipe.html#isempty">isEmpty</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c65f384/src/runtime/recipe/recipe.ts#L307">runtime/recipe/recipe.ts:307</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1560b0a/src/runtime/recipe/recipe.ts#L311">src/runtime/recipe/recipe.ts:311</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
@@ -1092,13 +1073,13 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="recipe.html">Recipe</a>.<a href="recipe.html#isresolved">isResolved</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c65f384/src/runtime/recipe/recipe.ts#L159">runtime/recipe/recipe.ts:159</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1560b0a/src/runtime/recipe/recipe.ts#L163">src/runtime/recipe/recipe.ts:163</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> options: <span class="tsd-signature-type">any</span><span class="tsd-signature-symbol"> =&nbsp;undefined</span></h5>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> options: <span class="tsd-signature-type">any</span></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
@@ -1116,7 +1097,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="recipe.html">Recipe</a>.<a href="recipe.html#mergeinto">mergeInto</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c65f384/src/runtime/recipe/recipe.ts#L505">runtime/recipe/recipe.ts:505</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1560b0a/src/runtime/recipe/recipe.ts#L509">src/runtime/recipe/recipe.ts:509</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1147,14 +1128,14 @@
 					<a name="newconnectionconstraint" class="tsd-anchor"></a>
 					<h3>new<wbr>Connection<wbr>Constraint</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
-						<li class="tsd-signature tsd-kind-icon">new<wbr>Connection<wbr>Constraint<span class="tsd-signature-symbol">(</span>from<span class="tsd-signature-symbol">: </span><a href="endpoint.html" class="tsd-signature-type">EndPoint</a>, to<span class="tsd-signature-symbol">: </span><a href="endpoint.html" class="tsd-signature-type">EndPoint</a>, direction<span class="tsd-signature-symbol">: </span><a href="../globals.html#direction" class="tsd-signature-type">Direction</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="connectionconstraint.html" class="tsd-signature-type">ConnectionConstraint</a></li>
+						<li class="tsd-signature tsd-kind-icon">new<wbr>Connection<wbr>Constraint<span class="tsd-signature-symbol">(</span>from<span class="tsd-signature-symbol">: </span><a href="endpoint.html" class="tsd-signature-type">EndPoint</a>, to<span class="tsd-signature-symbol">: </span><a href="endpoint.html" class="tsd-signature-type">EndPoint</a>, direction<span class="tsd-signature-symbol">: </span><a href="../globals.html#directionarrow" class="tsd-signature-type">DirectionArrow</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="connectionconstraint.html" class="tsd-signature-type">ConnectionConstraint</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="recipe.html">Recipe</a>.<a href="recipe.html#newconnectionconstraint">newConnectionConstraint</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c65f384/src/runtime/recipe/recipe.ts#L70">runtime/recipe/recipe.ts:70</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1560b0a/src/runtime/recipe/recipe.ts#L74">src/runtime/recipe/recipe.ts:74</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1166,7 +1147,7 @@
 									<h5>to: <a href="endpoint.html" class="tsd-signature-type">EndPoint</a></h5>
 								</li>
 								<li>
-									<h5>direction: <a href="../globals.html#direction" class="tsd-signature-type">Direction</a></h5>
+									<h5>direction: <a href="../globals.html#directionarrow" class="tsd-signature-type">DirectionArrow</a></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <a href="connectionconstraint.html" class="tsd-signature-type">ConnectionConstraint</a></h4>
@@ -1184,7 +1165,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="recipe.html">Recipe</a>.<a href="recipe.html#newhandle">newHandle</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c65f384/src/runtime/recipe/recipe.ts#L120">runtime/recipe/recipe.ts:120</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1560b0a/src/runtime/recipe/recipe.ts#L124">src/runtime/recipe/recipe.ts:124</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Handle</span></h4>
@@ -1195,14 +1176,14 @@
 					<a name="newobligation" class="tsd-anchor"></a>
 					<h3>new<wbr>Obligation</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
-						<li class="tsd-signature tsd-kind-icon">new<wbr>Obligation<span class="tsd-signature-symbol">(</span>from<span class="tsd-signature-symbol">: </span><a href="endpoint.html" class="tsd-signature-type">EndPoint</a>, to<span class="tsd-signature-symbol">: </span><a href="endpoint.html" class="tsd-signature-type">EndPoint</a>, direction<span class="tsd-signature-symbol">: </span><a href="../globals.html#direction" class="tsd-signature-type">Direction</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="connectionconstraint.html" class="tsd-signature-type">ConnectionConstraint</a></li>
+						<li class="tsd-signature tsd-kind-icon">new<wbr>Obligation<span class="tsd-signature-symbol">(</span>from<span class="tsd-signature-symbol">: </span><a href="endpoint.html" class="tsd-signature-type">EndPoint</a>, to<span class="tsd-signature-symbol">: </span><a href="endpoint.html" class="tsd-signature-type">EndPoint</a>, direction<span class="tsd-signature-symbol">: </span><a href="../globals.html#directionarrow" class="tsd-signature-type">DirectionArrow</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="connectionconstraint.html" class="tsd-signature-type">ConnectionConstraint</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="recipe.html">Recipe</a>.<a href="recipe.html#newobligation">newObligation</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c65f384/src/runtime/recipe/recipe.ts#L76">runtime/recipe/recipe.ts:76</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1560b0a/src/runtime/recipe/recipe.ts#L80">src/runtime/recipe/recipe.ts:80</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1214,7 +1195,7 @@
 									<h5>to: <a href="endpoint.html" class="tsd-signature-type">EndPoint</a></h5>
 								</li>
 								<li>
-									<h5>direction: <a href="../globals.html#direction" class="tsd-signature-type">Direction</a></h5>
+									<h5>direction: <a href="../globals.html#directionarrow" class="tsd-signature-type">DirectionArrow</a></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <a href="connectionconstraint.html" class="tsd-signature-type">ConnectionConstraint</a></h4>
@@ -1232,7 +1213,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="recipe.html">Recipe</a>.<a href="recipe.html#newparticle">newParticle</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c65f384/src/runtime/recipe/recipe.ts#L104">runtime/recipe/recipe.ts:104</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1560b0a/src/runtime/recipe/recipe.ts#L108">src/runtime/recipe/recipe.ts:108</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1256,7 +1237,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="recipe.html">Recipe</a>.<a href="recipe.html#newrequiresection">newRequireSection</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c65f384/src/runtime/recipe/recipe.ts#L98">runtime/recipe/recipe.ts:98</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1560b0a/src/runtime/recipe/recipe.ts#L102">src/runtime/recipe/recipe.ts:102</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <a href="requiresection.html" class="tsd-signature-type">RequireSection</a></h4>
@@ -1274,7 +1255,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="recipe.html">Recipe</a>.<a href="recipe.html#newslot">newSlot</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c65f384/src/runtime/recipe/recipe.ts#L133">runtime/recipe/recipe.ts:133</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1560b0a/src/runtime/recipe/recipe.ts#L137">src/runtime/recipe/recipe.ts:137</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1298,7 +1279,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="recipe.html">Recipe</a>.<a href="recipe.html#normalize">normalize</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c65f384/src/runtime/recipe/recipe.ts#L359">runtime/recipe/recipe.ts:359</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1560b0a/src/runtime/recipe/recipe.ts#L363">src/runtime/recipe/recipe.ts:363</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1322,7 +1303,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="recipe.html">Recipe</a>.<a href="recipe.html#removeconstraint">removeConstraint</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c65f384/src/runtime/recipe/recipe.ts#L88">runtime/recipe/recipe.ts:88</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1560b0a/src/runtime/recipe/recipe.ts#L92">src/runtime/recipe/recipe.ts:92</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1346,7 +1327,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="recipe.html">Recipe</a>.<a href="recipe.html#removehandle">removeHandle</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c65f384/src/runtime/recipe/recipe.ts#L126">runtime/recipe/recipe.ts:126</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1560b0a/src/runtime/recipe/recipe.ts#L130">src/runtime/recipe/recipe.ts:130</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1370,7 +1351,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="recipe.html">Recipe</a>.<a href="recipe.html#removeobligation">removeObligation</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c65f384/src/runtime/recipe/recipe.ts#L82">runtime/recipe/recipe.ts:82</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1560b0a/src/runtime/recipe/recipe.ts#L86">src/runtime/recipe/recipe.ts:86</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1394,7 +1375,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="recipe.html">Recipe</a>.<a href="recipe.html#removeparticle">removeParticle</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c65f384/src/runtime/recipe/recipe.ts#L110">runtime/recipe/recipe.ts:110</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1560b0a/src/runtime/recipe/recipe.ts#L114">src/runtime/recipe/recipe.ts:114</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1418,7 +1399,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="recipe.html">Recipe</a>.<a href="recipe.html#removeslot">removeSlot</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c65f384/src/runtime/recipe/recipe.ts#L145">runtime/recipe/recipe.ts:145</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1560b0a/src/runtime/recipe/recipe.ts#L149">src/runtime/recipe/recipe.ts:149</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1442,7 +1423,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="recipe.html">Recipe</a>.<a href="recipe.html#setsearchphrase">setSearchPhrase</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c65f384/src/runtime/recipe/recipe.ts#L283">runtime/recipe/recipe.ts:283</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1560b0a/src/runtime/recipe/recipe.ts#L287">src/runtime/recipe/recipe.ts:287</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1459,23 +1440,23 @@
 					<a name="tostring" class="tsd-anchor"></a>
 					<h3>to<wbr>String</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
-						<li class="tsd-signature tsd-kind-icon">to<wbr>String<span class="tsd-signature-symbol">(</span>nameMap<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">any</span>, options<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></li>
+						<li class="tsd-signature tsd-kind-icon">to<wbr>String<span class="tsd-signature-symbol">(</span>options<span class="tsd-signature-symbol">?: </span><a href="../globals.html#tostringoptions" class="tsd-signature-type">ToStringOptions</a>, nameMap<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">Map</span><span class="tsd-signature-symbol">&lt;</span><a href="../globals.html#recipecomponent" class="tsd-signature-type">RecipeComponent</a><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<p>Overrides <a href="recipe.html">Recipe</a>.<a href="recipe.html#tostring">toString</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c65f384/src/runtime/recipe/recipe.ts#L713">runtime/recipe/recipe.ts:713</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1560b0a/src/runtime/recipe/recipe.ts#L727">src/runtime/recipe/recipe.ts:727</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> nameMap: <span class="tsd-signature-type">any</span><span class="tsd-signature-symbol"> =&nbsp;undefined</span></h5>
+									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> options: <a href="../globals.html#tostringoptions" class="tsd-signature-type">ToStringOptions</a><span class="tsd-signature-symbol"> =&nbsp;{}</span></h5>
 								</li>
 								<li>
-									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> options: <span class="tsd-signature-type">any</span><span class="tsd-signature-symbol"> =&nbsp;undefined</span></h5>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> nameMap: <span class="tsd-signature-type">Map</span><span class="tsd-signature-symbol">&lt;</span><a href="../globals.html#recipecomponent" class="tsd-signature-type">RecipeComponent</a><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
@@ -1493,7 +1474,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="recipe.html">Recipe</a>.<a href="recipe.html#updatetoclone">updateToClone</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c65f384/src/runtime/recipe/recipe.ts#L547">runtime/recipe/recipe.ts:547</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1560b0a/src/runtime/recipe/recipe.ts#L552">src/runtime/recipe/recipe.ts:552</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1584,9 +1565,6 @@
 								<a href="requiresection.html#_copyinto" class="tsd-kind-icon">_copy<wbr>Into</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
-								<a href="requiresection.html#_findduplicate" class="tsd-kind-icon">_find<wbr>Duplicate</a>
-							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
 								<a href="requiresection.html#_isvalid" class="tsd-kind-icon">_is<wbr>Valid</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
@@ -1616,7 +1594,7 @@
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
 								<a href="requiresection.html#findslot" class="tsd-kind-icon">find<wbr>Slot</a>
 							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
 								<a href="requiresection.html#findslotbyid" class="tsd-kind-icon">find<wbr>Slot<wbr>ByID</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">

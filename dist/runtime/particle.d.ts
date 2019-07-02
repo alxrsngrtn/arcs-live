@@ -13,6 +13,7 @@ import { InnerArcHandle } from './particle-execution-context.js';
 import { HandleConnectionSpec, ParticleSpec } from './particle-spec.js';
 import { Relevance } from './relevance.js';
 import { SlotProxy } from './slot-proxy.js';
+import { Content } from './slot-consumer.js';
 import { Entity, EntityRawData, MutableEntityData } from './entity.js';
 /**
  * A basic particle. For particles that provide UI, you may like to
@@ -123,6 +124,6 @@ export declare class Particle {
     dataClone(entity: Entity): EntityRawData;
     mutate(entity: Entity, mutation: Consumer<MutableEntityData> | {}): void;
     renderSlot(slotName: string, contentTypes: string[]): void;
-    renderHostedSlot(slotName: string, hostedSlotId: string, content: string): void;
+    renderHostedSlot(slotName: string, hostedSlotId: string, content: Content): void;
     fireEvent(slotName: string, event: {}): void;
 }

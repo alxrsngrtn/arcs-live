@@ -10,7 +10,7 @@
 import { Predicate } from '../runtime/hot.js';
 import { Type, TypeVariable, TypeLiteral } from './type.js';
 import { ParticleSpec } from './particle-spec.js';
-interface Handle {
+export interface Handle {
     type?: Type;
     name?: string | TypeVariable;
     direction?: string;
@@ -20,7 +20,7 @@ interface HandleLiteral {
     name?: string | TypeLiteral;
     direction?: string;
 }
-interface Slot {
+export interface Slot {
     name?: string | TypeVariable;
     direction?: string;
     isRequired?: boolean;
@@ -32,7 +32,7 @@ interface SlotLiteral {
     isRequired?: boolean;
     isSet?: boolean;
 }
-interface TypeVarReference {
+export interface TypeVarReference {
     object: Handle | Slot;
     field: string;
 }

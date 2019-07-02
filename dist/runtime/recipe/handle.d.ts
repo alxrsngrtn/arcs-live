@@ -8,13 +8,12 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { ParticleSpec } from '../particle-spec.js';
-import { Schema } from '../schema.js';
-import { TypeVariableInfo } from '../type-variable-info.js';
 import { Type } from '../type.js';
 import { HandleConnection } from './handle-connection.js';
-import { Recipe, CloneMap, RecipeComponent, IsValidOptions, ToStringOptions } from './recipe.js';
+import { Recipe, CloneMap, RecipeComponent, IsResolvedOptions, IsValidOptions, ToStringOptions, VariableMap } from './recipe.js';
+import { Comparable } from './comparable.js';
 import { Fate } from '../manifest-ast-nodes.js';
-export declare class Handle {
+export declare class Handle implements Comparable<Handle> {
     private readonly _recipe;
     private _id;
     private _localName;
@@ -29,7 +28,7 @@ export declare class Handle {
     private _pattern;
     private _immediateValue;
     constructor(recipe: Recipe);
-    _copyInto(recipe: Recipe, cloneMap: CloneMap, variableMap: Map<TypeVariableInfo | Schema, TypeVariableInfo | Schema>): Handle;
+    _copyInto(recipe: Recipe, cloneMap: CloneMap, variableMap: VariableMap): Handle;
     mergeInto(handle: Handle): void;
     _mergedFate(fates: Fate[]): "use" | "create";
     _startNormalize(): void;
@@ -55,12 +54,12 @@ export declare class Handle {
     mappedType: Type;
     immediateValue: ParticleSpec;
     static effectiveType(handleType: Type, connections: {
-        type: Type;
-        direction: string;
+        type: Type | null | undefined;
+        direction: string | undefined | null;
     }[]): Type | import("../type.js").TypeVariable | import("../type.js").CollectionType<import("../type.js").TypeVariable> | import("../type.js").BigCollectionType<import("../type.js").TypeVariable>;
     static resolveEffectiveType(handleType: Type, connections: HandleConnection[]): Type | import("../type.js").TypeVariable | import("../type.js").CollectionType<import("../type.js").TypeVariable> | import("../type.js").BigCollectionType<import("../type.js").TypeVariable>;
     _isValid(options: IsValidOptions): boolean;
-    isResolved(options?: any): boolean;
-    toString(nameMap: ReadonlyMap<RecipeComponent, string>, options: ToStringOptions): string;
-    findConnectionByDirection(dir: string): HandleConnection;
+    isResolved(options?: IsResolvedOptions): boolean;
+    toString(options?: ToStringOptions, nameMap?: Map<RecipeComponent, string>): string;
+    findConnectionByDirection(dir: string): HandleConnection | undefined;
 }

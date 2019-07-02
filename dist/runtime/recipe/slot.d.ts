@@ -8,9 +8,10 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { Handle } from './handle.js';
-import { Recipe } from './recipe.js';
+import { CloneMap, IsResolvedOptions, IsValidOptions, Recipe, RecipeComponent, ToStringOptions } from './recipe.js';
 import { SlotConnection } from './slot-connection.js';
-export declare class Slot {
+import { Comparable } from './comparable.js';
+export declare class Slot implements Comparable<Slot> {
     private readonly _recipe;
     private _id?;
     private _localName?;
@@ -33,14 +34,14 @@ export declare class Slot {
         tags: any[];
     };
     readonly handles: Handle[];
-    _copyInto(recipe: Recipe, cloneMap: any): any;
+    _copyInto(recipe: Recipe, cloneMap: CloneMap): Slot;
     _startNormalize(): void;
     _finishNormalize(): void;
     _compareTo(other: Slot): number;
-    findHandleByID(id: any): Handle;
-    removeConsumeConnection(slotConnection: any): void;
+    findHandleByID(id: string): Handle;
+    removeConsumeConnection(slotConnection: SlotConnection): void;
     remove(): void;
-    isResolved(options?: any): boolean;
-    _isValid(options: any): boolean;
-    toString(nameMap: any, options: any): string;
+    isResolved(options?: IsResolvedOptions): boolean;
+    _isValid(options: IsValidOptions): boolean;
+    toString(options?: ToStringOptions, nameMap?: Map<RecipeComponent, string>): string;
 }

@@ -10,6 +10,93 @@
 import { assert } from '../../platform/assert-web.js';
 import { InterfaceType } from '../type.js';
 import { Recipe } from './recipe.js';
+export function directionToArrow(direction) {
+    // Use switch for totality checking.
+    switch (direction) {
+        case 'out':
+            return '->';
+        case 'in':
+            return '<-';
+        case 'inout':
+            return '<->';
+        case '`consume':
+            return 'consume';
+        case '`provide':
+            return 'provide';
+        case 'host':
+            return '='; // TODO(cypher1): Check this
+        case 'any':
+            return '=';
+        default:
+            throw new Error(`Bad direction ${direction}`);
+    }
+}
+export function arrowToDirection(arrow) {
+    // Use switch for totality checking.
+    switch (arrow) {
+        case '->':
+            return 'out';
+        case '<-':
+            return 'in';
+        case '<->':
+            return 'inout';
+        case 'consume':
+            return '`consume';
+        case 'provide':
+            return '`provide';
+        case '=':
+            return 'any';
+        default:
+            throw new Error(`Bad arrow ${arrow}`);
+    }
+}
+export function reverseArrow(arrow) {
+    switch (arrow) {
+        case '->':
+            return '<-';
+        case '<-':
+            return '->';
+        case '<->':
+            return '<->';
+        case 'consume':
+            return 'provide';
+        case 'provide':
+            return 'consume';
+        case '=':
+            return '=';
+        default:
+            // Catch nulls and unsafe values from javascript.
+            throw new Error(`Bad arrow ${arrow}`);
+    }
+}
+export function connectionMatchesHandleDirection(connectionDirection, handleDirection) {
+    return acceptedDirections(connectionDirection).includes(handleDirection);
+}
+export function acceptedDirections(direction) {
+    // @param direction: the direction of a handleconnection.
+    // @return acceptedDirections: the list of directions a handle can have that
+    // are allowed with this handle connection.
+    //
+    switch (direction) {
+        case 'any':
+            return ['any', 'in', 'out', 'inout', 'host', '`consume', '`provide'];
+        case 'in':
+            return ['any', 'in', 'inout', 'host', '`consume'];
+        case 'out':
+            return ['any', 'out', 'inout', '`provide'];
+        case 'inout':
+            return ['any', 'inout'];
+        case 'host':
+            return ['any', 'host'];
+        case '`consume':
+            return ['any', '`consume'];
+        case '`provide':
+            return ['any', '`provide'];
+        default:
+            // Catch nulls and unsafe values from javascript.
+            throw new Error(`Bad direction ${direction}`);
+    }
+}
 class Shape {
     constructor(recipe, particles, handles, hcs) {
         this.recipe = recipe;
@@ -38,21 +125,13 @@ export class RecipeUtil {
         Object.keys(map).forEach(key => {
             Object.keys(map[key]).forEach(name => {
                 const handle = map[key][name];
-                // NOTE: for now, '=' on the shape means "accept anything". This is going
-                // to change when we redo capabilities; for now it's modeled by mapping '=' to
-                // '=' rather than to 'inout'.
-                let direction = '=';
-                if (handle.direction) {
-                    direction = { '->': 'out', '<-': 'in', '=': '=' }[handle.direction];
-                }
                 const tags = handle.tags || [];
-                if (handle['localName']) {
+                if (handle.localName) {
                     hMap.get(handle.handle).localName = handle.localName;
                 }
                 const connection = pMap[key].addConnectionName(name);
-                // TODO(shans): work out a cleaner way to encode "accept anything" - 
-                // this is an abuse of the type system. 
-                connection.direction = direction;
+                // NOTE: for now, 'any' on the connection and '=' on the shape means 'accept anything'.
+                connection.direction = arrowToDirection(handle.direction || '=');
                 hMap.get(handle.handle).tags = tags;
                 connection.connectToHandle(hMap.get(handle.handle));
                 hcMap[key + ':' + name] = pMap[key].connections[name];
@@ -70,218 +149,216 @@ export class RecipeUtil {
         recipe.handleConnections.forEach(hc => hcs[hc.particle.name + ':' + hc.name] = hc);
         return new Shape(recipe, particles, handles, hcs);
     }
-    static find(recipe, shape) {
-        function _buildNewHCMatches(recipe, shapeHC, match, outputList) {
-            const { forward, reverse, score } = match;
-            let matchFound = false;
-            for (const recipeParticle of recipe.particles) {
-                if (!recipeParticle.spec) {
+    static _buildNewHCMatches(recipe, shapeHC, match, outputList) {
+        const { forward, reverse, score } = match;
+        let matchFound = false;
+        for (const recipeParticle of recipe.particles) {
+            if (!recipeParticle.spec) {
+                continue;
+            }
+            for (const recipeConnSpec of recipeParticle.spec.handleConnections) {
+                // TODO are there situations where multiple handleConnections should
+                // be allowed to point to the same one in the recipe?
+                if (reverse.has(recipeConnSpec)) {
                     continue;
                 }
-                for (const recipeConnSpec of recipeParticle.spec.handleConnections) {
-                    // TODO are there situations where multiple handleConnections should
-                    // be allowed to point to the same one in the recipe?
-                    if (reverse.has(recipeConnSpec)) {
+                // TODO support unnamed shape particles.
+                if (recipeParticle.name !== shapeHC.particle.name) {
+                    continue;
+                }
+                if (shapeHC.name && shapeHC.name !== recipeConnSpec.name) {
+                    continue;
+                }
+                if (recipeConnSpec.direction) {
+                    if (!connectionMatchesHandleDirection(shapeHC.direction, recipeConnSpec.direction)) {
                         continue;
                     }
-                    // TODO support unnamed shape particles.
-                    if (recipeParticle.name !== shapeHC.particle.name) {
+                }
+                const recipeHC = recipeParticle.connections[recipeConnSpec.name];
+                if (shapeHC.handle && recipeHC && recipeHC.handle && shapeHC.handle.localName &&
+                    shapeHC.handle.localName !== recipeHC.handle.localName) {
+                    continue;
+                }
+                // recipeHC is a candidate for shapeHC. shapeHC references a
+                // particle, so recipeHC must reference the matching particle,
+                // or a particle that isn't yet mapped from shape.
+                if (reverse.has(recipeParticle)) {
+                    if (reverse.get(recipeParticle) !== shapeHC.particle) {
                         continue;
                     }
-                    if (shapeHC.name && shapeHC.name !== recipeConnSpec.name) {
-                        continue;
-                    }
-                    const acceptedDirections = { 'in': ['in', 'inout'], 'out': ['out', 'inout'], '=': ['in', 'out', 'inout'], 'inout': ['inout'], 'host': ['host'], '`consume': ['consume'], '`provide': ['provide'] };
-                    if (recipeConnSpec.direction) {
-                        assert(Object.keys(acceptedDirections).includes(shapeHC.direction), `${shapeHC.direction} not in ${Object.keys(acceptedDirections)}`);
-                        if (!acceptedDirections[shapeHC.direction].includes(recipeConnSpec.direction)) {
+                }
+                else if (forward.has(shapeHC.particle)) {
+                    // we've already mapped the particle referenced by shapeHC
+                    // and it doesn't match recipeHC's particle as recipeHC's
+                    // particle isn't mapped
+                    continue;
+                }
+                // shapeHC doesn't necessarily reference a handle, but if it does
+                // then recipeHC needs to reference the matching handle, or one
+                // that isn't yet mapped, or no handle yet.
+                if (shapeHC.handle && recipeHC && recipeHC.handle) {
+                    if (reverse.has(recipeHC.handle)) {
+                        if (reverse.get(recipeHC.handle) !== shapeHC.handle) {
                             continue;
                         }
                     }
-                    const recipeHC = recipeParticle.connections[recipeConnSpec.name];
-                    if (shapeHC.handle && recipeHC && recipeHC.handle && shapeHC.handle.localName &&
-                        shapeHC.handle.localName !== recipeHC.handle.localName) {
+                    else if (forward.has(shapeHC.handle) && forward.get(shapeHC.handle) !== null) {
                         continue;
                     }
-                    // recipeHC is a candidate for shapeHC. shapeHC references a
-                    // particle, so recipeHC must reference the matching particle,
-                    // or a particle that isn't yet mapped from shape.
-                    if (reverse.has(recipeParticle)) {
-                        if (reverse.get(recipeParticle) !== shapeHC.particle) {
-                            continue;
+                    // Check whether shapeHC and recipeHC reference the same handle.
+                    if (shapeHC.handle.fate !== 'create' || (recipeHC.handle.fate !== 'create' && recipeHC.handle.originalFate !== 'create')) {
+                        if (Boolean(shapeHC.handle.immediateValue) !== Boolean(recipeHC.handle.immediateValue)) {
+                            continue; // One is an immediate value handle and the other is not.
                         }
-                    }
-                    else if (forward.has(shapeHC.particle)) {
-                        // we've already mapped the particle referenced by shapeHC
-                        // and it doesn't match recipeHC's particle as recipeHC's
-                        // particle isn't mapped
-                        continue;
-                    }
-                    // shapeHC doesn't necessarily reference a handle, but if it does
-                    // then recipeHC needs to reference the matching handle, or one
-                    // that isn't yet mapped, or no handle yet.
-                    if (shapeHC.handle && recipeHC && recipeHC.handle) {
-                        if (reverse.has(recipeHC.handle)) {
-                            if (reverse.get(recipeHC.handle) !== shapeHC.handle) {
-                                continue;
-                            }
-                        }
-                        else if (forward.has(shapeHC.handle) && forward.get(shapeHC.handle) !== null) {
-                            continue;
-                        }
-                        // Check whether shapeHC and recipeHC reference the same handle.
-                        if (shapeHC.handle.fate !== 'create' || (recipeHC.handle.fate !== 'create' && recipeHC.handle.originalFate !== 'create')) {
-                            if (Boolean(shapeHC.handle.immediateValue) !== Boolean(recipeHC.handle.immediateValue)) {
-                                continue; // One is an immediate value handle and the other is not.
-                            }
-                            if (recipeHC.handle.immediateValue) {
-                                if (!recipeHC.handle.immediateValue.equals(shapeHC.handle.immediateValue)) {
-                                    continue; // Immediate values are different.
-                                }
-                            }
-                            else {
-                                // Note: the id of a handle with 'copy' fate changes during recipe instantiation, hence comparing to original id too.
-                                // Skip the check if handles have 'create' fate (their ids are arbitrary).
-                                if (shapeHC.handle.id !== recipeHC.handle.id && shapeHC.handle.id !== recipeHC.handle.originalId) {
-                                    continue; // This is a different handle.
-                                }
-                            }
-                        }
-                    }
-                    // clone forward and reverse mappings and establish new components.
-                    const newMatch = { forward: new Map(forward), reverse: new Map(reverse), score };
-                    assert(!newMatch.reverse.has(recipeParticle) || newMatch.reverse.get(recipeParticle) === shapeHC.particle);
-                    assert(!newMatch.forward.has(shapeHC.particle) || newMatch.forward.get(shapeHC.particle) === recipeParticle);
-                    newMatch.forward.set(shapeHC.particle, recipeParticle);
-                    newMatch.reverse.set(recipeParticle, shapeHC.particle);
-                    if (shapeHC.handle) {
-                        if (!recipeHC || !recipeHC.handle) {
-                            if (!newMatch.forward.has(shapeHC.handle)) {
-                                newMatch.forward.set(shapeHC.handle, null);
-                                newMatch.score -= 2;
+                        if (recipeHC.handle.immediateValue) {
+                            if (!recipeHC.handle.immediateValue.equals(shapeHC.handle.immediateValue)) {
+                                continue; // Immediate values are different.
                             }
                         }
                         else {
-                            newMatch.forward.set(shapeHC.handle, recipeHC.handle);
-                            newMatch.reverse.set(recipeHC.handle, shapeHC.handle);
+                            // Note: the id of a handle with 'copy' fate changes during recipe instantiation, hence comparing to original id too.
+                            // Skip the check if handles have 'create' fate (their ids are arbitrary).
+                            if (shapeHC.handle.id !== recipeHC.handle.id && shapeHC.handle.id !== recipeHC.handle.originalId) {
+                                continue; // This is a different handle.
+                            }
                         }
                     }
-                    newMatch.forward.set(shapeHC, recipeConnSpec);
-                    newMatch.reverse.set(recipeConnSpec, shapeHC);
-                    outputList.push(newMatch);
-                    matchFound = true;
                 }
-            }
-            if (matchFound === false) {
-                // Non-null particle in the `forward` map means that some of the particle
-                // handle connections were successful matches, but some couldn't be matched.
-                // It means that this match in invalid.
-                if (match.forward.get(shapeHC.particle)) {
-                    return;
-                }
-                // The current handle connection from the shape doesn't match anything
-                // in the recipe. Find (or create) a particle for it.
-                const newMatches = [];
-                _buildNewParticleMatches(recipe, shapeHC.particle, match, newMatches);
-                newMatches.forEach(newMatch => {
-                    // the shape references a handle, might also need to create a recipe
-                    // handle for it (if there isn't already one from a previous match).
-                    if (shapeHC.handle && !newMatch.forward.has(shapeHC.handle)) {
-                        newMatch.forward.set(shapeHC.handle, null);
-                        newMatch.score -= 2;
+                // clone forward and reverse mappings and establish new components.
+                const newMatch = { forward: new Map(forward), reverse: new Map(reverse), score };
+                assert(!newMatch.reverse.has(recipeParticle) || newMatch.reverse.get(recipeParticle) === shapeHC.particle);
+                assert(!newMatch.forward.has(shapeHC.particle) || newMatch.forward.get(shapeHC.particle) === recipeParticle);
+                newMatch.forward.set(shapeHC.particle, recipeParticle);
+                newMatch.reverse.set(recipeParticle, shapeHC.particle);
+                if (shapeHC.handle) {
+                    if (!recipeHC || !recipeHC.handle) {
+                        if (!newMatch.forward.has(shapeHC.handle)) {
+                            newMatch.forward.set(shapeHC.handle, null);
+                            newMatch.score -= 2;
+                        }
                     }
-                    newMatch.forward.set(shapeHC, null);
-                    newMatch.score -= 1;
-                    outputList.push(newMatch);
-                });
+                    else {
+                        newMatch.forward.set(shapeHC.handle, recipeHC.handle);
+                        newMatch.reverse.set(recipeHC.handle, shapeHC.handle);
+                    }
+                }
+                newMatch.forward.set(shapeHC, recipeConnSpec);
+                newMatch.reverse.set(recipeConnSpec, shapeHC);
+                outputList.push(newMatch);
+                matchFound = true;
             }
         }
-        function _buildNewParticleMatches(recipe, shapeParticle, match, newMatches) {
+        if (matchFound === false) {
+            // Non-null particle in the `forward` map means that some of the particle
+            // handle connections were successful matches, but some couldn't be matched.
+            // It means that this match in invalid.
+            if (match.forward.get(shapeHC.particle)) {
+                return;
+            }
+            // The current handle connection from the shape doesn't match anything
+            // in the recipe. Find (or create) a particle for it.
+            const newMatches = [];
+            RecipeUtil._buildNewParticleMatches(recipe, shapeHC.particle, match, newMatches);
+            newMatches.forEach(newMatch => {
+                // the shape references a handle, might also need to create a recipe
+                // handle for it (if there isn't already one from a previous match).
+                if (shapeHC.handle && !newMatch.forward.has(shapeHC.handle)) {
+                    newMatch.forward.set(shapeHC.handle, null);
+                    newMatch.score -= 2;
+                }
+                newMatch.forward.set(shapeHC, null);
+                newMatch.score -= 1;
+                outputList.push(newMatch);
+            });
+        }
+    }
+    static _buildNewParticleMatches(recipe, shapeParticle, match, newMatches) {
+        const { forward, reverse, score } = match;
+        let matchFound = false;
+        for (const recipeParticle of recipe.particles) {
+            if (reverse.has(recipeParticle)) {
+                continue;
+            }
+            if (recipeParticle.name !== shapeParticle.name) {
+                continue;
+            }
+            let handleNamesMatch = true;
+            for (const connectionName of Object.keys(recipeParticle.connections)) {
+                const recipeConnection = recipeParticle.connections[connectionName];
+                if (!recipeConnection.handle) {
+                    continue;
+                }
+                const shapeConnection = shapeParticle.connections[connectionName];
+                if (shapeConnection && shapeConnection.handle && shapeConnection.handle.localName && shapeConnection.handle.localName !== recipeConnection.handle.localName) {
+                    handleNamesMatch = false;
+                    break;
+                }
+            }
+            if (!handleNamesMatch) {
+                continue;
+            }
+            const newMatch = { forward: new Map(forward), reverse: new Map(reverse), score };
+            assert(!newMatch.forward.has(shapeParticle) || newMatch.forward.get(shapeParticle) === recipeParticle);
+            assert(!newMatch.reverse.has(recipeParticle) || newMatch.reverse.get(recipeParticle) === shapeParticle);
+            newMatch.forward.set(shapeParticle, recipeParticle);
+            newMatch.reverse.set(recipeParticle, shapeParticle);
+            newMatches.push(newMatch);
+            matchFound = true;
+        }
+        if (matchFound === false) {
+            const newMatch = { forward: new Map(), reverse: new Map(), score: 0 };
+            forward.forEach((value, key) => {
+                assert(!newMatch.forward.has(key) || newMatch.forward.get(key) === value);
+                newMatch.forward.set(key, value);
+            });
+            reverse.forEach((value, key) => {
+                assert(!newMatch.reverse.has(key) || newMatch.reverse.get(key) === value);
+                newMatch.reverse.set(key, value);
+            });
+            if (!newMatch.forward.has(shapeParticle)) {
+                newMatch.forward.set(shapeParticle, null);
+                newMatch.score = match.score - 1;
+            }
+            newMatches.push(newMatch);
+        }
+    }
+    static _assignHandlesToEmptyPosition(shape, match, emptyHandles, nullHandles) {
+        if (emptyHandles.length === 1) {
+            const matches = [];
             const { forward, reverse, score } = match;
-            let matchFound = false;
-            for (const recipeParticle of recipe.particles) {
-                if (reverse.has(recipeParticle)) {
-                    continue;
-                }
-                if (recipeParticle.name !== shapeParticle.name) {
-                    continue;
-                }
-                let handleNamesMatch = true;
-                for (const connectionName of Object.keys(recipeParticle.connections)) {
-                    const recipeConnection = recipeParticle.connections[connectionName];
-                    if (!recipeConnection.handle) {
-                        continue;
-                    }
-                    const shapeConnection = shapeParticle.connections[connectionName];
-                    if (shapeConnection && shapeConnection.handle && shapeConnection.handle.localName && shapeConnection.handle.localName !== recipeConnection.handle.localName) {
-                        handleNamesMatch = false;
+            for (const nullHandle of nullHandles) {
+                let tagsMatch = true;
+                for (const tag of nullHandle.tags) {
+                    if (!emptyHandles[0].tags.includes(tag)) {
+                        tagsMatch = false;
                         break;
                     }
                 }
-                if (!handleNamesMatch) {
+                if (!tagsMatch) {
                     continue;
                 }
-                const newMatch = { forward: new Map(forward), reverse: new Map(reverse), score };
-                assert(!newMatch.forward.has(shapeParticle) || newMatch.forward.get(shapeParticle) === recipeParticle);
-                assert(!newMatch.reverse.has(recipeParticle) || newMatch.reverse.get(recipeParticle) === shapeParticle);
-                newMatch.forward.set(shapeParticle, recipeParticle);
-                newMatch.reverse.set(recipeParticle, shapeParticle);
-                newMatches.push(newMatch);
-                matchFound = true;
+                const newMatch = { forward: new Map(forward), reverse: new Map(reverse), score: score + 1 };
+                newMatch.forward.set(nullHandle, emptyHandles[0]);
+                newMatch.reverse.set(emptyHandles[0], nullHandle);
+                matches.push(newMatch);
             }
-            if (matchFound === false) {
-                const newMatch = { forward: new Map(), reverse: new Map(), score: 0 };
-                forward.forEach((value, key) => {
-                    assert(!newMatch.forward.has(key) || newMatch.forward.get(key) === value);
-                    newMatch.forward.set(key, value);
-                });
-                reverse.forEach((value, key) => {
-                    assert(!newMatch.reverse.has(key) || newMatch.reverse.get(key) === value);
-                    newMatch.reverse.set(key, value);
-                });
-                if (!newMatch.forward.has(shapeParticle)) {
-                    newMatch.forward.set(shapeParticle, null);
-                    newMatch.score = match.score - 1;
-                }
-                newMatches.push(newMatch);
+            return matches;
+        }
+        const thisHandle = emptyHandles.pop();
+        const matches = RecipeUtil._assignHandlesToEmptyPosition(shape, match, emptyHandles, nullHandles);
+        let newMatches = [];
+        for (const match of matches) {
+            const nullHandles = [...shape.handles.values()].filter(handle => match.forward.get(handle) === null);
+            if (nullHandles.length > 0) {
+                newMatches = newMatches.concat(RecipeUtil._assignHandlesToEmptyPosition(shape, match, [thisHandle], nullHandles));
+            }
+            else {
+                newMatches.concat(match);
             }
         }
-        function _assignHandlesToEmptyPosition(match, emptyHandles, nullHandles) {
-            if (emptyHandles.length === 1) {
-                const matches = [];
-                const { forward, reverse, score } = match;
-                for (const nullHandle of nullHandles) {
-                    let tagsMatch = true;
-                    for (const tag of nullHandle.tags) {
-                        if (!emptyHandles[0].tags.includes(tag)) {
-                            tagsMatch = false;
-                            break;
-                        }
-                    }
-                    if (!tagsMatch) {
-                        continue;
-                    }
-                    const newMatch = { forward: new Map(forward), reverse: new Map(reverse), score: score + 1 };
-                    newMatch.forward.set(nullHandle, emptyHandles[0]);
-                    newMatch.reverse.set(emptyHandles[0], nullHandle);
-                    matches.push(newMatch);
-                }
-                return matches;
-            }
-            const thisHandle = emptyHandles.pop();
-            const matches = _assignHandlesToEmptyPosition(match, emptyHandles, nullHandles);
-            let newMatches = [];
-            for (const match of matches) {
-                const nullHandles = [...shape.handles.values()].filter(handle => match.forward.get(handle) === null);
-                if (nullHandles.length > 0) {
-                    newMatches = newMatches.concat(_assignHandlesToEmptyPosition(match, [thisHandle], nullHandles));
-                }
-                else {
-                    newMatches.concat(match);
-                }
-            }
-            return newMatches;
-        }
+        return newMatches;
+    }
+    static find(recipe, shape) {
         // Particles and Handles are initially stored by a forward map from
         // shape component to recipe component.
         // Handle connections, particles and handles are also stored by a reverse map
@@ -292,7 +369,7 @@ export class RecipeUtil {
             const newMatches = [];
             for (const match of matches) {
                 // collect matching handle connections into a new matches list
-                _buildNewHCMatches(recipe, shapeHC, match, newMatches);
+                RecipeUtil._buildNewHCMatches(recipe, shapeHC, match, newMatches);
             }
             matches = newMatches;
         }
@@ -305,7 +382,7 @@ export class RecipeUtil {
             }
             const newMatches = [];
             for (const match of matches) {
-                _buildNewParticleMatches(recipe, shapeParticle, match, newMatches);
+                RecipeUtil._buildNewParticleMatches(recipe, shapeParticle, match, newMatches);
             }
             matches = newMatches;
         }
@@ -315,7 +392,7 @@ export class RecipeUtil {
             for (const match of matches) {
                 const nullHandles = [...shape.handles.values()].filter(handle => match.forward.get(handle) === null);
                 if (nullHandles.length > 0) {
-                    newMatches = newMatches.concat(_assignHandlesToEmptyPosition(match, emptyHandles, nullHandles));
+                    newMatches = newMatches.concat(RecipeUtil._assignHandlesToEmptyPosition(shape, match, emptyHandles, nullHandles));
                 }
                 else {
                     newMatches = newMatches.concat(match);
@@ -323,10 +400,10 @@ export class RecipeUtil {
             }
             matches = newMatches;
         }
-        return matches.map(({ forward, score }) => {
-            const match = {};
-            forward.forEach((value, key) => match[shape.reverse.get(key)] = value);
-            return { match, score };
+        return matches.map((match) => {
+            const result = {};
+            match.forward.forEach((value, key) => result[shape.reverse.get(key)] = value);
+            return { match: result, score: match.score };
         });
     }
     static constructImmediateValueHandle(connection, particleSpec, id) {
@@ -352,13 +429,9 @@ export class RecipeUtil {
         return handle;
     }
     static directionCounts(handle) {
-        const counts = { in: 0, out: 0, inout: 0, unknown: 0 };
+        const counts = { 'in': 0, 'out': 0, 'inout': 0, 'host': 0, '`consume': 0, '`provide': 0, 'any': 0 };
         for (const connection of handle.connections) {
-            let direction = connection.direction;
-            if (counts[direction] === undefined) {
-                direction = 'unknown';
-            }
-            counts[direction]++;
+            counts[connection.direction]++;
         }
         counts.in += counts.inout;
         counts.out += counts.inout;

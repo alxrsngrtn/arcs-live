@@ -121,7 +121,6 @@ export class ResolveWalker extends RecipeWalker {
         const toParticle = obligation.to.instance;
         for (const fromConnection of Object.values(fromParticle.connections)) {
             for (const toConnection of Object.values(toParticle.connections)) {
-                // @ts-ignore
                 if (fromConnection.handle && fromConnection.handle === toConnection.handle) {
                     return (recipe, obligation) => {
                         recipe.removeObligation(obligation);
@@ -152,8 +151,14 @@ export class RecipeResolver {
             console.warn(`could not normalize a recipe: ${[...options.errors.values()].join('\n')}.\n${recipe.toString()}`);
             return null;
         }
-        const result = await this.resolver.generate({ generated: [{ result: recipe, score: 1 }], terminal: [] });
-        return (result.length === 0) ? null : result[0].result;
+        const result = await this.resolver.generateFrom([{ result: recipe, score: 1 }]);
+        if (result.length === 0) {
+            if (options && options.errors) {
+                options.errors.set(recipe, 'Resolver generated 0 recipes');
+            }
+            return null;
+        }
+        return result[0].result;
     }
 }
 //# sourceMappingURL=recipe-resolver.js.map

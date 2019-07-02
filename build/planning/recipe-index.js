@@ -266,7 +266,10 @@ export class RecipeIndex {
     _fatesAndDirectionsMatch(slotHandleConn, matchingHandleConn) {
         const matchingHandle = matchingHandleConn.handle;
         const allMatchingHandleConns = matchingHandle ? matchingHandle.connections : [matchingHandleConn];
-        const matchingHandleConnsHasOutput = allMatchingHandleConns.find(conn => ['out', 'inout'].includes(conn.direction));
+        const matchingHandleConnsHasOutput = allMatchingHandleConns.find(conn => conn.isOutput);
+        if (!slotHandleConn.handle) {
+            throw new Error(`Unexpected empty Handle`);
+        }
         switch (slotHandleConn.handle.fate) {
             case 'create':
                 // matching handle not defined or its fate is 'create' or '?'.

@@ -15,20 +15,11 @@ public:
     registerHandle("in_col", in_col_);
     registerHandle("ot_col", ot_col_);
     registerHandle("io_col", io_col_);
+    autoRender();
   }
 
-  void onHandleSync(arcs::Handle* handle, bool all_synced) override {
-    if (all_synced) {
-      requestRender("root");
-    }
-  }
-
-  void onHandleUpdate(arcs::Handle* handle) override {
-    requestRender("root");
-  }
-
-  void requestRender(const std::string& slot_name) override {
-    std::string content = R"(
+  std::string getTemplate(const std::string& slot_name) override {
+    return R"(
       <style>
         #panel { margin: 10px; }
         #panel pre { margin-left: 20px; }
@@ -39,7 +30,7 @@ public:
         <button on-click="in_sng:get">get</button>
         <button on-click="in_sng:set">set (!)</button>
         <button on-click="in_sng:clear">clear (!)</button>
-        <pre>)" + arcs::entity_to_str(in_sng_.get(), "\n") + R"(</pre>
+        <pre>{{in_sng}}</pre>
 
         <b>[out Singleton]</b>
         <button on-click="ot_sng:get">get (!)</button>
@@ -51,7 +42,7 @@ public:
         <button on-click="io_sng:get">get</button>
         <button on-click="io_sng:set">set</button>
         <button on-click="io_sng:clear">clear</button>
-        <pre>)" + arcs::entity_to_str(io_sng_.get(), "\n") + R"(</pre>
+        <pre>{{io_sng}}</pre>
 
         <b>[in Collection]</b>
         <button on-click="in_col:size">size</button>
@@ -61,7 +52,7 @@ public:
         <button on-click="in_col:store">store (!)</button>
         <button on-click="in_col:remove">remove (!)</button>
         <button on-click="in_col:clear">clear (!)</button>
-        <pre>)" + collectionToStr(in_col_) + R"(</pre>
+        <pre>{{in_col}}</pre>
 
         <b>[out Collection]</b>
         <button on-click="ot_col:size">size (!)</button>
@@ -81,7 +72,7 @@ public:
         <button on-click="io_col:store">store</button>
         <button on-click="io_col:remove">remove</button>
         <button on-click="io_col:clear">clear</button>
-        <pre>)" + collectionToStr(io_col_) + R"(</pre>
+        <pre>{{io_col}}</pre>
 
         <b>Errors</b>
         <button on-click="_:throw">throw</button>
@@ -89,12 +80,19 @@ public:
         <button on-click="_:abort">abort</button>
         <button on-click="_:exit">exit</button>
       </div>)";
-    renderSlot(slot_name.c_str(), content.c_str());
+  }
+
+  void populateModel(const std::string& slot_name,
+                     std::function<void(const std::string&, const std::string&)> add) override {
+    add("in_sng", arcs::entity_to_str(in_sng_.get(), "\n"));
+    add("io_sng", arcs::entity_to_str(io_sng_.get(), "\n"));
+    add("in_col", collectionToStr(in_col_));
+    add("io_col", collectionToStr(io_col_));
   }
 
   std::string collectionToStr(const TestCollection& col) {
     if (col.empty()) {
-      return "<i>(empty)</i>";
+      return "(empty)";
     }
     std::string str = "Size: " + std::to_string(col.size()) + "\n";
     int i = 0;
@@ -122,7 +120,7 @@ public:
     } else if (action == "exit") {
       exit(1);
     }
-    requestRender("root");
+    renderSlot("root", false, true);
   }
 
   void processSingleton(TestSingleton* handle, const std::string& action) {
@@ -175,6 +173,7 @@ public:
     }
   }
 
+private:
   TestSingleton in_sng_;
   TestSingleton ot_sng_;
   TestSingleton io_sng_;
@@ -186,4 +185,45 @@ public:
   std::vector<arcs::Data> stored_;
 };
 
+
+class SimpleParticle : public arcs::Particle {
+public:
+  SimpleParticle() {
+    registerHandle("info", info_);
+  }
+
+  void onHandleSync(arcs::Handle* handle, bool all_synced) override {
+    onHandleUpdate(handle);
+  }
+
+  void onHandleUpdate(arcs::Handle* handle) override {
+    local_ = arcs::clone_entity(info_.get());
+    renderSlot("root", false, true);
+  }
+
+  std::string getTemplate(const std::string& slot_name) override {
+    return R"(<div on-click="click"><i>{{first}}</i> : <b>{{second}}</b></div>)";
+  }
+
+  void populateModel(const std::string& slot_name,
+                     std::function<void(const std::string&, const std::string&)> add) override {
+    add("first", local_._for());
+    add("second", arcs::num_to_str(local_.internal_id()));
+  }
+
+  void fireEvent(const std::string& slot_name, const std::string& handler) override {
+    if (local_.has_for()) {
+      local_.set_for(local_._for() + "*");
+    }
+    if (local_.has_internal_id()) {
+      local_.set_internal_id(local_.internal_id() + 1);
+    }
+    renderSlot("root", false, true);
+  }
+
+  arcs::Singleton<arcs::Info> info_;
+  arcs::Info local_;
+};
+
 DEFINE_PARTICLE(TestParticle)
+DEFINE_PARTICLE(SimpleParticle)

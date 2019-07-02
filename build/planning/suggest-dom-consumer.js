@@ -11,7 +11,7 @@ import { Modality } from '../runtime/modality.js';
 import { SlotDomConsumer } from '../runtime/slot-dom-consumer.js';
 export class SuggestDomConsumer extends SlotDomConsumer {
     constructor(arc, containerKind, suggestion, eventHandler) {
-        super(arc, /* consumeConn= */ null, containerKind);
+        super(arc, /* consumeConn= */ undefined, containerKind);
         this._suggestion = suggestion;
         this._suggestionContent = SuggestDomConsumer._extractContent(this._suggestion);
         this._eventHandler = eventHandler;

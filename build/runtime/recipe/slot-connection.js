@@ -13,7 +13,7 @@ import { compareComparables, compareStrings } from './comparable.js';
 export class SlotConnection {
     constructor(name, particle) {
         this._targetSlot = undefined;
-        this._providedSlots = {};
+        this._providedSlots = {}; // TODO(lindner): make private, used in slot.ts
         this._tags = [];
         assert(particle);
         assert(particle.recipe);
@@ -102,7 +102,8 @@ export class SlotConnection {
             }
             return false;
         }
-        if (this.getSlotSpec() == undefined || this.getSlotSpec().isRequired) {
+        const slotSpec = this.getSlotSpec();
+        if (slotSpec === undefined || slotSpec.isRequired) {
             if (!this.targetSlot || !(this.targetSlot.id || this.targetSlot.sourceConnection.isConnected())) {
                 // The required connection has no target slot
                 // or its target slot it not resolved (has no ID or source connection).
@@ -118,7 +119,7 @@ export class SlotConnection {
         if (this.getSlotSpec() == undefined)
             return true;
         return this.getSlotSpec().provideSlotConnections.every(providedSlot => {
-            if (providedSlot.isRequired && this.providedSlots[providedSlot.name].consumeConnections.length === 0) {
+            if (providedSlot && providedSlot.isRequired && this.providedSlots[providedSlot.name].consumeConnections.length === 0) {
                 if (options) {
                     options.details = 'missing consuming slot';
                 }

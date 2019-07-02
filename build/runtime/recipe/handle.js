@@ -197,7 +197,7 @@ export class Handle {
         this._tags = [...tags];
         return true;
     }
-    isResolved(options = undefined) {
+    isResolved(options) {
         assert(Object.isFrozen(this));
         let resolved = true;
         if (this.type) {
@@ -247,13 +247,12 @@ export class Handle {
         }
         return resolved;
     }
-    toString(nameMap, options) {
+    toString(options = {}, nameMap) {
         if (this._immediateValue) {
             // Immediate Value handles are only rendered inline with particle connections.
             // E.g. hostedParticle = ShowProduct
             return undefined;
         }
-        options = options || {};
         // TODO: type? maybe output in a comment
         const result = [];
         result.push(this.fate);
@@ -263,7 +262,7 @@ export class Handle {
         result.push(...this.tags.map(a => `#${a}`));
         const name = (nameMap && nameMap.get(this)) || this.localName;
         if (name) {
-            result.push(`as ${(nameMap && nameMap.get(this)) || this.localName}`);
+            result.push(`as ${name}`);
         }
         if (this.type) {
             result.push('//');

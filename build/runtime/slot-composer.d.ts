@@ -11,7 +11,7 @@ import { Arc } from './arc.js';
 import { ModalityHandler } from './modality-handler.js';
 import { Modality } from './modality.js';
 import { Particle } from './recipe/particle.js';
-import { SlotConsumer } from './slot-consumer.js';
+import { SlotConsumer, Content } from './slot-consumer.js';
 import { ProvidedSlotContext, SlotContext } from './slot-context.js';
 export declare type SlotComposerOptions = {
     modalityName?: string;
@@ -46,7 +46,7 @@ export declare class SlotComposer {
     createHostedSlot(innerArc: Arc, transformationParticle: Particle, transformationSlotName: string, storeId: string): string;
     _addSlotConsumer(slot: SlotConsumer): void;
     initializeRecipe(arc: Arc, recipeParticles: Particle[]): Promise<void>;
-    renderSlot(particle: Particle, slotName: string, content: any): void;
+    renderSlot(particle: Particle, slotName: string, content: Content): void;
     getAvailableContexts(): SlotContext[];
     dispose(): void;
 }

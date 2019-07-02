@@ -11,7 +11,7 @@ import { Arc } from '../runtime/arc.js';
 import { Recipe } from '../runtime/recipe/recipe.js';
 import { RecipeWalker } from '../runtime/recipe/recipe-walker.js';
 import { WalkerTactic } from '../runtime/recipe/walker.js';
-import { Action, Descendant } from '../runtime/recipe/walker.js';
+import { Action, GenerateParams, Descendant } from '../runtime/recipe/walker.js';
 import { Dictionary } from '../runtime/hot.js';
 export interface GenerationRecord {
     generation: number;
@@ -58,6 +58,7 @@ export declare class StrategizerWalker extends RecipeWalker {
     createDescendant(recipe: Recipe, score: number): void;
     static over(results: Descendant<Recipe>[], walker: StrategizerWalker, strategy: Strategy): Descendant<Recipe>[];
 }
+export declare type StrategyParams = GenerateParams<Recipe>;
 export declare abstract class Strategy extends Action<Recipe> {
     constructor(arc?: Arc, args?: any);
     activate(strategizer: Strategizer): Promise<{

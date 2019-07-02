@@ -37,7 +37,7 @@ describe('firebase-ng-driver', function () {
             output.registerReceiver((model, version) => {
                 assert.equal(model, 24);
                 assert.equal(version, 1);
-                FirebaseAppCache.stop().then(() => resolve).catch(reject);
+                FirebaseAppCache.stop().then(() => resolve()).catch(reject);
             });
         });
     });

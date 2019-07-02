@@ -69,7 +69,7 @@ describe('RecipeIndex', () => {
             `recipe
   create as handle0 // Person {}
   A as particle0
-    person = handle0`
+    person <-> handle0`
         ]);
     });
     it('resolves local slots, but not a root slot', async () => {

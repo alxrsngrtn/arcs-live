@@ -46,14 +46,21 @@ export interface Cloneable<T> {
 export interface Descendant<T extends Cloneable<T>> {
   result: T;
   score: number;
-  derivation: {
+  derivation?: {
     parent?: Descendant<T>;
     strategy: Action<T>
   }[];
-  hash: Promise<string> | string;
-  valid: boolean;
-  errors?;
-  normalized?;
+  hash?: Promise<string> | string;
+  valid?: boolean;
+  errors?: string[];
+  normalized?: boolean;
+}
+
+export interface GenerateParams<T extends Cloneable<T>> {
+  generated: Descendant<T>[];
+  population: Descendant<T>[];
+  terminal:  Descendant<T>[];
+  generation: number;
 }
 
 /**
@@ -73,13 +80,20 @@ export abstract class Action<T extends Cloneable<T>> {
     return this._arc;
   }
 
-  getResults(inputParams: {generated: Descendant<T>[]}) {
-    return inputParams.generated;
+  getResults({generated}:GenerateParams<T>): Descendant<T>[] {
+    return generated;
   }
 
-  async generate(inputParams): Promise<Descendant<T>[]> {
-    return [];
+  async generateFrom(generated: Descendant<T>[]) {
+    return this.generate({
+      generated,
+      population: [],
+      terminal: [],
+      generation: 0,
+    });
   }
+
+  async abstract generate(inputParams: GenerateParams<T>): Promise<Descendant<T>[]>;
 }
 
 // Exported alias to be used by visitor methods of walker subclasses.
@@ -102,11 +116,11 @@ export abstract class Walker<T extends Cloneable<T>> {
   // tslint:disable-next-line: variable-name
   static Independent: WalkerTactic = WalkerTactic.Independent;
   descendants: Descendant<T>[];
-  currentAction: Action<T>;
-  currentResult: Descendant<T>;
+  currentAction?: Action<T>;
+  currentResult?: Descendant<T>;
   tactic: WalkerTactic;
 
-  private updateList: Update<T, object[]>[];
+  private updateList?: Update<T, object[]>[];
 
   constructor(tactic: WalkerTactic) {
     this.descendants = [];

@@ -44,7 +44,7 @@ export declare class Suggestion {
     readonly rank: number;
     groupIndex: number;
     searchGroups: string[][];
-    static create(plan: Recipe, hash: string, relevance: Relevance): Suggestion;
+    static create(plan: Recipe, hash: string, relevance?: Relevance): Suggestion;
     constructor(plan: Recipe, hash: string, rank: number, versionByStore: {});
     readonly descriptionText: string;
     getDescription(modality: string): string | {};

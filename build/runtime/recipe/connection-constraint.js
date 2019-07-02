@@ -17,7 +17,7 @@ export class ParticleEndPoint extends EndPoint {
         this.particle = particle;
         this.connection = connection;
     }
-    _clone(cloneMap = undefined) {
+    _clone(cloneMap) {
         return new ParticleEndPoint(this.particle, this.connection);
     }
     _compareTo(other) {
@@ -28,7 +28,7 @@ export class ParticleEndPoint extends EndPoint {
             return cmp;
         return 0;
     }
-    toString(nameMap = undefined) {
+    toString(nameMap) {
         if (!this.connection) {
             return `${this.particle.name}`;
         }
@@ -93,6 +93,7 @@ export class TagEndPoint extends EndPoint {
             return cmp;
         return 0;
     }
+    // TODO: nameMap is not used. Remove it?
     toString(nameMap = undefined) {
         return this.tags.map(a => `#${a}`).join(' ');
     }
@@ -111,7 +112,7 @@ export class ConnectionConstraint {
     _copyInto(recipe, cloneMap) {
         if (this.type === 'constraint') {
             if (this.from instanceof InstanceEndPoint || this.to instanceof InstanceEndPoint) {
-                assert(!`Can't have connection constraints of type constraint with InstanceEndPoints`);
+                assert(false, `Can't have connection constraints of type constraint with InstanceEndPoints`);
             }
             else {
                 return recipe.newConnectionConstraint(this.from._clone(), this.to._clone(), this.direction);
@@ -129,7 +130,7 @@ export class ConnectionConstraint {
             return cmp;
         return 0;
     }
-    toString(nameMap = undefined, options = undefined) {
+    toString(nameMap, options) {
         let unresolved = '';
         if (options && options.showUnresolved === true && this.type === 'obligation') {
             unresolved = ' // unresolved obligation';

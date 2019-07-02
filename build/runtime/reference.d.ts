@@ -7,7 +7,7 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-import { Storable } from './handle.js';
+import { Collection, Storable } from './handle.js';
 import { ParticleExecutionContext } from './particle-execution-context.js';
 import { ReferenceType } from './type.js';
 import { Entity } from './entity.js';
@@ -20,7 +20,7 @@ export declare class Reference implements Storable {
     private storageKey;
     private readonly context;
     private storageProxy;
-    protected handle: any;
+    protected handle: Collection | null;
     [SYMBOL_INTERNALS]: {
         serialize: () => SerializedEntity;
     };

@@ -13,6 +13,18 @@ namespace arcs {
 using URL = std::string;
 
 class Handle;
+class Particle;
+
+// Strips trailing zeros, and the decimal point for integer values.
+std::string num_to_str(double num) {
+  std::string s = std::to_string(num);
+  auto i = s.size() - 1;
+  while (i > 0 && s[i] == '0') {
+    i--;
+  }
+  s.erase((s[i] == '.') ? i : i + 1);
+  return s;
+}
 
 namespace internal {
 
@@ -108,17 +120,6 @@ EMSCRIPTEN_KEEPALIVE int __syscall54(int, int) { return 0; }   // sys_ioctl
 // --- Packaging classes ---
 // Used by the code generated from Schema definitions to pack and unpack serialized data.
 
-// Strips trailing zeros, and the decimal point for integer values.
-std::string num_to_str(double num) {
-  std::string s = std::to_string(num);
-  auto i = s.size() - 1;
-  while (i > 0 && s[i] == '0') {
-    i--;
-  }
-  s.erase((s[i] == '.') ? i : i + 1);
-  return s;
-}
-
 // TODO: error handling
 class StringDecoder {
 public:
@@ -159,6 +160,17 @@ public:
   void validate(std::string token) {
     if (chomp(token.size()) != token) {
       error("Packaged entity decoding failed in validate()\n");
+    }
+  }
+
+  // Format is <size>:<length>:<value><length>:<value>...
+  static void decodeList(const char* str, std::function<void(const std::string&)> callback) {
+    StringDecoder decoder(str);
+    int num = decoder.getInt(':');
+    while (num--) {
+      int len = decoder.getInt(':');
+      std::string chunk = decoder.chomp(len);
+      callback(std::move(chunk));
     }
   }
 
@@ -289,12 +301,12 @@ void StringPrinter::add(const char* prefix, const bool& flag) {
 // singletonSet and collectionStore will create ids for entities if required, and will return
 // the new ids in allocated memory that we must free.
 
-EM_JS(const char*, singletonSet, (Handle* handle, const char* encoded), {})
-EM_JS(void, singletonClear, (Handle* handle), {})
-EM_JS(const char*, collectionStore, (Handle* handle, const char* encoded), {})
-EM_JS(void, collectionRemove, (Handle* handle, const char* encoded), {})
-EM_JS(void, collectionClear, (Handle* handle), {})
-EM_JS(void, render, (const char* slotName, const char* content), {})
+EM_JS(const char*, singletonSet, (Particle* p, Handle* h, const char* encoded), {})
+EM_JS(void, singletonClear, (Particle* p, Handle* h), {})
+EM_JS(const char*, collectionStore, (Particle* p, Handle* h, const char* encoded), {})
+EM_JS(void, collectionRemove, (Particle* p, Handle* h, const char* encoded), {})
+EM_JS(void, collectionClear, (Particle* p, Handle* h), {})
+EM_JS(void, render, (Particle* p, const char* slotName, const char* template_str, const char* model), {})
 
 }  // namespace internal
 
@@ -362,6 +374,7 @@ protected:
 
   // These are initialized by the Particle class.
   std::string name_;
+  Particle* particle_;
   Direction dir_ = Unconnected;
 
   friend class Particle;
@@ -390,7 +403,7 @@ public:
   void set(T* entity) {
     failForDirection(In);
     std::string encoded = internal::encode_entity(*entity);
-    const char* id = internal::singletonSet(this, encoded.c_str());
+    const char* id = internal::singletonSet(particle_, this, encoded.c_str());
     if (id != nullptr) {
       entity->_internal_id_ = id;
       free((void*)id);
@@ -403,7 +416,7 @@ public:
 
   void clear() {
     failForDirection(In);
-    internal::singletonClear(this);
+    internal::singletonClear(particle_, this);
     if (dir_ == InOut) {
       entity_ = T();
     }
@@ -446,16 +459,12 @@ public:
 
   void update(const char* added, const char* removed) override {
     add(added);
-    internal::StringDecoder decoder(removed);
-    int num = decoder.getInt(':');
-    while (num--) {
-      int len = decoder.getInt(':');
-      std::string chunk = decoder.chomp(len);
+    internal::StringDecoder::decodeList(removed, [this](const std::string& str) {
       // TODO: just get the id, no need to decode the full entity
       T entity;
-      internal::decode_entity(&entity, chunk.c_str());
+      internal::decode_entity(&entity, str.c_str());
       entities_.erase(entity._internal_id_);
-    }
+    });
   }
 
   size_t size() const {
@@ -483,7 +492,7 @@ public:
   void store(T* entity) {
     failForDirection(In);
     std::string encoded = internal::encode_entity(*entity);
-    const char* id = internal::collectionStore(this, encoded.c_str());
+    const char* id = internal::collectionStore(particle_, this, encoded.c_str());
     if (id != nullptr) {
       entity->_internal_id_ = id;
       free((void*)id);
@@ -497,7 +506,7 @@ public:
   void remove(const T& entity) {
     failForDirection(In);
     std::string encoded = internal::encode_entity(entity);
-    internal::collectionRemove(this, encoded.c_str());
+    internal::collectionRemove(particle_, this, encoded.c_str());
     if (dir_ == InOut) {
       entities_.erase(entity._internal_id_);
     }
@@ -505,7 +514,7 @@ public:
 
   void clear() {
     failForDirection(In);
-    internal::collectionClear(this);
+    internal::collectionClear(particle_, this);
     if (dir_ == InOut) {
       entities_.clear();
     }
@@ -514,16 +523,12 @@ public:
 private:
   void add(const char* added) {
     failForDirection(Out);
-    internal::StringDecoder decoder(added);
-    int num = decoder.getInt(':');
-    while (num--) {
-      int len = decoder.getInt(':');
-      std::string chunk = decoder.chomp(len);
+    internal::StringDecoder::decodeList(added, [this](const std::string& str) {
       std::unique_ptr<T> eptr(new T());
-      internal::decode_entity(eptr.get(), chunk.c_str());
+      internal::decode_entity(eptr.get(), str.c_str());
       entities_.erase(eptr->_internal_id_);  // emplace doesn't overwrite
       entities_.emplace(eptr->_internal_id_, std::move(eptr));
-    }
+    });
   }
 
   Map entities_;
@@ -536,10 +541,19 @@ class Particle {
 public:
   virtual ~Particle() {}
 
+  // TODO: port sync tracking and auto-render to the JS particle.
+
   // Called by sub-class constructors to map names to their handle fields.
   void registerHandle(std::string name, Handle& handle) {
     handle.name_ = std::move(name);
+    handle.particle_ = this;
     handles_[handle.name_] = &handle;
+  }
+
+  // Optionally called by sub-class constructors to indicate that we should automatically call
+  // renderSlot() with the given slot name once all handles are synced, and whenever one is updated.
+  void autoRender(const std::string& slot_name = "root") {
+    auto_render_slot_ = slot_name;
   }
 
   // Called by the runtime to associate the inner handle instance with the outer object.
@@ -561,26 +575,60 @@ public:
   void sync(Handle* handle) {
     to_sync_.erase(handle);
     onHandleSync(handle, to_sync_.empty());
+    if (to_sync_.empty() && !auto_render_slot_.empty()) {
+      renderSlot(auto_render_slot_, true, true);
+    }
   }
 
-  // Called by sub-classes to render into a slot.
-  void renderSlot(const std::string& slot_name, const std::string& content) const {
-    internal::render(slot_name.c_str(), content.c_str());
+  void update(Handle* handle) {
+    onHandleUpdate(handle);
+    if (!auto_render_slot_.empty()) {
+      renderSlot(auto_render_slot_, true, true);
+    }
   }
 
-  Handle* getHandle(const std::string& name) {
+  Handle* getHandle(const std::string& name) const {
     auto it = handles_.find(name);
     return (it != handles_.end()) ? it->second : nullptr;
+  }
+
+  void renderSlot(const std::string& slot_name, bool send_template, bool send_model) {
+    const char* template_ptr = nullptr;
+    std::string template_str;
+    if (send_template) {
+      template_str = getTemplate(slot_name);
+      template_ptr = template_str.c_str();
+    }
+
+    const char* model_ptr = nullptr;
+    std::string model;
+    if (send_model) {
+      int num = 0;
+      populateModel(slot_name, [&model, &num](const std::string& key, const std::string& value) {
+        model += std::to_string(key.size()) + ":" + key;
+        model += std::to_string(value.size()) + ":" + value;
+        num++;
+      });
+      model = std::to_string(num) + ":" + model;
+      model_ptr = model.c_str();
+    }
+
+    internal::render(this, slot_name.c_str(), template_ptr, model_ptr);
   }
 
   virtual void onHandleSync(Handle* handle, bool all_synced) {}
   virtual void onHandleUpdate(Handle* handle) {}
   virtual void fireEvent(const std::string& slot_name, const std::string& handler) {}
-  virtual void requestRender(const std::string& slot_name) {}
+
+  // Override to provide a template string and key:value model for rendering into a slot.
+  virtual std::string getTemplate(const std::string& slot_name) { return ""; }
+  virtual void populateModel(const std::string& slot_name,
+                             std::function<void(const std::string&, const std::string&)> add) {}
 
 private:
   std::unordered_map<std::string, Handle*> handles_;
   std::unordered_set<Handle*> to_sync_;
+  std::string auto_render_slot_;
 };
 
 // Defines an exported function 'newParticleName()' that the runtime will call to create
@@ -612,12 +660,12 @@ void syncHandle(Particle* particle, Handle* handle, const char* encoded) {
 EMSCRIPTEN_KEEPALIVE
 void updateHandle(Particle* particle, Handle* handle, const char* encoded1, const char* encoded2) {
   handle->update(encoded1, encoded2);
-  particle->onHandleUpdate(handle);
+  particle->update(handle);
 }
 
 EMSCRIPTEN_KEEPALIVE
-void requestRender(Particle* particle, const char* slot_name) {
-  particle->requestRender(slot_name);
+void renderSlot(Particle* particle, const char* slot_name, bool send_template, bool send_model) {
+  particle->renderSlot(slot_name, send_template, send_model);
 }
 
 EMSCRIPTEN_KEEPALIVE

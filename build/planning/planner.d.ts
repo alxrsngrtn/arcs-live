@@ -14,7 +14,7 @@ import { Strategizer, StrategyDerived, GenerationRecord, Ruleset } from './strat
 import { Descendant } from '../runtime/recipe/walker.js';
 import { Recipe } from '../runtime/recipe/recipe.js';
 import { PlannerInspector, PlannerInspectorFactory, InspectablePlanner } from './planner-inspector.js';
-interface AnnotatedDescendant extends Descendant<Recipe> {
+export interface AnnotatedDescendant extends Descendant<Recipe> {
     active?: boolean;
     irrelevant?: boolean;
     description?: string;
@@ -34,7 +34,7 @@ export interface PlannerInitOptions {
 export declare class Planner implements InspectablePlanner {
     arc: Arc;
     strategizer: Strategizer;
-    speculator: Speculator | null;
+    speculator?: Speculator;
     inspector?: PlannerInspector;
     noSpecEx: boolean;
     init(arc: Arc, { strategies, ruleset, strategyArgs, speculator, inspectorFactory, noSpecEx }: PlannerInitOptions): void;
@@ -49,4 +49,3 @@ export declare class Planner implements InspectablePlanner {
     static ResolutionStrategies: StrategyDerived[];
     static AllStrategies: StrategyDerived[];
 }
-export {};

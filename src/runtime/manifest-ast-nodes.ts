@@ -201,9 +201,23 @@ export type ParticleClaimStatement = ParticleClaimIsTag | ParticleClaimDerivesFr
 
 export interface ParticleCheckStatement extends BaseNode {
   kind: 'particle-trust-check';
-  handle: string;
-  conditions: ParticleCheckCondition[];
+  target: ParticleCheckTarget;
+  expression: ParticleCheckExpression;
 }
+
+export interface ParticleCheckTarget extends BaseNode {
+  kind: 'particle-check-target';
+  targetType: 'handle' | 'slot';
+  name: string;
+}
+
+export interface ParticleCheckBooleanExpression extends BaseNode {
+  kind: 'particle-trust-check-boolean-expression';
+  operator: 'and' | 'or';
+  children: ParticleCheckExpression[];
+}
+
+export type ParticleCheckExpression = ParticleCheckBooleanExpression | ParticleCheckCondition;
 
 export type ParticleCheckCondition = ParticleCheckHasTag | ParticleCheckIsFromHandle;
 
@@ -317,7 +331,7 @@ export type RecipeItem = RecipeParticle | RecipeHandle | RequireHandleSection | 
 export interface RecipeParticleConnection extends BaseNode {
   kind: 'handle-connection';
   param: string;
-  dir: string;
+  dir: DirectionArrow;
   target: ParticleConnectionTargetComponents;
 }
 
@@ -356,7 +370,7 @@ export interface RecipeSlotConnectionRef extends BaseNode {
 
 export interface RecipeConnection extends BaseNode {
   kind: 'connection';
-  direction: Direction;
+  direction: DirectionArrow;
   from: ConnectionTarget;
   to: ConnectionTarget;
 }
@@ -548,7 +562,6 @@ export type Manifest = ManifestItem[];
 export type ManifestStorageItem = string;
 export type ManifestStorageDescription = string;
 export type Modality = string;
-export type ParticleArgumentDirection = string;
 export type ReservedWord = string;
 export type ResourceStart = string;
 export type ResourceBody = string;
@@ -573,7 +586,10 @@ export type eolWhiteSpace = string;
 export type eol = string;
 
 // String-based enums.
-export type Direction = 'in' | 'out' | 'inout' | 'host';
+// TODO: convert to actual enums so that they can be iterated over.
+export type Direction = 'in' | 'out' | 'inout' | 'host' | '`consume' | '`provide' | 'any';
+export type DirectionArrow = '<-' | '->' | '<->' | 'consume' | 'provide' | '=';
+
 export type SlotDirection = 'provide' | 'consume';
 export type Fate = 'use' | 'create' | 'map' | 'copy' | '?' | '`slot';
 

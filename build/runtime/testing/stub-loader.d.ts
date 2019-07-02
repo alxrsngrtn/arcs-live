@@ -8,16 +8,17 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { Loader } from '../loader.js';
+import { Dictionary } from '../hot.js';
 /**
  * A Loader initialized with a per-path canned responses.
  * Value for '*' key can be specified for a response if the path did not match.
  * If '*' is not specified and path is not matched, Loader logic is invoked.
  */
 export declare class StubLoader extends Loader {
-    _fileMap: any;
+    _fileMap: Dictionary<string>;
     _cannedResponse: any;
-    constructor(fileMap: any);
-    loadResource(path: string): any;
+    constructor(fileMap: Dictionary<string>);
+    loadResource(path: string): Promise<string>;
     path(fileName: string): string;
     join(prefix: string, path: string): string;
     clone(): StubLoader;

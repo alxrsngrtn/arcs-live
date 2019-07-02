@@ -30,12 +30,12 @@ export declare class Schema {
     readonly name: string;
     static typesEqual(fieldType1: any, fieldType2: any): boolean;
     static _typeString(type: any): string;
-    static union(schema1: Schema, schema2: Schema): Schema;
+    static union(schema1: Schema, schema2: Schema): Schema | null;
     static intersect(schema1: Schema, schema2: Schema): Schema;
     equals(otherSchema: Schema): boolean;
     isMoreSpecificThan(otherSchema: Schema): boolean;
     readonly type: Type;
-    entityClass(context?: ParticleExecutionContext): EntityClass;
+    entityClass(context?: ParticleExecutionContext | null): EntityClass;
     toInlineSchemaString(options?: {
         hideFields?: boolean;
     }): string;

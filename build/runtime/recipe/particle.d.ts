@@ -8,16 +8,15 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { ParticleSpec, ConsumeSlotConnectionSpec } from '../particle-spec.js';
-import { Schema } from '../schema.js';
-import { TypeVariableInfo } from '../type-variable-info.js';
 import { Type } from '../type.js';
 import { HandleConnection } from './handle-connection.js';
-import { Recipe } from './recipe.js';
+import { CloneMap, IsValidOptions, Recipe, RecipeComponent, VariableMap, ToStringOptions } from './recipe.js';
 import { SlotConnection } from './slot-connection.js';
 import { Slot } from './slot.js';
+import { Comparable } from './comparable.js';
 import { Id } from '../id.js';
 import { Dictionary } from '../hot.js';
-export declare class Particle {
+export declare class Particle implements Comparable<Particle> {
     private readonly _recipe;
     private _id?;
     private _name;
@@ -29,8 +28,8 @@ export declare class Particle {
     _unnamedConnections: HandleConnection[];
     _consumedSlotConnections: Dictionary<SlotConnection>;
     constructor(recipe: Recipe, name: string);
-    _copyInto(recipe: Recipe, cloneMap: any, variableMap: Map<TypeVariableInfo | Schema, TypeVariableInfo | Schema>): Particle;
-    _cloneConnectionRawTypes(variableMap: Map<TypeVariableInfo | Schema, TypeVariableInfo | Schema>): void;
+    _copyInto(recipe: Recipe, cloneMap: CloneMap, variableMap: VariableMap): Particle;
+    _cloneConnectionRawTypes(variableMap: VariableMap): void;
     _startNormalize(): void;
     _finishNormalize(): void;
     _compareTo(other: Particle): number;
@@ -40,7 +39,7 @@ export declare class Particle {
      * @param particle
      */
     matches(particle: Particle): boolean;
-    _isValid(options: any): boolean;
+    _isValid(options: IsValidOptions): boolean;
     isResolved(options?: any): boolean;
     readonly recipe: Recipe;
     localName: string;
@@ -50,14 +49,14 @@ export declare class Particle {
     readonly unnamedConnections: HandleConnection[];
     readonly consumedSlotConnections: Dictionary<SlotConnection>;
     readonly primaryVerb: string;
-    verbs: any;
-    tags: any;
+    verbs: string[];
+    tags: string[];
     addUnnamedConnection(): HandleConnection;
     addConnectionName(name: string): HandleConnection;
     allConnections(): HandleConnection[];
-    ensureConnectionName(name: any): HandleConnection;
-    getConnectionByName(name: any): HandleConnection;
-    nameConnection(connection: any, name: any): void;
+    ensureConnectionName(name: string): HandleConnection;
+    getConnectionByName(name: string): HandleConnection;
+    nameConnection(connection: HandleConnection, name: string): void;
     getUnboundConnections(type?: Type): import("../particle-spec.js").HandleConnectionSpec[];
     addSlotConnection(name: string): SlotConnection;
     addSlotConnectionAsCopy(name: string): SlotConnection;
@@ -65,9 +64,9 @@ export declare class Particle {
     remove(): void;
     getSlotConnectionBySpec(spec: ConsumeSlotConnectionSpec): SlotConnection;
     getSlotConnections(): (SlotConnection | HandleConnection)[];
-    getSlotSpecByName(name: string): ConsumeSlotConnectionSpec;
+    getSlotSpecByName(name: string): ConsumeSlotConnectionSpec | undefined;
     getSlotConnectionByName(name: string): SlotConnection;
     getProvidedSlotByName(consumeName: string, name: string): Slot;
     getSlotSpecs(): Map<string, ConsumeSlotConnectionSpec>;
-    toString(nameMap: any, options: any): string;
+    toString(options?: ToStringOptions, nameMap?: Map<RecipeComponent, string>): string;
 }

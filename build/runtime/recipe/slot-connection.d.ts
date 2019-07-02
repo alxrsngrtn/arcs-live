@@ -8,15 +8,17 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { Particle } from './particle.js';
-import { Recipe } from './recipe.js';
+import { CloneMap, IsValidOptions, Recipe, RecipeComponent, ToStringOptions } from './recipe.js';
 import { Slot } from './slot.js';
+import { Comparable } from './comparable.js';
 import { Dictionary } from '../hot.js';
-export declare class SlotConnection {
+import { ConsumeSlotConnectionSpec } from '../particle-spec.js';
+export declare class SlotConnection implements Comparable<SlotConnection> {
     private readonly _recipe;
     private readonly _particle;
     private readonly _name;
     private _targetSlot?;
-    private _providedSlots;
+    _providedSlots: Dictionary<Slot>;
     private _tags;
     constructor(name: string, particle: Particle);
     remove(): void;
@@ -24,19 +26,19 @@ export declare class SlotConnection {
     readonly particle: Particle;
     readonly name: string;
     getQualifiedName(): string;
-    targetSlot: Slot;
+    targetSlot: Slot | undefined;
     readonly providedSlots: Dictionary<Slot>;
     tags: string[];
-    getSlotSpec(): import("../particle-spec.js").ConsumeSlotConnectionSpec;
+    getSlotSpec(): ConsumeSlotConnectionSpec | undefined;
     connectToSlot(targetSlot: Slot): void;
     disconnectFromSlot(): void;
-    _clone(particle: Particle, cloneMap: any): SlotConnection;
+    _clone(particle: Particle, cloneMap: CloneMap): SlotConnection;
     _normalize(): void;
     _compareTo(other: SlotConnection): number;
-    _isValid(options: any): boolean;
+    _isValid(options: IsValidOptions): boolean;
     isResolved(options?: any): boolean;
     isConnectedToInternalSlot(): boolean;
     isConnectedToRemoteSlot(): boolean;
     isConnected(): boolean;
-    toString(nameMap: any, options: any): string;
+    toString(nameMap: Map<RecipeComponent, string>, options: ToStringOptions): string;
 }

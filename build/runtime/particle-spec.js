@@ -71,6 +71,10 @@ export class ConsumeSlotConnectionSpec {
     get dependentConnections() { return this.provideSlotConnections; }
 }
 export class ProvideSlotConnectionSpec extends ConsumeSlotConnectionSpec {
+    constructor(slotModel) {
+        super(slotModel);
+        this.check = slotModel.check;
+    }
 }
 export class ParticleSpec {
     constructor(model) {
@@ -271,24 +275,61 @@ export class ParticleSpec {
         return results;
     }
     validateTrustChecks(checks) {
-        const results = new Map();
+        const results = [];
         if (checks) {
+            const providedSlotNames = this.getProvidedSlotsByName();
             checks.forEach(check => {
-                const handle = this.handleConnectionMap.get(check.handle);
-                if (!handle) {
-                    throw new Error(`Can't make a check on unknown handle ${check.handle}.`);
+                switch (check.target.targetType) {
+                    case 'handle': {
+                        const handleName = check.target.name;
+                        const handle = this.handleConnectionMap.get(handleName);
+                        if (!handle) {
+                            throw new Error(`Can't make a check on unknown handle ${handleName}.`);
+                        }
+                        if (!handle.isInput) {
+                            throw new Error(`Can't make a check on handle ${handleName} (not an input handle).`);
+                        }
+                        if (handle.check) {
+                            throw new Error(`Can't make multiple checks on the same input (${handleName}).`);
+                        }
+                        handle.check = createCheck(handle, check, this.handleConnectionMap);
+                        results.push(handle.check);
+                        break;
+                    }
+                    case 'slot': {
+                        const slotName = check.target.name;
+                        const slotSpec = providedSlotNames.get(slotName);
+                        if (!slotSpec) {
+                            if (this.slotConnectionNames.includes(slotName)) {
+                                throw new Error(`Slot ${slotName} is a consumed slot. Can only make checks on provided slots.`);
+                            }
+                            else {
+                                throw new Error(`Can't make a check on unknown slot ${slotName}.`);
+                            }
+                        }
+                        slotSpec.check = createCheck(slotSpec, check, this.handleConnectionMap);
+                        results.push(slotSpec.check);
+                        break;
+                    }
+                    default:
+                        throw new Error('Unknown check target type.');
                 }
-                if (!handle.isInput) {
-                    throw new Error(`Can't make a check on handle ${check.handle} (not an input handle).`);
-                }
-                if (handle.check) {
-                    throw new Error(`Can't make multiple checks on the same input (${check.handle}).`);
-                }
-                handle.check = createCheck(handle, check, this.handleConnectionMap);
-                results.set(check.handle, handle.check);
             });
         }
         return results;
+    }
+    getProvidedSlotsByName() {
+        const result = new Map();
+        for (const consumeConnection of this.slotConnections.values()) {
+            for (const provideConnection of consumeConnection.provideSlotConnections) {
+                const name = provideConnection.name;
+                if (result.has(name)) {
+                    throw new Error(`Another slot with name '${name}' has already been provided by this particle.`);
+                }
+                result.set(name, provideConnection);
+            }
+        }
+        return result;
     }
 }
 //# sourceMappingURL=particle-spec.js.map

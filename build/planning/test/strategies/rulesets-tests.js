@@ -101,9 +101,9 @@ describe('Rulesets', () => {
         const recipes = [].concat(...generations.map(instance => instance.generated));
         return {
             total: recipes.length,
-            fateAssigned: recipes.reduce((acc, r) => acc + (r.result.handles.every(h => h.fate !== '?')), 0),
+            fateAssigned: recipes.reduce((acc, r) => acc + Number(r.result.handles.every(h => h.fate !== '?')), 0),
             // Not using recipe.isResolved(), as those recipes are not truly resolved.
-            resolved: recipes.reduce((acc, r) => acc + (r.result.handles.every(h => (h.fate !== '?' && h.id.endsWith('resolved')))), 0),
+            resolved: recipes.reduce((acc, r) => acc + Number(r.result.handles.every(h => (h.fate !== '?' && h.id.endsWith('resolved')))), 0),
             redundantDerivations: recipes.reduce((acc, r) => acc + r.derivation.length - 1, 0)
         };
     };

@@ -40,7 +40,7 @@ import { Runtime } from '../runtime/runtime.js';
 const suggestionByHash = () => Runtime.getRuntime().getCacheService().getOrCreateCache('suggestionByHash');
 export class Planner {
     // TODO: Use context.arc instead of arc
-    init(arc, { strategies = Planner.AllStrategies, ruleset = Rulesets.Empty, strategyArgs = {}, speculator = null, inspectorFactory = null, noSpecEx = false }) {
+    init(arc, { strategies = Planner.AllStrategies, ruleset = Rulesets.Empty, strategyArgs = {}, speculator = undefined, inspectorFactory = undefined, noSpecEx = false }) {
         strategyArgs = Object.freeze({ ...strategyArgs });
         this.arc = arc;
         const strategyImpls = strategies.map(strategy => new strategy(arc, strategyArgs));
@@ -129,7 +129,7 @@ export class Planner {
         // efficient work distribution.
         const threadCount = this._speculativeThreadCount();
         const planGroups = this._splitToGroups(plans, threadCount);
-        let results = await trace.wait(Promise.all(planGroups.map(async (group, groupIndex) => {
+        const results = await trace.wait(Promise.all(planGroups.map(async (group, groupIndex) => {
             const results = [];
             for (const plan of group) {
                 const hash = ((hash) => hash.substring(hash.length - 4))(await plan.digest());
@@ -156,8 +156,8 @@ export class Planner {
             }
             return results;
         })));
-        results = [].concat(...results);
-        return trace.endWith(results);
+        const suggestionResults = [].concat(...results);
+        return trace.endWith(suggestionResults);
     }
     static clearCache() {
         suggestionByHash().clear();
@@ -167,7 +167,7 @@ export class Planner {
         if (cachedSuggestion && cachedSuggestion.isUpToDate(arc, plan)) {
             return cachedSuggestion;
         }
-        let relevance = null;
+        let relevance = undefined;
         let description = null;
         if (this.speculator && !this.noSpecEx) {
             const result = await this.speculator.speculate(this.arc, plan, hash);

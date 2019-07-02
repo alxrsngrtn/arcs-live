@@ -11,7 +11,7 @@ import { Modality } from '../modality.js';
 import { HandleConnectionSpec } from '../particle-spec.js';
 import { Type } from '../type.js';
 import { ConnectionConstraint, EndPoint } from './connection-constraint.js';
-import { Direction } from '../manifest-ast-nodes.js';
+import { DirectionArrow } from '../manifest-ast-nodes.js';
 import { HandleConnection } from './handle-connection.js';
 import { Handle } from './handle.js';
 import { Particle } from './particle.js';
@@ -20,14 +20,22 @@ import { SlotConnection } from './slot-connection.js';
 import { Slot } from './slot.js';
 import { Cloneable } from './walker.js';
 import { Dictionary } from '../hot.js';
+import { Schema } from '../schema.js';
+import { TypeVariableInfo } from '../type-variable-info.js';
 export declare type RecipeComponent = Particle | Handle | HandleConnection | Slot | SlotConnection | EndPoint;
 export declare type CloneMap = Map<RecipeComponent, RecipeComponent>;
+export declare type VariableMap = Map<TypeVariableInfo | Schema, TypeVariableInfo | Schema>;
+export declare type IsResolvedOptions = {
+    showUnresolved?: boolean;
+    details?: string[];
+};
 export declare type IsValidOptions = {
     errors?: Map<Recipe | RecipeComponent, string>;
 };
 export declare type ToStringOptions = {
     showUnresolved?: boolean;
     hideFields?: boolean;
+    details?: string[];
 };
 export declare class Recipe implements Cloneable<Recipe> {
     private readonly _requires;
@@ -44,8 +52,8 @@ export declare class Recipe implements Cloneable<Recipe> {
     private _search;
     private _patterns;
     constructor(name?: string);
-    newConnectionConstraint(from: EndPoint, to: EndPoint, direction: Direction): ConnectionConstraint;
-    newObligation(from: EndPoint, to: EndPoint, direction: Direction): ConnectionConstraint;
+    newConnectionConstraint(from: EndPoint, to: EndPoint, direction: DirectionArrow): ConnectionConstraint;
+    newObligation(from: EndPoint, to: EndPoint, direction: DirectionArrow): ConnectionConstraint;
     removeObligation(obligation: ConnectionConstraint): void;
     removeConstraint(constraint: ConnectionConstraint): void;
     clearConnectionConstraints(): void;
@@ -61,7 +69,7 @@ export declare class Recipe implements Cloneable<Recipe> {
     isCompatible(modality: Modality): boolean;
     readonly modality: Modality;
     allRequiredSlotsPresent(options?: any): boolean;
-    _findDuplicate(items: any, options: IsValidOptions): any;
+    private _findDuplicate;
     _isValid(options?: IsValidOptions): boolean;
     readonly requires: RequireSection[];
     name: string | undefined;
@@ -90,9 +98,9 @@ export declare class Recipe implements Cloneable<Recipe> {
         slots: Slot[];
         cloneMap: Map<any, any>;
     };
-    _copyInto(recipe: Recipe, cloneMap: any): void;
+    _copyInto(recipe: Recipe, cloneMap: CloneMap): void;
     updateToClone(dict: Dictionary<any>): Dictionary<any>;
-    _makeLocalNameMap(): Map<any, any>;
+    _makeLocalNameMap(): Map<RecipeComponent, string>;
     toString(options?: ToStringOptions): string;
     getFreeHandles(): Handle[];
     readonly allSpecifiedConnections: {
@@ -103,13 +111,14 @@ export declare class Recipe implements Cloneable<Recipe> {
         particle: Particle;
         connSpec: HandleConnectionSpec;
     }[];
-    findHandleByID(id: any): Handle;
-    getUnnamedUntypedConnections(): HandleConnection;
+    findHandleByID(id: string): Handle | undefined;
+    getUnnamedUntypedConnections(): HandleConnection | undefined;
     getParticlesByImplFile(files: Set<string>): Particle[];
-    findSlotByID(id: string): Slot;
+    findSlotByID(id: string): Slot | undefined;
 }
 export declare class RequireSection extends Recipe {
     readonly parent: Recipe;
-    constructor(parent?: Recipe, name?: string);
-    toString(nameMap?: any, options?: any): string;
+    constructor(parent: Recipe, name?: string);
+    findSlotByID(id: string): Slot | undefined;
+    toString(options?: ToStringOptions, nameMap?: Map<RecipeComponent, string>): string;
 }

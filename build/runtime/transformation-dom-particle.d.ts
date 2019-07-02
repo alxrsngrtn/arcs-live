@@ -8,6 +8,7 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { DomParticle } from './dom-particle.js';
+import { Content } from './slot-consumer.js';
 /**
  * Particle that does transformation stuff with DOM.
  */
@@ -16,8 +17,8 @@ export declare class TransformationDomParticle extends DomParticle {
     getTemplateName(slotName: string): any;
     render(props: any, state: any): any;
     shouldRender(props: any, state: any): boolean;
-    renderHostedSlot(slotName: any, hostedSlotId: any, content: any): void;
-    combineHostedTemplate(slotName: string, hostedSlotId: any, content: any): void;
-    combineHostedModel(slotName: any, hostedSlotId: any, content: any): void;
+    renderHostedSlot(slotName: string, hostedSlotId: string, content: Content): void;
+    combineHostedTemplate(slotName: string, hostedSlotId: string, content: Content): void;
+    combineHostedModel(slotName: string, hostedSlotId: string, content: Content): void;
     static propsToItems(propsValues: any): any;
 }

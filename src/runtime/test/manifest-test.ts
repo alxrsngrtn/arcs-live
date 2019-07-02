@@ -20,7 +20,8 @@ import {StubLoader} from '../testing/stub-loader.js';
 import {Dictionary} from '../hot.js';
 import {assertThrowsAsync} from '../testing/test-util.js';
 import {ClaimType, ClaimIsTag, ClaimDerivesFrom} from '../particle-claim.js';
-import {CheckHasTag} from '../particle-check.js';
+import {CheckHasTag, CheckBooleanExpression} from '../particle-check.js';
+import {ProvideSlotConnectionSpec} from '../particle-spec.js';
 
 async function assertRecipeParses(input: string, result: string) : Promise<void> {
   // Strip common leading whitespace.
@@ -763,8 +764,8 @@ ${particleStr1}
     assert.lengthOf(manifest.recipes, 1);
     const recipe = manifest.recipes[0];
     assert.lengthOf(recipe.slots, 2);
-    assert.equal(recipe.particles.find(p => p.name === 'ParticleB').consumedSlotConnections['slotB1'].providedSlots['slotB2'],
-                 recipe.particles.find(p => p.name === 'ParticleA').consumedSlotConnections['slotA'].targetSlot);
+    assert.equal(checkDefined(recipe.particles.find(p => p.name === 'ParticleB')).consumedSlotConnections['slotB1'].providedSlots['slotB2'],
+                 checkDefined(recipe.particles.find(p => p.name === 'ParticleA')).consumedSlotConnections['slotA'].targetSlot);
     recipe.normalize();
     assert.isTrue(recipe.isResolved());
   });
@@ -788,8 +789,8 @@ ${particleStr1}
     const recipe = manifest.recipes[0];
     assert.lengthOf(recipe.handles, 2);
     assert.equal(
-      recipe.particles.find(p => p.name === 'ParticleA').connections['slotA'].handle,
-      recipe.particles.find(p => p.name === 'ParticleB').connections['slotB2'].handle);
+      checkDefined(recipe.particles.find(p => p.name === 'ParticleA')).connections['slotA'].handle,
+      checkDefined(recipe.particles.find(p => p.name === 'ParticleB')).connections['slotB2'].handle);
 
     const options = {errors: new Map(), details: '', showUnresolved: true};
     recipe.normalize(options);
@@ -889,7 +890,7 @@ ${particleStr1}
     recipe.normalize();
 
     assert.lengthOf(recipe.handleConnections, 3);
-    const slotConnA = recipe.handleConnections.find(s => s.name === 'slotA');
+    const slotConnA = checkDefined(recipe.handleConnections.find(s => s.name === 'slotA'));
     assert.isUndefined(slotConnA.handle);
 
     assert.lengthOf(recipe.handles, 1);
@@ -944,20 +945,21 @@ ${particleStr1}
   });
   it('relies on the loader to combine paths', async () => {
     const registry = {};
-    const loader = {
-      loadResource(path) {
-        return {
-          'somewhere/a': `import 'path/b'`,
-          'somewhere/a path/b': `recipe`,
-        }[path];
-      },
-      path(fileName) {
+    const loader = new class extends StubLoader {
+      constructor() {
+        super({
+      'somewhere/a': `import 'path/b'`,
+      'somewhere/a path/b': `recipe`
+        });
+      }
+      path(fileName: string): string {
         return fileName;
-      },
-      join(path, file) {
+      }
+      join(path: string, file: string): string {
         return `${path} ${file}`;
-      },
-    };
+      }
+    }();
+        
     const manifest = await Manifest.load('somewhere/a', loader, {registry});
     assert(registry['somewhere/a path/b']);
   });
@@ -1114,7 +1116,8 @@ Expected a verb (e.g. &Verb) or an uppercase identifier (e.g. Foo) but "?" found
       await Manifest.parse(manifest);
       assert.fail();
     } catch (e) {
-      assert.match(e.message, /'->' not compatible with 'in' param of 'TestParticle'/);
+      console.error(e.message);
+      assert.match(e.message, /'->' \(out\) not compatible with 'in' param of 'TestParticle'/);
     }
   });
 
@@ -1132,6 +1135,7 @@ Expected a verb (e.g. &Verb) or an uppercase identifier (e.g. Foo) but "?" found
       await Manifest.parse(manifest);
       assert.fail();
     } catch (e) {
+      console.error(e.message);
       assert.match(e.message, /param 'b' is not defined by 'TestParticle'/);
     }
   });
@@ -1256,13 +1260,14 @@ Expected a verb (e.g. &Verb) or an uppercase identifier (e.g. Foo) but "?" found
         search \`Hello dear world\``;
     let recipe = (await Manifest.parse(manifestSource)).recipes[0];
     assert.isNotNull(recipe.search);
-
-    assert.equal('Hello dear world', recipe.search.phrase);
-    assert.deepEqual(['hello', 'dear', 'world'], recipe.search.unresolvedTokens);
-    assert.deepEqual([], recipe.search.resolvedTokens);
-    assert.isTrue(recipe.search.isValid());
+    let search = checkNotNull(recipe.search);
+    assert.equal('Hello dear world', search.phrase);
+    assert.deepEqual(['hello', 'dear', 'world'], search.unresolvedTokens);
+    assert.deepEqual([], search.resolvedTokens);
+    assert.isTrue(search.isValid());
     recipe.normalize();
-    assert.isFalse(recipe.search.isResolved());
+    search = checkNotNull(recipe.search);
+    assert.isFalse(search.isResolved());
     assert.isFalse(recipe.isResolved());
     assert.equal(recipe.toString(), `recipe`);
     assert.equal(recipe.toString({showUnresolved: true}), `recipe
@@ -1271,29 +1276,31 @@ Expected a verb (e.g. &Verb) or an uppercase identifier (e.g. Foo) but "?" found
 
     recipe = (await Manifest.parse(manifestSource)).recipes[0];
     // resolve some tokens.
-    recipe.search.resolveToken('hello');
-    recipe.search.resolveToken('world');
-    assert.equal('Hello dear world', recipe.search.phrase);
-    assert.deepEqual(['dear'], recipe.search.unresolvedTokens);
-    assert.deepEqual(['hello', 'world'], recipe.search.resolvedTokens);
+    search = checkNotNull(recipe.search);
+    search.resolveToken('hello');
+    search.resolveToken('world');
+    assert.equal('Hello dear world', search.phrase);
+    assert.deepEqual(['dear'], search.unresolvedTokens);
+    assert.deepEqual(['hello', 'world'], search.resolvedTokens);
     assert.equal(recipe.toString(), `recipe`);
     assert.equal(recipe.toString({showUnresolved: true}), `recipe
   search \`Hello dear world\`
     tokens \`dear\` // \`hello\` \`world\` // unresolved search tokens`);
 
     // resolve all tokens.
-    recipe.search.resolveToken('dear');
+    search.resolveToken('dear');
     recipe.normalize();
-    assert.equal('Hello dear world', recipe.search.phrase);
-    assert.deepEqual([], recipe.search.unresolvedTokens);
-    assert.deepEqual(['dear', 'hello', 'world'], recipe.search.resolvedTokens);
-    assert.isTrue(recipe.search.isResolved());
+    assert.equal('Hello dear world', search.phrase);
+    assert.deepEqual([], search.unresolvedTokens);
+    assert.deepEqual(['dear', 'hello', 'world'], search.resolvedTokens);
+    assert.isTrue(search.isResolved());
     assert.isTrue(recipe.isResolved());
     assert.equal(recipe.toString(), `recipe`);
     assert.equal(recipe.toString({showUnresolved: true}), `recipe
   search \`Hello dear world\`
     tokens // \`dear\` \`hello\` \`world\``);
   });
+
   it('merge recipes with search strings', async () => {
     const recipe1 = (await Manifest.parse(`recipe
   search \`Hello world\``)).recipes[0];
@@ -1302,9 +1309,10 @@ Expected a verb (e.g. &Verb) or an uppercase identifier (e.g. Foo) but "?" found
     tokens \`morning\` // \`good\``)).recipes[0];
 
     recipe2.mergeInto(recipe1);
-    assert.equal('Hello world good morning', recipe1.search.phrase);
-    assert.deepEqual(['hello', 'world', 'morning'], recipe1.search.unresolvedTokens);
-    assert.deepEqual(['good'], recipe1.search.resolvedTokens);
+    const search = checkNotNull(recipe1.search);
+    assert.equal('Hello world good morning', search.phrase);
+    assert.deepEqual(['hello', 'world', 'morning'], search.unresolvedTokens);
+    assert.deepEqual(['good'], search.resolvedTokens);
   });
   it('can parse a manifest containing stores', async () => {
     const loader = new StubLoader({'*': '[]'});
@@ -2028,38 +2036,114 @@ resource SomeName
       assert.lengthOf(manifest.particles, 1);
       const particle = manifest.particles[0];
       assert.isEmpty(particle.trustClaims);
-      assert.equal(particle.trustChecks.size, 2);
+      assert.lengthOf(particle.trustChecks, 2);
       
-      const check1 = particle.trustChecks.get('input1');
+      const check1 = checkDefined(particle.trustChecks[0]);
       assert.equal(check1.toManifestString(), 'check input1 is property1');
-      assert.equal(check1.handle.name, 'input1');
-      assert.lengthOf(check1.conditions, 1);
-      assert.equal((check1.conditions[0] as CheckHasTag).tag, 'property1');
+      assert.equal(check1.target.name, 'input1');
+      assert.deepEqual(check1.expression, new CheckHasTag('property1'));
 
-      const check2 = particle.trustChecks.get('input2');
+      const check2 = checkDefined(particle.trustChecks[1]);
       assert.equal(check2.toManifestString(), 'check input2 is property2');
-      assert.equal(check2.handle.name, 'input2');
-      assert.lengthOf(check2.conditions, 1);
-      assert.equal((check2.conditions[0] as CheckHasTag).tag, 'property2');
+      assert.equal(check2.target.name, 'input2');
+      assert.deepEqual(check2.expression, new CheckHasTag('property2'));
     });
 
-    it('supports checks with multiple tags', async () => {
+    it('supports checks on provided slots', async () => {
       const manifest = await Manifest.parse(`
         particle A
-          in T {} input
-          check input is property1 or is property2
+          consume root
+            provide mySlot
+          check mySlot data is trusted
       `);
       assert.lengthOf(manifest.particles, 1);
       const particle = manifest.particles[0];
       assert.isEmpty(particle.trustClaims);
-      assert.equal(particle.trustChecks.size, 1);
+      assert.lengthOf(particle.trustChecks, 1);
+      
+      const check = particle.trustChecks[0];
+      assert.equal(check.toManifestString(), 'check mySlot data is trusted');
+      assert.isTrue(check.target instanceof ProvideSlotConnectionSpec);
+      assert.equal(check.target.name, 'mySlot');
+      assert.deepEqual(check.expression, new CheckHasTag('trusted'));
+    });
 
-      const check = particle.trustChecks.get('input');
-      assert.equal(check.toManifestString(), 'check input is property1 or is property2');
-      assert.equal(check.handle.name, 'input');
-      assert.lengthOf(check.conditions, 2);
-      assert.equal((check.conditions[0] as CheckHasTag).tag, 'property1');
-      assert.equal((check.conditions[1] as CheckHasTag).tag, 'property2');
+    it(`supports checks with the 'or' operation`, async () => {
+      const manifest = await Manifest.parse(`
+        particle A
+          in T {} input
+          check input is property1 or is property2 or is property3
+      `);
+      assert.lengthOf(manifest.particles, 1);
+      const particle = manifest.particles[0];
+      assert.isEmpty(particle.trustClaims);
+      assert.lengthOf(particle.trustChecks, 1);
+
+      const check = checkDefined(particle.trustChecks[0]);
+      assert.equal(check.toManifestString(), 'check input is property1 or is property2 or is property3');
+      assert.equal(check.target.name, 'input');
+      assert.deepEqual(check.expression, new CheckBooleanExpression('or', [
+        new CheckHasTag('property1'),
+        new CheckHasTag('property2'),
+        new CheckHasTag('property3'),
+      ]));
+    });
+
+    it(`supports checks with the 'and' operation`, async () => {
+      const manifest = await Manifest.parse(`
+        particle A
+          in T {} input
+          check input is property1 and is property2 and is property3
+      `);
+      assert.lengthOf(manifest.particles, 1);
+      const particle = manifest.particles[0];
+      assert.isEmpty(particle.trustClaims);
+      assert.lengthOf(particle.trustChecks, 1);
+
+      const check = particle.trustChecks[0];
+      assert.equal(check.toManifestString(), 'check input is property1 and is property2 and is property3');
+      assert.equal(check.target.name, 'input');
+      assert.deepEqual(check.expression, new CheckBooleanExpression('and', [
+        new CheckHasTag('property1'),
+        new CheckHasTag('property2'),
+        new CheckHasTag('property3'),
+      ]));
+    });
+
+    it(`supports arbitrary nesting of 'and' and 'or' operations and conditions`, async () => {
+      const manifest = await Manifest.parse(`
+        particle A
+          in T {} input
+          check input (is property1 and ((is property2))) or ((is property2) or is property3)
+      `);
+      assert.lengthOf(manifest.particles, 1);
+      const particle = manifest.particles[0];
+      assert.isEmpty(particle.trustClaims);
+      assert.lengthOf(particle.trustChecks, 1);
+
+      const check = particle.trustChecks[0];
+      assert.equal(check.toManifestString(), 'check input (is property1 and is property2) or (is property2 or is property3)');
+      assert.equal(check.target.name, 'input');
+      assert.deepEqual(
+        check.expression,
+        new CheckBooleanExpression('or', [
+          new CheckBooleanExpression('and', [
+            new CheckHasTag('property1'),
+            new CheckHasTag('property2'),
+          ]),
+          new CheckBooleanExpression('or', [
+            new CheckHasTag('property2'),
+            new CheckHasTag('property3'),
+          ]),
+        ]));
+    });
+
+    it(`doesn't allow mixing 'and' and 'or' operations without nesting`, async () => {
+      assertThrowsAsync(async () => await Manifest.parse(`
+        particle A
+          in T {} input
+          check input is property1 or is property2 and is property3
+      `), `You cannot combine 'and' and 'or' operations in a single check expression.`);
     });
 
     it('can round-trip checks and claims', async () => {
@@ -2074,7 +2158,10 @@ resource SomeName
   claim output3 is not dangerous
   check input1 is trusted or is from handle input2
   check input2 is extraTrusted
-  modality dom`;
+  check childSlot data is somewhatTrusted
+  modality dom
+  consume parentSlot
+    provide childSlot`;
     
       const manifest = await Manifest.parse(manifestString);
       assert.equal(manifestString, manifest.toString());
@@ -2128,12 +2215,32 @@ resource SomeName
       `), `Can't make multiple checks on the same input (foo)`);
     });
 
-    it(`doesn't allow claims to specify more than one tag`, async () => {
+    it(`doesn't allow checks on consumed slots`, async () => {
       assertThrowsAsync(async () => await Manifest.parse(`
         particle A
-          out T {} output
-          claim output is tag1 and tag2
-      `, 'asgfasedfgasf'));
+          consume someOtherSlot
+            provide mySlot
+          check someOtherSlot data is trusted
+      `), `Slot someOtherSlot is a consumed slot. Can only make checks on provided slots`);
+    });
+
+    it(`doesn't allow checks on unknown slots`, async () => {
+      assertThrowsAsync(async () => await Manifest.parse(`
+        particle A
+          consume someOtherSlot
+            provide mySlot
+          check missingSlot data is trusted
+      `), `Can't make a check on unknown slot missingSlot`);
+    });
+
+    it(`doesn't allow multiple provided slots with the same name`, async () => {
+      assertThrowsAsync(async () => await Manifest.parse(`
+        particle A
+          consume firstSlot
+            provide mySlot
+          consume secondSlot
+            provide mySlot
+      `), `Another slot with name 'mySlot' has already been provided by this particle`);
     });
   });
 });

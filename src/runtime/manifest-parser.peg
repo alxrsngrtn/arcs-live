@@ -180,9 +180,9 @@ InterfaceItem
   / InterfaceArgument
 
 InterfaceArgument
-  = direction:(ParticleArgumentDirection whiteSpace)? type:(ParticleArgumentType whiteSpace)? name:(lowerIdent / '*') eolWhiteSpace
+  = direction:(Direction whiteSpace)? type:(ParticleArgumentType whiteSpace)? name:(lowerIdent / '*') eolWhiteSpace
   {
-    direction = optional(direction, dir => dir[0], null);
+    direction = optional(direction, dir => dir[0], 'any');
     if (direction === 'host') {
       error(`Interface cannot have arguments with a 'host' direction.`);
     }
@@ -327,16 +327,51 @@ ParticleClaimDerivesFrom
   }
 
 ParticleCheckStatement
-  = 'check' whiteSpace handle:lowerIdent whiteSpace first:ParticleCheckCondition rest:(whiteSpace 'or' whiteSpace ParticleCheckCondition)* eolWhiteSpace
+  = 'check' whiteSpace target:ParticleCheckTarget whiteSpace expression:ParticleCheckExpressionBody eolWhiteSpace
   {
-    const conditions: AstNode.ParticleCheckCondition[] = [first, ...rest.map(item => item[3])];
     return {
       kind: 'particle-trust-check',
       location: location(),
-      handle,
-      conditions,
+      target,
+      expression,
     } as AstNode.ParticleCheckStatement;
   }
+
+ParticleCheckTarget
+  = name:lowerIdent isSlot:(whiteSpace 'data')?
+  {
+    return {
+      kind: 'particle-check-target',
+      location: location(),
+      targetType: isSlot ? 'slot' : 'handle',
+      name,
+    } as AstNode.ParticleCheckTarget;
+  }
+
+// A series of check conditions using `and`/`or` operations (doesn't need to be surrounded by parentheses).
+ParticleCheckExpressionBody
+  = left:ParticleCheckExpression rest:(whiteSpace ('or'/'and') whiteSpace ParticleCheckExpression)*
+  {
+    if (rest.length === 0) {
+      return left;
+    }
+    const operators: Set<string> = new Set(rest.map(item => item[1]));
+    if (operators.size > 1) {
+      expected(`You cannot combine 'and' and 'or' operations in a single check expression. You must nest them inside parentheses.`);
+    }
+    const operator = rest[0][1];
+    return {
+      kind: 'particle-trust-check-boolean-expression',
+      location: location(),
+      operator,
+      children: [left, ...rest.map(item => item[3])],
+    } as AstNode.ParticleCheckExpression;
+  }
+
+// Can be either a single check condition, or a series of conditions using `and`/`or` operations surrounded by parentheses.
+ParticleCheckExpression
+  = condition:ParticleCheckCondition { return condition; }
+  / '(' whiteSpace? condition:ParticleCheckExpressionBody whiteSpace? ')' { return condition; }
 
 ParticleCheckCondition
   = ParticleCheckIsFromHandle
@@ -354,7 +389,7 @@ ParticleCheckHasTag
   }
 
 ParticleCheckIsFromHandle
-  = 'is from handle' whiteSpace parentHandle:lowerIdent
+  = 'is' whiteSpace 'from' whiteSpace 'handle' whiteSpace parentHandle:lowerIdent
   {
     return {
       kind: 'particle-trust-check-is-from-handle',
@@ -372,7 +407,7 @@ ParticleHandle
   }
 
 ParticleArgument
-  = direction:ParticleArgumentDirection isOptional:'?'? whiteSpace type:ParticleArgumentType whiteSpace nametag:NameAndTagList
+  = direction:Direction isOptional:'?'? whiteSpace type:ParticleArgumentType whiteSpace nametag:NameAndTagList
   {
     return {
       kind: 'particle-argument',
@@ -386,10 +421,23 @@ ParticleArgument
     } as AstNode.ParticleArgument;
   }
 
-ParticleArgumentDirection "a direction (e.g. inout, in, out, host, `consume, `provide)"
-  = 'inout' / 'in' / 'out' / 'host' / '`consume' / '`provide'
+Direction "a direction (e.g. inout, in, out, host, `consume, `provide, any)"
+  = 'inout' / 'in' / 'out' / 'host' / '`consume' / '`provide' / 'any'
   {
-    return text() as AstNode.Direction;
+    const dir = text() as AstNode.Direction;
+    if(dir === null) {
+      expected('a direction');
+    }
+    return dir;
+  }
+
+DirectionArrow "a direction arrow (e.g. <-, ->, <->, =, consume, provide)"
+  = '<->' / '<-' / '->' / '=' / 'consume' / 'provide' {
+    const dir = text() as AstNode.DirectionArrow;
+    if(dir === null) {
+      expected('a direction arrow');
+    }
+    return dir;
   }
 
 ParticleArgumentType
@@ -693,7 +741,7 @@ RecipeParticle
 RecipeParticleItem = RecipeParticleSlotConnection / RecipeParticleConnection
 
 RecipeParticleConnection
-  = param:(lowerIdent / '*') whiteSpace dir:Direction target:(whiteSpace ParticleConnectionTargetComponents)? eolWhiteSpace dependentConnections:(Indent (SameIndent RecipeParticleConnection)*)?
+  = param:(lowerIdent / '*') whiteSpace dir:DirectionArrow target:(whiteSpace ParticleConnectionTargetComponents)? eolWhiteSpace dependentConnections:(Indent (SameIndent RecipeParticleConnection)*)?
   {
     return {
       kind: 'handle-connection',
@@ -757,7 +805,7 @@ SlotDirection
   = 'provide' / 'consume'
 
 RecipeConnection
-  = from:ConnectionTarget whiteSpace direction:Direction whiteSpace to:ConnectionTarget eolWhiteSpace
+  = from:ConnectionTarget whiteSpace direction:DirectionArrow whiteSpace to:ConnectionTarget eolWhiteSpace
   {
     return {
       kind: 'connection',
@@ -779,9 +827,6 @@ RecipeSearch
       tokens: optional(tokens, tokens => tokens[1][2].map(t => t[1]), null)
     } as AstNode.RecipeSearch;
   }
-
-Direction
-  = dir:('<-' / '->' / '=' / 'consume' / 'provide')
 
 ConnectionTarget
   = VerbConnectionTarget / TagConnectionTarget / ParticleConnectionTarget / NameConnectionTarget
@@ -1162,8 +1207,8 @@ SameOrMoreIndent "same or more indentation" = &(i:" "* &{
 
 // Should only be used as a negative match.
 ReservedWord
-  = keyword:(Direction
-  / ParticleArgumentDirection
+  = keyword:(DirectionArrow
+  / Direction
   / RecipeHandleFate
   / 'particle'
   / 'recipe'

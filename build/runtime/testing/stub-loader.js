@@ -21,6 +21,8 @@ export class StubLoader extends Loader {
             this._cannedResponse = fileMap['*'];
         }
     }
+    // TODO(lindner): this should be async, but adding it causes a test to fail
+    // tslint:disable-next-line
     loadResource(path) {
         return this._fileMap.hasOwnProperty(path)
             ? this._fileMap[path]

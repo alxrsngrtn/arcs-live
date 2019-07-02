@@ -31,6 +31,7 @@ export declare class ParticleExecutionContext {
     private readonly pendingLoads;
     private readonly scheduler;
     private readonly keyedProxies;
+    private readonly wasmContainers;
     readonly idGenerator: IdGenerator;
     constructor(port: any, pecId: Id, idGenerator: IdGenerator, loader: Loader);
     generateID(): string;

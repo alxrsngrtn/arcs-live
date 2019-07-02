@@ -50,6 +50,7 @@ declare type SerializedSlotConnectionSpec = {
     formFactor?: string;
     handles?: string[];
     provideSlotConnections?: SerializedSlotConnectionSpec[];
+    check?: Check;
 };
 export declare class ConsumeSlotConnectionSpec {
     name: string;
@@ -57,7 +58,7 @@ export declare class ConsumeSlotConnectionSpec {
     isSet: boolean;
     tags: string[];
     formFactor: string;
-    handles?: string[];
+    handles: string[];
     provideSlotConnections: ProvideSlotConnectionSpec[];
     constructor(slotModel: SerializedSlotConnectionSpec);
     readonly isOptional: boolean;
@@ -66,6 +67,8 @@ export declare class ConsumeSlotConnectionSpec {
     readonly dependentConnections: ProvideSlotConnectionSpec[];
 }
 export declare class ProvideSlotConnectionSpec extends ConsumeSlotConnectionSpec {
+    check?: Check;
+    constructor(slotModel: SerializedSlotConnectionSpec);
 }
 export interface SerializedParticleSpec extends Literal {
     name: string;
@@ -93,7 +96,7 @@ export declare class ParticleSpec {
     modality: Modality;
     slotConnections: Map<string, ConsumeSlotConnectionSpec>;
     trustClaims: Map<string, Claim>;
-    trustChecks: Map<string, Check>;
+    trustChecks: Check[];
     constructor(model: SerializedParticleSpec);
     createConnection(arg: SerializedHandleConnectionSpec, typeVarMap: Map<string, Type>): HandleConnectionSpec;
     readonly handleConnections: HandleConnectionSpec[];
@@ -103,7 +106,7 @@ export declare class ParticleSpec {
     isInput(param: string): boolean;
     isOutput(param: string): boolean;
     getConnectionByName(name: string): HandleConnectionSpec | undefined;
-    getSlotSpec(slotName: string): ConsumeSlotConnectionSpec;
+    getSlotSpec(slotName: string): ConsumeSlotConnectionSpec | undefined;
     readonly slotConnectionNames: string[];
     readonly primaryVerb: string | undefined;
     isCompatible(modality: Modality): boolean;
@@ -119,5 +122,6 @@ export declare class ParticleSpec {
     toManifestString(): string;
     private validateTrustClaims;
     private validateTrustChecks;
+    private getProvidedSlotsByName;
 }
 export {};

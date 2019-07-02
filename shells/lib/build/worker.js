@@ -180,6 +180,7 @@ class ParticleExecutionContext {
         this.pendingLoads = [];
         this.scheduler = new _storage_proxy_js__WEBPACK_IMPORTED_MODULE_4__["StorageProxyScheduler"]();
         this.keyedProxies = {};
+        this.wasmContainers = {};
         const pec = this;
         this.apiPort = new class extends _api_channel_js__WEBPACK_IMPORTED_MODULE_1__["PECInnerPort"] {
             onDefineHandle(identifier, type, name) {
@@ -349,13 +350,21 @@ class ParticleExecutionContext {
             }];
     }
     async loadWasmParticle(spec) {
-        // TODO: use instantiateStreaming? requires passing the fetch() Response, not its ArrayBuffer
-        const buffer = await this.loader.loadBinary(spec.implFile);
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(buffer && buffer.byteLength > 0);
-        // Particle constructor expects spec to be attached to the class object.
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(spec.name.length > 0);
+        let container = this.wasmContainers[spec.implFile];
+        if (!container) {
+            const buffer = await this.loader.loadBinary(spec.implFile);
+            if (!buffer || buffer.byteLength === 0) {
+                throw new Error(`Failed to load binary file '${spec.implFile}'`);
+            }
+            container = new _wasm_js__WEBPACK_IMPORTED_MODULE_5__["WasmContainer"]();
+            await container.initialize(buffer);
+            this.wasmContainers[spec.implFile] = container;
+        }
+        // Particle constructor expects spec to be attached to the class object (and attaches it to
+        // the particle instance at that time).
         _wasm_js__WEBPACK_IMPORTED_MODULE_5__["WasmParticle"].spec = spec;
-        const particle = new _wasm_js__WEBPACK_IMPORTED_MODULE_5__["WasmParticle"]();
-        await particle.initialize(buffer);
+        const particle = new _wasm_js__WEBPACK_IMPORTED_MODULE_5__["WasmParticle"](container);
         _wasm_js__WEBPACK_IMPORTED_MODULE_5__["WasmParticle"].spec = null;
         return particle;
     }
@@ -1062,6 +1071,10 @@ class ConsumeSlotConnectionSpec {
     get dependentConnections() { return this.provideSlotConnections; }
 }
 class ProvideSlotConnectionSpec extends ConsumeSlotConnectionSpec {
+    constructor(slotModel) {
+        super(slotModel);
+        this.check = slotModel.check;
+    }
 }
 class ParticleSpec {
     constructor(model) {
@@ -1262,24 +1275,61 @@ class ParticleSpec {
         return results;
     }
     validateTrustChecks(checks) {
-        const results = new Map();
+        const results = [];
         if (checks) {
+            const providedSlotNames = this.getProvidedSlotsByName();
             checks.forEach(check => {
-                const handle = this.handleConnectionMap.get(check.handle);
-                if (!handle) {
-                    throw new Error(`Can't make a check on unknown handle ${check.handle}.`);
+                switch (check.target.targetType) {
+                    case 'handle': {
+                        const handleName = check.target.name;
+                        const handle = this.handleConnectionMap.get(handleName);
+                        if (!handle) {
+                            throw new Error(`Can't make a check on unknown handle ${handleName}.`);
+                        }
+                        if (!handle.isInput) {
+                            throw new Error(`Can't make a check on handle ${handleName} (not an input handle).`);
+                        }
+                        if (handle.check) {
+                            throw new Error(`Can't make multiple checks on the same input (${handleName}).`);
+                        }
+                        handle.check = Object(_particle_check_js__WEBPACK_IMPORTED_MODULE_4__["createCheck"])(handle, check, this.handleConnectionMap);
+                        results.push(handle.check);
+                        break;
+                    }
+                    case 'slot': {
+                        const slotName = check.target.name;
+                        const slotSpec = providedSlotNames.get(slotName);
+                        if (!slotSpec) {
+                            if (this.slotConnectionNames.includes(slotName)) {
+                                throw new Error(`Slot ${slotName} is a consumed slot. Can only make checks on provided slots.`);
+                            }
+                            else {
+                                throw new Error(`Can't make a check on unknown slot ${slotName}.`);
+                            }
+                        }
+                        slotSpec.check = Object(_particle_check_js__WEBPACK_IMPORTED_MODULE_4__["createCheck"])(slotSpec, check, this.handleConnectionMap);
+                        results.push(slotSpec.check);
+                        break;
+                    }
+                    default:
+                        throw new Error('Unknown check target type.');
                 }
-                if (!handle.isInput) {
-                    throw new Error(`Can't make a check on handle ${check.handle} (not an input handle).`);
-                }
-                if (handle.check) {
-                    throw new Error(`Can't make multiple checks on the same input (${check.handle}).`);
-                }
-                handle.check = Object(_particle_check_js__WEBPACK_IMPORTED_MODULE_4__["createCheck"])(handle, check, this.handleConnectionMap);
-                results.set(check.handle, handle.check);
             });
         }
         return results;
+    }
+    getProvidedSlotsByName() {
+        const result = new Map();
+        for (const consumeConnection of this.slotConnections.values()) {
+            for (const provideConnection of consumeConnection.provideSlotConnections) {
+                const name = provideConnection.name;
+                if (result.has(name)) {
+                    throw new Error(`Another slot with name '${name}' has already been provided by this particle.`);
+                }
+                result.set(name, provideConnection);
+            }
+        }
+        return result;
     }
 }
 //# sourceMappingURL=particle-spec.js.map
@@ -1707,7 +1757,7 @@ class Type {
             if (type1.canReadSubset.tag !== type2.canReadSubset.tag) {
                 return false;
             }
-            if (type1.canReadSubset instanceof EntityType) {
+            if (type1.canReadSubset instanceof EntityType && type2.canReadSubset instanceof EntityType) {
                 return _schema_js__WEBPACK_IMPORTED_MODULE_1__["Schema"].intersect(type1.canReadSubset.entitySchema, type2.canReadSubset.entitySchema) !== null;
             }
             throw new Error(`_canMergeCanReadSubset not implemented for types tagged with ${type1.canReadSubset.tag}`);
@@ -1719,7 +1769,7 @@ class Type {
             if (type1.canWriteSuperset.tag !== type2.canWriteSuperset.tag) {
                 return false;
             }
-            if (type1.canWriteSuperset instanceof EntityType) {
+            if (type1.canWriteSuperset instanceof EntityType && type2.canWriteSuperset instanceof EntityType) {
                 return _schema_js__WEBPACK_IMPORTED_MODULE_1__["Schema"].union(type1.canWriteSuperset.entitySchema, type2.canWriteSuperset.entitySchema) !== null;
             }
         }
@@ -2121,7 +2171,6 @@ class InterfaceType extends Type {
         super('Interface');
         this.interfaceInfo = iface;
     }
-    // TODO: export InterfaceInfo's Handle and Slot interfaces to type check here?
     static make(name, handles, slots) {
         return new InterfaceType(new _interface_info_js__WEBPACK_IMPORTED_MODULE_0__["InterfaceInfo"](name, handles, slots));
     }
@@ -2914,7 +2963,9 @@ class EntityInternals {
         this.userIDComponent = userIDComponent;
     }
     getId() {
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(this.isIdentified(), 'getId() called on unidentified entity');
+        if (this.id === undefined) {
+            throw new Error('no id');
+        }
         return this.id;
     }
     getEntityClass() {
@@ -4348,9 +4399,12 @@ class TypeVariableInfo {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CheckType", function() { return CheckType; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Check", function() { return Check; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CheckBooleanExpression", function() { return CheckBooleanExpression; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CheckHasTag", function() { return CheckHasTag; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CheckIsFromHandle", function() { return CheckIsFromHandle; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createCheck", function() { return createCheck; });
+/* harmony import */ var _particle_spec_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(5);
+/* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(3);
 /**
  * @license
  * Copyright 2019 Google LLC.
@@ -4360,6 +4414,8 @@ __webpack_require__.r(__webpack_exports__);
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
+
+
 /** The different types of trust checks that particles can make. */
 var CheckType;
 (function (CheckType) {
@@ -4367,14 +4423,38 @@ var CheckType;
     CheckType["IsFromHandle"] = "is-from-handle";
 })(CheckType || (CheckType = {}));
 class Check {
-    constructor(handle, conditions) {
-        this.handle = handle;
-        this.conditions = conditions;
+    constructor(target, expression) {
+        this.target = target;
+        this.expression = expression;
     }
     toManifestString() {
-        return `check ${this.handle.name} ${this.conditions.map(c => c.toManifestString()).join(' or ')}`;
+        let targetString;
+        if (this.target instanceof _particle_spec_js__WEBPACK_IMPORTED_MODULE_0__["HandleConnectionSpec"]) {
+            targetString = this.target.name;
+        }
+        else {
+            targetString = `${this.target.name} data`;
+        }
+        return `check ${targetString} ${this.expression.toManifestString()}`;
     }
 }
+/** A boolean expression inside a trust check. */
+class CheckBooleanExpression {
+    constructor(type, children) {
+        this.type = type;
+        this.children = children;
+    }
+    /**
+     * @inheritdoc
+     * @param requireParens Indicates whether to enclose the expression inside parentheses. All nested boolean expressions must have parentheses,
+     *     but a top-level expression doesn't need to.
+     */
+    toManifestString(requireParens = false) {
+        const str = this.children.map(child => child.toManifestString(/* requireParens= */ true)).join(` ${this.type} `);
+        return requireParens ? `(${str})` : str;
+    }
+}
+/** A check condition of the form 'check x is <tag>'. */
 class CheckHasTag {
     constructor(tag) {
         this.tag = tag;
@@ -4387,6 +4467,7 @@ class CheckHasTag {
         return `is ${this.tag}`;
     }
 }
+/** A check condition of the form 'check x is from handle <handle>'. */
 class CheckIsFromHandle {
     constructor(parentHandle) {
         this.parentHandle = parentHandle;
@@ -4403,18 +4484,31 @@ class CheckIsFromHandle {
         return `is from handle ${this.parentHandle.name}`;
     }
 }
-function createCheck(handle, astNode, handleConnectionMap) {
-    const conditions = astNode.conditions.map(condition => {
-        switch (condition.checkType) {
-            case CheckType.HasTag:
-                return CheckHasTag.fromASTNode(condition);
-            case CheckType.IsFromHandle:
-                return CheckIsFromHandle.fromASTNode(condition, handleConnectionMap);
-            default:
-                throw new Error('Unknown check type.');
-        }
-    });
-    return new Check(handle, conditions);
+/** Converts the given AST node into a CheckCondition object. */
+function createCheckCondition(astNode, handleConnectionMap) {
+    switch (astNode.checkType) {
+        case CheckType.HasTag:
+            return CheckHasTag.fromASTNode(astNode);
+        case CheckType.IsFromHandle:
+            return CheckIsFromHandle.fromASTNode(astNode, handleConnectionMap);
+        default:
+            throw new Error('Unknown check type.');
+    }
+}
+/** Converts the given AST node into a CheckExpression object. */
+function createCheckExpression(astNode, handleConnectionMap) {
+    if (astNode.kind === 'particle-trust-check-boolean-expression') {
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_1__["assert"])(astNode.children.length >= 2, 'Boolean check expressions must have at least two children.');
+        return new CheckBooleanExpression(astNode.operator, astNode.children.map(child => createCheckExpression(child, handleConnectionMap)));
+    }
+    else {
+        return createCheckCondition(astNode, handleConnectionMap);
+    }
+}
+/** Converts the given AST node into a Check object. */
+function createCheck(checkTarget, astNode, handleConnectionMap) {
+    const expression = createCheckExpression(astNode.expression, handleConnectionMap);
+    return new Check(checkTarget, expression);
 }
 //# sourceMappingURL=particle-check.js.map
 
@@ -5376,6 +5470,7 @@ class CrdtCollectionModel {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "EntityPackager", function() { return EntityPackager; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "WasmContainer", function() { return WasmContainer; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "WasmParticle", function() { return WasmParticle; });
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
 /* harmony import */ var _entity_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(11);
@@ -5493,6 +5588,19 @@ class StringDecoder {
         }
         return { id, data };
     }
+    // Format is <size>:<key-len>:<key><value-len>:<value><key-len>:<key><value-len>:<value>...
+    decodeDictionary(str) {
+        this.str = str;
+        const dict = {};
+        let num = Number(this.upTo(':'));
+        while (num--) {
+            const klen = Number(this.upTo(':'));
+            const key = this.chomp(klen);
+            const vlen = Number(this.upTo(':'));
+            dict[key] = this.chomp(vlen);
+        }
+        return dict;
+    }
     upTo(char) {
         const i = this.str.indexOf(char);
         if (i < 0) {
@@ -5583,37 +5691,37 @@ class EmscriptenWasmDriver {
             dynamictopPtr: metadata[8],
         };
     }
-    configureEnvironment(module, particle, env) {
-        particle.memory = new WebAssembly.Memory({ initial: this.cfg.memSize, maximum: this.cfg.memSize });
-        particle.heapU8 = new Uint8Array(particle.memory.buffer);
-        particle.heap32 = new Int32Array(particle.memory.buffer);
+    configureEnvironment(module, container, env) {
+        container.memory = new WebAssembly.Memory({ initial: this.cfg.memSize, maximum: this.cfg.memSize });
+        container.heapU8 = new Uint8Array(container.memory.buffer);
+        container.heap32 = new Int32Array(container.memory.buffer);
         // We need to poke the address of the heap base into the memory buffer prior to instantiating.
-        particle.heap32[this.cfg.dynamictopPtr >> 2] = this.cfg.dynamicBase;
+        container.heap32[this.cfg.dynamictopPtr >> 2] = this.cfg.dynamicBase;
         Object.assign(env, {
             // Memory setup
-            memory: particle.memory,
+            memory: container.memory,
             __memory_base: this.cfg.globalBase,
             table: new WebAssembly.Table({ initial: this.cfg.tableSize, maximum: this.cfg.tableSize, element: 'anyfunc' }),
             __table_base: 0,
             DYNAMICTOP_PTR: this.cfg.dynamictopPtr,
             // Heap management
-            _emscripten_get_heap_size: () => particle.heapU8.length,
+            _emscripten_get_heap_size: () => container.heapU8.length,
             _emscripten_resize_heap: (size) => false,
-            _emscripten_memcpy_big: (dst, src, num) => particle.heapU8.set(particle.heapU8.subarray(src, src + num), dst),
+            _emscripten_memcpy_big: (dst, src, num) => container.heapU8.set(container.heapU8.subarray(src, src + num), dst),
             // Error handling
-            _systemError: (msg) => { throw new Error(particle.read(msg)); },
+            _systemError: (msg) => { throw new Error(container.read(msg)); },
             abortOnCannotGrowMemory: (size) => { throw new Error(`abortOnCannotGrowMemory(${size})`); },
             // Logging
-            _setLogInfo: (file, line) => particle.logInfo = [particle.read(file), line],
-            ___syscall146: (which, varargs) => particle.sysWritev(which, varargs),
+            _setLogInfo: (file, line) => container.logInfo = [container.read(file), line],
+            ___syscall146: (which, varargs) => container.sysWritev(which, varargs),
         });
     }
-    initializeInstance(particle, instance) {
+    initializeInstance(container, instance) {
         // Emscripten doesn't need main() invoked
     }
 }
 class KotlinWasmDriver {
-    configureEnvironment(module, particle, env) {
+    configureEnvironment(module, container, env) {
         Object.assign(env, {
             // These two are used by launcher.cpp
             Konan_js_arg_size: (index) => 1,
@@ -5622,42 +5730,64 @@ class KotlinWasmDriver {
             Konan_js_allocateArena: (array) => { },
             Konan_js_freeArena: (arenaIndex) => { },
             // These two are used by logging functions
-            write: (ptr) => console.log(particle.read(ptr)),
+            write: (ptr) => console.log(container.read(ptr)),
             flush: () => { },
             // Apparently used by Kotlin Memory management
-            Konan_notify_memory_grow: () => this.updateMemoryViews(particle),
+            Konan_notify_memory_grow: () => this.updateMemoryViews(container),
             // Kotlin's own glue for abort and exit
-            Konan_abort: (pointer) => { throw new Error('Konan_abort(' + particle.read(pointer) + ')'); },
+            Konan_abort: (pointer) => { throw new Error('Konan_abort(' + container.read(pointer) + ')'); },
             Konan_exit: (status) => { },
             // Needed by some code that tries to get the current time in it's runtime
             Konan_date_now: (pointer) => {
                 const now = Date.now();
                 const high = Math.floor(now / 0xffffffff);
                 const low = Math.floor(now % 0xffffffff);
-                particle.heap32[pointer] = low;
-                particle.heap32[pointer + 1] = high;
+                container.heap32[pointer] = low;
+                container.heap32[pointer + 1] = high;
             },
         });
     }
     // Kotlin manages its own heap construction, as well as tables.
-    initializeInstance(particle, instance) {
-        this.updateMemoryViews(particle);
+    initializeInstance(container, instance) {
+        this.updateMemoryViews(container);
         // Kotlin main() must be invoked before everything else.
         instance.exports.Konan_js_main(1, 0);
     }
-    updateMemoryViews(particle) {
-        particle.memory = particle.exports.memory;
-        particle.heapU8 = new Uint8Array(particle.memory.buffer);
-        particle.heap32 = new Int32Array(particle.memory.buffer);
+    updateMemoryViews(container) {
+        container.memory = container.exports.memory;
+        container.heapU8 = new Uint8Array(container.memory.buffer);
+        container.heap32 = new Int32Array(container.memory.buffer);
     }
 }
-class WasmParticle extends _particle_js__WEBPACK_IMPORTED_MODULE_2__["Particle"] {
+// Holds an instance of a running wasm module, which may contain multiple particles.
+class WasmContainer {
     constructor() {
-        super(...arguments);
-        this.handleMap = new Map();
-        this.revHandleMap = new Map();
-        this.converters = new Map();
+        this.particleMap = new Map();
+        // Records file and line for console logging in C++. This is set by the console/error macros in
+        // arcs.h and used immediately in the following printf call (implemented by sysWritev() below).
         this.logInfo = null;
+    }
+    async initialize(buffer) {
+        // TODO: vet the imports/exports on 'module'
+        // TODO: use compileStreaming? requires passing the fetch() Response, not its ArrayBuffer
+        const module = await WebAssembly.compile(buffer);
+        const driver = this.driverForModule(module);
+        // Shared ENV between Emscripten and Kotlin
+        const env = {
+            abort: () => { throw new Error('Abort!'); },
+            // Inner particle API
+            _singletonSet: (p, h, encoded) => this.getParticle(p).singletonSet(h, encoded),
+            _singletonClear: (p, h) => this.getParticle(p).singletonClear(h),
+            _collectionStore: (p, h, encoded) => this.getParticle(p).collectionStore(h, encoded),
+            _collectionRemove: (p, h, encoded) => this.getParticle(p).collectionRemove(h, encoded),
+            _collectionClear: (p, h) => this.getParticle(p).collectionClear(h),
+            _render: (p, slotName, template, model) => this.getParticle(p).renderImpl(slotName, template, model),
+        };
+        driver.configureEnvironment(module, this, env);
+        const global = { 'NaN': NaN, 'Infinity': Infinity };
+        this.wasm = await WebAssembly.instantiate(module, { env, global });
+        this.exports = this.wasm.exports;
+        driver.initializeInstance(this, this.wasm);
     }
     driverForModule(module) {
         const customSections = WebAssembly.Module.customSections(module, 'emscripten_metadata');
@@ -5666,28 +5796,71 @@ class WasmParticle extends _particle_js__WEBPACK_IMPORTED_MODULE_2__["Particle"]
         }
         return new KotlinWasmDriver();
     }
-    async initialize(buffer) {
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(this.spec.name.length > 0);
-        // TODO: vet the imports/exports on 'module'
-        const module = await WebAssembly.compile(buffer);
-        const driver = this.driverForModule(module);
-        // Shared ENV between Emscripten and Kotlin
-        const env = {
-            abort: () => { throw new Error('Abort!'); },
-            // Inner particle API
-            _singletonSet: (handle, encoded) => this.singletonSet(handle, encoded),
-            _singletonClear: (handle) => this.singletonClear(handle),
-            _collectionStore: (handle, encoded) => this.collectionStore(handle, encoded),
-            _collectionRemove: (handle, encoded) => this.collectionRemove(handle, encoded),
-            _collectionClear: (handle) => this.collectionClear(handle),
-            _render: (slotName, content) => this.renderImpl(slotName, content),
+    getParticle(innerParticle) {
+        return this.particleMap.get(innerParticle);
+    }
+    register(particle, innerParticle) {
+        this.particleMap.set(innerParticle, particle);
+    }
+    // Allocates memory in the wasm container.
+    store(str) {
+        const p = this.exports._malloc(str.length + 1);
+        for (let i = 0; i < str.length; i++) {
+            this.heapU8[p + i] = str.charCodeAt(i);
+        }
+        this.heapU8[p + str.length] = 0;
+        return p;
+    }
+    // Currently only supports ASCII. TODO: unicode
+    read(idx) {
+        let str = '';
+        while (idx < this.heapU8.length && this.heapU8[idx] !== 0) {
+            str += String.fromCharCode(this.heapU8[idx++]);
+        }
+        return str;
+    }
+    // C++ printf support cribbed from emscripten glue js - currently only supports ASCII
+    sysWritev(which, varargs) {
+        const get = () => {
+            varargs += 4;
+            return this.heap32[(((varargs) - (4)) >> 2)];
         };
-        driver.configureEnvironment(module, this, env);
-        const global = { 'NaN': NaN, 'Infinity': Infinity };
-        this.wasm = await WebAssembly.instantiate(module, { env, global });
-        this.exports = this.wasm.exports;
-        driver.initializeInstance(this, this.wasm);
+        const output = (get() === 1) ? console.log : console.error;
+        const iov = get();
+        const iovcnt = get();
+        // TODO: does this need to be persistent across calls? (i.e. due to write buffering)
+        let str = this.logInfo ? `[${this.logInfo[0]}:${this.logInfo[1]}] ` : '';
+        let ret = 0;
+        for (let i = 0; i < iovcnt; i++) {
+            const ptr = this.heap32[(((iov) + (i * 8)) >> 2)];
+            const len = this.heap32[(((iov) + (i * 8 + 4)) >> 2)];
+            for (let j = 0; j < len; j++) {
+                const curr = this.heapU8[ptr + j];
+                if (curr === 0 || curr === 10) { // NUL or \n
+                    output(str);
+                    str = '';
+                }
+                else {
+                    str += String.fromCharCode(curr);
+                }
+            }
+            ret += len;
+        }
+        this.logInfo = null;
+        return ret;
+    }
+}
+// Creates and interfaces to a particle inside a WasmContainer's module.
+class WasmParticle extends _particle_js__WEBPACK_IMPORTED_MODULE_2__["Particle"] {
+    constructor(container) {
+        super();
+        this.handleMap = new Map();
+        this.revHandleMap = new Map();
+        this.converters = new Map();
+        this.container = container;
+        this.exports = container.exports;
         this.innerParticle = this.exports[`_new${this.spec.name}`]();
+        container.register(this, this.innerParticle);
     }
     // TODO: for now we set up Handle objects with onDefineHandle and map them into the
     // wasm container through this call, which creates corresponding Handle objects in there.
@@ -5696,7 +5869,7 @@ class WasmParticle extends _particle_js__WEBPACK_IMPORTED_MODULE_2__["Particle"]
     // transfer format. Obviously this can be improved.
     async setHandles(handles) {
         for (const [name, handle] of handles) {
-            const p = this.store(name);
+            const p = this.container.store(name);
             const wasmHandle = this.exports._connectHandle(this.innerParticle, p, handle.canRead, handle.canWrite);
             this.exports._free(p);
             if (wasmHandle === 0) {
@@ -5724,7 +5897,7 @@ class WasmParticle extends _particle_js__WEBPACK_IMPORTED_MODULE_2__["Particle"]
         else {
             encoded = converter.encodeCollection(model);
         }
-        const p = this.store(encoded);
+        const p = this.container.store(encoded);
         this.exports._syncHandle(this.innerParticle, wasmHandle, p);
         this.exports._free(p);
     }
@@ -5742,12 +5915,12 @@ class WasmParticle extends _particle_js__WEBPACK_IMPORTED_MODULE_2__["Particle"]
         let p2 = 0;
         if (handle instanceof _handle_js__WEBPACK_IMPORTED_MODULE_3__["Singleton"]) {
             if (update.data) {
-                p1 = this.store(converter.encodeSingleton(update.data));
+                p1 = this.container.store(converter.encodeSingleton(update.data));
             }
         }
         else {
-            p1 = this.store(converter.encodeCollection(update.added || []));
-            p2 = this.store(converter.encodeCollection(update.removed || []));
+            p1 = this.container.store(converter.encodeCollection(update.added || []));
+            p2 = this.container.store(converter.encodeCollection(update.removed || []));
         }
         this.exports._updateHandle(this.innerParticle, wasmHandle, p1, p2);
         if (p1)
@@ -5805,87 +5978,52 @@ class WasmParticle extends _particle_js__WEBPACK_IMPORTED_MODULE_2__["Particle"]
     }
     decodeEntity(handle, encoded) {
         const converter = this.converters.get(handle);
-        return converter.decodeSingleton(this.read(encoded));
+        return converter.decodeSingleton(this.container.read(encoded));
     }
     ensureIdentified(entity, handle) {
         let p = 0;
         if (!_entity_js__WEBPACK_IMPORTED_MODULE_1__["Entity"].isIdentified(entity)) {
             handle.createIdentityFor(entity);
-            p = this.store(_entity_js__WEBPACK_IMPORTED_MODULE_1__["Entity"].id(entity));
+            p = this.container.store(_entity_js__WEBPACK_IMPORTED_MODULE_1__["Entity"].id(entity));
         }
         return p;
     }
     // Called by the shell to initiate rendering; the particle will call env._render in response.
-    // TODO: handle contentTypes
     renderSlot(slotName, contentTypes) {
-        const p = this.store(slotName);
-        this.exports._requestRender(this.innerParticle, p);
+        const p = this.container.store(slotName);
+        const sendTemplate = contentTypes.includes('template');
+        const sendModel = contentTypes.includes('model');
+        this.exports._renderSlot(this.innerParticle, p, sendTemplate, sendModel);
         this.exports._free(p);
     }
     // TODO
-    renderHostedSlot(slotName, hostedSlotId, content) { }
+    renderHostedSlot(slotName, hostedSlotId, content) {
+        throw new Error('renderHostedSlot not implemented for wasm particles');
+    }
     // Actually renders the slot. May be invoked due to an external request via renderSlot(),
     // or directly from the wasm particle itself (e.g. in response to a data update).
-    renderImpl(slotName, content) {
-        const slot = this.slotProxiesByName.get(this.read(slotName));
+    // template is a string provided by the particle. model is an encoded key:value dictionary.
+    renderImpl(slotName, template, model) {
+        const slot = this.slotProxiesByName.get(this.container.read(slotName));
         if (slot) {
-            ['template', 'model'].forEach(ct => slot.requestedContentTypes.add(ct));
-            slot.render({ template: this.read(content), model: {}, templateName: 'default' });
+            const content = { templateName: 'default' };
+            if (template) {
+                content.template = this.container.read(template);
+                slot.requestedContentTypes.add('template');
+            }
+            if (model) {
+                content.model = new StringDecoder().decodeDictionary(this.container.read(model));
+                slot.requestedContentTypes.add('model');
+            }
+            slot.render(content);
         }
     }
     fireEvent(slotName, event) {
-        const sp = this.store(slotName);
-        const hp = this.store(event.handler);
+        const sp = this.container.store(slotName);
+        const hp = this.container.store(event.handler);
         this.exports._fireEvent(this.innerParticle, sp, hp);
         this.exports._free(sp);
         this.exports._free(hp);
-    }
-    // Allocates memory in the wasm container.
-    store(str) {
-        const p = this.exports._malloc(str.length + 1);
-        for (let i = 0; i < str.length; i++) {
-            this.heapU8[p + i] = str.charCodeAt(i);
-        }
-        this.heapU8[p + str.length] = 0;
-        return p;
-    }
-    // Currently only supports ASCII. TODO: unicode
-    read(idx) {
-        let str = '';
-        while (idx < this.heapU8.length && this.heapU8[idx] !== 0) {
-            str += String.fromCharCode(this.heapU8[idx++]);
-        }
-        return str;
-    }
-    // printf support cribbed from emscripten glue js - currently only supports ASCII
-    sysWritev(which, varargs) {
-        const get = () => {
-            varargs += 4;
-            return this.heap32[(((varargs) - (4)) >> 2)];
-        };
-        const output = (get() === 1) ? console.log : console.error;
-        const iov = get();
-        const iovcnt = get();
-        // TODO: does this need to be persistent across calls? (i.e. due to write buffering)
-        let str = this.logInfo ? `[${this.spec.name}|${this.logInfo[0]}:${this.logInfo[1]}] ` : '';
-        let ret = 0;
-        for (let i = 0; i < iovcnt; i++) {
-            const ptr = this.heap32[(((iov) + (i * 8)) >> 2)];
-            const len = this.heap32[(((iov) + (i * 8 + 4)) >> 2)];
-            for (let j = 0; j < len; j++) {
-                const curr = this.heapU8[ptr + j];
-                if (curr === 0 || curr === 10) { // NUL or \n
-                    output(str);
-                    str = '';
-                }
-                else {
-                    str += String.fromCharCode(curr);
-                }
-            }
-            ret += len;
-        }
-        this.logInfo = null;
-        return ret;
     }
 }
 //# sourceMappingURL=wasm.js.map
@@ -6380,7 +6518,7 @@ class Loader {
             return Object(_platform_fetch_web_js__WEBPACK_IMPORTED_MODULE_1__["fetch"])(file).then(res => res.arrayBuffer());
         }
         else {
-            return this.loadFile(file, null);
+            return this.loadFile(file);
         }
     }
     async loadFile(file, encoding) {

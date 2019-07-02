@@ -118,7 +118,7 @@ export class Recipe {
             }
         }
     }
-    isResolved(options = undefined) {
+    isResolved(options) {
         assert(Object.isFrozen(this), 'Recipe must be normalized to be resolved.');
         const checkThat = (check, label) => {
             if (!check && options && options.errors) {
@@ -438,10 +438,10 @@ export class Recipe {
     }
     _copyInto(recipe, cloneMap) {
         const variableMap = new Map();
-        function cloneTheThing(ob) {
+        const cloneTheThing = (ob) => {
             const clonedObject = ob._copyInto(recipe, cloneMap, variableMap);
             cloneMap.set(ob, clonedObject);
-        }
+        };
         recipe._name = this.name;
         recipe._verbs = recipe._verbs.concat(...this._verbs);
         this._handles.forEach(cloneTheThing);
@@ -514,7 +514,7 @@ export class Recipe {
     //       lists into a normal ordering.
     //
     // use { showUnresolved: true } in options to see why a recipe can't resolve.
-    toString(options = undefined) {
+    toString(options) {
         const nameMap = this._makeLocalNameMap();
         const result = [];
         const verbs = this.verbs.length > 0 ? ` ${this.verbs.map(verb => `&${verb}`).join(' ')}` : '';
@@ -532,21 +532,21 @@ export class Recipe {
             result.push(constraintStr);
         }
         result.push(...this.handles
-            .map(h => h.toString(nameMap, options))
+            .map(h => h.toString(options, nameMap))
             .filter(strValue => strValue)
             .map(strValue => strValue.replace(/^|(\n)/g, '$1  ')));
         for (const slot of this.slots) {
-            const slotString = slot.toString(nameMap, options);
+            const slotString = slot.toString(options, nameMap);
             if (slotString) {
                 result.push(slotString.replace(/^|(\n)/g, '$1  '));
             }
         }
         for (const require of this.requires) {
             if (!require.isEmpty())
-                result.push(require.toString(nameMap, options).replace(/^|(\n)/g, '$1  '));
+                result.push(require.toString(options, nameMap).replace(/^|(\n)/g, '$1  '));
         }
         for (const particle of this.particles) {
-            result.push(particle.toString(nameMap, options).replace(/^|(\n)/g, '$1  '));
+            result.push(particle.toString(options, nameMap).replace(/^|(\n)/g, '$1  '));
         }
         if (this.patterns.length > 0 || this.handles.find(h => h.pattern !== undefined)) {
             result.push(`  description \`${this.patterns[0]}\``);
@@ -562,7 +562,7 @@ export class Recipe {
         if (this._obligations.length > 0) {
             result.push('  obligations');
             for (const obligation of this._obligations) {
-                const obligationStr = obligation.toString(nameMap, options).replace(/^|(\n)/g, '$1    ');
+                const obligationStr = obligation.toString(nameMap).replace(/^|(\n)/g, '$1    ');
                 result.push(obligationStr);
             }
         }
@@ -575,6 +575,8 @@ export class Recipe {
         return [].concat(...this.particles.filter(p => p.spec && p.spec.connections).map(particle => particle.spec.connections.map(connSpec => ({ particle, connSpec }))));
     }
     getFreeConnections(type) {
+        // TODO(jopra): Check that this works for required connections that are
+        // dependent on optional connections.
         return this.allSpecifiedConnections.filter(({ particle, connSpec }) => !connSpec.isOptional &&
             connSpec.name !== 'descriptions' &&
             connSpec.direction !== 'host' &&
@@ -590,58 +592,61 @@ export class Recipe {
     getParticlesByImplFile(files) {
         return this.particles.filter(particle => particle.spec && files.has(particle.spec.implFile));
     }
+    // overridded by RequireSection
     findSlotByID(id) {
         let slot = this.slots.find(s => s.id === id);
-        if (slot == undefined) {
-            if (this instanceof RequireSection) {
-                slot = this.parent.slots.find(s => s.id === id);
-            }
-            else {
-                for (const require of this.requires) {
-                    slot = require.slots.find(s => s.id === id);
-                    if (slot !== undefined)
-                        break;
-                }
+        if (slot === undefined) {
+            for (const require of this.requires) {
+                slot = require.slots.find(s => s.id === id);
+                if (slot !== undefined)
+                    break;
             }
         }
         return slot;
     }
 }
 export class RequireSection extends Recipe {
-    constructor(parent = undefined, name = undefined) {
+    constructor(parent, name) {
         super(name);
         this.parent = parent;
     }
-    toString(nameMap = undefined, options = undefined) {
+    findSlotByID(id) {
+        let slot = this.slots.find(s => s.id === id);
+        if (slot === undefined) {
+            slot = this.parent.slots.find(s => s.id === id);
+        }
+        return slot;
+    }
+    toString(options = {}, nameMap) {
         if (nameMap == undefined) {
             nameMap = this._makeLocalNameMap();
         }
         const result = [];
         result.push(`require`);
-        if (options && options.showUnresolved) {
+        if (options.showUnresolved) {
             if (this.search) {
                 result.push(this.search.toString(options).replace(/^|(\n)/g, '$1  '));
             }
         }
         for (const constraint of this.connectionConstraints) {
             let constraintStr = constraint.toString().replace(/^|(\n)/g, '$1  ');
-            if (options && options.showUnresolved) {
+            if (options.showUnresolved) {
                 constraintStr = constraintStr.concat(' // unresolved connection-constraint');
             }
             result.push(constraintStr);
         }
         result.push(...this.handles
-            .map(h => h.toString(nameMap, options))
+            .map(h => h.toString(options, nameMap))
             .filter(strValue => strValue)
             .map(strValue => strValue.replace(/^|(\n)/g, '$1  ')));
         for (const slot of this.slots) {
-            const slotString = slot.toString(nameMap, options);
+            const slotString = slot.toString(options, nameMap);
             if (slotString) {
                 result.push(slotString.replace(/^|(\n)/g, '$1  '));
             }
         }
         for (const particle of this.particles) {
-            result.push(particle.toString(nameMap, options).replace(/^|(\n)/g, '$1  '));
+            result.push(particle.toString(options, nameMap).replace(/^|(\n)/g, '$1  '));
         }
         if (this.patterns.length > 0 || this.handles.find(h => h.pattern !== undefined)) {
             result.push(`  description \`${this.patterns[0]}\``);
@@ -657,7 +662,7 @@ export class RequireSection extends Recipe {
         if (this.obligations.length > 0) {
             result.push('  obligations');
             for (const obligation of this.obligations) {
-                const obligationStr = obligation.toString(nameMap, options).replace(/^|(\n)/g, '$1    ');
+                const obligationStr = obligation.toString(nameMap).replace(/^|(\n)/g, '$1    ');
                 result.push(obligationStr);
             }
         }

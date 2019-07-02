@@ -8,6 +8,7 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { assert } from '../../platform/assert-web.js';
+import { SlotConnection } from './slot-connection.js';
 import { compareArrays, compareComparables, compareStrings } from './comparable.js';
 export class Slot {
     constructor(recipe, name) {
@@ -73,8 +74,9 @@ export class Slot {
             }
         }
         this._consumeConnections.forEach(connection => {
-            if (cloneMap.get(connection) && cloneMap.get(connection).targetSlot == undefined) {
-                cloneMap.get(connection).connectToSlot(slot);
+            const clonedConnection = cloneMap.get(connection);
+            if (clonedConnection && clonedConnection instanceof SlotConnection && clonedConnection.targetSlot == undefined) {
+                clonedConnection.connectToSlot(slot);
             }
         });
         return slot;
@@ -117,7 +119,7 @@ export class Slot {
     remove() {
         this._recipe.removeSlot(this);
     }
-    isResolved(options = undefined) {
+    isResolved(options) {
         assert(Object.isFrozen(this));
         if (options && options.showUnresolved) {
             options.details = [];
@@ -127,7 +129,6 @@ export class Slot {
             if (!this.id) {
                 options.details.push('missing id');
             }
-            options.details = options.details.join('; ');
         }
         return Boolean(this._sourceConnection || this.id);
     }
@@ -135,7 +136,7 @@ export class Slot {
         // TODO: implement
         return true;
     }
-    toString(nameMap, options) {
+    toString(options = {}, nameMap) {
         const result = [];
         result.push('slot');
         if (this.id) {
@@ -145,7 +146,7 @@ export class Slot {
             result.push(this.tags.map(tag => `#${tag}`).join(' '));
         }
         result.push(`as ${(nameMap && nameMap.get(this)) || this.localName}`);
-        const includeUnresolved = options && options.showUnresolved && !this.isResolved(options);
+        const includeUnresolved = options.showUnresolved && !this.isResolved(options);
         if (includeUnresolved) {
             result.push(`// unresolved slot: ${options.details}`);
         }

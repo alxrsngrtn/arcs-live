@@ -45,9 +45,10 @@ export class Particle {
             // if recipe is a requireSection, then slot may already exist in recipe.
             if (cloneMap.has(slotConn.targetSlot)) {
                 assert(recipe instanceof RequireSection);
-                particle.consumedSlotConnections[key].connectToSlot(cloneMap.get(slotConn.targetSlot));
-                if (particle.recipe.slots.indexOf(cloneMap.get(slotConn.targetSlot)) === -1) {
-                    particle.recipe.slots.push(cloneMap.get(slotConn.targetSlot));
+                const targetSlot = cloneMap.get(slotConn.targetSlot);
+                particle.consumedSlotConnections[key].connectToSlot(targetSlot);
+                if (particle.recipe.slots.indexOf(targetSlot) === -1) {
+                    particle.recipe.slots.push(targetSlot);
                 }
             }
             for (const [name, slot] of Object.entries(slotConn.providedSlots)) {
@@ -309,7 +310,7 @@ export class Particle {
             return this.spec.slotConnections;
         return new Map();
     }
-    toString(nameMap, options) {
+    toString(options = {}, nameMap) {
         let result = [];
         // TODO: we need at least name or verb(s)
         if (this.name) {
@@ -322,7 +323,7 @@ export class Particle {
         else { // verb must exist, if there is no name.
             result.push(`&${this.primaryVerb}`);
         }
-        if (options && options.showUnresolved) {
+        if (options.showUnresolved) {
             if (!this.isResolved(options)) {
                 result.push(`// unresolved particle: ${options.details}`);
             }

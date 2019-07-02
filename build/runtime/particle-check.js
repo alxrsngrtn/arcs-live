@@ -7,6 +7,8 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
+import { HandleConnectionSpec } from './particle-spec.js';
+import { assert } from '../platform/assert-web.js';
 /** The different types of trust checks that particles can make. */
 export var CheckType;
 (function (CheckType) {
@@ -14,14 +16,38 @@ export var CheckType;
     CheckType["IsFromHandle"] = "is-from-handle";
 })(CheckType || (CheckType = {}));
 export class Check {
-    constructor(handle, conditions) {
-        this.handle = handle;
-        this.conditions = conditions;
+    constructor(target, expression) {
+        this.target = target;
+        this.expression = expression;
     }
     toManifestString() {
-        return `check ${this.handle.name} ${this.conditions.map(c => c.toManifestString()).join(' or ')}`;
+        let targetString;
+        if (this.target instanceof HandleConnectionSpec) {
+            targetString = this.target.name;
+        }
+        else {
+            targetString = `${this.target.name} data`;
+        }
+        return `check ${targetString} ${this.expression.toManifestString()}`;
     }
 }
+/** A boolean expression inside a trust check. */
+export class CheckBooleanExpression {
+    constructor(type, children) {
+        this.type = type;
+        this.children = children;
+    }
+    /**
+     * @inheritdoc
+     * @param requireParens Indicates whether to enclose the expression inside parentheses. All nested boolean expressions must have parentheses,
+     *     but a top-level expression doesn't need to.
+     */
+    toManifestString(requireParens = false) {
+        const str = this.children.map(child => child.toManifestString(/* requireParens= */ true)).join(` ${this.type} `);
+        return requireParens ? `(${str})` : str;
+    }
+}
+/** A check condition of the form 'check x is <tag>'. */
 export class CheckHasTag {
     constructor(tag) {
         this.tag = tag;
@@ -34,6 +60,7 @@ export class CheckHasTag {
         return `is ${this.tag}`;
     }
 }
+/** A check condition of the form 'check x is from handle <handle>'. */
 export class CheckIsFromHandle {
     constructor(parentHandle) {
         this.parentHandle = parentHandle;
@@ -50,17 +77,30 @@ export class CheckIsFromHandle {
         return `is from handle ${this.parentHandle.name}`;
     }
 }
-export function createCheck(handle, astNode, handleConnectionMap) {
-    const conditions = astNode.conditions.map(condition => {
-        switch (condition.checkType) {
-            case CheckType.HasTag:
-                return CheckHasTag.fromASTNode(condition);
-            case CheckType.IsFromHandle:
-                return CheckIsFromHandle.fromASTNode(condition, handleConnectionMap);
-            default:
-                throw new Error('Unknown check type.');
-        }
-    });
-    return new Check(handle, conditions);
+/** Converts the given AST node into a CheckCondition object. */
+function createCheckCondition(astNode, handleConnectionMap) {
+    switch (astNode.checkType) {
+        case CheckType.HasTag:
+            return CheckHasTag.fromASTNode(astNode);
+        case CheckType.IsFromHandle:
+            return CheckIsFromHandle.fromASTNode(astNode, handleConnectionMap);
+        default:
+            throw new Error('Unknown check type.');
+    }
+}
+/** Converts the given AST node into a CheckExpression object. */
+function createCheckExpression(astNode, handleConnectionMap) {
+    if (astNode.kind === 'particle-trust-check-boolean-expression') {
+        assert(astNode.children.length >= 2, 'Boolean check expressions must have at least two children.');
+        return new CheckBooleanExpression(astNode.operator, astNode.children.map(child => createCheckExpression(child, handleConnectionMap)));
+    }
+    else {
+        return createCheckCondition(astNode, handleConnectionMap);
+    }
+}
+/** Converts the given AST node into a Check object. */
+export function createCheck(checkTarget, astNode, handleConnectionMap) {
+    const expression = createCheckExpression(astNode.expression, handleConnectionMap);
+    return new Check(checkTarget, expression);
 }
 //# sourceMappingURL=particle-check.js.map

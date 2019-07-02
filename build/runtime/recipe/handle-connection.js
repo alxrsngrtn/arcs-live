@@ -8,13 +8,14 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { assert } from '../../platform/assert-web.js';
+import { directionToArrow, acceptedDirections } from './recipe-util.js';
 import { TypeChecker } from './type-checker.js';
 import { compareArrays, compareComparables, compareStrings } from './comparable.js';
 export class HandleConnection {
     constructor(name, particle) {
         this._tags = [];
         this.resolvedType = undefined;
-        this._direction = undefined;
+        this._direction = 'any';
         this._handle = undefined;
         assert(particle);
         assert(particle.recipe);
@@ -80,11 +81,11 @@ export class HandleConnection {
         return spec ? spec.type : null;
     }
     get direction() {
-        if (this._direction) {
+        if (this._direction !== 'any') {
             return this._direction;
         }
         const spec = this.spec;
-        return spec ? spec.direction : null;
+        return spec ? spec.direction : 'any';
     }
     get isInput() {
         return this.direction === 'in' || this.direction === 'inout';
@@ -100,6 +101,9 @@ export class HandleConnection {
         this._resetHandleType();
     }
     set direction(direction) {
+        if (direction === null) {
+            throw new Error(`Invalid direction '${direction}' for handle connection '${this.getQualifiedName()}'`);
+        }
         this._direction = direction;
         this._resetHandleType();
     }
@@ -116,7 +120,8 @@ export class HandleConnection {
         return this.spec.isOptional;
     }
     _isValid(options) {
-        if (this.direction && !['in', 'out', 'inout', 'host', '`consume', '`provide'].includes(this.direction)) {
+        // Note: The following casts are necessary to catch invalid values that typescript does not manage to check).
+        if (this.direction === null || this.direction === undefined) {
             if (options && options.errors) {
                 options.errors.set(this, `Invalid direction '${this.direction}' for handle connection '${this.getQualifiedName()}'`);
             }
@@ -130,8 +135,7 @@ export class HandleConnection {
                 }
                 return false;
             }
-            if (this.direction !== connectionSpec.direction &&
-                !(['in', 'out'].includes(this.direction) && connectionSpec.direction === 'inout')) {
+            if (!acceptedDirections(this.direction).includes(connectionSpec.direction)) {
                 if (options && options.errors) {
                     options.errors.set(this, `Direction '${this.direction}' for handle connection '${this.getQualifiedName()}' doesn't match particle spec's direction '${connectionSpec.direction}'`);
                 }
@@ -209,8 +213,8 @@ export class HandleConnection {
     toString(nameMap, options) {
         const result = [];
         result.push(this.name || '*');
-        // TODO: better deal with unspecified direction.
-        result.push({ 'in': '<-', 'out': '->', 'inout': '=', 'host': '=', '`consume': '<-', '`provide': '->' }[this.direction] || this.direction || '=');
+        // '=' is the 'any' direction (note: inout => '<->')
+        result.push((this.direction && directionToArrow(this.direction)) || '=');
         if (this.handle) {
             if (this.handle.immediateValue) {
                 result.push(this.handle.immediateValue.name);

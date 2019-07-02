@@ -180,8 +180,8 @@ export declare class BigCollection extends Handle {
      * in the particle's manifest.
      */
     stream({ pageSize, forward }: {
-        pageSize: any;
-        forward?: boolean;
+        pageSize: number;
+        forward: boolean;
     }): Promise<Cursor>;
 }
 export declare function handleFor(storage: Store, idGenerator: IdGenerator, name?: string, particleId?: string, canRead?: boolean, canWrite?: boolean): Handle;

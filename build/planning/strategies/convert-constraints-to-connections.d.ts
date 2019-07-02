@@ -8,10 +8,8 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { Recipe } from '../../runtime/recipe/recipe.js';
-import { Strategy } from '../strategizer.js';
+import { Strategy, StrategyParams } from '../strategizer.js';
 import { Descendant } from '../../runtime/recipe/walker.js';
 export declare class ConvertConstraintsToConnections extends Strategy {
-    generate(inputParams: {
-        generated: Descendant<Recipe>[];
-    }): Promise<Descendant<Recipe>[]>;
+    generate(inputParams: StrategyParams): Promise<Descendant<Recipe>[]>;
 }

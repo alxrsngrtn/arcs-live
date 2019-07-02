@@ -13,18 +13,16 @@ import { Description } from './description.js';
 import { SlotConnection } from './recipe/slot-connection.js';
 import { HostedSlotContext, ProvidedSlotContext, SlotContext } from './slot-context.js';
 import { StartRenderOptions, StopRenderOptions } from './particle-execution-host.js';
+import { Dictionary } from './hot.js';
 export interface Content {
     templateName?: string | Map<string, string>;
-    model?: {
-        models: any;
-        hash: string;
-    };
+    model?: Dictionary<any>;
     descriptions?: Map<string, Description>;
-    template?: string | Map<string, string>;
+    template?: string | Dictionary<string>;
 }
 export interface Rendering {
     container?: any;
-    model?: any;
+    model?: Dictionary<any>;
     templateName?: string;
 }
 export declare class SlotConsumer {

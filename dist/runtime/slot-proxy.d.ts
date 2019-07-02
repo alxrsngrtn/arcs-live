@@ -9,6 +9,7 @@
  */
 import { Particle } from './particle';
 import { PECInnerPort } from './api-channel';
+import { Content } from './slot-consumer.js';
 /**
  * A representation of a consumed slot. Retrieved from a particle using
  * particle.getSlot(name)
@@ -26,7 +27,7 @@ export declare class SlotProxy {
     /**
      * renders content to the slot.
      */
-    render(content: any): void;
+    render(content: Content): void;
     /**
      * registers a callback to be invoked when 'name' event happens.
      */

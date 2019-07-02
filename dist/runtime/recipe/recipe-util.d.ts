@@ -7,13 +7,20 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-import { ParticleSpec } from '../particle-spec.js';
+/// <reference types="core-js" />
+import { ParticleSpec, HandleConnectionSpec } from '../particle-spec.js';
 import { HandleConnection } from './handle-connection.js';
+import { Direction, DirectionArrow } from '../manifest-ast-nodes.js';
 import { Handle } from './handle.js';
 import { Particle } from './particle.js';
 import { Recipe, RecipeComponent } from './recipe.js';
 import { Id } from '../id.js';
 import { Dictionary } from '../hot.js';
+export declare function directionToArrow(direction: Direction): DirectionArrow;
+export declare function arrowToDirection(arrow: DirectionArrow): Direction;
+export declare function reverseArrow(arrow: DirectionArrow): DirectionArrow;
+export declare function connectionMatchesHandleDirection(connectionDirection: Direction, handleDirection: Direction): boolean;
+export declare function acceptedDirections(direction: Direction): Direction[];
 declare class Shape {
     recipe: Recipe;
     particles: Dictionary<Particle>;
@@ -22,22 +29,28 @@ declare class Shape {
     constructor(recipe: Recipe, particles: Dictionary<Particle>, handles: Map<string, Handle>, hcs: Dictionary<HandleConnection>);
 }
 declare type DirectionCounts = {
-    in: number;
-    out: number;
-    inout: number;
-    unknown: number;
+    [K in Direction]: number;
 };
 export declare type HandleRepr = {
     localName?: string;
     handle: string;
     tags?: string[];
-    direction?: string;
+    direction?: DirectionArrow;
+};
+declare type RecipeUtilComponent = RecipeComponent | HandleConnectionSpec;
+declare type Match = {
+    forward: Map<RecipeComponent, RecipeUtilComponent>;
+    reverse: Map<RecipeUtilComponent, RecipeComponent>;
+    score: number;
 };
 export declare class RecipeUtil {
     static makeShape(particles: string[], handles: string[], map: Dictionary<Dictionary<HandleRepr>>, recipe?: Recipe): Shape;
     static recipeToShape(recipe: Recipe): Shape;
+    static _buildNewHCMatches(recipe: Recipe, shapeHC: HandleConnection, match: Match, outputList: Match[]): void;
+    static _buildNewParticleMatches(recipe: Recipe, shapeParticle: Particle, match: Match, newMatches: Match[]): void;
+    static _assignHandlesToEmptyPosition(shape: Shape, match: Match, emptyHandles: Handle[], nullHandles: Handle[]): Match[];
     static find(recipe: Recipe, shape: Shape): {
-        match: {};
+        match: Dict<RecipeUtilComponent>;
         score: number;
     }[];
     static constructImmediateValueHandle(connection: HandleConnection, particleSpec: ParticleSpec, id: Id): Handle;

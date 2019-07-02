@@ -34,6 +34,23 @@ describe('recipe-util', () => {
         assert.equal(results[0].match['B'].name, 'B');
         assert.equal(results[0].match['v'].localName, 'handle1');
     });
+    it('cannot produce a shape match to a non-matching recipe', async () => {
+        const manifest = await Manifest.parse(`
+      schema S
+      particle B
+        out S b
+
+      recipe Recipe
+        map as handle1
+        B
+          b -> handle1`);
+        const recipe = manifest.recipes[0];
+        const shape = RecipeUtil.makeShape(['A', 'B'], ['v'], { 'A': { 'a': { handle: 'v' } }, 'B': { 'b': { handle: 'v' } } });
+        const results = RecipeUtil.find(recipe, shape);
+        // TODO: It may be better to not return a result than providing partially
+        // resolved results.
+        assert.equal(results[0].match['A'], null);
+    });
     it('can produce multiple partial shape matches to a simple recipe', async () => {
         const manifest = await Manifest.parse(`
       schema S

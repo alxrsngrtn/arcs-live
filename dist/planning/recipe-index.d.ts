@@ -14,13 +14,14 @@ import { Handle } from '../runtime/recipe/handle.js';
 import { Particle } from '../runtime/recipe/particle.js';
 import { Recipe } from '../runtime/recipe/recipe.js';
 import { Slot } from '../runtime/recipe/slot.js';
+declare type MatchingHandle = {
+    handle?: Handle;
+    matchingConn: HandleConnection;
+};
 declare type ConsumeSlotConnectionMatch = {
     recipeParticle: Particle;
     slotSpec: ConsumeSlotConnectionSpec;
-    matchingHandles: {
-        handle: Handle;
-        matchingConn: HandleConnection;
-    }[];
+    matchingHandles: MatchingHandle[];
 };
 export declare class RecipeIndex {
     ready: any;

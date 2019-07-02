@@ -8,13 +8,13 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { Arc } from '../arc.js';
-import { Action } from './walker.js';
+import { Action, GenerateParams } from './walker.js';
 import { ConsumeSlotConnectionSpec } from '../particle-spec.js';
-import { Direction } from '../manifest-ast-nodes.js';
 import { Handle } from './handle';
 import { Particle } from './particle.js';
 import { RecipeWalker } from './recipe-walker.js';
 import { Recipe, IsValidOptions } from './recipe.js';
+import { ConnectionConstraint } from './connection-constraint.js';
 import { SlotConnection } from './slot-connection.js';
 export declare class ResolveWalker extends RecipeWalker {
     private readonly arc;
@@ -22,17 +22,13 @@ export declare class ResolveWalker extends RecipeWalker {
     onHandle(recipe: Recipe, handle: Handle): (recipe: any, handle: any) => number;
     onSlotConnection(_recipe: Recipe, slotConnection: SlotConnection): (recipe: any, slotConnection: any) => number;
     onPotentialSlotConnection(_recipe: Recipe, particle: Particle, slotSpec: ConsumeSlotConnectionSpec): (_recipe: Recipe, particle: Particle, slotSpec: ConsumeSlotConnectionSpec) => number;
-    onObligation(recipe: Recipe, obligation: {
-        from: any;
-        to: any;
-        direction: Direction;
-    }): (recipe: any, obligation: any) => number;
+    onObligation(recipe: Recipe, obligation: ConnectionConstraint): (recipe: any, obligation: any) => number;
 }
 export declare class ResolveRecipeAction extends Action<Recipe> {
-    generate(inputParams: any): any;
+    generate(inputParams: GenerateParams<Recipe>): any;
 }
 export declare class RecipeResolver {
     private resolver;
     constructor(arc: Arc);
-    resolve(recipe: any, options?: IsValidOptions): Promise<any>;
+    resolve(recipe: any, options?: IsValidOptions): Promise<Recipe>;
 }

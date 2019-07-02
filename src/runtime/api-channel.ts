@@ -18,6 +18,7 @@ import {Particle} from './particle.js';
 import * as recipeHandle from './recipe/handle.js';
 import * as recipeParticle from './recipe/particle.js';
 import {StorageProxy} from './storage-proxy.js';
+import {Content} from './slot-consumer.js';
 import {SerializedModelEntry} from './storage/crdt-collection-model.js';
 import {StorageProviderBase} from './storage/storage-provider-base.js';
 import {Type} from './type.js';
@@ -443,7 +444,7 @@ export abstract class PECOuterPort extends APIPort {
   StartRender(@Mapped particle: recipeParticle.Particle, @Direct slotName: string, @ObjectMap(MappingType.Direct, MappingType.Direct) providedSlots: Map<string, string>, @List(MappingType.Direct) contentTypes: string[]) {}
   StopRender(@Mapped particle: recipeParticle.Particle, @Direct slotName: string) {}
 
-  abstract onRender(particle: recipeParticle.Particle, slotName: string, content: string);
+  abstract onRender(particle: recipeParticle.Particle, slotName: string, content: Content);
   abstract onInitializeProxy(handle: StorageProviderBase, callback: number);
   abstract onSynchronizeProxy(handle: StorageProviderBase, callback: number);
   abstract onHandleGet(handle: StorageProviderBase, callback: number);
@@ -472,7 +473,7 @@ export abstract class PECOuterPort extends APIPort {
 
   abstract onArcCreateSlot(callback: number, arc: Arc, transformationParticle: recipeParticle.Particle, transformationSlotName: string, handleId: string);
   CreateSlotCallback(@RemoteIgnore @Initializer slot: {}, @RemoteMapped callback: number, @Direct hostedSlotId: string) {}
-  InnerArcRender(@Mapped transformationParticle: recipeParticle.Particle, @Direct transformationSlotName: string, @Direct hostedSlotId: string, @Direct content: {}) {}
+  InnerArcRender(@Mapped transformationParticle: recipeParticle.Particle, @Direct transformationSlotName: string, @Direct hostedSlotId: string, @Direct content: Content) {}
 
   abstract onArcLoadRecipe(arc: Arc, recipe: string, callback: number);
   abstract onReportExceptionInHost(exception: PropagatedException);
@@ -506,7 +507,7 @@ export abstract class PECInnerPort extends APIPort {
   abstract onStartRender(particle: Particle, slotName: string, providedSlots: Map<string, string>, contentTypes: string[]);
   abstract onStopRender(particle: Particle, slotName: string);
 
-  Render(@Mapped particle: Particle, @Direct slotName: string, @Direct content: string) {}
+  Render(@Mapped particle: Particle, @Direct slotName: string, @Direct content: Content) {}
   InitializeProxy(@Mapped handle: StorageProxy, @LocalMapped callback: (data: {version: number}) => void) {}
   SynchronizeProxy(@Mapped handle: StorageProxy, @LocalMapped callback: (data: {version: number, model: SerializedModelEntry[]}) => void) {}
   HandleGet(@Mapped handle: StorageProxy, @LocalMapped callback: (data: {id: string}) => void) {}
@@ -538,7 +539,7 @@ export abstract class PECInnerPort extends APIPort {
 
   ArcCreateSlot(@LocalMapped callback: (value: string) => void, @RemoteMapped arc: {}, @Mapped transformationParticle: Particle, @Direct transformationSlotName: string, @Direct handleId: string) {}
   abstract onCreateSlotCallback(callback: (value: string) => void, hostedSlotId: string);
-  abstract onInnerArcRender(transformationParticle: Particle, transformationSlotName: string, hostedSlotID: string, content: string);
+  abstract onInnerArcRender(transformationParticle: Particle, transformationSlotName: string, hostedSlotID: string, content: Content);
 
   ArcLoadRecipe(@RemoteMapped arc: {}, @Direct recipe: string, @LocalMapped callback: (data: {error?: string}) => void) {}
 

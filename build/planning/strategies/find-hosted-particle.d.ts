@@ -7,7 +7,7 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-import { Strategy } from '../strategizer.js';
+import { Strategy, StrategyParams } from '../strategizer.js';
 export declare class FindHostedParticle extends Strategy {
-    generate(inputParams: any): any;
+    generate(inputParams: StrategyParams): any;
 }

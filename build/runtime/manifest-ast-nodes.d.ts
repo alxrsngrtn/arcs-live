@@ -158,9 +158,20 @@ export interface ParticleClaimDerivesFrom extends BaseNode {
 export declare type ParticleClaimStatement = ParticleClaimIsTag | ParticleClaimDerivesFrom;
 export interface ParticleCheckStatement extends BaseNode {
     kind: 'particle-trust-check';
-    handle: string;
-    conditions: ParticleCheckCondition[];
+    target: ParticleCheckTarget;
+    expression: ParticleCheckExpression;
 }
+export interface ParticleCheckTarget extends BaseNode {
+    kind: 'particle-check-target';
+    targetType: 'handle' | 'slot';
+    name: string;
+}
+export interface ParticleCheckBooleanExpression extends BaseNode {
+    kind: 'particle-trust-check-boolean-expression';
+    operator: 'and' | 'or';
+    children: ParticleCheckExpression[];
+}
+export declare type ParticleCheckExpression = ParticleCheckBooleanExpression | ParticleCheckCondition;
 export declare type ParticleCheckCondition = ParticleCheckHasTag | ParticleCheckIsFromHandle;
 export interface ParticleCheckHasTag extends BaseNode {
     kind: 'particle-trust-check-has-tag';
@@ -255,7 +266,7 @@ export declare type RecipeItem = RecipeParticle | RecipeHandle | RequireHandleSe
 export interface RecipeParticleConnection extends BaseNode {
     kind: 'handle-connection';
     param: string;
-    dir: string;
+    dir: DirectionArrow;
     target: ParticleConnectionTargetComponents;
 }
 export declare type RecipeParticleItem = RecipeParticleSlotConnection | RecipeParticleConnection;
@@ -287,7 +298,7 @@ export interface RecipeSlotConnectionRef extends BaseNode {
 }
 export interface RecipeConnection extends BaseNode {
     kind: 'connection';
-    direction: Direction;
+    direction: DirectionArrow;
     from: ConnectionTarget;
     to: ConnectionTarget;
 }
@@ -440,7 +451,6 @@ export declare type Manifest = ManifestItem[];
 export declare type ManifestStorageItem = string;
 export declare type ManifestStorageDescription = string;
 export declare type Modality = string;
-export declare type ParticleArgumentDirection = string;
 export declare type ReservedWord = string;
 export declare type ResourceStart = string;
 export declare type ResourceBody = string;
@@ -463,7 +473,8 @@ export declare type lowerIdent = string;
 export declare type whiteSpace = string;
 export declare type eolWhiteSpace = string;
 export declare type eol = string;
-export declare type Direction = 'in' | 'out' | 'inout' | 'host';
+export declare type Direction = 'in' | 'out' | 'inout' | 'host' | '`consume' | '`provide' | 'any';
+export declare type DirectionArrow = '<-' | '->' | '<->' | 'consume' | 'provide' | '=';
 export declare type SlotDirection = 'provide' | 'consume';
 export declare type Fate = 'use' | 'create' | 'map' | 'copy' | '?' | '`slot';
 export declare type ParticleArgumentType = TypeVariable | CollectionType | BigCollectionType | ReferenceType | SlotType | SchemaInline | TypeName;

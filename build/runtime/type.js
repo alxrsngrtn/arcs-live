@@ -60,7 +60,7 @@ export class Type {
             if (type1.canReadSubset.tag !== type2.canReadSubset.tag) {
                 return false;
             }
-            if (type1.canReadSubset instanceof EntityType) {
+            if (type1.canReadSubset instanceof EntityType && type2.canReadSubset instanceof EntityType) {
                 return Schema.intersect(type1.canReadSubset.entitySchema, type2.canReadSubset.entitySchema) !== null;
             }
             throw new Error(`_canMergeCanReadSubset not implemented for types tagged with ${type1.canReadSubset.tag}`);
@@ -72,7 +72,7 @@ export class Type {
             if (type1.canWriteSuperset.tag !== type2.canWriteSuperset.tag) {
                 return false;
             }
-            if (type1.canWriteSuperset instanceof EntityType) {
+            if (type1.canWriteSuperset instanceof EntityType && type2.canWriteSuperset instanceof EntityType) {
                 return Schema.union(type1.canWriteSuperset.entitySchema, type2.canWriteSuperset.entitySchema) !== null;
             }
         }
@@ -474,7 +474,6 @@ export class InterfaceType extends Type {
         super('Interface');
         this.interfaceInfo = iface;
     }
-    // TODO: export InterfaceInfo's Handle and Slot interfaces to type check here?
     static make(name, handles, slots) {
         return new InterfaceType(new InterfaceInfo(name, handles, slots));
     }
