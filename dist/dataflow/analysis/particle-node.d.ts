@@ -37,6 +37,7 @@ export declare class ParticleInput implements Edge {
     readonly connectionName: string;
     readonly connectionSpec: HandleConnectionSpec;
     readonly check?: Check;
+    readonly claim?: ClaimExpression;
     constructor(particleNode: ParticleNode, otherEnd: Node, connection: HandleConnection);
 }
 export declare class ParticleOutput implements Edge {

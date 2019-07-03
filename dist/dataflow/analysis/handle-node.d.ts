@@ -10,9 +10,9 @@
 import { Node, Edge } from './graph-internals.js';
 import { ParticleOutput, ParticleInput, ParticleNode } from './particle-node.js';
 import { HandleConnectionSpec } from '../../runtime/particle-spec.js';
-import { Handle } from '../../runtime/interface-info.js';
 import { CheckIsFromHandle } from '../../runtime/particle-check.js';
 import { HandleConnection } from '../../runtime/recipe/handle-connection.js';
+import { Handle } from '../../runtime/recipe/handle.js';
 export declare class HandleNode extends Node {
     readonly inEdges: ParticleOutput[];
     readonly outEdges: ParticleInput[];

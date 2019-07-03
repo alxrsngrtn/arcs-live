@@ -9,6 +9,7 @@
  */
 import { assert } from '../../../platform/chai-web.js';
 import { checkDefined } from '../../../runtime/testing/preconditions.js';
+import { ClaimType } from '../../../runtime/particle-claim.js';
 import { CheckHasTag } from '../../../runtime/particle-check.js';
 import { ProvideSlotConnectionSpec } from '../../../runtime/particle-spec.js';
 import { buildFlowGraph } from '../testing/flow-graph-testing.js';
@@ -91,6 +92,27 @@ describe('FlowGraph', () => {
     `);
         assert.hasAllKeys(graph.particleMap, ['P1', 'P2', 'P3']);
         assert.sameMembers(graph.connectionsAsStrings, ['P1.foo -> P2.bar', 'P1.foo -> P3.baz']);
+    });
+    it('works with datastores with tag claims', async () => {
+        const graph = await buildFlowGraph(`
+      schema MyEntity
+        Text text
+      resource MyResource
+        start
+        [{"text": "asdf"}]
+      store MyStore of MyEntity in MyResource
+        claim is trusted
+      particle P
+        in MyEntity input
+      recipe R
+        use MyStore as s
+        P
+          input <- s
+    `);
+        assert.lengthOf(graph.edges, 1);
+        const claim = graph.edges[0].claim;
+        assert.equal(claim.type, ClaimType.IsTag);
+        assert.equal(claim.tag, 'trusted');
     });
     it('copies particle claims to particle nodes and out-edges', async () => {
         const graph = await buildFlowGraph(`

@@ -55,8 +55,9 @@ export class ParticleInput {
         this.end = particleNode;
         this.connectionName = connection.name;
         this.label = `${particleNode.name}.${this.connectionName}`;
-        this.check = connection.spec.check;
         this.connectionSpec = connection.spec;
+        this.check = connection.spec.check;
+        this.claim = connection.handle.claim;
     }
 }
 export class ParticleOutput {

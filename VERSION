@@ -1,11 +1,5 @@
-commit 7c721a7c10f5c0a11c12c5875d4ff872ea244fbb
+commit 4359196a51e5a29aac625f718e2ccba84fb13467
 Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
-Date:   Wed Jul 3 15:30:47 2019 +1000
+Date:   Wed Jul 3 15:51:15 2019 +1000
 
-    Adds syntax support for datastore claims. (#3281)
-    
-    Syntax only, analyser in a follow up PR.
-    
-    I was able to reuse some of the existing Claim classes, but had to add
-    new AST nodes for datastore claims, because the syntax is slightly
-    different (there's no handle name, and "derives from" is not supported).
+    Support datastore claims in the analyser (#3282)
