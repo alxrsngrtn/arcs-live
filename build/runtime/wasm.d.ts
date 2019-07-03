@@ -56,17 +56,17 @@ export declare class WasmParticle extends Particle {
         originator?: any;
     }): Promise<void>;
     onHandleDesync(handle: Handle): Promise<void>;
-    singletonSet(wasmHandle: WasmAddress, encoded: WasmAddress): WasmAddress;
+    singletonSet(wasmHandle: WasmAddress, entityPtr: WasmAddress): WasmAddress;
     singletonClear(wasmHandle: WasmAddress): void;
-    collectionStore(wasmHandle: WasmAddress, encoded: WasmAddress): WasmAddress;
-    collectionRemove(wasmHandle: WasmAddress, encoded: WasmAddress): void;
+    collectionStore(wasmHandle: WasmAddress, entityPtr: WasmAddress): WasmAddress;
+    collectionRemove(wasmHandle: WasmAddress, entityPtr: WasmAddress): void;
     collectionClear(wasmHandle: WasmAddress): void;
     private getHandle;
     private decodeEntity;
     private ensureIdentified;
     renderSlot(slotName: string, contentTypes: string[]): void;
     renderHostedSlot(slotName: string, hostedSlotId: string, content: Content): void;
-    renderImpl(slotName: WasmAddress, template: WasmAddress, model: WasmAddress): void;
+    renderImpl(slotNamePtr: WasmAddress, templatePtr: WasmAddress, modelPtr: WasmAddress): void;
     fireEvent(slotName: string, event: any): void;
 }
 export {};

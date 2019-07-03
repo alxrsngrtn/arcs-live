@@ -1,5 +1,5 @@
-commit 3cca40a4851e483f7d2da937fb9db20ea7b67768
-Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Wed Jul 3 07:55:11 2019 +1000
+commit 7d9e80b32539d6012b15902284a0682d62a70f96
+Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
+Date:   Wed Jul 3 10:00:10 2019 +1000
 
-    Multi-tool 'Docker' layout for Arcs Explorer (#3261)
+    Wasm clean up: rename a few things for clarity (#3279)

@@ -298,11 +298,11 @@ export class WasmContainer {
         const env = {
             abort: () => { throw new Error('Abort!'); },
             // Inner particle API
-            _singletonSet: (p, h, encoded) => this.getParticle(p).singletonSet(h, encoded),
-            _singletonClear: (p, h) => this.getParticle(p).singletonClear(h),
-            _collectionStore: (p, h, encoded) => this.getParticle(p).collectionStore(h, encoded),
-            _collectionRemove: (p, h, encoded) => this.getParticle(p).collectionRemove(h, encoded),
-            _collectionClear: (p, h) => this.getParticle(p).collectionClear(h),
+            _singletonSet: (p, handle, entity) => this.getParticle(p).singletonSet(handle, entity),
+            _singletonClear: (p, handle) => this.getParticle(p).singletonClear(handle),
+            _collectionStore: (p, handle, entity) => this.getParticle(p).collectionStore(handle, entity),
+            _collectionRemove: (p, handle, entity) => this.getParticle(p).collectionRemove(handle, entity),
+            _collectionClear: (p, handle) => this.getParticle(p).collectionClear(handle),
             _render: (p, slotName, template, model) => this.getParticle(p).renderImpl(slotName, template, model),
         };
         driver.configureEnvironment(module, this, env);
@@ -462,9 +462,9 @@ export class WasmParticle extends Particle {
     // If the given entity doesn't have an id, this will create one for it and return the new id
     // in allocated memory that the wasm particle must free. If the entity already has an id this
     // returns 0 (nulltpr).
-    singletonSet(wasmHandle, encoded) {
+    singletonSet(wasmHandle, entityPtr) {
         const singleton = this.getHandle(wasmHandle);
-        const entity = this.decodeEntity(singleton, encoded);
+        const entity = this.decodeEntity(singleton, entityPtr);
         const p = this.ensureIdentified(entity, singleton);
         void singleton.set(entity);
         return p;
@@ -476,16 +476,16 @@ export class WasmParticle extends Particle {
     // If the given entity doesn't have an id, this will create one for it and return the new id
     // in allocated memory that the wasm particle must free. If the entity already has an id this
     // returns 0 (nulltpr).
-    collectionStore(wasmHandle, encoded) {
+    collectionStore(wasmHandle, entityPtr) {
         const collection = this.getHandle(wasmHandle);
-        const entity = this.decodeEntity(collection, encoded);
+        const entity = this.decodeEntity(collection, entityPtr);
         const p = this.ensureIdentified(entity, collection);
         void collection.store(entity);
         return p;
     }
-    collectionRemove(wasmHandle, encoded) {
+    collectionRemove(wasmHandle, entityPtr) {
         const collection = this.getHandle(wasmHandle);
-        void collection.remove(this.decodeEntity(collection, encoded));
+        void collection.remove(this.decodeEntity(collection, entityPtr));
     }
     collectionClear(wasmHandle) {
         const collection = this.getHandle(wasmHandle);
@@ -498,9 +498,9 @@ export class WasmParticle extends Particle {
         }
         return handle;
     }
-    decodeEntity(handle, encoded) {
+    decodeEntity(handle, entityPtr) {
         const converter = this.converters.get(handle);
-        return converter.decodeSingleton(this.container.read(encoded));
+        return converter.decodeSingleton(this.container.read(entityPtr));
     }
     ensureIdentified(entity, handle) {
         let p = 0;
@@ -525,16 +525,16 @@ export class WasmParticle extends Particle {
     // Actually renders the slot. May be invoked due to an external request via renderSlot(),
     // or directly from the wasm particle itself (e.g. in response to a data update).
     // template is a string provided by the particle. model is an encoded key:value dictionary.
-    renderImpl(slotName, template, model) {
-        const slot = this.slotProxiesByName.get(this.container.read(slotName));
+    renderImpl(slotNamePtr, templatePtr, modelPtr) {
+        const slot = this.slotProxiesByName.get(this.container.read(slotNamePtr));
         if (slot) {
             const content = { templateName: 'default' };
-            if (template) {
-                content.template = this.container.read(template);
+            if (templatePtr) {
+                content.template = this.container.read(templatePtr);
                 slot.requestedContentTypes.add('template');
             }
-            if (model) {
-                content.model = new StringDecoder().decodeDictionary(this.container.read(model));
+            if (modelPtr) {
+                content.model = new StringDecoder().decodeDictionary(this.container.read(modelPtr));
                 slot.requestedContentTypes.add('model');
             }
             slot.render(content);
