@@ -170,8 +170,8 @@
         "signature": "3b27e0c8efb582aa9505faf38a21d4759e599872c0719ae403b1a0da1c0fc46f"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/handle.ts": {
-        "version": "24be022fdedc8689e0442dc58c4fe92db69bc29ba71943ef179d68d0c1d58cc4",
-        "signature": "c0f7d9429c205a8efebf243fdf7a935507ec1b0daa63740b4a170958b81eabed"
+        "version": "fc7d5280c690257c7a2ef6a7492cc640210c9d037416e7877068d265d45376ec",
+        "signature": "11df4b7a43451884e1e1cd452e0806d31e003f23104b6903ca0fcd2f163e60a3"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/recipe-util.ts": {
         "version": "8a19451b0ec2ad022fbd396878b4726c4cf337f26b2282547aec188b59ab851d",
@@ -230,8 +230,8 @@
         "signature": "011197131bf36e7af627e7b0544a8d2d2482f791fa4af9755aba77676636ce64"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/storage-provider-base.ts": {
-        "version": "29f1f91f431a9ab53f9d4e12ac5ab0c41d9fc91bf767a8e94f26a8bde9d17d50",
-        "signature": "765a7532786dbf9675e3f3a1be17fcb9ae579da0d45d269d5ed51764207290bf"
+        "version": "657a948ea822a51f154bbd0625abd5027dbd0e31be903607b57358bc097bb88e",
+        "signature": "5f74e0029e3e50daf7a108398690d04c981b16178560bc28e29d900b81ca2863"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/description.ts": {
         "version": "649676216b245882affec3e8618666169b106479ab9ee452755d02714b14c1fb",
@@ -438,11 +438,11 @@
         "signature": "1087d3d9c5646f4ccd124de50d34df19f635e8e26b95e773a5aeb9f21dfd6e6f"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/manifest-ast-nodes.ts": {
-        "version": "e725aed6fee9cb29b0230b6b4fbd3c33662dff0ebabeb7d6c619f10a5316b0fd",
-        "signature": "6f322a9c4182a584e71cfb733c484bfd8c2c64b7b448ac590b1ff828396b3665"
+        "version": "b5f1c822f3d2f243a536b41697e06547020a4af8ee6fb25737073855b26e473e",
+        "signature": "2525b8e6f7ff678621bed4d119c02760924f29b0833aef482bce1c55b283be46"
       },
       "/home/travis/build/PolymerLabs/arcs/src/gen/runtime/manifest-parser.ts": {
-        "version": "98399dd1e0d1ee3cbf83125fda1c970d1c4c0f3253f665af893ac3a574980ec9",
+        "version": "4550619a76278f7e5977165116c603f9f929406deb88b0311a858ac1b0b95d0a",
         "signature": "ff2c763c7895327196fd3eb358dcc775b25f27bdae513079cc287433af262427"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/manifest-meta.ts": {
@@ -450,8 +450,8 @@
         "signature": "386225870fe7ff2b410dda3c36ac04396b8a67965f6edaa5f9fff1d1796548f6"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/manifest.ts": {
-        "version": "67e112c67566849fddb50ce8fa0adf1030a4374a8d6dc69bd8696681d078f57a",
-        "signature": "1b33149d906f6d1efbf2936bbdf498088995994e16620c14c2c05fea3ce15f25"
+        "version": "2055207ee955ed63f7f3fbcf3bfde84ff47255e545c888a1b3047e5430352c78",
+        "signature": "f8eef112a1c78f10bc16db4a74e0c07eca30c9de99a303c02cc28d824b3de2b2"
       },
       "/home/travis/build/PolymerLabs/arcs/src/platform/atob-web.ts": {
         "version": "83bd58cde323a7612560e333b3542a3ab39d1f645c1e1e22e54f4a66622b9e7c",
@@ -2189,7 +2189,7 @@
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/test/manifest-test.ts": {
-        "version": "15494785d3635bedaebc24f697f5879d4d907ff5d1fd0dd74a895705c438b764",
+        "version": "f56d63a09a169543e830a647ae5fe970f64f5fe0c1b16ab9420342e782775ca5",
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/test/multiplexer-test.ts": {
@@ -2831,6 +2831,7 @@
         "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/type-checker.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/comparable.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/manifest-ast-nodes.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/particle-claim.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
       ],
@@ -2954,6 +2955,7 @@
         "/home/travis/build/PolymerLabs/arcs/src/runtime/store.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/arc-exceptions.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/hot.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/particle-claim.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
       ],
@@ -3526,6 +3528,7 @@
         "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/storage-provider-base.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/storage-provider-factory.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/type.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/particle-claim.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
       ],
@@ -7880,6 +7883,7 @@
       ],
       "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/handle.ts": [
         "/home/travis/build/PolymerLabs/arcs/src/runtime/type.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/particle-claim.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/recipe.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/manifest-ast-nodes.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/handle-connection.ts",
@@ -7961,6 +7965,7 @@
         "/home/travis/build/PolymerLabs/arcs/src/runtime/id.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/type.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/key-base.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/particle-claim.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/arc-exceptions.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/crdt-collection-model.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/comparable.ts",
@@ -8288,6 +8293,7 @@
         "/home/travis/build/PolymerLabs/arcs/src/runtime/manifest-ast-nodes.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/type.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/storage-provider-factory.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/particle-claim.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/storage-provider-base.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/id.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/recipe.ts",
@@ -12033,7 +12039,7 @@
         [
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/handle.ts",
-            "start": 2075,
+            "start": 2190,
             "length": 6,
             "code": 2322,
             "category": 1,
@@ -12041,7 +12047,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/handle.ts",
-            "start": 3961,
+            "start": 4076,
             "length": 15,
             "code": 2322,
             "category": 1,
@@ -12049,7 +12055,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/handle.ts",
-            "start": 5251,
+            "start": 5366,
             "length": 15,
             "code": 2345,
             "category": 1,
@@ -12066,7 +12072,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/handle.ts",
-            "start": 6255,
+            "start": 6370,
             "length": 18,
             "code": 2322,
             "category": 1,
@@ -12083,7 +12089,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/handle.ts",
-            "start": 6666,
+            "start": 6804,
             "length": 16,
             "code": 2322,
             "category": 1,
@@ -12100,7 +12106,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/handle.ts",
-            "start": 6837,
+            "start": 7228,
             "length": 23,
             "code": 2322,
             "category": 1,
@@ -12117,7 +12123,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/handle.ts",
-            "start": 7013,
+            "start": 7404,
             "length": 24,
             "code": 2322,
             "category": 1,
@@ -12134,7 +12140,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/handle.ts",
-            "start": 7116,
+            "start": 7507,
             "length": 21,
             "code": 2322,
             "category": 1,
@@ -12151,7 +12157,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/handle.ts",
-            "start": 7221,
+            "start": 7612,
             "length": 24,
             "code": 2322,
             "category": 1,
@@ -12168,7 +12174,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/handle.ts",
-            "start": 7343,
+            "start": 7734,
             "length": 28,
             "code": 2322,
             "category": 1,
@@ -12185,7 +12191,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/handle.ts",
-            "start": 7974,
+            "start": 8365,
             "length": 15,
             "messageText": "Object is possibly 'null' or 'undefined'.",
             "category": 1,
@@ -12193,7 +12199,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/handle.ts",
-            "start": 8101,
+            "start": 8492,
             "length": 65,
             "code": 2345,
             "category": 1,
@@ -12210,7 +12216,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/handle.ts",
-            "start": 8474,
+            "start": 8865,
             "length": 7,
             "code": 2345,
             "category": 1,
@@ -12242,7 +12248,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/handle.ts",
-            "start": 9189,
+            "start": 9580,
             "length": 9,
             "code": 2345,
             "category": 1,
@@ -12250,7 +12256,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/handle.ts",
-            "start": 9264,
+            "start": 9655,
             "length": 16,
             "code": 2345,
             "category": 1,
@@ -12267,7 +12273,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/handle.ts",
-            "start": 10117,
+            "start": 10508,
             "length": 15,
             "messageText": "Object is possibly 'undefined'.",
             "category": 1,
@@ -12275,7 +12281,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/handle.ts",
-            "start": 10244,
+            "start": 10635,
             "length": 15,
             "messageText": "Object is possibly 'undefined'.",
             "category": 1,
@@ -12283,7 +12289,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/handle.ts",
-            "start": 10397,
+            "start": 10788,
             "length": 15,
             "messageText": "Object is possibly 'undefined'.",
             "category": 1,
@@ -12291,7 +12297,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/handle.ts",
-            "start": 10604,
+            "start": 10995,
             "length": 15,
             "messageText": "Object is possibly 'undefined'.",
             "category": 1,
@@ -12299,7 +12305,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/handle.ts",
-            "start": 10830,
+            "start": 11221,
             "length": 15,
             "messageText": "Object is possibly 'undefined'.",
             "category": 1,
@@ -12307,7 +12313,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/handle.ts",
-            "start": 11247,
+            "start": 11638,
             "length": 17,
             "code": 2322,
             "category": 1,
@@ -12315,7 +12321,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/handle.ts",
-            "start": 11744,
+            "start": 12135,
             "length": 72,
             "code": 2345,
             "category": 1,
@@ -12323,7 +12329,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/handle.ts",
-            "start": 12213,
+            "start": 12604,
             "length": 72,
             "code": 2345,
             "category": 1,
@@ -13208,7 +13214,7 @@
         [
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/storage-provider-base.ts",
-            "start": 6503,
+            "start": 6624,
             "length": 12,
             "code": 2345,
             "category": 1,
@@ -14177,7 +14183,7 @@
             "relatedInformation": [
               {
                 "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/storage-provider-base.ts",
-                "start": 3619,
+                "start": 3668,
                 "length": 7,
                 "messageText": "The expected type comes from property 'version' which is declared here on type '{ add?: { value: any; keys?: string[] | undefined; effective?: boolean | undefined; }[] | undefined; remove?: { value: any; keys?: string[] | undefined; effective?: boolean | undefined; }[] | undefined; data?: any; version?: number | undefined; originatorId?: string | undefined; barrier?: string | undefined; }'",
                 "category": 3,
@@ -14220,7 +14226,7 @@
             "relatedInformation": [
               {
                 "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/storage-provider-base.ts",
-                "start": 3619,
+                "start": 3668,
                 "length": 7,
                 "messageText": "The expected type comes from property 'version' which is declared here on type '{ add?: { value: any; keys?: string[] | undefined; effective?: boolean | undefined; }[] | undefined; remove?: { value: any; keys?: string[] | undefined; effective?: boolean | undefined; }[] | undefined; data?: any; version?: number | undefined; originatorId?: string | undefined; barrier?: string | undefined; }'",
                 "category": 3,
@@ -14287,7 +14293,7 @@
             "relatedInformation": [
               {
                 "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/storage-provider-base.ts",
-                "start": 3619,
+                "start": 3668,
                 "length": 7,
                 "messageText": "The expected type comes from property 'version' which is declared here on type '{ add?: { value: any; keys?: string[] | undefined; effective?: boolean | undefined; }[] | undefined; remove?: { value: any; keys?: string[] | undefined; effective?: boolean | undefined; }[] | undefined; data?: any; version?: number | undefined; originatorId?: string | undefined; barrier?: string | undefined; }'",
                 "category": 3,
@@ -14305,7 +14311,7 @@
             "relatedInformation": [
               {
                 "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/storage-provider-base.ts",
-                "start": 3637,
+                "start": 3686,
                 "length": 12,
                 "messageText": "The expected type comes from property 'originatorId' which is declared here on type '{ add?: { value: any; keys?: string[] | undefined; effective?: boolean | undefined; }[] | undefined; remove?: { value: any; keys?: string[] | undefined; effective?: boolean | undefined; }[] | undefined; data?: any; version?: number | undefined; originatorId?: string | undefined; barrier?: string | undefined; }'",
                 "category": 3,
@@ -14487,7 +14493,7 @@
             "relatedInformation": [
               {
                 "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/storage-provider-base.ts",
-                "start": 3619,
+                "start": 3668,
                 "length": 7,
                 "messageText": "The expected type comes from property 'version' which is declared here on type '{ add?: { value: any; keys?: string[] | undefined; effective?: boolean | undefined; }[] | undefined; remove?: { value: any; keys?: string[] | undefined; effective?: boolean | undefined; }[] | undefined; data?: any; version?: number | undefined; originatorId?: string | undefined; barrier?: string | undefined; }'",
                 "category": 3,
@@ -17754,7 +17760,7 @@
         [
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/gen/runtime/manifest-parser.ts",
-            "start": 12238,
+            "start": 13296,
             "length": 11,
             "messageText": "Object is possibly 'null'.",
             "category": 1,
@@ -17762,7 +17768,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/gen/runtime/manifest-parser.ts",
-            "start": 12801,
+            "start": 13859,
             "length": 332,
             "code": 2352,
             "category": 1,
@@ -17784,7 +17790,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/gen/runtime/manifest-parser.ts",
-            "start": 23138,
+            "start": 23952,
             "length": 323,
             "code": 2352,
             "category": 1,
@@ -17806,7 +17812,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/gen/runtime/manifest-parser.ts",
-            "start": 24666,
+            "start": 25480,
             "length": 316,
             "code": 2352,
             "category": 1,
@@ -17828,7 +17834,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/gen/runtime/manifest-parser.ts",
-            "start": 25413,
+            "start": 26227,
             "length": 7,
             "code": 2345,
             "category": 1,
@@ -17836,7 +17842,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/gen/runtime/manifest-parser.ts",
-            "start": 25523,
+            "start": 26337,
             "length": 1,
             "code": 2345,
             "category": 1,
@@ -17844,7 +17850,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/gen/runtime/manifest-parser.ts",
-            "start": 34563,
+            "start": 35377,
             "length": 132,
             "code": 2352,
             "category": 1,
@@ -17861,7 +17867,7 @@
             "relatedInformation": [
               {
                 "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/manifest-ast-nodes.ts",
-                "start": 7932,
+                "start": 8185,
                 "length": 4,
                 "messageText": "'name' is declared here.",
                 "category": 3,
@@ -17871,7 +17877,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/gen/runtime/manifest-parser.ts",
-            "start": 39944,
+            "start": 40758,
             "length": 6,
             "code": 2322,
             "category": 1,
@@ -17888,7 +17894,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/gen/runtime/manifest-parser.ts",
-            "start": 40249,
+            "start": 41063,
             "length": 6,
             "code": 2322,
             "category": 1,
@@ -17905,7 +17911,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/gen/runtime/manifest-parser.ts",
-            "start": 255300,
+            "start": 262151,
             "length": 97,
             "code": 2352,
             "category": 1,
@@ -17927,7 +17933,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/gen/runtime/manifest-parser.ts",
-            "start": 255722,
+            "start": 262573,
             "length": 51,
             "code": 2322,
             "category": 1,
@@ -17950,7 +17956,7 @@
         [
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/manifest.ts",
-            "start": 2905,
+            "start": 3073,
             "length": 17,
             "code": 2322,
             "category": 1,
@@ -17958,7 +17964,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/manifest.ts",
-            "start": 9288,
+            "start": 9650,
             "length": 13,
             "code": 2345,
             "category": 1,
@@ -17975,7 +17981,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/manifest.ts",
-            "start": 12609,
+            "start": 12993,
             "length": 29,
             "messageText": "Object is possibly 'undefined'.",
             "category": 1,
@@ -17983,7 +17989,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/manifest.ts",
-            "start": 16920,
+            "start": 17306,
             "length": 18,
             "code": 2322,
             "category": 1,
@@ -18000,7 +18006,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/manifest.ts",
-            "start": 17508,
+            "start": 17894,
             "length": 17,
             "code": 2345,
             "category": 1,
@@ -18017,7 +18023,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/manifest.ts",
-            "start": 21425,
+            "start": 21887,
             "length": 6,
             "code": 2322,
             "category": 1,
@@ -18034,7 +18040,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/manifest.ts",
-            "start": 21846,
+            "start": 22328,
             "length": 4,
             "code": 2345,
             "category": 1,
@@ -18042,7 +18048,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/manifest.ts",
-            "start": 26130,
+            "start": 26674,
             "length": 17,
             "code": 2345,
             "category": 1,
@@ -18059,16 +18065,16 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/manifest.ts",
-            "start": 29837,
+            "start": 30385,
             "length": 11,
             "code": 2345,
             "category": 1,
             "messageText": {
-              "messageText": "Argument of type 'StorageProviderBase | StorageStub' is not assignable to parameter of type '{ id: string; type: Type; originalId?: string | undefined; storageKey?: string | undefined; }'.",
+              "messageText": "Argument of type 'StorageProviderBase | StorageStub' is not assignable to parameter of type '{ id: string; type: Type; originalId?: string | undefined; storageKey?: string | undefined; claims?: ClaimIsTag[] | undefined; }'.",
               "category": 1,
               "code": 2345,
               "next": {
-                "messageText": "Type 'StorageProviderBase' is not assignable to type '{ id: string; type: Type; originalId?: string | undefined; storageKey?: string | undefined; }'.",
+                "messageText": "Type 'StorageProviderBase' is not assignable to type '{ id: string; type: Type; originalId?: string | undefined; storageKey?: string | undefined; claims?: ClaimIsTag[] | undefined; }'.",
                 "category": 1,
                 "code": 2322,
                 "next": {
@@ -18091,16 +18097,16 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/manifest.ts",
-            "start": 30081,
+            "start": 30629,
             "length": 11,
             "code": 2345,
             "category": 1,
             "messageText": {
-              "messageText": "Argument of type 'StorageProviderBase | StorageStub | undefined' is not assignable to parameter of type '{ id: string; type: Type; originalId?: string | undefined; storageKey?: string | undefined; }'.",
+              "messageText": "Argument of type 'StorageProviderBase | StorageStub | undefined' is not assignable to parameter of type '{ id: string; type: Type; originalId?: string | undefined; storageKey?: string | undefined; claims?: ClaimIsTag[] | undefined; }'.",
               "category": 1,
               "code": 2345,
               "next": {
-                "messageText": "Type 'undefined' is not assignable to type '{ id: string; type: Type; originalId?: string | undefined; storageKey?: string | undefined; }'.",
+                "messageText": "Type 'undefined' is not assignable to type '{ id: string; type: Type; originalId?: string | undefined; storageKey?: string | undefined; claims?: ClaimIsTag[] | undefined; }'.",
                 "category": 1,
                 "code": 2322
               }
@@ -18108,7 +18114,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/manifest.ts",
-            "start": 30346,
+            "start": 30894,
             "length": 11,
             "code": 2322,
             "category": 1,
@@ -18125,7 +18131,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/manifest.ts",
-            "start": 32398,
+            "start": 32932,
             "length": 9,
             "code": 2345,
             "category": 1,
@@ -18133,7 +18139,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/manifest.ts",
-            "start": 40942,
+            "start": 41456,
             "length": 14,
             "messageText": "Variable 'targetParticle' is used before being assigned.",
             "category": 1,
@@ -18141,7 +18147,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/manifest.ts",
-            "start": 41572,
+            "start": 42086,
             "length": 12,
             "code": 2322,
             "category": 1,
@@ -18158,7 +18164,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/manifest.ts",
-            "start": 41812,
+            "start": 42326,
             "length": 12,
             "messageText": "Variable 'targetHandle' is used before being assigned.",
             "category": 1,
@@ -18166,7 +18172,24 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/manifest.ts",
-            "start": 44894,
+            "start": 45385,
+            "length": 10,
+            "code": 2345,
+            "category": 1,
+            "messageText": {
+              "messageText": "Argument of type 'string | null' is not assignable to parameter of type 'string'.",
+              "category": 1,
+              "code": 2345,
+              "next": {
+                "messageText": "Type 'null' is not assignable to type 'string'.",
+                "category": 1,
+                "code": 2322
+              }
+            }
+          },
+          {
+            "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/manifest.ts",
+            "start": 45640,
             "length": 17,
             "code": 2345,
             "category": 1,
@@ -18183,7 +18206,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/manifest.ts",
-            "start": 45350,
+            "start": 46096,
             "length": 4,
             "messageText": "Variable 'json' is used before being assigned.",
             "category": 1,
@@ -18191,7 +18214,41 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/manifest.ts",
-            "start": 47570,
+            "start": 46575,
+            "length": 10,
+            "code": 2345,
+            "category": 1,
+            "messageText": {
+              "messageText": "Argument of type 'string | null' is not assignable to parameter of type 'string'.",
+              "category": 1,
+              "code": 2345,
+              "next": {
+                "messageText": "Type 'null' is not assignable to type 'string'.",
+                "category": 1,
+                "code": 2322
+              }
+            }
+          },
+          {
+            "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/manifest.ts",
+            "start": 47774,
+            "length": 10,
+            "code": 2345,
+            "category": 1,
+            "messageText": {
+              "messageText": "Argument of type 'string | null' is not assignable to parameter of type 'string'.",
+              "category": 1,
+              "code": 2345,
+              "next": {
+                "messageText": "Type 'null' is not assignable to type 'string'.",
+                "category": 1,
+                "code": 2322
+              }
+            }
+          },
+          {
+            "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/manifest.ts",
+            "start": 48332,
             "length": 36,
             "messageText": "Object is possibly 'undefined'.",
             "category": 1,
@@ -18199,7 +18256,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/manifest.ts",
-            "start": 50069,
+            "start": 50910,
             "length": 25,
             "messageText": "Object is possibly 'undefined'.",
             "category": 1,
@@ -18377,7 +18434,7 @@
             "relatedInformation": [
               {
                 "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/storage-provider-base.ts",
-                "start": 3619,
+                "start": 3668,
                 "length": 7,
                 "messageText": "The expected type comes from property 'version' which is declared here on type '{ add?: { value: any; keys?: string[] | undefined; effective?: boolean | undefined; }[] | undefined; remove?: { value: any; keys?: string[] | undefined; effective?: boolean | undefined; }[] | undefined; data?: any; version?: number | undefined; originatorId?: string | undefined; barrier?: string | undefined; }'",
                 "category": 3,
@@ -18404,7 +18461,7 @@
             "relatedInformation": [
               {
                 "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/storage-provider-base.ts",
-                "start": 3619,
+                "start": 3668,
                 "length": 7,
                 "messageText": "The expected type comes from property 'version' which is declared here on type '{ add?: { value: any; keys?: string[] | undefined; effective?: boolean | undefined; }[] | undefined; remove?: { value: any; keys?: string[] | undefined; effective?: boolean | undefined; }[] | undefined; data?: any; version?: number | undefined; originatorId?: string | undefined; barrier?: string | undefined; }'",
                 "category": 3,
@@ -18511,7 +18568,7 @@
             "relatedInformation": [
               {
                 "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/storage-provider-base.ts",
-                "start": 3637,
+                "start": 3686,
                 "length": 12,
                 "messageText": "The expected type comes from property 'originatorId' which is declared here on type '{ add?: { value: any; keys?: string[] | undefined; effective?: boolean | undefined; }[] | undefined; remove?: { value: any; keys?: string[] | undefined; effective?: boolean | undefined; }[] | undefined; data?: any; version?: number | undefined; originatorId?: string | undefined; barrier?: string | undefined; }'",
                 "category": 3,
@@ -18529,7 +18586,7 @@
             "relatedInformation": [
               {
                 "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/storage-provider-base.ts",
-                "start": 3660,
+                "start": 3709,
                 "length": 7,
                 "messageText": "The expected type comes from property 'barrier' which is declared here on type '{ add?: { value: any; keys?: string[] | undefined; effective?: boolean | undefined; }[] | undefined; remove?: { value: any; keys?: string[] | undefined; effective?: boolean | undefined; }[] | undefined; data?: any; version?: number | undefined; originatorId?: string | undefined; barrier?: string | undefined; }'",
                 "category": 3,
@@ -18596,7 +18653,7 @@
             "relatedInformation": [
               {
                 "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/storage-provider-base.ts",
-                "start": 3619,
+                "start": 3668,
                 "length": 7,
                 "messageText": "The expected type comes from property 'version' which is declared here on type '{ add?: { value: any; keys?: string[] | undefined; effective?: boolean | undefined; }[] | undefined; remove?: { value: any; keys?: string[] | undefined; effective?: boolean | undefined; }[] | undefined; data?: any; version?: number | undefined; originatorId?: string | undefined; barrier?: string | undefined; }'",
                 "category": 3,
@@ -18945,7 +19002,7 @@
             "relatedInformation": [
               {
                 "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/storage-provider-base.ts",
-                "start": 3619,
+                "start": 3668,
                 "length": 7,
                 "messageText": "The expected type comes from property 'version' which is declared here on type '{ add?: { value: any; keys?: string[] | undefined; effective?: boolean | undefined; }[] | undefined; remove?: { value: any; keys?: string[] | undefined; effective?: boolean | undefined; }[] | undefined; data?: any; version?: number | undefined; originatorId?: string | undefined; barrier?: string | undefined; }'",
                 "category": 3,
@@ -19020,7 +19077,7 @@
             "relatedInformation": [
               {
                 "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/storage-provider-base.ts",
-                "start": 3619,
+                "start": 3668,
                 "length": 7,
                 "messageText": "The expected type comes from property 'version' which is declared here on type '{ add?: { value: any; keys?: string[] | undefined; effective?: boolean | undefined; }[] | undefined; remove?: { value: any; keys?: string[] | undefined; effective?: boolean | undefined; }[] | undefined; data?: any; version?: number | undefined; originatorId?: string | undefined; barrier?: string | undefined; }'",
                 "category": 3,
@@ -19038,7 +19095,7 @@
             "relatedInformation": [
               {
                 "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/storage-provider-base.ts",
-                "start": 3637,
+                "start": 3686,
                 "length": 12,
                 "messageText": "The expected type comes from property 'originatorId' which is declared here on type '{ add?: { value: any; keys?: string[] | undefined; effective?: boolean | undefined; }[] | undefined; remove?: { value: any; keys?: string[] | undefined; effective?: boolean | undefined; }[] | undefined; data?: any; version?: number | undefined; originatorId?: string | undefined; barrier?: string | undefined; }'",
                 "category": 3,
@@ -19113,7 +19170,7 @@
             "relatedInformation": [
               {
                 "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/storage-provider-base.ts",
-                "start": 3619,
+                "start": 3668,
                 "length": 7,
                 "messageText": "The expected type comes from property 'version' which is declared here on type '{ add?: { value: any; keys?: string[] | undefined; effective?: boolean | undefined; }[] | undefined; remove?: { value: any; keys?: string[] | undefined; effective?: boolean | undefined; }[] | undefined; data?: any; version?: number | undefined; originatorId?: string | undefined; barrier?: string | undefined; }'",
                 "category": 3,
@@ -19131,7 +19188,7 @@
             "relatedInformation": [
               {
                 "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/storage-provider-base.ts",
-                "start": 3637,
+                "start": 3686,
                 "length": 12,
                 "messageText": "The expected type comes from property 'originatorId' which is declared here on type '{ add?: { value: any; keys?: string[] | undefined; effective?: boolean | undefined; }[] | undefined; remove?: { value: any; keys?: string[] | undefined; effective?: boolean | undefined; }[] | undefined; data?: any; version?: number | undefined; originatorId?: string | undefined; barrier?: string | undefined; }'",
                 "category": 3,
@@ -19231,7 +19288,7 @@
             "relatedInformation": [
               {
                 "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/storage-provider-base.ts",
-                "start": 3619,
+                "start": 3668,
                 "length": 7,
                 "messageText": "The expected type comes from property 'version' which is declared here on type '{ add?: { value: any; keys?: string[] | undefined; effective?: boolean | undefined; }[] | undefined; remove?: { value: any; keys?: string[] | undefined; effective?: boolean | undefined; }[] | undefined; data?: any; version?: number | undefined; originatorId?: string | undefined; barrier?: string | undefined; }'",
                 "category": 3,
@@ -19249,7 +19306,7 @@
             "relatedInformation": [
               {
                 "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/storage-provider-base.ts",
-                "start": 3637,
+                "start": 3686,
                 "length": 12,
                 "messageText": "The expected type comes from property 'originatorId' which is declared here on type '{ add?: { value: any; keys?: string[] | undefined; effective?: boolean | undefined; }[] | undefined; remove?: { value: any; keys?: string[] | undefined; effective?: boolean | undefined; }[] | undefined; data?: any; version?: number | undefined; originatorId?: string | undefined; barrier?: string | undefined; }'",
                 "category": 3,
@@ -22951,7 +23008,7 @@
             "relatedInformation": [
               {
                 "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/storage-provider-base.ts",
-                "start": 3619,
+                "start": 3668,
                 "length": 7,
                 "messageText": "The expected type comes from property 'version' which is declared here on type '{ add?: { value: any; keys?: string[] | undefined; effective?: boolean | undefined; }[] | undefined; remove?: { value: any; keys?: string[] | undefined; effective?: boolean | undefined; }[] | undefined; data?: any; version?: number | undefined; originatorId?: string | undefined; barrier?: string | undefined; }'",
                 "category": 3,
@@ -23186,7 +23243,7 @@
             "relatedInformation": [
               {
                 "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/storage-provider-base.ts",
-                "start": 3619,
+                "start": 3668,
                 "length": 7,
                 "messageText": "The expected type comes from property 'version' which is declared here on type '{ add?: { value: any; keys?: string[] | undefined; effective?: boolean | undefined; }[] | undefined; remove?: { value: any; keys?: string[] | undefined; effective?: boolean | undefined; }[] | undefined; data?: any; version?: number | undefined; originatorId?: string | undefined; barrier?: string | undefined; }'",
                 "category": 3,
@@ -23213,7 +23270,7 @@
             "relatedInformation": [
               {
                 "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/storage-provider-base.ts",
-                "start": 3619,
+                "start": 3668,
                 "length": 7,
                 "messageText": "The expected type comes from property 'version' which is declared here on type '{ add?: { value: any; keys?: string[] | undefined; effective?: boolean | undefined; }[] | undefined; remove?: { value: any; keys?: string[] | undefined; effective?: boolean | undefined; }[] | undefined; data?: any; version?: number | undefined; originatorId?: string | undefined; barrier?: string | undefined; }'",
                 "category": 3,
@@ -23240,7 +23297,7 @@
             "relatedInformation": [
               {
                 "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/storage-provider-base.ts",
-                "start": 3619,
+                "start": 3668,
                 "length": 7,
                 "messageText": "The expected type comes from property 'version' which is declared here on type '{ add?: { value: any; keys?: string[] | undefined; effective?: boolean | undefined; }[] | undefined; remove?: { value: any; keys?: string[] | undefined; effective?: boolean | undefined; }[] | undefined; data?: any; version?: number | undefined; originatorId?: string | undefined; barrier?: string | undefined; }'",
                 "category": 3,
@@ -23433,7 +23490,7 @@
             "relatedInformation": [
               {
                 "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/storage-provider-base.ts",
-                "start": 3619,
+                "start": 3668,
                 "length": 7,
                 "messageText": "The expected type comes from property 'version' which is declared here on type '{ add?: { value: any; keys?: string[] | undefined; effective?: boolean | undefined; }[] | undefined; remove?: { value: any; keys?: string[] | undefined; effective?: boolean | undefined; }[] | undefined; data?: any; version?: number | undefined; originatorId?: string | undefined; barrier?: string | undefined; }'",
                 "category": 3,
@@ -23609,7 +23666,7 @@
             "relatedInformation": [
               {
                 "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/storage-provider-base.ts",
-                "start": 3619,
+                "start": 3668,
                 "length": 7,
                 "messageText": "The expected type comes from property 'version' which is declared here on type '{ add?: { value: any; keys?: string[] | undefined; effective?: boolean | undefined; }[] | undefined; remove?: { value: any; keys?: string[] | undefined; effective?: boolean | undefined; }[] | undefined; data?: any; version?: number | undefined; originatorId?: string | undefined; barrier?: string | undefined; }'",
                 "category": 3,
@@ -23636,7 +23693,7 @@
             "relatedInformation": [
               {
                 "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/storage-provider-base.ts",
-                "start": 3660,
+                "start": 3709,
                 "length": 7,
                 "messageText": "The expected type comes from property 'barrier' which is declared here on type '{ add?: { value: any; keys?: string[] | undefined; effective?: boolean | undefined; }[] | undefined; remove?: { value: any; keys?: string[] | undefined; effective?: boolean | undefined; }[] | undefined; data?: any; version?: number | undefined; originatorId?: string | undefined; barrier?: string | undefined; }'",
                 "category": 3,
@@ -23679,7 +23736,7 @@
             "relatedInformation": [
               {
                 "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/storage-provider-base.ts",
-                "start": 3619,
+                "start": 3668,
                 "length": 7,
                 "messageText": "The expected type comes from property 'version' which is declared here on type '{ add?: { value: any; keys?: string[] | undefined; effective?: boolean | undefined; }[] | undefined; remove?: { value: any; keys?: string[] | undefined; effective?: boolean | undefined; }[] | undefined; data?: any; version?: number | undefined; originatorId?: string | undefined; barrier?: string | undefined; }'",
                 "category": 3,
@@ -23706,7 +23763,7 @@
             "relatedInformation": [
               {
                 "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/storage-provider-base.ts",
-                "start": 3619,
+                "start": 3668,
                 "length": 7,
                 "messageText": "The expected type comes from property 'version' which is declared here on type '{ add?: { value: any; keys?: string[] | undefined; effective?: boolean | undefined; }[] | undefined; remove?: { value: any; keys?: string[] | undefined; effective?: boolean | undefined; }[] | undefined; data?: any; version?: number | undefined; originatorId?: string | undefined; barrier?: string | undefined; }'",
                 "category": 3,
@@ -24201,7 +24258,7 @@
             "length": 5,
             "code": 2345,
             "category": 1,
-            "messageText": "Argument of type 'StorageProviderBase' is not assignable to parameter of type '{ id: string; type: Type; originalId?: string | undefined; storageKey?: string | undefined; }'."
+            "messageText": "Argument of type 'StorageProviderBase' is not assignable to parameter of type '{ id: string; type: Type; originalId?: string | undefined; storageKey?: string | undefined; claims?: ClaimIsTag[] | undefined; }'."
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/planning/test/strategies/init-population-tests.ts",
@@ -25030,7 +25087,7 @@
             "code": 2345,
             "category": 1,
             "messageText": {
-              "messageText": "Argument of type 'BigCollectionStorageProvider' is not assignable to parameter of type '{ id: string; type: Type; originalId?: string | undefined; storageKey?: string | undefined; }'.",
+              "messageText": "Argument of type 'BigCollectionStorageProvider' is not assignable to parameter of type '{ id: string; type: Type; originalId?: string | undefined; storageKey?: string | undefined; claims?: ClaimIsTag[] | undefined; }'.",
               "category": 1,
               "code": 2345,
               "next": {
@@ -25057,7 +25114,7 @@
             "code": 2345,
             "category": 1,
             "messageText": {
-              "messageText": "Argument of type 'SingletonStorageProvider' is not assignable to parameter of type '{ id: string; type: Type; originalId?: string | undefined; storageKey?: string | undefined; }'.",
+              "messageText": "Argument of type 'SingletonStorageProvider' is not assignable to parameter of type '{ id: string; type: Type; originalId?: string | undefined; storageKey?: string | undefined; claims?: ClaimIsTag[] | undefined; }'.",
               "category": 1,
               "code": 2345,
               "next": {
@@ -25084,7 +25141,7 @@
             "code": 2345,
             "category": 1,
             "messageText": {
-              "messageText": "Argument of type 'CollectionStorageProvider' is not assignable to parameter of type '{ id: string; type: Type; originalId?: string | undefined; storageKey?: string | undefined; }'.",
+              "messageText": "Argument of type 'CollectionStorageProvider' is not assignable to parameter of type '{ id: string; type: Type; originalId?: string | undefined; storageKey?: string | undefined; claims?: ClaimIsTag[] | undefined; }'.",
               "category": 1,
               "code": 2345,
               "next": {
@@ -25110,7 +25167,7 @@
             "length": 8,
             "code": 2345,
             "category": 1,
-            "messageText": "Argument of type 'BigCollectionStorageProvider' is not assignable to parameter of type '{ id: string; type: Type; originalId?: string | undefined; storageKey?: string | undefined; }'."
+            "messageText": "Argument of type 'BigCollectionStorageProvider' is not assignable to parameter of type '{ id: string; type: Type; originalId?: string | undefined; storageKey?: string | undefined; claims?: ClaimIsTag[] | undefined; }'."
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/manual_tests/firebase-tests.ts",
@@ -26001,7 +26058,7 @@
             "length": 6,
             "code": 2345,
             "category": 1,
-            "messageText": "Argument of type 'StorageProviderBase' is not assignable to parameter of type '{ id: string; type: Type; originalId?: string | undefined; storageKey?: string | undefined; }'."
+            "messageText": "Argument of type 'StorageProviderBase' is not assignable to parameter of type '{ id: string; type: Type; originalId?: string | undefined; storageKey?: string | undefined; claims?: ClaimIsTag[] | undefined; }'."
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/test/arc-tests.ts",
@@ -26009,7 +26066,7 @@
             "length": 6,
             "code": 2345,
             "category": 1,
-            "messageText": "Argument of type 'StorageProviderBase' is not assignable to parameter of type '{ id: string; type: Type; originalId?: string | undefined; storageKey?: string | undefined; }'."
+            "messageText": "Argument of type 'StorageProviderBase' is not assignable to parameter of type '{ id: string; type: Type; originalId?: string | undefined; storageKey?: string | undefined; claims?: ClaimIsTag[] | undefined; }'."
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/test/arc-tests.ts",
@@ -26017,7 +26074,7 @@
             "length": 6,
             "code": 2345,
             "category": 1,
-            "messageText": "Argument of type 'StorageProviderBase' is not assignable to parameter of type '{ id: string; type: Type; originalId?: string | undefined; storageKey?: string | undefined; }'."
+            "messageText": "Argument of type 'StorageProviderBase' is not assignable to parameter of type '{ id: string; type: Type; originalId?: string | undefined; storageKey?: string | undefined; claims?: ClaimIsTag[] | undefined; }'."
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/test/arc-tests.ts",
@@ -26025,7 +26082,7 @@
             "length": 6,
             "code": 2345,
             "category": 1,
-            "messageText": "Argument of type 'StorageProviderBase' is not assignable to parameter of type '{ id: string; type: Type; originalId?: string | undefined; storageKey?: string | undefined; }'."
+            "messageText": "Argument of type 'StorageProviderBase' is not assignable to parameter of type '{ id: string; type: Type; originalId?: string | undefined; storageKey?: string | undefined; claims?: ClaimIsTag[] | undefined; }'."
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/test/arc-tests.ts",
@@ -26033,7 +26090,7 @@
             "length": 6,
             "code": 2345,
             "category": 1,
-            "messageText": "Argument of type 'StorageProviderBase' is not assignable to parameter of type '{ id: string; type: Type; originalId?: string | undefined; storageKey?: string | undefined; }'."
+            "messageText": "Argument of type 'StorageProviderBase' is not assignable to parameter of type '{ id: string; type: Type; originalId?: string | undefined; storageKey?: string | undefined; claims?: ClaimIsTag[] | undefined; }'."
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/test/arc-tests.ts",
@@ -26041,7 +26098,7 @@
             "length": 6,
             "code": 2345,
             "category": 1,
-            "messageText": "Argument of type 'StorageProviderBase' is not assignable to parameter of type '{ id: string; type: Type; originalId?: string | undefined; storageKey?: string | undefined; }'."
+            "messageText": "Argument of type 'StorageProviderBase' is not assignable to parameter of type '{ id: string; type: Type; originalId?: string | undefined; storageKey?: string | undefined; claims?: ClaimIsTag[] | undefined; }'."
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/test/arc-tests.ts",
@@ -26049,7 +26106,7 @@
             "length": 6,
             "code": 2345,
             "category": 1,
-            "messageText": "Argument of type 'StorageProviderBase' is not assignable to parameter of type '{ id: string; type: Type; originalId?: string | undefined; storageKey?: string | undefined; }'."
+            "messageText": "Argument of type 'StorageProviderBase' is not assignable to parameter of type '{ id: string; type: Type; originalId?: string | undefined; storageKey?: string | undefined; claims?: ClaimIsTag[] | undefined; }'."
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/test/arc-tests.ts",
@@ -26057,7 +26114,7 @@
             "length": 6,
             "code": 2345,
             "category": 1,
-            "messageText": "Argument of type 'StorageProviderBase' is not assignable to parameter of type '{ id: string; type: Type; originalId?: string | undefined; storageKey?: string | undefined; }'."
+            "messageText": "Argument of type 'StorageProviderBase' is not assignable to parameter of type '{ id: string; type: Type; originalId?: string | undefined; storageKey?: string | undefined; claims?: ClaimIsTag[] | undefined; }'."
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/test/arc-tests.ts",
@@ -26065,7 +26122,7 @@
             "length": 6,
             "code": 2345,
             "category": 1,
-            "messageText": "Argument of type 'StorageProviderBase' is not assignable to parameter of type '{ id: string; type: Type; originalId?: string | undefined; storageKey?: string | undefined; }'."
+            "messageText": "Argument of type 'StorageProviderBase' is not assignable to parameter of type '{ id: string; type: Type; originalId?: string | undefined; storageKey?: string | undefined; claims?: ClaimIsTag[] | undefined; }'."
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/test/arc-tests.ts",
@@ -26073,7 +26130,7 @@
             "length": 6,
             "code": 2345,
             "category": 1,
-            "messageText": "Argument of type 'StorageProviderBase' is not assignable to parameter of type '{ id: string; type: Type; originalId?: string | undefined; storageKey?: string | undefined; }'."
+            "messageText": "Argument of type 'StorageProviderBase' is not assignable to parameter of type '{ id: string; type: Type; originalId?: string | undefined; storageKey?: string | undefined; claims?: ClaimIsTag[] | undefined; }'."
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/test/arc-tests.ts",
@@ -26081,7 +26138,7 @@
             "length": 6,
             "code": 2345,
             "category": 1,
-            "messageText": "Argument of type 'StorageProviderBase' is not assignable to parameter of type '{ id: string; type: Type; originalId?: string | undefined; storageKey?: string | undefined; }'."
+            "messageText": "Argument of type 'StorageProviderBase' is not assignable to parameter of type '{ id: string; type: Type; originalId?: string | undefined; storageKey?: string | undefined; claims?: ClaimIsTag[] | undefined; }'."
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/test/arc-tests.ts",
@@ -26089,7 +26146,7 @@
             "length": 6,
             "code": 2345,
             "category": 1,
-            "messageText": "Argument of type 'StorageProviderBase' is not assignable to parameter of type '{ id: string; type: Type; originalId?: string | undefined; storageKey?: string | undefined; }'."
+            "messageText": "Argument of type 'StorageProviderBase' is not assignable to parameter of type '{ id: string; type: Type; originalId?: string | undefined; storageKey?: string | undefined; claims?: ClaimIsTag[] | undefined; }'."
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/test/arc-tests.ts",
@@ -26097,7 +26154,7 @@
             "length": 6,
             "code": 2345,
             "category": 1,
-            "messageText": "Argument of type 'StorageProviderBase' is not assignable to parameter of type '{ id: string; type: Type; originalId?: string | undefined; storageKey?: string | undefined; }'."
+            "messageText": "Argument of type 'StorageProviderBase' is not assignable to parameter of type '{ id: string; type: Type; originalId?: string | undefined; storageKey?: string | undefined; claims?: ClaimIsTag[] | undefined; }'."
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/test/arc-tests.ts",
@@ -26105,7 +26162,7 @@
             "length": 6,
             "code": 2345,
             "category": 1,
-            "messageText": "Argument of type 'StorageProviderBase' is not assignable to parameter of type '{ id: string; type: Type; originalId?: string | undefined; storageKey?: string | undefined; }'."
+            "messageText": "Argument of type 'StorageProviderBase' is not assignable to parameter of type '{ id: string; type: Type; originalId?: string | undefined; storageKey?: string | undefined; claims?: ClaimIsTag[] | undefined; }'."
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/test/arc-tests.ts",
@@ -26113,7 +26170,7 @@
             "length": 6,
             "code": 2345,
             "category": 1,
-            "messageText": "Argument of type 'StorageProviderBase' is not assignable to parameter of type '{ id: string; type: Type; originalId?: string | undefined; storageKey?: string | undefined; }'."
+            "messageText": "Argument of type 'StorageProviderBase' is not assignable to parameter of type '{ id: string; type: Type; originalId?: string | undefined; storageKey?: string | undefined; claims?: ClaimIsTag[] | undefined; }'."
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/test/arc-tests.ts",
@@ -26121,7 +26178,7 @@
             "length": 6,
             "code": 2345,
             "category": 1,
-            "messageText": "Argument of type 'StorageProviderBase' is not assignable to parameter of type '{ id: string; type: Type; originalId?: string | undefined; storageKey?: string | undefined; }'."
+            "messageText": "Argument of type 'StorageProviderBase' is not assignable to parameter of type '{ id: string; type: Type; originalId?: string | undefined; storageKey?: string | undefined; claims?: ClaimIsTag[] | undefined; }'."
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/test/arc-tests.ts",
@@ -26129,7 +26186,7 @@
             "length": 6,
             "code": 2345,
             "category": 1,
-            "messageText": "Argument of type 'StorageProviderBase' is not assignable to parameter of type '{ id: string; type: Type; originalId?: string | undefined; storageKey?: string | undefined; }'."
+            "messageText": "Argument of type 'StorageProviderBase' is not assignable to parameter of type '{ id: string; type: Type; originalId?: string | undefined; storageKey?: string | undefined; claims?: ClaimIsTag[] | undefined; }'."
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/test/arc-tests.ts",
@@ -26137,7 +26194,7 @@
             "length": 6,
             "code": 2345,
             "category": 1,
-            "messageText": "Argument of type 'StorageProviderBase' is not assignable to parameter of type '{ id: string; type: Type; originalId?: string | undefined; storageKey?: string | undefined; }'."
+            "messageText": "Argument of type 'StorageProviderBase' is not assignable to parameter of type '{ id: string; type: Type; originalId?: string | undefined; storageKey?: string | undefined; claims?: ClaimIsTag[] | undefined; }'."
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/test/arc-tests.ts",
@@ -26145,7 +26202,7 @@
             "length": 6,
             "code": 2345,
             "category": 1,
-            "messageText": "Argument of type 'StorageProviderBase' is not assignable to parameter of type '{ id: string; type: Type; originalId?: string | undefined; storageKey?: string | undefined; }'."
+            "messageText": "Argument of type 'StorageProviderBase' is not assignable to parameter of type '{ id: string; type: Type; originalId?: string | undefined; storageKey?: string | undefined; claims?: ClaimIsTag[] | undefined; }'."
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/test/arc-tests.ts",
@@ -26153,7 +26210,7 @@
             "length": 6,
             "code": 2345,
             "category": 1,
-            "messageText": "Argument of type 'StorageProviderBase' is not assignable to parameter of type '{ id: string; type: Type; originalId?: string | undefined; storageKey?: string | undefined; }'."
+            "messageText": "Argument of type 'StorageProviderBase' is not assignable to parameter of type '{ id: string; type: Type; originalId?: string | undefined; storageKey?: string | undefined; claims?: ClaimIsTag[] | undefined; }'."
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/test/arc-tests.ts",
@@ -26161,7 +26218,7 @@
             "length": 6,
             "code": 2345,
             "category": 1,
-            "messageText": "Argument of type 'StorageProviderBase' is not assignable to parameter of type '{ id: string; type: Type; originalId?: string | undefined; storageKey?: string | undefined; }'."
+            "messageText": "Argument of type 'StorageProviderBase' is not assignable to parameter of type '{ id: string; type: Type; originalId?: string | undefined; storageKey?: string | undefined; claims?: ClaimIsTag[] | undefined; }'."
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/test/arc-tests.ts",
@@ -26169,7 +26226,7 @@
             "length": 6,
             "code": 2345,
             "category": 1,
-            "messageText": "Argument of type 'StorageProviderBase' is not assignable to parameter of type '{ id: string; type: Type; originalId?: string | undefined; storageKey?: string | undefined; }'."
+            "messageText": "Argument of type 'StorageProviderBase' is not assignable to parameter of type '{ id: string; type: Type; originalId?: string | undefined; storageKey?: string | undefined; claims?: ClaimIsTag[] | undefined; }'."
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/test/arc-tests.ts",
@@ -26177,7 +26234,7 @@
             "length": 6,
             "code": 2345,
             "category": 1,
-            "messageText": "Argument of type 'StorageProviderBase' is not assignable to parameter of type '{ id: string; type: Type; originalId?: string | undefined; storageKey?: string | undefined; }'."
+            "messageText": "Argument of type 'StorageProviderBase' is not assignable to parameter of type '{ id: string; type: Type; originalId?: string | undefined; storageKey?: string | undefined; claims?: ClaimIsTag[] | undefined; }'."
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/test/arc-tests.ts",
@@ -26185,7 +26242,7 @@
             "length": 6,
             "code": 2345,
             "category": 1,
-            "messageText": "Argument of type 'StorageProviderBase' is not assignable to parameter of type '{ id: string; type: Type; originalId?: string | undefined; storageKey?: string | undefined; }'."
+            "messageText": "Argument of type 'StorageProviderBase' is not assignable to parameter of type '{ id: string; type: Type; originalId?: string | undefined; storageKey?: string | undefined; claims?: ClaimIsTag[] | undefined; }'."
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/test/arc-tests.ts",
@@ -26193,7 +26250,7 @@
             "length": 6,
             "code": 2345,
             "category": 1,
-            "messageText": "Argument of type 'StorageProviderBase' is not assignable to parameter of type '{ id: string; type: Type; originalId?: string | undefined; storageKey?: string | undefined; }'."
+            "messageText": "Argument of type 'StorageProviderBase' is not assignable to parameter of type '{ id: string; type: Type; originalId?: string | undefined; storageKey?: string | undefined; claims?: ClaimIsTag[] | undefined; }'."
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/test/arc-tests.ts",
@@ -26201,7 +26258,7 @@
             "length": 6,
             "code": 2345,
             "category": 1,
-            "messageText": "Argument of type 'StorageProviderBase' is not assignable to parameter of type '{ id: string; type: Type; originalId?: string | undefined; storageKey?: string | undefined; }'."
+            "messageText": "Argument of type 'StorageProviderBase' is not assignable to parameter of type '{ id: string; type: Type; originalId?: string | undefined; storageKey?: string | undefined; claims?: ClaimIsTag[] | undefined; }'."
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/test/arc-tests.ts",
@@ -26209,7 +26266,7 @@
             "length": 6,
             "code": 2345,
             "category": 1,
-            "messageText": "Argument of type 'StorageProviderBase' is not assignable to parameter of type '{ id: string; type: Type; originalId?: string | undefined; storageKey?: string | undefined; }'."
+            "messageText": "Argument of type 'StorageProviderBase' is not assignable to parameter of type '{ id: string; type: Type; originalId?: string | undefined; storageKey?: string | undefined; claims?: ClaimIsTag[] | undefined; }'."
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/test/arc-tests.ts",
@@ -26217,7 +26274,7 @@
             "length": 6,
             "code": 2345,
             "category": 1,
-            "messageText": "Argument of type 'StorageProviderBase' is not assignable to parameter of type '{ id: string; type: Type; originalId?: string | undefined; storageKey?: string | undefined; }'."
+            "messageText": "Argument of type 'StorageProviderBase' is not assignable to parameter of type '{ id: string; type: Type; originalId?: string | undefined; storageKey?: string | undefined; claims?: ClaimIsTag[] | undefined; }'."
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/test/arc-tests.ts",
@@ -26225,7 +26282,7 @@
             "length": 6,
             "code": 2345,
             "category": 1,
-            "messageText": "Argument of type 'StorageProviderBase' is not assignable to parameter of type '{ id: string; type: Type; originalId?: string | undefined; storageKey?: string | undefined; }'."
+            "messageText": "Argument of type 'StorageProviderBase' is not assignable to parameter of type '{ id: string; type: Type; originalId?: string | undefined; storageKey?: string | undefined; claims?: ClaimIsTag[] | undefined; }'."
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/test/arc-tests.ts",
@@ -26233,7 +26290,7 @@
             "length": 6,
             "code": 2345,
             "category": 1,
-            "messageText": "Argument of type 'StorageProviderBase' is not assignable to parameter of type '{ id: string; type: Type; originalId?: string | undefined; storageKey?: string | undefined; }'."
+            "messageText": "Argument of type 'StorageProviderBase' is not assignable to parameter of type '{ id: string; type: Type; originalId?: string | undefined; storageKey?: string | undefined; claims?: ClaimIsTag[] | undefined; }'."
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/test/arc-tests.ts",
@@ -26241,7 +26298,7 @@
             "length": 6,
             "code": 2345,
             "category": 1,
-            "messageText": "Argument of type 'StorageProviderBase' is not assignable to parameter of type '{ id: string; type: Type; originalId?: string | undefined; storageKey?: string | undefined; }'."
+            "messageText": "Argument of type 'StorageProviderBase' is not assignable to parameter of type '{ id: string; type: Type; originalId?: string | undefined; storageKey?: string | undefined; claims?: ClaimIsTag[] | undefined; }'."
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/test/arc-tests.ts",
@@ -26249,7 +26306,7 @@
             "length": 6,
             "code": 2345,
             "category": 1,
-            "messageText": "Argument of type 'StorageProviderBase' is not assignable to parameter of type '{ id: string; type: Type; originalId?: string | undefined; storageKey?: string | undefined; }'."
+            "messageText": "Argument of type 'StorageProviderBase' is not assignable to parameter of type '{ id: string; type: Type; originalId?: string | undefined; storageKey?: string | undefined; claims?: ClaimIsTag[] | undefined; }'."
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/test/arc-tests.ts",
@@ -26293,7 +26350,7 @@
             "length": 8,
             "code": 2345,
             "category": 1,
-            "messageText": "Argument of type 'SingletonStorageProvider' is not assignable to parameter of type '{ id: string; type: Type; originalId?: string | undefined; storageKey?: string | undefined; }'."
+            "messageText": "Argument of type 'SingletonStorageProvider' is not assignable to parameter of type '{ id: string; type: Type; originalId?: string | undefined; storageKey?: string | undefined; claims?: ClaimIsTag[] | undefined; }'."
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/test/arc-tests.ts",
@@ -26301,7 +26358,7 @@
             "length": 8,
             "code": 2345,
             "category": 1,
-            "messageText": "Argument of type 'SingletonStorageProvider' is not assignable to parameter of type '{ id: string; type: Type; originalId?: string | undefined; storageKey?: string | undefined; }'."
+            "messageText": "Argument of type 'SingletonStorageProvider' is not assignable to parameter of type '{ id: string; type: Type; originalId?: string | undefined; storageKey?: string | undefined; claims?: ClaimIsTag[] | undefined; }'."
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/test/arc-tests.ts",
@@ -26335,7 +26392,7 @@
             "length": 5,
             "code": 2345,
             "category": 1,
-            "messageText": "Argument of type 'CollectionStorageProvider' is not assignable to parameter of type '{ id: string; type: Type; originalId?: string | undefined; storageKey?: string | undefined; }'."
+            "messageText": "Argument of type 'CollectionStorageProvider' is not assignable to parameter of type '{ id: string; type: Type; originalId?: string | undefined; storageKey?: string | undefined; claims?: ClaimIsTag[] | undefined; }'."
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/test/arc-tests.ts",
@@ -26343,7 +26400,7 @@
             "length": 8,
             "code": 2345,
             "category": 1,
-            "messageText": "Argument of type 'SingletonStorageProvider' is not assignable to parameter of type '{ id: string; type: Type; originalId?: string | undefined; storageKey?: string | undefined; }'."
+            "messageText": "Argument of type 'SingletonStorageProvider' is not assignable to parameter of type '{ id: string; type: Type; originalId?: string | undefined; storageKey?: string | undefined; claims?: ClaimIsTag[] | undefined; }'."
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/test/arc-tests.ts",
@@ -26351,7 +26408,7 @@
             "length": 8,
             "code": 2345,
             "category": 1,
-            "messageText": "Argument of type 'CollectionStorageProvider' is not assignable to parameter of type '{ id: string; type: Type; originalId?: string | undefined; storageKey?: string | undefined; }'."
+            "messageText": "Argument of type 'CollectionStorageProvider' is not assignable to parameter of type '{ id: string; type: Type; originalId?: string | undefined; storageKey?: string | undefined; claims?: ClaimIsTag[] | undefined; }'."
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/test/arc-tests.ts",
@@ -26359,7 +26416,7 @@
             "length": 8,
             "code": 2345,
             "category": 1,
-            "messageText": "Argument of type 'BigCollectionStorageProvider' is not assignable to parameter of type '{ id: string; type: Type; originalId?: string | undefined; storageKey?: string | undefined; }'."
+            "messageText": "Argument of type 'BigCollectionStorageProvider' is not assignable to parameter of type '{ id: string; type: Type; originalId?: string | undefined; storageKey?: string | undefined; claims?: ClaimIsTag[] | undefined; }'."
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/test/arc-tests.ts",
@@ -26383,7 +26440,7 @@
             "length": 9,
             "code": 2345,
             "category": 1,
-            "messageText": "Argument of type 'CollectionStorageProvider' is not assignable to parameter of type '{ id: string; type: Type; originalId?: string | undefined; storageKey?: string | undefined; }'."
+            "messageText": "Argument of type 'CollectionStorageProvider' is not assignable to parameter of type '{ id: string; type: Type; originalId?: string | undefined; storageKey?: string | undefined; claims?: ClaimIsTag[] | undefined; }'."
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/test/arc-tests.ts",
@@ -27688,7 +27745,7 @@
             "length": 8,
             "code": 2345,
             "category": 1,
-            "messageText": "Argument of type 'CollectionStorageProvider' is not assignable to parameter of type '{ id: string; type: Type; originalId?: string | undefined; storageKey?: string | undefined; }'."
+            "messageText": "Argument of type 'CollectionStorageProvider' is not assignable to parameter of type '{ id: string; type: Type; originalId?: string | undefined; storageKey?: string | undefined; claims?: ClaimIsTag[] | undefined; }'."
           }
         ]
       ],
@@ -27702,7 +27759,7 @@
             "length": 8,
             "code": 2345,
             "category": 1,
-            "messageText": "Argument of type 'SingletonStorageProvider' is not assignable to parameter of type '{ id: string; type: Type; originalId?: string | undefined; storageKey?: string | undefined; }'."
+            "messageText": "Argument of type 'SingletonStorageProvider' is not assignable to parameter of type '{ id: string; type: Type; originalId?: string | undefined; storageKey?: string | undefined; claims?: ClaimIsTag[] | undefined; }'."
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/test/particle-api-test.ts",
@@ -27710,7 +27767,7 @@
             "length": 8,
             "code": 2345,
             "category": 1,
-            "messageText": "Argument of type 'StorageProviderBase' is not assignable to parameter of type '{ id: string; type: Type; originalId?: string | undefined; storageKey?: string | undefined; }'."
+            "messageText": "Argument of type 'StorageProviderBase' is not assignable to parameter of type '{ id: string; type: Type; originalId?: string | undefined; storageKey?: string | undefined; claims?: ClaimIsTag[] | undefined; }'."
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/test/particle-api-test.ts",
@@ -27726,7 +27783,7 @@
             "length": 11,
             "code": 2345,
             "category": 1,
-            "messageText": "Argument of type 'StorageProviderBase' is not assignable to parameter of type '{ id: string; type: Type; originalId?: string | undefined; storageKey?: string | undefined; }'."
+            "messageText": "Argument of type 'StorageProviderBase' is not assignable to parameter of type '{ id: string; type: Type; originalId?: string | undefined; storageKey?: string | undefined; claims?: ClaimIsTag[] | undefined; }'."
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/test/particle-api-test.ts",
@@ -27734,7 +27791,7 @@
             "length": 11,
             "code": 2345,
             "category": 1,
-            "messageText": "Argument of type 'StorageProviderBase' is not assignable to parameter of type '{ id: string; type: Type; originalId?: string | undefined; storageKey?: string | undefined; }'."
+            "messageText": "Argument of type 'StorageProviderBase' is not assignable to parameter of type '{ id: string; type: Type; originalId?: string | undefined; storageKey?: string | undefined; claims?: ClaimIsTag[] | undefined; }'."
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/test/particle-api-test.ts",
@@ -27742,7 +27799,7 @@
             "length": 11,
             "code": 2345,
             "category": 1,
-            "messageText": "Argument of type 'StorageProviderBase' is not assignable to parameter of type '{ id: string; type: Type; originalId?: string | undefined; storageKey?: string | undefined; }'."
+            "messageText": "Argument of type 'StorageProviderBase' is not assignable to parameter of type '{ id: string; type: Type; originalId?: string | undefined; storageKey?: string | undefined; claims?: ClaimIsTag[] | undefined; }'."
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/test/particle-api-test.ts",
@@ -27750,7 +27807,7 @@
             "length": 11,
             "code": 2345,
             "category": 1,
-            "messageText": "Argument of type 'StorageProviderBase' is not assignable to parameter of type '{ id: string; type: Type; originalId?: string | undefined; storageKey?: string | undefined; }'."
+            "messageText": "Argument of type 'StorageProviderBase' is not assignable to parameter of type '{ id: string; type: Type; originalId?: string | undefined; storageKey?: string | undefined; claims?: ClaimIsTag[] | undefined; }'."
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/test/particle-api-test.ts",
@@ -27758,7 +27815,7 @@
             "length": 11,
             "code": 2345,
             "category": 1,
-            "messageText": "Argument of type 'StorageProviderBase' is not assignable to parameter of type '{ id: string; type: Type; originalId?: string | undefined; storageKey?: string | undefined; }'."
+            "messageText": "Argument of type 'StorageProviderBase' is not assignable to parameter of type '{ id: string; type: Type; originalId?: string | undefined; storageKey?: string | undefined; claims?: ClaimIsTag[] | undefined; }'."
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/test/particle-api-test.ts",
@@ -27766,7 +27823,7 @@
             "length": 11,
             "code": 2345,
             "category": 1,
-            "messageText": "Argument of type 'CollectionStorageProvider' is not assignable to parameter of type '{ id: string; type: Type; originalId?: string | undefined; storageKey?: string | undefined; }'."
+            "messageText": "Argument of type 'CollectionStorageProvider' is not assignable to parameter of type '{ id: string; type: Type; originalId?: string | undefined; storageKey?: string | undefined; claims?: ClaimIsTag[] | undefined; }'."
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/test/particle-api-test.ts",
@@ -27774,7 +27831,7 @@
             "length": 12,
             "code": 2345,
             "category": 1,
-            "messageText": "Argument of type 'StorageProviderBase' is not assignable to parameter of type '{ id: string; type: Type; originalId?: string | undefined; storageKey?: string | undefined; }'."
+            "messageText": "Argument of type 'StorageProviderBase' is not assignable to parameter of type '{ id: string; type: Type; originalId?: string | undefined; storageKey?: string | undefined; claims?: ClaimIsTag[] | undefined; }'."
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/test/particle-api-test.ts",
@@ -27782,7 +27839,7 @@
             "length": 8,
             "code": 2345,
             "category": 1,
-            "messageText": "Argument of type 'BigCollectionStorageProvider' is not assignable to parameter of type '{ id: string; type: Type; originalId?: string | undefined; storageKey?: string | undefined; }'."
+            "messageText": "Argument of type 'BigCollectionStorageProvider' is not assignable to parameter of type '{ id: string; type: Type; originalId?: string | undefined; storageKey?: string | undefined; claims?: ClaimIsTag[] | undefined; }'."
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/test/particle-api-test.ts",
@@ -27790,7 +27847,7 @@
             "length": 8,
             "code": 2345,
             "category": 1,
-            "messageText": "Argument of type 'BigCollectionStorageProvider' is not assignable to parameter of type '{ id: string; type: Type; originalId?: string | undefined; storageKey?: string | undefined; }'."
+            "messageText": "Argument of type 'BigCollectionStorageProvider' is not assignable to parameter of type '{ id: string; type: Type; originalId?: string | undefined; storageKey?: string | undefined; claims?: ClaimIsTag[] | undefined; }'."
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/test/particle-api-test.ts",
@@ -27798,7 +27855,7 @@
             "length": 8,
             "code": 2345,
             "category": 1,
-            "messageText": "Argument of type 'StorageProviderBase' is not assignable to parameter of type '{ id: string; type: Type; originalId?: string | undefined; storageKey?: string | undefined; }'."
+            "messageText": "Argument of type 'StorageProviderBase' is not assignable to parameter of type '{ id: string; type: Type; originalId?: string | undefined; storageKey?: string | undefined; claims?: ClaimIsTag[] | undefined; }'."
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/test/particle-api-test.ts",
@@ -28041,11 +28098,11 @@
             "code": 2345,
             "category": 1,
             "messageText": {
-              "messageText": "Argument of type 'StorageProviderBase | StorageStub | undefined' is not assignable to parameter of type '{ id: string; type: Type; originalId?: string | undefined; storageKey?: string | undefined; }'.",
+              "messageText": "Argument of type 'StorageProviderBase | StorageStub | undefined' is not assignable to parameter of type '{ id: string; type: Type; originalId?: string | undefined; storageKey?: string | undefined; claims?: ClaimIsTag[] | undefined; }'.",
               "category": 1,
               "code": 2345,
               "next": {
-                "messageText": "Type 'undefined' is not assignable to type '{ id: string; type: Type; originalId?: string | undefined; storageKey?: string | undefined; }'.",
+                "messageText": "Type 'undefined' is not assignable to type '{ id: string; type: Type; originalId?: string | undefined; storageKey?: string | undefined; claims?: ClaimIsTag[] | undefined; }'.",
                 "category": 1,
                 "code": 2322
               }

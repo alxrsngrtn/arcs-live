@@ -1,18 +1,11 @@
-commit 84b9386f17f79dd423792739067a7f9afd05a2b6
+commit 7c721a7c10f5c0a11c12c5875d4ff872ea244fbb
 Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
-Date:   Wed Jul 3 11:33:49 2019 +1000
+Date:   Wed Jul 3 15:30:47 2019 +1000
 
-    Refactors the ParticleClaimStatement AST node. (#3280)
+    Adds syntax support for datastore claims. (#3281)
     
-    * Refactors the ParticleClaimStatement AST node.
+    Syntax only, analyser in a follow up PR.
     
-    This pulls out an Expression field, similar to what we did for Checks.
-    This makes the code reusable for datastore claims (since they don't have handles), and will be useful for building boolean expressions in claims.
-    
-    * Store ClaimExpression on edges instead of Claims
-    
-    The Claim.handle field is irrelevant for edges, only the expression
-    actually matters. Also this will be needed for datastore claims, which don't
-    have a handle name, but will need to put claims on edges.
-    
-    * Review comments
+    I was able to reuse some of the existing Claim classes, but had to add
+    new AST nodes for datastore claims, because the syntax is slightly
+    different (there's no handle name, and "derives from" is not supported).

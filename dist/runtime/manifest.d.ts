@@ -19,6 +19,7 @@ import { StorageProviderBase } from './storage/storage-provider-base.js';
 import { StorageProviderFactory } from './storage/storage-provider-factory.js';
 import { EntityType, InterfaceType, Type } from './type.js';
 import { Dictionary } from './hot.js';
+import { ClaimIsTag } from './particle-claim.js';
 export declare class ManifestError extends Error {
     location: AstNode.SourceLocation;
     key: string;
@@ -33,7 +34,9 @@ export declare class StorageStub {
     referenceMode: boolean;
     originalId: string;
     description: string;
-    constructor(type: Type, id: string, name: string, storageKey: string, storageProviderFactory: StorageProviderFactory, originalId: string);
+    /** Trust tags claimed by this data store. */
+    claims: ClaimIsTag[];
+    constructor(type: Type, id: string, name: string, storageKey: string, storageProviderFactory: StorageProviderFactory, originalId: string, claims: ClaimIsTag[]);
     readonly version: number;
     inflate(): Promise<StorageProviderBase>;
     toLiteral(): any;
@@ -92,9 +95,9 @@ export declare class Manifest {
         key: string;
         value: string;
     }[]): void;
-    createStore(type: Type, name: string, id: string, tags: string[], storageKey?: string): Promise<StorageProviderBase | StorageStub>;
+    createStore(type: Type, name: string, id: string, tags: string[], claims?: ClaimIsTag[], storageKey?: string): Promise<StorageProviderBase | StorageStub>;
     _addStore(store: StorageProviderBase | StorageStub, tags: string[]): StorageProviderBase | StorageStub;
-    newStorageStub(type: Type, name: string, id: string, storageKey: string, tags: string[], originalId: string): StorageProviderBase | StorageStub;
+    newStorageStub(type: Type, name: string, id: string, storageKey: string, tags: string[], originalId: string, claims: ClaimIsTag[]): StorageProviderBase | StorageStub;
     _find<a>(manifestFinder: ManifestFinder<a>): a;
     _findAll<a>(manifestFinder: ManifestFinderGenerator<a>): IterableIterator<a>;
     findSchemaByName(name: string): Schema;

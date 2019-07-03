@@ -2023,6 +2023,21 @@ resource SomeName
                 ]),
             ]));
         });
+        it('data stores can make claims', async () => {
+            const manifest = await Manifest.parse(`
+        store NobId of NobIdStore {Text nobId} in NobIdJson
+          claim is property1 and is property2
+        resource NobIdJson
+          start
+          [{"nobId": "12345"}]
+      `);
+            assert.lengthOf(manifest.stores, 1);
+            const store = manifest.stores[0];
+            assert.lengthOf(store.claims, 2);
+            assert.equal(store.claims[0].tag, 'property1');
+            assert.equal(store.claims[1].tag, 'property2');
+            assert.include(manifest.toString(), '  claim is property1 and is property2');
+        });
         it(`doesn't allow mixing 'and' and 'or' operations without nesting`, async () => {
             assertThrowsAsync(async () => await Manifest.parse(`
         particle A
@@ -2030,7 +2045,7 @@ resource SomeName
           check input is property1 or is property2 and is property3
       `), `You cannot combine 'and' and 'or' operations in a single check expression.`);
         });
-        it('can round-trip checks and claims', async () => {
+        it('can round-trip particles with checks and claims', async () => {
             const manifestString = `particle TestParticle in 'a.js'
   in T {} input1
   in T {} input2
@@ -2047,7 +2062,7 @@ resource SomeName
   consume parentSlot
     provide childSlot`;
             const manifest = await Manifest.parse(manifestString);
-            assert.equal(manifestString, manifest.toString());
+            assert.equal(manifest.toString(), manifestString);
         });
         it('fails for unknown handle names', async () => {
             assertThrowsAsync(async () => await Manifest.parse(`

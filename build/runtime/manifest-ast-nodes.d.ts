@@ -83,7 +83,7 @@ export interface Import extends BaseNode {
 export interface ManifestStorage extends BaseNode {
     kind: 'store';
     name: string;
-    type: string;
+    type: ManifestStorageType;
     id: string | null;
     originalId: string | null;
     version: number;
@@ -91,6 +91,12 @@ export interface ManifestStorage extends BaseNode {
     source: string;
     origin: string;
     description: string | null;
+    claim: ManifestStorageClaim;
+}
+export declare type ManifestStorageType = SchemaInline | CollectionType | BigCollectionType | TypeName;
+export interface ManifestStorageClaim extends BaseNode {
+    kind: 'manifest-storage-claim';
+    tags: string[];
 }
 export interface ManifestStorageSource {
     origin: string;
@@ -451,7 +457,6 @@ export declare type Annotation = string;
 export declare type Indent = number;
 export declare type LocalName = string;
 export declare type Manifest = ManifestItem[];
-export declare type ManifestStorageItem = string;
 export declare type ManifestStorageDescription = string;
 export declare type Modality = string;
 export declare type ReservedWord = string;

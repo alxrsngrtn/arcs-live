@@ -24,6 +24,7 @@ import { TypeChecker } from './recipe/type-checker.js';
 import { Schema } from './schema.js';
 import { StorageProviderFactory } from './storage/storage-provider-factory.js';
 import { BigCollectionType, CollectionType, EntityType, InterfaceType, ReferenceType, SlotType, Type, TypeVariable } from './type.js';
+import { ClaimIsTag } from './particle-claim.js';
 export class ManifestError extends Error {
     constructor(location, message) {
         super(message);
@@ -33,7 +34,7 @@ export class ManifestError extends Error {
 // TODO(shans): Make sure that after refactor Storage objects have a lifecycle and can be directly used
 // deflated rather than requiring this stub.
 export class StorageStub {
-    constructor(type, id, name, storageKey, storageProviderFactory, originalId) {
+    constructor(type, id, name, storageKey, storageProviderFactory, originalId, claims) {
         this.referenceMode = false;
         this.type = type;
         this.id = id;
@@ -41,6 +42,7 @@ export class StorageStub {
         this.storageKey = storageKey;
         this.storageProviderFactory = storageProviderFactory;
         this.originalId = originalId;
+        this.claims = claims;
     }
     get version() {
         return undefined; // Fake to match StorageProviderBase.
@@ -71,6 +73,9 @@ export class StorageStub {
         // TODO(shans): there's a 'this.source' in StorageProviderBase which is sometimes
         // serialized here too - could it ever be part of StorageStub?
         results.push(handleStr.join(' '));
+        if (this.claims.length > 0) {
+            results.push(`  claim is ${this.claims.map(claim => claim.tag).join(' and is ')}`);
+        }
         if (this.description) {
             results.push(`  description \`${this.description}\``);
         }
@@ -215,10 +220,11 @@ export class Manifest {
     }
     // TODO: newParticle, Schema, etc.
     // TODO: simplify() / isValid().
-    async createStore(type, name, id, tags, storageKey) {
+    async createStore(type, name, id, tags, claims, storageKey) {
         const store = await this.storageProviderFactory.construct(id, type, storageKey || `volatile://${this.id}`);
         assert(store.version !== null);
         store.name = name;
+        store.claims = claims || [];
         this.storeManifestUrls.set(store.id, this.fileName);
         return this._addStore(store, tags);
     }
@@ -227,8 +233,8 @@ export class Manifest {
         this.storeTags.set(store, tags ? tags : []);
         return store;
     }
-    newStorageStub(type, name, id, storageKey, tags, originalId) {
-        return this._addStore(new StorageStub(type, id, name, storageKey, this.storageProviderFactory, originalId), tags);
+    newStorageStub(type, name, id, storageKey, tags, originalId, claims) {
+        return this._addStore(new StorageStub(type, id, name, storageKey, this.storageProviderFactory, originalId, claims), tags);
     }
     _find(manifestFinder) {
         let result = manifestFinder(this);
@@ -1029,7 +1035,7 @@ ${e.message}
         const name = item.name;
         let id = item.id;
         const originalId = item.originalId;
-        const type = item.type.model;
+        const type = item.type['model']; // Model added in _augmentAstWithTypes.
         if (id == null) {
             id = `${manifest._id}store${manifest._stores.length}`;
         }
@@ -1037,10 +1043,14 @@ ${e.message}
         if (tags == null) {
             tags = [];
         }
+        const claims = [];
+        if (item.claim) {
+            item.claim.tags.forEach(tag => claims.push(new ClaimIsTag(/* isNot= */ false, tag)));
+        }
         // Instead of creating links to remote firebase during manifest parsing,
         // we generate storage stubs that contain the relevant information.
         if (item.origin === 'storage') {
-            manifest.newStorageStub(type, name, id, item.source, tags, originalId);
+            manifest.newStorageStub(type, name, id, item.source, tags, originalId, claims);
             return;
         }
         let json;
@@ -1077,7 +1087,7 @@ ${e.message}
         }
         else {
             if (entities.length === 0) {
-                await Manifest._createStore(manifest, type, name, id, tags, item, originalId);
+                await Manifest._createStore(manifest, type, name, id, tags, item, originalId, claims);
                 return;
             }
             entities = entities.slice(entities.length - 1);
@@ -1105,7 +1115,7 @@ ${e.message}
             }
         }
         const version = item.version || 0;
-        const store = await Manifest._createStore(manifest, type, name, id, tags, item, originalId);
+        const store = await Manifest._createStore(manifest, type, name, id, tags, item, originalId, claims);
         // While the referenceMode hack exists, we need to look at the entities being stored to
         // determine whether this store should be in referenceMode or not.
         // TODO(shans): Eventually the actual type will need to be part of the determination too.
@@ -1139,8 +1149,8 @@ ${e.message}
         // tslint:disable-next-line: no-any
         await store.fromLiteral({ version, model });
     }
-    static async _createStore(manifest, type, name, id, tags, item, originalId) {
-        const store = await manifest.createStore(type, name, id, tags);
+    static async _createStore(manifest, type, name, id, tags, item, originalId, claims) {
+        const store = await manifest.createStore(type, name, id, tags, claims);
         // TODO(lindner): Property 'source' does not exist on type 'StorageStub | StorageProviderBase'.
         store['source'] = item.source;
         store.description = item.description;

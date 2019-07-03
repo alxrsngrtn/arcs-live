@@ -16,6 +16,7 @@ import { KeyBase } from './key-base.js';
 import { Store, BigCollectionStore, CollectionStore, SingletonStore } from '../store.js';
 import { PropagatedException } from '../arc-exceptions.js';
 import { Dictionary, Consumer } from '../hot.js';
+import { ClaimIsTag } from '../particle-claim.js';
 declare type Callback = Consumer<Dictionary<any>>;
 /**
  * Methods that must be implemented by a Singleton Storage Provider
@@ -99,6 +100,8 @@ export declare abstract class StorageProviderBase implements Comparable<StorageP
     name: string;
     readonly source: string | null;
     description: string;
+    /** Trust tags claimed by this data store. */
+    claims: ClaimIsTag[];
     protected constructor(type: Type, name: string, id: string, key: string);
     enableReferenceMode(): void;
     readonly storageKey: string;

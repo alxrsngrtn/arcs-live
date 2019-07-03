@@ -87,6 +87,7 @@
 						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="storagestub.html#claims" class="tsd-kind-icon">claims</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="storagestub.html#description" class="tsd-kind-icon">description</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="storagestub.html#id" class="tsd-kind-icon">id</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="storagestub.html#name" class="tsd-kind-icon">name</a></li>
@@ -121,13 +122,13 @@
 					<a name="constructor" class="tsd-anchor"></a>
 					<h3>constructor</h3>
 					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">new <wbr>Storage<wbr>Stub<span class="tsd-signature-symbol">(</span>type<span class="tsd-signature-symbol">: </span><a href="type.html" class="tsd-signature-type">Type</a>, id<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, name<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, storageKey<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, storageProviderFactory<span class="tsd-signature-symbol">: </span><a href="storageproviderfactory.html" class="tsd-signature-type">StorageProviderFactory</a>, originalId<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="storagestub.html" class="tsd-signature-type">StorageStub</a></li>
+						<li class="tsd-signature tsd-kind-icon">new <wbr>Storage<wbr>Stub<span class="tsd-signature-symbol">(</span>type<span class="tsd-signature-symbol">: </span><a href="type.html" class="tsd-signature-type">Type</a>, id<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, name<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, storageKey<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, storageProviderFactory<span class="tsd-signature-symbol">: </span><a href="storageproviderfactory.html" class="tsd-signature-type">StorageProviderFactory</a>, originalId<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, claims<span class="tsd-signature-symbol">: </span><a href="claimistag.html" class="tsd-signature-type">ClaimIsTag</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="storagestub.html" class="tsd-signature-type">StorageStub</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/84b9386/src/runtime/manifest.ts#L59">src/runtime/manifest.ts:59</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/7c721a7/src/runtime/manifest.ts#L62">src/runtime/manifest.ts:62</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -150,6 +151,9 @@
 								<li>
 									<h5>originalId: <span class="tsd-signature-type">string</span></h5>
 								</li>
+								<li>
+									<h5>claims: <a href="claimistag.html" class="tsd-signature-type">ClaimIsTag</a><span class="tsd-signature-symbol">[]</span></h5>
+								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <a href="storagestub.html" class="tsd-signature-type">StorageStub</a></h4>
 						</li>
@@ -159,12 +163,27 @@
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Properties</h2>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="claims" class="tsd-anchor"></a>
+					<h3>claims</h3>
+					<div class="tsd-signature tsd-kind-icon">claims<span class="tsd-signature-symbol">:</span> <a href="claimistag.html" class="tsd-signature-type">ClaimIsTag</a><span class="tsd-signature-symbol">[]</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/7c721a7/src/runtime/manifest.ts#L62">src/runtime/manifest.ts:62</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Trust tags claimed by this data store.</p>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
 					<a name="description" class="tsd-anchor"></a>
 					<h3>description</h3>
 					<div class="tsd-signature tsd-kind-icon">description<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/84b9386/src/runtime/manifest.ts#L59">src/runtime/manifest.ts:59</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/7c721a7/src/runtime/manifest.ts#L60">src/runtime/manifest.ts:60</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -174,7 +193,7 @@
 					<div class="tsd-signature tsd-kind-icon">id<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/84b9386/src/runtime/manifest.ts#L53">src/runtime/manifest.ts:53</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/7c721a7/src/runtime/manifest.ts#L54">src/runtime/manifest.ts:54</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -184,7 +203,7 @@
 					<div class="tsd-signature tsd-kind-icon">name<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/84b9386/src/runtime/manifest.ts#L54">src/runtime/manifest.ts:54</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/7c721a7/src/runtime/manifest.ts#L55">src/runtime/manifest.ts:55</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -194,7 +213,7 @@
 					<div class="tsd-signature tsd-kind-icon">original<wbr>Id<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/84b9386/src/runtime/manifest.ts#L58">src/runtime/manifest.ts:58</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/7c721a7/src/runtime/manifest.ts#L59">src/runtime/manifest.ts:59</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -204,7 +223,7 @@
 					<div class="tsd-signature tsd-kind-icon">reference<wbr>Mode<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> =&nbsp;false</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/84b9386/src/runtime/manifest.ts#L57">src/runtime/manifest.ts:57</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/7c721a7/src/runtime/manifest.ts#L58">src/runtime/manifest.ts:58</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -214,7 +233,7 @@
 					<div class="tsd-signature tsd-kind-icon">storage<wbr>Key<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/84b9386/src/runtime/manifest.ts#L55">src/runtime/manifest.ts:55</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/7c721a7/src/runtime/manifest.ts#L56">src/runtime/manifest.ts:56</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -224,7 +243,7 @@
 					<div class="tsd-signature tsd-kind-icon">storage<wbr>Provider<wbr>Factory<span class="tsd-signature-symbol">:</span> <a href="storageproviderfactory.html" class="tsd-signature-type">StorageProviderFactory</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/84b9386/src/runtime/manifest.ts#L56">src/runtime/manifest.ts:56</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/7c721a7/src/runtime/manifest.ts#L57">src/runtime/manifest.ts:57</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -234,7 +253,7 @@
 					<div class="tsd-signature tsd-kind-icon">type<span class="tsd-signature-symbol">:</span> <a href="type.html" class="tsd-signature-type">Type</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/84b9386/src/runtime/manifest.ts#L52">src/runtime/manifest.ts:52</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/7c721a7/src/runtime/manifest.ts#L53">src/runtime/manifest.ts:53</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -251,7 +270,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/84b9386/src/runtime/manifest.ts#L70">src/runtime/manifest.ts:70</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/7c721a7/src/runtime/manifest.ts#L74">src/runtime/manifest.ts:74</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
@@ -271,7 +290,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/84b9386/src/runtime/manifest.ts#L108">src/runtime/manifest.ts:108</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/7c721a7/src/runtime/manifest.ts#L115">src/runtime/manifest.ts:115</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -294,7 +313,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/84b9386/src/runtime/manifest.ts#L74">src/runtime/manifest.ts:74</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/7c721a7/src/runtime/manifest.ts#L78">src/runtime/manifest.ts:78</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="storageproviderbase.html" class="tsd-signature-type">StorageProviderBase</a><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -311,7 +330,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/84b9386/src/runtime/manifest.ts#L81">src/runtime/manifest.ts:81</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/7c721a7/src/runtime/manifest.ts#L85">src/runtime/manifest.ts:85</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">any</span></h4>
@@ -328,7 +347,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/84b9386/src/runtime/manifest.ts#L85">src/runtime/manifest.ts:85</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/7c721a7/src/runtime/manifest.ts#L89">src/runtime/manifest.ts:89</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -360,6 +379,9 @@
 						<ul>
 							<li class=" tsd-kind-constructor tsd-parent-kind-class">
 								<a href="storagestub.html#constructor" class="tsd-kind-icon">constructor</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="storagestub.html#claims" class="tsd-kind-icon">claims</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
 								<a href="storagestub.html#description" class="tsd-kind-icon">description</a>
