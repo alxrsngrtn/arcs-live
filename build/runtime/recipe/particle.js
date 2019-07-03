@@ -310,6 +310,9 @@ export class Particle {
             return this.spec.slotConnections;
         return new Map();
     }
+    isJavaParticle() {
+        return this.spec && (this.spec.implFile || '').endsWith('java');
+    }
     toString(options = {}, nameMap) {
         let result = [];
         // TODO: we need at least name or verb(s)

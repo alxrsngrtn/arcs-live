@@ -35,7 +35,7 @@ declare class ThingMapper {
     thingForIdentifier(id: any): {};
 }
 export declare class APIPort {
-    private _port;
+    private readonly _port;
     _mapper: ThingMapper;
     protected inspector: ArcInspector | null;
     protected attachStack: boolean;
@@ -45,6 +45,7 @@ export declare class APIPort {
     close(): void;
     _processMessage(e: any): Promise<void>;
     send(name: string, args: {}): void;
+    supportsJavaParticle(): boolean;
 }
 export declare abstract class PECOuterPort extends APIPort {
     constructor(messagePort: MessagePort, arc: Arc);

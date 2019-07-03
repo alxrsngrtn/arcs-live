@@ -182,8 +182,8 @@
         "signature": "3e49590795a0320a8b09f40c0bc08d293c376c2683d5af76fae357acc33d2da2"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/particle.ts": {
-        "version": "52618ca900fff1459c4a6509e493b24b2a5126493ddad7530993d8983cc04c6f",
-        "signature": "d09d387d26aff7b7556b246ded5e388080707f5c4f85a768ce2c516c14874ad2"
+        "version": "986cbf2345e390c53ef328b7aa9387f26110076058026a2ba81e4fd6cbbfad88",
+        "signature": "ee35d034a2869e233e3205426d10033f2dcfc23147aea40f5c7bfdc3e7369899"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/arc-inspector.ts": {
         "version": "9986e4437cbe2b871eedf0b0ed48d1026cc5a62d3899741ee56cbafab3f49f08",
@@ -240,6 +240,10 @@
       "/home/travis/build/PolymerLabs/arcs/src/runtime/slot-context.ts": {
         "version": "fd48c50fca103f567aa97bdf56eb0504d3115408b46c8398b436b79db48a018b",
         "signature": "3c5cde6937e959b2b7ba8544b857398b4ae726fc7bf7294392d74ba74ea3637f"
+      },
+      "/home/travis/build/PolymerLabs/arcs/src/runtime/message-channel.ts": {
+        "version": "96ccc99f9cbf555589e1c452c0ed9ded7111ebad03d941f2396de18475e46bc3",
+        "signature": "40f3e862c7b1e6cee79ba8e4d8ed49bb7d63596b7be270080bf14a0cd68c6661"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/recipe-walker.ts": {
         "version": "f6f8364c58df77538830e3bdadacca8a8f489ab1e078ccb1fef70c4ec661d37c",
@@ -322,8 +326,8 @@
         "signature": "f6c539701943eb6976f02cfeb6b4efcb8c7f19e91446480b369164597188c286"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/particle-execution-host.ts": {
-        "version": "f0b33a10a2bf796bd88f6b671254d3aec06d20668fc3a29995a46e1344bcb156",
-        "signature": "ee95e413f9dfd8b7c89b2465ee036f0cb4454d23bb7b13d3c5733cc043302565"
+        "version": "48fc2603da78e57b4a236dc02367955cf1fc2b3010b600f1c85faed839e02888",
+        "signature": "e821a0b9dd4fb9ff6a1c61fecd2999e331a2fb838146925207135b2c57743049"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/slot-consumer.ts": {
         "version": "549b1b8f007ec405e044be690b26d5c24ced9c51e823025f0bfc7e29fa4d9ac7",
@@ -377,10 +381,6 @@
         "version": "3f7aae1b5e87d861176034dc734e817497cfb7d7ddf73151be5b58028f3a40aa",
         "signature": "3f8458b07382a8b0340901b3291a96b11eb3b210dc8d186b675c5e719da176b0"
       },
-      "/home/travis/build/PolymerLabs/arcs/src/runtime/message-channel.ts": {
-        "version": "96ccc99f9cbf555589e1c452c0ed9ded7111ebad03d941f2396de18475e46bc3",
-        "signature": "40f3e862c7b1e6cee79ba8e4d8ed49bb7d63596b7be270080bf14a0cd68c6661"
-      },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/testing/stub-loader.ts": {
         "version": "dc65f5dbdf56c4d5f6a9eda26c42cc92c4ff1e31fc6fd775537a35bd69bdbc22",
         "signature": "3fd84e08280f4f64d51a14c442d7ea8ef0c56808e43be472692346184085fe5f"
@@ -394,12 +394,12 @@
         "signature": "11aee506c154a5e85806ec683fecf9088e22eb74ba70f226e29c11fafeb974c6"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts": {
-        "version": "4ff83b9199f95b3a50d0102878a52d41bb1b99ca5fb3aa4b414c3f311096ff06",
-        "signature": "d8e08f926374ed1e45a3beaea0d3ecd26e46fe94f682d3c7598382203ad8c052"
+        "version": "fac5843934b3a5d440ec5f6000930629588a1f639d12648a1009891bdefc427e",
+        "signature": "1857475fbe68e38435b8a5396f75645398b40b00bdf5b23e1838837f58114a9f"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/api-channel.ts": {
-        "version": "fc3b541e3398c4fd0054542dda4d92b67b853616eadc957cc38bdd1c6abd3b0d",
-        "signature": "c778bef921a7d8fffa0b923114357c2855a9281f7c5fa104b0e5b550b812fe89"
+        "version": "d58215e5c5aad9b518afbc539f62f5e736afc1c5b2508fbd70cc3d3a1fff2a19",
+        "signature": "a16bd77111eed2b42f0d70d82bc641ecb6d0c53049fb023a41b44a71570fc755"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/wasm.ts": {
         "version": "74d80ef873424775afa2021975106bf3f20f8a01c8d8081bd4fe1f6093bcb3b9",
@@ -2983,6 +2983,10 @@
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
       ],
+      "/home/travis/build/PolymerLabs/arcs/src/runtime/message-channel.ts": [
+        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
+        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
+      ],
       "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/recipe-walker.ts": [
         "/home/travis/build/PolymerLabs/arcs/src/runtime/particle-spec.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/connection-constraint.ts",
@@ -3172,6 +3176,7 @@
         "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/hot.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/manifest.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/message-channel.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/handle.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/particle.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/recipe-resolver.ts",
@@ -3321,10 +3326,6 @@
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
       ],
-      "/home/travis/build/PolymerLabs/arcs/src/runtime/message-channel.ts": [
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
-      ],
       "/home/travis/build/PolymerLabs/arcs/src/runtime/testing/stub-loader.ts": [
         "/home/travis/build/PolymerLabs/arcs/src/runtime/loader.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/hot.ts",
@@ -3352,6 +3353,7 @@
         "/home/travis/build/PolymerLabs/arcs/src/runtime/loader.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/hot.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/manifest.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/message-channel.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/modality.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/particle-execution-host.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/particle-spec.ts",
@@ -8094,6 +8096,7 @@
         "/home/travis/build/PolymerLabs/arcs/src/runtime/hot.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/slot-composer.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/message-channel.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/storage-provider-base.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/slot-consumer.ts"
       ],
@@ -8196,6 +8199,7 @@
         "/home/travis/build/PolymerLabs/arcs/src/runtime/loader.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/storage-provider-factory.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/arc-inspector.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/message-channel.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/storage-provider-base.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/particle-spec.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/particle-execution-host.ts",
@@ -12835,7 +12839,24 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/particle.ts",
-            "start": 14391,
+            "start": 13839,
+            "length": 64,
+            "code": 2322,
+            "category": 1,
+            "messageText": {
+              "messageText": "Type 'boolean | undefined' is not assignable to type 'boolean'.",
+              "category": 1,
+              "code": 2322,
+              "next": {
+                "messageText": "Type 'undefined' is not assignable to type 'boolean'.",
+                "category": 1,
+                "code": 2322
+              }
+            }
+          },
+          {
+            "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/particle.ts",
+            "start": 14495,
             "length": 7,
             "code": 2345,
             "category": 1,
@@ -12843,7 +12864,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/particle.ts",
-            "start": 14613,
+            "start": 14717,
             "length": 7,
             "code": 2345,
             "category": 1,
@@ -12860,7 +12881,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/particle.ts",
-            "start": 14768,
+            "start": 14872,
             "length": 7,
             "code": 2345,
             "category": 1,
@@ -12877,7 +12898,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/particle.ts",
-            "start": 14943,
+            "start": 15047,
             "length": 7,
             "code": 2345,
             "category": 1,
@@ -13483,6 +13504,19 @@
             "code": 2345,
             "category": 1,
             "messageText": "Argument of type 'null' is not assignable to parameter of type 'ProvideSlotConnectionSpec'."
+          }
+        ]
+      ],
+      [
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/message-channel.ts",
+        [
+          {
+            "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/message-channel.ts",
+            "start": 620,
+            "length": 15,
+            "code": 2322,
+            "category": 1,
+            "messageText": "Type 'undefined' is not assignable to type '(e: MessageEvent) => void | undefined'."
           }
         ]
       ],
@@ -14977,9 +15011,9 @@
             "relatedInformation": [
               {
                 "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts",
-                "start": 1736,
+                "start": 1786,
                 "length": 6,
-                "messageText": "The expected type comes from property 'loader' which is declared here on type 'Readonly<{ id: Id; context: Manifest; pecFactory?: PecFactory | undefined; slotComposer?: SlotComposer | undefined; loader: Loader; storageKey?: string | undefined; storageProviderFactory?: StorageProviderFactory | undefined; speculative?: boolean | undefined; innerArc?: boolean | undefined; stub?: boolean | undefin...'",
+                "messageText": "The expected type comes from property 'loader' which is declared here on type 'Readonly<{ id: Id; context: Manifest; pecFactory?: PecFactory | undefined; slotComposer?: SlotComposer | undefined; loader: Loader; storageKey?: string | undefined; storageProviderFactory?: StorageProviderFactory | undefined; ... 4 more ...; ports?: MessagePort[] | undefined; }>'",
                 "category": 3,
                 "code": 6500
               }
@@ -15004,9 +15038,9 @@
             "relatedInformation": [
               {
                 "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts",
-                "start": 1705,
+                "start": 1755,
                 "length": 12,
-                "messageText": "The expected type comes from property 'slotComposer' which is declared here on type 'Readonly<{ id: Id; context: Manifest; pecFactory?: PecFactory | undefined; slotComposer?: SlotComposer | undefined; loader: Loader; storageKey?: string | undefined; storageProviderFactory?: StorageProviderFactory | undefined; speculative?: boolean | undefined; innerArc?: boolean | undefined; stub?: boolean | undefin...'",
+                "messageText": "The expected type comes from property 'slotComposer' which is declared here on type 'Readonly<{ id: Id; context: Manifest; pecFactory?: PecFactory | undefined; slotComposer?: SlotComposer | undefined; loader: Loader; storageKey?: string | undefined; storageProviderFactory?: StorageProviderFactory | undefined; ... 4 more ...; ports?: MessagePort[] | undefined; }>'",
                 "category": 3,
                 "code": 6500
               }
@@ -15500,131 +15534,65 @@
         [
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/particle-execution-host.ts",
-            "start": 5381,
-            "length": 15,
-            "messageText": "Cannot invoke an object which is possibly 'undefined'.",
-            "category": 1,
-            "code": 2722
-          },
-          {
-            "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/particle-execution-host.ts",
-            "start": 6895,
-            "length": 4,
-            "code": 2345,
-            "category": 1,
-            "messageText": "Argument of type 'null' is not assignable to parameter of type 'string | undefined'."
-          },
-          {
-            "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/particle-execution-host.ts",
-            "start": 7244,
-            "length": 9,
-            "code": 2345,
-            "category": 1,
-            "messageText": {
-              "messageText": "Argument of type 'string | null' is not assignable to parameter of type 'string'.",
-              "category": 1,
-              "code": 2345,
-              "next": {
-                "messageText": "Type 'null' is not assignable to type 'string'.",
-                "category": 1,
-                "code": 2322
-              }
-            }
-          },
-          {
-            "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/particle-execution-host.ts",
-            "start": 7456,
-            "length": 9,
-            "code": 2345,
-            "category": 1,
-            "messageText": {
-              "messageText": "Argument of type 'string | null' is not assignable to parameter of type 'string'.",
-              "category": 1,
-              "code": 2345,
-              "next": {
-                "messageText": "Type 'null' is not assignable to type 'string'.",
-                "category": 1,
-                "code": 2322
-              }
-            }
-          },
-          {
-            "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/particle-execution-host.ts",
-            "start": 8928,
-            "length": 9,
-            "code": 2345,
-            "category": 1,
-            "messageText": {
-              "messageText": "Argument of type 'string | null' is not assignable to parameter of type 'string'.",
-              "category": 1,
-              "code": 2345,
-              "next": {
-                "messageText": "Type 'null' is not assignable to type 'string'.",
-                "category": 1,
-                "code": 2322
-              }
-            }
-          },
-          {
-            "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/particle-execution-host.ts",
-            "start": 8965,
-            "length": 9,
-            "code": 2345,
-            "category": 1,
-            "messageText": {
-              "messageText": "Argument of type 'string | null' is not assignable to parameter of type 'string'.",
-              "category": 1,
-              "code": 2345,
-              "next": {
-                "messageText": "Type 'null' is not assignable to type 'string'.",
-                "category": 1,
-                "code": 2322
-              }
-            }
-          },
-          {
-            "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/particle-execution-host.ts",
-            "start": 9589,
-            "length": 5,
-            "code": 2322,
-            "category": 1,
-            "messageText": "Type 'string' is not assignable to type 'undefined'."
-          },
-          {
-            "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/particle-execution-host.ts",
-            "start": 10744,
-            "length": 5,
-            "code": 2322,
-            "category": 1,
-            "messageText": "Type 'string' is not assignable to type 'undefined'."
-          },
-          {
-            "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/particle-execution-host.ts",
-            "start": 10877,
-            "length": 5,
-            "code": 2322,
-            "category": 1,
-            "messageText": "Type 'string' is not assignable to type 'undefined'."
-          },
-          {
-            "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/particle-execution-host.ts",
-            "start": 11028,
-            "length": 5,
-            "code": 2322,
-            "category": 1,
-            "messageText": "Type '\"No recipe defined\"' is not assignable to type 'undefined'."
-          },
-          {
-            "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/particle-execution-host.ts",
-            "start": 11288,
-            "length": 52,
+            "start": 2421,
+            "length": 13,
             "messageText": "Object is possibly 'undefined'.",
             "category": 1,
             "code": 2532
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/particle-execution-host.ts",
-            "start": 12545,
+            "start": 2591,
+            "length": 13,
+            "messageText": "Object is possibly 'undefined'.",
+            "category": 1,
+            "code": 2532
+          },
+          {
+            "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/particle-execution-host.ts",
+            "start": 2654,
+            "length": 4,
+            "code": 2345,
+            "category": 1,
+            "messageText": {
+              "messageText": "Argument of type 'PECOuterPort | undefined' is not assignable to parameter of type 'PECOuterPort'.",
+              "category": 1,
+              "code": 2345,
+              "next": {
+                "messageText": "Type 'undefined' is not assignable to type 'PECOuterPort'.",
+                "category": 1,
+                "code": 2322
+              }
+            }
+          },
+          {
+            "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/particle-execution-host.ts",
+            "start": 2835,
+            "length": 13,
+            "messageText": "Object is possibly 'undefined'.",
+            "category": 1,
+            "code": 2532
+          },
+          {
+            "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/particle-execution-host.ts",
+            "start": 2863,
+            "length": 42,
+            "code": 2322,
+            "category": 1,
+            "messageText": {
+              "messageText": "Type 'PECOuterPort | undefined' is not assignable to type 'PECOuterPort'.",
+              "category": 1,
+              "code": 2322,
+              "next": {
+                "messageText": "Type 'undefined' is not assignable to type 'PECOuterPort'.",
+                "category": 1,
+                "code": 2322
+              }
+            }
+          },
+          {
+            "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/particle-execution-host.ts",
+            "start": 3952,
             "length": 13,
             "code": 2345,
             "category": 1,
@@ -15638,6 +15606,130 @@
                 "code": 2322
               }
             }
+          },
+          {
+            "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/particle-execution-host.ts",
+            "start": 4780,
+            "length": 16,
+            "messageText": "Cannot invoke an object which is possibly 'undefined'.",
+            "category": 1,
+            "code": 2722
+          },
+          {
+            "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/particle-execution-host.ts",
+            "start": 9438,
+            "length": 4,
+            "code": 2345,
+            "category": 1,
+            "messageText": "Argument of type 'null' is not assignable to parameter of type 'string | undefined'."
+          },
+          {
+            "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/particle-execution-host.ts",
+            "start": 9764,
+            "length": 9,
+            "code": 2345,
+            "category": 1,
+            "messageText": {
+              "messageText": "Argument of type 'string | null' is not assignable to parameter of type 'string'.",
+              "category": 1,
+              "code": 2345,
+              "next": {
+                "messageText": "Type 'null' is not assignable to type 'string'.",
+                "category": 1,
+                "code": 2322
+              }
+            }
+          },
+          {
+            "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/particle-execution-host.ts",
+            "start": 9968,
+            "length": 9,
+            "code": 2345,
+            "category": 1,
+            "messageText": {
+              "messageText": "Argument of type 'string | null' is not assignable to parameter of type 'string'.",
+              "category": 1,
+              "code": 2345,
+              "next": {
+                "messageText": "Type 'null' is not assignable to type 'string'.",
+                "category": 1,
+                "code": 2322
+              }
+            }
+          },
+          {
+            "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/particle-execution-host.ts",
+            "start": 11339,
+            "length": 9,
+            "code": 2345,
+            "category": 1,
+            "messageText": {
+              "messageText": "Argument of type 'string | null' is not assignable to parameter of type 'string'.",
+              "category": 1,
+              "code": 2345,
+              "next": {
+                "messageText": "Type 'null' is not assignable to type 'string'.",
+                "category": 1,
+                "code": 2322
+              }
+            }
+          },
+          {
+            "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/particle-execution-host.ts",
+            "start": 11376,
+            "length": 9,
+            "code": 2345,
+            "category": 1,
+            "messageText": {
+              "messageText": "Argument of type 'string | null' is not assignable to parameter of type 'string'.",
+              "category": 1,
+              "code": 2345,
+              "next": {
+                "messageText": "Type 'null' is not assignable to type 'string'.",
+                "category": 1,
+                "code": 2322
+              }
+            }
+          },
+          {
+            "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/particle-execution-host.ts",
+            "start": 11945,
+            "length": 5,
+            "code": 2322,
+            "category": 1,
+            "messageText": "Type 'string' is not assignable to type 'undefined'."
+          },
+          {
+            "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/particle-execution-host.ts",
+            "start": 13010,
+            "length": 5,
+            "code": 2322,
+            "category": 1,
+            "messageText": "Type 'string' is not assignable to type 'undefined'."
+          },
+          {
+            "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/particle-execution-host.ts",
+            "start": 13131,
+            "length": 5,
+            "code": 2322,
+            "category": 1,
+            "messageText": "Type 'string' is not assignable to type 'undefined'."
+          },
+          {
+            "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/particle-execution-host.ts",
+            "start": 13266,
+            "length": 5,
+            "code": 2322,
+            "category": 1,
+            "messageText": "Type '\"No recipe defined\"' is not assignable to type 'undefined'."
+          },
+          {
+            "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/particle-execution-host.ts",
+            "start": 13502,
+            "length": 53,
+            "messageText": "Object is possibly 'undefined'.",
+            "category": 1,
+            "code": 2532
           }
         ]
       ],
@@ -16587,19 +16679,6 @@
           }
         ]
       ],
-      [
-        "/home/travis/build/PolymerLabs/arcs/src/runtime/message-channel.ts",
-        [
-          {
-            "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/message-channel.ts",
-            "start": 620,
-            "length": 15,
-            "code": 2322,
-            "category": 1,
-            "messageText": "Type 'undefined' is not assignable to type '(e: MessageEvent) => void | undefined'."
-          }
-        ]
-      ],
       "/home/travis/build/PolymerLabs/arcs/src/runtime/testing/stub-loader.ts",
       "/home/travis/build/PolymerLabs/arcs/src/runtime/fake-pec-factory.ts",
       "/home/travis/build/PolymerLabs/arcs/src/runtime/mutex.ts",
@@ -16608,7 +16687,7 @@
         [
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts",
-            "start": 5159,
+            "start": 5227,
             "length": 12,
             "code": 2345,
             "category": 1,
@@ -16625,7 +16704,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts",
-            "start": 7470,
+            "start": 7574,
             "length": 23,
             "code": 2322,
             "category": 1,
@@ -16642,7 +16721,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts",
-            "start": 7509,
+            "start": 7613,
             "length": 15,
             "code": 2322,
             "category": 1,
@@ -16650,7 +16729,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts",
-            "start": 11513,
+            "start": 11617,
             "length": 12,
             "code": 2322,
             "category": 1,
@@ -16667,7 +16746,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts",
-            "start": 12634,
+            "start": 12738,
             "length": 9,
             "code": 2345,
             "category": 1,
@@ -16684,7 +16763,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts",
-            "start": 12832,
+            "start": 12936,
             "length": 9,
             "code": 2345,
             "category": 1,
@@ -16701,7 +16780,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts",
-            "start": 13394,
+            "start": 13498,
             "length": 56,
             "code": 2345,
             "category": 1,
@@ -16718,7 +16797,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts",
-            "start": 14748,
+            "start": 14852,
             "length": 15,
             "code": 2345,
             "category": 1,
@@ -16735,7 +16814,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts",
-            "start": 15450,
+            "start": 15554,
             "length": 18,
             "code": 2345,
             "category": 1,
@@ -16752,7 +16831,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts",
-            "start": 15477,
+            "start": 15581,
             "length": 10,
             "code": 2322,
             "category": 1,
@@ -16769,9 +16848,9 @@
             "relatedInformation": [
               {
                 "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts",
-                "start": 1754,
+                "start": 1804,
                 "length": 10,
-                "messageText": "The expected type comes from property 'storageKey' which is declared here on type 'Readonly<{ id: Id; context: Manifest; pecFactory?: PecFactory | undefined; slotComposer?: SlotComposer | undefined; loader: Loader; storageKey?: string | undefined; storageProviderFactory?: StorageProviderFactory | undefined; speculative?: boolean | undefined; innerArc?: boolean | undefined; stub?: boolean | undefin...'",
+                "messageText": "The expected type comes from property 'storageKey' which is declared here on type 'Readonly<{ id: Id; context: Manifest; pecFactory?: PecFactory | undefined; slotComposer?: SlotComposer | undefined; loader: Loader; storageKey?: string | undefined; storageProviderFactory?: StorageProviderFactory | undefined; ... 4 more ...; ports?: MessagePort[] | undefined; }>'",
                 "category": 3,
                 "code": 6500
               }
@@ -16779,7 +16858,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts",
-            "start": 15941,
+            "start": 16045,
             "length": 21,
             "messageText": "Object is possibly 'undefined'.",
             "category": 1,
@@ -16787,7 +16866,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts",
-            "start": 16123,
+            "start": 16227,
             "length": 14,
             "messageText": "Object is possibly 'undefined'.",
             "category": 1,
@@ -16795,7 +16874,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts",
-            "start": 16873,
+            "start": 16977,
             "length": 4,
             "code": 2345,
             "category": 1,
@@ -16822,7 +16901,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts",
-            "start": 17002,
+            "start": 17106,
             "length": 19,
             "code": 2345,
             "category": 1,
@@ -16839,7 +16918,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts",
-            "start": 17118,
+            "start": 17222,
             "length": 17,
             "messageText": "Object is possibly 'undefined'.",
             "category": 1,
@@ -16847,7 +16926,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts",
-            "start": 17197,
+            "start": 17301,
             "length": 17,
             "messageText": "Object is possibly 'undefined'.",
             "category": 1,
@@ -16855,7 +16934,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts",
-            "start": 17197,
+            "start": 17301,
             "length": 20,
             "code": 2345,
             "category": 1,
@@ -16872,7 +16951,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts",
-            "start": 17268,
+            "start": 17372,
             "length": 17,
             "messageText": "Object is possibly 'undefined'.",
             "category": 1,
@@ -16880,7 +16959,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts",
-            "start": 17308,
+            "start": 17412,
             "length": 9,
             "messageText": "Object is possibly 'undefined'.",
             "category": 1,
@@ -16888,7 +16967,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts",
-            "start": 18944,
+            "start": 19048,
             "length": 33,
             "code": 2345,
             "category": 1,
@@ -16905,7 +16984,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts",
-            "start": 19173,
+            "start": 19277,
             "length": 19,
             "code": 2345,
             "category": 1,
@@ -16922,7 +17001,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts",
-            "start": 21859,
+            "start": 21963,
             "length": 4,
             "code": 2345,
             "category": 1,
@@ -16930,7 +17009,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts",
-            "start": 22630,
+            "start": 22734,
             "length": 15,
             "code": 2345,
             "category": 1,
@@ -16947,7 +17026,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts",
-            "start": 23967,
+            "start": 24071,
             "length": 15,
             "code": 2345,
             "category": 1,
@@ -16964,7 +17043,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts",
-            "start": 24171,
+            "start": 24275,
             "length": 15,
             "code": 2345,
             "category": 1,
@@ -16981,7 +17060,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts",
-            "start": 24483,
+            "start": 24587,
             "length": 15,
             "code": 2345,
             "category": 1,
@@ -16998,7 +17077,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts",
-            "start": 25817,
+            "start": 25921,
             "length": 4,
             "code": 2345,
             "category": 1,
@@ -17015,7 +17094,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts",
-            "start": 26014,
+            "start": 26118,
             "length": 10,
             "code": 2322,
             "category": 1,
@@ -17032,7 +17111,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts",
-            "start": 26808,
+            "start": 26912,
             "length": 9,
             "messageText": "Object is possibly 'undefined'.",
             "category": 1,
@@ -17040,7 +17119,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts",
-            "start": 29259,
+            "start": 29363,
             "length": 25,
             "messageText": "Object is possibly 'undefined'.",
             "category": 1,
@@ -17048,7 +17127,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts",
-            "start": 29770,
+            "start": 29874,
             "length": 39,
             "code": 2322,
             "category": 1,
@@ -17065,7 +17144,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts",
-            "start": 29941,
+            "start": 30045,
             "length": 33,
             "code": 2322,
             "category": 1,
@@ -17082,7 +17161,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts",
-            "start": 30872,
+            "start": 30976,
             "length": 25,
             "messageText": "Type 'undefined' must have a '[Symbol.iterator]()' method that returns an iterator.",
             "category": 1,
@@ -17095,7 +17174,7 @@
         [
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/api-channel.ts",
-            "start": 14658,
+            "start": 14821,
             "length": 14,
             "code": 2322,
             "category": 1,
@@ -17112,7 +17191,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/api-channel.ts",
-            "start": 14722,
+            "start": 14885,
             "length": 25,
             "messageText": "Object is possibly 'null'.",
             "category": 1,
@@ -22798,9 +22877,9 @@
             "relatedInformation": [
               {
                 "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts",
-                "start": 1736,
+                "start": 1786,
                 "length": 6,
-                "messageText": "The expected type comes from property 'loader' which is declared here on type 'Readonly<{ id: Id; context: Manifest; pecFactory?: PecFactory | undefined; slotComposer?: SlotComposer | undefined; loader: Loader; storageKey?: string | undefined; storageProviderFactory?: StorageProviderFactory | undefined; speculative?: boolean | undefined; innerArc?: boolean | undefined; stub?: boolean | undefin...'",
+                "messageText": "The expected type comes from property 'loader' which is declared here on type 'Readonly<{ id: Id; context: Manifest; pecFactory?: PecFactory | undefined; slotComposer?: SlotComposer | undefined; loader: Loader; storageKey?: string | undefined; storageProviderFactory?: StorageProviderFactory | undefined; ... 4 more ...; ports?: MessagePort[] | undefined; }>'",
                 "category": 3,
                 "code": 6500
               }
@@ -22825,9 +22904,9 @@
             "relatedInformation": [
               {
                 "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts",
-                "start": 1657,
+                "start": 1707,
                 "length": 7,
-                "messageText": "The expected type comes from property 'context' which is declared here on type 'Readonly<{ id: Id; context: Manifest; pecFactory?: PecFactory | undefined; slotComposer?: SlotComposer | undefined; loader: Loader; storageKey?: string | undefined; storageProviderFactory?: StorageProviderFactory | undefined; speculative?: boolean | undefined; innerArc?: boolean | undefined; stub?: boolean | undefin...'",
+                "messageText": "The expected type comes from property 'context' which is declared here on type 'Readonly<{ id: Id; context: Manifest; pecFactory?: PecFactory | undefined; slotComposer?: SlotComposer | undefined; loader: Loader; storageKey?: string | undefined; storageProviderFactory?: StorageProviderFactory | undefined; ... 4 more ...; ports?: MessagePort[] | undefined; }>'",
                 "category": 3,
                 "code": 6500
               }
@@ -26334,9 +26413,9 @@
             "relatedInformation": [
               {
                 "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts",
-                "start": 1657,
+                "start": 1707,
                 "length": 7,
-                "messageText": "The expected type comes from property 'context' which is declared here on type 'Readonly<{ id: Id; context: Manifest; pecFactory?: PecFactory | undefined; slotComposer?: SlotComposer | undefined; loader: Loader; storageKey?: string | undefined; storageProviderFactory?: StorageProviderFactory | undefined; speculative?: boolean | undefined; innerArc?: boolean | undefined; stub?: boolean | undefin...'",
+                "messageText": "The expected type comes from property 'context' which is declared here on type 'Readonly<{ id: Id; context: Manifest; pecFactory?: PecFactory | undefined; slotComposer?: SlotComposer | undefined; loader: Loader; storageKey?: string | undefined; storageProviderFactory?: StorageProviderFactory | undefined; ... 4 more ...; ports?: MessagePort[] | undefined; }>'",
                 "category": 3,
                 "code": 6500
               }
@@ -26352,7 +26431,7 @@
             "relatedInformation": [
               {
                 "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts",
-                "start": 2099,
+                "start": 2174,
                 "length": 7,
                 "messageText": "The expected type comes from property 'context' which is declared here on type 'Readonly<{ serialization: string; pecFactory?: PecFactory | undefined; slotComposer?: SlotComposer | undefined; loader: Loader; fileName: string; context: Manifest; inspectorFactory?: ArcInspectorFactory | undefined; }>'",
                 "category": 3,
@@ -26386,7 +26465,7 @@
             "relatedInformation": [
               {
                 "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts",
-                "start": 2099,
+                "start": 2174,
                 "length": 7,
                 "messageText": "The expected type comes from property 'context' which is declared here on type 'Readonly<{ serialization: string; pecFactory?: PecFactory | undefined; slotComposer?: SlotComposer | undefined; loader: Loader; fileName: string; context: Manifest; inspectorFactory?: ArcInspectorFactory | undefined; }>'",
                 "category": 3,
@@ -26468,7 +26547,7 @@
             "relatedInformation": [
               {
                 "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts",
-                "start": 2099,
+                "start": 2174,
                 "length": 7,
                 "messageText": "The expected type comes from property 'context' which is declared here on type 'Readonly<{ serialization: string; pecFactory?: PecFactory | undefined; slotComposer?: SlotComposer | undefined; loader: Loader; fileName: string; context: Manifest; inspectorFactory?: ArcInspectorFactory | undefined; }>'",
                 "category": 3,
@@ -26492,9 +26571,9 @@
             "relatedInformation": [
               {
                 "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts",
-                "start": 1657,
+                "start": 1707,
                 "length": 7,
-                "messageText": "The expected type comes from property 'context' which is declared here on type 'Readonly<{ id: Id; context: Manifest; pecFactory?: PecFactory | undefined; slotComposer?: SlotComposer | undefined; loader: Loader; storageKey?: string | undefined; storageProviderFactory?: StorageProviderFactory | undefined; speculative?: boolean | undefined; innerArc?: boolean | undefined; stub?: boolean | undefin...'",
+                "messageText": "The expected type comes from property 'context' which is declared here on type 'Readonly<{ id: Id; context: Manifest; pecFactory?: PecFactory | undefined; slotComposer?: SlotComposer | undefined; loader: Loader; storageKey?: string | undefined; storageProviderFactory?: StorageProviderFactory | undefined; ... 4 more ...; ports?: MessagePort[] | undefined; }>'",
                 "category": 3,
                 "code": 6500
               }
@@ -27883,9 +27962,9 @@
             "relatedInformation": [
               {
                 "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts",
-                "start": 1657,
+                "start": 1707,
                 "length": 7,
-                "messageText": "The expected type comes from property 'context' which is declared here on type 'Readonly<{ id: Id; context: Manifest; pecFactory?: PecFactory | undefined; slotComposer?: SlotComposer | undefined; loader: Loader; storageKey?: string | undefined; storageProviderFactory?: StorageProviderFactory | undefined; speculative?: boolean | undefined; innerArc?: boolean | undefined; stub?: boolean | undefin...'",
+                "messageText": "The expected type comes from property 'context' which is declared here on type 'Readonly<{ id: Id; context: Manifest; pecFactory?: PecFactory | undefined; slotComposer?: SlotComposer | undefined; loader: Loader; storageKey?: string | undefined; storageProviderFactory?: StorageProviderFactory | undefined; ... 4 more ...; ports?: MessagePort[] | undefined; }>'",
                 "category": 3,
                 "code": 6500
               }
@@ -27901,9 +27980,9 @@
             "relatedInformation": [
               {
                 "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts",
-                "start": 1657,
+                "start": 1707,
                 "length": 7,
-                "messageText": "The expected type comes from property 'context' which is declared here on type 'Readonly<{ id: Id; context: Manifest; pecFactory?: PecFactory | undefined; slotComposer?: SlotComposer | undefined; loader: Loader; storageKey?: string | undefined; storageProviderFactory?: StorageProviderFactory | undefined; speculative?: boolean | undefined; innerArc?: boolean | undefined; stub?: boolean | undefin...'",
+                "messageText": "The expected type comes from property 'context' which is declared here on type 'Readonly<{ id: Id; context: Manifest; pecFactory?: PecFactory | undefined; slotComposer?: SlotComposer | undefined; loader: Loader; storageKey?: string | undefined; storageProviderFactory?: StorageProviderFactory | undefined; ... 4 more ...; ports?: MessagePort[] | undefined; }>'",
                 "category": 3,
                 "code": 6500
               }
@@ -27919,9 +27998,9 @@
             "relatedInformation": [
               {
                 "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts",
-                "start": 1657,
+                "start": 1707,
                 "length": 7,
-                "messageText": "The expected type comes from property 'context' which is declared here on type 'Readonly<{ id: Id; context: Manifest; pecFactory?: PecFactory | undefined; slotComposer?: SlotComposer | undefined; loader: Loader; storageKey?: string | undefined; storageProviderFactory?: StorageProviderFactory | undefined; speculative?: boolean | undefined; innerArc?: boolean | undefined; stub?: boolean | undefin...'",
+                "messageText": "The expected type comes from property 'context' which is declared here on type 'Readonly<{ id: Id; context: Manifest; pecFactory?: PecFactory | undefined; slotComposer?: SlotComposer | undefined; loader: Loader; storageKey?: string | undefined; storageProviderFactory?: StorageProviderFactory | undefined; ... 4 more ...; ports?: MessagePort[] | undefined; }>'",
                 "category": 3,
                 "code": 6500
               }
@@ -27937,9 +28016,9 @@
             "relatedInformation": [
               {
                 "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts",
-                "start": 1657,
+                "start": 1707,
                 "length": 7,
-                "messageText": "The expected type comes from property 'context' which is declared here on type 'Readonly<{ id: Id; context: Manifest; pecFactory?: PecFactory | undefined; slotComposer?: SlotComposer | undefined; loader: Loader; storageKey?: string | undefined; storageProviderFactory?: StorageProviderFactory | undefined; speculative?: boolean | undefined; innerArc?: boolean | undefined; stub?: boolean | undefin...'",
+                "messageText": "The expected type comes from property 'context' which is declared here on type 'Readonly<{ id: Id; context: Manifest; pecFactory?: PecFactory | undefined; slotComposer?: SlotComposer | undefined; loader: Loader; storageKey?: string | undefined; storageProviderFactory?: StorageProviderFactory | undefined; ... 4 more ...; ports?: MessagePort[] | undefined; }>'",
                 "category": 3,
                 "code": 6500
               }
@@ -27971,9 +28050,9 @@
             "relatedInformation": [
               {
                 "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts",
-                "start": 1657,
+                "start": 1707,
                 "length": 7,
-                "messageText": "The expected type comes from property 'context' which is declared here on type 'Readonly<{ id: Id; context: Manifest; pecFactory?: PecFactory | undefined; slotComposer?: SlotComposer | undefined; loader: Loader; storageKey?: string | undefined; storageProviderFactory?: StorageProviderFactory | undefined; speculative?: boolean | undefined; innerArc?: boolean | undefined; stub?: boolean | undefin...'",
+                "messageText": "The expected type comes from property 'context' which is declared here on type 'Readonly<{ id: Id; context: Manifest; pecFactory?: PecFactory | undefined; slotComposer?: SlotComposer | undefined; loader: Loader; storageKey?: string | undefined; storageProviderFactory?: StorageProviderFactory | undefined; ... 4 more ...; ports?: MessagePort[] | undefined; }>'",
                 "category": 3,
                 "code": 6500
               }

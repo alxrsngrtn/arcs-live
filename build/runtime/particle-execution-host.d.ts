@@ -9,6 +9,7 @@
  */
 import { Arc } from './arc.js';
 import { Runnable } from './hot.js';
+import { MessagePort } from './message-channel.js';
 import { Particle } from './recipe/particle.js';
 import { SlotComposer } from './slot-composer.js';
 import { Content } from './slot-consumer.js';
@@ -24,7 +25,8 @@ export declare type StopRenderOptions = {
     slotName: string;
 };
 export declare class ParticleExecutionHost {
-    private readonly _apiPort;
+    private readonly _apiPorts;
+    private readonly _portByParticle;
     close: Runnable;
     private readonly arc;
     private nextIdentifier;
@@ -32,7 +34,9 @@ export declare class ParticleExecutionHost {
     private idleVersion;
     private idlePromise;
     private idleResolve;
-    constructor(port: any, slotComposer: SlotComposer, arc: Arc);
+    constructor(slotComposer: SlotComposer, arc: Arc, ports: MessagePort[]);
+    private choosePortForParticle;
+    private getPort;
     stop(): void;
     readonly idle: Promise<Map<Particle, number[]>> | undefined;
     readonly messageCount: number;
@@ -41,4 +45,5 @@ export declare class ParticleExecutionHost {
     startRender({ particle, slotName, providedSlots, contentTypes }: StartRenderOptions): void;
     stopRender({ particle, slotName }: StopRenderOptions): void;
     innerArcRender(transformationParticle: Particle, transformationSlotName: string, hostedSlotId: string, content: Content): void;
+    resolveIfIdle(version: number, relevance: Map<Particle, number[]>): void;
 }

@@ -20,7 +20,7 @@ import { StorageProviderFactory } from './storage/storage-provider-factory.js';
 import { ArcType, CollectionType, EntityType, InterfaceType, RelationType, Type, TypeVariable } from './type.js';
 import { Mutex } from './mutex.js';
 export class Arc {
-    constructor({ id, context, pecFactory, slotComposer, loader, storageKey, storageProviderFactory, speculative, innerArc, stub, inspectorFactory }) {
+    constructor({ id, context, pecFactory, slotComposer, loader, storageKey, storageProviderFactory, speculative, innerArc, stub, inspectorFactory, ports }) {
         this._activeRecipe = new Recipe();
         this._recipeDeltas = [];
         this.dataChangeCallbacks = new Map();
@@ -58,7 +58,7 @@ export class Arc {
         this.storageKey = storageKey;
         const pecId = this.generateID();
         const innerPecPort = this.pecFactory(pecId, this.idGenerator);
-        this.pec = new ParticleExecutionHost(innerPecPort, slotComposer, this);
+        this.pec = new ParticleExecutionHost(slotComposer, this, [innerPecPort].concat(ports || []));
         this.storageProviderFactory = storageProviderFactory || new StorageProviderFactory(this.id);
     }
     get loader() {

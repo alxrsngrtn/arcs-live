@@ -12,6 +12,7 @@ import { Id, IdGenerator } from './id.js';
 import { Loader } from './loader.js';
 import { Runnable } from './hot.js';
 import { Manifest, StorageStub } from './manifest.js';
+import { MessagePort } from './message-channel.js';
 import { Modality } from './modality.js';
 import { ParticleExecutionHost } from './particle-execution-host.js';
 import { ParticleSpec } from './particle-spec.js';
@@ -37,6 +38,7 @@ export declare type ArcOptions = Readonly<{
     innerArc?: boolean;
     stub?: boolean;
     inspectorFactory?: ArcInspectorFactory;
+    ports?: MessagePort[];
 }>;
 declare type DeserializeArcOptions = Readonly<{
     serialization: string;
@@ -75,7 +77,7 @@ export declare class Arc {
         stores: Map<string, StorageProviderBase>;
     }>;
     readonly pec: ParticleExecutionHost;
-    constructor({ id, context, pecFactory, slotComposer, loader, storageKey, storageProviderFactory, speculative, innerArc, stub, inspectorFactory }: ArcOptions);
+    constructor({ id, context, pecFactory, slotComposer, loader, storageKey, storageProviderFactory, speculative, innerArc, stub, inspectorFactory, ports }: ArcOptions);
     readonly loader: Loader;
     readonly modality: Modality;
     dispose(): void;

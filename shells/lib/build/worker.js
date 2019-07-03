@@ -643,6 +643,10 @@ class APIPort {
         }
         this._port.postMessage(call);
     }
+    supportsJavaParticle() {
+        // TODO: improve heuristics.
+        return Object.getPrototypeOf(this._port.constructor).name === 'MessagePort';
+    }
 }
 // The horror. From https://davidwalsh.name/javascript-arguments
 function getArgs(func) {

@@ -68,5 +68,6 @@ export declare class Particle implements Comparable<Particle> {
     getSlotConnectionByName(name: string): SlotConnection;
     getProvidedSlotByName(consumeName: string, name: string): Slot;
     getSlotSpecs(): Map<string, ConsumeSlotConnectionSpec>;
+    isJavaParticle(): boolean;
     toString(options?: ToStringOptions, nameMap?: Map<RecipeComponent, string>): string;
 }
