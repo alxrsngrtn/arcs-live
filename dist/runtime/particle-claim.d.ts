@@ -14,22 +14,26 @@ export declare enum ClaimType {
     IsTag = "is-tag",
     DerivesFrom = "derives-from"
 }
-export declare type Claim = ClaimIsTag | ClaimDerivesFrom;
-export declare class ClaimIsTag {
+export declare class Claim {
     readonly handle: HandleConnectionSpec;
+    readonly expression: ClaimExpression;
+    constructor(handle: HandleConnectionSpec, expression: ClaimExpression);
+    toManifestString(): string;
+}
+export declare type ClaimExpression = ClaimIsTag | ClaimDerivesFrom;
+export declare class ClaimIsTag {
     readonly isNot: boolean;
     readonly tag: string;
     readonly type: ClaimType.IsTag;
-    constructor(handle: HandleConnectionSpec, isNot: boolean, tag: string);
-    static fromASTNode(handle: HandleConnectionSpec, astNode: ParticleClaimIsTag): ClaimIsTag;
+    constructor(isNot: boolean, tag: string);
+    static fromASTNode(astNode: ParticleClaimIsTag): ClaimIsTag;
     toManifestString(): string;
 }
 export declare class ClaimDerivesFrom {
-    readonly handle: HandleConnectionSpec;
     readonly parentHandles: readonly HandleConnectionSpec[];
     readonly type: ClaimType.DerivesFrom;
-    constructor(handle: HandleConnectionSpec, parentHandles: readonly HandleConnectionSpec[]);
-    static fromASTNode(handle: HandleConnectionSpec, astNode: ParticleClaimDerivesFrom, handleConnectionMap: Map<string, HandleConnectionSpec>): ClaimDerivesFrom;
+    constructor(parentHandles: readonly HandleConnectionSpec[]);
+    static fromASTNode(astNode: ParticleClaimDerivesFrom, handleConnectionMap: Map<string, HandleConnectionSpec>): ClaimDerivesFrom;
     toManifestString(): string;
 }
 export declare function createClaim(handle: HandleConnectionSpec, astNode: ParticleClaimStatement, handleConnectionMap: Map<string, HandleConnectionSpec>): Claim;

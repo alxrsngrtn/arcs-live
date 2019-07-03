@@ -136,11 +136,17 @@ export interface Particle extends BaseNode {
     connections?: RecipeParticleConnection[];
     slotConnections?: RecipeParticleSlotConnection[];
 }
+/** A trust claim made by a particle about one of its handles. */
+export interface ParticleClaimStatement extends BaseNode {
+    kind: 'particle-trust-claim';
+    handle: string;
+    expression: ParticleClaimExpression;
+}
+export declare type ParticleClaimExpression = ParticleClaimIsTag | ParticleClaimDerivesFrom;
 /** A claim made by a particle, saying that one of its outputs has a particular trust tag (e.g. "claim output is foo"). */
 export interface ParticleClaimIsTag extends BaseNode {
     kind: 'particle-trust-claim-is-tag';
     claimType: ClaimType.IsTag;
-    handle: string;
     isNot: boolean;
     tag: string;
 }
@@ -151,11 +157,8 @@ export interface ParticleClaimIsTag extends BaseNode {
 export interface ParticleClaimDerivesFrom extends BaseNode {
     kind: 'particle-trust-claim-derives-from';
     claimType: ClaimType.DerivesFrom;
-    handle: string;
     parentHandles: string[];
 }
-/** A trust claim made by a particle. */
-export declare type ParticleClaimStatement = ParticleClaimIsTag | ParticleClaimDerivesFrom;
 export interface ParticleCheckStatement extends BaseNode {
     kind: 'particle-trust-check';
     target: ParticleCheckTarget;

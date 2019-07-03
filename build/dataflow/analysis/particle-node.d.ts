@@ -8,7 +8,7 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { Node, Edge } from './graph-internals.js';
-import { Claim } from '../../runtime/particle-claim.js';
+import { Claim, ClaimExpression } from '../../runtime/particle-claim.js';
 import { Check } from '../../runtime/particle-check.js';
 import { Particle } from '../../runtime/recipe/particle.js';
 import { HandleConnectionSpec } from '../../runtime/particle-spec.js';
@@ -45,7 +45,7 @@ export declare class ParticleOutput implements Edge {
     readonly label: string;
     readonly connectionName: string;
     readonly connectionSpec: HandleConnectionSpec;
-    readonly claim?: Claim;
+    readonly claim?: ClaimExpression;
     constructor(particleNode: ParticleNode, otherEnd: Node, connection: HandleConnection);
 }
 /** Creates a new node for every given particle. */

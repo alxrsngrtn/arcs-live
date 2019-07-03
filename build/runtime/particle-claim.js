@@ -13,27 +13,34 @@ export var ClaimType;
     ClaimType["IsTag"] = "is-tag";
     ClaimType["DerivesFrom"] = "derives-from";
 })(ClaimType || (ClaimType = {}));
-export class ClaimIsTag {
-    constructor(handle, isNot, tag) {
+export class Claim {
+    constructor(handle, expression) {
         this.handle = handle;
+        this.expression = expression;
+    }
+    toManifestString() {
+        return `claim ${this.handle.name} ${this.expression.toManifestString()}`;
+    }
+}
+export class ClaimIsTag {
+    constructor(isNot, tag) {
         this.isNot = isNot;
         this.tag = tag;
         this.type = ClaimType.IsTag;
     }
-    static fromASTNode(handle, astNode) {
-        return new ClaimIsTag(handle, astNode.isNot, astNode.tag);
+    static fromASTNode(astNode) {
+        return new ClaimIsTag(astNode.isNot, astNode.tag);
     }
     toManifestString() {
-        return `claim ${this.handle.name} is ${this.isNot ? 'not ' : ''}${this.tag}`;
+        return `is ${this.isNot ? 'not ' : ''}${this.tag}`;
     }
 }
 export class ClaimDerivesFrom {
-    constructor(handle, parentHandles) {
-        this.handle = handle;
+    constructor(parentHandles) {
         this.parentHandles = parentHandles;
         this.type = ClaimType.DerivesFrom;
     }
-    static fromASTNode(handle, astNode, handleConnectionMap) {
+    static fromASTNode(astNode, handleConnectionMap) {
         // Convert handle names into HandleConnectionSpec objects.
         const parentHandles = astNode.parentHandles.map(parentHandleName => {
             const parentHandle = handleConnectionMap.get(parentHandleName);
@@ -42,20 +49,24 @@ export class ClaimDerivesFrom {
             }
             return parentHandle;
         });
-        return new ClaimDerivesFrom(handle, parentHandles);
+        return new ClaimDerivesFrom(parentHandles);
     }
     toManifestString() {
-        return `claim ${this.handle.name} derives from ${this.parentHandles.map(h => h.name).join(' and ')}`;
+        return `derives from ${this.parentHandles.map(h => h.name).join(' and ')}`;
     }
 }
 export function createClaim(handle, astNode, handleConnectionMap) {
-    switch (astNode.claimType) {
+    let expression;
+    switch (astNode.expression.claimType) {
         case ClaimType.IsTag:
-            return ClaimIsTag.fromASTNode(handle, astNode);
+            expression = ClaimIsTag.fromASTNode(astNode.expression);
+            break;
         case ClaimType.DerivesFrom:
-            return ClaimDerivesFrom.fromASTNode(handle, astNode, handleConnectionMap);
+            expression = ClaimDerivesFrom.fromASTNode(astNode.expression, handleConnectionMap);
+            break;
         default:
             throw new Error('Unknown claim type.');
     }
+    return new Claim(handle, expression);
 }
 //# sourceMappingURL=particle-claim.js.map

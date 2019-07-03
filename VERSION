@@ -1,5 +1,18 @@
-commit 7d9e80b32539d6012b15902284a0682d62a70f96
-Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
-Date:   Wed Jul 3 10:00:10 2019 +1000
+commit 84b9386f17f79dd423792739067a7f9afd05a2b6
+Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
+Date:   Wed Jul 3 11:33:49 2019 +1000
 
-    Wasm clean up: rename a few things for clarity (#3279)
+    Refactors the ParticleClaimStatement AST node. (#3280)
+    
+    * Refactors the ParticleClaimStatement AST node.
+    
+    This pulls out an Expression field, similar to what we did for Checks.
+    This makes the code reusable for datastore claims (since they don't have handles), and will be useful for building boolean expressions in claims.
+    
+    * Store ClaimExpression on edges instead of Claims
+    
+    The Claim.handle field is irrelevant for edges, only the expression
+    actually matters. Also this will be needed for datastore claims, which don't
+    have a handle name, but will need to put claims on edges.
+    
+    * Review comments

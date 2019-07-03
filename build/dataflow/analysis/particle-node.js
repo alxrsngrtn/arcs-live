@@ -66,7 +66,8 @@ export class ParticleOutput {
         this.connectionName = connection.name;
         this.connectionSpec = connection.spec;
         this.label = `${particleNode.name}.${this.connectionName}`;
-        this.claim = particleNode.claims.get(this.connectionName);
+        const claim = particleNode.claims.get(this.connectionName);
+        this.claim = claim ? claim.expression : null;
     }
 }
 /** Creates a new node for every given particle. */

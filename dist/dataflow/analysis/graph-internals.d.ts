@@ -16,7 +16,7 @@
  * dependencies between FlowGraph, Node/Edge, and the concrete implementations
  * of Node/Edge like ParticleNode, etc.
  */
-import { Claim } from '../../runtime/particle-claim.js';
+import { ClaimExpression } from '../../runtime/particle-claim.js';
 import { Check } from '../../runtime/particle-check.js';
 /** Represents a node in a FlowGraph. Can be a particle, handle, etc. */
 export declare abstract class Node {
@@ -42,6 +42,6 @@ export interface Edge {
      * e.g. "MyParticle.output1".
      */
     readonly label: string;
-    readonly claim?: Claim;
+    readonly claim?: ClaimExpression;
     readonly check?: Check;
 }
