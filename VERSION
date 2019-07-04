@@ -1,5 +1,5 @@
-commit 83c9f1f27d3c56a237a2ccf9d4fbc97abb826c9a
-Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Thu Jul 4 13:25:01 2019 +1000
+commit 9be31d859e99bca248ca727f8a65832082d76507
+Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
+Date:   Thu Jul 4 13:59:07 2019 +1000
 
-    Use npm config port (#3292)
+    Update wasm C++ build script to accommodate Mac's broken sed (#3290)
