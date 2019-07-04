@@ -300,7 +300,7 @@ function cleanObsolete() {
     }
 }
 function buildPath(path, preprocess, deps) {
-    return () => {
+    const fn = () => {
         if (preprocess) {
             preprocess();
         }
@@ -317,6 +317,9 @@ function buildPath(path, preprocess, deps) {
         }
         return true;
     };
+    // Using a lambda breaks the display of func.name in the main execution loop.
+    Object.defineProperty(fn, 'name', { value: `build ${path.slice(2)}` });
+    return fn;
 }
 function tsc(path) {
     const result = saneSpawnWithOutput('node_modules/.bin/tsc', ['--diagnostics', '-p', path]);
@@ -416,13 +419,16 @@ function licenses() {
     return result.success;
 }
 function webpackPkg(pkg) {
-    return () => {
+    const fn = () => {
         const result = saneSpawnWithOutput('npm', ['run', `build:${pkg}`]);
         if (result.stdout) {
             console.log(result.stdout);
         }
         return result.success;
     };
+    // Using a lambda breaks the display of func.name in the main execution loop.
+    Object.defineProperty(fn, 'name', { value: pkg });
+    return fn;
 }
 function spawnWasSuccessful(result, opts = {}) {
     if (result.status === 0 && !result.error) {

@@ -1,5 +1,9 @@
-commit 9be31d859e99bca248ca727f8a65832082d76507
+commit 741b265b1badd59b505434fac2c3d4e664758309
 Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
-Date:   Thu Jul 4 13:59:07 2019 +1000
+Date:   Thu Jul 4 14:08:33 2019 +1000
 
-    Update wasm C++ build script to accommodate Mac's broken sed (#3290)
+    sigh: fix missing name display in build and webpack steps (#3269)
+    
+    * sigh: fix missing name display in build and webpack steps
+    
+    * Improved name display for build and webpack
