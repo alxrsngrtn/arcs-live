@@ -12,6 +12,8 @@ import { ParticleNode } from './particle-node.js';
 import { HandleNode } from './handle-node.js';
 import { SlotNode } from './slot-node.js';
 import { Node, Edge } from './graph-internals.js';
+import { Manifest } from '../../runtime/manifest.js';
+import { StoreReference } from '../../runtime/particle-check.js';
 /**
  * Data structure for representing the connectivity graph of a recipe. Used to perform static analysis on a resolved recipe.
  */
@@ -23,7 +25,9 @@ export declare class FlowGraph {
     readonly edges: Edge[];
     /** Maps from particle name to node. */
     readonly particleMap: Map<string, ParticleNode>;
-    constructor(recipe: Recipe);
+    private readonly manifest;
+    constructor(recipe: Recipe, manifest: Manifest);
     /** Returns a list of all pairwise particle connections, in string form: 'P1.foo -> P2.bar'. */
     readonly connectionsAsStrings: string[];
+    resolveStoreRefToID(storeRef: StoreReference): string;
 }

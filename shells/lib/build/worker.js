@@ -4406,6 +4406,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CheckBooleanExpression", function() { return CheckBooleanExpression; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CheckHasTag", function() { return CheckHasTag; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CheckIsFromHandle", function() { return CheckIsFromHandle; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CheckIsFromStore", function() { return CheckIsFromStore; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createCheck", function() { return createCheck; });
 /* harmony import */ var _particle_spec_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(5);
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(3);
@@ -4425,6 +4426,7 @@ var CheckType;
 (function (CheckType) {
     CheckType["HasTag"] = "has-tag";
     CheckType["IsFromHandle"] = "is-from-handle";
+    CheckType["IsFromStore"] = "is-from-store";
 })(CheckType || (CheckType = {}));
 class Check {
     constructor(target, expression) {
@@ -4488,6 +4490,27 @@ class CheckIsFromHandle {
         return `is from handle ${this.parentHandle.name}`;
     }
 }
+/** A check condition of the form 'check x is from store <store reference>'. */
+class CheckIsFromStore {
+    constructor(storeRef) {
+        this.storeRef = storeRef;
+        this.type = CheckType.IsFromStore;
+    }
+    static fromASTNode(astNode) {
+        return new CheckIsFromStore({
+            type: astNode.storeRef.type,
+            store: astNode.storeRef.store,
+        });
+    }
+    toManifestString() {
+        let store = this.storeRef.store;
+        if (this.storeRef.type === 'id') {
+            // Put the ID inside single-quotes.
+            store = `'${store}'`;
+        }
+        return `is from store ${store}`;
+    }
+}
 /** Converts the given AST node into a CheckCondition object. */
 function createCheckCondition(astNode, handleConnectionMap) {
     switch (astNode.checkType) {
@@ -4495,6 +4518,8 @@ function createCheckCondition(astNode, handleConnectionMap) {
             return CheckHasTag.fromASTNode(astNode);
         case CheckType.IsFromHandle:
             return CheckIsFromHandle.fromASTNode(astNode, handleConnectionMap);
+        case CheckType.IsFromStore:
+            return CheckIsFromStore.fromASTNode(astNode);
         default:
             throw new Error('Unknown check type.');
     }

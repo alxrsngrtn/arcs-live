@@ -17,6 +17,6 @@ export async function buildFlowGraph(manifestContent) {
     const recipe = manifest.recipes[0];
     assert(recipe.normalize(), 'Failed to normalize recipe.');
     assert(recipe.isResolved(), 'Recipe is not resolved.');
-    return new FlowGraph(recipe);
+    return new FlowGraph(recipe, manifest);
 }
 //# sourceMappingURL=flow-graph-testing.js.map

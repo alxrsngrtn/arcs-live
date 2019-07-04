@@ -7,12 +7,13 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-import { ParticleCheckStatement, ParticleCheckHasTag, ParticleCheckIsFromHandle } from './manifest-ast-nodes.js';
+import * as AstNode from './manifest-ast-nodes.js';
 import { HandleConnectionSpec, ProvideSlotConnectionSpec } from './particle-spec.js';
 /** The different types of trust checks that particles can make. */
 export declare enum CheckType {
     HasTag = "has-tag",
-    IsFromHandle = "is-from-handle"
+    IsFromHandle = "is-from-handle",
+    IsFromStore = "is-from-store"
 }
 export declare type CheckTarget = HandleConnectionSpec | ProvideSlotConnectionSpec;
 export declare class Check {
@@ -36,13 +37,13 @@ export declare class CheckBooleanExpression {
 /** An expression inside a trust check. Can be either a boolean expression or a single check condition. */
 export declare type CheckExpression = CheckBooleanExpression | CheckCondition;
 /** A single check condition inside a trust check. */
-export declare type CheckCondition = CheckHasTag | CheckIsFromHandle;
+export declare type CheckCondition = CheckHasTag | CheckIsFromHandle | CheckIsFromStore;
 /** A check condition of the form 'check x is <tag>'. */
 export declare class CheckHasTag {
     readonly tag: string;
     readonly type: CheckType.HasTag;
     constructor(tag: string);
-    static fromASTNode(astNode: ParticleCheckHasTag): CheckHasTag;
+    static fromASTNode(astNode: AstNode.ParticleCheckHasTag): CheckHasTag;
     toManifestString(): string;
 }
 /** A check condition of the form 'check x is from handle <handle>'. */
@@ -50,8 +51,21 @@ export declare class CheckIsFromHandle {
     readonly parentHandle: HandleConnectionSpec;
     readonly type: CheckType.IsFromHandle;
     constructor(parentHandle: HandleConnectionSpec);
-    static fromASTNode(astNode: ParticleCheckIsFromHandle, handleConnectionMap: Map<string, HandleConnectionSpec>): CheckIsFromHandle;
+    static fromASTNode(astNode: AstNode.ParticleCheckIsFromHandle, handleConnectionMap: Map<string, HandleConnectionSpec>): CheckIsFromHandle;
+    toManifestString(): string;
+}
+/** A reference to a data store. Can be either the name of the store, or its ID. */
+export declare type StoreReference = {
+    type: 'id' | 'name';
+    store: string;
+};
+/** A check condition of the form 'check x is from store <store reference>'. */
+export declare class CheckIsFromStore {
+    readonly storeRef: StoreReference;
+    readonly type: CheckType.IsFromStore;
+    constructor(storeRef: StoreReference);
+    static fromASTNode(astNode: AstNode.ParticleCheckIsFromStore): CheckIsFromStore;
     toManifestString(): string;
 }
 /** Converts the given AST node into a Check object. */
-export declare function createCheck(checkTarget: CheckTarget, astNode: ParticleCheckStatement, handleConnectionMap: Map<string, HandleConnectionSpec>): Check;
+export declare function createCheck(checkTarget: CheckTarget, astNode: AstNode.ParticleCheckStatement, handleConnectionMap: Map<string, HandleConnectionSpec>): Check;

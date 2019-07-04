@@ -17,6 +17,7 @@ export declare class HandleNode extends Node {
     readonly inEdges: ParticleOutput[];
     readonly outEdges: ParticleInput[];
     readonly connectionSpecs: Set<HandleConnectionSpec>;
+    readonly storeId: string;
     constructor(handle: Handle);
     /** Returns a list of all pairs of particles that are connected through this handle, in string form. */
     readonly connectionsAsStrings: string[];

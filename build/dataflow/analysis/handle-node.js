@@ -16,6 +16,7 @@ export class HandleNode extends Node {
         this.inEdges = [];
         this.outEdges = [];
         this.connectionSpecs = new Set();
+        this.storeId = handle.id;
     }
     /** Returns a list of all pairs of particles that are connected through this handle, in string form. */
     get connectionsAsStrings() {
