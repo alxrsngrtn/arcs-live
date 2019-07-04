@@ -1,9 +1,5 @@
-commit 741b265b1badd59b505434fac2c3d4e664758309
+commit 5e71d6b18ea3806df781fba7dc215f04bdc876cf
 Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
-Date:   Thu Jul 4 14:08:33 2019 +1000
+Date:   Thu Jul 4 15:52:39 2019 +1000
 
-    sigh: fix missing name display in build and webpack steps (#3269)
-    
-    * sigh: fix missing name display in build and webpack steps
-    
-    * Improved name display for build and webpack
+    Include user-test dir in sigh clean (#3293)
