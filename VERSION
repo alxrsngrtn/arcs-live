@@ -1,5 +1,5 @@
-commit 5e71d6b18ea3806df781fba7dc215f04bdc876cf
-Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
-Date:   Thu Jul 4 15:52:39 2019 +1000
+commit 7e674a6b34f31a8ee7467e5a35f0d2457cd0e8d5
+Author: shans <shane.stephens@gmail.com>
+Date:   Fri Jul 5 16:32:31 2019 +1000
 
-    Include user-test dir in sigh clean (#3293)
+    Add a CRDT for Entities. (#3296)

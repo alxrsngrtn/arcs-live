@@ -2045,8 +2045,12 @@
         "signature": "50f22c6414d93bc2b5f52da8ecccca67927c7b89aabb4e86903900a576ab1356"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/crdt/crdt-singleton.ts": {
-        "version": "1953f42c894f0084d489b1da8403aff7eeb17fedeb911d21649acefa0667d01b",
-        "signature": "434ac226ed5a2d21323856d368fd2b3c947bfe4111ff443efd16b2098595e405"
+        "version": "2fc62e8940dc91023c7a1914e05aee4dd38d3936e4bd3769d1425c0b2366f443",
+        "signature": "ac1e7c0f30cce5e6ce035ad6d1ba36032e42f5e3b5db0d70069dbd5c7c351ac9"
+      },
+      "/home/travis/build/PolymerLabs/arcs/src/runtime/crdt/crdt-entity.ts": {
+        "version": "5bb4261ae10c8c9cc63f148c23b4fb5c3f271ee90fcdad5c14158fdefb20f7b4",
+        "signature": "753806dec4b23c143bfff3a95a85862cac46e381c6a1d85fba7c2f667ca67ed5"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/crdt/tests/crdt-collection-tests.ts": {
         "version": "954ef7471b264c5d55343216bf9db98802870cb25df90a2a66c6b7ee05d67f9c",
@@ -2055,6 +2059,10 @@
       "/home/travis/build/PolymerLabs/arcs/src/runtime/crdt/tests/crdt-count-test.ts": {
         "version": "b49ff16495d4a242d7f2236fe6658d129de44de64e401952780276efd99ca831",
         "signature": "fd95df5d076cbfed143dc4904d376b5c6d9cb1091b630994ffe2366010afa6b3"
+      },
+      "/home/travis/build/PolymerLabs/arcs/src/runtime/crdt/tests/crdt-entity-test.ts": {
+        "version": "ffcfbe5c58be7853093b33049d3392368a1ff1eaf5de92e9c021618afc477f4e",
+        "signature": "8bc1d39a3b8ec61064f9969316a088e314895e7ffd094468dcc0b238f33cb4a6"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/crdt/tests/crdt-singleton-test.ts": {
         "version": "a61a688799f512818bb4064396b72146fa2e090082c77b69f01ad67612e776d3",
@@ -6535,6 +6543,14 @@
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
       ],
+      "/home/travis/build/PolymerLabs/arcs/src/runtime/crdt/crdt-entity.ts": [
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/crdt/crdt.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/crdt/crdt-collection.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/crdt/crdt-singleton.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/hot.ts",
+        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
+        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
+      ],
       "/home/travis/build/PolymerLabs/arcs/src/runtime/crdt/tests/crdt-collection-tests.ts": [
         "/home/travis/build/PolymerLabs/arcs/src/platform/chai-web.d.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/crdt/crdt.ts",
@@ -6546,6 +6562,14 @@
         "/home/travis/build/PolymerLabs/arcs/src/platform/chai-web.d.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/crdt/crdt-count.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/crdt/crdt.ts",
+        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
+        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
+      ],
+      "/home/travis/build/PolymerLabs/arcs/src/runtime/crdt/tests/crdt-entity-test.ts": [
+        "/home/travis/build/PolymerLabs/arcs/src/platform/chai-web.d.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/crdt/crdt-entity.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/crdt/crdt-singleton.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/crdt/crdt-collection.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
       ],
@@ -10448,6 +10472,12 @@
         "/home/travis/build/PolymerLabs/arcs/src/runtime/crdt/crdt.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/crdt/crdt-collection.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/hot.ts"
+      ],
+      "/home/travis/build/PolymerLabs/arcs/src/runtime/crdt/crdt-entity.ts": [
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/crdt/crdt.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/hot.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/crdt/crdt-collection.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/crdt/crdt-singleton.ts"
       ],
       "/home/travis/build/PolymerLabs/arcs/src/runtime/storageNG/drivers/firebase.ts": [
         "/home/travis/build/PolymerLabs/arcs/src/runtime/storageNG/storage-key.ts",
@@ -25116,7 +25146,7 @@
         [
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/crdt/crdt-singleton.ts",
-            "start": 2875,
+            "start": 2882,
             "length": 15,
             "code": 2416,
             "category": 1,
@@ -25143,8 +25173,158 @@
           }
         ]
       ],
+      [
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/crdt/crdt-entity.ts",
+        [
+          {
+            "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/crdt/crdt-entity.ts",
+            "start": 5269,
+            "length": 2,
+            "code": 2345,
+            "category": 1,
+            "messageText": {
+              "messageText": "Argument of type 'SetOp<S, keyof S> | { type: EntityOpTypes.Clear; field: keyof S; actor: string; clock: Dictionary<number>; }' is not assignable to parameter of type 'never'.",
+              "category": 1,
+              "code": 2345,
+              "next": {
+                "messageText": "Type 'SetOp<S, keyof S>' is not assignable to type 'never'.",
+                "category": 1,
+                "code": 2322
+              }
+            }
+          },
+          {
+            "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/crdt/crdt-entity.ts",
+            "start": 5789,
+            "length": 2,
+            "code": 2345,
+            "category": 1,
+            "messageText": {
+              "messageText": "Argument of type 'SetOp<S, keyof S> | { type: EntityOpTypes.Clear; field: keyof S; actor: string; clock: Dictionary<number>; }' is not assignable to parameter of type 'never'.",
+              "category": 1,
+              "code": 2345,
+              "next": {
+                "messageText": "Type 'SetOp<S, keyof S>' is not assignable to type 'never'.",
+                "category": 1,
+                "code": 2322
+              }
+            }
+          },
+          {
+            "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/crdt/crdt-entity.ts",
+            "start": 6415,
+            "length": 2,
+            "code": 2345,
+            "category": 1,
+            "messageText": {
+              "messageText": "Argument of type 'AddOp<C, keyof C> | RemoveOp<C, keyof C>' is not assignable to parameter of type 'never'.",
+              "category": 1,
+              "code": 2345,
+              "next": {
+                "messageText": "Type 'AddOp<C, keyof C>' is not assignable to type 'never'.",
+                "category": 1,
+                "code": 2322
+              }
+            }
+          },
+          {
+            "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/crdt/crdt-entity.ts",
+            "start": 6968,
+            "length": 2,
+            "code": 2345,
+            "category": 1,
+            "messageText": {
+              "messageText": "Argument of type 'AddOp<C, keyof C> | RemoveOp<C, keyof C>' is not assignable to parameter of type 'never'.",
+              "category": 1,
+              "code": 2345,
+              "next": {
+                "messageText": "Type 'AddOp<C, keyof C>' is not assignable to type 'never'.",
+                "category": 1,
+                "code": 2322
+              }
+            }
+          }
+        ]
+      ],
       "/home/travis/build/PolymerLabs/arcs/src/runtime/crdt/tests/crdt-collection-tests.ts",
       "/home/travis/build/PolymerLabs/arcs/src/runtime/crdt/tests/crdt-count-test.ts",
+      [
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/crdt/tests/crdt-entity-test.ts",
+        [
+          {
+            "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/crdt/tests/crdt-entity-test.ts",
+            "start": 991,
+            "length": 4,
+            "code": 2322,
+            "category": 1,
+            "messageText": "Type 'null' is not assignable to type 'Referenceable'.",
+            "relatedInformation": [
+              {
+                "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/hot.ts",
+                "start": 1810,
+                "length": 17,
+                "messageText": "The expected type comes from this index signature.",
+                "category": 3,
+                "code": 6501
+              }
+            ]
+          },
+          {
+            "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/crdt/tests/crdt-entity-test.ts",
+            "start": 2400,
+            "length": 4,
+            "code": 2322,
+            "category": 1,
+            "messageText": "Type 'null' is not assignable to type 'Referenceable'.",
+            "relatedInformation": [
+              {
+                "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/hot.ts",
+                "start": 1810,
+                "length": 17,
+                "messageText": "The expected type comes from this index signature.",
+                "category": 3,
+                "code": 6501
+              }
+            ]
+          },
+          {
+            "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/crdt/tests/crdt-entity-test.ts",
+            "start": 3032,
+            "length": 4,
+            "code": 2322,
+            "category": 1,
+            "messageText": "Type 'null' is not assignable to type 'Referenceable'.",
+            "relatedInformation": [
+              {
+                "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/hot.ts",
+                "start": 1810,
+                "length": 17,
+                "messageText": "The expected type comes from this index signature.",
+                "category": 3,
+                "code": 6501
+              }
+            ]
+          },
+          {
+            "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/crdt/tests/crdt-entity-test.ts",
+            "start": 3798,
+            "length": 4,
+            "code": 2322,
+            "category": 1,
+            "messageText": "Type 'null' is not assignable to type 'Referenceable'.",
+            "relatedInformation": [
+              {
+                "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/hot.ts",
+                "start": 1810,
+                "length": 17,
+                "messageText": "The expected type comes from this index signature.",
+                "category": 3,
+                "code": 6501
+              }
+            ]
+          }
+        ]
+      ],
       "/home/travis/build/PolymerLabs/arcs/src/runtime/crdt/tests/crdt-singleton-test.ts",
       [
         "/home/travis/build/PolymerLabs/arcs/src/runtime/storageNG/drivers/firebase.ts",

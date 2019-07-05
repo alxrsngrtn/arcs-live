@@ -37,7 +37,7 @@ export interface CRDTSingletonTypeRecord<T extends Referenceable> extends CRDTTy
     operation: SingletonOperation<T>;
     consumerType: RawSingleton<T>;
 }
-declare type SingletonChange<T extends Referenceable> = CRDTChange<CRDTSingletonTypeRecord<T>>;
+export declare type SingletonChange<T extends Referenceable> = CRDTChange<CRDTSingletonTypeRecord<T>>;
 declare type SingletonModel<T extends Referenceable> = CRDTModel<CRDTSingletonTypeRecord<T>>;
 export declare class CRDTSingleton<T extends Referenceable> implements SingletonModel<T> {
     private collection;
