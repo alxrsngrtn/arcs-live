@@ -14689,11 +14689,10 @@ const parse = peg$parse;
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-
 async function digest(str) {
-  const sha = crypto.createHash('sha1');
-  sha.update(str);
-  return Promise.resolve().then(() => sha.digest('hex'));
+    const sha = crypto.createHash('sha1');
+    sha.update(str);
+    return Promise.resolve().then(() => sha.digest('hex'));
 }
 
 /**
@@ -21318,7 +21317,6 @@ class SlotProxy {
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-
 // This is only relevant in the web devtools, but we need to
 // ensure that the stack trace is passed through on node
 // so that system exceptions are plumbed properly.
@@ -26789,28 +26787,27 @@ class ArcDevtoolsChannel {
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-
 class DevtoolsChannel extends AbstractDevtoolsChannel {
-  constructor() {
-    super();
-    this.server = new WebSocket.Server({port: 8787});
-    this.server.on('connection', ws => {
-      this.socket = ws;
-      this.socket.on('message', msg => {
-        if (msg === 'init') {
-          DevtoolsBroker.markConnected();
-        } else {
-          this._handleMessage(JSON.parse(msg));
-        }
-      });
-    });
-  }
-
-  _flush(messages) {
-    if (this.socket) {
-      this.socket.send(JSON.stringify(messages));
+    constructor() {
+        super();
+        this.server = new WebSocket.Server({ port: 8787 });
+        this.server.on('connection', (ws) => {
+            this.socket = ws;
+            this.socket.on('message', (msg) => {
+                if (msg === 'init') {
+                    DevtoolsBroker.markConnected();
+                }
+                else {
+                    this._handleMessage(JSON.parse(msg));
+                }
+            });
+        });
     }
-  }
+    _flush(messages) {
+        if (this.socket) {
+            this.socket.send(JSON.stringify(messages));
+        }
+    }
 }
 
 /**
@@ -26866,55 +26863,53 @@ class DevtoolsConnection {
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-
 const html$1 = (strings, ...values) => (strings[0] + values.map((v, i) => v + strings[i + 1]).join('')).trim();
-
 class PlatformLoaderBase extends Loader {
-  constructor(urlMap) {
-    super();
-    this._urlMap = urlMap || [];
-  }
-  loadResource(name) {
-    const path = this._resolve(name);
-    return super.loadResource(path);
-  }
-  _resolve(path) {
-    let url = this._urlMap[path];
-    if (!url && path) {
-      // TODO(sjmiles): inefficient!
-      const macro = Object.keys(this._urlMap).sort((a, b) => b.length - a.length).find(k => path.slice(0, k.length) == k);
-      if (macro) {
-        url = this._urlMap[macro] + path.slice(macro.length);
-      }
+    constructor(urlMap) {
+        super();
+        this._urlMap = urlMap || [];
     }
-    url = this.normalizeDots(url || path);
-    return url;
-  }
-  mapParticleUrl(path) {
-    const parts = path.split('/');
-    const suffix = parts.pop();
-    const folder = parts.join('/');
-    const name = suffix.split('.').shift();
-    const resolved = this._resolve(folder);
-    this._urlMap[name] = resolved;
-    this._urlMap['$here'] = resolved;
-  }
-  unwrapParticle(particleWrapper, log) {
-    // TODO(sjmiles): regarding `resolver`:
-    //  _resolve method allows particles to request remapping of assets paths
-    //  for use in DOM
-    const resolver = this._resolve.bind(this);
-    return particleWrapper({
-      Particle: Particle$1,
-      DomParticle,
-      MultiplexerDomParticle,
-      SimpleParticle: DomParticle,
-      TransformationDomParticle,
-      resolver,
-      log: log || (() => {}),
-      html: html$1
-    });
-  }
+    async loadResource(name) {
+        const path = this._resolve(name);
+        return super.loadResource(path);
+    }
+    _resolve(path) {
+        let url = this._urlMap[path];
+        if (!url && path) {
+            // TODO(sjmiles): inefficient!
+            const macro = Object.keys(this._urlMap).sort((a, b) => b.length - a.length).find(k => path.slice(0, k.length) === k);
+            if (macro) {
+                url = this._urlMap[macro] + path.slice(macro.length);
+            }
+        }
+        url = this.normalizeDots(url || path);
+        return url;
+    }
+    mapParticleUrl(path) {
+        const parts = path.split('/');
+        const suffix = parts.pop();
+        const folder = parts.join('/');
+        const name = suffix.split('.').shift();
+        const resolved = this._resolve(folder);
+        this._urlMap[name] = resolved;
+        this._urlMap['$here'] = resolved;
+    }
+    unwrapParticle(particleWrapper, log) {
+        // TODO(sjmiles): regarding `resolver`:
+        //  _resolve method allows particles to request remapping of assets paths
+        //  for use in DOM
+        const resolver = this._resolve.bind(this);
+        return particleWrapper({
+            Particle: Particle$1,
+            DomParticle,
+            MultiplexerDomParticle,
+            SimpleParticle: DomParticle,
+            TransformationDomParticle,
+            resolver,
+            log: log || (() => { }),
+            html: html$1
+        });
+    }
 }
 
 /**
@@ -26926,15 +26921,14 @@ class PlatformLoaderBase extends Loader {
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-
 class PlatformLoader extends PlatformLoaderBase {
-  async requireParticle(fileName) {
-    const path = this._resolve(fileName);
-    // inject path to this particle into the UrlMap,
-    // allows "foo.js" particle to invoke `importScripts(resolver('foo/othermodule.js'))`
-    this.mapParticleUrl(path);
-    return super.requireParticle(path);
-  }
+    async requireParticle(fileName) {
+        const path = this._resolve(fileName);
+        // inject path to this particle into the UrlMap,
+        // allows "foo.js" particle to invoke `importScripts(resolver('foo/othermodule.js'))`
+        this.mapParticleUrl(path);
+        return super.requireParticle(path);
+    }
 }
 
 /**

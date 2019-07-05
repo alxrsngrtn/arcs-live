@@ -7,11 +7,10 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-
 import crypto from 'crypto';
-
 export async function digest(str) {
-  const sha = crypto.createHash('sha1');
-  sha.update(str);
-  return Promise.resolve().then(() => sha.digest('hex'));
+    const sha = crypto.createHash('sha1');
+    sha.update(str);
+    return Promise.resolve().then(() => sha.digest('hex'));
 }
+//# sourceMappingURL=digest-node.js.map

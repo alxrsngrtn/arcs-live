@@ -7,11 +7,9 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-
 // "Convert" old-style module to ES6.
 //const smst = require('sourcemapped-stacktrace/sourcemapped-stacktrace.js');
 //export const mapStackTrace = smst.mapStackTrace;
-
 // TODO(sjmiles): no 'require' on web, rely on global otherwise-loaded
-export const mapStackTrace = window.sourceMappedStackTrace && window.sourceMappedStackTrace.mapStackTrace;
-
+export const mapStackTrace = window['sourceMappedStackTrace'] && window['sourceMappedStackTrace'].mapStackTrace;
+//# sourceMappingURL=sourcemapped-stacktrace-web.js.map

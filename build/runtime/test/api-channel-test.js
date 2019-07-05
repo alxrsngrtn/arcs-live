@@ -7,118 +7,151 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-'use strict';
-
-import {assert} from '../../platform/chai-web.js';
-import {APIPort, PECOuterPort, PECInnerPort} from '../api-channel.js';
-
+import { assert } from '../../platform/chai-web.js';
+import { APIPort, PECOuterPort, PECInnerPort } from '../api-channel.js';
 class Registrar {
-  constructor() {
-    this.calls = new Map();
-    this.handlers = new Map();
-    this.initializers = new Map();
-    this.initializerHandlers = new Map();
-  }
-}
-
-// TODO(shans): Make this test work with the new API channel
-describe('API channel', function() {
-  let outer;
-  let inner;
-
-  before(() => {
-    APIPort.prototype._testingHook = function() {
-      // Change the argumentType mapping objects/functions to generate string identifiers.
-      this.Direct = 'Direct';
-      this.LocalMapped = 'LocalMapped';
-      this.Mapped = 'Mapped';
-      this.Map = (keyprimitive, valueprimitive) => `Map(${keyprimitive},${valueprimitive})`;
-      this.List = (primitive) => `List(${primitive})`;
-      this.ByLiteral = (clazz) => `ByLiteral(${clazz.name})`;
-
-      // Override the registration functions to just capture the names and args in a Registrar.
-      this._reg_ = new Registrar();
-      this.registerCall = function(name, argumentTypes) {
-        this._reg_.calls.set(name, argumentTypes);
-      };
-      this.registerHandler = function(name, argumentTypes) {
-        this._reg_.handlers.set(name, argumentTypes);
-      };
-      this.registerInitializer = function(name, argumentTypes) {
-        this._reg_.initializers.set(name, argumentTypes);
-      };
-      this.registerInitializerHandler = function(name, argumentTypes) {
-        this._reg_.initializerHandlers.set(name, argumentTypes);
-      };
-      this.registerRedundantInitializer = this.registerInitializer;
-    };
-
-    const port = {setMessageCallback: () => {}};
-    const arc = {id: ''}; // OuterPortAttachment constructor needs the id.
-
-    // PECOuterPort can call DevToolsConnected during setup, so we need to stub that.
-    const outerPort = new class extends PECOuterPort {
-      DevToolsConnected() {}
-    }(port, arc);
-    
-
-    outer = outerPort._reg_;
-    inner = (new PECInnerPort(port))._reg_;
-  });
-
-  after(() => {
-    // Restore the normal APIPort constructor behaviour.
-    APIPort.prototype._testingHook = function() {};
-  });
-
-  // Verifies that message functions are correctly defined between the two sides of the API channel:
-  // - registerCall on one side must have a registerHandler on the other;
-  // - same for registerInitializer/registerRedundantInitializer and registerInitializerHandler;
-  // - the argumentTypes object for the two sides must have the same names and matching types.
-  //
-  // Argument type matching is defined as:
-  // - Direct can match to either Direct or LocalMapped;
-  // - LocalMapped cannot match to LocalMapped;
-  // - all other combinations must be an exact match.
-  //
-  // Note that this modifies handlerMap, which is ok because every map in the two Registrar objects
-  // is only used once in the four tests below.
-  function verify(callerMap, callerLabel, handlerMap, handlerLabel) {
-    for (const [name, callerArgs] of callerMap) {
-      const handlerArgs = handlerMap.get(name);
-      assert.isDefined(handlerArgs, `${callerLabel} '${name}': missing ${handlerLabel}`);
-
-      for (const [arg, callerType] of Object.entries(callerArgs)) {
-        const handlerType = handlerArgs[arg];
-        assert.isDefined(handlerType, `${callerLabel} '${name}': missing arg '${arg}' in ${handlerLabel}`);
-        delete handlerArgs[arg];
-
-        if ((callerType === handlerType && callerType !== 'LocalMapped') ||
-            (callerType === 'Direct' && handlerType === 'LocalMapped') ||
-            (callerType === 'LocalMapped' && handlerType === 'Direct')) {
-          continue;
-        }
-        assert.fail(0, 0, `${callerLabel} '${name}': type mismatch for arg '${arg}': '${callerType}' vs '${handlerType}'`);
-      }
-      assert.isEmpty(handlerArgs, `${callerLabel} '${name}': ${handlerLabel} has extra args '${Object.keys(handlerArgs)}'`);
-      handlerMap.delete(name);
+    constructor() {
+        // tslint:disable-next-line: no-any
+        this.calls = new Map();
+        // tslint:disable-next-line: no-any
+        this.handlers = new Map();
+        // tslint:disable-next-line: no-any
+        this.initializers = new Map();
+        // tslint:disable-next-line: no-any
+        this.initializerHandlers = new Map();
     }
-    assert.isEmpty(handlerMap, `${handlerLabel}s with no ${callerLabel}s: ${[...handlerMap.keys()]}`);
-  }
-
-  it('outer port calls match inner port handlers', () => {
-    verify(outer.calls, 'PECOuterPort call', inner.handlers, 'PECInnerPort handler');
-  });
-
-  it('inner port calls match outer port handlers', () => {
-    verify(inner.calls, 'PECInnerPort call', outer.handlers, 'PECOuterPort handler');
-  });
-
-  it('outer port initializers match inner port initializer handlers', () => {
-    verify(outer.initializers, 'PECOuterPort initializer', inner.initializerHandlers, 'PECInnerPort initializerHandler');
-  });
-
-  it('inner port initializers match outer port initializer handlers', () => {
-    verify(inner.initializers, 'PECInnerPort initializer', outer.initializerHandlers, 'PECOuterPort initializerHandler');
-  });
+}
+// TODO(shans): Make this test work with the new API channel
+// tslint:disable-next-line: only-arrow-functions
+describe('API channel', function () {
+    let outer;
+    let inner;
+    before(() => {
+        APIPort.prototype._testingHook = function () {
+            // Change the argumentType mapping objects/functions to generate string identifiers.
+            // TODO update quoted usage and/or find a better way of implementing _testingHook
+            this['Direct'] = 'Direct';
+            this['LocalMapped'] = 'LocalMapped';
+            this['Mapped'] = 'Mapped';
+            this['Map'] = (keyprimitive, valueprimitive) => `Map(${keyprimitive},${valueprimitive})`;
+            this['List'] = (primitive) => `List(${primitive})`;
+            this['ByLiteral'] = (clazz) => `ByLiteral(${clazz.name})`;
+            // Override the registration functions to just capture the names and args in a Registrar.
+            const reg = new Registrar();
+            this['_reg_'] = reg;
+            this['registerCall'] = (name, argumentTypes) => {
+                reg.calls.set(name, argumentTypes);
+            };
+            this['registerHandler'] = (name, argumentTypes) => {
+                reg.handlers.set(name, argumentTypes);
+            };
+            this['registerInitializer'] = (name, argumentTypes) => {
+                reg.initializers.set(name, argumentTypes);
+            };
+            this['registerInitializerHandler'] = (name, argumentTypes) => {
+                reg.initializerHandlers.set(name, argumentTypes);
+            };
+            this['registerRedundantInitializer'] = this['registerInitializer'];
+        };
+        // tslint:disable-next-line: no-any
+        const port = { setMessageCallback: () => { } };
+        // tslint:disable-next-line: no-any
+        const arc = { id: '' }; // OuterPortAttachment constructor needs the id.
+        // PECOuterPort can call DevToolsConnected during setup, so we need to stub that.
+        const outerPort = new class extends PECOuterPort {
+            DevToolsConnected() { }
+            onArcLoadRecipe() { }
+            onArcCreateHandle() { }
+            onArcCreateSlot() { }
+            onArcMapHandle() { }
+            onConstructInnerArc() { }
+            onGetBackingStore() { }
+            onHandleClear() { }
+            onHandleGet() { }
+            onHandleRemove() { }
+            onHandleRemoveMultiple() { }
+            onHandleSet() { }
+            onHandleStore() { }
+            onHandleStream() { }
+            onHandleToList() { }
+            onIdle() { }
+            onIntializeProxy() { }
+            onRender() { }
+            onReportExceptionInHost() { }
+            onServiceRequest() { }
+            onStreamCursorClose() { }
+            onStreamCursorNext() { }
+            onSynchronizeProxy() { }
+            onInitializeProxy() { }
+        }(port, arc);
+        outer = outerPort['_reg_'];
+        inner = new class extends PECInnerPort {
+            onAwaitIdle() { }
+            onConstructArcCallback() { }
+            onCreateHandleCallback() { }
+            onCreateSlotCallback() { }
+            onDefineHandle() { }
+            onGetBackingStoreCallback() { }
+            onInnerArcRender() { }
+            onInstantiateParticle() { }
+            onMapHandleCallback() { }
+            onSimpleCallback() { }
+            onStartRender() { }
+            onStop() { }
+            onStopRender() { }
+            onUIEvent() { }
+            constructor() {
+                super(port);
+            }
+        }()['_reg_'];
+    });
+    after(() => {
+        // Restore the normal APIPort constructor behaviour.
+        APIPort.prototype._testingHook = () => { };
+    });
+    // Verifies that message functions are correctly defined between the two sides of the API channel:
+    // - registerCall on one side must have a registerHandler on the other;
+    // - same for registerInitializer/registerRedundantInitializer and registerInitializerHandler;
+    // - the argumentTypes object for the two sides must have the same names and matching types.
+    //
+    // Argument type matching is defined as:
+    // - Direct can match to either Direct or LocalMapped;
+    // - LocalMapped cannot match to LocalMapped;
+    // - all other combinations must be an exact match.
+    //
+    // Note that this modifies handlerMap, which is ok because every map in the two Registrar objects
+    // is only used once in the four tests below.
+    function verify(callerMap, callerLabel, handlerMap, handlerLabel) {
+        for (const [name, callerArgs] of callerMap) {
+            const handlerArgs = handlerMap.get(name);
+            assert.isDefined(handlerArgs, `${callerLabel} '${name}': missing ${handlerLabel}`);
+            for (const [arg, callerType] of Object.entries(callerArgs)) {
+                const handlerType = handlerArgs[arg];
+                assert.isDefined(handlerType, `${callerLabel} '${name}': missing arg '${arg}' in ${handlerLabel}`);
+                delete handlerArgs[arg];
+                if ((callerType === handlerType && callerType !== 'LocalMapped') ||
+                    (callerType === 'Direct' && handlerType === 'LocalMapped') ||
+                    (callerType === 'LocalMapped' && handlerType === 'Direct')) {
+                    continue;
+                }
+                assert.fail(0, 0, `${callerLabel} '${name}': type mismatch for arg '${arg}': '${callerType}' vs '${handlerType}'`);
+            }
+            assert.isEmpty(handlerArgs, `${callerLabel} '${name}': ${handlerLabel} has extra args '${Object.keys(handlerArgs)}'`);
+            handlerMap.delete(name);
+        }
+        assert.isEmpty(handlerMap, `${handlerLabel}s with no ${callerLabel}s: ${[...handlerMap.keys()]}`);
+    }
+    it('outer port calls match inner port handlers', () => {
+        verify(outer.calls, 'PECOuterPort call', inner.handlers, 'PECInnerPort handler');
+    });
+    it('inner port calls match outer port handlers', () => {
+        verify(inner.calls, 'PECInnerPort call', outer.handlers, 'PECOuterPort handler');
+    });
+    it('outer port initializers match inner port initializer handlers', () => {
+        verify(outer.initializers, 'PECOuterPort initializer', inner.initializerHandlers, 'PECInnerPort initializerHandler');
+    });
+    it('inner port initializers match outer port initializer handlers', () => {
+        verify(inner.initializers, 'PECInnerPort initializer', outer.initializerHandlers, 'PECOuterPort initializerHandler');
+    });
 });
+//# sourceMappingURL=api-channel-test.js.map

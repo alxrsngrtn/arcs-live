@@ -7,6 +7,7 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
+// tslint:disable-next-line: no-any
 export function assert(test, message) {
     if (!test) {
         if (typeof window !== 'object') {

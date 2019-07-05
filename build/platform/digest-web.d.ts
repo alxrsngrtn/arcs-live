@@ -7,4 +7,4 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-export declare function digest(str: any): Promise<string>;
+export declare function digest(str: string): Promise<string>;

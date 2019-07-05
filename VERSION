@@ -1,5 +1,16 @@
-commit 7e674a6b34f31a8ee7467e5a35f0d2457cd0e8d5
-Author: shans <shane.stephens@gmail.com>
-Date:   Fri Jul 5 16:32:31 2019 +1000
+commit bbf8aa6759a4634b8702dde22c986ce80d45fa7e
+Author: Paul Lindner <plindner@google.com>
+Date:   Fri Jul 5 08:34:55 2019 -0700
 
-    Add a CRDT for Entities. (#3296)
+    Migrate remaining runtime tests and much of platform to Typescript (#3289)
+    
+    * Migrate remaining runtime tests and much of platform to Typescript
+    
+    - Switch to es2019 and add the es2019.webworker definitions (for loader)
+    - Adds typing to some places for consistency
+    
+    1724.5 points
+    
+    * lint
+    
+    * address code review comments

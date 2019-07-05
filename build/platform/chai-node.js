@@ -7,7 +7,8 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-
 import chai from 'chai';
+// tslint:disable-next-line: no-default-export
 export default chai;
 export const assert = chai.assert;
+//# sourceMappingURL=chai-node.js.map

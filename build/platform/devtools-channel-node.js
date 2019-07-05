@@ -7,31 +7,29 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-'use strict';
-
-import {AbstractDevtoolsChannel} from '../devtools-connector/abstract-devtools-channel.js';
-import {DevtoolsBroker} from '../../devtools/shared/devtools-broker.js';
+import { AbstractDevtoolsChannel } from '../devtools-connector/abstract-devtools-channel.js';
+import { DevtoolsBroker } from '../../devtools/shared/devtools-broker.js';
 import WebSocket from 'ws';
-
 export class DevtoolsChannel extends AbstractDevtoolsChannel {
-  constructor() {
-    super();
-    this.server = new WebSocket.Server({port: 8787});
-    this.server.on('connection', ws => {
-      this.socket = ws;
-      this.socket.on('message', msg => {
-        if (msg === 'init') {
-          DevtoolsBroker.markConnected();
-        } else {
-          this._handleMessage(JSON.parse(msg));
-        }
-      });
-    });
-  }
-
-  _flush(messages) {
-    if (this.socket) {
-      this.socket.send(JSON.stringify(messages));
+    constructor() {
+        super();
+        this.server = new WebSocket.Server({ port: 8787 });
+        this.server.on('connection', (ws) => {
+            this.socket = ws;
+            this.socket.on('message', (msg) => {
+                if (msg === 'init') {
+                    DevtoolsBroker.markConnected();
+                }
+                else {
+                    this._handleMessage(JSON.parse(msg));
+                }
+            });
+        });
     }
-  }
+    _flush(messages) {
+        if (this.socket) {
+            this.socket.send(JSON.stringify(messages));
+        }
+    }
 }
+//# sourceMappingURL=devtools-channel-node.js.map

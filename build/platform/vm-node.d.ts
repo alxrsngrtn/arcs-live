@@ -7,7 +7,5 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-
-import chai from 'chai';
-export default chai;
-export const assert = chai.assert;
+import vm from 'vm';
+export { vm };

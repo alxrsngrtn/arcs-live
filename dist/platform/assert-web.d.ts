@@ -7,4 +7,4 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-export declare function assert(test: any, message?: any): void;
+export declare function assert(test: any, message?: string): void;

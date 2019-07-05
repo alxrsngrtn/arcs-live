@@ -415,6 +415,7 @@ __webpack_require__.r(__webpack_exports__);
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
+// tslint:disable-next-line: no-any
 function assert(test, message) {
     if (!test) {
         if (typeof window !== 'object') {
@@ -5368,12 +5369,11 @@ __webpack_require__.r(__webpack_exports__);
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-
 // This is only relevant in the web devtools, but we need to
 // ensure that the stack trace is passed through on node
 // so that system exceptions are plumbed properly.
 const mapStackTrace = (x, f) => f([x]);
-
+//# sourceMappingURL=sourcemapped-stacktrace-node.js.map
 
 /***/ }),
 /* 27 */
@@ -6324,80 +6324,80 @@ __webpack_require__.r(__webpack_exports__);
  */
 
 
-
-
 const log = Object(_platform_log_web_js__WEBPACK_IMPORTED_MODULE_1__["logFactory"])('loader-web', 'green');
 const warn = Object(_platform_log_web_js__WEBPACK_IMPORTED_MODULE_1__["logFactory"])('loader-web', 'green', 'warn');
 const error = Object(_platform_log_web_js__WEBPACK_IMPORTED_MODULE_1__["logFactory"])('loader-web', 'green', 'error');
-
 class PlatformLoader extends _loader_platform_js__WEBPACK_IMPORTED_MODULE_0__["PlatformLoaderBase"] {
-  flushCaches() {
-    // punt object urls?
-  }
-  async loadResource(url) {
-    // subclass impl differentiates paths and URLs,
-    // for browser env we can feed both kinds into _loadURL
-    return super._loadURL(this._resolve(url));
-  }
-  async loadBinary(url) {
-    return super.loadBinary(this._resolve(url));
-  }
-  async provisionObjectUrl(fileName) {
-    const raw = await this.loadResource(fileName);
-    const code = `${raw}\n//# sourceURL=${fileName}`;
-    return URL.createObjectURL(new Blob([code], {type: 'application/javascript'}));
-  }
-  // Below here invoked from inside Worker
-  async loadParticleClass(spec) {
-    const clazz = await this.requireParticle(spec.implFile, spec.implBlobUrl);
-    if (clazz) {
-      clazz.spec = spec;
-    } else {
-      warn(`[spec.implFile]::defineParticle() returned no particle.`);
+    flushCaches() {
+        // punt object urls?
     }
-    return clazz;
-  }
-  async requireParticle(unresolvedPath, blobUrl) {
-    // inject path to this particle into the UrlMap,
-    // allows "foo.js" particle to invoke "importScripts(resolver('foo/othermodule.js'))"
-    this.mapParticleUrl(unresolvedPath);
-    // resolved target
-    const url = blobUrl || this._resolve(unresolvedPath);
-    // load wrapped particle
-    const particle = this.loadWrappedParticle(url);
-    // execute particle wrapper, if we have one
-    if (particle) {
-      const logger = this.provisionLogger(unresolvedPath);
-      return this.unwrapParticle(particle, logger);
+    async loadResource(url) {
+        // subclass impl differentiates paths and URLs,
+        // for browser env we can feed both kinds into _loadURL
+        return super._loadURL(this._resolve(url));
     }
-  }
-  provisionLogger(fileName) {
-    return Object(_platform_log_web_js__WEBPACK_IMPORTED_MODULE_1__["logFactory"])(fileName.split('/').pop(), '#1faa00');
-  }
-  loadWrappedParticle(url) {
-    let result;
-    // MUST be synchronous from here until deletion
-    // of self.defineParticle because we share this
-    // scope with other particles
-    self.defineParticle = function(particleWrapper) {
-      if (result) {
-        warn('multiple particles not supported, last particle wins');
-      }
-      // multiple particles not supported: last particle wins
-      result = particleWrapper;
-    };
-    try {
-      // import (execute) particle code
-      importScripts(url);
-    } catch (x) {
-      error(x);
+    async loadBinary(url) {
+        return super.loadBinary(this._resolve(url));
     }
-    // clean up
-    delete self.defineParticle;
-    return result;
-  }
+    async provisionObjectUrl(fileName) {
+        const raw = await this.loadResource(fileName);
+        const code = `${raw}\n//# sourceURL=${fileName}`;
+        return URL.createObjectURL(new Blob([code], { type: 'application/javascript' }));
+    }
+    // Below here invoked from inside Worker
+    async loadParticleClass(spec) {
+        const clazz = await this.requireParticle(spec.implFile, spec.implBlobUrl);
+        if (clazz) {
+            clazz.spec = spec;
+        }
+        else {
+            warn(`[spec.implFile]::defineParticle() returned no particle.`);
+        }
+        return clazz;
+    }
+    async requireParticle(unresolvedPath, blobUrl) {
+        // inject path to this particle into the UrlMap,
+        // allows "foo.js" particle to invoke "importScripts(resolver('foo/othermodule.js'))"
+        this.mapParticleUrl(unresolvedPath);
+        // resolved target
+        const url = blobUrl || this._resolve(unresolvedPath);
+        // load wrapped particle
+        const particle = this.loadWrappedParticle(url);
+        // execute particle wrapper, if we have one
+        if (particle) {
+            const logger = this.provisionLogger(unresolvedPath);
+            return this.unwrapParticle(particle, logger);
+        }
+    }
+    provisionLogger(fileName) {
+        return Object(_platform_log_web_js__WEBPACK_IMPORTED_MODULE_1__["logFactory"])(fileName.split('/').pop(), '#1faa00');
+    }
+    loadWrappedParticle(url) {
+        let result;
+        // MUST be synchronous from here until deletion
+        // of self.defineParticle because we share this
+        // scope with other particles
+        // TODO fix usage of quoted property
+        self['defineParticle'] = (particleWrapper) => {
+            if (result) {
+                warn('multiple particles not supported, last particle wins');
+            }
+            // multiple particles not supported: last particle wins
+            result = particleWrapper;
+        };
+        try {
+            // import (execute) particle code
+            importScripts(url);
+        }
+        catch (x) {
+            error(x);
+        }
+        // clean up
+        delete self['defineParticle'];
+        return result;
+    }
 }
-
+//# sourceMappingURL=loader-web.js.map
 
 /***/ }),
 /* 31 */
@@ -6425,58 +6425,55 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-
-
 const html = (strings, ...values) => (strings[0] + values.map((v, i) => v + strings[i + 1]).join('')).trim();
-
 class PlatformLoaderBase extends _runtime_loader_js__WEBPACK_IMPORTED_MODULE_0__["Loader"] {
-  constructor(urlMap) {
-    super();
-    this._urlMap = urlMap || [];
-  }
-  loadResource(name) {
-    const path = this._resolve(name);
-    return super.loadResource(path);
-  }
-  _resolve(path) {
-    let url = this._urlMap[path];
-    if (!url && path) {
-      // TODO(sjmiles): inefficient!
-      const macro = Object.keys(this._urlMap).sort((a, b) => b.length - a.length).find(k => path.slice(0, k.length) == k);
-      if (macro) {
-        url = this._urlMap[macro] + path.slice(macro.length);
-      }
+    constructor(urlMap) {
+        super();
+        this._urlMap = urlMap || [];
     }
-    url = this.normalizeDots(url || path);
-    return url;
-  }
-  mapParticleUrl(path) {
-    const parts = path.split('/');
-    const suffix = parts.pop();
-    const folder = parts.join('/');
-    const name = suffix.split('.').shift();
-    const resolved = this._resolve(folder);
-    this._urlMap[name] = resolved;
-    this._urlMap['$here'] = resolved;
-  }
-  unwrapParticle(particleWrapper, log) {
-    // TODO(sjmiles): regarding `resolver`:
-    //  _resolve method allows particles to request remapping of assets paths
-    //  for use in DOM
-    const resolver = this._resolve.bind(this);
-    return particleWrapper({
-      Particle: _runtime_particle_js__WEBPACK_IMPORTED_MODULE_1__["Particle"],
-      DomParticle: _runtime_dom_particle_js__WEBPACK_IMPORTED_MODULE_2__["DomParticle"],
-      MultiplexerDomParticle: _runtime_multiplexer_dom_particle_js__WEBPACK_IMPORTED_MODULE_3__["MultiplexerDomParticle"],
-      SimpleParticle: _runtime_dom_particle_js__WEBPACK_IMPORTED_MODULE_2__["DomParticle"],
-      TransformationDomParticle: _runtime_transformation_dom_particle_js__WEBPACK_IMPORTED_MODULE_4__["TransformationDomParticle"],
-      resolver,
-      log: log || (() => {}),
-      html
-    });
-  }
+    async loadResource(name) {
+        const path = this._resolve(name);
+        return super.loadResource(path);
+    }
+    _resolve(path) {
+        let url = this._urlMap[path];
+        if (!url && path) {
+            // TODO(sjmiles): inefficient!
+            const macro = Object.keys(this._urlMap).sort((a, b) => b.length - a.length).find(k => path.slice(0, k.length) === k);
+            if (macro) {
+                url = this._urlMap[macro] + path.slice(macro.length);
+            }
+        }
+        url = this.normalizeDots(url || path);
+        return url;
+    }
+    mapParticleUrl(path) {
+        const parts = path.split('/');
+        const suffix = parts.pop();
+        const folder = parts.join('/');
+        const name = suffix.split('.').shift();
+        const resolved = this._resolve(folder);
+        this._urlMap[name] = resolved;
+        this._urlMap['$here'] = resolved;
+    }
+    unwrapParticle(particleWrapper, log) {
+        // TODO(sjmiles): regarding `resolver`:
+        //  _resolve method allows particles to request remapping of assets paths
+        //  for use in DOM
+        const resolver = this._resolve.bind(this);
+        return particleWrapper({
+            Particle: _runtime_particle_js__WEBPACK_IMPORTED_MODULE_1__["Particle"],
+            DomParticle: _runtime_dom_particle_js__WEBPACK_IMPORTED_MODULE_2__["DomParticle"],
+            MultiplexerDomParticle: _runtime_multiplexer_dom_particle_js__WEBPACK_IMPORTED_MODULE_3__["MultiplexerDomParticle"],
+            SimpleParticle: _runtime_dom_particle_js__WEBPACK_IMPORTED_MODULE_2__["DomParticle"],
+            TransformationDomParticle: _runtime_transformation_dom_particle_js__WEBPACK_IMPORTED_MODULE_4__["TransformationDomParticle"],
+            resolver,
+            log: log || (() => { }),
+            html
+        });
+    }
 }
-
+//# sourceMappingURL=loader-platform.js.map
 
 /***/ }),
 /* 32 */

@@ -7,6 +7,6 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-
 import vm from 'vm';
-export {vm};
+export { vm };
+//# sourceMappingURL=vm-node.js.map

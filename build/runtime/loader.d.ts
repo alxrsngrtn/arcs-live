@@ -5,7 +5,7 @@ export declare class Loader {
     pec?: ParticleExecutionContext;
     path(fileName: string): string;
     join(prefix: string, path: string): string;
-    private normalizeDots;
+    protected normalizeDots(path: string): string;
     loadResource(file: string): Promise<string>;
     loadBinary(file: string): Promise<ArrayBuffer>;
     private loadFile;

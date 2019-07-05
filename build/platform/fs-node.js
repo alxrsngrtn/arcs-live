@@ -7,6 +7,6 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-
 import fs from 'fs';
-export {fs};
+export { fs };
+//# sourceMappingURL=fs-node.js.map
