@@ -1,5 +1,5 @@
-commit a113d2a4174c421e743be67357e11bcace6531ce
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Mon Jul 8 08:25:42 2019 -0700
+commit 98d08d50ad6e9f55fb42bc7f4651a34bd6e3fab2
+Author: Alex Rosengarten <alxr@google.com>
+Date:   Mon Jul 8 13:57:41 2019 -0700
 
-    provides @singleton for suggest listeners (#3295)
+    rm slandles from pipeapps2 (#3267)
