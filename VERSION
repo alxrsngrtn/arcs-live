@@ -1,5 +1,13 @@
-commit 98d08d50ad6e9f55fb42bc7f4651a34bd6e3fab2
-Author: Alex Rosengarten <alxr@google.com>
-Date:   Mon Jul 8 13:57:41 2019 -0700
+commit b666e45305aca0c1d5ca46739f9993549dd4c123
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Mon Jul 8 16:03:25 2019 -0700
 
-    rm slandles from pipeapps2 (#3267)
+    migrate javaharness to pipes-shell-2 (#3297)
+    
+    * migrate javaharness to pipes-shell-2
+    
+    * delete canonical recipes, update readme and uncomment manifests in PipeApps2/PipeApps.recipes
+    
+    * add comment to ShellApi and DeviceClient interfaces
+    
+    * null-check object
