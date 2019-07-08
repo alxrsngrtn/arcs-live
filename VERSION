@@ -1,16 +1,5 @@
-commit bbf8aa6759a4634b8702dde22c986ce80d45fa7e
-Author: Paul Lindner <plindner@google.com>
-Date:   Fri Jul 5 08:34:55 2019 -0700
+commit a113d2a4174c421e743be67357e11bcace6531ce
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Mon Jul 8 08:25:42 2019 -0700
 
-    Migrate remaining runtime tests and much of platform to Typescript (#3289)
-    
-    * Migrate remaining runtime tests and much of platform to Typescript
-    
-    - Switch to es2019 and add the es2019.webworker definitions (for loader)
-    - Adds typing to some places for consistency
-    
-    1724.5 points
-    
-    * lint
-    
-    * address code review comments
+    provides @singleton for suggest listeners (#3295)
