@@ -10,7 +10,7 @@
 import { Handle } from './handle.js';
 import { Id, IdGenerator } from './id.js';
 import { Loader } from './loader.js';
-import { Particle } from './particle.js';
+import { Particle, Capabilities } from './particle.js';
 import { StorageProxy } from './storage-proxy.js';
 import { Type } from './type.js';
 import { MessagePort } from './message-channel.js';
@@ -37,10 +37,7 @@ export declare class ParticleExecutionContext {
     generateID(): string;
     innerArcHandle(arcId: string, particleId: string): InnerArcHandle;
     getStorageProxy(storageKey: any, type: any): StorageProxy | Promise<StorageProxy>;
-    defaultCapabilitySet(): {
-        constructInnerArc: (particle: any) => Promise<InnerArcHandle>;
-        serviceRequest: (particle: any, args: any, callback: any) => void;
-    };
+    capabilities(hasInnerArcs: boolean): Capabilities;
     private instantiateParticle;
     private loadWasmParticle;
     readonly relevance: Map<any, any>;

@@ -141,16 +141,20 @@ export class ParticleExecutionContext {
         }
         return this.keyedProxies[storageKey];
     }
-    defaultCapabilitySet() {
-        return {
-            constructInnerArc: async (particle) => {
-                return new Promise((resolve, reject) => this.apiPort.ConstructInnerArc(arcId => resolve(this.innerArcHandle(arcId, particle.id)), particle));
-            },
+    capabilities(hasInnerArcs) {
+        const cap = {
             // TODO(sjmiles): experimental `services` impl
             serviceRequest: (particle, args, callback) => {
                 this.apiPort.ServiceRequest(particle, args, callback);
             }
         };
+        if (hasInnerArcs) {
+            // TODO: Particle doesn't have an id field; not sure if it needs one or innerArcHandle shouldn't have that arg.
+            cap.constructInnerArc = async (particle) => {
+                return new Promise((resolve, reject) => this.apiPort.ConstructInnerArc(arcId => resolve(this.innerArcHandle(arcId, undefined)), particle));
+            };
+        }
+        return cap;
     }
     // tslint:disable-next-line: no-any
     async instantiateParticle(id, spec, proxies) {
@@ -160,12 +164,12 @@ export class ParticleExecutionContext {
         let particle;
         if (spec.implFile && spec.implFile.endsWith('.wasm')) {
             particle = await this.loadWasmParticle(spec);
-            particle.setCapabilities({});
+            particle.setCapabilities(this.capabilities(false));
         }
         else {
             const clazz = await this.loader.loadParticleClass(spec);
             particle = new clazz();
-            particle.setCapabilities(this.defaultCapabilitySet());
+            particle.setCapabilities(this.capabilities(true));
         }
         this.particles.push(particle);
         const handleMap = new Map();

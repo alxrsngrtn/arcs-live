@@ -301,16 +301,20 @@ class ParticleExecutionContext {
         }
         return this.keyedProxies[storageKey];
     }
-    defaultCapabilitySet() {
-        return {
-            constructInnerArc: async (particle) => {
-                return new Promise((resolve, reject) => this.apiPort.ConstructInnerArc(arcId => resolve(this.innerArcHandle(arcId, particle.id)), particle));
-            },
+    capabilities(hasInnerArcs) {
+        const cap = {
             // TODO(sjmiles): experimental `services` impl
             serviceRequest: (particle, args, callback) => {
                 this.apiPort.ServiceRequest(particle, args, callback);
             }
         };
+        if (hasInnerArcs) {
+            // TODO: Particle doesn't have an id field; not sure if it needs one or innerArcHandle shouldn't have that arg.
+            cap.constructInnerArc = async (particle) => {
+                return new Promise((resolve, reject) => this.apiPort.ConstructInnerArc(arcId => resolve(this.innerArcHandle(arcId, undefined)), particle));
+            };
+        }
+        return cap;
     }
     // tslint:disable-next-line: no-any
     async instantiateParticle(id, spec, proxies) {
@@ -320,12 +324,12 @@ class ParticleExecutionContext {
         let particle;
         if (spec.implFile && spec.implFile.endsWith('.wasm')) {
             particle = await this.loadWasmParticle(spec);
-            particle.setCapabilities({});
+            particle.setCapabilities(this.capabilities(false));
         }
         else {
             const clazz = await this.loader.loadParticleClass(spec);
             particle = new clazz();
-            particle.setCapabilities(this.defaultCapabilitySet());
+            particle.setCapabilities(this.capabilities(true));
         }
         this.particles.push(particle);
         const handleMap = new Map();
@@ -5545,6 +5549,9 @@ __webpack_require__.r(__webpack_exports__);
 // Examples:
 //   Singleton:   4:id05|txt:T3:abc|lnk:U10:http://def|num:N37:|flg:B1|
 //   Collection:  3:29:4:id12|txt:T4:qwer|num:N9.2:|18:6:id2670|num:N-7:|15:5:id501|flg:B0|
+//
+// The encoder classes also support a "Dictionary" format of key:value string pairs:
+//   <size>:<key-len>:<key><value-len>:<value><key-len>:<key><value-len>:<value>...
 class EntityPackager {
     constructor(schema) {
         this.encoder = new StringEncoder();
@@ -5581,6 +5588,14 @@ class StringEncoder {
         for (const entity of entities) {
             const str = this.encodeSingleton(schema, entity);
             encoded += str.length + ':' + str;
+        }
+        return encoded;
+    }
+    static encodeDictionary(dict) {
+        const entries = Object.entries(dict);
+        let encoded = entries.length + ':';
+        for (const [key, value] of entries) {
+            encoded += key.length + ':' + key + value.length + ':' + value;
         }
         return encoded;
     }
@@ -5629,7 +5644,6 @@ class StringDecoder {
         }
         return { id, data };
     }
-    // Format is <size>:<key-len>:<key><value-len>:<value><key-len>:<key><value-len>:<value>...
     decodeDictionary(str) {
         this.str = str;
         const dict = {};
@@ -5817,12 +5831,14 @@ class WasmContainer {
         const env = {
             abort: () => { throw new Error('Abort!'); },
             // Inner particle API
+            // TODO: guard against null/empty args from the wasm side
             _singletonSet: (p, handle, entity) => this.getParticle(p).singletonSet(handle, entity),
             _singletonClear: (p, handle) => this.getParticle(p).singletonClear(handle),
             _collectionStore: (p, handle, entity) => this.getParticle(p).collectionStore(handle, entity),
             _collectionRemove: (p, handle, entity) => this.getParticle(p).collectionRemove(handle, entity),
             _collectionClear: (p, handle) => this.getParticle(p).collectionClear(handle),
             _render: (p, slotName, template, model) => this.getParticle(p).renderImpl(slotName, template, model),
+            _serviceRequest: (p, call, args, tag) => this.getParticle(p).serviceRequest(call, args, tag),
         };
         driver.configureEnvironment(module, this, env);
         const global = { 'NaN': NaN, 'Infinity': Infinity };
@@ -5851,6 +5867,10 @@ class WasmContainer {
         }
         this.heapU8[p + str.length] = 0;
         return p;
+    }
+    // Convenience function for freeing one or more wasm memory allocations. Null pointers are ignored.
+    free(...ptrs) {
+        ptrs.forEach(p => p && this.exports._free(p));
     }
     // Currently only supports ASCII. TODO: unicode
     read(idx) {
@@ -5912,7 +5932,7 @@ class WasmParticle extends _particle_js__WEBPACK_IMPORTED_MODULE_2__["Particle"]
         for (const [name, handle] of handles) {
             const p = this.container.store(name);
             const wasmHandle = this.exports._connectHandle(this.innerParticle, p, handle.canRead, handle.canWrite);
-            this.exports._free(p);
+            this.container.free(p);
             if (wasmHandle === 0) {
                 throw new Error(`Wasm particle failed to connect handle '${name}'`);
             }
@@ -5920,6 +5940,7 @@ class WasmParticle extends _particle_js__WEBPACK_IMPORTED_MODULE_2__["Particle"]
             this.revHandleMap.set(wasmHandle, handle);
             this.converters.set(handle, new EntityPackager(handle.entityClass.schema));
         }
+        this.exports._init(this.innerParticle);
     }
     async onHandleSync(handle, model) {
         const wasmHandle = this.handleMap.get(handle);
@@ -5940,7 +5961,7 @@ class WasmParticle extends _particle_js__WEBPACK_IMPORTED_MODULE_2__["Particle"]
         }
         const p = this.container.store(encoded);
         this.exports._syncHandle(this.innerParticle, wasmHandle, p);
-        this.exports._free(p);
+        this.container.free(p);
     }
     // tslint:disable-next-line: no-any
     async onHandleUpdate(handle, update) {
@@ -5964,10 +5985,7 @@ class WasmParticle extends _particle_js__WEBPACK_IMPORTED_MODULE_2__["Particle"]
             p2 = this.container.store(converter.encodeCollection(update.removed || []));
         }
         this.exports._updateHandle(this.innerParticle, wasmHandle, p1, p2);
-        if (p1)
-            this.exports._free(p1);
-        if (p2)
-            this.exports._free(p2);
+        this.container.free(p1, p2);
     }
     // Ignored for wasm particles.
     async onHandleDesync(handle) { }
@@ -6035,7 +6053,7 @@ class WasmParticle extends _particle_js__WEBPACK_IMPORTED_MODULE_2__["Particle"]
         const sendTemplate = contentTypes.includes('template');
         const sendModel = contentTypes.includes('model');
         this.exports._renderSlot(this.innerParticle, p, sendTemplate, sendModel);
-        this.exports._free(p);
+        this.container.free(p);
     }
     // TODO
     renderHostedSlot(slotName, hostedSlotId, content) {
@@ -6043,7 +6061,7 @@ class WasmParticle extends _particle_js__WEBPACK_IMPORTED_MODULE_2__["Particle"]
     }
     // Actually renders the slot. May be invoked due to an external request via renderSlot(),
     // or directly from the wasm particle itself (e.g. in response to a data update).
-    // template is a string provided by the particle. model is an encoded key:value dictionary.
+    // template is a string provided by the particle. model is an encoded Dictionary.
     renderImpl(slotNamePtr, templatePtr, modelPtr) {
         const slot = this.slotProxiesByName.get(this.container.read(slotNamePtr));
         if (slot) {
@@ -6059,12 +6077,41 @@ class WasmParticle extends _particle_js__WEBPACK_IMPORTED_MODULE_2__["Particle"]
             slot.render(content);
         }
     }
+    // Wasm particles can request service calls with a Dictionary of arguments and an optional string
+    // tag to disambiguate different requests to the same service call.
+    async serviceRequest(callPtr, argsPtr, tagPtr) {
+        const call = this.container.read(callPtr);
+        const args = new StringDecoder().decodeDictionary(this.container.read(argsPtr));
+        const tag = this.container.read(tagPtr);
+        // tslint:disable-next-line: no-any
+        const response = await this.service({ call, ...args });
+        // Convert the arbitrary response object to key:value string pairs.
+        const dict = {};
+        if (typeof response === 'object') {
+            for (const entry of Object.entries(response)) {
+                // tslint:disable-next-line: no-any
+                const [key, value] = entry;
+                dict[key] = (typeof value === 'object') ? JSON.stringify(value) : (value + '');
+            }
+        }
+        else {
+            // Convert a plain value response to {value: 'string'}
+            dict['value'] = response + '';
+        }
+        // We can't re-use the string pointers passed in as args to this method, because the await
+        // point above means the call to internal::serviceRequest inside the wasm module will already
+        // have completed, and the memory for those args will have been freed.
+        const cp = this.container.store(call);
+        const rp = this.container.store(StringEncoder.encodeDictionary(dict));
+        const tp = this.container.store(tag);
+        this.exports._serviceResponse(this.innerParticle, cp, rp, tp);
+        this.container.free(cp, rp, tp);
+    }
     fireEvent(slotName, event) {
         const sp = this.container.store(slotName);
         const hp = this.container.store(event.handler);
         this.exports._fireEvent(this.innerParticle, sp, hp);
-        this.exports._free(sp);
-        this.exports._free(hp);
+        this.container.free(sp, hp);
     }
 }
 //# sourceMappingURL=wasm.js.map
@@ -6238,12 +6285,12 @@ class Particle {
      */
     // TODO(sjmiles): experimental services impl
     async service(request) {
-        if (!this.capabilities['serviceRequest']) {
+        if (!this.capabilities.serviceRequest) {
             console.warn(`${this.spec.name} has no service support.`);
             return null;
         }
         return new Promise(resolve => {
-            this.capabilities['serviceRequest'](this, request, response => resolve(response));
+            this.capabilities.serviceRequest(this, request, response => resolve(response));
         });
     }
     /**

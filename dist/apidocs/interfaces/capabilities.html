@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>ParticleCheckStatement | arcs</title>
+	<title>Capabilities | arcs</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -56,10 +56,10 @@
 					<a href="../globals.html">Globals</a>
 				</li>
 				<li>
-					<a href="particlecheckstatement.html">ParticleCheckStatement</a>
+					<a href="capabilities.html">Capabilities</a>
 				</li>
 			</ul>
-			<h1>Interface ParticleCheckStatement</h1>
+			<h1>Interface Capabilities</h1>
 		</div>
 	</div>
 </header>
@@ -70,12 +70,7 @@
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<a href="../classes/basenode.html" class="tsd-signature-type">BaseNode</a>
-						<ul class="tsd-hierarchy">
-							<li>
-								<span class="target">ParticleCheckStatement</span>
-							</li>
-						</ul>
+						<span class="target">Capabilities</span>
 					</li>
 				</ul>
 			</section>
@@ -86,10 +81,8 @@
 						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="particlecheckstatement.html#expression" class="tsd-kind-icon">expression</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-overwrite"><a href="particlecheckstatement.html#kind" class="tsd-kind-icon">kind</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-inherited"><a href="particlecheckstatement.html#location" class="tsd-kind-icon">location</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="particlecheckstatement.html#target" class="tsd-kind-icon">target</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="capabilities.html#constructinnerarc" class="tsd-kind-icon">construct<wbr>Inner<wbr>Arc</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="capabilities.html#servicerequest" class="tsd-kind-icon">service<wbr>Request</a></li>
 							</ul>
 						</section>
 					</div>
@@ -98,46 +91,72 @@
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Properties</h2>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="expression" class="tsd-anchor"></a>
-					<h3>expression</h3>
-					<div class="tsd-signature tsd-kind-icon">expression<span class="tsd-signature-symbol">:</span> <a href="../globals.html#particlecheckexpression" class="tsd-signature-type">ParticleCheckExpression</a></div>
+					<a name="constructinnerarc" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> construct<wbr>Inner<wbr>Arc</h3>
+					<div class="tsd-signature tsd-kind-icon">construct<wbr>Inner<wbr>Arc<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">function</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9bdb968/src/runtime/manifest-ast-nodes.ts#L217">src/runtime/manifest-ast-nodes.ts:217</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9bdb968/src/runtime/particle.ts#L24">src/runtime/particle.ts:24</a></li>
 						</ul>
 					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-overwrite">
-					<a name="kind" class="tsd-anchor"></a>
-					<h3>kind</h3>
-					<div class="tsd-signature tsd-kind-icon">kind<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">"particle-trust-check"</span></div>
-					<aside class="tsd-sources">
-						<p>Overrides <a href="../classes/basenode.html">BaseNode</a>.<a href="../classes/basenode.html#kind">kind</a></p>
-						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9bdb968/src/runtime/manifest-ast-nodes.ts#L215">src/runtime/manifest-ast-nodes.ts:215</a></li>
+					<div class="tsd-type-declaration">
+						<h4>Type declaration</h4>
+						<ul class="tsd-parameters">
+							<li class="tsd-parameter-siganture">
+								<ul class="tsd-signatures tsd-kind-type-literal tsd-parent-kind-property tsd-is-not-exported">
+									<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>particle<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Particle</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../globals.html#innerarchandle" class="tsd-signature-type">InnerArcHandle</a><span class="tsd-signature-symbol">&gt;</span></li>
+								</ul>
+								<ul class="tsd-descriptions">
+									<li class="tsd-description">
+										<h4 class="tsd-parameters-title">Parameters</h4>
+										<ul class="tsd-parameters">
+											<li>
+												<h5>particle: <span class="tsd-signature-type">Particle</span></h5>
+											</li>
+										</ul>
+										<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../globals.html#innerarchandle" class="tsd-signature-type">InnerArcHandle</a><span class="tsd-signature-symbol">&gt;</span></h4>
+									</li>
+								</ul>
+							</li>
 						</ul>
-					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
-					<a name="location" class="tsd-anchor"></a>
-					<h3>location</h3>
-					<div class="tsd-signature tsd-kind-icon">location<span class="tsd-signature-symbol">:</span> <a href="sourcelocation.html" class="tsd-signature-type">SourceLocation</a></div>
-					<aside class="tsd-sources">
-						<p>Inherited from <a href="../classes/basenode.html">BaseNode</a>.<a href="../classes/basenode.html#location">location</a></p>
-						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9bdb968/src/runtime/manifest-ast-nodes.ts#L43">src/runtime/manifest-ast-nodes.ts:43</a></li>
-						</ul>
-					</aside>
+					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="target" class="tsd-anchor"></a>
-					<h3>target</h3>
-					<div class="tsd-signature tsd-kind-icon">target<span class="tsd-signature-symbol">:</span> <a href="particlechecktarget.html" class="tsd-signature-type">ParticleCheckTarget</a></div>
+					<a name="servicerequest" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> service<wbr>Request</h3>
+					<div class="tsd-signature tsd-kind-icon">service<wbr>Request<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">function</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9bdb968/src/runtime/manifest-ast-nodes.ts#L216">src/runtime/manifest-ast-nodes.ts:216</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9bdb968/src/runtime/particle.ts#L25">src/runtime/particle.ts:25</a></li>
 						</ul>
 					</aside>
+					<div class="tsd-type-declaration">
+						<h4>Type declaration</h4>
+						<ul class="tsd-parameters">
+							<li class="tsd-parameter-siganture">
+								<ul class="tsd-signatures tsd-kind-type-literal tsd-parent-kind-property tsd-is-not-exported">
+									<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>particle<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Particle</span>, args<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, callback<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+								</ul>
+								<ul class="tsd-descriptions">
+									<li class="tsd-description">
+										<h4 class="tsd-parameters-title">Parameters</h4>
+										<ul class="tsd-parameters">
+											<li>
+												<h5>particle: <span class="tsd-signature-type">Particle</span></h5>
+											</li>
+											<li>
+												<h5>args: <span class="tsd-signature-type">any</span></h5>
+											</li>
+											<li>
+												<h5>callback: <span class="tsd-signature-type">any</span></h5>
+											</li>
+										</ul>
+										<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+									</li>
+								</ul>
+							</li>
+						</ul>
+					</div>
 				</section>
 			</section>
 		</div>
@@ -154,19 +173,13 @@
 				</ul>
 				<ul class="current">
 					<li class="current tsd-kind-interface">
-						<a href="particlecheckstatement.html" class="tsd-kind-icon">Particle<wbr>Check<wbr>Statement</a>
+						<a href="capabilities.html" class="tsd-kind-icon">Capabilities</a>
 						<ul>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="particlecheckstatement.html#expression" class="tsd-kind-icon">expression</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-overwrite">
-								<a href="particlecheckstatement.html#kind" class="tsd-kind-icon">kind</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
-								<a href="particlecheckstatement.html#location" class="tsd-kind-icon">location</a>
+								<a href="capabilities.html#constructinnerarc" class="tsd-kind-icon">construct<wbr>Inner<wbr>Arc</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="particlecheckstatement.html#target" class="tsd-kind-icon">target</a>
+								<a href="capabilities.html#servicerequest" class="tsd-kind-icon">service<wbr>Request</a>
 							</li>
 						</ul>
 					</li>

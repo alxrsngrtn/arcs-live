@@ -35,6 +35,7 @@ export declare class WasmContainer {
     private getParticle;
     register(particle: WasmParticle, innerParticle: WasmAddress): void;
     store(str: string): WasmAddress;
+    free(...ptrs: WasmAddress[]): void;
     read(idx: WasmAddress): string;
     sysWritev(which: any, varargs: any): number;
 }
@@ -67,6 +68,7 @@ export declare class WasmParticle extends Particle {
     renderSlot(slotName: string, contentTypes: string[]): void;
     renderHostedSlot(slotName: string, hostedSlotId: string, content: Content): void;
     renderImpl(slotNamePtr: WasmAddress, templatePtr: WasmAddress, modelPtr: WasmAddress): void;
+    serviceRequest(callPtr: WasmAddress, argsPtr: WasmAddress, tagPtr: WasmAddress): Promise<void>;
     fireEvent(slotName: string, event: any): void;
 }
 export {};

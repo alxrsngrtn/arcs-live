@@ -15,6 +15,10 @@ import { Relevance } from './relevance.js';
 import { SlotProxy } from './slot-proxy.js';
 import { Content } from './slot-consumer.js';
 import { Entity, EntityRawData, MutableEntityData } from './entity.js';
+export interface Capabilities {
+    constructInnerArc?: (particle: Particle) => Promise<InnerArcHandle>;
+    serviceRequest?: (particle: Particle, args: any, callback: any) => void;
+}
 /**
  * A basic particle. For particles that provide UI, you may like to
  * instead use DOMParticle.
@@ -35,9 +39,7 @@ export declare class Particle {
      * This sets the capabilities for this particle.  This can only
      * be called once.
      */
-    setCapabilities(capabilities: {
-        constructInnerArc?: (particle: Particle) => Promise<InnerArcHandle>;
-    }): void;
+    setCapabilities(capabilities: Capabilities): void;
     private invokeSafely;
     callSetHandles(handles: ReadonlyMap<string, Handle>, onException: Consumer<Error>): Promise<void>;
     /**
