@@ -1,11 +1,5 @@
-commit 9bdb968967e39ac8d72b92efd46751dd0b91367a
-Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
-Date:   Tue Jul 9 10:39:38 2019 +1000
+commit 4c1093c1da0cc03c21e21ee3ac83599334b751d1
+Author: Joshua Pratt <jp10010101010000@gmail.com>
+Date:   Tue Jul 9 11:46:13 2019 +1000
 
-    Wasm: implement Services API (#3283)
-    
-    * Wasm: implement Services API
-    
-    This limits request/response objects to key:value string pairs.
-    
-    * Add todo
+    Tiny fix for undefined tag list (#3302)

@@ -804,7 +804,7 @@ function peg$parse(input, options) {
             kind: 'slot-connection-ref',
             location: location(),
             param,
-            tags,
+            tags: tags || [],
         };
     };
     const peg$c216 = function (from, direction, to) {
