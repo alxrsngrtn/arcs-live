@@ -29,7 +29,6 @@ export declare class WasmContainer {
     private wasm;
     exports: any;
     private particleMap;
-    logInfo: [string, number] | null;
     initialize(buffer: ArrayBuffer): Promise<void>;
     private driverForModule;
     private getParticle;
@@ -37,7 +36,6 @@ export declare class WasmContainer {
     store(str: string): WasmAddress;
     free(...ptrs: WasmAddress[]): void;
     read(idx: WasmAddress): string;
-    sysWritev(which: any, varargs: any): number;
 }
 export declare class WasmParticle extends Particle {
     private container;

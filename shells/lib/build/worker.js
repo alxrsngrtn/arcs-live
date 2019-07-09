@@ -5696,6 +5696,9 @@ class StringDecoder {
 }
 class EmscriptenWasmDriver {
     constructor(customSection) {
+        // Records file and line for console logging in C++. This is set by the console/error macros in
+        // arcs.h and used immediately in the following printf call (implemented by sysWritev() below).
+        this.logInfo = null;
         // Wasm modules built by emscripten require some external memory configuration by the caller,
         // which is usually built into the glue code generated alongside the module. We're not using
         // the glue code, but if we set the EMIT_EMSCRIPTEN_METADATA flag when building, emscripten
@@ -5767,12 +5770,42 @@ class EmscriptenWasmDriver {
             _systemError: (msg) => { throw new Error(container.read(msg)); },
             abortOnCannotGrowMemory: (size) => { throw new Error(`abortOnCannotGrowMemory(${size})`); },
             // Logging
-            _setLogInfo: (file, line) => container.logInfo = [container.read(file), line],
-            ___syscall146: (which, varargs) => container.sysWritev(which, varargs),
+            _setLogInfo: (file, line) => this.logInfo = [container.read(file), line],
+            ___syscall146: (which, varargs) => this.sysWritev(container, which, varargs),
         });
     }
     initializeInstance(container, instance) {
         // Emscripten doesn't need main() invoked
+    }
+    // C++ printf support cribbed from emscripten glue js - currently only supports ASCII
+    sysWritev(container, which, varargs) {
+        const get = () => {
+            varargs += 4;
+            return container.heap32[(((varargs) - (4)) >> 2)];
+        };
+        const output = (get() === 1) ? console.log : console.error;
+        const iov = get();
+        const iovcnt = get();
+        // TODO: does this need to be persistent across calls? (i.e. due to write buffering)
+        let str = this.logInfo ? `[${this.logInfo[0]}:${this.logInfo[1]}] ` : '';
+        let ret = 0;
+        for (let i = 0; i < iovcnt; i++) {
+            const ptr = container.heap32[(((iov) + (i * 8)) >> 2)];
+            const len = container.heap32[(((iov) + (i * 8 + 4)) >> 2)];
+            for (let j = 0; j < len; j++) {
+                const curr = container.heapU8[ptr + j];
+                if (curr === 0 || curr === 10) { // NUL or \n
+                    output(str);
+                    str = '';
+                }
+                else {
+                    str += String.fromCharCode(curr);
+                }
+            }
+            ret += len;
+        }
+        this.logInfo = null;
+        return ret;
     }
 }
 class KotlinWasmDriver {
@@ -5818,9 +5851,6 @@ class KotlinWasmDriver {
 class WasmContainer {
     constructor() {
         this.particleMap = new Map();
-        // Records file and line for console logging in C++. This is set by the console/error macros in
-        // arcs.h and used immediately in the following printf call (implemented by sysWritev() below).
-        this.logInfo = null;
     }
     async initialize(buffer) {
         // TODO: vet the imports/exports on 'module'
@@ -5879,36 +5909,6 @@ class WasmContainer {
             str += String.fromCharCode(this.heapU8[idx++]);
         }
         return str;
-    }
-    // C++ printf support cribbed from emscripten glue js - currently only supports ASCII
-    sysWritev(which, varargs) {
-        const get = () => {
-            varargs += 4;
-            return this.heap32[(((varargs) - (4)) >> 2)];
-        };
-        const output = (get() === 1) ? console.log : console.error;
-        const iov = get();
-        const iovcnt = get();
-        // TODO: does this need to be persistent across calls? (i.e. due to write buffering)
-        let str = this.logInfo ? `[${this.logInfo[0]}:${this.logInfo[1]}] ` : '';
-        let ret = 0;
-        for (let i = 0; i < iovcnt; i++) {
-            const ptr = this.heap32[(((iov) + (i * 8)) >> 2)];
-            const len = this.heap32[(((iov) + (i * 8 + 4)) >> 2)];
-            for (let j = 0; j < len; j++) {
-                const curr = this.heapU8[ptr + j];
-                if (curr === 0 || curr === 10) { // NUL or \n
-                    output(str);
-                    str = '';
-                }
-                else {
-                    str += String.fromCharCode(curr);
-                }
-            }
-            ret += len;
-        }
-        this.logInfo = null;
-        return ret;
     }
 }
 // Creates and interfaces to a particle inside a WasmContainer's module.
