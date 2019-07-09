@@ -1,5 +1,5 @@
-commit aefe810c597912b8d81a2268384f2f2bb26991b8
+commit ca8356a9cf9992570583da7d87da47d7cbcf4b9b
 Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
-Date:   Tue Jul 9 12:47:05 2019 +1000
+Date:   Tue Jul 9 15:27:59 2019 +1000
 
-    Move C++-specific print support into EmscriptenWasmDriver (#3303)
+    Remove unused schema2proto tooling (#3304)

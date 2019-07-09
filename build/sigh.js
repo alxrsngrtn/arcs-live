@@ -66,7 +66,6 @@ const steps = {
     unit: [unit],
     health: [health],
     bundle: [peg, build, bundle],
-    schema2proto: [peg, build, schema2proto],
     schema2pkg: [peg, build, schema2pkg],
     devServer: [peg, build, devServer],
     licenses: [build],
@@ -742,10 +741,6 @@ function spawnTool(toolPath, args) {
 // E.g. $ ./tools/sigh bundle -o restaurants.zip particles/Restaurants/Restaurants.recipes
 function bundle(args) {
     return spawnTool('build/tools/bundle-cli.js', args);
-}
-// E.g. $ ./tools/sigh schema2proto -o particles/native/wasm/proto particles/Restaurants/Restaurants.recipes
-function schema2proto(args) {
-    return spawnTool('build/tools/schema2proto.js', args);
 }
 // E.g. $ ./tools/sigh schema2pkg particles/Products/Product.schema
 function schema2pkg(args) {
