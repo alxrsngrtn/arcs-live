@@ -1,5 +1,10 @@
-commit 4c1093c1da0cc03c21e21ee3ac83599334b751d1
-Author: Joshua Pratt <jp10010101010000@gmail.com>
-Date:   Tue Jul 9 11:46:13 2019 +1000
+commit 3a845920d8dc73bec316d85a9e789ff73cf12b64
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Mon Jul 8 19:11:52 2019 -0700
 
-    Tiny fix for undefined tag list (#3302)
+    Java PEC: add more methods and storage proxy callbacks (#3288)
+    
+    * Declare CrdtCollectionModel classes
+    and make progress on StorageProxy Synchronize and SimpleCallback implementation.
+    
+    * address comment and remove crdt model
