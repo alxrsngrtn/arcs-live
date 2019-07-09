@@ -1,5 +1,5 @@
-commit ca8356a9cf9992570583da7d87da47d7cbcf4b9b
-Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
-Date:   Tue Jul 9 15:27:59 2019 +1000
+commit 0aa47385624208afbfb9fb97f6e55a9abd9b3b4c
+Author: Paul Lindner <plindner@google.com>
+Date:   Mon Jul 8 22:47:16 2019 -0700
 
-    Remove unused schema2proto tooling (#3304)
+    Remove Object support from Schemas (#3301)

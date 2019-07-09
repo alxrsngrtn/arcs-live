@@ -434,7 +434,7 @@
         "signature": "65d44719fd2341c9cd14b75f89a02dd4a3ba5f977f15a182bbcc6d5aa52cc1f4"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/entity.ts": {
-        "version": "b0e49273d437de70b02fcf0f0dd6fc8121769e39213ca4d8a930705ce1083e3d",
+        "version": "d05b48f25c48044e19bd76a959ebdcb2da9d99ab8d5d024f6b92b250394f1dc2",
         "signature": "8d6b5507b3a20cb4b4a0b6bcc550f95a066a2a509aab365ed13af4238a0c37be"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/schema.ts": {
@@ -466,7 +466,7 @@
         "signature": "8dc60803a44ab182f0518e2a95bd13d899a841289381fab5832281c51a5862cb"
       },
       "/home/travis/build/PolymerLabs/arcs/src/gen/runtime/manifest-parser.ts": {
-        "version": "66225033028f8b28d8cf9ae781da28279aa0858bdec1e523c8d47a761bd043e9",
+        "version": "583c010d4e3745f823a144bce71c5046d264225c0a70add60ab23eddce222597",
         "signature": "ff2c763c7895327196fd3eb358dcc775b25f27bdae513079cc287433af262427"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/manifest-meta.ts": {
@@ -1130,7 +1130,7 @@
         "signature": "8bc1d39a3b8ec61064f9969316a088e314895e7ffd094468dcc0b238f33cb4a6"
       },
       "/home/travis/build/PolymerLabs/arcs/src/planning/test/strategies/create-handle-group-tests.ts": {
-        "version": "f2c1ab727cc4c1bb6b6e11f60972ae6cbde9fa55425124cbfe55fd7f6a9de928",
+        "version": "d4c093be3629d89b7522574e072f43eeeee0442097b764917cf5669f865791dc",
         "signature": "8bc1d39a3b8ec61064f9969316a088e314895e7ffd094468dcc0b238f33cb4a6"
       },
       "/home/travis/build/PolymerLabs/arcs/src/planning/test/strategies/find-hosted-particle-tests.ts": {
@@ -2249,7 +2249,7 @@
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/test/entity-test.ts": {
-        "version": "474192a8525d0af0381cbb11396c631219b0dd715ed2e154dbc1baec0ce7670b",
+        "version": "729da769fe557ffcd1b03792a62a9b5f3d56523a44fbe40bdf14d98f7100335c",
         "signature": "8e609bb71c20b858c77f0e9f90bb1319db8477b13f9f965f1a1e18524bf50881"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/test/handle-test.ts": {
@@ -2329,7 +2329,7 @@
         "signature": "8bc1d39a3b8ec61064f9969316a088e314895e7ffd094468dcc0b238f33cb4a6"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/test/schema-tests.ts": {
-        "version": "737c93cf80456ddb348886095fcda380d575283a276a969fa38f8f21790d4b69",
+        "version": "c903a3e84bac63a5cfa9bb98fb951b48afc69812bc9f5a5efcf7902449e801ad",
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/test/slot-consumer-tests.ts": {
@@ -2365,7 +2365,7 @@
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/test/wasm-tests.ts": {
-        "version": "90386e12fe3c6203ea99c121eeb307dec4bc6f64d76bc258fd8efbed5a38e5e1",
+        "version": "caee31d3c8a622e7b757350ede40822569a0bfc7a0fd346813b30210dcbfb60e",
         "signature": "fd95df5d076cbfed143dc4904d376b5c6d9cb1091b630994ffe2366010afa6b3"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/test/debug/outer-port-attachments-tests.ts": {
@@ -17664,7 +17664,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/entity.ts",
-            "start": 6927,
+            "start": 6743,
             "length": 4,
             "code": 2345,
             "category": 1,
@@ -18285,7 +18285,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/gen/runtime/manifest-parser.ts",
-            "start": 41318,
+            "start": 41229,
             "length": 6,
             "code": 2322,
             "category": 1,
@@ -18302,7 +18302,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/gen/runtime/manifest-parser.ts",
-            "start": 41623,
+            "start": 41534,
             "length": 6,
             "code": 2322,
             "category": 1,
@@ -18319,7 +18319,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/gen/runtime/manifest-parser.ts",
-            "start": 265220,
+            "start": 264813,
             "length": 97,
             "code": 2352,
             "category": 1,
@@ -18341,7 +18341,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/gen/runtime/manifest-parser.ts",
-            "start": 265642,
+            "start": 265235,
             "length": 51,
             "code": 2322,
             "category": 1,
@@ -24647,7 +24647,7 @@
         [
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/planning/test/strategies/create-handle-group-tests.ts",
-            "start": 1303,
+            "start": 1301,
             "length": 4,
             "code": 2345,
             "category": 1,
@@ -24655,7 +24655,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/planning/test/strategies/create-handle-group-tests.ts",
-            "start": 1898,
+            "start": 1894,
             "length": 4,
             "code": 2345,
             "category": 1,
@@ -24663,7 +24663,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/planning/test/strategies/create-handle-group-tests.ts",
-            "start": 2284,
+            "start": 2280,
             "length": 4,
             "code": 2345,
             "category": 1,
@@ -24671,7 +24671,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/planning/test/strategies/create-handle-group-tests.ts",
-            "start": 3283,
+            "start": 3279,
             "length": 4,
             "code": 2345,
             "category": 1,
@@ -28925,7 +28925,7 @@
         [
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/test/schema-tests.ts",
-            "start": 10183,
+            "start": 10124,
             "length": 4,
             "code": 2345,
             "category": 1,
@@ -28933,7 +28933,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/test/schema-tests.ts",
-            "start": 10412,
+            "start": 10353,
             "length": 4,
             "code": 2345,
             "category": 1,
@@ -28941,7 +28941,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/test/schema-tests.ts",
-            "start": 11242,
+            "start": 11183,
             "length": 4,
             "code": 2345,
             "category": 1,
@@ -28949,7 +28949,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/test/schema-tests.ts",
-            "start": 11412,
+            "start": 11353,
             "length": 4,
             "code": 2345,
             "category": 1,
@@ -28957,7 +28957,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/test/schema-tests.ts",
-            "start": 14625,
+            "start": 14556,
             "length": 28,
             "code": 2345,
             "category": 1,
@@ -30408,7 +30408,7 @@
         [
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/test/wasm-tests.ts",
-            "start": 4090,
+            "start": 4047,
             "length": 4,
             "code": 2345,
             "category": 1,
