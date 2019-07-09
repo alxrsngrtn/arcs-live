@@ -1,13 +1,33 @@
-commit b666e45305aca0c1d5ca46739f9993549dd4c123
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Mon Jul 8 16:03:25 2019 -0700
+commit b84a7a4ad36e7dbe24ea669445acee671ef2497c
+Author: Alex Rosengarten <alxr@google.com>
+Date:   Mon Jul 8 17:26:38 2019 -0700
 
-    migrate javaharness to pipes-shell-2 (#3297)
+    Fix: Kotlin --> Wasm now has parity with Cpp --> Wasm (#3300)
     
-    * migrate javaharness to pipes-shell-2
+    * documented build + run steps for kotlin wasm
     
-    * delete canonical recipes, update readme and uncomment manifests in PipeApps2/PipeApps.recipes
+    * updating url in README
     
-    * add comment to ShellApi and DeviceClient interfaces
+    * updating url in README
     
-    * null-check object
+    * trying relative path
+    
+    * rel 2 README
+    
+    * specifically: gradlew build
+    
+    * multi-particle support for interop
+    
+    * updated render external
+    
+    * kotlin interop -- passing in particle address
+    
+    * using cpp interface for render in kotlin
+    
+    * requestRender --> renderSlot
+    
+    * fix build issues
+    
+    * fix readme typo
+    
+    * rm underscore, following jvm var naming convention
