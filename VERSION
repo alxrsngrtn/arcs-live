@@ -1,17 +1,15 @@
-commit a73e67f0a83d417c19d55aee9eb45a4281a213ad
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Wed Jul 10 13:02:31 2019 -0700
+commit ea82b7c306d9b655c867529133d8426938d9c491
+Author: yuangu-google <yuangu@google.com>
+Date:   Wed Jul 10 15:39:45 2019 -0700
 
-    pipes-shell-2 passes Java PEC port when creating an arc (#3298)
+    Use device ML service for captions. (#3278)
     
-    * pipes-shell-2 to pass Java PEC port when creating an arc.
+    * Use device ML service for captions.
     
-    * revert PeopleAutofill.recipes tag change
+    * move register service from bus.js to pipe.js
     
-    * refactor pecPorts in pipes-shell-2
+    * Remove path.js from index.html
     
-    * refactor pecPorts to its own module
+    * Add return bus.
     
-    * move pec message handling to pec-port
-    
-    * remove pecPorts from pipe.js
+    * Add comments for tc response.
