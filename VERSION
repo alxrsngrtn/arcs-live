@@ -1,11 +1,5 @@
-commit 5acf17e9478981736feec62d71a02766dd969a3f
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Wed Jul 10 10:26:33 2019 -0700
+commit 1e978b4209550d6ab7063c0955c62460dbcae9e5
+Author: Scott J. Miles <sjmiles@google.com>
+Date:   Wed Jul 10 10:35:21 2019 -0700
 
-    Basic particle rendering APIs (#3306)
-    
-    * Basic particle rendering APIs.
-    
-    * address comments
-    
-    * rename particle data members
+    fix fixes #3268: web-shell path in README (#3309)
