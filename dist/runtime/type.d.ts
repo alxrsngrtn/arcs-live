@@ -8,7 +8,7 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { Id } from './id.js';
-import { InterfaceInfo, Handle, Slot } from './interface-info.js';
+import { InterfaceInfo, HandleConnection, Slot } from './interface-info.js';
 import { Schema } from './schema.js';
 import { SlotInfo } from './slot-info.js';
 import { ArcInfo } from './synthetic-types.js';
@@ -154,7 +154,7 @@ export declare class RelationType extends Type {
 export declare class InterfaceType extends Type {
     readonly interfaceInfo: InterfaceInfo;
     constructor(iface: InterfaceInfo);
-    static make(name: string, handles: Handle[], slots: Slot[]): InterfaceType;
+    static make(name: string, handleConnections: HandleConnection[], slots: Slot[]): InterfaceType;
     readonly isInterface: boolean;
     mergeTypeVariablesByName(variableMap: Map<string, Type>): InterfaceType;
     _applyExistenceTypeTest(test: any): boolean;
@@ -174,6 +174,7 @@ export declare class SlotType extends Type {
     private readonly slot;
     constructor(slot: SlotInfo);
     static make(formFactor: string, handle: string): SlotType;
+    getSlot(): SlotInfo;
     readonly canWriteSuperset: SlotType;
     readonly canReadSubset: this;
     _isMoreSpecificThan(type: SlotType): boolean;

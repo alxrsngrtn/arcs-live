@@ -1395,7 +1395,7 @@ ws://127.0.0.1:9229/..</code> as normally appears for <a href="https://nodejs.or
 						<a href="interfaces/generationrecord.html" class="tsd-kind-icon">Generation<wbr>Record</a>
 					</li>
 					<li class=" tsd-kind-interface tsd-is-not-exported">
-						<a href="interfaces/handleliteral.html" class="tsd-kind-icon">Handle<wbr>Literal</a>
+						<a href="interfaces/handleconnectionliteral.html" class="tsd-kind-icon">Handle<wbr>Connection<wbr>Literal</a>
 					</li>
 					<li class=" tsd-kind-interface">
 						<a href="interfaces/handleoptions.html" class="tsd-kind-icon">Handle<wbr>Options</a>
@@ -1602,9 +1602,6 @@ ws://127.0.0.1:9229/..</code> as normally appears for <a href="https://nodejs.or
 						<a href="interfaces/outputresponseobject.html" class="tsd-kind-icon">Output<wbr>Response<wbr>Object</a>
 					</li>
 					<li class=" tsd-kind-interface">
-						<a href="interfaces/particleargument.html" class="tsd-kind-icon">Particle<wbr>Argument</a>
-					</li>
-					<li class=" tsd-kind-interface">
 						<a href="interfaces/particlecheckbooleanexpression.html" class="tsd-kind-icon">Particle<wbr>Check<wbr>Boolean<wbr>Expression</a>
 					</li>
 					<li class=" tsd-kind-interface">
@@ -1638,6 +1635,9 @@ ws://127.0.0.1:9229/..</code> as normally appears for <a href="https://nodejs.or
 						<a href="interfaces/particleconnectiontargetcomponents.html" class="tsd-kind-icon">Particle<wbr>Connection<wbr>Target<wbr>Components</a>
 					</li>
 					<li class=" tsd-kind-interface">
+						<a href="interfaces/particlehandleconnection.html" class="tsd-kind-icon">Particle<wbr>Handle<wbr>Connection</a>
+					</li>
+					<li class=" tsd-kind-interface">
 						<a href="interfaces/particlehandledescription.html" class="tsd-kind-icon">Particle<wbr>Handle<wbr>Description</a>
 					</li>
 					<li class=" tsd-kind-interface">
@@ -1656,7 +1656,7 @@ ws://127.0.0.1:9229/..</code> as normally appears for <a href="https://nodejs.or
 						<a href="interfaces/particleref.html" class="tsd-kind-icon">Particle<wbr>Ref</a>
 					</li>
 					<li class=" tsd-kind-interface">
-						<a href="interfaces/particleslot.html" class="tsd-kind-icon">Particle<wbr>Slot</a>
+						<a href="interfaces/particleslotconnection.html" class="tsd-kind-icon">Particle<wbr>Slot<wbr>Connection</a>
 					</li>
 					<li class=" tsd-kind-interface">
 						<a href="interfaces/plannerinitoptions.html" class="tsd-kind-icon">Planner<wbr>Init<wbr>Options</a>
@@ -2079,9 +2079,6 @@ ws://127.0.0.1:9229/..</code> as normally appears for <a href="https://nodejs.or
 						<a href="globals.html#parsefunction" class="tsd-kind-icon">Parse<wbr>Function</a>
 					</li>
 					<li class=" tsd-kind-type-alias">
-						<a href="globals.html#particleargumenttype" class="tsd-kind-icon">Particle<wbr>Argument<wbr>Type</a>
-					</li>
-					<li class=" tsd-kind-type-alias">
 						<a href="globals.html#particlecheckcondition" class="tsd-kind-icon">Particle<wbr>Check<wbr>Condition</a>
 					</li>
 					<li class=" tsd-kind-type-alias">
@@ -2094,13 +2091,13 @@ ws://127.0.0.1:9229/..</code> as normally appears for <a href="https://nodejs.or
 						<a href="globals.html#particledescription" class="tsd-kind-icon">Particle<wbr>Description</a>
 					</li>
 					<li class=" tsd-kind-type-alias">
-						<a href="globals.html#particlehandle" class="tsd-kind-icon">Particle<wbr>Handle</a>
+						<a href="globals.html#particlehandleconnectiontype" class="tsd-kind-icon">Particle<wbr>Handle<wbr>Connection<wbr>Type</a>
 					</li>
 					<li class=" tsd-kind-type-alias">
 						<a href="globals.html#particleitem" class="tsd-kind-icon">Particle<wbr>Item</a>
 					</li>
 					<li class=" tsd-kind-type-alias">
-						<a href="globals.html#particleslotitem" class="tsd-kind-icon">Particle<wbr>Slot<wbr>Item</a>
+						<a href="globals.html#particleslotconnectionitem" class="tsd-kind-icon">Particle<wbr>Slot<wbr>Connection<wbr>Item</a>
 					</li>
 					<li class=" tsd-kind-type-alias">
 						<a href="globals.html#pecfactory" class="tsd-kind-icon">Pec<wbr>Factory</a>
@@ -2475,7 +2472,7 @@ ws://127.0.0.1:9229/..</code> as normally appears for <a href="https://nodejs.or
 						<a href="globals.html#globalwarningkeys" class="tsd-kind-icon">global<wbr>Warning<wbr>Keys</a>
 					</li>
 					<li class=" tsd-kind-variable tsd-is-not-exported">
-						<a href="globals.html#handlefields" class="tsd-kind-icon">handle<wbr>Fields</a>
+						<a href="globals.html#handleconnectionfields" class="tsd-kind-icon">handle<wbr>Connection<wbr>Fields</a>
 					</li>
 					<li class=" tsd-kind-variable tsd-is-not-exported">
 						<a href="globals.html#isconnected" class="tsd-kind-icon">is<wbr>Connected</a>
@@ -2628,10 +2625,10 @@ ws://127.0.0.1:9229/..</code> as normally appears for <a href="https://nodejs.or
 						<a href="globals.html#remotemapped" class="tsd-kind-icon">Remote<wbr>Mapped</a>
 					</li>
 					<li class=" tsd-kind-function tsd-is-not-exported">
-						<a href="globals.html#_handlefromliteral" class="tsd-kind-icon">_<wbr>Handle<wbr>From<wbr>Literal</a>
+						<a href="globals.html#_handleconnectionfromliteral" class="tsd-kind-icon">_<wbr>Handle<wbr>Connection<wbr>From<wbr>Literal</a>
 					</li>
 					<li class=" tsd-kind-function tsd-is-not-exported">
-						<a href="globals.html#_handletoliteral" class="tsd-kind-icon">_<wbr>Handle<wbr>ToLiteral</a>
+						<a href="globals.html#_handleconnectiontoliteral" class="tsd-kind-icon">_<wbr>Handle<wbr>Connection<wbr>ToLiteral</a>
 					</li>
 					<li class=" tsd-kind-function tsd-is-not-exported">
 						<a href="globals.html#_slotfromliteral" class="tsd-kind-icon">_<wbr>Slot<wbr>From<wbr>Literal</a>

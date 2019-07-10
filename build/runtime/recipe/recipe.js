@@ -181,6 +181,7 @@ export class Recipe {
                     }
                 }
             }
+            // TODO: Remove check for slots in SLANDLESv2
             if (!usesSlandles && !atLeastOneSlotConnection) {
                 if (options && options.errors) {
                     options.errors.set(`?`, `no slot connections`);
@@ -467,47 +468,26 @@ export class Recipe {
         return result;
     }
     _makeLocalNameMap() {
-        const names = new Set();
-        for (const particle of this.particles) {
-            names.add(particle.localName);
-        }
-        for (const handle of this.handles) {
-            names.add(handle.localName);
-        }
-        for (const slot of this.slots) {
-            names.add(slot.localName);
-        }
+        const names = new Set([...this.particles,
+            ...this.handles,
+            ...this.slots].map((item) => item.localName));
+        let i;
         const nameMap = new Map();
-        let i = 0;
-        for (const particle of this.particles) {
-            let localName = particle.localName;
+        const mapName = (item, prefix) => {
+            let localName = item.localName;
             if (!localName) {
                 do {
-                    localName = `particle${i++}`;
+                    localName = `${prefix}${i++}`;
                 } while (names.has(localName));
             }
-            nameMap.set(particle, localName);
-        }
+            nameMap.set(item, localName);
+        };
         i = 0;
-        for (const handle of this.handles) {
-            let localName = handle.localName;
-            if (!localName) {
-                do {
-                    localName = `handle${i++}`;
-                } while (names.has(localName));
-            }
-            nameMap.set(handle, localName);
-        }
+        this.particles.map(particle => mapName(particle, 'particle'));
         i = 0;
-        for (const slot of this.slots) {
-            let localName = slot.localName;
-            if (!localName) {
-                do {
-                    localName = `slot${i++}`;
-                } while (names.has(localName));
-            }
-            nameMap.set(slot, localName);
-        }
+        this.handles.map(handle => mapName(handle, 'handle'));
+        i = 0;
+        this.slots.map(slot => mapName(slot, 'slot'));
         return nameMap;
     }
     // TODO: Add a normalize() which strips local names and puts and nested

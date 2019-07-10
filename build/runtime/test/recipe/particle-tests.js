@@ -30,7 +30,7 @@ describe('Recipe Particle', () => {
             const [recipeParticle] = recipe.particles;
             const hostedParticleConn = recipeParticle.spec.getConnectionByName('hostedParticle');
             const type = hostedParticleConn.type;
-            const ifaceVariable = type.interfaceInfo.handles[0].type;
+            const ifaceVariable = type.interfaceInfo.handleConnections[0].type;
             const listConn = recipeParticle.connections['list'];
             const listConnType = listConn.type;
             const listUnpackedVariable = listConnType.collectionType;
@@ -42,7 +42,7 @@ describe('Recipe Particle', () => {
             const hostedParticleConn = recipeParticle.spec.getConnectionByName('hostedParticle');
             const listConn = recipeParticle.connections['list'];
             const type = hostedParticleConn.type;
-            const ifaceVariable = type.interfaceInfo.handles[0].type;
+            const ifaceVariable = type.interfaceInfo.handleConnections[0].type;
             const listConnType = listConn.type;
             const listUnpackedVariable = listConnType.collectionType;
             assert.isTrue(TypeChecker.compareTypes({ type: ifaceVariable }, { type: listUnpackedVariable }));

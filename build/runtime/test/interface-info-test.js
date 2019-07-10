@@ -13,7 +13,7 @@ import { Manifest } from '../manifest.js';
 import { TypeChecker } from '../recipe/type-checker.js';
 import { EntityType, InterfaceType, TypeVariable } from '../type.js';
 describe('interface', () => {
-    it('finds type variable references in handles', () => {
+    it('finds type variable references in handle connections', () => {
         const iface = new InterfaceInfo('Test', [{ type: TypeVariable.make('a') }], []);
         assert.lengthOf(iface.typeVars, 1);
         assert.equal(iface.typeVars[0].field, 'type');
@@ -21,7 +21,7 @@ describe('interface', () => {
     });
     it('finds type variable references in slots', () => {
         const iface = new InterfaceInfo('Test', [], [
-            { name: TypeVariable.make('a'), direction: '', isRequired: false, isSet: false }
+            { name: TypeVariable.make('a'), direction: 'consume', isRequired: false, isSet: false }
         ]);
         assert.lengthOf(iface.typeVars, 1);
         assert.equal(iface.typeVars[0].field, 'name');
@@ -29,24 +29,24 @@ describe('interface', () => {
     });
     it('upgrades type variable references', () => {
         let type = InterfaceType.make('Test', [
-            { name: TypeVariable.make('a') },
-            { type: TypeVariable.make('b'), name: 'singleton' },
+            { name: TypeVariable.make('a'), type: TypeVariable.make('aType') },
+            { type: TypeVariable.make('b'), name: 'singleton', direction: 'any' },
             { type: TypeVariable.make('b').collectionOf(), name: 'set' }
         ], [
             { name: TypeVariable.make('a') },
         ]);
-        assert.lengthOf(type.interfaceInfo.typeVars, 4);
+        assert.lengthOf(type.interfaceInfo.typeVars, 5, `${JSON.stringify(type.interfaceInfo.typeVars.map(tv => tv.object.name))}`);
         const map = new Map();
         type = type.mergeTypeVariablesByName(map);
         assert(map.has('a'));
         assert(map.has('b'));
         const iface = type.interfaceInfo;
-        const handleName = iface.handles[0].name;
+        const handleName = iface.handleConnections[0].name;
         const slotName = iface.slots[0].name;
         assert.instanceOf(handleName, TypeVariable);
         assert.instanceOf(slotName, TypeVariable);
         assert.strictEqual(handleName.variable, slotName.variable);
-        assert.strictEqual(iface.handles[1].type, iface.handles[2].type.collectionType);
+        assert.strictEqual(iface.handleConnections[1].type, iface.handleConnections[2].type.collectionType);
     });
     it('matches particleSpecs', async () => {
         const manifest = await Manifest.parse(`
@@ -72,7 +72,7 @@ describe('interface', () => {
           out NotTest foo
       `);
         const type = new EntityType(manifest.schemas.Test);
-        const iface = new InterfaceInfo('Test', [{ name: 'foo' }, { direction: 'in' }, { type }], []);
+        const iface = new InterfaceInfo('Test', [{ name: 'foo', type: TypeVariable.make('a') }, { direction: 'in', type: TypeVariable.make('b') }, { type }], []);
         assert(!iface.particleMatches(manifest.particles[0]));
         assert(iface.particleMatches(manifest.particles[1]));
         assert(iface.particleMatches(manifest.particles[2]));
@@ -172,8 +172,8 @@ describe('interface', () => {
         const burritoDisplayer = manifest.findParticleByName('BurritoDisplayer');
         const multiplexer = recipe.particles.find(p => p.name === 'Multiplexer');
         // Initially handle type are unresolvable type variables.
-        assert.lengthOf(recipe.handles, 2);
-        for (const handle of recipe.handles) {
+        assert.lengthOf(recipe.handles, 2, `${JSON.stringify(recipe.handles.map(conn => conn.localName))}`);
+        for (const handle of recipe.handleConnections) {
             const collectionType = handle.type.collectionType;
             const resolved = collectionType.resolvedType();
             assert.isTrue(resolved instanceof TypeVariable);

@@ -112,12 +112,12 @@ describe('types', () => {
             const entity = EntityType.make(['Foo'], { value: 'Text' });
             const variable = TypeVariable.make('a', null, null);
             const col = new CollectionType(entity);
-            const iface = InterfaceType.make('i', [{ type: entity }, { type: variable }, { type: col }], [{ name: 'x' }]);
+            const iface = InterfaceType.make('i', [{ type: entity, direction: 'any' }, { type: variable, direction: 'any' }, { type: col, direction: 'any' }], [{ name: 'x' }]);
             deepEqual(iface.toLiteral(), {
                 tag: 'Interface',
                 data: {
                     name: 'i',
-                    handles: [{ type: entity.toLiteral() }, { type: variable.toLiteral() }, { type: col.toLiteral() }],
+                    handleConnections: [{ type: entity.toLiteral(), direction: 'any' }, { type: variable.toLiteral(), direction: 'any' }, { type: col.toLiteral(), direction: 'any' }],
                     slots: [{ name: 'x' }]
                 }
             });
@@ -174,7 +174,7 @@ describe('types', () => {
             const entity = EntityType.make(['Foo'], { value: 'Text' });
             const variable = TypeVariable.make('a', null, null);
             const arcInfo = new ArcType();
-            const iface = InterfaceType.make('i', [{ type: entity }, { type: variable }, { type: arcInfo }], []);
+            const iface = InterfaceType.make('i', [{ type: entity, direction: 'any' }, { type: variable, direction: 'any' }, { type: arcInfo, direction: 'any' }], []);
             const handleInfo = new HandleType();
             const relation = new RelationType([reference, iface, handleInfo]);
             const collection = new CollectionType(relation);
@@ -257,8 +257,8 @@ describe('types', () => {
             const variable = TypeVariable.make('a', null, null);
             const iface = InterfaceType.make('i', [{ type: entity, name: 'foo' }, { type: variable }], [{ name: 'x', direction: 'consume' }]);
             assert.equal(iface.interfaceInfo.toString(), `interface i
-  Foo {Text value} foo
-  ~a *
+  any Foo {Text value} foo
+  any ~a *
   consume x `);
         });
         // Regression test for https://github.com/PolymerLabs/arcs/issues/2575
@@ -267,7 +267,7 @@ describe('types', () => {
             variable.variable.resolution = EntityType.make(['Foo'], { value: 'Text' });
             const iface = InterfaceType.make('i', [{ type: variable }], []);
             assert.equal(iface.interfaceInfo.toString(), `interface i
-  ~a *
+  any ~a *
 `);
         });
     });

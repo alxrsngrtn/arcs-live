@@ -80,14 +80,18 @@ function _typeVarOrStringFromLiteral(member) {
     }
     return member;
 }
-function _HandleFromLiteral({ type, name, direction }) {
-    const typel = type ? _typeFromLiteral(type) : undefined;
-    const namel = name ? _typeVarOrStringFromLiteral(name) : undefined;
-    return { type: typel, name: namel, direction };
+function _HandleConnectionFromLiteral({ type, name, direction }) {
+    return {
+        type: type ? _typeFromLiteral(type) : undefined,
+        name: name ? _typeVarOrStringFromLiteral(name) : undefined,
+        direction: direction || 'any'
+    };
 }
 function _SlotFromLiteral({ name, direction, isRequired, isSet }) {
-    const namel = name ? _typeVarOrStringFromLiteral(name) : undefined;
-    return { name: namel, direction, isRequired, isSet };
+    return {
+        name: name ? _typeVarOrStringFromLiteral(name) : undefined,
+        direction, isRequired, isSet
+    };
 }
 function _typeToLiteral(member) {
     return member.toLiteral();
@@ -98,30 +102,36 @@ function _typeVarOrStringToLiteral(member) {
     }
     return member;
 }
-function _HandleToLiteral({ type, name, direction }) {
-    const typel = type ? _typeToLiteral(type) : undefined;
-    const namel = name ? _typeVarOrStringToLiteral(name) : undefined;
-    return { type: typel, name: namel, direction };
+function _HandleConnectionToLiteral({ type, name, direction }) {
+    return {
+        type: type && _typeToLiteral(type),
+        name: name && _typeVarOrStringToLiteral(name),
+        direction
+    };
 }
 function _SlotToLiteral({ name, direction, isRequired, isSet }) {
-    const namel = name ? _typeVarOrStringToLiteral(name) : undefined;
-    return { name: namel, direction, isRequired, isSet };
+    return {
+        name: name && _typeVarOrStringToLiteral(name),
+        direction,
+        isRequired,
+        isSet
+    };
 }
-const handleFields = ['type', 'name', 'direction'];
+const handleConnectionFields = ['type', 'name', 'direction'];
 const slotFields = ['name', 'direction', 'isRequired', 'isSet'];
 class InterfaceInfo {
-    constructor(name, handles, slots) {
+    constructor(name, handleConnections, slots) {
         assert(name);
-        assert(handles !== undefined);
+        assert(handleConnections !== undefined);
         assert(slots !== undefined);
         this.name = name;
-        this.handles = handles;
+        this.handleConnections = handleConnections;
         this.slots = slots;
         this.typeVars = [];
-        for (const handle of handles) {
-            for (const field of handleFields) {
-                if (InterfaceInfo.isTypeVar(handle[field])) {
-                    this.typeVars.push({ object: handle, field });
+        for (const handleConnection of handleConnections) {
+            for (const field of handleConnectionFields) {
+                if (InterfaceInfo.isTypeVar(handleConnection[field])) {
+                    this.typeVars.push({ object: handleConnection, field });
                 }
             }
         }
@@ -146,11 +156,11 @@ class InterfaceInfo {
         return this._cloneAndUpdate(typeVar => typeVar.canWriteSuperset);
     }
     isMoreSpecificThan(other) {
-        if (this.handles.length !== other.handles.length ||
+        if (this.handleConnections.length !== other.handleConnections.length ||
             this.slots.length !== other.slots.length) {
             return false;
         }
-        // TODO: should probably confirm that handles and slots actually match.
+        // TODO: should probably confirm that handleConnections and slots actually match.
         for (let i = 0; i < this.typeVars.length; i++) {
             const thisTypeVar = this.typeVars[i];
             const otherTypeVar = other.typeVars[i];
@@ -168,9 +178,9 @@ class InterfaceInfo {
         }
         return false;
     }
-    _handlesToManifestString() {
-        return this.handles
-            .map(h => `  ${h.direction ? h.direction + ' ' : ''}${h.type.toString()} ${h.name ? h.name : '*'}`)
+    _handleConnectionsToManifestString() {
+        return this.handleConnections
+            .map(h => `  ${h.direction || 'any'} ${h.type.toString()} ${h.name ? h.name : '*'}`)
             .join('\n');
     }
     _slotsToManifestString() {
@@ -182,31 +192,31 @@ class InterfaceInfo {
     // TODO: Include name as a property of the interface and normalize this to just toString()
     toString() {
         return `interface ${this.name}
-${this._handlesToManifestString()}
+${this._handleConnectionsToManifestString()}
 ${this._slotsToManifestString()}`;
     }
     static fromLiteral(data) {
-        const handles = data.handles.map(_HandleFromLiteral);
+        const handleConnections = data.handleConnections.map(_HandleConnectionFromLiteral);
         const slots = data.slots.map(_SlotFromLiteral);
-        return new InterfaceInfo(data.name, handles, slots);
+        return new InterfaceInfo(data.name, handleConnections, slots);
     }
     toLiteral() {
-        const handles = this.handles.map(_HandleToLiteral);
+        const handleConnections = this.handleConnections.map(_HandleConnectionToLiteral);
         const slots = this.slots.map(_SlotToLiteral);
-        return { name: this.name, handles, slots };
+        return { name: this.name, handleConnections, slots };
     }
     clone(variableMap) {
-        const handles = this.handles.map(({ name, direction, type }) => ({ name, direction, type: type ? type.clone(variableMap) : undefined }));
+        const handleConnections = this.handleConnections.map(({ name, direction, type }) => ({ name, direction, type: type ? type.clone(variableMap) : undefined }));
         const slots = this.slots.map(({ name, direction, isRequired, isSet }) => ({ name, direction, isRequired, isSet }));
-        return new InterfaceInfo(this.name, handles, slots);
+        return new InterfaceInfo(this.name, handleConnections, slots);
     }
     cloneWithResolutions(variableMap) {
         return this._cloneWithResolutions(variableMap);
     }
     _cloneWithResolutions(variableMap) {
-        const handles = this.handles.map(({ name, direction, type }) => ({ name, direction, type: type ? type._cloneWithResolutions(variableMap) : undefined }));
+        const handleConnections = this.handleConnections.map(({ name, direction, type }) => ({ name, direction, type: type ? type._cloneWithResolutions(variableMap) : undefined }));
         const slots = this.slots.map(({ name, direction, isRequired, isSet }) => ({ name, direction, isRequired, isSet }));
-        return new InterfaceInfo(this.name, handles, slots);
+        return new InterfaceInfo(this.name, handleConnections, slots);
     }
     canEnsureResolved() {
         for (const typeVar of this.typeVars) {
@@ -230,63 +240,63 @@ ${this._slotsToManifestString()}`;
     }
     tryMergeTypeVariablesWith(other) {
         // Type variable enabled slot matching will Just Work when we
-        // unify slots and handles.
+        // unify slots and handleConnections.
         if (!this._equalItems(other.slots, this.slots, this._equalSlot)) {
             return null;
         }
-        if (other.handles.length !== this.handles.length) {
+        if (other.handleConnections.length !== this.handleConnections.length) {
             return null;
         }
-        const handles = new Set(this.handles);
-        const otherHandles = new Set(other.handles);
-        const handleMap = new Map();
-        let sizeCheck = handles.size;
-        while (handles.size > 0) {
-            const handleMatches = [...handles.values()].map(handle => ({ handle, match: [...otherHandles.values()].filter(otherHandle => this._equalHandle(handle, otherHandle)) }));
-            for (const handleMatch of handleMatches) {
+        const handleConnections = new Set(this.handleConnections);
+        const otherHandleConnections = new Set(other.handleConnections);
+        const handleConnectionMap = new Map();
+        let sizeCheck = handleConnections.size;
+        while (handleConnections.size > 0) {
+            const handleConnectionMatches = [...handleConnections.values()].map(handleConnection => ({ handleConnection, match: [...otherHandleConnections.values()].filter(otherHandleConnection => this._equalHandleConnection(handleConnection, otherHandleConnection)) }));
+            for (const handleConnectionMatch of handleConnectionMatches) {
                 // no match!
-                if (handleMatch.match.length === 0) {
+                if (handleConnectionMatch.match.length === 0) {
                     return null;
                 }
-                if (handleMatch.match.length === 1) {
-                    handleMap.set(handleMatch.handle, handleMatch.match[0]);
-                    otherHandles.delete(handleMatch.match[0]);
-                    handles.delete(handleMatch.handle);
+                if (handleConnectionMatch.match.length === 1) {
+                    handleConnectionMap.set(handleConnectionMatch.handleConnection, handleConnectionMatch.match[0]);
+                    otherHandleConnections.delete(handleConnectionMatch.match[0]);
+                    handleConnections.delete(handleConnectionMatch.handleConnection);
                 }
             }
             // no progress!
-            if (handles.size === sizeCheck) {
+            if (handleConnections.size === sizeCheck) {
                 return null;
             }
-            sizeCheck = handles.size;
+            sizeCheck = handleConnections.size;
         }
-        const handleList = [];
-        for (const handle of this.handles) {
-            const otherHandle = handleMap.get(handle);
+        const handleConnectionList = [];
+        for (const handleConnection of this.handleConnections) {
+            const otherHandleConnection = handleConnectionMap.get(handleConnection);
             let resultType;
-            if (handle.type.hasVariable || otherHandle.type.hasVariable) {
-                resultType = TypeChecker._tryMergeTypeVariable(handle.type, otherHandle.type);
+            if (handleConnection.type.hasVariable || otherHandleConnection.type.hasVariable) {
+                resultType = TypeChecker._tryMergeTypeVariable(handleConnection.type, otherHandleConnection.type);
                 if (!resultType) {
                     return null;
                 }
             }
             else {
-                resultType = handle.type || otherHandle.type;
+                resultType = handleConnection.type || otherHandleConnection.type;
             }
-            handleList.push({ name: handle.name || otherHandle.name, direction: handle.direction || otherHandle.direction, type: resultType });
+            handleConnectionList.push({ name: handleConnection.name || otherHandleConnection.name, direction: handleConnection.direction || otherHandleConnection.direction, type: resultType });
         }
         const slots = this.slots.map(({ name, direction, isRequired, isSet }) => ({ name, direction, isRequired, isSet }));
-        return new InterfaceInfo(this.name, handleList, slots);
+        return new InterfaceInfo(this.name, handleConnectionList, slots);
     }
     resolvedType() {
         return this._cloneAndUpdate(typeVar => typeVar.resolvedType());
     }
     equals(other) {
-        if (this.handles.length !== other.handles.length) {
+        if (this.handleConnections.length !== other.handleConnections.length) {
             return false;
         }
         // TODO: this isn't quite right as it doesn't deal with duplicates properly
-        if (!this._equalItems(other.handles, this.handles, this._equalHandle)) {
+        if (!this._equalItems(other.handleConnections, this.handleConnections, this._equalHandleConnection)) {
             return false;
         }
         if (!this._equalItems(other.slots, this.slots, this._equalSlot)) {
@@ -294,10 +304,10 @@ ${this._slotsToManifestString()}`;
         }
         return true;
     }
-    _equalHandle(handle, otherHandle) {
-        return handle.name === otherHandle.name
-            && handle.direction === otherHandle.direction
-            && TypeChecker.compareTypes({ type: handle.type }, { type: otherHandle.type });
+    _equalHandleConnection(handleConnection, otherHandleConnection) {
+        return handleConnection.name === otherHandleConnection.name
+            && handleConnection.direction === otherHandleConnection.direction
+            && TypeChecker.compareTypes({ type: handleConnection.type }, { type: otherHandleConnection.type });
     }
     _equalSlot(slot, otherSlot) {
         return slot.name === otherSlot.name && slot.direction === otherSlot.direction && slot.isRequired === otherSlot.isRequired && slot.isSet === otherSlot.isSet;
@@ -331,22 +341,24 @@ ${this._slotsToManifestString()}`;
     static mustMatch(reference) {
         return !(reference == undefined || InterfaceInfo.isTypeVar(reference));
     }
-    static handlesMatch(interfaceHandle, particleHandle) {
-        if (InterfaceInfo.mustMatch(interfaceHandle.name) &&
-            interfaceHandle.name !== particleHandle.name) {
+    static handleConnectionsMatch(interfaceHandleConnection, particleHandleConnection) {
+        if (InterfaceInfo.mustMatch(interfaceHandleConnection.name) &&
+            interfaceHandleConnection.name !== particleHandleConnection.name) {
             return false;
         }
-        // TODO: direction subsetting?
-        if (InterfaceInfo.mustMatch(interfaceHandle.direction) &&
-            interfaceHandle.direction !== particleHandle.direction) {
+        // TODO: FIXME direction subsetting?
+        if (InterfaceInfo.mustMatch(interfaceHandleConnection.direction)
+            && interfaceHandleConnection.direction !== 'any'
+            && particleHandleConnection.direction !== 'any'
+            && interfaceHandleConnection.direction !== particleHandleConnection.direction) {
             return false;
         }
-        if (interfaceHandle.type == undefined) {
+        if (interfaceHandleConnection.type == undefined) {
             return true;
         }
-        const [left, right] = Type.unwrapPair(interfaceHandle.type, particleHandle.type);
+        const [left, right] = Type.unwrapPair(interfaceHandleConnection.type, particleHandleConnection.type);
         if (left instanceof TypeVariable) {
-            return [{ var: left, value: right, direction: interfaceHandle.direction }];
+            return [{ var: left, value: right, direction: interfaceHandleConnection.direction }];
         }
         else {
             return TypeChecker.compareTypes({ type: left }, { type: right });
@@ -379,7 +391,7 @@ ${this._slotsToManifestString()}`;
         return this._restrictThis(particleSpec);
     }
     _restrictThis(particleSpec) {
-        const handleMatches = this.handles.map(h => particleSpec.handleConnections.map(c => ({ match: c, result: InterfaceInfo.handlesMatch(h, c) }))
+        const handleConnectionMatches = this.handleConnections.map(h => particleSpec.handleConnections.map(c => ({ match: c, result: InterfaceInfo.handleConnectionsMatch(h, c) }))
             .filter(a => a.result !== false));
         const particleSlots = [];
         particleSpec.slotConnections.forEach(consumedSlot => {
@@ -412,12 +424,12 @@ ${this._slotsToManifestString()}`;
             }
             return false;
         }
-        const handleOptions = choose(handleMatches, []);
+        const handleConnectionOptions = choose(handleConnectionMatches, []);
         const slotOptions = choose(slotMatches, []);
-        if (handleOptions === false || slotOptions === false) {
+        if (handleConnectionOptions === false || slotOptions === false) {
             return false;
         }
-        for (const constraint of handleOptions) {
+        for (const constraint of handleConnectionOptions) {
             if (!constraint.var.variable.resolution) {
                 constraint.var.variable.resolution = constraint.value;
             }
@@ -2409,8 +2421,8 @@ class InterfaceType extends Type {
         super('Interface');
         this.interfaceInfo = iface;
     }
-    static make(name, handles, slots) {
-        return new InterfaceType(new InterfaceInfo(name, handles, slots));
+    static make(name, handleConnections, slots) {
+        return new InterfaceType(new InterfaceInfo(name, handleConnections, slots));
     }
     get isInterface() {
         return true;
@@ -2466,6 +2478,9 @@ class SlotType extends Type {
     }
     static make(formFactor, handle) {
         return new SlotType(new SlotInfo(formFactor, handle));
+    }
+    getSlot() {
+        return this.slot;
     }
     get canWriteSuperset() {
         return this;
@@ -3088,11 +3103,50 @@ class HandleConnectionSpec {
             this.dependentConnections.push(dependentConnection);
         }
     }
+    toSlotlikeConnection() {
+        // TODO: Remove in SLANDLESv2
+        const slotType = this.slandleType();
+        if (!slotType) {
+            throw new Error(`toSlotlikeConnection should only be used on Slot and [Slot] typed handles. Handle ${this.name} has type ${this.type}`);
+        }
+        const isSet = this.type.isCollectionType();
+        const slotInfo = slotType.getSlot();
+        return {
+            name: this.name,
+            isOptional: this.isOptional,
+            direction: this.direction,
+            tags: this.tags,
+            dependentConnections: this.dependentConnections.map(conn => conn.toSlotlikeConnection()),
+            // Fakes
+            isRoot: this.isRoot,
+            isRequired: !this.isOptional,
+            isSet,
+            type: slotType,
+            handles: [slotInfo.handle],
+            formFactor: slotInfo.formFactor,
+            provideSlotConnections: [],
+        };
+    }
+    slandleType() {
+        if (this.type.isSlot()) {
+            return this.type;
+        }
+        if (this.type.isCollectionType() && this.type.collectionType.isSlot()) {
+            return this.type.collectionType;
+        }
+        return undefined;
+    }
+    isRoot() {
+        // TODO: Remove in SLANDLESv2
+        return this.slandleType() && (this.name === 'root' || this.tags.includes('root'));
+    }
     get isInput() {
         // TODO: we probably don't really want host to be here.
+        // TODO: do we want to consider any here?
         return this.direction === 'in' || this.direction === 'inout' || this.direction === 'host';
     }
     get isOutput() {
+        // TODO: do we want to consider any here?
         return this.direction === 'out' || this.direction === 'inout';
     }
     isCompatibleType(type) {
@@ -3114,6 +3168,9 @@ class ConsumeSlotConnectionSpec {
         slotModel.provideSlotConnections.forEach(ps => {
             this.provideSlotConnections.push(new ProvideSlotConnectionSpec(ps));
         });
+    }
+    isRoot() {
+        return this.name === 'root' || this.tags.includes('root');
     }
     // Getters to 'fake' being a Handle.
     get isOptional() { return !this.isRequired; }
@@ -3160,6 +3217,9 @@ class ParticleSpec {
     }
     createConnection(arg, typeVarMap) {
         const connection = new HandleConnectionSpec(arg, typeVarMap);
+        if (this.handleConnectionMap.get(connection.name)) {
+            throw new Error(`Particle Spec ${this.name} already has a handle connection named "${connection.name}".`);
+        }
         this.handleConnectionMap.set(connection.name, connection);
         connection.instantiateDependentConnections(this, typeVarMap);
         return connection;
@@ -3806,10 +3866,9 @@ class DescriptionFormatter {
         }
     }
     static sort(p1, p2) {
-        const isRoot = (slotSpec) => slotSpec.name === 'root' || slotSpec.tags.includes('root');
         // Root slot comes first.
-        const hasRoot1 = Boolean([...p1._particle.spec.slotConnections.values()].find(slotSpec => isRoot(slotSpec)));
-        const hasRoot2 = Boolean([...p2._particle.spec.slotConnections.values()].find(slotSpec => isRoot(slotSpec)));
+        const hasRoot1 = [...p1._particle.spec.slotConnections.values()].some(slotSpec => slotSpec.isRoot());
+        const hasRoot2 = [...p2._particle.spec.slotConnections.values()].some(slotSpec => slotSpec.isRoot());
         if (hasRoot1 !== hasRoot2) {
             return hasRoot1 ? -1 : 1;
         }
@@ -4467,7 +4526,7 @@ function peg$parse(input, options) {
         const trustClaims = [];
         const trustChecks = [];
         let description = null;
-        let hasParticleArgument = false;
+        let hasParticleHandleConnection = false;
         verbs = optional(verbs, parsedOutput => parsedOutput[1], []);
         items = optional(items, extractIndented, []);
         items.forEach(item => {
@@ -4477,7 +4536,7 @@ function peg$parse(input, options) {
                 }
                 verbs.push(item.verb);
                 args = item.args; // TODO(jopra): This should merge, not overwrite;
-                hasParticleArgument = true;
+                hasParticleHandleConnection = true;
             }
             else if (item.kind === 'particle-argument') {
                 args.push(item);
@@ -4519,7 +4578,7 @@ function peg$parse(input, options) {
             modality,
             slotConnections,
             description,
-            hasParticleArgument,
+            hasParticleHandleConnection,
             trustClaims,
             trustChecks,
         };
@@ -6846,7 +6905,7 @@ function peg$parse(input, options) {
         }
         if (s1 !== peg$FAILED) {
             s2 = peg$currPos;
-            s3 = peg$parseParticleArgumentType();
+            s3 = peg$parseParticleHandleConnectionType();
             if (s3 !== peg$FAILED) {
                 s4 = peg$parsewhiteSpace();
                 if (s4 !== peg$FAILED) {
@@ -7504,11 +7563,11 @@ function peg$parse(input, options) {
         peg$silentFails++;
         s0 = peg$parseParticleModality();
         if (s0 === peg$FAILED) {
-            s0 = peg$parseParticleSlot();
+            s0 = peg$parseParticleSlotConnection();
             if (s0 === peg$FAILED) {
                 s0 = peg$parseDescription();
                 if (s0 === peg$FAILED) {
-                    s0 = peg$parseParticleHandle();
+                    s0 = peg$parseParticleHandleConnection();
                     if (s0 === peg$FAILED) {
                         s0 = peg$parseParticleClaimStatement();
                         if (s0 === peg$FAILED) {
@@ -8345,10 +8404,10 @@ function peg$parse(input, options) {
         }
         return s0;
     }
-    function peg$parseParticleHandle() {
+    function peg$parseParticleHandleConnection() {
         let s0, s1, s2, s3, s4, s5, s6, s7, s8;
         s0 = peg$currPos;
-        s1 = peg$parseParticleArgument();
+        s1 = peg$parseParticleHandleConnectionBody();
         if (s1 !== peg$FAILED) {
             s2 = peg$parseeolWhiteSpace();
             if (s2 !== peg$FAILED) {
@@ -8359,7 +8418,7 @@ function peg$parse(input, options) {
                     s6 = peg$currPos;
                     s7 = peg$parseSameIndent();
                     if (s7 !== peg$FAILED) {
-                        s8 = peg$parseParticleHandle();
+                        s8 = peg$parseParticleHandleConnection();
                         if (s8 !== peg$FAILED) {
                             s7 = [s7, s8];
                             s6 = s7;
@@ -8378,7 +8437,7 @@ function peg$parse(input, options) {
                         s6 = peg$currPos;
                         s7 = peg$parseSameIndent();
                         if (s7 !== peg$FAILED) {
-                            s8 = peg$parseParticleHandle();
+                            s8 = peg$parseParticleHandleConnection();
                             if (s8 !== peg$FAILED) {
                                 s7 = [s7, s8];
                                 s6 = s7;
@@ -8430,7 +8489,7 @@ function peg$parse(input, options) {
         }
         return s0;
     }
-    function peg$parseParticleArgument() {
+    function peg$parseParticleHandleConnectionBody() {
         let s0, s1, s2, s3, s4, s5, s6;
         s0 = peg$currPos;
         s1 = peg$parseDirection();
@@ -8451,7 +8510,7 @@ function peg$parse(input, options) {
             if (s2 !== peg$FAILED) {
                 s3 = peg$parsewhiteSpace();
                 if (s3 !== peg$FAILED) {
-                    s4 = peg$parseParticleArgumentType();
+                    s4 = peg$parseParticleHandleConnectionType();
                     if (s4 !== peg$FAILED) {
                         s5 = peg$parsewhiteSpace();
                         if (s5 !== peg$FAILED) {
@@ -8680,7 +8739,7 @@ function peg$parse(input, options) {
         }
         return s0;
     }
-    function peg$parseParticleArgumentType() {
+    function peg$parseParticleHandleConnectionType() {
         let s0;
         s0 = peg$parseTypeVariable();
         if (s0 === peg$FAILED) {
@@ -8717,7 +8776,7 @@ function peg$parse(input, options) {
             }
         }
         if (s1 !== peg$FAILED) {
-            s2 = peg$parseParticleArgumentType();
+            s2 = peg$parseParticleHandleConnectionType();
             if (s2 !== peg$FAILED) {
                 if (input.charCodeAt(peg$currPos) === 93) {
                     s3 = peg$c138;
@@ -8764,7 +8823,7 @@ function peg$parse(input, options) {
             }
         }
         if (s1 !== peg$FAILED) {
-            s2 = peg$parseParticleArgumentType();
+            s2 = peg$parseParticleHandleConnectionType();
             if (s2 !== peg$FAILED) {
                 if (input.charCodeAt(peg$currPos) === 62) {
                     s3 = peg$c46;
@@ -8811,7 +8870,7 @@ function peg$parse(input, options) {
             }
         }
         if (s1 !== peg$FAILED) {
-            s2 = peg$parseParticleArgumentType();
+            s2 = peg$parseParticleHandleConnectionType();
             if (s2 !== peg$FAILED) {
                 if (input.charCodeAt(peg$currPos) === 62) {
                     s3 = peg$c46;
@@ -8877,7 +8936,7 @@ function peg$parse(input, options) {
                     if (s5 !== peg$FAILED) {
                         s6 = peg$parsewhiteSpace();
                         if (s6 !== peg$FAILED) {
-                            s7 = peg$parseParticleArgumentType();
+                            s7 = peg$parseParticleHandleConnectionType();
                             if (s7 !== peg$FAILED) {
                                 s4 = [s4, s5, s6, s7];
                                 s3 = s4;
@@ -9434,7 +9493,7 @@ function peg$parse(input, options) {
         }
         return s0;
     }
-    function peg$parseParticleSlot() {
+    function peg$parseParticleSlotConnection() {
         let s0, s1, s2, s3, s4, s5, s6, s7, s8, s9, s10, s11, s12, s13;
         s0 = peg$currPos;
         s1 = peg$currPos;
@@ -9542,7 +9601,7 @@ function peg$parse(input, options) {
                                         s11 = peg$currPos;
                                         s12 = peg$parseSameIndent();
                                         if (s12 !== peg$FAILED) {
-                                            s13 = peg$parseParticleSlotItem();
+                                            s13 = peg$parseParticleSlotConnectionItem();
                                             if (s13 !== peg$FAILED) {
                                                 s12 = [s12, s13];
                                                 s11 = s12;
@@ -9561,7 +9620,7 @@ function peg$parse(input, options) {
                                             s11 = peg$currPos;
                                             s12 = peg$parseSameIndent();
                                             if (s12 !== peg$FAILED) {
-                                                s13 = peg$parseParticleSlotItem();
+                                                s13 = peg$parseParticleSlotConnectionItem();
                                                 if (s13 !== peg$FAILED) {
                                                     s12 = [s12, s13];
                                                     s11 = s12;
@@ -9638,7 +9697,7 @@ function peg$parse(input, options) {
         }
         return s0;
     }
-    function peg$parseParticleSlotItem() {
+    function peg$parseParticleSlotConnectionItem() {
         let s0;
         s0 = peg$parseSlotFormFactor();
         if (s0 === peg$FAILED) {
@@ -15209,9 +15268,12 @@ class HandleConnection {
             return this.resolvedType;
         }
         const spec = this.spec;
-        return spec ? spec.type : null;
+        // TODO: We need a global way to generate variables so that everything can
+        // have proper type bounds.
+        return spec ? spec.type : undefined;
     }
     get direction() {
+        // TODO: Should take the most strict of the direction and the spec direction.
         if (this._direction !== 'any') {
             return this._direction;
         }
@@ -15291,9 +15353,15 @@ class HandleConnection {
         let parent;
         if (this.spec && this.spec.parentConnection) {
             parent = this.particle.connections[this.spec.parentConnection.name];
-            if (!parent || !parent.handle) {
+            if (!parent) {
                 if (options) {
-                    options.details = 'parent connection missing handle';
+                    options.details = `parent connection '${this.spec.parentConnection.name}' missing`;
+                }
+                return false;
+            }
+            if (!parent.handle) {
+                if (options) {
+                    options.details = `parent connection '${this.spec.parentConnection.name}' missing handle`;
                 }
                 return false;
             }
@@ -15344,8 +15412,7 @@ class HandleConnection {
     toString(nameMap, options) {
         const result = [];
         result.push(this.name || '*');
-        // '=' is the 'any' direction (note: inout => '<->')
-        result.push((this.direction && directionToArrow(this.direction)) || '=');
+        result.push(directionToArrow(this.direction));
         if (this.handle) {
             if (this.handle.immediateValue) {
                 result.push(this.handle.immediateValue.name);
@@ -15696,7 +15763,7 @@ class Particle {
             const fulfilledSlotConnections = Object.values(this.consumedSlotConnections).filter(connection => connection.targetSlot !== undefined);
             if (fulfilledSlotConnections.length === 0) {
                 if (options && options.showUnresolved) {
-                    options.details = 'unfullfilled slot connections';
+                    options.details = `unfullfilled slot connections ${JSON.stringify([...this.spec.slotConnections])}`;
                 }
                 return false;
             }
@@ -15769,6 +15836,8 @@ class Particle {
         assert(!this._connections[name], `Connection "${name}" already has a handle`);
         const idx = this._unnamedConnections.indexOf(connection);
         assert(idx >= 0, `Cannot name '${name}' nonexistent unnamed connection.`);
+        // TODO: FIX: The following is accessing a readonly field illegally.
+        // tslint:disable-next-line: no-any
         connection._name = name;
         const connectionSpec = this.spec.getConnectionByName(name);
         connection.type = connectionSpec.type;
@@ -15786,7 +15855,10 @@ class Particle {
     }
     addSlotConnection(name) {
         assert(!(name in this.consumedSlotConnections), 'slot connection already exists');
-        assert(!this.spec || this.spec.slotConnections.has(name), 'slot connection not in particle spec');
+        const slandle = this.spec && this.spec.connections.find(conn => conn.name === name);
+        const isSlandle = slandle && slandle.type.isSlot();
+        const isSetSlandle = slandle && slandle.type.isCollectionType() && slandle.type.getContainedType().isSlot();
+        assert(!this.spec || this.spec.slotConnections.has(name) || isSlandle || isSetSlandle, `slot connection '${name}' is not in particle spec`);
         const slotConn = this.addSlotConnectionAsCopy(name);
         const slotSpec = this.getSlotSpecByName(name);
         if (slotSpec) {
@@ -15994,6 +16066,10 @@ class Slot {
         assert(recipe);
         this._recipe = recipe;
         this._name = name;
+    }
+    isRoot() {
+        // TODO: Revisit slot naming.
+        return this.name.includes('root') || this.tags.includes('root') || (this.id && this.id.includes('root'));
     }
     get recipe() { return this._recipe; }
     get id() { return this._id; }
@@ -16302,6 +16378,7 @@ class Recipe {
                     }
                 }
             }
+            // TODO: Remove check for slots in SLANDLESv2
             if (!usesSlandles && !atLeastOneSlotConnection) {
                 if (options && options.errors) {
                     options.errors.set(`?`, `no slot connections`);
@@ -16588,47 +16665,26 @@ class Recipe {
         return result;
     }
     _makeLocalNameMap() {
-        const names = new Set();
-        for (const particle of this.particles) {
-            names.add(particle.localName);
-        }
-        for (const handle of this.handles) {
-            names.add(handle.localName);
-        }
-        for (const slot of this.slots) {
-            names.add(slot.localName);
-        }
+        const names = new Set([...this.particles,
+            ...this.handles,
+            ...this.slots].map((item) => item.localName));
+        let i;
         const nameMap = new Map();
-        let i = 0;
-        for (const particle of this.particles) {
-            let localName = particle.localName;
+        const mapName = (item, prefix) => {
+            let localName = item.localName;
             if (!localName) {
                 do {
-                    localName = `particle${i++}`;
+                    localName = `${prefix}${i++}`;
                 } while (names.has(localName));
             }
-            nameMap.set(particle, localName);
-        }
+            nameMap.set(item, localName);
+        };
         i = 0;
-        for (const handle of this.handles) {
-            let localName = handle.localName;
-            if (!localName) {
-                do {
-                    localName = `handle${i++}`;
-                } while (names.has(localName));
-            }
-            nameMap.set(handle, localName);
-        }
+        this.particles.map(particle => mapName(particle, 'particle'));
         i = 0;
-        for (const slot of this.slots) {
-            let localName = slot.localName;
-            if (!localName) {
-                do {
-                    localName = `slot${i++}`;
-                } while (names.has(localName));
-            }
-            nameMap.set(slot, localName);
-        }
+        this.handles.map(handle => mapName(handle, 'handle'));
+        i = 0;
+        this.slots.map(slot => mapName(slot, 'slot'));
         return nameMap;
     }
     // TODO: Add a normalize() which strips local names and puts and nested
@@ -16837,6 +16893,7 @@ function arrowToDirection(arrow) {
         case '=':
             return 'any';
         default:
+            // Catch nulls and unsafe values from javascript.
             throw new Error(`Bad arrow ${arrow}`);
     }
 }
@@ -16959,10 +17016,8 @@ class RecipeUtil {
                 if (shapeHC.name && shapeHC.name !== recipeConnSpec.name) {
                     continue;
                 }
-                if (recipeConnSpec.direction) {
-                    if (!connectionMatchesHandleDirection(shapeHC.direction, recipeConnSpec.direction)) {
-                        continue;
-                    }
+                if (!connectionMatchesHandleDirection(shapeHC.direction, recipeConnSpec.direction)) {
+                    continue;
                 }
                 const recipeHC = recipeParticle.connections[recipeConnSpec.name];
                 if (shapeHC.handle && recipeHC && recipeHC.handle && shapeHC.handle.localName &&
@@ -19068,12 +19123,10 @@ ${e.message}
                 }
                 connection.tags = connectionItem.target ? connectionItem.target.tags : [];
                 const direction = arrowToDirection(connectionItem.dir);
-                if (connection.direction !== 'any') {
-                    if (!connectionMatchesHandleDirection(direction, connection.direction)) {
-                        throw new ManifestError(connectionItem.location, `'${connectionItem.dir}' (${direction}) not compatible with '${connection.direction}' param of '${particle.name}'`);
-                    }
+                if (!connectionMatchesHandleDirection(direction, connection.direction)) {
+                    throw new ManifestError(connectionItem.location, `'${connectionItem.dir}' (${direction}) not compatible with '${connection.direction}' param of '${particle.name}'`);
                 }
-                else {
+                else if (connection.direction === 'any') {
                     if (connectionItem.param !== '*' && particle.spec !== undefined) {
                         throw new ManifestError(connectionItem.location, `param '${connectionItem.param}' is not defined by '${particle.name}'`);
                     }
@@ -20886,13 +20939,13 @@ class APIPort {
         }
         this['before' + e.data.messageType](e.data.messageBody);
     }
-    send(name, args) {
+    async send(name, args) {
         const call = { messageType: name, messageBody: args, stack: this.attachStack ? new Error().stack : undefined };
         const count = this.messageCount++;
         if (this.inspector) {
             this.inspector.pecMessage(name, args, count, new Error().stack || '');
         }
-        this._port.postMessage(call);
+        await this._port.postMessage(call);
     }
     supportsJavaParticle() {
         // TODO: improve heuristics.
@@ -20989,7 +21042,7 @@ function AutoConstruct(target) {
                 // as the requestedId for mapping below.
                 const requestedId = descriptor.findIndex(d => d.identifier || false);
                 /** @this APIPort */
-                const impl = function (...args) {
+                const impl = async function (...args) {
                     const messageBody = {};
                     for (let i = 0; i < descriptor.length; i++) {
                         if (i === initializer) {
@@ -21008,7 +21061,7 @@ function AutoConstruct(target) {
                             messageBody['identifier'] = this._mapper.createMappingForThing(args[initializer], args[requestedId]);
                         }
                     }
-                    this.send(f, messageBody);
+                    await this.send(f, messageBody);
                 };
                 /** @this APIPort */
                 const before = async function before(messageBody) {
@@ -22615,6 +22668,9 @@ class ParticleExecutionContext {
         }
         else {
             const clazz = await this.loader.loadParticleClass(spec);
+            if (!clazz) {
+                return Promise.reject(new Error(`Could not load particle ${id} ${spec.name}`));
+            }
             particle = new clazz();
             particle.setCapabilities(this.capabilities(true));
         }
@@ -22878,15 +22934,16 @@ class Walker {
                         });
                         permutations = newResults;
                     });
-                    for (let permutation of permutations) {
+                    for (const permutation of permutations) {
                         const cloneMap = new Map();
                         const newResult = start.clone(cloneMap);
                         let score = 0;
-                        permutation = permutation.filter(p => p.continuation !== null);
-                        if (permutation.length === 0) {
+                        const newPermutation = permutation.filter(p => p.continuation !== null);
+                        if (newPermutation.length === 0) {
                             continue;
                         }
-                        permutation.forEach(({ continuation, context }) => {
+                        newPermutation.forEach(({ continuation, context }) => {
+                            // TODO: Should this only take the last?
                             score = continuation(newResult, ...context.map(c => cloneMap.get(c) || c));
                         });
                         updated.push({ result: newResult, score });
@@ -22898,14 +22955,16 @@ class Walker {
                         if (typeof continuation === 'function') {
                             continuation = [continuation];
                         }
-                        let score = 0;
-                        continuation.forEach(f => {
-                            if (f == null) {
-                                f = () => 0;
-                            }
+                        continuation.forEach(continuation => {
                             const cloneMap = new Map();
                             const newResult = start.clone(cloneMap);
-                            score = f(newResult, ...context.map(c => cloneMap.get(c) || c));
+                            let score = 0;
+                            if (continuation == null) {
+                                score = 0;
+                            }
+                            else {
+                                score = continuation(newResult, ...context.map(c => cloneMap.get(c) || c));
+                            }
                             updated.push({ result: newResult, score });
                         });
                     });
@@ -24013,7 +24072,13 @@ ${this.activeRecipe.toString()}`;
         if (!spec.implBlobUrl) {
             // if supported, construct spec.implBlobUrl for spec.implFile
             if (this.loader && this.loader['provisionObjectUrl']) {
-                spec.setImplBlobUrl(await this.loader['provisionObjectUrl'](spec.implFile));
+                const url = await this.loader['provisionObjectUrl'](spec.implFile);
+                if (url) {
+                    spec.setImplBlobUrl(url);
+                }
+                else {
+                    throw new Error(`Expected url for ${spec.implFile} but got ${url}`);
+                }
             }
         }
     }
@@ -26915,6 +26980,9 @@ class PlatformLoaderBase extends Loader {
         return url;
     }
     mapParticleUrl(path) {
+        if (!path) {
+            return undefined;
+        }
         const parts = path.split('/');
         const suffix = parts.pop();
         const folder = parts.join('/');
@@ -27505,7 +27573,8 @@ class Suggestion {
         const manifest = await Manifest.parse(plan, { loader, context, fileName: '' });
         assert(manifest.recipes.length === 1);
         const recipe = manifest.recipes[0];
-        assert(recipe.normalize({}), `can't normalize deserialized suggestion: ${plan}`);
+        const options = { errors: new Map() };
+        assert(recipe.normalize(options), `can't normalize deserialized suggestion: ${plan} ${JSON.stringify([...options.errors])}`);
         const suggestion = new Suggestion(recipe, hash, rank, JSON.parse(versionByStore || '{}'));
         suggestion.searchGroups = searchGroups || [];
         suggestion.descriptionByModality = descriptionByModality;
@@ -27531,22 +27600,23 @@ class Suggestion {
         return plan.handles.every(handle => arcVersionByStoreId[handle.id] === this.versionByStore[handle.id]);
     }
     isVisible(arc, filter, options) {
-        if (this.plan.slots.length === 0) {
+        const logReason = (label) => {
             if (options && options.reasons) {
-                options.reasons.push(`No slots`);
+                options.reasons.push(label);
             }
+        };
+        const slandles = this.plan.handles.filter(handle => handle.type.isSlot()
+            || handle.type.isCollectionType() && handle.type.collectionType.isSlot()).length;
+        if (slandles + this.plan.slots.length === 0) {
+            logReason(`No slots`);
             return false;
         }
         if (!this.descriptionText) {
-            if (options && options.reasons) {
-                options.reasons.push(`No description`);
-            }
+            logReason(`No description`);
             return false;
         }
         if (!arc.modality.isCompatible(this.plan.modality.names)) {
-            if (options && options.reasons) {
-                options.reasons.push(`Incompatible modalities ${this.plan.modality.names.join(', ')} with Arc modalities: ${arc.modality.names.join(', ')}`);
-            }
+            logReason(`Incompatible modalities ${this.plan.modality.names.join(', ')} with Arc modalities: ${arc.modality.names.join(', ')}`);
             return false;
         }
         if (filter.showAll) {
@@ -27554,14 +27624,12 @@ class Suggestion {
         }
         if (filter.search) {
             if (!this.descriptionText.toLowerCase().includes(filter.search) && !this.hasSearch(filter.search)) {
-                if (options && options.reasons) {
-                    options.reasons.push(`Description doesn't match search filter: ${filter.search}`);
-                }
+                logReason(`Description doesn't match search filter: ${filter.search}`);
                 return false;
             }
             return true;
         }
-        if (!this.plan.slots.find(s => s.name.includes('root') || s.tags.includes('root')) &&
+        if (!this.plan.slots.find(s => s.isRoot()) &&
             !((this.plan.slotConnections || []).find(sc => sc.name === 'root'))) {
             // suggestion uses only non 'root' slots.
             // TODO: should check agains slot-composer's root contexts instead.
@@ -27570,23 +27638,34 @@ class Suggestion {
         const usesHandlesFromActiveRecipe = this.plan.handles.some(handle => {
             // TODO(mmandlis): find a generic way to exlude system handles (eg Theme),
             // either by tagging or by exploring connection directions etc.
-            return !!handle.id &&
+            const hasHandle = !!handle.id &&
                 !!arc.activeRecipe.handles.find(activeHandle => activeHandle.id === handle.id);
-        });
-        const usesRemoteNonRootSlots = !!this.plan.slots.some(slot => {
-            return !slot.name.includes('root') && !slot.tags.includes('root') &&
-                slot.id && !slot.id.includes('root') &&
-                Boolean(arc.pec.slotComposer.findContextById(slot.id));
-        });
-        if (options && options.reasons) {
-            if (!usesHandlesFromActiveRecipe) {
-                options.reasons.push(`No active recipe handles`);
+            if (!hasHandle) {
+                logReason(`Has no handles`);
             }
-            if (!usesRemoteNonRootSlots) {
-                options.reasons.push(`No remote non-root slots.`);
-            }
+            return hasHandle;
+        });
+        if (!usesHandlesFromActiveRecipe) {
+            logReason(`No active recipe handles`);
+            return false;
         }
-        return usesHandlesFromActiveRecipe && usesRemoteNonRootSlots;
+        let hasRootSlot = false;
+        const usesRemoteNonRootSlots = this.plan.slots.some(slot => {
+            const isRootSlot = slot.isRoot();
+            if (isRootSlot) {
+                hasRootSlot = true;
+            }
+            const hasNonRootSlot = !isRootSlot && Boolean(arc.pec.slotComposer.findContextById(slot.id));
+            return hasNonRootSlot;
+        });
+        if (!hasRootSlot) {
+            logReason(`Has no root slot`);
+        }
+        if (!usesRemoteNonRootSlots) {
+            logReason(`No remote non-root slots.`);
+            return false;
+        }
+        return true;
     }
 }
 
@@ -30261,6 +30340,7 @@ class RecipeIndex {
      * could be connected to the potential slot.
      */
     findConsumeSlotConnectionMatch(particle, providedSlotSpec) {
+        // TODO: Construct a set of failure reasons for debugging & feedback to developers.
         this.ensureReady();
         const consumeConns = [];
         for (const recipe of this._recipes) {
@@ -30272,15 +30352,17 @@ class RecipeIndex {
             for (const recipeParticle of recipe.particles) {
                 if (!recipeParticle.spec)
                     continue;
+                // Match slot connections
                 for (const [name, slotSpec] of recipeParticle.spec.slotConnections) {
                     const recipeSlotConn = recipeParticle.getSlotConnectionByName(name);
                     if (recipeSlotConn && recipeSlotConn.targetSlot)
                         continue;
                     if (SlotUtils.specMatch(slotSpec, providedSlotSpec) && SlotUtils.tagsOrNameMatch(slotSpec, providedSlotSpec)) {
+                        // TODO: check slot was retrieved by name, tagsOrNameMatch is always true?
                         const slotConn = particle.getSlotConnectionByName(providedSlotSpec.name);
                         let matchingHandles = [];
                         if (providedSlotSpec.handles.length !== 0 || (slotConn && !SlotUtils.handlesMatch(recipeParticle, slotConn))) {
-                            matchingHandles = this._getMatchingHandles(recipeParticle, particle, providedSlotSpec);
+                            matchingHandles = this._getMatchingHandles(recipeParticle, particle, providedSlotSpec.handles);
                             if (matchingHandles.length === 0) {
                                 continue;
                             }
@@ -30311,9 +30393,9 @@ class RecipeIndex {
         }
         return providedSlots;
     }
-    _getMatchingHandles(particle, providingParticle, providedSlotSpec) {
+    _getMatchingHandles(particle, providingParticle, handleNames) {
         const matchingHandles = [];
-        for (const slotHandleConnName of providedSlotSpec.handles) {
+        for (const slotHandleConnName of handleNames) {
             const providedHandleConn = providingParticle.getConnectionByName(slotHandleConnName);
             if (!providedHandleConn)
                 continue;

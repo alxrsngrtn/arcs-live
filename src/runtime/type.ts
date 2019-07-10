@@ -9,7 +9,7 @@
  */
   
 import {Id} from './id.js';
-import {InterfaceInfo, Handle, Slot} from './interface-info.js';
+import {InterfaceInfo, HandleConnection, Slot} from './interface-info.js';
 import {TypeChecker} from './recipe/type-checker.js';
 import {Schema} from './schema.js';
 import {SlotInfo} from './slot-info.js';
@@ -609,8 +609,8 @@ export class InterfaceType extends Type {
     this.interfaceInfo = iface;
   }
 
-  static make(name: string, handles: Handle[], slots: Slot[]) {
-    return new InterfaceType(new InterfaceInfo(name, handles, slots));
+  static make(name: string, handleConnections: HandleConnection[], slots: Slot[]) {
+    return new InterfaceType(new InterfaceInfo(name, handleConnections, slots));
   }
 
   get isInterface(): boolean {
@@ -685,6 +685,10 @@ export class SlotType extends Type {
 
   static make(formFactor: string, handle: string) {
     return new SlotType(new SlotInfo(formFactor, handle));
+  }
+
+  getSlot(): SlotInfo {
+    return this.slot;
   }
 
   get canWriteSuperset(): SlotType {

@@ -186,6 +186,7 @@ export class RecipeIndex {
      * could be connected to the potential slot.
      */
     findConsumeSlotConnectionMatch(particle, providedSlotSpec) {
+        // TODO: Construct a set of failure reasons for debugging & feedback to developers.
         this.ensureReady();
         const consumeConns = [];
         for (const recipe of this._recipes) {
@@ -197,15 +198,17 @@ export class RecipeIndex {
             for (const recipeParticle of recipe.particles) {
                 if (!recipeParticle.spec)
                     continue;
+                // Match slot connections
                 for (const [name, slotSpec] of recipeParticle.spec.slotConnections) {
                     const recipeSlotConn = recipeParticle.getSlotConnectionByName(name);
                     if (recipeSlotConn && recipeSlotConn.targetSlot)
                         continue;
                     if (SlotUtils.specMatch(slotSpec, providedSlotSpec) && SlotUtils.tagsOrNameMatch(slotSpec, providedSlotSpec)) {
+                        // TODO: check slot was retrieved by name, tagsOrNameMatch is always true?
                         const slotConn = particle.getSlotConnectionByName(providedSlotSpec.name);
                         let matchingHandles = [];
                         if (providedSlotSpec.handles.length !== 0 || (slotConn && !SlotUtils.handlesMatch(recipeParticle, slotConn))) {
-                            matchingHandles = this._getMatchingHandles(recipeParticle, particle, providedSlotSpec);
+                            matchingHandles = this._getMatchingHandles(recipeParticle, particle, providedSlotSpec.handles);
                             if (matchingHandles.length === 0) {
                                 continue;
                             }
@@ -236,9 +239,9 @@ export class RecipeIndex {
         }
         return providedSlots;
     }
-    _getMatchingHandles(particle, providingParticle, providedSlotSpec) {
+    _getMatchingHandles(particle, providingParticle, handleNames) {
         const matchingHandles = [];
-        for (const slotHandleConnName of providedSlotSpec.handles) {
+        for (const slotHandleConnName of handleNames) {
             const providedHandleConn = providingParticle.getConnectionByName(slotHandleConnName);
             if (!providedHandleConn)
                 continue;

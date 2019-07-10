@@ -33,7 +33,7 @@ export declare class ParticleExecutionContext {
     private readonly keyedProxies;
     private readonly wasmContainers;
     readonly idGenerator: IdGenerator;
-    constructor(port: any, pecId: Id, idGenerator: IdGenerator, loader: Loader);
+    constructor(port: MessagePort, pecId: Id, idGenerator: IdGenerator, loader: Loader);
     generateID(): string;
     innerArcHandle(arcId: string, particleId: string): InnerArcHandle;
     getStorageProxy(storageKey: any, type: any): StorageProxy | Promise<StorageProxy>;

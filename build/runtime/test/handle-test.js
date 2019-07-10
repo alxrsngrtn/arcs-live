@@ -104,8 +104,8 @@ describe('Handle', () => {
     it('can store a particle in an interface store', async () => {
         const arc = new Arc({ id: ArcId.newForTest('test'), context: manifest, loader });
         const iface = InterfaceType.make('Test', [
-            { type: new EntityType(manifest.schemas.Foo) },
-            { type: new EntityType(manifest.schemas.Bar) }
+            { type: new EntityType(manifest.schemas.Foo), direction: 'any' },
+            { type: new EntityType(manifest.schemas.Bar), direction: 'any' }
         ], []);
         assert(iface.interfaceInfo.particleMatches(manifest.particles[0]));
         const ifaceStore = await arc.createStore(iface);

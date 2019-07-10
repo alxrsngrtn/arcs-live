@@ -38,6 +38,9 @@ export declare class HandleConnectionSpec {
     check?: Check;
     constructor(rawData: SerializedHandleConnectionSpec, typeVarMap: Map<string, Type>);
     instantiateDependentConnections(particle: any, typeVarMap: Map<string, Type>): void;
+    toSlotlikeConnection(): ConsumeSlotConnectionSpec;
+    slandleType(): SlotType | undefined;
+    isRoot(): boolean;
     readonly isInput: boolean;
     readonly isOutput: boolean;
     isCompatibleType(type: Type): boolean;
@@ -61,6 +64,7 @@ export declare class ConsumeSlotConnectionSpec {
     handles: string[];
     provideSlotConnections: ProvideSlotConnectionSpec[];
     constructor(slotModel: SerializedSlotConnectionSpec);
+    isRoot(): boolean;
     readonly isOptional: boolean;
     readonly direction: string;
     readonly type: SlotType;

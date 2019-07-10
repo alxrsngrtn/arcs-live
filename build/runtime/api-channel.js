@@ -193,13 +193,13 @@ export class APIPort {
         }
         this['before' + e.data.messageType](e.data.messageBody);
     }
-    send(name, args) {
+    async send(name, args) {
         const call = { messageType: name, messageBody: args, stack: this.attachStack ? new Error().stack : undefined };
         const count = this.messageCount++;
         if (this.inspector) {
             this.inspector.pecMessage(name, args, count, new Error().stack || '');
         }
-        this._port.postMessage(call);
+        await this._port.postMessage(call);
     }
     supportsJavaParticle() {
         // TODO: improve heuristics.
@@ -296,7 +296,7 @@ function AutoConstruct(target) {
                 // as the requestedId for mapping below.
                 const requestedId = descriptor.findIndex(d => d.identifier || false);
                 /** @this APIPort */
-                const impl = function (...args) {
+                const impl = async function (...args) {
                     const messageBody = {};
                     for (let i = 0; i < descriptor.length; i++) {
                         if (i === initializer) {
@@ -315,7 +315,7 @@ function AutoConstruct(target) {
                             messageBody['identifier'] = this._mapper.createMappingForThing(args[initializer], args[requestedId]);
                         }
                     }
-                    this.send(f, messageBody);
+                    await this.send(f, messageBody);
                 };
                 /** @this APIPort */
                 const before = async function before(messageBody) {

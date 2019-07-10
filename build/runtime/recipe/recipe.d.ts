@@ -100,7 +100,7 @@ export declare class Recipe implements Cloneable<Recipe> {
     };
     _copyInto(recipe: Recipe, cloneMap: CloneMap): void;
     updateToClone(dict: Dictionary<any>): Dictionary<any>;
-    _makeLocalNameMap(): Map<RecipeComponent, string>;
+    _makeLocalNameMap(): Map<any, any>;
     toString(options?: ToStringOptions): string;
     getFreeHandles(): Handle[];
     readonly allSpecifiedConnections: {

@@ -78,9 +78,12 @@ export class HandleConnection {
             return this.resolvedType;
         }
         const spec = this.spec;
-        return spec ? spec.type : null;
+        // TODO: We need a global way to generate variables so that everything can
+        // have proper type bounds.
+        return spec ? spec.type : undefined;
     }
     get direction() {
+        // TODO: Should take the most strict of the direction and the spec direction.
         if (this._direction !== 'any') {
             return this._direction;
         }
@@ -160,9 +163,15 @@ export class HandleConnection {
         let parent;
         if (this.spec && this.spec.parentConnection) {
             parent = this.particle.connections[this.spec.parentConnection.name];
-            if (!parent || !parent.handle) {
+            if (!parent) {
                 if (options) {
-                    options.details = 'parent connection missing handle';
+                    options.details = `parent connection '${this.spec.parentConnection.name}' missing`;
+                }
+                return false;
+            }
+            if (!parent.handle) {
+                if (options) {
+                    options.details = `parent connection '${this.spec.parentConnection.name}' missing handle`;
                 }
                 return false;
             }
@@ -213,8 +222,7 @@ export class HandleConnection {
     toString(nameMap, options) {
         const result = [];
         result.push(this.name || '*');
-        // '=' is the 'any' direction (note: inout => '<->')
-        result.push((this.direction && directionToArrow(this.direction)) || '=');
+        result.push(directionToArrow(this.direction));
         if (this.handle) {
             if (this.handle.immediateValue) {
                 result.push(this.handle.immediateValue.name);

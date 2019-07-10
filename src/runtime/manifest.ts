@@ -14,7 +14,7 @@ import {digest} from '../platform/digest-web.js';
 
 import {Id, IdGenerator} from './id.js';
 import {InterfaceInfo} from './interface-info.js';
-import {Handle as InterfaceInfoHandle} from './interface-info.js';
+import {HandleConnection as InterfaceInfoHandleConnection} from './interface-info.js';
 import {Slot as InterfaceInfoSlot} from './interface-info.js';
 import {Runnable} from './hot.js';
 import {Loader} from './loader.js';
@@ -737,7 +737,7 @@ ${e.message}
 
   // TODO: Move this to a generic pass over the AST and merge with resolveTypeName.
   private static _processInterface(manifest: Manifest, interfaceItem) {
-    const handles: InterfaceInfoHandle[] = [];
+    const handles: InterfaceInfoHandleConnection[] = [];
     for (const arg of interfaceItem.args) {
       const handle = {name: undefined, type: undefined, direction: arg.direction};
       if (arg.name !== '*') {
@@ -1005,13 +1005,11 @@ ${e.message}
         }
         connection.tags = connectionItem.target ? connectionItem.target.tags : [];
         const direction = arrowToDirection(connectionItem.dir);
-        if (connection.direction !== 'any') {
-          if (!connectionMatchesHandleDirection(direction, connection.direction)) {
-            throw new ManifestError(
-                connectionItem.location,
-                `'${connectionItem.dir}' (${direction}) not compatible with '${connection.direction}' param of '${particle.name}'`);
-          }
-        } else {
+        if (!connectionMatchesHandleDirection(direction, connection.direction)) {
+          throw new ManifestError(
+              connectionItem.location,
+              `'${connectionItem.dir}' (${direction}) not compatible with '${connection.direction}' param of '${particle.name}'`);
+        } else if (connection.direction === 'any') {
           if (connectionItem.param !== '*' && particle.spec !== undefined) {
             throw new ManifestError(
               connectionItem.location,

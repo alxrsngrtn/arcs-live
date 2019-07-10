@@ -474,8 +474,8 @@ export class InterfaceType extends Type {
         super('Interface');
         this.interfaceInfo = iface;
     }
-    static make(name, handles, slots) {
-        return new InterfaceType(new InterfaceInfo(name, handles, slots));
+    static make(name, handleConnections, slots) {
+        return new InterfaceType(new InterfaceInfo(name, handleConnections, slots));
     }
     get isInterface() {
         return true;
@@ -531,6 +531,9 @@ export class SlotType extends Type {
     }
     static make(formFactor, handle) {
         return new SlotType(new SlotInfo(formFactor, handle));
+    }
+    getSlot() {
+        return this.slot;
     }
     get canWriteSuperset() {
         return this;

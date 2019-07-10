@@ -30,5 +30,5 @@ export declare class ResolveRecipeAction extends Action<Recipe> {
 export declare class RecipeResolver {
     private resolver;
     constructor(arc: Arc);
-    resolve(recipe: any, options?: IsValidOptions): Promise<Recipe>;
+    resolve(recipe: Recipe, options?: IsValidOptions): Promise<Recipe>;
 }

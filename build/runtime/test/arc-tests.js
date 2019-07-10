@@ -218,7 +218,7 @@ function getSingletonHandle(store) {
                 recipe.handles[3].mapToStorage(dStore); // These might not be needed?
                 recipe.normalize();
                 await arc.instantiate(recipe);
-            }, /.*unresolved handle-connection: parent connection missing handle/);
+            }, /.*unresolved handle-connection: parent connection 'c' missing/);
         });
         it('required provided handles cannot resolve without parent', async () => await assertThrowsAsync(async () => {
             const loader = new Loader();
@@ -258,7 +258,7 @@ function getSingletonHandle(store) {
             recipe.handles[3].mapToStorage(dStore); // These might not be needed?
             recipe.normalize();
             await arc.instantiate(recipe);
-        }, /.*unresolved handle-connection: parent connection missing handle/));
+        }, /.*unresolved handle-connection: parent connection 'c' missing/));
         it('optional provided handles are not required to resolve with dependencies', async function () {
             if (!storageKeyPrefix.startsWith('volatile')) {
                 // TODO(lindner): fix pouch/firebase timing

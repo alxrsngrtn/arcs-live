@@ -38,21 +38,21 @@ export declare class BaseNode {
 }
 export interface BigCollectionType extends BaseNode {
     kind: 'big-collection-type';
-    type: ParticleArgumentType;
+    type: ParticleHandleConnectionType;
 }
 export interface CollectionType extends BaseNode {
     kind: 'collection-type';
-    type: ParticleArgumentType;
+    type: ParticleHandleConnectionType;
 }
 export declare function isCollectionType(node: BaseNode): node is CollectionType;
 export interface ReferenceType extends BaseNode {
     kind: 'reference-type';
-    type: ParticleArgumentType;
+    type: ParticleHandleConnectionType;
 }
 export interface TypeVariable extends BaseNode {
     kind: 'variable-type';
     name: string;
-    constraint: ParticleArgument;
+    constraint: ParticleHandleConnection;
 }
 export declare function isTypeVariable(node: BaseNode): node is TypeVariable;
 export interface SlotType extends BaseNode {
@@ -64,7 +64,7 @@ export interface SlotType extends BaseNode {
     };
 }
 export declare function isSlotType(node: BaseNode): node is SlotType;
-export declare function slandleType(arg: ParticleArgument): SlotType | undefined;
+export declare function slandleType(arg: ParticleHandleConnection): SlotType | undefined;
 export interface Description extends BaseNode {
     kind: 'description';
     name: 'pattern';
@@ -131,9 +131,9 @@ export interface Particle extends BaseNode {
     name: string;
     implFile?: string;
     verbs?: VerbList;
-    args?: ParticleArgument[];
+    args?: ParticleHandleConnection[];
     modality?: string[];
-    slots?: ParticleSlot[];
+    slots?: ParticleSlotConnection[];
     description?: Description;
     hasParticleArgument?: boolean;
     trustChecks?: ParticleCheckStatement[];
@@ -206,17 +206,16 @@ export interface ParticleModality extends BaseNode {
     kind: 'particle-modality';
     modality: string;
 }
-export interface ParticleArgument extends BaseNode {
+export interface ParticleHandleConnection extends BaseNode {
     kind: 'particle-argument';
     direction: Direction;
-    type: ParticleArgumentType;
+    type: ParticleHandleConnectionType;
     isOptional: boolean;
-    dependentConnections: ParticleHandle[];
+    dependentConnections: ParticleHandleConnection[];
     name: string;
     tags: TagList;
 }
-export declare type ParticleHandle = ParticleArgument;
-export declare type ParticleItem = ParticleModality | ParticleSlot | Description | ParticleHandle;
+export declare type ParticleItem = ParticleModality | ParticleSlotConnection | Description | ParticleHandleConnection;
 export interface ParticleHandleDescription extends BaseNode {
     kind: 'handle-description';
     name: string;
@@ -225,9 +224,9 @@ export interface ParticleHandleDescription extends BaseNode {
 export interface ParticleInterface extends BaseNode {
     kind: 'interface';
     verb: string;
-    args: ParticleArgument[];
+    args: ParticleHandleConnection[];
 }
-export interface ParticleSlot extends BaseNode {
+export interface ParticleSlotConnection extends BaseNode {
     kind: 'particle-slot';
     name: string;
     tags: TagList;
@@ -452,7 +451,7 @@ export interface SlotFormFactor extends BaseNode {
     kind: 'form-factor';
     formFactor: string;
 }
-export declare type ParticleSlotItem = SlotFormFactor | ParticleProvidedSlot;
+export declare type ParticleSlotConnectionItem = SlotFormFactor | ParticleProvidedSlot;
 export interface TypeName extends BaseNode {
     kind: 'type-name';
     name: string;
@@ -493,6 +492,6 @@ export declare type Direction = 'in' | 'out' | 'inout' | 'host' | '`consume' | '
 export declare type DirectionArrow = '<-' | '->' | '<->' | 'consume' | 'provide' | '=';
 export declare type SlotDirection = 'provide' | 'consume';
 export declare type Fate = 'use' | 'create' | 'map' | 'copy' | '?' | '`slot';
-export declare type ParticleArgumentType = TypeVariable | CollectionType | BigCollectionType | ReferenceType | SlotType | SchemaInline | TypeName;
-export declare type All = Import | Meta | MetaName | MetaStorageKey | Particle | ParticleArgument | ParticleInterface | RecipeHandle | Resource | Interface | InterfaceArgument | InterfaceInterface | InterfaceSlot;
+export declare type ParticleHandleConnectionType = TypeVariable | CollectionType | BigCollectionType | ReferenceType | SlotType | SchemaInline | TypeName;
+export declare type All = Import | Meta | MetaName | MetaStorageKey | Particle | ParticleHandleConnection | ParticleInterface | RecipeHandle | Resource | Interface | InterfaceArgument | InterfaceInterface | InterfaceSlot;
 export declare type ManifestItem = RecipeNode | Particle | Import | Schema | ManifestStorage | Interface | Meta | Resource;

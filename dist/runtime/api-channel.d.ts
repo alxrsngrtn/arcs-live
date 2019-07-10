@@ -20,6 +20,7 @@ import { SerializedModelEntry } from './storage/crdt-collection-model.js';
 import { StorageProviderBase } from './storage/storage-provider-base.js';
 import { Type } from './type.js';
 import { PropagatedException } from './arc-exceptions.js';
+import { MessagePort } from './message-channel.js';
 declare class ThingMapper {
     _prefix: string;
     _nextIdentifier: number;
@@ -44,7 +45,7 @@ export declare class APIPort {
     _testingHook(): void;
     close(): void;
     _processMessage(e: any): Promise<void>;
-    send(name: string, args: {}): void;
+    send(name: string, args: {}): Promise<void>;
     supportsJavaParticle(): boolean;
 }
 export declare abstract class PECOuterPort extends APIPort {

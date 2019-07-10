@@ -10,55 +10,56 @@
 import { Predicate } from '../runtime/hot.js';
 import { Type, TypeVariable, TypeLiteral } from './type.js';
 import { ParticleSpec } from './particle-spec.js';
-export interface Handle {
-    type?: Type;
+import * as AstNode from './manifest-ast-nodes.js';
+export interface HandleConnection {
+    type: Type;
     name?: string | TypeVariable;
-    direction?: string;
+    direction?: AstNode.Direction;
 }
-interface HandleLiteral {
+interface HandleConnectionLiteral {
     type?: TypeLiteral;
     name?: string | TypeLiteral;
-    direction?: string;
+    direction?: AstNode.Direction;
 }
 export interface Slot {
     name?: string | TypeVariable;
-    direction?: string;
+    direction?: AstNode.SlotDirection;
     isRequired?: boolean;
     isSet?: boolean;
 }
 interface SlotLiteral {
     name?: string | TypeLiteral;
-    direction?: string;
+    direction?: AstNode.SlotDirection;
     isRequired?: boolean;
     isSet?: boolean;
 }
 export interface TypeVarReference {
-    object: Handle | Slot;
+    object: HandleConnection | Slot;
     field: string;
 }
 export interface InterfaceInfoLiteral {
     name: string;
-    handles: HandleLiteral[];
+    handleConnections: HandleConnectionLiteral[];
     slots: SlotLiteral[];
 }
 declare type MatchResult = {
     var: TypeVariable;
     value: Type;
-    direction: string;
+    direction: AstNode.Direction;
 };
 export declare class InterfaceInfo {
     name: string;
-    handles: Handle[];
+    handleConnections: HandleConnection[];
     slots: Slot[];
     readonly typeVars: TypeVarReference[];
-    constructor(name: string, handles: Handle[], slots: Slot[]);
+    constructor(name: string, handleConnections: HandleConnection[], slots: Slot[]);
     toPrettyString(): string;
     mergeTypeVariablesByName(variableMap: Map<string, Type>): void;
     readonly canReadSubset: InterfaceInfo;
     readonly canWriteSuperset: InterfaceInfo;
     isMoreSpecificThan(other: InterfaceInfo): boolean;
     _applyExistenceTypeTest(test: Predicate<TypeVarReference>): boolean;
-    _handlesToManifestString(): string;
+    _handleConnectionsToManifestString(): string;
     _slotsToManifestString(): string;
     toString(): string;
     static fromLiteral(data: InterfaceInfoLiteral): InterfaceInfo;
@@ -71,14 +72,14 @@ export declare class InterfaceInfo {
     tryMergeTypeVariablesWith(other: InterfaceInfo): InterfaceInfo;
     resolvedType(): InterfaceInfo;
     equals(other: InterfaceInfo): boolean;
-    _equalHandle(handle: Handle, otherHandle: Handle): boolean;
+    _equalHandleConnection(handleConnection: HandleConnection, otherHandleConnection: HandleConnection): boolean;
     _equalSlot(slot: Slot, otherSlot: Slot): boolean;
     _equalItems<T>(otherItems: T[], items: T[], compareItem: (a: T, b: T) => boolean): boolean;
     _cloneAndUpdate(update: (t: Type) => Type): InterfaceInfo;
     static _updateTypeVar(typeVar: TypeVarReference, update: (t: Type) => Type): void;
     static isTypeVar(reference: TypeVariable | Type | string | boolean): boolean;
     static mustMatch(reference: TypeVariable | Type | string | boolean): boolean;
-    static handlesMatch(interfaceHandle: Handle, particleHandle: Handle): boolean | MatchResult[];
+    static handleConnectionsMatch(interfaceHandleConnection: HandleConnection, particleHandleConnection: HandleConnection): boolean | MatchResult[];
     static slotsMatch(interfaceSlot: Slot, particleSlot: Slot): boolean;
     particleMatches(particleSpec: ParticleSpec): boolean;
     restrictType(particleSpec: ParticleSpec): boolean;

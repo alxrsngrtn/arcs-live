@@ -21,6 +21,7 @@ export declare class Slot implements Comparable<Slot> {
     private _formFactor?;
     private _consumeConnections;
     constructor(recipe: Recipe, name: string);
+    isRoot(): boolean;
     readonly recipe: Recipe;
     id: string | undefined;
     localName: string | undefined;

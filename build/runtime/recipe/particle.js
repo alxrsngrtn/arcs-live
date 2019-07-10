@@ -159,7 +159,7 @@ export class Particle {
             const fulfilledSlotConnections = Object.values(this.consumedSlotConnections).filter(connection => connection.targetSlot !== undefined);
             if (fulfilledSlotConnections.length === 0) {
                 if (options && options.showUnresolved) {
-                    options.details = 'unfullfilled slot connections';
+                    options.details = `unfullfilled slot connections ${JSON.stringify([...this.spec.slotConnections])}`;
                 }
                 return false;
             }
@@ -232,6 +232,8 @@ export class Particle {
         assert(!this._connections[name], `Connection "${name}" already has a handle`);
         const idx = this._unnamedConnections.indexOf(connection);
         assert(idx >= 0, `Cannot name '${name}' nonexistent unnamed connection.`);
+        // TODO: FIX: The following is accessing a readonly field illegally.
+        // tslint:disable-next-line: no-any
         connection._name = name;
         const connectionSpec = this.spec.getConnectionByName(name);
         connection.type = connectionSpec.type;
@@ -249,7 +251,10 @@ export class Particle {
     }
     addSlotConnection(name) {
         assert(!(name in this.consumedSlotConnections), 'slot connection already exists');
-        assert(!this.spec || this.spec.slotConnections.has(name), 'slot connection not in particle spec');
+        const slandle = this.spec && this.spec.connections.find(conn => conn.name === name);
+        const isSlandle = slandle && slandle.type.isSlot();
+        const isSetSlandle = slandle && slandle.type.isCollectionType() && slandle.type.getContainedType().isSlot();
+        assert(!this.spec || this.spec.slotConnections.has(name) || isSlandle || isSetSlandle, `slot connection '${name}' is not in particle spec`);
         const slotConn = this.addSlotConnectionAsCopy(name);
         const slotSpec = this.getSlotSpecByName(name);
         if (slotSpec) {

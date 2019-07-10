@@ -281,7 +281,7 @@ function peg$parse(input, options) {
         const trustClaims = [];
         const trustChecks = [];
         let description = null;
-        let hasParticleArgument = false;
+        let hasParticleHandleConnection = false;
         verbs = optional(verbs, parsedOutput => parsedOutput[1], []);
         items = optional(items, extractIndented, []);
         items.forEach(item => {
@@ -291,7 +291,7 @@ function peg$parse(input, options) {
                 }
                 verbs.push(item.verb);
                 args = item.args; // TODO(jopra): This should merge, not overwrite;
-                hasParticleArgument = true;
+                hasParticleHandleConnection = true;
             }
             else if (item.kind === 'particle-argument') {
                 args.push(item);
@@ -333,7 +333,7 @@ function peg$parse(input, options) {
             modality,
             slotConnections,
             description,
-            hasParticleArgument,
+            hasParticleHandleConnection,
             trustClaims,
             trustChecks,
         };
@@ -2660,7 +2660,7 @@ function peg$parse(input, options) {
         }
         if (s1 !== peg$FAILED) {
             s2 = peg$currPos;
-            s3 = peg$parseParticleArgumentType();
+            s3 = peg$parseParticleHandleConnectionType();
             if (s3 !== peg$FAILED) {
                 s4 = peg$parsewhiteSpace();
                 if (s4 !== peg$FAILED) {
@@ -3318,11 +3318,11 @@ function peg$parse(input, options) {
         peg$silentFails++;
         s0 = peg$parseParticleModality();
         if (s0 === peg$FAILED) {
-            s0 = peg$parseParticleSlot();
+            s0 = peg$parseParticleSlotConnection();
             if (s0 === peg$FAILED) {
                 s0 = peg$parseDescription();
                 if (s0 === peg$FAILED) {
-                    s0 = peg$parseParticleHandle();
+                    s0 = peg$parseParticleHandleConnection();
                     if (s0 === peg$FAILED) {
                         s0 = peg$parseParticleClaimStatement();
                         if (s0 === peg$FAILED) {
@@ -4160,10 +4160,10 @@ function peg$parse(input, options) {
         }
         return s0;
     }
-    function peg$parseParticleHandle() {
+    function peg$parseParticleHandleConnection() {
         let s0, s1, s2, s3, s4, s5, s6, s7, s8;
         s0 = peg$currPos;
-        s1 = peg$parseParticleArgument();
+        s1 = peg$parseParticleHandleConnectionBody();
         if (s1 !== peg$FAILED) {
             s2 = peg$parseeolWhiteSpace();
             if (s2 !== peg$FAILED) {
@@ -4174,7 +4174,7 @@ function peg$parse(input, options) {
                     s6 = peg$currPos;
                     s7 = peg$parseSameIndent();
                     if (s7 !== peg$FAILED) {
-                        s8 = peg$parseParticleHandle();
+                        s8 = peg$parseParticleHandleConnection();
                         if (s8 !== peg$FAILED) {
                             s7 = [s7, s8];
                             s6 = s7;
@@ -4193,7 +4193,7 @@ function peg$parse(input, options) {
                         s6 = peg$currPos;
                         s7 = peg$parseSameIndent();
                         if (s7 !== peg$FAILED) {
-                            s8 = peg$parseParticleHandle();
+                            s8 = peg$parseParticleHandleConnection();
                             if (s8 !== peg$FAILED) {
                                 s7 = [s7, s8];
                                 s6 = s7;
@@ -4245,7 +4245,7 @@ function peg$parse(input, options) {
         }
         return s0;
     }
-    function peg$parseParticleArgument() {
+    function peg$parseParticleHandleConnectionBody() {
         let s0, s1, s2, s3, s4, s5, s6;
         s0 = peg$currPos;
         s1 = peg$parseDirection();
@@ -4266,7 +4266,7 @@ function peg$parse(input, options) {
             if (s2 !== peg$FAILED) {
                 s3 = peg$parsewhiteSpace();
                 if (s3 !== peg$FAILED) {
-                    s4 = peg$parseParticleArgumentType();
+                    s4 = peg$parseParticleHandleConnectionType();
                     if (s4 !== peg$FAILED) {
                         s5 = peg$parsewhiteSpace();
                         if (s5 !== peg$FAILED) {
@@ -4495,7 +4495,7 @@ function peg$parse(input, options) {
         }
         return s0;
     }
-    function peg$parseParticleArgumentType() {
+    function peg$parseParticleHandleConnectionType() {
         let s0;
         s0 = peg$parseTypeVariable();
         if (s0 === peg$FAILED) {
@@ -4532,7 +4532,7 @@ function peg$parse(input, options) {
             }
         }
         if (s1 !== peg$FAILED) {
-            s2 = peg$parseParticleArgumentType();
+            s2 = peg$parseParticleHandleConnectionType();
             if (s2 !== peg$FAILED) {
                 if (input.charCodeAt(peg$currPos) === 93) {
                     s3 = peg$c138;
@@ -4579,7 +4579,7 @@ function peg$parse(input, options) {
             }
         }
         if (s1 !== peg$FAILED) {
-            s2 = peg$parseParticleArgumentType();
+            s2 = peg$parseParticleHandleConnectionType();
             if (s2 !== peg$FAILED) {
                 if (input.charCodeAt(peg$currPos) === 62) {
                     s3 = peg$c46;
@@ -4626,7 +4626,7 @@ function peg$parse(input, options) {
             }
         }
         if (s1 !== peg$FAILED) {
-            s2 = peg$parseParticleArgumentType();
+            s2 = peg$parseParticleHandleConnectionType();
             if (s2 !== peg$FAILED) {
                 if (input.charCodeAt(peg$currPos) === 62) {
                     s3 = peg$c46;
@@ -4692,7 +4692,7 @@ function peg$parse(input, options) {
                     if (s5 !== peg$FAILED) {
                         s6 = peg$parsewhiteSpace();
                         if (s6 !== peg$FAILED) {
-                            s7 = peg$parseParticleArgumentType();
+                            s7 = peg$parseParticleHandleConnectionType();
                             if (s7 !== peg$FAILED) {
                                 s4 = [s4, s5, s6, s7];
                                 s3 = s4;
@@ -5249,7 +5249,7 @@ function peg$parse(input, options) {
         }
         return s0;
     }
-    function peg$parseParticleSlot() {
+    function peg$parseParticleSlotConnection() {
         let s0, s1, s2, s3, s4, s5, s6, s7, s8, s9, s10, s11, s12, s13;
         s0 = peg$currPos;
         s1 = peg$currPos;
@@ -5357,7 +5357,7 @@ function peg$parse(input, options) {
                                         s11 = peg$currPos;
                                         s12 = peg$parseSameIndent();
                                         if (s12 !== peg$FAILED) {
-                                            s13 = peg$parseParticleSlotItem();
+                                            s13 = peg$parseParticleSlotConnectionItem();
                                             if (s13 !== peg$FAILED) {
                                                 s12 = [s12, s13];
                                                 s11 = s12;
@@ -5376,7 +5376,7 @@ function peg$parse(input, options) {
                                             s11 = peg$currPos;
                                             s12 = peg$parseSameIndent();
                                             if (s12 !== peg$FAILED) {
-                                                s13 = peg$parseParticleSlotItem();
+                                                s13 = peg$parseParticleSlotConnectionItem();
                                                 if (s13 !== peg$FAILED) {
                                                     s12 = [s12, s13];
                                                     s11 = s12;
@@ -5453,7 +5453,7 @@ function peg$parse(input, options) {
         }
         return s0;
     }
-    function peg$parseParticleSlotItem() {
+    function peg$parseParticleSlotConnectionItem() {
         let s0;
         s0 = peg$parseSlotFormFactor();
         if (s0 === peg$FAILED) {

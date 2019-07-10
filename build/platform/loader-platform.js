@@ -35,6 +35,9 @@ export class PlatformLoaderBase extends Loader {
         return url;
     }
     mapParticleUrl(path) {
+        if (!path) {
+            return undefined;
+        }
         const parts = path.split('/');
         const suffix = parts.pop();
         const folder = parts.join('/');
