@@ -350,7 +350,7 @@
         "signature": "e821a0b9dd4fb9ff6a1c61fecd2999e331a2fb838146925207135b2c57743049"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/slot-consumer.ts": {
-        "version": "549b1b8f007ec405e044be690b26d5c24ced9c51e823025f0bfc7e29fa4d9ac7",
+        "version": "d51dc836c53f5403e61bed944eea172abdd62f68a94ed5b244bcde90fd646329",
         "signature": "08d33f182bc9d9c235f720ccebe6cfecefb5bf35c829772a7a25e6b734d87689"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/slot-proxy.ts": {
@@ -2225,7 +2225,7 @@
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/test/api-channel-test.ts": {
-        "version": "2f368dd0ac4e14a749e7fa099a6ce9668633b08f7f383826f2786d78ddddc726",
+        "version": "6195eac96267839dce1dfaac29cf31e51244c8d770fe279cbcd54d1da07ee21d",
         "signature": "8bc1d39a3b8ec61064f9969316a088e314895e7ffd094468dcc0b238f33cb4a6"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/testing/callback-tracker.ts": {
@@ -16077,7 +16077,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/slot-consumer.ts",
-            "start": 5477,
+            "start": 5481,
             "length": 16,
             "messageText": "Object is possibly 'undefined'.",
             "category": 1,
@@ -16085,7 +16085,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/slot-consumer.ts",
-            "start": 5477,
+            "start": 5481,
             "length": 30,
             "messageText": "Object is possibly 'undefined'.",
             "category": 1,
@@ -16093,7 +16093,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/slot-consumer.ts",
-            "start": 5574,
+            "start": 5578,
             "length": 16,
             "messageText": "Object is possibly 'undefined'.",
             "category": 1,
@@ -16101,7 +16101,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/slot-consumer.ts",
-            "start": 5574,
+            "start": 5578,
             "length": 44,
             "code": 2345,
             "category": 1,
@@ -16118,7 +16118,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/slot-consumer.ts",
-            "start": 7000,
+            "start": 7004,
             "length": 12,
             "code": 2322,
             "category": 1,
@@ -16126,7 +16126,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/slot-consumer.ts",
-            "start": 8481,
+            "start": 8485,
             "length": 12,
             "code": 2322,
             "category": 1,
@@ -16134,7 +16134,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/slot-consumer.ts",
-            "start": 8690,
+            "start": 8694,
             "length": 12,
             "code": 2322,
             "category": 1,
@@ -16142,7 +16142,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/slot-consumer.ts",
-            "start": 8751,
+            "start": 8755,
             "length": 12,
             "code": 2322,
             "category": 1,

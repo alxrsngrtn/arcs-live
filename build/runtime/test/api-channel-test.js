@@ -54,7 +54,7 @@ describe('API channel', function () {
             this['registerRedundantInitializer'] = this['registerInitializer'];
         };
         // tslint:disable-next-line: no-any
-        const port = { setMessageCallback: () => { } };
+        const port = { onmessage: () => { } };
         // tslint:disable-next-line: no-any
         const arc = { id: '' }; // OuterPortAttachment constructor needs the id.
         // PECOuterPort can call DevToolsConnected during setup, so we need to stub that.

@@ -1,5 +1,11 @@
-commit 0aa47385624208afbfb9fb97f6e55a9abd9b3b4c
-Author: Paul Lindner <plindner@google.com>
-Date:   Mon Jul 8 22:47:16 2019 -0700
+commit 5acf17e9478981736feec62d71a02766dd969a3f
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Wed Jul 10 10:26:33 2019 -0700
 
-    Remove Object support from Schemas (#3301)
+    Basic particle rendering APIs (#3306)
+    
+    * Basic particle rendering APIs.
+    
+    * address comments
+    
+    * rename particle data members
