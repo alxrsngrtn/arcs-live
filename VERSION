@@ -1,10 +1,69 @@
-commit 04f727b38b7110f1b5db2efaf9a637c4be0d57c3
-Author: Joshua Pratt <jp10010101010000@gmail.com>
-Date:   Thu Jul 11 09:45:47 2019 +1000
+commit 35526934d0d75ebff22b4725207f867ca8983a3d
+Author: Alex Rosengarten <alxr@google.com>
+Date:   Wed Jul 10 17:14:14 2019 -0700
 
-    Runtime recipe api changes to allow Slandle particles to resolve (#3294)
+    Kotin --> Wasm now supports services.  (#3307)
     
-    * Track normalization errors and use a lambda to simplify handle local name generation
-    * Rename slots and handles to avoid name collisions, also modify slandles descriptions
-    * Support use of handles as slandles
-    * Fix for slandles star date test
+    * Wasm: implement Services API
+    
+    This limits request/response objects to key:value string pairs.
+    
+    * documented build + run steps for kotlin wasm
+    
+    * updating url in README
+    
+    * updating url in README
+    
+    * trying relative path
+    
+    * rel 2 README
+    
+    * specifically: gradlew build
+    
+    * multi-particle support for interop
+    
+    * updated render external
+    
+    * kotlin interop -- passing in particle address
+    
+    * using cpp interface for render in kotlin
+    
+    * requestRender --> renderSlot
+    
+    * fix build issues
+    
+    * fix readme typo
+    
+    * rm underscore, following jvm var naming convention
+    
+    * add service request + encode dict
+    
+    * decode dictionary + decode list
+    
+    * refactor populateModel + StringEncoder
+    - populateModel takes a dictionary now
+    - StringEncoder has a companion object for encoding dictionaries.
+    
+    * using kotlin collections
+    
+    * HashMap --> MutableMap
+    
+    * cpp particle distinct from kotlin
+    
+    * added init fn, populateModel is pure
+    
+    * Created service demo particle
+    
+    * added srvc response hook
+    
+    * updated manifest w/ service demo particle
+    
+    * fix: using parent class, not specific case
+    
+    * Cleaning up service particle
+    - fixed warnings
+    - cleaner syntax
+    - added some logs
+    - removed paren from tmpl
+    
+    * normal syntax
