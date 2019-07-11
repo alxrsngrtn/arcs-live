@@ -11,38 +11,12 @@ import { assert } from '../../../platform/chai-web.js';
 import { Store, StorageMode, ProxyMessageType } from '../store.js';
 import { SequenceTest, ExpectedResponse, SequenceOutput } from '../../testing/sequence.js';
 import { CRDTCount, CountOpTypes } from '../../crdt/crdt-count.js';
-import { DriverFactory, Driver, Exists } from '../drivers/driver-factory.js';
-import { StorageKey } from '../storage-key.js';
+import { DriverFactory, Exists } from '../drivers/driver-factory.js';
 import { Runtime } from '../../runtime.js';
 import { VolatileStorageKey, VolatileStorageDriverProvider } from '../drivers/volatile.js';
 import { MockFirebaseStorageDriverProvider } from '../testing/mock-firebase.js';
 import { FirebaseStorageKey } from '../drivers/firebase.js';
-class MockDriver extends Driver {
-    async read(key) { throw new Error('unimplemented'); }
-    async write(key, value) { throw new Error('unimplemented'); }
-    registerReceiver(receiver) {
-        this.receiver = receiver;
-    }
-    async send(model) {
-        return true;
-    }
-}
-class MockStorageDriverProvider {
-    willSupport(storageKey) {
-        return true;
-    }
-    async driver(storageKey, exists) {
-        return new MockDriver(storageKey, exists);
-    }
-}
-class MockStorageKey extends StorageKey {
-    constructor() {
-        super('testing');
-    }
-    toString() {
-        return `${this.protocol}://`;
-    }
-}
+import { MockStorageKey, MockStorageDriverProvider } from '../testing/test-storage.js';
 let testKey;
 const incOp = (actor, from) => ({
     type: ProxyMessageType.Operations,

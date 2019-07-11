@@ -59,19 +59,31 @@
 					<a href="mockdriver.html">MockDriver</a>
 				</li>
 			</ul>
-			<h1>Class MockDriver&lt;Data, Data&gt;</h1>
+			<h1>Class MockDriver&lt;Data&gt;</h1>
 		</div>
 	</div>
 </header>
 <div class="container container-main">
 	<div class="row">
 		<div class="col-8 col-content">
+			<section class="tsd-panel tsd-comment">
+				<div class="tsd-comment tsd-typography">
+					<div class="lead">
+						<p>These classes are intended to provide <strong>extremely</strong> simple fake objects to use
+						when testing StorageNG classes. Methods on these classes should either:</p>
+						<ul>
+							<li>throw an exception</li>
+							<li>implement an obvious default</li>
+							<li>store the input</li>
+						</ul>
+					</div>
+					<p>Ideally, the methods shouldn&#39;t actually do anything, (i.e. should always throw)
+					and should be overridden explicitly in testing.</p>
+				</div>
+			</section>
 			<section class="tsd-panel tsd-type-parameters">
 				<h3>Type parameters</h3>
 				<ul class="tsd-type-parameters">
-					<li>
-						<h4>Data</h4>
-					</li>
 					<li>
 						<h4>Data</h4>
 					</li>
@@ -80,9 +92,6 @@
 			<section class="tsd-panel tsd-hierarchy">
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
-					<li>
-						<a href="driver.html" class="tsd-signature-type">Driver</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Data</span><span class="tsd-signature-symbol">&gt;</span>
-					</li>
 					<li>
 						<a href="driver.html" class="tsd-signature-type">Driver</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Data</span><span class="tsd-signature-symbol">&gt;</span>
 						<ul class="tsd-hierarchy">
@@ -97,47 +106,46 @@
 				<h2>Index</h2>
 				<section class="tsd-panel tsd-index-panel">
 					<div class="tsd-index-content">
-						<section class="tsd-index-section tsd-is-inherited tsd-is-not-exported">
+						<section class="tsd-index-section tsd-is-inherited">
 							<h3>Constructors</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited tsd-is-not-exported"><a href="mockdriver.html#constructor" class="tsd-kind-icon">constructor</a></li>
+								<li class="tsd-kind-constructor tsd-parent-kind-class tsd-is-inherited"><a href="mockdriver.html#constructor" class="tsd-kind-icon">constructor</a></li>
 							</ul>
 						</section>
-						<section class="tsd-index-section tsd-is-not-exported">
+						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited tsd-is-not-exported"><a href="mockdriver.html#exists" class="tsd-kind-icon">exists</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-not-exported"><a href="mockdriver.html#receiver" class="tsd-kind-icon">receiver</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited tsd-is-not-exported"><a href="mockdriver.html#storagekey" class="tsd-kind-icon">storage<wbr>Key</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="mockdriver.html#exists" class="tsd-kind-icon">exists</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="mockdriver.html#receiver" class="tsd-kind-icon">receiver</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="mockdriver.html#storagekey" class="tsd-kind-icon">storage<wbr>Key</a></li>
 							</ul>
 						</section>
-						<section class="tsd-index-section tsd-is-not-exported">
+						<section class="tsd-index-section ">
 							<h3>Methods</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-not-exported"><a href="mockdriver.html#read" class="tsd-kind-icon">read</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-not-exported"><a href="mockdriver.html#registerreceiver" class="tsd-kind-icon">register<wbr>Receiver</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-not-exported"><a href="mockdriver.html#send" class="tsd-kind-icon">send</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-not-exported"><a href="mockdriver.html#write" class="tsd-kind-icon">write</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="mockdriver.html#read" class="tsd-kind-icon">read</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="mockdriver.html#registerreceiver" class="tsd-kind-icon">register<wbr>Receiver</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="mockdriver.html#send" class="tsd-kind-icon">send</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="mockdriver.html#write" class="tsd-kind-icon">write</a></li>
 							</ul>
 						</section>
 					</div>
 				</section>
 			</section>
-			<section class="tsd-panel-group tsd-member-group tsd-is-inherited tsd-is-not-exported">
+			<section class="tsd-panel-group tsd-member-group tsd-is-inherited">
 				<h2>Constructors</h2>
-				<section class="tsd-panel tsd-member tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited tsd-is-not-exported">
+				<section class="tsd-panel tsd-member tsd-kind-constructor tsd-parent-kind-class tsd-is-inherited">
 					<a name="constructor" class="tsd-anchor"></a>
 					<h3>constructor</h3>
-					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited tsd-is-not-exported">
+					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class tsd-is-inherited">
 						<li class="tsd-signature tsd-kind-icon">new <wbr>Mock<wbr>Driver<span class="tsd-signature-symbol">(</span>storageKey<span class="tsd-signature-symbol">: </span><a href="storagekey.html" class="tsd-signature-type">StorageKey</a>, exists<span class="tsd-signature-symbol">: </span><a href="../enums/exists.html" class="tsd-signature-type">Exists</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="mockdriver.html" class="tsd-signature-type">MockDriver</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="driver.html">Driver</a>.<a href="driver.html#constructor">constructor</a></p>
-								<p>Overrides <a href="driver.html">Driver</a>.<a href="driver.html#constructor">constructor</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/3f582d4/src/runtime/storageNG/drivers/driver-factory.ts#L35">src/runtime/storageNG/drivers/driver-factory.ts:35</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/a495dd7/src/runtime/storageNG/drivers/driver-factory.ts#L35">src/runtime/storageNG/drivers/driver-factory.ts:35</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -154,50 +162,47 @@
 					</ul>
 				</section>
 			</section>
-			<section class="tsd-panel-group tsd-member-group tsd-is-not-exported">
+			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Properties</h2>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited tsd-is-not-exported">
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
 					<a name="exists" class="tsd-anchor"></a>
 					<h3>exists</h3>
 					<div class="tsd-signature tsd-kind-icon">exists<span class="tsd-signature-symbol">:</span> <a href="../enums/exists.html" class="tsd-signature-type">Exists</a></div>
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="driver.html">Driver</a>.<a href="driver.html#exists">exists</a></p>
-						<p>Overrides <a href="driver.html">Driver</a>.<a href="driver.html#exists">exists</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/3f582d4/src/runtime/storageNG/drivers/driver-factory.ts#L35">src/runtime/storageNG/drivers/driver-factory.ts:35</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/a495dd7/src/runtime/storageNG/drivers/driver-factory.ts#L35">src/runtime/storageNG/drivers/driver-factory.ts:35</a></li>
 						</ul>
 					</aside>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-not-exported">
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
 					<a name="receiver" class="tsd-anchor"></a>
 					<h3>receiver</h3>
 					<div class="tsd-signature tsd-kind-icon">receiver<span class="tsd-signature-symbol">:</span> <a href="../globals.html#receivemethod" class="tsd-signature-type">ReceiveMethod</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Data</span><span class="tsd-signature-symbol">&gt;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/3f582d4/src/runtime/storageNG/tests/store-sequence-test.ts#L24">src/runtime/storageNG/tests/store-sequence-test.ts:24</a></li>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/3f582d4/src/runtime/storageNG/tests/store-test.ts#L18">src/runtime/storageNG/tests/store-test.ts:18</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/a495dd7/src/runtime/storageNG/testing/test-storage.ts#L30">src/runtime/storageNG/testing/test-storage.ts:30</a></li>
 						</ul>
 					</aside>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited tsd-is-not-exported">
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
 					<a name="storagekey" class="tsd-anchor"></a>
 					<h3>storage<wbr>Key</h3>
 					<div class="tsd-signature tsd-kind-icon">storage<wbr>Key<span class="tsd-signature-symbol">:</span> <a href="storagekey.html" class="tsd-signature-type">StorageKey</a></div>
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="driver.html">Driver</a>.<a href="driver.html#storagekey">storageKey</a></p>
-						<p>Overrides <a href="driver.html">Driver</a>.<a href="driver.html#storagekey">storageKey</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/3f582d4/src/runtime/storageNG/drivers/driver-factory.ts#L34">src/runtime/storageNG/drivers/driver-factory.ts:34</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/a495dd7/src/runtime/storageNG/drivers/driver-factory.ts#L34">src/runtime/storageNG/drivers/driver-factory.ts:34</a></li>
 						</ul>
 					</aside>
 				</section>
 			</section>
-			<section class="tsd-panel-group tsd-member-group tsd-is-not-exported">
+			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Methods</h2>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-not-exported">
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
 					<a name="read" class="tsd-anchor"></a>
 					<h3>read</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-not-exported">
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
 						<li class="tsd-signature tsd-kind-icon">read<span class="tsd-signature-symbol">(</span>key<span class="tsd-signature-symbol">: </span><a href="storagekey.html" class="tsd-signature-type">StorageKey</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
@@ -205,7 +210,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="driver.html">Driver</a>.<a href="driver.html#read">read</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/3f582d4/src/runtime/storageNG/tests/store-sequence-test.ts#L25">src/runtime/storageNG/tests/store-sequence-test.ts:25</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/a495dd7/src/runtime/storageNG/testing/test-storage.ts#L31">src/runtime/storageNG/testing/test-storage.ts:31</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -218,10 +223,10 @@
 						</li>
 					</ul>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-not-exported">
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
 					<a name="registerreceiver" class="tsd-anchor"></a>
 					<h3>register<wbr>Receiver</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-not-exported">
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
 						<li class="tsd-signature tsd-kind-icon">register<wbr>Receiver<span class="tsd-signature-symbol">(</span>receiver<span class="tsd-signature-symbol">: </span><a href="../globals.html#receivemethod" class="tsd-signature-type">ReceiveMethod</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Data</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
@@ -229,7 +234,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="driver.html">Driver</a>.<a href="driver.html#registerreceiver">registerReceiver</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/3f582d4/src/runtime/storageNG/tests/store-sequence-test.ts#L27">src/runtime/storageNG/tests/store-sequence-test.ts:27</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/a495dd7/src/runtime/storageNG/testing/test-storage.ts#L33">src/runtime/storageNG/testing/test-storage.ts:33</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -242,10 +247,10 @@
 						</li>
 					</ul>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-not-exported">
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
 					<a name="send" class="tsd-anchor"></a>
 					<h3>send</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-not-exported">
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
 						<li class="tsd-signature tsd-kind-icon">send<span class="tsd-signature-symbol">(</span>model<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Data</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
@@ -253,7 +258,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="driver.html">Driver</a>.<a href="driver.html#send">send</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/3f582d4/src/runtime/storageNG/tests/store-sequence-test.ts#L30">src/runtime/storageNG/tests/store-sequence-test.ts:30</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/a495dd7/src/runtime/storageNG/testing/test-storage.ts#L36">src/runtime/storageNG/testing/test-storage.ts:36</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -266,10 +271,10 @@
 						</li>
 					</ul>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-not-exported">
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
 					<a name="write" class="tsd-anchor"></a>
 					<h3>write</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-not-exported">
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
 						<li class="tsd-signature tsd-kind-icon">write<span class="tsd-signature-symbol">(</span>key<span class="tsd-signature-symbol">: </span><a href="storagekey.html" class="tsd-signature-type">StorageKey</a>, value<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">__type</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
@@ -277,7 +282,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="driver.html">Driver</a>.<a href="driver.html#write">write</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/3f582d4/src/runtime/storageNG/tests/store-sequence-test.ts#L26">src/runtime/storageNG/tests/store-sequence-test.ts:26</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/a495dd7/src/runtime/storageNG/testing/test-storage.ts#L32">src/runtime/storageNG/testing/test-storage.ts:32</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -307,31 +312,31 @@
 				<ul class="before-current">
 				</ul>
 				<ul class="current">
-					<li class="current tsd-kind-class tsd-has-type-parameter tsd-is-not-exported">
+					<li class="current tsd-kind-class tsd-has-type-parameter">
 						<a href="mockdriver.html" class="tsd-kind-icon">Mock<wbr>Driver</a>
 						<ul>
-							<li class=" tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited tsd-is-not-exported">
+							<li class=" tsd-kind-constructor tsd-parent-kind-class tsd-is-inherited">
 								<a href="mockdriver.html#constructor" class="tsd-kind-icon">constructor</a>
 							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited tsd-is-not-exported">
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
 								<a href="mockdriver.html#exists" class="tsd-kind-icon">exists</a>
 							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-not-exported">
+							<li class=" tsd-kind-property tsd-parent-kind-class">
 								<a href="mockdriver.html#receiver" class="tsd-kind-icon">receiver</a>
 							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited tsd-is-not-exported">
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
 								<a href="mockdriver.html#storagekey" class="tsd-kind-icon">storage<wbr>Key</a>
 							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-not-exported">
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
 								<a href="mockdriver.html#read" class="tsd-kind-icon">read</a>
 							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-not-exported">
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
 								<a href="mockdriver.html#registerreceiver" class="tsd-kind-icon">register<wbr>Receiver</a>
 							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-not-exported">
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
 								<a href="mockdriver.html#send" class="tsd-kind-icon">send</a>
 							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-not-exported">
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
 								<a href="mockdriver.html#write" class="tsd-kind-icon">write</a>
 							</li>
 						</ul>

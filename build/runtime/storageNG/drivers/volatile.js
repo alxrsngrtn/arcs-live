@@ -18,6 +18,9 @@ export class VolatileStorageKey extends StorageKey {
     toString() {
         return `${this.protocol}://${this.unique}`;
     }
+    childWithComponent(component) {
+        return new VolatileStorageKey(`${this.unique}/${component}`);
+    }
 }
 export class VolatileMemory {
     constructor() {

@@ -19,6 +19,7 @@ export declare class FirebaseStorageKey extends StorageKey {
     readonly domain: string;
     constructor(projectId: string, domain: string, apiKey: string, location: string);
     toString(): string;
+    childWithComponent(component: string): FirebaseStorageKey;
 }
 export declare class FirebaseAppCache {
     protected appCache: Map<string, firebase.app.App>;

@@ -1,31 +1,5 @@
-commit 3f582d4ee46a2e19c9c37927046f43bd81692945
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Wed Jul 10 20:41:51 2019 -0700
+commit a495dd7efdbd3f8abcbbccd796ea7fa293a2211c
+Author: shans <shane.stephens@gmail.com>
+Date:   Thu Jul 11 15:47:41 2019 +1000
 
-    Use storage stub for volatile storage in manifest (#3151)
-    
-    * use volatile storage stub in manifest
-    
-    * cleanup
-    
-    * restrict manifest stores to storage-stubs only
-    
-    * use connectOrConstruct and constructKey methods
-    
-    * fix redundant asserts and ifs
-    
-    * test in arcs-tests for instantiating with proper fates
-    
-    * fix lint
-    
-    * tiny tweaks: add missing } and find mapped store in context, and lint
-    
-    * fix merge
-    
-    * fix merge
-    
-    * Treat volatile 'map' stores same as 'copy'
-    
-    * fix copying/mapping referenceMode=false store
-    
-    * address comment: rename method to isBackedByManifest
+    Backing store (#3308)

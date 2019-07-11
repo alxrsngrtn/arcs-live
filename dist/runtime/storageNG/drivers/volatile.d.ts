@@ -18,6 +18,7 @@ export declare class VolatileStorageKey extends StorageKey {
     readonly unique: string;
     constructor(unique: string);
     toString(): string;
+    childWithComponent(component: string): VolatileStorageKey;
 }
 export declare class VolatileMemory {
     entries: Map<string, VolatileEntry<unknown>>;

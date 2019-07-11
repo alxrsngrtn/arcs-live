@@ -24,6 +24,9 @@ export class FirebaseStorageKey extends StorageKey {
     toString() {
         return `${this.protocol}://${this.databaseURL}:${this.apiKey}/${this.location}`;
     }
+    childWithComponent(component) {
+        return new FirebaseStorageKey(this.projectId, this.domain, this.apiKey, `${this.location}/${component}`);
+    }
 }
 export class FirebaseAppCache {
     constructor(runtime) {

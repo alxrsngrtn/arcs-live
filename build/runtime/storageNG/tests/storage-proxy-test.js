@@ -9,48 +9,9 @@
  */
 import { assert } from '../../../platform/chai-web.js';
 import { CRDTSingleton, SingletonOpTypes } from '../../crdt/crdt-singleton.js';
-import { Exists } from '../drivers/driver-factory.js';
-import { Handle } from '../handle.js';
-import { StorageKey } from '../storage-key.js';
 import { StorageProxy } from '../storage-proxy.js';
-import { ActiveStore, StorageMode, ProxyMessageType } from '../store.js';
-export class MockStore extends ActiveStore {
-    constructor() {
-        super(new MockStorageKey(), Exists.ShouldCreate, null, StorageMode.Direct, CRDTSingleton);
-        this.lastCapturedMessage = null;
-    }
-    on(callback) {
-        return 1;
-    }
-    off(callback) {
-        throw new Error('unimplemented');
-    }
-    async onProxyMessage(message) {
-        this.lastCapturedMessage = message;
-        return Promise.resolve(true);
-    }
-}
-class MockStorageKey extends StorageKey {
-    constructor() {
-        super('testing');
-    }
-    toString() {
-        return `${this.protocol}://`;
-    }
-}
-class MockHandle extends Handle {
-    constructor() {
-        super(...arguments);
-        this.onSyncCalled = false;
-        this.lastUpdate = null;
-    }
-    onSync() {
-        this.onSyncCalled = true;
-    }
-    onUpdate(ops) {
-        this.lastUpdate = ops;
-    }
-}
+import { ProxyMessageType } from '../store.js';
+import { MockStore, MockHandle } from '../testing/test-storage.js';
 describe('StorageProxy', async () => {
     it('will apply and propagate operation', async () => {
         const mockStore = new MockStore();

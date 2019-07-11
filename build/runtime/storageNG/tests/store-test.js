@@ -8,36 +8,11 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { assert } from '../../../platform/chai-web.js';
-import { Store, StorageMode, DirectStore, ProxyMessageType } from '../store.js';
-import { Exists, DriverFactory, Driver } from '../drivers/driver-factory.js';
+import { Store, StorageMode, ProxyMessageType } from '../store.js';
+import { Exists, DriverFactory } from '../drivers/driver-factory.js';
 import { CRDTCount, CountOpTypes } from '../../crdt/crdt-count.js';
-import { StorageKey } from '../storage-key.js';
-class MockDriver extends Driver {
-    async read(key) { throw new Error('unimplemented'); }
-    async write(key, value) { throw new Error('unimplemented'); }
-    registerReceiver(receiver) {
-        this.receiver = receiver;
-    }
-    async send(model) {
-        throw new Error('send implementation required for testing');
-    }
-}
-class MockStorageDriverProvider {
-    willSupport(storageKey) {
-        return true;
-    }
-    async driver(storageKey, exists) {
-        return new MockDriver(storageKey, exists);
-    }
-}
-class MockStorageKey extends StorageKey {
-    constructor() {
-        super('testing');
-    }
-    toString() {
-        return `${this.protocol}://`;
-    }
-}
+import { DirectStore } from '../direct-store.js';
+import { MockStorageKey, MockStorageDriverProvider } from '../testing/test-storage.js';
 let testKey;
 describe('Store', async () => {
     beforeEach(() => {
