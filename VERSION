@@ -1,5 +1,9 @@
-commit a495dd7efdbd3f8abcbbccd796ea7fa293a2211c
-Author: shans <shane.stephens@gmail.com>
-Date:   Thu Jul 11 15:47:41 2019 +1000
+commit 30d34a39f5ec294177bb31773f05f4f181197a33
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Thu Jul 11 10:05:13 2019 -0700
 
-    Backing store (#3308)
+    declare java crdt interfaces and classes (#3312)
+    
+    * declare java crdt interfaces and classes
+    
+    * remove redundant super() call

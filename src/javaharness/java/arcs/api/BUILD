@@ -15,5 +15,6 @@ j2cl_library(
         "//java/arcs:dagger",
         "//java/arcs:dagger_runtime",
         "//java/arcs:javax_inject",
+        "//java/arcs/crdt:crdt-j2cl",
     ],
 )
