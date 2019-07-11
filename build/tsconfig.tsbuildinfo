@@ -250,8 +250,8 @@
         "signature": "011197131bf36e7af627e7b0544a8d2d2482f791fa4af9755aba77676636ce64"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/storage-provider-base.ts": {
-        "version": "657a948ea822a51f154bbd0625abd5027dbd0e31be903607b57358bc097bb88e",
-        "signature": "5f74e0029e3e50daf7a108398690d04c981b16178560bc28e29d900b81ca2863"
+        "version": "67e62fc9ced7fd9326a0e44446b1f751ed96890b4f40fbe69cf5c2715aa0f0f5",
+        "signature": "2a1c9594252d0ebf186b12570c2a2393d8266eef2ac8549a94427116e63c722a"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/description.ts": {
         "version": "649676216b245882affec3e8618666169b106479ab9ee452755d02714b14c1fb",
@@ -286,8 +286,8 @@
         "signature": "26731e3019e5722c8b60d0b15fc209d3573825cddf9096d1687e9131b7f8dd04"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/volatile-storage.ts": {
-        "version": "c6974cff3930c74f06da4c85c9d56a05e8782d5d44820d7522591e33d633de24",
-        "signature": "6bf038d00a3e2446f07efcb08c28d507d5d41d3a4c5ade2b6b33d4c8a58c76a6"
+        "version": "29a1953c11adfc67a3e3d7abb5875b0f779af71eee8ee19656407df118c0f846",
+        "signature": "e596b9f399f5dfd8bf6908fa5952a755991137d971e85ac281a813b26976001e"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/synthetic-types.ts": {
         "version": "3a7f010bb2fb2b42de43fdae4b84a506717caa8830f48eb099153352afe7d33a",
@@ -301,9 +301,13 @@
         "version": "e04104c2f00e5ff30a986e4a77f280b1d7797966c20b20253220672868b274ca",
         "signature": "7daca5a6eaf62b4682e03e290eb8fcd7eb8bc92885b50cc4eada16dfb501b5f4"
       },
+      "/home/travis/build/PolymerLabs/arcs/src/runtime/mutex.ts": {
+        "version": "fe8cfcf2a603978d004a354d6472527e0f8c151b977d01a6a8028f3f25293ecc",
+        "signature": "11aee506c154a5e85806ec683fecf9088e22eb74ba70f226e29c11fafeb974c6"
+      },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/storage-provider-factory.ts": {
-        "version": "f87e2e9012e4a04cb141fadf1efc56f099d9f52e2ca2a404c1583926763004b6",
-        "signature": "a66f05f5aba4d064f7d8497fc65bc7157ba12ec04a4466d3baa2fc093cd04371"
+        "version": "f9e80343023e5cbd992f42f51b83daafaba84d8f35fc90e60208ecb2dc23eedc",
+        "signature": "2f38a817702e90c031039dfd5f5985c632d89a062b087dea8a750a0eef8a8fd6"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/testing/fake-slot-composer.ts": {
         "version": "30b6968d7f1e52637aa391a05467d54947fd5cb0c6c7c19311bddd83a9a56e26",
@@ -346,7 +350,7 @@
         "signature": "f6c539701943eb6976f02cfeb6b4efcb8c7f19e91446480b369164597188c286"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/particle-execution-host.ts": {
-        "version": "48fc2603da78e57b4a236dc02367955cf1fc2b3010b600f1c85faed839e02888",
+        "version": "f5b547dd699e9438f4b805756f36d1989b8f0e88253dc61e1477d72f36a09fd0",
         "signature": "e821a0b9dd4fb9ff6a1c61fecd2999e331a2fb838146925207135b2c57743049"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/slot-consumer.ts": {
@@ -413,13 +417,9 @@
         "version": "fb85e9f2e3f07aa1537fb842c54659b2f55cd4d4813a72d5649365b9fe1f33f9",
         "signature": "f2d8b054448cb4886900f4baa77e8b41c7d00a7a3bd25a90752e325aab5e14c3"
       },
-      "/home/travis/build/PolymerLabs/arcs/src/runtime/mutex.ts": {
-        "version": "fe8cfcf2a603978d004a354d6472527e0f8c151b977d01a6a8028f3f25293ecc",
-        "signature": "11aee506c154a5e85806ec683fecf9088e22eb74ba70f226e29c11fafeb974c6"
-      },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts": {
-        "version": "0636fefccf61fc2ef5a451213aad517204e62f0e82f8ee35d96d60aaa75a8954",
-        "signature": "1857475fbe68e38435b8a5396f75645398b40b00bdf5b23e1838837f58114a9f"
+        "version": "3e4e77968feeec07ecb622f84fccd412f1d476d643c01a527dba508d1490d903",
+        "signature": "df6c882136163ca55bc773ba9a9b1f4fe3b67ef1149c259071173a9b85161b97"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/api-channel.ts": {
         "version": "6246752c93f69c3f317012dd6b897ded59fc71f3c2410716fb01b6d3a6a2a4b4",
@@ -474,8 +474,8 @@
         "signature": "386225870fe7ff2b410dda3c36ac04396b8a67965f6edaa5f9fff1d1796548f6"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/manifest.ts": {
-        "version": "e5096d3bd0d51470cb5da61edf81afb97045a22ce2ea8dcceb97920dd232acf7",
-        "signature": "f8eef112a1c78f10bc16db4a74e0c07eca30c9de99a303c02cc28d824b3de2b2"
+        "version": "3e48c622b4671e6556607217cc52358ef923f7a034db0a3eab9b757538e6f6b5",
+        "signature": "b981b430b7adf960bb76ce0e38d8033064c8f6b6bc3583a01128ab361e9a2f08"
       },
       "/home/travis/build/PolymerLabs/arcs/src/platform/atob-web.ts": {
         "version": "83bd58cde323a7612560e333b3542a3ab39d1f645c1e1e22e54f4a66622b9e7c",
@@ -722,7 +722,7 @@
         "signature": "261a969dd3d303a43bf7d510de0e5642118314c62275fe23ad98a206ffea4582"
       },
       "/home/travis/build/PolymerLabs/arcs/src/devtools-connector/arc-stores-fetcher.ts": {
-        "version": "3eca1a98a176ad1cdb3f42f3566fde77a5cef84d3e0ee497847c5b985ad6773b",
+        "version": "412c485fbedb608962e4809526ad5114de37f9dcacde483f43373546271c04fb",
         "signature": "eb2a954a60843cb794890544b0192d84609d5048f45c0a2c6242860a5f0a08cf"
       },
       "/home/travis/build/PolymerLabs/arcs/src/devtools-connector/testing/devtools-channel-stub.ts": {
@@ -1074,7 +1074,7 @@
         "signature": "4c918af21ea0baab4d5d816e2be8fba976a27b71c2440c2529233e1016e084dc"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/pouchdb/pouch-db-singleton.ts": {
-        "version": "33bf0f7dab99888257531c2600f45193a42e3e73012c5bc9ec4a0ea458590715",
+        "version": "a707f12b92f4df9f3e4fa931fa9f41a16e7bd94b3bfd285de2ad4738331b4e0c",
         "signature": "45c856c6562a83146499a713606045019f32a12814e5a84aff3b84ef26afe221"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/pouchdb/pouch-db-storage.ts": {
@@ -1174,7 +1174,7 @@
         "signature": "8bc1d39a3b8ec61064f9969316a088e314895e7ffd094468dcc0b238f33cb4a6"
       },
       "/home/travis/build/PolymerLabs/arcs/src/planning/test/strategies/search-tokens-to-handles-test.ts": {
-        "version": "7013c125449d8ddd5bbc9c226ccc87c94447675d18383a5fbb0b596af918a045",
+        "version": "c8e5d1dc11804b64bf4d2f18781e8036f944e7e4020721a083acc6a2bba78585",
         "signature": "8bc1d39a3b8ec61064f9969316a088e314895e7ffd094468dcc0b238f33cb4a6"
       },
       "/home/travis/build/PolymerLabs/arcs/src/planning/test/strategies/search-tokens-to-particles-tests.ts": {
@@ -2233,7 +2233,7 @@
         "signature": "de98b2596fde11c47205b5d100a0a772bf89b472641123bb3284bbf7dae1fa61"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/test/arc-tests.ts": {
-        "version": "aed12f88e5b2520d8da1b2813f6cc4456a5d128761310a87a914cca53362d17b",
+        "version": "6e9c214b288b5beb141fd62a75ee1a24ea160a9614a34276237323c8c6d41538",
         "signature": "600636836c17982e77369e742e2b185b3a695f0407d06b57f41cbf45b0a11d8b"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/test/bytes-test.ts": {
@@ -2277,7 +2277,7 @@
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/test/manifest-test.ts": {
-        "version": "66a4dc65bb49b29fbe4b1b1313939d4fe15d4f3ed188e336488491086d88be46",
+        "version": "58187d3b04d7bdf77fd9baf2da52a1d261e1c5d20b29361a6833157ba9c80109",
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/test/multiplexer-test.ts": {
@@ -2289,7 +2289,7 @@
         "signature": "8bc1d39a3b8ec61064f9969316a088e314895e7ffd094468dcc0b238f33cb4a6"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/test/particle-api-test.ts": {
-        "version": "68817fe3853ee132a0e3e80be3aa39af522c6954b26dbee41080481b4289ac22",
+        "version": "30381e14851c7e5cb42d42f76a8e38a7250608424a6c90696d2baf56ec3d5fa6",
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/test/particle-execution-context-test.ts": {
@@ -2433,11 +2433,11 @@
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "/home/travis/build/PolymerLabs/arcs/src/tests/multiplexer-integration-test.ts": {
-        "version": "e429087d8573a6845c917cef811328b2893065b074f7ad543af3354f6074c9eb",
+        "version": "b2b1bc19d8d3de47f99d1ca0aab1d2afddad02c4dabc416863c70dab6f4a640c",
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "/home/travis/build/PolymerLabs/arcs/src/tests/recipe-descriptions-test.ts": {
-        "version": "e18bcdd51f4a423cd8fc1f4fa72ca574e4059b98e805cb06489085808c33a7e4",
+        "version": "03d47e35fe282d7cc38e60d3c5073b27454b8bb9613e2a09c7eafa55d8795a76",
         "signature": "8bc1d39a3b8ec61064f9969316a088e314895e7ffd094468dcc0b238f33cb4a6"
       },
       "/home/travis/build/PolymerLabs/arcs/src/tests/slot-composer-tests.ts": {
@@ -2489,7 +2489,7 @@
         "signature": "dec479adce6c2c753ce57e9d570378e097509f28d1e45155b5eed46e6d039830"
       },
       "/home/travis/build/PolymerLabs/arcs/src/tools/bundle.ts": {
-        "version": "5ffbff4f5db376ab8aee7093da1469c323b71e3a6fb2d72efa073f90115c3f69",
+        "version": "6cc5db4e47949a2a0758bfa3c171ddd6e3283d26796a211479159c9707377624",
         "signature": "11df73d59f56ef4a81c23e02dc594afd1fda4870d3b4857103b0695734ce2dd5"
       },
       "/home/travis/build/PolymerLabs/arcs/src/tools/bundle-cli.ts": {
@@ -3184,6 +3184,10 @@
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
       ],
+      "/home/travis/build/PolymerLabs/arcs/src/runtime/mutex.ts": [
+        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
+        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
+      ],
       "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/storage-provider-factory.ts": [
         "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/storage-provider-base.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/volatile-storage.ts",
@@ -3192,6 +3196,7 @@
         "/home/travis/build/PolymerLabs/arcs/src/runtime/type.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/key-base.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/hot.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/mutex.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
       ],
@@ -3454,10 +3459,6 @@
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
       ],
-      "/home/travis/build/PolymerLabs/arcs/src/runtime/mutex.ts": [
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
-      ],
       "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts": [
         "/home/travis/build/PolymerLabs/arcs/src/platform/assert-web.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/arc-inspector.ts",
@@ -3645,6 +3646,7 @@
         "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/storage-provider-factory.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/type.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/particle-claim.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/volatile-storage.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
       ],
@@ -6986,6 +6988,7 @@
         "/home/travis/build/PolymerLabs/arcs/src/runtime/testing/test-util.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/type.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/runtime.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/recipe-resolver.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
       ],
@@ -13584,7 +13587,7 @@
         [
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/storage-provider-base.ts",
-            "start": 6624,
+            "start": 6615,
             "length": 12,
             "code": 2345,
             "category": 1,
@@ -14181,8 +14184,8 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/volatile-storage.ts",
-            "start": 4232,
-            "length": 31,
+            "start": 4031,
+            "length": 20,
             "code": 2322,
             "category": 1,
             "messageText": {
@@ -14218,7 +14221,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/volatile-storage.ts",
-            "start": 4547,
+            "start": 4640,
             "length": 12,
             "code": 2322,
             "category": 1,
@@ -14226,7 +14229,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/volatile-storage.ts",
-            "start": 4581,
+            "start": 4674,
             "length": 31,
             "messageText": "Object is possibly 'undefined'.",
             "category": 1,
@@ -14234,7 +14237,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/volatile-storage.ts",
-            "start": 4695,
+            "start": 4788,
             "length": 12,
             "code": 2322,
             "category": 1,
@@ -14242,7 +14245,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/volatile-storage.ts",
-            "start": 4998,
+            "start": 5091,
             "length": 14,
             "code": 2416,
             "category": 1,
@@ -14304,7 +14307,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/volatile-storage.ts",
-            "start": 7425,
+            "start": 7559,
             "length": 11,
             "code": 2416,
             "category": 1,
@@ -14331,7 +14334,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/volatile-storage.ts",
-            "start": 8037,
+            "start": 8171,
             "length": 17,
             "messageText": "Object is possibly 'null'.",
             "category": 1,
@@ -14339,7 +14342,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/volatile-storage.ts",
-            "start": 8180,
+            "start": 8314,
             "length": 17,
             "messageText": "Object is possibly 'null'.",
             "category": 1,
@@ -14347,7 +14350,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/volatile-storage.ts",
-            "start": 8294,
+            "start": 8428,
             "length": 23,
             "code": 2416,
             "category": 1,
@@ -14364,7 +14367,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/volatile-storage.ts",
-            "start": 8294,
+            "start": 8428,
             "length": 23,
             "code": 2416,
             "category": 1,
@@ -14406,7 +14409,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/volatile-storage.ts",
-            "start": 8558,
+            "start": 8692,
             "length": 7,
             "code": 2322,
             "category": 1,
@@ -14423,7 +14426,7 @@
             "relatedInformation": [
               {
                 "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/volatile-storage.ts",
-                "start": 8495,
+                "start": 8629,
                 "length": 7,
                 "messageText": "The expected type comes from property 'version' which is declared here on type '{ version: number; model: SerializedModelEntry[]; }'",
                 "category": 3,
@@ -14433,7 +14436,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/volatile-storage.ts",
-            "start": 9310,
+            "start": 9436,
             "length": 17,
             "messageText": "Object is possibly 'null'.",
             "category": 1,
@@ -14441,7 +14444,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/volatile-storage.ts",
-            "start": 9477,
+            "start": 9603,
             "length": 5,
             "code": 2322,
             "category": 1,
@@ -14468,7 +14471,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/volatile-storage.ts",
-            "start": 9964,
+            "start": 10090,
             "length": 27,
             "code": 2322,
             "category": 1,
@@ -14476,7 +14479,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/volatile-storage.ts",
-            "start": 10170,
+            "start": 10296,
             "length": 12,
             "messageText": "Object is possibly 'null'.",
             "category": 1,
@@ -14484,7 +14487,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/volatile-storage.ts",
-            "start": 10403,
+            "start": 10529,
             "length": 17,
             "messageText": "Object is possibly 'null'.",
             "category": 1,
@@ -14492,7 +14495,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/volatile-storage.ts",
-            "start": 10568,
+            "start": 10694,
             "length": 27,
             "code": 2322,
             "category": 1,
@@ -14500,7 +14503,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/volatile-storage.ts",
-            "start": 10912,
+            "start": 11038,
             "length": 12,
             "code": 2345,
             "category": 1,
@@ -14517,7 +14520,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/volatile-storage.ts",
-            "start": 11097,
+            "start": 11223,
             "length": 14,
             "code": 2322,
             "category": 1,
@@ -14525,7 +14528,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/volatile-storage.ts",
-            "start": 11226,
+            "start": 11352,
             "length": 17,
             "messageText": "Object is possibly 'null'.",
             "category": 1,
@@ -14533,7 +14536,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/volatile-storage.ts",
-            "start": 11283,
+            "start": 11409,
             "length": 14,
             "code": 2322,
             "category": 1,
@@ -14541,7 +14544,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/volatile-storage.ts",
-            "start": 11351,
+            "start": 11477,
             "length": 12,
             "messageText": "Object is possibly 'null'.",
             "category": 1,
@@ -14549,7 +14552,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/volatile-storage.ts",
-            "start": 11428,
+            "start": 11554,
             "length": 7,
             "code": 2322,
             "category": 1,
@@ -14576,7 +14579,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/volatile-storage.ts",
-            "start": 11503,
+            "start": 11629,
             "length": 27,
             "code": 2322,
             "category": 1,
@@ -14584,7 +14587,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/volatile-storage.ts",
-            "start": 11950,
+            "start": 12076,
             "length": 12,
             "messageText": "Object is possibly 'null'.",
             "category": 1,
@@ -14592,7 +14595,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/volatile-storage.ts",
-            "start": 12030,
+            "start": 12156,
             "length": 7,
             "code": 2322,
             "category": 1,
@@ -14619,7 +14622,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/volatile-storage.ts",
-            "start": 12083,
+            "start": 12209,
             "length": 6,
             "code": 2416,
             "category": 1,
@@ -14651,7 +14654,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/volatile-storage.ts",
-            "start": 12338,
+            "start": 12464,
             "length": 12,
             "messageText": "Object is possibly 'null'.",
             "category": 1,
@@ -14659,7 +14662,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/volatile-storage.ts",
-            "start": 12440,
+            "start": 12566,
             "length": 7,
             "code": 2322,
             "category": 1,
@@ -14686,7 +14689,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/volatile-storage.ts",
-            "start": 12463,
+            "start": 12589,
             "length": 12,
             "code": 2322,
             "category": 1,
@@ -14704,7 +14707,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/volatile-storage.ts",
-            "start": 14049,
+            "start": 14175,
             "length": 17,
             "messageText": "Object is possibly 'null'.",
             "category": 1,
@@ -14712,7 +14715,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/volatile-storage.ts",
-            "start": 14192,
+            "start": 14318,
             "length": 17,
             "messageText": "Object is possibly 'null'.",
             "category": 1,
@@ -14720,7 +14723,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/volatile-storage.ts",
-            "start": 14312,
+            "start": 14438,
             "length": 23,
             "code": 2416,
             "category": 1,
@@ -14737,7 +14740,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/volatile-storage.ts",
-            "start": 14312,
+            "start": 14438,
             "length": 23,
             "code": 2416,
             "category": 1,
@@ -14784,7 +14787,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/volatile-storage.ts",
-            "start": 14532,
+            "start": 14658,
             "length": 17,
             "messageText": "Object is possibly 'null'.",
             "category": 1,
@@ -14792,7 +14795,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/volatile-storage.ts",
-            "start": 14965,
+            "start": 15091,
             "length": 7,
             "code": 2322,
             "category": 1,
@@ -14809,7 +14812,7 @@
             "relatedInformation": [
               {
                 "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/volatile-storage.ts",
-                "start": 14753,
+                "start": 14879,
                 "length": 7,
                 "messageText": "The expected type comes from property 'version' which is declared here on type '{ version: number; model: SerializedModelEntry[]; }'",
                 "category": 3,
@@ -14819,7 +14822,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/volatile-storage.ts",
-            "start": 15650,
+            "start": 15768,
             "length": 17,
             "messageText": "Object is possibly 'null'.",
             "category": 1,
@@ -14827,7 +14830,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/volatile-storage.ts",
-            "start": 15753,
+            "start": 15871,
             "length": 27,
             "code": 2322,
             "category": 1,
@@ -14835,7 +14838,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/volatile-storage.ts",
-            "start": 15782,
+            "start": 15900,
             "length": 22,
             "code": 2322,
             "category": 1,
@@ -14843,7 +14846,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/volatile-storage.ts",
-            "start": 16940,
+            "start": 17058,
             "length": 17,
             "messageText": "Object is possibly 'null'.",
             "category": 1,
@@ -14851,7 +14854,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/volatile-storage.ts",
-            "start": 17322,
+            "start": 17440,
             "length": 12,
             "messageText": "Object is possibly 'null'.",
             "category": 1,
@@ -14859,7 +14862,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/volatile-storage.ts",
-            "start": 17452,
+            "start": 17570,
             "length": 7,
             "code": 2322,
             "category": 1,
@@ -14886,7 +14889,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/volatile-storage.ts",
-            "start": 17520,
+            "start": 17638,
             "length": 27,
             "code": 2322,
             "category": 1,
@@ -14894,7 +14897,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/volatile-storage.ts",
-            "start": 17549,
+            "start": 17667,
             "length": 22,
             "code": 2322,
             "category": 1,
@@ -14902,7 +14905,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/volatile-storage.ts",
-            "start": 17609,
+            "start": 17727,
             "length": 4,
             "code": 2345,
             "category": 1,
@@ -14910,7 +14913,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/volatile-storage.ts",
-            "start": 18845,
+            "start": 18963,
             "length": 11,
             "code": 2416,
             "category": 1,
@@ -14937,7 +14940,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/volatile-storage.ts",
-            "start": 19156,
+            "start": 19274,
             "length": 12,
             "messageText": "Object is possibly 'null'.",
             "category": 1,
@@ -14945,7 +14948,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/volatile-storage.ts",
-            "start": 19242,
+            "start": 19360,
             "length": 5,
             "code": 2322,
             "category": 1,
@@ -14953,7 +14956,7 @@
             "relatedInformation": [
               {
                 "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/volatile-storage.ts",
-                "start": 18434,
+                "start": 18552,
                 "length": 5,
                 "messageText": "The expected type comes from property 'index' which is declared here on type '{ index: number; value: {}; keys: Dictionary<number>; }'",
                 "category": 3,
@@ -14963,7 +14966,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/volatile-storage.ts",
-            "start": 19255,
+            "start": 19373,
             "length": 5,
             "code": 2322,
             "category": 1,
@@ -14971,7 +14974,7 @@
             "relatedInformation": [
               {
                 "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/volatile-storage.ts",
-                "start": 18449,
+                "start": 18567,
                 "length": 5,
                 "messageText": "The expected type comes from property 'value' which is declared here on type '{ index: number; value: {}; keys: Dictionary<number>; }'",
                 "category": 3,
@@ -14981,7 +14984,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/volatile-storage.ts",
-            "start": 19333,
+            "start": 19451,
             "length": 4,
             "messageText": "Object is possibly 'undefined'.",
             "category": 1,
@@ -14989,7 +14992,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/volatile-storage.ts",
-            "start": 19333,
+            "start": 19451,
             "length": 10,
             "code": 2322,
             "category": 1,
@@ -15006,7 +15009,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/volatile-storage.ts",
-            "start": 19364,
+            "start": 19482,
             "length": 4,
             "messageText": "Object is possibly 'undefined'.",
             "category": 1,
@@ -15014,7 +15017,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/volatile-storage.ts",
-            "start": 19406,
+            "start": 19524,
             "length": 4,
             "messageText": "Object is possibly 'undefined'.",
             "category": 1,
@@ -15022,7 +15025,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/volatile-storage.ts",
-            "start": 19406,
+            "start": 19524,
             "length": 12,
             "code": 2322,
             "category": 1,
@@ -15039,7 +15042,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/volatile-storage.ts",
-            "start": 19514,
+            "start": 19632,
             "length": 12,
             "messageText": "Object is possibly 'null'.",
             "category": 1,
@@ -15047,7 +15050,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/volatile-storage.ts",
-            "start": 20679,
+            "start": 20797,
             "length": 9,
             "code": 2416,
             "category": 1,
@@ -15064,7 +15067,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/volatile-storage.ts",
-            "start": 20679,
+            "start": 20797,
             "length": 9,
             "code": 2416,
             "category": 1,
@@ -15106,7 +15109,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/volatile-storage.ts",
-            "start": 20802,
+            "start": 20920,
             "length": 2,
             "code": 2322,
             "category": 1,
@@ -15114,7 +15117,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/volatile-storage.ts",
-            "start": 20806,
+            "start": 20924,
             "length": 5,
             "code": 2322,
             "category": 1,
@@ -15122,7 +15125,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/volatile-storage.ts",
-            "start": 20813,
+            "start": 20931,
             "length": 5,
             "code": 2322,
             "category": 1,
@@ -15130,7 +15133,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/volatile-storage.ts",
-            "start": 20820,
+            "start": 20938,
             "length": 4,
             "code": 2322,
             "category": 1,
@@ -15251,7 +15254,20 @@
           }
         ]
       ],
-      "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/storage-provider-factory.ts",
+      "/home/travis/build/PolymerLabs/arcs/src/runtime/mutex.ts",
+      [
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/storage-provider-factory.ts",
+        [
+          {
+            "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/storage-provider-factory.ts",
+            "start": 2738,
+            "length": 22,
+            "messageText": "Object is possibly 'undefined'.",
+            "category": 1,
+            "code": 2532
+          }
+        ]
+      ],
       "/home/travis/build/PolymerLabs/arcs/src/runtime/testing/fake-slot-composer.ts",
       "/home/travis/build/PolymerLabs/arcs/src/runtime/storageNG/storage-key.ts",
       "/home/travis/build/PolymerLabs/arcs/src/runtime/storageNG/drivers/driver-factory.ts",
@@ -16042,7 +16058,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/particle-execution-host.ts",
-            "start": 11945,
+            "start": 11963,
             "length": 5,
             "code": 2322,
             "category": 1,
@@ -16050,7 +16066,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/particle-execution-host.ts",
-            "start": 13010,
+            "start": 13024,
             "length": 5,
             "code": 2322,
             "category": 1,
@@ -16058,7 +16074,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/particle-execution-host.ts",
-            "start": 13131,
+            "start": 13145,
             "length": 5,
             "code": 2322,
             "category": 1,
@@ -16066,7 +16082,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/particle-execution-host.ts",
-            "start": 13266,
+            "start": 13280,
             "length": 5,
             "code": 2322,
             "category": 1,
@@ -16074,7 +16090,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/particle-execution-host.ts",
-            "start": 13502,
+            "start": 13516,
             "length": 53,
             "messageText": "Object is possibly 'undefined'.",
             "category": 1,
@@ -17039,7 +17055,6 @@
       ],
       "/home/travis/build/PolymerLabs/arcs/src/runtime/testing/stub-loader.ts",
       "/home/travis/build/PolymerLabs/arcs/src/runtime/fake-pec-factory.ts",
-      "/home/travis/build/PolymerLabs/arcs/src/runtime/mutex.ts",
       [
         "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts",
         [
@@ -17216,7 +17231,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts",
-            "start": 16045,
+            "start": 16011,
             "length": 21,
             "messageText": "Object is possibly 'undefined'.",
             "category": 1,
@@ -17224,7 +17239,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts",
-            "start": 16227,
+            "start": 16193,
             "length": 14,
             "messageText": "Object is possibly 'undefined'.",
             "category": 1,
@@ -17232,7 +17247,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts",
-            "start": 16977,
+            "start": 16943,
             "length": 4,
             "code": 2345,
             "category": 1,
@@ -17259,7 +17274,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts",
-            "start": 17106,
+            "start": 17072,
             "length": 19,
             "code": 2345,
             "category": 1,
@@ -17276,7 +17291,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts",
-            "start": 17222,
+            "start": 17188,
             "length": 17,
             "messageText": "Object is possibly 'undefined'.",
             "category": 1,
@@ -17284,7 +17299,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts",
-            "start": 17301,
+            "start": 17267,
             "length": 17,
             "messageText": "Object is possibly 'undefined'.",
             "category": 1,
@@ -17292,7 +17307,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts",
-            "start": 17301,
+            "start": 17267,
             "length": 20,
             "code": 2345,
             "category": 1,
@@ -17309,7 +17324,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts",
-            "start": 17372,
+            "start": 17338,
             "length": 17,
             "messageText": "Object is possibly 'undefined'.",
             "category": 1,
@@ -17317,7 +17332,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts",
-            "start": 17412,
+            "start": 17378,
             "length": 9,
             "messageText": "Object is possibly 'undefined'.",
             "category": 1,
@@ -17325,7 +17340,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts",
-            "start": 19200,
+            "start": 19166,
             "length": 33,
             "code": 2345,
             "category": 1,
@@ -17342,7 +17357,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts",
-            "start": 19429,
+            "start": 19395,
             "length": 19,
             "code": 2345,
             "category": 1,
@@ -17359,7 +17374,24 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts",
-            "start": 22115,
+            "start": 21782,
+            "length": 15,
+            "code": 2345,
+            "category": 1,
+            "messageText": {
+              "messageText": "Argument of type 'string | null' is not assignable to parameter of type 'string'.",
+              "category": 1,
+              "code": 2345,
+              "next": {
+                "messageText": "Type 'null' is not assignable to type 'string'.",
+                "category": 1,
+                "code": 2322
+              }
+            }
+          },
+          {
+            "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts",
+            "start": 22211,
             "length": 4,
             "code": 2345,
             "category": 1,
@@ -17367,7 +17399,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts",
-            "start": 22886,
+            "start": 23005,
             "length": 15,
             "code": 2345,
             "category": 1,
@@ -17384,7 +17416,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts",
-            "start": 24223,
+            "start": 24238,
             "length": 15,
             "code": 2345,
             "category": 1,
@@ -17401,7 +17433,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts",
-            "start": 24427,
+            "start": 24441,
             "length": 15,
             "code": 2345,
             "category": 1,
@@ -17418,7 +17450,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts",
-            "start": 24739,
+            "start": 24709,
             "length": 15,
             "code": 2345,
             "category": 1,
@@ -17435,7 +17467,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts",
-            "start": 26073,
+            "start": 26059,
             "length": 4,
             "code": 2345,
             "category": 1,
@@ -17452,7 +17484,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts",
-            "start": 26270,
+            "start": 26256,
             "length": 10,
             "code": 2322,
             "category": 1,
@@ -17469,7 +17501,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts",
-            "start": 27064,
+            "start": 27050,
             "length": 9,
             "messageText": "Object is possibly 'undefined'.",
             "category": 1,
@@ -17477,7 +17509,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts",
-            "start": 29515,
+            "start": 29501,
             "length": 25,
             "messageText": "Object is possibly 'undefined'.",
             "category": 1,
@@ -17485,12 +17517,12 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts",
-            "start": 30026,
+            "start": 30012,
             "length": 39,
             "code": 2322,
             "category": 1,
             "messageText": {
-              "messageText": "Type 'StorageProviderBase | StorageStub | undefined' is not assignable to type 'StorageProviderBase | StorageStub'.",
+              "messageText": "Type 'StorageStub | undefined' is not assignable to type 'StorageProviderBase | StorageStub'.",
               "category": 1,
               "code": 2322,
               "next": {
@@ -17502,8 +17534,8 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts",
-            "start": 30197,
-            "length": 33,
+            "start": 30220,
+            "length": 56,
             "code": 2322,
             "category": 1,
             "messageText": {
@@ -17519,7 +17551,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts",
-            "start": 31128,
+            "start": 31180,
             "length": 25,
             "messageText": "Type 'undefined' must have a '[Symbol.iterator]()' method that returns an iterator.",
             "category": 1,
@@ -18435,15 +18467,41 @@
         [
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/manifest.ts",
-            "start": 3093,
-            "length": 17,
+            "start": 3671,
+            "length": 12,
             "code": 2322,
             "category": 1,
-            "messageText": "Type 'undefined' is not assignable to type 'number'."
+            "messageText": {
+              "messageText": "Type 'string | undefined' is not assignable to type 'string | null'.",
+              "category": 1,
+              "code": 2322,
+              "next": {
+                "messageText": "Type 'undefined' is not assignable to type 'string | null'.",
+                "category": 1,
+                "code": 2322
+              }
+            }
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/manifest.ts",
-            "start": 9670,
+            "start": 10356,
+            "length": 10,
+            "code": 2345,
+            "category": 1,
+            "messageText": {
+              "messageText": "Argument of type 'string | undefined' is not assignable to parameter of type 'string'.",
+              "category": 1,
+              "code": 2345,
+              "next": {
+                "messageText": "Type 'undefined' is not assignable to type 'string'.",
+                "category": 1,
+                "code": 2322
+              }
+            }
+          },
+          {
+            "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/manifest.ts",
+            "start": 10866,
             "length": 13,
             "code": 2345,
             "category": 1,
@@ -18460,7 +18518,24 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/manifest.ts",
-            "start": 13013,
+            "start": 11016,
+            "length": 11,
+            "code": 2345,
+            "category": 1,
+            "messageText": {
+              "messageText": "Argument of type 'string | undefined' is not assignable to parameter of type 'string'.",
+              "category": 1,
+              "code": 2345,
+              "next": {
+                "messageText": "Type 'undefined' is not assignable to type 'string'.",
+                "category": 1,
+                "code": 2322
+              }
+            }
+          },
+          {
+            "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/manifest.ts",
+            "start": 13785,
             "length": 29,
             "messageText": "Object is possibly 'undefined'.",
             "category": 1,
@@ -18468,7 +18543,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/manifest.ts",
-            "start": 17326,
+            "start": 18098,
             "length": 18,
             "code": 2322,
             "category": 1,
@@ -18485,7 +18560,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/manifest.ts",
-            "start": 17914,
+            "start": 18686,
             "length": 17,
             "code": 2345,
             "category": 1,
@@ -18502,7 +18577,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/manifest.ts",
-            "start": 21907,
+            "start": 22679,
             "length": 6,
             "code": 2322,
             "category": 1,
@@ -18519,7 +18594,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/manifest.ts",
-            "start": 22348,
+            "start": 23120,
             "length": 4,
             "code": 2345,
             "category": 1,
@@ -18527,7 +18602,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/manifest.ts",
-            "start": 26694,
+            "start": 27466,
             "length": 17,
             "code": 2345,
             "category": 1,
@@ -18544,7 +18619,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/manifest.ts",
-            "start": 27535,
+            "start": 28307,
             "length": 6,
             "code": 2345,
             "category": 1,
@@ -18566,44 +18641,12 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/manifest.ts",
-            "start": 30415,
+            "start": 31431,
             "length": 11,
             "code": 2345,
             "category": 1,
             "messageText": {
-              "messageText": "Argument of type 'StorageProviderBase | StorageStub' is not assignable to parameter of type '{ id: string; type: Type; originalId?: string | undefined; storageKey?: string | undefined; claims?: ClaimIsTag[] | undefined; }'.",
-              "category": 1,
-              "code": 2345,
-              "next": {
-                "messageText": "Type 'StorageProviderBase' is not assignable to type '{ id: string; type: Type; originalId?: string | undefined; storageKey?: string | undefined; claims?: ClaimIsTag[] | undefined; }'.",
-                "category": 1,
-                "code": 2322,
-                "next": {
-                  "messageText": "Types of property 'originalId' are incompatible.",
-                  "category": 1,
-                  "code": 2326,
-                  "next": {
-                    "messageText": "Type 'string | null' is not assignable to type 'string | undefined'.",
-                    "category": 1,
-                    "code": 2322,
-                    "next": {
-                      "messageText": "Type 'null' is not assignable to type 'string | undefined'.",
-                      "category": 1,
-                      "code": 2322
-                    }
-                  }
-                }
-              }
-            }
-          },
-          {
-            "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/manifest.ts",
-            "start": 30659,
-            "length": 11,
-            "code": 2345,
-            "category": 1,
-            "messageText": {
-              "messageText": "Argument of type 'StorageProviderBase | StorageStub | undefined' is not assignable to parameter of type '{ id: string; type: Type; originalId?: string | undefined; storageKey?: string | undefined; claims?: ClaimIsTag[] | undefined; }'.",
+              "messageText": "Argument of type 'StorageStub | undefined' is not assignable to parameter of type '{ id: string; type: Type; originalId?: string | undefined; storageKey?: string | undefined; claims?: ClaimIsTag[] | undefined; }'.",
               "category": 1,
               "code": 2345,
               "next": {
@@ -18615,7 +18658,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/manifest.ts",
-            "start": 30924,
+            "start": 31696,
             "length": 11,
             "code": 2322,
             "category": 1,
@@ -18632,7 +18675,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/manifest.ts",
-            "start": 32962,
+            "start": 33734,
             "length": 9,
             "code": 2345,
             "category": 1,
@@ -18640,7 +18683,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/manifest.ts",
-            "start": 41456,
+            "start": 42228,
             "length": 14,
             "messageText": "Variable 'targetParticle' is used before being assigned.",
             "category": 1,
@@ -18648,7 +18691,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/manifest.ts",
-            "start": 42086,
+            "start": 42858,
             "length": 12,
             "code": 2322,
             "category": 1,
@@ -18665,7 +18708,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/manifest.ts",
-            "start": 42326,
+            "start": 43098,
             "length": 12,
             "messageText": "Variable 'targetHandle' is used before being assigned.",
             "category": 1,
@@ -18673,7 +18716,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/manifest.ts",
-            "start": 45385,
+            "start": 46164,
             "length": 10,
             "code": 2345,
             "category": 1,
@@ -18690,7 +18733,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/manifest.ts",
-            "start": 45640,
+            "start": 46437,
             "length": 17,
             "code": 2345,
             "category": 1,
@@ -18707,7 +18750,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/manifest.ts",
-            "start": 46096,
+            "start": 46893,
             "length": 4,
             "messageText": "Variable 'json' is used before being assigned.",
             "category": 1,
@@ -18715,41 +18758,15 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/manifest.ts",
-            "start": 46575,
-            "length": 10,
-            "code": 2345,
+            "start": 47061,
+            "length": 8,
+            "code": 2322,
             "category": 1,
-            "messageText": {
-              "messageText": "Argument of type 'string | null' is not assignable to parameter of type 'string'.",
-              "category": 1,
-              "code": 2345,
-              "next": {
-                "messageText": "Type 'null' is not assignable to type 'string'.",
-                "category": 1,
-                "code": 2322
-              }
-            }
+            "messageText": "Type 'null' is not assignable to type 'Type'."
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/manifest.ts",
-            "start": 47774,
-            "length": 10,
-            "code": 2345,
-            "category": 1,
-            "messageText": {
-              "messageText": "Argument of type 'string | null' is not assignable to parameter of type 'string'.",
-              "category": 1,
-              "code": 2345,
-              "next": {
-                "messageText": "Type 'null' is not assignable to type 'string'.",
-                "category": 1,
-                "code": 2322
-              }
-            }
-          },
-          {
-            "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/manifest.ts",
-            "start": 48332,
+            "start": 48972,
             "length": 36,
             "messageText": "Object is possibly 'undefined'.",
             "category": 1,
@@ -18757,7 +18774,24 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/manifest.ts",
-            "start": 50910,
+            "start": 50036,
+            "length": 10,
+            "code": 2345,
+            "category": 1,
+            "messageText": {
+              "messageText": "Argument of type 'string | null' is not assignable to parameter of type 'string'.",
+              "category": 1,
+              "code": 2345,
+              "next": {
+                "messageText": "Type 'null' is not assignable to type 'string'.",
+                "category": 1,
+                "code": 2322
+              }
+            }
+          },
+          {
+            "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/manifest.ts",
+            "start": 51113,
             "length": 25,
             "messageText": "Object is possibly 'undefined'.",
             "category": 1,
@@ -23988,7 +24022,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/pouchdb/pouch-db-singleton.ts",
-            "start": 3495,
+            "start": 3522,
             "length": 12,
             "code": 2345,
             "category": 1,
@@ -24005,7 +24039,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/pouchdb/pouch-db-singleton.ts",
-            "start": 3636,
+            "start": 3663,
             "length": 7,
             "code": 2322,
             "category": 1,
@@ -24032,7 +24066,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/pouchdb/pouch-db-singleton.ts",
-            "start": 3825,
+            "start": 3852,
             "length": 23,
             "code": 2416,
             "category": 1,
@@ -24079,7 +24113,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/pouchdb/pouch-db-singleton.ts",
-            "start": 3825,
+            "start": 3852,
             "length": 23,
             "code": 2416,
             "category": 1,
@@ -24096,7 +24130,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/pouchdb/pouch-db-singleton.ts",
-            "start": 4798,
+            "start": 4825,
             "length": 7,
             "code": 2322,
             "category": 1,
@@ -24113,7 +24147,7 @@
             "relatedInformation": [
               {
                 "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/pouchdb/pouch-db-singleton.ts",
-                "start": 4436,
+                "start": 4463,
                 "length": 7,
                 "messageText": "The expected type comes from property 'version' which is declared here on type '{ version: number; model: SerializedModelEntry[]; }'",
                 "category": 3,
@@ -24123,7 +24157,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/pouchdb/pouch-db-singleton.ts",
-            "start": 6287,
+            "start": 6314,
             "length": 12,
             "code": 2322,
             "category": 1,
@@ -24131,7 +24165,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/pouchdb/pouch-db-singleton.ts",
-            "start": 6521,
+            "start": 6548,
             "length": 27,
             "code": 2322,
             "category": 1,
@@ -24139,7 +24173,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/pouchdb/pouch-db-singleton.ts",
-            "start": 7820,
+            "start": 7847,
             "length": 11,
             "code": 2322,
             "category": 1,
@@ -24156,7 +24190,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/pouchdb/pouch-db-singleton.ts",
-            "start": 8527,
+            "start": 8554,
             "length": 11,
             "code": 2322,
             "category": 1,
@@ -24173,7 +24207,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/pouchdb/pouch-db-singleton.ts",
-            "start": 8703,
+            "start": 8730,
             "length": 6,
             "messageText": "Variable 'stored' is used before being assigned.",
             "category": 1,
@@ -24181,7 +24215,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/pouchdb/pouch-db-singleton.ts",
-            "start": 8771,
+            "start": 8798,
             "length": 7,
             "code": 2322,
             "category": 1,
@@ -24208,7 +24242,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/pouchdb/pouch-db-singleton.ts",
-            "start": 8808,
+            "start": 8835,
             "length": 7,
             "code": 2322,
             "category": 1,
@@ -24235,7 +24269,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/pouchdb/pouch-db-singleton.ts",
-            "start": 8941,
+            "start": 8968,
             "length": 27,
             "code": 2322,
             "category": 1,
@@ -24243,7 +24277,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/pouchdb/pouch-db-singleton.ts",
-            "start": 8970,
+            "start": 8997,
             "length": 22,
             "code": 2322,
             "category": 1,
@@ -24251,7 +24285,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/pouchdb/pouch-db-singleton.ts",
-            "start": 9950,
+            "start": 9977,
             "length": 7,
             "code": 2322,
             "category": 1,
@@ -24278,7 +24312,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/pouchdb/pouch-db-singleton.ts",
-            "start": 10091,
+            "start": 10118,
             "length": 7,
             "code": 2322,
             "category": 1,
@@ -24305,7 +24339,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/pouchdb/pouch-db-singleton.ts",
-            "start": 10351,
+            "start": 10378,
             "length": 5,
             "code": 2322,
             "category": 1,
@@ -24790,7 +24824,26 @@
             "length": 5,
             "code": 2345,
             "category": 1,
-            "messageText": "Argument of type 'StorageProviderBase' is not assignable to parameter of type '{ id: string; type: Type; originalId?: string | undefined; storageKey?: string | undefined; claims?: ClaimIsTag[] | undefined; }'."
+            "messageText": {
+              "messageText": "Argument of type 'StorageProviderBase' is not assignable to parameter of type '{ id: string; type: Type; originalId?: string | undefined; storageKey?: string | undefined; claims?: ClaimIsTag[] | undefined; }'.",
+              "category": 1,
+              "code": 2345,
+              "next": {
+                "messageText": "Types of property 'originalId' are incompatible.",
+                "category": 1,
+                "code": 2326,
+                "next": {
+                  "messageText": "Type 'string | null' is not assignable to type 'string | undefined'.",
+                  "category": 1,
+                  "code": 2322,
+                  "next": {
+                    "messageText": "Type 'null' is not assignable to type 'string | undefined'.",
+                    "category": 1,
+                    "code": 2322
+                  }
+                }
+              }
+            }
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/planning/test/strategies/init-population-tests.ts",
@@ -25095,7 +25148,7 @@
         [
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/planning/test/strategies/search-tokens-to-handles-test.ts",
-            "start": 1426,
+            "start": 1444,
             "length": 13,
             "messageText": "Object is possibly 'null'.",
             "category": 1,
@@ -25103,7 +25156,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/planning/test/strategies/search-tokens-to-handles-test.ts",
-            "start": 2688,
+            "start": 2706,
             "length": 13,
             "messageText": "Object is possibly 'null'.",
             "category": 1,
@@ -26778,7 +26831,7 @@
         [
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/test/arc-tests.ts",
-            "start": 5681,
+            "start": 5742,
             "length": 6,
             "code": 2345,
             "category": 1,
@@ -26786,7 +26839,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/test/arc-tests.ts",
-            "start": 5725,
+            "start": 5786,
             "length": 6,
             "code": 2345,
             "category": 1,
@@ -26794,7 +26847,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/test/arc-tests.ts",
-            "start": 5769,
+            "start": 5830,
             "length": 6,
             "code": 2345,
             "category": 1,
@@ -26802,7 +26855,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/test/arc-tests.ts",
-            "start": 5843,
+            "start": 5904,
             "length": 6,
             "code": 2345,
             "category": 1,
@@ -26810,7 +26863,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/test/arc-tests.ts",
-            "start": 7759,
+            "start": 10186,
             "length": 6,
             "code": 2345,
             "category": 1,
@@ -26818,7 +26871,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/test/arc-tests.ts",
-            "start": 7803,
+            "start": 10230,
             "length": 6,
             "code": 2345,
             "category": 1,
@@ -26826,7 +26879,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/test/arc-tests.ts",
-            "start": 7847,
+            "start": 10274,
             "length": 6,
             "code": 2345,
             "category": 1,
@@ -26834,7 +26887,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/test/arc-tests.ts",
-            "start": 7921,
+            "start": 10348,
             "length": 6,
             "code": 2345,
             "category": 1,
@@ -26842,7 +26895,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/test/arc-tests.ts",
-            "start": 9834,
+            "start": 12261,
             "length": 6,
             "code": 2345,
             "category": 1,
@@ -26850,7 +26903,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/test/arc-tests.ts",
-            "start": 9880,
+            "start": 12307,
             "length": 6,
             "code": 2345,
             "category": 1,
@@ -26858,7 +26911,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/test/arc-tests.ts",
-            "start": 9926,
+            "start": 12353,
             "length": 6,
             "code": 2345,
             "category": 1,
@@ -26866,7 +26919,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/test/arc-tests.ts",
-            "start": 10002,
+            "start": 12429,
             "length": 6,
             "code": 2345,
             "category": 1,
@@ -26874,7 +26927,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/test/arc-tests.ts",
-            "start": 11685,
+            "start": 14112,
             "length": 6,
             "code": 2345,
             "category": 1,
@@ -26882,7 +26935,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/test/arc-tests.ts",
-            "start": 11731,
+            "start": 14158,
             "length": 6,
             "code": 2345,
             "category": 1,
@@ -26890,7 +26943,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/test/arc-tests.ts",
-            "start": 11777,
+            "start": 14204,
             "length": 6,
             "code": 2345,
             "category": 1,
@@ -26898,7 +26951,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/test/arc-tests.ts",
-            "start": 11853,
+            "start": 14280,
             "length": 6,
             "code": 2345,
             "category": 1,
@@ -26906,7 +26959,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/test/arc-tests.ts",
-            "start": 13584,
+            "start": 16011,
             "length": 6,
             "code": 2345,
             "category": 1,
@@ -26914,7 +26967,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/test/arc-tests.ts",
-            "start": 13628,
+            "start": 16055,
             "length": 6,
             "code": 2345,
             "category": 1,
@@ -26922,7 +26975,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/test/arc-tests.ts",
-            "start": 13672,
+            "start": 16099,
             "length": 6,
             "code": 2345,
             "category": 1,
@@ -26930,7 +26983,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/test/arc-tests.ts",
-            "start": 13746,
+            "start": 16173,
             "length": 6,
             "code": 2345,
             "category": 1,
@@ -26938,7 +26991,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/test/arc-tests.ts",
-            "start": 15727,
+            "start": 18154,
             "length": 6,
             "code": 2345,
             "category": 1,
@@ -26946,7 +26999,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/test/arc-tests.ts",
-            "start": 15773,
+            "start": 18200,
             "length": 6,
             "code": 2345,
             "category": 1,
@@ -26954,7 +27007,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/test/arc-tests.ts",
-            "start": 15819,
+            "start": 18246,
             "length": 6,
             "code": 2345,
             "category": 1,
@@ -26962,7 +27015,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/test/arc-tests.ts",
-            "start": 15895,
+            "start": 18322,
             "length": 6,
             "code": 2345,
             "category": 1,
@@ -26970,7 +27023,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/test/arc-tests.ts",
-            "start": 17622,
+            "start": 20049,
             "length": 6,
             "code": 2345,
             "category": 1,
@@ -26978,7 +27031,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/test/arc-tests.ts",
-            "start": 17666,
+            "start": 20093,
             "length": 6,
             "code": 2345,
             "category": 1,
@@ -26986,7 +27039,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/test/arc-tests.ts",
-            "start": 17710,
+            "start": 20137,
             "length": 6,
             "code": 2345,
             "category": 1,
@@ -26994,7 +27047,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/test/arc-tests.ts",
-            "start": 17784,
+            "start": 20211,
             "length": 6,
             "code": 2345,
             "category": 1,
@@ -27002,7 +27055,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/test/arc-tests.ts",
-            "start": 19749,
+            "start": 22176,
             "length": 6,
             "code": 2345,
             "category": 1,
@@ -27010,7 +27063,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/test/arc-tests.ts",
-            "start": 19793,
+            "start": 22220,
             "length": 6,
             "code": 2345,
             "category": 1,
@@ -27018,7 +27071,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/test/arc-tests.ts",
-            "start": 19837,
+            "start": 22264,
             "length": 6,
             "code": 2345,
             "category": 1,
@@ -27026,7 +27079,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/test/arc-tests.ts",
-            "start": 19911,
+            "start": 22338,
             "length": 6,
             "code": 2345,
             "category": 1,
@@ -27034,7 +27087,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/test/arc-tests.ts",
-            "start": 20646,
+            "start": 23073,
             "length": 7,
             "code": 2322,
             "category": 1,
@@ -27052,7 +27105,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/test/arc-tests.ts",
-            "start": 20797,
+            "start": 23224,
             "length": 7,
             "code": 2322,
             "category": 1,
@@ -27070,7 +27123,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/test/arc-tests.ts",
-            "start": 21706,
+            "start": 24133,
             "length": 8,
             "code": 2345,
             "category": 1,
@@ -27078,7 +27131,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/test/arc-tests.ts",
-            "start": 21752,
+            "start": 24179,
             "length": 8,
             "code": 2345,
             "category": 1,
@@ -27086,7 +27139,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/test/arc-tests.ts",
-            "start": 22196,
+            "start": 24623,
             "length": 7,
             "code": 2322,
             "category": 1,
@@ -27104,7 +27157,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/test/arc-tests.ts",
-            "start": 23754,
+            "start": 26181,
             "length": 7,
             "messageText": "Object is possibly 'undefined'.",
             "category": 1,
@@ -27112,7 +27165,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/test/arc-tests.ts",
-            "start": 23864,
+            "start": 26291,
             "length": 5,
             "code": 2345,
             "category": 1,
@@ -27120,7 +27173,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/test/arc-tests.ts",
-            "start": 26627,
+            "start": 29054,
             "length": 8,
             "code": 2345,
             "category": 1,
@@ -27128,7 +27181,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/test/arc-tests.ts",
-            "start": 26673,
+            "start": 29100,
             "length": 8,
             "code": 2345,
             "category": 1,
@@ -27136,7 +27189,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/test/arc-tests.ts",
-            "start": 26719,
+            "start": 29146,
             "length": 8,
             "code": 2345,
             "category": 1,
@@ -27144,7 +27197,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/test/arc-tests.ts",
-            "start": 29853,
+            "start": 32280,
             "length": 24,
             "messageText": "Object is possibly 'undefined'.",
             "category": 1,
@@ -27152,7 +27205,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/test/arc-tests.ts",
-            "start": 29907,
+            "start": 32334,
             "length": 17,
             "messageText": "Object is possibly 'undefined'.",
             "category": 1,
@@ -27160,7 +27213,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/test/arc-tests.ts",
-            "start": 35435,
+            "start": 37862,
             "length": 9,
             "code": 2345,
             "category": 1,
@@ -27168,7 +27221,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/test/arc-tests.ts",
-            "start": 36008,
+            "start": 38435,
             "length": 7,
             "code": 2322,
             "category": 1,
@@ -28388,7 +28441,23 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/test/manifest-test.ts",
-            "start": 50972,
+            "start": 36765,
+            "length": 11,
+            "messageText": "Object is possibly 'undefined'.",
+            "category": 1,
+            "code": 2532
+          },
+          {
+            "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/test/manifest-test.ts",
+            "start": 38122,
+            "length": 34,
+            "messageText": "Object is possibly 'undefined'.",
+            "category": 1,
+            "code": 2532
+          },
+          {
+            "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/test/manifest-test.ts",
+            "start": 51214,
             "length": 40,
             "messageText": "Object is possibly 'null' or 'undefined'.",
             "category": 1,
@@ -28396,7 +28465,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/test/manifest-test.ts",
-            "start": 51708,
+            "start": 51950,
             "length": 40,
             "messageText": "Object is possibly 'null' or 'undefined'.",
             "category": 1,
@@ -28404,7 +28473,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/test/manifest-test.ts",
-            "start": 51792,
+            "start": 52034,
             "length": 6,
             "messageText": "Object is possibly 'null'.",
             "category": 1,
@@ -28412,7 +28481,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/test/manifest-test.ts",
-            "start": 52458,
+            "start": 52700,
             "length": 40,
             "messageText": "Object is possibly 'null' or 'undefined'.",
             "category": 1,
@@ -28420,7 +28489,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/test/manifest-test.ts",
-            "start": 52542,
+            "start": 52784,
             "length": 6,
             "messageText": "Object is possibly 'null'.",
             "category": 1,
@@ -28428,7 +28497,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/test/manifest-test.ts",
-            "start": 53201,
+            "start": 53443,
             "length": 40,
             "messageText": "Object is possibly 'null' or 'undefined'.",
             "category": 1,
@@ -28436,7 +28505,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/test/manifest-test.ts",
-            "start": 53285,
+            "start": 53527,
             "length": 6,
             "messageText": "Object is possibly 'null'.",
             "category": 1,
@@ -28444,7 +28513,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/test/manifest-test.ts",
-            "start": 55204,
+            "start": 55446,
             "length": 74,
             "messageText": "Object is possibly 'null'.",
             "category": 1,
@@ -28452,7 +28521,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/test/manifest-test.ts",
-            "start": 66550,
+            "start": 66940,
             "length": 6,
             "messageText": "Object is possibly 'undefined'.",
             "category": 1,
@@ -28460,7 +28529,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/test/manifest-test.ts",
-            "start": 66602,
+            "start": 66992,
             "length": 6,
             "messageText": "Object is possibly 'undefined'.",
             "category": 1,
@@ -28468,7 +28537,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/test/manifest-test.ts",
-            "start": 66732,
+            "start": 67122,
             "length": 6,
             "messageText": "Object is possibly 'undefined'.",
             "category": 1,
@@ -28476,7 +28545,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/test/manifest-test.ts",
-            "start": 66784,
+            "start": 67174,
             "length": 6,
             "messageText": "Object is possibly 'undefined'.",
             "category": 1,
@@ -28484,7 +28553,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/test/manifest-test.ts",
-            "start": 67332,
+            "start": 67722,
             "length": 6,
             "messageText": "Object is possibly 'undefined'.",
             "category": 1,
@@ -28492,7 +28561,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/test/manifest-test.ts",
-            "start": 67384,
+            "start": 67774,
             "length": 6,
             "messageText": "Object is possibly 'undefined'.",
             "category": 1,
@@ -28500,7 +28569,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/test/manifest-test.ts",
-            "start": 67451,
+            "start": 67841,
             "length": 6,
             "messageText": "Object is possibly 'undefined'.",
             "category": 1,
@@ -28508,7 +28577,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/test/manifest-test.ts",
-            "start": 68076,
+            "start": 68466,
             "length": 5,
             "messageText": "Object is possibly 'undefined'.",
             "category": 1,
@@ -28516,7 +28585,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/test/manifest-test.ts",
-            "start": 68132,
+            "start": 68522,
             "length": 5,
             "messageText": "Object is possibly 'undefined'.",
             "category": 1,
@@ -28995,7 +29064,7 @@
             "code": 2345,
             "category": 1,
             "messageText": {
-              "messageText": "Argument of type 'StorageProviderBase | StorageStub | undefined' is not assignable to parameter of type '{ id: string; type: Type; originalId?: string | undefined; storageKey?: string | undefined; claims?: ClaimIsTag[] | undefined; }'.",
+              "messageText": "Argument of type 'StorageStub | undefined' is not assignable to parameter of type '{ id: string; type: Type; originalId?: string | undefined; storageKey?: string | undefined; claims?: ClaimIsTag[] | undefined; }'.",
               "category": 1,
               "code": 2345,
               "next": {
@@ -30873,7 +30942,7 @@
         [
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/tests/multiplexer-integration-test.ts",
-            "start": 3805,
+            "start": 4174,
             "length": 13,
             "messageText": "Object is possibly 'undefined'.",
             "category": 1,
@@ -30881,7 +30950,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/tests/multiplexer-integration-test.ts",
-            "start": 4131,
+            "start": 4500,
             "length": 10,
             "messageText": "Object is possibly 'undefined'.",
             "category": 1,
@@ -30889,7 +30958,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/tests/multiplexer-integration-test.ts",
-            "start": 4170,
+            "start": 4539,
             "length": 10,
             "messageText": "Object is possibly 'undefined'.",
             "category": 1,
@@ -30897,7 +30966,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/tests/multiplexer-integration-test.ts",
-            "start": 4387,
+            "start": 4756,
             "length": 10,
             "messageText": "Object is possibly 'undefined'.",
             "category": 1,

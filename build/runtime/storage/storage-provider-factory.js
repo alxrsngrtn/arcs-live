@@ -9,6 +9,7 @@
  */
 import { VolatileStorage } from './volatile-storage.js';
 import { SyntheticStorage } from './synthetic-storage.js';
+import { Mutex } from '../mutex.js';
 // TODO(sjmiles): StorageProviderFactory.register can be used
 // to install additional providers, as long as it's invoked
 // before any StorageProviderFactory objects are constructed.
@@ -19,6 +20,7 @@ const providers = {
 export class StorageProviderFactory {
     constructor(arcId) {
         this.arcId = arcId;
+        this.mutexMap = new Map();
         this._storageInstances = {};
         Object.keys(providers).forEach(name => {
             const { storage, isPersistent } = providers[name];
@@ -52,13 +54,25 @@ export class StorageProviderFactory {
         // TODO(shans): don't use reference mode once adapters are implemented
         return await this._storageForKey(key).connect(id, type, key);
     }
+    async _acquireMutexForKey(key) {
+        if (!this.mutexMap.has(key)) {
+            this.mutexMap.set(key, new Mutex());
+        }
+        return this.mutexMap.get(key).acquire();
+    }
     async connectOrConstruct(id, type, key) {
         const storage = this._storageForKey(key);
-        let result = await storage.connect(id, type, key);
-        if (result == null) {
-            result = await storage.construct(id, type, key);
+        const release = await this._acquireMutexForKey(key);
+        try {
+            let result = await storage.connect(id, type, key);
+            if (result == null) {
+                result = await storage.construct(id, type, key);
+            }
+            return result;
         }
-        return result;
+        finally {
+            release();
+        }
     }
     async baseStorageFor(type, keyString) {
         return await this._storageForKey(keyString).baseStorageFor(type, keyString);

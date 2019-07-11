@@ -33,18 +33,23 @@ export declare class VolatileStorage extends StorageBase {
     constructor(arcId: Id);
     construct(id: string, type: Type, keyFragment: string): Promise<VolatileStorageProvider>;
     _construct(id: any, type: any, keyFragment: any): Promise<VolatileCollection | VolatileBigCollection | VolatileSingleton>;
+    constructKey(keyFragment: string): string;
     connect(id: string, type: Type, key: string): Promise<VolatileStorageProvider>;
     baseStorageKey(type: Type): string;
     baseStorageFor(type: Type, key: string): Promise<VolatileCollection>;
     parseStringAsKey(s: string): VolatileKey;
 }
-declare abstract class VolatileStorageProvider extends StorageProviderBase {
+export declare abstract class VolatileStorageProvider extends StorageProviderBase {
     backingStore: VolatileCollection | null;
     protected storageEngine: VolatileStorage;
     private pendingBackingStore;
     static newProvider(type: any, storageEngine: any, name: any, id: any, key: any): VolatileCollection | VolatileBigCollection | VolatileSingleton;
     ensureBackingStore(): Promise<VolatileCollection>;
     abstract backingType(): Type;
+    fromLiteral({ version, model }: {
+        version: any;
+        model: any;
+    }): void;
 }
 declare class VolatileCollection extends VolatileStorageProvider implements CollectionStorageProvider {
     _model: CrdtCollectionModel;
@@ -60,7 +65,10 @@ declare class VolatileCollection extends VolatileStorageProvider implements Coll
         version: number;
         model: SerializedModelEntry[];
     }>;
-    private fromLiteral;
+    fromLiteral({ version, model }: {
+        version: any;
+        model: any;
+    }): void;
     _toList(): Promise<SerializedModelEntry[]>;
     toList(): Promise<ModelValue[]>;
     getMultiple(ids: string[]): Promise<ModelValue[]>;
@@ -92,7 +100,10 @@ declare class VolatileSingleton extends VolatileStorageProvider implements Singl
         version: number;
         model: SerializedModelEntry[];
     }>;
-    private fromLiteral;
+    fromLiteral({ version, model }: {
+        version: number;
+        model: SerializedModelEntry[];
+    }): void;
     traceInfo(): {
         stored: boolean;
     };
@@ -126,7 +137,10 @@ declare class VolatileBigCollection extends VolatileStorageProvider implements B
         version: number;
         model: any[];
     }>;
-    private fromLiteral;
+    fromLiteral({ version, model }: {
+        version: any;
+        model: any;
+    }): void;
     clearItemsForTesting(): void;
 }
 export {};

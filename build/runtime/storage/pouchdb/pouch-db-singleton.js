@@ -49,6 +49,7 @@ export class PouchDbSingleton extends PouchDbStorageProvider {
     }
     async cloneFrom(handle) {
         const literal = await handle.toLiteral();
+        await this.initialized;
         this.referenceMode = handle.referenceMode;
         if (handle.referenceMode && literal.model.length > 0) {
             // cloneFrom the backing store data by reading the model and writing it out.

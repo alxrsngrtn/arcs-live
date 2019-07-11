@@ -98,7 +98,7 @@ export declare abstract class StorageProviderBase implements Comparable<StorageP
     readonly id: string;
     originalId: string | null;
     name: string;
-    readonly source: string | null;
+    source: string | null;
     description: string;
     /** Trust tags claimed by this data store. */
     claims: ClaimIsTag[];

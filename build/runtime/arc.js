@@ -10,7 +10,7 @@
 import { assert } from '../platform/assert-web.js';
 import { FakePecFactory } from './fake-pec-factory.js';
 import { Id, IdGenerator, ArcId } from './id.js';
-import { Manifest, StorageStub } from './manifest.js';
+import { Manifest } from './manifest.js';
 import { ParticleExecutionHost } from './particle-execution-host.js';
 import { Handle } from './recipe/handle.js';
 import { Recipe } from './recipe/recipe.js';
@@ -304,11 +304,9 @@ ${this.activeRecipe.toString()}`;
             context,
             inspectorFactory
         });
-        await Promise.all(manifest.stores.map(async (store) => {
-            const tags = manifest.storeTags.get(store);
-            if (store instanceof StorageStub) {
-                store = await store.inflate();
-            }
+        await Promise.all(manifest.stores.map(async (storeStub) => {
+            const tags = manifest.storeTags.get(storeStub);
+            const store = await storeStub.inflate();
             arc._registerStore(store, tags);
         }));
         const recipe = manifest.activeRecipe.clone();
@@ -434,7 +432,8 @@ ${this.activeRecipe.toString()}`;
         // it should be done at planning stage.
         slots.forEach(slot => slot.id = slot.id || `slotid-${this.generateID().toString()}`);
         for (const recipeHandle of handles) {
-            if (['copy', 'create'].includes(recipeHandle.fate)) {
+            if (['copy', 'create'].includes(recipeHandle.fate) ||
+                ((recipeHandle.fate === 'map') && this.context.findStoreById(recipeHandle.id).isBackedByManifest())) {
                 let type = recipeHandle.type;
                 if (recipeHandle.fate === 'create') {
                     assert(type.maybeEnsureResolved(), `Can't assign resolved type to ${type}`);
@@ -452,19 +451,13 @@ ${this.activeRecipe.toString()}`;
                     // tslint:disable-next-line: no-any
                     await newStore.set(particleClone);
                 }
-                else if (recipeHandle.fate === 'copy') {
-                    const copiedStoreRef = this.findStoreById(recipeHandle.id);
-                    let copiedStore;
-                    if (copiedStoreRef instanceof StorageStub) {
-                        copiedStore = await copiedStoreRef.inflate();
-                    }
-                    else {
-                        copiedStore = copiedStoreRef;
-                    }
+                else if (['copy', 'map'].includes(recipeHandle.fate)) {
+                    const copiedStoreRef = this.context.findStoreById(recipeHandle.id);
+                    const copiedStore = await copiedStoreRef.inflate(this.storageProviderFactory);
                     assert(copiedStore, `Cannot find store ${recipeHandle.id}`);
                     assert(copiedStore.version !== null, `Copied store ${recipeHandle.id} doesn't have version.`);
                     await newStore.cloneFrom(copiedStore);
-                    this._tagStore(newStore, this.findStoreTags(copiedStore));
+                    this._tagStore(newStore, this.context.findStoreTags(copiedStoreRef));
                     const copiedStoreDesc = this.getStoreDescription(copiedStore);
                     if (copiedStoreDesc) {
                         this.storeDescriptions.set(newStore, copiedStoreDesc);
@@ -490,9 +483,9 @@ ${this.activeRecipe.toString()}`;
                 }
                 assert(storageKey, `couldn't find storage key for handle '${recipeHandle}'`);
                 const type = recipeHandle.type.resolvedType();
-                assert(type.isResolved(), `couldn't resolve type ${type.toString()}`);
+                assert(type.isResolved());
                 const store = await this.storageProviderFactory.connect(recipeHandle.id, type, storageKey);
-                assert(store, `store '${recipeHandle.id}' was not found`);
+                assert(store, `store '${recipeHandle.id}' was not found (${storageKey})`);
                 this._registerStore(store, recipeHandle.tags);
             }
         }
@@ -623,7 +616,7 @@ ${this.activeRecipe.toString()}`;
         if (this.storeTags.has(store)) {
             return this.storeTags.get(store);
         }
-        return new Set(this._context.findStoreTags(store));
+        return this._context.findStoreTags(store);
     }
     getStoreDescription(store) {
         assert(store, 'Cannot fetch description for nonexistent store');

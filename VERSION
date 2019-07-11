@@ -1,69 +1,31 @@
-commit 35526934d0d75ebff22b4725207f867ca8983a3d
-Author: Alex Rosengarten <alxr@google.com>
-Date:   Wed Jul 10 17:14:14 2019 -0700
+commit 3f582d4ee46a2e19c9c37927046f43bd81692945
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Wed Jul 10 20:41:51 2019 -0700
 
-    Kotin --> Wasm now supports services.  (#3307)
+    Use storage stub for volatile storage in manifest (#3151)
     
-    * Wasm: implement Services API
+    * use volatile storage stub in manifest
     
-    This limits request/response objects to key:value string pairs.
+    * cleanup
     
-    * documented build + run steps for kotlin wasm
+    * restrict manifest stores to storage-stubs only
     
-    * updating url in README
+    * use connectOrConstruct and constructKey methods
     
-    * updating url in README
+    * fix redundant asserts and ifs
     
-    * trying relative path
+    * test in arcs-tests for instantiating with proper fates
     
-    * rel 2 README
+    * fix lint
     
-    * specifically: gradlew build
+    * tiny tweaks: add missing } and find mapped store in context, and lint
     
-    * multi-particle support for interop
+    * fix merge
     
-    * updated render external
+    * fix merge
     
-    * kotlin interop -- passing in particle address
+    * Treat volatile 'map' stores same as 'copy'
     
-    * using cpp interface for render in kotlin
+    * fix copying/mapping referenceMode=false store
     
-    * requestRender --> renderSlot
-    
-    * fix build issues
-    
-    * fix readme typo
-    
-    * rm underscore, following jvm var naming convention
-    
-    * add service request + encode dict
-    
-    * decode dictionary + decode list
-    
-    * refactor populateModel + StringEncoder
-    - populateModel takes a dictionary now
-    - StringEncoder has a companion object for encoding dictionaries.
-    
-    * using kotlin collections
-    
-    * HashMap --> MutableMap
-    
-    * cpp particle distinct from kotlin
-    
-    * added init fn, populateModel is pure
-    
-    * Created service demo particle
-    
-    * added srvc response hook
-    
-    * updated manifest w/ service demo particle
-    
-    * fix: using parent class, not specific case
-    
-    * Cleaning up service particle
-    - fixed warnings
-    - cleaner syntax
-    - added some logs
-    - removed paren from tmpl
-    
-    * normal syntax
+    * address comment: rename method to isBackedByManifest

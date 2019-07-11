@@ -17490,6 +17490,16 @@ class VolatileStorage extends StorageBase {
         return provider;
     }
     async _construct(id, type, keyFragment) {
+        const key = this.constructKey(keyFragment);
+        // TODO(shanestephens): should pass in factory, not 'this' here.
+        const provider = VolatileStorageProvider.newProvider(type, this, undefined, id, key);
+        if (this._memoryMap[key] !== undefined) {
+            return null;
+        }
+        this._memoryMap[key] = provider;
+        return provider;
+    }
+    constructKey(keyFragment) {
         const key = new VolatileKey(keyFragment);
         if (key.arcId === undefined) {
             key.arcId = this.arcId.toString();
@@ -17497,13 +17507,7 @@ class VolatileStorage extends StorageBase {
         if (key.location === undefined) {
             key.location = 'volatile-' + this.localIDBase++;
         }
-        // TODO(shanestephens): should pass in factory, not 'this' here.
-        const provider = VolatileStorageProvider.newProvider(type, this, undefined, id, key.toString());
-        if (this._memoryMap[key.toString()] !== undefined) {
-            return null;
-        }
-        this._memoryMap[key.toString()] = provider;
-        return provider;
+        return key.toString();
     }
     async connect(id, type, key) {
         const imKey = new VolatileKey(key);
@@ -17577,6 +17581,7 @@ class VolatileStorageProvider extends StorageProviderBase {
         }
         return this.pendingBackingStore;
     }
+    fromLiteral({ version, model }) { }
 }
 class VolatileCollection extends VolatileStorageProvider {
     constructor(type, storageEngine, name, id, key) {
@@ -18159,6 +18164,69 @@ class SyntheticCollection extends StorageProviderBase {
 
 /**
  * @license
+ * Copyright 2019 Google LLC.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+/**
+ * A simmple Mutex to gate access to critical async code
+ * sections that should not execute concurrently.
+ *
+ * Sample usage:
+ *
+ * ```
+ *   class SampleClass {
+ *     private readonly mutex = new Mutex();
+ *
+ *     async instantiate() {
+ *       const release = await mutex.acquire();
+ *       try {
+ *         // Protected section with async execution.
+ *       } finally {
+ *         release();
+ *       }
+ *     }
+ *   }
+ */
+class Mutex {
+    constructor() {
+        this.next = Promise.resolve();
+        this.depth = 0; // tracks the number of blocked executions on this lock.
+    }
+    /**
+     * @return true if the mutex is already acquired.
+     */
+    get locked() {
+        return this.depth !== 0;
+    }
+    /**
+     * Call acquire and await it to lock the critical section for the Mutex.
+     *
+     * @return A Releaser which resolves to a function which releases the Mutex.
+     */
+    async acquire() {
+        let release;
+        const current = this.next.then(() => {
+            // external code is awaiting the result of acquire
+            this.depth++;
+            return () => {
+                // external code is calling the releaser
+                release();
+                this.depth--;
+            };
+        });
+        this.next = new Promise(resolve => {
+            release = resolve;
+        });
+        return current;
+    }
+}
+
+/**
+ * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
  * This code may only be used under the BSD style license found at
  * http://polymer.github.io/LICENSE.txt
@@ -18176,6 +18244,7 @@ const providers = {
 class StorageProviderFactory {
     constructor(arcId) {
         this.arcId = arcId;
+        this.mutexMap = new Map();
         this._storageInstances = {};
         Object.keys(providers).forEach(name => {
             const { storage, isPersistent } = providers[name];
@@ -18209,13 +18278,25 @@ class StorageProviderFactory {
         // TODO(shans): don't use reference mode once adapters are implemented
         return await this._storageForKey(key).connect(id, type, key);
     }
+    async _acquireMutexForKey(key) {
+        if (!this.mutexMap.has(key)) {
+            this.mutexMap.set(key, new Mutex());
+        }
+        return this.mutexMap.get(key).acquire();
+    }
     async connectOrConstruct(id, type, key) {
         const storage = this._storageForKey(key);
-        let result = await storage.connect(id, type, key);
-        if (result == null) {
-            result = await storage.construct(id, type, key);
+        const release = await this._acquireMutexForKey(key);
+        try {
+            let result = await storage.connect(id, type, key);
+            if (result == null) {
+                result = await storage.construct(id, type, key);
+            }
+            return result;
         }
-        return result;
+        finally {
+            release();
+        }
     }
     async baseStorageFor(type, keyString) {
         return await this._storageForKey(keyString).baseStorageFor(type, keyString);
@@ -18254,8 +18335,9 @@ class ManifestError extends Error {
 // TODO(shans): Make sure that after refactor Storage objects have a lifecycle and can be directly used
 // deflated rather than requiring this stub.
 class StorageStub {
-    constructor(type, id, name, storageKey, storageProviderFactory, originalId, claims) {
-        this.referenceMode = false;
+    constructor(type, id, name, storageKey, storageProviderFactory, originalId, 
+    /** Trust tags claimed by this data store. */
+    claims, description, version, source, referenceMode = false, model) {
         this.type = type;
         this.id = id;
         this.name = name;
@@ -18263,18 +18345,33 @@ class StorageStub {
         this.storageProviderFactory = storageProviderFactory;
         this.originalId = originalId;
         this.claims = claims;
+        this.description = description;
+        this.version = version;
+        this.source = source;
+        this.referenceMode = referenceMode;
+        this.model = model;
     }
-    get version() {
-        return undefined; // Fake to match StorageProviderBase.
-    }
-    async inflate() {
-        const store = await this.storageProviderFactory.connect(this.id, this.type, this.storageKey);
+    async inflate(storageProviderFactory) {
+        const factory = storageProviderFactory || this.storageProviderFactory;
+        const store = this.isBackedByManifest()
+            ? await factory.construct(this.id, this.type, this.storageKey)
+            : await factory.connect(this.id, this.type, this.storageKey);
         assert(store != null, 'inflating missing storageKey ' + this.storageKey);
         store.originalId = this.originalId;
+        store.referenceMode = this.referenceMode;
+        store.name = this.name;
+        store.source = this.source;
+        store.description = this.description;
+        if (this.isBackedByManifest()) {
+            await store.fromLiteral({ version: this.version, model: this.model });
+        }
         return store;
     }
     toLiteral() {
         return undefined; // Fake to match StorageProviderBase;
+    }
+    isBackedByManifest() {
+        return (this.version !== undefined && !!this.model);
     }
     toString(handleTags) {
         const results = [];
@@ -18287,8 +18384,20 @@ class StorageStub {
         if (this.id) {
             handleStr.push(`'${this.id}'`);
         }
+        if (this.originalId) {
+            handleStr.push(`!!${this.originalId}`);
+        }
+        if (this.version !== undefined) {
+            handleStr.push(`@${this.version}`);
+        }
         if (handleTags && handleTags.length) {
             handleStr.push(`${handleTags.join(' ')}`);
+        }
+        if (this.source) {
+            handleStr.push(`in '${this.source}'`);
+        }
+        else if (this.storageKey) {
+            handleStr.push(`at '${this.storageKey}'`);
         }
         // TODO(shans): there's a 'this.source' in StorageProviderBase which is sometimes
         // serialized here too - could it ever be part of StorageStub?
@@ -18441,20 +18550,18 @@ class Manifest {
     // TODO: newParticle, Schema, etc.
     // TODO: simplify() / isValid().
     async createStore(type, name, id, tags, claims, storageKey) {
-        const store = await this.storageProviderFactory.construct(id, type, storageKey || `volatile://${this.id}`);
-        assert(store.version !== null);
-        store.name = name;
-        store.claims = claims || [];
-        this.storeManifestUrls.set(store.id, this.fileName);
-        return this._addStore(store, tags);
+        return this.newStorageStub(type, name, id, storageKey, tags, null, claims);
     }
     _addStore(store, tags) {
         this._stores.push(store);
         this.storeTags.set(store, tags ? tags : []);
         return store;
     }
-    newStorageStub(type, name, id, storageKey, tags, originalId, claims) {
-        return this._addStore(new StorageStub(type, id, name, storageKey, this.storageProviderFactory, originalId, claims), tags);
+    newStorageStub(type, name, id, storageKey, tags, originalId, claims, description, version, source, referenceMode, model) {
+        if (source) {
+            this.storeManifestUrls.set(id, this.fileName);
+        }
+        return this._addStore(new StorageStub(type, id, name, storageKey, this.storageProviderFactory, originalId, claims, description, version, source, referenceMode, model), tags);
     }
     _find(manifestFinder) {
         let result = manifestFinder(this);
@@ -18501,7 +18608,7 @@ class Manifest {
         return this._find(manifest => manifest._stores.find(store => store.id === id));
     }
     findStoreTags(store) {
-        return this._find(manifest => manifest.storeTags.get(store));
+        return new Set(this._find(manifest => manifest.storeTags.get(store)));
     }
     findManifestUrlForHandleId(id) {
         return this._find(manifest => manifest.storeManifestUrls.get(id));
@@ -19268,8 +19375,7 @@ ${e.message}
         // Instead of creating links to remote firebase during manifest parsing,
         // we generate storage stubs that contain the relevant information.
         if (item.origin === 'storage') {
-            manifest.newStorageStub(type, name, id, item.source, tags, originalId, claims);
-            return;
+            return manifest.newStorageStub(type, name, id, item.source, tags, originalId, claims, item.description, item.version);
         }
         let json;
         let source;
@@ -19296,7 +19402,8 @@ ${e.message}
             throw new ManifestError(item.location, `Error parsing JSON from '${source}' (${e.message})'`);
         }
         // TODO: clean this up
-        let unitType;
+        let unitType = null;
+        let referenceMode = true;
         if (type instanceof CollectionType) {
             unitType = type.collectionType;
         }
@@ -19305,13 +19412,14 @@ ${e.message}
         }
         else {
             if (entities.length === 0) {
-                await Manifest._createStore(manifest, type, name, id, tags, item, originalId, claims);
-                return;
+                referenceMode = false;
             }
-            entities = entities.slice(entities.length - 1);
-            unitType = type;
+            else {
+                entities = entities.slice(entities.length - 1);
+                unitType = type;
+            }
         }
-        if (unitType instanceof EntityType) {
+        if (unitType && unitType instanceof EntityType) {
             let hasSerializedId = false;
             entities = entities.map(entity => {
                 if (entity == null) {
@@ -19332,8 +19440,6 @@ ${e.message}
                 id = `${id}:${entityHash}`;
             }
         }
-        const version = item.version || 0;
-        const store = await Manifest._createStore(manifest, type, name, id, tags, item, originalId, claims);
         // While the referenceMode hack exists, we need to look at the entities being stored to
         // determine whether this store should be in referenceMode or not.
         // TODO(shans): Eventually the actual type will need to be part of the determination too.
@@ -19345,7 +19451,7 @@ ${e.message}
             entities = entities.map(({ id, rawData }) => ({ id, storageKey }));
         }
         else if (entities.length > 0) {
-            store.referenceMode = false;
+            referenceMode = false;
         }
         // For this store to be able to be treated as a CRDT, each item needs a key.
         // Using id as key seems safe, nothing else should do this.
@@ -19363,17 +19469,9 @@ ${e.message}
         else {
             model = entities.map(value => ({ id: value.id, value }));
         }
-        // TODO(lindner): fromLiteral is not declared in the StorageProviderBase/StorageStub interface
-        // tslint:disable-next-line: no-any
-        await store.fromLiteral({ version, model });
-    }
-    static async _createStore(manifest, type, name, id, tags, item, originalId, claims) {
-        const store = await manifest.createStore(type, name, id, tags, claims);
-        // TODO(lindner): Property 'source' does not exist on type 'StorageStub | StorageProviderBase'.
-        store['source'] = item.source;
-        store.description = item.description;
-        store.originalId = originalId;
-        return store;
+        const version = item.version || 0;
+        const storageKey = manifest.storageProviderFactory._storageForKey('volatile').constructKey('volatile');
+        return manifest.newStorageStub(type, name, id, storageKey, tags, originalId, claims, item.description, version, item.source, referenceMode, model);
     }
     _newRecipe(name) {
         const recipe = new Recipe(name);
@@ -23607,11 +23705,13 @@ class PECOuterPortImpl extends PECOuterPort {
             const missingHandles = [];
             for (const handle of recipe0.handles) {
                 const fromHandle = this.arc.findStoreById(handle.id) || manifest.findStoreById(handle.id);
-                if (!fromHandle) {
+                if (fromHandle) {
+                    handle.mapToStorage(fromHandle);
+                }
+                else {
                     missingHandles.push(handle);
                     continue;
                 }
-                handle.mapToStorage(fromHandle);
             }
             if (missingHandles.length > 0) {
                 let recipeToResolve = recipe0;
@@ -23634,14 +23734,14 @@ class PECOuterPortImpl extends PECOuterPort {
                     if (recipe0.isResolved()) {
                         // TODO: pass tags through too, and reconcile with similar logic
                         // in Arc.deserialize.
-                        manifest.stores.forEach(async (store) => {
+                        for (const store of manifest.stores) {
                             if (store instanceof StorageStub) {
                                 this.arc._registerStore(await store.inflate(), []);
                             }
                             else {
                                 this.arc._registerStore(store, []);
                             }
-                        });
+                        }
                         // TODO: Awaiting this promise causes tests to fail...
                         floatingPromiseToAudit(arc.instantiate(recipe0));
                     }
@@ -23669,69 +23769,6 @@ class PECOuterPortImpl extends PECOuterPort {
     async onServiceRequest(particle, request, callback) {
         const response = await Services.request(request);
         this.SimpleCallback(callback, response);
-    }
-}
-
-/**
- * @license
- * Copyright 2019 Google LLC.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-/**
- * A simmple Mutex to gate access to critical async code
- * sections that should not execute concurrently.
- *
- * Sample usage:
- *
- * ```
- *   class SampleClass {
- *     private readonly mutex = new Mutex();
- *
- *     async instantiate() {
- *       const release = await mutex.acquire();
- *       try {
- *         // Protected section with async execution.
- *       } finally {
- *         release();
- *       }
- *     }
- *   }
- */
-class Mutex {
-    constructor() {
-        this.next = Promise.resolve();
-        this.depth = 0; // tracks the number of blocked executions on this lock.
-    }
-    /**
-     * @return true if the mutex is already acquired.
-     */
-    get locked() {
-        return this.depth !== 0;
-    }
-    /**
-     * Call acquire and await it to lock the critical section for the Mutex.
-     *
-     * @return A Releaser which resolves to a function which releases the Mutex.
-     */
-    async acquire() {
-        let release;
-        const current = this.next.then(() => {
-            // external code is awaiting the result of acquire
-            this.depth++;
-            return () => {
-                // external code is calling the releaser
-                release();
-                this.depth--;
-            };
-        });
-        this.next = new Promise(resolve => {
-            release = resolve;
-        });
-        return current;
     }
 }
 
@@ -24029,11 +24066,9 @@ ${this.activeRecipe.toString()}`;
             context,
             inspectorFactory
         });
-        await Promise.all(manifest.stores.map(async (store) => {
-            const tags = manifest.storeTags.get(store);
-            if (store instanceof StorageStub) {
-                store = await store.inflate();
-            }
+        await Promise.all(manifest.stores.map(async (storeStub) => {
+            const tags = manifest.storeTags.get(storeStub);
+            const store = await storeStub.inflate();
             arc._registerStore(store, tags);
         }));
         const recipe = manifest.activeRecipe.clone();
@@ -24159,7 +24194,8 @@ ${this.activeRecipe.toString()}`;
         // it should be done at planning stage.
         slots.forEach(slot => slot.id = slot.id || `slotid-${this.generateID().toString()}`);
         for (const recipeHandle of handles) {
-            if (['copy', 'create'].includes(recipeHandle.fate)) {
+            if (['copy', 'create'].includes(recipeHandle.fate) ||
+                ((recipeHandle.fate === 'map') && this.context.findStoreById(recipeHandle.id).isBackedByManifest())) {
                 let type = recipeHandle.type;
                 if (recipeHandle.fate === 'create') {
                     assert(type.maybeEnsureResolved(), `Can't assign resolved type to ${type}`);
@@ -24177,19 +24213,13 @@ ${this.activeRecipe.toString()}`;
                     // tslint:disable-next-line: no-any
                     await newStore.set(particleClone);
                 }
-                else if (recipeHandle.fate === 'copy') {
-                    const copiedStoreRef = this.findStoreById(recipeHandle.id);
-                    let copiedStore;
-                    if (copiedStoreRef instanceof StorageStub) {
-                        copiedStore = await copiedStoreRef.inflate();
-                    }
-                    else {
-                        copiedStore = copiedStoreRef;
-                    }
+                else if (['copy', 'map'].includes(recipeHandle.fate)) {
+                    const copiedStoreRef = this.context.findStoreById(recipeHandle.id);
+                    const copiedStore = await copiedStoreRef.inflate(this.storageProviderFactory);
                     assert(copiedStore, `Cannot find store ${recipeHandle.id}`);
                     assert(copiedStore.version !== null, `Copied store ${recipeHandle.id} doesn't have version.`);
                     await newStore.cloneFrom(copiedStore);
-                    this._tagStore(newStore, this.findStoreTags(copiedStore));
+                    this._tagStore(newStore, this.context.findStoreTags(copiedStoreRef));
                     const copiedStoreDesc = this.getStoreDescription(copiedStore);
                     if (copiedStoreDesc) {
                         this.storeDescriptions.set(newStore, copiedStoreDesc);
@@ -24215,9 +24245,9 @@ ${this.activeRecipe.toString()}`;
                 }
                 assert(storageKey, `couldn't find storage key for handle '${recipeHandle}'`);
                 const type = recipeHandle.type.resolvedType();
-                assert(type.isResolved(), `couldn't resolve type ${type.toString()}`);
+                assert(type.isResolved());
                 const store = await this.storageProviderFactory.connect(recipeHandle.id, type, storageKey);
-                assert(store, `store '${recipeHandle.id}' was not found`);
+                assert(store, `store '${recipeHandle.id}' was not found (${storageKey})`);
                 this._registerStore(store, recipeHandle.tags);
             }
         }
@@ -24348,7 +24378,7 @@ ${this.activeRecipe.toString()}`;
         if (this.storeTags.has(store)) {
             return this.storeTags.get(store);
         }
-        return new Set(this._context.findStoreTags(store));
+        return this._context.findStoreTags(store);
     }
     getStoreDescription(store) {
         assert(store, 'Cannot fetch description for nonexistent store');

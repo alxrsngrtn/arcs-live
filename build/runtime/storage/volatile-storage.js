@@ -79,6 +79,16 @@ export class VolatileStorage extends StorageBase {
         return provider;
     }
     async _construct(id, type, keyFragment) {
+        const key = this.constructKey(keyFragment);
+        // TODO(shanestephens): should pass in factory, not 'this' here.
+        const provider = VolatileStorageProvider.newProvider(type, this, undefined, id, key);
+        if (this._memoryMap[key] !== undefined) {
+            return null;
+        }
+        this._memoryMap[key] = provider;
+        return provider;
+    }
+    constructKey(keyFragment) {
         const key = new VolatileKey(keyFragment);
         if (key.arcId === undefined) {
             key.arcId = this.arcId.toString();
@@ -86,13 +96,7 @@ export class VolatileStorage extends StorageBase {
         if (key.location === undefined) {
             key.location = 'volatile-' + this.localIDBase++;
         }
-        // TODO(shanestephens): should pass in factory, not 'this' here.
-        const provider = VolatileStorageProvider.newProvider(type, this, undefined, id, key.toString());
-        if (this._memoryMap[key.toString()] !== undefined) {
-            return null;
-        }
-        this._memoryMap[key.toString()] = provider;
-        return provider;
+        return key.toString();
     }
     async connect(id, type, key) {
         const imKey = new VolatileKey(key);
@@ -136,7 +140,7 @@ export class VolatileStorage extends StorageBase {
         return key;
     }
 }
-class VolatileStorageProvider extends StorageProviderBase {
+export class VolatileStorageProvider extends StorageProviderBase {
     constructor() {
         super(...arguments);
         this.backingStore = null;
@@ -166,6 +170,7 @@ class VolatileStorageProvider extends StorageProviderBase {
         }
         return this.pendingBackingStore;
     }
+    fromLiteral({ version, model }) { }
 }
 class VolatileCollection extends VolatileStorageProvider {
     constructor(type, storageEngine, name, id, key) {

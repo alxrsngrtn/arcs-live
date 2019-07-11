@@ -26,20 +26,25 @@ export declare class ManifestError extends Error {
     constructor(location: AstNode.SourceLocation, message: string);
 }
 export declare class StorageStub {
-    type: Type;
-    id: string;
-    name: string;
-    storageKey: string;
-    storageProviderFactory: StorageProviderFactory;
-    referenceMode: boolean;
-    originalId: string;
-    description: string;
+    readonly type: Type;
+    readonly id: string;
+    readonly name: string;
+    readonly storageKey: string;
+    readonly storageProviderFactory: StorageProviderFactory;
+    readonly originalId: string;
     /** Trust tags claimed by this data store. */
-    claims: ClaimIsTag[];
-    constructor(type: Type, id: string, name: string, storageKey: string, storageProviderFactory: StorageProviderFactory, originalId: string, claims: ClaimIsTag[]);
-    readonly version: number;
-    inflate(): Promise<StorageProviderBase>;
+    readonly claims: ClaimIsTag[];
+    readonly description: string;
+    readonly version?: number;
+    readonly source?: string;
+    readonly referenceMode: boolean;
+    readonly model?: {}[];
+    constructor(type: Type, id: string, name: string, storageKey: string, storageProviderFactory: StorageProviderFactory, originalId: string, 
+    /** Trust tags claimed by this data store. */
+    claims: ClaimIsTag[], description: string, version?: number, source?: string, referenceMode?: boolean, model?: {}[]);
+    inflate(storageProviderFactory?: StorageProviderFactory): Promise<StorageProviderBase>;
     toLiteral(): any;
+    isBackedByManifest(): boolean;
     toString(handleTags: string[]): string;
     _compareTo(other: StorageProviderBase): number;
 }
@@ -62,7 +67,7 @@ export declare class Manifest {
     private _schemas;
     private _stores;
     private _interfaces;
-    storeTags: Map<StorageProviderBase | StorageStub, string[]>;
+    storeTags: Map<StorageStub, string[]>;
     private _fileName;
     private readonly _id;
     private readonly _idGenerator;
@@ -84,8 +89,8 @@ export declare class Manifest {
     readonly imports: Manifest[];
     readonly schemas: Dictionary<Schema>;
     readonly fileName: string;
-    readonly stores: (StorageStub | StorageProviderBase)[];
-    readonly allStores: (StorageStub | StorageProviderBase)[];
+    readonly stores: StorageStub[];
+    readonly allStores: StorageStub[];
     readonly interfaces: InterfaceInfo[];
     readonly meta: ManifestMeta;
     readonly resources: {};
@@ -96,22 +101,22 @@ export declare class Manifest {
         value: string;
     }[]): void;
     createStore(type: Type, name: string, id: string, tags: string[], claims?: ClaimIsTag[], storageKey?: string): Promise<StorageProviderBase | StorageStub>;
-    _addStore(store: StorageProviderBase | StorageStub, tags: string[]): StorageProviderBase | StorageStub;
-    newStorageStub(type: Type, name: string, id: string, storageKey: string, tags: string[], originalId: string, claims: ClaimIsTag[]): StorageProviderBase | StorageStub;
+    _addStore(store: StorageStub, tags: string[]): StorageStub;
+    newStorageStub(type: Type, name: string, id: string, storageKey: string, tags: string[], originalId: string, claims: ClaimIsTag[], description?: string, version?: number, source?: string, referenceMode?: boolean, model?: {}[]): StorageStub;
     _find<a>(manifestFinder: ManifestFinder<a>): a;
     _findAll<a>(manifestFinder: ManifestFinderGenerator<a>): IterableIterator<a>;
     findSchemaByName(name: string): Schema;
     findTypeByName(name: string): EntityType | InterfaceType | undefined;
     findParticleByName(name: string): ParticleSpec;
     findParticlesByVerb(verb: string): ParticleSpec[];
-    findStoreByName(name: string): StorageStub | StorageProviderBase;
-    findStoreById(id: string): StorageStub | StorageProviderBase;
-    findStoreTags(store: StorageProviderBase | StorageStub): string[];
+    findStoreByName(name: string): StorageStub;
+    findStoreById(id: string): StorageStub;
+    findStoreTags(store: StorageStub): Set<string>;
     findManifestUrlForHandleId(id: string): string;
     findStoresByType(type: Type, options?: {
         tags: string[];
         subtype: boolean;
-    }): (StorageProviderBase | StorageStub)[];
+    }): StorageStub[];
     findInterfaceByName(name: string): InterfaceInfo;
     findRecipesByVerb(verb: string): Recipe[];
     generateID(): Id;
@@ -130,7 +135,6 @@ export declare class Manifest {
         iface?: InterfaceInfo;
     } | null;
     private static _processStore;
-    private static _createStore;
     private _newRecipe;
     toString(options?: {
         recursive?: boolean;

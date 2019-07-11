@@ -12,7 +12,6 @@ import path from 'path';
 import JSZip from 'jszip';
 import { Loader } from '../runtime/loader.js';
 import { Manifest } from '../runtime/manifest.js';
-import { StorageProviderBase } from '../runtime/storage/storage-provider-base.js';
 /**
  * @param entryPoints array of paths to Arc manifests to bundle, e.g. ['./feature/awesome.recipes']
  * @param bundleName path to the output bundle, e.g. './awesome.zip'
@@ -89,7 +88,7 @@ function collectDependencies(manifest, dependencies) {
         dependencies.add(particle.implFile);
     }
     for (const store of manifest.stores) {
-        if (store instanceof StorageProviderBase && store.source) {
+        if (store.source) {
             dependencies.add(store.source);
         }
     }

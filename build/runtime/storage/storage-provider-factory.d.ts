@@ -18,12 +18,14 @@ export declare class StorageProviderFactory {
         isPersistent: boolean;
     }): void;
     private _storageInstances;
+    private readonly mutexMap;
     constructor(arcId: Id);
     private getInstance;
     _storageForKey(key: string): StorageBase;
     isPersistent(key: any): boolean;
     construct(id: string, type: Type, keyFragment: string): Promise<StorageProviderBase>;
     connect(id: string, type: Type, key: string): Promise<StorageProviderBase>;
+    private _acquireMutexForKey;
     connectOrConstruct(id: string, type: Type, key: string): Promise<StorageProviderBase>;
     baseStorageFor(type: Type, keyString: string): Promise<StorageProviderBase>;
     baseStorageKey(type: Type, keyString: string): string;

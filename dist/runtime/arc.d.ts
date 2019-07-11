@@ -136,7 +136,7 @@ export declare class Arc {
         tags: string[];
     }): StorageProviderBase[];
     findStoreById(id: string): StorageProviderBase | StorageStub;
-    findStoreTags(store: StorageProviderBase): Set<string>;
+    findStoreTags(store: StorageProviderBase | StorageStub): Set<string>;
     getStoreDescription(store: StorageProviderBase): string;
     getVersionByStore({ includeArc, includeContext }: {
         includeArc?: boolean;

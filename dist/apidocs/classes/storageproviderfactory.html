@@ -89,11 +89,13 @@
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="storageproviderfactory.html#_storageinstances" class="tsd-kind-icon">_storage<wbr>Instances</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="storageproviderfactory.html#arcid" class="tsd-kind-icon">arc<wbr>Id</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="storageproviderfactory.html#mutexmap" class="tsd-kind-icon">mutex<wbr>Map</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
 							<h3>Methods</h3>
 							<ul class="tsd-index-list">
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="storageproviderfactory.html#_acquiremutexforkey" class="tsd-kind-icon">_acquire<wbr>Mutex<wbr>For<wbr>Key</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="storageproviderfactory.html#_storageforkey" class="tsd-kind-icon">_storage<wbr>For<wbr>Key</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="storageproviderfactory.html#basestoragefor" class="tsd-kind-icon">base<wbr>Storage<wbr>For</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="storageproviderfactory.html#basestoragekey" class="tsd-kind-icon">base<wbr>Storage<wbr>Key</a></li>
@@ -123,7 +125,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/3552693/src/runtime/storage/storage-provider-factory.ts#L33">src/runtime/storage/storage-provider-factory.ts:33</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/3f582d4/src/runtime/storage/storage-provider-factory.ts#L36">src/runtime/storage/storage-provider-factory.ts:36</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -145,7 +147,7 @@
 					<div class="tsd-signature tsd-kind-icon">_storage<wbr>Instances<span class="tsd-signature-symbol">:</span> <a href="../interfaces/dictionary.html" class="tsd-signature-type">Dictionary</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">object</span><span class="tsd-signature-symbol">&gt;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/3552693/src/runtime/storage/storage-provider-factory.ts#L33">src/runtime/storage/storage-provider-factory.ts:33</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/3f582d4/src/runtime/storage/storage-provider-factory.ts#L34">src/runtime/storage/storage-provider-factory.ts:34</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -155,13 +157,46 @@
 					<div class="tsd-signature tsd-kind-icon">arc<wbr>Id<span class="tsd-signature-symbol">:</span> <a href="id.html" class="tsd-signature-type">Id</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/3552693/src/runtime/storage/storage-provider-factory.ts#L35">src/runtime/storage/storage-provider-factory.ts:35</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/3f582d4/src/runtime/storage/storage-provider-factory.ts#L38">src/runtime/storage/storage-provider-factory.ts:38</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private">
+					<a name="mutexmap" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> mutex<wbr>Map</h3>
+					<div class="tsd-signature tsd-kind-icon">mutex<wbr>Map<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Map</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">, </span><a href="mutex.html" class="tsd-signature-type">Mutex</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> =&nbsp;new Map&lt;string, Mutex&gt;()</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/3f582d4/src/runtime/storage/storage-provider-factory.ts#L36">src/runtime/storage/storage-provider-factory.ts:36</a></li>
 						</ul>
 					</aside>
 				</section>
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Methods</h2>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-private">
+					<a name="_acquiremutexforkey" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> _acquire<wbr>Mutex<wbr>For<wbr>Key</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private">
+						<li class="tsd-signature tsd-kind-icon">_acquire<wbr>Mutex<wbr>For<wbr>Key<span class="tsd-signature-symbol">(</span>key<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/releaser.html" class="tsd-signature-type">Releaser</a><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/3f582d4/src/runtime/storage/storage-provider-factory.ts#L75">src/runtime/storage/storage-provider-factory.ts:75</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>key: <span class="tsd-signature-type">string</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/releaser.html" class="tsd-signature-type">Releaser</a><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
 					<a name="_storageforkey" class="tsd-anchor"></a>
 					<h3>_storage<wbr>For<wbr>Key</h3>
@@ -172,7 +207,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/3552693/src/runtime/storage/storage-provider-factory.ts#L51">src/runtime/storage/storage-provider-factory.ts:51</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/3f582d4/src/runtime/storage/storage-provider-factory.ts#L54">src/runtime/storage/storage-provider-factory.ts:54</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -195,7 +230,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/3552693/src/runtime/storage/storage-provider-factory.ts#L81">src/runtime/storage/storage-provider-factory.ts:81</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/3f582d4/src/runtime/storage/storage-provider-factory.ts#L96">src/runtime/storage/storage-provider-factory.ts:96</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -221,7 +256,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/3552693/src/runtime/storage/storage-provider-factory.ts#L85">src/runtime/storage/storage-provider-factory.ts:85</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/3f582d4/src/runtime/storage/storage-provider-factory.ts#L100">src/runtime/storage/storage-provider-factory.ts:100</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -247,7 +282,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/3552693/src/runtime/storage/storage-provider-factory.ts#L67">src/runtime/storage/storage-provider-factory.ts:67</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/3f582d4/src/runtime/storage/storage-provider-factory.ts#L70">src/runtime/storage/storage-provider-factory.ts:70</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -276,7 +311,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/3552693/src/runtime/storage/storage-provider-factory.ts#L72">src/runtime/storage/storage-provider-factory.ts:72</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/3f582d4/src/runtime/storage/storage-provider-factory.ts#L82">src/runtime/storage/storage-provider-factory.ts:82</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -305,7 +340,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/3552693/src/runtime/storage/storage-provider-factory.ts#L62">src/runtime/storage/storage-provider-factory.ts:62</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/3f582d4/src/runtime/storage/storage-provider-factory.ts#L65">src/runtime/storage/storage-provider-factory.ts:65</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -334,7 +369,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/3552693/src/runtime/storage/storage-provider-factory.ts#L43">src/runtime/storage/storage-provider-factory.ts:43</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/3f582d4/src/runtime/storage/storage-provider-factory.ts#L46">src/runtime/storage/storage-provider-factory.ts:46</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -365,7 +400,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/3552693/src/runtime/storage/storage-provider-factory.ts#L58">src/runtime/storage/storage-provider-factory.ts:58</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/3f582d4/src/runtime/storage/storage-provider-factory.ts#L61">src/runtime/storage/storage-provider-factory.ts:61</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -388,7 +423,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/3552693/src/runtime/storage/storage-provider-factory.ts#L93">src/runtime/storage/storage-provider-factory.ts:93</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/3f582d4/src/runtime/storage/storage-provider-factory.ts#L108">src/runtime/storage/storage-provider-factory.ts:108</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -414,7 +449,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/3552693/src/runtime/storage/storage-provider-factory.ts#L89">src/runtime/storage/storage-provider-factory.ts:89</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/3f582d4/src/runtime/storage/storage-provider-factory.ts#L104">src/runtime/storage/storage-provider-factory.ts:104</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -437,7 +472,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/3552693/src/runtime/storage/storage-provider-factory.ts#L98">src/runtime/storage/storage-provider-factory.ts:98</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/3f582d4/src/runtime/storage/storage-provider-factory.ts#L113">src/runtime/storage/storage-provider-factory.ts:113</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -454,7 +489,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/3552693/src/runtime/storage/storage-provider-factory.ts#L29">src/runtime/storage/storage-provider-factory.ts:29</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/3f582d4/src/runtime/storage/storage-provider-factory.ts#L30">src/runtime/storage/storage-provider-factory.ts:30</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -503,6 +538,12 @@
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
 								<a href="storageproviderfactory.html#arcid" class="tsd-kind-icon">arc<wbr>Id</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
+								<a href="storageproviderfactory.html#mutexmap" class="tsd-kind-icon">mutex<wbr>Map</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-private">
+								<a href="storageproviderfactory.html#_acquiremutexforkey" class="tsd-kind-icon">_acquire<wbr>Mutex<wbr>For<wbr>Key</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="storageproviderfactory.html#_storageforkey" class="tsd-kind-icon">_storage<wbr>For<wbr>Key</a>

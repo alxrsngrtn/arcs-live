@@ -34,8 +34,9 @@ export class ManifestError extends Error {
 // TODO(shans): Make sure that after refactor Storage objects have a lifecycle and can be directly used
 // deflated rather than requiring this stub.
 export class StorageStub {
-    constructor(type, id, name, storageKey, storageProviderFactory, originalId, claims) {
-        this.referenceMode = false;
+    constructor(type, id, name, storageKey, storageProviderFactory, originalId, 
+    /** Trust tags claimed by this data store. */
+    claims, description, version, source, referenceMode = false, model) {
         this.type = type;
         this.id = id;
         this.name = name;
@@ -43,18 +44,33 @@ export class StorageStub {
         this.storageProviderFactory = storageProviderFactory;
         this.originalId = originalId;
         this.claims = claims;
+        this.description = description;
+        this.version = version;
+        this.source = source;
+        this.referenceMode = referenceMode;
+        this.model = model;
     }
-    get version() {
-        return undefined; // Fake to match StorageProviderBase.
-    }
-    async inflate() {
-        const store = await this.storageProviderFactory.connect(this.id, this.type, this.storageKey);
+    async inflate(storageProviderFactory) {
+        const factory = storageProviderFactory || this.storageProviderFactory;
+        const store = this.isBackedByManifest()
+            ? await factory.construct(this.id, this.type, this.storageKey)
+            : await factory.connect(this.id, this.type, this.storageKey);
         assert(store != null, 'inflating missing storageKey ' + this.storageKey);
         store.originalId = this.originalId;
+        store.referenceMode = this.referenceMode;
+        store.name = this.name;
+        store.source = this.source;
+        store.description = this.description;
+        if (this.isBackedByManifest()) {
+            await store.fromLiteral({ version: this.version, model: this.model });
+        }
         return store;
     }
     toLiteral() {
         return undefined; // Fake to match StorageProviderBase;
+    }
+    isBackedByManifest() {
+        return (this.version !== undefined && !!this.model);
     }
     toString(handleTags) {
         const results = [];
@@ -67,8 +83,20 @@ export class StorageStub {
         if (this.id) {
             handleStr.push(`'${this.id}'`);
         }
+        if (this.originalId) {
+            handleStr.push(`!!${this.originalId}`);
+        }
+        if (this.version !== undefined) {
+            handleStr.push(`@${this.version}`);
+        }
         if (handleTags && handleTags.length) {
             handleStr.push(`${handleTags.join(' ')}`);
+        }
+        if (this.source) {
+            handleStr.push(`in '${this.source}'`);
+        }
+        else if (this.storageKey) {
+            handleStr.push(`at '${this.storageKey}'`);
         }
         // TODO(shans): there's a 'this.source' in StorageProviderBase which is sometimes
         // serialized here too - could it ever be part of StorageStub?
@@ -221,20 +249,18 @@ export class Manifest {
     // TODO: newParticle, Schema, etc.
     // TODO: simplify() / isValid().
     async createStore(type, name, id, tags, claims, storageKey) {
-        const store = await this.storageProviderFactory.construct(id, type, storageKey || `volatile://${this.id}`);
-        assert(store.version !== null);
-        store.name = name;
-        store.claims = claims || [];
-        this.storeManifestUrls.set(store.id, this.fileName);
-        return this._addStore(store, tags);
+        return this.newStorageStub(type, name, id, storageKey, tags, null, claims);
     }
     _addStore(store, tags) {
         this._stores.push(store);
         this.storeTags.set(store, tags ? tags : []);
         return store;
     }
-    newStorageStub(type, name, id, storageKey, tags, originalId, claims) {
-        return this._addStore(new StorageStub(type, id, name, storageKey, this.storageProviderFactory, originalId, claims), tags);
+    newStorageStub(type, name, id, storageKey, tags, originalId, claims, description, version, source, referenceMode, model) {
+        if (source) {
+            this.storeManifestUrls.set(id, this.fileName);
+        }
+        return this._addStore(new StorageStub(type, id, name, storageKey, this.storageProviderFactory, originalId, claims, description, version, source, referenceMode, model), tags);
     }
     _find(manifestFinder) {
         let result = manifestFinder(this);
@@ -281,7 +307,7 @@ export class Manifest {
         return this._find(manifest => manifest._stores.find(store => store.id === id));
     }
     findStoreTags(store) {
-        return this._find(manifest => manifest.storeTags.get(store));
+        return new Set(this._find(manifest => manifest.storeTags.get(store)));
     }
     findManifestUrlForHandleId(id) {
         return this._find(manifest => manifest.storeManifestUrls.get(id));
@@ -1048,8 +1074,7 @@ ${e.message}
         // Instead of creating links to remote firebase during manifest parsing,
         // we generate storage stubs that contain the relevant information.
         if (item.origin === 'storage') {
-            manifest.newStorageStub(type, name, id, item.source, tags, originalId, claims);
-            return;
+            return manifest.newStorageStub(type, name, id, item.source, tags, originalId, claims, item.description, item.version);
         }
         let json;
         let source;
@@ -1076,7 +1101,8 @@ ${e.message}
             throw new ManifestError(item.location, `Error parsing JSON from '${source}' (${e.message})'`);
         }
         // TODO: clean this up
-        let unitType;
+        let unitType = null;
+        let referenceMode = true;
         if (type instanceof CollectionType) {
             unitType = type.collectionType;
         }
@@ -1085,13 +1111,14 @@ ${e.message}
         }
         else {
             if (entities.length === 0) {
-                await Manifest._createStore(manifest, type, name, id, tags, item, originalId, claims);
-                return;
+                referenceMode = false;
             }
-            entities = entities.slice(entities.length - 1);
-            unitType = type;
+            else {
+                entities = entities.slice(entities.length - 1);
+                unitType = type;
+            }
         }
-        if (unitType instanceof EntityType) {
+        if (unitType && unitType instanceof EntityType) {
             let hasSerializedId = false;
             entities = entities.map(entity => {
                 if (entity == null) {
@@ -1112,8 +1139,6 @@ ${e.message}
                 id = `${id}:${entityHash}`;
             }
         }
-        const version = item.version || 0;
-        const store = await Manifest._createStore(manifest, type, name, id, tags, item, originalId, claims);
         // While the referenceMode hack exists, we need to look at the entities being stored to
         // determine whether this store should be in referenceMode or not.
         // TODO(shans): Eventually the actual type will need to be part of the determination too.
@@ -1125,7 +1150,7 @@ ${e.message}
             entities = entities.map(({ id, rawData }) => ({ id, storageKey }));
         }
         else if (entities.length > 0) {
-            store.referenceMode = false;
+            referenceMode = false;
         }
         // For this store to be able to be treated as a CRDT, each item needs a key.
         // Using id as key seems safe, nothing else should do this.
@@ -1143,17 +1168,9 @@ ${e.message}
         else {
             model = entities.map(value => ({ id: value.id, value }));
         }
-        // TODO(lindner): fromLiteral is not declared in the StorageProviderBase/StorageStub interface
-        // tslint:disable-next-line: no-any
-        await store.fromLiteral({ version, model });
-    }
-    static async _createStore(manifest, type, name, id, tags, item, originalId, claims) {
-        const store = await manifest.createStore(type, name, id, tags, claims);
-        // TODO(lindner): Property 'source' does not exist on type 'StorageStub | StorageProviderBase'.
-        store['source'] = item.source;
-        store.description = item.description;
-        store.originalId = originalId;
-        return store;
+        const version = item.version || 0;
+        const storageKey = manifest.storageProviderFactory._storageForKey('volatile').constructKey('volatile');
+        return manifest.newStorageStub(type, name, id, storageKey, tags, originalId, claims, item.description, version, item.source, referenceMode, model);
     }
     _newRecipe(name) {
         const recipe = new Recipe(name);
