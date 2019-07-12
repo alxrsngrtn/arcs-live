@@ -20,6 +20,6 @@ export declare class SuggestDomConsumer extends SlotDomConsumer {
     readonly templatePrefix: string;
     formatContent(content: Content): Content | undefined;
     onContainerUpdate(container: any, originalContainer: any): void;
-    static _extractContent(suggestion: Suggestion): {};
+    static _extractContent(suggestion: Suggestion): import("./plan/suggestion.js").DescriptionProperties;
     static render(arc: Arc, container: any, suggestion: Suggestion): SlotDomConsumer;
 }

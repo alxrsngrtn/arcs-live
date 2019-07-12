@@ -7,6 +7,7 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
+import { Suggestion } from '../plan/suggestion.js';
 import { Planner } from '../planner.js';
 import { RecipeIndex } from '../recipe-index.js';
 import { Speculator } from '../speculator.js';
@@ -14,6 +15,8 @@ import { assert } from '../../platform/chai-web.js';
 import { InterfaceType } from '../../runtime/type.js';
 import { TestHelper } from '../../runtime/testing/test-helper.js';
 import { devtoolsPlannerInspectorFactory } from '../../devtools-connector/devtools-planner-inspector.js';
+export class TestSuggestion extends Suggestion {
+}
 /**
  * Helper class to recipe instantiation and replanning.
  * Usage example:
@@ -100,7 +103,7 @@ export class PlanningTestHelper extends TestHelper {
                     suggestions = suggestions.filter(p => {
                         return options.hostedParticles.every(hosted => {
                             const interfaceHandles = p.plan.handles.filter(h => h.type instanceof InterfaceType);
-                            return interfaceHandles.find(handle => this.arc.findStoreById(handle.id)._stored.name === hosted);
+                            return interfaceHandles.find(handle => this.arc.findStoreById(handle.id)._stored.name === hosted) !== undefined;
                         });
                     });
                 }

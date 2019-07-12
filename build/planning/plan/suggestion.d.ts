@@ -10,6 +10,7 @@
 import { Arc } from '../../runtime/arc.js';
 import { DescriptionFormatter } from '../../runtime/description-formatter.js';
 import { Description } from '../../runtime/description.js';
+import { Dictionary } from '../../runtime/hot.js';
 import { Loader } from '../../runtime/loader.js';
 import { Manifest } from '../../runtime/manifest.js';
 import { Modality } from '../../runtime/modality.js';
@@ -17,6 +18,11 @@ import { Recipe } from '../../runtime/recipe/recipe.js';
 import { Search } from '../../runtime/recipe/search.js';
 import { Relevance } from '../../runtime/relevance.js';
 import { SuggestFilter } from './suggest-filter.js';
+export declare type DescriptionProperties = {
+    text?: string;
+    template?: string;
+    model?: Dictionary<string | number>;
+};
 /**
  * options for the fromLiteral() method.
  */
@@ -26,7 +32,7 @@ export declare type FromLiteralOptions = {
     rank: number;
     versionByStore?: string;
     searchGroups?: string[][];
-    descriptionByModality?: {};
+    descriptionByModality?: Dictionary<DescriptionProperties>;
 };
 export declare type EnvOptions = {
     context: Manifest;
@@ -47,7 +53,7 @@ export declare class Suggestion {
     static create(plan: Recipe, hash: string, relevance?: Relevance): Suggestion;
     constructor(plan: Recipe, hash: string, rank: number, versionByStore: {});
     readonly descriptionText: string;
-    getDescription(modality: string): string | {};
+    getDescription(modality: string): DescriptionProperties;
     setDescription(description: Description, modality: Modality, descriptionFormatter?: typeof DescriptionFormatter): void;
     isEquivalent(other: Suggestion): boolean;
     isEqual(other: Suggestion): boolean;

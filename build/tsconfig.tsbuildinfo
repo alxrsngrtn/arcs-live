@@ -590,8 +590,8 @@
         "signature": "09e339afdbd224f2a7cf55896c3d190be97c9223bdaeececaa7ea7c1972c432e"
       },
       "/home/travis/build/PolymerLabs/arcs/src/planning/plan/suggestion.ts": {
-        "version": "05a2567518461d7a9ff5d2b5f08e9d45bce2b00b740dcc2cd40c3815a6f8476b",
-        "signature": "a9a00e29bf6956f290604b898a05dc469bdb45d6c622e0d53bab9f3b26eadb6a"
+        "version": "d8e0bf7168fd41e937502c25382f6fa447151d4a0334a61a6a12180635d1e42a",
+        "signature": "51eb22f8bbbf6febec347af27933b3ffd94b0dc50ddbcaa27cd657da47297a7d"
       },
       "/home/travis/build/PolymerLabs/arcs/src/planning/plan/planning-result.ts": {
         "version": "74016079f10c0d9aeb962ced5508f3261bd56be7a497f460fbf287f9c809d879",
@@ -615,7 +615,7 @@
       },
       "/home/travis/build/PolymerLabs/arcs/src/planning/suggest-dom-consumer.ts": {
         "version": "7ec8f4161003b055aefa7774123bee5beea338063b6ec665fac1aa544b29d129",
-        "signature": "a757469bc24970a22c93d181a522cbfc7e4924f23df54049391e0e62024ee712"
+        "signature": "84770ff59b1325020a506dfca05debefb3efbef1f476e480f7a398e9617359b2"
       },
       "/home/travis/build/PolymerLabs/arcs/src/planning/headless-suggest-dom-consumer.ts": {
         "version": "fd36f7d8756d0eb7404fb4f6c90fb0a73d199864b2a986658de78da4602be26f",
@@ -794,8 +794,8 @@
         "signature": "6bfad1f3753847fb6865817f5c0ae615477d6963dee8912eb77f2c170ecf4113"
       },
       "/home/travis/build/PolymerLabs/arcs/src/planning/testing/planning-test-helper.ts": {
-        "version": "722bad3e1c09ded5f14c86e48c2078e916ca1ca6357ae07d668142d04f430f22",
-        "signature": "8c4c6fa7633da4e904976fe952a0677898e86650671ebe69b373c2b846d8e56e"
+        "version": "114d862fef3da3e4b9bf6461a1fac6ff511778610a4569092650bbfa9bf8aa29",
+        "signature": "f3ea307bbc9acf5f20f39d3c51e478776218c04c8de67ec72948130081508c72"
       },
       "/home/travis/build/PolymerLabs/arcs/src/planning/test/suggestion-composer-tests.ts": {
         "version": "d207a505a4d201dc1383e1742c3af9c4966628a762c6ad67961cc80b58d128fc",
@@ -2457,7 +2457,7 @@
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "/home/travis/build/PolymerLabs/arcs/src/tests/recipe-descriptions-test.ts": {
-        "version": "03d47e35fe282d7cc38e60d3c5073b27454b8bb9613e2a09c7eafa55d8795a76",
+        "version": "7f758224379cb2726ba15feee78ac257340c67af9d2cba10b3f3d31b01d9f16e",
         "signature": "8bc1d39a3b8ec61064f9969316a088e314895e7ffd094468dcc0b238f33cb4a6"
       },
       "/home/travis/build/PolymerLabs/arcs/src/tests/slot-composer-tests.ts": {
@@ -3882,6 +3882,7 @@
         "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/description-formatter.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/description.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/hot.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/loader.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/manifest.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/modality.ts",
@@ -4454,6 +4455,8 @@
         "/home/travis/build/PolymerLabs/arcs/src/planning/speculator.ts",
         "/home/travis/build/PolymerLabs/arcs/src/platform/chai-web.d.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/manifest.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/recipe.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/relevance.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/type.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/testing/test-helper.ts",
         "/home/travis/build/PolymerLabs/arcs/src/devtools-connector/devtools-planner-inspector.ts",
@@ -8742,6 +8745,7 @@
         "/home/travis/build/PolymerLabs/arcs/src/runtime/hot.ts"
       ],
       "/home/travis/build/PolymerLabs/arcs/src/planning/plan/suggestion.ts": [
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/hot.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/manifest.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/loader.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/recipe.ts",
@@ -8982,9 +8986,11 @@
         "/home/travis/build/PolymerLabs/arcs/src/runtime/manifest.ts"
       ],
       "/home/travis/build/PolymerLabs/arcs/src/planning/testing/planning-test-helper.ts": [
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/relevance.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/planning/plan/suggestion.ts",
         "/home/travis/build/PolymerLabs/arcs/src/planning/recipe-index.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/manifest.ts",
-        "/home/travis/build/PolymerLabs/arcs/src/planning/plan/suggestion.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/recipe.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/testing/test-helper.ts"
       ],
       "/home/travis/build/PolymerLabs/arcs/node_modules/@types/debug/index.d.ts": [
@@ -21078,7 +21084,7 @@
         [
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/planning/plan/suggestion.ts",
-            "start": 2274,
+            "start": 2472,
             "length": 11,
             "code": 2345,
             "category": 1,
@@ -21095,12 +21101,12 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/planning/plan/suggestion.ts",
-            "start": 7077,
+            "start": 7295,
             "length": 32,
             "code": 2322,
             "category": 1,
             "messageText": {
-              "messageText": "Type '{} | undefined' is not assignable to type '{}'.",
+              "messageText": "Type 'Dictionary<DescriptionProperties> | undefined' is not assignable to type '{}'.",
               "category": 1,
               "code": 2322,
               "next": {
@@ -21112,7 +21118,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/planning/plan/suggestion.ts",
-            "start": 7788,
+            "start": 8006,
             "length": 41,
             "code": 2322,
             "category": 1,
@@ -21129,7 +21135,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/planning/plan/suggestion.ts",
-            "start": 8040,
+            "start": 8258,
             "length": 9,
             "messageText": "Type 'null' cannot be used as an index type.",
             "category": 1,
@@ -21137,7 +21143,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/planning/plan/suggestion.ts",
-            "start": 8075,
+            "start": 8293,
             "length": 9,
             "messageText": "Type 'null' cannot be used as an index type.",
             "category": 1,
@@ -23538,11 +23544,44 @@
         [
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/planning/testing/planning-test-helper.ts",
-            "start": 5143,
+            "start": 4035,
+            "length": 27,
+            "messageText": "Object is possibly 'undefined'.",
+            "category": 1,
+            "code": 2532
+          },
+          {
+            "file": "/home/travis/build/PolymerLabs/arcs/src/planning/testing/planning-test-helper.ts",
+            "start": 5303,
             "length": 23,
             "messageText": "Object is possibly 'undefined'.",
             "category": 1,
             "code": 2532
+          },
+          {
+            "file": "/home/travis/build/PolymerLabs/arcs/src/planning/testing/planning-test-helper.ts",
+            "start": 5742,
+            "length": 10,
+            "code": 2322,
+            "category": 1,
+            "messageText": {
+              "messageText": "Type 'TestSuggestion | undefined' is not assignable to type 'Suggestion'.",
+              "category": 1,
+              "code": 2322,
+              "next": {
+                "messageText": "Type 'undefined' is not assignable to type 'Suggestion'.",
+                "category": 1,
+                "code": 2322
+              }
+            }
+          },
+          {
+            "file": "/home/travis/build/PolymerLabs/arcs/src/planning/testing/planning-test-helper.ts",
+            "start": 5853,
+            "length": 10,
+            "messageText": "Variable 'suggestion' is used before being assigned.",
+            "category": 1,
+            "code": 2454
           }
         ]
       ],

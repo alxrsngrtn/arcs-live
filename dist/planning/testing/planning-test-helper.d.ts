@@ -10,13 +10,18 @@
 import { Suggestion } from '../plan/suggestion.js';
 import { RecipeIndex } from '../recipe-index.js';
 import { Manifest } from '../../runtime/manifest.js';
+import { Recipe } from '../../runtime/recipe/recipe.js';
+import { Relevance } from '../../runtime/relevance.js';
 import { TestHelperOptions, TestHelper } from '../../runtime/testing/test-helper.js';
 declare type TestHelperPlanOptions = TestHelperOptions & {
     expectedNumPlans?: number;
-    expectedSuggestions?: any;
+    expectedSuggestions?: string[];
     includeInnerArcs?: boolean;
     verify?: any;
 };
+export declare class TestSuggestion extends Suggestion {
+    relevance?: Relevance;
+}
 /**
  * Helper class to recipe instantiation and replanning.
  * Usage example:
@@ -25,7 +30,7 @@ declare type TestHelperPlanOptions = TestHelperOptions & {
  *   await helper.verifyData('MyParticle1', 'myHandle1', async (handle) => { ... });
  */
 export declare class PlanningTestHelper extends TestHelper {
-    suggestions: any;
+    suggestions: TestSuggestion[];
     recipeIndex: RecipeIndex;
     static create(options?: TestHelperPlanOptions): Promise<PlanningTestHelper>;
     /**
@@ -50,11 +55,11 @@ export declare class PlanningTestHelper extends TestHelper {
         particles?: string[];
         descriptionText?: string;
     }): Promise<void>;
-    findSuggestionByParticleNames(particlesNames: string[]): any;
+    findSuggestionByParticleNames(particlesNames: string[]): Suggestion[];
     instantiateSuggestion(suggestion: Suggestion): Promise<void>;
     /**
      * Getter for a single available suggestion plan (fails, if there is more than one).
      */
-    readonly plan: any;
+    readonly plan: Recipe;
 }
 export {};
