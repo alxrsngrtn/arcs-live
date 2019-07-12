@@ -1311,22 +1311,23 @@ class ParticleSpec {
     toManifestString() {
         return this.toString();
     }
-    validateTrustClaims(claims) {
-        const results = new Map();
-        if (claims) {
-            claims.forEach(claim => {
-                const handle = this.handleConnectionMap.get(claim.handle);
+    validateTrustClaims(statements) {
+        const results = [];
+        if (statements) {
+            statements.forEach(statement => {
+                const handle = this.handleConnectionMap.get(statement.handle);
                 if (!handle) {
-                    throw new Error(`Can't make a claim on unknown handle ${claim.handle}.`);
+                    throw new Error(`Can't make a claim on unknown handle ${statement.handle}.`);
                 }
                 if (!handle.isOutput) {
-                    throw new Error(`Can't make a claim on handle ${claim.handle} (not an output handle).`);
+                    throw new Error(`Can't make a claim on handle ${statement.handle} (not an output handle).`);
                 }
-                if (handle.claim) {
-                    throw new Error(`Can't make multiple claims on the same output (${claim.handle}).`);
+                if (handle.claims) {
+                    throw new Error(`Can't make multiple claims on the same output (${statement.handle}).`);
                 }
-                handle.claim = Object(_particle_claim_js__WEBPACK_IMPORTED_MODULE_5__["createClaim"])(handle, claim, this.handleConnectionMap);
-                results.set(claim.handle, handle.claim);
+                const particleClaim = Object(_particle_claim_js__WEBPACK_IMPORTED_MODULE_5__["createParticleClaim"])(handle, statement, this.handleConnectionMap);
+                handle.claims = particleClaim.claims;
+                results.push(particleClaim);
             });
         }
         return results;
@@ -4612,10 +4613,10 @@ function createCheck(checkTarget, astNode, handleConnectionMap) {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ClaimType", function() { return ClaimType; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Claim", function() { return Claim; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ParticleClaim", function() { return ParticleClaim; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ClaimIsTag", function() { return ClaimIsTag; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ClaimDerivesFrom", function() { return ClaimDerivesFrom; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createClaim", function() { return createClaim; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createParticleClaim", function() { return createParticleClaim; });
 /**
  * @license
  * Copyright 2019 Google LLC.
@@ -4631,13 +4632,15 @@ var ClaimType;
     ClaimType["IsTag"] = "is-tag";
     ClaimType["DerivesFrom"] = "derives-from";
 })(ClaimType || (ClaimType = {}));
-class Claim {
-    constructor(handle, expression) {
+/** A list of claims made by a particle on a specific handle. */
+class ParticleClaim {
+    constructor(handle, claims) {
         this.handle = handle;
-        this.expression = expression;
+        this.claims = claims;
     }
     toManifestString() {
-        return `claim ${this.handle.name} ${this.expression.toManifestString()}`;
+        const manifestStrings = this.claims.map(claim => claim.toManifestString());
+        return `claim ${this.handle.name} ${manifestStrings.join(' and ')}`;
     }
 }
 class ClaimIsTag {
@@ -4654,38 +4657,34 @@ class ClaimIsTag {
     }
 }
 class ClaimDerivesFrom {
-    constructor(parentHandles) {
-        this.parentHandles = parentHandles;
+    constructor(parentHandle) {
+        this.parentHandle = parentHandle;
         this.type = ClaimType.DerivesFrom;
     }
     static fromASTNode(astNode, handleConnectionMap) {
         // Convert handle names into HandleConnectionSpec objects.
-        const parentHandles = astNode.parentHandles.map(parentHandleName => {
-            const parentHandle = handleConnectionMap.get(parentHandleName);
-            if (!parentHandle) {
-                throw new Error(`Unknown "derives from" handle name: ${parentHandle}.`);
-            }
-            return parentHandle;
-        });
-        return new ClaimDerivesFrom(parentHandles);
+        const parentHandle = handleConnectionMap.get(astNode.parentHandle);
+        if (!parentHandle) {
+            throw new Error(`Unknown "derives from" handle name: ${parentHandle}.`);
+        }
+        return new ClaimDerivesFrom(parentHandle);
     }
     toManifestString() {
-        return `derives from ${this.parentHandles.map(h => h.name).join(' and ')}`;
+        return `derives from ${this.parentHandle.name}`;
     }
 }
-function createClaim(handle, astNode, handleConnectionMap) {
-    let expression;
-    switch (astNode.expression.claimType) {
-        case ClaimType.IsTag:
-            expression = ClaimIsTag.fromASTNode(astNode.expression);
-            break;
-        case ClaimType.DerivesFrom:
-            expression = ClaimDerivesFrom.fromASTNode(astNode.expression, handleConnectionMap);
-            break;
-        default:
-            throw new Error('Unknown claim type.');
-    }
-    return new Claim(handle, expression);
+function createParticleClaim(handle, astNode, handleConnectionMap) {
+    const claims = astNode.expression.map(claimNode => {
+        switch (claimNode.claimType) {
+            case ClaimType.IsTag:
+                return ClaimIsTag.fromASTNode(claimNode);
+            case ClaimType.DerivesFrom:
+                return ClaimDerivesFrom.fromASTNode(claimNode, handleConnectionMap);
+            default:
+                throw new Error('Unknown claim type.');
+        }
+    });
+    return new ParticleClaim(handle, claims);
 }
 //# sourceMappingURL=particle-claim.js.map
 

@@ -37,14 +37,17 @@ export class ParticleNode extends Node {
      */
     inEdgesFromOutEdge(outEdge) {
         assert(this.outEdges.includes(outEdge), 'Particle does not have the given out-edge.');
-        if (outEdge.claim && outEdge.claim.type === ClaimType.DerivesFrom) {
-            const result = [];
-            for (const parentHandle of outEdge.claim.parentHandles) {
-                const inEdge = this.inEdgesByName.get(parentHandle.name);
-                assert(!!inEdge, `Claim derives from unknown handle: ${parentHandle}.`);
-                result.push(inEdge);
+        if (outEdge.claims) {
+            const derivesClaims = outEdge.claims.filter(claim => claim.type === ClaimType.DerivesFrom);
+            if (derivesClaims.length) {
+                const result = [];
+                for (const claim of derivesClaims) {
+                    const inEdge = this.inEdgesByName.get(claim.parentHandle.name);
+                    assert(!!inEdge, `Claim derives from unknown handle: ${claim.parentHandle}.`);
+                    result.push(inEdge);
+                }
+                return result;
             }
-            return result;
         }
         return this.inEdges;
     }
@@ -57,7 +60,7 @@ export class ParticleInput {
         this.label = `${particleNode.name}.${this.connectionName}`;
         this.connectionSpec = connection.spec;
         this.check = connection.spec.check;
-        this.claim = connection.handle.claim;
+        this.claims = connection.handle.claims;
     }
 }
 export class ParticleOutput {
@@ -67,8 +70,8 @@ export class ParticleOutput {
         this.connectionName = connection.name;
         this.connectionSpec = connection.spec;
         this.label = `${particleNode.name}.${this.connectionName}`;
-        const claim = particleNode.claims.get(this.connectionName);
-        this.claim = claim ? claim.expression : null;
+        const claim = particleNode.claims.find(claim => this.connectionName === claim.handle.name);
+        this.claims = claim ? claim.claims : null;
     }
 }
 /** Creates a new node for every given particle. */

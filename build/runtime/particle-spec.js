@@ -12,7 +12,7 @@ import { Modality } from './modality.js';
 import { TypeChecker } from './recipe/type-checker.js';
 import { InterfaceType, SlotType, Type } from './type.js';
 import { createCheck } from './particle-check.js';
-import { createClaim } from './particle-claim.js';
+import { createParticleClaim } from './particle-claim.js';
 function asType(t) {
     return (t instanceof Type) ? t : Type.fromLiteral(t);
 }
@@ -299,22 +299,23 @@ export class ParticleSpec {
     toManifestString() {
         return this.toString();
     }
-    validateTrustClaims(claims) {
-        const results = new Map();
-        if (claims) {
-            claims.forEach(claim => {
-                const handle = this.handleConnectionMap.get(claim.handle);
+    validateTrustClaims(statements) {
+        const results = [];
+        if (statements) {
+            statements.forEach(statement => {
+                const handle = this.handleConnectionMap.get(statement.handle);
                 if (!handle) {
-                    throw new Error(`Can't make a claim on unknown handle ${claim.handle}.`);
+                    throw new Error(`Can't make a claim on unknown handle ${statement.handle}.`);
                 }
                 if (!handle.isOutput) {
-                    throw new Error(`Can't make a claim on handle ${claim.handle} (not an output handle).`);
+                    throw new Error(`Can't make a claim on handle ${statement.handle} (not an output handle).`);
                 }
-                if (handle.claim) {
-                    throw new Error(`Can't make multiple claims on the same output (${claim.handle}).`);
+                if (handle.claims) {
+                    throw new Error(`Can't make multiple claims on the same output (${statement.handle}).`);
                 }
-                handle.claim = createClaim(handle, claim, this.handleConnectionMap);
-                results.set(claim.handle, handle.claim);
+                const particleClaim = createParticleClaim(handle, statement, this.handleConnectionMap);
+                handle.claims = particleClaim.claims;
+                results.push(particleClaim);
             });
         }
         return results;

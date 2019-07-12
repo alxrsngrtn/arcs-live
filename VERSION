@@ -1,9 +1,10 @@
-commit 30d34a39f5ec294177bb31773f05f4f181197a33
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Thu Jul 11 10:05:13 2019 -0700
+commit 17eb0316cda341c5129a1a4b6d040dd3b45cbeff
+Author: raulverag <42563960+raulverag@users.noreply.github.com>
+Date:   Fri Jul 12 13:52:14 2019 +1000
 
-    declare java crdt interfaces and classes (#3312)
+    Implement multiple tag claims (syntax only) (#3313)
     
-    * declare java crdt interfaces and classes
+    The intention was syntax only, and there aren't any tests for multiple claims,
+    but they might be done. Next PR will add more tests.
     
-    * remove redundant super() call
+    Multiple derived-from claims were modified too.

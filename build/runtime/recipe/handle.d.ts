@@ -13,7 +13,7 @@ import { HandleConnection } from './handle-connection.js';
 import { Recipe, CloneMap, RecipeComponent, IsResolvedOptions, IsValidOptions, ToStringOptions, VariableMap } from './recipe.js';
 import { Comparable } from './comparable.js';
 import { Fate } from '../manifest-ast-nodes.js';
-import { ClaimIsTag, ClaimExpression } from '../particle-claim.js';
+import { ClaimIsTag, Claim } from '../particle-claim.js';
 export declare class Handle implements Comparable<Handle> {
     private readonly _recipe;
     private _id;
@@ -28,7 +28,7 @@ export declare class Handle implements Comparable<Handle> {
     private _storageKey;
     private _pattern;
     private _immediateValue;
-    claim: ClaimExpression | undefined;
+    claims: Claim[] | undefined;
     constructor(recipe: Recipe);
     _copyInto(recipe: Recipe, cloneMap: CloneMap, variableMap: VariableMap): Handle;
     mergeInto(handle: Handle): void;

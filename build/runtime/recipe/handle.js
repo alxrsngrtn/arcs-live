@@ -30,7 +30,7 @@ export class Handle {
         // Value assigned in the immediate mode, E.g. hostedParticle = ShowProduct
         // Currently only supports ParticleSpec.
         this._immediateValue = undefined;
-        this.claim = undefined;
+        this.claims = undefined;
         assert(recipe);
         this._recipe = recipe;
     }
@@ -147,13 +147,7 @@ export class Handle {
         this._type = undefined;
         this._mappedType = storage.type;
         this._storageKey = storage.storageKey;
-        if (storage.claims) {
-            // TODO: Support multiple tag claims.
-            assert(storage.claims.length <= 1, 'Multiple tag claims is not supported yet.');
-            if (storage.claims.length === 1) {
-                this.claim = storage.claims[0];
-            }
-        }
+        this.claims = storage.claims;
     }
     get localName() { return this._localName; }
     set localName(name) { this._localName = name; }

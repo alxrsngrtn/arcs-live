@@ -8,7 +8,7 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { Node, Edge } from './graph-internals.js';
-import { Claim, ClaimExpression } from '../../runtime/particle-claim.js';
+import { Claim, ParticleClaim } from '../../runtime/particle-claim.js';
 import { Check } from '../../runtime/particle-check.js';
 import { Particle } from '../../runtime/recipe/particle.js';
 import { HandleConnectionSpec } from '../../runtime/particle-spec.js';
@@ -17,7 +17,7 @@ export declare class ParticleNode extends Node {
     readonly inEdgesByName: Map<string, ParticleInput>;
     readonly outEdgesByName: Map<string, Edge>;
     readonly name: string;
-    readonly claims: Map<string, Claim>;
+    readonly claims: ParticleClaim[];
     readonly checks: Check[];
     constructor(particle: Particle);
     addInEdge(edge: ParticleInput): void;
@@ -37,7 +37,7 @@ export declare class ParticleInput implements Edge {
     readonly connectionName: string;
     readonly connectionSpec: HandleConnectionSpec;
     readonly check?: Check;
-    readonly claim?: ClaimExpression;
+    readonly claims?: Claim[];
     constructor(particleNode: ParticleNode, otherEnd: Node, connection: HandleConnection);
 }
 export declare class ParticleOutput implements Edge {
@@ -46,7 +46,7 @@ export declare class ParticleOutput implements Edge {
     readonly label: string;
     readonly connectionName: string;
     readonly connectionSpec: HandleConnectionSpec;
-    readonly claim?: ClaimExpression;
+    readonly claims?: Claim[];
     constructor(particleNode: ParticleNode, otherEnd: Node, connection: HandleConnection);
 }
 /** Creates a new node for every given particle. */

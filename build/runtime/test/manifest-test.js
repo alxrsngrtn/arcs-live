@@ -1887,13 +1887,13 @@ resource SomeName
             assert.lengthOf(manifest.particles, 1);
             const particle = manifest.particles[0];
             assert.isEmpty(particle.trustChecks);
-            assert.equal(particle.trustClaims.size, 2);
-            const claim1 = particle.trustClaims.get('output1');
-            assert.equal(claim1.handle.name, 'output1');
-            assert.equal(claim1.expression.tag, 'property1');
-            const claim2 = particle.trustClaims.get('output2');
-            assert.equal(claim2.handle.name, 'output2');
-            assert.equal(claim2.expression.tag, 'property2');
+            assert.lengthOf(particle.trustClaims, 2);
+            const claim1 = particle.trustClaims.find(claim => claim.handle.name === 'output1');
+            assert.isNotNull(claim1);
+            assert.equal(claim1.claims[0].tag, 'property1');
+            const claim2 = particle.trustClaims.find(claim => claim.handle.name === 'output2');
+            assert.isNotNull(claim2);
+            assert.equal(claim2.claims[0].tag, 'property2');
         });
         it('supports "is not" tag claims', async () => {
             const manifest = await Manifest.parse(`
@@ -1905,11 +1905,11 @@ resource SomeName
             assert.lengthOf(manifest.particles, 1);
             const particle = manifest.particles[0];
             assert.isEmpty(particle.trustChecks);
-            assert.equal(particle.trustClaims.size, 1);
-            const claim1 = particle.trustClaims.get('output1');
-            assert.equal(claim1.handle.name, 'output1');
-            assert.equal(claim1.expression.isNot, true);
-            assert.equal(claim1.expression.tag, 'property1');
+            assert.equal(particle.trustClaims.length, 1);
+            const claim1 = particle.trustClaims.find(claim => claim.handle.name === 'output1');
+            assert.isNotNull(claim1);
+            assert.equal(claim1.claims[0].isNot, true);
+            assert.equal(claim1.claims[0].tag, 'property1');
         });
         it('supports "derives from" claims with multiple parents', async () => {
             const manifest = await Manifest.parse(`
@@ -1922,10 +1922,10 @@ resource SomeName
             assert.lengthOf(manifest.particles, 1);
             const particle = manifest.particles[0];
             assert.isEmpty(particle.trustChecks);
-            assert.equal(particle.trustClaims.size, 1);
-            const claim = particle.trustClaims.get('output');
-            assert.equal(claim.handle.name, 'output');
-            assert.sameMembers(claim.expression.parentHandles.map(h => h.name), ['input1', 'input2']);
+            assert.equal(particle.trustClaims.length, 1);
+            const claim = particle.trustClaims.find(claim => claim.handle.name === 'output');
+            assert.isNotNull(claim);
+            assert.sameMembers(claim.claims.map(claim => claim.parentHandle.name), ['input1', 'input2']);
         });
         it('supports multiple check statements', async () => {
             const manifest = await Manifest.parse(`
@@ -2080,7 +2080,7 @@ resource SomeName
   out T {} output2
   out T {} output3
   claim output1 is trusted
-  claim output2 derives from input2
+  claim output2 derives from input2 and derives from input2
   claim output3 is not dangerous
   check input1 is trusted or is from handle input2
   check input2 is extraTrusted

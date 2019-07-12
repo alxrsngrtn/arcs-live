@@ -13,13 +13,15 @@ export var ClaimType;
     ClaimType["IsTag"] = "is-tag";
     ClaimType["DerivesFrom"] = "derives-from";
 })(ClaimType || (ClaimType = {}));
-export class Claim {
-    constructor(handle, expression) {
+/** A list of claims made by a particle on a specific handle. */
+export class ParticleClaim {
+    constructor(handle, claims) {
         this.handle = handle;
-        this.expression = expression;
+        this.claims = claims;
     }
     toManifestString() {
-        return `claim ${this.handle.name} ${this.expression.toManifestString()}`;
+        const manifestStrings = this.claims.map(claim => claim.toManifestString());
+        return `claim ${this.handle.name} ${manifestStrings.join(' and ')}`;
     }
 }
 export class ClaimIsTag {
@@ -36,37 +38,33 @@ export class ClaimIsTag {
     }
 }
 export class ClaimDerivesFrom {
-    constructor(parentHandles) {
-        this.parentHandles = parentHandles;
+    constructor(parentHandle) {
+        this.parentHandle = parentHandle;
         this.type = ClaimType.DerivesFrom;
     }
     static fromASTNode(astNode, handleConnectionMap) {
         // Convert handle names into HandleConnectionSpec objects.
-        const parentHandles = astNode.parentHandles.map(parentHandleName => {
-            const parentHandle = handleConnectionMap.get(parentHandleName);
-            if (!parentHandle) {
-                throw new Error(`Unknown "derives from" handle name: ${parentHandle}.`);
-            }
-            return parentHandle;
-        });
-        return new ClaimDerivesFrom(parentHandles);
+        const parentHandle = handleConnectionMap.get(astNode.parentHandle);
+        if (!parentHandle) {
+            throw new Error(`Unknown "derives from" handle name: ${parentHandle}.`);
+        }
+        return new ClaimDerivesFrom(parentHandle);
     }
     toManifestString() {
-        return `derives from ${this.parentHandles.map(h => h.name).join(' and ')}`;
+        return `derives from ${this.parentHandle.name}`;
     }
 }
-export function createClaim(handle, astNode, handleConnectionMap) {
-    let expression;
-    switch (astNode.expression.claimType) {
-        case ClaimType.IsTag:
-            expression = ClaimIsTag.fromASTNode(astNode.expression);
-            break;
-        case ClaimType.DerivesFrom:
-            expression = ClaimDerivesFrom.fromASTNode(astNode.expression, handleConnectionMap);
-            break;
-        default:
-            throw new Error('Unknown claim type.');
-    }
-    return new Claim(handle, expression);
+export function createParticleClaim(handle, astNode, handleConnectionMap) {
+    const claims = astNode.expression.map(claimNode => {
+        switch (claimNode.claimType) {
+            case ClaimType.IsTag:
+                return ClaimIsTag.fromASTNode(claimNode);
+            case ClaimType.DerivesFrom:
+                return ClaimDerivesFrom.fromASTNode(claimNode, handleConnectionMap);
+            default:
+                throw new Error('Unknown claim type.');
+        }
+    });
+    return new ParticleClaim(handle, claims);
 }
 //# sourceMappingURL=particle-claim.js.map

@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>Claim | arcs</title>
+	<title>ParticleClaim | arcs</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -56,21 +56,28 @@
 					<a href="../globals.html">Globals</a>
 				</li>
 				<li>
-					<a href="claim.html">Claim</a>
+					<a href="particleclaim.html">ParticleClaim</a>
 				</li>
 			</ul>
-			<h1>Class Claim</h1>
+			<h1>Class ParticleClaim</h1>
 		</div>
 	</div>
 </header>
 <div class="container container-main">
 	<div class="row">
 		<div class="col-8 col-content">
+			<section class="tsd-panel tsd-comment">
+				<div class="tsd-comment tsd-typography">
+					<div class="lead">
+						<p>A list of claims made by a particle on a specific handle.</p>
+					</div>
+				</div>
+			</section>
 			<section class="tsd-panel tsd-hierarchy">
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<span class="target">Claim</span>
+						<span class="target">ParticleClaim</span>
 					</li>
 				</ul>
 			</section>
@@ -81,20 +88,20 @@
 						<section class="tsd-index-section ">
 							<h3>Constructors</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-constructor tsd-parent-kind-class"><a href="claim.html#constructor" class="tsd-kind-icon">constructor</a></li>
+								<li class="tsd-kind-constructor tsd-parent-kind-class"><a href="particleclaim.html#constructor" class="tsd-kind-icon">constructor</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="claim.html#expression" class="tsd-kind-icon">expression</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="claim.html#handle" class="tsd-kind-icon">handle</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="particleclaim.html#claims" class="tsd-kind-icon">claims</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="particleclaim.html#handle" class="tsd-kind-icon">handle</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
 							<h3>Methods</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="claim.html#tomanifeststring" class="tsd-kind-icon">to<wbr>Manifest<wbr>String</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="particleclaim.html#tomanifeststring" class="tsd-kind-icon">to<wbr>Manifest<wbr>String</a></li>
 							</ul>
 						</section>
 					</div>
@@ -106,13 +113,13 @@
 					<a name="constructor" class="tsd-anchor"></a>
 					<h3>constructor</h3>
 					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">new <wbr>Claim<span class="tsd-signature-symbol">(</span>handle<span class="tsd-signature-symbol">: </span><a href="handleconnectionspec.html" class="tsd-signature-type">HandleConnectionSpec</a>, expression<span class="tsd-signature-symbol">: </span><a href="../globals.html#claimexpression" class="tsd-signature-type">ClaimExpression</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="claim.html" class="tsd-signature-type">Claim</a></li>
+						<li class="tsd-signature tsd-kind-icon">new <wbr>Particle<wbr>Claim<span class="tsd-signature-symbol">(</span>handle<span class="tsd-signature-symbol">: </span><a href="handleconnectionspec.html" class="tsd-signature-type">HandleConnectionSpec</a>, claims<span class="tsd-signature-symbol">: </span><a href="../globals.html#claim" class="tsd-signature-type">Claim</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="particleclaim.html" class="tsd-signature-type">ParticleClaim</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/30d34a3/src/runtime/particle-claim.ts#L20">src/runtime/particle-claim.ts:20</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/17eb031/src/runtime/particle-claim.ts#L21">src/runtime/particle-claim.ts:21</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -121,10 +128,10 @@
 									<h5>handle: <a href="handleconnectionspec.html" class="tsd-signature-type">HandleConnectionSpec</a></h5>
 								</li>
 								<li>
-									<h5>expression: <a href="../globals.html#claimexpression" class="tsd-signature-type">ClaimExpression</a></h5>
+									<h5>claims: <a href="../globals.html#claim" class="tsd-signature-type">Claim</a><span class="tsd-signature-symbol">[]</span></h5>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <a href="claim.html" class="tsd-signature-type">Claim</a></h4>
+							<h4 class="tsd-returns-title">Returns <a href="particleclaim.html" class="tsd-signature-type">ParticleClaim</a></h4>
 						</li>
 					</ul>
 				</section>
@@ -132,12 +139,12 @@
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Properties</h2>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
-					<a name="expression" class="tsd-anchor"></a>
-					<h3>expression</h3>
-					<div class="tsd-signature tsd-kind-icon">expression<span class="tsd-signature-symbol">:</span> <a href="../globals.html#claimexpression" class="tsd-signature-type">ClaimExpression</a></div>
+					<a name="claims" class="tsd-anchor"></a>
+					<h3>claims</h3>
+					<div class="tsd-signature tsd-kind-icon">claims<span class="tsd-signature-symbol">:</span> <a href="../globals.html#claim" class="tsd-signature-type">Claim</a><span class="tsd-signature-symbol">[]</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/30d34a3/src/runtime/particle-claim.ts#L21">src/runtime/particle-claim.ts:21</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/17eb031/src/runtime/particle-claim.ts#L22">src/runtime/particle-claim.ts:22</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -147,7 +154,7 @@
 					<div class="tsd-signature tsd-kind-icon">handle<span class="tsd-signature-symbol">:</span> <a href="handleconnectionspec.html" class="tsd-signature-type">HandleConnectionSpec</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/30d34a3/src/runtime/particle-claim.ts#L21">src/runtime/particle-claim.ts:21</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/17eb031/src/runtime/particle-claim.ts#L22">src/runtime/particle-claim.ts:22</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -164,7 +171,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/30d34a3/src/runtime/particle-claim.ts#L23">src/runtime/particle-claim.ts:23</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/17eb031/src/runtime/particle-claim.ts#L24">src/runtime/particle-claim.ts:24</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
@@ -186,19 +193,19 @@
 				</ul>
 				<ul class="current">
 					<li class="current tsd-kind-class">
-						<a href="claim.html" class="tsd-kind-icon">Claim</a>
+						<a href="particleclaim.html" class="tsd-kind-icon">Particle<wbr>Claim</a>
 						<ul>
 							<li class=" tsd-kind-constructor tsd-parent-kind-class">
-								<a href="claim.html#constructor" class="tsd-kind-icon">constructor</a>
+								<a href="particleclaim.html#constructor" class="tsd-kind-icon">constructor</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
-								<a href="claim.html#expression" class="tsd-kind-icon">expression</a>
+								<a href="particleclaim.html#claims" class="tsd-kind-icon">claims</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
-								<a href="claim.html#handle" class="tsd-kind-icon">handle</a>
+								<a href="particleclaim.html#handle" class="tsd-kind-icon">handle</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
-								<a href="claim.html#tomanifeststring" class="tsd-kind-icon">to<wbr>Manifest<wbr>String</a>
+								<a href="particleclaim.html#tomanifeststring" class="tsd-kind-icon">to<wbr>Manifest<wbr>String</a>
 							</li>
 						</ul>
 					</li>
