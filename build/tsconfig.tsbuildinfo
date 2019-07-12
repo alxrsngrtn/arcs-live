@@ -550,7 +550,7 @@
         "signature": "25982836805c8385a742a10c7eade384b44d60e3c85bff6641b47ad81cb1325a"
       },
       "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/tests/analysis-test.ts": {
-        "version": "89540d8d494461c95c0484eee5bb2206c2e6039252c4945b23a4b4c9ebbd7e58",
+        "version": "05aad40f18ac516fffd96bd93a64dc427db840b432e62d2f8ca0da20d741a198",
         "signature": "8e609bb71c20b858c77f0e9f90bb1319db8477b13f9f965f1a1e18524bf50881"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/testing/preconditions.ts": {
@@ -2297,7 +2297,7 @@
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/test/manifest-test.ts": {
-        "version": "53f7aa97871fbbc0e762907c9c8554640e351356bbb31f58f6c0b1cdf34fa4eb",
+        "version": "e960361bbcb6647ee40b9639a82fbe45ff21cfe973695c9e4a00a8b99947e52e",
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/test/multiplexer-test.ts": {
@@ -28748,7 +28748,15 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/test/manifest-test.ts",
-            "start": 67811,
+            "start": 67818,
+            "length": 5,
+            "messageText": "Object is possibly 'undefined'.",
+            "category": 1,
+            "code": 2532
+          },
+          {
+            "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/test/manifest-test.ts",
+            "start": 68465,
             "length": 6,
             "messageText": "Object is possibly 'undefined'.",
             "category": 1,
@@ -28756,7 +28764,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/test/manifest-test.ts",
-            "start": 67877,
+            "start": 68531,
             "length": 6,
             "messageText": "Object is possibly 'undefined'.",
             "category": 1,
@@ -28764,7 +28772,31 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/test/manifest-test.ts",
-            "start": 68573,
+            "start": 69227,
+            "length": 5,
+            "messageText": "Object is possibly 'undefined'.",
+            "category": 1,
+            "code": 2532
+          },
+          {
+            "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/test/manifest-test.ts",
+            "start": 70037,
+            "length": 5,
+            "messageText": "Object is possibly 'undefined'.",
+            "category": 1,
+            "code": 2532
+          },
+          {
+            "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/test/manifest-test.ts",
+            "start": 70079,
+            "length": 5,
+            "messageText": "Object is possibly 'undefined'.",
+            "category": 1,
+            "code": 2532
+          },
+          {
+            "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/test/manifest-test.ts",
+            "start": 70383,
             "length": 5,
             "messageText": "Object is possibly 'undefined'.",
             "category": 1,

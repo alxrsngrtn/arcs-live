@@ -1,10 +1,11 @@
-commit 17eb0316cda341c5129a1a4b6d040dd3b45cbeff
+commit e6392a85b253cac187aed61f7f814ef936b38d0b
 Author: raulverag <42563960+raulverag@users.noreply.github.com>
-Date:   Fri Jul 12 13:52:14 2019 +1000
+Date:   Fri Jul 12 16:18:03 2019 +1000
 
-    Implement multiple tag claims (syntax only) (#3313)
+    Adds test for multiple claims in one claim statement (#3317)
     
-    The intention was syntax only, and there aren't any tests for multiple claims,
-    but they might be done. Next PR will add more tests.
+    * Adds tests for multiple claims in one statement
     
-    Multiple derived-from claims were modified too.
+    * Moar tests
+    
+    * Tweaks per review

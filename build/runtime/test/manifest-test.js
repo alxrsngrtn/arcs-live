@@ -15,6 +15,7 @@ import { Manifest } from '../manifest.js';
 import { checkDefined, checkNotNull } from '../testing/preconditions.js';
 import { StubLoader } from '../testing/stub-loader.js';
 import { assertThrowsAsync } from '../testing/test-util.js';
+import { ClaimType } from '../particle-claim.js';
 import { CheckHasTag, CheckBooleanExpression, CheckIsFromStore } from '../particle-check.js';
 import { ProvideSlotConnectionSpec } from '../particle-spec.js';
 async function assertRecipeParses(input, result) {
@@ -1895,6 +1896,20 @@ resource SomeName
             assert.isNotNull(claim2);
             assert.equal(claim2.claims[0].tag, 'property2');
         });
+        it('supports claim statement with multiple tags', async () => {
+            const manifest = await Manifest.parse(`
+        particle A
+          out T {} output1
+          claim output1 is property1 and is property2
+      `);
+            assert.lengthOf(manifest.particles, 1);
+            const particle = manifest.particles[0];
+            assert.isEmpty(particle.trustChecks);
+            assert.lengthOf(particle.trustClaims, 1);
+            const claim = particle.trustClaims.find(claim => claim.handle.name === 'output1');
+            assert.isNotNull(claim);
+            assert.sameMembers(claim.claims.map(claim => claim.tag), ['property1', 'property2']);
+        });
         it('supports "is not" tag claims', async () => {
             const manifest = await Manifest.parse(`
         particle A
@@ -1926,6 +1941,30 @@ resource SomeName
             const claim = particle.trustClaims.find(claim => claim.handle.name === 'output');
             assert.isNotNull(claim);
             assert.sameMembers(claim.claims.map(claim => claim.parentHandle.name), ['input1', 'input2']);
+        });
+        it('supports mixed claims with multiple tags, not tags, and "derives from"', async () => {
+            const manifest = await Manifest.parse(`
+        particle A
+          in T {} input1
+          in T {} input2
+          out T {} output1
+          claim output1 is property1 and is property2 and derives from input1 and is not property3 and derives from input2
+      `);
+            assert.lengthOf(manifest.particles, 1);
+            const particle = manifest.particles[0];
+            assert.isEmpty(particle.trustChecks);
+            assert.lengthOf(particle.trustClaims, 1);
+            const claim = particle.trustClaims.find(claim => claim.handle.name === 'output1');
+            assert.isNotNull(claim);
+            assert.lengthOf(claim.claims, 5);
+            const tagClaims = claim.claims.filter(claim => claim.type === ClaimType.IsTag);
+            assert.lengthOf(tagClaims, 3);
+            const notClaims = tagClaims.filter(claim => claim.isNot === true);
+            assert.lengthOf(notClaims, 1);
+            assert.equal(notClaims[0].tag, 'property3');
+            const derivesClaims = claim.claims.filter(claim => claim.type === ClaimType.DerivesFrom);
+            assert.lengthOf(derivesClaims, 2);
+            assert.sameMembers(derivesClaims.map(claim => claim.parentHandle.name), ['input1', 'input2']);
         });
         it('supports multiple check statements', async () => {
             const manifest = await Manifest.parse(`
