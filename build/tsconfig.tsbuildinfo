@@ -174,12 +174,12 @@
         "signature": "b7ba4f64cdea87655b0d7c357b39e9f2ca63090d6b12e49eabe8f14f869ac198"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/slot.ts": {
-        "version": "3d472d979bf9eabdfa6179bfa329b46bcead92baae139d5255a426dd9d35aead",
+        "version": "72a3a555951f1ddcedebad73117116c873680a09fab5556901da6ad03241e5f0",
         "signature": "56ad50962e1370f69891913879f90f5afbf8552731c2a666d1768937d0de25ba"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/slot-connection.ts": {
-        "version": "441152dddbb8a6b03fbd8dddf4f1c2652eb15f647344ab7b92e87c471b252e88",
-        "signature": "8923f997ccece3bba0c07b93e3ebebd411c9ef5b9dde193d238f7b3d48f21b7d"
+        "version": "8b278a50c0529620628a909df946e466cdcb0922913c79f8cd9fd162fcacb0b0",
+        "signature": "55f5349ef1be5c124bbde7a6f885aaf0f1c47d8e22dd945a36bb14fc55f43710"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/walker.ts": {
         "version": "8f40d5a6fc11d4c0d13dfd5e305126c589beed4540c17d2a6ec95602206fcb6f",
@@ -8204,10 +8204,10 @@
         "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/comparable.ts"
       ],
       "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/slot-connection.ts": [
-        "/home/travis/build/PolymerLabs/arcs/src/runtime/hot.ts",
-        "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/slot.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/particle.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/recipe.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/slot.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/hot.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/particle-spec.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/comparable.ts"
       ],
@@ -12010,7 +12010,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/slot.ts",
-            "start": 4148,
+            "start": 4147,
             "length": 14,
             "code": 2322,
             "category": 1,
@@ -12018,7 +12018,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/slot.ts",
-            "start": 4685,
+            "start": 4684,
             "length": 7,
             "code": 2345,
             "category": 1,
@@ -12035,7 +12035,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/slot.ts",
-            "start": 4754,
+            "start": 4753,
             "length": 14,
             "code": 2345,
             "category": 1,
@@ -12052,7 +12052,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/slot.ts",
-            "start": 4837,
+            "start": 4836,
             "length": 15,
             "code": 2345,
             "category": 1,
@@ -12074,7 +12074,7 @@
         [
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/slot-connection.ts",
-            "start": 3317,
+            "start": 3270,
             "length": 16,
             "code": 2345,
             "category": 1,
@@ -12091,7 +12091,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/slot-connection.ts",
-            "start": 4517,
+            "start": 4470,
             "length": 32,
             "messageText": "Object is possibly 'undefined'.",
             "category": 1,
@@ -12099,7 +12099,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/slot-connection.ts",
-            "start": 4942,
+            "start": 4895,
             "length": 18,
             "messageText": "Object is possibly 'undefined'.",
             "category": 1,
@@ -12107,7 +12107,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/slot-connection.ts",
-            "start": 5328,
+            "start": 5281,
             "length": 63,
             "code": 2322,
             "category": 1,
@@ -12124,7 +12124,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/slot-connection.ts",
-            "start": 5516,
+            "start": 5469,
             "length": 74,
             "code": 2322,
             "category": 1,

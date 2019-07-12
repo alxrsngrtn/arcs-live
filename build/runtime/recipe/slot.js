@@ -74,7 +74,7 @@ export class Slot {
             // the connections are re-established when Particles clone their attached SlotConnection objects.
             slot._sourceConnection = cloneMap.get(this._sourceConnection);
             if (slot.sourceConnection) {
-                slot.sourceConnection._providedSlots[slot.name] = slot;
+                slot.sourceConnection.providedSlots[slot.name] = slot;
             }
         }
         this._consumeConnections.forEach(connection => {

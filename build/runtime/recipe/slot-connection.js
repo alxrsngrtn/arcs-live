@@ -13,7 +13,7 @@ import { compareComparables, compareStrings } from './comparable.js';
 export class SlotConnection {
     constructor(name, particle) {
         this._targetSlot = undefined;
-        this._providedSlots = {}; // TODO(lindner): make private, used in slot.ts
+        this._providedSlots = {};
         this._tags = [];
         assert(particle);
         assert(particle.recipe);

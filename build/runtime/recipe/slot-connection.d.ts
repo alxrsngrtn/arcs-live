@@ -18,7 +18,7 @@ export declare class SlotConnection implements Comparable<SlotConnection> {
     private readonly _particle;
     private readonly _name;
     private _targetSlot?;
-    _providedSlots: Dictionary<Slot>;
+    private _providedSlots;
     private _tags;
     constructor(name: string, particle: Particle);
     remove(): void;

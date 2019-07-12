@@ -1,28 +1,5 @@
-commit 0a86c14dc317b905724f889d64d1b0ef995634f0
-Author: Alex Rosengarten <alxr@google.com>
-Date:   Fri Jul 12 13:09:32 2019 -0700
+commit b10c55a952a093a0d8744adaadd738ad5aeffda5
+Author: Paul Lindner <plindner@google.com>
+Date:   Fri Jul 12 16:25:56 2019 -0700
 
-    Created schema2kotlin Entity generator (#3314)
-    
-    * creating schema gen base
-    
-    * Applying schema converter base to c++ generator
-    
-    * added starter kotlin gen
-    - made cpp gen fit a naming pattern w/ base
-    
-    * adding schema2kotlin to sigh
-    
-    * first iter kotlin generation
-    
-    * Pretty good, simple entity generator
-    
-    * fixed bug: extra paren
-    
-    * Checking in generated entities
-    
-    * updated test particle
-    
-    * made logic consistent
-    
-    * fixed formatting
+    Make providedSlots private, use getter in Slots (#3323)
