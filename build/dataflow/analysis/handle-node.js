@@ -11,11 +11,12 @@ import { Node } from './graph-internals.js';
 import { ParticleOutput, ParticleInput } from './particle-node.js';
 import { assert } from '../../platform/assert-web.js';
 export class HandleNode extends Node {
-    constructor(handle) {
+    constructor(nodeId, handle) {
         super();
         this.inEdges = [];
         this.outEdges = [];
         this.connectionSpecs = new Set();
+        this.nodeId = nodeId;
         this.storeId = handle.id;
     }
     /** Returns a list of all pairs of particles that are connected through this handle, in string form. */
@@ -48,22 +49,23 @@ export class HandleNode extends Node {
 /** Creates a new node for every given handle. */
 export function createHandleNodes(handles) {
     const nodes = new Map();
-    handles.forEach(handle => {
-        nodes.set(handle, new HandleNode(handle));
+    handles.forEach((handle, index) => {
+        const nodeId = 'H' + index;
+        nodes.set(handle, new HandleNode(nodeId, handle));
     });
     return nodes;
 }
 /** Adds a connection between the given particle and handle nodes. */
-export function addHandleConnection(particleNode, handleNode, connection) {
+export function addHandleConnection(particleNode, handleNode, connection, edgeId) {
     switch (connection.direction) {
         case 'in': {
-            const edge = new ParticleInput(particleNode, handleNode, connection);
+            const edge = new ParticleInput(edgeId, particleNode, handleNode, connection);
             particleNode.addInEdge(edge);
             handleNode.addOutEdge(edge);
             return edge;
         }
         case 'out': {
-            const edge = new ParticleOutput(particleNode, handleNode, connection);
+            const edge = new ParticleOutput(edgeId, particleNode, handleNode, connection);
             particleNode.addOutEdge(edge);
             handleNode.addInEdge(edge);
             return edge;

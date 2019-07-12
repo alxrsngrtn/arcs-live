@@ -100,6 +100,7 @@
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="handlenode.html#particleoutput" class="tsd-kind-icon">Particle<wbr>Output</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="handlenode.html#connectionspecs" class="tsd-kind-icon">connection<wbr>Specs</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-overwrite"><a href="handlenode.html#inedges" class="tsd-kind-icon">in<wbr>Edges</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-overwrite"><a href="handlenode.html#nodeid" class="tsd-kind-icon">node<wbr>Id</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-overwrite"><a href="handlenode.html#outedges" class="tsd-kind-icon">out<wbr>Edges</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="handlenode.html#storeid" class="tsd-kind-icon">store<wbr>Id</a></li>
 							</ul>
@@ -129,17 +130,20 @@
 					<a name="constructor" class="tsd-anchor"></a>
 					<h3>constructor</h3>
 					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">new <wbr>Handle<wbr>Node<span class="tsd-signature-symbol">(</span>handle<span class="tsd-signature-symbol">: </span><a href="handle.html" class="tsd-signature-type">Handle</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="handlenode.html" class="tsd-signature-type">HandleNode</a></li>
+						<li class="tsd-signature tsd-kind-icon">new <wbr>Handle<wbr>Node<span class="tsd-signature-symbol">(</span>nodeId<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, handle<span class="tsd-signature-symbol">: </span><a href="handle.html" class="tsd-signature-type">Handle</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="handlenode.html" class="tsd-signature-type">HandleNode</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/e6392a8/src/dataflow/analysis/handle-node.ts#L23">src/dataflow/analysis/handle-node.ts:23</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/77ab501/src/dataflow/analysis/handle-node.ts#L24">src/dataflow/analysis/handle-node.ts:24</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
+								<li>
+									<h5>nodeId: <span class="tsd-signature-type">string</span></h5>
+								</li>
 								<li>
 									<h5>handle: <a href="handle.html" class="tsd-signature-type">Handle</a></h5>
 								</li>
@@ -158,9 +162,9 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="node.html">Node</a>.<a href="node.html#edge">Edge</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/e6392a8/src/dataflow/analysis/graph-internals.ts#L26">src/dataflow/analysis/graph-internals.ts:26</a></li>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/e6392a8/src/dataflow/analysis/graph-internals.ts#L27">src/dataflow/analysis/graph-internals.ts:27</a></li>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/e6392a8/src/dataflow/analysis/graph-internals.ts#L40">src/dataflow/analysis/graph-internals.ts:40</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/77ab501/src/dataflow/analysis/graph-internals.ts#L29">src/dataflow/analysis/graph-internals.ts:29</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/77ab501/src/dataflow/analysis/graph-internals.ts#L30">src/dataflow/analysis/graph-internals.ts:30</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/77ab501/src/dataflow/analysis/graph-internals.ts#L43">src/dataflow/analysis/graph-internals.ts:43</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -170,7 +174,7 @@
 					<div class="tsd-signature tsd-kind-icon">Particle<wbr>Output<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/e6392a8/src/dataflow/analysis/handle-node.ts#L51">src/dataflow/analysis/handle-node.ts:51</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/77ab501/src/dataflow/analysis/handle-node.ts#L53">src/dataflow/analysis/handle-node.ts:53</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -180,7 +184,7 @@
 					<div class="tsd-signature tsd-kind-icon">connection<wbr>Specs<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Set</span><span class="tsd-signature-symbol">&lt;</span><a href="handleconnectionspec.html" class="tsd-signature-type">HandleConnectionSpec</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> =&nbsp;new Set()</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/e6392a8/src/dataflow/analysis/handle-node.ts#L22">src/dataflow/analysis/handle-node.ts:22</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/77ab501/src/dataflow/analysis/handle-node.ts#L23">src/dataflow/analysis/handle-node.ts:23</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -191,7 +195,18 @@
 					<aside class="tsd-sources">
 						<p>Overrides <a href="node.html">Node</a>.<a href="node.html#inedges">inEdges</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/e6392a8/src/dataflow/analysis/handle-node.ts#L20">src/dataflow/analysis/handle-node.ts:20</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/77ab501/src/dataflow/analysis/handle-node.ts#L21">src/dataflow/analysis/handle-node.ts:21</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-overwrite">
+					<a name="nodeid" class="tsd-anchor"></a>
+					<h3>node<wbr>Id</h3>
+					<div class="tsd-signature tsd-kind-icon">node<wbr>Id<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+					<aside class="tsd-sources">
+						<p>Overrides <a href="node.html">Node</a>.<a href="node.html#nodeid">nodeId</a></p>
+						<ul>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/77ab501/src/dataflow/analysis/handle-node.ts#L20">src/dataflow/analysis/handle-node.ts:20</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -202,7 +217,7 @@
 					<aside class="tsd-sources">
 						<p>Overrides <a href="node.html">Node</a>.<a href="node.html#outedges">outEdges</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/e6392a8/src/dataflow/analysis/handle-node.ts#L21">src/dataflow/analysis/handle-node.ts:21</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/77ab501/src/dataflow/analysis/handle-node.ts#L22">src/dataflow/analysis/handle-node.ts:22</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -212,7 +227,7 @@
 					<div class="tsd-signature tsd-kind-icon">store<wbr>Id<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/e6392a8/src/dataflow/analysis/handle-node.ts#L23">src/dataflow/analysis/handle-node.ts:23</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/77ab501/src/dataflow/analysis/handle-node.ts#L24">src/dataflow/analysis/handle-node.ts:24</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -229,7 +244,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/e6392a8/src/dataflow/analysis/handle-node.ts#L31">src/dataflow/analysis/handle-node.ts:31</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/77ab501/src/dataflow/analysis/handle-node.ts#L33">src/dataflow/analysis/handle-node.ts:33</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -252,7 +267,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="node.html">Node</a>.<a href="node.html#innodes">inNodes</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/e6392a8/src/dataflow/analysis/graph-internals.ts#L32">src/dataflow/analysis/graph-internals.ts:32</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/77ab501/src/dataflow/analysis/graph-internals.ts#L35">src/dataflow/analysis/graph-internals.ts:35</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <a href="node.html" class="tsd-signature-type">Node</a><span class="tsd-signature-symbol">[]</span></h4>
@@ -270,7 +285,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="node.html">Node</a>.<a href="node.html#outnodes">outNodes</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/e6392a8/src/dataflow/analysis/graph-internals.ts#L36">src/dataflow/analysis/graph-internals.ts:36</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/77ab501/src/dataflow/analysis/graph-internals.ts#L39">src/dataflow/analysis/graph-internals.ts:39</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <a href="node.html" class="tsd-signature-type">Node</a><span class="tsd-signature-symbol">[]</span></h4>
@@ -291,7 +306,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="node.html">Node</a>.<a href="node.html#addinedge">addInEdge</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/e6392a8/src/dataflow/analysis/handle-node.ts#L41">src/dataflow/analysis/handle-node.ts:41</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/77ab501/src/dataflow/analysis/handle-node.ts#L43">src/dataflow/analysis/handle-node.ts:43</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -315,7 +330,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="node.html">Node</a>.<a href="node.html#addoutedge">addOutEdge</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/e6392a8/src/dataflow/analysis/handle-node.ts#L46">src/dataflow/analysis/handle-node.ts:46</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/77ab501/src/dataflow/analysis/handle-node.ts#L48">src/dataflow/analysis/handle-node.ts:48</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -339,7 +354,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="node.html">Node</a>.<a href="node.html#inedgesfromoutedge">inEdgesFromOutEdge</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/e6392a8/src/dataflow/analysis/handle-node.ts#L51">src/dataflow/analysis/handle-node.ts:51</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/77ab501/src/dataflow/analysis/handle-node.ts#L53">src/dataflow/analysis/handle-node.ts:53</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -383,6 +398,9 @@
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-overwrite">
 								<a href="handlenode.html#inedges" class="tsd-kind-icon">in<wbr>Edges</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-overwrite">
+								<a href="handlenode.html#nodeid" class="tsd-kind-icon">node<wbr>Id</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-overwrite">
 								<a href="handlenode.html#outedges" class="tsd-kind-icon">out<wbr>Edges</a>

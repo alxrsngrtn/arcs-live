@@ -20,6 +20,8 @@ import { Claim } from '../../runtime/particle-claim.js';
 import { Check } from '../../runtime/particle-check.js';
 /** Represents a node in a FlowGraph. Can be a particle, handle, etc. */
 export declare abstract class Node {
+    /** A unique ID for this node. No other node in this graph can have this ID. */
+    abstract readonly nodeId: string;
     abstract readonly inEdges: readonly Edge[];
     abstract readonly outEdges: readonly Edge[];
     abstract addInEdge(edge: Edge): void;
@@ -33,6 +35,8 @@ export declare abstract class Node {
  * handles, etc.
  */
 export interface Edge {
+    /** A unique ID for this edge. No other edge in this graph can have this ID. */
+    readonly edgeId: string;
     readonly start: Node;
     readonly end: Node;
     /** The name of the handle/slot this edge represents, e.g. "output1". */

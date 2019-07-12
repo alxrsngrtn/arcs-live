@@ -506,23 +506,23 @@
         "signature": "74b0fe35f5cadce1dcc19d5e93f21b31c387808566250dc8766480b9a320943d"
       },
       "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/graph-internals.ts": {
-        "version": "d0d887bae1aa92242f9d3b83ef7420506f45316336ba74acf41fbe1575464c3e",
-        "signature": "d3c36da16de36fa95db06149412a0f81569c8670f4e2b8f2500dfa551cb82f39"
+        "version": "fa152eb98013fb9e3e5c599c309020ef58d91183b45e2b995c568b33ee3c3610",
+        "signature": "20ef6cab04b26db545d7cd92dab7d233dc3c59119f2c42cd3651179c15857aef"
       },
       "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/particle-node.ts": {
-        "version": "ee7851d128ac1479113ddeeb083abd137ba86d83cf93733db635d4e2a4e636cc",
-        "signature": "f6ac5a53e5f428be199d50674c33a06a9644fbd9c2bd8e906390026c1996da48"
+        "version": "fd4218012c0ad5fec1add130fa870ed15bb5d39ed455ae3f010731d38d395740",
+        "signature": "7c8b6c0ce5433415bc6587ea1c254a3e8d17fd2da033ce7ec03409ab2bf1bc26"
       },
       "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/handle-node.ts": {
-        "version": "962dbd345a3240313d559cfefe569eadde5235a89aed6b8c6bbcbcde3902ea40",
-        "signature": "3aef12ac7325b42c7079f01a81be93fe59d6c9299034ead01bd22157c25e8136"
+        "version": "65e2b22eabf438550e193d77c191524a1a91f760f20a4703b26b20528ae53fd2",
+        "signature": "e2c3408b5edd530afdc6568fc3dbf94095c2c36b392c511fa1992201cdee7395"
       },
       "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/slot-node.ts": {
-        "version": "dbfed1f0ada142baa22b20b6b2eea48136c60889f097d9c69b98e7870140074c",
-        "signature": "1f3dab4c982216a0eb570a1a448ffa490470d755d3248194d7e792bc20aa0c8c"
+        "version": "2b7e883a6e1fcd7a8080666b2faf35744402bc9326195c584a66aa5e1c9f9c9c",
+        "signature": "92a0bcebb44ff9e8b73a21b8f36cadf8efb0f6235728e4f11db304f517c5cfd1"
       },
       "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/flow-graph.ts": {
-        "version": "fa522c84e18a3d33fb54544353ca52fd24380358bde8749b0af6a42bc0ca682b",
+        "version": "d37a835edceab724f9804b25da462bb72cbce09dfa39eb932498496a01226ba3",
         "signature": "b354c1c474f02e561a65f7a0c156b082bc08d0402dc8351c1680f1e5653f096d"
       },
       "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/graph-traversal.ts": {
@@ -558,11 +558,11 @@
         "signature": "535087ae214f316cbb0a3a17fb44a767c4789b7b69c4bd2c8d37fa8d5845a81f"
       },
       "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/tests/flow-graph-test.ts": {
-        "version": "124cf75e61a52c32652dc90b81761707de58c0d7aeb53663c958ffa23697c356",
+        "version": "724afd77dd8cdff921ed2ad31537dae3a9a7a24e7381adc78fb93c8d13b1339a",
         "signature": "43a5176681925d9f51b139647154e4a52c2eb1b1a64bb428595000952bcbc7f1"
       },
       "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/tests/graph-traversal-test.ts": {
-        "version": "678f6286b536538a4ac4aa4b08cb3a503a7a752b8b80a4b2d97e2c1ed06273a2",
+        "version": "272400f307a8bbd01570b8f9b4586f6994609917895f018ebf2e458daf11612a",
         "signature": "8e609bb71c20b858c77f0e9f90bb1319db8477b13f9f965f1a1e18524bf50881"
       },
       "/home/travis/build/PolymerLabs/arcs/src/dataflow/cli/flowcheck.ts": {
@@ -20328,7 +20328,7 @@
         [
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/particle-node.ts",
-            "start": 1129,
+            "start": 1198,
             "length": 13,
             "messageText": "Object is possibly 'undefined'.",
             "category": 1,
@@ -20336,7 +20336,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/particle-node.ts",
-            "start": 1174,
+            "start": 1243,
             "length": 13,
             "messageText": "Object is possibly 'undefined'.",
             "category": 1,
@@ -20344,7 +20344,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/particle-node.ts",
-            "start": 2430,
+            "start": 2499,
             "length": 6,
             "code": 2345,
             "category": 1,
@@ -20361,7 +20361,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/particle-node.ts",
-            "start": 3139,
+            "start": 3277,
             "length": 17,
             "messageText": "Object is possibly 'undefined'.",
             "category": 1,
@@ -20369,7 +20369,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/particle-node.ts",
-            "start": 3815,
+            "start": 4022,
             "length": 11,
             "code": 2322,
             "category": 1,
@@ -20391,7 +20391,7 @@
         [
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/handle-node.ts",
-            "start": 1033,
+            "start": 1102,
             "length": 12,
             "code": 2322,
             "category": 1,
@@ -20414,7 +20414,7 @@
         [
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/flow-graph.ts",
-            "start": 1821,
+            "start": 1849,
             "length": 17,
             "code": 2345,
             "category": 1,
@@ -20431,7 +20431,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/flow-graph.ts",
-            "start": 1880,
+            "start": 1952,
             "length": 12,
             "code": 2345,
             "category": 1,
@@ -20448,7 +20448,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/flow-graph.ts",
-            "start": 2200,
+            "start": 2280,
             "length": 21,
             "code": 2345,
             "category": 1,
@@ -20465,7 +20465,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/flow-graph.ts",
-            "start": 2261,
+            "start": 2385,
             "length": 12,
             "code": 2345,
             "category": 1,
@@ -20482,7 +20482,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/flow-graph.ts",
-            "start": 2580,
+            "start": 2712,
             "length": 24,
             "messageText": "Object is possibly 'undefined'.",
             "category": 1,
@@ -20490,7 +20490,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/flow-graph.ts",
-            "start": 2779,
+            "start": 2911,
             "length": 16,
             "messageText": "Object is possibly 'undefined'.",
             "category": 1,
@@ -20498,7 +20498,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/flow-graph.ts",
-            "start": 3727,
+            "start": 3859,
             "length": 5,
             "messageText": "Object is possibly 'undefined'.",
             "category": 1,
@@ -20506,7 +20506,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/flow-graph.ts",
-            "start": 3899,
+            "start": 4031,
             "length": 5,
             "messageText": "Object is possibly 'undefined'.",
             "category": 1,

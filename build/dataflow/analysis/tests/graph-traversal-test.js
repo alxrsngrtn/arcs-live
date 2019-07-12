@@ -11,8 +11,9 @@ import { assert } from '../../../platform/chai-web.js';
 import { Node } from '../graph-internals.js';
 import { BackwardsPath } from '../graph-traversal.js';
 class TestNode extends Node {
-    constructor() {
-        super(...arguments);
+    constructor(nodeId) {
+        super();
+        this.nodeId = nodeId;
         this.inEdges = [];
         this.outEdges = [];
     }
@@ -35,13 +36,14 @@ class TestEdge {
         this.end = end;
         this.label = label;
         this.connectionName = 'connectionName';
+        this.edgeId = label;
     }
 }
 describe('BackwardsPath', () => {
     // Construct directed graph: A -> B -> C.
-    const nodeA = new TestNode();
-    const nodeB = new TestNode();
-    const nodeC = new TestNode();
+    const nodeA = new TestNode('A');
+    const nodeB = new TestNode('B');
+    const nodeC = new TestNode('C');
     const edgeAToB = new TestEdge(nodeA, nodeB, 'A -> B');
     const edgeBToC = new TestEdge(nodeB, nodeC, 'B -> C');
     const edgeCToA = new TestEdge(nodeC, nodeA, 'C -> A');

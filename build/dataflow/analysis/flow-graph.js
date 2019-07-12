@@ -24,18 +24,21 @@ export class FlowGraph {
         const particleNodes = createParticleNodes(recipe.particles);
         const handleNodes = createHandleNodes(recipe.handles);
         const slotNodes = createSlotNodes(recipe.slots);
+        let edgeIdCounter = 0;
         // Add edges to the nodes.
         recipe.handleConnections.forEach(connection => {
             const particleNode = particleNodes.get(connection.particle);
             const handleNode = handleNodes.get(connection.handle);
-            const edge = addHandleConnection(particleNode, handleNode, connection);
+            const edgeId = 'E' + edgeIdCounter++;
+            const edge = addHandleConnection(particleNode, handleNode, connection, edgeId);
             this.edges.push(edge);
         });
         // Add edges from particles to the slots that they consume (one-way only, for now).
         recipe.slotConnections.forEach(connection => {
             const particleNode = particleNodes.get(connection.particle);
             const slotNode = slotNodes.get(connection.targetSlot);
-            const edge = addSlotConnection(particleNode, slotNode, connection);
+            const edgeId = 'E' + edgeIdCounter++;
+            const edge = addSlotConnection(particleNode, slotNode, connection, edgeId);
             this.edges.push(edge);
             // Copy the Check object from the "provide" connection onto the SlotNode.
             // (Checks are defined by the particle that provides the slot, but are

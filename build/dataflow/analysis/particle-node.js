@@ -11,10 +11,11 @@ import { Node } from './graph-internals.js';
 import { ClaimType } from '../../runtime/particle-claim.js';
 import { assert } from '../../platform/assert-web.js';
 export class ParticleNode extends Node {
-    constructor(particle) {
+    constructor(nodeId, particle) {
         super();
         this.inEdgesByName = new Map();
         this.outEdgesByName = new Map();
+        this.nodeId = nodeId;
         this.name = particle.name;
         this.claims = particle.spec.trustClaims;
         this.checks = particle.spec.trustChecks;
@@ -53,7 +54,8 @@ export class ParticleNode extends Node {
     }
 }
 export class ParticleInput {
-    constructor(particleNode, otherEnd, connection) {
+    constructor(edgeId, particleNode, otherEnd, connection) {
+        this.edgeId = edgeId;
         this.start = otherEnd;
         this.end = particleNode;
         this.connectionName = connection.name;
@@ -64,7 +66,8 @@ export class ParticleInput {
     }
 }
 export class ParticleOutput {
-    constructor(particleNode, otherEnd, connection) {
+    constructor(edgeId, particleNode, otherEnd, connection) {
+        this.edgeId = edgeId;
         this.start = particleNode;
         this.end = otherEnd;
         this.connectionName = connection.name;
@@ -77,8 +80,9 @@ export class ParticleOutput {
 /** Creates a new node for every given particle. */
 export function createParticleNodes(particles) {
     const nodes = new Map();
-    particles.forEach(particle => {
-        nodes.set(particle, new ParticleNode(particle));
+    particles.forEach((particle, index) => {
+        const nodeId = 'P' + index;
+        nodes.set(particle, new ParticleNode(nodeId, particle));
     });
     return nodes;
 }

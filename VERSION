@@ -1,11 +1,5 @@
-commit e6392a85b253cac187aed61f7f814ef936b38d0b
-Author: raulverag <42563960+raulverag@users.noreply.github.com>
-Date:   Fri Jul 12 16:18:03 2019 +1000
+commit 77ab5010236fd9b52f25671a16b7881c9bb88161
+Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
+Date:   Fri Jul 12 16:32:19 2019 +1000
 
-    Adds test for multiple claims in one claim statement (#3317)
-    
-    * Adds tests for multiple claims in one statement
-    
-    * Moar tests
-    
-    * Tweaks per review
+    Added nodeId and edgeId (#3316)

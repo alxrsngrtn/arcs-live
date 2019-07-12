@@ -16,10 +16,11 @@ import { HandleConnection } from '../../runtime/recipe/handle-connection.js';
 export declare class ParticleNode extends Node {
     readonly inEdgesByName: Map<string, ParticleInput>;
     readonly outEdgesByName: Map<string, Edge>;
+    readonly nodeId: string;
     readonly name: string;
     readonly claims: ParticleClaim[];
     readonly checks: Check[];
-    constructor(particle: Particle);
+    constructor(nodeId: string, particle: Particle);
     addInEdge(edge: ParticleInput): void;
     addOutEdge(edge: Edge): void;
     readonly inEdges: readonly ParticleInput[];
@@ -31,6 +32,7 @@ export declare class ParticleNode extends Node {
     inEdgesFromOutEdge(outEdge: Edge): readonly ParticleInput[];
 }
 export declare class ParticleInput implements Edge {
+    readonly edgeId: string;
     readonly start: Node;
     readonly end: ParticleNode;
     readonly label: string;
@@ -38,16 +40,17 @@ export declare class ParticleInput implements Edge {
     readonly connectionSpec: HandleConnectionSpec;
     readonly check?: Check;
     readonly claims?: Claim[];
-    constructor(particleNode: ParticleNode, otherEnd: Node, connection: HandleConnection);
+    constructor(edgeId: string, particleNode: ParticleNode, otherEnd: Node, connection: HandleConnection);
 }
 export declare class ParticleOutput implements Edge {
+    readonly edgeId: string;
     readonly start: ParticleNode;
     readonly end: Node;
     readonly label: string;
     readonly connectionName: string;
     readonly connectionSpec: HandleConnectionSpec;
     readonly claims?: Claim[];
-    constructor(particleNode: ParticleNode, otherEnd: Node, connection: HandleConnection);
+    constructor(edgeId: string, particleNode: ParticleNode, otherEnd: Node, connection: HandleConnection);
 }
 /** Creates a new node for every given particle. */
 export declare function createParticleNodes(particles: Particle[]): Map<Particle, ParticleNode>;

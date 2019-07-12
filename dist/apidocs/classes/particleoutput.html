@@ -96,6 +96,7 @@
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="particleoutput.html#claims" class="tsd-kind-icon">claims</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="particleoutput.html#connectionname" class="tsd-kind-icon">connection<wbr>Name</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="particleoutput.html#connectionspec" class="tsd-kind-icon">connection<wbr>Spec</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="particleoutput.html#edgeid" class="tsd-kind-icon">edge<wbr>Id</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="particleoutput.html#end" class="tsd-kind-icon">end</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="particleoutput.html#label" class="tsd-kind-icon">label</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="particleoutput.html#start" class="tsd-kind-icon">start</a></li>
@@ -110,17 +111,20 @@
 					<a name="constructor" class="tsd-anchor"></a>
 					<h3>constructor</h3>
 					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">new <wbr>Particle<wbr>Output<span class="tsd-signature-symbol">(</span>particleNode<span class="tsd-signature-symbol">: </span><a href="particlenode.html" class="tsd-signature-type">ParticleNode</a>, otherEnd<span class="tsd-signature-symbol">: </span><a href="node.html" class="tsd-signature-type">Node</a>, connection<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">HandleConnection</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="particleoutput.html" class="tsd-signature-type">ParticleOutput</a></li>
+						<li class="tsd-signature tsd-kind-icon">new <wbr>Particle<wbr>Output<span class="tsd-signature-symbol">(</span>edgeId<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, particleNode<span class="tsd-signature-symbol">: </span><a href="particlenode.html" class="tsd-signature-type">ParticleNode</a>, otherEnd<span class="tsd-signature-symbol">: </span><a href="node.html" class="tsd-signature-type">Node</a>, connection<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">HandleConnection</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="particleoutput.html" class="tsd-signature-type">ParticleOutput</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/e6392a8/src/dataflow/analysis/particle-node.ts#L104">src/dataflow/analysis/particle-node.ts:104</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/77ab501/src/dataflow/analysis/particle-node.ts#L109">src/dataflow/analysis/particle-node.ts:109</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
+								<li>
+									<h5>edgeId: <span class="tsd-signature-type">string</span></h5>
+								</li>
 								<li>
 									<h5>particleNode: <a href="particlenode.html" class="tsd-signature-type">ParticleNode</a></h5>
 								</li>
@@ -145,7 +149,7 @@
 					<aside class="tsd-sources">
 						<p>Implementation of <a href="../interfaces/edge.html">Edge</a>.<a href="../interfaces/edge.html#claims">claims</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/e6392a8/src/dataflow/analysis/particle-node.ts#L104">src/dataflow/analysis/particle-node.ts:104</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/77ab501/src/dataflow/analysis/particle-node.ts#L109">src/dataflow/analysis/particle-node.ts:109</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -156,7 +160,7 @@
 					<aside class="tsd-sources">
 						<p>Implementation of <a href="../interfaces/edge.html">Edge</a>.<a href="../interfaces/edge.html#connectionname">connectionName</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/e6392a8/src/dataflow/analysis/particle-node.ts#L101">src/dataflow/analysis/particle-node.ts:101</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/77ab501/src/dataflow/analysis/particle-node.ts#L106">src/dataflow/analysis/particle-node.ts:106</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -166,7 +170,18 @@
 					<div class="tsd-signature tsd-kind-icon">connection<wbr>Spec<span class="tsd-signature-symbol">:</span> <a href="handleconnectionspec.html" class="tsd-signature-type">HandleConnectionSpec</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/e6392a8/src/dataflow/analysis/particle-node.ts#L102">src/dataflow/analysis/particle-node.ts:102</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/77ab501/src/dataflow/analysis/particle-node.ts#L107">src/dataflow/analysis/particle-node.ts:107</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="edgeid" class="tsd-anchor"></a>
+					<h3>edge<wbr>Id</h3>
+					<div class="tsd-signature tsd-kind-icon">edge<wbr>Id<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+					<aside class="tsd-sources">
+						<p>Implementation of <a href="../interfaces/edge.html">Edge</a>.<a href="../interfaces/edge.html#edgeid">edgeId</a></p>
+						<ul>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/77ab501/src/dataflow/analysis/particle-node.ts#L102">src/dataflow/analysis/particle-node.ts:102</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -177,7 +192,7 @@
 					<aside class="tsd-sources">
 						<p>Implementation of <a href="../interfaces/edge.html">Edge</a>.<a href="../interfaces/edge.html#end">end</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/e6392a8/src/dataflow/analysis/particle-node.ts#L99">src/dataflow/analysis/particle-node.ts:99</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/77ab501/src/dataflow/analysis/particle-node.ts#L104">src/dataflow/analysis/particle-node.ts:104</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -188,7 +203,7 @@
 					<aside class="tsd-sources">
 						<p>Implementation of <a href="../interfaces/edge.html">Edge</a>.<a href="../interfaces/edge.html#label">label</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/e6392a8/src/dataflow/analysis/particle-node.ts#L100">src/dataflow/analysis/particle-node.ts:100</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/77ab501/src/dataflow/analysis/particle-node.ts#L105">src/dataflow/analysis/particle-node.ts:105</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -199,7 +214,7 @@
 					<aside class="tsd-sources">
 						<p>Implementation of <a href="../interfaces/edge.html">Edge</a>.<a href="../interfaces/edge.html#start">start</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/e6392a8/src/dataflow/analysis/particle-node.ts#L98">src/dataflow/analysis/particle-node.ts:98</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/77ab501/src/dataflow/analysis/particle-node.ts#L103">src/dataflow/analysis/particle-node.ts:103</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -231,6 +246,9 @@
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
 								<a href="particleoutput.html#connectionspec" class="tsd-kind-icon">connection<wbr>Spec</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="particleoutput.html#edgeid" class="tsd-kind-icon">edge<wbr>Id</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
 								<a href="particleoutput.html#end" class="tsd-kind-icon">end</a>

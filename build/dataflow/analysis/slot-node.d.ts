@@ -15,21 +15,23 @@ import { SlotConnection } from '../../runtime/recipe/slot-connection.js';
 export declare class SlotNode extends Node {
     readonly inEdges: SlotInput[];
     readonly outEdges: readonly Edge[];
+    readonly nodeId: string;
     check?: Check;
-    constructor(slot: Slot);
+    constructor(nodeId: string, slot: Slot);
     addInEdge(edge: SlotInput): void;
     addOutEdge(edge: Edge): void;
     inEdgesFromOutEdge(outEdge: Edge): never;
 }
 declare class SlotInput implements Edge {
+    readonly edgeId: string;
     readonly start: ParticleNode;
     readonly end: SlotNode;
     readonly label: string;
     readonly connectionName: string;
-    constructor(particleNode: ParticleNode, slotNode: SlotNode, connection: SlotConnection);
+    constructor(edgeId: string, particleNode: ParticleNode, slotNode: SlotNode, connection: SlotConnection);
     readonly check: Check | undefined;
 }
 export declare function createSlotNodes(slots: Slot[]): Map<Slot, SlotNode>;
 /** Adds a connection between the given particle and slot nodes, where the particle "consumes" the slot. */
-export declare function addSlotConnection(particleNode: ParticleNode, slotNode: SlotNode, connection: SlotConnection): Edge;
+export declare function addSlotConnection(particleNode: ParticleNode, slotNode: SlotNode, connection: SlotConnection, edgeId: string): Edge;
 export {};
