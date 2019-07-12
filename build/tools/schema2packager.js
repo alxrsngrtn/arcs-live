@@ -7,23 +7,8 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-import fs from 'fs';
-import minimist from 'minimist';
-import { Manifest } from '../runtime/manifest.js';
-// TODO: options: output dir, filter specific schema(s)
-const argv = minimist(process.argv.slice(2), {
-    boolean: ['help'],
-});
-if (argv.help || argv._.length === 0) {
-    console.log(`
-Usage
-  $ tools/sigh schema2packager [file ...]
-
-Description
-  Generates C++ code from Schemas for use in wasm particles.
-`);
-    process.exit();
-}
+import { Schema2Base, typeSummary } from './schema2base.js';
+const description = 'Generates C++ code from Schemas for use in wasm particles.';
 const keywords = [
     'alignas', 'alignof', 'and', 'and_eq', 'asm', 'auto', 'bitand', 'bitor', 'bool', 'break', 'case',
     'catch', 'char', 'char8_t', 'char16_t', 'char32_t', 'class', 'compl', 'concept', 'const',
@@ -36,16 +21,6 @@ const keywords = [
     'this', 'thread_local', 'throw', 'true', 'try', 'typedef', 'typeid', 'typename', 'union',
     'unsigned', 'using', 'virtual', 'void', 'volatile', 'wchar_t', 'while', 'xor', 'xor_eq'
 ];
-function typeSummary(descriptor) {
-    switch (descriptor.kind) {
-        case 'schema-primitive':
-            return `schema-primitive:${descriptor.type}`;
-        case 'schema-collection':
-            return `schema-collection:${descriptor.schema.type}`;
-        default:
-            return descriptor.kind;
-    }
-}
 function generate(name, schema) {
     const fields = [];
     const api = [];
@@ -188,18 +163,6 @@ struct std::hash<arcs::${name}> {
 `;
     return content.replace(/ +\n/g, '\n');
 }
-// TODO: handle schemas with multiple names and schemas with parents
-// TODO: error handling
-async function processFile(file) {
-    const contents = fs.readFileSync(file, 'utf-8');
-    const manifest = await Manifest.parse(contents);
-    for (const schema of Object.values(manifest.schemas)) {
-        const outFile = 'entity-' + schema.names[0].toLowerCase() + '.h';
-        const contents = generate(schema.names[0], schema);
-        fs.writeFileSync(outFile, contents);
-    }
-}
-for (const file of argv._) {
-    void processFile(file);
-}
+const schema2cpp = new Schema2Base(description, (schemaName => `entity-${schemaName}.h`), generate);
+schema2cpp.call();
 //# sourceMappingURL=schema2packager.js.map

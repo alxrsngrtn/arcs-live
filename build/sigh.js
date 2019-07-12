@@ -67,6 +67,7 @@ const steps = {
     health: [health],
     bundle: [peg, build, bundle],
     schema2pkg: [peg, build, schema2pkg],
+    schema2kotlin: [peg, build, schema2kotlin],
     devServer: [peg, build, devServer],
     licenses: [build],
     default: [check, peg, railroad, build, runTests, webpack, webpackTools, lint, tslint],
@@ -745,6 +746,10 @@ function bundle(args) {
 // E.g. $ ./tools/sigh schema2pkg particles/Products/Product.schema
 function schema2pkg(args) {
     return spawnTool('build/tools/schema2packager.js', args);
+}
+// E.g. $ ./tools/sigh schema2kotlin particles/Products/Product.schema
+function schema2kotlin(args) {
+    return spawnTool('build/tools/schema2kotlin.js', args);
 }
 function devServer(args) {
     return spawnTool('build/tools/dev_server/dev-server.js', args);
