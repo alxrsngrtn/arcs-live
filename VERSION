@@ -1,5 +1,5 @@
-commit 0705fc7744cf0e5ac8e99d0ca17ae7d864c58db3
+commit 692a1d8daddd3ff29290e656656256cb83f539d9
 Author: Paul Lindner <plindner@google.com>
-Date:   Mon Jul 15 14:13:32 2019 -0700
+Date:   Mon Jul 15 15:28:39 2019 -0700
 
-    fix github pages issue with dangling symlink (#3328)
+    Be more specific about omitting tfjs-node to make Travis happy (#3329)
