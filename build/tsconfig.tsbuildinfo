@@ -506,7 +506,7 @@
         "signature": "74b0fe35f5cadce1dcc19d5e93f21b31c387808566250dc8766480b9a320943d"
       },
       "/home/travis/build/PolymerLabs/arcs/src/common/time/timeunit.ts": {
-        "version": "d4fc7c790de170294a6308fae5c5285b9bb136cf3cb914b314670e933fbf9da5",
+        "version": "954157a2b3e3eefe437df8cdfa8deb1f972dca7e36c1206522dea5944b6a4c4b",
         "signature": "060e24d72c1b52676ddfb02af0882c193da675bb0c8e8f1d0ab1b72c576646ec"
       },
       "/home/travis/build/PolymerLabs/arcs/src/common/time/instant.ts": {
@@ -2497,7 +2497,7 @@
         "signature": "8e609bb71c20b858c77f0e9f90bb1319db8477b13f9f965f1a1e18524bf50881"
       },
       "/home/travis/build/PolymerLabs/arcs/src/tests/particles/products-test.ts": {
-        "version": "68bb75493c1fe3ebaafb717a5d4f69a7d8e83fd848ee6266dcd128506772051b",
+        "version": "7641bc863093d6926ef43d7ce433ab452f2a5c3882cdd59894a6e8866c2a23d8",
         "signature": "8bc1d39a3b8ec61064f9969316a088e314895e7ffd094468dcc0b238f33cb4a6"
       },
       "/home/travis/build/PolymerLabs/arcs/src/tests/particles/test-environment-test.ts": {
@@ -7660,7 +7660,13 @@
       ],
       "/home/travis/build/PolymerLabs/arcs/src/tests/particles/products-test.ts": [
         "/home/travis/build/PolymerLabs/arcs/src/platform/chai-web.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/src/planning/testing/arcs-planning-testing.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/id.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/loader.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/manifest.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/runtime.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/testing/mock-slot-composer.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/testing/fake-slot-composer.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
       ],
@@ -31367,7 +31373,44 @@
       "/home/travis/build/PolymerLabs/arcs/node_modules/@types/minimatch/index.d.ts",
       "/home/travis/build/PolymerLabs/arcs/node_modules/@types/glob/index.d.ts",
       "/home/travis/build/PolymerLabs/arcs/src/tests/particles/particles-test.ts",
-      "/home/travis/build/PolymerLabs/arcs/src/tests/particles/products-test.ts",
+      [
+        "/home/travis/build/PolymerLabs/arcs/src/tests/particles/products-test.ts",
+        [
+          {
+            "file": "/home/travis/build/PolymerLabs/arcs/src/tests/particles/products-test.ts",
+            "start": 2182,
+            "length": 6,
+            "messageText": "Object is possibly 'undefined'.",
+            "category": 1,
+            "code": 2532
+          },
+          {
+            "file": "/home/travis/build/PolymerLabs/arcs/src/tests/particles/products-test.ts",
+            "start": 2204,
+            "length": 6,
+            "messageText": "Object is possibly 'undefined'.",
+            "category": 1,
+            "code": 2532
+          },
+          {
+            "file": "/home/travis/build/PolymerLabs/arcs/src/tests/particles/products-test.ts",
+            "start": 3705,
+            "length": 6,
+            "code": 2345,
+            "category": 1,
+            "messageText": {
+              "messageText": "Argument of type 'Recipe | undefined' is not assignable to parameter of type 'Recipe'.",
+              "category": 1,
+              "code": 2345,
+              "next": {
+                "messageText": "Type 'undefined' is not assignable to type 'Recipe'.",
+                "category": 1,
+                "code": 2322
+              }
+            }
+          }
+        ]
+      ],
       [
         "/home/travis/build/PolymerLabs/arcs/src/tests/particles/test-environment-test.ts",
         [

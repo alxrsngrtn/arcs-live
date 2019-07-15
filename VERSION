@@ -1,5 +1,11 @@
-commit 3999d31f836b83974d5c8a18983e42b3bf70e880
-Author: Paul Lindner <plindner@google.com>
-Date:   Mon Jul 15 11:23:34 2019 -0700
+commit a9b2eb3adb366c72b4b55ff3958cbbea2a923285
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Mon Jul 15 12:37:49 2019 -0700
 
-    Use strictEqual and strictNotEqual for all tests (#3321)
+    get rid of test planner helper in products-test (#3133)
+    
+    * get rid of test planner helper in products-test
+    
+    * address comment (long awaited)
+    
+    * fix lint and merge
