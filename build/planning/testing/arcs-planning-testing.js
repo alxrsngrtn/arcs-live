@@ -8,6 +8,6 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { PlanningTestHelper } from './planning-test-helper.js';
-import { StrategyTestHelper } from '../test/strategies/strategy-test-helper.js';
+import { StrategyTestHelper } from './strategy-test-helper.js';
 export { PlanningTestHelper, StrategyTestHelper };
 //# sourceMappingURL=arcs-planning-testing.js.map

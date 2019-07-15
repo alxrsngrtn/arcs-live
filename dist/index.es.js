@@ -23790,7 +23790,7 @@ class PECOuterPortImpl extends PECOuterPort {
  * http://polymer.github.io/PATENTS.txt
  */
 class Arc {
-    constructor({ id, context, pecFactory, slotComposer, loader, storageKey, storageProviderFactory, speculative, innerArc, stub, inspectorFactory, ports }) {
+    constructor({ id, context, pecFactories, slotComposer, loader, storageKey, storageProviderFactory, speculative, innerArc, stub, inspectorFactory }) {
         this._activeRecipe = new Recipe();
         this._recipeDeltas = [];
         this.dataChangeCallbacks = new Map();
@@ -23808,8 +23808,8 @@ class Arc {
         this.loadedParticleInfo = new Map();
         // TODO: context should not be optional.
         this._context = context || new Manifest({ id });
-        // TODO: pecFactory should not be optional. update all callers and fix here.
-        this.pecFactory = pecFactory || FakePecFactory(loader).bind(null);
+        // TODO: pecFactories should not be optional. update all callers and fix here.
+        this.pecFactories = pecFactories && pecFactories.length > 0 ? pecFactories.slice() : [FakePecFactory(loader).bind(null)];
         if (typeof id === 'string') {
             // TODO(csilvestrini): Replace this warning with an exception.
             console.error(`Arc created with string ID ${id}!!! This should be an object of type Id instead. This warning will turn into an ` +
@@ -23826,9 +23826,8 @@ class Arc {
         this.inspectorFactory = inspectorFactory;
         this.inspector = inspectorFactory && inspectorFactory.create(this);
         this.storageKey = storageKey;
-        const pecId = this.generateID();
-        const innerPecPort = this.pecFactory(pecId, this.idGenerator);
-        this.pec = new ParticleExecutionHost(slotComposer, this, [innerPecPort].concat(ports || []));
+        const ports = this.pecFactories.map(f => f(this.generateID(), this.idGenerator));
+        this.pec = new ParticleExecutionHost(slotComposer, this, ports);
         this.storageProviderFactory = storageProviderFactory || new StorageProviderFactory(this.id);
     }
     get loader() {
@@ -23899,7 +23898,7 @@ class Arc {
     }
     createInnerArc(transformationParticle) {
         const id = this.generateID('inner');
-        const innerArc = new Arc({ id, pecFactory: this.pecFactory, slotComposer: this.pec.slotComposer, loader: this._loader, context: this.context, innerArc: true, speculative: this.isSpeculative, inspectorFactory: this.inspectorFactory });
+        const innerArc = new Arc({ id, pecFactories: this.pecFactories, slotComposer: this.pec.slotComposer, loader: this._loader, context: this.context, innerArc: true, speculative: this.isSpeculative, inspectorFactory: this.inspectorFactory });
         let particleInnerArcs = this.innerArcsByParticle.get(transformationParticle);
         if (!particleInnerArcs) {
             particleInnerArcs = [];
@@ -24062,13 +24061,13 @@ ${this.activeRecipe.toString()}`;
         // TODO: storage refactor: make sure set() is available here (or wrap store in a Handle-like adaptor).
         await store.set(arcInfoType.newInstance(this.id, serialization));
     }
-    static async deserialize({ serialization, pecFactory, slotComposer, loader, fileName, context, inspectorFactory }) {
+    static async deserialize({ serialization, pecFactories, slotComposer, loader, fileName, context, inspectorFactory }) {
         const manifest = await Manifest.parse(serialization, { loader, fileName, context });
         const arc = new Arc({
             id: Id.fromString(manifest.meta.name),
             storageKey: manifest.meta.storageKey,
             slotComposer,
-            pecFactory,
+            pecFactories,
             loader,
             storageProviderFactory: manifest.storageProviderFactory,
             context,
@@ -24134,7 +24133,7 @@ ${this.activeRecipe.toString()}`;
     // Makes a copy of the arc used for speculative execution.
     async cloneForSpeculativeExecution() {
         const arc = new Arc({ id: this.generateID(),
-            pecFactory: this.pecFactory,
+            pecFactories: this.pecFactories,
             context: this.context,
             loader: this._loader,
             speculative: true,
@@ -30948,7 +30947,7 @@ const isNormalized = recipe => {
   return Object.isFrozen(recipe);
 };
 
-const spawn = async ({id, serialization, context, composer, storage, ports}) => {
+const spawn = async ({id, serialization, context, composer, storage, portFactories}) => {
   const arcId = IdGenerator.newSession().newArcId(id);
   const params = {
     id: arcId,
@@ -30957,10 +30956,9 @@ const spawn = async ({id, serialization, context, composer, storage, ports}) => 
     context,
     storageKey: storage || 'volatile',
     slotComposer: composer,
-    pecFactory: env.pecFactory,
+    pecFactories: [].concat([env.pecFactory], portFactories || []),
     loader: env.loader,
     inspectorFactory: devtoolsArcInspectorFactory,
-    ports
   };
   Object.assign(params, env.params);
   return serialization ? Arc.deserialize(params) : new Arc(params);

@@ -97,7 +97,7 @@ describe('Bundle Tool', () => {
         });
   });
   it('bundles Products demo', async () => {
-    await bundle(['src/runtime/test/artifacts/Products/Products.recipes'], 'test-output/bundle/products.zip', false);
+    await bundle(['src/runtime/tests/artifacts/Products/Products.recipes'], 'test-output/bundle/products.zip', false);
     const data = fs.readFileSync('test-output/bundle/products.zip');
     const zip = await JSZip.loadAsync(data);
 
@@ -139,7 +139,7 @@ describe('Bundle Tool', () => {
       `particle Recommend in 'source/Recommend.js'`
     );
 
-    assert.equal(
+    assert.strictEqual(
         await zip.file('__bundle_entry.manifest').async('text'),
         `import 'Products/Products.recipes'\n`);
   });

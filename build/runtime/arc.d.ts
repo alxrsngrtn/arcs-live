@@ -29,7 +29,7 @@ import { InterfaceInfo } from './interface-info.js';
 export declare type ArcOptions = Readonly<{
     id: Id;
     context: Manifest;
-    pecFactory?: PecFactory;
+    pecFactories?: PecFactory[];
     slotComposer?: SlotComposer;
     loader: Loader;
     storageKey?: string;
@@ -42,7 +42,7 @@ export declare type ArcOptions = Readonly<{
 }>;
 declare type DeserializeArcOptions = Readonly<{
     serialization: string;
-    pecFactory?: PecFactory;
+    pecFactories?: PecFactory[];
     slotComposer?: SlotComposer;
     loader: Loader;
     fileName: string;
@@ -51,7 +51,7 @@ declare type DeserializeArcOptions = Readonly<{
 }>;
 export declare class Arc {
     private readonly _context;
-    private readonly pecFactory;
+    private readonly pecFactories;
     readonly isSpeculative: boolean;
     readonly isInnerArc: boolean;
     readonly isStub: boolean;
@@ -77,7 +77,7 @@ export declare class Arc {
         stores: Map<string, StorageProviderBase>;
     }>;
     readonly pec: ParticleExecutionHost;
-    constructor({ id, context, pecFactory, slotComposer, loader, storageKey, storageProviderFactory, speculative, innerArc, stub, inspectorFactory, ports }: ArcOptions);
+    constructor({ id, context, pecFactories, slotComposer, loader, storageKey, storageProviderFactory, speculative, innerArc, stub, inspectorFactory }: ArcOptions);
     readonly loader: Loader;
     readonly modality: Modality;
     dispose(): void;
@@ -93,7 +93,7 @@ export declare class Arc {
     private _serializeStorageKey;
     serialize(): Promise<string>;
     persistSerialization(serialization: string): Promise<void>;
-    static deserialize({ serialization, pecFactory, slotComposer, loader, fileName, context, inspectorFactory }: DeserializeArcOptions): Promise<Arc>;
+    static deserialize({ serialization, pecFactories, slotComposer, loader, fileName, context, inspectorFactory }: DeserializeArcOptions): Promise<Arc>;
     readonly context: Manifest;
     readonly activeRecipe: Recipe;
     readonly allRecipes: Recipe[];

@@ -88,7 +88,7 @@ describe('Bundle Tool', () => {
         });
     });
     it('bundles Products demo', async () => {
-        await bundle(['src/runtime/test/artifacts/Products/Products.recipes'], 'test-output/bundle/products.zip', false);
+        await bundle(['src/runtime/tests/artifacts/Products/Products.recipes'], 'test-output/bundle/products.zip', false);
         const data = fs.readFileSync('test-output/bundle/products.zip');
         const zip = await JSZip.loadAsync(data);
         assert.hasAllKeys(zip.files, [
@@ -124,7 +124,7 @@ describe('Bundle Tool', () => {
         ]);
         // Sanity check.
         assert.include(await zip.file('Products/Recommend.recipes').async('text'), `particle Recommend in 'source/Recommend.js'`);
-        assert.equal(await zip.file('__bundle_entry.manifest').async('text'), `import 'Products/Products.recipes'\n`);
+        assert.strictEqual(await zip.file('__bundle_entry.manifest').async('text'), `import 'Products/Products.recipes'\n`);
     });
 });
 //# sourceMappingURL=bundle-test.js.map

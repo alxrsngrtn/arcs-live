@@ -46,13 +46,13 @@ describe('Volatile + Backing Store Integration', async () => {
         const id2 = store.on(async (m, id) => { message = m; muxId = id; return true; });
         await store.onProxyMessage({ type: ProxyMessageType.SyncRequest, id: id2 }, 'thing0');
         assertHasModel(message, count1);
-        assert.equal(muxId, 'thing0');
+        assert.strictEqual(muxId, 'thing0');
         await store.onProxyMessage({ type: ProxyMessageType.SyncRequest, id: id2 }, 'thing1');
         assertHasModel(message, count2);
-        assert.equal(muxId, 'thing1');
+        assert.strictEqual(muxId, 'thing1');
         await store.onProxyMessage({ type: ProxyMessageType.SyncRequest, id: id2 }, 'not-a-thing');
         assertHasModel(message, new CRDTCount());
-        assert.equal(muxId, 'not-a-thing');
+        assert.strictEqual(muxId, 'not-a-thing');
     });
 });
 //# sourceMappingURL=volatile-backing-store-integration-test.js.map

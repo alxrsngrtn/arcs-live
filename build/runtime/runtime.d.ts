@@ -17,7 +17,7 @@ import { StorageProviderFactory } from './storage/storage-provider-factory.js';
 import { ArcInspectorFactory } from './arc-inspector.js';
 import { VolatileMemory } from './storageNG/drivers/volatile.js';
 export declare type RuntimeArcOptions = Readonly<{
-    pecFactory?: PecFactory;
+    pecFactories?: PecFactory[];
     storageProviderFactory?: StorageProviderFactory;
     speculative?: boolean;
     innerArc?: boolean;

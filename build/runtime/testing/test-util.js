@@ -100,7 +100,7 @@ export async function assertSingletonWillChangeTo(arc, store, field, expectation
 }
 export async function assertSingletonIs(store, field, expectation) {
     const actual = await store.get();
-    assert.equal(actual !== null ? actual.rawData[field] : '(null)', expectation);
+    assert.strictEqual(actual !== null ? actual.rawData[field] : '(null)', expectation);
 }
 export async function assertThrowsAsync(fn, ...args) {
     try {

@@ -29,10 +29,10 @@ describe('Tracing', () => {
     }
     function assertFlowEnclosedInComplete(flowEvent, completeEvent) {
         if (flowEvent.ph === 's') {
-            assert.equal(flowEvent.ts, completeEvent.ts + completeEvent.dur, `Flow should start at the end of the first complete event`);
+            assert.strictEqual(flowEvent.ts, completeEvent.ts + completeEvent.dur, `Flow should start at the end of the first complete event`);
         }
         else {
-            assert.equal(flowEvent.ts, completeEvent.ts, `Flow should step and end at the beginning of the respective complete event`);
+            assert.strictEqual(flowEvent.ts, completeEvent.ts, `Flow should step and end at the beginning of the respective complete event`);
         }
     }
     const promiseResult = 42;
@@ -56,9 +56,9 @@ describe('Tracing', () => {
         const events = Tracing.save().traceEvents;
         assert.lengthOf(events, 1);
         const [event] = events;
-        assert.equal(event.ph, 'X');
-        assert.equal(event.cat, 'Stuff');
-        assert.equal(event.name, 'Thingy::thing');
+        assert.strictEqual(event.ph, 'X');
+        assert.strictEqual(event.cat, 'Stuff');
+        assert.strictEqual(event.name, 'Thingy::thing');
         assert.isUndefined(event.args);
         assertTimestampsIncreasing(beginMicros, event.ts, event.ts + event.dur, endMicros);
     });
@@ -69,9 +69,9 @@ describe('Tracing', () => {
         const events = Tracing.save().traceEvents;
         assert.lengthOf(events, 1);
         const [event] = events;
-        assert.equal(event.ph, 'X');
-        assert.equal(event.cat, 'Stuff');
-        assert.equal(event.name, 'Thingy::thing');
+        assert.strictEqual(event.ph, 'X');
+        assert.strictEqual(event.cat, 'Stuff');
+        assert.strictEqual(event.name, 'Thingy::thing');
         assert.deepEqual(event.args, { content: 'yay' });
     });
     it('traces an asynchronous event', async () => {
@@ -82,19 +82,19 @@ describe('Tracing', () => {
         const insideFirstSync = Tracing.now();
         let promise = trace.wait(waitABit());
         const betweenFirstAndSecond = Tracing.now();
-        assert.equal(await promise, promiseResult);
+        assert.strictEqual(await promise, promiseResult);
         const insideSecondSync = Tracing.now();
         promise = trace.wait(waitABit());
         const betweenSecondAndThird = Tracing.now();
-        assert.equal(await promise, promiseResult);
+        assert.strictEqual(await promise, promiseResult);
         const insideThirdSync = Tracing.now();
         trace.end();
         const endMicros = Tracing.now();
         const events = Tracing.save().traceEvents;
         assert.lengthOf(events, 6);
         for (const event of events) {
-            assert.equal(event.cat, 'Stuff');
-            assert.equal(event.seq, 'stream_1');
+            assert.strictEqual(event.cat, 'Stuff');
+            assert.strictEqual(event.seq, 'stream_1');
             assert.isUndefined(event.args);
         }
         const flowStartEvent = events.find(e => e.ph === 's');
@@ -103,7 +103,7 @@ describe('Tracing', () => {
         const completeEvents = events.filter(e => e.ph === 'X');
         assert.lengthOf(completeEvents, 3);
         completeEvents.sort((a, b) => (a.ts - b.ts));
-        assert.equal(completeEvents[0].name, 'Thingy::thing');
+        assert.strictEqual(completeEvents[0].name, 'Thingy::thing');
         assert.isTrue([
             flowStartEvent,
             flowStepEvent,
@@ -124,12 +124,12 @@ describe('Tracing', () => {
         const insideFirstSync = Tracing.now();
         const promise = trace.endWith(waitABit(), { args: { finished: true } });
         const betweenFirstAndSecond = Tracing.now();
-        assert.equal(await promise, promiseResult);
+        assert.strictEqual(await promise, promiseResult);
         const endMicros = Tracing.now();
         const events = Tracing.save().traceEvents;
         assert.lengthOf(events, 4);
         for (const event of events) {
-            assert.equal(event.cat, 'Stuff');
+            assert.strictEqual(event.cat, 'Stuff');
         }
         const flowStartEvent = events.find(e => e.ph === 's');
         const flowEndEvent = events.find(e => e.ph === 'f');
@@ -140,7 +140,7 @@ describe('Tracing', () => {
         assert.deepEqual(completeEvents[1].args, {
             finished: true
         });
-        assert.equal(completeEvents[0].name, 'Thingy::thing');
+        assert.strictEqual(completeEvents[0].name, 'Thingy::thing');
         assert.isTrue([
             flowStartEvent,
             flowEndEvent,
@@ -243,8 +243,8 @@ describe('Tracing', () => {
         const events = Tracing.save().traceEvents;
         assert.lengthOf(events, 3);
         for (const event of events) {
-            assert.equal(event.cat, 'Stuff');
-            assert.equal(event.name, 'Flowing');
+            assert.strictEqual(event.cat, 'Stuff');
+            assert.strictEqual(event.name, 'Flowing');
         }
         const flowStartEvent = events.find(e => e.ph === 's');
         const flowStepEvent = events.find(e => e.ph === 't');

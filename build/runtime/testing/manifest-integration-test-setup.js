@@ -15,7 +15,7 @@ import { ArcId } from '../id.js';
 export async function manifestTestSetup() {
     const registry = {};
     const loader = new Loader();
-    const manifest = await Manifest.load('./src/runtime/test/artifacts/test.manifest', loader, registry);
+    const manifest = await Manifest.load('./src/runtime/tests/artifacts/test.manifest', loader, registry);
     assert(manifest);
     const arc = new Arc({ id: ArcId.newForTest('test'), context: manifest, loader });
     const recipe = manifest.recipes[0];

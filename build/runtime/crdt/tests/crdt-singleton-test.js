@@ -13,7 +13,7 @@ import { CRDTSingleton, SingletonOpTypes } from '../crdt-singleton';
 describe('CRDTSingleton', () => {
     it('can set values from a single actor', () => {
         const singleton = new CRDTSingleton();
-        assert.equal(singleton.getParticleView(), null);
+        assert.strictEqual(singleton.getParticleView(), null);
         singleton.applyOperation({
             type: SingletonOpTypes.Set,
             value: { id: '1' },
@@ -39,7 +39,7 @@ describe('CRDTSingleton', () => {
     });
     it('can clear values', () => {
         const singleton = new CRDTSingleton();
-        assert.equal(singleton.getParticleView(), null);
+        assert.strictEqual(singleton.getParticleView(), null);
         singleton.applyOperation({
             type: SingletonOpTypes.Set,
             value: { id: '1' },
@@ -62,11 +62,11 @@ describe('CRDTSingleton', () => {
         assert.deepEqual(singleton.getParticleView(), { id: '1' });
         // Up-to-date version number, does clear it.
         singleton.applyOperation({ type: SingletonOpTypes.Clear, actor: 'A', clock: { A: 1 } });
-        assert.equal(singleton.getParticleView(), null);
+        assert.strictEqual(singleton.getParticleView(), null);
     });
     it('can add and clear from multiple actors', () => {
         const singleton = new CRDTSingleton();
-        assert.equal(singleton.getParticleView(), null);
+        assert.strictEqual(singleton.getParticleView(), null);
         singleton.applyOperation({
             type: SingletonOpTypes.Set,
             value: { id: '1' },
@@ -100,7 +100,7 @@ describe('CRDTSingleton', () => {
             clock: { A: 1, B: 2 }
         });
         assert.deepEqual(singleton.getData().values, {});
-        assert.equal(singleton.getParticleView(), null);
+        assert.strictEqual(singleton.getParticleView(), null);
     });
     it('can merge two singletons', () => {
         const singletonA = new CRDTSingleton();
@@ -136,7 +136,7 @@ describe('CRDTSingleton', () => {
             actor: 'A',
             clock: newVersion,
         }));
-        assert.equal(singletonA.getParticleView(), null);
+        assert.strictEqual(singletonA.getParticleView(), null);
     });
 });
 //# sourceMappingURL=crdt-singleton-test.js.map

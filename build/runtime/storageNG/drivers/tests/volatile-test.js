@@ -49,17 +49,17 @@ describe('Volatile Driver', async () => {
         const recvQueue2 = [];
         volatile2.registerReceiver((model, version) => recvQueue2.push({ model, version }));
         await volatile1.send(3, 1);
-        assert.equal(recvQueue1.length, 0);
+        assert.strictEqual(recvQueue1.length, 0);
         assert.deepEqual(recvQueue2, [{ model: 3, version: 1 }]);
     });
     it(`won't accept out-of-date writes`, async () => {
         const volatileKey = new VolatileStorageKey('unique');
         const volatile1 = new VolatileDriver(volatileKey, Exists.ShouldCreate);
-        assert.equal(true, await volatile1.send(3, 1));
-        assert.equal(false, await volatile1.send(4, 0));
-        assert.equal(false, await volatile1.send(4, 1));
-        assert.equal(false, await volatile1.send(4, 3));
-        assert.equal(true, await volatile1.send(4, 2));
+        assert.strictEqual(true, await volatile1.send(3, 1));
+        assert.strictEqual(false, await volatile1.send(4, 0));
+        assert.strictEqual(false, await volatile1.send(4, 1));
+        assert.strictEqual(false, await volatile1.send(4, 3));
+        assert.strictEqual(true, await volatile1.send(4, 2));
     });
     it('will only accept a given version from one connected driver', async () => {
         const volatileKey = new VolatileStorageKey('unique');
@@ -73,7 +73,7 @@ describe('Volatile Driver', async () => {
         const promise2 = volatile2.send(4, 1);
         const results = await Promise.all([promise1, promise2]);
         assert.deepEqual([true, false], results);
-        assert.equal(recvQueue1.length, 0);
+        assert.strictEqual(recvQueue1.length, 0);
         assert.deepEqual(recvQueue2, [{ model: 3, version: 1 }]);
     });
 });
