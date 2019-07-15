@@ -1,5 +1,5 @@
-commit 692a1d8daddd3ff29290e656656256cb83f539d9
+commit 1e24d476b988aa95ba12eb34cde2e66ba49d8069
 Author: Paul Lindner <plindner@google.com>
-Date:   Mon Jul 15 15:28:39 2019 -0700
+Date:   Mon Jul 15 16:12:29 2019 -0700
 
-    Be more specific about omitting tfjs-node to make Travis happy (#3329)
+    Additional deploy fixes for dangling symlinks and tfjs-node (#3331)
