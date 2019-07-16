@@ -1,8 +1,9 @@
-commit 8e7b69e6a17595c15e30106573b14dbcaa24f2b4
-Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
-Date:   Tue Jul 16 12:55:54 2019 +1000
+commit 8cc99b43414eea4cf82812bf33b0b8e42d0eff35
+Author: Joshua Pratt <jp10010101010000@gmail.com>
+Date:   Tue Jul 16 13:19:28 2019 +1000
 
-    Added unit tests for Flow and FlowModifier. (#3333)
+    Ensure the planner displays visibility information (#3299)
     
-    Moved TestNode/TestEdge into flow-graph-testing.ts so it can be used in
-    other unit tests.
+    * Test resolution and planning for slandles
+    * Update slandles particles to include explicit roots
+    * Ensure that visibility information is displayed in the planner inspector

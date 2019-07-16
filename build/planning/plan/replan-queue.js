@@ -38,7 +38,7 @@ export class ReplanQueue {
         else if (this.changes.length > 0) {
             // Schedule delayed planning.
             const timeNow = now();
-            this.changes.forEach((ch, i) => this.changes[i] = timeNow);
+            this.changes.forEach((_ch, i) => this.changes[i] = timeNow);
             this._scheduleReplan(this.options.replanDelayMs);
         }
     }

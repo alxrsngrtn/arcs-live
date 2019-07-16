@@ -610,7 +610,7 @@
         "signature": "09e339afdbd224f2a7cf55896c3d190be97c9223bdaeececaa7ea7c1972c432e"
       },
       "/home/travis/build/PolymerLabs/arcs/src/planning/plan/suggestion.ts": {
-        "version": "d8e0bf7168fd41e937502c25382f6fa447151d4a0334a61a6a12180635d1e42a",
+        "version": "1d480958246a2d4f8a4544e7e54f355c26e19c396ff3b054992879dcd5c7a495",
         "signature": "51eb22f8bbbf6febec347af27933b3ffd94b0dc50ddbcaa27cd657da47297a7d"
       },
       "/home/travis/build/PolymerLabs/arcs/src/planning/plan/planning-result.ts": {
@@ -726,7 +726,7 @@
         "signature": "55534ada5c9912c9301a9641e968b9978f1bce14e0647a5018231a458a5e4c8f"
       },
       "/home/travis/build/PolymerLabs/arcs/src/planning/plan/plan-consumer.ts": {
-        "version": "e76c695201022e3b9ffe951b5e020ec4787a1a872e180cbee32daa09e6084bec",
+        "version": "217661872d251abfd8d7e8b648e92b475684b041afdb75d79d7034726f1a06e1",
         "signature": "6a5b13fae02fd0b0d5731a254641a84c9e904cddafd02fe0f744eada64d58744"
       },
       "/home/travis/build/PolymerLabs/arcs/src/planning/planner-inspector.ts": {
@@ -766,11 +766,11 @@
         "signature": "32041b1f1cff1fc6b79747a6e2b45b9844eb8894776b4054e7c50c2a070a56bb"
       },
       "/home/travis/build/PolymerLabs/arcs/src/planning/plan/plan-producer.ts": {
-        "version": "490aff963acecdd77e8a360240e39460e6a8181fcb19ecdd4ffad6dbd308f6e7",
-        "signature": "851dc7636ee689f6528e14dfcd36d3476427911ebe9743c9e9bcd2606b60dfdc"
+        "version": "e28a7e6e72589c808744df601b902118f745b153a5d1a964a24cae297c21bd1c",
+        "signature": "81d01c989384ba3b572cce19f42a5ab1229bc41ccd7ce2d2120d68c39ad14c4a"
       },
       "/home/travis/build/PolymerLabs/arcs/src/planning/plan/replan-queue.ts": {
-        "version": "e95dba7b7d953b15121eed59ec42bedaeec0dbe167fc14069748a2b9e1a1244d",
+        "version": "2babfa112e5165f80607c882b12253778198e43b79f8cfac67d7543d95dda4a9",
         "signature": "a908026abe1b0a0d3c2b9967546f3e7548c3420b1f2d81af38af631158f74dba"
       },
       "/home/travis/build/PolymerLabs/arcs/src/planning/plan/planificator.ts": {
@@ -1186,7 +1186,7 @@
         "signature": "70ec31185ba202997da2613e9400fff44ef0abf3c22f4794f67d658fe0c909b2"
       },
       "/home/travis/build/PolymerLabs/arcs/src/planning/tests/planner-test.ts": {
-        "version": "d07ee5c2a531fb6d84001490b0c52cf8f2ae3ac1d577869894347fee1d36f687",
+        "version": "defede5ea6e971d5abe6eba51621c0b5bb2d47c288ec007e1354ec8f0175716a",
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/testing/manifest-integration-test-setup.ts": {
@@ -5190,6 +5190,7 @@
         "/home/travis/build/PolymerLabs/arcs/src/runtime/testing/stub-loader.ts",
         "/home/travis/build/PolymerLabs/arcs/src/planning/planner.ts",
         "/home/travis/build/PolymerLabs/arcs/src/planning/speculator.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/testing/test-util.ts",
         "/home/travis/build/PolymerLabs/arcs/src/planning/testing/strategy-test-helper.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/id.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
@@ -8992,7 +8993,8 @@
         "/home/travis/build/PolymerLabs/arcs/src/planning/speculator.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/storage-provider-base.ts",
         "/home/travis/build/PolymerLabs/arcs/src/planning/planner-inspector.ts",
-        "/home/travis/build/PolymerLabs/arcs/src/planning/plan/suggestion.ts"
+        "/home/travis/build/PolymerLabs/arcs/src/planning/plan/suggestion.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/planning/strategizer.ts"
       ],
       "/home/travis/build/PolymerLabs/arcs/src/planning/plan/replan-queue.ts": [
         "/home/travis/build/PolymerLabs/arcs/src/planning/plan/plan-producer.ts",
@@ -23113,7 +23115,24 @@
         [
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/planning/plan/plan-consumer.ts",
-            "start": 4278,
+            "start": 2895,
+            "length": 13,
+            "code": 2345,
+            "category": 1,
+            "messageText": {
+              "messageText": "Argument of type 'SuggestionVisibilityOptions | undefined' is not assignable to parameter of type 'SuggestionVisibilityOptions'.",
+              "category": 1,
+              "code": 2345,
+              "next": {
+                "messageText": "Type 'undefined' is not assignable to type 'SuggestionVisibilityOptions'.",
+                "category": 1,
+                "code": 2322
+              }
+            }
+          },
+          {
+            "file": "/home/travis/build/PolymerLabs/arcs/src/planning/plan/plan-consumer.ts",
+            "start": 4367,
             "length": 23,
             "messageText": "Object is possibly 'null'.",
             "category": 1,
@@ -23318,7 +23337,7 @@
         [
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/planning/plan/plan-producer.ts",
-            "start": 2861,
+            "start": 3073,
             "length": 16,
             "messageText": "Object is possibly 'undefined'.",
             "category": 1,
@@ -23326,7 +23345,24 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/planning/plan/plan-producer.ts",
-            "start": 6265,
+            "start": 5888,
+            "length": 16,
+            "code": 2345,
+            "category": 1,
+            "messageText": {
+              "messageText": "Argument of type '{ trigger: Trigger; search?: string | undefined; } | undefined' is not assignable to parameter of type '{}'.",
+              "category": 1,
+              "code": 2345,
+              "next": {
+                "messageText": "Type 'undefined' is not assignable to type '{}'.",
+                "category": 1,
+                "code": 2322
+              }
+            }
+          },
+          {
+            "file": "/home/travis/build/PolymerLabs/arcs/src/planning/plan/plan-producer.ts",
+            "start": 6220,
             "length": 4,
             "code": 2345,
             "category": 1,
@@ -23334,7 +23370,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/planning/plan/plan-producer.ts",
-            "start": 7022,
+            "start": 6962,
             "length": 12,
             "code": 2322,
             "category": 1,
@@ -25341,7 +25377,7 @@
         [
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/planning/tests/planner-test.ts",
-            "start": 21532,
+            "start": 22680,
             "length": 3,
             "messageText": "Object is possibly 'null'.",
             "category": 1,

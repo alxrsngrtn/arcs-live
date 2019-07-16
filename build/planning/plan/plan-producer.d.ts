@@ -12,6 +12,7 @@ import { SingletonStorageProvider } from '../../runtime/storage/storage-provider
 import { Planner, Generation } from '../planner.js';
 import { RecipeIndex } from '../recipe-index.js';
 import { Speculator } from '../speculator.js';
+import { StrategyDerived } from '../strategizer.js';
 import { PlanningResult } from './planning-result.js';
 import { Suggestion } from './suggestion.js';
 import { PlannerInspector } from '../planner-inspector.js';
@@ -22,6 +23,16 @@ export declare enum Trigger {
     DataChanged = "data-changed",
     Forced = "forced"
 }
+declare type SuggestionOptions = {
+    cancelOngoingPlanning?: boolean;
+    metadata?: {
+        trigger: Trigger;
+        search?: string;
+    };
+    search?: string;
+    strategies?: StrategyDerived[];
+    contextual?: boolean;
+};
 export declare class PlanProducer {
     arc: Arc;
     result: PlanningResult;
@@ -29,7 +40,7 @@ export declare class PlanProducer {
     recipeIndex: RecipeIndex;
     speculator: Speculator;
     needReplan: boolean;
-    replanOptions: {};
+    replanOptions: SuggestionOptions;
     _isPlanning: boolean;
     stateChangedCallbacks: ((isPlanning: boolean) => void)[];
     search: string;
@@ -46,7 +57,8 @@ export declare class PlanProducer {
     registerStateChangedCallback(callback: any): void;
     onSearchChanged(): Promise<void>;
     dispose(): void;
-    produceSuggestions(options?: {}): Promise<void>;
+    produceSuggestions(options?: SuggestionOptions): Promise<void>;
     runPlanner(options: any, generations: Generation[]): Promise<Suggestion[]>;
     protected _cancelPlanning(): void;
 }
+export {};

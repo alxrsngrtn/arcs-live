@@ -27697,6 +27697,7 @@ class Suggestion {
         });
         if (!hasRootSlot) {
             logReason(`Has no root slot`);
+            return false;
         }
         if (!usesRemoteNonRootSlots) {
             logReason(`No remote non-root slots.`);
@@ -31943,7 +31944,7 @@ class PlanConsumer {
         return this.result.suggestions.filter(suggestion => {
             const suggestOption = options && options.reasons ? { reasons: [] } : undefined;
             const isVisible = suggestion.isVisible(this.arc, this.suggestFilter, suggestOption);
-            if (!isVisible && suggestOption && options && options.reasons) {
+            if (options && options.reasons) {
                 options.reasons.set(suggestion.hash, suggestOption);
             }
             return isVisible;
@@ -31958,8 +31959,10 @@ class PlanConsumer {
     }
     _onSuggestionsChanged() {
         this.suggestionsChangeCallbacks.forEach(callback => callback({ suggestions: this.result.suggestions }));
-        if (this.inspector)
+        if (this.inspector) {
             this.inspector.updatePlanningResults(this.result, {});
+            this.inspector.updateVisibleSuggestions(this.result.suggestions, { reasons: new Map() });
+        }
     }
     _onMaybeSuggestionsChanged() {
         const options = this.inspector ? { reasons: new Map() } : undefined;
@@ -32138,6 +32141,7 @@ class PlanProducer {
     constructor(arc, result, searchStore, inspector, { debug = false, noSpecEx = false } = {}) {
         this.planner = null;
         this.needReplan = false;
+        this.replanOptions = {};
         this._isPlanning = false;
         this.stateChangedCallbacks = [];
         assert(result, 'result cannot be null');
@@ -32181,30 +32185,24 @@ class PlanProducer {
             // search string turned empty, no need to replan, going back to contextual suggestions.
             return;
         }
-        const metadata = { trigger: Trigger.Search, search: this.search };
-        if (this.search === '*') { // Search for ALL (including non-contextual) suggestions.
-            if (this.result.contextual) {
-                await this.produceSuggestions({ contextual: false, metadata });
-            }
-        }
-        else { // Search by search term.
-            const options = {
-                cancelOngoingPlanning: this.result.suggestions.length > 0,
-                search: this.search
-            };
-            if (this.result.contextual) {
-                // If we're searching but currently only have contextual suggestions,
-                // we need get non-contextual suggestions as well.
-                options.contextual = false;
-            }
-            else {
+        const options = {
+            // If we're searching but currently only have contextual suggestions,
+            // we need get non-contextual suggestions as well.
+            contextual: !this.result.contextual,
+            metadata: { trigger: Trigger.Search, search: this.search }
+        };
+        if (this.search !== '*') { // Search for ALL (including non-contextual) suggestions.
+            // Search by search term.
+            options.cancelOngoingPlanning = this.result.suggestions.length > 0;
+            options.search = this.search;
+            if (options.contextual) {
                 // If search changed and we already how all suggestions (i.e. including
                 // non-contextual ones) then it's enough to initialize with InitSearch
                 // with a new search phrase.
                 options.strategies = [InitSearch, ...Planner.ResolutionStrategies];
             }
-            await this.produceSuggestions({ ...options, metadata });
         }
+        await this.produceSuggestions(options);
     }
     dispose() {
         if (this.searchStore) {
@@ -32212,7 +32210,7 @@ class PlanProducer {
         }
     }
     async produceSuggestions(options = {}) {
-        if (options['cancelOngoingPlanning'] && this.isPlanning) {
+        if (options.cancelOngoingPlanning && this.isPlanning) {
             this._cancelPlanning();
         }
         this.needReplan = true;
@@ -32237,17 +32235,17 @@ class PlanProducer {
             if (this.result.merge({
                 suggestions,
                 generations: serializedGenerations,
-                contextual: this.replanOptions['contextual']
+                contextual: this.replanOptions.contextual
             }, this.arc)) {
                 // Store suggestions to store.
                 await this.result.flush();
                 if (this.inspector)
-                    this.inspector.updatePlanningResults(this.result, options['metadata']);
+                    this.inspector.updatePlanningResults(this.result, options.metadata);
             }
             else {
                 // Add skipped result to devtools.
                 if (this.inspector) {
-                    this.inspector.updatePlanningAttempt(suggestions, options['metadata']);
+                    this.inspector.updatePlanningAttempt(suggestions, options.metadata);
                     if (this.debug)
                         this.inspector.strategizingRecord(serializedGenerations, { label: 'Plan Producer', keep: true });
                 }
@@ -32256,7 +32254,7 @@ class PlanProducer {
         else { // Suggestions are null, if planning was cancelled.
             // Add cancelled attempt to devtools.
             if (this.inspector)
-                this.inspector.updatePlanningAttempt(null, options['metadata']);
+                this.inspector.updatePlanningAttempt(null, options.metadata);
         }
     }
     async runPlanner(options, generations) {
@@ -32264,16 +32262,16 @@ class PlanProducer {
         assert(!this.planner, 'Planner must be null');
         this.planner = new Planner();
         this.planner.init(this.arc, {
-            strategies: options['strategies'],
+            strategies: options.strategies,
             strategyArgs: {
-                contextual: options['contextual'],
-                search: options['search'],
+                contextual: options.contextual,
+                search: options.search,
                 recipeIndex: this.recipeIndex
             },
             speculator: this.speculator,
             noSpecEx: this.noSpecEx
         });
-        suggestions = await this.planner.suggest(options['timeout'] || defaultTimeoutMs, generations);
+        suggestions = await this.planner.suggest(options.timeout || defaultTimeoutMs, generations);
         if (this.planner) {
             this.planner = null;
             return suggestions;
@@ -32330,7 +32328,7 @@ class ReplanQueue {
         else if (this.changes.length > 0) {
             // Schedule delayed planning.
             const timeNow = now();
-            this.changes.forEach((ch, i) => this.changes[i] = timeNow);
+            this.changes.forEach((_ch, i) => this.changes[i] = timeNow);
             this._scheduleReplan(this.options.replanDelayMs);
         }
     }
