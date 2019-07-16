@@ -558,8 +558,8 @@
         "signature": "df60ca02fef9f573c12deb0d98ecbef0c5d9dca902bd953c354a4c5d9fdfaa5a"
       },
       "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/testing/flow-graph-testing.ts": {
-        "version": "5e67287781293c356babe89d0bd07a3774e6c75e06073347910033c2fe73a51e",
-        "signature": "25982836805c8385a742a10c7eade384b44d60e3c85bff6641b47ad81cb1325a"
+        "version": "ec7ad1f70ff300bf56fc64048988df5b2ba996e096afa44b302c2c47d4d4c227",
+        "signature": "7c18bf250064231f5e977a0a006298664f28dc6576f16594ce1e0ab980926b30"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/testing/test-util.ts": {
         "version": "ebb2fa6249512c48982049e9d565a7a79fca355af941d02381c3ee2197fca1e2",
@@ -577,8 +577,12 @@
         "version": "2691ee7af1ec791e3f177b5184c1980811717460d16e9c53c40f45b132367e8c",
         "signature": "43a5176681925d9f51b139647154e4a52c2eb1b1a64bb428595000952bcbc7f1"
       },
+      "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/tests/graph-internals-test.ts": {
+        "version": "9742283a8cbb66b6fd02892083da0163766bd93c9fe09212ba42a6b44ff30916",
+        "signature": "43a5176681925d9f51b139647154e4a52c2eb1b1a64bb428595000952bcbc7f1"
+      },
       "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/tests/graph-traversal-test.ts": {
-        "version": "c6b6cd7526a7792f496683bd53729e951c8f3c07c91ebced46d208e7a0811b67",
+        "version": "043c62c37ef77ff8ba6633689466ba5d13a81364f16425a622c7c5e532f1efe4",
         "signature": "8e609bb71c20b858c77f0e9f90bb1319db8477b13f9f965f1a1e18524bf50881"
       },
       "/home/travis/build/PolymerLabs/arcs/src/dataflow/cli/flowcheck.ts": {
@@ -3838,6 +3842,8 @@
         "/home/travis/build/PolymerLabs/arcs/src/platform/chai-web.d.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/manifest.ts",
         "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/flow-graph.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/particle-check.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/graph-internals.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
       ],
@@ -3869,11 +3875,20 @@
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
       ],
+      "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/tests/graph-internals-test.ts": [
+        "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/graph-internals.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/platform/chai-web.d.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/testing/flow-graph-testing.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/particle-claim.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/particle-spec.ts",
+        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
+        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
+      ],
       "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/tests/graph-traversal-test.ts": [
         "/home/travis/build/PolymerLabs/arcs/src/platform/chai-web.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/src/runtime/particle-check.ts",
         "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/graph-internals.ts",
         "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/graph-traversal.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/testing/flow-graph-testing.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
       ],
@@ -8765,7 +8780,9 @@
         "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/analysis.ts"
       ],
       "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/testing/flow-graph-testing.ts": [
-        "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/flow-graph.ts"
+        "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/flow-graph.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/particle-check.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/graph-internals.ts"
       ],
       "/home/travis/build/PolymerLabs/arcs/src/runtime/testing/test-util.ts": [
         "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts"
@@ -20727,6 +20744,7 @@
           }
         ]
       ],
+      "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/tests/graph-internals-test.ts",
       "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/tests/graph-traversal-test.ts",
       "/home/travis/build/PolymerLabs/arcs/src/dataflow/cli/flowcheck.ts",
       [

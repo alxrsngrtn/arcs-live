@@ -8,37 +8,8 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { assert } from '../../../platform/chai-web.js';
-import { Node } from '../graph-internals.js';
 import { BackwardsPath } from '../graph-traversal.js';
-class TestNode extends Node {
-    constructor(nodeId) {
-        super();
-        this.nodeId = nodeId;
-        this.inEdges = [];
-        this.outEdges = [];
-    }
-    addInEdge() {
-        throw new Error('Unimplemented.');
-    }
-    addOutEdge() {
-        throw new Error('Unimplemented.');
-    }
-    evaluateCheckCondition(condition, edge) {
-        throw new Error('Unimplemented.');
-    }
-    inEdgesFromOutEdge(outEdge) {
-        throw new Error('Unimplemented.');
-    }
-}
-class TestEdge {
-    constructor(start, end, label) {
-        this.start = start;
-        this.end = end;
-        this.label = label;
-        this.connectionName = 'connectionName';
-        this.edgeId = label;
-    }
-}
+import { TestNode, TestEdge } from '../testing/flow-graph-testing.js';
 describe('BackwardsPath', () => {
     // Construct directed graph: A -> B -> C.
     const nodeA = new TestNode('A');

@@ -10,6 +10,7 @@
 import { assert } from '../../../platform/chai-web.js';
 import { Manifest } from '../../../runtime/manifest.js';
 import { FlowGraph } from '../flow-graph.js';
+import { Node } from '../graph-internals.js';
 /** Constructs a FlowGraph from the recipe in the given manifest. */
 export async function buildFlowGraph(manifestContent) {
     const manifest = await Manifest.parse(manifestContent);
@@ -18,5 +19,34 @@ export async function buildFlowGraph(manifestContent) {
     assert(recipe.normalize(), 'Failed to normalize recipe.');
     assert(recipe.isResolved(), 'Recipe is not resolved.');
     return new FlowGraph(recipe, manifest);
+}
+export class TestNode extends Node {
+    constructor(nodeId) {
+        super();
+        this.nodeId = nodeId;
+        this.inEdges = [];
+        this.outEdges = [];
+    }
+    addInEdge() {
+        throw new Error('Unimplemented.');
+    }
+    addOutEdge() {
+        throw new Error('Unimplemented.');
+    }
+    evaluateCheckCondition(condition, edge) {
+        throw new Error('Unimplemented.');
+    }
+    inEdgesFromOutEdge(outEdge) {
+        throw new Error('Unimplemented.');
+    }
+}
+export class TestEdge {
+    constructor(start, end, label) {
+        this.start = start;
+        this.end = end;
+        this.label = label;
+        this.connectionName = 'connectionName';
+        this.edgeId = label;
+    }
 }
 //# sourceMappingURL=flow-graph-testing.js.map
