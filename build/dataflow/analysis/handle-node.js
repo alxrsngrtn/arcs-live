@@ -15,7 +15,6 @@ export class HandleNode extends Node {
         super();
         this.inEdges = [];
         this.outEdges = [];
-        this.connectionSpecs = new Set();
         this.nodeId = nodeId;
         this.storeId = handle.id;
     }
@@ -31,19 +30,13 @@ export class HandleNode extends Node {
     }
     addInEdge(edge) {
         this.inEdges.push(edge);
-        this.connectionSpecs.add(edge.connectionSpec);
     }
     addOutEdge(edge) {
         this.outEdges.push(edge);
-        this.connectionSpecs.add(edge.connectionSpec);
     }
     inEdgesFromOutEdge(outEdge) {
         assert(this.outEdges.includes(outEdge), 'Handle does not have the given out-edge.');
         return this.inEdges;
-    }
-    validateIsFromHandleCheck(condition) {
-        // Check if this handle node has the desired HandleConnectionSpec. If so, it is the right handle.
-        return this.connectionSpecs.has(condition.parentHandle);
     }
 }
 /** Creates a new node for every given handle. */

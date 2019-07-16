@@ -11,9 +11,9 @@ import { Recipe } from '../../runtime/recipe/recipe.js';
 import { ParticleNode } from './particle-node.js';
 import { HandleNode } from './handle-node.js';
 import { SlotNode } from './slot-node.js';
-import { Node, Edge } from './graph-internals.js';
+import { Node, Edge, FlowCheck } from './graph-internals.js';
 import { Manifest } from '../../runtime/manifest.js';
-import { StoreReference } from '../../runtime/particle-check.js';
+import { StoreReference, CheckIsFromHandle, CheckIsFromStore, CheckExpression, Check } from '../../runtime/particle-check.js';
 /**
  * Data structure for representing the connectivity graph of a recipe. Used to perform static analysis on a resolved recipe.
  */
@@ -25,9 +25,20 @@ export declare class FlowGraph {
     readonly edges: Edge[];
     /** Maps from particle name to node. */
     readonly particleMap: Map<string, ParticleNode>;
+    /** Maps from HandleConnectionSpec to edge. */
+    private readonly handleSpecMap;
     private readonly manifest;
     constructor(recipe: Recipe, manifest: Manifest);
     /** Returns a list of all pairwise particle connections, in string form: 'P1.foo -> P2.bar'. */
     readonly connectionsAsStrings: string[];
+    /** Converts an "is from handle" check into the node ID that we need to search for. */
+    handleCheckToNodeId(check: CheckIsFromHandle): string;
+    /** Converts an "is from store" check into the node ID that we need to search for. */
+    storeCheckToNodeId(check: CheckIsFromStore): string;
+    /** Converts a StoreReference into a store ID. */
     resolveStoreRefToID(storeRef: StoreReference): string;
+    /** Converts a particle Check object into a FlowCheck object (the internal representation used by FlowGraph). */
+    createFlowCheck(originalCheck: Check, expression?: CheckExpression): FlowCheck;
+    /** Converts a particle CheckCondition into a FlowCondition object (the internal representation used by FlowGraph). */
+    private createFlowCondition;
 }

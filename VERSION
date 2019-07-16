@@ -1,7 +1,30 @@
-commit 592827e4d60435d193f271044c7e5368a08e22b7
-Author: Paul Lindner <plindner@google.com>
-Date:   Mon Jul 15 17:37:20 2019 -0700
+commit 3921c41241e9c21bc43435ba98111076fe11c681
+Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
+Date:   Tue Jul 16 11:44:55 2019 +1000
 
-    Also clean up symlink from server to root (#3332)
+    Added Flow, FlowCondition, FlowCheck, FlowModifier classes. (#3325)
     
-    Addresses #3330
+    * Added Flow, FlowCondition, FlowCheck, FlowModifier classes.
+    
+    These classes are all essentially eqivalent to the
+    Check/CheckCondition/Claim classes we already have on the ParticleSpec
+    class. However, instead of pointing to complex objects like
+    HandleConnectionSpec, they are now just all strings (using nodeId,
+    edgeId, tag strings).
+    
+    This will be incredibly useful for testing the new Hindley-Milner
+    algorithm, since we won't need to create complex Handle/Particle
+    objects, but can operate on simple strings instead.
+    
+    It also makes some of the code simpler and more efficient (all of the
+    'is from handle'/'is from store' checks now get evaluated only once,
+    whereas before they were evaluated for every path).
+    
+    Also note that the Flow object is going to be especially useful for HM.
+    It currently represents a path, but in HM it's going to be used to
+    represent the accumulated set of claims for every edge (with few/no
+    changes at all).
+    
+    * Made FlowCheck type simpler
+    
+    * Fix comment

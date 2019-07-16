@@ -7,7 +7,7 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-import { Node } from './graph-internals.js';
+import { Node, FlowModifier } from './graph-internals.js';
 import { ClaimType } from '../../runtime/particle-claim.js';
 import { assert } from '../../platform/assert-web.js';
 export class ParticleNode extends Node {
@@ -17,8 +17,6 @@ export class ParticleNode extends Node {
         this.outEdgesByName = new Map();
         this.nodeId = nodeId;
         this.name = particle.name;
-        this.claims = particle.spec.trustClaims;
-        this.checks = particle.spec.trustChecks;
     }
     addInEdge(edge) {
         this.inEdgesByName.set(edge.connectionName, edge);
@@ -38,17 +36,8 @@ export class ParticleNode extends Node {
      */
     inEdgesFromOutEdge(outEdge) {
         assert(this.outEdges.includes(outEdge), 'Particle does not have the given out-edge.');
-        if (outEdge.claims) {
-            const derivesClaims = outEdge.claims.filter(claim => claim.type === ClaimType.DerivesFrom);
-            if (derivesClaims.length) {
-                const result = [];
-                for (const claim of derivesClaims) {
-                    const inEdge = this.inEdgesByName.get(claim.parentHandle.name);
-                    assert(!!inEdge, `Claim derives from unknown handle: ${claim.parentHandle}.`);
-                    result.push(inEdge);
-                }
-                return result;
-            }
+        if (outEdge.derivesFrom && outEdge.derivesFrom.length) {
+            return outEdge.derivesFrom;
         }
         return this.inEdges;
     }
@@ -61,8 +50,7 @@ export class ParticleInput {
         this.connectionName = connection.name;
         this.label = `${particleNode.name}.${this.connectionName}`;
         this.connectionSpec = connection.spec;
-        this.check = connection.spec.check;
-        this.claims = connection.handle.claims;
+        this.modifier = FlowModifier.fromClaims(this, connection.handle.claims);
     }
 }
 export class ParticleOutput {
@@ -71,10 +59,16 @@ export class ParticleOutput {
         this.start = particleNode;
         this.end = otherEnd;
         this.connectionName = connection.name;
-        this.connectionSpec = connection.spec;
         this.label = `${particleNode.name}.${this.connectionName}`;
-        const claim = particleNode.claims.find(claim => this.connectionName === claim.handle.name);
-        this.claims = claim ? claim.claims : null;
+        this.modifier = FlowModifier.fromClaims(this, connection.spec.claims);
+        if (connection.spec.claims) {
+            this.derivesFrom = [];
+            for (const claim of connection.spec.claims) {
+                if (claim.type === ClaimType.DerivesFrom) {
+                    this.derivesFrom.push(particleNode.inEdgesByName[claim.parentHandle.name]);
+                }
+            }
+        }
     }
 }
 /** Creates a new node for every given particle. */

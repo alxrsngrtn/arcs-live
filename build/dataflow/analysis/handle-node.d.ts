@@ -9,15 +9,12 @@
  */
 import { Node, Edge } from './graph-internals.js';
 import { ParticleOutput, ParticleInput, ParticleNode } from './particle-node.js';
-import { HandleConnectionSpec } from '../../runtime/particle-spec.js';
-import { CheckIsFromHandle } from '../../runtime/particle-check.js';
 import { HandleConnection } from '../../runtime/recipe/handle-connection.js';
 import { Handle } from '../../runtime/recipe/handle.js';
 export declare class HandleNode extends Node {
     readonly nodeId: string;
     readonly inEdges: ParticleOutput[];
     readonly outEdges: ParticleInput[];
-    readonly connectionSpecs: Set<HandleConnectionSpec>;
     readonly storeId: string;
     constructor(nodeId: string, handle: Handle);
     /** Returns a list of all pairs of particles that are connected through this handle, in string form. */
@@ -25,7 +22,6 @@ export declare class HandleNode extends Node {
     addInEdge(edge: ParticleOutput): void;
     addOutEdge(edge: ParticleInput): void;
     inEdgesFromOutEdge(outEdge: ParticleInput): readonly ParticleOutput[];
-    validateIsFromHandleCheck(condition: CheckIsFromHandle): boolean;
 }
 /** Creates a new node for every given handle. */
 export declare function createHandleNodes(handles: Handle[]): Map<Handle, HandleNode>;

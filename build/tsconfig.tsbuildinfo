@@ -526,31 +526,31 @@
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/graph-internals.ts": {
-        "version": "fa152eb98013fb9e3e5c599c309020ef58d91183b45e2b995c568b33ee3c3610",
-        "signature": "20ef6cab04b26db545d7cd92dab7d233dc3c59119f2c42cd3651179c15857aef"
+        "version": "82919c587a0cee0664e92eab8b626869eaebf4d3da051b19e3e28ead91141f0b",
+        "signature": "115e1dec389204b8b68bd2f8eb1e31915212059ab4ab4f20885f2b344b3b41e0"
       },
       "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/particle-node.ts": {
-        "version": "fd4218012c0ad5fec1add130fa870ed15bb5d39ed455ae3f010731d38d395740",
-        "signature": "7c8b6c0ce5433415bc6587ea1c254a3e8d17fd2da033ce7ec03409ab2bf1bc26"
+        "version": "557207aae59d5325706a570d9bc32b05cd9ad9d18d1d114b1423f7fd6fb4ba4f",
+        "signature": "3a23f075107f8408694af71d80a43a51ae3cd3cd0c2100c4ebba10f2303f5a23"
       },
       "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/handle-node.ts": {
-        "version": "65e2b22eabf438550e193d77c191524a1a91f760f20a4703b26b20528ae53fd2",
-        "signature": "e2c3408b5edd530afdc6568fc3dbf94095c2c36b392c511fa1992201cdee7395"
+        "version": "18f227c5bc7cd91f39862768abd75228d85b40475e7e41e8bf8a9fc2e26af798",
+        "signature": "0618dc35b343db5ced1249bf0988d39b63510b63ea8f4c1954abea68a89128a1"
       },
       "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/slot-node.ts": {
-        "version": "2b7e883a6e1fcd7a8080666b2faf35744402bc9326195c584a66aa5e1c9f9c9c",
-        "signature": "92a0bcebb44ff9e8b73a21b8f36cadf8efb0f6235728e4f11db304f517c5cfd1"
+        "version": "1d5e1a35f31db935cbd3ab02712c3c654b533803ba3143c6df527e1d6ff1f4e9",
+        "signature": "19cb2cc31418feed1284eff30c25e9a195a768abae6af5882748bfff7990a442"
       },
       "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/flow-graph.ts": {
-        "version": "d37a835edceab724f9804b25da462bb72cbce09dfa39eb932498496a01226ba3",
-        "signature": "b354c1c474f02e561a65f7a0c156b082bc08d0402dc8351c1680f1e5653f096d"
+        "version": "da8d5fd2971f04c345ed2537af030edf5b274a98de707a726bf68253ee8e4bbc",
+        "signature": "e92b9e8c009efd0a70c7dd15c3e217a006aec8439832fb97a25fa9c4f90a2051"
       },
       "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/graph-traversal.ts": {
         "version": "6329be8f26a7790659bd812ea40b098c4b88c380cc34bfbdd32d401ee21023b1",
         "signature": "a5023fc20c7299040fcbea8446f9f47d6d32a67330fd9080a01b26b9e582582f"
       },
       "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/analysis.ts": {
-        "version": "985b54d4b1dfabd3690c0f773051152c5c4b84356b11d95ad04a140894503218",
+        "version": "345daa02194e860d30c83713506ac36039db938bf3db80a174832ca9b4807aa1",
         "signature": "9a8902bb7b74e88184848e17759964806d28d42c043cadf277b4c508b4f5d07d"
       },
       "/home/travis/build/PolymerLabs/arcs/src/dataflow/arcs-dataflow.ts": {
@@ -561,8 +561,12 @@
         "version": "5e67287781293c356babe89d0bd07a3774e6c75e06073347910033c2fe73a51e",
         "signature": "25982836805c8385a742a10c7eade384b44d60e3c85bff6641b47ad81cb1325a"
       },
+      "/home/travis/build/PolymerLabs/arcs/src/runtime/testing/test-util.ts": {
+        "version": "ebb2fa6249512c48982049e9d565a7a79fca355af941d02381c3ee2197fca1e2",
+        "signature": "4c86e04bcbc0a95e6fce540fb1151f3b9e07ffca1f2630061dfc8de54a7c63b3"
+      },
       "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/tests/analysis-test.ts": {
-        "version": "05aad40f18ac516fffd96bd93a64dc427db840b432e62d2f8ca0da20d741a198",
+        "version": "7001c01952798598027edf415e5a069e3d78bdc400bebd0f72574425dcaaaa12",
         "signature": "8e609bb71c20b858c77f0e9f90bb1319db8477b13f9f965f1a1e18524bf50881"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/testing/preconditions.ts": {
@@ -570,7 +574,7 @@
         "signature": "535087ae214f316cbb0a3a17fb44a767c4789b7b69c4bd2c8d37fa8d5845a81f"
       },
       "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/tests/flow-graph-test.ts": {
-        "version": "0bd95ebd951c7e973dc8c9db16d8219d38f7b0258738537d17100da1ebb8d510",
+        "version": "2691ee7af1ec791e3f177b5184c1980811717460d16e9c53c40f45b132367e8c",
         "signature": "43a5176681925d9f51b139647154e4a52c2eb1b1a64bb428595000952bcbc7f1"
       },
       "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/tests/graph-traversal-test.ts": {
@@ -2204,10 +2208,6 @@
         "version": "5a29561539f400338e3c21de847c86780b304d5cf7dc97b7bfd1439b2333e544",
         "signature": "8f5a620739fe50aeaf57d49ad4ea706c68679355ccf9ee65c43b078ba6f26ced"
       },
-      "/home/travis/build/PolymerLabs/arcs/src/runtime/testing/test-util.ts": {
-        "version": "ebb2fa6249512c48982049e9d565a7a79fca355af941d02381c3ee2197fca1e2",
-        "signature": "4c86e04bcbc0a95e6fce540fb1151f3b9e07ffca1f2630061dfc8de54a7c63b3"
-      },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/storageNG/drivers/tests/firebase-test.ts": {
         "version": "1b924239113d2d66970024491ce4cd477c63fbeb3e8c9756b9bb17bc53cd82ac",
         "signature": "fd95df5d076cbfed143dc4904d376b5c6d9cb1091b630994ffe2366010afa6b3"
@@ -3810,6 +3810,7 @@
         "/home/travis/build/PolymerLabs/arcs/src/runtime/manifest.ts",
         "/home/travis/build/PolymerLabs/arcs/src/platform/assert-web.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/particle-check.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/particle-spec.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
       ],
@@ -3822,10 +3823,7 @@
       "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/analysis.ts": [
         "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/flow-graph.ts",
         "/home/travis/build/PolymerLabs/arcs/src/platform/assert-web.ts",
-        "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/handle-node.ts",
-        "/home/travis/build/PolymerLabs/arcs/src/runtime/particle-check.ts",
         "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/graph-traversal.ts",
-        "/home/travis/build/PolymerLabs/arcs/src/runtime/particle-claim.ts",
         "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/graph-internals.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
@@ -3843,10 +3841,18 @@
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
       ],
+      "/home/travis/build/PolymerLabs/arcs/src/runtime/testing/test-util.ts": [
+        "/home/travis/build/PolymerLabs/arcs/src/platform/chai-web.d.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/type.ts",
+        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
+        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
+      ],
       "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/tests/analysis-test.ts": [
         "/home/travis/build/PolymerLabs/arcs/src/platform/chai-web.d.ts",
         "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/analysis.ts",
         "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/testing/flow-graph-testing.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/testing/test-util.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
       ],
@@ -3857,11 +3863,9 @@
       "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/tests/flow-graph-test.ts": [
         "/home/travis/build/PolymerLabs/arcs/src/platform/chai-web.d.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/testing/preconditions.ts",
-        "/home/travis/build/PolymerLabs/arcs/src/runtime/particle-claim.ts",
-        "/home/travis/build/PolymerLabs/arcs/src/runtime/particle-check.ts",
-        "/home/travis/build/PolymerLabs/arcs/src/runtime/particle-spec.ts",
         "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/particle-node.ts",
         "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/testing/flow-graph-testing.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/graph-internals.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
       ],
@@ -6941,13 +6945,6 @@
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
       ],
-      "/home/travis/build/PolymerLabs/arcs/src/runtime/testing/test-util.ts": [
-        "/home/travis/build/PolymerLabs/arcs/src/platform/chai-web.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts",
-        "/home/travis/build/PolymerLabs/arcs/src/runtime/type.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
-      ],
       "/home/travis/build/PolymerLabs/arcs/src/runtime/storageNG/drivers/tests/firebase-test.ts": [
         "/home/travis/build/PolymerLabs/arcs/src/runtime/runtime.ts",
         "/home/travis/build/PolymerLabs/arcs/src/platform/chai-web.d.ts",
@@ -8732,23 +8729,18 @@
       ],
       "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/particle-node.ts": [
         "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/graph-internals.ts",
-        "/home/travis/build/PolymerLabs/arcs/src/runtime/particle-claim.ts",
-        "/home/travis/build/PolymerLabs/arcs/src/runtime/particle-check.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/particle.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/particle-spec.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/handle-connection.ts"
       ],
       "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/handle-node.ts": [
         "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/particle-node.ts",
-        "/home/travis/build/PolymerLabs/arcs/src/runtime/particle-spec.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/handle.ts",
-        "/home/travis/build/PolymerLabs/arcs/src/runtime/particle-check.ts",
         "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/graph-internals.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/handle-connection.ts"
       ],
       "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/slot-node.ts": [
         "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/graph-internals.ts",
-        "/home/travis/build/PolymerLabs/arcs/src/runtime/particle-check.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/interface-info.ts",
         "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/particle-node.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/slot-connection.ts"
@@ -8774,6 +8766,9 @@
       ],
       "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/testing/flow-graph-testing.ts": [
         "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/flow-graph.ts"
+      ],
+      "/home/travis/build/PolymerLabs/arcs/src/runtime/testing/test-util.ts": [
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts"
       ],
       "/home/travis/build/PolymerLabs/arcs/src/devtools-connector/abstract-devtools-channel.ts": [
         "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts"
@@ -10947,9 +10942,6 @@
         "/home/travis/build/PolymerLabs/arcs/src/runtime/storageNG/storage-key.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/storageNG/drivers/driver-factory.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/storageNG/drivers/firebase.ts"
-      ],
-      "/home/travis/build/PolymerLabs/arcs/src/runtime/testing/test-util.ts": [
-        "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts"
       ],
       "/home/travis/build/PolymerLabs/arcs/src/runtime/storageNG/testing/test-storage.ts": [
         "/home/travis/build/PolymerLabs/arcs/src/runtime/storageNG/drivers/driver-factory.ts",
@@ -20394,40 +20386,7 @@
         [
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/particle-node.ts",
-            "start": 1198,
-            "length": 13,
-            "messageText": "Object is possibly 'undefined'.",
-            "category": 1,
-            "code": 2532
-          },
-          {
-            "file": "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/particle-node.ts",
-            "start": 1243,
-            "length": 13,
-            "messageText": "Object is possibly 'undefined'.",
-            "category": 1,
-            "code": 2532
-          },
-          {
-            "file": "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/particle-node.ts",
-            "start": 2499,
-            "length": 6,
-            "code": 2345,
-            "category": 1,
-            "messageText": {
-              "messageText": "Argument of type 'ParticleInput | undefined' is not assignable to parameter of type 'ParticleInput'.",
-              "category": 1,
-              "code": 2345,
-              "next": {
-                "messageText": "Type 'undefined' is not assignable to type 'ParticleInput'.",
-                "category": 1,
-                "code": 2322
-              }
-            }
-          },
-          {
-            "file": "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/particle-node.ts",
-            "start": 3277,
+            "start": 2716,
             "length": 17,
             "messageText": "Object is possibly 'undefined'.",
             "category": 1,
@@ -20435,16 +20394,33 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/particle-node.ts",
-            "start": 4022,
-            "length": 11,
-            "code": 2322,
+            "start": 2716,
+            "length": 24,
+            "code": 2345,
             "category": 1,
             "messageText": {
-              "messageText": "Type 'Claim[] | null' is not assignable to type 'Claim[] | undefined'.",
+              "messageText": "Argument of type 'Claim[] | undefined' is not assignable to parameter of type 'Claim[]'.",
               "category": 1,
-              "code": 2322,
+              "code": 2345,
               "next": {
-                "messageText": "Type 'null' is not assignable to type 'Claim[] | undefined'.",
+                "messageText": "Type 'undefined' is not assignable to type 'Claim[]'.",
+                "category": 1,
+                "code": 2322
+              }
+            }
+          },
+          {
+            "file": "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/particle-node.ts",
+            "start": 3366,
+            "length": 22,
+            "code": 2345,
+            "category": 1,
+            "messageText": {
+              "messageText": "Argument of type 'Claim[] | undefined' is not assignable to parameter of type 'Claim[]'.",
+              "category": 1,
+              "code": 2345,
+              "next": {
+                "messageText": "Type 'undefined' is not assignable to type 'Claim[]'.",
                 "category": 1,
                 "code": 2322
               }
@@ -20457,7 +20433,7 @@
         [
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/handle-node.ts",
-            "start": 1102,
+            "start": 1046,
             "length": 12,
             "code": 2322,
             "category": 1,
@@ -20480,7 +20456,7 @@
         [
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/flow-graph.ts",
-            "start": 1849,
+            "start": 2470,
             "length": 17,
             "code": 2345,
             "category": 1,
@@ -20497,7 +20473,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/flow-graph.ts",
-            "start": 1952,
+            "start": 2573,
             "length": 12,
             "code": 2345,
             "category": 1,
@@ -20514,7 +20490,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/flow-graph.ts",
-            "start": 2280,
+            "start": 2954,
             "length": 21,
             "code": 2345,
             "category": 1,
@@ -20531,7 +20507,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/flow-graph.ts",
-            "start": 2385,
+            "start": 3059,
             "length": 12,
             "code": 2345,
             "category": 1,
@@ -20548,7 +20524,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/flow-graph.ts",
-            "start": 2712,
+            "start": 3386,
             "length": 24,
             "messageText": "Object is possibly 'undefined'.",
             "category": 1,
@@ -20556,7 +20532,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/flow-graph.ts",
-            "start": 2911,
+            "start": 3585,
             "length": 16,
             "messageText": "Object is possibly 'undefined'.",
             "category": 1,
@@ -20564,7 +20540,48 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/flow-graph.ts",
-            "start": 3859,
+            "start": 3585,
+            "length": 22,
+            "code": 2322,
+            "category": 1,
+            "messageText": {
+              "messageText": "Type '(FlowCondition & { originalCheck?: Check | undefined; }) | ({ operator: \"or\" | \"and\"; children: readonly FlowCheck[]; } & { originalCheck?: Check | undefined; }) | null' is not assignable to type '(FlowCondition & { originalCheck?: Check | undefined; }) | ({ operator: \"or\" | \"and\"; children: readonly FlowCheck[]; } & { originalCheck?: Check | undefined; }) | undefined'.",
+              "category": 1,
+              "code": 2322,
+              "next": {
+                "messageText": "Type 'null' is not assignable to type '(FlowCondition & { originalCheck?: Check | undefined; }) | ({ operator: \"or\" | \"and\"; children: readonly FlowCheck[]; } & { originalCheck?: Check | undefined; }) | undefined'.",
+                "category": 1,
+                "code": 2322
+              }
+            }
+          },
+          {
+            "file": "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/flow-graph.ts",
+            "start": 4021,
+            "length": 4,
+            "messageText": "Object is possibly 'undefined'.",
+            "category": 1,
+            "code": 2532
+          },
+          {
+            "file": "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/flow-graph.ts",
+            "start": 4655,
+            "length": 10,
+            "messageText": "Object is possibly 'undefined'.",
+            "category": 1,
+            "code": 2532
+          },
+          {
+            "file": "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/flow-graph.ts",
+            "start": 5046,
+            "length": 6,
+            "messageText": "Object is possibly 'undefined'.",
+            "category": 1,
+            "code": 2532
+          },
+          {
+            "file": "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/flow-graph.ts",
+            "start": 5357,
             "length": 5,
             "messageText": "Object is possibly 'undefined'.",
             "category": 1,
@@ -20572,7 +20589,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/flow-graph.ts",
-            "start": 4031,
+            "start": 5529,
             "length": 5,
             "messageText": "Object is possibly 'undefined'.",
             "category": 1,
@@ -20631,7 +20648,24 @@
         [
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/analysis.ts",
-            "start": 2079,
+            "start": 1783,
+            "length": 5,
+            "code": 2345,
+            "category": 1,
+            "messageText": {
+              "messageText": "Argument of type '(FlowCondition & { originalCheck?: Check | undefined; }) | ({ operator: \"or\" | \"and\"; children: readonly FlowCheck[]; } & { originalCheck?: Check | undefined; }) | undefined' is not assignable to parameter of type 'FlowCheck'.",
+              "category": 1,
+              "code": 2345,
+              "next": {
+                "messageText": "Type 'undefined' is not assignable to type 'FlowCheck'.",
+                "category": 1,
+                "code": 2322
+              }
+            }
+          },
+          {
+            "file": "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/analysis.ts",
+            "start": 1829,
             "length": 5,
             "messageText": "Object is possibly 'undefined'.",
             "category": 1,
@@ -20639,8 +20673,8 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/analysis.ts",
-            "start": 2171,
-            "length": 5,
+            "start": 1829,
+            "length": 19,
             "messageText": "Object is possibly 'undefined'.",
             "category": 1,
             "code": 2532
@@ -20649,6 +20683,19 @@
       ],
       "/home/travis/build/PolymerLabs/arcs/src/dataflow/arcs-dataflow.ts",
       "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/testing/flow-graph-testing.ts",
+      [
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/testing/test-util.ts",
+        [
+          {
+            "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/testing/test-util.ts",
+            "start": 2996,
+            "length": 4,
+            "code": 2345,
+            "category": 1,
+            "messageText": "Argument of type 'any' is not assignable to parameter of type 'never'."
+          }
+        ]
+      ],
       "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/tests/analysis-test.ts",
       "/home/travis/build/PolymerLabs/arcs/src/runtime/testing/preconditions.ts",
       [
@@ -20656,76 +20703,27 @@
         [
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/tests/flow-graph-test.ts",
-            "start": 3543,
-            "length": 21,
+            "start": 3429,
+            "length": 8,
+            "messageText": "Object is possibly 'undefined'.",
+            "category": 1,
+            "code": 2532
+          },
+          {
+            "file": "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/tests/flow-graph-test.ts",
+            "start": 3485,
+            "length": 8,
+            "messageText": "Object is possibly 'undefined'.",
+            "category": 1,
+            "code": 2532
+          },
+          {
+            "file": "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/tests/flow-graph-test.ts",
+            "start": 3524,
+            "length": 5,
             "code": 2345,
             "category": 1,
-            "messageText": {
-              "messageText": "Argument of type 'Claim[] | undefined' is not assignable to parameter of type '{ readonly length?: number | undefined; }'.",
-              "category": 1,
-              "code": 2345,
-              "next": {
-                "messageText": "Type 'undefined' is not assignable to type '{ readonly length?: number | undefined; }'.",
-                "category": 1,
-                "code": 2322
-              }
-            }
-          },
-          {
-            "file": "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/tests/flow-graph-test.ts",
-            "start": 3588,
-            "length": 21,
-            "messageText": "Object is possibly 'undefined'.",
-            "category": 1,
-            "code": 2532
-          },
-          {
-            "file": "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/tests/flow-graph-test.ts",
-            "start": 4226,
-            "length": 13,
-            "messageText": "Object is possibly 'undefined'.",
-            "category": 1,
-            "code": 2532
-          },
-          {
-            "file": "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/tests/flow-graph-test.ts",
-            "start": 4376,
-            "length": 21,
-            "messageText": "Object is possibly 'undefined'.",
-            "category": 1,
-            "code": 2532
-          },
-          {
-            "file": "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/tests/flow-graph-test.ts",
-            "start": 4402,
-            "length": 13,
-            "messageText": "Object is possibly 'undefined'.",
-            "category": 1,
-            "code": 2532
-          },
-          {
-            "file": "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/tests/flow-graph-test.ts",
-            "start": 6235,
-            "length": 5,
-            "messageText": "Object is possibly 'undefined'.",
-            "category": 1,
-            "code": 2532
-          },
-          {
-            "file": "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/tests/flow-graph-test.ts",
-            "start": 6300,
-            "length": 5,
-            "messageText": "Object is possibly 'undefined'.",
-            "category": 1,
-            "code": 2532
-          },
-          {
-            "file": "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/tests/flow-graph-test.ts",
-            "start": 6358,
-            "length": 5,
-            "messageText": "Object is possibly 'undefined'.",
-            "category": 1,
-            "code": 2532
+            "messageText": "Argument of type '\"add\"' is not assignable to parameter of type 'TagOperation | undefined'."
           }
         ]
       ],
@@ -26380,19 +26378,6 @@
             "code": 2322,
             "category": 1,
             "messageText": "Type 'MockFirebaseReference' is not assignable to type 'Reference'."
-          }
-        ]
-      ],
-      [
-        "/home/travis/build/PolymerLabs/arcs/src/runtime/testing/test-util.ts",
-        [
-          {
-            "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/testing/test-util.ts",
-            "start": 2996,
-            "length": 4,
-            "code": 2345,
-            "category": 1,
-            "messageText": "Argument of type 'any' is not assignable to parameter of type 'never'."
           }
         ]
       ],

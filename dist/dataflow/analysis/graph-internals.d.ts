@@ -18,6 +18,50 @@
  */
 import { Claim } from '../../runtime/particle-claim.js';
 import { Check } from '../../runtime/particle-check.js';
+/**
+ * Represents the set of implicit and explicit claims that flow along a path in
+ * the graph, i.e. tags, node IDs and edge IDs.
+ */
+export declare class Flow {
+    readonly nodeIds: Set<string>;
+    readonly edgeIds: Set<string>;
+    readonly tags: Set<string>;
+    /** Modifies the current Flow (in place) by applying the given FlowModifier. */
+    modify(modifier: FlowModifier): void;
+    /** Evaluates the given FlowCheck against the current Flow. */
+    evaluateCheck(check: FlowCheck): boolean;
+    /** Evaluates the given CheckCondition against the current Flow. */
+    private checkCondition;
+}
+export declare enum TagOperation {
+    Add = "add",
+    Remove = "remove"
+}
+/** Represents a sequence of modifications that can be made to a flow. */
+export declare class FlowModifier {
+    /** Node IDs to add. */
+    readonly nodeIds: Set<string>;
+    /** Edge IDs to add. */
+    readonly edgeIds: Set<string>;
+    /** Tags to add/remove. Maps from tag name to operation. */
+    readonly tagOperations: Map<string, TagOperation>;
+    static fromConditions(...conditions: FlowCondition[]): FlowModifier;
+    static fromClaims(edge: Edge, claims: Claim[]): FlowModifier;
+}
+/** An equivalent of a particle CheckCondition, used internally by FlowGraph. */
+export declare type FlowCondition = {
+    type: 'node' | 'edge' | 'tag';
+    value: string;
+};
+/** An equivalent of a particle Check statement, used internally by FlowGraph. Either a FlowCondition, or a boolean expression. */
+export declare type FlowCheck = (FlowCondition | {
+    operator: 'or' | 'and';
+    children: readonly FlowCheck[];
+})
+/** Optional Check object from which this FlowCheck was constructed. */
+ & {
+    originalCheck?: Check;
+};
 /** Represents a node in a FlowGraph. Can be a particle, handle, etc. */
 export declare abstract class Node {
     /** A unique ID for this node. No other node in this graph can have this ID. */
@@ -46,6 +90,7 @@ export interface Edge {
      * e.g. "MyParticle.output1".
      */
     readonly label: string;
-    readonly claims?: Claim[];
-    readonly check?: Check;
+    readonly derivesFrom?: Edge[];
+    readonly modifier?: FlowModifier;
+    check?: FlowCheck;
 }

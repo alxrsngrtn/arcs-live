@@ -9,10 +9,8 @@
  */
 import { assert } from '../../../platform/chai-web.js';
 import { checkDefined } from '../../../runtime/testing/preconditions.js';
-import { ClaimType } from '../../../runtime/particle-claim.js';
-import { CheckHasTag } from '../../../runtime/particle-check.js';
-import { ProvideSlotConnectionSpec } from '../../../runtime/particle-spec.js';
 import { buildFlowGraph } from '../testing/flow-graph-testing.js';
+import { FlowModifier } from '../graph-internals.js';
 describe('FlowGraph', () => {
     it('works with empty recipe', async () => {
         const graph = await buildFlowGraph(`
@@ -110,12 +108,11 @@ describe('FlowGraph', () => {
           input <- s
     `);
         assert.lengthOf(graph.edges, 1);
-        assert.lengthOf(graph.edges[0].claims, 1);
-        const claim = graph.edges[0].claims[0];
-        assert.strictEqual(claim.type, ClaimType.IsTag);
-        assert.strictEqual(claim.tag, 'trusted');
+        const modifier = graph.edges[0].modifier;
+        assert.strictEqual(modifier.tagOperations.size, 1);
+        assert.strictEqual(modifier.tagOperations.get('trusted'), 'add');
     });
-    it('copies particle claims to particle nodes and out-edges', async () => {
+    it('copies particle claims to particle out-edges as a flow modifier', async () => {
         const graph = await buildFlowGraph(`
       particle P
         out Foo {} foo
@@ -124,14 +121,9 @@ describe('FlowGraph', () => {
         P
           foo -> h
     `);
-        const node = checkDefined(graph.particleMap.get('P'));
-        assert.strictEqual(node.claims.length, 1);
-        const particleClaim = node.claims.find(pclaim => pclaim.handle.name === 'foo');
-        assert.isNotNull(particleClaim);
-        assert.strictEqual(particleClaim.claims[0].tag, 'trusted');
-        assert.isEmpty(node.checks);
         assert.lengthOf(graph.edges, 1);
-        assert.strictEqual(graph.edges[0].claims[0], particleClaim.claims[0]);
+        assert.isNotNull(graph.edges[0].modifier);
+        assert.deepEqual(graph.edges[0].modifier, FlowModifier.fromConditions({ type: 'node', value: 'P0' }, { type: 'edge', value: 'E0' }, { type: 'tag', value: 'trusted' }));
     });
     it('copies particle checks to particle nodes and in-edges', async () => {
         const graph = await buildFlowGraph(`
@@ -142,14 +134,9 @@ describe('FlowGraph', () => {
         P
           foo <- h
     `);
-        const node = checkDefined(graph.particleMap.get('P'));
-        assert.lengthOf(node.checks, 1);
-        const check = node.checks[0];
-        assert.strictEqual(check.target.name, 'foo');
-        assert.deepEqual(check.expression, new CheckHasTag('trusted'));
-        assert.isEmpty(node.claims);
         assert.lengthOf(graph.edges, 1);
-        assert.strictEqual(graph.edges[0].check, check);
+        const check = graph.edges[0].check;
+        assert.deepNestedInclude(check, { type: 'tag', value: 'trusted' });
     });
     it('supports making checks on slots', async () => {
         const graph = await buildFlowGraph(`
@@ -181,10 +168,7 @@ describe('FlowGraph', () => {
         assert.strictEqual(slot2.inEdges[0].connectionName, 'slotToConsume');
         assert.strictEqual(slot2.inEdges[0].start.name, 'P2');
         const check = slot2.inEdges[0].check;
-        assert.instanceOf(check.target, ProvideSlotConnectionSpec);
-        assert.strictEqual(check.target.name, 'slotToProvide');
-        assert.deepEqual(check.expression, new CheckHasTag('trusted'));
-        assert.strictEqual(check, slot2.check);
+        assert.deepNestedInclude(check, { type: 'tag', value: 'trusted' });
     });
     it('resolves data store names and IDs', async () => {
         const graph = await buildFlowGraph(`
