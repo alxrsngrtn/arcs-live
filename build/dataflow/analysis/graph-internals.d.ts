@@ -18,6 +18,7 @@
  */
 import { Claim } from '../../runtime/particle-claim.js';
 import { Check } from '../../runtime/particle-check.js';
+import { DeepSet } from './deep-set.js';
 /**
  * Represents the set of implicit and explicit claims that flow along a path in
  * the graph, i.e. tags, node IDs and edge IDs.
@@ -26,12 +27,21 @@ export declare class Flow {
     readonly nodeIds: Set<string>;
     readonly edgeIds: Set<string>;
     readonly tags: Set<string>;
+    constructor(nodeIds?: Set<string>, edgeIds?: Set<string>, tags?: Set<string>);
     /** Modifies the current Flow (in place) by applying the given FlowModifier. */
     modify(modifier: FlowModifier): void;
+    copy(): Flow;
+    copyAndModify(modifier: FlowModifier): Flow;
     /** Evaluates the given FlowCheck against the current Flow. */
     evaluateCheck(check: FlowCheck): boolean;
     /** Evaluates the given CheckCondition against the current Flow. */
     private checkCondition;
+    toUniqueString(): string;
+}
+/** A set of unique flows. */
+export declare class FlowSet extends DeepSet<Flow> {
+    /** Copies the current FlowSet, and applies the given modifier to every flow in the copy. */
+    copyAndModify(modifier: FlowModifier): DeepSet<Flow>;
 }
 export declare enum TagOperation {
     Add = "add",
@@ -45,8 +55,25 @@ export declare class FlowModifier {
     readonly edgeIds: Set<string>;
     /** Tags to add/remove. Maps from tag name to operation. */
     readonly tagOperations: Map<string, TagOperation>;
+    constructor(
+    /** Node IDs to add. */
+    nodeIds?: Set<string>, 
+    /** Edge IDs to add. */
+    edgeIds?: Set<string>, 
+    /** Tags to add/remove. Maps from tag name to operation. */
+    tagOperations?: Map<string, TagOperation>);
     static fromConditions(...conditions: FlowCondition[]): FlowModifier;
     static fromClaims(edge: Edge, claims: Claim[]): FlowModifier;
+    copy(): FlowModifier;
+    /** Copies the current FlowModifier, and then applies the given modifications to the copy. */
+    copyAndModify(modifier: FlowModifier): FlowModifier;
+    toFlow(): Flow;
+    toUniqueString(): string;
+}
+/** A set of FlowModifiers. */
+export declare class FlowModifierSet extends DeepSet<FlowModifier> {
+    /** Copies the current FlowModifierSet, and extends each modifier in the copy with the given extra modifier. */
+    copyAndModify(extraModifier: FlowModifier): DeepSet<FlowModifier>;
 }
 /** An equivalent of a particle CheckCondition, used internally by FlowGraph. */
 export declare type FlowCondition = {

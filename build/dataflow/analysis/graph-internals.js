@@ -17,15 +17,16 @@
  * of Node/Edge like ParticleNode, etc.
  */
 import { ClaimType } from '../../runtime/particle-claim.js';
+import { DeepSet } from './deep-set.js';
 /**
  * Represents the set of implicit and explicit claims that flow along a path in
  * the graph, i.e. tags, node IDs and edge IDs.
  */
 export class Flow {
-    constructor() {
-        this.nodeIds = new Set();
-        this.edgeIds = new Set();
-        this.tags = new Set();
+    constructor(nodeIds = new Set(), edgeIds = new Set(), tags = new Set()) {
+        this.nodeIds = nodeIds;
+        this.edgeIds = edgeIds;
+        this.tags = tags;
     }
     /** Modifies the current Flow (in place) by applying the given FlowModifier. */
     modify(modifier) {
@@ -39,6 +40,14 @@ export class Flow {
                 this.tags.delete(tag);
             }
         });
+    }
+    copy() {
+        return new Flow(new Set(this.nodeIds), new Set(this.edgeIds), new Set(this.tags));
+    }
+    copyAndModify(modifier) {
+        const copy = this.copy();
+        copy.modify(modifier);
+        return copy;
     }
     /** Evaluates the given FlowCheck against the current Flow. */
     evaluateCheck(check) {
@@ -69,6 +78,27 @@ export class Flow {
                 throw new Error('Unknown condition type.');
         }
     }
+    toUniqueString() {
+        const elements = [];
+        for (const nodeId of this.nodeIds) {
+            elements.push('node:' + nodeId);
+        }
+        for (const edgeId of this.edgeIds) {
+            elements.push('edge:' + edgeId);
+        }
+        for (const tag of this.tags) {
+            elements.push('tag:' + tag);
+        }
+        elements.sort();
+        return '{' + elements.join(', ') + '}';
+    }
+}
+/** A set of unique flows. */
+export class FlowSet extends DeepSet {
+    /** Copies the current FlowSet, and applies the given modifier to every flow in the copy. */
+    copyAndModify(modifier) {
+        return this.map(flow => flow.copyAndModify(modifier));
+    }
 }
 export var TagOperation;
 (function (TagOperation) {
@@ -77,13 +107,16 @@ export var TagOperation;
 })(TagOperation || (TagOperation = {}));
 /** Represents a sequence of modifications that can be made to a flow. */
 export class FlowModifier {
-    constructor() {
-        /** Node IDs to add. */
-        this.nodeIds = new Set();
-        /** Edge IDs to add. */
-        this.edgeIds = new Set();
-        /** Tags to add/remove. Maps from tag name to operation. */
-        this.tagOperations = new Map();
+    constructor(
+    /** Node IDs to add. */
+    nodeIds = new Set(), 
+    /** Edge IDs to add. */
+    edgeIds = new Set(), 
+    /** Tags to add/remove. Maps from tag name to operation. */
+    tagOperations = new Map()) {
+        this.nodeIds = nodeIds;
+        this.edgeIds = edgeIds;
+        this.tagOperations = tagOperations;
     }
     static fromConditions(...conditions) {
         const modifier = new FlowModifier();
@@ -116,6 +149,44 @@ export class FlowModifier {
         modifier.edgeIds.add(edge.edgeId);
         modifier.nodeIds.add(edge.start.nodeId);
         return modifier;
+    }
+    copy() {
+        return new FlowModifier(new Set(this.nodeIds), new Set(this.edgeIds), new Map(this.tagOperations));
+    }
+    /** Copies the current FlowModifier, and then applies the given modifications to the copy. */
+    copyAndModify(modifier) {
+        const copy = this.copy();
+        modifier.nodeIds.forEach(n => copy.nodeIds.add(n));
+        modifier.edgeIds.forEach(n => copy.edgeIds.add(n));
+        modifier.tagOperations.forEach((op, tag) => copy.tagOperations.set(tag, op));
+        return copy;
+    }
+    toFlow() {
+        const flow = new Flow();
+        flow.modify(this);
+        return flow;
+    }
+    toUniqueString() {
+        const elements = [];
+        for (const nodeId of this.nodeIds) {
+            elements.push('+node:' + nodeId);
+        }
+        for (const edgeId of this.edgeIds) {
+            elements.push('+edge:' + edgeId);
+        }
+        for (const [tag, op] of this.tagOperations) {
+            const sign = op === TagOperation.Add ? '+' : '-';
+            elements.push(sign + 'tag:' + tag);
+        }
+        elements.sort();
+        return '{' + elements.join(', ') + '}';
+    }
+}
+/** A set of FlowModifiers. */
+export class FlowModifierSet extends DeepSet {
+    /** Copies the current FlowModifierSet, and extends each modifier in the copy with the given extra modifier. */
+    copyAndModify(extraModifier) {
+        return this.map(modifier => modifier.copyAndModify(extraModifier));
     }
 }
 /** Represents a node in a FlowGraph. Can be a particle, handle, etc. */

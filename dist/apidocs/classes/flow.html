@@ -87,6 +87,12 @@
 				<section class="tsd-panel tsd-index-panel">
 					<div class="tsd-index-content">
 						<section class="tsd-index-section ">
+							<h3>Constructors</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-constructor tsd-parent-kind-class"><a href="flow.html#constructor" class="tsd-kind-icon">constructor</a></li>
+							</ul>
+						</section>
+						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="flow.html#edgeids" class="tsd-kind-icon">edge<wbr>Ids</a></li>
@@ -98,11 +104,46 @@
 							<h3>Methods</h3>
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="flow.html#checkcondition" class="tsd-kind-icon">check<wbr>Condition</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="flow.html#copy" class="tsd-kind-icon">copy</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="flow.html#copyandmodify" class="tsd-kind-icon">copy<wbr>And<wbr>Modify</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="flow.html#evaluatecheck" class="tsd-kind-icon">evaluate<wbr>Check</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="flow.html#modify" class="tsd-kind-icon">modify</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="flow.html#touniquestring" class="tsd-kind-icon">to<wbr>Unique<wbr>String</a></li>
 							</ul>
 						</section>
 					</div>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group ">
+				<h2>Constructors</h2>
+				<section class="tsd-panel tsd-member tsd-kind-constructor tsd-parent-kind-class">
+					<a name="constructor" class="tsd-anchor"></a>
+					<h3>constructor</h3>
+					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">new <wbr>Flow<span class="tsd-signature-symbol">(</span>nodeIds<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">Set</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span>, edgeIds<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">Set</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span>, tags<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">Set</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="flow.html" class="tsd-signature-type">Flow</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/4644dfc/src/dataflow/analysis/graph-internals.ts#L29">src/dataflow/analysis/graph-internals.ts:29</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> nodeIds: <span class="tsd-signature-type">Set</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> =&nbsp;new Set()</span></h5>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> edgeIds: <span class="tsd-signature-type">Set</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> =&nbsp;new Set()</span></h5>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> tags: <span class="tsd-signature-type">Set</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> =&nbsp;new Set()</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="flow.html" class="tsd-signature-type">Flow</a></h4>
+						</li>
+					</ul>
 				</section>
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
@@ -110,30 +151,30 @@
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
 					<a name="edgeids" class="tsd-anchor"></a>
 					<h3>edge<wbr>Ids</h3>
-					<div class="tsd-signature tsd-kind-icon">edge<wbr>Ids<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Set</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> =&nbsp;new Set()</span></div>
+					<div class="tsd-signature tsd-kind-icon">edge<wbr>Ids<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Set</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/8cc99b4/src/dataflow/analysis/graph-internals.ts#L30">src/dataflow/analysis/graph-internals.ts:30</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/4644dfc/src/dataflow/analysis/graph-internals.ts#L32">src/dataflow/analysis/graph-internals.ts:32</a></li>
 						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
 					<a name="nodeids" class="tsd-anchor"></a>
 					<h3>node<wbr>Ids</h3>
-					<div class="tsd-signature tsd-kind-icon">node<wbr>Ids<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Set</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> =&nbsp;new Set()</span></div>
+					<div class="tsd-signature tsd-kind-icon">node<wbr>Ids<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Set</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/8cc99b4/src/dataflow/analysis/graph-internals.ts#L29">src/dataflow/analysis/graph-internals.ts:29</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/4644dfc/src/dataflow/analysis/graph-internals.ts#L31">src/dataflow/analysis/graph-internals.ts:31</a></li>
 						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
 					<a name="tags" class="tsd-anchor"></a>
 					<h3>tags</h3>
-					<div class="tsd-signature tsd-kind-icon">tags<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Set</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> =&nbsp;new Set()</span></div>
+					<div class="tsd-signature tsd-kind-icon">tags<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Set</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/8cc99b4/src/dataflow/analysis/graph-internals.ts#L31">src/dataflow/analysis/graph-internals.ts:31</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/4644dfc/src/dataflow/analysis/graph-internals.ts#L33">src/dataflow/analysis/graph-internals.ts:33</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -150,7 +191,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/8cc99b4/src/dataflow/analysis/graph-internals.ts#L62">src/dataflow/analysis/graph-internals.ts:62</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/4644dfc/src/dataflow/analysis/graph-internals.ts#L74">src/dataflow/analysis/graph-internals.ts:74</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -169,6 +210,46 @@
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="copy" class="tsd-anchor"></a>
+					<h3>copy</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">copy<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="flow.html" class="tsd-signature-type">Flow</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/4644dfc/src/dataflow/analysis/graph-internals.ts#L48">src/dataflow/analysis/graph-internals.ts:48</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <a href="flow.html" class="tsd-signature-type">Flow</a></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="copyandmodify" class="tsd-anchor"></a>
+					<h3>copy<wbr>And<wbr>Modify</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">copy<wbr>And<wbr>Modify<span class="tsd-signature-symbol">(</span>modifier<span class="tsd-signature-symbol">: </span><a href="flowmodifier.html" class="tsd-signature-type">FlowModifier</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="flow.html" class="tsd-signature-type">Flow</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/4644dfc/src/dataflow/analysis/graph-internals.ts#L52">src/dataflow/analysis/graph-internals.ts:52</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>modifier: <a href="flowmodifier.html" class="tsd-signature-type">FlowModifier</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="flow.html" class="tsd-signature-type">Flow</a></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
 					<a name="evaluatecheck" class="tsd-anchor"></a>
 					<h3>evaluate<wbr>Check</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
@@ -178,7 +259,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/8cc99b4/src/dataflow/analysis/graph-internals.ts#L47">src/dataflow/analysis/graph-internals.ts:47</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/4644dfc/src/dataflow/analysis/graph-internals.ts#L59">src/dataflow/analysis/graph-internals.ts:59</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -206,7 +287,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/8cc99b4/src/dataflow/analysis/graph-internals.ts#L34">src/dataflow/analysis/graph-internals.ts:34</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/4644dfc/src/dataflow/analysis/graph-internals.ts#L36">src/dataflow/analysis/graph-internals.ts:36</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -221,6 +302,23 @@
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="touniquestring" class="tsd-anchor"></a>
+					<h3>to<wbr>Unique<wbr>String</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">to<wbr>Unique<wbr>String<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/4644dfc/src/dataflow/analysis/graph-internals.ts#L87">src/dataflow/analysis/graph-internals.ts:87</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -241,6 +339,9 @@
 					<li class="current tsd-kind-class">
 						<a href="flow.html" class="tsd-kind-icon">Flow</a>
 						<ul>
+							<li class=" tsd-kind-constructor tsd-parent-kind-class">
+								<a href="flow.html#constructor" class="tsd-kind-icon">constructor</a>
+							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
 								<a href="flow.html#edgeids" class="tsd-kind-icon">edge<wbr>Ids</a>
 							</li>
@@ -254,10 +355,19 @@
 								<a href="flow.html#checkcondition" class="tsd-kind-icon">check<wbr>Condition</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="flow.html#copy" class="tsd-kind-icon">copy</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="flow.html#copyandmodify" class="tsd-kind-icon">copy<wbr>And<wbr>Modify</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="flow.html#evaluatecheck" class="tsd-kind-icon">evaluate<wbr>Check</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="flow.html#modify" class="tsd-kind-icon">modify</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="flow.html#touniquestring" class="tsd-kind-icon">to<wbr>Unique<wbr>String</a>
 							</li>
 						</ul>
 					</li>

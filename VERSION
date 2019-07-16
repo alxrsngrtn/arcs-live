@@ -1,9 +1,15 @@
-commit 8cc99b43414eea4cf82812bf33b0b8e42d0eff35
-Author: Joshua Pratt <jp10010101010000@gmail.com>
-Date:   Tue Jul 16 13:19:28 2019 +1000
+commit 4644dfc831495e77cec3c61619f72e8d0ee2b839
+Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
+Date:   Tue Jul 16 16:38:30 2019 +1000
 
-    Ensure the planner displays visibility information (#3299)
+    Added a DeepSet implementation (#3334)
     
-    * Test resolution and planning for slandles
-    * Update slandles particles to include explicit roots
-    * Ensure that visibility information is displayed in the planner inspector
+    This is like a regular Set, except instead of using pointer equality to
+    determine whether elements are in the set, it uses value equality. Value
+    equality is implemented via a toUniqueString() hack, for
+    simplicity/efficiency. Every element in the set has a unique string
+    representation, and the string representation is used to determine
+    whether other elements are duplicates.
+    
+    Also adds some new methods to Flow and FlowModifier, and adds FlowSet
+    and FlowModifierSet using DeepSet.
