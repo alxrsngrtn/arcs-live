@@ -216,4 +216,5 @@ describe('CRDTCollection', () => {
         assert.deepEqual(modelChange2, otherChange2);
     });
 });
+// Note: if/when adding more tests to this file, please, also update CollectionDataTest.java
 //# sourceMappingURL=crdt-collection-test.js.map

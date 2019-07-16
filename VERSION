@@ -1,9 +1,9 @@
-commit 1d0f1053907feb042ce08a15301477fc076288a4
-Author: Alex Rosengarten <alxr@google.com>
-Date:   Tue Jul 16 10:24:46 2019 -0700
+commit 4f3b801e911d2ee5e6bb70652319a98bc62fee9e
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Tue Jul 16 15:16:04 2019 -0700
 
-    Added note about python certificates (#3327)
+    crdt collection tests (#3335)
     
-    * Added note about python certificates
+    * crdt collection tests
     
-    * SLL --> SSL :)
+    * fix typo and update todo note

@@ -2157,7 +2157,7 @@
         "signature": "753806dec4b23c143bfff3a95a85862cac46e381c6a1d85fba7c2f667ca67ed5"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/crdt/tests/crdt-collection-test.ts": {
-        "version": "64b2f5b3f6f2bcd15b4d25280985cb36c2784947f99bcf5f49f4fb961d9715e0",
+        "version": "c9d3b575e561912224966363d619fc6c6d4d0b9e7d68de475aac05c5e3dc5591",
         "signature": "8bc1d39a3b8ec61064f9969316a088e314895e7ffd094468dcc0b238f33cb4a6"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/crdt/tests/crdt-count-test.ts": {
