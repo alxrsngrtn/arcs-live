@@ -122,6 +122,11 @@
 						<code>npm config set msvs_version 2015</code> bit, and similar for Python if you
 					install that manually per <code>node-gyp</code> option 2 instructions.</li>
 				</ul>
+				<h3 id="mac-installation-notes">Mac Installation Notes</h3>
+				<ul>
+					<li>When installing, if you run into SSL Cert verification errors, consider certifying Python 3.6 on Mac:
+					<code>/Applications/Python\ 3.6/Install\ Certificates.command</code> (<a href="https://stackoverflow.com/a/42334357">source</a>)</li>
+				</ul>
 				<h2 id="starting-arcs">Starting Arcs</h2>
 				<p>After the full build (<code>npm install &amp;&amp; tools/sigh</code>) run: (note that <code>npm
 start</code> will block, so you&#39;ll have to run the second command in a new shell):</p>
