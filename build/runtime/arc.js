@@ -10,7 +10,7 @@
 import { assert } from '../platform/assert-web.js';
 import { FakePecFactory } from './fake-pec-factory.js';
 import { Id, IdGenerator, ArcId } from './id.js';
-import { Manifest } from './manifest.js';
+import { Manifest, StorageStub } from './manifest.js';
 import { ParticleExecutionHost } from './particle-execution-host.js';
 import { Handle } from './recipe/handle.js';
 import { Recipe } from './recipe/recipe.js';
@@ -431,8 +431,13 @@ ${this.activeRecipe.toString()}`;
         // it should be done at planning stage.
         slots.forEach(slot => slot.id = slot.id || `slotid-${this.generateID().toString()}`);
         for (const recipeHandle of handles) {
+            const store = this.context.findStoreById(recipeHandle.id);
+            // TODO(sjmiles): I added `(store instanceof StorageStub)` clause below because the context generators used
+            // in shells/* work today by creating and updating inflated stores in the context.
             if (['copy', 'create'].includes(recipeHandle.fate) ||
-                ((recipeHandle.fate === 'map') && this.context.findStoreById(recipeHandle.id).isBackedByManifest())) {
+                ((recipeHandle.fate === 'map')
+                    && (store instanceof StorageStub)
+                    && store.isBackedByManifest())) {
                 let type = recipeHandle.type;
                 if (recipeHandle.fate === 'create') {
                     assert(type.maybeEnsureResolved(), `Can't assign resolved type to ${type}`);

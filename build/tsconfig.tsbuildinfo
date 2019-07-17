@@ -418,7 +418,7 @@
         "signature": "f2d8b054448cb4886900f4baa77e8b41c7d00a7a3bd25a90752e325aab5e14c3"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts": {
-        "version": "cd972d0f4201bcf3c3424247fd75087a488effe337ce50e25d22bcfdd2870651",
+        "version": "e6ef37536fa1b574c8ab38a850d1e10952f3eae5ca51c220e70a2d065a9efc47",
         "signature": "938ffb70c9c0cb5ef91e0171b84d787c5dbcb8edd508b51eb701d1c795555d57"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/api-channel.ts": {
@@ -17310,7 +17310,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts",
-            "start": 7589,
+            "start": 7588,
             "length": 23,
             "code": 2322,
             "category": 1,
@@ -17327,7 +17327,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts",
-            "start": 7628,
+            "start": 7627,
             "length": 15,
             "code": 2322,
             "category": 1,
@@ -17335,7 +17335,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts",
-            "start": 11636,
+            "start": 11635,
             "length": 12,
             "code": 2322,
             "category": 1,
@@ -17352,7 +17352,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts",
-            "start": 12757,
+            "start": 12756,
             "length": 9,
             "code": 2345,
             "category": 1,
@@ -17369,7 +17369,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts",
-            "start": 12955,
+            "start": 12954,
             "length": 9,
             "code": 2345,
             "category": 1,
@@ -17386,7 +17386,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts",
-            "start": 13517,
+            "start": 13516,
             "length": 56,
             "code": 2345,
             "category": 1,
@@ -17403,7 +17403,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts",
-            "start": 14871,
+            "start": 14870,
             "length": 15,
             "code": 2345,
             "category": 1,
@@ -17420,7 +17420,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts",
-            "start": 15575,
+            "start": 15574,
             "length": 18,
             "code": 2345,
             "category": 1,
@@ -17437,7 +17437,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts",
-            "start": 15602,
+            "start": 15601,
             "length": 10,
             "code": 2322,
             "category": 1,
@@ -17464,7 +17464,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts",
-            "start": 16034,
+            "start": 16033,
             "length": 21,
             "messageText": "Object is possibly 'undefined'.",
             "category": 1,
@@ -17472,7 +17472,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts",
-            "start": 16216,
+            "start": 16215,
             "length": 14,
             "messageText": "Object is possibly 'undefined'.",
             "category": 1,
@@ -17480,7 +17480,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts",
-            "start": 16966,
+            "start": 16965,
             "length": 4,
             "code": 2345,
             "category": 1,
@@ -17507,7 +17507,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts",
-            "start": 17095,
+            "start": 17094,
             "length": 19,
             "code": 2345,
             "category": 1,
@@ -17524,7 +17524,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts",
-            "start": 17211,
+            "start": 17210,
             "length": 17,
             "messageText": "Object is possibly 'undefined'.",
             "category": 1,
@@ -17532,7 +17532,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts",
-            "start": 17290,
+            "start": 17289,
             "length": 17,
             "messageText": "Object is possibly 'undefined'.",
             "category": 1,
@@ -17540,7 +17540,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts",
-            "start": 17290,
+            "start": 17289,
             "length": 20,
             "code": 2345,
             "category": 1,
@@ -17557,7 +17557,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts",
-            "start": 17361,
+            "start": 17360,
             "length": 17,
             "messageText": "Object is possibly 'undefined'.",
             "category": 1,
@@ -17565,7 +17565,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts",
-            "start": 17401,
+            "start": 17400,
             "length": 9,
             "messageText": "Object is possibly 'undefined'.",
             "category": 1,
@@ -17573,7 +17573,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts",
-            "start": 19193,
+            "start": 19192,
             "length": 33,
             "code": 2345,
             "category": 1,
@@ -17590,7 +17590,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts",
-            "start": 19422,
+            "start": 19421,
             "length": 19,
             "code": 2345,
             "category": 1,
@@ -17607,7 +17607,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts",
-            "start": 21809,
+            "start": 21723,
             "length": 15,
             "code": 2345,
             "category": 1,
@@ -17624,7 +17624,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts",
-            "start": 22238,
+            "start": 22527,
             "length": 4,
             "code": 2345,
             "category": 1,
@@ -17632,7 +17632,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts",
-            "start": 23032,
+            "start": 23321,
             "length": 15,
             "code": 2345,
             "category": 1,
@@ -17649,7 +17649,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts",
-            "start": 24265,
+            "start": 24554,
             "length": 15,
             "code": 2345,
             "category": 1,
@@ -17666,7 +17666,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts",
-            "start": 24468,
+            "start": 24757,
             "length": 15,
             "code": 2345,
             "category": 1,
@@ -17683,7 +17683,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts",
-            "start": 24736,
+            "start": 25025,
             "length": 15,
             "code": 2345,
             "category": 1,
@@ -17700,7 +17700,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts",
-            "start": 26086,
+            "start": 26375,
             "length": 4,
             "code": 2345,
             "category": 1,
@@ -17717,7 +17717,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts",
-            "start": 26283,
+            "start": 26572,
             "length": 10,
             "code": 2322,
             "category": 1,
@@ -17734,7 +17734,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts",
-            "start": 27077,
+            "start": 27366,
             "length": 9,
             "messageText": "Object is possibly 'undefined'.",
             "category": 1,
@@ -17742,7 +17742,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts",
-            "start": 29528,
+            "start": 29817,
             "length": 25,
             "messageText": "Object is possibly 'undefined'.",
             "category": 1,
@@ -17750,7 +17750,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts",
-            "start": 30039,
+            "start": 30328,
             "length": 39,
             "code": 2322,
             "category": 1,
@@ -17767,7 +17767,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts",
-            "start": 30247,
+            "start": 30536,
             "length": 56,
             "code": 2322,
             "category": 1,
@@ -17784,7 +17784,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts",
-            "start": 31207,
+            "start": 31496,
             "length": 25,
             "messageText": "Type 'undefined' must have a '[Symbol.iterator]()' method that returns an iterator.",
             "category": 1,

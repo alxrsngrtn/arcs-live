@@ -1,11 +1,23 @@
-commit 1e119fbc360ecbb41a3062ed42132235a904b5be
-Author: Paul Lindner <lindner@inuus.com>
-Date:   Wed Jul 17 13:02:33 2019 -0700
+commit ed3f98d94707145ad07dbda4c61d54f436b18c81
+Author: Scott J. Miles <sjmiles@google.com>
+Date:   Wed Jul 17 14:07:43 2019 -0700
 
-    Implement the Clock service with a single method now (#3337)
+    Shells: adapt to changes in Manifest storage handling (#3336)
     
-    * Implement the Clock service with a single method now
+    * factor out shared code
     
-    - Also add MILLIS support for Instant date parsing/generation.
-    - Add toString to TimeUnit
-    - Tests
+    * Identify pipes-shell in tab
+    
+    * restructure file tree for clarity
+    
+    * ensure `name` property flows from bus to process
+    
+    * wip
+    
+    * wip
+    
+    * clean up
+    
+    * initial web-shell repairs
+    
+    * ws
