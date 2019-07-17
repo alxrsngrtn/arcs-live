@@ -9,7 +9,7 @@
  */
 import { FlowGraph } from '../flow-graph.js';
 import { CheckCondition } from '../../../runtime/particle-check.js';
-import { Edge, Node } from '../graph-internals.js';
+import { Edge, Node, FlowModifier } from '../graph-internals.js';
 /** Constructs a FlowGraph from the recipe in the given manifest. */
 export declare function buildFlowGraph(manifestContent: string): Promise<FlowGraph>;
 export declare class TestNode extends Node {
@@ -28,5 +28,6 @@ export declare class TestEdge implements Edge {
     readonly label: string;
     readonly edgeId: string;
     readonly connectionName = "connectionName";
+    modifier?: FlowModifier;
     constructor(start: TestNode, end: TestNode, label: string);
 }

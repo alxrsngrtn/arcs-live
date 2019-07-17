@@ -7,4 +7,11 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-export {};
+import { Schema2Base } from './schema2base.js';
+import { Schema } from '../runtime/schema.js';
+export declare class Schema2Kotlin extends Schema2Base {
+    outputName(baseName: string): string;
+    fileHeader(outName: string): string;
+    fileFooter(): string;
+    entityClass(name: string, schema: Schema): string;
+}

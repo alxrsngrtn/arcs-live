@@ -1,15 +1,17 @@
-commit 97969fe216f3432b69afa20a68ddf779b7ed0995
+commit f71683a9f061221e2c73966b6a9a84f95d7a2599
 Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
-Date:   Wed Jul 17 13:38:52 2019 +1000
+Date:   Wed Jul 17 15:46:44 2019 +1000
 
-    Implemented new dataflow algorithm inspired by Hindley-Milner algo. (#3339)
+    Added more comprehensive unit tests for dataflow algorithm (#3341)
     
-    * Implemented new dataflow algorithm inspired by Hindley-Milner algo.
+    * Added more comprehensive unit tests for HM dataflow algorithm
     
-    Does not yet handle cycles.
+    These unit tests are for the individual steps of the algorithm (testing
+    Solver methods and EdgeExpression methods directly). We already have a
+    comprehensive suite of tests for full recipes.
     
-    All existing unit tests are passing. However, I had to remove the
-    "failed for path: P1.output -> P2.input" part of the error messages,
-    since it wasn't obvious how to support that with the new algorithm.
+    Made some slight adjustments to the API to make it easier to test.
     
-    * Review comments:
+    * Review comments
+    
+    * Fix test

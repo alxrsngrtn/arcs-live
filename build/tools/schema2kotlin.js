@@ -7,10 +7,9 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-const description = `Generates Kotlin code from Schemas for use in wasm particles.`;
-import { Schema2Base, typeSummary } from './schema2base.js';
+import { Schema2Base } from './schema2base.js';
 // https://kotlinlang.org/docs/reference/keyword-reference.html
-// var keywords = [...document.getElementsByTagName('code')].map((x) => x.innerHTML);
+// [...document.getElementsByTagName('code')].map(x => x.innerHTML);
 const keywords = [
     'as', 'as?', 'break', 'class', 'continue', 'do', 'else', 'false', 'for', 'fun', 'if', 'in', '!in', 'interface', 'is',
     '!is', 'null', 'object', 'package', 'return', 'super', 'this', 'throw', 'true', 'try', 'typealias', 'val', 'var',
@@ -20,65 +19,46 @@ const keywords = [
     'lateinit', 'noinline', 'open', 'operator', 'out', 'override', 'private', 'protected', 'public', 'reified', 'sealed',
     'suspend', 'tailrec', 'vararg', 'field', 'it'
 ];
-function leftPad(block, n = 0) {
-    return block.split('\n')
-        .map((line) => `${' '.repeat(n)}${line}`)
-        .join('\n');
-}
-function generate(name, schema) {
-    const fields = [];
-    const encode = [];
-    const decode = [];
-    const processValue = (field, typeChar) => {
-        const typeMap = {
-            'T': ['String', '""'],
-            'U': ['String', '""'],
-            'N': ['Double', '0.0'],
-            'B': ['Boolean', 'false'],
-        };
-        const decodeMap = {
-            'T': 'decodeText()',
-            'U': 'decodeText()',
-            'N': 'decodeNum()',
-            'B': 'decodeBool()'
-        };
-        const type = typeMap[typeChar][0];
-        const defaultVal = typeMap[typeChar][1];
-        const decodeType = typeMap[typeChar];
-        const fixed = field + (keywords.includes(field) ? '_' : '');
-        fields.push(`var ${fixed}: ${type} = ${defaultVal}`);
-        decode.push(`"${fixed}" -> {`, `     decoder.validate("${typeChar}")`, `     ${fixed} = decoder.${decodeType}`, `}`);
-        encode.push(`encoder.encode("${fixed}:${typeChar}", ${fixed})`);
-    };
-    let fieldCount = 0;
-    for (const [field, descriptor] of Object.entries(schema.fields)) {
-        fieldCount++;
-        switch (typeSummary(descriptor)) {
-            case 'schema-primitive:Text':
-                processValue(field, 'T');
-                break;
-            case 'schema-primitive:URL':
-                processValue(field, 'U');
-                break;
-            case 'schema-primitive:Number':
-                processValue(field, 'N');
-                break;
-            case 'schema-primitive:Boolean':
-                processValue(field, 'B');
-                break;
-            default:
-                console.error(`Schema type for field '${field}' is not yet supported:`);
-                console.dir(descriptor, { depth: null });
-                process.exit(1);
-        }
+// type-char to [kotlin-type, default-value, decode-function]
+const typeMap = {
+    'T': ['String', '""', 'decodeText()'],
+    'U': ['String', '""', 'decodeText()'],
+    'N': ['Double', '0.0', 'decodeNum()'],
+    'B': ['Boolean', 'false', 'decodeBool()'],
+};
+export class Schema2Kotlin extends Schema2Base {
+    // test-Kotlin.file_name.manifest -> TestKotlinFileNameManifest.kt
+    outputName(baseName) {
+        const parts = baseName.toLowerCase().split(/[-._]/);
+        return parts.map(part => part[0].toUpperCase() + part.slice(1)).join('') + '.kt';
     }
-    const content = `\
-    package arcs
+    fileHeader(outName) {
+        return `\
+package arcs
 
 //
 // GENERATED CODE -- DO NOT EDIT
 //
 // Current implementation doesn't support optional field detection
+`;
+    }
+    fileFooter() {
+        return '';
+    }
+    entityClass(name, schema) {
+        const fields = [];
+        const encode = [];
+        const decode = [];
+        const fieldCount = this.processSchema(schema, (field, typeChar) => {
+            const type = typeMap[typeChar][0];
+            const defaultVal = typeMap[typeChar][1];
+            const decodeType = typeMap[typeChar][2];
+            const fixed = field + (keywords.includes(field) ? '_' : '');
+            fields.push(`var ${fixed}: ${type} = ${defaultVal}`);
+            decode.push(`"${fixed}" -> {`, `  decoder.validate("${typeChar}")`, `  ${fixed} = decoder.${decodeType}`, `}`);
+            encode.push(`encoder.encode("${fixed}:${typeChar}", ${fixed})`);
+        });
+        return `\
 
 data class ${name}(
   ${fields.join(', ')}
@@ -94,7 +74,7 @@ data class ${name}(
     while (!decoder.done() && i < ${fieldCount}) {
       val name = decoder.upTo(":")
       when (name) {
-${leftPad(decode.join('\n'), 8)}
+        ${decode.join('\n        ')}
       }
       decoder.validate("|")
       i++
@@ -105,19 +85,11 @@ ${leftPad(decode.join('\n'), 8)}
   override fun encodeEntity(): String {
     val encoder = StringEncoder()
     encoder.encode("", internalId)
-${leftPad(encode.join('\n'), 4)}
+    ${encode.join('\n    ')}
     return encoder.result()
   }
-}`;
-    // Post-process whole file
-    return content.replace(/ +\n/g, '\n');
 }
-function titleCase(variable) {
-    if (variable === '') {
-        return '';
+`;
     }
-    return variable[0].toUpperCase() + variable.substr(1).toLowerCase();
 }
-const schema2kotlin = new Schema2Base(description, schemaName => `${titleCase(schemaName)}.kt`, generate);
-schema2kotlin.call();
 //# sourceMappingURL=schema2kotlin.js.map

@@ -5978,8 +5978,12 @@ class WasmParticle extends _particle_js__WEBPACK_IMPORTED_MODULE_2__["Particle"]
         this.converters = new Map();
         this.container = container;
         this.exports = container.exports;
-        this.innerParticle = this.exports[`_new${this.spec.name}`]();
-        container.register(this, this.innerParticle);
+        const fn = `_new${this.spec.name}`;
+        if (!(fn in this.exports)) {
+            throw new Error(`wasm module does not export instantiator function '${fn}' for particle '${this.spec.name}'`);
+        }
+        this.innerParticle = this.exports[fn]();
+        this.container.register(this, this.innerParticle);
     }
     // TODO: for now we set up Handle objects with onDefineHandle and map them into the
     // wasm container through this call, which creates corresponding Handle objects in there.

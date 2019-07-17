@@ -37,7 +37,7 @@ export class TestNode extends Node {
         throw new Error('Unimplemented.');
     }
     inEdgesFromOutEdge(outEdge) {
-        throw new Error('Unimplemented.');
+        return this.inEdges;
     }
 }
 export class TestEdge {
@@ -47,6 +47,8 @@ export class TestEdge {
         this.label = label;
         this.connectionName = 'connectionName';
         this.edgeId = label;
+        start.outEdges.push(this);
+        end.inEdges.push(this);
     }
 }
 //# sourceMappingURL=flow-graph-testing.js.map

@@ -20,7 +20,7 @@ export class ValidationResult {
 }
 /** Returns true if all checks in the graph pass. */
 export function validateGraph(graph) {
-    const solver = new Solver(graph);
+    const solver = new Solver(graph.edges);
     solver.resolve();
     return solver.validateAllChecks();
 }
@@ -30,7 +30,7 @@ export function validateGraph(graph) {
  * parent edge, and a set of modifiers which should be applied to the flow from
  * that edge.
  */
-class EdgeExpression {
+export class EdgeExpression {
     constructor(edge) {
         /** Fully resolved flows coming into this edge. */
         this.resolvedFlows = new FlowSet();
@@ -66,7 +66,7 @@ class EdgeExpression {
     expandParent(parentExpr) {
         assert(this.unresolvedFlows.has(parentExpr.edge), `Can't substitute parent edge, it's not an unresolved parent.`);
         assert(!parentExpr.unresolvedFlows.has(this.edge), `Cycles aren't supported (yet).`);
-        // Remove unresolved parent, and replace with inherited unresolved parents.
+        // Remove unresolved parent, and replace with unresolved grandparents.
         const modifierSet = this.unresolvedFlows.get(parentExpr.edge);
         this.unresolvedFlows.delete(parentExpr.edge);
         for (const modifier of modifierSet) {
@@ -99,23 +99,23 @@ class EdgeExpression {
         }
         for (const [edge, modifierSets] of this.unresolvedFlows) {
             for (const modifiers of modifierSets) {
-                result.push(`  ${edge.label} + ${modifiers.toString()}`);
+                result.push(`  EdgeExpression(${edge.label}) + ${modifiers.toUniqueString()}`);
             }
         }
         result.push('}');
         return result.join('\n');
     }
 }
-class Solver {
-    constructor(graph) {
+export class Solver {
+    constructor(edges) {
         /** Maps from an edge to a "expression" for it. */
         this.edgeExpressions = new Map();
         this._isResolved = false;
-        this.graph = graph;
+        this.edges = edges;
         // Fill dependentEdges map with empty sets.
-        this.dependentEdges = new Map();
-        for (const edge of graph.edges) {
-            this.dependentEdges.set(edge, new Set());
+        this.dependentExpressions = new Map();
+        for (const edge of edges) {
+            this.dependentExpressions.set(edge, new Set());
         }
     }
     /** Returns true if every edge in the graph has been fully resolved to a FlowSet. */
@@ -129,7 +129,7 @@ class Solver {
     validateAllChecks() {
         assert(this._isResolved, 'Graph must be resolved before checks can be validated.');
         const finalResult = new ValidationResult();
-        for (const edge of this.graph.edges) {
+        for (const edge of this.edges) {
             if (edge.check) {
                 const result = this.validateCheckOnEdge(edge);
                 result.failures.forEach(f => finalResult.failures.add(f));
@@ -160,13 +160,13 @@ class Solver {
         if (this._isResolved) {
             return;
         }
-        for (const edge of this.graph.edges) {
+        for (const edge of this.edges) {
             this.processEdge(edge);
         }
         // Verify that all edges are fully resolved.
-        const numEdges = this.graph.edges.length;
+        const numEdges = this.edges.length;
         assert(this.edgeExpressions.size === numEdges);
-        assert(this.dependentEdges.size === numEdges);
+        assert(this.dependentExpressions.size === numEdges);
         for (const edgeExpression of this.edgeExpressions.values()) {
             assert(edgeExpression.isResolved, `Unresolved edge expression: ${edgeExpression.toString()}`);
         }
@@ -178,18 +178,24 @@ class Solver {
      * still not be fully resolved at the end of this function.
      */
     processEdge(edge) {
-        if (this.edgeExpressions.has(edge)) {
+        let edgeExpression = this.edgeExpressions.get(edge);
+        if (edgeExpression) {
             // Edge has already been processed.
-            return;
+            return edgeExpression;
         }
-        const edgeExpression = new EdgeExpression(edge);
+        edgeExpression = new EdgeExpression(edge);
         this.edgeExpressions.set(edge, edgeExpression);
         // Try to expand all of the parents we already know about.
         for (const parent of edgeExpression.parents) {
             // Indicate that edge depends on parent.
-            this.dependentEdges.get(parent).add(edge);
+            this.dependentExpressions.get(parent).add(edgeExpression);
             this.tryExpandParent(edgeExpression, parent);
         }
+        // Now go through and expand this edge in the edges which depend on it.
+        for (const dependentExpression of this.dependentExpressions.get(edge)) {
+            this.tryExpandParent(dependentExpression, edge);
+        }
+        return edgeExpression;
     }
     /**
      * Takes an edge expression with an unresolved parent edge, and tries to
@@ -199,21 +205,12 @@ class Solver {
         if (!expression.unresolvedFlows.has(parentEdge)) {
             return;
         }
-        const edge = expression.edge;
         const parentExpression = this.edgeExpressions.get(parentEdge);
         if (parentExpression) {
-            this.dependentEdges.get(parentEdge).delete(edge);
+            this.dependentExpressions.get(parentEdge).delete(expression);
             expression.expandParent(parentExpression);
-            // Try expanding further.
-            for (const newParent of parentExpression.parents) {
-                this.dependentEdges.get(newParent).add(edge);
-                this.tryExpandParent(expression, newParent);
-            }
-        }
-        // Now go through and expand this edge in the edges which depend on it.
-        for (const dependentEdge of this.dependentEdges.get(edge)) {
-            const dependentEdgeExpression = this.edgeExpressions.get(dependentEdge);
-            this.tryExpandParent(dependentEdgeExpression, edge);
+            // Note down new dependencies from the grandparents to this edge.
+            parentExpression.parents.forEach(grandparent => this.dependentExpressions.get(grandparent).add(expression));
         }
     }
 }
