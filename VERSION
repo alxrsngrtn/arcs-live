@@ -1,17 +1,5 @@
-commit f71683a9f061221e2c73966b6a9a84f95d7a2599
-Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
-Date:   Wed Jul 17 15:46:44 2019 +1000
+commit 66dbbd54d5ed5b32a58ec73d04b565c53d536663
+Author: Scott J. Miles <sjmiles@google.com>
+Date:   Wed Jul 17 12:23:41 2019 -0700
 
-    Added more comprehensive unit tests for dataflow algorithm (#3341)
-    
-    * Added more comprehensive unit tests for HM dataflow algorithm
-    
-    These unit tests are for the individual steps of the algorithm (testing
-    Solver methods and EdgeExpression methods directly). We already have a
-    comprehensive suite of tests for full recipes.
-    
-    Made some slight adjustments to the API to make it easier to test.
-    
-    * Review comments
-    
-    * Fix test
+    wdio.conf.js: reflect folder name change (s/test/tests) (#3338)
