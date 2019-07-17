@@ -1,9 +1,15 @@
-commit 4f3b801e911d2ee5e6bb70652319a98bc62fee9e
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Tue Jul 16 15:16:04 2019 -0700
+commit 97969fe216f3432b69afa20a68ddf779b7ed0995
+Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
+Date:   Wed Jul 17 13:38:52 2019 +1000
 
-    crdt collection tests (#3335)
+    Implemented new dataflow algorithm inspired by Hindley-Milner algo. (#3339)
     
-    * crdt collection tests
+    * Implemented new dataflow algorithm inspired by Hindley-Milner algo.
     
-    * fix typo and update todo note
+    Does not yet handle cycles.
+    
+    All existing unit tests are passing. However, I had to remove the
+    "failed for path: P1.output -> P2.input" part of the error messages,
+    since it wasn't obvious how to support that with the new algorithm.
+    
+    * Review comments:

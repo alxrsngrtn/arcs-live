@@ -10,7 +10,7 @@
 import { FlowGraph } from './flow-graph.js';
 /** Result from validating an entire graph. */
 export declare class ValidationResult {
-    failures: string[];
+    failures: Set<string>;
     readonly isValid: boolean;
 }
 /** Returns true if all checks in the graph pass. */
