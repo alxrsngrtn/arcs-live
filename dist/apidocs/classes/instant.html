@@ -123,6 +123,7 @@
 							<h3>Methods</h3>
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="instant.html#tostring" class="tsd-kind-icon">to<wbr>String</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="instant.html#truncateto" class="tsd-kind-icon">truncate<wbr>To</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-static"><a href="instant.html#fromepochmilliseconds" class="tsd-kind-icon">from<wbr>Epoch<wbr>Milliseconds</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-static"><a href="instant.html#fromepochseconds" class="tsd-kind-icon">from<wbr>Epoch<wbr>Seconds</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-static"><a href="instant.html#fromstring" class="tsd-kind-icon">from<wbr>String</a></li>
@@ -143,7 +144,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/66dbbd5/src/common/time/instant.ts#L26">src/common/time/instant.ts:26</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1e119fb/src/common/time/instant.ts#L26">src/common/time/instant.ts:26</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -171,7 +172,7 @@
 					<div class="tsd-signature tsd-kind-icon">nanos<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/66dbbd5/src/common/time/instant.ts#L25">src/common/time/instant.ts:25</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1e119fb/src/common/time/instant.ts#L25">src/common/time/instant.ts:25</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -181,7 +182,7 @@
 					<div class="tsd-signature tsd-kind-icon">resolution<wbr>Value<span class="tsd-signature-symbol">:</span> <a href="timeunit.html" class="tsd-signature-type">TimeUnit</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/66dbbd5/src/common/time/instant.ts#L26">src/common/time/instant.ts:26</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1e119fb/src/common/time/instant.ts#L26">src/common/time/instant.ts:26</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -191,27 +192,27 @@
 					<div class="tsd-signature tsd-kind-icon">secs<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/66dbbd5/src/common/time/instant.ts#L24">src/common/time/instant.ts:24</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1e119fb/src/common/time/instant.ts#L24">src/common/time/instant.ts:24</a></li>
 						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private tsd-is-static">
 					<a name="inputlenparsedata" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagStatic">Static</span> <span class="tsd-flag ts-flagPrivate">Private</span> input<wbr>Len<wbr>Parse<wbr>Data</h3>
-					<div class="tsd-signature tsd-kind-icon">input<wbr>Len<wbr>Parse<wbr>Data<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">ReadonlyMap</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">object</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> =&nbsp;new Map([[4,  {timeunit: TimeUnit.YEARS, suffix: &#x27;-01-01&#x27;}],[7,  {timeunit: TimeUnit.MONTHS, suffix: &#x27;-01&#x27;}],[10, {timeunit: TimeUnit.DAYS, suffix: &#x27;&#x27;}],[13, {timeunit: TimeUnit.HOURS, suffix: &#x27;:00:00+00:00&#x27;}],[16, {timeunit: TimeUnit.MINUTES, suffix: &#x27;:00+00:00&#x27;}],[19, {timeunit: TimeUnit.SECONDS, suffix: &#x27;+00:00&#x27;}]])</span></div>
+					<div class="tsd-signature tsd-kind-icon">input<wbr>Len<wbr>Parse<wbr>Data<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">ReadonlyMap</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">object</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> =&nbsp;new Map([[4,  {timeunit: TimeUnit.YEARS, suffix: &#x27;-01-01&#x27;}],[7,  {timeunit: TimeUnit.MONTHS, suffix: &#x27;-01&#x27;}],[10, {timeunit: TimeUnit.DAYS, suffix: &#x27;&#x27;}],[13, {timeunit: TimeUnit.HOURS, suffix: &#x27;:00:00+00:00&#x27;}],[16, {timeunit: TimeUnit.MINUTES, suffix: &#x27;:00+00:00&#x27;}],[19, {timeunit: TimeUnit.SECONDS, suffix: &#x27;+00:00&#x27;}],[23, {timeunit: TimeUnit.MILLIS, suffix: &#x27;+00:00&#x27;}]])</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/66dbbd5/src/common/time/instant.ts#L82">src/common/time/instant.ts:82</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1e119fb/src/common/time/instant.ts#L103">src/common/time/instant.ts:103</a></li>
 						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private tsd-is-static">
 					<a name="tostringtruncation" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagStatic">Static</span> <span class="tsd-flag ts-flagPrivate">Private</span> to<wbr>String<wbr>Truncation</h3>
-					<div class="tsd-signature tsd-kind-icon">to<wbr>String<wbr>Truncation<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">ReadonlyMap</span><span class="tsd-signature-symbol">&lt;</span><a href="timeunit.html" class="tsd-signature-type">TimeUnit</a><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> =&nbsp;new Map([[TimeUnit.YEARS, 4],[TimeUnit.MONTHS, 7],[TimeUnit.DAYS, 10],[TimeUnit.HOURS, 13],[TimeUnit.MINUTES, 16],[TimeUnit.SECONDS, 19]])</span></div>
+					<div class="tsd-signature tsd-kind-icon">to<wbr>String<wbr>Truncation<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">ReadonlyMap</span><span class="tsd-signature-symbol">&lt;</span><a href="timeunit.html" class="tsd-signature-type">TimeUnit</a><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> =&nbsp;new Map([[TimeUnit.YEARS, 4],[TimeUnit.MONTHS, 7],[TimeUnit.DAYS, 10],[TimeUnit.HOURS, 13],[TimeUnit.MINUTES, 16],[TimeUnit.SECONDS, 19],[TimeUnit.MILLIS, 23]])</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/66dbbd5/src/common/time/instant.ts#L91">src/common/time/instant.ts:91</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1e119fb/src/common/time/instant.ts#L113">src/common/time/instant.ts:113</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -228,7 +229,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/66dbbd5/src/common/time/instant.ts#L42">src/common/time/instant.ts:42</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1e119fb/src/common/time/instant.ts#L42">src/common/time/instant.ts:42</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -250,7 +251,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/66dbbd5/src/common/time/instant.ts#L49">src/common/time/instant.ts:49</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1e119fb/src/common/time/instant.ts#L49">src/common/time/instant.ts:49</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -272,7 +273,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/66dbbd5/src/common/time/instant.ts#L56">src/common/time/instant.ts:56</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1e119fb/src/common/time/instant.ts#L56">src/common/time/instant.ts:56</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -297,10 +298,40 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/66dbbd5/src/common/time/instant.ts#L137">src/common/time/instant.ts:137</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1e119fb/src/common/time/instant.ts#L159">src/common/time/instant.ts:159</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="truncateto" class="tsd-anchor"></a>
+					<h3>truncate<wbr>To</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">truncate<wbr>To<span class="tsd-signature-symbol">(</span>timeunit<span class="tsd-signature-symbol">: </span><a href="timeunit.html" class="tsd-signature-type">TimeUnit</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="instant.html" class="tsd-signature-type">Instant</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1e119fb/src/common/time/instant.ts#L66">src/common/time/instant.ts:66</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Returns a truncated Instant based on the current value and the
+									specified TimeUnit.</p>
+								</div>
+								<p>Throws if the specified TimeUnit is finer than the current TimeUnit;</p>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>timeunit: <a href="timeunit.html" class="tsd-signature-type">TimeUnit</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="instant.html" class="tsd-signature-type">Instant</a></h4>
 						</li>
 					</ul>
 				</section>
@@ -314,7 +345,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/66dbbd5/src/common/time/instant.ts#L64">src/common/time/instant.ts:64</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1e119fb/src/common/time/instant.ts#L85">src/common/time/instant.ts:85</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -343,7 +374,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/66dbbd5/src/common/time/instant.ts#L76">src/common/time/instant.ts:76</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1e119fb/src/common/time/instant.ts#L97">src/common/time/instant.ts:97</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -372,7 +403,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/66dbbd5/src/common/time/instant.ts#L106">src/common/time/instant.ts:106</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1e119fb/src/common/time/instant.ts#L129">src/common/time/instant.ts:129</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -439,6 +470,9 @@
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="instant.html#tostring" class="tsd-kind-icon">to<wbr>String</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="instant.html#truncateto" class="tsd-kind-icon">truncate<wbr>To</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-static">
 								<a href="instant.html#fromepochmilliseconds" class="tsd-kind-icon">from<wbr>Epoch<wbr>Milliseconds</a>

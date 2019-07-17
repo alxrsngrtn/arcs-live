@@ -33,7 +33,7 @@ export class Instant {
      * Returns the rounded number of milliseconds from the Epoch for this Instant..
      */
     get epochMilliseconds() {
-        return this.secs * 1000 + Math.round(this.nanos / 1000000);
+        return this.secs * 1000 + Math.round(this.nanos / 1000);
     }
     /**
      * Returns the rounded number of seconds from the Epoch for this Instant.
@@ -46,6 +46,24 @@ export class Instant {
      */
     get resolution() {
         return this.resolutionValue;
+    }
+    /**
+     * Returns a truncated Instant based on the current value and the
+     * specified TimeUnit.
+     *
+     * Throws if the specified TimeUnit is finer than the current TimeUnit;
+     */
+    truncateTo(timeunit) {
+        const truncate = Instant.toStringTruncation.get(timeunit);
+        if (!truncate) {
+            throw new Error('unimplemented resolution' + timeunit);
+        }
+        const asString = this.toString();
+        // TODO(lindner): Replace with direct TimeUnit compare.
+        if (truncate > asString.length) {
+            throw new Error('specified timeunit is finer than current precision');
+        }
+        return Instant.fromString(asString.substr(0, truncate));
     }
     /**
      * Creates a new Instant from the given milliseconds.  The returned
@@ -99,7 +117,7 @@ export class Instant {
         // Use resolution to truncate output.
         const truncate = Instant.toStringTruncation.get(this.resolution);
         if (!truncate) {
-            throw new Error('unimplemented resolution');
+            throw new Error('unimplemented resolution ' + this.resolution.toString());
         }
         return val.substr(0, truncate);
     }
@@ -111,12 +129,14 @@ Instant.inputLenParseData = new Map([[4, { timeunit: TimeUnit.YEARS, suffix: '-0
     [10, { timeunit: TimeUnit.DAYS, suffix: '' }],
     [13, { timeunit: TimeUnit.HOURS, suffix: ':00:00+00:00' }],
     [16, { timeunit: TimeUnit.MINUTES, suffix: ':00+00:00' }],
-    [19, { timeunit: TimeUnit.SECONDS, suffix: '+00:00' }]]);
+    [19, { timeunit: TimeUnit.SECONDS, suffix: '+00:00' }],
+    [23, { timeunit: TimeUnit.MILLIS, suffix: '+00:00' }]]);
 // String to truncate based on the TimeUnit
 Instant.toStringTruncation = new Map([[TimeUnit.YEARS, 4],
     [TimeUnit.MONTHS, 7],
     [TimeUnit.DAYS, 10],
     [TimeUnit.HOURS, 13],
     [TimeUnit.MINUTES, 16],
-    [TimeUnit.SECONDS, 19]]);
+    [TimeUnit.SECONDS, 19],
+    [TimeUnit.MILLIS, 23]]);
 //# sourceMappingURL=instant.js.map

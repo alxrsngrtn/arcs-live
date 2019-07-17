@@ -1,5 +1,11 @@
-commit 66dbbd54d5ed5b32a58ec73d04b565c53d536663
-Author: Scott J. Miles <sjmiles@google.com>
-Date:   Wed Jul 17 12:23:41 2019 -0700
+commit 1e119fbc360ecbb41a3062ed42132235a904b5be
+Author: Paul Lindner <lindner@inuus.com>
+Date:   Wed Jul 17 13:02:33 2019 -0700
 
-    wdio.conf.js: reflect folder name change (s/test/tests) (#3338)
+    Implement the Clock service with a single method now (#3337)
+    
+    * Implement the Clock service with a single method now
+    
+    - Also add MILLIS support for Instant date parsing/generation.
+    - Add toString to TimeUnit
+    - Tests

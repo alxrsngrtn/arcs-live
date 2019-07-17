@@ -19,6 +19,7 @@ export declare class TimeUnit {
      * not used, so this pertains to dates only..
      */
     readonly estimated: boolean;
+    private static readonly stringToTimeUnit;
     private constructor();
     /**  Unit that represents the concept of a nanosecond. */
     static readonly NANOS: TimeUnit;
@@ -42,4 +43,5 @@ export declare class TimeUnit {
     static readonly YEARS: TimeUnit;
     /** An uppercase string matching the name of the constant. ex MILLIS */
     toString(): string;
+    static fromString(value: string): TimeUnit;
 }

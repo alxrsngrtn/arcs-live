@@ -37,6 +37,13 @@ export declare class Instant {
      */
     readonly resolution: TimeUnit;
     /**
+     * Returns a truncated Instant based on the current value and the
+     * specified TimeUnit.
+     *
+     * Throws if the specified TimeUnit is finer than the current TimeUnit;
+     */
+    truncateTo(timeunit: TimeUnit): Instant;
+    /**
      * Creates a new Instant from the given milliseconds.  The returned
      * value uses TimeUnit.MILLIS as the resolution.
      */

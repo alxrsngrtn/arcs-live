@@ -24,12 +24,24 @@ export class TimeUnit {
         this.durationSec = durationSec;
         this.durationNS = durationNS;
         this.estimated = estimated;
+        // Map the name to the instance.
+        TimeUnit.stringToTimeUnit[name] = this;
     }
+    // TODO DECADES, CENTURIES, MILLENIA, ERAS
     /** An uppercase string matching the name of the constant. ex MILLIS */
     toString() {
         return this.name;
     }
+    static fromString(value) {
+        const result = TimeUnit.stringToTimeUnit[value];
+        if (!result) {
+            throw new Error('invalid timeunit');
+        }
+        return result;
+    }
 }
+// A map of the name to the time unit.
+TimeUnit.stringToTimeUnit = new Map();
 /**  Unit that represents the concept of a nanosecond. */
 TimeUnit.NANOS = new TimeUnit('NANOS', 0, 1);
 /** Unit that represents the concept of a microsecond. */

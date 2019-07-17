@@ -15,6 +15,7 @@ export interface ServiceRequest {
     service?: string;
     invoke?: string;
     call?: string;
+    [key: string]: any;
 }
 export declare class Services {
     static registry: Registry;
