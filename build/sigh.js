@@ -147,6 +147,10 @@ function check() {
 // postinstall step. This is invoked by the wasm build step and will generally only be required
 // at the same cadence as npm install.
 function installAndCheckEmsdk() {
+    if (!fs.existsSync('node_modules/emsdk-npm')) {
+        console.error(`emsdk-npm not found - run 'npm install'`);
+        return false;
+    }
     if (fs.existsSync('node_modules/emsdk-npm/emsdk')) {
         return true;
     }
@@ -476,7 +480,9 @@ function buildWasmModule(configFile, logCmd) {
 }
 // Finds all 'wasm.json' files to generate C++ headers and compile wasm modules.
 function wasm(args) {
-    installAndCheckEmsdk();
+    if (!installAndCheckEmsdk()) {
+        return false;
+    }
     const options = minimist(args, {
         boolean: ['trace'],
     });
