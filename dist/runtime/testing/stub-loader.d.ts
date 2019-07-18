@@ -16,7 +16,7 @@ import { Dictionary } from '../hot.js';
  */
 export declare class StubLoader extends Loader {
     _fileMap: Dictionary<string>;
-    _cannedResponse: any;
+    _cannedResponse: string;
     constructor(fileMap: Dictionary<string>);
     loadResource(path: string): Promise<string>;
     path(fileName: string): string;

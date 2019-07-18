@@ -50,6 +50,9 @@ export class DeepSet {
     get size() {
         return this.elementSet.size;
     }
+    get isEmpty() {
+        return this.size === 0;
+    }
     /** Unique string representation of this DeepSet. */
     toUniqueString() {
         const strings = [...this.stringSet];

@@ -482,7 +482,7 @@ class Yn{constructor(e,t,n,r){this.handlers=new Map,this.requestedContentTypes=n
  * Code distributed by Google as part of this project is also
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
- */class pr extends Bt{constructor(e){super(),this._fileMap=e,e.hasOwnProperty("*")&&(this._cannedResponse=e["*"])}loadResource(e){return this._fileMap.hasOwnProperty(e)?this._fileMap[e]:this._cannedResponse||super.loadResource(e)}path(e){return this._fileMap.hasOwnProperty(e)||this._cannedResponse?e:super.path(e)}join(e,t){return this._fileMap.hasOwnProperty(e)||this._cannedResponse?t:super.join(e,t)}clone(){return new pr(this._fileMap)}}
+ */class pr extends Bt{constructor(e){super(),this._fileMap=e,e.hasOwnProperty("*")&&(this._cannedResponse=e["*"])}async loadResource(e){return this._fileMap.hasOwnProperty(e)?this._fileMap[e]:this._cannedResponse||super.loadResource(e)}path(e){return this._fileMap.hasOwnProperty(e)||this._cannedResponse?e:super.path(e)}join(e,t){return this._fileMap.hasOwnProperty(e)||this._cannedResponse?t:super.join(e,t)}clone(){return new pr(this._fileMap)}}
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.

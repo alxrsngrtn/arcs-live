@@ -49,7 +49,7 @@ describe('references', () => {
     });
     it('exposes a dereference API to particles', async () => {
         const loader = new StubLoader({
-            manifest: `
+            'manifest': `
         schema Result
           Text value
 
@@ -87,6 +87,7 @@ describe('references', () => {
         assert.isTrue(recipe.normalize());
         assert.isTrue(recipe.isResolved());
         await arc.instantiate(recipe);
+        await arc.idle;
         assert.isTrue(arc._stores[0].type instanceof ReferenceType);
         const volatileEngine = arc.storageProviderFactory._storageForKey('volatile');
         const backingStore = await volatileEngine.baseStorageFor(arc._stores[1].type, volatileEngine.baseStorageKey(arc._stores[1].type));

@@ -38,7 +38,45 @@ function createChainOfEdges(...nodeIds) {
         const secondNode = nodes[i];
         edges.push(new TestEdge(firstNode, secondNode, firstNode.nodeId + '->' + secondNode.nodeId));
     }
+    // Mark the first node in the chain as having ingress, so the whole chain is
+    // valid. 
+    nodes[0].ingress = true;
     return edges;
+}
+/**
+ * Marks the nodes representing the given particles as having ingress.
+ *
+ * This is needed to get the existing unit tests to pass. Once we have a way of
+ * detecting nodes with ingress properly (e.g. handles with the map or create
+ * fate), we can delete this hack.
+ *
+ * TODO: Delete this hack.
+ */
+function markParticlesWithIngress(graph, ...particleNames) {
+    for (const name of particleNames) {
+        const node = graph.particleMap.get(name);
+        assert.isDefined(node, `Particle with name '${name}' not found.`);
+        node.ingress = true;
+    }
+}
+/**
+ * Same as markParticlesWithIngress, but operates on handles instead of
+ * particles. The handles with the given labels (of the form
+ * "ParticleName.inputName") will be marked with ingress.
+ *
+ * TODO: Delete this hack.
+ */
+function markParticleInputsWithIngress(graph, ...labels) {
+    for (const label of labels) {
+        const parts = label.split('.');
+        assert.lengthOf(parts, 2, `Particle input '${label}' is not of the form 'ParticleName.inputName'.`);
+        const [particleName, inputName] = parts;
+        const particleNode = graph.particleMap.get(particleName);
+        assert.isDefined(particleNode, `Particle with name '${particleName}' not found.`);
+        const inputEdge = particleNode.inEdgesByName.get(inputName);
+        assert.isDefined(inputEdge, `Particle '${particleName}' does not have input '${inputName}'.`);
+        inputEdge.start.ingress = true;
+    }
 }
 // FlowModifier constants.
 const addsTagT1 = new FlowModifier();
@@ -82,12 +120,34 @@ describe('EdgeExpression', () => {
         edge.modifier = addsTagT1;
         const expression = new EdgeExpression(edge);
         assert.isFalse(expression.isResolved);
-        assert.equal(expression.resolvedFlows.size, 0);
+        assert.isTrue(expression.resolvedFlows.isEmpty);
         assert.hasAllKeys(expression.unresolvedFlows, [parentEdge]);
         assert.deepEqual(expression.unresolvedFlows.get(parentEdge), new FlowModifierSet(addsTagT1));
         assert.sameMembers(expression.parents, [parentEdge]);
         assert.equal(expression.toString(), `EdgeExpression(B->C) {
   EdgeExpression(A->B) + {+tag:t1}
+}`);
+    });
+    it('start nodes with no parents and no ingress produce no flow', () => {
+        const [edge] = createChainOfEdges('A', 'B');
+        edge.start.ingress = false;
+        const expression = new EdgeExpression(edge);
+        assert.isTrue(expression.isResolved);
+        assert.isTrue(expression.resolvedFlows.isEmpty);
+        assert.isEmpty(expression.unresolvedFlows);
+        assert.equal(expression.toString(), `EdgeExpression(A->B) {
+}`);
+    });
+    it('nodes with parents and with ingress have both resolved and unresolved flow', () => {
+        const [parentEdge, edge] = createChainOfEdges('A', 'B', 'C');
+        edge.start.ingress = true;
+        const expression = new EdgeExpression(edge);
+        assert.isFalse(expression.isResolved);
+        assert.deepEqual(expression.resolvedFlows, new FlowSet(new Flow()));
+        assert.hasAllKeys(expression.unresolvedFlows, [parentEdge]);
+        assert.equal(expression.toString(), `EdgeExpression(B->C) {
+  {}
+  EdgeExpression(A->B) + {}
 }`);
     });
     it('can substitute a resolved parent', () => {
@@ -225,6 +285,7 @@ describe('FlowGraph validation', () => {
         P
           foo -> h
     `);
+        markParticlesWithIngress(graph, 'P');
         assert.isTrue(validateGraph(graph).isValid);
     });
     it('succeeds when a check is satisfied directly', async () => {
@@ -241,7 +302,26 @@ describe('FlowGraph validation', () => {
         P2
           bar <- h
     `);
+        markParticlesWithIngress(graph, 'P1');
         assert.isTrue(validateGraph(graph).isValid);
+    });
+    it('fails when the edge has no ingress', async () => {
+        const graph = await buildFlowGraph(`
+      particle P1
+        out Foo {} foo
+        claim foo is trusted
+      particle P2
+        in Foo {} bar
+        check bar is trusted
+      recipe R
+        P1
+          foo -> h
+        P2
+          bar <- h
+    `);
+        const result = validateGraph(graph);
+        assert.isFalse(result.isValid);
+        assert.hasAllKeys(result.failures, [`'check bar is trusted' failed: no data ingress.`]);
     });
     it('fails when a different tag is claimed', async () => {
         const graph = await buildFlowGraph(`
@@ -257,6 +337,7 @@ describe('FlowGraph validation', () => {
         P2
           bar <- h
     `);
+        markParticlesWithIngress(graph, 'P1');
         assertFailures(validateGraph(graph), [`'check bar is trusted' failed for path: P1.foo -> P2.bar`]);
     });
     it('fails when no tag is claimed', async () => {
@@ -272,6 +353,7 @@ describe('FlowGraph validation', () => {
         P2
           bar <- h
     `);
+        markParticlesWithIngress(graph, 'P1');
         assertFailures(validateGraph(graph), [`'check bar is trusted' failed for path: P1.foo -> P2.bar`]);
     });
     it('fails when a "not tag" is claimed and the tag is checked for', async () => {
@@ -288,6 +370,7 @@ describe('FlowGraph validation', () => {
         P2
           bar <- h
     `);
+        markParticlesWithIngress(graph, 'P1');
         assertFailures(validateGraph(graph), [`'check bar is trusted' failed for path: P1.foo -> P2.bar`]);
     });
     it('succeeds when a "not tag" is claimed and there are no checks', async () => {
@@ -303,6 +386,7 @@ describe('FlowGraph validation', () => {
         P2
           bar <- h
     `);
+        markParticlesWithIngress(graph, 'P1');
         assert.isTrue(validateGraph(graph).isValid);
     });
     it('fails when a "not tag" cancels a tag', async () => {
@@ -326,6 +410,7 @@ describe('FlowGraph validation', () => {
         P3
           bye <- h1
     `);
+        markParticlesWithIngress(graph, 'P1');
         assert.isFalse(validateGraph(graph).isValid);
     });
     it('succeeds when a "not tag" cancels a tag that is reclaimed downstream', async () => {
@@ -356,6 +441,7 @@ describe('FlowGraph validation', () => {
         P4
           bit <- h2
     `);
+        markParticlesWithIngress(graph, 'P1');
         assert.isTrue(validateGraph(graph).isValid);
     });
     it('succeeds when handle has multiple inputs with the right tags', async () => {
@@ -377,6 +463,7 @@ describe('FlowGraph validation', () => {
         P3
           bar <- h
     `);
+        markParticlesWithIngress(graph, 'P1', 'P2');
         assert.isTrue(validateGraph(graph).isValid);
     });
     it('fails when handle has multiple inputs but one is untagged', async () => {
@@ -397,6 +484,7 @@ describe('FlowGraph validation', () => {
         P3
           bar <- h
     `);
+        markParticlesWithIngress(graph, 'P1', 'P2');
         assertFailures(validateGraph(graph), [`'check bar is trusted' failed for path: P2.foo -> P3.bar`]);
     });
     it('fails when handle has no inputs', async () => {
@@ -408,6 +496,7 @@ describe('FlowGraph validation', () => {
         P
           bar <- h
     `);
+        markParticleInputsWithIngress(graph, 'P.bar');
         assertFailures(validateGraph(graph), [`'check bar is trusted' failed for path: P.bar`]);
     });
     it('claim propagates through a chain of particles', async () => {
@@ -430,6 +519,7 @@ describe('FlowGraph validation', () => {
         P3
           bar <- h2
     `);
+        markParticlesWithIngress(graph, 'P1');
         assert.isTrue(validateGraph(graph).isValid);
     });
     it('a claim made later in a chain of particles does not override claims made earlier', async () => {
@@ -453,8 +543,8 @@ describe('FlowGraph validation', () => {
         P3
           bar <- h2
     `);
-        const result = validateGraph(graph);
-        assert.isTrue(result.isValid);
+        markParticlesWithIngress(graph, 'P1');
+        assert.isTrue(validateGraph(graph).isValid);
     });
     it('succeeds when a check includes multiple tags', async () => {
         const graph = await buildFlowGraph(`
@@ -475,8 +565,8 @@ describe('FlowGraph validation', () => {
         P3
           bar <- h
     `);
-        const result = validateGraph(graph);
-        assert.isTrue(result.isValid);
+        markParticlesWithIngress(graph, 'P1', 'P2');
+        assert.isTrue(validateGraph(graph).isValid);
     });
     it(`fails when a check including multiple tags isn't met`, async () => {
         const graph = await buildFlowGraph(`
@@ -497,6 +587,7 @@ describe('FlowGraph validation', () => {
         P3
           bar <- h
     `);
+        markParticlesWithIngress(graph, 'P1', 'P2');
         assertFailures(validateGraph(graph), [`'check bar is tag1 or is tag2' failed for path: P2.foo -> P3.bar`]);
     });
     it(`succeeds when a check including multiple anded tags is met by a single claim`, async () => {
@@ -513,8 +604,8 @@ describe('FlowGraph validation', () => {
         P2
           bar <- h
     `);
-        const result = validateGraph(graph);
-        assert.isTrue(result.isValid);
+        markParticlesWithIngress(graph, 'P1');
+        assert.isTrue(validateGraph(graph).isValid);
     });
     it(`succeeds when a check including multiple ored tags is met by a single claim`, async () => {
         const graph = await buildFlowGraph(`
@@ -530,8 +621,8 @@ describe('FlowGraph validation', () => {
         P2
           bar <- h
     `);
-        const result = validateGraph(graph);
-        assert.isTrue(result.isValid);
+        markParticlesWithIngress(graph, 'P1');
+        assert.isTrue(validateGraph(graph).isValid);
     });
     it('can detect more than one failure for the same check', async () => {
         const graph = await buildFlowGraph(`
@@ -556,6 +647,7 @@ describe('FlowGraph validation', () => {
         P4
           bar <- h
     `);
+        markParticlesWithIngress(graph, 'P1', 'P2', 'P3');
         assertFailures(validateGraph(graph), [
             `'check bar is trusted' failed for path: P1.foo -> P4.bar`,
             `'check bar is trusted' failed for path: P2.foo -> P4.bar`,
@@ -582,6 +674,7 @@ describe('FlowGraph validation', () => {
           bar1 <- h1
           bar2 <- h2
     `);
+        markParticlesWithIngress(graph, 'P1');
         assertFailures(validateGraph(graph), [
             `'check bar1 is trusted' failed for path: P1.foo1 -> P2.bar1`,
             `'check bar2 is extraTrusted' failed for path: P1.foo2 -> P2.bar2`,
@@ -604,6 +697,7 @@ describe('FlowGraph validation', () => {
         P
           input <- s
     `);
+        markParticleInputsWithIngress(graph, 'P.input');
         assert.isTrue(validateGraph(graph).isValid);
     });
     describe(`'is from handle' check conditions`, () => {
@@ -618,6 +712,7 @@ describe('FlowGraph validation', () => {
             input1 <- h
             input2 <- h
       `);
+            markParticleInputsWithIngress(graph, 'P.input1', 'P.input2');
             assert.isTrue(validateGraph(graph).isValid);
         });
         it('fails when handle is different', async () => {
@@ -631,6 +726,7 @@ describe('FlowGraph validation', () => {
             input1 <- h1
             input2 <- h2
       `);
+            markParticleInputsWithIngress(graph, 'P.input1', 'P.input2');
             assertFailures(validateGraph(graph), [`'check input2 is from handle input1' failed for path: P.input2`]);
         });
         it('succeeds when the handle has inputs', async () => {
@@ -650,6 +746,7 @@ describe('FlowGraph validation', () => {
             trustedSource <- h
             inputToCheck <- h
       `);
+            markParticlesWithIngress(graph, 'P1');
             assert.isTrue(validateGraph(graph).isValid);
         });
         it('succeeds when the handle is separated by a chain of other particles', async () => {
@@ -669,6 +766,7 @@ describe('FlowGraph validation', () => {
             trustedSource <- h
             inputToCheck <- h1
       `);
+            markParticleInputsWithIngress(graph, 'P1.input');
             assert.isTrue(validateGraph(graph).isValid);
         });
         it('succeeds when the handle is separated by another particle with a claim', async () => {
@@ -689,6 +787,7 @@ describe('FlowGraph validation', () => {
             trustedSource <- h
             inputToCheck <- h1
       `);
+            markParticleInputsWithIngress(graph, 'P1.input');
             assert.isTrue(validateGraph(graph).isValid);
         });
         it('fails when another handle is also found', async () => {
@@ -710,6 +809,7 @@ describe('FlowGraph validation', () => {
             trustedSource <- h
             inputToCheck <- h2
       `);
+            markParticleInputsWithIngress(graph, 'P1.input1', 'P1.input2');
             assertFailures(validateGraph(graph), [
                 `'check inputToCheck is from handle trustedSource' failed for path: P1.input2 -> P1.output -> P2.inputToCheck`,
             ]);
@@ -732,6 +832,7 @@ describe('FlowGraph validation', () => {
           P
             input <- s
       `);
+            markParticleInputsWithIngress(graph, 'P.input');
             assert.isTrue(validateGraph(graph).isValid);
         });
         it('succeeds when the data store identified by ID is present', async () => {
@@ -750,6 +851,7 @@ describe('FlowGraph validation', () => {
           P
             input <- s
       `);
+            markParticleInputsWithIngress(graph, 'P.input');
             assert.isTrue(validateGraph(graph).isValid);
         });
         it('fails when the data store identified by name is missing', async () => {
@@ -810,6 +912,7 @@ describe('FlowGraph validation', () => {
             input1 <- s1
             input2 <- s2
       `);
+            markParticleInputsWithIngress(graph, 'P.input1');
             assertFailures(validateGraph(graph), [`'check input1 is from store MyStore' failed for path: P.input`]);
         });
     });
@@ -829,6 +932,7 @@ describe('FlowGraph validation', () => {
             trustedSource <- h
             inputToCheck <- h
       `);
+            markParticlesWithIngress(graph, 'P1');
             assert.isTrue(validateGraph(graph).isValid);
         });
         it('succeeds when only the tag is present', async () => {
@@ -847,6 +951,7 @@ describe('FlowGraph validation', () => {
             trustedSource <- h
             inputToCheck <- h2
       `);
+            markParticlesWithIngress(graph, 'P1');
             assert.isTrue(validateGraph(graph).isValid);
         });
         it('fails when neither condition is present', async () => {
@@ -864,6 +969,7 @@ describe('FlowGraph validation', () => {
             trustedSource <- h
             inputToCheck <- h2
       `);
+            markParticlesWithIngress(graph, 'P1');
             assertFailures(validateGraph(graph), [
                 `'check inputToCheck is from handle trustedSource or is trusted' failed for path: P1.output -> P2.inputToCheck`,
             ]);
@@ -886,6 +992,7 @@ describe('FlowGraph validation', () => {
             trustedSource <- h
             inputToCheck <- h
       `);
+            markParticlesWithIngress(graph, 'P1');
             assert.isTrue(validateGraph(graph).isValid);
         });
         it('fails when only one condition is met', async () => {
@@ -904,6 +1011,7 @@ describe('FlowGraph validation', () => {
             trustedSource <- h
             inputToCheck <- h
       `);
+            markParticlesWithIngress(graph, 'P1');
             assertFailures(validateGraph(graph), [
                 `'check inputToCheck is from handle trustedSource and is trusted' failed for path: P1.output -> P2.inputToCheck`,
             ]);
@@ -925,6 +1033,7 @@ describe('FlowGraph validation', () => {
               trustedSource <- h
               inputToCheck <- h
         `);
+                markParticlesWithIngress(graph, 'P1');
                 return validateGraph(graph).isValid;
             };
             assert.isTrue(await validateCondition('is trusted'));
@@ -965,6 +1074,7 @@ describe('FlowGraph validation', () => {
             bar <- h
             consume slotToConsume as slot0
       `);
+            markParticlesWithIngress(graph, 'P2');
             assert.isTrue(validateGraph(graph).isValid);
         });
         it('fails for tag checks when the tag is missing', async () => {
@@ -983,6 +1093,7 @@ describe('FlowGraph validation', () => {
           P2
             consume slotToConsume as slot0
       `);
+            markParticlesWithIngress(graph, 'P2');
             assertFailures(validateGraph(graph), [`'check slotToProvide data is trusted' failed for path: P2.slotToConsume`]);
         });
         it('succeeds for handle checks when the slot consumer derives from the right handle', async () => {
@@ -1005,6 +1116,7 @@ describe('FlowGraph validation', () => {
             bar <- h
             consume slotToConsume as slot0
       `);
+            markParticlesWithIngress(graph, 'P1');
             assert.isTrue(validateGraph(graph).isValid);
         });
         it('fails for handle checks when the handle is not present', async () => {
@@ -1025,6 +1137,7 @@ describe('FlowGraph validation', () => {
           P2
             consume slotToConsume as slot0
       `);
+            markParticlesWithIngress(graph, 'P2');
             assertFailures(validateGraph(graph), [`'check slotToProvide data is from handle foo' failed for path: P2.slotToConsume`]);
         });
     });

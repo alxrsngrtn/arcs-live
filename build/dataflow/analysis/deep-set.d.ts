@@ -32,6 +32,7 @@ export declare class DeepSet<T extends UniqueStringable> implements Iterable<T> 
     asSet(): ReadonlySet<T>;
     toArray(): T[];
     readonly size: number;
+    readonly isEmpty: boolean;
     /** Unique string representation of this DeepSet. */
     toUniqueString(): string;
 }
