@@ -37,7 +37,7 @@ export declare class StorageStub {
     readonly description: string;
     readonly version?: number;
     readonly source?: string;
-    readonly referenceMode: boolean;
+    referenceMode: boolean;
     readonly model?: {}[];
     constructor(type: Type, id: string, name: string, storageKey: string, storageProviderFactory: StorageProviderFactory, originalId: string, 
     /** Trust tags claimed by this data store. */

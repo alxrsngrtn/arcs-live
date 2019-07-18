@@ -1,5 +1,33 @@
-commit d506684f5ff72f7574c261da4f559e8d1c4f72f9
-Author: Paul Lindner <lindner@inuus.com>
-Date:   Thu Jul 18 00:20:53 2019 -0700
+commit ea205c2448e2ad81e13d4902ff5c5cafa4bcf017
+Author: Scott J. Miles <sjmiles@google.com>
+Date:   Thu Jul 18 15:21:42 2019 -0700
 
-    Fix issues with reference-test to enable correct async behavior in StubLoader (#3322)
+    Shells: update test infra to WDIO 5 (#3353)
+    
+    * attempt to update to wdio5
+    
+    * wip
+    
+    * maybe it works
+    
+    * wip
+    
+    * use files provided by Paul
+    
+    * use Paul's conf
+    
+    * fixups
+    
+    * add first persistence test
+    
+    * this PR changes package.json, so here is package-lock
+    
+    * remove junk
+    
+    * remove junk
+    
+    * clean ups
+    
+    * clean up
+    
+    * better logging
