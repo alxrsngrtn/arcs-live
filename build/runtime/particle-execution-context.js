@@ -52,6 +52,9 @@ export class ParticleExecutionContext {
             async onInstantiateParticle(id, spec, proxies) {
                 return pec.instantiateParticle(id, spec, proxies);
             }
+            async onReloadParticle(id) {
+                return pec.reloadParticle(id);
+            }
             onSimpleCallback(callback, data) {
                 callback(data);
             }
@@ -195,6 +198,9 @@ export class ParticleExecutionContext {
                 this.pendingLoads.splice(idx, 1);
                 resolve();
             }];
+    }
+    async reloadParticle(id) {
+        // TODO(sherrypra): Implement this method.
     }
     async loadWasmParticle(spec) {
         assert(spec.name.length > 0);

@@ -39,6 +39,7 @@ export declare class ParticleExecutionContext {
     getStorageProxy(storageKey: any, type: any): StorageProxy | Promise<StorageProxy>;
     capabilities(hasInnerArcs: boolean): Capabilities;
     private instantiateParticle;
+    private reloadParticle;
     private loadWasmParticle;
     readonly relevance: Map<any, any>;
     readonly busy: boolean;

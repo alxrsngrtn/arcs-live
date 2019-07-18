@@ -29,6 +29,7 @@ declare class ThingMapper {
     constructor(prefix: string);
     _newIdentifier(): string;
     createMappingForThing(thing: any, requestedId?: any): any;
+    recreateMappingForThing(thing: any): string;
     maybeCreateMappingForThing(thing: any): any;
     establishThingMapping(id: any, thing: any): Promise<void>;
     hasMappingForThing(thing: any): boolean;
@@ -53,6 +54,7 @@ export declare abstract class PECOuterPort extends APIPort {
     Stop(): void;
     DefineHandle(store: StorageProviderBase, type: Type, name: string): void;
     InstantiateParticle(particle: recipeParticle.Particle, id: string, spec: ParticleSpec, stores: Map<string, StorageProviderBase>): void;
+    ReloadParticle(particle: recipeParticle.Particle, id: string): void;
     UIEvent(particle: recipeParticle.Particle, slotName: string, event: {}): void;
     SimpleCallback(callback: number, data: {}): void;
     AwaitIdle(version: number): void;
@@ -100,6 +102,7 @@ export declare abstract class PECInnerPort extends APIPort {
     abstract onStop(): any;
     abstract onDefineHandle(identifier: string, type: Type, name: string): any;
     abstract onInstantiateParticle(id: string, spec: ParticleSpec, proxies: Map<string, StorageProxy>): any;
+    abstract onReloadParticle(id: string): any;
     abstract onUIEvent(particle: Particle, slotName: string, event: {}): any;
     abstract onSimpleCallback(callback: (data: {}) => void, data: {}): any;
     abstract onAwaitIdle(version: number): any;

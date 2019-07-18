@@ -422,16 +422,16 @@
         "signature": "938ffb70c9c0cb5ef91e0171b84d787c5dbcb8edd508b51eb701d1c795555d57"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/api-channel.ts": {
-        "version": "6246752c93f69c3f317012dd6b897ded59fc71f3c2410716fb01b6d3a6a2a4b4",
-        "signature": "938ef23a7eefa184063496db1ca993da9d10744af471c9c7301a6bb832b72ad5"
+        "version": "f75a99a29915feab03421dba5b32f6f4aba06ded0084fca7742a6211ad980b22",
+        "signature": "d9d9b6065a7fc97ca4c7673a12389174fe604eb3701506118a3e65a0aa10bda5"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/wasm.ts": {
         "version": "a148f4e1dc969b576ca872da6e08ff248bb1bec57eafe6e1387b2784f1169331",
         "signature": "b5f3067e557c60e61d475e7084b8d01d84ae676de646ce64f2b5c7ce44dedceb"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/particle-execution-context.ts": {
-        "version": "860f290966cad6822c5527f1e1630be7bab413e5c261ba1fc4298d7556a30389",
-        "signature": "c1eec6407ecff7dfc955ee58ae5ef59398199ecc9369708ad173379f6b8c8b94"
+        "version": "db684e3bc9e1555f861b7dd803700441e1f9216c82f71302c684d7deb4a27ef0",
+        "signature": "375c1f6c571df3ff742045ee691775076148220b2763e88c4bc1fb3f55a0943d"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/entity.ts": {
         "version": "d05b48f25c48044e19bd76a959ebdcb2da9d99ab8d5d024f6b92b250394f1dc2",
@@ -2269,7 +2269,7 @@
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/tests/api-channel-test.ts": {
-        "version": "6195eac96267839dce1dfaac29cf31e51244c8d770fe279cbcd54d1da07ee21d",
+        "version": "b61fda11431845d4dd3b0f17ac104330dd3997e9d7e2afe41a27ce1282abb28f",
         "signature": "8bc1d39a3b8ec61064f9969316a088e314895e7ffd094468dcc0b238f33cb4a6"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/tests/arc-test.ts": {
@@ -17796,7 +17796,7 @@
         [
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/api-channel.ts",
-            "start": 14895,
+            "start": 15504,
             "length": 14,
             "code": 2322,
             "category": 1,
@@ -17813,7 +17813,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/api-channel.ts",
-            "start": 14959,
+            "start": 15568,
             "length": 25,
             "messageText": "Object is possibly 'null'.",
             "category": 1,
@@ -17918,7 +17918,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/particle-execution-context.ts",
-            "start": 8203,
+            "start": 8294,
             "length": 9,
             "code": 2345,
             "category": 1,
@@ -17926,7 +17926,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/particle-execution-context.ts",
-            "start": 9374,
+            "start": 9465,
             "length": 8,
             "messageText": "Object is possibly 'undefined'.",
             "category": 1,
@@ -17934,7 +17934,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/particle-execution-context.ts",
-            "start": 9392,
+            "start": 9483,
             "length": 8,
             "messageText": "Object is possibly 'undefined'.",
             "category": 1,
@@ -17942,7 +17942,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/particle-execution-context.ts",
-            "start": 10804,
+            "start": 10992,
             "length": 17,
             "code": 2322,
             "category": 1,

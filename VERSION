@@ -1,5 +1,5 @@
-commit 2f9dadfa591ac29110fa185dc0ea52454de7b3fd
-Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
-Date:   Fri Jul 19 08:57:00 2019 +1000
+commit e33e9166392e76b2aafd2ea241a1335ed9271387
+Author: sherry-pra <52428204+sherry-pra@users.noreply.github.com>
+Date:   Thu Jul 18 16:11:19 2019 -0700
 
-    Better error when emsdk-npm is missing (#3355)
+    Api channel supports reloading particle (#3344)

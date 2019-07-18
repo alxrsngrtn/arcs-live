@@ -98,6 +98,9 @@ function NoArgs(target, propertyKey) {
 function RedundantInitializer(target, propertyKey, parameterIndex) {
     set(target.constructor, propertyKey, parameterIndex, { type: MappingType.Direct, initializer: true, redundant: true });
 }
+function OverridingInitializer(target, propertyKey, parameterIndex) {
+    set(target.constructor, propertyKey, parameterIndex, { type: MappingType.Direct, initializer: true, overriding: true });
+}
 function Initializer(target, propertyKey, parameterIndex) {
     set(target.constructor, propertyKey, parameterIndex, { type: MappingType.Direct, initializer: true });
 }
@@ -131,6 +134,12 @@ class ThingMapper {
         }
         assert(!this._idMap.has(id), `${requestedId ? 'requestedId' : (thing.apiChannelMappingId ? 'apiChannelMappingId' : 'newIdentifier()')} ${id} already in use`);
         // TODO: Awaiting this promise causes tests to fail...
+        floatingPromiseToAudit(this.establishThingMapping(id, thing));
+        return id;
+    }
+    recreateMappingForThing(thing) {
+        assert(this._reverseIdMap.has(thing));
+        const id = this._reverseIdMap.get(thing);
         floatingPromiseToAudit(this.establishThingMapping(id, thing));
         return id;
     }
@@ -311,6 +320,9 @@ function AutoConstruct(target) {
                             assert(requestedId === -1);
                             messageBody['identifier'] = this._mapper.maybeCreateMappingForThing(args[initializer]);
                         }
+                        else if (descriptor[initializer].overriding) {
+                            messageBody['identifier'] = this._mapper.recreateMappingForThing(args[initializer]);
+                        }
                         else {
                             messageBody['identifier'] = this._mapper.createMappingForThing(args[initializer], args[requestedId]);
                         }
@@ -378,6 +390,7 @@ export class PECOuterPort extends APIPort {
     Stop() { }
     DefineHandle(store, type, name) { }
     InstantiateParticle(particle, id, spec, stores) { }
+    ReloadParticle(particle, id) { }
     UIEvent(particle, slotName, event) { }
     SimpleCallback(callback, data) { }
     AwaitIdle(version) { }
@@ -402,6 +415,9 @@ __decorate([
 __decorate([
     __param(0, Initializer), __param(1, Identifier), __param(1, Direct), __param(2, ByLiteral(ParticleSpec)), __param(3, ObjectMap(MappingType.Direct, MappingType.Mapped))
 ], PECOuterPort.prototype, "InstantiateParticle", null);
+__decorate([
+    __param(0, OverridingInitializer), __param(1, Identifier), __param(1, Direct)
+], PECOuterPort.prototype, "ReloadParticle", null);
 __decorate([
     __param(0, Mapped), __param(1, Direct), __param(2, Direct)
 ], PECOuterPort.prototype, "UIEvent", null);
