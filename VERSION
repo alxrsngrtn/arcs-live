@@ -1,23 +1,9 @@
-commit ed3f98d94707145ad07dbda4c61d54f436b18c81
-Author: Scott J. Miles <sjmiles@google.com>
-Date:   Wed Jul 17 14:07:43 2019 -0700
+commit a0c1e61b1764e4345e902ffe18b2e6e300390617
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Wed Jul 17 18:53:49 2019 -0700
 
-    Shells: adapt to changes in Manifest storage handling (#3336)
+    add storage methods to java pec (#3348)
     
-    * factor out shared code
+    * add storage methods to java pec
     
-    * Identify pipes-shell in tab
-    
-    * restructure file tree for clarity
-    
-    * ensure `name` property flows from bus to process
-    
-    * wip
-    
-    * wip
-    
-    * clean up
-    
-    * initial web-shell repairs
-    
-    * ws
+    * address comments: helper store apis method in pec, emptyJson method in parser
