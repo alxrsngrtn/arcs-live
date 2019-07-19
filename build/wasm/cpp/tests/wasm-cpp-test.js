@@ -12,7 +12,7 @@ import { Loader } from '../../../runtime/loader.js';
 import { Manifest } from '../../../runtime/manifest.js';
 import { Runtime } from '../../../runtime/runtime.js';
 import { FakeSlotComposer } from '../../../runtime/testing/fake-slot-composer.js';
-describe('wasm C++ tests', () => {
+describe.skip('wasm C++ tests', () => {
     it('simple entity passthrough', async () => {
         const loader = new Loader();
         const manifest = await Manifest.parse(`
