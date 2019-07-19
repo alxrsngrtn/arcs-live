@@ -41,16 +41,18 @@ export declare type CheckCondition = CheckHasTag | CheckIsFromHandle | CheckIsFr
 /** A check condition of the form 'check x is <tag>'. */
 export declare class CheckHasTag {
     readonly tag: string;
+    readonly isNot: boolean;
     readonly type: CheckType.HasTag;
-    constructor(tag: string);
+    constructor(tag: string, isNot: boolean);
     static fromASTNode(astNode: AstNode.ParticleCheckHasTag): CheckHasTag;
     toManifestString(): string;
 }
 /** A check condition of the form 'check x is from handle <handle>'. */
 export declare class CheckIsFromHandle {
     readonly parentHandle: HandleConnectionSpec;
+    readonly isNot: boolean;
     readonly type: CheckType.IsFromHandle;
-    constructor(parentHandle: HandleConnectionSpec);
+    constructor(parentHandle: HandleConnectionSpec, isNot: boolean);
     static fromASTNode(astNode: AstNode.ParticleCheckIsFromHandle, handleConnectionMap: Map<string, HandleConnectionSpec>): CheckIsFromHandle;
     toManifestString(): string;
 }
@@ -62,8 +64,9 @@ export declare type StoreReference = {
 /** A check condition of the form 'check x is from store <store reference>'. */
 export declare class CheckIsFromStore {
     readonly storeRef: StoreReference;
+    readonly isNot: boolean;
     readonly type: CheckType.IsFromStore;
-    constructor(storeRef: StoreReference);
+    constructor(storeRef: StoreReference, isNot: boolean);
     static fromASTNode(astNode: AstNode.ParticleCheckIsFromStore): CheckIsFromStore;
     toManifestString(): string;
 }

@@ -186,16 +186,19 @@ export declare type ParticleCheckCondition = ParticleCheckHasTag | ParticleCheck
 export interface ParticleCheckHasTag extends BaseNode {
     kind: 'particle-trust-check-has-tag';
     checkType: CheckType.HasTag;
+    isNot: boolean;
     tag: string;
 }
 export interface ParticleCheckIsFromHandle extends BaseNode {
     kind: 'particle-trust-check-is-from-handle';
     checkType: CheckType.IsFromHandle;
+    isNot: boolean;
     parentHandle: string;
 }
 export interface ParticleCheckIsFromStore extends BaseNode {
     kind: 'particle-trust-check-is-from-store';
     checkType: CheckType.IsFromStore;
+    isNot: boolean;
     storeRef: StoreReference;
 }
 export interface StoreReference extends BaseNode {

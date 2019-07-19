@@ -50,21 +50,23 @@ export class CheckBooleanExpression {
 }
 /** A check condition of the form 'check x is <tag>'. */
 export class CheckHasTag {
-    constructor(tag) {
+    constructor(tag, isNot) {
         this.tag = tag;
+        this.isNot = isNot;
         this.type = CheckType.HasTag;
     }
     static fromASTNode(astNode) {
-        return new CheckHasTag(astNode.tag);
+        return new CheckHasTag(astNode.tag, astNode.isNot);
     }
     toManifestString() {
-        return `is ${this.tag}`;
+        return `is ${this.isNot ? 'not ' : ''}${this.tag}`;
     }
 }
 /** A check condition of the form 'check x is from handle <handle>'. */
 export class CheckIsFromHandle {
-    constructor(parentHandle) {
+    constructor(parentHandle, isNot) {
         this.parentHandle = parentHandle;
+        this.isNot = isNot;
         this.type = CheckType.IsFromHandle;
     }
     static fromASTNode(astNode, handleConnectionMap) {
@@ -72,23 +74,24 @@ export class CheckIsFromHandle {
         if (!parentHandle) {
             throw new Error(`Unknown "check is from handle" handle name: ${parentHandle}.`);
         }
-        return new CheckIsFromHandle(parentHandle);
+        return new CheckIsFromHandle(parentHandle, astNode.isNot);
     }
     toManifestString() {
-        return `is from handle ${this.parentHandle.name}`;
+        return `is ${this.isNot ? 'not ' : ''}from handle ${this.parentHandle.name}`;
     }
 }
 /** A check condition of the form 'check x is from store <store reference>'. */
 export class CheckIsFromStore {
-    constructor(storeRef) {
+    constructor(storeRef, isNot) {
         this.storeRef = storeRef;
+        this.isNot = isNot;
         this.type = CheckType.IsFromStore;
     }
     static fromASTNode(astNode) {
         return new CheckIsFromStore({
             type: astNode.storeRef.type,
             store: astNode.storeRef.store,
-        });
+        }, astNode.isNot);
     }
     toManifestString() {
         let store = this.storeRef.store;
@@ -96,7 +99,7 @@ export class CheckIsFromStore {
             // Put the ID inside single-quotes.
             store = `'${store}'`;
         }
-        return `is from store ${store}`;
+        return `is ${this.isNot ? 'not ' : ''}from store ${store}`;
     }
 }
 /** Converts the given AST node into a CheckCondition object. */

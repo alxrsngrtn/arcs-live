@@ -450,8 +450,8 @@
         "signature": "e36e04e3fb3fb6b5da73834fb22379ef2fc287e709ae3b340a900010c9b1ab3a"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/particle-check.ts": {
-        "version": "4ce95792912920bb834b028fa906dd2642af78e056ee06afedadca0d45470b65",
-        "signature": "858ef761ee15b2d938cf9a59c6e24d3e158c490e7e17fcc3d9ed3ea6dbbd32ca"
+        "version": "2184d7f97deb8acee0048f178755d0e7452704689993c1abb8936cc6485cfb00",
+        "signature": "ba53a96a7471850e94429df01b87149911740377cf201485a43e1032249e5de8"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/particle-spec.ts": {
         "version": "b78fb251b8875a6fc0226f49be472b73bf5b119ea46a1a289903716f6afc4044",
@@ -462,11 +462,11 @@
         "signature": "1ff70153a74b019cf6ef32cdc8a9fc74c846d097a4cf5732aac2122cd17b7fe6"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/manifest-ast-nodes.ts": {
-        "version": "c177ef022f430028bb8ca428f11a8efe873b3cb202a093cd917a8f29c21394ba",
-        "signature": "006f6c4a357b2b9d75e1aa8c2e470a4b81158402806f5ffaf22820f9c986be61"
+        "version": "be33cdeaa24bdd4c84309a1890171300f8a888fb4d96a0d29e57b8628f9e7e1a",
+        "signature": "75e94ff9c6a80f90bdef15c3a168a076d194dc0e2f668ebeb4f24a362c746d67"
       },
       "/home/travis/build/PolymerLabs/arcs/src/gen/runtime/manifest-parser.ts": {
-        "version": "7160d2f79c79dbd6598436342388dd29df07b0a3768e413b6bf1ca34a93d3fc9",
+        "version": "a6a639bd2118ad79a1ae0035dec755ee73c57ac4013f437b9ca879e72d1878f6",
         "signature": "ff2c763c7895327196fd3eb358dcc775b25f27bdae513079cc287433af262427"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/manifest-meta.ts": {
@@ -2317,7 +2317,7 @@
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/tests/manifest-test.ts": {
-        "version": "fb24a6930eb558b6fd08366f8ae8d6fd12e5ba6997bc04e67221727b22a08e65",
+        "version": "99f51337485349fd78a70de6ad1612aa307e7626cb4a241fa860534c5035a9be",
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/tests/multiplexer-test.ts": {
@@ -18533,7 +18533,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/gen/runtime/manifest-parser.ts",
-            "start": 24518,
+            "start": 24626,
             "length": 333,
             "code": 2352,
             "category": 1,
@@ -18555,7 +18555,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/gen/runtime/manifest-parser.ts",
-            "start": 26056,
+            "start": 26164,
             "length": 316,
             "code": 2352,
             "category": 1,
@@ -18577,7 +18577,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/gen/runtime/manifest-parser.ts",
-            "start": 26803,
+            "start": 26911,
             "length": 7,
             "code": 2345,
             "category": 1,
@@ -18585,7 +18585,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/gen/runtime/manifest-parser.ts",
-            "start": 26913,
+            "start": 27021,
             "length": 1,
             "code": 2345,
             "category": 1,
@@ -18593,7 +18593,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/gen/runtime/manifest-parser.ts",
-            "start": 35965,
+            "start": 36073,
             "length": 132,
             "code": 2352,
             "category": 1,
@@ -18610,7 +18610,7 @@
             "relatedInformation": [
               {
                 "file": "/home/travis/build/PolymerLabs/arcs/src/runtime/manifest-ast-nodes.ts",
-                "start": 8590,
+                "start": 8644,
                 "length": 4,
                 "messageText": "'name' is declared here.",
                 "category": 3,
@@ -18620,7 +18620,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/gen/runtime/manifest-parser.ts",
-            "start": 41257,
+            "start": 41365,
             "length": 6,
             "code": 2322,
             "category": 1,
@@ -18637,7 +18637,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/gen/runtime/manifest-parser.ts",
-            "start": 41562,
+            "start": 41670,
             "length": 6,
             "code": 2322,
             "category": 1,
@@ -18654,7 +18654,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/gen/runtime/manifest-parser.ts",
-            "start": 265041,
+            "start": 267528,
             "length": 97,
             "code": 2352,
             "category": 1,
@@ -18676,7 +18676,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/gen/runtime/manifest-parser.ts",
-            "start": 265463,
+            "start": 267950,
             "length": 51,
             "code": 2322,
             "category": 1,
