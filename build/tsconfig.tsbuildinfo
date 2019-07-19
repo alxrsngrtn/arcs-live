@@ -526,15 +526,15 @@
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/deep-set.ts": {
-        "version": "48c48c01d0d4e9509d7c298089f8e0f173caf0f3f55f86c5eef83e295585a083",
-        "signature": "f7b8e6e7a938e6050b8168cd85151853847c8cd144c9869259e7bff2d4dd866b"
+        "version": "23dd4acda310d6fa20d9085f9516945ba1ad8956e0ed25afcc12517008bcb1a8",
+        "signature": "e40f1b3080081848738b30a72d981f2dc2a2662f2df1985a70c7c389cd10cf0f"
       },
       "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/graph-internals.ts": {
         "version": "d2d0d3bb9066543d803d183869662491d19a99c35e3852ff5d91e19cb444d582",
         "signature": "c4bb4226377a076c869107f4d9c8f98580061ec2ab0cb89d6b323a8104866aca"
       },
       "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/particle-node.ts": {
-        "version": "557207aae59d5325706a570d9bc32b05cd9ad9d18d1d114b1423f7fd6fb4ba4f",
+        "version": "7d241045af5a8039e6d805967e5a5f99c2c110d28f28a1ac9ed04a69d1c8c0d8",
         "signature": "3a23f075107f8408694af71d80a43a51ae3cd3cd0c2100c4ebba10f2303f5a23"
       },
       "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/handle-node.ts": {
@@ -550,8 +550,8 @@
         "signature": "e92b9e8c009efd0a70c7dd15c3e217a006aec8439832fb97a25fa9c4f90a2051"
       },
       "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/analysis.ts": {
-        "version": "ef40423ef93cd7853e835a5b7e9abbb4f8d2666241885e7533393d3cfb934d13",
-        "signature": "e570c0edd2b59c5cd76465ef71a34685435f308829bfd9088c8d29918d0e688d"
+        "version": "6d92e143fe2ca7ec86315345e03b27e34f3b244d5d065900f80b99c2c75e9c8f",
+        "signature": "e610de187bbc10e7db9af28123b2c2f687a737d27a30202fc75eda50e8719693"
       },
       "/home/travis/build/PolymerLabs/arcs/src/dataflow/arcs-dataflow.ts": {
         "version": "8e4dab061e9d06ffcbca21c415c8356c4d502660c4fe0305c09f3b5a4e400394",
@@ -566,7 +566,7 @@
         "signature": "4c86e04bcbc0a95e6fce540fb1151f3b9e07ffca1f2630061dfc8de54a7c63b3"
       },
       "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/tests/analysis-test.ts": {
-        "version": "3b910fc22fad7467ced92a9c8bdcd7cd40a11bb2d5daf077f58a54dfea0cb300",
+        "version": "79a751c906f86f5ea37763fbc6db928cf58371373f65056ef17ab32b89c4dbc3",
         "signature": "8e609bb71c20b858c77f0e9f90bb1319db8477b13f9f965f1a1e18524bf50881"
       },
       "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/tests/deep-set-test.ts": {
@@ -2593,7 +2593,7 @@
         "signature": "c5fd5833a48c4ebb113dd7713bc276c14b3e5f2c83f84973f64765a57715d5ba"
       },
       "/home/travis/build/PolymerLabs/arcs/src/tools/dev_server/status-handler.ts": {
-        "version": "450b101c0805fa38d82f75e584780a16f86ef847cd9f6f8e9c1fc22b13ff2451",
+        "version": "2d50a16ecc02f82e8a2120d4ffe913e97355d51411e349a1d0ae4115c4426dda",
         "signature": "ae93711bcd18b94a75a15177052d2cecb313ef3d4869f6c058221e152c188da0"
       },
       "/home/travis/build/PolymerLabs/arcs/src/tools/dev_server/dev-server.ts": {
@@ -20508,6 +20508,23 @@
                 "code": 2322
               }
             }
+          },
+          {
+            "file": "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/particle-node.ts",
+            "start": 3590,
+            "length": 55,
+            "code": 2345,
+            "category": 1,
+            "messageText": {
+              "messageText": "Argument of type 'ParticleInput | undefined' is not assignable to parameter of type 'ParticleInput'.",
+              "category": 1,
+              "code": 2345,
+              "next": {
+                "messageText": "Type 'undefined' is not assignable to type 'ParticleInput'.",
+                "category": 1,
+                "code": 2322
+              }
+            }
           }
         ]
       ],
@@ -20685,7 +20702,7 @@
         [
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/analysis.ts",
-            "start": 2982,
+            "start": 2890,
             "length": 11,
             "messageText": "Object is possibly 'undefined'.",
             "category": 1,
@@ -20693,7 +20710,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/analysis.ts",
-            "start": 3795,
+            "start": 3736,
             "length": 30,
             "messageText": "Object is possibly 'undefined'.",
             "category": 1,
@@ -20701,7 +20718,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/analysis.ts",
-            "start": 6030,
+            "start": 6906,
             "length": 14,
             "messageText": "Object is possibly 'undefined'.",
             "category": 1,
@@ -20709,7 +20726,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/analysis.ts",
-            "start": 6198,
+            "start": 7074,
             "length": 5,
             "messageText": "Object is possibly 'undefined'.",
             "category": 1,
@@ -20717,7 +20734,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/analysis.ts",
-            "start": 6198,
+            "start": 7074,
             "length": 19,
             "messageText": "Object is possibly 'undefined'.",
             "category": 1,
@@ -20725,7 +20742,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/analysis.ts",
-            "start": 6362,
+            "start": 7238,
             "length": 5,
             "code": 2345,
             "category": 1,
@@ -20742,7 +20759,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/analysis.ts",
-            "start": 6485,
+            "start": 7361,
             "length": 5,
             "messageText": "Object is possibly 'undefined'.",
             "category": 1,
@@ -20750,7 +20767,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/analysis.ts",
-            "start": 6485,
+            "start": 7361,
             "length": 19,
             "messageText": "Object is possibly 'undefined'.",
             "category": 1,
@@ -20758,7 +20775,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/analysis.ts",
-            "start": 7957,
+            "start": 8833,
             "length": 37,
             "messageText": "Object is possibly 'undefined'.",
             "category": 1,
@@ -20766,7 +20783,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/analysis.ts",
-            "start": 8190,
+            "start": 9066,
             "length": 35,
             "messageText": "Object is possibly 'undefined'.",
             "category": 1,
@@ -20774,7 +20791,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/analysis.ts",
-            "start": 8733,
+            "start": 9609,
             "length": 41,
             "messageText": "Object is possibly 'undefined'.",
             "category": 1,
@@ -20782,7 +20799,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/analysis.ts",
-            "start": 8970,
+            "start": 9846,
             "length": 42,
             "messageText": "Object is possibly 'undefined'.",
             "category": 1,
@@ -20810,7 +20827,7 @@
         [
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/tests/analysis-test.ts",
-            "start": 2748,
+            "start": 2747,
             "length": 4,
             "messageText": "Object is possibly 'undefined'.",
             "category": 1,
@@ -20818,7 +20835,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/tests/analysis-test.ts",
-            "start": 3475,
+            "start": 3473,
             "length": 12,
             "messageText": "Object is possibly 'undefined'.",
             "category": 1,
@@ -20826,7 +20843,7 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/tests/analysis-test.ts",
-            "start": 3621,
+            "start": 3618,
             "length": 9,
             "messageText": "Object is possibly 'undefined'.",
             "category": 1,
@@ -20834,7 +20851,39 @@
           },
           {
             "file": "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/tests/analysis-test.ts",
-            "start": 8227,
+            "start": 5707,
+            "length": 42,
+            "messageText": "Object is possibly 'undefined'.",
+            "category": 1,
+            "code": 2532
+          },
+          {
+            "file": "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/tests/analysis-test.ts",
+            "start": 7904,
+            "length": 47,
+            "messageText": "Object is possibly 'undefined'.",
+            "category": 1,
+            "code": 2532
+          },
+          {
+            "file": "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/tests/analysis-test.ts",
+            "start": 8341,
+            "length": 42,
+            "messageText": "Object is possibly 'undefined'.",
+            "category": 1,
+            "code": 2532
+          },
+          {
+            "file": "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/tests/analysis-test.ts",
+            "start": 9205,
+            "length": 47,
+            "messageText": "Object is possibly 'undefined'.",
+            "category": 1,
+            "code": 2532
+          },
+          {
+            "file": "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/tests/analysis-test.ts",
+            "start": 10872,
             "length": 42,
             "messageText": "Object is possibly 'undefined'.",
             "category": 1,

@@ -65,7 +65,6 @@ export class EdgeExpression {
      */
     expandParent(parentExpr) {
         assert(this.unresolvedFlows.has(parentExpr.edge), `Can't substitute parent edge, it's not an unresolved parent.`);
-        assert(!parentExpr.unresolvedFlows.has(this.edge), `Cycles aren't supported (yet).`);
         // Remove unresolved parent, and replace with unresolved grandparents.
         const modifierSet = this.unresolvedFlows.get(parentExpr.edge);
         this.unresolvedFlows.delete(parentExpr.edge);
@@ -82,6 +81,7 @@ export class EdgeExpression {
                 }
             }
         }
+        this.removeSelfReference();
     }
     /** Add a new unresolved flow, consisting of the given edge and a modifier for it. */
     inheritFromEdge(edge, modifier) {
@@ -92,14 +92,37 @@ export class EdgeExpression {
             this.unresolvedFlows.set(edge, new FlowModifierSet(modifier));
         }
     }
+    removeSelfReference() {
+        const selfModifierSet = this.unresolvedFlows.get(this.edge);
+        if (!selfModifierSet) {
+            return;
+        }
+        // Delete the self-reference.
+        this.unresolvedFlows.delete(this.edge);
+        // Apply each self-modifier to a copy of each parent modifier.
+        for (const parentModifierSet of this.unresolvedFlows.values()) {
+            const newModifiers = new FlowModifierSet();
+            for (const selfModifier of selfModifierSet) {
+                newModifiers.addAll(parentModifierSet.copyAndModify(selfModifier));
+            }
+            parentModifierSet.addAll(newModifiers);
+        }
+        // Make a copy of all existing resolved flows, with each set of flow
+        // modifiers applied to them.
+        const newFlows = new FlowSet();
+        for (const selfModifier of selfModifierSet) {
+            newFlows.addAll(this.resolvedFlows.copyAndModify(selfModifier));
+        }
+        this.resolvedFlows.addAll(newFlows);
+    }
     toString() {
-        const result = [`EdgeExpression(${this.edge.label}) {`];
+        const result = [`EdgeExpression(${this.edge.edgeId}) {`];
         for (const flow of this.resolvedFlows) {
             result.push('  ' + flow.toUniqueString());
         }
         for (const [edge, modifierSets] of this.unresolvedFlows) {
             for (const modifiers of modifierSets) {
-                result.push(`  EdgeExpression(${edge.label}) + ${modifiers.toUniqueString()}`);
+                result.push(`  EdgeExpression(${edge.edgeId}) + ${modifiers.toUniqueString()}`);
             }
         }
         result.push('}');

@@ -33,6 +33,11 @@ export declare class DeepSet<T extends UniqueStringable> implements Iterable<T> 
     toArray(): T[];
     readonly size: number;
     readonly isEmpty: boolean;
+    /**
+     * Returns true if this DeepSet is equal to the other DeepSet (deep equals,
+     * computed via toUniqueString() for each DeepSet).
+     */
+    equals(other: DeepSet<T>): boolean;
     /** Unique string representation of this DeepSet. */
     toUniqueString(): string;
 }

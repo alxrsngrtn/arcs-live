@@ -17,7 +17,7 @@ export function status(proxy) {
         if (req.path !== '/status') {
             return next();
         }
-        res.send(`<p>Proxy Status:
+        res.send(`<title>ALDS</title><p>Proxy Status:
         <p>Device: ${proxy.deviceConnected ? 'Connected' : 'Disconnected'}
         <p>Explorer: ${proxy.explorerConnected ? 'Connected' : 'Disconnected'}`);
     };

@@ -53,6 +53,13 @@ export class DeepSet {
     get isEmpty() {
         return this.size === 0;
     }
+    /**
+     * Returns true if this DeepSet is equal to the other DeepSet (deep equals,
+     * computed via toUniqueString() for each DeepSet).
+     */
+    equals(other) {
+        return this.toUniqueString() === other.toUniqueString();
+    }
     /** Unique string representation of this DeepSet. */
     toUniqueString() {
         const strings = [...this.stringSet];

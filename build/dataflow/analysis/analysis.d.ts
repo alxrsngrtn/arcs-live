@@ -44,13 +44,17 @@ export declare class EdgeExpression {
     expandParent(parentExpr: EdgeExpression): void;
     /** Add a new unresolved flow, consisting of the given edge and a modifier for it. */
     private inheritFromEdge;
+    removeSelfReference(): void;
     toString(): string;
 }
 export declare class Solver {
     readonly edges: Edge[];
     /** Maps from an edge to a "expression" for it. */
     readonly edgeExpressions: Map<Edge, EdgeExpression>;
-    /** Maps from an edge to the set of edge expressions which depends upon it. */
+    /**
+     * Maps from an edge to the set of edge expressions which depends something
+     * upon it.
+     */
     readonly dependentExpressions: Map<Edge, Set<EdgeExpression>>;
     private _isResolved;
     constructor(edges: Edge[]);

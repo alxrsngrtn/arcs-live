@@ -1,5 +1,11 @@
-commit f7c182efbdf3253f2277454ca7d98067295da960
-Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
-Date:   Fri Jul 19 18:03:31 2019 +1000
+commit a1b7734b6856326b154b89313fe3feb698b86f86
+Author: Scott J. Miles <sjmiles@google.com>
+Date:   Fri Jul 19 12:33:28 2019 -0700
 
-    Added syntax support for "check _ is not _" (#3363)
+    wdio: explicit polling for ALDS server spin up (#3358)
+    
+    * explicit polling for server status
+    
+    * remove `--continue-on-error` so it at least stops
+    
+    * poll for ALDS status
