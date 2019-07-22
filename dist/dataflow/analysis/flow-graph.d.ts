@@ -25,7 +25,7 @@ export declare class FlowGraph {
     readonly edges: Edge[];
     /** Maps from particle name to node. */
     readonly particleMap: Map<string, ParticleNode>;
-    /** Maps from HandleConnectionSpec to edge. */
+    /** Maps from HandleConnectionSpec to HandleNode. */
     private readonly handleSpecMap;
     private readonly manifest;
     constructor(recipe: Recipe, manifest: Manifest);

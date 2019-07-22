@@ -1,5 +1,5 @@
-commit 67a5b68c4db8880e0ddb194b95ff8ffb00072d4f
+commit 56f64181a3c4565eebd180a7ad0f1100a4821f66
 Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
-Date:   Mon Jul 22 15:31:40 2019 +1000
+Date:   Mon Jul 22 15:43:09 2019 +1000
 
-    Added support for "check ... is not ..." to the dataflow analyser. (#3370)
+    Support inout connections in the dataflow analyser (#3371)

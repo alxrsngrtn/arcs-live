@@ -26,4 +26,4 @@ export declare class HandleNode extends Node {
 /** Creates a new node for every given handle. */
 export declare function createHandleNodes(handles: Handle[]): Map<Handle, HandleNode>;
 /** Adds a connection between the given particle and handle nodes. */
-export declare function addHandleConnection(particleNode: ParticleNode, handleNode: HandleNode, connection: HandleConnection, edgeId: string): Edge;
+export declare function addHandleConnection(direction: 'in' | 'out', particleNode: ParticleNode, handleNode: HandleNode, connection: HandleConnection, edgeId: string): Edge;

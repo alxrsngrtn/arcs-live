@@ -534,20 +534,20 @@
         "signature": "f3f91b04ff9da014ffef1d5b55f440d40d372e144b0a7eca72849769dd234397"
       },
       "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/particle-node.ts": {
-        "version": "7d241045af5a8039e6d805967e5a5f99c2c110d28f28a1ac9ed04a69d1c8c0d8",
-        "signature": "3a23f075107f8408694af71d80a43a51ae3cd3cd0c2100c4ebba10f2303f5a23"
+        "version": "c266c66b4f5c302079a4c5570e209113e79638706505dee0ffd966fe62329178",
+        "signature": "2f53c4f45afdc90c6ba433776545727cfbec130cc709bdee25ffa21828d8ec9b"
       },
       "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/handle-node.ts": {
-        "version": "976854ecfb38f09a5ce899744a9ae9155df251f5291f7c00cb0c567fa84e27c0",
-        "signature": "0618dc35b343db5ced1249bf0988d39b63510b63ea8f4c1954abea68a89128a1"
+        "version": "9638c3e47a846253fc9d8014a9d1e3b463b5ee87abe747444665f424980393a3",
+        "signature": "59872da9310a0c14e2179690cc706ef86db803b0eabe6fe797e2b5464c967887"
       },
       "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/slot-node.ts": {
         "version": "1d5e1a35f31db935cbd3ab02712c3c654b533803ba3143c6df527e1d6ff1f4e9",
         "signature": "19cb2cc31418feed1284eff30c25e9a195a768abae6af5882748bfff7990a442"
       },
       "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/flow-graph.ts": {
-        "version": "685db62818c0bbac01999b962c9000f848cd5f347baea5f4994aa5352968d8c5",
-        "signature": "e92b9e8c009efd0a70c7dd15c3e217a006aec8439832fb97a25fa9c4f90a2051"
+        "version": "f16f5e32f3f79410e0fa6c18c2fffe69477cc8abb90a4378781668fb71f6943e",
+        "signature": "34bf0b19ffaea446db10810d0817e7e3dd7917103c4e2296a175146e31edd19e"
       },
       "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/analysis.ts": {
         "version": "6d92e143fe2ca7ec86315345e03b27e34f3b244d5d065900f80b99c2c75e9c8f",
@@ -566,7 +566,7 @@
         "signature": "4c86e04bcbc0a95e6fce540fb1151f3b9e07ffca1f2630061dfc8de54a7c63b3"
       },
       "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/tests/analysis-test.ts": {
-        "version": "9190e11519d1851950da3843b27702469e1b68d261e8dc9283ece60e25c2aa94",
+        "version": "84fbab50501cced8df6efa153815bad36bee6f92ebdb4e8ddfa10fd29fcd3427",
         "signature": "8e609bb71c20b858c77f0e9f90bb1319db8477b13f9f965f1a1e18524bf50881"
       },
       "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/tests/deep-set-test.ts": {
@@ -578,7 +578,7 @@
         "signature": "535087ae214f316cbb0a3a17fb44a767c4789b7b69c4bd2c8d37fa8d5845a81f"
       },
       "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/tests/flow-graph-test.ts": {
-        "version": "f3290da13e9cfbff7ee807860ce51fe2b18ec65baca450615278f975f986e77c",
+        "version": "f90b2ded07d6db75e0fce51d334b793977c58d89fe5bae924cf530ef2547b026",
         "signature": "43a5176681925d9f51b139647154e4a52c2eb1b1a64bb428595000952bcbc7f1"
       },
       "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/tests/graph-internals-test.ts": {
@@ -3804,7 +3804,6 @@
       "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/particle-node.ts": [
         "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/graph-internals.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/particle-claim.ts",
-        "/home/travis/build/PolymerLabs/arcs/src/runtime/particle-check.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/particle.ts",
         "/home/travis/build/PolymerLabs/arcs/src/platform/assert-web.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/particle-spec.ts",
