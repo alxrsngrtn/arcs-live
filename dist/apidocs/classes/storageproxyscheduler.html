@@ -59,13 +59,21 @@
 					<a href="storageproxyscheduler.html">StorageProxyScheduler</a>
 				</li>
 			</ul>
-			<h1>Class StorageProxyScheduler</h1>
+			<h1>Class StorageProxyScheduler&lt;T&gt;</h1>
 		</div>
 	</div>
 </header>
 <div class="container container-main">
 	<div class="row">
 		<div class="col-8 col-content">
+			<section class="tsd-panel tsd-type-parameters">
+				<h3>Type parameters</h3>
+				<ul class="tsd-type-parameters">
+					<li>
+						<h4>T<span class="tsd-signature-symbol">: </span><a href="../interfaces/crdttyperecord.html" class="tsd-signature-type">CRDTTypeRecord</a></h4>
+					</li>
+				</ul>
+			</section>
 			<section class="tsd-panel tsd-hierarchy">
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
@@ -124,7 +132,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/56f6418/src/runtime/storage-proxy.ts#L560">src/runtime/storage-proxy.ts:560</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c106eea/src/runtime/storage-proxy.ts#L560">src/runtime/storage-proxy.ts:560</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <a href="storageproxyscheduler.html" class="tsd-signature-type">StorageProxyScheduler</a></h4>
@@ -140,7 +148,8 @@
 					<div class="tsd-signature tsd-kind-icon">_idle<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span><span class="tsd-signature-symbol"> =&nbsp;null</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/56f6418/src/runtime/storage-proxy.ts#L560">src/runtime/storage-proxy.ts:560</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c106eea/src/runtime/storage-proxy.ts#L560">src/runtime/storage-proxy.ts:560</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c106eea/src/runtime/storageNG/storage-proxy.ts#L187">src/runtime/storageNG/storage-proxy.ts:187</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -150,17 +159,19 @@
 					<div class="tsd-signature tsd-kind-icon">_idle<wbr>Resolver<span class="tsd-signature-symbol">:</span> <a href="../globals.html#runnable" class="tsd-signature-type">Runnable</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span><span class="tsd-signature-symbol"> =&nbsp;null</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/56f6418/src/runtime/storage-proxy.ts#L559">src/runtime/storage-proxy.ts:559</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c106eea/src/runtime/storage-proxy.ts#L559">src/runtime/storage-proxy.ts:559</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c106eea/src/runtime/storageNG/storage-proxy.ts#L186">src/runtime/storageNG/storage-proxy.ts:186</a></li>
 						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private">
 					<a name="_queues" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagPrivate">Private</span> _queues</h3>
-					<div class="tsd-signature tsd-kind-icon">_queues<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Map</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Particle</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">Map</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Handle</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-symbol">[</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">Particle</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">__type</span><span class="tsd-signature-symbol">]</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> =&nbsp;new Map&lt;Particle, Map&lt;Handle, [string, Particle, {}][]&gt;&gt;()</span></div>
+					<div class="tsd-signature tsd-kind-icon">_queues<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Map</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Particle</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">Map</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Handle</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-type">object</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">object</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">object</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> =&nbsp;new Map&lt;Particle, Map&lt;Handle&lt;T&gt;, Event[]&gt;&gt;()</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/56f6418/src/runtime/storage-proxy.ts#L558">src/runtime/storage-proxy.ts:558</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c106eea/src/runtime/storage-proxy.ts#L558">src/runtime/storage-proxy.ts:558</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c106eea/src/runtime/storageNG/storage-proxy.ts#L185">src/runtime/storageNG/storage-proxy.ts:185</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -170,7 +181,8 @@
 					<div class="tsd-signature tsd-kind-icon">_scheduled<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> =&nbsp;false</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/56f6418/src/runtime/storage-proxy.ts#L557">src/runtime/storage-proxy.ts:557</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c106eea/src/runtime/storage-proxy.ts#L557">src/runtime/storage-proxy.ts:557</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c106eea/src/runtime/storageNG/storage-proxy.ts#L184">src/runtime/storageNG/storage-proxy.ts:184</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -187,7 +199,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/56f6418/src/runtime/storage-proxy.ts#L581">src/runtime/storage-proxy.ts:581</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c106eea/src/runtime/storageNG/storage-proxy.ts#L207">src/runtime/storageNG/storage-proxy.ts:207</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
@@ -204,7 +216,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/56f6418/src/runtime/storage-proxy.ts#L593">src/runtime/storage-proxy.ts:593</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c106eea/src/runtime/storageNG/storage-proxy.ts#L219">src/runtime/storageNG/storage-proxy.ts:219</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -224,7 +236,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/56f6418/src/runtime/storage-proxy.ts#L614">src/runtime/storage-proxy.ts:614</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c106eea/src/runtime/storage-proxy.ts#L614">src/runtime/storage-proxy.ts:614</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -241,7 +253,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/56f6418/src/runtime/storage-proxy.ts#L603">src/runtime/storage-proxy.ts:603</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c106eea/src/runtime/storage-proxy.ts#L603">src/runtime/storage-proxy.ts:603</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -258,7 +270,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/56f6418/src/runtime/storage-proxy.ts#L585">src/runtime/storage-proxy.ts:585</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c106eea/src/runtime/storage-proxy.ts#L585">src/runtime/storage-proxy.ts:585</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -275,7 +287,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/56f6418/src/runtime/storage-proxy.ts#L568">src/runtime/storage-proxy.ts:568</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c106eea/src/runtime/storage-proxy.ts#L568">src/runtime/storage-proxy.ts:568</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -308,7 +320,7 @@
 				<ul class="before-current">
 				</ul>
 				<ul class="current">
-					<li class="current tsd-kind-class">
+					<li class="current tsd-kind-class tsd-has-type-parameter">
 						<a href="storageproxyscheduler.html" class="tsd-kind-icon">Storage<wbr>Proxy<wbr>Scheduler</a>
 						<ul>
 							<li class=" tsd-kind-constructor tsd-parent-kind-class">

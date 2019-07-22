@@ -26,11 +26,14 @@ export declare abstract class Handle<T extends CRDTTypeRecord> {
     key: string;
     clock: VersionMap;
     options: HandleOptions;
+    readonly canRead: boolean;
+    readonly canWrite: boolean;
     particle: Particle;
-    constructor(key: string, storageProxy: StorageProxy<T>, particle: Particle);
+    constructor(key: string, storageProxy: StorageProxy<T>, particle: Particle, canRead: boolean, canWrite: boolean);
     configure(options: HandleOptions): void;
     abstract onUpdate(updates: T['operation'][]): void;
     abstract onSync(): void;
+    onDesync(): void;
 }
 /**
  * A handle on a set of Entity data. Note that, as a set, a Collection can only
@@ -38,6 +41,7 @@ export declare abstract class Handle<T extends CRDTTypeRecord> {
  * implied by the set.
  */
 export declare class CollectionHandle<T extends Referenceable> extends Handle<CRDTCollectionTypeRecord<T>> {
+    get(id: string): Promise<T>;
     add(entity: T): Promise<boolean>;
     addMultiple(entities: T[]): Promise<boolean>;
     remove(entity: T): Promise<boolean>;

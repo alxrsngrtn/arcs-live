@@ -109,6 +109,8 @@
 						<section class="tsd-index-section tsd-is-inherited">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="collectionhandle.html#canread" class="tsd-kind-icon">can<wbr>Read</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="collectionhandle.html#canwrite" class="tsd-kind-icon">can<wbr>Write</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="collectionhandle.html#clock" class="tsd-kind-icon">clock</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="collectionhandle.html#key" class="tsd-kind-icon">key</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="collectionhandle.html#options" class="tsd-kind-icon">options</a></li>
@@ -123,6 +125,8 @@
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="collectionhandle.html#addmultiple" class="tsd-kind-icon">add<wbr>Multiple</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="collectionhandle.html#clear" class="tsd-kind-icon">clear</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="collectionhandle.html#configure" class="tsd-kind-icon">configure</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="collectionhandle.html#get" class="tsd-kind-icon">get</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="collectionhandle.html#ondesync" class="tsd-kind-icon">on<wbr>Desync</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="collectionhandle.html#onsync" class="tsd-kind-icon">on<wbr>Sync</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="collectionhandle.html#onupdate" class="tsd-kind-icon">on<wbr>Update</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="collectionhandle.html#remove" class="tsd-kind-icon">remove</a></li>
@@ -138,14 +142,14 @@
 					<a name="constructor" class="tsd-anchor"></a>
 					<h3>constructor</h3>
 					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class tsd-is-inherited">
-						<li class="tsd-signature tsd-kind-icon">new <wbr>Collection<wbr>Handle<span class="tsd-signature-symbol">(</span>key<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, storageProxy<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">StorageProxy</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/crdtcollectiontyperecord.html" class="tsd-signature-type">CRDTCollectionTypeRecord</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span>, particle<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Particle</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="collectionhandle.html" class="tsd-signature-type">CollectionHandle</a></li>
+						<li class="tsd-signature tsd-kind-icon">new <wbr>Collection<wbr>Handle<span class="tsd-signature-symbol">(</span>key<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, storageProxy<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">StorageProxy</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/crdtcollectiontyperecord.html" class="tsd-signature-type">CRDTCollectionTypeRecord</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span>, particle<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Particle</span>, canRead<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span>, canWrite<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="collectionhandle.html" class="tsd-signature-type">CollectionHandle</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<p>Inherited from Handle.__constructor</p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/56f6418/src/runtime/storageNG/handle.ts#L33">src/runtime/storageNG/handle.ts:33</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c106eea/src/runtime/storageNG/handle.ts#L36">src/runtime/storageNG/handle.ts:36</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -159,6 +163,12 @@
 								<li>
 									<h5>particle: <span class="tsd-signature-type">Particle</span></h5>
 								</li>
+								<li>
+									<h5>canRead: <span class="tsd-signature-type">boolean</span></h5>
+								</li>
+								<li>
+									<h5>canWrite: <span class="tsd-signature-type">boolean</span></h5>
+								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <a href="collectionhandle.html" class="tsd-signature-type">CollectionHandle</a></h4>
 						</li>
@@ -168,13 +178,35 @@
 			<section class="tsd-panel-group tsd-member-group tsd-is-inherited">
 				<h2>Properties</h2>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
+					<a name="canread" class="tsd-anchor"></a>
+					<h3>can<wbr>Read</h3>
+					<div class="tsd-signature tsd-kind-icon">can<wbr>Read<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div>
+					<aside class="tsd-sources">
+						<p>Inherited from Handle.canRead</p>
+						<ul>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c106eea/src/runtime/storageNG/handle.ts#L34">src/runtime/storageNG/handle.ts:34</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
+					<a name="canwrite" class="tsd-anchor"></a>
+					<h3>can<wbr>Write</h3>
+					<div class="tsd-signature tsd-kind-icon">can<wbr>Write<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div>
+					<aside class="tsd-sources">
+						<p>Inherited from Handle.canWrite</p>
+						<ul>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c106eea/src/runtime/storageNG/handle.ts#L35">src/runtime/storageNG/handle.ts:35</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
 					<a name="clock" class="tsd-anchor"></a>
 					<h3>clock</h3>
 					<div class="tsd-signature tsd-kind-icon">clock<span class="tsd-signature-symbol">:</span> <a href="../globals.html#versionmap" class="tsd-signature-type">VersionMap</a></div>
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="handle.html">Handle</a>.<a href="handle.html#clock">clock</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/56f6418/src/runtime/storageNG/handle.ts#L31">src/runtime/storageNG/handle.ts:31</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c106eea/src/runtime/storageNG/handle.ts#L32">src/runtime/storageNG/handle.ts:32</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -185,7 +217,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="handle.html">Handle</a>.<a href="handle.html#key">key</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/56f6418/src/runtime/storageNG/handle.ts#L30">src/runtime/storageNG/handle.ts:30</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c106eea/src/runtime/storageNG/handle.ts#L31">src/runtime/storageNG/handle.ts:31</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -196,7 +228,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from Handle.options</p>
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/56f6418/src/runtime/storageNG/handle.ts#L32">src/runtime/storageNG/handle.ts:32</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c106eea/src/runtime/storageNG/handle.ts#L33">src/runtime/storageNG/handle.ts:33</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -207,7 +239,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="handle.html">Handle</a>.<a href="handle.html#particle">particle</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/56f6418/src/runtime/storageNG/handle.ts#L33">src/runtime/storageNG/handle.ts:33</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c106eea/src/runtime/storageNG/handle.ts#L36">src/runtime/storageNG/handle.ts:36</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -218,7 +250,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="handle.html">Handle</a>.<a href="handle.html#storageproxy">storageProxy</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/56f6418/src/runtime/storageNG/handle.ts#L29">src/runtime/storageNG/handle.ts:29</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c106eea/src/runtime/storageNG/handle.ts#L30">src/runtime/storageNG/handle.ts:30</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -235,7 +267,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/56f6418/src/runtime/storageNG/handle.ts#L60">src/runtime/storageNG/handle.ts:60</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c106eea/src/runtime/storageNG/handle.ts#L78">src/runtime/storageNG/handle.ts:78</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -258,7 +290,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/56f6418/src/runtime/storageNG/handle.ts#L71">src/runtime/storageNG/handle.ts:71</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c106eea/src/runtime/storageNG/handle.ts#L89">src/runtime/storageNG/handle.ts:89</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -281,7 +313,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/56f6418/src/runtime/storageNG/handle.ts#L85">src/runtime/storageNG/handle.ts:85</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c106eea/src/runtime/storageNG/handle.ts#L103">src/runtime/storageNG/handle.ts:103</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -299,7 +331,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from Handle.configure</p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/56f6418/src/runtime/storageNG/handle.ts#L46">src/runtime/storageNG/handle.ts:46</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c106eea/src/runtime/storageNG/handle.ts#L56">src/runtime/storageNG/handle.ts:56</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -308,6 +340,47 @@
 									<h5>options: <span class="tsd-signature-type">HandleOptions</span></h5>
 								</li>
 							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="get" class="tsd-anchor"></a>
+					<h3>get</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">get<span class="tsd-signature-symbol">(</span>id<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c106eea/src/runtime/storageNG/handle.ts#L73">src/runtime/storageNG/handle.ts:73</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>id: <span class="tsd-signature-type">string</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+					<a name="ondesync" class="tsd-anchor"></a>
+					<h3>on<wbr>Desync</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+						<li class="tsd-signature tsd-kind-icon">on<wbr>Desync<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from <a href="handle.html">Handle</a>.<a href="handle.html#ondesync">onDesync</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c106eea/src/runtime/storageNG/handle.ts#L63">src/runtime/storageNG/handle.ts:63</a></li>
+								</ul>
+							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
 						</li>
 					</ul>
@@ -323,7 +396,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="handle.html">Handle</a>.<a href="handle.html#onsync">onSync</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/56f6418/src/runtime/storageNG/handle.ts#L122">src/runtime/storageNG/handle.ts:122</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c106eea/src/runtime/storageNG/handle.ts#L140">src/runtime/storageNG/handle.ts:140</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -341,7 +414,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="handle.html">Handle</a>.<a href="handle.html#onupdate">onUpdate</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/56f6418/src/runtime/storageNG/handle.ts#L105">src/runtime/storageNG/handle.ts:105</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c106eea/src/runtime/storageNG/handle.ts#L123">src/runtime/storageNG/handle.ts:123</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -364,7 +437,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/56f6418/src/runtime/storageNG/handle.ts#L75">src/runtime/storageNG/handle.ts:75</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c106eea/src/runtime/storageNG/handle.ts#L93">src/runtime/storageNG/handle.ts:93</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -387,7 +460,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/56f6418/src/runtime/storageNG/handle.ts#L101">src/runtime/storageNG/handle.ts:101</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c106eea/src/runtime/storageNG/handle.ts#L119">src/runtime/storageNG/handle.ts:119</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -415,6 +488,12 @@
 								<a href="collectionhandle.html#constructor" class="tsd-kind-icon">constructor</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
+								<a href="collectionhandle.html#canread" class="tsd-kind-icon">can<wbr>Read</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
+								<a href="collectionhandle.html#canwrite" class="tsd-kind-icon">can<wbr>Write</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
 								<a href="collectionhandle.html#clock" class="tsd-kind-icon">clock</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
@@ -440,6 +519,12 @@
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
 								<a href="collectionhandle.html#configure" class="tsd-kind-icon">configure</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="collectionhandle.html#get" class="tsd-kind-icon">get</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+								<a href="collectionhandle.html#ondesync" class="tsd-kind-icon">on<wbr>Desync</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
 								<a href="collectionhandle.html#onsync" class="tsd-kind-icon">on<wbr>Sync</a>

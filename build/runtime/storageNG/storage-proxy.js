@@ -14,17 +14,39 @@ import { ProxyMessageType } from './store.js';
  * TODO: describe this class.
  */
 export class StorageProxy {
-    constructor(crdt, store) {
+    constructor(crdt, store, scheduler) {
         this.handles = [];
+        this.listenerAttached = false;
+        this.keepSynced = false;
+        this.synchronized = false;
         this.crdt = crdt;
-        this.registerWithStore(store);
-    }
-    registerWithStore(store) {
-        this.id = store.on(x => this.onMessage(x));
         this.store = store;
+        this.scheduler = scheduler;
     }
-    registerHandle(h) {
-        this.handles.push(h);
+    registerHandle(handle) {
+        this.handles.push(handle);
+        // Attach an event listener to the backing store when the first readable handle is registered.
+        if (!this.listenerAttached) {
+            this.id = this.store.on(x => this.onMessage(x));
+            this.listenerAttached = true;
+        }
+        // Change to synchronized mode as soon as we get any handle configured with keepSynced and send
+        // a request to get the full model (once).
+        // TODO: drop back to non-sync mode if all handles re-configure to !keepSynced.
+        if (handle.options.keepSynced) {
+            if (!this.keepSynced) {
+                this.synchronizeModel().catch(e => {
+                    // TODO: report the exception on the host side.
+                    console.error('Error during SyncRequest', e);
+                });
+                this.keepSynced = true;
+            }
+            // If a handle configured for sync notifications registers after we've received the full
+            // model, notify it immediately.
+            if (handle.options.notifySync && this.synchronized) {
+                handle.onSync();
+            }
+        }
         const version = {};
         for (const [k, v] of Object.entries(this.crdt.getData().version)) {
             version[k] = v;
@@ -48,21 +70,33 @@ export class StorageProxy {
         await this.synchronizeModel();
         return this.crdt.getParticleView();
     }
+    async getData() {
+        await this.synchronizeModel();
+        return this.crdt.getData();
+    }
     async onMessage(message) {
         assert(message.id === this.id);
         switch (message.type) {
             case ProxyMessageType.ModelUpdate:
                 this.crdt.merge(message.model);
+                this.synchronized = true;
                 this.notifySync();
                 break;
             case ProxyMessageType.Operations:
+                // Bail if we're not in synchronized mode.
+                if (!this.keepSynced) {
+                    return false;
+                }
                 for (const op of message.operations) {
                     if (!this.crdt.applyOperation(op)) {
                         // If we cannot cleanly apply ops, sync the whole model.
-                        await this.synchronizeModel();
-                        // TODO do we need to notify that we are desynced? and return?
+                        this.synchronized = false;
+                        await this.notifyDesync();
+                        return this.synchronizeModel();
                     }
                 }
+                // If we have consumed all operations, we've caught up.
+                this.synchronized = true;
                 this.notifyUpdate(message.operations);
                 break;
             case ProxyMessageType.SyncRequest:
@@ -73,27 +107,123 @@ export class StorageProxy {
         }
         return true;
     }
-    // TODO: use a Scheduler to deliver this in batches by particle.
     notifyUpdate(operations) {
         for (const handle of this.handles) {
             if (handle.options.notifyUpdate) {
-                handle.onUpdate(operations);
+                this.scheduler.enqueue(handle.particle, handle, { type: HandleMessageType.Update, ops: operations });
             }
             else if (handle.options.keepSynced) {
                 // keepSynced but not notifyUpdate, notify of the new model.
-                handle.onSync();
+                this.scheduler.enqueue(handle.particle, handle, { type: HandleMessageType.Sync });
             }
         }
     }
     notifySync() {
         for (const handle of this.handles) {
             if (handle.options.notifySync) {
-                handle.onSync();
+                this.scheduler.enqueue(handle.particle, handle, { type: HandleMessageType.Sync });
+            }
+        }
+    }
+    notifyDesync() {
+        for (const handle of this.handles) {
+            if (handle.options.notifyDesync) {
+                this.scheduler.enqueue(handle.particle, handle, { type: HandleMessageType.Desync });
             }
         }
     }
     async synchronizeModel() {
         return this.store.onProxyMessage({ type: ProxyMessageType.SyncRequest, id: this.id });
+    }
+}
+var HandleMessageType;
+(function (HandleMessageType) {
+    HandleMessageType[HandleMessageType["Sync"] = 0] = "Sync";
+    HandleMessageType[HandleMessageType["Desync"] = 1] = "Desync";
+    HandleMessageType[HandleMessageType["Update"] = 2] = "Update";
+})(HandleMessageType || (HandleMessageType = {}));
+export class StorageProxyScheduler {
+    constructor() {
+        this._scheduled = false;
+        this._queues = new Map();
+        this._idleResolver = null;
+        this._idle = null;
+        this._scheduled = false;
+        // Particle -> {Handle -> [Queue of events]}
+        this._queues = new Map();
+    }
+    enqueue(particle, handle, args) {
+        if (!this._queues.has(particle)) {
+            this._queues.set(particle, new Map());
+        }
+        const byHandle = this._queues.get(particle);
+        if (!byHandle.has(handle)) {
+            byHandle.set(handle, []);
+        }
+        const queue = byHandle.get(handle);
+        queue.push(args);
+        this._schedule();
+    }
+    get busy() {
+        return this._queues.size > 0;
+    }
+    _updateIdle() {
+        if (this._idleResolver && !this.busy) {
+            this._idleResolver();
+            this._idle = null;
+            this._idleResolver = null;
+        }
+    }
+    get idle() {
+        if (!this.busy) {
+            return Promise.resolve();
+        }
+        if (!this._idle) {
+            this._idle = new Promise(resolve => this._idleResolver = resolve);
+        }
+        return this._idle;
+    }
+    _schedule() {
+        if (this._scheduled) {
+            return;
+        }
+        this._scheduled = true;
+        setTimeout(() => {
+            this._scheduled = false;
+            this._dispatch();
+        }, 0);
+    }
+    _dispatch() {
+        // TODO: should we process just one particle per task?
+        while (this._queues.size > 0) {
+            const particle = [...this._queues.keys()][0];
+            const byHandle = this._queues.get(particle);
+            this._queues.delete(particle);
+            for (const [handle, queue] of byHandle.entries()) {
+                for (const update of queue) {
+                    try {
+                        switch (update.type) {
+                            case HandleMessageType.Sync:
+                                handle.onSync();
+                                break;
+                            case HandleMessageType.Desync:
+                                handle.onDesync();
+                                break;
+                            case HandleMessageType.Update:
+                                handle.onUpdate(update.ops);
+                                break;
+                            default:
+                                console.error('Ignoring unknown update', update);
+                        }
+                    }
+                    catch (e) {
+                        // TODO: report the exception on the host side.
+                        console.error('Error dispatching to particle', e);
+                    }
+                }
+            }
+        }
+        this._updateIdle();
     }
 }
 //# sourceMappingURL=storage-proxy.js.map

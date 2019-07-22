@@ -7,16 +7,16 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
+import { assert } from '../../platform/assert-web.js';
 import { CollectionOpTypes } from '../crdt/crdt-collection';
 import { SingletonOpTypes } from '../crdt/crdt-singleton';
 /**
  * Base class for Handles.
  */
 export class Handle {
-    constructor(key, storageProxy, particle) {
+    constructor(key, storageProxy, particle, canRead, canWrite) {
         this.key = key;
         this.storageProxy = storageProxy;
-        this.clock = this.storageProxy.registerHandle(this);
         this.particle = particle;
         this.options = {
             keepSynced: true,
@@ -24,9 +24,15 @@ export class Handle {
             notifyUpdate: true,
             notifyDesync: false,
         };
+        this.canRead = canRead;
+        this.canWrite = canWrite;
+        this.clock = this.storageProxy.registerHandle(this);
     }
     configure(options) {
+        assert(this.canRead, 'configure can only be called on readable Handles');
         this.options = options;
+    }
+    onDesync() {
     }
 }
 /**
@@ -35,6 +41,10 @@ export class Handle {
  * implied by the set.
  */
 export class CollectionHandle extends Handle {
+    async get(id) {
+        const data = await this.storageProxy.getData();
+        return data.values[id].value;
+    }
     async add(entity) {
         this.clock[this.key] = (this.clock[this.key] || 0) + 1;
         const op = {
@@ -93,7 +103,7 @@ export class CollectionHandle extends Handle {
     }
     onSync() {
         // TODO: call onHandleSync on the particle, eg:
-        // particle.onHandleSync(this /*handle*/, this.toSet() /*model*/);
+        // particle.onHandleSync(this /*handle*/, this.toList() /*model*/);
     }
 }
 /**

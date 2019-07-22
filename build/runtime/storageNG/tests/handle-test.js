@@ -11,17 +11,17 @@ import { assert } from '../../../platform/chai-web.js';
 import { CRDTCollection } from '../../crdt/crdt-collection.js';
 import { CRDTSingleton } from '../../crdt/crdt-singleton.js';
 import { CollectionHandle, SingletonHandle } from '../handle.js';
-import { StorageProxy } from '../storage-proxy.js';
+import { StorageProxy, StorageProxyScheduler } from '../storage-proxy.js';
 import { MockStore } from '../testing/test-storage.js';
 function getCollectionHandle() {
     // tslint:disable-next-line: no-any
     const fakeParticle = {};
-    return new CollectionHandle('me', new StorageProxy(new CRDTCollection(), new MockStore()), fakeParticle);
+    return new CollectionHandle('me', new StorageProxy(new CRDTCollection(), new MockStore(), new StorageProxyScheduler()), fakeParticle, true, true);
 }
 function getSingletonHandle() {
     // tslint:disable-next-line: no-any
     const fakeParticle = {};
-    return new SingletonHandle('me', new StorageProxy(new CRDTSingleton(), new MockStore()), fakeParticle);
+    return new SingletonHandle('me', new StorageProxy(new CRDTSingleton(), new MockStore(), new StorageProxyScheduler()), fakeParticle, true, true);
 }
 describe('CollectionHandle', () => {
     it('can add and remove elements', async () => {
@@ -33,6 +33,12 @@ describe('CollectionHandle', () => {
         assert.sameDeepMembers(await handle.toList(), [{ id: 'A' }, { id: 'B' }]);
         await handle.remove({ id: 'A' });
         assert.sameDeepMembers(await handle.toList(), [{ id: 'B' }]);
+    });
+    it('can get an element by ID', async () => {
+        const handle = getCollectionHandle();
+        const entity = { id: 'A', property: 'something' };
+        await handle.add(entity);
+        assert.deepEqual(await handle.get('A'), entity);
     });
     it('can clear', async () => {
         const handle = getCollectionHandle();

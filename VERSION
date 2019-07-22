@@ -1,5 +1,7 @@
-commit 56f64181a3c4565eebd180a7ad0f1100a4821f66
-Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
-Date:   Mon Jul 22 15:43:09 2019 +1000
+commit c106eeac598cde38dcbe75f25ffb07b77f2438d4
+Author: galganif <4754402+galganif@users.noreply.github.com>
+Date:   Mon Jul 22 16:38:44 2019 +1000
 
-    Support inout connections in the dataflow analyser (#3371)
+    add more logic to the NG storage proxy, copied from old storage proxy (#3361)
+    
+    * add more logic to the NG storage proxy, copied from old storage proxy

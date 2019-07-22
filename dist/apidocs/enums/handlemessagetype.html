@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>CRDTTypeRecord | arcs</title>
+	<title>HandleMessageType | arcs</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -56,82 +56,60 @@
 					<a href="../globals.html">Globals</a>
 				</li>
 				<li>
-					<a href="crdttyperecord.html">CRDTTypeRecord</a>
+					<a href="handlemessagetype.html">HandleMessageType</a>
 				</li>
 			</ul>
-			<h1>Interface CRDTTypeRecord</h1>
+			<h1>Enumeration HandleMessageType</h1>
 		</div>
 	</div>
 </header>
 <div class="container container-main">
 	<div class="row">
 		<div class="col-8 col-content">
-			<section class="tsd-panel tsd-hierarchy">
-				<h3>Hierarchy</h3>
-				<ul class="tsd-hierarchy">
-					<li>
-						<span class="target">CRDTTypeRecord</span>
-						<ul class="tsd-hierarchy">
-							<li>
-								<a href="crdtcollectiontyperecord.html" class="tsd-signature-type">CRDTCollectionTypeRecord</a>
-							</li>
-							<li>
-								<a href="crdtcounttyperecord.html" class="tsd-signature-type">CRDTCountTypeRecord</a>
-							</li>
-							<li>
-								<a href="crdtsingletontyperecord.html" class="tsd-signature-type">CRDTSingletonTypeRecord</a>
-							</li>
-							<li>
-								<a href="crdtentitytyperecord.html" class="tsd-signature-type">CRDTEntityTypeRecord</a>
-							</li>
-						</ul>
-					</li>
-				</ul>
-			</section>
 			<section class="tsd-panel-group tsd-index-group">
 				<h2>Index</h2>
 				<section class="tsd-panel tsd-index-panel">
 					<div class="tsd-index-content">
-						<section class="tsd-index-section ">
-							<h3>Properties</h3>
+						<section class="tsd-index-section tsd-is-not-exported">
+							<h3>Enumeration members</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="crdttyperecord.html#consumertype" class="tsd-kind-icon">consumer<wbr>Type</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="crdttyperecord.html#data" class="tsd-kind-icon">data</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="crdttyperecord.html#operation" class="tsd-kind-icon">operation</a></li>
+								<li class="tsd-kind-enum-member tsd-parent-kind-enum tsd-is-not-exported"><a href="handlemessagetype.html#desync" class="tsd-kind-icon">Desync</a></li>
+								<li class="tsd-kind-enum-member tsd-parent-kind-enum tsd-is-not-exported"><a href="handlemessagetype.html#sync" class="tsd-kind-icon">Sync</a></li>
+								<li class="tsd-kind-enum-member tsd-parent-kind-enum tsd-is-not-exported"><a href="handlemessagetype.html#update" class="tsd-kind-icon">Update</a></li>
 							</ul>
 						</section>
 					</div>
 				</section>
 			</section>
-			<section class="tsd-panel-group tsd-member-group ">
-				<h2>Properties</h2>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="consumertype" class="tsd-anchor"></a>
-					<h3>consumer<wbr>Type</h3>
-					<div class="tsd-signature tsd-kind-icon">consumer<wbr>Type<span class="tsd-signature-symbol">:</span> <a href="crdtconsumertype.html" class="tsd-signature-type">CRDTConsumerType</a></div>
+			<section class="tsd-panel-group tsd-member-group tsd-is-not-exported">
+				<h2>Enumeration members</h2>
+				<section class="tsd-panel tsd-member tsd-kind-enum-member tsd-parent-kind-enum tsd-is-not-exported">
+					<a name="desync" class="tsd-anchor"></a>
+					<h3>Desync</h3>
+					<div class="tsd-signature tsd-kind-icon">Desync<span class="tsd-signature-symbol">:</span> </div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c106eea/src/runtime/crdt/crdt.ts#L38">src/runtime/crdt/crdt.ts:38</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c106eea/src/runtime/storageNG/storage-proxy.ts#L175">src/runtime/storageNG/storage-proxy.ts:175</a></li>
 						</ul>
 					</aside>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="data" class="tsd-anchor"></a>
-					<h3>data</h3>
-					<div class="tsd-signature tsd-kind-icon">data<span class="tsd-signature-symbol">:</span> <a href="crdtdata.html" class="tsd-signature-type">CRDTData</a></div>
+				<section class="tsd-panel tsd-member tsd-kind-enum-member tsd-parent-kind-enum tsd-is-not-exported">
+					<a name="sync" class="tsd-anchor"></a>
+					<h3>Sync</h3>
+					<div class="tsd-signature tsd-kind-icon">Sync<span class="tsd-signature-symbol">:</span> </div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c106eea/src/runtime/crdt/crdt.ts#L36">src/runtime/crdt/crdt.ts:36</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c106eea/src/runtime/storageNG/storage-proxy.ts#L174">src/runtime/storageNG/storage-proxy.ts:174</a></li>
 						</ul>
 					</aside>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="operation" class="tsd-anchor"></a>
-					<h3>operation</h3>
-					<div class="tsd-signature tsd-kind-icon">operation<span class="tsd-signature-symbol">:</span> <a href="crdtoperation.html" class="tsd-signature-type">CRDTOperation</a></div>
+				<section class="tsd-panel tsd-member tsd-kind-enum-member tsd-parent-kind-enum tsd-is-not-exported">
+					<a name="update" class="tsd-anchor"></a>
+					<h3>Update</h3>
+					<div class="tsd-signature tsd-kind-icon">Update<span class="tsd-signature-symbol">:</span> </div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c106eea/src/runtime/crdt/crdt.ts#L37">src/runtime/crdt/crdt.ts:37</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c106eea/src/runtime/storageNG/storage-proxy.ts#L176">src/runtime/storageNG/storage-proxy.ts:176</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -149,17 +127,17 @@
 				<ul class="before-current">
 				</ul>
 				<ul class="current">
-					<li class="current tsd-kind-interface">
-						<a href="crdttyperecord.html" class="tsd-kind-icon">CRDTType<wbr>Record</a>
+					<li class="current tsd-kind-enum tsd-is-not-exported">
+						<a href="handlemessagetype.html" class="tsd-kind-icon">Handle<wbr>Message<wbr>Type</a>
 						<ul>
-							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="crdttyperecord.html#consumertype" class="tsd-kind-icon">consumer<wbr>Type</a>
+							<li class=" tsd-kind-enum-member tsd-parent-kind-enum tsd-is-not-exported">
+								<a href="handlemessagetype.html#desync" class="tsd-kind-icon">Desync</a>
 							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="crdttyperecord.html#data" class="tsd-kind-icon">data</a>
+							<li class=" tsd-kind-enum-member tsd-parent-kind-enum tsd-is-not-exported">
+								<a href="handlemessagetype.html#sync" class="tsd-kind-icon">Sync</a>
 							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="crdttyperecord.html#operation" class="tsd-kind-icon">operation</a>
+							<li class=" tsd-kind-enum-member tsd-parent-kind-enum tsd-is-not-exported">
+								<a href="handlemessagetype.html#update" class="tsd-kind-icon">Update</a>
 							</li>
 						</ul>
 					</li>

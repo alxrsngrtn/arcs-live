@@ -2201,12 +2201,12 @@
         "signature": "1aacc65888314d6721e57a4276ee0105a2d5b5b7b371c259ebbebadea1f9de75"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/storageNG/storage-proxy.ts": {
-        "version": "565fcb8c8cc5e2b47a167ebfbb4be47604f6e0fa694d7a0ae72f6f744397c5c9",
-        "signature": "c9a913cfab01c305f96f3d961ea51704cbfecdd8081fc2e8831ea364cec8aa82"
+        "version": "224dee41f965ca2fa8cd4b0add8c872b5d0735af1d591fd2666cb2687df4acec",
+        "signature": "a3f15032e3a49eea88d0673137929e5b478a997e9b76e305f7ead7a0578c26d0"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/storageNG/handle.ts": {
-        "version": "867690683e69928e485ee032a635ae9142ba7bab1e018ae0fc44de91994ecc90",
-        "signature": "187f58cb5cf9dd06c83cb13ea69cd60c858cf162194683bbee115a7fc63c7c2b"
+        "version": "fc4adce73e855504d7acbdc4e180fbbab3e7c6bf99e4b655344a63eb0f1f23ad",
+        "signature": "38056811c66a54997456e519ee38975949673c9990fffb9682d338a9e234a1c3"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/storageNG/testing/mock-firebase.ts": {
         "version": "5a29561539f400338e3c21de847c86780b304d5cf7dc97b7bfd1439b2333e544",
@@ -2229,11 +2229,11 @@
         "signature": "fd95df5d076cbfed143dc4904d376b5c6d9cb1091b630994ffe2366010afa6b3"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/storageNG/tests/handle-test.ts": {
-        "version": "b3eeb2a86c0ff063e66d5ad7e866f0805a98b01a02f68586b8797608c67b2d57",
+        "version": "31b98bac3e71a2e8f4b74d9bec634e8e3fd69feb7e40cc186ad6323fe17812d7",
         "signature": "fd95df5d076cbfed143dc4904d376b5c6d9cb1091b630994ffe2366010afa6b3"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/storageNG/tests/storage-proxy-test.ts": {
-        "version": "14f51ce32574db8cbe0e97298d8f116fb7355a16aafdf01a1fba2429fd9a2d60",
+        "version": "e9131b933adb1c7d72695082f17cf0efa58e59fafc1a3339320c9ccc70511486",
         "signature": "fd95df5d076cbfed143dc4904d376b5c6d9cb1091b630994ffe2366010afa6b3"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/testing/sequence.ts": {
@@ -6954,12 +6954,15 @@
       "/home/travis/build/PolymerLabs/arcs/src/runtime/storageNG/storage-proxy.ts": [
         "/home/travis/build/PolymerLabs/arcs/src/platform/assert-web.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/crdt/crdt.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/hot.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/particle.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/storageNG/handle.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/storageNG/store.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
       ],
       "/home/travis/build/PolymerLabs/arcs/src/runtime/storageNG/handle.ts": [
+        "/home/travis/build/PolymerLabs/arcs/src/platform/assert-web.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/crdt/crdt.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/crdt/crdt-collection.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/crdt/crdt-singleton.ts",
@@ -8941,7 +8944,8 @@
       "/home/travis/build/PolymerLabs/arcs/src/runtime/storageNG/storage-proxy.ts": [
         "/home/travis/build/PolymerLabs/arcs/src/runtime/crdt/crdt.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/storageNG/store.ts",
-        "/home/travis/build/PolymerLabs/arcs/src/runtime/storageNG/handle.ts"
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/storageNG/handle.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/particle.ts"
       ],
       "/home/travis/build/PolymerLabs/arcs/src/runtime/handle.ts": [
         "/home/travis/build/PolymerLabs/arcs/src/runtime/type.ts",

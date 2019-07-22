@@ -8,6 +8,7 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { CRDTModel, CRDTOperation, CRDTTypeRecord, VersionMap } from '../crdt/crdt.js';
+import { Particle } from '../particle.js';
 import { Handle } from './handle.js';
 import { ActiveStore, ProxyMessage } from './store.js';
 /**
@@ -18,13 +19,45 @@ export declare class StorageProxy<T extends CRDTTypeRecord> {
     private crdt;
     private id;
     private store;
-    constructor(crdt: CRDTModel<T>, store: ActiveStore<T>);
-    registerWithStore(store: ActiveStore<T>): void;
-    registerHandle(h: Handle<T>): VersionMap;
+    private listenerAttached;
+    private keepSynced;
+    private synchronized;
+    private readonly scheduler;
+    constructor(crdt: CRDTModel<T>, store: ActiveStore<T>, scheduler: StorageProxyScheduler<T>);
+    registerHandle(handle: Handle<T>): VersionMap;
     applyOp(op: CRDTOperation): Promise<boolean>;
     getParticleView(): Promise<T['consumerType']>;
+    getData(): Promise<T['data']>;
     onMessage(message: ProxyMessage<T>): Promise<boolean>;
     private notifyUpdate;
     private notifySync;
+    private notifyDesync;
     private synchronizeModel;
 }
+declare enum HandleMessageType {
+    Sync = 0,
+    Desync = 1,
+    Update = 2
+}
+declare type Event = {
+    type: HandleMessageType.Sync;
+} | {
+    type: HandleMessageType.Desync;
+} | {
+    type: HandleMessageType.Update;
+    ops: CRDTOperation[];
+};
+export declare class StorageProxyScheduler<T extends CRDTTypeRecord> {
+    private _scheduled;
+    private _queues;
+    private _idleResolver;
+    private _idle;
+    constructor();
+    enqueue(particle: Particle, handle: Handle<T>, args: Event): void;
+    readonly busy: boolean;
+    _updateIdle(): void;
+    readonly idle: Promise<void>;
+    _schedule(): void;
+    _dispatch(): void;
+}
+export {};
