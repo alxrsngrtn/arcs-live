@@ -7,7 +7,9 @@ export declare class Loader {
     join(prefix: string, path: string): string;
     protected normalizeDots(path: string): string;
     loadResource(file: string): Promise<string>;
-    loadBinary(file: string): Promise<ArrayBuffer>;
+    loadWasmBinary(spec: any): Promise<ArrayBuffer>;
+    mapParticleUrl(path: string): void;
+    resolve(path: string): string;
     private loadFile;
     _loadURL(url: string): Promise<string>;
     /**

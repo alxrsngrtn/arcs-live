@@ -12,7 +12,7 @@ export declare class PlatformLoaderBase extends Loader {
     _urlMap: any;
     constructor(urlMap: any);
     loadResource(name: string): Promise<string>;
-    _resolve(path: string): any;
+    resolve(path: string): any;
     mapParticleUrl(path: string): any;
     unwrapParticle(particleWrapper: any, log?: any): any;
 }

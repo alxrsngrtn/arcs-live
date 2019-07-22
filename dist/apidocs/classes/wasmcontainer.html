@@ -79,14 +79,21 @@
 				<section class="tsd-panel tsd-index-panel">
 					<div class="tsd-index-content">
 						<section class="tsd-index-section ">
+							<h3>Constructors</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-constructor tsd-parent-kind-class"><a href="wasmcontainer.html#constructor" class="tsd-kind-icon">constructor</a></li>
+							</ul>
+						</section>
+						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="wasmcontainer.html#exports" class="tsd-kind-icon">exports</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="wasmcontainer.html#heap32" class="tsd-kind-icon">heap32</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="wasmcontainer.html#heapu8" class="tsd-kind-icon">heap<wbr>U8</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="wasmcontainer.html#loader" class="tsd-kind-icon">loader</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="wasmcontainer.html#memory" class="tsd-kind-icon">memory</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="wasmcontainer.html#particlemap" class="tsd-kind-icon">particle<wbr>Map</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="wasmcontainer.html#wasm" class="tsd-kind-icon">wasm</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="wasmcontainer.html#particlemap" class="tsd-kind-icon">particle<wbr>Map</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="wasmcontainer.html#wasm" class="tsd-kind-icon">wasm</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
@@ -98,10 +105,37 @@
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="wasmcontainer.html#initialize" class="tsd-kind-icon">initialize</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="wasmcontainer.html#read" class="tsd-kind-icon">read</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="wasmcontainer.html#register" class="tsd-kind-icon">register</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="wasmcontainer.html#resolve" class="tsd-kind-icon">resolve</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="wasmcontainer.html#store" class="tsd-kind-icon">store</a></li>
 							</ul>
 						</section>
 					</div>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group ">
+				<h2>Constructors</h2>
+				<section class="tsd-panel tsd-member tsd-kind-constructor tsd-parent-kind-class">
+					<a name="constructor" class="tsd-anchor"></a>
+					<h3>constructor</h3>
+					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">new <wbr>Wasm<wbr>Container<span class="tsd-signature-symbol">(</span>loader<span class="tsd-signature-symbol">: </span><a href="loader.html" class="tsd-signature-type">Loader</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="wasmcontainer.html" class="tsd-signature-type">WasmContainer</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/e5a006e/src/runtime/wasm.ts#L414">src/runtime/wasm.ts:414</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>loader: <a href="loader.html" class="tsd-signature-type">Loader</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="wasmcontainer.html" class="tsd-signature-type">WasmContainer</a></h4>
+						</li>
+					</ul>
 				</section>
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
@@ -112,7 +146,7 @@
 					<div class="tsd-signature tsd-kind-icon">exports<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/52c88bf/src/runtime/wasm.ts#L411">src/runtime/wasm.ts:411</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/e5a006e/src/runtime/wasm.ts#L413">src/runtime/wasm.ts:413</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -122,7 +156,7 @@
 					<div class="tsd-signature tsd-kind-icon">heap32<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Int32Array</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/52c88bf/src/runtime/wasm.ts#L408">src/runtime/wasm.ts:408</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/e5a006e/src/runtime/wasm.ts#L410">src/runtime/wasm.ts:410</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -132,7 +166,17 @@
 					<div class="tsd-signature tsd-kind-icon">heap<wbr>U8<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Uint8Array</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/52c88bf/src/runtime/wasm.ts#L407">src/runtime/wasm.ts:407</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/e5a006e/src/runtime/wasm.ts#L409">src/runtime/wasm.ts:409</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="loader" class="tsd-anchor"></a>
+					<h3>loader</h3>
+					<div class="tsd-signature tsd-kind-icon">loader<span class="tsd-signature-symbol">:</span> <a href="loader.html" class="tsd-signature-type">Loader</a></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/e5a006e/src/runtime/wasm.ts#L407">src/runtime/wasm.ts:407</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -142,27 +186,27 @@
 					<div class="tsd-signature tsd-kind-icon">memory<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Memory</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/52c88bf/src/runtime/wasm.ts#L406">src/runtime/wasm.ts:406</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/e5a006e/src/runtime/wasm.ts#L408">src/runtime/wasm.ts:408</a></li>
 						</ul>
 					</aside>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private">
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
 					<a name="particlemap" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagPrivate">Private</span> particle<wbr>Map</h3>
+					<h3>particle<wbr>Map</h3>
 					<div class="tsd-signature tsd-kind-icon">particle<wbr>Map<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Map</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">, </span><a href="wasmparticle.html" class="tsd-signature-type">WasmParticle</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> =&nbsp;new Map&lt;WasmAddress, WasmParticle&gt;()</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/52c88bf/src/runtime/wasm.ts#L412">src/runtime/wasm.ts:412</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/e5a006e/src/runtime/wasm.ts#L414">src/runtime/wasm.ts:414</a></li>
 						</ul>
 					</aside>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private">
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
 					<a name="wasm" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagPrivate">Private</span> wasm</h3>
+					<h3>wasm</h3>
 					<div class="tsd-signature tsd-kind-icon">wasm<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Instance</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/52c88bf/src/runtime/wasm.ts#L409">src/runtime/wasm.ts:409</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/e5a006e/src/runtime/wasm.ts#L411">src/runtime/wasm.ts:411</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -179,7 +223,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/52c88bf/src/runtime/wasm.ts#L444">src/runtime/wasm.ts:444</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/e5a006e/src/runtime/wasm.ts#L451">src/runtime/wasm.ts:451</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -202,7 +246,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/52c88bf/src/runtime/wasm.ts#L471">src/runtime/wasm.ts:471</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/e5a006e/src/runtime/wasm.ts#L483">src/runtime/wasm.ts:483</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -225,7 +269,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/52c88bf/src/runtime/wasm.ts#L452">src/runtime/wasm.ts:452</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/e5a006e/src/runtime/wasm.ts#L459">src/runtime/wasm.ts:459</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -248,7 +292,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/52c88bf/src/runtime/wasm.ts#L414">src/runtime/wasm.ts:414</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/e5a006e/src/runtime/wasm.ts#L420">src/runtime/wasm.ts:420</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -271,7 +315,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/52c88bf/src/runtime/wasm.ts#L476">src/runtime/wasm.ts:476</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/e5a006e/src/runtime/wasm.ts#L488">src/runtime/wasm.ts:488</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -294,7 +338,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/52c88bf/src/runtime/wasm.ts#L456">src/runtime/wasm.ts:456</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/e5a006e/src/runtime/wasm.ts#L463">src/runtime/wasm.ts:463</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -311,6 +355,29 @@
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="resolve" class="tsd-anchor"></a>
+					<h3>resolve</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">resolve<span class="tsd-signature-symbol">(</span>urlPtr<span class="tsd-signature-symbol">: </span><a href="../globals.html#wasmaddress" class="tsd-signature-type">WasmAddress</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../globals.html#wasmaddress" class="tsd-signature-type">WasmAddress</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/e5a006e/src/runtime/wasm.ts#L468">src/runtime/wasm.ts:468</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>urlPtr: <a href="../globals.html#wasmaddress" class="tsd-signature-type">WasmAddress</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="../globals.html#wasmaddress" class="tsd-signature-type">WasmAddress</a></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
 					<a name="store" class="tsd-anchor"></a>
 					<h3>store</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
@@ -320,7 +387,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/52c88bf/src/runtime/wasm.ts#L461">src/runtime/wasm.ts:461</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/e5a006e/src/runtime/wasm.ts#L473">src/runtime/wasm.ts:473</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -350,6 +417,9 @@
 					<li class="current tsd-kind-class">
 						<a href="wasmcontainer.html" class="tsd-kind-icon">Wasm<wbr>Container</a>
 						<ul>
+							<li class=" tsd-kind-constructor tsd-parent-kind-class">
+								<a href="wasmcontainer.html#constructor" class="tsd-kind-icon">constructor</a>
+							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
 								<a href="wasmcontainer.html#exports" class="tsd-kind-icon">exports</a>
 							</li>
@@ -360,12 +430,15 @@
 								<a href="wasmcontainer.html#heapu8" class="tsd-kind-icon">heap<wbr>U8</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="wasmcontainer.html#loader" class="tsd-kind-icon">loader</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
 								<a href="wasmcontainer.html#memory" class="tsd-kind-icon">memory</a>
 							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
+							<li class=" tsd-kind-property tsd-parent-kind-class">
 								<a href="wasmcontainer.html#particlemap" class="tsd-kind-icon">particle<wbr>Map</a>
 							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
+							<li class=" tsd-kind-property tsd-parent-kind-class">
 								<a href="wasmcontainer.html#wasm" class="tsd-kind-icon">wasm</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-private">
@@ -385,6 +458,9 @@
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="wasmcontainer.html#register" class="tsd-kind-icon">register</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="wasmcontainer.html#resolve" class="tsd-kind-icon">resolve</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="wasmcontainer.html#store" class="tsd-kind-icon">store</a>

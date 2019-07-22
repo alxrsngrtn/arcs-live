@@ -326,8 +326,9 @@ class KotlinWasmDriver {
 }
 // Holds an instance of a running wasm module, which may contain multiple particles.
 export class WasmContainer {
-    constructor() {
+    constructor(loader) {
         this.particleMap = new Map();
+        this.loader = loader;
     }
     async initialize(buffer) {
         // TODO: vet the imports/exports on 'module'
@@ -346,6 +347,7 @@ export class WasmContainer {
             _collectionClear: (p, handle) => this.getParticle(p).collectionClear(handle),
             _render: (p, slotName, template, model) => this.getParticle(p).renderImpl(slotName, template, model),
             _serviceRequest: (p, call, args, tag) => this.getParticle(p).serviceRequest(call, args, tag),
+            _resolveUrl: (url) => this.resolve(url),
         };
         driver.configureEnvironment(module, this, env);
         const global = { 'NaN': NaN, 'Infinity': Infinity };
@@ -365,6 +367,10 @@ export class WasmContainer {
     }
     register(particle, innerParticle) {
         this.particleMap.set(innerParticle, particle);
+    }
+    // Allocates memory in the wasm container; the calling particle is responsible for freeing.
+    resolve(urlPtr) {
+        return this.store(this.loader.resolve(this.read(urlPtr)));
     }
     // Allocates memory in the wasm container.
     store(str) {

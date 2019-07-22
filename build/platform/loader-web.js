@@ -19,10 +19,7 @@ export class PlatformLoader extends PlatformLoaderBase {
     async loadResource(url) {
         // subclass impl differentiates paths and URLs,
         // for browser env we can feed both kinds into _loadURL
-        return super._loadURL(this._resolve(url));
-    }
-    async loadBinary(url) {
-        return super.loadBinary(this._resolve(url));
+        return super._loadURL(this.resolve(url));
     }
     async provisionObjectUrl(fileName) {
         const raw = await this.loadResource(fileName);
@@ -45,7 +42,7 @@ export class PlatformLoader extends PlatformLoaderBase {
         // allows "foo.js" particle to invoke "importScripts(resolver('foo/othermodule.js'))"
         this.mapParticleUrl(unresolvedPath);
         // resolved target
-        const url = blobUrl || this._resolve(unresolvedPath);
+        const url = blobUrl || this.resolve(unresolvedPath);
         // load wrapped particle
         const particle = this.loadWrappedParticle(url);
         // execute particle wrapper, if we have one

@@ -20835,13 +20835,20 @@ class Loader {
         }
         return this.loadFile(file, 'utf-8');
     }
-    async loadBinary(file) {
-        if (/^https?:\/\//.test(file)) {
-            return fetch(file).then(res => res.arrayBuffer());
+    async loadWasmBinary(spec) {
+        // TODO: use spec.implBlobUrl if present?
+        this.mapParticleUrl(spec.implFile);
+        const target = this.resolve(spec.implFile);
+        if (/^https?:\/\//.test(target)) {
+            return fetch(target).then(res => res.arrayBuffer());
         }
         else {
-            return this.loadFile(file);
+            return this.loadFile(target);
         }
+    }
+    mapParticleUrl(path) { }
+    resolve(path) {
+        return path;
     }
     async loadFile(file, encoding) {
         return new Promise((resolve, reject) => {
@@ -22477,8 +22484,9 @@ class KotlinWasmDriver {
 }
 // Holds an instance of a running wasm module, which may contain multiple particles.
 class WasmContainer {
-    constructor() {
+    constructor(loader) {
         this.particleMap = new Map();
+        this.loader = loader;
     }
     async initialize(buffer) {
         // TODO: vet the imports/exports on 'module'
@@ -22497,6 +22505,7 @@ class WasmContainer {
             _collectionClear: (p, handle) => this.getParticle(p).collectionClear(handle),
             _render: (p, slotName, template, model) => this.getParticle(p).renderImpl(slotName, template, model),
             _serviceRequest: (p, call, args, tag) => this.getParticle(p).serviceRequest(call, args, tag),
+            _resolveUrl: (url) => this.resolve(url),
         };
         driver.configureEnvironment(module, this, env);
         const global = { 'NaN': NaN, 'Infinity': Infinity };
@@ -22516,6 +22525,10 @@ class WasmContainer {
     }
     register(particle, innerParticle) {
         this.particleMap.set(innerParticle, particle);
+    }
+    // Allocates memory in the wasm container; the calling particle is responsible for freeing.
+    resolve(urlPtr) {
+        return this.store(this.loader.resolve(this.read(urlPtr)));
     }
     // Allocates memory in the wasm container.
     store(str) {
@@ -22948,11 +22961,11 @@ class ParticleExecutionContext {
         assert(spec.name.length > 0);
         let container = this.wasmContainers[spec.implFile];
         if (!container) {
-            const buffer = await this.loader.loadBinary(spec.implFile);
+            const buffer = await this.loader.loadWasmBinary(spec);
             if (!buffer || buffer.byteLength === 0) {
-                throw new Error(`Failed to load binary file '${spec.implFile}'`);
+                throw new Error(`Failed to load wasm binary '${spec.implFile}'`);
             }
-            container = new WasmContainer();
+            container = new WasmContainer(this.loader);
             await container.initialize(buffer);
             this.wasmContainers[spec.implFile] = container;
         }
@@ -27147,10 +27160,10 @@ class PlatformLoaderBase extends Loader {
         this._urlMap = urlMap || [];
     }
     async loadResource(name) {
-        const path = this._resolve(name);
+        const path = this.resolve(name);
         return super.loadResource(path);
     }
-    _resolve(path) {
+    resolve(path) {
         let url = this._urlMap[path];
         if (!url && path) {
             // TODO(sjmiles): inefficient!
@@ -27169,16 +27182,18 @@ class PlatformLoaderBase extends Loader {
         const parts = path.split('/');
         const suffix = parts.pop();
         const folder = parts.join('/');
-        const name = suffix.split('.').shift();
-        const resolved = this._resolve(folder);
-        this._urlMap[name] = resolved;
+        const resolved = this.resolve(folder);
+        if (!suffix.endsWith('.wasm')) {
+            const name = suffix.split('.').shift();
+            this._urlMap[name] = resolved;
+        }
         this._urlMap['$here'] = resolved;
     }
     unwrapParticle(particleWrapper, log) {
         // TODO(sjmiles): regarding `resolver`:
-        //  _resolve method allows particles to request remapping of assets paths
+        //  resolve method allows particles to request remapping of assets paths
         //  for use in DOM
-        const resolver = this._resolve.bind(this);
+        const resolver = this.resolve.bind(this);
         return particleWrapper({
             Particle: Particle$1,
             DomParticle,
@@ -27203,7 +27218,7 @@ class PlatformLoaderBase extends Loader {
  */
 class PlatformLoader extends PlatformLoaderBase {
     async requireParticle(fileName) {
-        const path = this._resolve(fileName);
+        const path = this.resolve(fileName);
         // inject path to this particle into the UrlMap,
         // allows "foo.js" particle to invoke `importScripts(resolver('foo/othermodule.js'))`
         this.mapParticleUrl(path);

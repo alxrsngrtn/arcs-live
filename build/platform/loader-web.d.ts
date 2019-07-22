@@ -12,7 +12,6 @@ import { ParticleSpec } from '../runtime/particle-spec.js';
 export declare class PlatformLoader extends PlatformLoaderBase {
     flushCaches(): void;
     loadResource(url: string): Promise<string>;
-    loadBinary(url: string): Promise<ArrayBuffer>;
     provisionObjectUrl(fileName: string): Promise<string>;
     loadParticleClass(spec: ParticleSpec): Promise<any>;
     requireParticle(unresolvedPath: string, blobUrl?: any): Promise<any>;

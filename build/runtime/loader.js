@@ -57,13 +57,20 @@ export class Loader {
         }
         return this.loadFile(file, 'utf-8');
     }
-    async loadBinary(file) {
-        if (/^https?:\/\//.test(file)) {
-            return fetch(file).then(res => res.arrayBuffer());
+    async loadWasmBinary(spec) {
+        // TODO: use spec.implBlobUrl if present?
+        this.mapParticleUrl(spec.implFile);
+        const target = this.resolve(spec.implFile);
+        if (/^https?:\/\//.test(target)) {
+            return fetch(target).then(res => res.arrayBuffer());
         }
         else {
-            return this.loadFile(file);
+            return this.loadFile(target);
         }
+    }
+    mapParticleUrl(path) { }
+    resolve(path) {
+        return path;
     }
     async loadFile(file, encoding) {
         return new Promise((resolve, reject) => {

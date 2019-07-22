@@ -12,6 +12,7 @@ import { Entity } from './entity.js';
 import { Particle } from './particle.js';
 import { Handle } from './handle.js';
 import { Content } from './slot-consumer.js';
+import { Loader } from './loader.js';
 export declare class EntityPackager {
     readonly schema: Schema;
     private encoder;
@@ -23,16 +24,19 @@ export declare class EntityPackager {
 }
 declare type WasmAddress = number;
 export declare class WasmContainer {
+    loader: Loader;
     memory: WebAssembly.Memory;
     heapU8: Uint8Array;
     heap32: Int32Array;
-    private wasm;
+    wasm: WebAssembly.Instance;
     exports: any;
-    private particleMap;
+    particleMap: Map<number, WasmParticle>;
+    constructor(loader: Loader);
     initialize(buffer: ArrayBuffer): Promise<void>;
     private driverForModule;
     private getParticle;
     register(particle: WasmParticle, innerParticle: WasmAddress): void;
+    resolve(urlPtr: WasmAddress): WasmAddress;
     store(str: string): WasmAddress;
     free(...ptrs: WasmAddress[]): void;
     read(idx: WasmAddress): string;

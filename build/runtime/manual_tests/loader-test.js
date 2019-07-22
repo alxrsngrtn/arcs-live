@@ -53,13 +53,13 @@ describe('loader', function () {
         const target = path.join('test-output', 'loader-binary');
         fs.writeFileSync(target, data);
         const loader = new Loader();
-        const buffer = await loader.loadBinary(target);
+        const buffer = await loader.loadWasmBinary({ implFile: target });
         assert.instanceOf(buffer, ArrayBuffer);
         assert.deepEqual(new Uint8Array(buffer), data);
     });
     it('loads a binary URL', async () => {
         const loader = new Loader();
-        const buffer = await loader.loadBinary('http://schema.org/Thing');
+        const buffer = await loader.loadWasmBinary({ implFile: 'http://schema.org/Thing' });
         assert.instanceOf(buffer, ArrayBuffer);
         assert.isAbove(buffer.byteLength, 0);
     });

@@ -1,5 +1,11 @@
-commit 52c88bf7b5631384fa734e8f7341ff9e78c14731
-Author: Joshua Pratt <jp10010101010000@gmail.com>
-Date:   Mon Jul 22 13:13:38 2019 +1000
+commit e5a006ef99fd1dd15e718232f8691d02c66b351d
+Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
+Date:   Mon Jul 22 13:47:02 2019 +1000
 
-    Ensure health stats are generated on Travis without running tests twice (#3369)
+    Add 'resolver' function wasm API (#3357)
+    
+    * Add 'resolver' function wasm API
+    
+    This allows particles to specify URLs like 'https://$arcs/...'
+    
+    * Review comments
