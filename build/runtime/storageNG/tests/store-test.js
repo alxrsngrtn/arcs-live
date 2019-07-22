@@ -75,12 +75,12 @@ describe('Store', async () => {
         const operation = { type: CountOpTypes.Increment, actor: 'me', version: { from: 0, to: 1 } };
         count.applyOperation(operation);
         let sentSyncRequest = false;
-        return new Promise(async (resolve, reject) => {
+        return new Promise((resolve, reject) => {
             const id = activeStore.on(async (proxyMessage) => {
                 if (proxyMessage.type === ProxyMessageType.Operations) {
                     assert.isFalse(sentSyncRequest);
                     sentSyncRequest = true;
-                    await activeStore.onProxyMessage({ type: ProxyMessageType.SyncRequest, id });
+                    const result = activeStore.onProxyMessage({ type: ProxyMessageType.SyncRequest, id });
                     return true;
                 }
                 assert.isTrue(sentSyncRequest);
@@ -91,14 +91,14 @@ describe('Store', async () => {
                 }
                 throw new Error();
             });
-            await activeStore.onProxyMessage({ type: ProxyMessageType.Operations, operations: [operation], id });
+            const result = activeStore.onProxyMessage({ type: ProxyMessageType.Operations, operations: [operation], id });
         });
     });
     it('will only send a model response to the requesting proxy', async () => {
         DriverFactory.register(new MockStorageDriverProvider());
         const store = new Store(testKey, Exists.ShouldCreate, null, StorageMode.Direct, CRDTCount);
         const activeStore = await store.activate();
-        return new Promise(async (resolve, reject) => {
+        return new Promise((resolve, reject) => {
             // requesting store
             const id1 = activeStore.on(async (proxyMessage) => {
                 assert.strictEqual(proxyMessage.type, ProxyMessageType.ModelUpdate);
@@ -109,7 +109,7 @@ describe('Store', async () => {
             const id2 = activeStore.on(proxyMessage => {
                 throw new Error();
             });
-            await activeStore.onProxyMessage({ type: ProxyMessageType.SyncRequest, id: id1 });
+            const result = activeStore.onProxyMessage({ type: ProxyMessageType.SyncRequest, id: id1 });
         });
     });
     it('will propagate updates from drivers to proxies', async () => {
@@ -118,7 +118,7 @@ describe('Store', async () => {
         const activeStore = await store.activate();
         const count = new CRDTCount();
         count.applyOperation({ type: CountOpTypes.Increment, actor: 'me', version: { from: 0, to: 1 } });
-        return new Promise(async (resolve, reject) => {
+        return new Promise((resolve, reject) => {
             const id = activeStore.on(async (proxyMessage) => {
                 if (proxyMessage.type === ProxyMessageType.Operations) {
                     assert.strictEqual(proxyMessage.operations.length, 1);
@@ -131,7 +131,7 @@ describe('Store', async () => {
                 throw new Error();
             });
             const driver = activeStore['driver'];
-            await driver.receiver(count.getData(), 1);
+            driver.receiver(count.getData(), 1);
         });
     });
     it(`won't send an update to the driver after driver-originated messages`, async () => {

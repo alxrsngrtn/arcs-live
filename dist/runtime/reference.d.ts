@@ -38,7 +38,7 @@ export declare class Reference implements Storable {
 /** A subclass of Reference that clients can create. */
 export declare abstract class ClientReference extends Reference {
     private mode;
-    stored: Promise<undefined>;
+    stored: Promise<void>;
     /** Use the newClientReference factory method instead. */
     protected constructor(entity: Entity, context: ParticleExecutionContext);
     private storeReference;

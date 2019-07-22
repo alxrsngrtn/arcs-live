@@ -78,13 +78,14 @@ export class Loader {
         });
     }
     async _loadURL(url) {
+        const fetcher = (url) => fetch(url).then(async (res) => res.ok ? res.text() : undefined);
         if (/\/\/schema.org\//.test(url)) {
             if (url.endsWith('/Thing')) {
-                return fetch('https://schema.org/Product.jsonld').then(res => res.text()).then(data => JsonldToManifest.convert(data, { '@id': 'schema:Thing' }));
+                return fetcher('https://schema.org/Product.jsonld').then(data => JsonldToManifest.convert(data, { '@id': 'schema:Thing' }));
             }
-            return fetch(url + '.jsonld').then(res => res.text()).then(data => JsonldToManifest.convert(data));
+            return fetcher(url + '.jsonld').then(data => JsonldToManifest.convert(data));
         }
-        return fetch(url).then(res => res.text());
+        return fetcher(url);
     }
     /**
      * Returns a particle class implementation by loading and executing

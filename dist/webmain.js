@@ -1045,6 +1045,7 @@ class WebCryptoSessionKey {
         try {
             const webPkey = pkey;
             const rawWrappedKey = crypto$1.subtle.wrapKey('raw', this.sessionKey, pkey.cryptoKey(), {
+                //these are the wrapping key's algorithm options
                 name: webPkey.algorithm(),
             });
             return rawWrappedKey.then(rawKey => new WebCryptoWrappedKey(new Uint8Array(rawKey), pkey));

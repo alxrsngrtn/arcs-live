@@ -63,10 +63,7 @@ export class ClientReference extends Reference {
         super({ id: Entity.id(entity), storageKey: null }, new ReferenceType(Entity.entityClass(entity).type), context);
         this.mode = ReferenceMode.Unstored;
         this.entity = entity;
-        this.stored = new Promise(async (resolve, reject) => {
-            await this.storeReference(entity);
-            resolve();
-        });
+        this.stored = this.storeReference(entity);
     }
     async storeReference(entity) {
         await this.ensureStorageProxy();

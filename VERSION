@@ -1,11 +1,5 @@
-commit a1b7734b6856326b154b89313fe3feb698b86f86
-Author: Scott J. Miles <sjmiles@google.com>
-Date:   Fri Jul 19 12:33:28 2019 -0700
+commit 52c88bf7b5631384fa734e8f7341ff9e78c14731
+Author: Joshua Pratt <jp10010101010000@gmail.com>
+Date:   Mon Jul 22 13:13:38 2019 +1000
 
-    wdio: explicit polling for ALDS server spin up (#3358)
-    
-    * explicit polling for server status
-    
-    * remove `--continue-on-error` so it at least stops
-    
-    * poll for ALDS status
+    Ensure health stats are generated on Travis without running tests twice (#3369)

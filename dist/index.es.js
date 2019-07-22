@@ -1122,10 +1122,7 @@ class ClientReference extends Reference {
         super({ id: Entity.id(entity), storageKey: null }, new ReferenceType(Entity.entityClass(entity).type), context);
         this.mode = ReferenceMode.Unstored;
         this.entity = entity;
-        this.stored = new Promise(async (resolve, reject) => {
-            await this.storeReference(entity);
-            resolve();
-        });
+        this.stored = this.storeReference(entity);
     }
     async storeReference(entity) {
         await this.ensureStorageProxy();
@@ -20859,13 +20856,14 @@ class Loader {
         });
     }
     async _loadURL(url) {
+        const fetcher = (url) => fetch(url).then(async (res) => res.ok ? res.text() : undefined);
         if (/\/\/schema.org\//.test(url)) {
             if (url.endsWith('/Thing')) {
-                return fetch('https://schema.org/Product.jsonld').then(res => res.text()).then(data => JsonldToManifest.convert(data, { '@id': 'schema:Thing' }));
+                return fetcher('https://schema.org/Product.jsonld').then(data => JsonldToManifest.convert(data, { '@id': 'schema:Thing' }));
             }
-            return fetch(url + '.jsonld').then(res => res.text()).then(data => JsonldToManifest.convert(data));
+            return fetcher(url + '.jsonld').then(data => JsonldToManifest.convert(data));
         }
-        return fetch(url).then(res => res.text());
+        return fetcher(url);
     }
     /**
      * Returns a particle class implementation by loading and executing
@@ -24111,12 +24109,12 @@ class Arc {
                     const storeId = context.dataResources.get(storageKey);
                     serializedData.forEach(a => { a.storageKey = storeId; });
                 }
-                context.resources += `resource ${id}Resource\n`;
                 const indent = '  ';
-                context.resources += indent + 'start\n';
                 const data = JSON.stringify(serializedData);
-                context.resources += data.split('\n').map(line => indent + line).join('\n');
-                context.resources += '\n';
+                context.resources += `resource ${id}Resource\n`
+                    + indent + 'start\n'
+                    + data.split('\n').map(line => indent + line).join('\n')
+                    + '\n';
                 context.handles += `store ${id} of ${handle.type.toString()} ${combinedId} @${handle.version || 0} ${handleTags} in ${id}Resource\n`;
                 break;
             }
@@ -26755,6 +26753,7 @@ class WebCryptoSessionKey {
         try {
             const webPkey = pkey;
             const rawWrappedKey = crypto$1.subtle.wrapKey('raw', this.sessionKey, pkey.cryptoKey(), {
+                //these are the wrapping key's algorithm options
                 name: webPkey.algorithm(),
             });
             return rawWrappedKey.then(rawKey => new WebCryptoWrappedKey(new Uint8Array(rawKey), pkey));
@@ -30426,7 +30425,7 @@ class RecipeIndex {
             new RelevantContextRecipes(arc.context, arc.modality),
             ...IndexStrategies.map(S => new S(arcStub, { recipeIndex: this }))
         ], [], Empty);
-        this.ready = trace.endWith(new Promise(async (resolve) => {
+        this.ready = trace.endWith((async () => {
             do {
                 const record = await strategizer.generate();
             } while (strategizer.generated.length + strategizer.terminal.length > 0);
@@ -30440,8 +30439,7 @@ class RecipeIndex {
             }
             this._recipes = [...candidates].map(r => r.result);
             this._isReady = true;
-            resolve(true);
-        }));
+        })());
     }
     static create(arc) {
         return new RecipeIndex(arc);
@@ -31645,15 +31643,13 @@ const SingleUserContext = class {
     // TODO(sjmiles): cache and return promises in case of re-entrancy
     let promise = this.pendingStores[id];
     if (!promise) {
-      promise = new Promise(async (resolve) => {
-        const store = await context.findStoreById(id);
-        if (store) {
-          resolve(store);
-        } else {
-          const store = await context.createStore(type, name, id, tags);
-          resolve(store);
+      promise = (async () => {
+        let store = context.findStoreById(id);
+        if (!store) {
+          store = await context.createStore(type, name, id, tags);
         }
-      });
+        return store;
+      })();
       this.pendingStores[id] = promise;
     }
     return promise;

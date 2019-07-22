@@ -3490,10 +3490,7 @@ class ClientReference extends Reference {
         super({ id: _entity_js__WEBPACK_IMPORTED_MODULE_3__["Entity"].id(entity), storageKey: null }, new _type_js__WEBPACK_IMPORTED_MODULE_2__["ReferenceType"](_entity_js__WEBPACK_IMPORTED_MODULE_3__["Entity"].entityClass(entity).type), context);
         this.mode = ReferenceMode.Unstored;
         this.entity = entity;
-        this.stored = new Promise(async (resolve, reject) => {
-            await this.storeReference(entity);
-            resolve();
-        });
+        this.stored = this.storeReference(entity);
     }
     async storeReference(entity) {
         await this.ensureStorageProxy();
@@ -6709,13 +6706,14 @@ class Loader {
         });
     }
     async _loadURL(url) {
+        const fetcher = (url) => Object(_platform_fetch_web_js__WEBPACK_IMPORTED_MODULE_1__["fetch"])(url).then(async (res) => res.ok ? res.text() : undefined);
         if (/\/\/schema.org\//.test(url)) {
             if (url.endsWith('/Thing')) {
-                return Object(_platform_fetch_web_js__WEBPACK_IMPORTED_MODULE_1__["fetch"])('https://schema.org/Product.jsonld').then(res => res.text()).then(data => _converters_jsonldToManifest_js__WEBPACK_IMPORTED_MODULE_4__["JsonldToManifest"].convert(data, { '@id': 'schema:Thing' }));
+                return fetcher('https://schema.org/Product.jsonld').then(data => _converters_jsonldToManifest_js__WEBPACK_IMPORTED_MODULE_4__["JsonldToManifest"].convert(data, { '@id': 'schema:Thing' }));
             }
-            return Object(_platform_fetch_web_js__WEBPACK_IMPORTED_MODULE_1__["fetch"])(url + '.jsonld').then(res => res.text()).then(data => _converters_jsonldToManifest_js__WEBPACK_IMPORTED_MODULE_4__["JsonldToManifest"].convert(data));
+            return fetcher(url + '.jsonld').then(data => _converters_jsonldToManifest_js__WEBPACK_IMPORTED_MODULE_4__["JsonldToManifest"].convert(data));
         }
-        return Object(_platform_fetch_web_js__WEBPACK_IMPORTED_MODULE_1__["fetch"])(url).then(res => res.text());
+        return fetcher(url);
     }
     /**
      * Returns a particle class implementation by loading and executing
