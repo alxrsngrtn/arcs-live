@@ -46,7 +46,7 @@ describe('Flow', () => {
     });
     describe('evaluateCheck', () => {
         it('checks node IDs', () => {
-            const check = { type: 'node', value: 'N1' };
+            const check = { type: 'node', value: 'N1', negated: false };
             const flow = new Flow();
             flow.tags.add('N1');
             flow.edgeIds.add('N1');
@@ -55,7 +55,7 @@ describe('Flow', () => {
             assert.isTrue(flow.evaluateCheck(check));
         });
         it('checks edge IDs', () => {
-            const check = { type: 'edge', value: 'E1' };
+            const check = { type: 'edge', value: 'E1', negated: false };
             const flow = new Flow();
             flow.tags.add('E1');
             flow.nodeIds.add('E1');
@@ -64,7 +64,7 @@ describe('Flow', () => {
             assert.isTrue(flow.evaluateCheck(check));
         });
         it('checks tags', () => {
-            const check = { type: 'tag', value: 't' };
+            const check = { type: 'tag', value: 't', negated: false };
             const flow = new Flow();
             flow.nodeIds.add('t');
             flow.edgeIds.add('t');
@@ -72,28 +72,73 @@ describe('Flow', () => {
             flow.tags.add('t');
             assert.isTrue(flow.evaluateCheck(check));
         });
+        it('handles negated checks', () => {
+            const negatedTagCheck = { type: 'tag', value: 't', negated: true };
+            const negatedNodeCheck = { type: 'node', value: 'N1', negated: true };
+            const negatedEdgeCheck = { type: 'edge', value: 'E1', negated: true };
+            const emptyFlow = new Flow();
+            assert.isTrue(emptyFlow.evaluateCheck(negatedTagCheck));
+            assert.isTrue(emptyFlow.evaluateCheck(negatedNodeCheck));
+            assert.isTrue(emptyFlow.evaluateCheck(negatedEdgeCheck));
+            const flow = new Flow();
+            flow.tags.add('t');
+            flow.nodeIds.add('N1');
+            flow.edgeIds.add('E1');
+            assert.isFalse(flow.evaluateCheck(negatedTagCheck));
+            assert.isFalse(flow.evaluateCheck(negatedNodeCheck));
+            assert.isFalse(flow.evaluateCheck(negatedEdgeCheck));
+        });
         it(`handles 'or' operators`, () => {
-            const check = { operator: 'or', children: [{ type: 'tag', value: 't1' }, { type: 'tag', value: 't2' }] };
+            const check = { operator: 'or', children: [
+                    { type: 'tag', value: 't1', negated: false },
+                    { type: 'tag', value: 't2', negated: false },
+                ] };
             const flow = new Flow();
             flow.tags.add('t1');
             assert.isTrue(flow.evaluateCheck(check));
             flow.tags.add('t2');
             assert.isTrue(flow.evaluateCheck(check));
         });
+        it(`handles 'or' operators with negated conditions`, () => {
+            const check = { operator: 'or', children: [
+                    { type: 'tag', value: 't1', negated: true },
+                    { type: 'tag', value: 't2', negated: false },
+                ] };
+            const flow = new Flow();
+            assert.isTrue(flow.evaluateCheck(check));
+            flow.tags.add('t1');
+            assert.isFalse(flow.evaluateCheck(check));
+            flow.tags.add('t2');
+            assert.isTrue(flow.evaluateCheck(check));
+        });
         it(`handles 'and' operators`, () => {
-            const check = { operator: 'and', children: [{ type: 'tag', value: 't1' }, { type: 'tag', value: 't2' }] };
+            const check = { operator: 'and', children: [
+                    { type: 'tag', value: 't1', negated: false },
+                    { type: 'tag', value: 't2', negated: false },
+                ] };
             const flow = new Flow();
             flow.tags.add('t1');
             assert.isFalse(flow.evaluateCheck(check));
             flow.tags.add('t2');
             assert.isTrue(flow.evaluateCheck(check));
         });
+        it(`handles 'and' operators with negated conditions`, () => {
+            const check = { operator: 'and', children: [
+                    { type: 'tag', value: 't1', negated: false },
+                    { type: 'tag', value: 't2', negated: true },
+                ] };
+            const flow = new Flow();
+            flow.tags.add('t1');
+            assert.isTrue(flow.evaluateCheck(check));
+            flow.tags.add('t2');
+            assert.isFalse(flow.evaluateCheck(check));
+        });
         it(`handles nested 'or' and 'and' operators`, () => {
             const check = { operator: 'and', children: [
-                    { type: 'tag', value: 't1' },
+                    { type: 'tag', value: 't1', negated: false },
                     { operator: 'or', children: [
-                            { type: 'tag', value: 't2' },
-                            { type: 'tag', value: 't3' }
+                            { type: 'tag', value: 't2', negated: false },
+                            { type: 'tag', value: 't3', negated: false },
                         ] },
                 ] };
             // Runs evaluateCheck for a flow with the given tags.
@@ -120,7 +165,7 @@ describe('Flow', () => {
         assert.notStrictEqual(original.tags, copy.tags);
     });
     it('can create a modified copy', () => {
-        const modifier = FlowModifier.fromConditions({ type: 'edge', value: 'E1' }, { type: 'node', value: 'N1' }, { type: 'tag', value: 't1' });
+        const modifier = FlowModifier.parse('+edge:E1', '+node:N1', '+tag:t1');
         const original = new Flow();
         const copy = original.copyAndModify(modifier);
         assert.hasAllDeepKeys(copy.nodeIds, ['N1']);
@@ -143,13 +188,13 @@ describe('Flow', () => {
 });
 describe('FlowModifier', () => {
     it('creates an empty modifier from an empty list of conditions', () => {
-        const modifier = FlowModifier.fromConditions();
+        const modifier = FlowModifier.parse();
         assert.isEmpty(modifier.edgeIds);
         assert.isEmpty(modifier.nodeIds);
         assert.isEmpty(modifier.tagOperations);
     });
     it('can be created from a list of conditions', () => {
-        const modifier = FlowModifier.fromConditions({ type: 'edge', value: 'E1' }, { type: 'edge', value: 'E2' }, { type: 'node', value: 'N1' }, { type: 'node', value: 'N2' }, { type: 'tag', value: 't1' }, { type: 'tag', value: 't2' });
+        const modifier = FlowModifier.parse('+edge:E1', '+edge:E2', '+node:N1', '+node:N2', '+tag:t1', '+tag:t2');
         assert.hasAllDeepKeys(modifier.edgeIds, ['E1', 'E2']);
         assert.hasAllDeepKeys(modifier.nodeIds, ['N1', 'N2']);
         assert.deepEqual(modifier.tagOperations, new Map([['t1', TagOperation.Add], ['t2', TagOperation.Add]]));
@@ -171,14 +216,14 @@ describe('FlowModifier', () => {
         assert.deepEqual(modifier.tagOperations, new Map([['t1', TagOperation.Add], ['t2', TagOperation.Remove]]));
     });
     it('can be converted into a Flow object', () => {
-        const modifier = FlowModifier.fromConditions({ type: 'edge', value: 'E1' }, { type: 'node', value: 'N1' }, { type: 'tag', value: 't1' });
+        const modifier = FlowModifier.parse('+edge:E1', '+node:N1', '+tag:t1');
         const flow = modifier.toFlow();
         assert.hasAllDeepKeys(flow.edgeIds, ['E1']);
         assert.hasAllDeepKeys(flow.nodeIds, ['N1']);
         assert.hasAllDeepKeys(flow.tags, ['t1']);
     });
     it('can create a copy', () => {
-        const original = FlowModifier.fromConditions({ type: 'edge', value: 'E1' }, { type: 'node', value: 'N1' }, { type: 'tag', value: 't1' });
+        const original = FlowModifier.parse('+edge:E1', '+node:N1', '+tag:t1');
         const copy = original.copy();
         assert.deepEqual(original, copy);
         assert.notStrictEqual(original.nodeIds, copy.nodeIds);
@@ -186,19 +231,18 @@ describe('FlowModifier', () => {
         assert.notStrictEqual(original.tagOperations, copy.tagOperations);
     });
     it('can create a modified copy', () => {
-        const original = FlowModifier.fromConditions({ type: 'edge', value: 'E1' }, { type: 'node', value: 'N1' }, { type: 'tag', value: 't1' });
-        const modifier = FlowModifier.fromConditions({ type: 'edge', value: 'E2' }, { type: 'node', value: 'N2' }, { type: 'tag', value: 't2' });
+        const original = FlowModifier.parse('+edge:E1', '+node:N1', '+tag:t1');
+        const modifier = FlowModifier.parse('+edge:E2', '+node:N2', '-tag:t2');
         const copy = original.copyAndModify(modifier);
         assert.hasAllDeepKeys(original.nodeIds, ['N1']);
         assert.hasAllDeepKeys(original.edgeIds, ['E1']);
         assert.deepEqual(original.tagOperations, new Map([['t1', TagOperation.Add]]));
         assert.hasAllDeepKeys(copy.nodeIds, ['N1', 'N2']);
         assert.hasAllDeepKeys(copy.edgeIds, ['E1', 'E2']);
-        assert.deepEqual(copy.tagOperations, new Map([['t1', TagOperation.Add], ['t2', TagOperation.Add]]));
+        assert.deepEqual(copy.tagOperations, new Map([['t1', TagOperation.Add], ['t2', TagOperation.Remove]]));
     });
     it('has a unique string representation', () => {
-        const modifier = FlowModifier.fromConditions({ type: 'node', value: 'N1' }, { type: 'node', value: 'N2' }, { type: 'edge', value: 'E1' }, { type: 'edge', value: 'E2' }, { type: 'tag', value: 't1' }, { type: 'tag', value: 't2' });
-        modifier.tagOperations.set('t2', TagOperation.Remove);
+        const modifier = FlowModifier.parse('+node:N1', '+node:N2', '+edge:E1', '+edge:E2', '+tag:t1', '-tag:t2');
         assert.strictEqual(modifier.toUniqueString(), '{+edge:E1, +edge:E2, +node:N1, +node:N2, +tag:t1, -tag:t2}');
     });
 });

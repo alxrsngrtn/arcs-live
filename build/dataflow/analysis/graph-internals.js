@@ -67,16 +67,22 @@ export class Flow {
     }
     /** Evaluates the given CheckCondition against the current Flow. */
     checkCondition(condition) {
+        let result;
         switch (condition.type) {
             case 'node':
-                return this.nodeIds.has(condition.value);
+                result = this.nodeIds.has(condition.value);
+                break;
             case 'edge':
-                return this.edgeIds.has(condition.value);
+                result = this.edgeIds.has(condition.value);
+                break;
             case 'tag':
-                return this.tags.has(condition.value);
+                result = this.tags.has(condition.value);
+                break;
             default:
                 throw new Error('Unknown condition type.');
         }
+        // Flip the result if the check condition was negated.
+        return condition.negated ? !result : result;
     }
     toUniqueString() {
         const elements = [];
@@ -118,21 +124,37 @@ export class FlowModifier {
         this.edgeIds = edgeIds;
         this.tagOperations = tagOperations;
     }
-    static fromConditions(...conditions) {
+    /**
+     * Creates a new FlowModifier from the given list of strings. Each string must
+     * start with either a plus or minus symbol (indicating whether the condition
+     * is added or removed), then give one of 'tag', 'node', or 'edge', followed
+     * by the tag/node/edge ID respectively. (Tags can be added or removed. Nodes
+     * and edges can only be added.) e.g. '+node:P2', '+edge:E1', '-tag:trusted'.
+     */
+    static parse(...conditions) {
         const modifier = new FlowModifier();
         for (const condition of conditions) {
-            switch (condition.type) {
+            const firstChar = condition[0];
+            if (!'+-'.includes(firstChar)) {
+                throw new Error(`'${condition}' must start with either + or -`);
+            }
+            const operator = firstChar === '+' ? TagOperation.Add : TagOperation.Remove;
+            const [type, value] = condition.slice(1).split(':', 2);
+            if (operator === TagOperation.Remove && type !== 'tag') {
+                throw new Error(`The - operator can only be used with tags. Got '${condition}'.`);
+            }
+            switch (type) {
                 case 'tag':
-                    modifier.tagOperations.set(condition.value, TagOperation.Add);
+                    modifier.tagOperations.set(value, operator);
                     break;
                 case 'node':
-                    modifier.nodeIds.add(condition.value);
+                    modifier.nodeIds.add(value);
                     break;
                 case 'edge':
-                    modifier.edgeIds.add(condition.value);
+                    modifier.edgeIds.add(value);
                     break;
                 default:
-                    throw new Error('Unknown FlowCondition type.');
+                    throw new Error(`Unknown type: '${condition}'`);
             }
         }
         return modifier;

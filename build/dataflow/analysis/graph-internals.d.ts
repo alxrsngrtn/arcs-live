@@ -62,7 +62,14 @@ export declare class FlowModifier {
     edgeIds?: Set<string>, 
     /** Tags to add/remove. Maps from tag name to operation. */
     tagOperations?: Map<string, TagOperation>);
-    static fromConditions(...conditions: FlowCondition[]): FlowModifier;
+    /**
+     * Creates a new FlowModifier from the given list of strings. Each string must
+     * start with either a plus or minus symbol (indicating whether the condition
+     * is added or removed), then give one of 'tag', 'node', or 'edge', followed
+     * by the tag/node/edge ID respectively. (Tags can be added or removed. Nodes
+     * and edges can only be added.) e.g. '+node:P2', '+edge:E1', '-tag:trusted'.
+     */
+    static parse(...conditions: string[]): FlowModifier;
     static fromClaims(edge: Edge, claims: Claim[]): FlowModifier;
     copy(): FlowModifier;
     /** Copies the current FlowModifier, and then applies the given modifications to the copy. */
@@ -79,6 +86,11 @@ export declare class FlowModifierSet extends DeepSet<FlowModifier> {
 export declare type FlowCondition = {
     type: 'node' | 'edge' | 'tag';
     value: string;
+    /**
+     * Indicates whether the condition is negated, i.e. check that this tag is
+     * *not* present.
+     */
+    negated: boolean;
 };
 /** An equivalent of a particle Check statement, used internally by FlowGraph. Either a FlowCondition, or a boolean expression. */
 export declare type FlowCheck = (FlowCondition | {
