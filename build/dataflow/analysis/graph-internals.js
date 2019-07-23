@@ -213,6 +213,13 @@ export class FlowModifierSet extends DeepSet {
 }
 /** Represents a node in a FlowGraph. Can be a particle, handle, etc. */
 export class Node {
+    constructor() {
+        /**
+         * Boolean indicating whether this node has direct ingress or not (e.g. from a
+         * external datastore).
+         */
+        this.ingress = false;
+    }
     get inNodes() {
         return this.inEdges.map(e => e.start);
     }

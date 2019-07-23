@@ -1,7 +1,5 @@
-commit c106eeac598cde38dcbe75f25ffb07b77f2438d4
-Author: galganif <4754402+galganif@users.noreply.github.com>
-Date:   Mon Jul 22 16:38:44 2019 +1000
+commit a83e161d853505c2b181c2bb558d19714ea29faf
+Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
+Date:   Tue Jul 23 10:49:59 2019 +1000
 
-    add more logic to the NG storage proxy, copied from old storage proxy (#3361)
-    
-    * add more logic to the NG storage proxy, copied from old storage proxy
+    Handles with the use, map or copy fates are considered ingress. (#3373)
