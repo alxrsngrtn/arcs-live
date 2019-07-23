@@ -502,7 +502,7 @@
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "/home/travis/build/PolymerLabs/arcs/src/cli/spotify-importer.ts": {
-        "version": "09bc78f549d87feec698bee9c8f0579e2ff130d2f773b11358ff04c5e784aa26",
+        "version": "52eb4756112bed6001e0c20423599830d4b2a9028003a4e80fa52895c40ea3c4",
         "signature": "74b0fe35f5cadce1dcc19d5e93f21b31c387808566250dc8766480b9a320943d"
       },
       "/home/travis/build/PolymerLabs/arcs/src/common/time/timeunit.ts": {
