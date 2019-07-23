@@ -1,5 +1,5 @@
-commit a83e161d853505c2b181c2bb558d19714ea29faf
+commit 972d0e3c9265d549aae61c176cbd4e3dc5cfb315
 Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
-Date:   Tue Jul 23 10:49:59 2019 +1000
+Date:   Tue Jul 23 11:42:43 2019 +1000
 
-    Handles with the use, map or copy fates are considered ingress. (#3373)
+    Added sigh command to run the dataflow analyser (#3375)
