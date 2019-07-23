@@ -134,7 +134,6 @@ export interface Edge {
      * e.g. "MyParticle.output1".
      */
     readonly label: string;
-    readonly derivesFrom?: Edge[];
     readonly modifier?: FlowModifier;
     check?: FlowCheck;
 }

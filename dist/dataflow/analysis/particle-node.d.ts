@@ -25,7 +25,7 @@ export declare class ParticleNode extends Node {
      * Iterates through all of the relevant in-edges leading into this particle, that flow out into the given out-edge. The out-edge may have a
      * 'derives from' claim that restricts which edges flow into it.
      */
-    inEdgesFromOutEdge(outEdge: Edge): readonly Edge[];
+    inEdgesFromOutEdge(outEdge: ParticleOutput): readonly Edge[];
 }
 export declare class ParticleInput implements Edge {
     readonly edgeId: string;
@@ -44,9 +44,11 @@ export declare class ParticleOutput implements Edge {
     readonly end: Node;
     readonly label: string;
     readonly connectionName: string;
+    readonly connectionSpec: HandleConnectionSpec;
     readonly modifier: FlowModifier;
     readonly derivesFrom: ParticleInput[];
     constructor(edgeId: string, particleNode: ParticleNode, otherEnd: Node, connection: HandleConnection);
+    computeDerivedFromEdges(): void;
 }
 /** Creates a new node for every given particle. */
 export declare function createParticleNodes(particles: Particle[]): Map<Particle, ParticleNode>;

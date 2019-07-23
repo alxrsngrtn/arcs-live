@@ -530,12 +530,12 @@
         "signature": "e40f1b3080081848738b30a72d981f2dc2a2662f2df1985a70c7c389cd10cf0f"
       },
       "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/graph-internals.ts": {
-        "version": "9f655aed824c3ea914a8e79e55a57250b0b347f084c61c97c34f2c32126bcfa8",
-        "signature": "f3f91b04ff9da014ffef1d5b55f440d40d372e144b0a7eca72849769dd234397"
+        "version": "64145df79a7a655a8253d551fafad2fe51f50878accff552edb386d0b3e01a48",
+        "signature": "ebb4a15cc94802b43a8da28f3eca6f27d384cc616801274b7f2c8fa90af472ee"
       },
       "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/particle-node.ts": {
-        "version": "c266c66b4f5c302079a4c5570e209113e79638706505dee0ffd966fe62329178",
-        "signature": "2f53c4f45afdc90c6ba433776545727cfbec130cc709bdee25ffa21828d8ec9b"
+        "version": "a68d70ea09aa1573439f86f4dc37e2a340ea61be7e0a453a18433fc89f0ca0e1",
+        "signature": "3501829e502fe394b34dfd822c913ed5425797c22e1f918809ef5576d1263312"
       },
       "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/handle-node.ts": {
         "version": "273880da1acc6b7bfdfb506200e22513de6237cf5cb7372289c3454386e42dfb",
@@ -546,7 +546,7 @@
         "signature": "19cb2cc31418feed1284eff30c25e9a195a768abae6af5882748bfff7990a442"
       },
       "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/flow-graph.ts": {
-        "version": "f16f5e32f3f79410e0fa6c18c2fffe69477cc8abb90a4378781668fb71f6943e",
+        "version": "14600e49f6fb78ba1a81a657cfaa71ae63fc653257bcb71a0305c916923e5b16",
         "signature": "34bf0b19ffaea446db10810d0817e7e3dd7917103c4e2296a175146e31edd19e"
       },
       "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/analysis.ts": {
@@ -578,7 +578,7 @@
         "signature": "535087ae214f316cbb0a3a17fb44a767c4789b7b69c4bd2c8d37fa8d5845a81f"
       },
       "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/tests/flow-graph-test.ts": {
-        "version": "6b35f1595724250a2e51abc5746a4bf4233a724929900b236e4671dc0e0014ae",
+        "version": "23fb1bdba2affb421d94eb12610bf37ed7647d74c287d628d253243c9a80af76",
         "signature": "43a5176681925d9f51b139647154e4a52c2eb1b1a64bb428595000952bcbc7f1"
       },
       "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/tests/graph-internals-test.ts": {

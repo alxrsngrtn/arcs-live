@@ -9,6 +9,7 @@
  */
 import { assert } from '../../../platform/chai-web.js';
 import { checkDefined } from '../../../runtime/testing/preconditions.js';
+import { ParticleOutput, ParticleInput } from '../particle-node.js';
 import { buildFlowGraph } from '../testing/flow-graph-testing.js';
 import { FlowModifier } from '../graph-internals.js';
 describe('FlowGraph', () => {
@@ -276,6 +277,31 @@ describe('FlowGraph', () => {
         assert.isTrue((await runForHandleWithFate('use MyStore')).ingress);
         assert.isTrue((await runForHandleWithFate('map MyStore')).ingress);
         assert.isTrue((await runForHandleWithFate('copy MyStore')).ingress);
+    });
+    it('supports circular "derives from" statements', async () => {
+        // Regression test for a race condition bug where the order in which edges
+        // were created was important ('claim foo1 derives from foo2' required that
+        // and edge for foo2 had already been created).
+        const graph = await buildFlowGraph(`
+      particle P
+        inout Foo {} foo1
+        inout Foo {} foo2
+        claim foo1 derives from foo2
+        claim foo2 derives from foo1
+      recipe R
+        P
+          foo1 <-> h1
+          foo2 <-> h2
+    `);
+        assert.lengthOf(graph.edges, 4);
+        const foo1Out = graph.edges.find(e => e instanceof ParticleOutput && e.label === 'P.foo1');
+        const foo2Out = graph.edges.find(e => e instanceof ParticleOutput && e.label === 'P.foo2');
+        const foo1In = graph.edges.find(e => e instanceof ParticleInput && e.label === 'P.foo1');
+        const foo2In = graph.edges.find(e => e instanceof ParticleInput && e.label === 'P.foo2');
+        assert.lengthOf(foo1Out.derivesFrom, 1);
+        assert.strictEqual(foo1Out.derivesFrom[0], foo2In);
+        assert.lengthOf(foo2Out.derivesFrom, 1);
+        assert.strictEqual(foo2Out.derivesFrom[0], foo1In);
     });
 });
 //# sourceMappingURL=flow-graph-test.js.map

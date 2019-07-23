@@ -1,7 +1,13 @@
-commit 1b2c6c441cc843e6d784997ac40af122abda58cd
+commit 20a3adfe3ef5de0d7c11045ca858f0eec9337a85
 Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
-Date:   Tue Jul 23 17:12:03 2019 +1000
+Date:   Tue Jul 23 17:13:34 2019 +1000
 
-    Added more dataflow examples. (#3379)
+    Fixes bug when computing 'derives from' edges. (#3377)
     
-    Examples taken from the slides presented at the Summit.
+    The bug arises when processing a claim like 'claim foo derives from
+    bar'. If the edge 'bar' has not been created yet, then we can't store it
+    in the derivesFrom list for the edge 'foo' (and instead store
+    undefined).
+    
+    Now, we compute the derivesFrom list in a separate pass after all edges
+    have been constructed.

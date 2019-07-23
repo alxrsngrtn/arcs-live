@@ -7,7 +7,7 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-import { createParticleNodes, ParticleInput } from './particle-node.js';
+import { createParticleNodes, ParticleOutput, ParticleInput } from './particle-node.js';
 import { createHandleNodes, addHandleConnection } from './handle-node.js';
 import { createSlotNodes, addSlotConnection } from './slot-node.js';
 import { assert } from '../../platform/assert-web.js';
@@ -73,12 +73,18 @@ export class FlowGraph {
                 providedSlotNode.check = providedSlotSpec.check ? this.createFlowCheck(providedSlotSpec.check) : null;
             }
         });
-        // Attach check objects to particle in-edges. Must be done in a separate
-        // pass after all edges have been created, since checks can reference other
-        // nodes/edges.
         this.edges.forEach(edge => {
+            // Attach check objects to particle in-edges. Must be done in a separate
+            // pass after all edges have been created, since checks can reference
+            // other nodes/edges.
             if (edge instanceof ParticleInput && edge.connectionSpec.check) {
                 edge.check = this.createFlowCheck(edge.connectionSpec.check);
+            }
+            // Compute the list of 'derived from' edges for all out-edges. This must
+            // also be done in a separate pass since we can't guarantee the ordering
+            // in which the edges were created.
+            if (edge instanceof ParticleOutput) {
+                edge.computeDerivedFromEdges();
             }
         });
     }

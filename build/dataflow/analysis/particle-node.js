@@ -59,13 +59,19 @@ export class ParticleOutput {
         this.start = particleNode;
         this.end = otherEnd;
         this.connectionName = connection.name;
+        this.connectionSpec = connection.spec;
         this.label = `${particleNode.name}.${this.connectionName}`;
         this.modifier = FlowModifier.fromClaims(this, connection.spec.claims);
-        if (connection.spec.claims) {
-            this.derivesFrom = [];
-            for (const claim of connection.spec.claims) {
+        this.derivesFrom = [];
+    }
+    computeDerivedFromEdges() {
+        assert(this.derivesFrom.length === 0, '"Derived from" edges have already been computed.');
+        if (this.connectionSpec.claims) {
+            for (const claim of this.connectionSpec.claims) {
                 if (claim.type === ClaimType.DerivesFrom) {
-                    this.derivesFrom.push(particleNode.inEdgesByName.get(claim.parentHandle.name));
+                    const derivedFromEdge = this.start.inEdgesByName.get(claim.parentHandle.name);
+                    assert(derivedFromEdge, `Handle '${claim.parentHandle.name}' is not an in-edge.`);
+                    this.derivesFrom.push(derivedFromEdge);
                 }
             }
         }
