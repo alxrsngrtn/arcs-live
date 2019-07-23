@@ -20473,7 +20473,7 @@ class DomParticle extends XenStateMixin(DomParticleBase) {
         return {
             handleNames: this.spec.inputs.map(i => i.name),
             // TODO(mmandlis): this.spec needs to be replaced with a particle-spec loaded from
-            // .manifest files, instead of .ptcl ones.
+            // .arcs files, instead of .ptcl ones.
             slotNames: [...this.spec.slotConnections.values()].map(s => s.name)
         };
     }
@@ -31369,7 +31369,7 @@ const Const = {
     volatileStorageKey: volatile,
     storageKey: pouchdb, //firebase,
     plannerStorageKey: 'volatile',
-    manifest: `https://$particles/canonical.manifest`,
+    manifest: `https://$particles/canonical.arcs`,
     launcherId: 'arc-launcher'
   },
   LOCALSTORAGE: {
@@ -32856,7 +32856,7 @@ class UserPlanner {
  */
 
 const contextManifest = `
-  import 'https://$particles/canonical.manifest'
+  import 'https://$particles/canonical.arcs'
   import 'https://$particles/Profile/Sharing.recipe'
 `;
 

@@ -15,7 +15,7 @@ import { assert } from '../../platform/chai-web.js';
 /** Tests that all .schema, .recipe(s) and .manifest files in the particles folder compile successfully. */
 describe('Particle definitions', () => {
     const loader = new Loader();
-    const filenames = glob.sync('particles/**/*.{manifest,schema,recipe,recipes}');
+    const filenames = glob.sync('particles/**/*.arcs');
     filenames
         .forEach(filename => {
         // skip experimental Native partices for now as they need a heavyweight build step

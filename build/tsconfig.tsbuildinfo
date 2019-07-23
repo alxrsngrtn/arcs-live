@@ -394,7 +394,7 @@
         "signature": "bf1f9815ff16f44295f505f392ad42099cfa92f1544546334997d75bfe8e816b"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/dom-particle.ts": {
-        "version": "2150bbbb2f1eb2f16a78effdc1b60d455bcdc027dfeb0f72046ff45a188ddacc",
+        "version": "6db2ae26f3b9e8a77a38aaf01c381b31c03c1ef54716d349a328a7d89341957a",
         "signature": "b1992e79dda81a43edfa961c3c4310746925fa8deead865e3ea30b9a9c83edf0"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/transformation-dom-particle.ts": {
@@ -2505,7 +2505,7 @@
         "signature": "d852d6282c8dc8156d26d6bda83ab4bde51fee05ba2fe0ecdc165ddda009d3ee"
       },
       "/home/travis/build/PolymerLabs/arcs/src/tests/particles/particles-test.ts": {
-        "version": "02070e736af80c726a0a139ddbdf5e27811de5abe38d542d345edaa0855856b2",
+        "version": "14564922a740ae7da6552f3da59d1e65563b80e3750ba175c65c0441a860fb50",
         "signature": "8e609bb71c20b858c77f0e9f90bb1319db8477b13f9f965f1a1e18524bf50881"
       },
       "/home/travis/build/PolymerLabs/arcs/src/tests/particles/products-test.ts": {
@@ -2521,7 +2521,7 @@
         "signature": "8bc1d39a3b8ec61064f9969316a088e314895e7ffd094468dcc0b238f33cb4a6"
       },
       "/home/travis/build/PolymerLabs/arcs/src/tests/particles/TicTacToe/moveapplier-test.ts": {
-        "version": "ec51165f69e2797a877a6e97df4e3a5f47614c7db01af678f2881e87d49b2d11",
+        "version": "4b50ae8e40feaa70db7576e17703e2274471cbf3980e2098e5099819a3b9b61a",
         "signature": "8bc1d39a3b8ec61064f9969316a088e314895e7ffd094468dcc0b238f33cb4a6"
       },
       "/home/travis/build/PolymerLabs/arcs/node_modules/@types/minimist/index.d.ts": {
@@ -2533,11 +2533,11 @@
         "signature": "dec479adce6c2c753ce57e9d570378e097509f28d1e45155b5eed46e6d039830"
       },
       "/home/travis/build/PolymerLabs/arcs/src/tools/bundle.ts": {
-        "version": "6cc5db4e47949a2a0758bfa3c171ddd6e3283d26796a211479159c9707377624",
+        "version": "3f217a88794a906a430c329deeff9136900a66b99d01be1f497e1ff1edb42e8e",
         "signature": "11df73d59f56ef4a81c23e02dc594afd1fda4870d3b4857103b0695734ce2dd5"
       },
       "/home/travis/build/PolymerLabs/arcs/src/tools/bundle-cli.ts": {
-        "version": "09927605bb7fc9432bc357b1157aac0770c2e424a45510ab6b55f6eda2ec56cd",
+        "version": "1dffa388baf3bc9341ff6f82f350d05a1c8581933bc671926509ea8fa138f9c7",
         "signature": "fd95df5d076cbfed143dc4904d376b5c6d9cb1091b630994ffe2366010afa6b3"
       },
       "/home/travis/build/PolymerLabs/arcs/src/tools/schema2base.ts": {
@@ -2545,11 +2545,11 @@
         "signature": "44c67db51f6f262099ce193695d05ebc7e4cc90de35cfda0e9cf2aaeb8ce1ea5"
       },
       "/home/travis/build/PolymerLabs/arcs/src/tools/schema2cpp.ts": {
-        "version": "a684289d23794f6504d77ac77392350dd1d6bc8a344ff78efa972cee959f7df9",
+        "version": "9cf5fa1c5af1af9d93489b79497f4ff3bc4901d1d7166c11c35d21f7cc7c2cbd",
         "signature": "2399853c21d04efd6ace178ab5736d5ad95a9e1674dc8cee3944fd706556b8a2"
       },
       "/home/travis/build/PolymerLabs/arcs/src/tools/schema2kotlin.ts": {
-        "version": "0c82660b2ca236973bf7f810e0a4cdd1c233efd6b84fb0b23c7ddf24b734d41b",
+        "version": "86a0cf4860dbbbb9a4bde5bbfcf2cd00f05919ddfc16729ddcbfcf748e03dc3d",
         "signature": "f88411a821e09edd5e5f268d2563bdba5387c320ea692afaa6e80d8049499a14"
       },
       "/home/travis/build/PolymerLabs/arcs/src/tools/schema2packager.ts": {
@@ -2601,7 +2601,7 @@
         "signature": "fd95df5d076cbfed143dc4904d376b5c6d9cb1091b630994ffe2366010afa6b3"
       },
       "/home/travis/build/PolymerLabs/arcs/src/tools/tests/bundle-test.ts": {
-        "version": "5eee7df57490460ba57421c456530d89bef5aee950e4d367322c941b1207193a",
+        "version": "ff2ee4a03e9f1c5a154f594edc7563371d7e944ab2580749f455dd13424b88a0",
         "signature": "fd95df5d076cbfed143dc4904d376b5c6d9cb1091b630994ffe2366010afa6b3"
       },
       "/home/travis/build/PolymerLabs/arcs/src/tracelib/tests/trace-test.ts": {
@@ -2609,7 +2609,7 @@
         "signature": "8bc1d39a3b8ec61064f9969316a088e314895e7ffd094468dcc0b238f33cb4a6"
       },
       "/home/travis/build/PolymerLabs/arcs/src/wasm/cpp/tests/wasm-cpp-test.ts": {
-        "version": "423d3481aaad241dd9a52389012bb3d592225e60bf78605e0d831d1bd5aa4ec4",
+        "version": "242d466f1cd5094e1ec995c705218cc45e7b2f5800656a9a64b4b3e13179f637",
         "signature": "8e609bb71c20b858c77f0e9f90bb1319db8477b13f9f965f1a1e18524bf50881"
       },
       "/home/travis/build/PolymerLabs/arcs/node_modules/@types/core-js/index.d.ts": {

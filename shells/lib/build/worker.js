@@ -7038,7 +7038,7 @@ class DomParticle extends Object(_modalities_dom_components_xen_xen_state_js__WE
         return {
             handleNames: this.spec.inputs.map(i => i.name),
             // TODO(mmandlis): this.spec needs to be replaced with a particle-spec loaded from
-            // .manifest files, instead of .ptcl ones.
+            // .arcs files, instead of .ptcl ones.
             slotNames: [...this.spec.slotConnections.values()].map(s => s.name)
         };
     }

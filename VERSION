@@ -1,13 +1,5 @@
-commit 20a3adfe3ef5de0d7c11045ca858f0eec9337a85
-Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
-Date:   Tue Jul 23 17:13:34 2019 +1000
+commit ca938a8634aa513ad699546209c523a19f0c1e91
+Author: Piotr Swigon <piotr.swigon@gmail.com>
+Date:   Tue Jul 23 18:29:13 2019 +1000
 
-    Fixes bug when computing 'derives from' edges. (#3377)
-    
-    The bug arises when processing a claim like 'claim foo derives from
-    bar'. If the edge 'bar' has not been created yet, then we can't store it
-    in the derivesFrom list for the edge 'foo' (and instead store
-    undefined).
-    
-    Now, we compute the derivesFrom list in a separate pass after all edges
-    have been constructed.
+    Moves all manifests in particles/ to .arcs (#3378)
