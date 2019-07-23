@@ -374,8 +374,8 @@
         "signature": "72c40c6f2e61d63e346ed8715847bd9b379f195ed653d6524d0b5f0bd0cc729a"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/storage-proxy.ts": {
-        "version": "9eac20a720a0ba7414da0cf9211371d7af394080cfa56a930b9d055c024b6f50",
-        "signature": "6d8d907179dccfe7b1af6936ab7f6189270e8573ba3abedd87a3f314c5a9230a"
+        "version": "4baa721121f0af2e8beaf88e473034260355ecc064cca5b42e92d91f5adff71d",
+        "signature": "7dfbcdc030f38bc3ab3ffa21edaeeec9964303f1ab198d2397ed5ac127424cd3"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/symbols.ts": {
         "version": "86ce7b9192e71b15024531b512d64dc971e42ba1856684193f470edfa4ccbb0e",
@@ -386,8 +386,8 @@
         "signature": "fe3ceae45b6db319ae3f0551edac0555329db0be6c8c5dfb92347105fc23aee1"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/handle.ts": {
-        "version": "a36943b6f9686f0c230de97836f29d1cb11f95bedf504f4e48b70d0cd726deaa",
-        "signature": "304044301d0d7951c89674b36ef9ed6a15c59920a63b37954aa44a99f3d5db3f"
+        "version": "7d8e1a61136f410ed21b579be86a141fe226c04267bf411a4fdae43e92dbe8bc",
+        "signature": "ad2540baa66896687b867aa56c031b3f590c3ba8f7a0f82956648b3ff0cf8cde"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/dom-particle-base.ts": {
         "version": "49596d3f1ca18b8673d79bbb52ef09bb0fb50dd600d9ae99eccc9c166900c012",
@@ -2293,7 +2293,7 @@
         "signature": "8e609bb71c20b858c77f0e9f90bb1319db8477b13f9f965f1a1e18524bf50881"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/tests/handle-test.ts": {
-        "version": "63991a384b80122a4645166617233674bae7a06cc6dc2846b093d47bfdd048d4",
+        "version": "959f4126c5f72fafce02db5fdd3168471d547ffbefc5efd498dba41a375ae30f",
         "signature": "8e609bb71c20b858c77f0e9f90bb1319db8477b13f9f965f1a1e18524bf50881"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/tests/id-test.ts": {
@@ -7199,6 +7199,7 @@
         "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/storage-provider-base.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/type.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/id.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/storage-proxy.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
       ],

@@ -1,5 +1,9 @@
-commit ca938a8634aa513ad699546209c523a19f0c1e91
-Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Tue Jul 23 18:29:13 2019 +1000
+commit 40da53be574657c35727fa34de1a7107a6498ee8
+Author: sherry-pra <52428204+sherry-pra@users.noreply.github.com>
+Date:   Tue Jul 23 14:39:41 2019 -0700
 
-    Moves all manifests in particles/ to .arcs (#3378)
+    Hot code reload: added support for disabling handle (#3346)
+    
+    Includes NoOp storage proxy.
+    
+    Builds on prior change adding api-channel support for particle reload.

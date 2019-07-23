@@ -34,7 +34,7 @@ export interface HandleOptions {
  * Base class for Collections and Singletons.
  */
 export declare abstract class Handle {
-    readonly storage: Store;
+    protected _storage: Store;
     private readonly idGenerator;
     readonly name: string;
     readonly canRead: boolean;
@@ -51,8 +51,14 @@ export declare abstract class Handle {
     createIdentityFor(entity: Entity): void;
     readonly type: import("./type.js").Type;
     readonly _id: string;
+    readonly storage: Readonly<Store>;
     toManifestString(): string;
     protected generateKey(): string;
+    /**
+     * Disables this handle so that it is no longer able to make changes or receive updates from the
+     * storage proxy
+     */
+    disable(particle?: Particle): void;
 }
 /**
  * A handle on a set of Entity data. Note that, as a set, a Collection can only
@@ -62,7 +68,7 @@ export declare abstract class Handle {
  * which handles are connected.
  */
 export declare class Collection extends Handle {
-    readonly storage: CollectionStore;
+    protected _storage: CollectionStore;
     _notify(kind: string, particle: Particle, details: any): Promise<void>;
     /**
      * Returns the Entity specified by id contained by the handle, or null if this id is not
@@ -96,6 +102,7 @@ export declare class Collection extends Handle {
      * in the particle's manifest.
      */
     remove(entity: Storable): Promise<void>;
+    readonly storage: Readonly<CollectionStore>;
 }
 /**
  * A handle on a single entity. A particle's manifest dictates
@@ -103,7 +110,7 @@ export declare class Collection extends Handle {
  * the current recipe identifies which handles are connected.
  */
 export declare class Singleton extends Handle {
-    readonly storage: SingletonStore;
+    protected _storage: SingletonStore;
     _notify(kind: string, particle: Particle, details: any): Promise<void>;
     /**
      * @returns the Entity contained by the Singleton, or undefined if the Singleton is cleared.
@@ -124,6 +131,7 @@ export declare class Singleton extends Handle {
      * in the particle's manifest.
      */
     clear(): Promise<void>;
+    readonly storage: Readonly<SingletonStore>;
 }
 /**
  * Provides paginated read access to a BigCollection. Conforms to the javascript iterator protocol
@@ -152,7 +160,7 @@ declare class Cursor {
  * trigger onHandleSync() or onHandleUpdate().
  */
 export declare class BigCollection extends Handle {
-    readonly storage: BigCollectionStore;
+    protected _storage: BigCollectionStore;
     configure(options: any): void;
     _notify(kind: string, particle: Particle, details: any): Promise<void>;
     /**
@@ -183,6 +191,7 @@ export declare class BigCollection extends Handle {
         pageSize: number;
         forward: boolean;
     }): Promise<Cursor>;
+    readonly storage: Readonly<BigCollectionStore>;
 }
 export declare function handleFor(storage: Store, idGenerator: IdGenerator, name?: string, particleId?: string, canRead?: boolean, canWrite?: boolean): Handle;
 export {};

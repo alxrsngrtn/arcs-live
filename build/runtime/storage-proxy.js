@@ -64,6 +64,9 @@ export class StorageProxy {
         }
         return new SingletonProxy(id, type, port, pec, scheduler, name);
     }
+    static newNoOpProxy(type) {
+        return new NoOpStorageProxy(null, type, null, null, null, 'NoOpStorage');
+    }
     reportExceptionInHost(exception) {
         // TODO: Encapsulate source-mapping of the stack trace once there are more users of the port.RaiseSystemException() call.
         if (mapStackTrace) {
@@ -104,6 +107,12 @@ export class StorageProxy {
                 this.scheduler.enqueue(particle, handle, ['sync', particle, syncModel]);
             }
         }
+    }
+    /**
+     * Called by Handle to dissociate particle/handle pair associated with this proxy
+     */
+    deregister(particleIn, handleIn) {
+        this.observers = this.observers.filter(({ particle, handle }) => particle !== particleIn || handle !== handleIn);
     }
     _onSynchronize({ version, model }) {
         if (this.version !== undefined && version <= this.version) {
@@ -486,6 +495,66 @@ export class BigCollectionProxy extends StorageProxy {
     async cursorClose(cursorId) {
         this.port.StreamCursorClose(this, cursorId);
         return Promise.resolve();
+    }
+}
+/**
+ * NoOpStorageProxy is an implementation of StorageProxy that does no operations. It silently
+ * absorbs and throws away all changes without creating any logging, warnings or any other visible
+ * behaviors or persistent changes.
+ *
+ * It is aimed to be used by disabled particles to finish their job without causing any post-disabled
+ * async errors, etc.
+ *
+ * TODO(sherrypra): Add a unit test to ensure this stays in sync with the real storage APIs
+ */
+export class NoOpStorageProxy extends StorageProxy {
+    _getModelForSync() {
+        return null;
+    }
+    _synchronizeModel(version, model) {
+        return true;
+    }
+    _processUpdate(update, apply) {
+        return null;
+    }
+    reportExceptionInHost(exception) { }
+    deregister() { }
+    register() { }
+    _onSynchronize({ version, model }) { }
+    _onUpdate(update) { }
+    _notify(kind, details, predicate = (ignored) => true) { }
+    _processUpdates() { }
+    generateBarrier() {
+        return null;
+    }
+    async get(id) {
+        return new Promise(resolve => { });
+    }
+    // tslint:disable-next-line: no-any
+    async store(value, keys, particleId) {
+        return new Promise(resolve => { });
+    }
+    async clear(particleId) {
+        return new Promise(resolve => { });
+    }
+    async remove(id, keys, particleId) {
+        return new Promise(resolve => { });
+    }
+    async toList() {
+        return new Promise(resolve => { });
+    }
+    async stream(pageSize, forward) {
+        return new Promise(resolve => { });
+    }
+    // tslint:disable-next-line: no-any
+    async cursorNext(cursorId) {
+        return new Promise(resolve => { });
+    }
+    async cursorClose(cursorId) {
+        throw new Promise(resolve => { });
+    }
+    async set(entity, particleId) {
+        throw new Promise(resolve => { });
     }
 }
 export class StorageProxyScheduler {

@@ -14,6 +14,7 @@ import { Loader } from '../loader.js';
 import { Manifest } from '../manifest.js';
 import { EntityType, InterfaceType } from '../type.js';
 import { ArcId, IdGenerator } from '../id.js';
+import { NoOpStorageProxy } from '../storage-proxy.js';
 describe('Handle', () => {
     let loader;
     let manifest;
@@ -92,6 +93,16 @@ describe('Handle', () => {
         await fooHandle.set(new Foo({ value: '2' }, 'id1'));
         const stored = await fooHandle.get();
         assert.strictEqual(stored['value'], '2');
+    });
+    it('disable handle sets storage into a noOp storage', async () => {
+        const arc = new Arc({ id: ArcId.newForTest('test'), context: manifest, loader });
+        // tslint:disable-next-line: variable-name
+        const Foo = manifest.schemas.Foo.entityClass();
+        const fooStorage = await arc.createStore(Foo.type);
+        const fooHandle = handleFor(fooStorage, IdGenerator.newSession());
+        assert(!(fooHandle.storage instanceof NoOpStorageProxy));
+        fooHandle.disable();
+        assert(fooHandle.storage instanceof NoOpStorageProxy);
     });
     it('remove entry from store', async () => {
         const arc = new Arc({ id: ArcId.newForTest('test'), context: manifest, loader });

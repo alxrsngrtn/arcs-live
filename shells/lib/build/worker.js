@@ -92,7 +92,7 @@
 __webpack_require__.r(__webpack_exports__);
 /* WEBPACK VAR INJECTION */(function(global) {/* harmony import */ var _build_runtime_particle_execution_context_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(2);
 /* harmony import */ var _build_platform_loader_web_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(30);
-/* harmony import */ var _build_runtime_id_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(15);
+/* harmony import */ var _build_runtime_id_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(18);
 /**
  * @license
  * Copyright 2019 Google LLC.
@@ -154,8 +154,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
 /* harmony import */ var _api_channel_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(4);
 /* harmony import */ var _handle_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(13);
-/* harmony import */ var _slot_proxy_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(24);
-/* harmony import */ var _storage_proxy_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(25);
+/* harmony import */ var _slot_proxy_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(27);
+/* harmony import */ var _storage_proxy_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(15);
 /* harmony import */ var _wasm_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(28);
 /* harmony import */ var _arc_exceptions_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(14);
 /**
@@ -453,7 +453,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _particle_spec_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(5);
 /* harmony import */ var _type_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(8);
 /* harmony import */ var _arc_exceptions_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(14);
-/* harmony import */ var _util_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(23);
+/* harmony import */ var _util_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(26);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -1030,8 +1030,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _modality_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(6);
 /* harmony import */ var _recipe_type_checker_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(7);
 /* harmony import */ var _type_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(8);
-/* harmony import */ var _particle_check_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(21);
-/* harmony import */ var _particle_claim_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(22);
+/* harmony import */ var _particle_check_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(24);
+/* harmony import */ var _particle_claim_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(25);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -1772,9 +1772,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "HandleType", function() { return HandleType; });
 /* harmony import */ var _interface_info_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(9);
 /* harmony import */ var _schema_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(10);
-/* harmony import */ var _slot_info_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(18);
-/* harmony import */ var _synthetic_types_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(19);
-/* harmony import */ var _type_variable_info_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(20);
+/* harmony import */ var _slot_info_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(21);
+/* harmony import */ var _synthetic_types_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(22);
+/* harmony import */ var _type_variable_info_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(23);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -3027,7 +3027,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _type_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(8);
 /* harmony import */ var _reference_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(12);
 /* harmony import */ var _recipe_type_checker_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(7);
-/* harmony import */ var _symbols_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(17);
+/* harmony import */ var _symbols_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(20);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -3424,7 +3424,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _handle_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(13);
 /* harmony import */ var _type_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(8);
 /* harmony import */ var _entity_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(11);
-/* harmony import */ var _symbols_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(17);
+/* harmony import */ var _symbols_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(20);
 /**
  * @license
  * Copyright (c) 2018 Google Inc. All rights reserved.
@@ -3531,10 +3531,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _arc_exceptions_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(14);
 /* harmony import */ var _particle_spec_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(5);
 /* harmony import */ var _reference_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(12);
-/* harmony import */ var _type_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(8);
-/* harmony import */ var _entity_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(11);
-/* harmony import */ var _id_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(15);
-/* harmony import */ var _symbols_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(17);
+/* harmony import */ var _storage_proxy_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(15);
+/* harmony import */ var _type_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(8);
+/* harmony import */ var _entity_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(11);
+/* harmony import */ var _id_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(18);
+/* harmony import */ var _symbols_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(20);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -3544,6 +3545,7 @@ __webpack_require__.r(__webpack_exports__);
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
+
 
 
 
@@ -3562,7 +3564,7 @@ function restore(entry, entityClass) {
     const { id, rawData } = entry;
     const entity = new entityClass(cloneData(rawData));
     if (entry.id) {
-        _entity_js__WEBPACK_IMPORTED_MODULE_5__["Entity"].identify(entity, entry.id);
+        _entity_js__WEBPACK_IMPORTED_MODULE_6__["Entity"].identify(entity, entry.id);
     }
     // TODO some relation magic, somewhere, at some point.
     return entity;
@@ -3574,7 +3576,7 @@ class Handle {
     // TODO type particleId, marked as string, but called with number
     constructor(storage, idGenerator, name, particleId, canRead, canWrite) {
         Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(!(storage instanceof Handle));
-        this.storage = storage;
+        this._storage = storage;
         this.idGenerator = idGenerator;
         this.name = name || this.storage.name;
         this.canRead = canRead;
@@ -3615,15 +3617,15 @@ class Handle {
     }
     _serialize(entity) {
         Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(entity, `can't serialize a null entity`);
-        if (entity instanceof _entity_js__WEBPACK_IMPORTED_MODULE_5__["Entity"]) {
-            if (!_entity_js__WEBPACK_IMPORTED_MODULE_5__["Entity"].isIdentified(entity)) {
+        if (entity instanceof _entity_js__WEBPACK_IMPORTED_MODULE_6__["Entity"]) {
+            if (!_entity_js__WEBPACK_IMPORTED_MODULE_6__["Entity"].isIdentified(entity)) {
                 this.createIdentityFor(entity);
             }
         }
-        return entity[_symbols_js__WEBPACK_IMPORTED_MODULE_7__["SYMBOL_INTERNALS"]].serialize();
+        return entity[_symbols_js__WEBPACK_IMPORTED_MODULE_8__["SYMBOL_INTERNALS"]].serialize();
     }
     createIdentityFor(entity) {
-        _entity_js__WEBPACK_IMPORTED_MODULE_5__["Entity"].createIdentity(entity, _id_js__WEBPACK_IMPORTED_MODULE_6__["Id"].fromString(this._id), this.idGenerator);
+        _entity_js__WEBPACK_IMPORTED_MODULE_6__["Entity"].createIdentity(entity, _id_js__WEBPACK_IMPORTED_MODULE_7__["Id"].fromString(this._id), this.idGenerator);
     }
     get type() {
         return this.storage.type;
@@ -3631,11 +3633,26 @@ class Handle {
     get _id() {
         return this.storage.id;
     }
+    get storage() {
+        return this._storage;
+    }
     toManifestString() {
         return `'${this._id}'`;
     }
     generateKey() {
-        return this.idGenerator.newChildId(_id_js__WEBPACK_IMPORTED_MODULE_6__["Id"].fromString(this._id), 'key').toString();
+        return this.idGenerator.newChildId(_id_js__WEBPACK_IMPORTED_MODULE_7__["Id"].fromString(this._id), 'key').toString();
+    }
+    /**
+     * Disables this handle so that it is no longer able to make changes or receive updates from the
+     * storage proxy
+     */
+    disable(particle) {
+        if (this.storage instanceof _storage_proxy_js__WEBPACK_IMPORTED_MODULE_4__["StorageProxy"]) {
+            this.storage.deregister(particle, this);
+        }
+        // Set this handle's storage to a no-operation storage proxy so any actions that need to be
+        // taken by this handle in the future (due to some async operations) will do nothing and finish quietly
+        this._storage = _storage_proxy_js__WEBPACK_IMPORTED_MODULE_4__["StorageProxy"].newNoOpProxy(this.storage.type);
     }
 }
 /**
@@ -3741,6 +3758,9 @@ class Collection extends Handle {
         const keys = [];
         await this.storage.remove(serialization.id, keys, this._particleId);
     }
+    get storage() {
+        return this._storage;
+    }
 }
 /**
  * A handle on a single entity. A particle's manifest dictates
@@ -3784,13 +3804,13 @@ class Singleton extends Handle {
         if (model == null) {
             return null;
         }
-        if (this.type instanceof _type_js__WEBPACK_IMPORTED_MODULE_4__["EntityType"]) {
+        if (this.type instanceof _type_js__WEBPACK_IMPORTED_MODULE_5__["EntityType"]) {
             return restore(model, this.entityClass);
         }
-        if (this.type instanceof _type_js__WEBPACK_IMPORTED_MODULE_4__["InterfaceType"]) {
+        if (this.type instanceof _type_js__WEBPACK_IMPORTED_MODULE_5__["InterfaceType"]) {
             return _particle_spec_js__WEBPACK_IMPORTED_MODULE_2__["ParticleSpec"].fromLiteral(model);
         }
-        if (this.type instanceof _type_js__WEBPACK_IMPORTED_MODULE_4__["ReferenceType"]) {
+        if (this.type instanceof _type_js__WEBPACK_IMPORTED_MODULE_5__["ReferenceType"]) {
             return new _reference_js__WEBPACK_IMPORTED_MODULE_3__["Reference"](model, this.type, this.storage.pec);
         }
         throw new Error(`Don't know how to deliver handle data of type ${this.type}`);
@@ -3823,6 +3843,9 @@ class Singleton extends Handle {
             throw new Error('Handle not writeable');
         }
         return this.storage.clear(this._particleId);
+    }
+    get storage() {
+        return this._storage;
     }
 }
 /**
@@ -3916,20 +3939,23 @@ class BigCollection extends Handle {
         const cursorId = await this.storage.stream(pageSize, forward);
         return new Cursor(this, cursorId);
     }
+    get storage() {
+        return this._storage;
+    }
 }
 function handleFor(storage, idGenerator, name = null, particleId = '', canRead = true, canWrite = true) {
     let handle;
-    if (storage.type instanceof _type_js__WEBPACK_IMPORTED_MODULE_4__["CollectionType"]) {
+    if (storage.type instanceof _type_js__WEBPACK_IMPORTED_MODULE_5__["CollectionType"]) {
         handle = new Collection(storage, idGenerator, name, particleId, canRead, canWrite);
     }
-    else if (storage.type instanceof _type_js__WEBPACK_IMPORTED_MODULE_4__["BigCollectionType"]) {
+    else if (storage.type instanceof _type_js__WEBPACK_IMPORTED_MODULE_5__["BigCollectionType"]) {
         handle = new BigCollection(storage, idGenerator, name, particleId, canRead, canWrite);
     }
     else {
         handle = new Singleton(storage, idGenerator, name, particleId, canRead, canWrite);
     }
     const type = storage.type.getContainedType() || storage.type;
-    if (type instanceof _type_js__WEBPACK_IMPORTED_MODULE_4__["EntityType"]) {
+    if (type instanceof _type_js__WEBPACK_IMPORTED_MODULE_5__["EntityType"]) {
         handle.entityClass = type.entitySchema.entityClass(storage.pec);
     }
     return handle;
@@ -4032,846 +4058,18 @@ registerSystemExceptionHandler((exception) => {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "IdGenerator", function() { return IdGenerator; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Id", function() { return Id; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ArcId", function() { return ArcId; });
-/* harmony import */ var _random_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(16);
-/**
- * @license
- * Copyright (c) 2017 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-
-/**
- * Generates new IDs which are rooted in the current session. Only one IdGenerator should be instantiated for each running Arc, and all of the
- * IDs created should be created using that same IdGenerator instance.
- */
-class IdGenerator {
-    /** Use the newSession factory method instead. */
-    constructor(currentSessionId) {
-        this._nextComponentId = 0;
-        this._currentSessionId = currentSessionId;
-    }
-    /** Generates a new random session ID to use when creating new IDs. */
-    static newSession() {
-        const sessionId = Math.floor(_random_js__WEBPACK_IMPORTED_MODULE_0__["Random"].next() * Math.pow(2, 50)) + '';
-        return new IdGenerator(sessionId);
-    }
-    /**
-     * Intended only for testing the IdGenerator class itself. Lets you specify the session ID manually. Prefer using the real
-     * IdGenerator.newSession() method when testing other classes.
-     */
-    static createWithSessionIdForTesting(sessionId) {
-        return new IdGenerator(sessionId);
-    }
-    newArcId(name) {
-        return ArcId._newArcIdInternal(this._currentSessionId, name);
-    }
-    /**
-     * Creates a new ID, as a child of the given parentId. The given subcomponent will be appended to the component hierarchy of the given ID, but
-     * the generator's random session ID will be used as the ID's root.
-     */
-    newChildId(parentId, subcomponent = '') {
-        // Append (and increment) a counter to the subcomponent, to ensure that it is unique.
-        subcomponent += this._nextComponentId++;
-        return Id._newIdInternal(this._currentSessionId, [...parentId.idTree, subcomponent]);
-    }
-    get currentSessionIdForTesting() {
-        return this._currentSessionId;
-    }
-}
-/**
- * An immutable object consisting of two components: a root, and an idTree. The root is the session ID from the particular session in which the
- * ID was constructed (see the IdGenerator class). The idTree is a list of subcomponents, forming a hierarchy of IDs (child IDs are created by
- * appending subcomponents to their parent ID's idTree).
- */
-class Id {
-    /** Protected constructor. Use IdGenerator to create new IDs instead. */
-    constructor(root, idTree = []) {
-        /** The components of the idTree. */
-        this.idTree = [];
-        this.root = root;
-        this.idTree = idTree;
-    }
-    /** Creates a new ID. Use IdGenerator to create new IDs instead. */
-    static _newIdInternal(root, idTree = []) {
-        return new Id(root, idTree);
-    }
-    /** Parses a string representation of an ID (see toString). */
-    static fromString(str) {
-        const bits = str.split(':');
-        if (bits[0].startsWith('!')) {
-            const root = bits[0].slice(1);
-            const idTree = bits.slice(1).filter(component => component.length > 0);
-            return new Id(root, idTree);
-        }
-        else {
-            return new Id('', bits);
-        }
-    }
-    /** Returns the full ID string. */
-    toString() {
-        return `!${this.root}:${this.idTree.join(':')}`;
-    }
-    /** Returns the idTree as as string (without the root). */
-    idTreeAsString() {
-        return this.idTree.join(':');
-    }
-    equal(id) {
-        if (id.root !== this.root || id.idTree.length !== this.idTree.length) {
-            return false;
-        }
-        for (let i = 0; i < id.idTree.length; i++) {
-            if (id.idTree[i] !== this.idTree[i]) {
-                return false;
-            }
-        }
-        return true;
-    }
-}
-class ArcId extends Id {
-    /** Creates a new Arc ID. Use IdGenerator to create new IDs instead. */
-    static _newArcIdInternal(root, name) {
-        return new ArcId(root, [name]);
-    }
-    /** Creates a new Arc ID with the given name. For convenience in unit testing only; otherwise use IdGenerator to create new IDs instead. */
-    static newForTest(id) {
-        return IdGenerator.newSession().newArcId(id);
-    }
-}
-//# sourceMappingURL=id.js.map
-
-/***/ }),
-/* 16 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Random", function() { return Random; });
-/**
- * @license
- * Copyright (c) 2018 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-class RNG {
-}
-/**
- * A basic random number generator using Math.random();
- */
-class MathRandomRNG extends RNG {
-    next() {
-        return Math.random();
-    }
-}
-// Singleton Pattern
-const random = new MathRandomRNG();
-class Random {
-    static next() {
-        return random.next();
-    }
-}
-//# sourceMappingURL=random.js.map
-
-/***/ }),
-/* 17 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SYMBOL_INTERNALS", function() { return SYMBOL_INTERNALS; });
-/**
- * @license
- * Copyright (c) 2017 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-// TypeScript seems to lose the necessary type info if this symbol is wrapped in an object and then
-// used as an interface key (e.g. 'interface Foo { [Symbols.internals]: {...} }'), so we just have
-// to export it as a standard variable. See the EntityInternals class for the usage of this symbol.
-const SYMBOL_INTERNALS = Symbol('internals');
-//# sourceMappingURL=symbols.js.map
-
-/***/ }),
-/* 18 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SlotInfo", function() { return SlotInfo; });
-/**
- * @license
- * Copyright (c) 2017 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-class SlotInfo {
-    constructor(formFactor, handle) {
-        this.formFactor = formFactor;
-        this.handle = handle;
-    }
-    toLiteral() {
-        return this;
-    }
-    static fromLiteral({ formFactor, handle }) {
-        return new SlotInfo(formFactor, handle);
-    }
-}
-//# sourceMappingURL=slot-info.js.map
-
-/***/ }),
-/* 19 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ArcInfo", function() { return ArcInfo; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ArcHandle", function() { return ArcHandle; });
-/**
- * @license
- * Copyright (c) 2018 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-// Equivalent to an Entity with Schema { serialization Text }
-class ArcInfo {
-    constructor(arcId, serialization) {
-        this.id = arcId.toString();
-        // TODO: remove the import-removal hack when import statements no longer appear
-        // in serialized manifests, or deal with them correctly if they end up staying
-        this.serialization = serialization.replace(/\bimport .*\n/g, '');
-    }
-    // Retrieves the serialized string from a stored instance of ArcInfo.
-    static extractSerialization(data) {
-        return data.serialization.replace(/\bimport .*\n/g, '');
-    }
-}
-class ArcHandle {
-    constructor(id, storageKey, type, tags) {
-        this.id = id;
-        this.storageKey = storageKey;
-        this.type = type;
-        this.tags = tags;
-    }
-}
-//# sourceMappingURL=synthetic-types.js.map
-
-/***/ }),
-/* 20 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "TypeVariableInfo", function() { return TypeVariableInfo; });
-/* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
-/* harmony import */ var _schema_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(10);
-/* harmony import */ var _type_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(8);
-/**
- * @license
- * Copyright (c) 2017 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-
-
-
-class TypeVariableInfo {
-    constructor(name, canWriteSuperset, canReadSubset) {
-        this.name = name;
-        this._canWriteSuperset = canWriteSuperset;
-        this._canReadSubset = canReadSubset;
-        this._resolution = null;
-    }
-    /**
-     * Merge both the read subset (upper bound) and write superset (lower bound) constraints
-     * of two variables together. Use this when two separate type variables need to resolve
-     * to the same value.
-     */
-    maybeMergeConstraints(variable) {
-        if (!this.maybeMergeCanReadSubset(variable.canReadSubset)) {
-            return false;
-        }
-        return this.maybeMergeCanWriteSuperset(variable.canWriteSuperset);
-    }
-    /**
-     * Merge a type variable's read subset (upper bound) constraints into this variable.
-     * This is used to accumulate read constraints when resolving a handle's type.
-     */
-    maybeMergeCanReadSubset(constraint) {
-        if (constraint == null) {
-            return true;
-        }
-        if (this.canReadSubset == null) {
-            this.canReadSubset = constraint;
-            return true;
-        }
-        if (this.canReadSubset instanceof _type_js__WEBPACK_IMPORTED_MODULE_2__["SlotType"] && constraint instanceof _type_js__WEBPACK_IMPORTED_MODULE_2__["SlotType"]) {
-            // TODO: formFactor compatibility, etc.
-            return true;
-        }
-        if (this.canReadSubset instanceof _type_js__WEBPACK_IMPORTED_MODULE_2__["EntityType"] && constraint instanceof _type_js__WEBPACK_IMPORTED_MODULE_2__["EntityType"]) {
-            const mergedSchema = _schema_js__WEBPACK_IMPORTED_MODULE_1__["Schema"].intersect(this.canReadSubset.entitySchema, constraint.entitySchema);
-            if (!mergedSchema) {
-                return false;
-            }
-            this.canReadSubset = new _type_js__WEBPACK_IMPORTED_MODULE_2__["EntityType"](mergedSchema);
-            return true;
-        }
-        return false;
-    }
-    /**
-     * merge a type variable's write superset (lower bound) constraints into this variable.
-     * This is used to accumulate write constraints when resolving a handle's type.
-     */
-    maybeMergeCanWriteSuperset(constraint) {
-        if (constraint == null) {
-            return true;
-        }
-        if (this.canWriteSuperset == null) {
-            this.canWriteSuperset = constraint;
-            return true;
-        }
-        if (this.canWriteSuperset instanceof _type_js__WEBPACK_IMPORTED_MODULE_2__["SlotType"] && constraint instanceof _type_js__WEBPACK_IMPORTED_MODULE_2__["SlotType"]) {
-            // TODO: formFactor compatibility, etc.
-            return true;
-        }
-        if (this.canWriteSuperset instanceof _type_js__WEBPACK_IMPORTED_MODULE_2__["EntityType"] && constraint instanceof _type_js__WEBPACK_IMPORTED_MODULE_2__["EntityType"]) {
-            const mergedSchema = _schema_js__WEBPACK_IMPORTED_MODULE_1__["Schema"].union(this.canWriteSuperset.entitySchema, constraint.entitySchema);
-            if (!mergedSchema) {
-                return false;
-            }
-            this.canWriteSuperset = new _type_js__WEBPACK_IMPORTED_MODULE_2__["EntityType"](mergedSchema);
-            return true;
-        }
-        return false;
-    }
-    isSatisfiedBy(type) {
-        const constraint = this._canWriteSuperset;
-        if (!constraint) {
-            return true;
-        }
-        if (!(constraint instanceof _type_js__WEBPACK_IMPORTED_MODULE_2__["EntityType"]) || !(type instanceof _type_js__WEBPACK_IMPORTED_MODULE_2__["EntityType"])) {
-            throw new Error(`constraint checking not implemented for ${this} and ${type}`);
-        }
-        return type.getEntitySchema().isMoreSpecificThan(constraint.getEntitySchema());
-    }
-    get resolution() {
-        if (this._resolution) {
-            return this._resolution.resolvedType();
-        }
-        return null;
-    }
-    isValidResolutionCandidate(value) {
-        const elementType = value.resolvedType().getContainedType();
-        if (elementType instanceof _type_js__WEBPACK_IMPORTED_MODULE_2__["TypeVariable"] && elementType.variable === this) {
-            return { result: false, detail: 'variable cannot resolve to collection of itself' };
-        }
-        return { result: true };
-    }
-    set resolution(value) {
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(!this._resolution);
-        const isValid = this.isValidResolutionCandidate(value);
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(isValid.result, isValid.detail);
-        let probe = value;
-        while (probe) {
-            if (!(probe instanceof _type_js__WEBPACK_IMPORTED_MODULE_2__["TypeVariable"])) {
-                break;
-            }
-            if (probe.variable === this) {
-                return;
-            }
-            probe = probe.variable.resolution;
-        }
-        this._resolution = value;
-        this._canWriteSuperset = null;
-        this._canReadSubset = null;
-    }
-    get canWriteSuperset() {
-        if (this._resolution) {
-            Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(!this._canWriteSuperset);
-            if (this._resolution instanceof _type_js__WEBPACK_IMPORTED_MODULE_2__["TypeVariable"]) {
-                return this._resolution.variable.canWriteSuperset;
-            }
-            return null;
-        }
-        return this._canWriteSuperset;
-    }
-    set canWriteSuperset(value) {
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(!this._resolution);
-        this._canWriteSuperset = value;
-    }
-    get canReadSubset() {
-        if (this._resolution) {
-            Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(!this._canReadSubset);
-            if (this._resolution instanceof _type_js__WEBPACK_IMPORTED_MODULE_2__["TypeVariable"]) {
-                return this._resolution.variable.canReadSubset;
-            }
-            return null;
-        }
-        return this._canReadSubset;
-    }
-    set canReadSubset(value) {
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(!this._resolution);
-        this._canReadSubset = value;
-    }
-    get hasConstraint() {
-        return this._canReadSubset !== null || this._canWriteSuperset !== null;
-    }
-    canEnsureResolved() {
-        if (this._resolution) {
-            return this._resolution.canEnsureResolved();
-        }
-        if (this._canWriteSuperset || this._canReadSubset) {
-            return true;
-        }
-        return false;
-    }
-    maybeEnsureResolved() {
-        if (this._resolution) {
-            return this._resolution.maybeEnsureResolved();
-        }
-        if (this._canWriteSuperset) {
-            this.resolution = this._canWriteSuperset;
-            return true;
-        }
-        if (this._canReadSubset) {
-            this.resolution = this._canReadSubset;
-            return true;
-        }
-        return false;
-    }
-    toLiteral() {
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(this.resolution == null);
-        return this.toLiteralIgnoringResolutions();
-    }
-    toLiteralIgnoringResolutions() {
-        return {
-            name: this.name,
-            canWriteSuperset: this._canWriteSuperset && this._canWriteSuperset.toLiteral(),
-            canReadSubset: this._canReadSubset && this._canReadSubset.toLiteral()
-        };
-    }
-    static fromLiteral(data) {
-        return new TypeVariableInfo(data.name, data.canWriteSuperset ? _type_js__WEBPACK_IMPORTED_MODULE_2__["Type"].fromLiteral(data.canWriteSuperset) : null, data.canReadSubset ? _type_js__WEBPACK_IMPORTED_MODULE_2__["Type"].fromLiteral(data.canReadSubset) : null);
-    }
-    isResolved() {
-        return (this._resolution && this._resolution.isResolved());
-    }
-}
-//# sourceMappingURL=type-variable-info.js.map
-
-/***/ }),
-/* 21 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CheckType", function() { return CheckType; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Check", function() { return Check; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CheckBooleanExpression", function() { return CheckBooleanExpression; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CheckHasTag", function() { return CheckHasTag; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CheckIsFromHandle", function() { return CheckIsFromHandle; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CheckIsFromStore", function() { return CheckIsFromStore; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createCheck", function() { return createCheck; });
-/* harmony import */ var _particle_spec_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(5);
-/* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(3);
-/**
- * @license
- * Copyright 2019 Google LLC.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-
-
-/** The different types of trust checks that particles can make. */
-var CheckType;
-(function (CheckType) {
-    CheckType["HasTag"] = "has-tag";
-    CheckType["IsFromHandle"] = "is-from-handle";
-    CheckType["IsFromStore"] = "is-from-store";
-})(CheckType || (CheckType = {}));
-class Check {
-    constructor(target, expression) {
-        this.target = target;
-        this.expression = expression;
-    }
-    toManifestString() {
-        let targetString;
-        if (this.target instanceof _particle_spec_js__WEBPACK_IMPORTED_MODULE_0__["HandleConnectionSpec"]) {
-            targetString = this.target.name;
-        }
-        else {
-            targetString = `${this.target.name} data`;
-        }
-        return `check ${targetString} ${this.expression.toManifestString()}`;
-    }
-}
-/** A boolean expression inside a trust check. */
-class CheckBooleanExpression {
-    constructor(type, children) {
-        this.type = type;
-        this.children = children;
-    }
-    /**
-     * @inheritdoc
-     * @param requireParens Indicates whether to enclose the expression inside parentheses. All nested boolean expressions must have parentheses,
-     *     but a top-level expression doesn't need to.
-     */
-    toManifestString(requireParens = false) {
-        const str = this.children.map(child => child.toManifestString(/* requireParens= */ true)).join(` ${this.type} `);
-        return requireParens ? `(${str})` : str;
-    }
-}
-/** A check condition of the form 'check x is <tag>'. */
-class CheckHasTag {
-    constructor(tag, isNot) {
-        this.tag = tag;
-        this.isNot = isNot;
-        this.type = CheckType.HasTag;
-    }
-    static fromASTNode(astNode) {
-        return new CheckHasTag(astNode.tag, astNode.isNot);
-    }
-    toManifestString() {
-        return `is ${this.isNot ? 'not ' : ''}${this.tag}`;
-    }
-}
-/** A check condition of the form 'check x is from handle <handle>'. */
-class CheckIsFromHandle {
-    constructor(parentHandle, isNot) {
-        this.parentHandle = parentHandle;
-        this.isNot = isNot;
-        this.type = CheckType.IsFromHandle;
-    }
-    static fromASTNode(astNode, handleConnectionMap) {
-        const parentHandle = handleConnectionMap.get(astNode.parentHandle);
-        if (!parentHandle) {
-            throw new Error(`Unknown "check is from handle" handle name: ${parentHandle}.`);
-        }
-        return new CheckIsFromHandle(parentHandle, astNode.isNot);
-    }
-    toManifestString() {
-        return `is ${this.isNot ? 'not ' : ''}from handle ${this.parentHandle.name}`;
-    }
-}
-/** A check condition of the form 'check x is from store <store reference>'. */
-class CheckIsFromStore {
-    constructor(storeRef, isNot) {
-        this.storeRef = storeRef;
-        this.isNot = isNot;
-        this.type = CheckType.IsFromStore;
-    }
-    static fromASTNode(astNode) {
-        return new CheckIsFromStore({
-            type: astNode.storeRef.type,
-            store: astNode.storeRef.store,
-        }, astNode.isNot);
-    }
-    toManifestString() {
-        let store = this.storeRef.store;
-        if (this.storeRef.type === 'id') {
-            // Put the ID inside single-quotes.
-            store = `'${store}'`;
-        }
-        return `is ${this.isNot ? 'not ' : ''}from store ${store}`;
-    }
-}
-/** Converts the given AST node into a CheckCondition object. */
-function createCheckCondition(astNode, handleConnectionMap) {
-    switch (astNode.checkType) {
-        case CheckType.HasTag:
-            return CheckHasTag.fromASTNode(astNode);
-        case CheckType.IsFromHandle:
-            return CheckIsFromHandle.fromASTNode(astNode, handleConnectionMap);
-        case CheckType.IsFromStore:
-            return CheckIsFromStore.fromASTNode(astNode);
-        default:
-            throw new Error('Unknown check type.');
-    }
-}
-/** Converts the given AST node into a CheckExpression object. */
-function createCheckExpression(astNode, handleConnectionMap) {
-    if (astNode.kind === 'particle-trust-check-boolean-expression') {
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_1__["assert"])(astNode.children.length >= 2, 'Boolean check expressions must have at least two children.');
-        return new CheckBooleanExpression(astNode.operator, astNode.children.map(child => createCheckExpression(child, handleConnectionMap)));
-    }
-    else {
-        return createCheckCondition(astNode, handleConnectionMap);
-    }
-}
-/** Converts the given AST node into a Check object. */
-function createCheck(checkTarget, astNode, handleConnectionMap) {
-    const expression = createCheckExpression(astNode.expression, handleConnectionMap);
-    return new Check(checkTarget, expression);
-}
-//# sourceMappingURL=particle-check.js.map
-
-/***/ }),
-/* 22 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ClaimType", function() { return ClaimType; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ParticleClaim", function() { return ParticleClaim; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ClaimIsTag", function() { return ClaimIsTag; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ClaimDerivesFrom", function() { return ClaimDerivesFrom; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createParticleClaim", function() { return createParticleClaim; });
-/**
- * @license
- * Copyright 2019 Google LLC.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-/** The different types of trust claims that particles can make. */
-var ClaimType;
-(function (ClaimType) {
-    ClaimType["IsTag"] = "is-tag";
-    ClaimType["DerivesFrom"] = "derives-from";
-})(ClaimType || (ClaimType = {}));
-/** A list of claims made by a particle on a specific handle. */
-class ParticleClaim {
-    constructor(handle, claims) {
-        this.handle = handle;
-        this.claims = claims;
-    }
-    toManifestString() {
-        const manifestStrings = this.claims.map(claim => claim.toManifestString());
-        return `claim ${this.handle.name} ${manifestStrings.join(' and ')}`;
-    }
-}
-class ClaimIsTag {
-    constructor(isNot, tag) {
-        this.isNot = isNot;
-        this.tag = tag;
-        this.type = ClaimType.IsTag;
-    }
-    static fromASTNode(astNode) {
-        return new ClaimIsTag(astNode.isNot, astNode.tag);
-    }
-    toManifestString() {
-        return `is ${this.isNot ? 'not ' : ''}${this.tag}`;
-    }
-}
-class ClaimDerivesFrom {
-    constructor(parentHandle) {
-        this.parentHandle = parentHandle;
-        this.type = ClaimType.DerivesFrom;
-    }
-    static fromASTNode(astNode, handleConnectionMap) {
-        // Convert handle names into HandleConnectionSpec objects.
-        const parentHandle = handleConnectionMap.get(astNode.parentHandle);
-        if (!parentHandle) {
-            throw new Error(`Unknown "derives from" handle name: ${parentHandle}.`);
-        }
-        return new ClaimDerivesFrom(parentHandle);
-    }
-    toManifestString() {
-        return `derives from ${this.parentHandle.name}`;
-    }
-}
-function createParticleClaim(handle, astNode, handleConnectionMap) {
-    const claims = astNode.expression.map(claimNode => {
-        switch (claimNode.claimType) {
-            case ClaimType.IsTag:
-                return ClaimIsTag.fromASTNode(claimNode);
-            case ClaimType.DerivesFrom:
-                return ClaimDerivesFrom.fromASTNode(claimNode, handleConnectionMap);
-            default:
-                throw new Error('Unknown claim type.');
-        }
-    });
-    return new ParticleClaim(handle, claims);
-}
-//# sourceMappingURL=particle-claim.js.map
-
-/***/ }),
-/* 23 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "setDiff", function() { return setDiff; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "setDiffCustom", function() { return setDiffCustom; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "floatingPromiseToAudit", function() { return floatingPromiseToAudit; });
-/* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
-/**
- * @license
- * Copyright (c) 2018 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-
-/**
- * Returns the set delta between two lists based on direct object comparison.
- */
-function setDiff(from, to) {
-    const result = { add: [], remove: [] };
-    const items = new Set([...from, ...to]);
-    const fromSet = new Set(from);
-    const toSet = new Set(to);
-    for (const item of items) {
-        if (fromSet.has(item)) {
-            if (toSet.has(item)) {
-                continue;
-            }
-            result.remove.push(item);
-            continue;
-        }
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(toSet.has(item));
-        result.add.push(item);
-    }
-    return result;
-}
-/**
- * Returns the set delta between two lists based on custom object comparison.
- * `keyFn` takes type T and returns the value by which items should be compared.
- */
-function setDiffCustom(from, to, keyFn) {
-    const result = { add: [], remove: [] };
-    const items = new Map();
-    const fromSet = new Map();
-    const toSet = new Map();
-    for (const item of from) {
-        const key = keyFn(item);
-        items.set(key, item);
-        fromSet.set(key, item);
-    }
-    for (const item of to) {
-        const key = keyFn(item);
-        items.set(key, item);
-        toSet.set(key, item);
-    }
-    for (const [key, item] of items) {
-        if (fromSet.has(key)) {
-            if (toSet.has(key)) {
-                continue;
-            }
-            result.remove.push(item);
-            continue;
-        }
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(toSet.has(key));
-        result.add.push(item);
-    }
-    return result;
-}
-/**
- * A hack to ignore a floating promise and bypass the linter. Promises should very rarely be left floating, and when such behaviour is intended,
- * it should be clearly marked as such. See https://tsetse.info/must-use-promises.html for details.
- *
- * TODO: Remove all usages of this function and then delete it.
- */
-function floatingPromiseToAudit(promise) { }
-//# sourceMappingURL=util.js.map
-
-/***/ }),
-/* 24 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SlotProxy", function() { return SlotProxy; });
-/**
- * @license
- * Copyright (c) 2017 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-/**
- * A representation of a consumed slot. Retrieved from a particle using
- * particle.getSlot(name)
- */
-class SlotProxy {
-    constructor(apiPort, particle, slotName, providedSlots) {
-        // eslint-disable-next-line func-call-spacing
-        this.handlers = new Map();
-        this.requestedContentTypes = new Set();
-        this._isRendered = false;
-        this.apiPort = apiPort;
-        this.slotName = slotName;
-        this.particle = particle;
-        this.providedSlots = providedSlots;
-    }
-    get isRendered() {
-        return this._isRendered;
-    }
-    /**
-     * renders content to the slot.
-     */
-    render(content) {
-        this.apiPort.Render(this.particle, this.slotName, content);
-        Object.keys(content).forEach(key => { this.requestedContentTypes.delete(key); });
-        // Slot is considered rendered, if a non-empty content was sent and all requested content types were fullfilled.
-        this._isRendered = this.requestedContentTypes.size === 0 && (Object.keys(content).length > 0);
-    }
-    /**
-     * registers a callback to be invoked when 'name' event happens.
-     */
-    registerEventHandler(name, f) {
-        if (!this.handlers.has(name)) {
-            this.handlers.set(name, []);
-        }
-        this.handlers.get(name).push(f);
-    }
-    clearEventHandlers(name) {
-        this.handlers.set(name, []);
-    }
-    fireEvent(event) {
-        for (const handler of this.handlers.get(event.handler) || []) {
-            handler(event);
-        }
-    }
-}
-//# sourceMappingURL=slot-proxy.js.map
-
-/***/ }),
-/* 25 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "StorageProxy", function() { return StorageProxy; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CollectionProxy", function() { return CollectionProxy; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SingletonProxy", function() { return SingletonProxy; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "BigCollectionProxy", function() { return BigCollectionProxy; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "NoOpStorageProxy", function() { return NoOpStorageProxy; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "StorageProxyScheduler", function() { return StorageProxyScheduler; });
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
-/* harmony import */ var _platform_sourcemapped_stacktrace_web_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(26);
+/* harmony import */ var _platform_sourcemapped_stacktrace_web_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(16);
 /* harmony import */ var _arc_exceptions_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(14);
-/* harmony import */ var _storage_crdt_collection_model_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(27);
+/* harmony import */ var _storage_crdt_collection_model_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(17);
 /* harmony import */ var _type_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(8);
-/* harmony import */ var _id_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(15);
+/* harmony import */ var _id_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(18);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -4938,6 +4136,9 @@ class StorageProxy {
         }
         return new SingletonProxy(id, type, port, pec, scheduler, name);
     }
+    static newNoOpProxy(type) {
+        return new NoOpStorageProxy(null, type, null, null, null, 'NoOpStorage');
+    }
     reportExceptionInHost(exception) {
         // TODO: Encapsulate source-mapping of the stack trace once there are more users of the port.RaiseSystemException() call.
         if (_platform_sourcemapped_stacktrace_web_js__WEBPACK_IMPORTED_MODULE_1__["mapStackTrace"]) {
@@ -4978,6 +4179,12 @@ class StorageProxy {
                 this.scheduler.enqueue(particle, handle, ['sync', particle, syncModel]);
             }
         }
+    }
+    /**
+     * Called by Handle to dissociate particle/handle pair associated with this proxy
+     */
+    deregister(particleIn, handleIn) {
+        this.observers = this.observers.filter(({ particle, handle }) => particle !== particleIn || handle !== handleIn);
     }
     _onSynchronize({ version, model }) {
         if (this.version !== undefined && version <= this.version) {
@@ -5362,6 +4569,66 @@ class BigCollectionProxy extends StorageProxy {
         return Promise.resolve();
     }
 }
+/**
+ * NoOpStorageProxy is an implementation of StorageProxy that does no operations. It silently
+ * absorbs and throws away all changes without creating any logging, warnings or any other visible
+ * behaviors or persistent changes.
+ *
+ * It is aimed to be used by disabled particles to finish their job without causing any post-disabled
+ * async errors, etc.
+ *
+ * TODO(sherrypra): Add a unit test to ensure this stays in sync with the real storage APIs
+ */
+class NoOpStorageProxy extends StorageProxy {
+    _getModelForSync() {
+        return null;
+    }
+    _synchronizeModel(version, model) {
+        return true;
+    }
+    _processUpdate(update, apply) {
+        return null;
+    }
+    reportExceptionInHost(exception) { }
+    deregister() { }
+    register() { }
+    _onSynchronize({ version, model }) { }
+    _onUpdate(update) { }
+    _notify(kind, details, predicate = (ignored) => true) { }
+    _processUpdates() { }
+    generateBarrier() {
+        return null;
+    }
+    async get(id) {
+        return new Promise(resolve => { });
+    }
+    // tslint:disable-next-line: no-any
+    async store(value, keys, particleId) {
+        return new Promise(resolve => { });
+    }
+    async clear(particleId) {
+        return new Promise(resolve => { });
+    }
+    async remove(id, keys, particleId) {
+        return new Promise(resolve => { });
+    }
+    async toList() {
+        return new Promise(resolve => { });
+    }
+    async stream(pageSize, forward) {
+        return new Promise(resolve => { });
+    }
+    // tslint:disable-next-line: no-any
+    async cursorNext(cursorId) {
+        return new Promise(resolve => { });
+    }
+    async cursorClose(cursorId) {
+        throw new Promise(resolve => { });
+    }
+    async set(entity, particleId) {
+        throw new Promise(resolve => { });
+    }
+}
 class StorageProxyScheduler {
     constructor() {
         this._scheduled = false;
@@ -5438,7 +4705,7 @@ class StorageProxyScheduler {
 //# sourceMappingURL=storage-proxy.js.map
 
 /***/ }),
-/* 26 */
+/* 16 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -5460,7 +4727,7 @@ const mapStackTrace = (x, f) => f([x]);
 //# sourceMappingURL=sourcemapped-stacktrace-node.js.map
 
 /***/ }),
-/* 27 */
+/* 17 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -5587,6 +4854,835 @@ class CrdtCollectionModel {
     }
 }
 //# sourceMappingURL=crdt-collection-model.js.map
+
+/***/ }),
+/* 18 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "IdGenerator", function() { return IdGenerator; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Id", function() { return Id; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ArcId", function() { return ArcId; });
+/* harmony import */ var _random_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(19);
+/**
+ * @license
+ * Copyright (c) 2017 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+
+/**
+ * Generates new IDs which are rooted in the current session. Only one IdGenerator should be instantiated for each running Arc, and all of the
+ * IDs created should be created using that same IdGenerator instance.
+ */
+class IdGenerator {
+    /** Use the newSession factory method instead. */
+    constructor(currentSessionId) {
+        this._nextComponentId = 0;
+        this._currentSessionId = currentSessionId;
+    }
+    /** Generates a new random session ID to use when creating new IDs. */
+    static newSession() {
+        const sessionId = Math.floor(_random_js__WEBPACK_IMPORTED_MODULE_0__["Random"].next() * Math.pow(2, 50)) + '';
+        return new IdGenerator(sessionId);
+    }
+    /**
+     * Intended only for testing the IdGenerator class itself. Lets you specify the session ID manually. Prefer using the real
+     * IdGenerator.newSession() method when testing other classes.
+     */
+    static createWithSessionIdForTesting(sessionId) {
+        return new IdGenerator(sessionId);
+    }
+    newArcId(name) {
+        return ArcId._newArcIdInternal(this._currentSessionId, name);
+    }
+    /**
+     * Creates a new ID, as a child of the given parentId. The given subcomponent will be appended to the component hierarchy of the given ID, but
+     * the generator's random session ID will be used as the ID's root.
+     */
+    newChildId(parentId, subcomponent = '') {
+        // Append (and increment) a counter to the subcomponent, to ensure that it is unique.
+        subcomponent += this._nextComponentId++;
+        return Id._newIdInternal(this._currentSessionId, [...parentId.idTree, subcomponent]);
+    }
+    get currentSessionIdForTesting() {
+        return this._currentSessionId;
+    }
+}
+/**
+ * An immutable object consisting of two components: a root, and an idTree. The root is the session ID from the particular session in which the
+ * ID was constructed (see the IdGenerator class). The idTree is a list of subcomponents, forming a hierarchy of IDs (child IDs are created by
+ * appending subcomponents to their parent ID's idTree).
+ */
+class Id {
+    /** Protected constructor. Use IdGenerator to create new IDs instead. */
+    constructor(root, idTree = []) {
+        /** The components of the idTree. */
+        this.idTree = [];
+        this.root = root;
+        this.idTree = idTree;
+    }
+    /** Creates a new ID. Use IdGenerator to create new IDs instead. */
+    static _newIdInternal(root, idTree = []) {
+        return new Id(root, idTree);
+    }
+    /** Parses a string representation of an ID (see toString). */
+    static fromString(str) {
+        const bits = str.split(':');
+        if (bits[0].startsWith('!')) {
+            const root = bits[0].slice(1);
+            const idTree = bits.slice(1).filter(component => component.length > 0);
+            return new Id(root, idTree);
+        }
+        else {
+            return new Id('', bits);
+        }
+    }
+    /** Returns the full ID string. */
+    toString() {
+        return `!${this.root}:${this.idTree.join(':')}`;
+    }
+    /** Returns the idTree as as string (without the root). */
+    idTreeAsString() {
+        return this.idTree.join(':');
+    }
+    equal(id) {
+        if (id.root !== this.root || id.idTree.length !== this.idTree.length) {
+            return false;
+        }
+        for (let i = 0; i < id.idTree.length; i++) {
+            if (id.idTree[i] !== this.idTree[i]) {
+                return false;
+            }
+        }
+        return true;
+    }
+}
+class ArcId extends Id {
+    /** Creates a new Arc ID. Use IdGenerator to create new IDs instead. */
+    static _newArcIdInternal(root, name) {
+        return new ArcId(root, [name]);
+    }
+    /** Creates a new Arc ID with the given name. For convenience in unit testing only; otherwise use IdGenerator to create new IDs instead. */
+    static newForTest(id) {
+        return IdGenerator.newSession().newArcId(id);
+    }
+}
+//# sourceMappingURL=id.js.map
+
+/***/ }),
+/* 19 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Random", function() { return Random; });
+/**
+ * @license
+ * Copyright (c) 2018 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+class RNG {
+}
+/**
+ * A basic random number generator using Math.random();
+ */
+class MathRandomRNG extends RNG {
+    next() {
+        return Math.random();
+    }
+}
+// Singleton Pattern
+const random = new MathRandomRNG();
+class Random {
+    static next() {
+        return random.next();
+    }
+}
+//# sourceMappingURL=random.js.map
+
+/***/ }),
+/* 20 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SYMBOL_INTERNALS", function() { return SYMBOL_INTERNALS; });
+/**
+ * @license
+ * Copyright (c) 2017 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+// TypeScript seems to lose the necessary type info if this symbol is wrapped in an object and then
+// used as an interface key (e.g. 'interface Foo { [Symbols.internals]: {...} }'), so we just have
+// to export it as a standard variable. See the EntityInternals class for the usage of this symbol.
+const SYMBOL_INTERNALS = Symbol('internals');
+//# sourceMappingURL=symbols.js.map
+
+/***/ }),
+/* 21 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SlotInfo", function() { return SlotInfo; });
+/**
+ * @license
+ * Copyright (c) 2017 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+class SlotInfo {
+    constructor(formFactor, handle) {
+        this.formFactor = formFactor;
+        this.handle = handle;
+    }
+    toLiteral() {
+        return this;
+    }
+    static fromLiteral({ formFactor, handle }) {
+        return new SlotInfo(formFactor, handle);
+    }
+}
+//# sourceMappingURL=slot-info.js.map
+
+/***/ }),
+/* 22 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ArcInfo", function() { return ArcInfo; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ArcHandle", function() { return ArcHandle; });
+/**
+ * @license
+ * Copyright (c) 2018 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+// Equivalent to an Entity with Schema { serialization Text }
+class ArcInfo {
+    constructor(arcId, serialization) {
+        this.id = arcId.toString();
+        // TODO: remove the import-removal hack when import statements no longer appear
+        // in serialized manifests, or deal with them correctly if they end up staying
+        this.serialization = serialization.replace(/\bimport .*\n/g, '');
+    }
+    // Retrieves the serialized string from a stored instance of ArcInfo.
+    static extractSerialization(data) {
+        return data.serialization.replace(/\bimport .*\n/g, '');
+    }
+}
+class ArcHandle {
+    constructor(id, storageKey, type, tags) {
+        this.id = id;
+        this.storageKey = storageKey;
+        this.type = type;
+        this.tags = tags;
+    }
+}
+//# sourceMappingURL=synthetic-types.js.map
+
+/***/ }),
+/* 23 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "TypeVariableInfo", function() { return TypeVariableInfo; });
+/* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
+/* harmony import */ var _schema_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(10);
+/* harmony import */ var _type_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(8);
+/**
+ * @license
+ * Copyright (c) 2017 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+
+
+
+class TypeVariableInfo {
+    constructor(name, canWriteSuperset, canReadSubset) {
+        this.name = name;
+        this._canWriteSuperset = canWriteSuperset;
+        this._canReadSubset = canReadSubset;
+        this._resolution = null;
+    }
+    /**
+     * Merge both the read subset (upper bound) and write superset (lower bound) constraints
+     * of two variables together. Use this when two separate type variables need to resolve
+     * to the same value.
+     */
+    maybeMergeConstraints(variable) {
+        if (!this.maybeMergeCanReadSubset(variable.canReadSubset)) {
+            return false;
+        }
+        return this.maybeMergeCanWriteSuperset(variable.canWriteSuperset);
+    }
+    /**
+     * Merge a type variable's read subset (upper bound) constraints into this variable.
+     * This is used to accumulate read constraints when resolving a handle's type.
+     */
+    maybeMergeCanReadSubset(constraint) {
+        if (constraint == null) {
+            return true;
+        }
+        if (this.canReadSubset == null) {
+            this.canReadSubset = constraint;
+            return true;
+        }
+        if (this.canReadSubset instanceof _type_js__WEBPACK_IMPORTED_MODULE_2__["SlotType"] && constraint instanceof _type_js__WEBPACK_IMPORTED_MODULE_2__["SlotType"]) {
+            // TODO: formFactor compatibility, etc.
+            return true;
+        }
+        if (this.canReadSubset instanceof _type_js__WEBPACK_IMPORTED_MODULE_2__["EntityType"] && constraint instanceof _type_js__WEBPACK_IMPORTED_MODULE_2__["EntityType"]) {
+            const mergedSchema = _schema_js__WEBPACK_IMPORTED_MODULE_1__["Schema"].intersect(this.canReadSubset.entitySchema, constraint.entitySchema);
+            if (!mergedSchema) {
+                return false;
+            }
+            this.canReadSubset = new _type_js__WEBPACK_IMPORTED_MODULE_2__["EntityType"](mergedSchema);
+            return true;
+        }
+        return false;
+    }
+    /**
+     * merge a type variable's write superset (lower bound) constraints into this variable.
+     * This is used to accumulate write constraints when resolving a handle's type.
+     */
+    maybeMergeCanWriteSuperset(constraint) {
+        if (constraint == null) {
+            return true;
+        }
+        if (this.canWriteSuperset == null) {
+            this.canWriteSuperset = constraint;
+            return true;
+        }
+        if (this.canWriteSuperset instanceof _type_js__WEBPACK_IMPORTED_MODULE_2__["SlotType"] && constraint instanceof _type_js__WEBPACK_IMPORTED_MODULE_2__["SlotType"]) {
+            // TODO: formFactor compatibility, etc.
+            return true;
+        }
+        if (this.canWriteSuperset instanceof _type_js__WEBPACK_IMPORTED_MODULE_2__["EntityType"] && constraint instanceof _type_js__WEBPACK_IMPORTED_MODULE_2__["EntityType"]) {
+            const mergedSchema = _schema_js__WEBPACK_IMPORTED_MODULE_1__["Schema"].union(this.canWriteSuperset.entitySchema, constraint.entitySchema);
+            if (!mergedSchema) {
+                return false;
+            }
+            this.canWriteSuperset = new _type_js__WEBPACK_IMPORTED_MODULE_2__["EntityType"](mergedSchema);
+            return true;
+        }
+        return false;
+    }
+    isSatisfiedBy(type) {
+        const constraint = this._canWriteSuperset;
+        if (!constraint) {
+            return true;
+        }
+        if (!(constraint instanceof _type_js__WEBPACK_IMPORTED_MODULE_2__["EntityType"]) || !(type instanceof _type_js__WEBPACK_IMPORTED_MODULE_2__["EntityType"])) {
+            throw new Error(`constraint checking not implemented for ${this} and ${type}`);
+        }
+        return type.getEntitySchema().isMoreSpecificThan(constraint.getEntitySchema());
+    }
+    get resolution() {
+        if (this._resolution) {
+            return this._resolution.resolvedType();
+        }
+        return null;
+    }
+    isValidResolutionCandidate(value) {
+        const elementType = value.resolvedType().getContainedType();
+        if (elementType instanceof _type_js__WEBPACK_IMPORTED_MODULE_2__["TypeVariable"] && elementType.variable === this) {
+            return { result: false, detail: 'variable cannot resolve to collection of itself' };
+        }
+        return { result: true };
+    }
+    set resolution(value) {
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(!this._resolution);
+        const isValid = this.isValidResolutionCandidate(value);
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(isValid.result, isValid.detail);
+        let probe = value;
+        while (probe) {
+            if (!(probe instanceof _type_js__WEBPACK_IMPORTED_MODULE_2__["TypeVariable"])) {
+                break;
+            }
+            if (probe.variable === this) {
+                return;
+            }
+            probe = probe.variable.resolution;
+        }
+        this._resolution = value;
+        this._canWriteSuperset = null;
+        this._canReadSubset = null;
+    }
+    get canWriteSuperset() {
+        if (this._resolution) {
+            Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(!this._canWriteSuperset);
+            if (this._resolution instanceof _type_js__WEBPACK_IMPORTED_MODULE_2__["TypeVariable"]) {
+                return this._resolution.variable.canWriteSuperset;
+            }
+            return null;
+        }
+        return this._canWriteSuperset;
+    }
+    set canWriteSuperset(value) {
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(!this._resolution);
+        this._canWriteSuperset = value;
+    }
+    get canReadSubset() {
+        if (this._resolution) {
+            Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(!this._canReadSubset);
+            if (this._resolution instanceof _type_js__WEBPACK_IMPORTED_MODULE_2__["TypeVariable"]) {
+                return this._resolution.variable.canReadSubset;
+            }
+            return null;
+        }
+        return this._canReadSubset;
+    }
+    set canReadSubset(value) {
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(!this._resolution);
+        this._canReadSubset = value;
+    }
+    get hasConstraint() {
+        return this._canReadSubset !== null || this._canWriteSuperset !== null;
+    }
+    canEnsureResolved() {
+        if (this._resolution) {
+            return this._resolution.canEnsureResolved();
+        }
+        if (this._canWriteSuperset || this._canReadSubset) {
+            return true;
+        }
+        return false;
+    }
+    maybeEnsureResolved() {
+        if (this._resolution) {
+            return this._resolution.maybeEnsureResolved();
+        }
+        if (this._canWriteSuperset) {
+            this.resolution = this._canWriteSuperset;
+            return true;
+        }
+        if (this._canReadSubset) {
+            this.resolution = this._canReadSubset;
+            return true;
+        }
+        return false;
+    }
+    toLiteral() {
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(this.resolution == null);
+        return this.toLiteralIgnoringResolutions();
+    }
+    toLiteralIgnoringResolutions() {
+        return {
+            name: this.name,
+            canWriteSuperset: this._canWriteSuperset && this._canWriteSuperset.toLiteral(),
+            canReadSubset: this._canReadSubset && this._canReadSubset.toLiteral()
+        };
+    }
+    static fromLiteral(data) {
+        return new TypeVariableInfo(data.name, data.canWriteSuperset ? _type_js__WEBPACK_IMPORTED_MODULE_2__["Type"].fromLiteral(data.canWriteSuperset) : null, data.canReadSubset ? _type_js__WEBPACK_IMPORTED_MODULE_2__["Type"].fromLiteral(data.canReadSubset) : null);
+    }
+    isResolved() {
+        return (this._resolution && this._resolution.isResolved());
+    }
+}
+//# sourceMappingURL=type-variable-info.js.map
+
+/***/ }),
+/* 24 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CheckType", function() { return CheckType; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Check", function() { return Check; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CheckBooleanExpression", function() { return CheckBooleanExpression; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CheckHasTag", function() { return CheckHasTag; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CheckIsFromHandle", function() { return CheckIsFromHandle; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CheckIsFromStore", function() { return CheckIsFromStore; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createCheck", function() { return createCheck; });
+/* harmony import */ var _particle_spec_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(5);
+/* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(3);
+/**
+ * @license
+ * Copyright 2019 Google LLC.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+
+
+/** The different types of trust checks that particles can make. */
+var CheckType;
+(function (CheckType) {
+    CheckType["HasTag"] = "has-tag";
+    CheckType["IsFromHandle"] = "is-from-handle";
+    CheckType["IsFromStore"] = "is-from-store";
+})(CheckType || (CheckType = {}));
+class Check {
+    constructor(target, expression) {
+        this.target = target;
+        this.expression = expression;
+    }
+    toManifestString() {
+        let targetString;
+        if (this.target instanceof _particle_spec_js__WEBPACK_IMPORTED_MODULE_0__["HandleConnectionSpec"]) {
+            targetString = this.target.name;
+        }
+        else {
+            targetString = `${this.target.name} data`;
+        }
+        return `check ${targetString} ${this.expression.toManifestString()}`;
+    }
+}
+/** A boolean expression inside a trust check. */
+class CheckBooleanExpression {
+    constructor(type, children) {
+        this.type = type;
+        this.children = children;
+    }
+    /**
+     * @inheritdoc
+     * @param requireParens Indicates whether to enclose the expression inside parentheses. All nested boolean expressions must have parentheses,
+     *     but a top-level expression doesn't need to.
+     */
+    toManifestString(requireParens = false) {
+        const str = this.children.map(child => child.toManifestString(/* requireParens= */ true)).join(` ${this.type} `);
+        return requireParens ? `(${str})` : str;
+    }
+}
+/** A check condition of the form 'check x is <tag>'. */
+class CheckHasTag {
+    constructor(tag, isNot) {
+        this.tag = tag;
+        this.isNot = isNot;
+        this.type = CheckType.HasTag;
+    }
+    static fromASTNode(astNode) {
+        return new CheckHasTag(astNode.tag, astNode.isNot);
+    }
+    toManifestString() {
+        return `is ${this.isNot ? 'not ' : ''}${this.tag}`;
+    }
+}
+/** A check condition of the form 'check x is from handle <handle>'. */
+class CheckIsFromHandle {
+    constructor(parentHandle, isNot) {
+        this.parentHandle = parentHandle;
+        this.isNot = isNot;
+        this.type = CheckType.IsFromHandle;
+    }
+    static fromASTNode(astNode, handleConnectionMap) {
+        const parentHandle = handleConnectionMap.get(astNode.parentHandle);
+        if (!parentHandle) {
+            throw new Error(`Unknown "check is from handle" handle name: ${parentHandle}.`);
+        }
+        return new CheckIsFromHandle(parentHandle, astNode.isNot);
+    }
+    toManifestString() {
+        return `is ${this.isNot ? 'not ' : ''}from handle ${this.parentHandle.name}`;
+    }
+}
+/** A check condition of the form 'check x is from store <store reference>'. */
+class CheckIsFromStore {
+    constructor(storeRef, isNot) {
+        this.storeRef = storeRef;
+        this.isNot = isNot;
+        this.type = CheckType.IsFromStore;
+    }
+    static fromASTNode(astNode) {
+        return new CheckIsFromStore({
+            type: astNode.storeRef.type,
+            store: astNode.storeRef.store,
+        }, astNode.isNot);
+    }
+    toManifestString() {
+        let store = this.storeRef.store;
+        if (this.storeRef.type === 'id') {
+            // Put the ID inside single-quotes.
+            store = `'${store}'`;
+        }
+        return `is ${this.isNot ? 'not ' : ''}from store ${store}`;
+    }
+}
+/** Converts the given AST node into a CheckCondition object. */
+function createCheckCondition(astNode, handleConnectionMap) {
+    switch (astNode.checkType) {
+        case CheckType.HasTag:
+            return CheckHasTag.fromASTNode(astNode);
+        case CheckType.IsFromHandle:
+            return CheckIsFromHandle.fromASTNode(astNode, handleConnectionMap);
+        case CheckType.IsFromStore:
+            return CheckIsFromStore.fromASTNode(astNode);
+        default:
+            throw new Error('Unknown check type.');
+    }
+}
+/** Converts the given AST node into a CheckExpression object. */
+function createCheckExpression(astNode, handleConnectionMap) {
+    if (astNode.kind === 'particle-trust-check-boolean-expression') {
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_1__["assert"])(astNode.children.length >= 2, 'Boolean check expressions must have at least two children.');
+        return new CheckBooleanExpression(astNode.operator, astNode.children.map(child => createCheckExpression(child, handleConnectionMap)));
+    }
+    else {
+        return createCheckCondition(astNode, handleConnectionMap);
+    }
+}
+/** Converts the given AST node into a Check object. */
+function createCheck(checkTarget, astNode, handleConnectionMap) {
+    const expression = createCheckExpression(astNode.expression, handleConnectionMap);
+    return new Check(checkTarget, expression);
+}
+//# sourceMappingURL=particle-check.js.map
+
+/***/ }),
+/* 25 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ClaimType", function() { return ClaimType; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ParticleClaim", function() { return ParticleClaim; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ClaimIsTag", function() { return ClaimIsTag; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ClaimDerivesFrom", function() { return ClaimDerivesFrom; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createParticleClaim", function() { return createParticleClaim; });
+/**
+ * @license
+ * Copyright 2019 Google LLC.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+/** The different types of trust claims that particles can make. */
+var ClaimType;
+(function (ClaimType) {
+    ClaimType["IsTag"] = "is-tag";
+    ClaimType["DerivesFrom"] = "derives-from";
+})(ClaimType || (ClaimType = {}));
+/** A list of claims made by a particle on a specific handle. */
+class ParticleClaim {
+    constructor(handle, claims) {
+        this.handle = handle;
+        this.claims = claims;
+    }
+    toManifestString() {
+        const manifestStrings = this.claims.map(claim => claim.toManifestString());
+        return `claim ${this.handle.name} ${manifestStrings.join(' and ')}`;
+    }
+}
+class ClaimIsTag {
+    constructor(isNot, tag) {
+        this.isNot = isNot;
+        this.tag = tag;
+        this.type = ClaimType.IsTag;
+    }
+    static fromASTNode(astNode) {
+        return new ClaimIsTag(astNode.isNot, astNode.tag);
+    }
+    toManifestString() {
+        return `is ${this.isNot ? 'not ' : ''}${this.tag}`;
+    }
+}
+class ClaimDerivesFrom {
+    constructor(parentHandle) {
+        this.parentHandle = parentHandle;
+        this.type = ClaimType.DerivesFrom;
+    }
+    static fromASTNode(astNode, handleConnectionMap) {
+        // Convert handle names into HandleConnectionSpec objects.
+        const parentHandle = handleConnectionMap.get(astNode.parentHandle);
+        if (!parentHandle) {
+            throw new Error(`Unknown "derives from" handle name: ${parentHandle}.`);
+        }
+        return new ClaimDerivesFrom(parentHandle);
+    }
+    toManifestString() {
+        return `derives from ${this.parentHandle.name}`;
+    }
+}
+function createParticleClaim(handle, astNode, handleConnectionMap) {
+    const claims = astNode.expression.map(claimNode => {
+        switch (claimNode.claimType) {
+            case ClaimType.IsTag:
+                return ClaimIsTag.fromASTNode(claimNode);
+            case ClaimType.DerivesFrom:
+                return ClaimDerivesFrom.fromASTNode(claimNode, handleConnectionMap);
+            default:
+                throw new Error('Unknown claim type.');
+        }
+    });
+    return new ParticleClaim(handle, claims);
+}
+//# sourceMappingURL=particle-claim.js.map
+
+/***/ }),
+/* 26 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "setDiff", function() { return setDiff; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "setDiffCustom", function() { return setDiffCustom; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "floatingPromiseToAudit", function() { return floatingPromiseToAudit; });
+/* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
+/**
+ * @license
+ * Copyright (c) 2018 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+
+/**
+ * Returns the set delta between two lists based on direct object comparison.
+ */
+function setDiff(from, to) {
+    const result = { add: [], remove: [] };
+    const items = new Set([...from, ...to]);
+    const fromSet = new Set(from);
+    const toSet = new Set(to);
+    for (const item of items) {
+        if (fromSet.has(item)) {
+            if (toSet.has(item)) {
+                continue;
+            }
+            result.remove.push(item);
+            continue;
+        }
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(toSet.has(item));
+        result.add.push(item);
+    }
+    return result;
+}
+/**
+ * Returns the set delta between two lists based on custom object comparison.
+ * `keyFn` takes type T and returns the value by which items should be compared.
+ */
+function setDiffCustom(from, to, keyFn) {
+    const result = { add: [], remove: [] };
+    const items = new Map();
+    const fromSet = new Map();
+    const toSet = new Map();
+    for (const item of from) {
+        const key = keyFn(item);
+        items.set(key, item);
+        fromSet.set(key, item);
+    }
+    for (const item of to) {
+        const key = keyFn(item);
+        items.set(key, item);
+        toSet.set(key, item);
+    }
+    for (const [key, item] of items) {
+        if (fromSet.has(key)) {
+            if (toSet.has(key)) {
+                continue;
+            }
+            result.remove.push(item);
+            continue;
+        }
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(toSet.has(key));
+        result.add.push(item);
+    }
+    return result;
+}
+/**
+ * A hack to ignore a floating promise and bypass the linter. Promises should very rarely be left floating, and when such behaviour is intended,
+ * it should be clearly marked as such. See https://tsetse.info/must-use-promises.html for details.
+ *
+ * TODO: Remove all usages of this function and then delete it.
+ */
+function floatingPromiseToAudit(promise) { }
+//# sourceMappingURL=util.js.map
+
+/***/ }),
+/* 27 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SlotProxy", function() { return SlotProxy; });
+/**
+ * @license
+ * Copyright (c) 2017 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+/**
+ * A representation of a consumed slot. Retrieved from a particle using
+ * particle.getSlot(name)
+ */
+class SlotProxy {
+    constructor(apiPort, particle, slotName, providedSlots) {
+        // eslint-disable-next-line func-call-spacing
+        this.handlers = new Map();
+        this.requestedContentTypes = new Set();
+        this._isRendered = false;
+        this.apiPort = apiPort;
+        this.slotName = slotName;
+        this.particle = particle;
+        this.providedSlots = providedSlots;
+    }
+    get isRendered() {
+        return this._isRendered;
+    }
+    /**
+     * renders content to the slot.
+     */
+    render(content) {
+        this.apiPort.Render(this.particle, this.slotName, content);
+        Object.keys(content).forEach(key => { this.requestedContentTypes.delete(key); });
+        // Slot is considered rendered, if a non-empty content was sent and all requested content types were fullfilled.
+        this._isRendered = this.requestedContentTypes.size === 0 && (Object.keys(content).length > 0);
+    }
+    /**
+     * registers a callback to be invoked when 'name' event happens.
+     */
+    registerEventHandler(name, f) {
+        if (!this.handlers.has(name)) {
+            this.handlers.set(name, []);
+        }
+        this.handlers.get(name).push(f);
+    }
+    clearEventHandlers(name) {
+        this.handlers.set(name, []);
+    }
+    fireEvent(event) {
+        for (const handler of this.handlers.get(event.handler) || []) {
+            handler(event);
+        }
+    }
+}
+//# sourceMappingURL=slot-proxy.js.map
 
 /***/ }),
 /* 28 */

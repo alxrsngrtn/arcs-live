@@ -11,6 +11,7 @@ import { assert } from '../platform/assert-web.js';
 import { SystemException, UserException } from './arc-exceptions.js';
 import { ParticleSpec } from './particle-spec.js';
 import { Reference } from './reference.js';
+import { StorageProxy } from './storage-proxy.js';
 import { BigCollectionType, CollectionType, EntityType, InterfaceType, ReferenceType } from './type.js';
 import { Entity } from './entity.js';
 import { Id } from './id.js';
@@ -37,7 +38,7 @@ export class Handle {
     // TODO type particleId, marked as string, but called with number
     constructor(storage, idGenerator, name, particleId, canRead, canWrite) {
         assert(!(storage instanceof Handle));
-        this.storage = storage;
+        this._storage = storage;
         this.idGenerator = idGenerator;
         this.name = name || this.storage.name;
         this.canRead = canRead;
@@ -94,11 +95,26 @@ export class Handle {
     get _id() {
         return this.storage.id;
     }
+    get storage() {
+        return this._storage;
+    }
     toManifestString() {
         return `'${this._id}'`;
     }
     generateKey() {
         return this.idGenerator.newChildId(Id.fromString(this._id), 'key').toString();
+    }
+    /**
+     * Disables this handle so that it is no longer able to make changes or receive updates from the
+     * storage proxy
+     */
+    disable(particle) {
+        if (this.storage instanceof StorageProxy) {
+            this.storage.deregister(particle, this);
+        }
+        // Set this handle's storage to a no-operation storage proxy so any actions that need to be
+        // taken by this handle in the future (due to some async operations) will do nothing and finish quietly
+        this._storage = StorageProxy.newNoOpProxy(this.storage.type);
     }
 }
 /**
@@ -204,6 +220,9 @@ export class Collection extends Handle {
         const keys = [];
         await this.storage.remove(serialization.id, keys, this._particleId);
     }
+    get storage() {
+        return this._storage;
+    }
 }
 /**
  * A handle on a single entity. A particle's manifest dictates
@@ -286,6 +305,9 @@ export class Singleton extends Handle {
             throw new Error('Handle not writeable');
         }
         return this.storage.clear(this._particleId);
+    }
+    get storage() {
+        return this._storage;
     }
 }
 /**
@@ -378,6 +400,9 @@ export class BigCollection extends Handle {
         }
         const cursorId = await this.storage.stream(pageSize, forward);
         return new Cursor(this, cursorId);
+    }
+    get storage() {
+        return this._storage;
     }
 }
 export function handleFor(storage, idGenerator, name = null, particleId = '', canRead = true, canWrite = true) {

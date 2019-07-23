@@ -46,6 +46,7 @@ export declare type SerializedEntity = {
  */
 export declare abstract class StorageProxy implements Store {
     static newProxy(id: string, type: Type, port: PECInnerPort, pec: ParticleExecutionContext, scheduler: any, name: string): CollectionProxy | BigCollectionProxy | SingletonProxy;
+    static newNoOpProxy(type: Type): NoOpStorageProxy;
     storageKey: string;
     readonly id: string;
     readonly type: Type;
@@ -76,6 +77,10 @@ export declare abstract class StorageProxy implements Store {
      *  Called by ParticleExecutionContext to associate (potentially multiple) particle/handle pairs with this proxy.
      */
     register(particle: Particle, handle: Handle): void;
+    /**
+     * Called by Handle to dissociate particle/handle pair associated with this proxy
+     */
+    deregister(particleIn: Particle, handleIn: Handle): void;
     _onSynchronize({ version, model }: {
         version: number;
         model: SerializedModelEntry[];
@@ -151,6 +156,47 @@ export declare class BigCollectionProxy extends StorageProxy implements BigColle
     stream(pageSize: any, forward: any): Promise<number>;
     cursorNext(cursorId: any): Promise<any>;
     cursorClose(cursorId: any): Promise<void>;
+}
+/**
+ * NoOpStorageProxy is an implementation of StorageProxy that does no operations. It silently
+ * absorbs and throws away all changes without creating any logging, warnings or any other visible
+ * behaviors or persistent changes.
+ *
+ * It is aimed to be used by disabled particles to finish their job without causing any post-disabled
+ * async errors, etc.
+ *
+ * TODO(sherrypra): Add a unit test to ensure this stays in sync with the real storage APIs
+ */
+export declare class NoOpStorageProxy extends StorageProxy implements CollectionStore, BigCollectionStore, SingletonStore {
+    _getModelForSync(): {
+        id: string;
+    } | ModelValue[];
+    _synchronizeModel(version: number, model: SerializedModelEntry[]): boolean;
+    _processUpdate(update: {
+        version: number;
+    }, apply?: boolean): {};
+    reportExceptionInHost(exception: PropagatedException): void;
+    deregister(): void;
+    register(): void;
+    _onSynchronize({ version, model }: {
+        version: number;
+        model: SerializedModelEntry[];
+    }): void;
+    _onUpdate(update: {
+        version: number;
+    }): void;
+    _notify(kind: string, details: any, predicate?: (ignored: HandleOptions) => boolean): void;
+    _processUpdates(): void;
+    protected generateBarrier(): string;
+    get(id?: string): Promise<{}>;
+    store(value: any, keys: string[], particleId?: string): Promise<void>;
+    clear(particleId: string): Promise<void>;
+    remove(id: string, keys: string[], particleId?: string): Promise<void>;
+    toList(): Promise<ModelValue[]>;
+    stream(pageSize: number, forward?: boolean): Promise<number>;
+    cursorNext(cursorId: number): Promise<any>;
+    cursorClose(cursorId: number): Promise<void>;
+    set(entity: {}, particleId: string): Promise<void>;
 }
 export declare class StorageProxyScheduler {
     private _scheduled;
