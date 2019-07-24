@@ -10,7 +10,7 @@
 import { assert } from '../../../platform/chai-web.js';
 import { Manifest } from '../../../runtime/manifest.js';
 import { FlowGraph } from '../flow-graph.js';
-import { Node } from '../graph-internals.js';
+import { Node, FlowModifier } from '../graph-internals.js';
 /** Constructs a FlowGraph from the recipe in the given manifest. */
 export async function buildFlowGraph(manifestContent) {
     const manifest = await Manifest.parse(manifestContent);
@@ -46,6 +46,7 @@ export class TestEdge {
         this.end = end;
         this.label = label;
         this.connectionName = 'connectionName';
+        this.modifier = new FlowModifier();
         this.edgeId = label;
         start.outEdges.push(this);
         end.inEdges.push(this);

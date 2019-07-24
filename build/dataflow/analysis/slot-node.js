@@ -7,7 +7,7 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-import { Node } from './graph-internals.js';
+import { Node, FlowModifier } from './graph-internals.js';
 export class SlotNode extends Node {
     constructor(nodeId, slot) {
         super();
@@ -34,6 +34,7 @@ class SlotInput {
         this.end = slotNode;
         this.connectionName = connection.name;
         this.label = `${particleNode.name}.${this.connectionName}`;
+        this.modifier = FlowModifier.fromClaims(this, []);
     }
     get check() {
         return this.end.check;

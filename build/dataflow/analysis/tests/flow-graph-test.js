@@ -192,6 +192,9 @@ describe('FlowGraph', () => {
         assert.strictEqual(slot1.inEdges[0].start.name, 'P1');
         assert.isUndefined(slot1.inEdges[0].check);
         assert.isUndefined(slot1.check);
+        assert.strictEqual(slot1.inEdges[0].edgeId, 'E0');
+        assert.strictEqual(slot1.inEdges[0].start.nodeId, 'P0');
+        assert.deepEqual(slot1.inEdges[0].modifier, FlowModifier.parse('+edge:E0', '+node:P0'));
         const slot2 = checkDefined(graph.slots[1]);
         assert.isEmpty(slot2.outEdges);
         assert.lengthOf(slot2.inEdges, 1);
@@ -199,6 +202,9 @@ describe('FlowGraph', () => {
         assert.strictEqual(slot2.inEdges[0].start.name, 'P2');
         const check = slot2.inEdges[0].check;
         assert.deepNestedInclude(check, { type: 'tag', value: 'trusted' });
+        assert.strictEqual(slot2.inEdges[0].edgeId, 'E1');
+        assert.strictEqual(slot2.inEdges[0].start.nodeId, 'P1');
+        assert.deepEqual(slot2.inEdges[0].modifier, FlowModifier.parse('+edge:E1', '+node:P1'));
     });
     it('resolves data store names and IDs', async () => {
         const graph = await buildFlowGraph(`

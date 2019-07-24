@@ -1,21 +1,5 @@
-commit 532121d0932840fc3a95bd8169ed9386ea12816e
-Author: Alex Rosengarten <alxr@google.com>
-Date:   Tue Jul 23 14:43:41 2019 -0700
+commit 7ed06becf4f083124c529617b5861e477eba459e
+Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
+Date:   Wed Jul 24 13:35:56 2019 +1000
 
-    Kotlin URL Resolver in Wasm (#3374)
-    
-    * Add 'resolver' function wasm API
-    
-    This allows particles to specify URLs like 'https://$arcs/...'
-    
-    * added return type
-    
-    * Add external resolveUrl function to particle
-    
-    * fix: loader.resolve
-    
-    * attempt to integrate resolver into demo
-    
-    * update build for cpp: renamed test particle
-    
-    * cleaned up str w/ escaping
+    Fixes bug where SlotInput edges were missing modifiers (#3383)

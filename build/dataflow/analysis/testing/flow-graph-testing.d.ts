@@ -28,6 +28,6 @@ export declare class TestEdge implements Edge {
     readonly label: string;
     readonly edgeId: string;
     readonly connectionName = "connectionName";
-    modifier?: FlowModifier;
+    modifier: FlowModifier;
     constructor(start: TestNode, end: TestNode, label: string);
 }
