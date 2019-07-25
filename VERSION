@@ -1,19 +1,5 @@
-commit 582db97b22e522ec760d46d6554194b6166fdda1
+commit 9538603b974fcdea0eba392b53a70aa06d6a8160
 Author: Joshua Pratt <jp10010101010000@gmail.com>
-Date:   Thu Jul 25 14:44:29 2019 +1000
+Date:   Thu Jul 25 14:59:27 2019 +1000
 
-    Rendering support for explicit slandles (#3340)
-    
-    * Renaming, adding types and simplify value reuse
-    
-    * More types
-    
-    * Ground work for slandes at runtime
-    
-    * Provide an API that finds both slots and slandes
-    
-    * Fix up in response to review
-    
-    * Remove debugging log
-    
-    * Comment on possible limitation in resolver
+    Show slandles in PEC overview (#3350)
