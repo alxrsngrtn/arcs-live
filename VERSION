@@ -1,24 +1,9 @@
-commit e948d17f770442ef244a99bc6473ad0c6433c18c
+commit 91d7ab76b7e8d08c6213ec51343715eb7a2f116c
 Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Thu Jul 25 13:01:58 2019 -0700
+Date:   Thu Jul 25 14:29:34 2019 -0700
 
-    pipe-shell evolutions (#3356 + conflict resolutions) (#3388)
+    portable java promise (#3386)
     
-    * blast away deprecated pipe-shell
+    * portable java promise
     
-    * pipes-shell-2 => pipes-shell-demo
-    pipes-shell-demo - demo => pipes.shell
-    
-    * fix paths
-    
-    * fix javaharness pipe-shell references
-    
-    * added webpack-auto-inject-version plugin
-    
-    * fix symbolic link
-    
-    * introduce 'spawn' verb
-    
-    * resolve conflicts: rename PipeApps schemas and recipes files to .arcs
-    
-    * address comments: fix typo and revert package.json
+    * Address comment: make then method chainable
