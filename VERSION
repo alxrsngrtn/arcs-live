@@ -1,16 +1,19 @@
-commit d4861978322116aed41b44bd4e5116bb753c6628
-Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
-Date:   Thu Jul 25 14:28:58 2019 +1000
+commit 582db97b22e522ec760d46d6554194b6166fdda1
+Author: Joshua Pratt <jp10010101010000@gmail.com>
+Date:   Thu Jul 25 14:44:29 2019 +1000
 
-    Added an OrderedSet class. (#3385)
+    Rendering support for explicit slandles (#3340)
     
-    * Added an OrderedSet class.
+    * Renaming, adding types and simplify value reuse
     
-    Hooks it up in the Flow/FlowModifier to use for edgeIds. This will be
-    needed in order to resurrect the full path of edges (in order) from the
-    Flow, so we can report sensible failure messages.
+    * More types
     
-    * Reverted ordering of edgeIds in toUniqueString() methods.
+    * Ground work for slandes at runtime
     
-    This was breaking the deduping of equivalent cycle traversals, and
-    exploding the search space.
+    * Provide an API that finds both slots and slandes
+    
+    * Fix up in response to review
+    
+    * Remove debugging log
+    
+    * Comment on possible limitation in resolver

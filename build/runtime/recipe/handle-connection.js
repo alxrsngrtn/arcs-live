@@ -8,6 +8,7 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { assert } from '../../platform/assert-web.js';
+import { SlotConnection } from './slot-connection.js';
 import { directionToArrow, acceptedDirections } from './recipe-util.js';
 import { TypeChecker } from './type-checker.js';
 import { compareArrays, compareComparables, compareStrings } from './comparable.js';
@@ -115,6 +116,16 @@ export class HandleConnection {
             return null;
         }
         return this.particle.spec.handleConnectionMap.get(this.name);
+    }
+    toSlotConnection() {
+        // TODO: Remove in SLANDLESv2
+        if (!(this.handle && this.handle.type && this.handle.type.slandleType())) {
+            return undefined;
+        }
+        const slandle = new SlotConnection(this.name, this.particle);
+        slandle.tags = this.tags;
+        slandle.targetSlot = this.handle && this.handle.toSlot();
+        return slandle;
     }
     get isOptional() {
         if (this.spec == null) {

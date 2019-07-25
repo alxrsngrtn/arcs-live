@@ -93,6 +93,7 @@ export class SlotConsumer {
         this.hostedSlotContexts.forEach(ctx => ctx.containerAvailable = Boolean(newContainer));
     }
     createProvidedContexts() {
+        assert(this.consumeConn.getSlotSpec(), `Missing consume connection spec`);
         return this.consumeConn.getSlotSpec().provideSlotConnections.map(spec => new ProvidedSlotContext(this.consumeConn.providedSlots[spec.name].id, spec.name, /* tags=*/ [], /* container= */ null, spec, this));
     }
     updateProvidedContexts() {

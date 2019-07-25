@@ -7,7 +7,9 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
+import { Recipe } from '../../runtime/recipe/recipe.js';
 import { Strategy } from '../strategizer.js';
+import { GenerateParams, Descendant } from '../../runtime/recipe/walker.js';
 export declare class FindRequiredParticle extends Strategy {
-    generate(inputParams: any): any;
+    generate(inputParams: GenerateParams<Recipe>): Promise<Descendant<Recipe>[]>;
 }

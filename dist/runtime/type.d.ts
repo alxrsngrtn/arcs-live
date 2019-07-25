@@ -30,6 +30,7 @@ export declare abstract class Type {
     static _canMergeCanReadSubset(type1: Type, type2: Type): boolean;
     static _canMergeCanWriteSuperset(type1: Type, type2: Type): boolean;
     isSlot(): this is SlotType;
+    slandleType(): SlotType | undefined;
     isCollectionType<T extends Type>(): this is CollectionType<T>;
     isBigCollectionType<T extends Type>(): this is BigCollectionType<T>;
     isResolved(): boolean;

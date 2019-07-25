@@ -10,6 +10,7 @@
 import { HandleConnectionSpec } from '../particle-spec.js';
 import { Type } from '../type.js';
 import { Handle } from './handle.js';
+import { SlotConnection } from './slot-connection.js';
 import { Particle } from './particle.js';
 import { CloneMap, IsValidOptions, Recipe, RecipeComponent, ToStringOptions, VariableMap } from './recipe.js';
 import { Comparable } from './comparable.js';
@@ -38,6 +39,7 @@ export declare class HandleConnection implements Comparable<HandleConnection> {
     readonly handle: Handle | undefined;
     readonly particle: Particle;
     readonly spec: HandleConnectionSpec;
+    toSlotConnection(): SlotConnection;
     readonly isOptional: boolean;
     _isValid(options: IsValidOptions): boolean;
     isResolved(options?: any): boolean;

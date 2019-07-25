@@ -42,7 +42,7 @@ export declare class SlotComposer {
     getSlotConsumer(particle: Particle, slotName: string): SlotConsumer;
     findContainerByName(name: string): HTMLElement | undefined;
     findContextsByName(name: string): ProvidedSlotContext[];
-    findContextById(slotId: any): SlotContext;
+    findContextById(slotId: string): SlotContext;
     createHostedSlot(innerArc: Arc, transformationParticle: Particle, transformationSlotName: string, storeId: string): string;
     _addSlotConsumer(slot: SlotConsumer): void;
     initializeRecipe(arc: Arc, recipeParticles: Particle[]): Promise<void>;

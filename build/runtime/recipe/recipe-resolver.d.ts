@@ -16,15 +16,19 @@ import { RecipeWalker } from './recipe-walker.js';
 import { Recipe, IsValidOptions } from './recipe.js';
 import { ConnectionConstraint } from './connection-constraint.js';
 import { SlotConnection } from './slot-connection.js';
+import { Continuation } from './walker.js';
 export declare class ResolveWalker extends RecipeWalker {
+    private options;
     private readonly arc;
-    constructor(tactic: any, arc: any);
-    onHandle(recipe: Recipe, handle: Handle): (recipe: any, handle: any) => number;
-    onSlotConnection(_recipe: Recipe, slotConnection: SlotConnection): (recipe: any, slotConnection: any) => number;
-    onPotentialSlotConnection(_recipe: Recipe, particle: Particle, slotSpec: ConsumeSlotConnectionSpec): (_recipe: Recipe, particle: Particle, slotSpec: ConsumeSlotConnectionSpec) => number;
-    onObligation(recipe: Recipe, obligation: ConnectionConstraint): (recipe: any, obligation: any) => number;
+    constructor(tactic: any, arc: any, options?: any);
+    onHandle(recipe: Recipe, handle: Handle): Continuation<Recipe, Handle[]>;
+    onSlotConnection(_recipe: Recipe, slotConnection: SlotConnection): Continuation<Recipe, SlotConnection[]>;
+    onPotentialSlotConnection(_recipe: Recipe, particle: Particle, slotSpec: ConsumeSlotConnectionSpec): any[] | ((_recipe: Recipe, particle: Particle, slotSpec: ConsumeSlotConnectionSpec) => number);
+    onObligation(recipe: Recipe, obligation: ConnectionConstraint): any[] | ((recipe: any, obligation: any) => number);
 }
 export declare class ResolveRecipeAction extends Action<Recipe> {
+    private options;
+    withOptions(options: IsValidOptions): void;
     generate(inputParams: GenerateParams<Recipe>): any;
 }
 export declare class RecipeResolver {

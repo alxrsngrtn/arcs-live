@@ -12,16 +12,23 @@ import { RecipeUtil } from './recipe-util.js';
 import { RecipeWalker } from './recipe-walker.js';
 import { SlotUtils } from './slot-utils.js';
 export class ResolveWalker extends RecipeWalker {
-    constructor(tactic, arc) {
+    constructor(tactic, arc, options) {
         super(tactic);
         this.arc = arc;
+        this.options = options;
     }
     onHandle(recipe, handle) {
+        const error = (label) => {
+            if (this.options && this.options.errors) {
+                this.options.errors.set(handle, label);
+            }
+            return [];
+        };
         const arc = this.arc;
         if (handle.connections.length === 0 ||
             (handle.id && handle.storageKey) || (!handle.type) ||
             (!handle.fate)) {
-            return undefined;
+            return error('No connections to handle or missing handle information');
         }
         let mappable;
         if (!handle.id) {
@@ -62,7 +69,15 @@ export class ResolveWalker extends RecipeWalker {
                 default:
                     throw new Error(`unexpected fate ${handle.fate}`);
             }
-            mappable = storeById ? [storeById] : [];
+            if (storeById) {
+                mappable = [storeById];
+            }
+            else {
+                return error('cannot find associated store');
+            }
+        }
+        if (mappable.length === 0) {
+            return error('Cannot find a handle matching requested type and tags.');
         }
         mappable = mappable.filter(incomingHandle => {
             for (const existingHandle of recipe.handles) {
@@ -73,18 +88,26 @@ export class ResolveWalker extends RecipeWalker {
             }
             return true;
         });
-        if (mappable.length === 1) {
-            return (recipe, handle) => {
-                handle.mapToStorage(mappable[0]);
-                return 0;
-            };
+        if (mappable.length === 0) {
+            // TODO(jopra): Reconsider this behaviour.
+            // Tracked at https://github.com/PolymerLabs/arcs/issues/3389
+            return error('The only handles matching the requested type and tags are already present in this recipe');
         }
-        return undefined;
+        return mappable.map(store => ((recipe, updateHandle) => {
+            updateHandle.mapToStorage(store);
+            return 0;
+        }));
     }
     onSlotConnection(_recipe, slotConnection) {
+        const error = (label) => {
+            if (this.options && this.options.errors) {
+                this.options.errors.set(slotConnection, label);
+            }
+            return [];
+        };
         const arc = this.arc;
         if (slotConnection.isConnected()) {
-            return undefined;
+            return error('Slot connection is already connected');
         }
         const slotSpec = slotConnection.getSlotSpec();
         const particle = slotConnection.particle;
@@ -92,7 +115,7 @@ export class ResolveWalker extends RecipeWalker {
         const allSlots = [...local, ...remote];
         // SlotUtils handles a multi-slot case.
         if (allSlots.length !== 1) {
-            return undefined;
+            return error('There are multiple matching slots (match is ambiguous)');
         }
         const selectedSlot = allSlots[0];
         return (recipe, slotConnection) => {
@@ -101,12 +124,18 @@ export class ResolveWalker extends RecipeWalker {
         };
     }
     onPotentialSlotConnection(_recipe, particle, slotSpec) {
+        const error = (label) => {
+            if (this.options && this.options.errors) {
+                this.options.errors.set(particle, label);
+            }
+            return [];
+        };
         const arc = this.arc;
         const { local, remote } = SlotUtils.findAllSlotCandidates(particle, slotSpec, arc);
         const allSlots = [...local, ...remote];
         // SlotUtils handles a multi-slot case.
         if (allSlots.length !== 1) {
-            return undefined;
+            return error('There are multiple matching slots for this slot spec (match is ambiguous)');
         }
         const selectedSlot = allSlots[0];
         return (_recipe, particle, slotSpec) => {
@@ -117,6 +146,7 @@ export class ResolveWalker extends RecipeWalker {
     }
     // TODO(lindner): add typeof checks here and figure out where handle is coming from.
     onObligation(recipe, obligation) {
+        // TODO(jopra): Log errors from here.
         const fromParticle = obligation.from.instance;
         const toParticle = obligation.to.instance;
         for (const fromConnection of Object.values(fromParticle.connections)) {
@@ -129,12 +159,15 @@ export class ResolveWalker extends RecipeWalker {
                 }
             }
         }
-        return undefined;
+        return [];
     }
 }
 export class ResolveRecipeAction extends Action {
+    withOptions(options) {
+        this.options = options;
+    }
     async generate(inputParams) {
-        return ResolveWalker.walk(this.getResults(inputParams), new ResolveWalker(ResolveWalker.Permuted, this.arc), this);
+        return ResolveWalker.walk(this.getResults(inputParams), new ResolveWalker(ResolveWalker.Permuted, this.arc, this.options), this);
     }
 }
 // Provides basic recipe resolution for recipes against a particular arc.
@@ -151,6 +184,7 @@ export class RecipeResolver {
             console.warn(`could not normalize a recipe: ${[...options.errors.values()].join('\n')}.\n${recipe.toString()}`);
             return null;
         }
+        this.resolver.withOptions(options); // Smuggle error data around
         const result = await this.resolver.generateFrom([{ result: recipe, score: 1 }]);
         if (result.length === 0) {
             if (options && options.errors) {

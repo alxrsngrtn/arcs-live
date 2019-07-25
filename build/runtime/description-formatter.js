@@ -190,7 +190,7 @@ export class DescriptionFormatter {
             }
             return [];
         }
-        const providedSlotConn = particle.consumedSlotConnections[handleNames[0]].providedSlots[handleNames[1]];
+        const providedSlotConn = particle.getSlotConnectionByName(handleNames[0]).providedSlots[handleNames[1]];
         assert(providedSlotConn, `Could not find handle ${handleNames.join('.')}`);
         return [{
                 fullName: valueTokens[0],

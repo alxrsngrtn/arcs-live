@@ -9,10 +9,11 @@
  */
 import { ParticleSpec } from '../particle-spec.js';
 import { Type } from '../type.js';
+import { Slot } from './slot.js';
 import { HandleConnection } from './handle-connection.js';
 import { Recipe, CloneMap, RecipeComponent, IsResolvedOptions, IsValidOptions, ToStringOptions, VariableMap } from './recipe.js';
 import { Comparable } from './comparable.js';
-import { Fate } from '../manifest-ast-nodes.js';
+import { Fate, Direction } from '../manifest-ast-nodes.js';
 import { ClaimIsTag, Claim } from '../particle-claim.js';
 export declare class Handle implements Comparable<Handle> {
     private readonly _recipe;
@@ -30,6 +31,7 @@ export declare class Handle implements Comparable<Handle> {
     private _immediateValue;
     claims: Claim[] | undefined;
     constructor(recipe: Recipe);
+    toSlot(): Slot;
     _copyInto(recipe: Recipe, cloneMap: CloneMap, variableMap: VariableMap): Handle;
     mergeInto(handle: Handle): void;
     _mergedFate(fates: Fate[]): "use" | "create";
@@ -57,8 +59,8 @@ export declare class Handle implements Comparable<Handle> {
     mappedType: Type;
     immediateValue: ParticleSpec;
     static effectiveType(handleType: Type, connections: {
-        type: Type | null | undefined;
-        direction: string | undefined | null;
+        type?: Type;
+        direction?: Direction;
     }[]): Type | import("../type.js").TypeVariable | import("../type.js").CollectionType<import("../type.js").TypeVariable> | import("../type.js").BigCollectionType<import("../type.js").TypeVariable>;
     static resolveEffectiveType(handleType: Type, connections: HandleConnection[]): Type | import("../type.js").TypeVariable | import("../type.js").CollectionType<import("../type.js").TypeVariable> | import("../type.js").BigCollectionType<import("../type.js").TypeVariable>;
     _isValid(options: IsValidOptions): boolean;

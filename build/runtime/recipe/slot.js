@@ -46,6 +46,7 @@ export class Slot {
         return (this.sourceConnection && this.sourceConnection.getSlotSpec()) ? this.sourceConnection.particle.getSlotSpecByName(this.name) : { isSet: false, tags: [] };
     }
     get handles() {
+        // TODO(jopra): This lazy initialization is surprising. Consider removing.
         const handles = [];
         if (this.sourceConnection && this.sourceConnection.getSlotSpec()) {
             for (const handleName of this.sourceConnection.particle.getSlotSpecByName(this.name).handles) {

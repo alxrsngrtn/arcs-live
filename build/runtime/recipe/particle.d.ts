@@ -7,6 +7,7 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
+/// <reference types="core-js" />
 import { ParticleSpec, ConsumeSlotConnectionSpec } from '../particle-spec.js';
 import { Type } from '../type.js';
 import { HandleConnection } from './handle-connection.js';
@@ -45,9 +46,8 @@ export declare class Particle implements Comparable<Particle> {
     localName: string;
     id: Id;
     name: string;
-    readonly connections: Dictionary<HandleConnection>;
+    readonly connections: Dict<HandleConnection>;
     readonly unnamedConnections: HandleConnection[];
-    readonly consumedSlotConnections: Dictionary<SlotConnection>;
     readonly primaryVerb: string;
     verbs: string[];
     tags: string[];
@@ -55,6 +55,15 @@ export declare class Particle implements Comparable<Particle> {
     addConnectionName(name: string): HandleConnection;
     allConnections(): HandleConnection[];
     ensureConnectionName(name: string): HandleConnection;
+    getSlotConnectionNames(): string[];
+    getSlandleConnectionByName(name: string): SlotConnection;
+    getSlotConnectionByName(name: string): SlotConnection;
+    getSlotConnectionBySpec(spec: ConsumeSlotConnectionSpec): SlotConnection;
+    getSlandleConnections(): SlotConnection[];
+    getSlotConnections(): SlotConnection[];
+    getSlotSpecByName(name: string): ConsumeSlotConnectionSpec | undefined;
+    getProvidedSlotByName(consumeName: string, name: string): Slot;
+    getSlotSpecs(): Map<string, ConsumeSlotConnectionSpec>;
     getConnectionByName(name: string): HandleConnection;
     nameConnection(connection: HandleConnection, name: string): void;
     getUnboundConnections(type?: Type): import("../particle-spec.js").HandleConnectionSpec[];
@@ -62,12 +71,6 @@ export declare class Particle implements Comparable<Particle> {
     addSlotConnectionAsCopy(name: string): SlotConnection;
     removeSlotConnection(slotConnection: SlotConnection): void;
     remove(): void;
-    getSlotConnectionBySpec(spec: ConsumeSlotConnectionSpec): SlotConnection;
-    getSlotConnections(): (SlotConnection | HandleConnection)[];
-    getSlotSpecByName(name: string): ConsumeSlotConnectionSpec | undefined;
-    getSlotConnectionByName(name: string): SlotConnection;
-    getProvidedSlotByName(consumeName: string, name: string): Slot;
-    getSlotSpecs(): Map<string, ConsumeSlotConnectionSpec>;
     isJavaParticle(): boolean;
     toString(options?: ToStringOptions, nameMap?: Map<RecipeComponent, string>): string;
 }

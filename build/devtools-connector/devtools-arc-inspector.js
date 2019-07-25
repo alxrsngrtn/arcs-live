@@ -56,7 +56,7 @@ class DevtoolsArcInspector {
             return;
         const truncate = ({ id, name }) => ({ id, name });
         const slotConnections = [];
-        particles.forEach(p => Object.values(p.consumedSlotConnections).forEach(cs => {
+        particles.forEach(p => p.getSlotConnections().forEach(cs => {
             if (cs.targetSlot) {
                 slotConnections.push({
                     particleId: cs.particle.id.toString(),

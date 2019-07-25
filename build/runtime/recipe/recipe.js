@@ -81,9 +81,7 @@ export class Recipe {
         const idx = this._particles.indexOf(particle);
         assert(idx > -1);
         this._particles.splice(idx, 1);
-        for (const slotConnection of Object.values(particle._consumedSlotConnections)) {
-            slotConnection.remove();
-        }
+        particle.getSlotConnections().map(conn => conn.remove());
     }
     newHandle() {
         const handle = new Handle(this);
@@ -135,8 +133,8 @@ export class Recipe {
             && checkThat(this.modality.isResolved(), 'unresolved modality')
             && checkThat(this.allRequiredSlotsPresent(options), 'unresolved required slot')
             && checkThat(this._slots.every(slot => slot.isResolved()), 'unresolved slots')
-            && checkThat(this.handleConnections.every(connection => connection.isResolved()), 'unresolved handle connections')
-            && checkThat(this.slotConnections.every(slotConnection => slotConnection.isResolved()), 'unresolved slot connections');
+            && checkThat(this.handleConnections.every(connection => connection.isResolved(options)), 'unresolved handle connections')
+            && checkThat(this.slotConnections.every(slotConnection => slotConnection.isResolved(options)), 'unresolved slot connections');
         // TODO: check recipe level resolution requirements, eg there is no slot loops.
     }
     isCompatible(modality) {
@@ -162,14 +160,14 @@ export class Recipe {
                 }
             }
             for (const [name, slotSpec] of particle.spec.slotConnections) {
-                if (slotSpec.isRequired && !particle.consumedSlotConnections[name]) {
+                if (slotSpec.isRequired && !particle.getSlotConnectionByName(name)) {
                     if (options && options.errors) {
                         options.errors.set(name, `required slot ${name} has no matching connection`);
                     }
                     return false;
                 }
                 // required provided slots are only required when the corresponding consume slot connection is present
-                if (particle.consumedSlotConnections[name]) {
+                if (particle.getSlotConnectionByName(name)) {
                     atLeastOneSlotConnection = true;
                     for (const providedSlotSpec of slotSpec.provideSlotConnections) {
                         if (providedSlotSpec.isRequired && !particle.getProvidedSlotByName(name, providedSlotSpec.name)) {
@@ -242,9 +240,10 @@ export class Recipe {
         }
     }
     get slotConnections() {
+        // TODO: Is this the correct api?
         const slotConnections = [];
         this._particles.forEach(particle => {
-            slotConnections.push(...Object.values(particle.consumedSlotConnections));
+            slotConnections.push(...particle.getSlotConnections());
         });
         return slotConnections;
     }

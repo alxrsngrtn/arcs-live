@@ -40,13 +40,14 @@ export class Particle {
         });
         particle._unnamedConnections = this._unnamedConnections.map(connection => connection._clone(particle, cloneMap));
         particle._cloneConnectionRawTypes(variableMap);
-        for (const [key, slotConn] of Object.entries(this.consumedSlotConnections)) {
+        for (const key of this.getSlotConnectionNames()) {
+            const slotConn = this.getSlotConnectionByName(key);
             particle._consumedSlotConnections[key] = slotConn._clone(particle, cloneMap);
             // if recipe is a requireSection, then slot may already exist in recipe.
             if (cloneMap.has(slotConn.targetSlot)) {
                 assert(recipe instanceof RequireSection);
                 const targetSlot = cloneMap.get(slotConn.targetSlot);
-                particle.consumedSlotConnections[key].connectToSlot(targetSlot);
+                particle.getSlotConnectionByName(key).connectToSlot(targetSlot);
                 if (particle.recipe.slots.indexOf(targetSlot) === -1) {
                     particle.recipe.slots.push(targetSlot);
                 }
@@ -55,8 +56,8 @@ export class Particle {
                 if (cloneMap.has(slot)) {
                     assert(recipe instanceof RequireSection);
                     const clonedSlot = cloneMap.get(slot);
-                    clonedSlot.sourceConnection = particle.consumedSlotConnections[key];
-                    particle.consumedSlotConnections[key].providedSlots[name] = clonedSlot;
+                    clonedSlot.sourceConnection = particle.getSlotConnectionByName(key);
+                    particle.getSlotConnectionByName(key).providedSlots[name] = clonedSlot;
                     if (particle.recipe.slots.indexOf(clonedSlot) === -1) {
                         particle.recipe.slots.push(clonedSlot);
                     }
@@ -83,8 +84,8 @@ export class Particle {
         }
         this._connections = normalizedConnections;
         const normalizedSlotConnections = {};
-        for (const key of (Object.keys(this.consumedSlotConnections).sort())) {
-            normalizedSlotConnections[key] = this.consumedSlotConnections[key];
+        for (const key of this.getSlotConnectionNames().sort()) {
+            normalizedSlotConnections[key] = this.getSlotConnectionByName(key);
         }
         this._consumedSlotConnections = normalizedSlotConnections;
     }
@@ -116,15 +117,16 @@ export class Particle {
     matches(particle) {
         if (this.name && particle.name && this.name !== particle.name)
             return false;
-        for (const [name, slotConn] of Object.entries(this.consumedSlotConnections)) {
-            if (particle.consumedSlotConnections[name] == undefined
-                || particle.consumedSlotConnections[name].targetSlot == undefined)
+        for (const name of this.getSlotConnectionNames()) {
+            const slotConn = this.getSlotConnectionByName(name);
+            if (particle.getSlotConnectionByName(name) == undefined
+                || particle.getSlotConnectionByName(name).targetSlot == undefined)
                 return false;
-            if (slotConn.targetSlot && slotConn.targetSlot.id && slotConn.targetSlot.id !== particle.consumedSlotConnections[name].targetSlot.id)
+            if (slotConn.targetSlot && slotConn.targetSlot.id && slotConn.targetSlot.id !== particle.getSlotConnectionByName(name).targetSlot.id)
                 return false;
             for (const pname of Object.keys(slotConn.providedSlots)) {
                 const slot = slotConn.providedSlots[pname];
-                const pslot = particle.consumedSlotConnections[name].providedSlots[pname];
+                const pslot = particle.getSlotConnectionByName(name).providedSlots[pname];
                 if (pslot == undefined || (slot.id && pslot.id && slot.id !== pslot.id))
                     return false;
             }
@@ -156,7 +158,7 @@ export class Particle {
         const slandleConnections = Object.values(this.connections).filter(connection => connection.type.isSlot()
             || (connection.type.isCollectionType() && connection.type.getContainedType().isSlot()));
         if (slandleConnections.length === 0 && this.spec.slotConnections.size > 0) {
-            const fulfilledSlotConnections = Object.values(this.consumedSlotConnections).filter(connection => connection.targetSlot !== undefined);
+            const fulfilledSlotConnections = this.getSlotConnections().filter(connection => connection.targetSlot !== undefined);
             if (fulfilledSlotConnections.length === 0) {
                 if (options && options.showUnresolved) {
                     options.details = `unfullfilled slot connections ${JSON.stringify([...this.spec.slotConnections])}`;
@@ -204,7 +206,6 @@ export class Particle {
     set name(name) { this._name = name; }
     get connections() { return this._connections; } // {parameter -> HandleConnection}
     get unnamedConnections() { return this._unnamedConnections; } // HandleConnection*
-    get consumedSlotConnections() { return this._consumedSlotConnections; }
     get primaryVerb() { return (this._verbs.length > 0) ? this._verbs[0] : undefined; }
     set verbs(verbs) { this._verbs = verbs; }
     set tags(tags) { this._tags = tags; }
@@ -224,6 +225,54 @@ export class Particle {
     }
     ensureConnectionName(name) {
         return this._connections[name] || this.addConnectionName(name);
+    }
+    getSlotConnectionNames() {
+        return Object.keys(this._consumedSlotConnections);
+    }
+    getSlandleConnectionByName(name) {
+        if (name in this._connections) {
+            const slandle = this._connections[name].toSlotConnection();
+            return slandle;
+        }
+        return this._consumedSlotConnections[name];
+    }
+    getSlotConnectionByName(name) {
+        return this._consumedSlotConnections[name];
+    }
+    getSlotConnectionBySpec(spec) {
+        return this.getSlotConnections().find(slotConn => slotConn.getSlotSpec() === spec);
+    }
+    getSlandleConnections() {
+        // TODO(jopra): Revisit when slots are removed.
+        return [...Object.values(this._consumedSlotConnections), ...this.allConnections().map(conn => conn.toSlotConnection()).filter(conn => conn)];
+    }
+    getSlotConnections() {
+        // TODO(jopra): Revisit when slots are removed.
+        return Object.values(this._consumedSlotConnections);
+    }
+    getSlotSpecByName(name) {
+        if (!this.spec)
+            return undefined;
+        const slot = this.spec.slotConnections.get(name);
+        if (slot)
+            return slot;
+        // TODO(jopra): Provided slots should always be listed in the particle spec.
+        for (const slot of this.spec.slotConnections.values()) {
+            for (const provided of slot.provideSlotConnections) {
+                if (provided.name === name)
+                    return provided;
+            }
+        }
+        return undefined;
+    }
+    getProvidedSlotByName(consumeName, name) {
+        const conn = this.getSlotConnectionByName(consumeName);
+        return conn && conn.providedSlots[name];
+    }
+    getSlotSpecs() {
+        if (this.spec)
+            return this.spec.slotConnections;
+        return new Map();
     }
     getConnectionByName(name) {
         return this._connections[name];
@@ -250,7 +299,7 @@ export class Particle {
             (!type || TypeChecker.compareTypes({ type }, { type: connSpec.type })));
     }
     addSlotConnection(name) {
-        assert(!(name in this.consumedSlotConnections), 'slot connection already exists');
+        assert(!this.getSlotConnectionByName(name), 'slot connection already exists');
         const slandle = this.spec && this.spec.connections.find(conn => conn.name === name);
         const isSlandle = slandle && slandle.type.isSlot();
         const isSetSlandle = slandle && slandle.type.isCollectionType() && slandle.type.getContainedType().isSlot();
@@ -283,38 +332,6 @@ export class Particle {
     remove() {
         this.recipe.removeParticle(this);
     }
-    getSlotConnectionBySpec(spec) {
-        return Object.values(this.consumedSlotConnections).find(slotConn => slotConn.getSlotSpec() === spec);
-    }
-    getSlotConnections() {
-        return Object.values(this.consumedSlotConnections);
-    }
-    getSlotSpecByName(name) {
-        if (!this.spec)
-            return undefined;
-        const slot = this.spec.slotConnections.get(name);
-        if (slot)
-            return slot;
-        // TODO(jopra): Provided slots should always be listed in the particle spec.
-        for (const slot of this.spec.slotConnections.values()) {
-            for (const provided of slot.provideSlotConnections) {
-                if (provided.name === name)
-                    return provided;
-            }
-        }
-        return undefined;
-    }
-    getSlotConnectionByName(name) {
-        return this.consumedSlotConnections[name];
-    }
-    getProvidedSlotByName(consumeName, name) {
-        return this.consumedSlotConnections[consumeName] && this.consumedSlotConnections[consumeName].providedSlots[name];
-    }
-    getSlotSpecs() {
-        if (this.spec)
-            return this.spec.slotConnections;
-        return new Map();
-    }
     isJavaParticle() {
         return this.spec && (this.spec.implFile || '').endsWith('java');
     }
@@ -343,7 +360,7 @@ export class Particle {
         for (const connection of Object.values(this.connections)) {
             result.push(connection.toString(nameMap, options).replace(/^|(\n)/g, '$1  '));
         }
-        for (const slotConnection of Object.values(this.consumedSlotConnections)) {
+        for (const slotConnection of this.getSlotConnections()) {
             result.push(slotConnection.toString(nameMap, options).replace(/^|(\n)/g, '$1  '));
         }
         return result.join('\n');

@@ -26,7 +26,7 @@ export interface Rendering {
     templateName?: string;
 }
 export declare class SlotConsumer {
-    readonly consumeConn?: SlotConnection;
+    readonly consumeConn: SlotConnection;
     slotContext: SlotContext;
     readonly directlyProvidedSlotContexts: ProvidedSlotContext[];
     readonly hostedSlotContexts: HostedSlotContext[];
@@ -38,7 +38,7 @@ export declare class SlotConsumer {
     private innerContainerBySlotId;
     readonly arc: Arc;
     description: Description;
-    constructor(arc: Arc, consumeConn?: SlotConnection, containerKind?: string);
+    constructor(arc: Arc, consumeConn: SlotConnection, containerKind?: string);
     getRendering(subId?: string): Rendering;
     readonly renderings: [string, Rendering][];
     addRenderingBySubId(subId: string | undefined, rendering: Rendering): void;

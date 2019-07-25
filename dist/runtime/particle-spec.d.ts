@@ -38,8 +38,7 @@ export declare class HandleConnectionSpec {
     check?: Check;
     constructor(rawData: SerializedHandleConnectionSpec, typeVarMap: Map<string, Type>);
     instantiateDependentConnections(particle: any, typeVarMap: Map<string, Type>): void;
-    toSlotlikeConnection(): ConsumeSlotConnectionSpec;
-    slandleType(): SlotType | undefined;
+    toSlotConnectionSpec(): ConsumeSlotConnectionSpec;
     isRoot(): boolean;
     readonly isInput: boolean;
     readonly isOutput: boolean;
@@ -111,7 +110,9 @@ export declare class ParticleSpec {
     isOutput(param: string): boolean;
     getConnectionByName(name: string): HandleConnectionSpec | undefined;
     getSlotSpec(slotName: string): ConsumeSlotConnectionSpec | undefined;
-    readonly slotConnectionNames: string[];
+    getSlandleSpec(slotName: string): ConsumeSlotConnectionSpec | undefined;
+    slandleConnectionNames(): string[];
+    slotConnectionNames(): string[];
     readonly primaryVerb: string | undefined;
     isCompatible(modality: Modality): boolean;
     setImplBlobUrl(url: string): void;
