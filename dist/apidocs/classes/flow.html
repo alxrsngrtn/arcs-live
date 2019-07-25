@@ -120,13 +120,13 @@
 					<a name="constructor" class="tsd-anchor"></a>
 					<h3>constructor</h3>
 					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">new <wbr>Flow<span class="tsd-signature-symbol">(</span>nodeIds<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">Set</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span>, edgeIds<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">Set</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span>, tags<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">Set</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="flow.html" class="tsd-signature-type">Flow</a></li>
+						<li class="tsd-signature tsd-kind-icon">new <wbr>Flow<span class="tsd-signature-symbol">(</span>nodeIds<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">Set</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span>, edgeIds<span class="tsd-signature-symbol">?: </span><a href="orderedset.html" class="tsd-signature-type">OrderedSet</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span>, tags<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">Set</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="flow.html" class="tsd-signature-type">Flow</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/7ed06be/src/dataflow/analysis/graph-internals.ts#L29">src/dataflow/analysis/graph-internals.ts:29</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/d486197/src/dataflow/analysis/graph-internals.ts#L30">src/dataflow/analysis/graph-internals.ts:30</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -135,7 +135,7 @@
 									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> nodeIds: <span class="tsd-signature-type">Set</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> =&nbsp;new Set()</span></h5>
 								</li>
 								<li>
-									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> edgeIds: <span class="tsd-signature-type">Set</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> =&nbsp;new Set()</span></h5>
+									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> edgeIds: <a href="orderedset.html" class="tsd-signature-type">OrderedSet</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> =&nbsp;new OrderedSet()</span></h5>
 								</li>
 								<li>
 									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> tags: <span class="tsd-signature-type">Set</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> =&nbsp;new Set()</span></h5>
@@ -151,10 +151,10 @@
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
 					<a name="edgeids" class="tsd-anchor"></a>
 					<h3>edge<wbr>Ids</h3>
-					<div class="tsd-signature tsd-kind-icon">edge<wbr>Ids<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Set</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span></div>
+					<div class="tsd-signature tsd-kind-icon">edge<wbr>Ids<span class="tsd-signature-symbol">:</span> <a href="orderedset.html" class="tsd-signature-type">OrderedSet</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/7ed06be/src/dataflow/analysis/graph-internals.ts#L32">src/dataflow/analysis/graph-internals.ts:32</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/d486197/src/dataflow/analysis/graph-internals.ts#L33">src/dataflow/analysis/graph-internals.ts:33</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -164,7 +164,7 @@
 					<div class="tsd-signature tsd-kind-icon">node<wbr>Ids<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Set</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/7ed06be/src/dataflow/analysis/graph-internals.ts#L31">src/dataflow/analysis/graph-internals.ts:31</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/d486197/src/dataflow/analysis/graph-internals.ts#L32">src/dataflow/analysis/graph-internals.ts:32</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -174,7 +174,7 @@
 					<div class="tsd-signature tsd-kind-icon">tags<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Set</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/7ed06be/src/dataflow/analysis/graph-internals.ts#L33">src/dataflow/analysis/graph-internals.ts:33</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/d486197/src/dataflow/analysis/graph-internals.ts#L34">src/dataflow/analysis/graph-internals.ts:34</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -191,7 +191,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/7ed06be/src/dataflow/analysis/graph-internals.ts#L74">src/dataflow/analysis/graph-internals.ts:74</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/d486197/src/dataflow/analysis/graph-internals.ts#L75">src/dataflow/analysis/graph-internals.ts:75</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -219,7 +219,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/7ed06be/src/dataflow/analysis/graph-internals.ts#L48">src/dataflow/analysis/graph-internals.ts:48</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/d486197/src/dataflow/analysis/graph-internals.ts#L49">src/dataflow/analysis/graph-internals.ts:49</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <a href="flow.html" class="tsd-signature-type">Flow</a></h4>
@@ -236,7 +236,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/7ed06be/src/dataflow/analysis/graph-internals.ts#L52">src/dataflow/analysis/graph-internals.ts:52</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/d486197/src/dataflow/analysis/graph-internals.ts#L53">src/dataflow/analysis/graph-internals.ts:53</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -259,7 +259,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/7ed06be/src/dataflow/analysis/graph-internals.ts#L59">src/dataflow/analysis/graph-internals.ts:59</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/d486197/src/dataflow/analysis/graph-internals.ts#L60">src/dataflow/analysis/graph-internals.ts:60</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -287,7 +287,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/7ed06be/src/dataflow/analysis/graph-internals.ts#L36">src/dataflow/analysis/graph-internals.ts:36</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/d486197/src/dataflow/analysis/graph-internals.ts#L37">src/dataflow/analysis/graph-internals.ts:37</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -315,7 +315,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/7ed06be/src/dataflow/analysis/graph-internals.ts#L93">src/dataflow/analysis/graph-internals.ts:93</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/d486197/src/dataflow/analysis/graph-internals.ts#L94">src/dataflow/analysis/graph-internals.ts:94</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>

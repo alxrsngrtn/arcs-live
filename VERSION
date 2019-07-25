@@ -1,5 +1,16 @@
-commit 7ed06becf4f083124c529617b5861e477eba459e
+commit d4861978322116aed41b44bd4e5116bb753c6628
 Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
-Date:   Wed Jul 24 13:35:56 2019 +1000
+Date:   Thu Jul 25 14:28:58 2019 +1000
 
-    Fixes bug where SlotInput edges were missing modifiers (#3383)
+    Added an OrderedSet class. (#3385)
+    
+    * Added an OrderedSet class.
+    
+    Hooks it up in the Flow/FlowModifier to use for edgeIds. This will be
+    needed in order to resurrect the full path of edges (in order) from the
+    Flow, so we can report sensible failure messages.
+    
+    * Reverted ordering of edgeIds in toUniqueString() methods.
+    
+    This was breaking the deduping of equivalent cycle traversals, and
+    exploding the search space.

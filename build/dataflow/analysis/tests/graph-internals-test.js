@@ -14,8 +14,8 @@ import { ClaimIsTag } from '../../../runtime/particle-claim';
 describe('Flow', () => {
     it('starts empty', () => {
         const flow = new Flow();
+        assert.strictEqual(flow.edgeIds.length, 0);
         assert.isEmpty(flow.nodeIds);
-        assert.isEmpty(flow.edgeIds);
         assert.isEmpty(flow.tags);
     });
     describe('modify', () => {
@@ -28,7 +28,7 @@ describe('Flow', () => {
             const flow = new Flow();
             flow.modify(modifier);
             assert.hasAllDeepKeys(flow.nodeIds, ['N1', 'N2']);
-            assert.hasAllDeepKeys(flow.edgeIds, ['E1', 'E2']);
+            assert.deepEqual(flow.edgeIds.asArray(), ['E1', 'E2']);
         });
         it('adds and removes tags', () => {
             const modifier1 = new FlowModifier();
@@ -168,11 +168,11 @@ describe('Flow', () => {
         const modifier = FlowModifier.parse('+edge:E1', '+node:N1', '+tag:t1');
         const original = new Flow();
         const copy = original.copyAndModify(modifier);
+        assert.deepEqual(copy.edgeIds.asArray(), ['E1']);
         assert.hasAllDeepKeys(copy.nodeIds, ['N1']);
-        assert.hasAllDeepKeys(copy.edgeIds, ['E1']);
         assert.hasAllDeepKeys(copy.tags, ['t1']);
+        assert.strictEqual(original.edgeIds.length, 0);
         assert.isEmpty(original.nodeIds);
-        assert.isEmpty(original.edgeIds);
         assert.isEmpty(original.tags);
     });
     it('has a unique string representation', () => {
@@ -185,24 +185,41 @@ describe('Flow', () => {
         flow.tags.add('t2');
         assert.strictEqual(flow.toUniqueString(), '{edge:E1, edge:E2, node:N1, node:N2, tag:t1, tag:t2}');
     });
+    it('the string representation does not depend on the ordering of the components of the flow', () => {
+        const flow1 = new Flow();
+        flow1.nodeIds.add('N1');
+        flow1.nodeIds.add('N2');
+        flow1.edgeIds.add('E1');
+        flow1.edgeIds.add('E2');
+        flow1.tags.add('t1');
+        flow1.tags.add('t2');
+        const flow2 = new Flow();
+        flow2.nodeIds.add('N2');
+        flow2.nodeIds.add('N1');
+        flow2.edgeIds.add('E2');
+        flow2.edgeIds.add('E1');
+        flow2.tags.add('t2');
+        flow2.tags.add('t1');
+        assert.strictEqual(flow1.toUniqueString(), flow2.toUniqueString());
+    });
 });
 describe('FlowModifier', () => {
     it('creates an empty modifier from an empty list of conditions', () => {
         const modifier = FlowModifier.parse();
-        assert.isEmpty(modifier.edgeIds);
+        assert.strictEqual(modifier.edgeIds.length, 0);
         assert.isEmpty(modifier.nodeIds);
         assert.isEmpty(modifier.tagOperations);
     });
     it('can be created from a list of conditions', () => {
         const modifier = FlowModifier.parse('+edge:E1', '+edge:E2', '+node:N1', '+node:N2', '+tag:t1', '+tag:t2');
-        assert.hasAllDeepKeys(modifier.edgeIds, ['E1', 'E2']);
+        assert.deepEqual(modifier.edgeIds.asArray(), ['E1', 'E2']);
         assert.hasAllDeepKeys(modifier.nodeIds, ['N1', 'N2']);
         assert.deepEqual(modifier.tagOperations, new Map([['t1', TagOperation.Add], ['t2', TagOperation.Add]]));
     });
     it('can be created from an edge and an empty list of claims', () => {
         const edge = new TestEdge(new TestNode('A'), new TestNode('B'), 'AB');
         const modifier = FlowModifier.fromClaims(edge, []);
-        assert.hasAllDeepKeys(modifier.edgeIds, ['AB']);
+        assert.deepEqual(modifier.edgeIds.asArray(), ['AB']);
         assert.hasAllDeepKeys(modifier.nodeIds, ['A']);
         assert.isEmpty(modifier.tagOperations);
     });
@@ -211,14 +228,14 @@ describe('FlowModifier', () => {
         const claim1 = new ClaimIsTag(/* isNot= */ false, 't1');
         const claim2 = new ClaimIsTag(/* isNot= */ true, 't2');
         const modifier = FlowModifier.fromClaims(edge, [claim1, claim2]);
-        assert.hasAllDeepKeys(modifier.edgeIds, ['AB']);
+        assert.deepEqual(modifier.edgeIds.asArray(), ['AB']);
         assert.hasAllDeepKeys(modifier.nodeIds, ['A']);
         assert.deepEqual(modifier.tagOperations, new Map([['t1', TagOperation.Add], ['t2', TagOperation.Remove]]));
     });
     it('can be converted into a Flow object', () => {
         const modifier = FlowModifier.parse('+edge:E1', '+node:N1', '+tag:t1');
         const flow = modifier.toFlow();
-        assert.hasAllDeepKeys(flow.edgeIds, ['E1']);
+        assert.deepEqual(flow.edgeIds.asArray(), ['E1']);
         assert.hasAllDeepKeys(flow.nodeIds, ['N1']);
         assert.hasAllDeepKeys(flow.tags, ['t1']);
     });
@@ -235,10 +252,10 @@ describe('FlowModifier', () => {
         const modifier = FlowModifier.parse('+edge:E2', '+node:N2', '-tag:t2');
         const copy = original.copyAndModify(modifier);
         assert.hasAllDeepKeys(original.nodeIds, ['N1']);
-        assert.hasAllDeepKeys(original.edgeIds, ['E1']);
+        assert.deepEqual(original.edgeIds.asArray(), ['E1']);
         assert.deepEqual(original.tagOperations, new Map([['t1', TagOperation.Add]]));
         assert.hasAllDeepKeys(copy.nodeIds, ['N1', 'N2']);
-        assert.hasAllDeepKeys(copy.edgeIds, ['E1', 'E2']);
+        assert.deepEqual(copy.edgeIds.asArray(), ['E1', 'E2']);
         assert.deepEqual(copy.tagOperations, new Map([['t1', TagOperation.Add], ['t2', TagOperation.Remove]]));
     });
     it('has a unique string representation', () => {

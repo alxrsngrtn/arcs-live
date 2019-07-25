@@ -18,20 +18,21 @@
  */
 import { ClaimType } from '../../runtime/particle-claim.js';
 import { DeepSet } from './deep-set.js';
+import { OrderedSet } from './ordered-set.js';
 /**
  * Represents the set of implicit and explicit claims that flow along a path in
  * the graph, i.e. tags, node IDs and edge IDs.
  */
 export class Flow {
-    constructor(nodeIds = new Set(), edgeIds = new Set(), tags = new Set()) {
+    constructor(nodeIds = new Set(), edgeIds = new OrderedSet(), tags = new Set()) {
         this.nodeIds = nodeIds;
         this.edgeIds = edgeIds;
         this.tags = tags;
     }
     /** Modifies the current Flow (in place) by applying the given FlowModifier. */
     modify(modifier) {
+        this.edgeIds.addAll(modifier.edgeIds);
         modifier.nodeIds.forEach(n => this.nodeIds.add(n));
-        modifier.edgeIds.forEach(e => this.edgeIds.add(e));
         modifier.tagOperations.forEach((operation, tag) => {
             if (operation === 'add') {
                 this.tags.add(tag);
@@ -42,7 +43,7 @@ export class Flow {
         });
     }
     copy() {
-        return new Flow(new Set(this.nodeIds), new Set(this.edgeIds), new Set(this.tags));
+        return new Flow(new Set(this.nodeIds), this.edgeIds.copy(), new Set(this.tags));
     }
     copyAndModify(modifier) {
         const copy = this.copy();
@@ -89,11 +90,16 @@ export class Flow {
         for (const nodeId of this.nodeIds) {
             elements.push('node:' + nodeId);
         }
-        for (const edgeId of this.edgeIds) {
-            elements.push('edge:' + edgeId);
-        }
         for (const tag of this.tags) {
             elements.push('tag:' + tag);
+        }
+        // NOTE: We use asSet() here for the edge IDs instead of asList(), and thus
+        // treat all different orderings of edges (i.e. paths) as equivalent,
+        // provided they visit the exact same edges. This helps dedupe visiting
+        // the same series of cycles in different orders, significantly reducing the
+        // search space.
+        for (const edgeId of this.edgeIds.asSet()) {
+            elements.push('edge:' + edgeId);
         }
         elements.sort();
         return '{' + elements.join(', ') + '}';
@@ -101,7 +107,10 @@ export class Flow {
 }
 /** A set of unique flows. */
 export class FlowSet extends DeepSet {
-    /** Copies the current FlowSet, and applies the given modifier to every flow in the copy. */
+    /**
+     * Copies the current FlowSet, and applies the given modifier to every flow in
+     * the copy.
+     */
     copyAndModify(modifier) {
         return this.map(flow => flow.copyAndModify(modifier));
     }
@@ -117,7 +126,7 @@ export class FlowModifier {
     /** Node IDs to add. */
     nodeIds = new Set(), 
     /** Edge IDs to add. */
-    edgeIds = new Set(), 
+    edgeIds = new OrderedSet(), 
     /** Tags to add/remove. Maps from tag name to operation. */
     tagOperations = new Map()) {
         this.nodeIds = nodeIds;
@@ -173,13 +182,13 @@ export class FlowModifier {
         return modifier;
     }
     copy() {
-        return new FlowModifier(new Set(this.nodeIds), new Set(this.edgeIds), new Map(this.tagOperations));
+        return new FlowModifier(new Set(this.nodeIds), this.edgeIds.copy(), new Map(this.tagOperations));
     }
     /** Copies the current FlowModifier, and then applies the given modifications to the copy. */
     copyAndModify(modifier) {
         const copy = this.copy();
+        copy.edgeIds.addAll(modifier.edgeIds);
         modifier.nodeIds.forEach(n => copy.nodeIds.add(n));
-        modifier.edgeIds.forEach(n => copy.edgeIds.add(n));
         modifier.tagOperations.forEach((op, tag) => copy.tagOperations.set(tag, op));
         return copy;
     }
@@ -190,11 +199,12 @@ export class FlowModifier {
     }
     toUniqueString() {
         const elements = [];
+        // The edgeIds list is ordered, but for de-duping we still want to sort them. 
+        for (const edgeId of this.edgeIds.asSet()) {
+            elements.push('+edge:' + edgeId);
+        }
         for (const nodeId of this.nodeIds) {
             elements.push('+node:' + nodeId);
-        }
-        for (const edgeId of this.edgeIds) {
-            elements.push('+edge:' + edgeId);
         }
         for (const [tag, op] of this.tagOperations) {
             const sign = op === TagOperation.Add ? '+' : '-';

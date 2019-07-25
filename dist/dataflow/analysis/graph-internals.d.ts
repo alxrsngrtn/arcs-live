@@ -19,15 +19,16 @@
 import { Claim } from '../../runtime/particle-claim.js';
 import { Check } from '../../runtime/particle-check.js';
 import { DeepSet } from './deep-set.js';
+import { OrderedSet } from './ordered-set.js';
 /**
  * Represents the set of implicit and explicit claims that flow along a path in
  * the graph, i.e. tags, node IDs and edge IDs.
  */
 export declare class Flow {
     readonly nodeIds: Set<string>;
-    readonly edgeIds: Set<string>;
+    readonly edgeIds: OrderedSet<string>;
     readonly tags: Set<string>;
-    constructor(nodeIds?: Set<string>, edgeIds?: Set<string>, tags?: Set<string>);
+    constructor(nodeIds?: Set<string>, edgeIds?: OrderedSet<string>, tags?: Set<string>);
     /** Modifies the current Flow (in place) by applying the given FlowModifier. */
     modify(modifier: FlowModifier): void;
     copy(): Flow;
@@ -40,7 +41,10 @@ export declare class Flow {
 }
 /** A set of unique flows. */
 export declare class FlowSet extends DeepSet<Flow> {
-    /** Copies the current FlowSet, and applies the given modifier to every flow in the copy. */
+    /**
+     * Copies the current FlowSet, and applies the given modifier to every flow in
+     * the copy.
+     */
     copyAndModify(modifier: FlowModifier): DeepSet<Flow>;
 }
 export declare enum TagOperation {
@@ -52,14 +56,14 @@ export declare class FlowModifier {
     /** Node IDs to add. */
     readonly nodeIds: Set<string>;
     /** Edge IDs to add. */
-    readonly edgeIds: Set<string>;
+    readonly edgeIds: OrderedSet<string>;
     /** Tags to add/remove. Maps from tag name to operation. */
     readonly tagOperations: Map<string, TagOperation>;
     constructor(
     /** Node IDs to add. */
     nodeIds?: Set<string>, 
     /** Edge IDs to add. */
-    edgeIds?: Set<string>, 
+    edgeIds?: OrderedSet<string>, 
     /** Tags to add/remove. Maps from tag name to operation. */
     tagOperations?: Map<string, TagOperation>);
     /**
