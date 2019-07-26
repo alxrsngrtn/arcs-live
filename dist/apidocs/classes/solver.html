@@ -74,10 +74,6 @@
 					</li>
 				</ul>
 			</section>
-			<section class="tsd-panel tsd-kind-class">
-				<h3 class="tsd-before-signature">Indexable</h3>
-				<div class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">[</span><span class="tsd-signature-symbol">]: </span><span class="tsd-signature-type">any</span></div>
-			</section>
 			<section class="tsd-panel-group tsd-index-group">
 				<h2>Index</h2>
 				<section class="tsd-panel tsd-index-panel">
@@ -91,7 +87,6 @@
 						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="solver.html#edge" class="tsd-kind-icon">Edge</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="solver.html#_isresolved" class="tsd-kind-icon">_is<wbr>Resolved</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="solver.html#dependentexpressions" class="tsd-kind-icon">dependent<wbr>Expressions</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="solver.html#edgeexpressions" class="tsd-kind-icon">edge<wbr>Expressions</a></li>
@@ -123,25 +118,19 @@
 					<a name="constructor" class="tsd-anchor"></a>
 					<h3>constructor</h3>
 					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">new <wbr>Solver<span class="tsd-signature-symbol">(</span>edges<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">readonly</span>, Edge<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, __namedParameters<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="solver.html" class="tsd-signature-type">Solver</a></li>
+						<li class="tsd-signature tsd-kind-icon">new <wbr>Solver<span class="tsd-signature-symbol">(</span>edges<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">keyof Edge[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="solver.html" class="tsd-signature-type">Solver</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/650a660/src/dataflow/analysis/analysis.ts#L212">src/dataflow/analysis/analysis.ts:212</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/fa37042/src/dataflow/analysis/analysis.ts#L212">src/dataflow/analysis/analysis.ts:212</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>edges: <span class="tsd-signature-type">readonly</span></h5>
-								</li>
-								<li>
-									<h5>Edge: <span class="tsd-signature-type">any</span></h5>
-								</li>
-								<li>
-									<h5>__namedParameters: <span class="tsd-signature-type">[]</span></h5>
+									<h5>edges: <span class="tsd-signature-type">keyof Edge[]</span></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <a href="solver.html" class="tsd-signature-type">Solver</a></h4>
@@ -151,23 +140,13 @@
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Properties</h2>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
-					<a name="edge" class="tsd-anchor"></a>
-					<h3>Edge</h3>
-					<div class="tsd-signature tsd-kind-icon">Edge<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/650a660/src/dataflow/analysis/analysis.ts#L201">src/dataflow/analysis/analysis.ts:201</a></li>
-						</ul>
-					</aside>
-				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private">
 					<a name="_isresolved" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagPrivate">Private</span> _is<wbr>Resolved</h3>
 					<div class="tsd-signature tsd-kind-icon">_is<wbr>Resolved<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> =&nbsp;false</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/650a660/src/dataflow/analysis/analysis.ts#L212">src/dataflow/analysis/analysis.ts:212</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/fa37042/src/dataflow/analysis/analysis.ts#L212">src/dataflow/analysis/analysis.ts:212</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -177,7 +156,7 @@
 					<div class="tsd-signature tsd-kind-icon">dependent<wbr>Expressions<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Map</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/edge.html" class="tsd-signature-type">Edge</a><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">Set</span><span class="tsd-signature-symbol">&lt;</span><a href="edgeexpression.html" class="tsd-signature-type">EdgeExpression</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/650a660/src/dataflow/analysis/analysis.ts#L210">src/dataflow/analysis/analysis.ts:210</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/fa37042/src/dataflow/analysis/analysis.ts#L210">src/dataflow/analysis/analysis.ts:210</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -193,7 +172,7 @@
 					<div class="tsd-signature tsd-kind-icon">edge<wbr>Expressions<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Map</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/edge.html" class="tsd-signature-type">Edge</a><span class="tsd-signature-symbol">, </span><a href="edgeexpression.html" class="tsd-signature-type">EdgeExpression</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> =&nbsp;new Map()</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/650a660/src/dataflow/analysis/analysis.ts#L204">src/dataflow/analysis/analysis.ts:204</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/fa37042/src/dataflow/analysis/analysis.ts#L204">src/dataflow/analysis/analysis.ts:204</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -205,10 +184,10 @@
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
 					<a name="edges" class="tsd-anchor"></a>
 					<h3>edges</h3>
-					<div class="tsd-signature tsd-kind-icon">edges<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">readonly</span></div>
+					<div class="tsd-signature tsd-kind-icon">edges<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">keyof Edge[]</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/650a660/src/dataflow/analysis/analysis.ts#L201">src/dataflow/analysis/analysis.ts:201</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/fa37042/src/dataflow/analysis/analysis.ts#L201">src/dataflow/analysis/analysis.ts:201</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -225,7 +204,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/650a660/src/dataflow/analysis/analysis.ts#L225">src/dataflow/analysis/analysis.ts:225</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/fa37042/src/dataflow/analysis/analysis.ts#L225">src/dataflow/analysis/analysis.ts:225</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -250,7 +229,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/650a660/src/dataflow/analysis/analysis.ts#L300">src/dataflow/analysis/analysis.ts:300</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/fa37042/src/dataflow/analysis/analysis.ts#L300">src/dataflow/analysis/analysis.ts:300</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -280,7 +259,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/650a660/src/dataflow/analysis/analysis.ts#L275">src/dataflow/analysis/analysis.ts:275</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/fa37042/src/dataflow/analysis/analysis.ts#L275">src/dataflow/analysis/analysis.ts:275</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -303,7 +282,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/650a660/src/dataflow/analysis/analysis.ts#L330">src/dataflow/analysis/analysis.ts:330</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/fa37042/src/dataflow/analysis/analysis.ts#L330">src/dataflow/analysis/analysis.ts:330</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -335,7 +314,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/650a660/src/dataflow/analysis/analysis.ts#L233">src/dataflow/analysis/analysis.ts:233</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/fa37042/src/dataflow/analysis/analysis.ts#L233">src/dataflow/analysis/analysis.ts:233</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -358,7 +337,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/650a660/src/dataflow/analysis/analysis.ts#L246">src/dataflow/analysis/analysis.ts:246</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/fa37042/src/dataflow/analysis/analysis.ts#L246">src/dataflow/analysis/analysis.ts:246</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -390,9 +369,6 @@
 						<ul>
 							<li class=" tsd-kind-constructor tsd-parent-kind-class">
 								<a href="solver.html#constructor" class="tsd-kind-icon">constructor</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class">
-								<a href="solver.html#edge" class="tsd-kind-icon">Edge</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
 								<a href="solver.html#_isresolved" class="tsd-kind-icon">_is<wbr>Resolved</a>
@@ -445,6 +421,7 @@
 				<li class="tsd-kind-function tsd-has-type-parameter"><span class="tsd-kind-icon">Function with type parameter</span></li>
 				<li class="tsd-kind-index-signature"><span class="tsd-kind-icon">Index signature</span></li>
 				<li class="tsd-kind-type-alias"><span class="tsd-kind-icon">Type alias</span></li>
+				<li class="tsd-kind-type-alias tsd-has-type-parameter"><span class="tsd-kind-icon">Type alias with type parameter</span></li>
 			</ul>
 			<ul class="tsd-legend">
 				<li class="tsd-kind-enum"><span class="tsd-kind-icon">Enumeration</span></li>
@@ -493,7 +470,7 @@
 	</div>
 </footer>
 <div class="container tsd-generator">
-	<p>Generated using <a href="http://typedoc.org/" target="_blank">TypeDoc</a></p>
+	<p>Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p>
 </div>
 <div class="overlay"></div>
 <script src="../assets/js/main.js"></script>

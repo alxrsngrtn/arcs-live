@@ -66,12 +66,16 @@
 			<div class="tsd-panel tsd-typography">
 				<p><a href="https://travis-ci.org/PolymerLabs/arcs"><img src="https://travis-ci.org/PolymerLabs/arcs.svg?branch=master" alt="Build Status"></a>
 				<a href="https://ci.appveyor.com/project/arcs/arcs-3i77k/branch/master"><img src="https://ci.appveyor.com/api/projects/status/rswlpkq2vtp9cns0/branch/master?svg=true" alt="AppVeyor Build status"></a></p>
-				<h1 id="arcs">arcs</h1>
+				<a href="#arcs" id="arcs" style="color: inherit; text-decoration: none;">
+					<h1>arcs</h1>
+				</a>
 				<p>A hosted version of Arcs is available in both tagged and bleeding edge forms.
 				Neither is stable -- the runtime, database and front-end are all iterating rapidly.</p>
 				<p><a href="https://live.arcs.dev/dist/apidocs/">TypeDoc</a>
 				generated documentation is available for Arcs Runtime.</p>
-				<h2 id="tagged-releases">Tagged Releases</h2>
+				<a href="#tagged-releases" id="tagged-releases" style="color: inherit; text-decoration: none;">
+					<h2>Tagged Releases</h2>
+				</a>
 				<p>Tagged release URLs have the form
 					<code>https://cdn.rawgit.com/PolymerLabs/arcs-live/&lt;release_number&gt;/shells/web-shell</code>
 					(the list of releases is
@@ -80,7 +84,9 @@
 				<a href="https://cdn.rawgit.com/PolymerLabs/arcs-live/v0.4.1/shell/apps/web/index.html">v0.4.1</a>.</p>
 				<p>Bleeding edge often works and is available on:
 				<a href="https://live.arcs.dev/">https://live.arcs.dev/</a></p>
-				<h2 id="install">Install</h2>
+				<a href="#install" id="install" style="color: inherit; text-decoration: none;">
+					<h2>Install</h2>
+				</a>
 				<p>Arcs is developed with a recent version of Node (v10.0.0 at the time of this
 					writing), in particular as we use new ES6 features. You can check our <a href="https://github.com/PolymerLabs/arcs/blob/master/.travis.yml">Travis
 					config</a> to see what
@@ -89,10 +95,14 @@
 					(ex. v11+) you may want to try rolling back to an earlier version. We welcome
 					patches that will allow more recent versions to operate, ideally without
 				requiring an upgrade to our current version.</p>
-				<h3 id="installing-the-easy-way">Installing the easy way</h3>
+				<a href="#installing-the-easy-way" id="installing-the-easy-way" style="color: inherit; text-decoration: none;">
+					<h3>Installing the easy way</h3>
+				</a>
 				<p>1) Run the setup script (MacOS, Linux)</p>
 				<pre><code>   $ ./tools/<span class="hljs-built_in">setup</span></code></pre><p>2) That&#39;s it! (You can skip the next two sections.)</p>
-				<h3 id="installing-from-scratch">Installing from scratch</h3>
+				<a href="#installing-from-scratch" id="installing-from-scratch" style="color: inherit; text-decoration: none;">
+					<h3>Installing from scratch</h3>
+				</a>
 				<p>1) Install nvm.</p>
 				<p>   As per the <a href="https://github.com/creationix/nvm/blob/master/README.md#installation">installation instructions</a>,
 					download and run the installation script directly in your terminal (yes, you
@@ -101,16 +111,24 @@
 				<p>1) Install node.</p>
 				<pre><code>   $ nvm install <span class="hljs-number">10</span></code></pre><p>1) If you need to update npm to a later version (our build checks for the
 				minimum required version):</p>
-				<pre><code>   $ <span class="hljs-built_in">npm</span> install -g <span class="hljs-built_in">npm</span>   <span class="hljs-comment"># can use npm@6.3.0 to install a specific version</span></code></pre><h3 id="installing-within-the-arcs-project-">Installing within the Arcs project:</h3>
+				<pre><code>   $ <span class="hljs-built_in">npm</span> install -g <span class="hljs-built_in">npm</span>   <span class="hljs-comment"># can use npm@6.3.0 to install a specific version</span></code></pre>
+				<a href="#installing-within-the-arcs-project" id="installing-within-the-arcs-project" style="color: inherit; text-decoration: none;">
+					<h3>Installing within the Arcs project:</h3>
+				</a>
 				<pre><code><span class="hljs-variable">$ </span>npm install
 <span class="hljs-variable">$ </span>./tools/sigh</code></pre><p><code>npm install</code> is required on a fresh checkout. After that it only needs to be
 					re-run infrequently as new dependencies are included, and usually a build
 				failure will be the signal for that.</p>
-				<h2 id="git-setup">Git Setup</h2>
+				<a href="#git-setup" id="git-setup" style="color: inherit; text-decoration: none;">
+					<h2>Git Setup</h2>
+				</a>
 				<p>You may also find it helpful to have sigh lint and type check your work locally
 					before you commit it. To do this, you can setup git to run presubmit checks
 				using:</p>
-				<pre><code>$ git<span class="hljs-built_in"> config </span>core.hooksPath tools/hooks</code></pre><h3 id="windows-installation-notes">Windows Installation Notes</h3>
+				<pre><code>$ git<span class="hljs-built_in"> config </span>core.hooksPath tools/hooks</code></pre>
+				<a href="#windows-installation-notes" id="windows-installation-notes" style="color: inherit; text-decoration: none;">
+					<h3>Windows Installation Notes</h3>
+				</a>
 				<ul>
 					<li><a href="https://git-scm.com/downloads">Git for Windows</a> is one of many Git options.</li>
 					<li>Consider using <a href="https://github.com/coreybutler/nvm-windows/">nvm-windows</a>
@@ -125,24 +143,36 @@
 						<code>npm config set msvs_version 2015</code> bit, and similar for Python if you
 					install that manually per <code>node-gyp</code> option 2 instructions.</li>
 				</ul>
-				<h3 id="mac-installation-notes">Mac Installation Notes</h3>
+				<a href="#mac-installation-notes" id="mac-installation-notes" style="color: inherit; text-decoration: none;">
+					<h3>Mac Installation Notes</h3>
+				</a>
 				<ul>
 					<li>When installing, if you run into SSL Cert verification errors, consider certifying Python 3.6 on Mac:
 					<code>/Applications/Python\ 3.6/Install\ Certificates.command</code> (<a href="https://stackoverflow.com/a/42334357">source</a>)</li>
 				</ul>
-				<h2 id="starting-arcs">Starting Arcs</h2>
+				<a href="#starting-arcs" id="starting-arcs" style="color: inherit; text-decoration: none;">
+					<h2>Starting Arcs</h2>
+				</a>
 				<p>After the full build (<code>npm install &amp;&amp; tools/sigh</code>) run: (note that <code>npm
 start</code> will block, so you&#39;ll have to run the second command in a new shell):</p>
 				<pre><code>$ <span class="hljs-built_in">npm</span> start</code></pre><p>Then open <code>http://localhost:8786/shells/web-shell/</code> in a web browser
 				(or, on MacOS, use <code>open &#39;http://localhost:8786/shells/web-shell/</code>).</p>
-				<h2 id="subprojects">Subprojects</h2>
+				<a href="#subprojects" id="subprojects" style="color: inherit; text-decoration: none;">
+					<h2>Subprojects</h2>
+				</a>
 				<p>Subcomponents have more detailed descriptions. Particularly the extensions
 				also have individual installation steps.</p>
-				<h3 id="chrome-extension">Chrome Extension</h3>
+				<a href="#chrome-extension" id="chrome-extension" style="color: inherit; text-decoration: none;">
+					<h3>Chrome Extension</h3>
+				</a>
 				<p>See <a href="extension/README.md">extension</a>.</p>
-				<h3 id="chrome-developer-tools-extension">Chrome Developer Tools Extension</h3>
+				<a href="#chrome-developer-tools-extension" id="chrome-developer-tools-extension" style="color: inherit; text-decoration: none;">
+					<h3>Chrome Developer Tools Extension</h3>
+				</a>
 				<p>See <a href="devtools/README.md">devtools</a>.</p>
-				<h2 id="testing">Testing</h2>
+				<a href="#testing" id="testing" style="color: inherit; text-decoration: none;">
+					<h2>Testing</h2>
+				</a>
 				<p>The simplest way to run tests is to let the targets do all the work. These
 					commands will install all packages, run a build, start a background server,
 				run all the tests, and kill the background server:</p>
@@ -163,20 +193,27 @@ $ npm run <span class="hljs-keyword">test</span>-<span class="hljs-keyword">with
 				<p>This also works for unit tests: <code>./tools/sigh test --grep &#39;regex&#39;</code>. In addition,
 					for unit tests you can run only a single test case by using <code>it.only()</code> instead
 				of <code>it()</code>, or a single suite using <code>describe.only()</code> instead of <code>describe()</code>.</p>
-				<h3 id="debugging-tests">Debugging tests</h3>
+				<a href="#debugging-tests" id="debugging-tests" style="color: inherit; text-decoration: none;">
+					<h3>Debugging tests</h3>
+				</a>
 				<p>If you see errors like</p>
 				<pre><code><span class="hljs-symbol">ERROR:</span> connect ECONNREFUSED <span class="hljs-number">127.0</span>.<span class="hljs-number">0.1</span>:<span class="hljs-number">9515</span>
 chrome
     at new RuntimeError (...\node_modules\webdriverio\build\<span class="hljs-class"><span class="hljs-keyword">lib</span>\<span class="hljs-title">utils</span>\<span class="hljs-title">ErrorHandler</span>.<span class="hljs-title">js</span>:144:12)</span>
     at Request._callback (...\node_modules\webdriverio\build\<span class="hljs-class"><span class="hljs-keyword">lib</span>\<span class="hljs-title">utils</span>\<span class="hljs-title">RequestHandler</span>.<span class="hljs-title">js</span>:327:43)</span></code></pre><p>It may indicate that chromedriver hasn&#39;t been installed completely. Run the install script:</p>
-				<pre><code><span class="hljs-keyword">node</span> <span class="hljs-title">node_modules</span>\chromedriver\install.js</code></pre><h4 id="debugging-unit-tests-in-chrome">Debugging unit tests in Chrome</h4>
+				<pre><code><span class="hljs-keyword">node</span> <span class="hljs-title">node_modules</span>\chromedriver\install.js</code></pre>
+				<a href="#debugging-unit-tests-in-chrome" id="debugging-unit-tests-in-chrome" style="color: inherit; text-decoration: none;">
+					<h4>Debugging unit tests in Chrome</h4>
+				</a>
 				<p>You can attach the Chrome debugger to debug your unit tests using the
 				<code>--inspect</code> flag:</p>
 				<pre><code>.<span class="hljs-regexp">/tools/</span>sigh test --<span class="hljs-keyword">inspect</span></code></pre><p>It will wait for you to attach your debugger before running the tests. Open
 					[chrome://inspect] and look for the &quot;inspect&quot; button under the &quot;Remote Target&quot;
 					heading. You can use <code>Ctrl-P</code> to open files (you may need to add the <code>build</code>
 				folder to your workspace first). Hit &quot;resume&quot; to start running the unit tests.</p>
-				<h3 id="debugging-selenium-failures">Debugging Selenium Failures</h3>
+				<a href="#debugging-selenium-failures" id="debugging-selenium-failures" style="color: inherit; text-decoration: none;">
+					<h3>Debugging Selenium Failures</h3>
+				</a>
 				<p>Selenium failures are often easy to cause due to seemingly unrelated changes,
 				and difficult to diagnose.</p>
 				<p>There are 2 main avenues to debug them in this system. The first is to have
@@ -194,7 +231,9 @@ chrome
 				<p>Webdriver takes screenshots of failures, which are saved to the
 					<code>./shells/test/errorShots/</code> directory. When running on Travis, the screenshots
 				are uploaded to the <code>Arcs Webdriver Screenshots</code> team drive.</p>
-				<h4 id="graphical-non-headless-">Graphical (non-headless)</h4>
+				<a href="#graphical-non-headless" id="graphical-non-headless" style="color: inherit; text-decoration: none;">
+					<h4>Graphical (non-headless)</h4>
+				</a>
 				<p>It may be easiest to see the problem in a browser window to diagnose it. Edit
 					<code>wdio.conf.js</code> in the branch with failures, comment out the <code>&#39;--headless&#39;</code>
 					option and increase the mocha timeout. In combination, these two changes will
@@ -233,7 +272,9 @@ index <span class="hljs-number">0</span>e36452..<span class="hljs-number">8</spa
 				<p>There are also some commands available natively at that point, including
 					<code>.help</code> and the <code>browser</code> variable (including methods such as
 				<code>browser.execute()</code>).</p>
-				<h4 id="attaching-a-debugger">Attaching a Debugger</h4>
+				<a href="#attaching-a-debugger" id="attaching-a-debugger" style="color: inherit; text-decoration: none;">
+					<h4>Attaching a Debugger</h4>
+				</a>
 				<p>To attach a debugger, uncomment the <code>execArgv</code> <code>--inspect</code> configuration option.
 					It&#39;s likely that you&#39;ll still want to have increased the <code>mochaTimeout</code> and to
 				be running graphically, so those are in the example as well:</p>
@@ -273,7 +314,9 @@ ws://127.0.0.1:9229/..</code> as normally appears for <a href="https://nodejs.or
 				<p>Adding <code>debugger;</code> statements may be the easiest way to activate the debugger.
 					Using <code>browser.debug();</code> statements to pause execution to give you time to
 				attach a debugger may be helpful as well.</p>
-				<h2 id="releasing">Releasing</h2>
+				<a href="#releasing" id="releasing" style="color: inherit; text-decoration: none;">
+					<h2>Releasing</h2>
+				</a>
 				<p>Our release process is pretty minimal, but requires a few steps across the
 					<a href="https://github.com/PolymerLabs/arcs">arcs</a> and
 				<a href="https://github.com/PolymerLabs/arcs-live">arcs-live</a> repositories.</p>
@@ -2549,9 +2592,6 @@ ws://127.0.0.1:9229/..</code> as normally appears for <a href="https://nodejs.or
 						<a href="globals.html#commonstyletemplate" class="tsd-kind-icon">common<wbr>Style<wbr>Template</a>
 					</li>
 					<li class=" tsd-kind-variable tsd-is-not-exported">
-						<a href="globals.html#connections" class="tsd-kind-icon">connections</a>
-					</li>
-					<li class=" tsd-kind-variable tsd-is-not-exported">
 						<a href="globals.html#createid" class="tsd-kind-icon">create<wbr>Id</a>
 					</li>
 					<li class=" tsd-kind-variable tsd-is-not-exported">
@@ -2586,9 +2626,6 @@ ws://127.0.0.1:9229/..</code> as normally appears for <a href="https://nodejs.or
 					</li>
 					<li class=" tsd-kind-variable tsd-is-not-exported">
 						<a href="globals.html#globalwarningkeys" class="tsd-kind-icon">global<wbr>Warning<wbr>Keys</a>
-					</li>
-					<li class=" tsd-kind-variable tsd-is-not-exported">
-						<a href="globals.html#handle" class="tsd-kind-icon">handle</a>
 					</li>
 					<li class=" tsd-kind-variable tsd-is-not-exported">
 						<a href="globals.html#handleconnectionfields" class="tsd-kind-icon">handle<wbr>Connection<wbr>Fields</a>
@@ -2667,9 +2704,6 @@ ws://127.0.0.1:9229/..</code> as normally appears for <a href="https://nodejs.or
 					</li>
 					<li class=" tsd-kind-variable tsd-is-not-exported">
 						<a href="globals.html#slotfields" class="tsd-kind-icon">slot<wbr>Fields</a>
-					</li>
-					<li class=" tsd-kind-variable tsd-is-not-exported">
-						<a href="globals.html#storeid" class="tsd-kind-icon">store<wbr>Id</a>
 					</li>
 					<li class=" tsd-kind-variable tsd-is-not-exported">
 						<a href="globals.html#streamingcallbacks" class="tsd-kind-icon">streaming<wbr>Callbacks</a>
@@ -3246,6 +3280,7 @@ ws://127.0.0.1:9229/..</code> as normally appears for <a href="https://nodejs.or
 				<li class="tsd-kind-function tsd-has-type-parameter"><span class="tsd-kind-icon">Function with type parameter</span></li>
 				<li class="tsd-kind-index-signature"><span class="tsd-kind-icon">Index signature</span></li>
 				<li class="tsd-kind-type-alias"><span class="tsd-kind-icon">Type alias</span></li>
+				<li class="tsd-kind-type-alias tsd-has-type-parameter"><span class="tsd-kind-icon">Type alias with type parameter</span></li>
 			</ul>
 			<ul class="tsd-legend">
 				<li class="tsd-kind-enum"><span class="tsd-kind-icon">Enumeration</span></li>
@@ -3294,7 +3329,7 @@ ws://127.0.0.1:9229/..</code> as normally appears for <a href="https://nodejs.or
 	</div>
 </footer>
 <div class="container tsd-generator">
-	<p>Generated using <a href="http://typedoc.org/" target="_blank">TypeDoc</a></p>
+	<p>Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p>
 </div>
 <div class="overlay"></div>
 <script src="assets/js/main.js"></script>

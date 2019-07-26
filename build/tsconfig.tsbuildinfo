@@ -981,6 +981,10 @@
         "version": "8340ab153b820a3410aa80beb76d0ac3d8cfde5ff0e677944a9c6b0fb7ba606f",
         "signature": "8340ab153b820a3410aa80beb76d0ac3d8cfde5ff0e677944a9c6b0fb7ba606f"
       },
+      "/home/travis/build/PolymerLabs/arcs/node_modules/@types/pouchdb-adapter-cordova-sqlite/index.d.ts": {
+        "version": "d3eb68bf84cda147dfa4b50414304ea63efe4a5e897d03cca14eed537623a315",
+        "signature": "d3eb68bf84cda147dfa4b50414304ea63efe4a5e897d03cca14eed537623a315"
+      },
       "/home/travis/build/PolymerLabs/arcs/node_modules/@types/pouchdb-adapter-fruitdown/index.d.ts": {
         "version": "eaa52db1743cc9bbaf4132bcec47862c20f0d1a90c697928538717db348d04f2",
         "signature": "eaa52db1743cc9bbaf4132bcec47862c20f0d1a90c697928538717db348d04f2"
@@ -1034,8 +1038,8 @@
         "signature": "cfe3a93170617b0db102180681966196202440b0d14b1c9f83b8013248bec3ad"
       },
       "/home/travis/build/PolymerLabs/arcs/node_modules/@types/pouchdb/index.d.ts": {
-        "version": "24d5f1dec935554b084a2da6c15e083eb1a4609840b9e13806c23632eefdfb14",
-        "signature": "24d5f1dec935554b084a2da6c15e083eb1a4609840b9e13806c23632eefdfb14"
+        "version": "45c31e764a94467bb99a8ab1733869142ad188a1caee2d41e764391378089caf",
+        "signature": "45c31e764a94467bb99a8ab1733869142ad188a1caee2d41e764391378089caf"
       },
       "/home/travis/build/PolymerLabs/arcs/src/platform/pouchdb-web.d.ts": {
         "version": "8af504cd86378edecb34e9400ff47d808aa24cf63f384b6650cbd2ef7832a3b6",
@@ -1314,8 +1318,8 @@
         "signature": "2d6b217f7b1b6cecdc0587801e143fe465b99b03b7247761f0529570bee314f1"
       },
       "/home/travis/build/PolymerLabs/arcs/node_modules/@types/mocha/index.d.ts": {
-        "version": "9e658768714f6421add577e09817cedbc7e8fb66f79d01af936d24537cbcbf27",
-        "signature": "9e658768714f6421add577e09817cedbc7e8fb66f79d01af936d24537cbcbf27"
+        "version": "c4c03cf65951d980ba618ae9601d10438730803fc9c8a1f7b34af8739981e205",
+        "signature": "c4c03cf65951d980ba618ae9601d10438730803fc9c8a1f7b34af8739981e205"
       },
       "/home/travis/build/PolymerLabs/arcs/src/platform/mocha-node.ts": {
         "version": "d5b4d56c8942884ce7c6a2793e784f03b37c70fd6311c233c68cd206b7a1ac2a",
@@ -2517,8 +2521,8 @@
         "signature": "3602dfff3072caea42f23a9b63fb34a7b0c95a62b93ce2add5fe6b159447845e"
       },
       "/home/travis/build/PolymerLabs/arcs/node_modules/@types/jszip/index.d.ts": {
-        "version": "dec479adce6c2c753ce57e9d570378e097509f28d1e45155b5eed46e6d039830",
-        "signature": "dec479adce6c2c753ce57e9d570378e097509f28d1e45155b5eed46e6d039830"
+        "version": "0edac467ab32db119a7cab8904665f2ba2a89ffe97132833405dcca3871f6e33",
+        "signature": "0edac467ab32db119a7cab8904665f2ba2a89ffe97132833405dcca3871f6e33"
       },
       "/home/travis/build/PolymerLabs/arcs/src/tools/bundle.ts": {
         "version": "3f217a88794a906a430c329deeff9136900a66b99d01be1f497e1ff1edb42e8e",
@@ -2573,8 +2577,8 @@
         "signature": "a6742e25ac12860727c22a379707e050a126c48c4dd98ddd795a3a33dd0a63c7"
       },
       "/home/travis/build/PolymerLabs/arcs/node_modules/@types/morgan/index.d.ts": {
-        "version": "fc20fb48224b5162c584b7907221cce2c03bd01a1af59036ccbb23e094796350",
-        "signature": "fc20fb48224b5162c584b7907221cce2c03bd01a1af59036ccbb23e094796350"
+        "version": "d331c83227ae5b3090f0d46fc6738d96b6959b2365571fa56d052acec81a5a1a",
+        "signature": "d331c83227ae5b3090f0d46fc6738d96b6959b2365571fa56d052acec81a5a1a"
       },
       "/home/travis/build/PolymerLabs/arcs/src/tools/dev_server/explorer-proxy.ts": {
         "version": "3c44f308076ad7a792d35aa7a43eb91f5717ef94fd65883e5741d9bb358a6489",
@@ -2612,81 +2616,13 @@
         "version": "89ccbe04e737ce613f5f04990271cfa84901446350b8551b0555ddf19319723b",
         "signature": "89ccbe04e737ce613f5f04990271cfa84901446350b8551b0555ddf19319723b"
       },
-      "/home/travis/build/PolymerLabs/arcs/node_modules/@types/fs-extra/index.d.ts": {
-        "version": "d5c03e5866400953db3ef99447cc29bc3bac083171e128fd87a25c09defd2503",
-        "signature": "d5c03e5866400953db3ef99447cc29bc3bac083171e128fd87a25c09defd2503"
-      },
-      "/home/travis/build/PolymerLabs/arcs/node_modules/@types/handlebars/index.d.ts": {
-        "version": "2e8b9f9f3f0f170b2e073b0a418d4b2fffc3a58a839f1757ea47b4d99ee0fd4d",
-        "signature": "2e8b9f9f3f0f170b2e073b0a418d4b2fffc3a58a839f1757ea47b4d99ee0fd4d"
-      },
-      "/home/travis/build/PolymerLabs/arcs/node_modules/@types/highlight.js/index.d.ts": {
-        "version": "128ffe0fd9465c6b64611d673132e2c8865454788d85f39a5553d2782c11ede5",
-        "signature": "128ffe0fd9465c6b64611d673132e2c8865454788d85f39a5553d2782c11ede5"
-      },
       "/home/travis/build/PolymerLabs/arcs/node_modules/@types/is-windows/index.d.ts": {
         "version": "886b23c5d90a45b4fdb451fd5e6ce5800e2b4da30bd5649025c69c540ba10cce",
         "signature": "886b23c5d90a45b4fdb451fd5e6ce5800e2b4da30bd5649025c69c540ba10cce"
       },
-      "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/common.d.ts": {
-        "version": "826e226ef4293d2e692c796d7cc81c94f353c57fd6016685b79d68134e5df047",
-        "signature": "826e226ef4293d2e692c796d7cc81c94f353c57fd6016685b79d68134e5df047"
-      },
-      "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/array.d.ts": {
-        "version": "24f73778cc712f3d2ff4b69227957577487118bd41652b63c5f913ba12f7631a",
-        "signature": "24f73778cc712f3d2ff4b69227957577487118bd41652b63c5f913ba12f7631a"
-      },
-      "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/collection.d.ts": {
-        "version": "b645de8e8084e4cb7fb9ba2d8e3fd893dc3b5a6568fb7a5027aec4f779ef814d",
-        "signature": "b645de8e8084e4cb7fb9ba2d8e3fd893dc3b5a6568fb7a5027aec4f779ef814d"
-      },
-      "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/date.d.ts": {
-        "version": "6e88e36ca6d6953fde31898701899e61239b22f09906d5970caac88107a4b01a",
-        "signature": "6e88e36ca6d6953fde31898701899e61239b22f09906d5970caac88107a4b01a"
-      },
-      "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/function.d.ts": {
-        "version": "8d0b0656ffc2f973bdea853fc00a3f99122db54fd7a0e13bf87d6f358fbc3c6e",
-        "signature": "8d0b0656ffc2f973bdea853fc00a3f99122db54fd7a0e13bf87d6f358fbc3c6e"
-      },
-      "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/lang.d.ts": {
-        "version": "5ded11c97be84de8fc472b3639230daa947232f25da04803508539880e3939aa",
-        "signature": "5ded11c97be84de8fc472b3639230daa947232f25da04803508539880e3939aa"
-      },
-      "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/math.d.ts": {
-        "version": "90e654b460f8ff7a3ff73ec54996290afebf00c8acc0fc634961af1509416db5",
-        "signature": "90e654b460f8ff7a3ff73ec54996290afebf00c8acc0fc634961af1509416db5"
-      },
-      "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/number.d.ts": {
-        "version": "81fdef0cbc4aeed4e29f7ed43d7b768ebe39e068da55c95bd710f47be289d6ac",
-        "signature": "81fdef0cbc4aeed4e29f7ed43d7b768ebe39e068da55c95bd710f47be289d6ac"
-      },
-      "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/object.d.ts": {
-        "version": "17d66f8a355e76a5a1ee0a82e3428541abdebe80db47f93586a21a2cd79d89bc",
-        "signature": "17d66f8a355e76a5a1ee0a82e3428541abdebe80db47f93586a21a2cd79d89bc"
-      },
-      "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/seq.d.ts": {
-        "version": "e4db201366aed6e8ec28c4f9e998729477b0825ae7e517441e8000f192b8b033",
-        "signature": "e4db201366aed6e8ec28c4f9e998729477b0825ae7e517441e8000f192b8b033"
-      },
-      "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/string.d.ts": {
-        "version": "20fb7144dd7a3e5007cc44e96c843879216fd082bf5761bd420715d645eb683e",
-        "signature": "20fb7144dd7a3e5007cc44e96c843879216fd082bf5761bd420715d645eb683e"
-      },
-      "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/util.d.ts": {
-        "version": "026742bab94860543fde035a6bfd5d5103fab08afbdacf9a207a44b2bb6fccba",
-        "signature": "026742bab94860543fde035a6bfd5d5103fab08afbdacf9a207a44b2bb6fccba"
-      },
-      "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/index.d.ts": {
-        "version": "4b0129cc010964d404b46ab0ecc2017e29e61be7f243a2f4b8633de40c6bf632",
-        "signature": "4b0129cc010964d404b46ab0ecc2017e29e61be7f243a2f4b8633de40c6bf632"
-      },
       "/home/travis/build/PolymerLabs/arcs/node_modules/@types/long/index.d.ts": {
         "version": "d32ef7739402db3a15640222d047f0044e8e9a09ee123d49e8f57f3c66c2a732",
         "signature": "d32ef7739402db3a15640222d047f0044e8e9a09ee123d49e8f57f3c66c2a732"
-      },
-      "/home/travis/build/PolymerLabs/arcs/node_modules/@types/marked/index.d.ts": {
-        "version": "c08a5e873738f5576ae1ca5810b5ebc30509f05bde56c3a3bbdd75d6c0806e6a",
-        "signature": "c08a5e873738f5576ae1ca5810b5ebc30509f05bde56c3a3bbdd75d6c0806e6a"
       },
       "/home/travis/build/PolymerLabs/arcs/node_modules/@types/mkdirp/index.d.ts": {
         "version": "a877eff63216a52ca8d06431e888e3e3522c323361537d156f94f877870ef21c",
@@ -2699,10 +2635,6 @@
       "/home/travis/build/PolymerLabs/arcs/node_modules/@types/seedrandom/index.d.ts": {
         "version": "1268e311431a3b23db043921bb743be87f3ec0acb2d675564d7961620f4569e0",
         "signature": "1268e311431a3b23db043921bb743be87f3ec0acb2d675564d7961620f4569e0"
-      },
-      "/home/travis/build/PolymerLabs/arcs/node_modules/@types/shelljs/index.d.ts": {
-        "version": "430fb916bb8477db0a96b180e91dd678d5889773fde2884c740ec0c0d797ae20",
-        "signature": "430fb916bb8477db0a96b180e91dd678d5889773fde2884c740ec0c0d797ae20"
       },
       "/home/travis/build/PolymerLabs/arcs/node_modules/@types/webgl-ext/index.d.ts": {
         "version": "49febed15cc962e5823a8b0781f0fcd8f5f63f6bcadcdda5e30e4d173ce738d4",
@@ -4713,6 +4645,11 @@
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
       ],
+      "/home/travis/build/PolymerLabs/arcs/node_modules/@types/pouchdb-adapter-cordova-sqlite/index.d.ts": [
+        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/pouchdb-core/index.d.ts",
+        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
+        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
+      ],
       "/home/travis/build/PolymerLabs/arcs/node_modules/@types/pouchdb-adapter-fruitdown/index.d.ts": [
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/pouchdb-core/index.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
@@ -4791,6 +4728,7 @@
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
       ],
       "/home/travis/build/PolymerLabs/arcs/node_modules/@types/pouchdb/index.d.ts": [
+        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/pouchdb-adapter-cordova-sqlite/index.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/pouchdb-adapter-fruitdown/index.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/pouchdb-adapter-http/index.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/pouchdb-adapter-idb/index.d.ts",
@@ -7878,237 +7816,11 @@
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
       ],
-      "/home/travis/build/PolymerLabs/arcs/node_modules/@types/fs-extra/index.d.ts": [
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/fs.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/index.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
-      ],
-      "/home/travis/build/PolymerLabs/arcs/node_modules/@types/handlebars/index.d.ts": [
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
-      ],
-      "/home/travis/build/PolymerLabs/arcs/node_modules/@types/highlight.js/index.d.ts": [
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
-      ],
       "/home/travis/build/PolymerLabs/arcs/node_modules/@types/is-windows/index.d.ts": [
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
       ],
-      "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/common.d.ts": [
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/index.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/array.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/collection.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/date.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/function.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/lang.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/math.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/number.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/object.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/seq.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/string.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/util.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
-      ],
-      "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/array.d.ts": [
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/index.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/common.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/collection.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/date.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/function.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/lang.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/math.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/number.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/object.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/seq.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/string.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/util.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
-      ],
-      "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/collection.d.ts": [
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/index.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/common.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/array.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/date.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/function.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/lang.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/math.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/number.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/object.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/seq.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/string.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/util.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
-      ],
-      "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/date.d.ts": [
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/index.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/common.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/array.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/collection.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/function.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/lang.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/math.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/number.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/object.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/seq.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/string.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/util.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
-      ],
-      "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/function.d.ts": [
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/index.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/common.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/array.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/collection.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/date.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/lang.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/math.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/number.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/object.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/seq.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/string.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/util.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
-      ],
-      "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/lang.d.ts": [
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/index.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/common.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/array.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/collection.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/date.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/function.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/math.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/number.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/object.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/seq.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/string.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/util.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
-      ],
-      "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/math.d.ts": [
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/index.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/common.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/array.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/collection.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/date.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/function.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/lang.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/number.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/object.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/seq.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/string.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/util.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
-      ],
-      "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/number.d.ts": [
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/index.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/common.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/array.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/collection.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/date.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/function.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/lang.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/math.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/object.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/seq.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/string.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/util.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
-      ],
-      "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/object.d.ts": [
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/index.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/common.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/array.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/collection.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/date.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/function.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/lang.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/math.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/number.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/seq.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/string.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/util.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
-      ],
-      "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/seq.d.ts": [
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/index.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/common.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/array.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/collection.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/date.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/function.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/lang.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/math.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/number.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/object.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/string.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/util.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
-      ],
-      "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/string.d.ts": [
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/index.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/common.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/array.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/collection.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/date.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/function.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/lang.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/math.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/number.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/object.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/seq.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/util.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
-      ],
-      "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/util.d.ts": [
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/index.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/common.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/array.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/collection.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/date.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/function.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/lang.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/math.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/number.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/object.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/seq.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/string.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
-      ],
-      "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/index.d.ts": [
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/common.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/array.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/collection.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/date.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/function.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/lang.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/math.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/number.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/object.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/seq.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/string.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/util.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
-      ],
       "/home/travis/build/PolymerLabs/arcs/node_modules/@types/long/index.d.ts": [
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
-      ],
-      "/home/travis/build/PolymerLabs/arcs/node_modules/@types/marked/index.d.ts": [
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
       ],
@@ -8121,13 +7833,6 @@
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
       ],
       "/home/travis/build/PolymerLabs/arcs/node_modules/@types/seedrandom/index.d.ts": [
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
-      ],
-      "/home/travis/build/PolymerLabs/arcs/node_modules/@types/shelljs/index.d.ts": [
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/child_process.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/glob/index.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/index.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
       ],
@@ -9290,6 +8995,7 @@
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
       ],
       "/home/travis/build/PolymerLabs/arcs/node_modules/@types/pouchdb/index.d.ts": [
+        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/pouchdb-adapter-cordova-sqlite/index.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/pouchdb-adapter-fruitdown/index.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/pouchdb-adapter-http/index.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/pouchdb-adapter-idb/index.d.ts",
@@ -9394,6 +9100,11 @@
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
       ],
+      "/home/travis/build/PolymerLabs/arcs/node_modules/@types/pouchdb-adapter-cordova-sqlite/index.d.ts": [
+        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/pouchdb-core/index.d.ts",
+        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
+        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
+      ],
       "/home/travis/build/PolymerLabs/arcs/node_modules/@types/pouchdb-find/index.d.ts": [
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/pouchdb-core/index.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
@@ -9457,19 +9168,6 @@
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/base.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts"
-      ],
-      "/home/travis/build/PolymerLabs/arcs/node_modules/@types/shelljs/index.d.ts": [
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/child_process.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/glob/index.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/index.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
-      ],
-      "/home/travis/build/PolymerLabs/arcs/node_modules/@types/fs-extra/index.d.ts": [
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/fs.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/index.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
       ],
       "/home/travis/build/PolymerLabs/arcs/node_modules/@types/body-parser/index.d.ts": [
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/connect/index.d.ts",
@@ -9771,231 +9469,11 @@
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
       ],
-      "/home/travis/build/PolymerLabs/arcs/node_modules/@types/marked/index.d.ts": [
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
-      ],
       "/home/travis/build/PolymerLabs/arcs/node_modules/@types/long/index.d.ts": [
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
       ],
-      "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/index.d.ts": [
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/common.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/array.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/collection.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/date.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/function.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/lang.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/math.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/number.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/object.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/seq.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/string.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/util.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
-      ],
-      "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/util.d.ts": [
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/index.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/common.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/array.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/collection.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/date.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/function.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/lang.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/math.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/number.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/object.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/seq.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/string.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
-      ],
-      "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/string.d.ts": [
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/index.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/common.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/array.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/collection.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/date.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/function.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/lang.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/math.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/number.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/object.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/seq.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/util.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
-      ],
-      "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/seq.d.ts": [
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/index.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/common.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/array.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/collection.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/date.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/function.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/lang.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/math.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/number.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/object.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/string.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/util.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
-      ],
-      "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/object.d.ts": [
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/index.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/common.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/array.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/collection.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/date.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/function.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/lang.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/math.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/number.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/seq.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/string.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/util.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
-      ],
-      "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/number.d.ts": [
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/index.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/common.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/array.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/collection.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/date.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/function.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/lang.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/math.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/object.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/seq.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/string.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/util.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
-      ],
-      "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/math.d.ts": [
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/index.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/common.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/array.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/collection.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/date.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/function.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/lang.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/number.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/object.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/seq.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/string.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/util.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
-      ],
-      "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/lang.d.ts": [
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/index.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/common.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/array.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/collection.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/date.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/function.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/math.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/number.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/object.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/seq.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/string.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/util.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
-      ],
-      "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/function.d.ts": [
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/index.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/common.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/array.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/collection.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/date.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/lang.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/math.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/number.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/object.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/seq.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/string.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/util.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
-      ],
-      "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/date.d.ts": [
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/index.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/common.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/array.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/collection.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/function.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/lang.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/math.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/number.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/object.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/seq.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/string.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/util.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
-      ],
-      "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/collection.d.ts": [
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/index.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/common.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/array.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/date.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/function.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/lang.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/math.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/number.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/object.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/seq.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/string.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/util.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
-      ],
-      "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/array.d.ts": [
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/index.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/common.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/collection.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/date.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/function.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/lang.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/math.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/number.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/object.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/seq.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/string.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/util.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
-      ],
-      "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/common.d.ts": [
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/index.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/array.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/collection.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/date.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/function.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/lang.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/math.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/number.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/object.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/seq.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/string.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/util.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
-      ],
       "/home/travis/build/PolymerLabs/arcs/node_modules/@types/is-windows/index.d.ts": [
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
-      ],
-      "/home/travis/build/PolymerLabs/arcs/node_modules/@types/highlight.js/index.d.ts": [
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
-      ],
-      "/home/travis/build/PolymerLabs/arcs/node_modules/@types/handlebars/index.d.ts": [
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
       ],
@@ -11603,6 +11081,7 @@
       "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/index.d.ts",
       "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node-fetch/index.d.ts",
       "/home/travis/build/PolymerLabs/arcs/node_modules/@types/pouchdb-core/index.d.ts",
+      "/home/travis/build/PolymerLabs/arcs/node_modules/@types/pouchdb-adapter-cordova-sqlite/index.d.ts",
       "/home/travis/build/PolymerLabs/arcs/node_modules/@types/pouchdb-adapter-fruitdown/index.d.ts",
       "/home/travis/build/PolymerLabs/arcs/node_modules/@types/pouchdb-adapter-http/index.d.ts",
       "/home/travis/build/PolymerLabs/arcs/node_modules/@types/pouchdb-adapter-idb/index.d.ts",
@@ -12011,29 +11490,11 @@
       "/home/travis/build/PolymerLabs/arcs/node_modules/@types/core-js/index.d.ts",
       "/home/travis/build/PolymerLabs/arcs/node_modules/@types/eslint-visitor-keys/index.d.ts",
       "/home/travis/build/PolymerLabs/arcs/node_modules/@types/estree/index.d.ts",
-      "/home/travis/build/PolymerLabs/arcs/node_modules/@types/fs-extra/index.d.ts",
-      "/home/travis/build/PolymerLabs/arcs/node_modules/@types/handlebars/index.d.ts",
-      "/home/travis/build/PolymerLabs/arcs/node_modules/@types/highlight.js/index.d.ts",
       "/home/travis/build/PolymerLabs/arcs/node_modules/@types/is-windows/index.d.ts",
-      "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/common.d.ts",
-      "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/array.d.ts",
-      "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/collection.d.ts",
-      "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/date.d.ts",
-      "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/function.d.ts",
-      "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/lang.d.ts",
-      "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/math.d.ts",
-      "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/number.d.ts",
-      "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/object.d.ts",
-      "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/seq.d.ts",
-      "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/string.d.ts",
-      "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/common/util.d.ts",
-      "/home/travis/build/PolymerLabs/arcs/node_modules/@types/lodash/index.d.ts",
       "/home/travis/build/PolymerLabs/arcs/node_modules/@types/long/index.d.ts",
-      "/home/travis/build/PolymerLabs/arcs/node_modules/@types/marked/index.d.ts",
       "/home/travis/build/PolymerLabs/arcs/node_modules/@types/mkdirp/index.d.ts",
       "/home/travis/build/PolymerLabs/arcs/node_modules/@types/rimraf/index.d.ts",
       "/home/travis/build/PolymerLabs/arcs/node_modules/@types/seedrandom/index.d.ts",
-      "/home/travis/build/PolymerLabs/arcs/node_modules/@types/shelljs/index.d.ts",
       "/home/travis/build/PolymerLabs/arcs/node_modules/@types/webgl-ext/index.d.ts"
     ]
   },
