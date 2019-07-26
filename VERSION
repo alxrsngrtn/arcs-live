@@ -1,5 +1,5 @@
-commit 86266efac3ac19c2b3ea1a15f082cb2ec78c8790
-Author: Alex Rosengarten <alexrosengarten@gmail.com>
-Date:   Fri Jul 26 13:20:46 2019 -0700
+commit 650a660fc0089947757a990d025a7124be14a928
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Fri Jul 26 14:26:53 2019 -0700
 
-    rm tfjs-node (#3390)
+    Delete remainders of old pipes-shell (#3399)
