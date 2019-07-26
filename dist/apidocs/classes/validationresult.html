@@ -88,7 +88,8 @@
 						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="validationresult.html#failures" class="tsd-kind-icon">failures</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="validationresult.html#checkfailures" class="tsd-kind-icon">check<wbr>Failures</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="validationresult.html#ingressfailures" class="tsd-kind-icon">ingress<wbr>Failures</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
@@ -97,18 +98,37 @@
 								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="validationresult.html#isvalid" class="tsd-kind-icon">is<wbr>Valid</a></li>
 							</ul>
 						</section>
+						<section class="tsd-index-section ">
+							<h3>Methods</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="validationresult.html#addallfailures" class="tsd-kind-icon">add<wbr>All<wbr>Failures</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="validationresult.html#addcheckfailure" class="tsd-kind-icon">add<wbr>Check<wbr>Failure</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="validationresult.html#addingressfailure" class="tsd-kind-icon">add<wbr>Ingress<wbr>Failure</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="validationresult.html#getfailuremessages" class="tsd-kind-icon">get<wbr>Failure<wbr>Messages</a></li>
+							</ul>
+						</section>
 					</div>
 				</section>
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Properties</h2>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
-					<a name="failures" class="tsd-anchor"></a>
-					<h3>failures</h3>
-					<div class="tsd-signature tsd-kind-icon">failures<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Set</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> =&nbsp;new Set()</span></div>
+					<a name="checkfailures" class="tsd-anchor"></a>
+					<h3>check<wbr>Failures</h3>
+					<div class="tsd-signature tsd-kind-icon">check<wbr>Failures<span class="tsd-signature-symbol">:</span> <a href="checkfailure.html" class="tsd-signature-type">CheckFailure</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> =&nbsp;[]</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/91d7ab7/src/dataflow/analysis/analysis.ts#L17">src/dataflow/analysis/analysis.ts:17</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/b9d19ce/src/dataflow/analysis/analysis.ts#L38">src/dataflow/analysis/analysis.ts:38</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="ingressfailures" class="tsd-anchor"></a>
+					<h3>ingress<wbr>Failures</h3>
+					<div class="tsd-signature tsd-kind-icon">ingress<wbr>Failures<span class="tsd-signature-symbol">:</span> <a href="ingressfailure.html" class="tsd-signature-type">IngressFailure</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> =&nbsp;[]</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/b9d19ce/src/dataflow/analysis/analysis.ts#L39">src/dataflow/analysis/analysis.ts:39</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -125,10 +145,108 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/91d7ab7/src/dataflow/analysis/analysis.ts#L19">src/dataflow/analysis/analysis.ts:19</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/b9d19ce/src/dataflow/analysis/analysis.ts#L54">src/dataflow/analysis/analysis.ts:54</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
+						</li>
+					</ul>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group ">
+				<h2>Methods</h2>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="addallfailures" class="tsd-anchor"></a>
+					<h3>add<wbr>All<wbr>Failures</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">add<wbr>All<wbr>Failures<span class="tsd-signature-symbol">(</span>other<span class="tsd-signature-symbol">: </span><a href="validationresult.html" class="tsd-signature-type">ValidationResult</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/b9d19ce/src/dataflow/analysis/analysis.ts#L49">src/dataflow/analysis/analysis.ts:49</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>other: <a href="validationresult.html" class="tsd-signature-type">ValidationResult</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="addcheckfailure" class="tsd-anchor"></a>
+					<h3>add<wbr>Check<wbr>Failure</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">add<wbr>Check<wbr>Failure<span class="tsd-signature-symbol">(</span>check<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, flow<span class="tsd-signature-symbol">: </span><a href="flow.html" class="tsd-signature-type">Flow</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/b9d19ce/src/dataflow/analysis/analysis.ts#L41">src/dataflow/analysis/analysis.ts:41</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>check: <span class="tsd-signature-type">string</span></h5>
+								</li>
+								<li>
+									<h5>flow: <a href="flow.html" class="tsd-signature-type">Flow</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="addingressfailure" class="tsd-anchor"></a>
+					<h3>add<wbr>Ingress<wbr>Failure</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">add<wbr>Ingress<wbr>Failure<span class="tsd-signature-symbol">(</span>check<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/b9d19ce/src/dataflow/analysis/analysis.ts#L45">src/dataflow/analysis/analysis.ts:45</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>check: <span class="tsd-signature-type">string</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="getfailuremessages" class="tsd-anchor"></a>
+					<h3>get<wbr>Failure<wbr>Messages</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">get<wbr>Failure<wbr>Messages<span class="tsd-signature-symbol">(</span>graph<span class="tsd-signature-symbol">: </span><a href="flowgraph.html" class="tsd-signature-type">FlowGraph</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/b9d19ce/src/dataflow/analysis/analysis.ts#L58">src/dataflow/analysis/analysis.ts:58</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>graph: <a href="flowgraph.html" class="tsd-signature-type">FlowGraph</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -150,10 +268,25 @@
 						<a href="validationresult.html" class="tsd-kind-icon">Validation<wbr>Result</a>
 						<ul>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
-								<a href="validationresult.html#failures" class="tsd-kind-icon">failures</a>
+								<a href="validationresult.html#checkfailures" class="tsd-kind-icon">check<wbr>Failures</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="validationresult.html#ingressfailures" class="tsd-kind-icon">ingress<wbr>Failures</a>
 							</li>
 							<li class=" tsd-kind-get-signature tsd-parent-kind-class">
 								<a href="validationresult.html#isvalid" class="tsd-kind-icon">is<wbr>Valid</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="validationresult.html#addallfailures" class="tsd-kind-icon">add<wbr>All<wbr>Failures</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="validationresult.html#addcheckfailure" class="tsd-kind-icon">add<wbr>Check<wbr>Failure</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="validationresult.html#addingressfailure" class="tsd-kind-icon">add<wbr>Ingress<wbr>Failure</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="validationresult.html#getfailuremessages" class="tsd-kind-icon">get<wbr>Failure<wbr>Messages</a>
 							</li>
 						</ul>
 					</li>

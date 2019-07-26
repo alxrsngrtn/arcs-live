@@ -1,9 +1,5 @@
-commit 91d7ab76b7e8d08c6213ec51343715eb7a2f116c
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Thu Jul 25 14:29:34 2019 -0700
+commit b9d19ce6dbf2287a2d5047404921b7be022ebc91
+Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
+Date:   Fri Jul 26 11:28:54 2019 +1000
 
-    portable java promise (#3386)
-    
-    * portable java promise
-    
-    * Address comment: make then method chainable
+    Added back proper dataflow error messages, so it tells you the failing (#3392)

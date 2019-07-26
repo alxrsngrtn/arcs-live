@@ -17,7 +17,8 @@ import { CheckType } from '../../runtime/particle-check.js';
  */
 export class FlowGraph {
     constructor(recipe, manifest) {
-        this.edges = [];
+        /** Maps from edge ID to Edge. */
+        this.edgeMap = new Map();
         /** Maps from HandleConnectionSpec to HandleNode. */
         this.handleSpecMap = new Map();
         if (!recipe.isResolved()) {
@@ -43,7 +44,7 @@ export class FlowGraph {
             const addEdgeWithDirection = (direction) => {
                 const edgeId = 'E' + edgeIdCounter++;
                 const edge = addHandleConnection(direction, particleNode, handleNode, connection, edgeId);
-                this.edges.push(edge);
+                this.edgeMap.set(edgeId, edge);
             };
             if (connection.direction === 'inout') {
                 // An inout handle connection is represented by two edges.
@@ -63,7 +64,7 @@ export class FlowGraph {
             const slotNode = slotNodes.get(connection.targetSlot);
             const edgeId = 'E' + edgeIdCounter++;
             const edge = addSlotConnection(particleNode, slotNode, connection, edgeId);
-            this.edges.push(edge);
+            this.edgeMap.set(edgeId, edge);
             // Copy the Check object from the "provide" connection onto the SlotNode.
             // (Checks are defined by the particle that provides the slot, but are
             // applied to the particle that consumes the slot.)
@@ -88,6 +89,9 @@ export class FlowGraph {
             }
         });
     }
+    get edges() {
+        return [...this.edgeMap.values()];
+    }
     /** Returns a list of all pairwise particle connections, in string form: 'P1.foo -> P2.bar'. */
     get connectionsAsStrings() {
         const connections = [];
@@ -95,6 +99,10 @@ export class FlowGraph {
             handleNode.connectionsAsStrings.forEach(c => connections.push(c));
         }
         return connections;
+    }
+    /** Converts a list of edge IDs into a path string using the edge labels. */
+    edgeIdsToPath(edgeIds) {
+        return edgeIds.map(edgeId => this.edgeMap.get(edgeId).label).join(' -> ');
     }
     /** Converts an "is from handle" check into the node ID that we need to search for. */
     handleCheckToNodeId(check) {

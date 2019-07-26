@@ -13,17 +13,10 @@ import { buildFlowGraph, TestEdge, TestNode } from '../testing/flow-graph-testin
 import { assertThrowsAsync } from '../../../runtime/testing/test-util.js';
 import { FlowSet, Flow, FlowModifier, TagOperation, FlowModifierSet } from '../graph-internals.js';
 /** Checks that the given ValidationResult failed with the expected failure messages. */
-function assertFailures(result, expectedFailures) {
+function assertGraphFailures(graph, expectedFailures) {
+    const result = validateGraph(graph);
     assert.isFalse(result.isValid);
-    // TODO: Restore the ability of reporting the path where the check failed.
-    // For now, we will remove the path from each expected failure message.
-    const expectedFailuresWithoutPaths = new Set();
-    for (const expected of expectedFailures) {
-        const index = expected.indexOf(' for path:');
-        assert(index !== -1, 'Expected failure message is not of the right format.');
-        expectedFailuresWithoutPaths.add(expected.slice(0, index));
-    }
-    assert.sameMembers([...result.failures], [...expectedFailuresWithoutPaths]);
+    assert.sameMembers(result.getFailureMessages(graph), expectedFailures);
 }
 /**
  * Creates test nodes and edges in a chain, using the given node IDs. e.g.
@@ -358,9 +351,7 @@ describe('FlowGraph validation', () => {
         P2
           bar <- h
     `);
-        const result = validateGraph(graph);
-        assert.isFalse(result.isValid);
-        assert.hasAllKeys(result.failures, [`'check bar is trusted' failed: no data ingress.`]);
+        assertGraphFailures(graph, [`'check bar is trusted' failed: no data ingress.`]);
     });
     it('fails when a different tag is claimed', async () => {
         const graph = await buildFlowGraph(`
@@ -377,7 +368,7 @@ describe('FlowGraph validation', () => {
           bar <- h
     `);
         markParticlesWithIngress(graph, 'P1');
-        assertFailures(validateGraph(graph), [`'check bar is trusted' failed for path: P1.foo -> P2.bar`]);
+        assertGraphFailures(graph, [`'check bar is trusted' failed for path: P1.foo -> P2.bar`]);
     });
     it('fails when no tag is claimed', async () => {
         const graph = await buildFlowGraph(`
@@ -393,7 +384,7 @@ describe('FlowGraph validation', () => {
           bar <- h
     `);
         markParticlesWithIngress(graph, 'P1');
-        assertFailures(validateGraph(graph), [`'check bar is trusted' failed for path: P1.foo -> P2.bar`]);
+        assertGraphFailures(graph, [`'check bar is trusted' failed for path: P1.foo -> P2.bar`]);
     });
     it('fails when a "not tag" is claimed and the tag is checked for', async () => {
         const graph = await buildFlowGraph(`
@@ -410,7 +401,7 @@ describe('FlowGraph validation', () => {
           bar <- h
     `);
         markParticlesWithIngress(graph, 'P1');
-        assertFailures(validateGraph(graph), [`'check bar is trusted' failed for path: P1.foo -> P2.bar`]);
+        assertGraphFailures(graph, [`'check bar is trusted' failed for path: P1.foo -> P2.bar`]);
     });
     it('succeeds when a "not tag" is claimed and there are no checks', async () => {
         const graph = await buildFlowGraph(`
@@ -510,7 +501,7 @@ describe('FlowGraph validation', () => {
           bar <- h
     `);
         markParticlesWithIngress(graph, 'P1');
-        assertFailures(validateGraph(graph), [`'check bar is not private' failed for path: P1.foo -> P2.bar`]);
+        assertGraphFailures(graph, [`'check bar is not private' failed for path: P1.foo -> P2.bar`]);
     });
     it('succeeds when an inout handle claims the same tag it checks', async () => {
         const graph = await buildFlowGraph(`
@@ -525,7 +516,7 @@ describe('FlowGraph validation', () => {
         markParticlesWithIngress(graph, 'P');
         assert.isTrue(validateGraph(graph).isValid);
     });
-    it('fails when an inout handle claims a different tag it checks', async () => {
+    it('fails when an inout handle claims a different tag from the one it checks', async () => {
         const graph = await buildFlowGraph(`
       particle P
         inout Foo {} foo
@@ -536,7 +527,7 @@ describe('FlowGraph validation', () => {
           foo <-> h
     `);
         markParticlesWithIngress(graph, 'P');
-        assertFailures(validateGraph(graph), [`'check foo is t1' failed for path: P1.foo`]);
+        assertGraphFailures(graph, [`'check foo is t1' failed for path: P.foo -> P.foo`]);
     });
     it('succeeds when handle has multiple inputs with the right tags', async () => {
         const graph = await buildFlowGraph(`
@@ -579,7 +570,7 @@ describe('FlowGraph validation', () => {
           bar <- h
     `);
         markParticlesWithIngress(graph, 'P1', 'P2');
-        assertFailures(validateGraph(graph), [`'check bar is trusted' failed for path: P2.foo -> P3.bar`]);
+        assertGraphFailures(graph, [`'check bar is trusted' failed for path: P2.foo -> P3.bar`]);
     });
     it('fails when handle has no inputs', async () => {
         const graph = await buildFlowGraph(`
@@ -591,7 +582,7 @@ describe('FlowGraph validation', () => {
           bar <- h
     `);
         markParticleInputsWithIngress(graph, 'P.bar');
-        assertFailures(validateGraph(graph), [`'check bar is trusted' failed for path: P.bar`]);
+        assertGraphFailures(graph, [`'check bar is trusted' failed for path: P.bar`]);
     });
     it('claim propagates through a chain of particles', async () => {
         const graph = await buildFlowGraph(`
@@ -682,7 +673,7 @@ describe('FlowGraph validation', () => {
           bar <- h
     `);
         markParticlesWithIngress(graph, 'P1', 'P2');
-        assertFailures(validateGraph(graph), [`'check bar is tag1 or is tag2' failed for path: P2.foo -> P3.bar`]);
+        assertGraphFailures(graph, [`'check bar is tag1 or is tag2' failed for path: P2.foo -> P3.bar`]);
     });
     it(`succeeds when a check including multiple anded tags is met by a single claim`, async () => {
         const graph = await buildFlowGraph(`
@@ -742,7 +733,7 @@ describe('FlowGraph validation', () => {
           bar <- h
     `);
         markParticlesWithIngress(graph, 'P1', 'P2', 'P3');
-        assertFailures(validateGraph(graph), [
+        assertGraphFailures(graph, [
             `'check bar is trusted' failed for path: P1.foo -> P4.bar`,
             `'check bar is trusted' failed for path: P2.foo -> P4.bar`,
             `'check bar is trusted' failed for path: P3.foo -> P4.bar`,
@@ -769,7 +760,7 @@ describe('FlowGraph validation', () => {
           bar2 <- h2
     `);
         markParticlesWithIngress(graph, 'P1');
-        assertFailures(validateGraph(graph), [
+        assertGraphFailures(graph, [
             `'check bar1 is trusted' failed for path: P1.foo1 -> P2.bar1`,
             `'check bar2 is extraTrusted' failed for path: P1.foo2 -> P2.bar2`,
         ]);
@@ -820,7 +811,7 @@ describe('FlowGraph validation', () => {
             input2 <- h2
       `);
             markParticleInputsWithIngress(graph, 'P.input1', 'P.input2');
-            assertFailures(validateGraph(graph), [`'check input2 is from handle input1' failed for path: P.input2`]);
+            assertGraphFailures(graph, [`'check input2 is from handle input1' failed for path: P.input2`]);
         });
         it('succeeds for a negated handle check when the handle is different', async () => {
             const graph = await buildFlowGraph(`
@@ -848,7 +839,7 @@ describe('FlowGraph validation', () => {
             input2 <- h
       `);
             markParticleInputsWithIngress(graph, 'P.input1');
-            assertFailures(validateGraph(graph), [`'check input2 is not from handle input1' failed for path: P.input2`]);
+            assertGraphFailures(graph, [`'check input2 is not from handle input1' failed for path: P.input2`]);
         });
         it('succeeds on an inout handle checking against itself', async () => {
             const graph = await buildFlowGraph(`
@@ -943,7 +934,7 @@ describe('FlowGraph validation', () => {
             inputToCheck <- h2
       `);
             markParticleInputsWithIngress(graph, 'P1.input1', 'P1.input2');
-            assertFailures(validateGraph(graph), [
+            assertGraphFailures(graph, [
                 `'check inputToCheck is from handle trustedSource' failed for path: P1.input2 -> P1.output -> P2.inputToCheck`,
             ]);
         });
@@ -1020,7 +1011,7 @@ describe('FlowGraph validation', () => {
           P
             input <- s
       `);
-            assertFailures(validateGraph(graph), [`'check input is not from store 'my-store-id'' failed for path: P.input`]);
+            assertGraphFailures(graph, [`'check input is not from store 'my-store-id'' failed for path: P.input`]);
         });
         it('fails when the data store identified by name is missing', async () => {
             assertThrowsAsync(async () => await buildFlowGraph(`
@@ -1080,7 +1071,7 @@ describe('FlowGraph validation', () => {
             input1 <- s1
             input2 <- s2
       `);
-            assertFailures(validateGraph(graph), [`'check input1 is from store MyStore' failed for path: P.input`]);
+            assertGraphFailures(graph, [`'check input1 is from store MyStore' failed for path: P.input1`]);
         });
     });
     describe(`checks using the 'or' operator`, () => {
@@ -1137,7 +1128,7 @@ describe('FlowGraph validation', () => {
             inputToCheck <- h2
       `);
             markParticlesWithIngress(graph, 'P1');
-            assertFailures(validateGraph(graph), [
+            assertGraphFailures(graph, [
                 `'check inputToCheck is from handle trustedSource or is trusted' failed for path: P1.output -> P2.inputToCheck`,
             ]);
         });
@@ -1179,7 +1170,7 @@ describe('FlowGraph validation', () => {
             inputToCheck <- h
       `);
             markParticlesWithIngress(graph, 'P1');
-            assertFailures(validateGraph(graph), [
+            assertGraphFailures(graph, [
                 `'check inputToCheck is from handle trustedSource and is trusted' failed for path: P1.output -> P2.inputToCheck`,
             ]);
         });
@@ -1261,7 +1252,7 @@ describe('FlowGraph validation', () => {
             consume slotToConsume as slot0
       `);
             markParticlesWithIngress(graph, 'P2');
-            assertFailures(validateGraph(graph), [`'check slotToProvide data is trusted' failed for path: P2.slotToConsume`]);
+            assertGraphFailures(graph, [`'check slotToProvide data is trusted' failed for path: P2.slotToConsume`]);
         });
         it('succeeds for handle checks when the slot consumer derives from the right handle', async () => {
             const graph = await buildFlowGraph(`
@@ -1305,7 +1296,7 @@ describe('FlowGraph validation', () => {
             consume slotToConsume as slot0
       `);
             markParticlesWithIngress(graph, 'P2');
-            assertFailures(validateGraph(graph), [`'check slotToProvide data is from handle foo' failed for path: P2.slotToConsume`]);
+            assertGraphFailures(graph, [`'check slotToProvide data is from handle foo' failed for path: P2.slotToConsume`]);
         });
     });
     describe('cycles', () => {
@@ -1531,7 +1522,9 @@ describe('FlowGraph validation', () => {
             output -> h1
       `);
             markParticlesWithIngress(graph, 'P1');
-            assertFailures(validateGraph(graph), [`'check input is trusted' failed for path: P2.output -> P1.input`]);
+            assertGraphFailures(graph, [
+                `'check input is trusted' failed for path: P1.output -> P2.input -> P2.output -> P1.input`,
+            ]);
         });
         it('tags can be removed by a cycle along a chain', async () => {
             // We have a chain of particles P1-P2-P3, through which a tag gets
@@ -1562,7 +1555,9 @@ describe('FlowGraph validation', () => {
             input <- h2
       `);
             markParticlesWithIngress(graph, 'P1');
-            assertFailures(validateGraph(graph), [`'check input is trusted' failed for path: P2.output2 -> P2.input2 -> P2.output1 -> P3.input`]);
+            assertGraphFailures(graph, [
+                `'check input is trusted' failed for path: P1.output -> P2.input1 -> P2.output2 -> P2.input2 -> P2.output1 -> P3.input`,
+            ]);
         });
         it('overlapping cycles with no ingress fail', async () => {
             const graph = await buildFlowGraph(`
@@ -1581,9 +1576,7 @@ describe('FlowGraph validation', () => {
             output1 -> h
             output2 -> h
       `);
-            const result = validateGraph(graph);
-            assert.isFalse(result.isValid);
-            assert.hasAllKeys(result.failures, [`'check input1 is trusted' failed: no data ingress.`]);
+            assertGraphFailures(graph, [`'check input1 is trusted' failed: no data ingress.`]);
         });
     });
 });

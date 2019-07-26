@@ -8,11 +8,32 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { FlowGraph } from './flow-graph.js';
-import { Edge, FlowSet, FlowModifierSet } from './graph-internals.js';
+import { Edge, FlowSet, FlowModifierSet, Flow } from './graph-internals.js';
+/** Failure result reported when a check statement is not satisfied. */
+declare class CheckFailure {
+    readonly check: string;
+    readonly flow: Flow;
+    constructor(check: string, flow: Flow);
+    getFailureMessage(graph: FlowGraph): string;
+}
+/**
+ * Failure result reported when there is no data ingress into an edge with a
+ * check statement.
+ */
+declare class IngressFailure {
+    readonly check: string;
+    constructor(check: string);
+    getFailureMessage(graph: FlowGraph): string;
+}
 /** Result from validating an entire graph. */
 export declare class ValidationResult {
-    failures: Set<string>;
+    readonly checkFailures: CheckFailure[];
+    readonly ingressFailures: IngressFailure[];
+    addCheckFailure(check: string, flow: Flow): void;
+    addIngressFailure(check: string): void;
+    addAllFailures(other: ValidationResult): void;
     readonly isValid: boolean;
+    getFailureMessages(graph: FlowGraph): string[];
 }
 /** Returns true if all checks in the graph pass. */
 export declare function validateGraph(graph: FlowGraph): ValidationResult;
@@ -48,7 +69,7 @@ export declare class EdgeExpression {
     toString(): string;
 }
 export declare class Solver {
-    readonly edges: Edge[];
+    readonly edges: readonly Edge[];
     /** Maps from an edge to a "expression" for it. */
     readonly edgeExpressions: Map<Edge, EdgeExpression>;
     /**
@@ -57,7 +78,7 @@ export declare class Solver {
      */
     readonly dependentExpressions: Map<Edge, Set<EdgeExpression>>;
     private _isResolved;
-    constructor(edges: Edge[]);
+    constructor(edges: readonly Edge[]);
     /** Returns true if every edge in the graph has been fully resolved to a FlowSet. */
     readonly isResolved: boolean;
     /**
@@ -83,3 +104,4 @@ export declare class Solver {
      */
     private tryExpandParent;
 }
+export {};

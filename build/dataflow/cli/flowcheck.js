@@ -38,7 +38,7 @@ import { validateGraph } from '../analysis/analysis.js';
                 console.log('    Data-flow checks passed.');
             }
             else {
-                for (const failure of result.failures) {
+                for (const failure of result.getFailureMessages(graph)) {
                     console.error('    ' + failure);
                 }
             }

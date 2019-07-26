@@ -22,15 +22,19 @@ export declare class FlowGraph {
     readonly handles: HandleNode[];
     readonly slots: SlotNode[];
     readonly nodes: Node[];
-    readonly edges: Edge[];
+    /** Maps from edge ID to Edge. */
+    readonly edgeMap: Map<string, Edge>;
     /** Maps from particle name to node. */
     readonly particleMap: Map<string, ParticleNode>;
     /** Maps from HandleConnectionSpec to HandleNode. */
     private readonly handleSpecMap;
     private readonly manifest;
     constructor(recipe: Recipe, manifest: Manifest);
+    readonly edges: readonly Edge[];
     /** Returns a list of all pairwise particle connections, in string form: 'P1.foo -> P2.bar'. */
     readonly connectionsAsStrings: string[];
+    /** Converts a list of edge IDs into a path string using the edge labels. */
+    edgeIdsToPath(edgeIds: readonly string[]): string;
     /** Converts an "is from handle" check into the node ID that we need to search for. */
     handleCheckToNodeId(check: CheckIsFromHandle): string;
     /** Converts an "is from store" check into the node ID that we need to search for. */
