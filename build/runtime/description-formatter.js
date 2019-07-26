@@ -8,7 +8,7 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { assert } from '../platform/assert-web.js';
-import { ParticleSpec } from './particle-spec.js';
+import { ParticleSpec, isRoot } from './particle-spec.js';
 import { BigCollectionType, CollectionType, InterfaceType } from './type.js';
 export class DescriptionFormatter {
     constructor(particleDescriptions = [], storeDescById = {}) {
@@ -424,8 +424,8 @@ export class DescriptionFormatter {
     }
     static sort(p1, p2) {
         // Root slot comes first.
-        const hasRoot1 = [...p1._particle.spec.slotConnections.values()].some(slotSpec => slotSpec.isRoot());
-        const hasRoot2 = [...p2._particle.spec.slotConnections.values()].some(slotSpec => slotSpec.isRoot());
+        const hasRoot1 = [...p1._particle.spec.slotConnections.values()].some(slotSpec => isRoot(slotSpec));
+        const hasRoot2 = [...p2._particle.spec.slotConnections.values()].some(slotSpec => isRoot(slotSpec));
         if (hasRoot1 !== hasRoot2) {
             return hasRoot1 ? -1 : 1;
         }

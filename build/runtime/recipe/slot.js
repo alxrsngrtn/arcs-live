@@ -22,10 +22,6 @@ export class Slot {
         this._recipe = recipe;
         this._name = name;
     }
-    isRoot() {
-        // TODO: Revisit slot naming.
-        return this.name.includes('root') || this.tags.includes('root') || (this.id && this.id.includes('root'));
-    }
     get recipe() { return this._recipe; }
     get id() { return this._id; }
     set id(id) { this._id = id; }

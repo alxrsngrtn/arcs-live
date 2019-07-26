@@ -3876,6 +3876,26 @@ function asType(t) {
 function asTypeLiteral(t) {
     return (t instanceof Type) ? t.toLiteral() : t;
 }
+function isRoot({ name, tags, id, type }) {
+    const rootNames = [
+        'root',
+        'toproot',
+        'modal'
+    ];
+    if (type && !type.slandleType()) {
+        // If this is a handle that is not a Slandle, it cannot be a root slot.
+        return false;
+    }
+    // Checks that, if the id exists, it starts with the root id prefx.
+    const prefix = 'rootslotid-';
+    if (id && id.lastIndexOf(prefix, 0) === 0) {
+        const rootName = id.substr(prefix.length);
+        if (rootNames.includes(rootName)) {
+            return true;
+        }
+    }
+    return rootNames.includes(name) || tags.some(tag => rootNames.includes(tag));
+}
 class HandleConnectionSpec {
     constructor(rawData, typeVarMap) {
         this.parentConnection = null;
@@ -3909,7 +3929,6 @@ class HandleConnectionSpec {
             tags: this.tags,
             dependentConnections: this.dependentConnections.map(conn => conn.toSlotConnectionSpec()),
             // Fakes
-            isRoot: this.isRoot,
             isRequired: !this.isOptional,
             isSet,
             type: slotType,
@@ -3917,10 +3936,6 @@ class HandleConnectionSpec {
             formFactor: slotInfo.formFactor,
             provideSlotConnections: [],
         };
-    }
-    isRoot() {
-        // TODO: Remove in SLANDLESv2
-        return this.type.slandleType() && (this.name === 'root' || this.tags.includes('root'));
     }
     get isInput() {
         // TODO: we probably don't really want host to be here.
@@ -3950,9 +3965,6 @@ class ConsumeSlotConnectionSpec {
         slotModel.provideSlotConnections.forEach(ps => {
             this.provideSlotConnections.push(new ProvideSlotConnectionSpec(ps));
         });
-    }
-    isRoot() {
-        return this.name === 'root' || this.tags.includes('root');
     }
     // Getters to 'fake' being a Handle.
     get isOptional() { return !this.isRequired; }
@@ -4661,8 +4673,8 @@ class DescriptionFormatter {
     }
     static sort(p1, p2) {
         // Root slot comes first.
-        const hasRoot1 = [...p1._particle.spec.slotConnections.values()].some(slotSpec => slotSpec.isRoot());
-        const hasRoot2 = [...p2._particle.spec.slotConnections.values()].some(slotSpec => slotSpec.isRoot());
+        const hasRoot1 = [...p1._particle.spec.slotConnections.values()].some(slotSpec => isRoot(slotSpec));
+        const hasRoot2 = [...p2._particle.spec.slotConnections.values()].some(slotSpec => isRoot(slotSpec));
         if (hasRoot1 !== hasRoot2) {
             return hasRoot1 ? -1 : 1;
         }
@@ -17800,10 +17812,6 @@ class Slot {
         this._recipe = recipe;
         this._name = name;
     }
-    isRoot() {
-        // TODO: Revisit slot naming.
-        return this.name.includes('root') || this.tags.includes('root') || (this.id && this.id.includes('root'));
-    }
     get recipe() { return this._recipe; }
     get id() { return this._id; }
     set id(id) { this._id = id; }
@@ -28014,7 +28022,7 @@ class Suggestion {
             }
             return true;
         }
-        if (!this.plan.slots.find(s => s.isRoot()) &&
+        if (!this.plan.slots.find(isRoot) &&
             !((this.plan.slotConnections || []).find(sc => sc.name === 'root'))) {
             // suggestion uses only non 'root' slots.
             // TODO: should check agains slot-composer's root contexts instead.
@@ -28036,7 +28044,7 @@ class Suggestion {
         }
         let hasRootSlot = false;
         const usesRemoteNonRootSlots = this.plan.slots.some(slot => {
-            const isRootSlot = slot.isRoot();
+            const isRootSlot = isRoot(slot);
             if (isRootSlot) {
                 hasRootSlot = true;
             }

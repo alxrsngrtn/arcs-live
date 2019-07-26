@@ -24,6 +24,12 @@ declare type SerializedHandleConnectionSpec = {
     dependentConnections: SerializedHandleConnectionSpec[];
     check?: string;
 };
+export declare function isRoot({ name, tags, id, type }: {
+    name: string;
+    tags: string[];
+    id?: string;
+    type?: Type;
+}): boolean;
 export declare class HandleConnectionSpec {
     rawData: SerializedHandleConnectionSpec;
     direction: Direction;
@@ -39,7 +45,6 @@ export declare class HandleConnectionSpec {
     constructor(rawData: SerializedHandleConnectionSpec, typeVarMap: Map<string, Type>);
     instantiateDependentConnections(particle: any, typeVarMap: Map<string, Type>): void;
     toSlotConnectionSpec(): ConsumeSlotConnectionSpec;
-    isRoot(): boolean;
     readonly isInput: boolean;
     readonly isOutput: boolean;
     isCompatibleType(type: Type): boolean;
@@ -63,7 +68,6 @@ export declare class ConsumeSlotConnectionSpec {
     handles: string[];
     provideSlotConnections: ProvideSlotConnectionSpec[];
     constructor(slotModel: SerializedSlotConnectionSpec);
-    isRoot(): boolean;
     readonly isOptional: boolean;
     readonly direction: string;
     readonly type: SlotType;

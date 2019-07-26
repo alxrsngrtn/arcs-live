@@ -11,6 +11,7 @@ import { assert } from '../../platform/assert-web.js';
 import { DescriptionFormatter } from '../../runtime/description-formatter.js';
 import { Manifest } from '../../runtime/manifest.js';
 import { RecipeResolver } from '../../runtime/recipe/recipe-resolver.js';
+import { isRoot } from '../../runtime/particle-spec.js';
 export class Suggestion {
     constructor(plan, hash, rank, versionByStore) {
         // TODO: update Description class to be serializable.
@@ -191,7 +192,7 @@ export class Suggestion {
             }
             return true;
         }
-        if (!this.plan.slots.find(s => s.isRoot()) &&
+        if (!this.plan.slots.find(isRoot) &&
             !((this.plan.slotConnections || []).find(sc => sc.name === 'root'))) {
             // suggestion uses only non 'root' slots.
             // TODO: should check agains slot-composer's root contexts instead.
@@ -213,7 +214,7 @@ export class Suggestion {
         }
         let hasRootSlot = false;
         const usesRemoteNonRootSlots = this.plan.slots.some(slot => {
-            const isRootSlot = slot.isRoot();
+            const isRootSlot = isRoot(slot);
             if (isRootSlot) {
                 hasRootSlot = true;
             }

@@ -1022,6 +1022,7 @@ PECInnerPort = __decorate([
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isRoot", function() { return isRoot; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "HandleConnectionSpec", function() { return HandleConnectionSpec; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ConsumeSlotConnectionSpec", function() { return ConsumeSlotConnectionSpec; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ProvideSlotConnectionSpec", function() { return ProvideSlotConnectionSpec; });
@@ -1052,6 +1053,26 @@ function asType(t) {
 }
 function asTypeLiteral(t) {
     return (t instanceof _type_js__WEBPACK_IMPORTED_MODULE_3__["Type"]) ? t.toLiteral() : t;
+}
+function isRoot({ name, tags, id, type }) {
+    const rootNames = [
+        'root',
+        'toproot',
+        'modal'
+    ];
+    if (type && !type.slandleType()) {
+        // If this is a handle that is not a Slandle, it cannot be a root slot.
+        return false;
+    }
+    // Checks that, if the id exists, it starts with the root id prefx.
+    const prefix = 'rootslotid-';
+    if (id && id.lastIndexOf(prefix, 0) === 0) {
+        const rootName = id.substr(prefix.length);
+        if (rootNames.includes(rootName)) {
+            return true;
+        }
+    }
+    return rootNames.includes(name) || tags.some(tag => rootNames.includes(tag));
 }
 class HandleConnectionSpec {
     constructor(rawData, typeVarMap) {
@@ -1086,7 +1107,6 @@ class HandleConnectionSpec {
             tags: this.tags,
             dependentConnections: this.dependentConnections.map(conn => conn.toSlotConnectionSpec()),
             // Fakes
-            isRoot: this.isRoot,
             isRequired: !this.isOptional,
             isSet,
             type: slotType,
@@ -1094,10 +1114,6 @@ class HandleConnectionSpec {
             formFactor: slotInfo.formFactor,
             provideSlotConnections: [],
         };
-    }
-    isRoot() {
-        // TODO: Remove in SLANDLESv2
-        return this.type.slandleType() && (this.name === 'root' || this.tags.includes('root'));
     }
     get isInput() {
         // TODO: we probably don't really want host to be here.
@@ -1127,9 +1143,6 @@ class ConsumeSlotConnectionSpec {
         slotModel.provideSlotConnections.forEach(ps => {
             this.provideSlotConnections.push(new ProvideSlotConnectionSpec(ps));
         });
-    }
-    isRoot() {
-        return this.name === 'root' || this.tags.includes('root');
     }
     // Getters to 'fake' being a Handle.
     get isOptional() { return !this.isRequired; }
