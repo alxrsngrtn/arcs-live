@@ -1358,28 +1358,28 @@
         "signature": "537d550e7acc16ac5ebbc872705b583ec37fc07856606b17d0a7d1b7bc61adf4"
       },
       "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-core/dist/ops/conv_util.d.ts": {
-        "version": "415fb1e4e485d8df1bc2a4c0384e77467ebde954056067f86cae69fc990c72b6",
-        "signature": "415fb1e4e485d8df1bc2a4c0384e77467ebde954056067f86cae69fc990c72b6"
+        "version": "7709760a2a7734678c2911c998a53f2fa611f7f7f92eb431f6b8b8ca8da50772",
+        "signature": "7709760a2a7734678c2911c998a53f2fa611f7f7f92eb431f6b8b8ca8da50772"
       },
       "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-core/dist/ops/fused_util.d.ts": {
         "version": "81570f7896f57b253e786c8686b39233f9806d1571e20c39638a8576018ede7a",
         "signature": "81570f7896f57b253e786c8686b39233f9806d1571e20c39638a8576018ede7a"
       },
       "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-core/dist/types.d.ts": {
-        "version": "5f123c3adbce091f4656a76c01d45ec8b79872ad7c9aeaedc4f59f1742effaa9",
-        "signature": "5f123c3adbce091f4656a76c01d45ec8b79872ad7c9aeaedc4f59f1742effaa9"
+        "version": "87c46574e0fe92d2d8ddff848cbad7c42a674aaa98b45deef075dd23bd86945d",
+        "signature": "87c46574e0fe92d2d8ddff848cbad7c42a674aaa98b45deef075dd23bd86945d"
       },
       "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-core/dist/tensor.d.ts": {
-        "version": "a72c3cfe6cdaa7ecc90cb6be877d05d2d2946f3f85a0faa1cb196f01ee7cedf6",
-        "signature": "a72c3cfe6cdaa7ecc90cb6be877d05d2d2946f3f85a0faa1cb196f01ee7cedf6"
+        "version": "aec5be29c77b93cd749b315908c1f3442b0f4184cad6f63e6936a5f9061f7e41",
+        "signature": "aec5be29c77b93cd749b315908c1f3442b0f4184cad6f63e6936a5f9061f7e41"
       },
       "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-core/dist/backends/backend.d.ts": {
-        "version": "b78aa2a8d22a28ba6d130683cecd5ad0a3841847fd781562fc2e50fe0793df68",
-        "signature": "b78aa2a8d22a28ba6d130683cecd5ad0a3841847fd781562fc2e50fe0793df68"
+        "version": "db74eca4f4697e0844c10070ffa4d2a74155da2a187562f8bcfc20793468c7dd",
+        "signature": "db74eca4f4697e0844c10070ffa4d2a74155da2a187562f8bcfc20793468c7dd"
       },
       "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-core/dist/platforms/platform.d.ts": {
-        "version": "921fe4f4f6dadc66e47214c2cf7f3f07c4494b47b885ec9048ec8b4e87611ec1",
-        "signature": "921fe4f4f6dadc66e47214c2cf7f3f07c4494b47b885ec9048ec8b4e87611ec1"
+        "version": "5c91bc5d10524b7dfd5dcb8834f80b7bfc92f98fac98151a3700786570991785",
+        "signature": "5c91bc5d10524b7dfd5dcb8834f80b7bfc92f98fac98151a3700786570991785"
       },
       "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-core/dist/environment.d.ts": {
         "version": "8733699c5fef61ef7e7fa38bce7c6e7bbd3bf2a02da754cec06a8329ea333901",
@@ -1394,8 +1394,8 @@
         "signature": "4313d19ddb3770e0fa25540916a94c0fb6fe6e22daa5adcdac85a51077dc2976"
       },
       "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-core/dist/engine.d.ts": {
-        "version": "5b29e32a5a15f4e14d2d5b5c9dfcbf0e3ef9e78423cd23293eddf0736c6ebae5",
-        "signature": "5b29e32a5a15f4e14d2d5b5c9dfcbf0e3ef9e78423cd23293eddf0736c6ebae5"
+        "version": "f9116c7455b406cbd519298f9375550b21e4af0abcf6bfbe8d93f8e28a3de5e1",
+        "signature": "f9116c7455b406cbd519298f9375550b21e4af0abcf6bfbe8d93f8e28a3de5e1"
       },
       "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-core/dist/flags.d.ts": {
         "version": "f761c91419d0a89422a0004ef1a92929dd4d2d5e5c16758654d8b0467d1998c6",
@@ -1422,8 +1422,8 @@
         "signature": "35dc12e16d9bc16317e5db09fb6492d1312aabad3efeb49ea38fe9c314a36983"
       },
       "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-core/dist/backends/webgl/tex_util.d.ts": {
-        "version": "01e3cbd71bac829fc831d2da4f9f8699c9abd5575e24633bbcc40091ca62f80c",
-        "signature": "01e3cbd71bac829fc831d2da4f9f8699c9abd5575e24633bbcc40091ca62f80c"
+        "version": "de7f2299714ba7c946621859769e2f8cb62b9eaadeb8faaa9fbaccdd81c883c3",
+        "signature": "de7f2299714ba7c946621859769e2f8cb62b9eaadeb8faaa9fbaccdd81c883c3"
       },
       "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-core/dist/backends/webgl/gpgpu_math.d.ts": {
         "version": "245e14d7eef0f0bfc30611eadc59ef4ed8b64d6b303e4c0a57293640f9fe079a",
@@ -1434,20 +1434,20 @@
         "signature": "2a14c747b8c55eb5a4f382e836f089f991a518a9ac5f0b18dbe246c651635b97"
       },
       "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-core/dist/backends/webgl/backend_webgl.d.ts": {
-        "version": "702c7f43180b54ee9ae23a9dfe04c7447ca85d1c098dcb2356ee1493037d1aa1",
-        "signature": "702c7f43180b54ee9ae23a9dfe04c7447ca85d1c098dcb2356ee1493037d1aa1"
+        "version": "68fa56e9f70a99622da7c47157da141cbd8b28f5ad41adc9021a080d40b1a477",
+        "signature": "68fa56e9f70a99622da7c47157da141cbd8b28f5ad41adc9021a080d40b1a477"
       },
       "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-core/dist/backends/cpu/backend_cpu.d.ts": {
-        "version": "ce6ce00fc2aa90e1619c64d6e4435d9865ee2a1d40739db104770a03a0bf43fc",
-        "signature": "ce6ce00fc2aa90e1619c64d6e4435d9865ee2a1d40739db104770a03a0bf43fc"
+        "version": "929f7a31e5ece3d8f3ea1e127bc5495ffa8ec314d9d276e0e7694f12cdbff931",
+        "signature": "929f7a31e5ece3d8f3ea1e127bc5495ffa8ec314d9d276e0e7694f12cdbff931"
       },
       "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-core/dist/platforms/platform_browser.d.ts": {
-        "version": "c3e2a7f44b1ff19401059b0b216077c77aec5c2591c83a8c1d1429d25577d8c2",
-        "signature": "c3e2a7f44b1ff19401059b0b216077c77aec5c2591c83a8c1d1429d25577d8c2"
+        "version": "83210ab733f46c4384f15ba18194bd788eb789ea960b004c7d55d0498c645873",
+        "signature": "83210ab733f46c4384f15ba18194bd788eb789ea960b004c7d55d0498c645873"
       },
       "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-core/dist/platforms/platform_node.d.ts": {
-        "version": "199d7e9cc61e736654fe3813104344df3a6388d9240591f2d018a8999b3b7e3b",
-        "signature": "199d7e9cc61e736654fe3813104344df3a6388d9240591f2d018a8999b3b7e3b"
+        "version": "2a04a967b4fb251d45a6c3aa21c6ec91a9cd047be25568739568de99d1967d93",
+        "signature": "2a04a967b4fb251d45a6c3aa21c6ec91a9cd047be25568739568de99d1967d93"
       },
       "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-core/dist/ops/axis_util.d.ts": {
         "version": "e147bba2ebba35d8736f75c349b109df01b8a3cfb5b10d9225e5fcbab821b99e",
@@ -1462,12 +1462,12 @@
         "signature": "c7d17f1746ace9f943d24110444db01d19fbe1536ad2ec9f817ba8661c2f0ab7"
       },
       "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-core/dist/backends/backend_util.d.ts": {
-        "version": "3aef622266770b56ca4c08ff6209d660f88152bec182524505c6a1b773a16a49",
-        "signature": "3aef622266770b56ca4c08ff6209d660f88152bec182524505c6a1b773a16a49"
+        "version": "6ae67da7631af68f6baaf4993ecee7382aa1ea106c131064247d2ed0d67e4689",
+        "signature": "6ae67da7631af68f6baaf4993ecee7382aa1ea106c131064247d2ed0d67e4689"
       },
       "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-core/dist/io/types.d.ts": {
-        "version": "ca6d7b7880615322668cf9791ca9761308d856f18ee46179ebf1f1efe6281495",
-        "signature": "ca6d7b7880615322668cf9791ca9761308d856f18ee46179ebf1f1efe6281495"
+        "version": "fd94d4a30a9c919d6c16c5debb10233cef68ff17f920abd456957530ae8c1a46",
+        "signature": "fd94d4a30a9c919d6c16c5debb10233cef68ff17f920abd456957530ae8c1a46"
       },
       "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-core/dist/io/router_registry.d.ts": {
         "version": "f5a19e91ccf83084a65d47a418629e2dd61d93255a050155d5bdd56b87b6cc87",
@@ -1490,8 +1490,8 @@
         "signature": "b32afc43a4a426e938a8954a42fb2db5f1984cd310fb3658df8673ccba9b2d81"
       },
       "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-core/dist/io/io_utils.d.ts": {
-        "version": "787a3ca0b6aa07da24fcd18e451f8c5ae784c8defdfbf65bc3d5e8c3b6f72f09",
-        "signature": "787a3ca0b6aa07da24fcd18e451f8c5ae784c8defdfbf65bc3d5e8c3b6f72f09"
+        "version": "ec7e8149ff8d9579e1d6c7d98d0205604a838a7af6c3ea8f4a9a43c88680f5f4",
+        "signature": "ec7e8149ff8d9579e1d6c7d98d0205604a838a7af6c3ea8f4a9a43c88680f5f4"
       },
       "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-core/dist/io/passthrough.d.ts": {
         "version": "a972ca6a0502f1238e632fc7eb68760af9772b727fec00b0d4990e4b63d4ba58",
@@ -1506,8 +1506,8 @@
         "signature": "6cddc4805104d032ade06bd016228a81e3786ae52c498fcc6995c7155e87fc62"
       },
       "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-core/dist/io/io.d.ts": {
-        "version": "d78e8076758b73aec1590fcd123d306b39d14efeb398be90437a2ec9766f523a",
-        "signature": "d78e8076758b73aec1590fcd123d306b39d14efeb398be90437a2ec9766f523a"
+        "version": "d0147aa29ad1e727590f0790746bac714c448f93897581b6a15be0c754043017",
+        "signature": "d0147aa29ad1e727590f0790746bac714c448f93897581b6a15be0c754043017"
       },
       "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-core/dist/ops/confusion_matrix.d.ts": {
         "version": "01c39b1d2463209e959171cc1e528c5e558f7519473fab37c1ceb842c888579a",
@@ -1534,12 +1534,12 @@
         "signature": "5874188c0ce7e25a50a4e72058b05d1c7da4b17bccec93920f98279c2d49823b"
       },
       "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-core/dist/util.d.ts": {
-        "version": "fcd231a091beebd748deabf40095f888c441fc3ac5ddc1f39dc4bb588570edc1",
-        "signature": "fcd231a091beebd748deabf40095f888c441fc3ac5ddc1f39dc4bb588570edc1"
+        "version": "90affa60f885d13194aa520fb4b6917e851f0bc0f5c3cc4f94b6af167f4aa4d9",
+        "signature": "90affa60f885d13194aa520fb4b6917e851f0bc0f5c3cc4f94b6af167f4aa4d9"
       },
       "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-core/dist/version.d.ts": {
-        "version": "03ffe29cc762c15d9f56fe583d3a2bdf9c9e198c86919f7ee9d31f9df234380a",
-        "signature": "03ffe29cc762c15d9f56fe583d3a2bdf9c9e198c86919f7ee9d31f9df234380a"
+        "version": "b021ffe4536302ec2ada14e68e64db7728cb5294b7409ef486e9377d26c5bd1f",
+        "signature": "b021ffe4536302ec2ada14e68e64db7728cb5294b7409ef486e9377d26c5bd1f"
       },
       "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-core/dist/backends/webgl/gpgpu_util.d.ts": {
         "version": "1624ce11f40f1d1d656c66fd6438ed1e6adbf322a4a8da2f9601d4448f30e0ad",
@@ -1658,8 +1658,8 @@
         "signature": "b932bb5ba48fab318d24b081780990c0983d4868d298e82ff17cf40f04aecf64"
       },
       "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-core/dist/ops/tensor_ops.d.ts": {
-        "version": "9ab9bdb12b97dc835dc63a7d0ec1ce009dab440a68b14897d3fcff8870a5d2b2",
-        "signature": "9ab9bdb12b97dc835dc63a7d0ec1ce009dab440a68b14897d3fcff8870a5d2b2"
+        "version": "3955fef8fe697841c808462b4776b797ebe842447861583b2425c24547ed2266",
+        "signature": "3955fef8fe697841c808462b4776b797ebe842447861583b2425c24547ed2266"
       },
       "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-core/dist/ops/transpose.d.ts": {
         "version": "d32f8706f8ab5c33ec6e2618bf6bf33119357761f0f280744501e0c0a469564c",
@@ -1754,8 +1754,8 @@
         "signature": "64be9047a9cc8a0fb58aff7e73f08c7c06ed2891c34895ada52cd84df2986a87"
       },
       "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-core/dist/globals.d.ts": {
-        "version": "ffa01d49216567101c493cb01146f11dddddf099285e888a0d0fe03d65baf8c0",
-        "signature": "ffa01d49216567101c493cb01146f11dddddf099285e888a0d0fe03d65baf8c0"
+        "version": "eab1a4cbc5590038e29521bc51699deed3f58eebde848166dfaf35ae759df088",
+        "signature": "eab1a4cbc5590038e29521bc51699deed3f58eebde848166dfaf35ae759df088"
       },
       "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-core/dist/gradients.d.ts": {
         "version": "10dd1a0039f75e10808eacf716b12271e5976a96823fae6a1da8dd88560312a2",
@@ -1818,8 +1818,8 @@
         "signature": "36bf454940411a894df4cb0f7ebcbbf85be06528f3470d85d3e8e2ac6019347f"
       },
       "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-layers/dist/engine/container.d.ts": {
-        "version": "7694258a2548314311c1c4a7b51d581a033e033567f592a7cd9d187d8ee7d063",
-        "signature": "7694258a2548314311c1c4a7b51d581a033e033567f592a7cd9d187d8ee7d063"
+        "version": "20bafc1752aff7cb52691c5c67705bfeb8d7294bc5e3ffc8699bffa93823e6a5",
+        "signature": "20bafc1752aff7cb52691c5c67705bfeb8d7294bc5e3ffc8699bffa93823e6a5"
       },
       "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-layers/dist/logs.d.ts": {
         "version": "985d2b99690cb66c9ee1e9f2132f1670bcc3f5f01a390e22092d0e95518c7760",
@@ -1829,21 +1829,37 @@
         "version": "1441341823f20af69f0c0755b6c312ec5cf627dfa8ae30ca799ad05db49aeef6",
         "signature": "1441341823f20af69f0c0755b6c312ec5cf627dfa8ae30ca799ad05db49aeef6"
       },
+      "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-layers/dist/keras_format/loss_config.d.ts": {
+        "version": "c9b11c2c6e784d77f6e762853bf6a3c7c8203570e5f058cbad70cf2d227f2e8a",
+        "signature": "c9b11c2c6e784d77f6e762853bf6a3c7c8203570e5f058cbad70cf2d227f2e8a"
+      },
+      "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-layers/dist/keras_format/optimizer_config.d.ts": {
+        "version": "b8d1dc7c3155710631ff3355d47a7400fee9c248948f2745a107d104ff9440c5",
+        "signature": "b8d1dc7c3155710631ff3355d47a7400fee9c248948f2745a107d104ff9440c5"
+      },
+      "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-layers/dist/keras_format/training_config.d.ts": {
+        "version": "78349dff6c602648fa0f0960dc7793b719e80b8830d63d2e03060f964414eb7b",
+        "signature": "78349dff6c602648fa0f0960dc7793b719e80b8830d63d2e03060f964414eb7b"
+      },
       "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-layers/dist/engine/dataset_stub.d.ts": {
         "version": "ed5d5aa5d018f1864f1c40e7e3f30397ec91ee39bed45db8bc6a4e2e84e19aad",
         "signature": "ed5d5aa5d018f1864f1c40e7e3f30397ec91ee39bed45db8bc6a4e2e84e19aad"
       },
+      "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-layers/dist/engine/training_utils.d.ts": {
+        "version": "5b955e470e60e2cae6b080f0ce7345e854838a63e0a7025405a11cbd2c7a6886",
+        "signature": "5b955e470e60e2cae6b080f0ce7345e854838a63e0a7025405a11cbd2c7a6886"
+      },
       "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-layers/dist/engine/training_dataset.d.ts": {
-        "version": "a4f9742c5a471c3a8d1d4174e66f8693bdc296abac2259481184e35ddac6503a",
-        "signature": "a4f9742c5a471c3a8d1d4174e66f8693bdc296abac2259481184e35ddac6503a"
+        "version": "38da09ec46b9054f5ddbb435d961a0e60c3f7645b59c214370211537f9499bbc",
+        "signature": "38da09ec46b9054f5ddbb435d961a0e60c3f7645b59c214370211537f9499bbc"
       },
       "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-layers/dist/engine/training_tensors.d.ts": {
-        "version": "cd239fabf85857ca7f2bb4195b63d433799272b22ab61630c8bc743ba7f43f5f",
-        "signature": "cd239fabf85857ca7f2bb4195b63d433799272b22ab61630c8bc743ba7f43f5f"
+        "version": "c6a3d4a0d0ae9f136b542494fad18bc08d6c4f38e4e81a7f0cc9781a9a6d4b33",
+        "signature": "c6a3d4a0d0ae9f136b542494fad18bc08d6c4f38e4e81a7f0cc9781a9a6d4b33"
       },
       "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-layers/dist/engine/training.d.ts": {
-        "version": "a6560852ce2428e26e6d381e8a0028e050b000b6be3538de8f89a2957f68804c",
-        "signature": "a6560852ce2428e26e6d381e8a0028e050b000b6be3538de8f89a2957f68804c"
+        "version": "b854b34d89837590b7583f4646e8f838fdfd703267e49f224461d84458b22be3",
+        "signature": "b854b34d89837590b7583f4646e8f838fdfd703267e49f224461d84458b22be3"
       },
       "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-layers/dist/models.d.ts": {
         "version": "4239a0d6247c2dfd441a5dacb3701231e6f936194c4560f2f7b66a902c0b11d6",
@@ -1930,12 +1946,12 @@
         "signature": "e2a315c9cea27da28f874e21d0640052b25d2fea80dce465f4a15e240164ae95"
       },
       "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-layers/dist/version.d.ts": {
-        "version": "6e1c25a1f41d55ed05c5fabf1e68b1e3e549cf4bfa11c3887b72951740a91cce",
-        "signature": "6e1c25a1f41d55ed05c5fabf1e68b1e3e549cf4bfa11c3887b72951740a91cce"
+        "version": "e73d7145e3e62d5d9730fede2afa65ff507fbbaf0adeb3cbd6217e788196518b",
+        "signature": "e73d7145e3e62d5d9730fede2afa65ff507fbbaf0adeb3cbd6217e788196518b"
       },
       "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-layers/dist/index.d.ts": {
-        "version": "2fb7f81a5abae03186df6445d5a330ae24e79929c03d5e94923e6a7642a8dcce",
-        "signature": "2fb7f81a5abae03186df6445d5a330ae24e79929c03d5e94923e6a7642a8dcce"
+        "version": "08abbf97b813f862c6291675967309e66b7d5aa406b7a7e210ed7fdadcddc4d2",
+        "signature": "08abbf97b813f862c6291675967309e66b7d5aa406b7a7e210ed7fdadcddc4d2"
       },
       "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-converter/dist/src/executor/tensor_array.d.ts": {
         "version": "1b880fbf2bb7697fca6e1ac7bbf29e3e14162e3be3f685c6a507a4c22a7efdf4",
@@ -1965,8 +1981,8 @@
         "signature": "0e9698c76f157a2fb0f8170cb1fce9a48e9fda03532f6408013fe4b10f293a20"
       },
       "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-converter/dist/src/version.d.ts": {
-        "version": "03ffe29cc762c15d9f56fe583d3a2bdf9c9e198c86919f7ee9d31f9df234380a",
-        "signature": "03ffe29cc762c15d9f56fe583d3a2bdf9c9e198c86919f7ee9d31f9df234380a"
+        "version": "b021ffe4536302ec2ada14e68e64db7728cb5294b7409ef486e9377d26c5bd1f",
+        "signature": "b021ffe4536302ec2ada14e68e64db7728cb5294b7409ef486e9377d26c5bd1f"
       },
       "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-converter/dist/src/index.d.ts": {
         "version": "8774f3e50ed4adaba132a9b1881056f86d981ac39a2a0885909cb2dde972d979",
@@ -2037,8 +2053,8 @@
         "signature": "8d75373547409585df618b4ecac52f18af0afaf20187460ffbca229a09a55c79"
       },
       "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-data/dist/version.d.ts": {
-        "version": "03ffe29cc762c15d9f56fe583d3a2bdf9c9e198c86919f7ee9d31f9df234380a",
-        "signature": "03ffe29cc762c15d9f56fe583d3a2bdf9c9e198c86919f7ee9d31f9df234380a"
+        "version": "b021ffe4536302ec2ada14e68e64db7728cb5294b7409ef486e9377d26c5bd1f",
+        "signature": "b021ffe4536302ec2ada14e68e64db7728cb5294b7409ef486e9377d26c5bd1f"
       },
       "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-data/dist/index.d.ts": {
         "version": "005af123ad24977287a2abf6aae5a0a09bd4748ded25f26274f11df3dd11b6a8",
@@ -2048,45 +2064,9 @@
         "version": "57f21ba5fe40eefbf766ef4c07cc68ab4849b27ff1eadab2b3518f8e1b387251",
         "signature": "57f21ba5fe40eefbf766ef4c07cc68ab4849b27ff1eadab2b3518f8e1b387251"
       },
-      "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-node/dist/io/file_system.d.ts": {
-        "version": "5a1a6ca0344ea8375e2b96c2ae3c733ee42bb10a57ed3ee2efd09b8d0327ae07",
-        "signature": "5a1a6ca0344ea8375e2b96c2ae3c733ee42bb10a57ed3ee2efd09b8d0327ae07"
-      },
-      "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-node/dist/io/node_http.d.ts": {
-        "version": "a187ebf8f3867f8a754f3e2507e3ffd221b4de17ba53fa8b8fa315379829958e",
-        "signature": "a187ebf8f3867f8a754f3e2507e3ffd221b4de17ba53fa8b8fa315379829958e"
-      },
-      "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-node/dist/io/index.d.ts": {
-        "version": "1eb25c303afb308779164a7025a93e6ae1f23531581978bb9f93e93e57ad4201",
-        "signature": "1eb25c303afb308779164a7025a93e6ae1f23531581978bb9f93e93e57ad4201"
-      },
-      "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-node/dist/callbacks.d.ts": {
-        "version": "c28cd6d0b5c902dfc22e23bb3ffe054a97b4e571871479ab7e4909ee1a1dfbcf",
-        "signature": "c28cd6d0b5c902dfc22e23bb3ffe054a97b4e571871479ab7e4909ee1a1dfbcf"
-      },
-      "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-node/dist/tfjs_binding.d.ts": {
-        "version": "0c5b0dd422faaf6a7136e6818591b9bb71fc5aa04e7ee954946d114aaa5c7cf4",
-        "signature": "0c5b0dd422faaf6a7136e6818591b9bb71fc5aa04e7ee954946d114aaa5c7cf4"
-      },
-      "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-node/dist/nodejs_kernel_backend.d.ts": {
-        "version": "fab118234b88e8fdca047ebc33bc88aa52d8e48eaf2c8093d71a8368264ab113",
-        "signature": "fab118234b88e8fdca047ebc33bc88aa52d8e48eaf2c8093d71a8368264ab113"
-      },
-      "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-node/dist/tensorboard.d.ts": {
-        "version": "7cbd2b677faa3293c5b0ae32e43a19f3c17b161169ac5530eaeb6c3956460939",
-        "signature": "7cbd2b677faa3293c5b0ae32e43a19f3c17b161169ac5530eaeb6c3956460939"
-      },
-      "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-node/dist/node.d.ts": {
-        "version": "e7bc49da591e940c9011e25715222ae822d90a9e4c042dcabc594bfcb2234e26",
-        "signature": "e7bc49da591e940c9011e25715222ae822d90a9e4c042dcabc594bfcb2234e26"
-      },
-      "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-node/dist/index.d.ts": {
-        "version": "2d75cd8c323fcb15689fda1242ca6f43db5524069a586f7e94871229ce141d07",
-        "signature": "2d75cd8c323fcb15689fda1242ca6f43db5524069a586f7e94871229ce141d07"
-      },
       "/home/travis/build/PolymerLabs/arcs/src/platform/tf-node.ts": {
-        "version": "4b480ff9a1b7a17edbc6aa6536f21c9ecd6dcf3d22f4fa900f543a7107aae375",
-        "signature": "ec5066e640b5398c5fcc8e5538ed4baf81db5b5eb4f7f5dd9bacdf0b80d4abbc"
+        "version": "20625f68e9f89cd404c28f8691d414b6279636e816073258412f00fc101e13f8",
+        "signature": "1e6156567d962370ca910ec82b64217b27b42b26d138e15dcf2aac331e84a531"
       },
       "/home/travis/build/PolymerLabs/arcs/src/platform/tf-web.ts": {
         "version": "6bdbbe138d8724979d7d7fd7c238e609404a2a15df59bdaf405b77108bc8bb11",
@@ -5620,6 +5600,7 @@
         "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-core/dist/ops/broadcast_util.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-core/dist/ops/concat_util.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-core/dist/ops/conv_util.d.ts",
+        "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-core/dist/engine.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
       ],
@@ -6250,7 +6231,29 @@
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
       ],
+      "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-layers/dist/keras_format/loss_config.d.ts": [
+        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
+        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
+      ],
+      "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-layers/dist/keras_format/optimizer_config.d.ts": [
+        "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-layers/dist/keras_format/types.d.ts",
+        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
+        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
+      ],
+      "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-layers/dist/keras_format/training_config.d.ts": [
+        "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-layers/dist/keras_format/common.d.ts",
+        "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-layers/dist/keras_format/loss_config.d.ts",
+        "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-layers/dist/keras_format/optimizer_config.d.ts",
+        "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-layers/dist/keras_format/types.d.ts",
+        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
+        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
+      ],
       "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-layers/dist/engine/dataset_stub.d.ts": [
+        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
+        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
+      ],
+      "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-layers/dist/engine/training_utils.d.ts": [
+        "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-core/dist/index.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
       ],
@@ -6259,25 +6262,30 @@
         "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-layers/dist/base_callbacks.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-layers/dist/types.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-layers/dist/engine/dataset_stub.d.ts",
+        "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-layers/dist/engine/training_utils.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
       ],
       "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-layers/dist/engine/training_tensors.d.ts": [
         "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-core/dist/index.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-layers/dist/base_callbacks.d.ts",
+        "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-layers/dist/engine/training_utils.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
       ],
       "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-layers/dist/engine/training.d.ts": [
         "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-core/dist/index.d.ts",
+        "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-core/dist/tensor_types.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-layers/dist/base_callbacks.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-layers/dist/keras_format/common.d.ts",
+        "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-layers/dist/keras_format/training_config.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-layers/dist/types.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-layers/dist/engine/container.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-layers/dist/engine/dataset_stub.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-layers/dist/engine/topology.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-layers/dist/engine/training_dataset.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-layers/dist/engine/training_tensors.d.ts",
+        "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-layers/dist/engine/training_utils.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
       ],
@@ -6500,6 +6508,7 @@
         "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-layers/dist/callbacks.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-layers/dist/engine/topology.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-layers/dist/engine/training.d.ts",
+        "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-layers/dist/engine/training_utils.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-layers/dist/engine/training_dataset.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-layers/dist/engine/training_tensors.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-layers/dist/exports.d.ts",
@@ -6697,67 +6706,8 @@
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
       ],
-      "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-node/dist/io/file_system.d.ts": [
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-core/dist/index.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
-      ],
-      "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-node/dist/io/node_http.d.ts": [
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-core/dist/index.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
-      ],
-      "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-node/dist/io/index.d.ts": [
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-node/dist/io/file_system.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-node/dist/io/node_http.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
-      ],
-      "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-node/dist/callbacks.d.ts": [
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs/dist/index.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
-      ],
-      "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-node/dist/tfjs_binding.d.ts": [
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
-      ],
-      "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-node/dist/nodejs_kernel_backend.d.ts": [
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-core/dist/index.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-core/dist/ops/conv_util.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-core/dist/ops/fused_util.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-node/dist/tfjs_binding.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
-      ],
-      "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-node/dist/tensorboard.d.ts": [
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs/dist/index.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-node/dist/nodejs_kernel_backend.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
-      ],
-      "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-node/dist/node.d.ts": [
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-node/dist/callbacks.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-node/dist/tensorboard.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
-      ],
-      "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-node/dist/index.d.ts": [
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs/dist/index.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-node/dist/io/index.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-node/dist/node.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-core/dist/io/model_management.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-core/dist/io/browser_files.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-core/dist/io/http.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-core/dist/io/io_utils.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-core/dist/io/passthrough.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-core/dist/io/weights_loader.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-core/dist/io/router_registry.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
-      ],
       "/home/travis/build/PolymerLabs/arcs/src/platform/tf-node.ts": [
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-node/dist/index.d.ts",
+        "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs/dist/index.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
       ],
@@ -10105,66 +10055,7 @@
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/vm.d.ts"
       ],
       "/home/travis/build/PolymerLabs/arcs/src/platform/tf-node.ts": [
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-node/dist/index.d.ts"
-      ],
-      "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-node/dist/index.d.ts": [
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs/dist/index.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-node/dist/io/index.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-node/dist/node.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-core/dist/io/model_management.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-core/dist/io/browser_files.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-core/dist/io/http.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-core/dist/io/io_utils.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-core/dist/io/passthrough.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-core/dist/io/weights_loader.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-core/dist/io/router_registry.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
-      ],
-      "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-node/dist/node.d.ts": [
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-node/dist/callbacks.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-node/dist/tensorboard.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
-      ],
-      "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-node/dist/tensorboard.d.ts": [
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs/dist/index.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-node/dist/nodejs_kernel_backend.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
-      ],
-      "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-node/dist/nodejs_kernel_backend.d.ts": [
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-core/dist/index.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-core/dist/ops/conv_util.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-core/dist/ops/fused_util.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-node/dist/tfjs_binding.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
-      ],
-      "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-node/dist/tfjs_binding.d.ts": [
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
-      ],
-      "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-node/dist/callbacks.d.ts": [
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs/dist/index.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
-      ],
-      "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-node/dist/io/index.d.ts": [
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-node/dist/io/file_system.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-node/dist/io/node_http.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
-      ],
-      "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-node/dist/io/node_http.d.ts": [
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-core/dist/index.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
-      ],
-      "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-node/dist/io/file_system.d.ts": [
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-core/dist/index.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
+        "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs/dist/index.d.ts"
       ],
       "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs/dist/index.d.ts": [
         "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-core/dist/index.d.ts",
@@ -10358,6 +10249,7 @@
         "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-layers/dist/callbacks.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-layers/dist/engine/topology.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-layers/dist/engine/training.d.ts",
+        "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-layers/dist/engine/training_utils.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-layers/dist/engine/training_dataset.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-layers/dist/engine/training_tensors.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-layers/dist/exports.d.ts",
@@ -10580,20 +10472,24 @@
       ],
       "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-layers/dist/engine/training.d.ts": [
         "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-core/dist/index.d.ts",
+        "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-core/dist/tensor_types.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-layers/dist/base_callbacks.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-layers/dist/keras_format/common.d.ts",
+        "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-layers/dist/keras_format/training_config.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-layers/dist/types.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-layers/dist/engine/container.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-layers/dist/engine/dataset_stub.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-layers/dist/engine/topology.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-layers/dist/engine/training_dataset.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-layers/dist/engine/training_tensors.d.ts",
+        "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-layers/dist/engine/training_utils.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
       ],
       "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-layers/dist/engine/training_tensors.d.ts": [
         "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-core/dist/index.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-layers/dist/base_callbacks.d.ts",
+        "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-layers/dist/engine/training_utils.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
       ],
@@ -10602,10 +10498,33 @@
         "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-layers/dist/base_callbacks.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-layers/dist/types.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-layers/dist/engine/dataset_stub.d.ts",
+        "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-layers/dist/engine/training_utils.d.ts",
+        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
+        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
+      ],
+      "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-layers/dist/engine/training_utils.d.ts": [
+        "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-core/dist/index.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
       ],
       "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-layers/dist/engine/dataset_stub.d.ts": [
+        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
+        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
+      ],
+      "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-layers/dist/keras_format/training_config.d.ts": [
+        "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-layers/dist/keras_format/common.d.ts",
+        "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-layers/dist/keras_format/loss_config.d.ts",
+        "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-layers/dist/keras_format/optimizer_config.d.ts",
+        "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-layers/dist/keras_format/types.d.ts",
+        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
+        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
+      ],
+      "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-layers/dist/keras_format/optimizer_config.d.ts": [
+        "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-layers/dist/keras_format/types.d.ts",
+        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
+        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
+      ],
+      "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-layers/dist/keras_format/loss_config.d.ts": [
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
       ],
@@ -11244,6 +11163,7 @@
         "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-core/dist/ops/broadcast_util.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-core/dist/ops/concat_util.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-core/dist/ops/conv_util.d.ts",
+        "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-core/dist/engine.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
       ],
@@ -11895,7 +11815,11 @@
       "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-layers/dist/engine/container.d.ts",
       "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-layers/dist/logs.d.ts",
       "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-layers/dist/base_callbacks.d.ts",
+      "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-layers/dist/keras_format/loss_config.d.ts",
+      "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-layers/dist/keras_format/optimizer_config.d.ts",
+      "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-layers/dist/keras_format/training_config.d.ts",
       "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-layers/dist/engine/dataset_stub.d.ts",
+      "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-layers/dist/engine/training_utils.d.ts",
       "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-layers/dist/engine/training_dataset.d.ts",
       "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-layers/dist/engine/training_tensors.d.ts",
       "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-layers/dist/engine/training.d.ts",
@@ -11950,15 +11874,6 @@
       "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-data/dist/version.d.ts",
       "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-data/dist/index.d.ts",
       "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs/dist/index.d.ts",
-      "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-node/dist/io/file_system.d.ts",
-      "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-node/dist/io/node_http.d.ts",
-      "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-node/dist/io/index.d.ts",
-      "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-node/dist/callbacks.d.ts",
-      "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-node/dist/tfjs_binding.d.ts",
-      "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-node/dist/nodejs_kernel_backend.d.ts",
-      "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-node/dist/tensorboard.d.ts",
-      "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-node/dist/node.d.ts",
-      "/home/travis/build/PolymerLabs/arcs/node_modules/@tensorflow/tfjs-node/dist/index.d.ts",
       "/home/travis/build/PolymerLabs/arcs/src/platform/tf-node.ts",
       "/home/travis/build/PolymerLabs/arcs/src/platform/tf-web.ts",
       "/home/travis/build/PolymerLabs/arcs/src/platform/vm-node.ts",

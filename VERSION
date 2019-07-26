@@ -1,7 +1,5 @@
-commit 3839708ab3c1ae755058e111b18d8c20d10e480b
-Author: Joshua Pratt <jp10010101010000@gmail.com>
-Date:   Fri Jul 26 14:08:59 2019 +1000
+commit 86266efac3ac19c2b3ea1a15f082cb2ec78c8790
+Author: Alex Rosengarten <alexrosengarten@gmail.com>
+Date:   Fri Jul 26 13:20:46 2019 -0700
 
-    Improve root slot & slandle check (#3380)
-    
-    Avoid duplicate implementation of isRoot and handle isRoot id's
+    rm tfjs-node (#3390)
