@@ -1,8 +1,5 @@
-commit fa37042569e436c7c0827893fcae0309a64a27cb
-Author: Paul Lindner <plindner@google.com>
-Date:   Fri Jul 26 16:40:28 2019 -0700
+commit e642b66fe78078bd4ad185a4353a51ec17b7de2a
+Author: Walter Korman <wkorman@chromium.org>
+Date:   Sat Jul 27 08:58:39 2019 -0700
 
-    Upgrade to typedoc 0.15.0 (#3397)
-    
-    - remove override for target to set the ES target
-    - update external typescript types
+    Reduce verbose empathy by swapping out for compassion. (#3400)
