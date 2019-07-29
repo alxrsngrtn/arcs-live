@@ -37,6 +37,9 @@ import { SearchTokensToParticles } from './strategies/search-tokens-to-particles
 import { Strategizer } from './strategizer.js';
 import { Description } from '../runtime/description.js';
 import { Runtime } from '../runtime/runtime.js';
+import { Relevance } from '../runtime/relevance.js';
+import { logsFactory } from '../runtime/log-factory.js';
+const { log } = logsFactory('planner', 'olive');
 const suggestionByHash = () => Runtime.getRuntime().getCacheService().getOrCreateCache('suggestionByHash');
 export class Planner {
     // TODO: Use context.arc instead of arc
@@ -169,7 +172,8 @@ export class Planner {
         }
         let relevance = undefined;
         let description = null;
-        if (this.speculator && !this.noSpecEx) {
+        if (this._shouldSpeculate(plan)) {
+            log(`speculatively executing [${plan.name}]`);
             const result = await this.speculator.speculate(this.arc, plan, hash);
             if (!result) {
                 return undefined;
@@ -177,9 +181,13 @@ export class Planner {
             const speculativeArc = result.speculativeArc;
             relevance = result.relevance;
             description = await Description.create(speculativeArc, relevance);
+            log(`[${plan.name}] => [${description.getRecipeSuggestion()}]`);
         }
         else {
-            description = await Description.createForPlan(arc, plan);
+            const speculativeArc = await arc.cloneForSpeculativeExecution();
+            await speculativeArc.mergeIntoActiveRecipe(plan);
+            relevance = Relevance.create(arc, plan);
+            description = await Description.create(speculativeArc, relevance);
         }
         const suggestion = Suggestion.create(plan, hash, relevance);
         suggestion.setDescription(description, this.arc.modality, this.arc.pec.slotComposer ?
@@ -187,6 +195,42 @@ export class Planner {
             : undefined);
         suggestionByHash().set(hash, suggestion);
         return suggestion;
+    }
+    _shouldSpeculate(plan) {
+        if (!this.speculator || this.noSpecEx) {
+            return false;
+        }
+        if (plan.handleConnections.some(({ type }) => type.toString() === `[Description {Text key, Text value}]`)) {
+            return true;
+        }
+        const planPatternsWithTokens = plan.patterns.filter(p => p.includes('${'));
+        const particlesWithTokens = plan.particles.filter(p => !!p.spec.pattern && p.spec.pattern.includes('${'));
+        if (planPatternsWithTokens.length === 0 && particlesWithTokens.length === 0) {
+            return false;
+        }
+        // Check if recipe description use out handle connections.
+        for (const pattern of planPatternsWithTokens) {
+            const allTokens = Description.getAllTokens(pattern);
+            for (const tokens of allTokens) {
+                const particle = plan.particles.find(p => p.name === tokens[0]);
+                assert(particle);
+                const handleConn = particle.getConnectionByName(tokens[1]);
+                if (handleConn && handleConn.handle && RecipeUtil.directionCounts(handleConn.handle).out > 0) {
+                    return true;
+                }
+            }
+        }
+        // Check if particle descriptions use out handle connections.
+        for (const particle of particlesWithTokens) {
+            const allTokens = Description.getAllTokens(particle.spec.pattern);
+            for (const tokens of allTokens) {
+                const handleConn = particle.getConnectionByName(tokens[0]);
+                if (handleConn && handleConn.handle && RecipeUtil.directionCounts(handleConn.handle).out > 0) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
     _updateGeneration(generations, hash, handler) {
         if (generations) {

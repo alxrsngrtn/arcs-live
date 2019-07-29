@@ -124,6 +124,11 @@ export declare class Arc {
      * Waits for completion of an existing Instantiate before returning.
      */
     instantiate(recipe: Recipe): Promise<void>;
+    mergeIntoActiveRecipe(recipe: Recipe): Promise<{
+        handles: Handle[];
+        particles: Particle[];
+        slots: Slot[];
+    }>;
     private _doInstantiate;
     createStore(type: Type, name?: string, id?: string, tags?: string[], storageKey?: string): Promise<StorageProviderBase>;
     _registerStore(store: StorageProviderBase, tags?: string[]): void;

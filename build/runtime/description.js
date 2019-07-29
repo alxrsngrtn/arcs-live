@@ -11,6 +11,7 @@ import { assert } from '../platform/assert-web.js';
 import { DescriptionFormatter } from './description-formatter.js';
 import { BigCollectionType, CollectionType, EntityType, InterfaceType } from './type.js';
 import { StorageProviderBase } from './storage/storage-provider-base.js';
+import { StorageStub } from './manifest.js';
 export class Description {
     constructor(storeDescById = {}, 
     // TODO(mmandlis): replace Particle[] with serializable json objects.
@@ -76,6 +77,14 @@ export class Description {
         formatter.excludeValues = true;
         return formatter.getHandleDescription(recipeHandle);
     }
+    static getAllTokens(pattern) {
+        const allTokens = [];
+        const tokens = pattern.match(DescriptionFormatter.tokensRegex);
+        for (let i = 0; i < tokens.length; ++i) {
+            allTokens[i] = tokens[i].match(DescriptionFormatter.tokensInnerRegex)[1].split('.');
+        }
+        return allTokens;
+    }
     static async initDescriptionHandles(allParticles, arc, relevance) {
         return await Promise.all(allParticles.map(particle => Description._createParticleDescription(particle, arc, relevance)));
     }
@@ -118,7 +127,7 @@ export class Description {
         return {};
     }
     static async _prepareStoreValue(store) {
-        if (!store) {
+        if (!store || (store instanceof StorageStub)) {
             return undefined;
         }
         if (store.type instanceof CollectionType) {

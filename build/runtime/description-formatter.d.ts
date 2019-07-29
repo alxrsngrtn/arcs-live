@@ -51,6 +51,8 @@ export declare class DescriptionFormatter {
     _joinTokens(tokens: any): any;
     _capitalizeAndPunctuate(sentence: any): string;
     patternToSuggestion(pattern: string, particleDescription: any): any;
+    static readonly tokensRegex: RegExp;
+    static readonly tokensInnerRegex: RegExp;
     _initTokens(pattern: string, particleDescription: any): any[];
     _initSubTokens(pattern: any, particleDescription: any): {}[];
     tokenToString(token: any): any;

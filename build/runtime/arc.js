@@ -423,8 +423,7 @@ ${this.activeRecipe.toString()}`;
             release();
         }
     }
-    // Critical section for instantiate,
-    async _doInstantiate(recipe) {
+    async mergeIntoActiveRecipe(recipe) {
         const { handles, particles, slots } = recipe.mergeInto(this._activeRecipe);
         this._recipeDeltas.push({ particles, handles, slots, patterns: recipe.patterns });
         // TODO(mmandlis): Get rid of populating the missing local slot IDs here,
@@ -493,6 +492,11 @@ ${this.activeRecipe.toString()}`;
                 this._registerStore(store, recipeHandle.tags);
             }
         }
+        return { handles, particles, slots };
+    }
+    // Critical section for instantiate,
+    async _doInstantiate(recipe) {
+        const { handles, particles, slots } = await this.mergeIntoActiveRecipe(recipe);
         await Promise.all(particles.map(recipeParticle => this._instantiateParticle(recipeParticle)));
         if (this.pec.slotComposer) {
             // TODO: pass slot-connections instead

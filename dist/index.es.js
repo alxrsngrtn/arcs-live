@@ -4359,7 +4359,7 @@ class DescriptionFormatter {
         pattern = pattern.replace(/</g, '&lt;');
         let results = [];
         while (pattern.length > 0) {
-            const tokens = pattern.match(/\${[a-zA-Z0-9.]+}(?:\.[_a-zA-Z]+)?/g);
+            const tokens = pattern.match(DescriptionFormatter.tokensRegex);
             let firstToken;
             let tokenIndex;
             if (tokens) {
@@ -4383,7 +4383,7 @@ class DescriptionFormatter {
         return results;
     }
     _initSubTokens(pattern, particleDescription) {
-        const valueTokens = pattern.match(/\${([a-zA-Z0-9.]+)}(?:\.([_a-zA-Z]+))?/);
+        const valueTokens = pattern.match(DescriptionFormatter.tokensInnerRegex);
         const handleNames = valueTokens[1].split('.');
         const extra = valueTokens.length === 3 ? valueTokens[2] : undefined;
         // Fetch the particle description by name from the value token - if it wasn't passed, this is a recipe description.
@@ -4692,6 +4692,8 @@ class DescriptionFormatter {
         return p2Slots - p1Slots;
     }
 }
+DescriptionFormatter.tokensRegex = /\${[a-zA-Z0-9.]+}(?:\.[_a-zA-Z]+)?/g;
+DescriptionFormatter.tokensInnerRegex = /\${([a-zA-Z0-9.]+)}(?:\.([_a-zA-Z]+))?/;
 
 /**
  * @license
@@ -4893,159 +4895,6 @@ class StorageProviderBase {
      */
     async modelForSynchronization() {
         return this.toLiteral();
-    }
-}
-
-/**
- * @license
- * Copyright (c) 2017 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-class Description {
-    constructor(storeDescById = {}, 
-    // TODO(mmandlis): replace Particle[] with serializable json objects.
-    arcRecipes, particleDescriptions = []) {
-        this.storeDescById = storeDescById;
-        this.arcRecipes = arcRecipes;
-        this.particleDescriptions = particleDescriptions;
-    }
-    static async XcreateForPlan(plan) {
-        const particleDescriptions = await Description.initDescriptionHandles(plan.particles);
-        return new Description({}, [{ patterns: plan.patterns, particles: plan.particles }], particleDescriptions);
-    }
-    static async createForPlan(arc, plan) {
-        const allParticles = plan.particles;
-        const particleDescriptions = await Description.initDescriptionHandles(allParticles, arc);
-        const storeDescById = {};
-        for (const { id } of plan.handles) {
-            const store = arc.findStoreById(id);
-            if (store && store instanceof StorageProviderBase) {
-                storeDescById[id] = arc.getStoreDescription(store);
-            }
-        }
-        // ... and pass to the private constructor.
-        return new Description(storeDescById, [{ patterns: plan.patterns, particles: plan.particles }], particleDescriptions);
-    }
-    /**
-     * Create a new Description object for the given Arc with an
-     * optional Relevance object.
-     */
-    static async create(arc, relevance) {
-        // Execute async related code here
-        const allParticles = [].concat(...arc.allDescendingArcs.map(arc => arc.activeRecipe.particles));
-        const particleDescriptions = await Description.initDescriptionHandles(allParticles, arc, relevance);
-        const storeDescById = {};
-        for (const { id } of arc.activeRecipe.handles) {
-            const store = arc.findStoreById(id);
-            if (store && store instanceof StorageProviderBase) {
-                storeDescById[id] = arc.getStoreDescription(store);
-            }
-        }
-        // ... and pass to the private constructor.
-        return new Description(storeDescById, arc.recipeDeltas, particleDescriptions);
-    }
-    getArcDescription(formatterClass = DescriptionFormatter) {
-        const patterns = [].concat(...this.arcRecipes.map(recipe => recipe.patterns));
-        const particles = [].concat(...this.arcRecipes.map(recipe => recipe.particles));
-        const desc = new (formatterClass)(this.particleDescriptions, this.storeDescById).getDescription({
-            patterns,
-            particles
-        });
-        if (desc) {
-            return desc;
-        }
-        return undefined;
-    }
-    getRecipeSuggestion(formatterClass = DescriptionFormatter) {
-        const formatter = new (formatterClass)(this.particleDescriptions, this.storeDescById);
-        return formatter.getDescription(this.arcRecipes[this.arcRecipes.length - 1]);
-    }
-    getHandleDescription(recipeHandle) {
-        assert(recipeHandle.connections.length > 0, 'handle has no connections?');
-        const formatter = new DescriptionFormatter(this.particleDescriptions, this.storeDescById);
-        formatter.excludeValues = true;
-        return formatter.getHandleDescription(recipeHandle);
-    }
-    static async initDescriptionHandles(allParticles, arc, relevance) {
-        return await Promise.all(allParticles.map(particle => Description._createParticleDescription(particle, arc, relevance)));
-    }
-    static async _createParticleDescription(particle, arc, relevance) {
-        let pDesc = {
-            _particle: particle,
-            _connections: {}
-        };
-        if (relevance) {
-            pDesc._rank = relevance.calcParticleRelevance(particle);
-        }
-        const descByName = await Description._getPatternByNameFromDescriptionHandle(particle, arc);
-        pDesc = { ...pDesc, ...descByName };
-        pDesc.pattern = pDesc.pattern || particle.spec.pattern;
-        for (const handleConn of Object.values(particle.connections)) {
-            const specConn = particle.spec.handleConnectionMap.get(handleConn.name);
-            const pattern = descByName[handleConn.name] || specConn.pattern;
-            const store = arc ? arc.findStoreById(handleConn.handle.id) : null;
-            pDesc._connections[handleConn.name] = {
-                pattern,
-                _handleConn: handleConn,
-                value: await Description._prepareStoreValue(store)
-            };
-        }
-        return pDesc;
-    }
-    static async _getPatternByNameFromDescriptionHandle(particle, arc) {
-        const descriptionConn = particle.connections['descriptions'];
-        if (descriptionConn && descriptionConn.handle && descriptionConn.handle.id) {
-            const descHandle = arc.findStoreById(descriptionConn.handle.id);
-            if (descHandle) {
-                // TODO(shans): fix this mess when there's a unified Collection class or interface.
-                const descByName = {};
-                for (const d of await descHandle.toList()) {
-                    descByName[d.rawData.key] = d.rawData.value;
-                }
-                return descByName;
-            }
-        }
-        return {};
-    }
-    static async _prepareStoreValue(store) {
-        if (!store) {
-            return undefined;
-        }
-        if (store.type instanceof CollectionType) {
-            const collectionStore = store;
-            const values = await collectionStore.toList();
-            if (values && values.length > 0) {
-                return { collectionValues: values };
-            }
-        }
-        else if (store.type instanceof BigCollectionType) {
-            const bigCollectionStore = store;
-            const cursorId = await bigCollectionStore.stream(1);
-            const { value, done } = await bigCollectionStore.cursorNext(cursorId);
-            bigCollectionStore.cursorClose(cursorId);
-            if (!done && value[0].rawData.name) {
-                return { bigCollectionValues: value[0] };
-            }
-        }
-        else if (store.type instanceof EntityType) {
-            const singletonStore = store;
-            const value = await singletonStore.get();
-            if (value && value['rawData']) {
-                return { entityValue: value['rawData'], valueDescription: store.type.entitySchema.description.value };
-            }
-        }
-        else if (store.type instanceof InterfaceType) {
-            const singletonStore = store;
-            const interfaceValue = await singletonStore.get();
-            if (interfaceValue) {
-                return { interfaceValue };
-            }
-        }
-        return undefined;
     }
 }
 
@@ -20394,6 +20243,167 @@ ${e.message}
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
+class Description {
+    constructor(storeDescById = {}, 
+    // TODO(mmandlis): replace Particle[] with serializable json objects.
+    arcRecipes, particleDescriptions = []) {
+        this.storeDescById = storeDescById;
+        this.arcRecipes = arcRecipes;
+        this.particleDescriptions = particleDescriptions;
+    }
+    static async XcreateForPlan(plan) {
+        const particleDescriptions = await Description.initDescriptionHandles(plan.particles);
+        return new Description({}, [{ patterns: plan.patterns, particles: plan.particles }], particleDescriptions);
+    }
+    static async createForPlan(arc, plan) {
+        const allParticles = plan.particles;
+        const particleDescriptions = await Description.initDescriptionHandles(allParticles, arc);
+        const storeDescById = {};
+        for (const { id } of plan.handles) {
+            const store = arc.findStoreById(id);
+            if (store && store instanceof StorageProviderBase) {
+                storeDescById[id] = arc.getStoreDescription(store);
+            }
+        }
+        // ... and pass to the private constructor.
+        return new Description(storeDescById, [{ patterns: plan.patterns, particles: plan.particles }], particleDescriptions);
+    }
+    /**
+     * Create a new Description object for the given Arc with an
+     * optional Relevance object.
+     */
+    static async create(arc, relevance) {
+        // Execute async related code here
+        const allParticles = [].concat(...arc.allDescendingArcs.map(arc => arc.activeRecipe.particles));
+        const particleDescriptions = await Description.initDescriptionHandles(allParticles, arc, relevance);
+        const storeDescById = {};
+        for (const { id } of arc.activeRecipe.handles) {
+            const store = arc.findStoreById(id);
+            if (store && store instanceof StorageProviderBase) {
+                storeDescById[id] = arc.getStoreDescription(store);
+            }
+        }
+        // ... and pass to the private constructor.
+        return new Description(storeDescById, arc.recipeDeltas, particleDescriptions);
+    }
+    getArcDescription(formatterClass = DescriptionFormatter) {
+        const patterns = [].concat(...this.arcRecipes.map(recipe => recipe.patterns));
+        const particles = [].concat(...this.arcRecipes.map(recipe => recipe.particles));
+        const desc = new (formatterClass)(this.particleDescriptions, this.storeDescById).getDescription({
+            patterns,
+            particles
+        });
+        if (desc) {
+            return desc;
+        }
+        return undefined;
+    }
+    getRecipeSuggestion(formatterClass = DescriptionFormatter) {
+        const formatter = new (formatterClass)(this.particleDescriptions, this.storeDescById);
+        return formatter.getDescription(this.arcRecipes[this.arcRecipes.length - 1]);
+    }
+    getHandleDescription(recipeHandle) {
+        assert(recipeHandle.connections.length > 0, 'handle has no connections?');
+        const formatter = new DescriptionFormatter(this.particleDescriptions, this.storeDescById);
+        formatter.excludeValues = true;
+        return formatter.getHandleDescription(recipeHandle);
+    }
+    static getAllTokens(pattern) {
+        const allTokens = [];
+        const tokens = pattern.match(DescriptionFormatter.tokensRegex);
+        for (let i = 0; i < tokens.length; ++i) {
+            allTokens[i] = tokens[i].match(DescriptionFormatter.tokensInnerRegex)[1].split('.');
+        }
+        return allTokens;
+    }
+    static async initDescriptionHandles(allParticles, arc, relevance) {
+        return await Promise.all(allParticles.map(particle => Description._createParticleDescription(particle, arc, relevance)));
+    }
+    static async _createParticleDescription(particle, arc, relevance) {
+        let pDesc = {
+            _particle: particle,
+            _connections: {}
+        };
+        if (relevance) {
+            pDesc._rank = relevance.calcParticleRelevance(particle);
+        }
+        const descByName = await Description._getPatternByNameFromDescriptionHandle(particle, arc);
+        pDesc = { ...pDesc, ...descByName };
+        pDesc.pattern = pDesc.pattern || particle.spec.pattern;
+        for (const handleConn of Object.values(particle.connections)) {
+            const specConn = particle.spec.handleConnectionMap.get(handleConn.name);
+            const pattern = descByName[handleConn.name] || specConn.pattern;
+            const store = arc ? arc.findStoreById(handleConn.handle.id) : null;
+            pDesc._connections[handleConn.name] = {
+                pattern,
+                _handleConn: handleConn,
+                value: await Description._prepareStoreValue(store)
+            };
+        }
+        return pDesc;
+    }
+    static async _getPatternByNameFromDescriptionHandle(particle, arc) {
+        const descriptionConn = particle.connections['descriptions'];
+        if (descriptionConn && descriptionConn.handle && descriptionConn.handle.id) {
+            const descHandle = arc.findStoreById(descriptionConn.handle.id);
+            if (descHandle) {
+                // TODO(shans): fix this mess when there's a unified Collection class or interface.
+                const descByName = {};
+                for (const d of await descHandle.toList()) {
+                    descByName[d.rawData.key] = d.rawData.value;
+                }
+                return descByName;
+            }
+        }
+        return {};
+    }
+    static async _prepareStoreValue(store) {
+        if (!store || (store instanceof StorageStub)) {
+            return undefined;
+        }
+        if (store.type instanceof CollectionType) {
+            const collectionStore = store;
+            const values = await collectionStore.toList();
+            if (values && values.length > 0) {
+                return { collectionValues: values };
+            }
+        }
+        else if (store.type instanceof BigCollectionType) {
+            const bigCollectionStore = store;
+            const cursorId = await bigCollectionStore.stream(1);
+            const { value, done } = await bigCollectionStore.cursorNext(cursorId);
+            bigCollectionStore.cursorClose(cursorId);
+            if (!done && value[0].rawData.name) {
+                return { bigCollectionValues: value[0] };
+            }
+        }
+        else if (store.type instanceof EntityType) {
+            const singletonStore = store;
+            const value = await singletonStore.get();
+            if (value && value['rawData']) {
+                return { entityValue: value['rawData'], valueDescription: store.type.entitySchema.description.value };
+            }
+        }
+        else if (store.type instanceof InterfaceType) {
+            const singletonStore = store;
+            const interfaceValue = await singletonStore.get();
+            if (interfaceValue) {
+                return { interfaceValue };
+            }
+        }
+        return undefined;
+    }
+}
+
+/**
+ * @license
+ * Copyright (c) 2017 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
 
 /**
  * @license
@@ -24570,8 +24580,7 @@ ${this.activeRecipe.toString()}`;
             release();
         }
     }
-    // Critical section for instantiate,
-    async _doInstantiate(recipe) {
+    async mergeIntoActiveRecipe(recipe) {
         const { handles, particles, slots } = recipe.mergeInto(this._activeRecipe);
         this._recipeDeltas.push({ particles, handles, slots, patterns: recipe.patterns });
         // TODO(mmandlis): Get rid of populating the missing local slot IDs here,
@@ -24640,6 +24649,11 @@ ${this.activeRecipe.toString()}`;
                 this._registerStore(store, recipeHandle.tags);
             }
         }
+        return { handles, particles, slots };
+    }
+    // Critical section for instantiate,
+    async _doInstantiate(recipe) {
+        const { handles, particles, slots } = await this.mergeIntoActiveRecipe(recipe);
         await Promise.all(particles.map(recipeParticle => this._instantiateParticle(recipeParticle)));
         if (this.pec.slotComposer) {
             // TODO: pass slot-connections instead
@@ -30221,6 +30235,104 @@ class SearchTokensToHandles extends Strategy {
     }
 }
 
+class Relevance {
+    constructor() {
+        // stores a copy of arc.getVersionByStore
+        this.versionByStore = {};
+        // public for testing
+        this.relevanceMap = new Map();
+    }
+    static create(arc, recipe) {
+        const relevance = new Relevance();
+        const versionByStore = arc.getVersionByStore({ includeArc: true, includeContext: true });
+        recipe.handles.forEach(handle => {
+            if (handle.id && versionByStore[handle.id] !== undefined) {
+                relevance.versionByStore[handle.id] = versionByStore[handle.id];
+            }
+        });
+        return relevance;
+    }
+    apply(relevance) {
+        for (const key of relevance.keys()) {
+            if (this.relevanceMap.has(key)) {
+                this.relevanceMap.set(key, this.relevanceMap.get(key).concat(relevance.get(key)));
+            }
+            else {
+                this.relevanceMap.set(key, relevance.get(key));
+            }
+        }
+    }
+    calcRelevanceScore() {
+        let relevance = 1;
+        let hasNegative = false;
+        for (const rList of this.relevanceMap.values()) {
+            const particleRelevance = Relevance.particleRelevance(rList);
+            if (particleRelevance < 0) {
+                hasNegative = true;
+            }
+            relevance *= Math.abs(particleRelevance);
+        }
+        return relevance * (hasNegative ? -1 : 1);
+    }
+    // Returns false, if at least one of the particles relevance lists ends with a negative score.
+    isRelevant(plan) {
+        const hasUi = plan.particles.some(p => p.getSlotConnectionNames().length > 0);
+        let rendersUi = false;
+        for (const [particle, rList] of this.relevanceMap) {
+            if (rList[rList.length - 1] < 0) {
+                continue;
+            }
+            else if (particle.getSlotConnectionNames().length) {
+                rendersUi = true;
+                break;
+            }
+        }
+        // If the recipe has UI rendering particles, at least one of the particles must render UI.
+        return hasUi === rendersUi;
+    }
+    static scaleRelevance(relevance) {
+        if (relevance == undefined) {
+            relevance = 5;
+        }
+        relevance = Math.max(-1, Math.min(relevance, 10));
+        // TODO: might want to make this geometric or something instead;
+        return relevance / 5;
+    }
+    static particleRelevance(relevanceList) {
+        let relevance = 1;
+        let hasNegative = false;
+        relevanceList.forEach(r => {
+            const scaledRelevance = Relevance.scaleRelevance(r);
+            if (scaledRelevance < 0) {
+                hasNegative = true;
+            }
+            relevance *= Math.abs(scaledRelevance);
+        });
+        return relevance * (hasNegative ? -1 : 1);
+    }
+    calcParticleRelevance(particle) {
+        if (this.relevanceMap.has(particle)) {
+            return Relevance.particleRelevance(this.relevanceMap.get(particle));
+        }
+        return -1;
+    }
+}
+
+/**
+ * @license
+ * Copyright 2019 Google LLC.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+const logsFactory = (preamble, color) => ({
+    log: logFactory(preamble, color, 'log'),
+    warn: logFactory(preamble, color, 'warn'),
+    error: logFactory(preamble, color, 'error')
+});
+
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -30230,6 +30342,7 @@ class SearchTokensToHandles extends Strategy {
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
+const { log } = logsFactory('planner', 'olive');
 const suggestionByHash = () => Runtime.getRuntime().getCacheService().getOrCreateCache('suggestionByHash');
 class Planner {
     // TODO: Use context.arc instead of arc
@@ -30362,7 +30475,8 @@ class Planner {
         }
         let relevance = undefined;
         let description = null;
-        if (this.speculator && !this.noSpecEx) {
+        if (this._shouldSpeculate(plan)) {
+            log(`speculatively executing [${plan.name}]`);
             const result = await this.speculator.speculate(this.arc, plan, hash);
             if (!result) {
                 return undefined;
@@ -30370,9 +30484,13 @@ class Planner {
             const speculativeArc = result.speculativeArc;
             relevance = result.relevance;
             description = await Description.create(speculativeArc, relevance);
+            log(`[${plan.name}] => [${description.getRecipeSuggestion()}]`);
         }
         else {
-            description = await Description.createForPlan(arc, plan);
+            const speculativeArc = await arc.cloneForSpeculativeExecution();
+            await speculativeArc.mergeIntoActiveRecipe(plan);
+            relevance = Relevance.create(arc, plan);
+            description = await Description.create(speculativeArc, relevance);
         }
         const suggestion = Suggestion.create(plan, hash, relevance);
         suggestion.setDescription(description, this.arc.modality, this.arc.pec.slotComposer ?
@@ -30380,6 +30498,42 @@ class Planner {
             : undefined);
         suggestionByHash().set(hash, suggestion);
         return suggestion;
+    }
+    _shouldSpeculate(plan) {
+        if (!this.speculator || this.noSpecEx) {
+            return false;
+        }
+        if (plan.handleConnections.some(({ type }) => type.toString() === `[Description {Text key, Text value}]`)) {
+            return true;
+        }
+        const planPatternsWithTokens = plan.patterns.filter(p => p.includes('${'));
+        const particlesWithTokens = plan.particles.filter(p => !!p.spec.pattern && p.spec.pattern.includes('${'));
+        if (planPatternsWithTokens.length === 0 && particlesWithTokens.length === 0) {
+            return false;
+        }
+        // Check if recipe description use out handle connections.
+        for (const pattern of planPatternsWithTokens) {
+            const allTokens = Description.getAllTokens(pattern);
+            for (const tokens of allTokens) {
+                const particle = plan.particles.find(p => p.name === tokens[0]);
+                assert(particle);
+                const handleConn = particle.getConnectionByName(tokens[1]);
+                if (handleConn && handleConn.handle && RecipeUtil.directionCounts(handleConn.handle).out > 0) {
+                    return true;
+                }
+            }
+        }
+        // Check if particle descriptions use out handle connections.
+        for (const particle of particlesWithTokens) {
+            const allTokens = Description.getAllTokens(particle.spec.pattern);
+            for (const tokens of allTokens) {
+                const handleConn = particle.getConnectionByName(tokens[0]);
+                if (handleConn && handleConn.handle && RecipeUtil.directionCounts(handleConn.handle).out > 0) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
     _updateGeneration(generations, hash, handler) {
         if (generations) {
@@ -32270,7 +32424,7 @@ class DevtoolsArcInspector {
  * http://polymer.github.io/PATENTS.txt
  */
 
-const log = console.log.bind(console);
+const log$1 = console.log.bind(console);
 const warn = console.warn.bind(console);
 const env = {};
 
@@ -32364,21 +32518,6 @@ const Utils = {
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-const logsFactory = (preamble, color) => ({
-    log: logFactory(preamble, color, 'log'),
-    warn: logFactory(preamble, color, 'warn'),
-    error: logFactory(preamble, color, 'error')
-});
-
-/**
- * @license
- * Copyright 2019 Google LLC.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
 
 class SyntheticStores {
   static get providerFactory() {
@@ -32428,7 +32567,7 @@ class SyntheticStores {
  * http://polymer.github.io/PATENTS.txt
  */
 
-const {log: log$1, warn: warn$1, error: error$1} = logsFactory('ArcHost', '#cade57');
+const {log: log$2, warn: warn$1, error: error$1} = logsFactory('ArcHost', '#cade57');
 
 class ArcHost {
   constructor(context, storage, composer) {
@@ -32444,7 +32583,7 @@ class ArcHost {
   }
   // config = {id, [serialization], [manifest]}
   async spawn(config) {
-    log$1('spawning arc', config);
+    log$2('spawning arc', config);
     this.config = config;
     const context = this.context || await Utils.parse(``);
     const storage = config.storage || this.storage;
@@ -32488,7 +32627,7 @@ class ArcHost {
     return await Utils.spawn({id, context, composer, serialization, storage: `${storage}/${id}`});
   }
   async instantiateDefaultRecipe(arc, manifest) {
-    log$1('instantiateDefaultRecipe');
+    log$2('instantiateDefaultRecipe');
     try {
       manifest = await Utils.parse(manifest);
       const recipe = manifest.allRecipes[0];
@@ -32501,11 +32640,11 @@ class ArcHost {
     }
   }
   async instantiatePlan(arc, plan) {
-    log$1('instantiatePlan');
+    log$2('instantiatePlan');
     // TODO(sjmiles): pass suggestion all the way from web-shell
     // and call suggestion.instantiate(arc).
     if (!plan.isResolved()) {
-      log$1(`plan ${plan.toString({showUnresolved: true})} is not resolved.`);
+      log$2(`plan ${plan.toString({showUnresolved: true})} is not resolved.`);
     }
     try {
       await arc.instantiate(plan);
@@ -32519,7 +32658,7 @@ class ArcHost {
     const key = `${storage}/${arcid}/arc-info`;
     const store = await SyntheticStores.providerFactory.connect('id', new ArcType(), key);
     if (store) {
-      log$1('loading stored serialization');
+      log$2('loading stored serialization');
       const info = await store.get();
       return info && info.serialization;
     }
@@ -32527,9 +32666,9 @@ class ArcHost {
   async persistSerialization(arc) {
     const {id, storageKey} = arc;
     if (!storageKey.includes('volatile')) {
-      log$1(`compiling serialization for [${id}]...`);
+      log$2(`compiling serialization for [${id}]...`);
       const serialization = await arc.serialize();
-      log$1(`persisting serialization to [${id}/serialization]...`);
+      log$2(`persisting serialization to [${id}/serialization]...`);
       await arc.persistSerialization(serialization);
     }
   }
@@ -32621,7 +32760,7 @@ const Const = {
  * http://polymer.github.io/PATENTS.txt
  */
 
-const log$2 = logFactory('UserArcs', '#4f0433');
+const log$3 = logFactory('UserArcs', '#4f0433');
 const warn$2 = logFactory('UserArcs', '#4f0433', 'warn');
 
 class UserArcs {
@@ -32676,13 +32815,13 @@ class UserArcs {
     // TODO(sjmiles): marshalling of arcs-store arc id from userid should be elsewhere
     const store = await SyntheticStores.getArcsStore(storage, Const.DEFAULT.launcherId);
     if (store) {
-      log$2(`marshalled arcsStore for [${userid}]`);
+      log$3(`marshalled arcsStore for [${userid}]`);
       return store;
     }
     warn$2(`failed to marshal arcsStore for [${userid}][${storage}]`);
   }
   async foundArcsStore(store) {
-    log$2('foundArcsStore', Boolean(store));
+    log$3('foundArcsStore', Boolean(store));
     await this.publishInitialChanges(this.listeners);
     store.on('change', changes => this.arcsStoreChange(changes), this);
   }
@@ -32701,7 +32840,7 @@ class UserArcs {
  * http://polymer.github.io/PATENTS.txt
  */
 
-const log$3 = logFactory('SingleUserContext', '#f2ce14');
+const log$4 = logFactory('SingleUserContext', '#f2ce14');
 const warn$3 = logFactory('SingleUserContext', '#f2ce14', 'warn');
 const error$2 = logFactory('SingleUserContext', '#f2ce14', 'error');
 
@@ -32726,7 +32865,7 @@ const SingleUserContext = class {
   }
   async attachArcStore(storage, arcstore) {
     this.observeStore(arcstore, arcstore.id, info => {
-      log$3('arcstore::observer', info);
+      log$4('arcstore::observer', info);
       if (info.add) {
         info.add.forEach(({value}) => this._addArc(storage, value.rawData));
       } else if (info.remove) {
@@ -32735,7 +32874,7 @@ const SingleUserContext = class {
           this.removeArc(value.id);
         });
       } else {
-        log$3('arcstore::observer info type not supported: ', info);
+        log$4('arcstore::observer info type not supported: ', info);
       }
     });
   }
@@ -32785,7 +32924,7 @@ const SingleUserContext = class {
       console.warn(`observeStore: store is null for [${key}]`);
     } else {
       if (!this.observers[key]) {
-        log$3(`observing [${key}]`);
+        log$4(`observing [${key}]`);
         // TODO(sjmiles): create synthetic store `change` records from the initial state
         // SyntheticCollection has `toList` but is `!type.isCollection`,
         if (store.toList) {
@@ -32793,7 +32932,7 @@ const SingleUserContext = class {
           if (data && data.length) {
             const add = data.map(value => ({value}));
             cb({add});
-          } else log$3('...store is empty collection');
+          } else log$4('...store is empty collection');
         } else if (store.type.isEntity) {
           const data = await store.get();
           if (data) {
@@ -32805,7 +32944,7 @@ const SingleUserContext = class {
     }
   }
    onArcStoreChanged(arcid, info) {
-    log$3('Synthetic-store change event (onArcStoreChanged):', info);
+    log$4('Synthetic-store change event (onArcStoreChanged):', info);
     // TODO(sjmiles): synthesize add/remove records from data record
     //   this._patchArcDataInfo(arcid, info);
     // process add/remove stream
@@ -32838,7 +32977,7 @@ const SingleUserContext = class {
     const {context, userid, isProfile} = this;
     const tags = handle.tags ? handle.tags.join('-') : '';
     if (tags) {
-      log$3('updateHandle', tags/*, info*/);
+      log$4('updateHandle', tags/*, info*/);
       const type = handle.type.isCollection ? handle.type : handle.type.collectionOf();
       const id = SyntheticStores.snarfId(handle.storageKey);
       //
@@ -32846,13 +32985,13 @@ const SingleUserContext = class {
       const shortid = `${(isProfile ? `PROFILE` : `FRIEND`)}_${tags}`;
       const storeName = shortid;
       const storeId = isProfile ? shortid : shareid;
-      log$3('share id:', storeId);
+      log$4('share id:', storeId);
       const store = await this.getShareStore(context, type, storeName, storeId, ['shared']); //handle.tags);
       //
       const boxStoreId = `BOXED_${tags}`;
       const boxDataId = `${userid}|${arcid}`;
       //const boxId = `${tags}|${boxDataId}`;
-      log$3('box ids:', boxStoreId, boxDataId/*, boxId*/);
+      log$4('box ids:', boxStoreId, boxDataId/*, boxId*/);
       const boxStore = await this.getShareStore(context, type, boxStoreId, boxStoreId, ['shared']); //[boxStoreId]);
       //
       // TODO(sjmiles): no mutation
@@ -32943,7 +33082,7 @@ const SingleUserContext = class {
     this.removeUserEntities(context, 'all', true);
   }
   async removeUserEntities(context, userid, isProfile) {
-    log$3(`removing entities for [${userid}]`);
+    log$4(`removing entities for [${userid}]`);
     const jobs = [];
     for (let i=0, store; (store=context.stores[i]); i++) {
       jobs.push(this.removeUserStoreEntities(userid, store, isProfile));
@@ -32954,14 +33093,14 @@ const SingleUserContext = class {
    if (!store) {
       console.warn(`removeUserStoreEntities: store is null for [${userid}]`);
     } else {
-      log$3(`scanning [${userid}] [${store.id}] (${store.toList ? 'collection' : 'singleton'})`);
+      log$4(`scanning [${userid}] [${store.id}] (${store.toList ? 'collection' : 'singleton'})`);
       //const tags = context.findStoreTags(store);
       if (store.toList) {
         const entities = await store.toList();
         entities.forEach(entity => {
           const uid = entity.id.split('uid:').pop().split('|').shift();
           if (isProfile || uid === userid) {
-            log$3(`  REMOVE `, entity.id);
+            log$4(`  REMOVE `, entity.id);
             // TODO(sjmiles): _removeUserStoreEntities is strangely re-entering
             //  (1) `remove` fires synchronous change events
             //  (2) looks like there are double `remove` events in the queue. Bug?
@@ -32975,7 +33114,7 @@ const SingleUserContext = class {
       else {
         const uid = store.id.split('|').slice(-2, -1).pop();
         if (isProfile || uid === userid) {
-          log$3(`  CLEAR store`);
+          log$4(`  CLEAR store`);
           store.clear();
         }
       }
@@ -32993,7 +33132,7 @@ const SingleUserContext = class {
  * http://polymer.github.io/PATENTS.txt
  */
 
-const log$4 = logFactory('UserContext', '#4f0433');
+const log$5 = logFactory('UserContext', '#4f0433');
 const warn$4 = logFactory('UserContext', '#4f0433', 'warn');
 
 class UserContext {
@@ -33368,89 +33507,6 @@ class PlanConsumer {
     }
 }
 
-class Relevance {
-    constructor() {
-        // stores a copy of arc.getVersionByStore
-        this.versionByStore = {};
-        // public for testing
-        this.relevanceMap = new Map();
-    }
-    static create(arc, recipe) {
-        const relevance = new Relevance();
-        const versionByStore = arc.getVersionByStore({ includeArc: true, includeContext: true });
-        recipe.handles.forEach(handle => {
-            if (handle.id && versionByStore[handle.id] !== undefined) {
-                relevance.versionByStore[handle.id] = versionByStore[handle.id];
-            }
-        });
-        return relevance;
-    }
-    apply(relevance) {
-        for (const key of relevance.keys()) {
-            if (this.relevanceMap.has(key)) {
-                this.relevanceMap.set(key, this.relevanceMap.get(key).concat(relevance.get(key)));
-            }
-            else {
-                this.relevanceMap.set(key, relevance.get(key));
-            }
-        }
-    }
-    calcRelevanceScore() {
-        let relevance = 1;
-        let hasNegative = false;
-        for (const rList of this.relevanceMap.values()) {
-            const particleRelevance = Relevance.particleRelevance(rList);
-            if (particleRelevance < 0) {
-                hasNegative = true;
-            }
-            relevance *= Math.abs(particleRelevance);
-        }
-        return relevance * (hasNegative ? -1 : 1);
-    }
-    // Returns false, if at least one of the particles relevance lists ends with a negative score.
-    isRelevant(plan) {
-        const hasUi = plan.particles.some(p => p.getSlotConnectionNames().length > 0);
-        let rendersUi = false;
-        for (const [particle, rList] of this.relevanceMap) {
-            if (rList[rList.length - 1] < 0) {
-                continue;
-            }
-            else if (particle.getSlotConnectionNames().length) {
-                rendersUi = true;
-                break;
-            }
-        }
-        // If the recipe has UI rendering particles, at least one of the particles must render UI.
-        return hasUi === rendersUi;
-    }
-    static scaleRelevance(relevance) {
-        if (relevance == undefined) {
-            relevance = 5;
-        }
-        relevance = Math.max(-1, Math.min(relevance, 10));
-        // TODO: might want to make this geometric or something instead;
-        return relevance / 5;
-    }
-    static particleRelevance(relevanceList) {
-        let relevance = 1;
-        let hasNegative = false;
-        relevanceList.forEach(r => {
-            const scaledRelevance = Relevance.scaleRelevance(r);
-            if (scaledRelevance < 0) {
-                hasNegative = true;
-            }
-            relevance *= Math.abs(scaledRelevance);
-        });
-        return relevance * (hasNegative ? -1 : 1);
-    }
-    calcParticleRelevance(particle) {
-        if (this.relevanceMap.has(particle)) {
-            return Relevance.particleRelevance(this.relevanceMap.get(particle));
-        }
-        return -1;
-    }
-}
-
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -33506,7 +33562,7 @@ class Speculator {
  * http://polymer.github.io/PATENTS.txt
  */
 const defaultTimeoutMs = 5000;
-const log$5 = logFactory('PlanProducer', '#ff0090', 'log');
+const log$6 = logFactory('PlanProducer', '#ff0090', 'log');
 const error$3 = logFactory('PlanProducer', '#ff0090', 'error');
 var Trigger;
 (function (Trigger) {
@@ -33608,7 +33664,7 @@ class PlanProducer {
         }
         const timestr = ((now() - time) / 1000).toFixed(2);
         if (suggestions) {
-            log$5(`[${this.arc.id.idTreeAsString()}] Produced ${suggestions.length} suggestions [elapsed=${timestr}s].`);
+            log$6(`[${this.arc.id.idTreeAsString()}] Produced ${suggestions.length} suggestions [elapsed=${timestr}s].`);
             this.isPlanning = false;
             const serializedGenerations = this.debug ? PlanningResult.formatSerializableGenerations(generations) : [];
             if (this.result.merge({
@@ -33665,7 +33721,7 @@ class PlanProducer {
         this.speculator.dispose();
         this.needReplan = false;
         this.isPlanning = false; // using the setter method to trigger callbacks.
-        log$5(`Cancel planning`);
+        log$6(`Cancel planning`);
     }
 }
 
@@ -33993,7 +34049,7 @@ class DevtoolsPlannerInspector {
  * http://polymer.github.io/PATENTS.txt
  */
 
-const log$6 = logFactory('UserPlanner', '#4f0433');
+const log$7 = logFactory('UserPlanner', '#4f0433');
 const warn$5 = logFactory('UserPlanner', '#4f0433', 'warn');
 
 class UserPlanner {
@@ -34019,7 +34075,7 @@ class UserPlanner {
     }
     this.runners[key] = true;
     // TODO(sjmiles): we'll need a queue to handle change notifications that arrive while we are 'await'ing
-    log$6(`marshalArc [${key}]`);
+    log$7(`marshalArc [${key}]`);
     try {
       const host = await this.hostFactory();
       const arc = await host.spawn({id: key});
@@ -34042,7 +34098,7 @@ class UserPlanner {
     }
   }
   async createPlanificator(userid, key, arc) {
-    log$6(`createPlanificator for [${key}]`);
+    log$7(`createPlanificator for [${key}]`);
     const options = {
       storageKeyBase: this.options.plannerStorage,
       //onlyConsumer: config.plannerOnlyConsumer,
@@ -34057,12 +34113,12 @@ class UserPlanner {
     return planificator;
   }
   suggestionsChanged(key, {suggestions}) {
-    log$6(`${suggestions.length} suggestions [${key}]: ${suggestions.map(({plan}) => `[${plan.name}]`).join(', ')}`);
+    log$7(`${suggestions.length} suggestions [${key}]: ${suggestions.map(({plan}) => `[${plan.name}]`).join(', ')}`);
   }
 
   visibleSuggestionsChanged(key, suggestions) {
-    log$6(`${suggestions.length} visible suggestions [${key}]:`);
-    suggestions.forEach(({descriptionByModality, plan: {name}}) => log$6(`\t\t[${name}]: ${descriptionByModality.text}`));
+    log$7(`${suggestions.length} visible suggestions [${key}]:`);
+    suggestions.forEach(({descriptionByModality, plan: {name}}) => log$7(`\t\t[${name}]: ${descriptionByModality.text}`));
   }
 }
 

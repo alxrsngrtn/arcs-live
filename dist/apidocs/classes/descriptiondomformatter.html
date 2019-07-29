@@ -95,6 +95,8 @@
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="descriptiondomformatter.html#excludevalues" class="tsd-kind-icon">exclude<wbr>Values</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="descriptiondomformatter.html#nextid" class="tsd-kind-icon">nextID</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="descriptiondomformatter.html#seenparticles" class="tsd-kind-icon">seen<wbr>Particles</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-static"><a href="descriptiondomformatter.html#tokensinnerregex" class="tsd-kind-icon">tokens<wbr>Inner<wbr>Regex</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-static"><a href="descriptiondomformatter.html#tokensregex" class="tsd-kind-icon">tokens<wbr>Regex</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
@@ -146,7 +148,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="descriptionformatter.html">DescriptionFormatter</a>.<a href="descriptionformatter.html#constructor">constructor</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/2047a0a/src/runtime/description-formatter.ts#L36">src/runtime/description-formatter.ts:36</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/39fc40c/src/runtime/description-formatter.ts#L36">src/runtime/description-formatter.ts:36</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -172,7 +174,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="descriptionformatter.html">DescriptionFormatter</a>.<a href="descriptionformatter.html#excludevalues">excludeValues</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/2047a0a/src/runtime/description-formatter.ts#L36">src/runtime/description-formatter.ts:36</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/39fc40c/src/runtime/description-formatter.ts#L36">src/runtime/description-formatter.ts:36</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -182,7 +184,7 @@
 					<div class="tsd-signature tsd-kind-icon">nextID<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> =&nbsp;0</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/2047a0a/src/runtime/description-dom-formatter.ts#L16">src/runtime/description-dom-formatter.ts:16</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/39fc40c/src/runtime/description-dom-formatter.ts#L16">src/runtime/description-dom-formatter.ts:16</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -193,7 +195,29 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="descriptionformatter.html">DescriptionFormatter</a>.<a href="descriptionformatter.html#seenparticles">seenParticles</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/2047a0a/src/runtime/description-formatter.ts#L35">src/runtime/description-formatter.ts:35</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/39fc40c/src/runtime/description-formatter.ts#L35">src/runtime/description-formatter.ts:35</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-static">
+					<a name="tokensinnerregex" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagStatic">Static</span> tokens<wbr>Inner<wbr>Regex</h3>
+					<div class="tsd-signature tsd-kind-icon">tokens<wbr>Inner<wbr>Regex<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">RegExp</span><span class="tsd-signature-symbol"> =&nbsp;/\${([a-zA-Z0-9.]+)}(?:\.([_a-zA-Z]+))?/</span></div>
+					<aside class="tsd-sources">
+						<p>Inherited from <a href="descriptionformatter.html">DescriptionFormatter</a>.<a href="descriptionformatter.html#tokensinnerregex">tokensInnerRegex</a></p>
+						<ul>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/39fc40c/src/runtime/description-formatter.ts#L139">src/runtime/description-formatter.ts:139</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-static">
+					<a name="tokensregex" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagStatic">Static</span> tokens<wbr>Regex</h3>
+					<div class="tsd-signature tsd-kind-icon">tokens<wbr>Regex<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">RegExp</span><span class="tsd-signature-symbol"> =&nbsp;/\${[a-zA-Z0-9.]+}(?:\.[_a-zA-Z]+)?/g</span></div>
+					<aside class="tsd-sources">
+						<p>Inherited from <a href="descriptionformatter.html">DescriptionFormatter</a>.<a href="descriptionformatter.html#tokensregex">tokensRegex</a></p>
+						<ul>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/39fc40c/src/runtime/description-formatter.ts#L138">src/runtime/description-formatter.ts:138</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -211,7 +235,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="descriptionformatter.html">DescriptionFormatter</a>.<a href="descriptionformatter.html#_capitalizeandpunctuate">_capitalizeAndPunctuate</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/2047a0a/src/runtime/description-dom-formatter.ts#L112">src/runtime/description-dom-formatter.ts:112</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/39fc40c/src/runtime/description-dom-formatter.ts#L112">src/runtime/description-dom-formatter.ts:112</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -235,7 +259,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="descriptionformatter.html">DescriptionFormatter</a>.<a href="descriptionformatter.html#_combinedescriptionandvalue">_combineDescriptionAndValue</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/2047a0a/src/runtime/description-dom-formatter.ts#L180">src/runtime/description-dom-formatter.ts:180</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/39fc40c/src/runtime/description-dom-formatter.ts#L180">src/runtime/description-dom-formatter.ts:180</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -273,7 +297,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="descriptionformatter.html">DescriptionFormatter</a>.<a href="descriptionformatter.html#_combineselecteddescriptions">_combineSelectedDescriptions</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/2047a0a/src/runtime/description-dom-formatter.ts#L22">src/runtime/description-dom-formatter.ts:22</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/39fc40c/src/runtime/description-dom-formatter.ts#L22">src/runtime/description-dom-formatter.ts:22</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -300,7 +324,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="descriptionformatter.html">DescriptionFormatter</a>.<a href="descriptionformatter.html#_formatbigcollection">_formatBigCollection</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/2047a0a/src/runtime/description-dom-formatter.ts#L222">src/runtime/description-dom-formatter.ts:222</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/39fc40c/src/runtime/description-dom-formatter.ts#L222">src/runtime/description-dom-formatter.ts:222</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -340,7 +364,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="descriptionformatter.html">DescriptionFormatter</a>.<a href="descriptionformatter.html#_formatcollection">_formatCollection</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/2047a0a/src/runtime/description-dom-formatter.ts#L202">src/runtime/description-dom-formatter.ts:202</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/39fc40c/src/runtime/description-dom-formatter.ts#L202">src/runtime/description-dom-formatter.ts:202</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -375,7 +399,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="descriptionformatter.html">DescriptionFormatter</a>.<a href="descriptionformatter.html#_formatdescription">_formatDescription</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/2047a0a/src/runtime/description-formatter.ts#L407">src/runtime/description-formatter.ts:407</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/39fc40c/src/runtime/description-formatter.ts#L410">src/runtime/description-formatter.ts:410</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -399,7 +423,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="descriptionformatter.html">DescriptionFormatter</a>.<a href="descriptionformatter.html#_formatdescriptionpattern">_formatDescriptionPattern</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/2047a0a/src/runtime/description-formatter.ts#L413">src/runtime/description-formatter.ts:413</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/39fc40c/src/runtime/description-formatter.ts#L416">src/runtime/description-formatter.ts:416</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -426,7 +450,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="descriptionformatter.html">DescriptionFormatter</a>.<a href="descriptionformatter.html#_formatentityproperty">_formatEntityProperty</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/2047a0a/src/runtime/description-dom-formatter.ts#L194">src/runtime/description-dom-formatter.ts:194</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/39fc40c/src/runtime/description-dom-formatter.ts#L194">src/runtime/description-dom-formatter.ts:194</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -469,7 +493,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="descriptionformatter.html">DescriptionFormatter</a>.<a href="descriptionformatter.html#_formathandletype">_formatHandleType</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/2047a0a/src/runtime/description-formatter.ts#L449">src/runtime/description-formatter.ts:449</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/39fc40c/src/runtime/description-formatter.ts#L452">src/runtime/description-formatter.ts:452</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -493,7 +517,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="descriptionformatter.html">DescriptionFormatter</a>.<a href="descriptionformatter.html#_formatsingleton">_formatSingleton</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/2047a0a/src/runtime/description-dom-formatter.ts#L229">src/runtime/description-dom-formatter.ts:229</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/39fc40c/src/runtime/description-dom-formatter.ts#L229">src/runtime/description-dom-formatter.ts:229</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -533,7 +557,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="descriptionformatter.html">DescriptionFormatter</a>.<a href="descriptionformatter.html#_formatstoredescription">_formatStoreDescription</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/2047a0a/src/runtime/description-formatter.ts#L435">src/runtime/description-formatter.ts:435</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/39fc40c/src/runtime/description-formatter.ts#L438">src/runtime/description-formatter.ts:438</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -560,7 +584,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="descriptionformatter.html">DescriptionFormatter</a>.<a href="descriptionformatter.html#_formatstorevalue">_formatStoreValue</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/2047a0a/src/runtime/description-formatter.ts#L358">src/runtime/description-formatter.ts:358</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/39fc40c/src/runtime/description-formatter.ts#L361">src/runtime/description-formatter.ts:361</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -587,7 +611,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="descriptionformatter.html">DescriptionFormatter</a>.<a href="descriptionformatter.html#_handletokentostring">_handleTokenToString</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/2047a0a/src/runtime/description-formatter.ts#L257">src/runtime/description-formatter.ts:257</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/39fc40c/src/runtime/description-formatter.ts#L260">src/runtime/description-formatter.ts:260</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -611,7 +635,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="descriptionformatter.html">DescriptionFormatter</a>.<a href="descriptionformatter.html#_initsubtokens">_initSubTokens</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/2047a0a/src/runtime/description-formatter.ts#L165">src/runtime/description-formatter.ts:165</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/39fc40c/src/runtime/description-formatter.ts#L168">src/runtime/description-formatter.ts:168</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -638,7 +662,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="descriptionformatter.html">DescriptionFormatter</a>.<a href="descriptionformatter.html#_inittokens">_initTokens</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/2047a0a/src/runtime/description-formatter.ts#L138">src/runtime/description-formatter.ts:138</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/39fc40c/src/runtime/description-formatter.ts#L141">src/runtime/description-formatter.ts:141</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -665,7 +689,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="descriptionformatter.html">DescriptionFormatter</a>.<a href="descriptionformatter.html#_isselecteddescription">_isSelectedDescription</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/2047a0a/src/runtime/description-dom-formatter.ts#L18">src/runtime/description-dom-formatter.ts:18</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/39fc40c/src/runtime/description-dom-formatter.ts#L18">src/runtime/description-dom-formatter.ts:18</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -689,7 +713,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="descriptionformatter.html">DescriptionFormatter</a>.<a href="descriptionformatter.html#_joindescriptions">_joinDescriptions</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/2047a0a/src/runtime/description-dom-formatter.ts#L129">src/runtime/description-dom-formatter.ts:129</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/39fc40c/src/runtime/description-dom-formatter.ts#L129">src/runtime/description-dom-formatter.ts:129</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -713,7 +737,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="descriptionformatter.html">DescriptionFormatter</a>.<a href="descriptionformatter.html#_jointokens">_joinTokens</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/2047a0a/src/runtime/description-dom-formatter.ts#L157">src/runtime/description-dom-formatter.ts:157</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/39fc40c/src/runtime/description-dom-formatter.ts#L157">src/runtime/description-dom-formatter.ts:157</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -737,7 +761,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="descriptionformatter.html">DescriptionFormatter</a>.<a href="descriptionformatter.html#_particletokentostring">_particleTokenToString</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/2047a0a/src/runtime/description-formatter.ts#L253">src/runtime/description-formatter.ts:253</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/39fc40c/src/runtime/description-formatter.ts#L256">src/runtime/description-formatter.ts:256</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -761,7 +785,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="descriptionformatter.html">DescriptionFormatter</a>.<a href="descriptionformatter.html#_propertytokentostring">_propertyTokenToString</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/2047a0a/src/runtime/description-formatter.ts#L334">src/runtime/description-formatter.ts:334</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/39fc40c/src/runtime/description-formatter.ts#L337">src/runtime/description-formatter.ts:337</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -790,7 +814,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/2047a0a/src/runtime/description-dom-formatter.ts#L76">src/runtime/description-dom-formatter.ts:76</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/39fc40c/src/runtime/description-dom-formatter.ts#L76">src/runtime/description-dom-formatter.ts:76</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -828,7 +852,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="descriptionformatter.html">DescriptionFormatter</a>.<a href="descriptionformatter.html#_selecthandleconnection">_selectHandleConnection</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/2047a0a/src/runtime/description-formatter.ts#L454">src/runtime/description-formatter.ts:454</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/39fc40c/src/runtime/description-formatter.ts#L457">src/runtime/description-formatter.ts:457</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -852,7 +876,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="descriptionformatter.html">DescriptionFormatter</a>.<a href="descriptionformatter.html#_slottokentostring">_slotTokenToString</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/2047a0a/src/runtime/description-formatter.ts#L315">src/runtime/description-formatter.ts:315</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/39fc40c/src/runtime/description-formatter.ts#L318">src/runtime/description-formatter.ts:318</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -876,7 +900,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="descriptionformatter.html">DescriptionFormatter</a>.<a href="descriptionformatter.html#getdescription">getDescription</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/2047a0a/src/runtime/description-formatter.ts#L41">src/runtime/description-formatter.ts:41</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/39fc40c/src/runtime/description-formatter.ts#L41">src/runtime/description-formatter.ts:41</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -908,7 +932,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="descriptionformatter.html">DescriptionFormatter</a>.<a href="descriptionformatter.html#gethandledescription">getHandleDescription</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/2047a0a/src/runtime/description-formatter.ts#L74">src/runtime/description-formatter.ts:74</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/39fc40c/src/runtime/description-formatter.ts#L74">src/runtime/description-formatter.ts:74</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -932,7 +956,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="descriptionformatter.html">DescriptionFormatter</a>.<a href="descriptionformatter.html#patterntosuggestion">patternToSuggestion</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/2047a0a/src/runtime/description-formatter.ts#L129">src/runtime/description-formatter.ts:129</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/39fc40c/src/runtime/description-formatter.ts#L129">src/runtime/description-formatter.ts:129</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -959,7 +983,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="descriptionformatter.html">DescriptionFormatter</a>.<a href="descriptionformatter.html#tokentostring">tokenToString</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/2047a0a/src/runtime/description-formatter.ts#L238">src/runtime/description-formatter.ts:238</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/39fc40c/src/runtime/description-formatter.ts#L241">src/runtime/description-formatter.ts:241</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -983,7 +1007,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="descriptionformatter.html">DescriptionFormatter</a>.<a href="descriptionformatter.html#sort">sort</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/2047a0a/src/runtime/description-formatter.ts#L484">src/runtime/description-formatter.ts:484</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/39fc40c/src/runtime/description-formatter.ts#L487">src/runtime/description-formatter.ts:487</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1027,6 +1051,12 @@
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
 								<a href="descriptiondomformatter.html#seenparticles" class="tsd-kind-icon">seen<wbr>Particles</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-static">
+								<a href="descriptiondomformatter.html#tokensinnerregex" class="tsd-kind-icon">tokens<wbr>Inner<wbr>Regex</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-static">
+								<a href="descriptiondomformatter.html#tokensregex" class="tsd-kind-icon">tokens<wbr>Regex</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
 								<a href="descriptiondomformatter.html#_capitalizeandpunctuate" class="tsd-kind-icon">_capitalize<wbr>And<wbr>Punctuate</a>

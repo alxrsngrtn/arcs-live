@@ -44,6 +44,7 @@ export declare class Planner implements InspectablePlanner {
     suggest(timeout?: number, generations?: Generation[]): Promise<Suggestion[]>;
     static clearCache(): void;
     private retriveOrCreateSuggestion;
+    _shouldSpeculate(plan: any): boolean;
     _updateGeneration(generations: Generation[], hash: string, handler: (_: AnnotatedDescendant) => void): void;
     static InitializationStrategies: StrategyDerived[];
     static ResolutionStrategies: StrategyDerived[];

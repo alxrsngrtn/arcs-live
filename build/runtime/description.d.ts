@@ -27,6 +27,7 @@ export declare class Description {
     getArcDescription(formatterClass?: typeof DescriptionFormatter): string | undefined;
     getRecipeSuggestion(formatterClass?: typeof DescriptionFormatter): any;
     getHandleDescription(recipeHandle: Handle): string;
+    static getAllTokens(pattern: string): string[][];
     private static initDescriptionHandles;
     private static _createParticleDescription;
     private static _getPatternByNameFromDescriptionHandle;

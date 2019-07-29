@@ -1,10 +1,9 @@
-commit 2047a0a94561ffadd78f5abd9d8d2da9773833df
-Author: sherry-pra <52428204+sherry-pra@users.noreply.github.com>
-Date:   Mon Jul 29 12:56:10 2019 -0700
+commit 39fc40c9e407abc956c0a028fda2a3b8ef26a48f
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Mon Jul 29 14:44:31 2019 -0700
 
-    Hot code reload: added support for rewiring slotProxy (#3365)
+    rename pipes arc to ingestion arc and create primitive ingestion recipe (#3408)
     
-    Adds a function in slotProxy class to transfer rendering capability to
-    another particle
+    * rename pipes arc to ingestion arc and create primitive ingestion recipe
     
-    Builds on prior change of adding disable handle support
+    * fix import in RenderNotification manifest file
