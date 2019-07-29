@@ -23,6 +23,10 @@ export declare class ArcPlannerInvoker {
         results: {
             recipe: string;
             derivation: string[];
+            dataflow: {
+                success: boolean;
+                message: string;
+            };
             errors: {
                 error: any;
             }[];
@@ -32,6 +36,10 @@ export declare class ArcPlannerInvoker {
         results: {
             recipe: string;
             derivation: string[];
+            dataflow: {
+                success: boolean;
+                message: string;
+            };
             errors: {
                 error: any;
             }[];
@@ -46,6 +54,10 @@ export declare class ArcPlannerInvoker {
         results: {
             recipe: string;
             derivation: string[];
+            dataflow: {
+                success: boolean;
+                message: string;
+            };
             errors: {
                 error: any;
             }[];

@@ -13,6 +13,7 @@ import { RecipeIndex } from '../planning/recipe-index.js';
 import { CoalesceRecipes } from '../planning/strategies/coalesce-recipes.js';
 import * as Rulesets from '../planning/strategies/rulesets.js';
 import { Strategizer, Strategy } from '../planning/strategizer.js';
+import { analyseDataflow } from '../dataflow/analysis/analysis.js';
 class InitialRecipe extends Strategy {
     constructor(recipe) {
         super();
@@ -112,9 +113,24 @@ export class ArcPlannerInvoker {
                 catch (e) {
                     console.warn(e);
                 }
+                let dataflow;
+                try {
+                    const manifest = this.arc.context;
+                    const [graph, flowResult] = analyseDataflow(recipe, manifest);
+                    if (flowResult.isValid) {
+                        dataflow = { success: true, message: 'Success!' };
+                    }
+                    else {
+                        dataflow = { success: false, message: 'Failed: ' + flowResult.getFailureMessages(graph).join('\n') };
+                    }
+                }
+                catch (e) {
+                    dataflow = { success: false, message: e.toString() };
+                }
                 return {
                     recipe: recipeString,
                     derivation: this.extractDerivation(result),
+                    dataflow,
                     errors: [...errors.values()].map(error => ({ error })),
                 };
             }) };

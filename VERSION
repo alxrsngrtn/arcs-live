@@ -1,5 +1,9 @@
-commit 21618978949ef85890926f0355183999a01106f5
+commit 0a482268562a7319c428c36185223adb00872f41
 Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
-Date:   Mon Jul 29 15:00:30 2019 +1000
+Date:   Mon Jul 29 15:01:21 2019 +1000
 
-    Make a nicer API for running the dataflow analyser. (#3404)
+    Adds dataflow-checking ability to the Arcs Explorer's recipe editor. (#3405)
+    
+    Screenshots:
+    Success: http://screenshot/gq8j4EhHQ62
+    Failure: http://screenshot/RkHXt6ocPcZ

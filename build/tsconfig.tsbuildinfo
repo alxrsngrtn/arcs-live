@@ -742,8 +742,8 @@
         "signature": "f95d2be34b07ceba985935b9027445a48eaa13b93b407dfb32e3329a9f6da64a"
       },
       "/home/travis/build/PolymerLabs/arcs/src/devtools-connector/arc-planner-invoker.ts": {
-        "version": "1f9fe58a281c53a4d0b4ae9a5dcff1630f6b3264be8606c56d491f4052947fe5",
-        "signature": "261a969dd3d303a43bf7d510de0e5642118314c62275fe23ad98a206ffea4582"
+        "version": "7720375f99464e1fea9c29429ac61bf2946b1185b358cf1fbd20aab0dac5ace3",
+        "signature": "10fcbb9da4af9b476cc305777ef041fc1843e23c703fbc0a457d9455e5a55563"
       },
       "/home/travis/build/PolymerLabs/arcs/src/devtools-connector/arc-stores-fetcher.ts": {
         "version": "412c485fbedb608962e4809526ad5114de37f9dcacde483f43373546271c04fb",
@@ -4253,6 +4253,7 @@
         "/home/travis/build/PolymerLabs/arcs/src/planning/strategies/coalesce-recipes.ts",
         "/home/travis/build/PolymerLabs/arcs/src/planning/strategies/rulesets.ts",
         "/home/travis/build/PolymerLabs/arcs/src/planning/strategizer.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/analysis.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
       ],

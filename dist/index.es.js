@@ -30872,6 +30872,1001 @@ class RecipeIndex {
 
 /**
  * @license
+ * Copyright 2019 Google LLC.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+/**
+ * A Set implementation that performs deep equality of its elements instead of
+ * strict equality. Every element needs to have a unique string representation,
+ * which will be used as a simple way to compute deep equality.
+ */
+class DeepSet {
+    constructor(...elements) {
+        /** All elements stored in the set. */
+        this.elementSet = new Set();
+        /** The unique string representation of every element in the set. */
+        this.stringSet = new Set();
+        elements.forEach(e => this.add(e));
+    }
+    add(element) {
+        const repr = element.toUniqueString();
+        if (this.stringSet.has(repr)) {
+            return;
+        }
+        this.stringSet.add(repr);
+        this.elementSet.add(element);
+    }
+    addAll(other) {
+        other.elementSet.forEach(e => this.add(e));
+    }
+    map(transform) {
+        const result = new DeepSet();
+        for (const elem of this) {
+            result.add(transform(elem));
+        }
+        return result;
+    }
+    [Symbol.iterator]() {
+        return this.elementSet[Symbol.iterator]();
+    }
+    asSet() {
+        return this.elementSet;
+    }
+    toArray() {
+        return [...this.elementSet];
+    }
+    get size() {
+        return this.elementSet.size;
+    }
+    get isEmpty() {
+        return this.size === 0;
+    }
+    /**
+     * Returns true if this DeepSet is equal to the other DeepSet (deep equals,
+     * computed via toUniqueString() for each DeepSet).
+     */
+    equals(other) {
+        return this.toUniqueString() === other.toUniqueString();
+    }
+    /** Unique string representation of this DeepSet. */
+    toUniqueString() {
+        const strings = [...this.stringSet];
+        strings.sort();
+        return '{' + strings.join(', ') + '}';
+    }
+}
+
+/**
+ * @license
+ * Copyright 2019 Google LLC.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+/**
+ * An ordered set of elements. Backed by an Array and a Set. Lookups are backed
+ * by the Set so they are quick, and order is maintained by the Array. Elements
+ * can be added to the OrderedSet multiple times.
+ */
+class OrderedSet {
+    constructor() {
+        this.set = new Set();
+        this.array = [];
+    }
+    add(element) {
+        this.set.add(element);
+        this.array.push(element);
+    }
+    addAll(other) {
+        other.set.forEach(e => this.set.add(e));
+        this.array.push(...other.array);
+    }
+    has(element) {
+        return this.set.has(element);
+    }
+    copy() {
+        const copy = new OrderedSet();
+        copy.addAll(this);
+        return copy;
+    }
+    get length() {
+        return this.array.length;
+    }
+    asSet() {
+        return this.set;
+    }
+    asArray() {
+        return this.array;
+    }
+}
+
+/**
+ * @license
+ * Copyright 2019 Google LLC.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+/**
+ * Represents the set of implicit and explicit claims that flow along a path in
+ * the graph, i.e. tags, node IDs and edge IDs.
+ */
+class Flow {
+    constructor(nodeIds = new Set(), edgeIds = new OrderedSet(), tags = new Set()) {
+        this.nodeIds = nodeIds;
+        this.edgeIds = edgeIds;
+        this.tags = tags;
+    }
+    /** Modifies the current Flow (in place) by applying the given FlowModifier. */
+    modify(modifier) {
+        this.edgeIds.addAll(modifier.edgeIds);
+        modifier.nodeIds.forEach(n => this.nodeIds.add(n));
+        modifier.tagOperations.forEach((operation, tag) => {
+            if (operation === 'add') {
+                this.tags.add(tag);
+            }
+            else {
+                this.tags.delete(tag);
+            }
+        });
+    }
+    copy() {
+        return new Flow(new Set(this.nodeIds), this.edgeIds.copy(), new Set(this.tags));
+    }
+    copyAndModify(modifier) {
+        const copy = this.copy();
+        copy.modify(modifier);
+        return copy;
+    }
+    /** Evaluates the given FlowCheck against the current Flow. */
+    evaluateCheck(check) {
+        if ('operator' in check) {
+            if (check.operator === 'or') {
+                // Only one child expression needs to pass.
+                return check.children.some(childExpr => this.evaluateCheck(childExpr));
+            }
+            else {
+                // 'and' operator. Every child expression needs to pass.
+                return check.children.every(childExpr => this.evaluateCheck(childExpr));
+            }
+        }
+        else {
+            return this.checkCondition(check);
+        }
+    }
+    /** Evaluates the given CheckCondition against the current Flow. */
+    checkCondition(condition) {
+        let result;
+        switch (condition.type) {
+            case 'node':
+                result = this.nodeIds.has(condition.value);
+                break;
+            case 'edge':
+                result = this.edgeIds.has(condition.value);
+                break;
+            case 'tag':
+                result = this.tags.has(condition.value);
+                break;
+            default:
+                throw new Error('Unknown condition type.');
+        }
+        // Flip the result if the check condition was negated.
+        return condition.negated ? !result : result;
+    }
+    toUniqueString() {
+        const elements = [];
+        for (const nodeId of this.nodeIds) {
+            elements.push('node:' + nodeId);
+        }
+        for (const tag of this.tags) {
+            elements.push('tag:' + tag);
+        }
+        // NOTE: We use asSet() here for the edge IDs instead of asList(), and thus
+        // treat all different orderings of edges (i.e. paths) as equivalent,
+        // provided they visit the exact same edges. This helps dedupe visiting
+        // the same series of cycles in different orders, significantly reducing the
+        // search space.
+        for (const edgeId of this.edgeIds.asSet()) {
+            elements.push('edge:' + edgeId);
+        }
+        elements.sort();
+        return '{' + elements.join(', ') + '}';
+    }
+}
+/** A set of unique flows. */
+class FlowSet extends DeepSet {
+    /**
+     * Copies the current FlowSet, and applies the given modifier to every flow in
+     * the copy.
+     */
+    copyAndModify(modifier) {
+        return this.map(flow => flow.copyAndModify(modifier));
+    }
+}
+var TagOperation;
+(function (TagOperation) {
+    TagOperation["Add"] = "add";
+    TagOperation["Remove"] = "remove";
+})(TagOperation || (TagOperation = {}));
+/** Represents a sequence of modifications that can be made to a flow. */
+class FlowModifier {
+    constructor(
+    /** Node IDs to add. */
+    nodeIds = new Set(), 
+    /** Edge IDs to add. */
+    edgeIds = new OrderedSet(), 
+    /** Tags to add/remove. Maps from tag name to operation. */
+    tagOperations = new Map()) {
+        this.nodeIds = nodeIds;
+        this.edgeIds = edgeIds;
+        this.tagOperations = tagOperations;
+    }
+    /**
+     * Creates a new FlowModifier from the given list of strings. Each string must
+     * start with either a plus or minus symbol (indicating whether the condition
+     * is added or removed), then give one of 'tag', 'node', or 'edge', followed
+     * by the tag/node/edge ID respectively. (Tags can be added or removed. Nodes
+     * and edges can only be added.) e.g. '+node:P2', '+edge:E1', '-tag:trusted'.
+     */
+    static parse(...conditions) {
+        const modifier = new FlowModifier();
+        for (const condition of conditions) {
+            const firstChar = condition[0];
+            if (!'+-'.includes(firstChar)) {
+                throw new Error(`'${condition}' must start with either + or -`);
+            }
+            const operator = firstChar === '+' ? TagOperation.Add : TagOperation.Remove;
+            const [type, value] = condition.slice(1).split(':', 2);
+            if (operator === TagOperation.Remove && type !== 'tag') {
+                throw new Error(`The - operator can only be used with tags. Got '${condition}'.`);
+            }
+            switch (type) {
+                case 'tag':
+                    modifier.tagOperations.set(value, operator);
+                    break;
+                case 'node':
+                    modifier.nodeIds.add(value);
+                    break;
+                case 'edge':
+                    modifier.edgeIds.add(value);
+                    break;
+                default:
+                    throw new Error(`Unknown type: '${condition}'`);
+            }
+        }
+        return modifier;
+    }
+    static fromClaims(edge, claims) {
+        const modifier = new FlowModifier();
+        if (claims) {
+            for (const claim of claims) {
+                if (claim.type === ClaimType.IsTag) {
+                    modifier.tagOperations.set(claim.tag, claim.isNot ? TagOperation.Remove : TagOperation.Add);
+                }
+            }
+        }
+        modifier.edgeIds.add(edge.edgeId);
+        modifier.nodeIds.add(edge.start.nodeId);
+        return modifier;
+    }
+    copy() {
+        return new FlowModifier(new Set(this.nodeIds), this.edgeIds.copy(), new Map(this.tagOperations));
+    }
+    /** Copies the current FlowModifier, and then applies the given modifications to the copy. */
+    copyAndModify(modifier) {
+        const copy = this.copy();
+        copy.edgeIds.addAll(modifier.edgeIds);
+        modifier.nodeIds.forEach(n => copy.nodeIds.add(n));
+        modifier.tagOperations.forEach((op, tag) => copy.tagOperations.set(tag, op));
+        return copy;
+    }
+    toFlow() {
+        const flow = new Flow();
+        flow.modify(this);
+        return flow;
+    }
+    toUniqueString() {
+        const elements = [];
+        // The edgeIds list is ordered, but for de-duping we still want to sort them. 
+        for (const edgeId of this.edgeIds.asSet()) {
+            elements.push('+edge:' + edgeId);
+        }
+        for (const nodeId of this.nodeIds) {
+            elements.push('+node:' + nodeId);
+        }
+        for (const [tag, op] of this.tagOperations) {
+            const sign = op === TagOperation.Add ? '+' : '-';
+            elements.push(sign + 'tag:' + tag);
+        }
+        elements.sort();
+        return '{' + elements.join(', ') + '}';
+    }
+}
+/** A set of FlowModifiers. */
+class FlowModifierSet extends DeepSet {
+    /** Copies the current FlowModifierSet, and extends each modifier in the copy with the given extra modifier. */
+    copyAndModify(extraModifier) {
+        return this.map(modifier => modifier.copyAndModify(extraModifier));
+    }
+}
+/** Represents a node in a FlowGraph. Can be a particle, handle, etc. */
+class Node$1 {
+    constructor() {
+        /**
+         * Boolean indicating whether this node has direct ingress or not (e.g. from a
+         * external datastore).
+         */
+        this.ingress = false;
+    }
+    get inNodes() {
+        return this.inEdges.map(e => e.start);
+    }
+    get outNodes() {
+        return this.outEdges.map(e => e.end);
+    }
+}
+
+/**
+ * @license
+ * Copyright 2019 Google LLC.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+class ParticleNode extends Node$1 {
+    constructor(nodeId, particle) {
+        super();
+        this.inEdgesByName = new Map();
+        this.outEdgesByName = new Map();
+        this.nodeId = nodeId;
+        this.name = particle.name;
+    }
+    addInEdge(edge) {
+        this.inEdgesByName.set(edge.connectionName, edge);
+    }
+    addOutEdge(edge) {
+        this.outEdgesByName.set(edge.connectionName, edge);
+    }
+    get inEdges() {
+        return [...this.inEdgesByName.values()];
+    }
+    get outEdges() {
+        return [...this.outEdgesByName.values()];
+    }
+    /**
+     * Iterates through all of the relevant in-edges leading into this particle, that flow out into the given out-edge. The out-edge may have a
+     * 'derives from' claim that restricts which edges flow into it.
+     */
+    inEdgesFromOutEdge(outEdge) {
+        assert(this.outEdges.includes(outEdge), 'Particle does not have the given out-edge.');
+        if (outEdge.derivesFrom && outEdge.derivesFrom.length) {
+            return outEdge.derivesFrom;
+        }
+        return this.inEdges;
+    }
+}
+class ParticleInput {
+    constructor(edgeId, particleNode, otherEnd, connection) {
+        this.edgeId = edgeId;
+        this.start = otherEnd;
+        this.end = particleNode;
+        this.connectionName = connection.name;
+        this.label = `${particleNode.name}.${this.connectionName}`;
+        this.connectionSpec = connection.spec;
+        this.modifier = FlowModifier.fromClaims(this, connection.handle.claims);
+    }
+}
+class ParticleOutput {
+    constructor(edgeId, particleNode, otherEnd, connection) {
+        this.edgeId = edgeId;
+        this.start = particleNode;
+        this.end = otherEnd;
+        this.connectionName = connection.name;
+        this.connectionSpec = connection.spec;
+        this.label = `${particleNode.name}.${this.connectionName}`;
+        this.modifier = FlowModifier.fromClaims(this, connection.spec.claims);
+        this.derivesFrom = [];
+    }
+    computeDerivedFromEdges() {
+        assert(this.derivesFrom.length === 0, '"Derived from" edges have already been computed.');
+        if (this.connectionSpec.claims) {
+            for (const claim of this.connectionSpec.claims) {
+                if (claim.type === ClaimType.DerivesFrom) {
+                    const derivedFromEdge = this.start.inEdgesByName.get(claim.parentHandle.name);
+                    assert(derivedFromEdge, `Handle '${claim.parentHandle.name}' is not an in-edge.`);
+                    this.derivesFrom.push(derivedFromEdge);
+                }
+            }
+        }
+    }
+}
+/** Creates a new node for every given particle. */
+function createParticleNodes(particles) {
+    const nodes = new Map();
+    particles.forEach((particle, index) => {
+        const nodeId = 'P' + index;
+        nodes.set(particle, new ParticleNode(nodeId, particle));
+    });
+    return nodes;
+}
+
+/**
+ * @license
+ * Copyright 2019 Google LLC.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+class HandleNode extends Node$1 {
+    constructor(nodeId, handle) {
+        super();
+        this.inEdges = [];
+        this.outEdges = [];
+        this.nodeId = nodeId;
+        this.storeId = handle.id;
+        // Handles with the 'use', 'map' or 'copy' fate can come from sources
+        // external to the recipe, and so should be treated as ingress. 
+        if (handle.fate !== 'create') {
+            this.ingress = true;
+        }
+    }
+    /** Returns a list of all pairs of particles that are connected through this handle, in string form. */
+    get connectionsAsStrings() {
+        const connections = [];
+        this.inEdges.forEach(inEdge => {
+            this.outEdges.forEach(outEdge => {
+                connections.push(`${inEdge.label} -> ${outEdge.label}`);
+            });
+        });
+        return connections;
+    }
+    addInEdge(edge) {
+        this.inEdges.push(edge);
+    }
+    addOutEdge(edge) {
+        this.outEdges.push(edge);
+    }
+    inEdgesFromOutEdge(outEdge) {
+        assert(this.outEdges.includes(outEdge), 'Handle does not have the given out-edge.');
+        return this.inEdges;
+    }
+}
+/** Creates a new node for every given handle. */
+function createHandleNodes(handles) {
+    const nodes = new Map();
+    handles.forEach((handle, index) => {
+        const nodeId = 'H' + index;
+        nodes.set(handle, new HandleNode(nodeId, handle));
+    });
+    return nodes;
+}
+/** Adds a connection between the given particle and handle nodes. */
+function addHandleConnection(direction, particleNode, handleNode, connection, edgeId) {
+    if (direction === 'in') {
+        const edge = new ParticleInput(edgeId, particleNode, handleNode, connection);
+        particleNode.addInEdge(edge);
+        handleNode.addOutEdge(edge);
+        return edge;
+    }
+    else {
+        const edge = new ParticleOutput(edgeId, particleNode, handleNode, connection);
+        particleNode.addOutEdge(edge);
+        handleNode.addInEdge(edge);
+        return edge;
+    }
+}
+
+/**
+ * @license
+ * Copyright 2019 Google LLC.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+class SlotNode extends Node$1 {
+    constructor(nodeId, slot) {
+        super();
+        // For now, slots can only have in-edges (from the particles that consume them).
+        // TODO: These should be inout edges, because slots can bubble up user events back to these same particles.
+        this.inEdges = [];
+        this.outEdges = [];
+        this.nodeId = nodeId;
+    }
+    addInEdge(edge) {
+        this.inEdges.push(edge);
+    }
+    addOutEdge(edge) {
+        throw new Error(`Slots can't have out-edges (yet).`);
+    }
+    inEdgesFromOutEdge(outEdge) {
+        throw new Error(`Slots can't have out-edges (yet).`);
+    }
+}
+class SlotInput {
+    constructor(edgeId, particleNode, slotNode, connection) {
+        this.edgeId = edgeId;
+        this.start = particleNode;
+        this.end = slotNode;
+        this.connectionName = connection.name;
+        this.label = `${particleNode.name}.${this.connectionName}`;
+        this.modifier = FlowModifier.fromClaims(this, []);
+    }
+    get check() {
+        return this.end.check;
+    }
+}
+function createSlotNodes(slots) {
+    const nodes = new Map();
+    slots.forEach((slot, index) => {
+        const nodeId = 'S' + index;
+        nodes.set(slot, new SlotNode(nodeId, slot));
+    });
+    return nodes;
+}
+/** Adds a connection between the given particle and slot nodes, where the particle "consumes" the slot. */
+function addSlotConnection(particleNode, slotNode, connection, edgeId) {
+    const edge = new SlotInput(edgeId, particleNode, slotNode, connection);
+    particleNode.addOutEdge(edge);
+    slotNode.addInEdge(edge);
+    return edge;
+}
+
+/**
+ * @license
+ * Copyright 2019 Google LLC.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+/**
+ * Data structure for representing the connectivity graph of a recipe. Used to perform static analysis on a resolved recipe.
+ */
+class FlowGraph {
+    constructor(recipe, manifest) {
+        /** Maps from edge ID to Edge. */
+        this.edgeMap = new Map();
+        /** Maps from HandleConnectionSpec to HandleNode. */
+        this.handleSpecMap = new Map();
+        if (!recipe.isResolved()) {
+            throw new Error('Recipe must be resolved.');
+        }
+        // Create the nodes of the graph.
+        const particleNodes = createParticleNodes(recipe.particles);
+        const handleNodes = createHandleNodes(recipe.handles);
+        const slotNodes = createSlotNodes(recipe.slots);
+        this.particles = [...particleNodes.values()];
+        this.handles = [...handleNodes.values()];
+        this.slots = [...slotNodes.values()];
+        this.nodes = [...this.particles, ...this.handles, ...this.slots];
+        this.particleMap = new Map(this.particles.map(n => [n.name, n]));
+        this.manifest = manifest;
+        let edgeIdCounter = 0;
+        // Add edges to the nodes.
+        recipe.handleConnections.forEach(connection => {
+            const particleNode = particleNodes.get(connection.particle);
+            const handleNode = handleNodes.get(connection.handle);
+            this.handleSpecMap.set(connection.spec, handleNode);
+            // Function to construct a new edge in the graph.
+            const addEdgeWithDirection = (direction) => {
+                const edgeId = 'E' + edgeIdCounter++;
+                const edge = addHandleConnection(direction, particleNode, handleNode, connection, edgeId);
+                this.edgeMap.set(edgeId, edge);
+            };
+            if (connection.direction === 'inout') {
+                // An inout handle connection is represented by two edges.
+                addEdgeWithDirection('in');
+                addEdgeWithDirection('out');
+            }
+            else if (connection.direction === 'in' || connection.direction === 'out') {
+                addEdgeWithDirection(connection.direction);
+            }
+            else {
+                throw new Error(`Unsupported handle connection direction: ${connection.direction}`);
+            }
+        });
+        // Add edges from particles to the slots that they consume (one-way only, for now).
+        recipe.slotConnections.forEach(connection => {
+            const particleNode = particleNodes.get(connection.particle);
+            const slotNode = slotNodes.get(connection.targetSlot);
+            const edgeId = 'E' + edgeIdCounter++;
+            const edge = addSlotConnection(particleNode, slotNode, connection, edgeId);
+            this.edgeMap.set(edgeId, edge);
+            // Copy the Check object from the "provide" connection onto the SlotNode.
+            // (Checks are defined by the particle that provides the slot, but are
+            // applied to the particle that consumes the slot.)
+            for (const providedSlotSpec of connection.getSlotSpec().provideSlotConnections) {
+                const providedSlot = connection.providedSlots[providedSlotSpec.name];
+                const providedSlotNode = slotNodes.get(providedSlot);
+                providedSlotNode.check = providedSlotSpec.check ? this.createFlowCheck(providedSlotSpec.check) : null;
+            }
+        });
+        this.edges.forEach(edge => {
+            // Attach check objects to particle in-edges. Must be done in a separate
+            // pass after all edges have been created, since checks can reference
+            // other nodes/edges.
+            if (edge instanceof ParticleInput && edge.connectionSpec.check) {
+                edge.check = this.createFlowCheck(edge.connectionSpec.check);
+            }
+            // Compute the list of 'derived from' edges for all out-edges. This must
+            // also be done in a separate pass since we can't guarantee the ordering
+            // in which the edges were created.
+            if (edge instanceof ParticleOutput) {
+                edge.computeDerivedFromEdges();
+            }
+        });
+    }
+    get edges() {
+        return [...this.edgeMap.values()];
+    }
+    /** Returns a list of all pairwise particle connections, in string form: 'P1.foo -> P2.bar'. */
+    get connectionsAsStrings() {
+        const connections = [];
+        for (const handleNode of this.handles) {
+            handleNode.connectionsAsStrings.forEach(c => connections.push(c));
+        }
+        return connections;
+    }
+    /** Converts a list of edge IDs into a path string using the edge labels. */
+    edgeIdsToPath(edgeIds) {
+        return edgeIds.map(edgeId => this.edgeMap.get(edgeId).label).join(' -> ');
+    }
+    /** Converts an "is from handle" check into the node ID that we need to search for. */
+    handleCheckToNodeId(check) {
+        return this.handleSpecMap.get(check.parentHandle).nodeId;
+    }
+    /** Converts an "is from store" check into the node ID that we need to search for. */
+    storeCheckToNodeId(check) {
+        const storeId = this.resolveStoreRefToID(check.storeRef);
+        const handle = this.handles.find(h => h.storeId === storeId);
+        assert(handle, `Store with id ${storeId} is not connected by a handle.`);
+        return handle.nodeId;
+    }
+    /** Converts a StoreReference into a store ID. */
+    resolveStoreRefToID(storeRef) {
+        if (storeRef.type === 'id') {
+            const store = this.manifest.findStoreById(storeRef.store);
+            assert(store, `Store with id '${storeRef.store}' not found.`);
+            return store.id;
+        }
+        else {
+            const store = this.manifest.findStoreByName(storeRef.store);
+            assert(store, `Store with name ${storeRef.store} not found.`);
+            return store.id;
+        }
+    }
+    /** Converts a particle Check object into a FlowCheck object (the internal representation used by FlowGraph). */
+    createFlowCheck(originalCheck, expression) {
+        expression = expression || originalCheck.expression;
+        if (expression.type === 'and' || expression.type === 'or') {
+            return {
+                originalCheck,
+                operator: expression.type,
+                children: expression.children.map(child => this.createFlowCheck(originalCheck, child)),
+            };
+        }
+        else {
+            return { ...this.createFlowCondition(expression), originalCheck };
+        }
+    }
+    /** Converts a particle CheckCondition into a FlowCondition object (the internal representation used by FlowGraph). */
+    createFlowCondition(condition) {
+        switch (condition.type) {
+            case CheckType.HasTag:
+                return { type: 'tag', negated: condition.isNot, value: condition.tag };
+            case CheckType.IsFromHandle:
+                return { type: 'node', negated: condition.isNot, value: this.handleCheckToNodeId(condition) };
+            case CheckType.IsFromStore:
+                return { type: 'node', negated: condition.isNot, value: this.storeCheckToNodeId(condition) };
+            default:
+                throw new Error('Unknown CheckType');
+        }
+    }
+}
+
+/**
+ * @license
+ * Copyright 2019 Google LLC.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+/** Runs the dataflow analyser on the given recipe. */
+function analyseDataflow(recipe, manifest) {
+    const graph = new FlowGraph(recipe, manifest);
+    return [graph, validateGraph(graph)];
+}
+/** Failure result reported when a check statement is not satisfied. */
+class CheckFailure {
+    constructor(check, flow) {
+        this.check = check;
+        this.flow = flow;
+    }
+    getFailureMessage(graph) {
+        return `'${this.check}' failed for path: ${graph.edgeIdsToPath(this.flow.edgeIds.asArray())}`;
+    }
+}
+/**
+ * Failure result reported when there is no data ingress into an edge with a
+ * check statement.
+ */
+class IngressFailure {
+    constructor(check) {
+        this.check = check;
+    }
+    getFailureMessage(graph) {
+        return `'${this.check}' failed: no data ingress.`;
+    }
+}
+/** Result from validating an entire graph. */
+class ValidationResult {
+    constructor() {
+        this.checkFailures = [];
+        this.ingressFailures = [];
+    }
+    addCheckFailure(check, flow) {
+        this.checkFailures.push(new CheckFailure(check, flow));
+    }
+    addIngressFailure(check) {
+        this.ingressFailures.push(new IngressFailure(check));
+    }
+    addAllFailures(other) {
+        other.checkFailures.forEach(f => this.addCheckFailure(f.check, f.flow));
+        other.ingressFailures.forEach(f => this.addIngressFailure(f.check));
+    }
+    get isValid() {
+        return this.checkFailures.length === 0 && this.ingressFailures.length === 0;
+    }
+    getFailureMessages(graph) {
+        return [
+            ...this.ingressFailures.map(f => f.getFailureMessage(graph)),
+            ...this.checkFailures.map(f => f.getFailureMessage(graph)),
+        ];
+    }
+}
+/** Returns true if all checks in the graph pass. */
+function validateGraph(graph) {
+    const solver = new Solver(graph.edges);
+    solver.resolve();
+    return solver.validateAllChecks();
+}
+/**
+ * A flow expression for an edge. When fully resolved, it contains a set of
+ * resolved flows into the edge. When unresolved, it contains references to each
+ * parent edge, and a set of modifiers which should be applied to the flow from
+ * that edge.
+ */
+class EdgeExpression {
+    constructor(edge) {
+        /** Fully resolved flows coming into this edge. */
+        this.resolvedFlows = new FlowSet();
+        /**
+         * Edges upon which this edge depends. Not yet resolved. Maps from a parent
+         * edge to the set of modifiers which should be applied to it.
+         */
+        this.unresolvedFlows = new Map();
+        this.edge = edge;
+        const modifier = edge.modifier || new FlowModifier();
+        const parentEdges = edge.start.inEdgesFromOutEdge(edge);
+        if (parentEdges.length > 0) {
+            // Indicate that this edge inherits from its parents (and apply 
+            // modifiers).
+            parentEdges.forEach(e => this.inheritFromEdge(e, modifier));
+        }
+        if (edge.start.ingress) {
+            this.resolvedFlows.add(modifier.toFlow());
+        }
+    }
+    get isResolved() {
+        return this.unresolvedFlows.size === 0;
+    }
+    get parents() {
+        return [...this.unresolvedFlows.keys()];
+    }
+    /**
+     * Replaces an unresolved parent with the parent's own expression. Any
+     * resolved flows into the parent get copied and modified to become resolved
+     * into the child. Unresolved flows into the parent become unresolved flows
+     * into the child (with the child's modifiers added too).
+     */
+    expandParent(parentExpr) {
+        assert(this.unresolvedFlows.has(parentExpr.edge), `Can't substitute parent edge, it's not an unresolved parent.`);
+        // Remove unresolved parent, and replace with unresolved grandparents.
+        const modifierSet = this.unresolvedFlows.get(parentExpr.edge);
+        this.unresolvedFlows.delete(parentExpr.edge);
+        for (const modifier of modifierSet) {
+            // Copy flows from parent (and apply modifiers).
+            const newFlows = parentExpr.resolvedFlows.copyAndModify(modifier);
+            this.resolvedFlows.addAll(newFlows);
+            // Copy any unresolved grandparents (and apply modifiers).
+            for (const [edge, parentModifierSet] of parentExpr.unresolvedFlows) {
+                for (const parentModifier of parentModifierSet) {
+                    // Combine modifiers, applying parent's modifiers first.
+                    const combinedModifier = parentModifier.copyAndModify(modifier);
+                    this.inheritFromEdge(edge, combinedModifier);
+                }
+            }
+        }
+        this.removeSelfReference();
+    }
+    /** Add a new unresolved flow, consisting of the given edge and a modifier for it. */
+    inheritFromEdge(edge, modifier) {
+        if (this.unresolvedFlows.has(edge)) {
+            this.unresolvedFlows.get(edge).add(modifier);
+        }
+        else {
+            this.unresolvedFlows.set(edge, new FlowModifierSet(modifier));
+        }
+    }
+    removeSelfReference() {
+        const selfModifierSet = this.unresolvedFlows.get(this.edge);
+        if (!selfModifierSet) {
+            return;
+        }
+        // Delete the self-reference.
+        this.unresolvedFlows.delete(this.edge);
+        // Apply each self-modifier to a copy of each parent modifier.
+        for (const parentModifierSet of this.unresolvedFlows.values()) {
+            const newModifiers = new FlowModifierSet();
+            for (const selfModifier of selfModifierSet) {
+                newModifiers.addAll(parentModifierSet.copyAndModify(selfModifier));
+            }
+            parentModifierSet.addAll(newModifiers);
+        }
+        // Make a copy of all existing resolved flows, with each set of flow
+        // modifiers applied to them.
+        const newFlows = new FlowSet();
+        for (const selfModifier of selfModifierSet) {
+            newFlows.addAll(this.resolvedFlows.copyAndModify(selfModifier));
+        }
+        this.resolvedFlows.addAll(newFlows);
+    }
+    toString() {
+        const result = [`EdgeExpression(${this.edge.edgeId}) {`];
+        for (const flow of this.resolvedFlows) {
+            result.push('  ' + flow.toUniqueString());
+        }
+        for (const [edge, modifierSets] of this.unresolvedFlows) {
+            for (const modifiers of modifierSets) {
+                result.push(`  EdgeExpression(${edge.edgeId}) + ${modifiers.toUniqueString()}`);
+            }
+        }
+        result.push('}');
+        return result.join('\n');
+    }
+}
+class Solver {
+    constructor(edges) {
+        /** Maps from an edge to a "expression" for it. */
+        this.edgeExpressions = new Map();
+        this._isResolved = false;
+        this.edges = edges;
+        // Fill dependentEdges map with empty sets.
+        this.dependentExpressions = new Map();
+        for (const edge of edges) {
+            this.dependentExpressions.set(edge, new Set());
+        }
+    }
+    /** Returns true if every edge in the graph has been fully resolved to a FlowSet. */
+    get isResolved() {
+        return this._isResolved;
+    }
+    /**
+     * Runs through every check on an edge in the graph, and validates it against
+     * the resolved flows into that edge.
+     */
+    validateAllChecks() {
+        assert(this._isResolved, 'Graph must be resolved before checks can be validated.');
+        const finalResult = new ValidationResult();
+        for (const edge of this.edges) {
+            if (edge.check) {
+                const result = this.validateCheckOnEdge(edge);
+                finalResult.addAllFailures(result);
+            }
+        }
+        return finalResult;
+    }
+    validateCheckOnEdge(edge) {
+        assert(this._isResolved, 'Graph must be resolved before checks can be validated.');
+        assert(edge.check, 'Edge does not have any check conditions.');
+        const check = edge.check;
+        const finalResult = new ValidationResult();
+        const edgeExpression = this.edgeExpressions.get(edge);
+        const flows = edgeExpression.resolvedFlows;
+        if (flows.size === 0) {
+            // There is no ingress into this edge, so there's nothing to check.
+            finalResult.addIngressFailure(check.originalCheck.toManifestString());
+            return finalResult;
+        }
+        for (const flow of flows) {
+            if (!flow.evaluateCheck(check)) {
+                finalResult.addCheckFailure(check.originalCheck.toManifestString(), flow);
+            }
+        }
+        return finalResult;
+    }
+    /**
+     * Fully resolves the graph. All edges will have a fully resolved edge
+     * expression at the end of this function.
+     */
+    resolve() {
+        if (this._isResolved) {
+            return;
+        }
+        for (const edge of this.edges) {
+            this.processEdge(edge);
+        }
+        // Verify that all edges are fully resolved.
+        const numEdges = this.edges.length;
+        assert(this.edgeExpressions.size === numEdges);
+        assert(this.dependentExpressions.size === numEdges);
+        for (const edgeExpression of this.edgeExpressions.values()) {
+            assert(edgeExpression.isResolved, `Unresolved edge expression: ${edgeExpression.toString()}`);
+        }
+        this._isResolved = true;
+    }
+    /**
+     * Constructs a new EdgeExpression for the given edge, and tries to expand as
+     * many of its unresolved parents as is possible. The edge expression might
+     * still not be fully resolved at the end of this function.
+     */
+    processEdge(edge) {
+        let edgeExpression = this.edgeExpressions.get(edge);
+        if (edgeExpression) {
+            // Edge has already been processed.
+            return edgeExpression;
+        }
+        edgeExpression = new EdgeExpression(edge);
+        this.edgeExpressions.set(edge, edgeExpression);
+        // Try to expand all of the parents we already know about.
+        for (const parent of edgeExpression.parents) {
+            // Indicate that edge depends on parent.
+            this.dependentExpressions.get(parent).add(edgeExpression);
+            this.tryExpandParent(edgeExpression, parent);
+        }
+        // Now go through and expand this edge in the edges which depend on it.
+        for (const dependentExpression of this.dependentExpressions.get(edge)) {
+            this.tryExpandParent(dependentExpression, edge);
+        }
+        return edgeExpression;
+    }
+    /**
+     * Takes an edge expression with an unresolved parent edge, and tries to
+     * expand out that parent edge using the parent edge's own expression.
+     */
+    tryExpandParent(expression, parentEdge) {
+        if (!expression.unresolvedFlows.has(parentEdge)) {
+            return;
+        }
+        const parentExpression = this.edgeExpressions.get(parentEdge);
+        if (parentExpression) {
+            this.dependentExpressions.get(parentEdge).delete(expression);
+            expression.expandParent(parentExpression);
+            // Note down new dependencies from the grandparents to this edge.
+            parentExpression.parents.forEach(grandparent => this.dependentExpressions.get(grandparent).add(expression));
+        }
+    }
+}
+
+/**
+ * @license
  * Copyright (c) 2018 Google Inc. All rights reserved.
  * This code may only be used under the BSD style license found at
  * http://polymer.github.io/LICENSE.txt
@@ -30978,9 +31973,24 @@ class ArcPlannerInvoker {
                 catch (e) {
                     console.warn(e);
                 }
+                let dataflow;
+                try {
+                    const manifest = this.arc.context;
+                    const [graph, flowResult] = analyseDataflow(recipe, manifest);
+                    if (flowResult.isValid) {
+                        dataflow = { success: true, message: 'Success!' };
+                    }
+                    else {
+                        dataflow = { success: false, message: 'Failed: ' + flowResult.getFailureMessages(graph).join('\n') };
+                    }
+                }
+                catch (e) {
+                    dataflow = { success: false, message: e.toString() };
+                }
                 return {
                     recipe: recipeString,
                     derivation: this.extractDerivation(result),
+                    dataflow,
                     errors: [...errors.values()].map(error => ({ error })),
                 };
             }) };
