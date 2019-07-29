@@ -1,5 +1,5 @@
-commit e642b66fe78078bd4ad185a4353a51ec17b7de2a
-Author: Walter Korman <wkorman@chromium.org>
-Date:   Sat Jul 27 08:58:39 2019 -0700
+commit 1e19275999b75151c3094543d8872d8587071ee7
+Author: Joshua Pratt <jp10010101010000@gmail.com>
+Date:   Mon Jul 29 12:54:14 2019 +1000
 
-    Reduce verbose empathy by swapping out for compassion. (#3400)
+    Require identifiers to not contain new lines and improve error reporting (#3395)
