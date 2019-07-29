@@ -1,9 +1,5 @@
-commit 39fc40c9e407abc956c0a028fda2a3b8ef26a48f
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Mon Jul 29 14:44:31 2019 -0700
+commit d88b54bb28b3a2093e01e9b2f6d072d33bd4994e
+Author: Joshua Pratt <jp10010101010000@gmail.com>
+Date:   Tue Jul 30 09:18:38 2019 +1000
 
-    rename pipes arc to ingestion arc and create primitive ingestion recipe (#3408)
-    
-    * rename pipes arc to ingestion arc and create primitive ingestion recipe
-    
-    * fix import in RenderNotification manifest file
+    Run the health stats & upload for default rather than runTests (#3403)
