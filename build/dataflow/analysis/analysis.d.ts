@@ -9,6 +9,10 @@
  */
 import { FlowGraph } from './flow-graph.js';
 import { Edge, FlowSet, FlowModifierSet, Flow } from './graph-internals.js';
+import { Recipe } from '../../runtime/recipe/recipe.js';
+import { Manifest } from '../../runtime/manifest.js';
+/** Runs the dataflow analyser on the given recipe. */
+export declare function analyseDataflow(recipe: Recipe, manifest: Manifest): [FlowGraph, ValidationResult];
 /** Failure result reported when a check statement is not satisfied. */
 declare class CheckFailure {
     readonly check: string;

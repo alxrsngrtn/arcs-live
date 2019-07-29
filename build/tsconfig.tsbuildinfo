@@ -554,12 +554,8 @@
         "signature": "181f50e70a346c5c3a0f2e2695e7b064e8b663e62a0b1e7aff55805556dffa16"
       },
       "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/analysis.ts": {
-        "version": "fcca213e8c3fc07c9d748ed3954369550cd501e99f96ea65cc4a29e497843478",
-        "signature": "afe95ae6b111f6fc6584f88e8e5c42322c2821f5e95e3a13daa9d429b6251d94"
-      },
-      "/home/travis/build/PolymerLabs/arcs/src/dataflow/arcs-dataflow.ts": {
-        "version": "8e4dab061e9d06ffcbca21c415c8356c4d502660c4fe0305c09f3b5a4e400394",
-        "signature": "df60ca02fef9f573c12deb0d98ecbef0c5d9dca902bd953c354a4c5d9fdfaa5a"
+        "version": "87995c3e0bdfbbadd35ccaeb837159ae19b51bc92f770b1408688ba62d829bc9",
+        "signature": "6f2e3e2bfa48fb94c74f78fd9ba6f8c3172b5be64254abab6503d20e2c49d9fe"
       },
       "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/testing/flow-graph-testing.ts": {
         "version": "78453bb89038c3c2c4627721f99731d13175be68d73fd019f57cfea5b69944e3",
@@ -570,7 +566,7 @@
         "signature": "4c86e04bcbc0a95e6fce540fb1151f3b9e07ffca1f2630061dfc8de54a7c63b3"
       },
       "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/tests/analysis-test.ts": {
-        "version": "bb951ae2cbf0e279d8eb2b56fec9c43ab80088c90913c94299f175aa5809ace9",
+        "version": "f22d2c02ba79748fba528b8119301806547e0b87b42e63c5c2c0d85bbf038a64",
         "signature": "8e609bb71c20b858c77f0e9f90bb1319db8477b13f9f965f1a1e18524bf50881"
       },
       "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/tests/deep-set-test.ts": {
@@ -594,7 +590,7 @@
         "signature": "43a5176681925d9f51b139647154e4a52c2eb1b1a64bb428595000952bcbc7f1"
       },
       "/home/travis/build/PolymerLabs/arcs/src/dataflow/cli/flowcheck.ts": {
-        "version": "2729ee6552804609ee3340a9d6c17daabd9e9634c241f1c35c7a2a9af916ba8b",
+        "version": "9ef79955473728769494aa553654df09fd0f2089263cb64210e6704f180a1a5a",
         "signature": "43a5176681925d9f51b139647154e4a52c2eb1b1a64bb428595000952bcbc7f1"
       },
       "/home/travis/build/PolymerLabs/arcs/src/devtools-connector/abstract-devtools-channel.ts": {
@@ -3772,12 +3768,8 @@
         "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/flow-graph.ts",
         "/home/travis/build/PolymerLabs/arcs/src/platform/assert-web.ts",
         "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/graph-internals.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
-      ],
-      "/home/travis/build/PolymerLabs/arcs/src/dataflow/arcs-dataflow.ts": [
-        "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/flow-graph.ts",
-        "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/analysis.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/recipe.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/manifest.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
       ],
@@ -3803,7 +3795,7 @@
         "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/testing/flow-graph-testing.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/testing/test-util.ts",
         "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/graph-internals.ts",
-        "/home/travis/build/PolymerLabs/arcs/src/dataflow/arcs-dataflow.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/flow-graph.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
       ],
@@ -3841,7 +3833,7 @@
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
       ],
       "/home/travis/build/PolymerLabs/arcs/src/dataflow/cli/flowcheck.ts": [
-        "/home/travis/build/PolymerLabs/arcs/src/dataflow/arcs-dataflow.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/flow-graph.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/loader.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/manifest.ts",
         "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/analysis.ts",
@@ -8245,6 +8237,12 @@
         "/home/travis/build/PolymerLabs/arcs/src/runtime/particle-check.ts",
         "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/graph-internals.ts"
       ],
+      "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/analysis.ts": [
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/recipe.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/manifest.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/flow-graph.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/graph-internals.ts"
+      ],
       "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/flow-graph.ts": [
         "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/particle-node.ts",
         "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/handle-node.ts",
@@ -8253,14 +8251,6 @@
         "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/recipe.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/manifest.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/particle-check.ts"
-      ],
-      "/home/travis/build/PolymerLabs/arcs/src/dataflow/arcs-dataflow.ts": [
-        "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/flow-graph.ts",
-        "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/analysis.ts"
-      ],
-      "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/analysis.ts": [
-        "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/graph-internals.ts",
-        "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/flow-graph.ts"
       ],
       "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts": [
         "/home/travis/build/PolymerLabs/arcs/src/runtime/id.ts",
@@ -10975,7 +10965,6 @@
       "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/slot-node.ts",
       "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/flow-graph.ts",
       "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/analysis.ts",
-      "/home/travis/build/PolymerLabs/arcs/src/dataflow/arcs-dataflow.ts",
       "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/testing/flow-graph-testing.ts",
       "/home/travis/build/PolymerLabs/arcs/src/runtime/testing/test-util.ts",
       "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/tests/analysis-test.ts",

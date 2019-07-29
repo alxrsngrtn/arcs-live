@@ -1,5 +1,5 @@
-commit 1e19275999b75151c3094543d8872d8587071ee7
-Author: Joshua Pratt <jp10010101010000@gmail.com>
-Date:   Mon Jul 29 12:54:14 2019 +1000
+commit 21618978949ef85890926f0355183999a01106f5
+Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
+Date:   Mon Jul 29 15:00:30 2019 +1000
 
-    Require identifiers to not contain new lines and improve error reporting (#3395)
+    Make a nicer API for running the dataflow analyser. (#3404)

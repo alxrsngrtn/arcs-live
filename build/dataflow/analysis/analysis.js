@@ -7,8 +7,14 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
+import { FlowGraph } from './flow-graph.js';
 import { assert } from '../../platform/assert-web.js';
 import { FlowModifier, FlowSet, FlowModifierSet } from './graph-internals.js';
+/** Runs the dataflow analyser on the given recipe. */
+export function analyseDataflow(recipe, manifest) {
+    const graph = new FlowGraph(recipe, manifest);
+    return [graph, validateGraph(graph)];
+}
 /** Failure result reported when a check statement is not satisfied. */
 class CheckFailure {
     constructor(check, flow) {
