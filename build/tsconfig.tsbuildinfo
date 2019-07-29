@@ -358,8 +358,8 @@
         "signature": "a1f434053ed0700235e58688b74b4da731ddf893675e211bbf8d6b00522611e8"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/slot-proxy.ts": {
-        "version": "b2d0ab33849f36358f4b319cbfba34267b526d1d6b10ec96642db1a795b70b8e",
-        "signature": "8b7c960145c1c506087ef3629307080f82e4ac40d812f0c90b20ed40aa1b5470"
+        "version": "8985cd0a320b66d14acb351f594858c5867db4a295691a5616957e047d647336",
+        "signature": "0e4dcf9b109c7ed53a9bd7193b831641bae6346cb4e2bde186c39b4ca3dcd220"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/particle.ts": {
         "version": "ad878caba985fe50a89e7d0058b7e721d55e7a34dc14d2c09c5b6465cbc86d1e",
@@ -8705,8 +8705,8 @@
         "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/crdt-collection-model.ts"
       ],
       "/home/travis/build/PolymerLabs/arcs/src/runtime/slot-proxy.ts": [
-        "/home/travis/build/PolymerLabs/arcs/src/runtime/particle.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/api-channel.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/particle.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/slot-consumer.ts"
       ],
       "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/handle-connection.ts": [

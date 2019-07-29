@@ -22337,6 +22337,17 @@ class SlotProxy {
             handler(event);
         }
     }
+    /**
+     * Called by PEC to remove all rendering capabilities to this slotProxy from the current
+     * particle and give them to the given particle.
+     */
+    rewire(particle) {
+        this.particle.removeSlotProxy(this.slotName);
+        this.particle = particle;
+        this._isRendered = false;
+        this.particle.addSlotProxy(this);
+        this.particle.renderSlot(this.slotName, ['model', 'template', 'templateName']);
+    }
 }
 
 /**

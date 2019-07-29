@@ -454,7 +454,7 @@ var Nn,On=function(e,t,n,r){var i,s=arguments.length,o=s<3?t:null===r?r=Object.g
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-class ar{constructor(e,t,n,r){this.handlers=new Map,this.requestedContentTypes=new Set,this._isRendered=!1,this.apiPort=e,this.slotName=n,this.particle=t,this.providedSlots=r}get isRendered(){return this._isRendered}render(e){this.apiPort.Render(this.particle,this.slotName,e),Object.keys(e).forEach(e=>{this.requestedContentTypes.delete(e)}),this._isRendered=0===this.requestedContentTypes.size&&Object.keys(e).length>0}registerEventHandler(e,t){this.handlers.has(e)||this.handlers.set(e,[]),this.handlers.get(e).push(t)}clearEventHandlers(e){this.handlers.set(e,[])}fireEvent(e){for(const t of this.handlers.get(e.handler)||[])t(e)}}
+class ar{constructor(e,t,n,r){this.handlers=new Map,this.requestedContentTypes=new Set,this._isRendered=!1,this.apiPort=e,this.slotName=n,this.particle=t,this.providedSlots=r}get isRendered(){return this._isRendered}render(e){this.apiPort.Render(this.particle,this.slotName,e),Object.keys(e).forEach(e=>{this.requestedContentTypes.delete(e)}),this._isRendered=0===this.requestedContentTypes.size&&Object.keys(e).length>0}registerEventHandler(e,t){this.handlers.has(e)||this.handlers.set(e,[]),this.handlers.get(e).push(t)}clearEventHandlers(e){this.handlers.set(e,[])}fireEvent(e){for(const t of this.handlers.get(e.handler)||[])t(e)}rewire(e){this.particle.removeSlotProxy(this.slotName),this.particle=e,this._isRendered=!1,this.particle.addSlotProxy(this),this.particle.renderSlot(this.slotName,["model","template","templateName"])}}
 /**
  * @license
  * Copyright (c) 2019 Google Inc. All rights reserved.

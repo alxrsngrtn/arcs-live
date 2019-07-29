@@ -1,9 +1,10 @@
-commit 0a482268562a7319c428c36185223adb00872f41
-Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
-Date:   Mon Jul 29 15:01:21 2019 +1000
+commit 2047a0a94561ffadd78f5abd9d8d2da9773833df
+Author: sherry-pra <52428204+sherry-pra@users.noreply.github.com>
+Date:   Mon Jul 29 12:56:10 2019 -0700
 
-    Adds dataflow-checking ability to the Arcs Explorer's recipe editor. (#3405)
+    Hot code reload: added support for rewiring slotProxy (#3365)
     
-    Screenshots:
-    Success: http://screenshot/gq8j4EhHQ62
-    Failure: http://screenshot/RkHXt6ocPcZ
+    Adds a function in slotProxy class to transfer rendering capability to
+    another particle
+    
+    Builds on prior change of adding disable handle support

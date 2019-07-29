@@ -16,8 +16,8 @@ import { Content } from './slot-consumer.js';
  */
 export declare class SlotProxy {
     readonly slotName: string;
-    readonly particle: Particle;
     readonly providedSlots: ReadonlyMap<string, string>;
+    private particle;
     private readonly apiPort;
     private readonly handlers;
     readonly requestedContentTypes: Set<string>;
@@ -34,4 +34,9 @@ export declare class SlotProxy {
     registerEventHandler(name: string, f: any): void;
     clearEventHandlers(name: string): void;
     fireEvent(event: any): void;
+    /**
+     * Called by PEC to remove all rendering capabilities to this slotProxy from the current
+     * particle and give them to the given particle.
+     */
+    rewire(particle: Particle): void;
 }
