@@ -13,6 +13,7 @@ import { HandleConnectionSpec, ProvideSlotConnectionSpec } from './particle-spec
 export declare enum CheckType {
     HasTag = "has-tag",
     IsFromHandle = "is-from-handle",
+    IsFromOutput = "is-from-output",
     IsFromStore = "is-from-store"
 }
 export declare type CheckTarget = HandleConnectionSpec | ProvideSlotConnectionSpec;
@@ -37,7 +38,7 @@ export declare class CheckBooleanExpression {
 /** An expression inside a trust check. Can be either a boolean expression or a single check condition. */
 export declare type CheckExpression = CheckBooleanExpression | CheckCondition;
 /** A single check condition inside a trust check. */
-export declare type CheckCondition = CheckHasTag | CheckIsFromHandle | CheckIsFromStore;
+export declare type CheckCondition = CheckHasTag | CheckIsFromHandle | CheckIsFromOutput | CheckIsFromStore;
 /** A check condition of the form 'check x is <tag>'. */
 export declare class CheckHasTag {
     readonly tag: string;
@@ -54,6 +55,15 @@ export declare class CheckIsFromHandle {
     readonly type: CheckType.IsFromHandle;
     constructor(parentHandle: HandleConnectionSpec, isNot: boolean);
     static fromASTNode(astNode: AstNode.ParticleCheckIsFromHandle, handleConnectionMap: Map<string, HandleConnectionSpec>): CheckIsFromHandle;
+    toManifestString(): string;
+}
+/** A check condition of the form 'check x is from output <output>'. */
+export declare class CheckIsFromOutput {
+    readonly output: HandleConnectionSpec;
+    readonly isNot: boolean;
+    readonly type: CheckType.IsFromOutput;
+    constructor(output: HandleConnectionSpec, isNot: boolean);
+    static fromASTNode(astNode: AstNode.ParticleCheckIsFromOutput, handleConnectionMap: Map<string, HandleConnectionSpec>): CheckIsFromOutput;
     toManifestString(): string;
 }
 /** A reference to a data store. Can be either the name of the store, or its ID. */

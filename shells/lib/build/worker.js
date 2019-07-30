@@ -5343,6 +5343,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CheckBooleanExpression", function() { return CheckBooleanExpression; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CheckHasTag", function() { return CheckHasTag; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CheckIsFromHandle", function() { return CheckIsFromHandle; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CheckIsFromOutput", function() { return CheckIsFromOutput; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CheckIsFromStore", function() { return CheckIsFromStore; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createCheck", function() { return createCheck; });
 /* harmony import */ var _particle_spec_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(5);
@@ -5363,6 +5364,7 @@ var CheckType;
 (function (CheckType) {
     CheckType["HasTag"] = "has-tag";
     CheckType["IsFromHandle"] = "is-from-handle";
+    CheckType["IsFromOutput"] = "is-from-output";
     CheckType["IsFromStore"] = "is-from-store";
 })(CheckType || (CheckType = {}));
 class Check {
@@ -5421,12 +5423,30 @@ class CheckIsFromHandle {
     static fromASTNode(astNode, handleConnectionMap) {
         const parentHandle = handleConnectionMap.get(astNode.parentHandle);
         if (!parentHandle) {
-            throw new Error(`Unknown "check is from handle" handle name: ${parentHandle}.`);
+            throw new Error(`Unknown "check is from handle" handle name: ${astNode.parentHandle}.`);
         }
         return new CheckIsFromHandle(parentHandle, astNode.isNot);
     }
     toManifestString() {
         return `is ${this.isNot ? 'not ' : ''}from handle ${this.parentHandle.name}`;
+    }
+}
+/** A check condition of the form 'check x is from output <output>'. */
+class CheckIsFromOutput {
+    constructor(output, isNot) {
+        this.output = output;
+        this.isNot = isNot;
+        this.type = CheckType.IsFromOutput;
+    }
+    static fromASTNode(astNode, handleConnectionMap) {
+        const output = handleConnectionMap.get(astNode.output);
+        if (!output) {
+            throw new Error(`Unknown "check is from output" output name: ${astNode.output}.`);
+        }
+        return new CheckIsFromOutput(output, astNode.isNot);
+    }
+    toManifestString() {
+        return `is ${this.isNot ? 'not ' : ''}from output ${this.output.name}`;
     }
 }
 /** A check condition of the form 'check x is from store <store reference>'. */
@@ -5460,6 +5480,8 @@ function createCheckCondition(astNode, handleConnectionMap) {
             return CheckIsFromHandle.fromASTNode(astNode, handleConnectionMap);
         case CheckType.IsFromStore:
             return CheckIsFromStore.fromASTNode(astNode);
+        case CheckType.IsFromOutput:
+            return CheckIsFromOutput.fromASTNode(astNode, handleConnectionMap);
         default:
             throw new Error('Unknown check type.');
     }

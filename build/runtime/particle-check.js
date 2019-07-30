@@ -14,6 +14,7 @@ export var CheckType;
 (function (CheckType) {
     CheckType["HasTag"] = "has-tag";
     CheckType["IsFromHandle"] = "is-from-handle";
+    CheckType["IsFromOutput"] = "is-from-output";
     CheckType["IsFromStore"] = "is-from-store";
 })(CheckType || (CheckType = {}));
 export class Check {
@@ -72,12 +73,30 @@ export class CheckIsFromHandle {
     static fromASTNode(astNode, handleConnectionMap) {
         const parentHandle = handleConnectionMap.get(astNode.parentHandle);
         if (!parentHandle) {
-            throw new Error(`Unknown "check is from handle" handle name: ${parentHandle}.`);
+            throw new Error(`Unknown "check is from handle" handle name: ${astNode.parentHandle}.`);
         }
         return new CheckIsFromHandle(parentHandle, astNode.isNot);
     }
     toManifestString() {
         return `is ${this.isNot ? 'not ' : ''}from handle ${this.parentHandle.name}`;
+    }
+}
+/** A check condition of the form 'check x is from output <output>'. */
+export class CheckIsFromOutput {
+    constructor(output, isNot) {
+        this.output = output;
+        this.isNot = isNot;
+        this.type = CheckType.IsFromOutput;
+    }
+    static fromASTNode(astNode, handleConnectionMap) {
+        const output = handleConnectionMap.get(astNode.output);
+        if (!output) {
+            throw new Error(`Unknown "check is from output" output name: ${astNode.output}.`);
+        }
+        return new CheckIsFromOutput(output, astNode.isNot);
+    }
+    toManifestString() {
+        return `is ${this.isNot ? 'not ' : ''}from output ${this.output.name}`;
     }
 }
 /** A check condition of the form 'check x is from store <store reference>'. */
@@ -111,6 +130,8 @@ function createCheckCondition(astNode, handleConnectionMap) {
             return CheckIsFromHandle.fromASTNode(astNode, handleConnectionMap);
         case CheckType.IsFromStore:
             return CheckIsFromStore.fromASTNode(astNode);
+        case CheckType.IsFromOutput:
+            return CheckIsFromOutput.fromASTNode(astNode, handleConnectionMap);
         default:
             throw new Error('Unknown check type.');
     }

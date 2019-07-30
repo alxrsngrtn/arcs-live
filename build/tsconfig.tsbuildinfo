@@ -450,8 +450,8 @@
         "signature": "e36e04e3fb3fb6b5da73834fb22379ef2fc287e709ae3b340a900010c9b1ab3a"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/particle-check.ts": {
-        "version": "2184d7f97deb8acee0048f178755d0e7452704689993c1abb8936cc6485cfb00",
-        "signature": "ba53a96a7471850e94429df01b87149911740377cf201485a43e1032249e5de8"
+        "version": "f2cf04daeb37b61472d02086b2e17ed2f7960bdd3696099bfaf69f51212ed220",
+        "signature": "5f81ab9527a7fce014911edd1abd6e86326348360a48f3344bb9eabb33b7753e"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/particle-spec.ts": {
         "version": "866c1a00a5d0137d303c8193afdd98ec579050e2e17a2af99ae91bc26cdf379f",
@@ -462,11 +462,11 @@
         "signature": "1ff70153a74b019cf6ef32cdc8a9fc74c846d097a4cf5732aac2122cd17b7fe6"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/manifest-ast-nodes.ts": {
-        "version": "be33cdeaa24bdd4c84309a1890171300f8a888fb4d96a0d29e57b8628f9e7e1a",
-        "signature": "75e94ff9c6a80f90bdef15c3a168a076d194dc0e2f668ebeb4f24a362c746d67"
+        "version": "9ee5350594c4bd797b18627bc0b135435de7526309185c6a1012012ad25297e2",
+        "signature": "9a6ec5a3125659b57c5f1514930de33b3f2ec329217431e9334ee725058f37be"
       },
       "/home/travis/build/PolymerLabs/arcs/src/gen/runtime/manifest-parser.ts": {
-        "version": "dcb185e97ca20edbe660114311a5e67838cc4f6cf21a795db28c8cd76645d3da",
+        "version": "ece105941a9deed5994f7e5a113117f92b0a08577721a2e3a38bcf08a83ee1a9",
         "signature": "ff2c763c7895327196fd3eb358dcc775b25f27bdae513079cc287433af262427"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/manifest-meta.ts": {
@@ -550,8 +550,8 @@
         "signature": "b214f1d9912f28c40d01f56662a2d3951b3534f9db86f210f4f56a1f7abc5c5e"
       },
       "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/flow-graph.ts": {
-        "version": "f5742bf7d86056d5f35872fe199f6e4aea9569ce430ab6046acf2beeaadae796",
-        "signature": "181f50e70a346c5c3a0f2e2695e7b064e8b663e62a0b1e7aff55805556dffa16"
+        "version": "2900f9c222f69a971101e4557b5084c0d96dc0cf77df633452ace32f1002fdc5",
+        "signature": "bc1a2fdd443718106e606c4ebac7f90afa10efa598856de0afd6a160efe002dc"
       },
       "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/analysis.ts": {
         "version": "87995c3e0bdfbbadd35ccaeb837159ae19b51bc92f770b1408688ba62d829bc9",
@@ -566,7 +566,7 @@
         "signature": "4c86e04bcbc0a95e6fce540fb1151f3b9e07ffca1f2630061dfc8de54a7c63b3"
       },
       "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/tests/analysis-test.ts": {
-        "version": "f22d2c02ba79748fba528b8119301806547e0b87b42e63c5c2c0d85bbf038a64",
+        "version": "63122be3b05e629f864d9a24b420df7fd5b177bd1e23076bf5e40b1a308c834f",
         "signature": "8e609bb71c20b858c77f0e9f90bb1319db8477b13f9f965f1a1e18524bf50881"
       },
       "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/tests/deep-set-test.ts": {
@@ -2305,7 +2305,7 @@
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/tests/manifest-test.ts": {
-        "version": "b34bbc7c5f961aef42c04a352a8fc238ecd00a6d7816dc681f8cab85a67609d9",
+        "version": "ddac2857d429c9e354a253e10d5de9cc5b622a74e3e2e246a3f18ae459299660",
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/tests/multiplexer-test.ts": {
@@ -2480,10 +2480,6 @@
         "version": "c6abccda6c6b0ed7381955f79db48d089f2d82954f1d631ecdbc3cad2d85e84f",
         "signature": "8bc1d39a3b8ec61064f9969316a088e314895e7ffd094468dcc0b238f33cb4a6"
       },
-      "/home/travis/build/PolymerLabs/arcs/src/tests/particles/multi-slot-test.ts": {
-        "version": "37f17a0efd216a7dddfbcf80500dcce4ca365567605258e34623d16644dbaca8",
-        "signature": "8bc1d39a3b8ec61064f9969316a088e314895e7ffd094468dcc0b238f33cb4a6"
-      },
       "/home/travis/build/PolymerLabs/arcs/node_modules/@types/minimatch/index.d.ts": {
         "version": "1d1e6bd176eee5970968423d7e215bfd66828b6db8d54d17afec05a831322633",
         "signature": "1d1e6bd176eee5970968423d7e215bfd66828b6db8d54d17afec05a831322633"
@@ -2491,6 +2487,14 @@
       "/home/travis/build/PolymerLabs/arcs/node_modules/@types/glob/index.d.ts": {
         "version": "d852d6282c8dc8156d26d6bda83ab4bde51fee05ba2fe0ecdc165ddda009d3ee",
         "signature": "d852d6282c8dc8156d26d6bda83ab4bde51fee05ba2fe0ecdc165ddda009d3ee"
+      },
+      "/home/travis/build/PolymerLabs/arcs/src/tests/particles/dataflow-test.ts": {
+        "version": "59071f160e9d941d56d6cb3df4d3874786af8b0a40b0191a9a15fee6d0bb161c",
+        "signature": "8e609bb71c20b858c77f0e9f90bb1319db8477b13f9f965f1a1e18524bf50881"
+      },
+      "/home/travis/build/PolymerLabs/arcs/src/tests/particles/multi-slot-test.ts": {
+        "version": "37f17a0efd216a7dddfbcf80500dcce4ca365567605258e34623d16644dbaca8",
+        "signature": "8bc1d39a3b8ec61064f9969316a088e314895e7ffd094468dcc0b238f33cb4a6"
       },
       "/home/travis/build/PolymerLabs/arcs/src/tests/particles/particles-test.ts": {
         "version": "14564922a740ae7da6552f3da59d1e65563b80e3750ba175c65c0441a860fb50",
@@ -7589,12 +7593,6 @@
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
       ],
-      "/home/travis/build/PolymerLabs/arcs/src/tests/particles/multi-slot-test.ts": [
-        "/home/travis/build/PolymerLabs/arcs/src/platform/chai-web.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/src/planning/testing/arcs-planning-testing.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
-        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
-      ],
       "/home/travis/build/PolymerLabs/arcs/node_modules/@types/minimatch/index.d.ts": [
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
@@ -7603,6 +7601,21 @@
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/events.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/minimatch/index.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/index.d.ts",
+        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
+        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
+      ],
+      "/home/travis/build/PolymerLabs/arcs/src/tests/particles/dataflow-test.ts": [
+        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/glob/index.d.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/loader.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/manifest.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/analysis.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/platform/chai-web.d.ts",
+        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
+        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
+      ],
+      "/home/travis/build/PolymerLabs/arcs/src/tests/particles/multi-slot-test.ts": [
+        "/home/travis/build/PolymerLabs/arcs/src/platform/chai-web.d.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/planning/testing/arcs-planning-testing.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
       ],
@@ -11448,9 +11461,10 @@
       "/home/travis/build/PolymerLabs/arcs/src/tests/recipe-descriptions-test.ts",
       "/home/travis/build/PolymerLabs/arcs/src/tests/slot-composer-test.ts",
       "/home/travis/build/PolymerLabs/arcs/src/tests/particles/common-test.ts",
-      "/home/travis/build/PolymerLabs/arcs/src/tests/particles/multi-slot-test.ts",
       "/home/travis/build/PolymerLabs/arcs/node_modules/@types/minimatch/index.d.ts",
       "/home/travis/build/PolymerLabs/arcs/node_modules/@types/glob/index.d.ts",
+      "/home/travis/build/PolymerLabs/arcs/src/tests/particles/dataflow-test.ts",
+      "/home/travis/build/PolymerLabs/arcs/src/tests/particles/multi-slot-test.ts",
       "/home/travis/build/PolymerLabs/arcs/src/tests/particles/particles-test.ts",
       "/home/travis/build/PolymerLabs/arcs/src/tests/particles/products-test.ts",
       "/home/travis/build/PolymerLabs/arcs/src/tests/particles/test-environment-test.ts",
