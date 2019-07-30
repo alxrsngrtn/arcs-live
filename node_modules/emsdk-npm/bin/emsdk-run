@@ -15,7 +15,7 @@ fi
 EMSDKRUN_CURDIR=`pwd`
 BASH_SOURCE="./emsdk_env.sh"
 cd "$DIR/emsdk"
-. ./emsdk_env.sh
+. ./emsdk_env.sh ""
 cd "$EMSDKRUN_CURDIR"
 
 # Run the binary, which should now be in PATH

@@ -1,5 +1,5 @@
-commit c2929abd2260a9205242f77264498cb18fb7a99a
+commit d4b01fbadf56f7bc75a45eed93a16585a31c377f
 Author: Joshua Pratt <jp10010101010000@gmail.com>
-Date:   Tue Jul 30 14:13:44 2019 +1000
+Date:   Tue Jul 30 14:59:38 2019 +1000
 
-    Inherit from Loader (#3415)
+    Rename aml-language-server to language server internally as aml is no longer used (#3416)

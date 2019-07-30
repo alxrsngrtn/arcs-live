@@ -55,7 +55,7 @@ const build = buildPath('.', cleanObsolete, []);
 const webpack = webpackPkg('webpack');
 const webpackTools = webpackPkg('webpack-tools');
 
-const buildLS = buildPath('./src/tools/aml-language-server', null, ['vscode-jsonrpc', 'vscode-languageserver']);
+const buildLS = buildPath('./src/tools/language-server', null, ['vscode-jsonrpc', 'vscode-languageserver']);
 const webpackLS = webpackPkg('webpack-languageserver');
 
 const steps: {[index: string]: ((args?: string[]) => boolean)[]} = {
@@ -279,7 +279,7 @@ function linkUnit(dummySrc: string, dummyDest: string): boolean {
 function languageServer(): boolean {
   keepProcessAlive = true; // Tell the runner to not exit.
   // Opens a language server on port 2089
-  return saneSpawn('tools/aml-language-server', []);
+  return saneSpawn('tools/language-server', []);
 }
 
 function peg(): boolean {
@@ -547,7 +547,8 @@ function buildWasmModule(configFile: string, logCmd: boolean): boolean {
   return success;
 }
 
-// Finds all 'wasm.json' files to generate C++ headers and compile wasm modules.
+// With no args, finds all 'wasm.json' files to generate C++ headers and compile wasm modules.
+// Otherwise only the requested configs are processed (e.g. tools/sigh wasm src/wasm/cpp/wasm.json)
 function wasm(args: string[]): boolean {
   if (!installAndCheckEmsdk()) {
     return false;
@@ -555,8 +556,16 @@ function wasm(args: string[]): boolean {
   const options = minimist(args, {
     boolean: ['trace'],
   });
+
+  const specified = (options._.length > 0);
+  const targets = specified ? options._ : findProjectFiles('src', null, /[/\\]wasm\.json$/);
   let success = true;
-  for (const configFile of findProjectFiles('src', null, /[/\\]wasm\.json$/)) {
+  for (const configFile of targets) {
+    if (specified && !fs.existsSync(configFile)) {
+      console.error(`wasm config not found: ${configFile}`);
+      success = false;
+      continue;
+    }
     success = success && buildWasmModule(configFile, options.trace);
   }
   return success;
