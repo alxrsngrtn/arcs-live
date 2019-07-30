@@ -1,10 +1,5 @@
-commit 970caa8c93522cc2cb23b36f89bac5746cffaac1
-Author: Paul Lindner <plindner@google.com>
-Date:   Mon Jul 29 23:00:27 2019 -0700
+commit c3f03909c5c89df7a4c57604663a55c3e71aa2c2
+Author: Piotr Swigon <piotr.swigon@gmail.com>
+Date:   Tue Jul 30 20:22:57 2019 +1000
 
-    Upgrade to ts-pegjs 0.2.6 (#3409)
-    
-    - Includes many fixes noImplicitAny and more.
-    - Improves type coverage by 0.3 points
-    - Includes my PR https://github.com/metadevpro/ts-pegjs/pull/38
-    - Prepares for 0.11 of pegjs (when it is released)
+    A test for Schema Catalogue syntax (#3406)

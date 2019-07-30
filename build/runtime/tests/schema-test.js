@@ -357,5 +357,29 @@ describe('schema', () => {
         const b1 = new Buffer({ data: Uint8Array.from([12, 34, 56]) });
         assert.deepEqual(b1.data, Uint8Array.from([12, 34, 56]));
     });
+    // A mini integration test for schema aliases, annonymous schemas
+    // and type inference for fields.
+    it('handles Schema Catalogue syntax', async () => {
+        const manifest = await Manifest.parse(`
+      alias schema * as Base
+        Text name
+        Text phoneNumber
+        URL website
+        
+      schema Person extends Base
+        Text jobTitle
+        Number age
+      
+      particle P
+        in Person {name, age, Bytes custom} person`);
+        const particle = manifest.particles[0];
+        const connection = particle.handleConnections[0];
+        const schema = connection.type.getEntitySchema();
+        assert.deepEqual(schema.names, ['Person']);
+        assert.hasAllKeys(schema.fields, ['name', 'age', 'custom']);
+        assert.strictEqual(schema.fields.name.type, 'Text');
+        assert.strictEqual(schema.fields.age.type, 'Number');
+        assert.strictEqual(schema.fields.custom.type, 'Bytes');
+    });
 });
 //# sourceMappingURL=schema-test.js.map
