@@ -1,9 +1,5 @@
-commit de512bf29f1da5e760af9473ebea785797ee2ee7
-Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
-Date:   Tue Jul 30 14:00:33 2019 +1000
+commit c2929abd2260a9205242f77264498cb18fb7a99a
+Author: Joshua Pratt <jp10010101010000@gmail.com>
+Date:   Tue Jul 30 14:13:44 2019 +1000
 
-    Added tests for the Dataflow examples (#3407)
-    
-    * Added tests for the Dataflow examples
-    
-    * Added copyright
+    Inherit from Loader (#3415)
