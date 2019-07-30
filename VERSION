@@ -1,5 +1,9 @@
-commit d88b54bb28b3a2093e01e9b2f6d072d33bd4994e
-Author: Joshua Pratt <jp10010101010000@gmail.com>
-Date:   Tue Jul 30 09:18:38 2019 +1000
+commit 7eb016a5ac25fe6aff1f3aba14c2ab38561276da
+Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
+Date:   Tue Jul 30 11:27:18 2019 +1000
 
-    Run the health stats & upload for default rather than runTests (#3403)
+    Remove obsolete npm dependency on protobufjs (#3412)
+    
+    * Remove obsolete npm dependency on protobufjs
+    
+    * Forgot to include package-lock.json
