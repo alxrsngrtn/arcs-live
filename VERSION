@@ -1,5 +1,9 @@
-commit 8cf980c20ecbd3833516fdc5aad1343e1faee340
+commit d828bf25edcb96295facf59e9d0402916bdda90a
 Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Tue Jul 30 09:17:53 2019 -0700
+Date:   Tue Jul 30 09:37:04 2019 -0700
 
-    update Suggestion::isVisible method to not log irrelevant reasons and not return false when root slot is present (#3413)
+    pass java pec port to ingestion arc ctor (#3410)
+    
+    * pass java pec port to ingestion arc ctor
+    
+    * address comments: make arc-host's _spawn a pure function again, and move ingestion-arc.js out of lib
