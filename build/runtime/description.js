@@ -11,7 +11,7 @@ import { assert } from '../platform/assert-web.js';
 import { DescriptionFormatter } from './description-formatter.js';
 import { BigCollectionType, CollectionType, EntityType, InterfaceType } from './type.js';
 import { StorageProviderBase } from './storage/storage-provider-base.js';
-import { StorageStub } from './manifest.js';
+import { StorageStub } from './storage-stub.js';
 export class Description {
     constructor(storeDescById = {}, 
     // TODO(mmandlis): replace Particle[] with serializable json objects.

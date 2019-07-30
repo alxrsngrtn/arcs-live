@@ -10,7 +10,7 @@
 import { Id } from '../id.js';
 import { Comparable } from '../recipe/comparable.js';
 import { Type } from '../type.js';
-import { StorageStub } from '../manifest.js';
+import { StorageStub } from '../storage-stub.js';
 import { SerializedModelEntry } from './crdt-collection-model.js';
 import { KeyBase } from './key-base.js';
 import { Store, BigCollectionStore, CollectionStore, SingletonStore } from '../store.js';

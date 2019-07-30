@@ -1,9 +1,5 @@
-commit d828bf25edcb96295facf59e9d0402916bdda90a
+commit c7e77d03c1b1ab2ae6110cd81c344ef9c2b23fc9
 Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Tue Jul 30 09:37:04 2019 -0700
+Date:   Tue Jul 30 13:13:38 2019 -0700
 
-    pass java pec port to ingestion arc ctor (#3410)
-    
-    * pass java pec port to ingestion arc ctor
-    
-    * address comments: make arc-host's _spawn a pure function again, and move ingestion-arc.js out of lib
+    move StorageStub into its own file to avoid circular dependencies (#3421)

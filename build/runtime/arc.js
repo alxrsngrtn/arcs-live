@@ -10,8 +10,9 @@
 import { assert } from '../platform/assert-web.js';
 import { FakePecFactory } from './fake-pec-factory.js';
 import { Id, IdGenerator, ArcId } from './id.js';
-import { Manifest, StorageStub } from './manifest.js';
+import { Manifest } from './manifest.js';
 import { ParticleExecutionHost } from './particle-execution-host.js';
+import { StorageStub } from './storage-stub.js';
 import { Handle } from './recipe/handle.js';
 import { Recipe } from './recipe/recipe.js';
 import { compareComparables } from './recipe/comparable.js';

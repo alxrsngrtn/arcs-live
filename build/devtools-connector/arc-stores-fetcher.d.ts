@@ -9,7 +9,7 @@
  */
 import { Arc } from '../runtime/arc.js';
 import { ArcDevtoolsChannel } from './abstract-devtools-channel.js';
-import { StorageStub } from '../runtime/manifest.js';
+import { StorageStub } from '../runtime/storage-stub.js';
 import { StorageProviderBase } from '../runtime/storage/storage-provider-base.js';
 import { Type } from '../runtime/type.js';
 declare type Result = {

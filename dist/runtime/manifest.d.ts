@@ -20,33 +20,11 @@ import { StorageProviderFactory } from './storage/storage-provider-factory.js';
 import { EntityType, InterfaceType, Type } from './type.js';
 import { Dictionary } from './hot.js';
 import { ClaimIsTag } from './particle-claim.js';
+import { StorageStub } from './storage-stub.js';
 export declare class ManifestError extends Error {
     location: AstNode.SourceLocation;
     key: string;
     constructor(location: AstNode.SourceLocation, message: string);
-}
-export declare class StorageStub {
-    readonly type: Type;
-    readonly id: string;
-    readonly name: string;
-    readonly storageKey: string;
-    readonly storageProviderFactory: StorageProviderFactory;
-    readonly originalId: string;
-    /** Trust tags claimed by this data store. */
-    readonly claims: ClaimIsTag[];
-    readonly description: string;
-    readonly version?: number;
-    readonly source?: string;
-    referenceMode: boolean;
-    readonly model?: {}[];
-    constructor(type: Type, id: string, name: string, storageKey: string, storageProviderFactory: StorageProviderFactory, originalId: string, 
-    /** Trust tags claimed by this data store. */
-    claims: ClaimIsTag[], description: string, version?: number, source?: string, referenceMode?: boolean, model?: {}[]);
-    inflate(storageProviderFactory?: StorageProviderFactory): Promise<StorageProviderBase>;
-    toLiteral(): any;
-    isBackedByManifest(): boolean;
-    toString(handleTags: string[]): string;
-    _compareTo(other: StorageProviderBase): number;
 }
 declare type ManifestFinder<a> = (manifest: Manifest) => a;
 declare type ManifestFinderGenerator<a> = ((manifest: Manifest) => IterableIterator<a>) | ((manifest: Manifest) => a[]);

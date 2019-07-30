@@ -10,7 +10,8 @@
 import { assert } from '../platform/assert-web.js';
 import { PECOuterPort } from './api-channel.js';
 import { reportSystemException } from './arc-exceptions.js';
-import { Manifest, StorageStub } from './manifest.js';
+import { Manifest } from './manifest.js';
+import { StorageStub } from './storage-stub.js';
 import { RecipeResolver } from './recipe/recipe-resolver.js';
 import { Services } from './services.js';
 import { floatingPromiseToAudit } from './util.js';
