@@ -1,5 +1,5 @@
-commit c3f03909c5c89df7a4c57604663a55c3e71aa2c2
-Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Tue Jul 30 20:22:57 2019 +1000
+commit 8cf980c20ecbd3833516fdc5aad1343e1faee340
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Tue Jul 30 09:17:53 2019 -0700
 
-    A test for Schema Catalogue syntax (#3406)
+    update Suggestion::isVisible method to not log irrelevant reasons and not return false when root slot is present (#3413)
