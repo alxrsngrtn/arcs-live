@@ -2605,7 +2605,7 @@
         "signature": "8bc1d39a3b8ec61064f9969316a088e314895e7ffd094468dcc0b238f33cb4a6"
       },
       "/home/travis/build/PolymerLabs/arcs/src/wasm/cpp/tests/wasm-cpp-test.ts": {
-        "version": "242d466f1cd5094e1ec995c705218cc45e7b2f5800656a9a64b4b3e13179f637",
+        "version": "72e2b67af0b67e2312c76344049e30a0c6bb59c6936b1da8dcc20d3ba9d3e27c",
         "signature": "8e609bb71c20b858c77f0e9f90bb1319db8477b13f9f965f1a1e18524bf50881"
       },
       "/home/travis/build/PolymerLabs/arcs/node_modules/@types/core-js/index.d.ts": {
