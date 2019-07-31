@@ -172,7 +172,7 @@ export class VolatileStorageProvider extends StorageProviderBase {
     }
     fromLiteral({ version, model }) { }
 }
-class VolatileCollection extends VolatileStorageProvider {
+export class VolatileCollection extends VolatileStorageProvider {
     constructor(type, storageEngine, name, id, key) {
         super(type, name, id, key);
         this._model = new CrdtCollectionModel();
@@ -307,7 +307,7 @@ class VolatileCollection extends VolatileStorageProvider {
         this._model = new CrdtCollectionModel();
     }
 }
-class VolatileSingleton extends VolatileStorageProvider {
+export class VolatileSingleton extends VolatileStorageProvider {
     constructor(type, storageEngine, name, id, key) {
         super(type, name, id, key);
         this.localKeyId = 0;

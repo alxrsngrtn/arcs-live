@@ -7,6 +7,7 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
+import { Arc } from '../arc.js';
 import { Loader } from '../loader.js';
 import { Manifest } from '../manifest.js';
 import { MockSlotComposer } from '../testing/mock-slot-composer.js';
@@ -24,7 +25,7 @@ export declare class TestHelper {
     logging?: boolean;
     loader?: Loader;
     timeout: any;
-    arc: any;
+    arc: Arc;
     slotComposer: MockSlotComposer;
     static setupOptions(options: TestHelperOptions): Promise<void>;
     static setupHelper(options: TestHelperOptions, helper: TestHelper): void;
@@ -43,8 +44,8 @@ export declare class TestHelper {
     setTimeout(timeout: number): void;
     clearTimeout(): void;
     readonly envOptions: {
-        context: any;
-        loader: any;
+        context: Manifest;
+        loader: Loader;
     };
     /**
      * Sends an event to particle's slot via the slot composer.

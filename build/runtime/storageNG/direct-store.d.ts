@@ -7,6 +7,7 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
+import { PropagatedException } from '../arc-exceptions.js';
 import { CRDTModel, CRDTTypeRecord } from '../crdt/crdt.js';
 import { Type } from '../type.js';
 import { Exists, Driver } from './drivers/driver-factory.js';
@@ -43,4 +44,5 @@ export declare class DirectStore<T extends CRDTTypeRecord> extends ActiveStore<T
     onProxyMessage(message: ProxyMessage<T>): Promise<boolean>;
     on(callback: ProxyCallback<T>): number;
     off(callback: number): void;
+    reportExceptionInHost(exception: PropagatedException): void;
 }

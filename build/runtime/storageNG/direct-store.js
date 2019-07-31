@@ -231,5 +231,9 @@ export class DirectStore extends ActiveStore {
     off(callback) {
         this.callbacks.delete(callback);
     }
+    reportExceptionInHost(exception) {
+        this.pendingException = exception;
+        this.notifyIdle();
+    }
 }
 //# sourceMappingURL=direct-store.js.map

@@ -68,7 +68,8 @@ describe('common particles test', () => {
         assert.isEmpty(helper.arc._stores);
         await helper.acceptSuggestion({ particles: ['CopyCollection', 'CopyCollection'] });
         // Copied 2 and 3 entities from two collections.
-        assert.strictEqual(5, helper.arc._stores[2]._model.size);
+        const collection = helper.arc._stores[2];
+        assert.strictEqual(5, collection._model.size);
     });
 });
 //# sourceMappingURL=common-test.js.map

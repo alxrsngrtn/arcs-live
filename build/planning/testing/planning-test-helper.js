@@ -103,7 +103,7 @@ export class PlanningTestHelper extends TestHelper {
                     suggestions = suggestions.filter(p => {
                         return options.hostedParticles.every(hosted => {
                             const interfaceHandles = p.plan.handles.filter(h => h.type instanceof InterfaceType);
-                            return interfaceHandles.find(handle => this.arc.findStoreById(handle.id)._stored.name === hosted) !== undefined;
+                            return interfaceHandles.find(handle => this.arc.findStoreById(handle.id)._stored['name'] === hosted) !== undefined;
                         });
                     });
                 }

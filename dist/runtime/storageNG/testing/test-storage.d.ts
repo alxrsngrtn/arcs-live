@@ -7,6 +7,7 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
+import { PropagatedException } from '../../arc-exceptions.js';
 import { CRDTTypeRecord, CRDTOperation } from '../../crdt/crdt.js';
 import { ActiveStore, ProxyMessage, ProxyCallback } from '../store.js';
 import { Exists, StorageDriverProvider, Driver, ReceiveMethod } from '../drivers/driver-factory.js';
@@ -31,10 +32,12 @@ export declare class MockDriver<Data> extends Driver<Data> {
 }
 export declare class MockStore<T extends CRDTTypeRecord> extends ActiveStore<T> {
     lastCapturedMessage: ProxyMessage<T>;
+    lastCapturedException: PropagatedException;
     constructor();
     on(callback: ProxyCallback<T>): number;
     off(callback: number): void;
     onProxyMessage(message: ProxyMessage<T>): Promise<boolean>;
+    reportExceptionInHost(exception: PropagatedException): void;
 }
 export declare class MockStorageKey extends StorageKey {
     constructor();

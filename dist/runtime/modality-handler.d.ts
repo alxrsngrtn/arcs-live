@@ -11,7 +11,7 @@ import { DescriptionFormatter } from './description-formatter.js';
 import { SlotConsumer } from './slot-consumer.js';
 export declare class ModalityHandler {
     readonly slotConsumerClass: typeof SlotConsumer;
-    readonly descriptionFormatter?: typeof DescriptionFormatter;
+    descriptionFormatter?: typeof DescriptionFormatter;
     constructor(slotConsumerClass: typeof SlotConsumer, descriptionFormatter?: typeof DescriptionFormatter);
     static createHeadlessHandler(): ModalityHandler;
     static readonly headlessHandler: ModalityHandler;

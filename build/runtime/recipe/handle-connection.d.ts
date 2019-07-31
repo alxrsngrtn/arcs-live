@@ -17,7 +17,7 @@ import { Comparable } from './comparable.js';
 import { Direction } from '../manifest-ast-nodes.js';
 export declare class HandleConnection implements Comparable<HandleConnection> {
     private readonly _recipe;
-    _name: string;
+    private _name;
     private _tags;
     private resolvedType?;
     private _direction;

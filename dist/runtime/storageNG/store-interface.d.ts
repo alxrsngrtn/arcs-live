@@ -7,6 +7,7 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
+import { PropagatedException } from '../arc-exceptions.js';
 import { CRDTModel, CRDTTypeRecord } from '../crdt/crdt.js';
 import { Type } from '../type.js';
 import { Exists } from './drivers/driver-factory.js';
@@ -57,4 +58,5 @@ export declare abstract class ActiveStore<T extends CRDTTypeRecord> implements S
     abstract on(callback: ProxyCallback<T>): number;
     abstract off(callback: number): void;
     abstract onProxyMessage(message: ProxyMessage<T>): Promise<boolean>;
+    abstract reportExceptionInHost(exception: PropagatedException): void;
 }

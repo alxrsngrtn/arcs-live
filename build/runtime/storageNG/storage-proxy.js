@@ -8,6 +8,8 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { assert } from '../../platform/assert-web.js';
+import { mapStackTrace } from '../../platform/sourcemapped-stacktrace-web.js';
+import { SystemException } from '../arc-exceptions.js';
 import { CRDTError } from '../crdt/crdt.js';
 import { ProxyMessageType } from './store.js';
 /**
@@ -23,6 +25,18 @@ export class StorageProxy {
         this.store = store;
         this.scheduler = scheduler;
     }
+    reportExceptionInHost(exception) {
+        // TODO: Encapsulate source-mapping of the stack trace once there are more users of the port.RaiseSystemException() call.
+        if (mapStackTrace) {
+            mapStackTrace(exception.cause.stack, mappedStack => {
+                exception.cause.stack = mappedStack;
+                this.store.reportExceptionInHost(exception);
+            });
+        }
+        else {
+            this.store.reportExceptionInHost(exception);
+        }
+    }
     registerHandle(handle) {
         this.handles.push(handle);
         // Attach an event listener to the backing store when the first readable handle is registered.
@@ -36,8 +50,7 @@ export class StorageProxy {
         if (handle.options.keepSynced) {
             if (!this.keepSynced) {
                 this.synchronizeModel().catch(e => {
-                    // TODO: report the exception on the host side.
-                    console.error('Error during SyncRequest', e);
+                    this.reportExceptionInHost(new SystemException(e, handle.key, 'StorageProxy::registerHandle'));
                 });
                 this.keepSynced = true;
             }
@@ -217,8 +230,7 @@ export class StorageProxyScheduler {
                         }
                     }
                     catch (e) {
-                        // TODO: report the exception on the host side.
-                        console.error('Error dispatching to particle', e);
+                        handle.storageProxy.reportExceptionInHost(new SystemException(e, 'StorageProxyScheduler::_dispatch', handle.key));
                     }
                 }
             }

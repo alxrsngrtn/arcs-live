@@ -51,7 +51,7 @@ export declare abstract class VolatileStorageProvider extends StorageProviderBas
         model: any;
     }): void;
 }
-declare class VolatileCollection extends VolatileStorageProvider implements CollectionStorageProvider {
+export declare class VolatileCollection extends VolatileStorageProvider implements CollectionStorageProvider {
     _model: CrdtCollectionModel;
     constructor(type: any, storageEngine: any, name: any, id: any, key: any);
     backingType(): Type;
@@ -82,7 +82,7 @@ declare class VolatileCollection extends VolatileStorageProvider implements Coll
     remove(id: any, keys?: string[], originatorId?: any): Promise<void>;
     clearItemsForTesting(): void;
 }
-declare class VolatileSingleton extends VolatileStorageProvider implements SingletonStorageProvider {
+export declare class VolatileSingleton extends VolatileStorageProvider implements SingletonStorageProvider {
     _stored: {
         id: string;
         storageKey?: string;

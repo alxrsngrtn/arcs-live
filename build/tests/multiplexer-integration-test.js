@@ -17,7 +17,7 @@ describe('Multiplexer', () => {
         const helper = await PlanningTestHelper.create({
             manifestFilename: './src/tests/particles/artifacts/polymorphic-muxing.recipes'
         });
-        const context = helper.arc._context;
+        const context = helper.arc.context;
         const showOneParticle = context.particles.find(p => p.name === 'ShowOne');
         const showTwoParticle = context.particles.find(p => p.name === 'ShowTwo');
         const showOneSpec = JSON.stringify(showOneParticle.toLiteral());
@@ -50,7 +50,7 @@ describe('Multiplexer', () => {
             }
         });
         postsStub['referenceMode'] = false;
-        postsStub['version'] = '1';
+        // version could be set here, but doesn't matter for tests.
         await helper.makePlans();
         // Render 3 posts
         helper.slotComposer

@@ -32,7 +32,7 @@ export declare class VolatileStorage extends StorageBase {
     localIDBase: number;
     constructor(arcId: Id);
     construct(id: string, type: Type, keyFragment: string): Promise<VolatileStorageProvider>;
-    _construct(id: any, type: any, keyFragment: any): Promise<VolatileCollection | VolatileBigCollection | VolatileSingleton>;
+    _construct(id: any, type: any, keyFragment: any): Promise<VolatileCollection | VolatileSingleton | VolatileBigCollection>;
     constructKey(keyFragment: string): string;
     connect(id: string, type: Type, key: string): Promise<VolatileStorageProvider>;
     baseStorageKey(type: Type): string;
@@ -43,7 +43,7 @@ export declare abstract class VolatileStorageProvider extends StorageProviderBas
     backingStore: VolatileCollection | null;
     protected storageEngine: VolatileStorage;
     private pendingBackingStore;
-    static newProvider(type: any, storageEngine: any, name: any, id: any, key: any): VolatileCollection | VolatileBigCollection | VolatileSingleton;
+    static newProvider(type: any, storageEngine: any, name: any, id: any, key: any): VolatileCollection | VolatileSingleton | VolatileBigCollection;
     ensureBackingStore(): Promise<VolatileCollection>;
     abstract backingType(): Type;
     fromLiteral({ version, model }: {
@@ -51,7 +51,7 @@ export declare abstract class VolatileStorageProvider extends StorageProviderBas
         model: any;
     }): void;
 }
-declare class VolatileCollection extends VolatileStorageProvider implements CollectionStorageProvider {
+export declare class VolatileCollection extends VolatileStorageProvider implements CollectionStorageProvider {
     _model: CrdtCollectionModel;
     constructor(type: any, storageEngine: any, name: any, id: any, key: any);
     backingType(): Type;
@@ -82,7 +82,7 @@ declare class VolatileCollection extends VolatileStorageProvider implements Coll
     remove(id: any, keys?: string[], originatorId?: any): Promise<void>;
     clearItemsForTesting(): void;
 }
-declare class VolatileSingleton extends VolatileStorageProvider implements SingletonStorageProvider {
+export declare class VolatileSingleton extends VolatileStorageProvider implements SingletonStorageProvider {
     _stored: {
         id: string;
         storageKey?: string;

@@ -36,6 +36,7 @@ export class MockStore extends ActiveStore {
     constructor() {
         super(new MockStorageKey(), Exists.ShouldCreate, null, StorageMode.Direct, CRDTSingleton);
         this.lastCapturedMessage = null;
+        this.lastCapturedException = null;
     }
     on(callback) {
         return 1;
@@ -46,6 +47,9 @@ export class MockStore extends ActiveStore {
     async onProxyMessage(message) {
         this.lastCapturedMessage = message;
         return Promise.resolve(true);
+    }
+    reportExceptionInHost(exception) {
+        this.lastCapturedException = exception;
     }
 }
 export class MockStorageKey extends StorageKey {
