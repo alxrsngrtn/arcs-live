@@ -16,14 +16,20 @@ import { ProxyMessageType } from './store.js';
  * TODO: describe this class.
  */
 export class StorageProxy {
-    constructor(crdt, store, scheduler) {
+    constructor(apiChannelId, crdt, store, type, pec) {
         this.handles = [];
         this.listenerAttached = false;
         this.keepSynced = false;
         this.synchronized = false;
+        this.apiChannelId = apiChannelId;
         this.crdt = crdt;
         this.store = store;
-        this.scheduler = scheduler;
+        this.type = type;
+        this.pec = pec;
+        this.scheduler = new StorageProxyScheduler();
+    }
+    async idle() {
+        return this.scheduler.idle;
     }
     reportExceptionInHost(exception) {
         // TODO: Encapsulate source-mapping of the stack trace once there are more users of the port.RaiseSystemException() call.
@@ -214,28 +220,26 @@ export class StorageProxyScheduler {
             this._queues.delete(particle);
             for (const [handle, queue] of byHandle.entries()) {
                 for (const update of queue) {
-                    try {
-                        switch (update.type) {
-                            case HandleMessageType.Sync:
-                                handle.onSync();
-                                break;
-                            case HandleMessageType.Desync:
-                                handle.onDesync();
-                                break;
-                            case HandleMessageType.Update:
-                                handle.onUpdate(update.ops);
-                                break;
-                            default:
-                                console.error('Ignoring unknown update', update);
-                        }
-                    }
-                    catch (e) {
-                        handle.storageProxy.reportExceptionInHost(new SystemException(e, 'StorageProxyScheduler::_dispatch', handle.key));
-                    }
+                    this._dispatchh(handle, update).catch(e => handle.storageProxy.reportExceptionInHost(new SystemException(e, 'StorageProxyScheduler::_dispatch', handle.key)));
                 }
             }
         }
         this._updateIdle();
+    }
+    async _dispatchh(handle, update) {
+        switch (update.type) {
+            case HandleMessageType.Sync:
+                handle.onSync();
+                break;
+            case HandleMessageType.Desync:
+                await handle.onDesync();
+                break;
+            case HandleMessageType.Update:
+                handle.onUpdate(update.ops);
+                break;
+            default:
+                console.error('Ignoring unknown update', update);
+        }
     }
 }
 //# sourceMappingURL=storage-proxy.js.map

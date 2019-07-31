@@ -9,16 +9,19 @@
  */
 import { assert } from '../../../platform/chai-web.js';
 import { CRDTSingleton, SingletonOpTypes } from '../../crdt/crdt-singleton.js';
-import { StorageProxy, StorageProxyScheduler } from '../storage-proxy.js';
+import { StorageProxy } from '../storage-proxy.js';
 import { ProxyMessageType } from '../store.js';
 import { MockHandle, MockStore } from '../testing/test-storage.js';
+import { EntityType } from '../../type.js';
+function getStorageProxy(store) {
+    return new StorageProxy('id', new CRDTSingleton(), store, EntityType.make([], {}), null /*pec*/);
+}
 describe('StorageProxy', async () => {
     it('will apply and propagate operation', async () => {
         const mockStore = new MockStore();
-        const scheduler = new StorageProxyScheduler();
-        const storageProxy = new StorageProxy(new CRDTSingleton(), mockStore, scheduler);
+        const storageProxy = getStorageProxy(mockStore);
         // Register a handle to verify updates are sent back.
-        const handle = new MockHandle('handle', storageProxy, {}, true, true);
+        const handle = new MockHandle(storageProxy);
         const op = {
             type: SingletonOpTypes.Set,
             value: { id: 'e1' },
@@ -32,15 +35,14 @@ describe('StorageProxy', async () => {
             operations: [op],
             id: 1
         });
-        await scheduler.idle;
+        await storageProxy.idle();
         assert.sameDeepMembers(handle.lastUpdate, [op]);
     });
     it('will sync before returning the particle view', async () => {
         const mockStore = new MockStore();
-        const scheduler = new StorageProxyScheduler();
-        const storageProxy = new StorageProxy(new CRDTSingleton(), mockStore, scheduler);
+        const storageProxy = getStorageProxy(mockStore);
         // Register a handle to verify updates are sent back.
-        const handle = new MockHandle('handle', storageProxy, {}, true, true);
+        const handle = new MockHandle(storageProxy);
         // When requested a sync, store will send back a model.
         mockStore.onProxyMessage = async (message) => {
             mockStore.lastCapturedMessage = message;
@@ -51,14 +53,14 @@ describe('StorageProxy', async () => {
         const result = await storageProxy.getParticleView();
         assert.deepEqual(result, { id: 'e1' });
         assert.deepEqual(mockStore.lastCapturedMessage, { type: ProxyMessageType.SyncRequest, id: 1 });
-        await scheduler.idle;
+        await storageProxy.idle();
         assert.isTrue(handle.onSyncCalled);
     });
     it('can exchange models with the store', async () => {
         const mockStore = new MockStore();
-        const storageProxy = new StorageProxy(new CRDTSingleton(), mockStore, new StorageProxyScheduler());
+        const storageProxy = getStorageProxy(mockStore);
         // Registering a handle trigger the proxy to connect to the store and fetch the model.
-        const handle = new MockHandle('handle', storageProxy, {}, true, true);
+        const handle = new MockHandle(storageProxy);
         assert.deepEqual(mockStore.lastCapturedMessage, { type: ProxyMessageType.SyncRequest, id: 1 });
         const crdtData = {
             values: { 'e1': { value: { id: 'e1' }, version: { A: 1 } } },
@@ -72,9 +74,8 @@ describe('StorageProxy', async () => {
     });
     it('propagates exceptions to the store', async () => {
         const mockStore = new MockStore();
-        const scheduler = new StorageProxyScheduler();
-        const storageProxy = new StorageProxy(new CRDTSingleton(), mockStore, scheduler);
-        const handle = new MockHandle('handle', storageProxy, {}, true, true);
+        const storageProxy = getStorageProxy(mockStore);
+        const handle = new MockHandle(storageProxy);
         handle.onSync = () => {
             throw new Error('something wrong');
         };
@@ -89,7 +90,7 @@ describe('StorageProxy', async () => {
             return true;
         };
         await storageProxy.getParticleView();
-        await scheduler.idle;
+        await storageProxy.idle();
         assert.equal(mockStore.lastCapturedException.message, 'SystemException: exception Error raised when invoking system function StorageProxyScheduler::_dispatch on behalf of particle handle: something wrong');
     });
 });

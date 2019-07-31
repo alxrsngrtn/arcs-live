@@ -11,6 +11,9 @@ import { CRDTTypeRecord, VersionMap } from '../crdt/crdt';
 import { CollectionOperation, CRDTCollectionTypeRecord, Referenceable } from '../crdt/crdt-collection';
 import { CRDTSingletonTypeRecord, SingletonOperation } from '../crdt/crdt-singleton';
 import { Particle } from '../particle';
+import { Entity, EntityClass } from '../entity.js';
+import { IdGenerator } from '../id.js';
+import { Type } from '../type.js';
 import { StorageProxy } from './storage-proxy';
 export interface HandleOptions {
     keepSynced: boolean;
@@ -24,16 +27,29 @@ export interface HandleOptions {
 export declare abstract class Handle<T extends CRDTTypeRecord> {
     storageProxy: StorageProxy<T>;
     key: string;
-    clock: VersionMap;
+    private readonly idGenerator;
+    protected clock: VersionMap;
     options: HandleOptions;
     readonly canRead: boolean;
     readonly canWrite: boolean;
     particle: Particle;
-    constructor(key: string, storageProxy: StorageProxy<T>, particle: Particle, canRead: boolean, canWrite: boolean);
-    configure(options: HandleOptions): void;
+    entityClass: EntityClass | null;
+    readonly name: string;
+    readonly storage: StorageProxy<T>;
+    readonly type: Type;
+    readonly _id: string;
+    createIdentityFor(entity: Entity): void;
+    constructor(key: string, storageProxy: StorageProxy<T>, idGenerator: IdGenerator, particle: Particle, canRead: boolean, canWrite: boolean, name?: string);
+    configure(options: {
+        keepSynced?: boolean;
+        notifySync?: boolean;
+        notifyUpdate?: boolean;
+        notifyDesync?: boolean;
+    }): void;
+    protected reportUserExceptionInHost(exception: Error, particle: Particle, method: string): void;
     abstract onUpdate(updates: T['operation'][]): void;
     abstract onSync(): void;
-    onDesync(): void;
+    onDesync(): Promise<void>;
 }
 /**
  * A handle on a set of Entity data. Note that, as a set, a Collection can only

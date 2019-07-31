@@ -182,6 +182,9 @@ class TestEngine {
         // tslint:disable-next-line: no-any
         return StorageProxy.newProxy('X' + this._idCounters[1]++, store.type, this, fakePec, this._scheduler, store.name);
     }
+    newNoOpProxy(store) {
+        return StorageProxy.newNoOpProxy(store.type);
+    }
     newHandle(store, proxy, particle, canRead, canWrite) {
         return handleFor(proxy, this._idGenerator, store.name, particle.id, canRead, canWrite);
     }
@@ -647,6 +650,26 @@ describe('storage-proxy', () => {
         await engine.verifySubsequence('onHandleUpdate:P1:bar:+[v2]');
         await engine.verifySubsequence('onHandleUpdate:P2:bar:+[v2](originator)');
         await engine.verify('HandleStore:bar:v2');
+    });
+    it('ensures NoOpStorageProxy overrides all methods', async () => {
+        const engine = new TestEngine('arc-id');
+        const fooProxy = engine.newProxy({ type: engine.type, name: 'foo' });
+        const properties = [];
+        let proto = Object.getPrototypeOf(fooProxy);
+        while (proto && proto !== Object.prototype) {
+            Object.getOwnPropertyNames(proto).forEach(name => {
+                const desc = Object.getOwnPropertyDescriptor(proto, name);
+                if (desc && typeof desc.value === 'function') {
+                    properties.push(name);
+                }
+            });
+            proto = Object.getPrototypeOf(proto);
+        }
+        const noOpProxy = engine.newNoOpProxy({ type: engine.type });
+        const noOpProperties = Object.getOwnPropertyNames(Object.getPrototypeOf(noOpProxy));
+        properties.forEach(property => {
+            assert(noOpProperties.indexOf(property) !== -1);
+        });
     });
 });
 //# sourceMappingURL=storage-proxy-test.js.map

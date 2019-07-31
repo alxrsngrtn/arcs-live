@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>Singleton | arcs</title>
+	<title>HandleOld | arcs</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -56,10 +56,10 @@
 					<a href="../globals.html">Globals</a>
 				</li>
 				<li>
-					<a href="singleton.html">Singleton</a>
+					<a href="handleold.html">HandleOld</a>
 				</li>
 			</ul>
-			<h1>Class Singleton</h1>
+			<h1>Class HandleOld</h1>
 		</div>
 	</div>
 </header>
@@ -69,9 +69,7 @@
 			<section class="tsd-panel tsd-comment">
 				<div class="tsd-comment tsd-typography">
 					<div class="lead">
-						<p>A handle on a single entity. A particle&#39;s manifest dictates
-							the types of handles that need to be connected to that particle, and
-						the current recipe identifies which handles are connected.</p>
+						<p>Base class for Collections and Singletons.</p>
 					</div>
 				</div>
 			</section>
@@ -79,10 +77,16 @@
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<a href="handleold.html" class="tsd-signature-type">HandleOld</a>
+						<span class="target">HandleOld</span>
 						<ul class="tsd-hierarchy">
 							<li>
-								<span class="target">Singleton</span>
+								<a href="collection.html" class="tsd-signature-type">Collection</a>
+							</li>
+							<li>
+								<a href="singleton.html" class="tsd-signature-type">Singleton</a>
+							</li>
+							<li>
+								<a href="bigcollection.html" class="tsd-signature-type">BigCollection</a>
 							</li>
 						</ul>
 					</li>
@@ -92,65 +96,61 @@
 				<h2>Index</h2>
 				<section class="tsd-panel tsd-index-panel">
 					<div class="tsd-index-content">
-						<section class="tsd-index-section tsd-is-inherited">
+						<section class="tsd-index-section ">
 							<h3>Constructors</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-constructor tsd-parent-kind-class tsd-is-inherited"><a href="singleton.html#constructor" class="tsd-kind-icon">constructor</a></li>
+								<li class="tsd-kind-constructor tsd-parent-kind-class"><a href="handleold.html#constructor" class="tsd-kind-icon">constructor</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="singleton.html#_particleid" class="tsd-kind-icon">_particle<wbr>Id</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-overwrite tsd-is-protected"><a href="singleton.html#_storage" class="tsd-kind-icon">_storage</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="singleton.html#canread" class="tsd-kind-icon">can<wbr>Read</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="singleton.html#canwrite" class="tsd-kind-icon">can<wbr>Write</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="singleton.html#entityclass" class="tsd-kind-icon">entity<wbr>Class</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="singleton.html#name" class="tsd-kind-icon">name</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="singleton.html#options" class="tsd-kind-icon">options</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="handleold.html#_particleid" class="tsd-kind-icon">_particle<wbr>Id</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-protected"><a href="handleold.html#_storage" class="tsd-kind-icon">_storage</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="handleold.html#canread" class="tsd-kind-icon">can<wbr>Read</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="handleold.html#canwrite" class="tsd-kind-icon">can<wbr>Write</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="handleold.html#entityclass" class="tsd-kind-icon">entity<wbr>Class</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="handleold.html#idgenerator" class="tsd-kind-icon">id<wbr>Generator</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="handleold.html#name" class="tsd-kind-icon">name</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="handleold.html#options" class="tsd-kind-icon">options</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
 							<h3>Accessors</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-get-signature tsd-parent-kind-class tsd-is-inherited"><a href="singleton.html#_id" class="tsd-kind-icon">_id</a></li>
-								<li class="tsd-kind-get-signature tsd-parent-kind-class tsd-is-overwrite"><a href="singleton.html#storage" class="tsd-kind-icon">storage</a></li>
-								<li class="tsd-kind-get-signature tsd-parent-kind-class tsd-is-inherited"><a href="singleton.html#type" class="tsd-kind-icon">type</a></li>
+								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="handleold.html#_id" class="tsd-kind-icon">_id</a></li>
+								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="handleold.html#storage" class="tsd-kind-icon">storage</a></li>
+								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="handleold.html#type" class="tsd-kind-icon">type</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
 							<h3>Methods</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="singleton.html#_notify" class="tsd-kind-icon">_notify</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="singleton.html#_restore" class="tsd-kind-icon">_restore</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="singleton.html#_serialize" class="tsd-kind-icon">_serialize</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="singleton.html#clear" class="tsd-kind-icon">clear</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="singleton.html#configure" class="tsd-kind-icon">configure</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="singleton.html#createidentityfor" class="tsd-kind-icon">create<wbr>Identity<wbr>For</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="singleton.html#disable" class="tsd-kind-icon">disable</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-protected"><a href="singleton.html#generatekey" class="tsd-kind-icon">generate<wbr>Key</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="singleton.html#get" class="tsd-kind-icon">get</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-protected"><a href="singleton.html#reportsystemexceptioninhost" class="tsd-kind-icon">report<wbr>System<wbr>Exception<wbr>InHost</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-protected"><a href="singleton.html#reportuserexceptioninhost" class="tsd-kind-icon">report<wbr>User<wbr>Exception<wbr>InHost</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="singleton.html#set" class="tsd-kind-icon">set</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="singleton.html#tomanifeststring" class="tsd-kind-icon">to<wbr>Manifest<wbr>String</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="handleold.html#_notify" class="tsd-kind-icon">_notify</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="handleold.html#_serialize" class="tsd-kind-icon">_serialize</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="handleold.html#configure" class="tsd-kind-icon">configure</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="handleold.html#createidentityfor" class="tsd-kind-icon">create<wbr>Identity<wbr>For</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="handleold.html#disable" class="tsd-kind-icon">disable</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-protected"><a href="handleold.html#generatekey" class="tsd-kind-icon">generate<wbr>Key</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-protected"><a href="handleold.html#reportsystemexceptioninhost" class="tsd-kind-icon">report<wbr>System<wbr>Exception<wbr>InHost</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-protected"><a href="handleold.html#reportuserexceptioninhost" class="tsd-kind-icon">report<wbr>User<wbr>Exception<wbr>InHost</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="handleold.html#tomanifeststring" class="tsd-kind-icon">to<wbr>Manifest<wbr>String</a></li>
 							</ul>
 						</section>
 					</div>
 				</section>
 			</section>
-			<section class="tsd-panel-group tsd-member-group tsd-is-inherited">
+			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Constructors</h2>
-				<section class="tsd-panel tsd-member tsd-kind-constructor tsd-parent-kind-class tsd-is-inherited">
+				<section class="tsd-panel tsd-member tsd-kind-constructor tsd-parent-kind-class">
 					<a name="constructor" class="tsd-anchor"></a>
 					<h3>constructor</h3>
-					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class tsd-is-inherited">
-						<li class="tsd-signature tsd-kind-icon">new <wbr>Singleton<span class="tsd-signature-symbol">(</span>storage<span class="tsd-signature-symbol">: </span><a href="store.html" class="tsd-signature-type">Store</a>, idGenerator<span class="tsd-signature-symbol">: </span><a href="idgenerator.html" class="tsd-signature-type">IdGenerator</a>, name<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, particleId<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span>, canRead<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span>, canWrite<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="singleton.html" class="tsd-signature-type">Singleton</a></li>
+					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">new <wbr>Handle<wbr>Old<span class="tsd-signature-symbol">(</span>storage<span class="tsd-signature-symbol">: </span><a href="store.html" class="tsd-signature-type">Store</a>, idGenerator<span class="tsd-signature-symbol">: </span><a href="idgenerator.html" class="tsd-signature-type">IdGenerator</a>, name<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, particleId<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span>, canRead<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span>, canWrite<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="handleold.html" class="tsd-signature-type">HandleOld</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
-								<p>Inherited from <a href="handleold.html">HandleOld</a>.<a href="handleold.html#constructor">constructor</a></p>
 								<ul>
 									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/e9f89c0/src/runtime/handle.ts#L69">src/runtime/handle.ts:69</a></li>
 								</ul>
@@ -176,85 +176,88 @@
 									<h5>canWrite: <span class="tsd-signature-type">boolean</span></h5>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <a href="singleton.html" class="tsd-signature-type">Singleton</a></h4>
+							<h4 class="tsd-returns-title">Returns <a href="handleold.html" class="tsd-signature-type">HandleOld</a></h4>
 						</li>
 					</ul>
 				</section>
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Properties</h2>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
 					<a name="_particleid" class="tsd-anchor"></a>
 					<h3>_particle<wbr>Id</h3>
 					<div class="tsd-signature tsd-kind-icon">_particle<wbr>Id<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span></div>
 					<aside class="tsd-sources">
-						<p>Inherited from <a href="handleold.html">HandleOld</a>.<a href="handleold.html#_particleid">_particleId</a></p>
 						<ul>
 							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/e9f89c0/src/runtime/handle.ts#L65">src/runtime/handle.ts:65</a></li>
 						</ul>
 					</aside>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-overwrite tsd-is-protected">
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-protected">
 					<a name="_storage" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagProtected">Protected</span> _storage</h3>
-					<div class="tsd-signature tsd-kind-icon">_storage<span class="tsd-signature-symbol">:</span> <a href="../interfaces/singletonstore.html" class="tsd-signature-type">SingletonStore</a></div>
+					<div class="tsd-signature tsd-kind-icon">_storage<span class="tsd-signature-symbol">:</span> <a href="store.html" class="tsd-signature-type">Store</a></div>
 					<aside class="tsd-sources">
-						<p>Overrides <a href="handleold.html">HandleOld</a>.<a href="handleold.html#_storage">_storage</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/e9f89c0/src/runtime/handle.ts#L288">src/runtime/handle.ts:288</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/e9f89c0/src/runtime/handle.ts#L60">src/runtime/handle.ts:60</a></li>
 						</ul>
 					</aside>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
 					<a name="canread" class="tsd-anchor"></a>
 					<h3>can<wbr>Read</h3>
 					<div class="tsd-signature tsd-kind-icon">can<wbr>Read<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div>
 					<aside class="tsd-sources">
-						<p>Inherited from <a href="handleold.html">HandleOld</a>.<a href="handleold.html#canread">canRead</a></p>
 						<ul>
 							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/e9f89c0/src/runtime/handle.ts#L63">src/runtime/handle.ts:63</a></li>
 						</ul>
 					</aside>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
 					<a name="canwrite" class="tsd-anchor"></a>
 					<h3>can<wbr>Write</h3>
 					<div class="tsd-signature tsd-kind-icon">can<wbr>Write<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div>
 					<aside class="tsd-sources">
-						<p>Inherited from <a href="handleold.html">HandleOld</a>.<a href="handleold.html#canwrite">canWrite</a></p>
 						<ul>
 							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/e9f89c0/src/runtime/handle.ts#L64">src/runtime/handle.ts:64</a></li>
 						</ul>
 					</aside>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
 					<a name="entityclass" class="tsd-anchor"></a>
 					<h3>entity<wbr>Class</h3>
 					<div class="tsd-signature tsd-kind-icon">entity<wbr>Class<span class="tsd-signature-symbol">:</span> <a href="../globals.html#entityclass" class="tsd-signature-type">EntityClass</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span></div>
 					<aside class="tsd-sources">
-						<p>Inherited from <a href="handleold.html">HandleOld</a>.<a href="handleold.html#entityclass">entityClass</a></p>
 						<ul>
 							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/e9f89c0/src/runtime/handle.ts#L67">src/runtime/handle.ts:67</a></li>
 						</ul>
 					</aside>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private">
+					<a name="idgenerator" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> id<wbr>Generator</h3>
+					<div class="tsd-signature tsd-kind-icon">id<wbr>Generator<span class="tsd-signature-symbol">:</span> <a href="idgenerator.html" class="tsd-signature-type">IdGenerator</a></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/e9f89c0/src/runtime/handle.ts#L61">src/runtime/handle.ts:61</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
 					<a name="name" class="tsd-anchor"></a>
 					<h3>name</h3>
 					<div class="tsd-signature tsd-kind-icon">name<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
-						<p>Inherited from <a href="handleold.html">HandleOld</a>.<a href="handleold.html#name">name</a></p>
 						<ul>
 							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/e9f89c0/src/runtime/handle.ts#L62">src/runtime/handle.ts:62</a></li>
 						</ul>
 					</aside>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
 					<a name="options" class="tsd-anchor"></a>
 					<h3>options</h3>
 					<div class="tsd-signature tsd-kind-icon">options<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">HandleOptions</span></div>
 					<aside class="tsd-sources">
-						<p>Inherited from <a href="handleold.html">HandleOld</a>.<a href="handleold.html#options">options</a></p>
 						<ul>
 							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/e9f89c0/src/runtime/handle.ts#L66">src/runtime/handle.ts:66</a></li>
 						</ul>
@@ -263,16 +266,15 @@
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Accessors</h2>
-				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class tsd-is-inherited">
+				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class">
 					<a name="_id" class="tsd-anchor"></a>
 					<h3>_id</h3>
-					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class tsd-is-inherited">
+					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class">
 						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> _id<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
-								<p>Inherited from <a href="handleold.html">HandleOld</a>.<a href="handleold.html#_id">_id</a></p>
 								<ul>
 									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/e9f89c0/src/runtime/handle.ts#L134">src/runtime/handle.ts:134</a></li>
 								</ul>
@@ -281,34 +283,32 @@
 						</li>
 					</ul>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class tsd-is-overwrite">
+				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class">
 					<a name="storage" class="tsd-anchor"></a>
 					<h3>storage</h3>
-					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class tsd-is-overwrite">
-						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> storage<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Readonly</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/singletonstore.html" class="tsd-signature-type">SingletonStore</a><span class="tsd-signature-symbol">&gt;</span></li>
+					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> storage<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Readonly</span><span class="tsd-signature-symbol">&lt;</span><a href="store.html" class="tsd-signature-type">Store</a><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
-								<p>Overrides <a href="handleold.html">HandleOld</a>.<a href="handleold.html#storage">storage</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/e9f89c0/src/runtime/handle.ts#L370">src/runtime/handle.ts:370</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/e9f89c0/src/runtime/handle.ts#L138">src/runtime/handle.ts:138</a></li>
 								</ul>
 							</aside>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Readonly</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/singletonstore.html" class="tsd-signature-type">SingletonStore</a><span class="tsd-signature-symbol">&gt;</span></h4>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Readonly</span><span class="tsd-signature-symbol">&lt;</span><a href="store.html" class="tsd-signature-type">Store</a><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class tsd-is-inherited">
+				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class">
 					<a name="type" class="tsd-anchor"></a>
 					<h3>type</h3>
-					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class tsd-is-inherited">
+					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class">
 						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> type<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="type.html" class="tsd-signature-type">Type</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
-								<p>Inherited from <a href="handleold.html">HandleOld</a>.<a href="handleold.html#type">type</a></p>
 								<ul>
 									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/e9f89c0/src/runtime/handle.ts#L130">src/runtime/handle.ts:130</a></li>
 								</ul>
@@ -320,18 +320,17 @@
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Methods</h2>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
 					<a name="_notify" class="tsd-anchor"></a>
-					<h3>_notify</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
-						<li class="tsd-signature tsd-kind-icon">_notify<span class="tsd-signature-symbol">(</span>kind<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, particle<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Particle</span>, details<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
+					<h3><span class="tsd-flag ts-flagAbstract">Abstract</span> _notify</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">_notify<span class="tsd-signature-symbol">(</span>kind<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, particle<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Particle</span>, details<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">__type</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
-								<p>Overrides <a href="handleold.html">HandleOld</a>.<a href="handleold.html#_notify">_notify</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/e9f89c0/src/runtime/handle.ts#L290">src/runtime/handle.ts:290</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/e9f89c0/src/runtime/handle.ts#L69">src/runtime/handle.ts:69</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -343,51 +342,22 @@
 									<h5>particle: <span class="tsd-signature-type">Particle</span></h5>
 								</li>
 								<li>
-									<h5>details: <span class="tsd-signature-type">any</span></h5>
+									<h5>details: <span class="tsd-signature-type">__type</span></h5>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">any</span></h4>
 						</li>
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
-					<a name="_restore" class="tsd-anchor"></a>
-					<h3>_restore</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">_restore<span class="tsd-signature-symbol">(</span>model<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="particlespec.html" class="tsd-signature-type">ParticleSpec</a><span class="tsd-signature-symbol"> | </span><a href="entity.html" class="tsd-signature-type">Entity</a><span class="tsd-signature-symbol"> | </span><a href="reference.html" class="tsd-signature-type">Reference</a></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/e9f89c0/src/runtime/handle.ts#L323">src/runtime/handle.ts:323</a></li>
-								</ul>
-							</aside>
-							<h4 class="tsd-parameters-title">Parameters</h4>
-							<ul class="tsd-parameters">
-								<li>
-									<h5>model: <span class="tsd-signature-type">any</span></h5>
-								</li>
-							</ul>
-							<h4 class="tsd-returns-title">Returns <a href="particlespec.html" class="tsd-signature-type">ParticleSpec</a>
-								<span class="tsd-signature-symbol"> | </span>
-								<a href="entity.html" class="tsd-signature-type">Entity</a>
-								<span class="tsd-signature-symbol"> | </span>
-								<a href="reference.html" class="tsd-signature-type">Reference</a>
-							</h4>
-						</li>
-					</ul>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
 					<a name="_serialize" class="tsd-anchor"></a>
 					<h3>_serialize</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
 						<li class="tsd-signature tsd-kind-icon">_serialize<span class="tsd-signature-symbol">(</span>entity<span class="tsd-signature-symbol">: </span><a href="../interfaces/storable.html" class="tsd-signature-type">Storable</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">object</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
-								<p>Inherited from <a href="handleold.html">HandleOld</a>.<a href="handleold.html#_serialize">_serialize</a></p>
 								<ul>
 									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/e9f89c0/src/runtime/handle.ts#L116">src/runtime/handle.ts:116</a></li>
 								</ul>
@@ -411,43 +381,14 @@
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
-					<a name="clear" class="tsd-anchor"></a>
-					<h3>clear</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">clear<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/e9f89c0/src/runtime/handle.ts#L362">src/runtime/handle.ts:362</a></li>
-								</ul>
-							</aside>
-							<div class="tsd-comment tsd-typography">
-								<div class="lead">
-									<p>Clears any entity currently in the Singleton.</p>
-								</div>
-								<dl class="tsd-comment-tags">
-									<dt>throws</dt>
-									<dd><p>{Error} if this Singleton is not configured as a writeable handle (i.e. &#39;out&#39; or &#39;inout&#39;)
-										in the particle&#39;s manifest.</p>
-									</dd>
-								</dl>
-							</div>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
-						</li>
-					</ul>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
 					<a name="configure" class="tsd-anchor"></a>
 					<h3>configure</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
 						<li class="tsd-signature tsd-kind-icon">configure<span class="tsd-signature-symbol">(</span>options<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
-								<p>Inherited from <a href="handleold.html">HandleOld</a>.<a href="handleold.html#configure">configure</a></p>
 								<ul>
 									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/e9f89c0/src/runtime/handle.ts#L101">src/runtime/handle.ts:101</a></li>
 								</ul>
@@ -462,16 +403,15 @@
 						</li>
 					</ul>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
 					<a name="createidentityfor" class="tsd-anchor"></a>
 					<h3>create<wbr>Identity<wbr>For</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
 						<li class="tsd-signature tsd-kind-icon">create<wbr>Identity<wbr>For<span class="tsd-signature-symbol">(</span>entity<span class="tsd-signature-symbol">: </span><a href="entity.html" class="tsd-signature-type">Entity</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
-								<p>Inherited from <a href="handleold.html">HandleOld</a>.<a href="handleold.html#createidentityfor">createIdentityFor</a></p>
 								<ul>
 									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/e9f89c0/src/runtime/handle.ts#L126">src/runtime/handle.ts:126</a></li>
 								</ul>
@@ -486,16 +426,15 @@
 						</li>
 					</ul>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
 					<a name="disable" class="tsd-anchor"></a>
 					<h3>disable</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
 						<li class="tsd-signature tsd-kind-icon">disable<span class="tsd-signature-symbol">(</span>particle<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">Particle</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
-								<p>Inherited from <a href="handleold.html">HandleOld</a>.<a href="handleold.html#disable">disable</a></p>
 								<ul>
 									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/e9f89c0/src/runtime/handle.ts#L154">src/runtime/handle.ts:154</a></li>
 								</ul>
@@ -516,16 +455,15 @@
 						</li>
 					</ul>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-protected">
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-protected">
 					<a name="generatekey" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagProtected">Protected</span> generate<wbr>Key</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-protected">
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-protected">
 						<li class="tsd-signature tsd-kind-icon">generate<wbr>Key<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
-								<p>Inherited from <a href="handleold.html">HandleOld</a>.<a href="handleold.html#generatekey">generateKey</a></p>
 								<ul>
 									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/e9f89c0/src/runtime/handle.ts#L146">src/runtime/handle.ts:146</a></li>
 								</ul>
@@ -534,42 +472,15 @@
 						</li>
 					</ul>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
-					<a name="get" class="tsd-anchor"></a>
-					<h3>get</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">get<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="particlespec.html" class="tsd-signature-type">ParticleSpec</a><span class="tsd-signature-symbol"> | </span><a href="entity.html" class="tsd-signature-type">Entity</a><span class="tsd-signature-symbol"> | </span><a href="reference.html" class="tsd-signature-type">Reference</a><span class="tsd-signature-symbol">&gt;</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/e9f89c0/src/runtime/handle.ts#L315">src/runtime/handle.ts:315</a></li>
-								</ul>
-							</aside>
-							<div class="tsd-comment tsd-typography">
-								<dl class="tsd-comment-tags">
-									<dt>throws</dt>
-									<dd><p>{Error} if this Singleton is not configured as a readable handle (i.e. &#39;in&#39; or &#39;inout&#39;)
-										in the particle&#39;s manifest.</p>
-									</dd>
-								</dl>
-							</div>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="particlespec.html" class="tsd-signature-type">ParticleSpec</a><span class="tsd-signature-symbol"> | </span><a href="entity.html" class="tsd-signature-type">Entity</a><span class="tsd-signature-symbol"> | </span><a href="reference.html" class="tsd-signature-type">Reference</a><span class="tsd-signature-symbol">&gt;</span></h4>
-							<p>the Entity contained by the Singleton, or undefined if the Singleton is cleared.</p>
-						</li>
-					</ul>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-protected">
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-protected">
 					<a name="reportsystemexceptioninhost" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagProtected">Protected</span> report<wbr>System<wbr>Exception<wbr>InHost</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-protected">
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-protected">
 						<li class="tsd-signature tsd-kind-icon">report<wbr>System<wbr>Exception<wbr>InHost<span class="tsd-signature-symbol">(</span>exception<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Error</span>, method<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
-								<p>Inherited from <a href="handleold.html">HandleOld</a>.<a href="handleold.html#reportsystemexceptioninhost">reportSystemExceptionInHost</a></p>
 								<ul>
 									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/e9f89c0/src/runtime/handle.ts#L92">src/runtime/handle.ts:92</a></li>
 								</ul>
@@ -587,16 +498,15 @@
 						</li>
 					</ul>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-protected">
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-protected">
 					<a name="reportuserexceptioninhost" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagProtected">Protected</span> report<wbr>User<wbr>Exception<wbr>InHost</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-protected">
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-protected">
 						<li class="tsd-signature tsd-kind-icon">report<wbr>User<wbr>Exception<wbr>InHost<span class="tsd-signature-symbol">(</span>exception<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Error</span>, particle<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Particle</span>, method<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
-								<p>Inherited from <a href="handleold.html">HandleOld</a>.<a href="handleold.html#reportuserexceptioninhost">reportUserExceptionInHost</a></p>
 								<ul>
 									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/e9f89c0/src/runtime/handle.ts#L88">src/runtime/handle.ts:88</a></li>
 								</ul>
@@ -618,49 +528,14 @@
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
-					<a name="set" class="tsd-anchor"></a>
-					<h3>set</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">set<span class="tsd-signature-symbol">(</span>entity<span class="tsd-signature-symbol">: </span><a href="../interfaces/storable.html" class="tsd-signature-type">Storable</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/e9f89c0/src/runtime/handle.ts#L344">src/runtime/handle.ts:344</a></li>
-								</ul>
-							</aside>
-							<div class="tsd-comment tsd-typography">
-								<div class="lead">
-									<p>Stores a new entity into the Singleton, replacing any existing entity.</p>
-								</div>
-								<dl class="tsd-comment-tags">
-									<dt>throws</dt>
-									<dd><p>{Error} if this Singleton is not configured as a writeable handle (i.e. &#39;out&#39; or &#39;inout&#39;)
-										in the particle&#39;s manifest.</p>
-									</dd>
-								</dl>
-							</div>
-							<h4 class="tsd-parameters-title">Parameters</h4>
-							<ul class="tsd-parameters">
-								<li>
-									<h5>entity: <a href="../interfaces/storable.html" class="tsd-signature-type">Storable</a></h5>
-								</li>
-							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
-						</li>
-					</ul>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
 					<a name="tomanifeststring" class="tsd-anchor"></a>
 					<h3>to<wbr>Manifest<wbr>String</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
 						<li class="tsd-signature tsd-kind-icon">to<wbr>Manifest<wbr>String<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
-								<p>Inherited from <a href="handleold.html">HandleOld</a>.<a href="handleold.html#tomanifeststring">toManifestString</a></p>
 								<ul>
 									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/e9f89c0/src/runtime/handle.ts#L142">src/runtime/handle.ts:142</a></li>
 								</ul>
@@ -684,79 +559,70 @@
 				</ul>
 				<ul class="current">
 					<li class="current tsd-kind-class">
-						<a href="singleton.html" class="tsd-kind-icon">Singleton</a>
+						<a href="handleold.html" class="tsd-kind-icon">Handle<wbr>Old</a>
 						<ul>
-							<li class=" tsd-kind-constructor tsd-parent-kind-class tsd-is-inherited">
-								<a href="singleton.html#constructor" class="tsd-kind-icon">constructor</a>
+							<li class=" tsd-kind-constructor tsd-parent-kind-class">
+								<a href="handleold.html#constructor" class="tsd-kind-icon">constructor</a>
 							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
-								<a href="singleton.html#_particleid" class="tsd-kind-icon">_particle<wbr>Id</a>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="handleold.html#_particleid" class="tsd-kind-icon">_particle<wbr>Id</a>
 							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-overwrite tsd-is-protected">
-								<a href="singleton.html#_storage" class="tsd-kind-icon">_storage</a>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-protected">
+								<a href="handleold.html#_storage" class="tsd-kind-icon">_storage</a>
 							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
-								<a href="singleton.html#canread" class="tsd-kind-icon">can<wbr>Read</a>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="handleold.html#canread" class="tsd-kind-icon">can<wbr>Read</a>
 							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
-								<a href="singleton.html#canwrite" class="tsd-kind-icon">can<wbr>Write</a>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="handleold.html#canwrite" class="tsd-kind-icon">can<wbr>Write</a>
 							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
-								<a href="singleton.html#entityclass" class="tsd-kind-icon">entity<wbr>Class</a>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="handleold.html#entityclass" class="tsd-kind-icon">entity<wbr>Class</a>
 							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
-								<a href="singleton.html#name" class="tsd-kind-icon">name</a>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
+								<a href="handleold.html#idgenerator" class="tsd-kind-icon">id<wbr>Generator</a>
 							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
-								<a href="singleton.html#options" class="tsd-kind-icon">options</a>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="handleold.html#name" class="tsd-kind-icon">name</a>
 							</li>
-							<li class=" tsd-kind-get-signature tsd-parent-kind-class tsd-is-inherited">
-								<a href="singleton.html#_id" class="tsd-kind-icon">_id</a>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="handleold.html#options" class="tsd-kind-icon">options</a>
 							</li>
-							<li class=" tsd-kind-get-signature tsd-parent-kind-class tsd-is-overwrite">
-								<a href="singleton.html#storage" class="tsd-kind-icon">storage</a>
+							<li class=" tsd-kind-get-signature tsd-parent-kind-class">
+								<a href="handleold.html#_id" class="tsd-kind-icon">_id</a>
 							</li>
-							<li class=" tsd-kind-get-signature tsd-parent-kind-class tsd-is-inherited">
-								<a href="singleton.html#type" class="tsd-kind-icon">type</a>
+							<li class=" tsd-kind-get-signature tsd-parent-kind-class">
+								<a href="handleold.html#storage" class="tsd-kind-icon">storage</a>
 							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
-								<a href="singleton.html#_notify" class="tsd-kind-icon">_notify</a>
-							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class">
-								<a href="singleton.html#_restore" class="tsd-kind-icon">_restore</a>
-							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
-								<a href="singleton.html#_serialize" class="tsd-kind-icon">_serialize</a>
+							<li class=" tsd-kind-get-signature tsd-parent-kind-class">
+								<a href="handleold.html#type" class="tsd-kind-icon">type</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
-								<a href="singleton.html#clear" class="tsd-kind-icon">clear</a>
-							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
-								<a href="singleton.html#configure" class="tsd-kind-icon">configure</a>
-							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
-								<a href="singleton.html#createidentityfor" class="tsd-kind-icon">create<wbr>Identity<wbr>For</a>
-							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
-								<a href="singleton.html#disable" class="tsd-kind-icon">disable</a>
-							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-protected">
-								<a href="singleton.html#generatekey" class="tsd-kind-icon">generate<wbr>Key</a>
+								<a href="handleold.html#_notify" class="tsd-kind-icon">_notify</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
-								<a href="singleton.html#get" class="tsd-kind-icon">get</a>
-							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-protected">
-								<a href="singleton.html#reportsystemexceptioninhost" class="tsd-kind-icon">report<wbr>System<wbr>Exception<wbr>InHost</a>
-							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-protected">
-								<a href="singleton.html#reportuserexceptioninhost" class="tsd-kind-icon">report<wbr>User<wbr>Exception<wbr>InHost</a>
+								<a href="handleold.html#_serialize" class="tsd-kind-icon">_serialize</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
-								<a href="singleton.html#set" class="tsd-kind-icon">set</a>
+								<a href="handleold.html#configure" class="tsd-kind-icon">configure</a>
 							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
-								<a href="singleton.html#tomanifeststring" class="tsd-kind-icon">to<wbr>Manifest<wbr>String</a>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="handleold.html#createidentityfor" class="tsd-kind-icon">create<wbr>Identity<wbr>For</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="handleold.html#disable" class="tsd-kind-icon">disable</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-protected">
+								<a href="handleold.html#generatekey" class="tsd-kind-icon">generate<wbr>Key</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-protected">
+								<a href="handleold.html#reportsystemexceptioninhost" class="tsd-kind-icon">report<wbr>System<wbr>Exception<wbr>InHost</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-protected">
+								<a href="handleold.html#reportuserexceptioninhost" class="tsd-kind-icon">report<wbr>User<wbr>Exception<wbr>InHost</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="handleold.html#tomanifeststring" class="tsd-kind-icon">to<wbr>Manifest<wbr>String</a>
 							</li>
 						</ul>
 					</li>

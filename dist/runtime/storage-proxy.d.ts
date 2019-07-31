@@ -9,7 +9,7 @@
  */
 import { PECInnerPort } from './api-channel.js';
 import { PropagatedException } from './arc-exceptions.js';
-import { Handle, HandleOptions } from './handle.js';
+import { Handle, HandleOld, HandleOptions } from './handle.js';
 import { ParticleExecutionContext } from './particle-execution-context.js';
 import { Particle } from './particle.js';
 import { SerializedModelEntry, ModelValue } from './storage/crdt-collection-model.js';
@@ -60,7 +60,7 @@ export declare abstract class StorageProxy implements Store {
     protected synchronized: SyncState;
     protected observers: {
         particle: Particle;
-        handle: Handle;
+        handle: HandleOld;
     }[];
     private readonly updates;
     protected barrier: string | null;
@@ -204,7 +204,7 @@ export declare class StorageProxyScheduler {
     private _idleResolver;
     private _idle;
     constructor();
-    enqueue(particle: Particle, handle: Handle, args: [string, Particle, {}]): void;
+    enqueue(particle: Particle, handle: HandleOld, args: [string, Particle, {}]): void;
     readonly busy: boolean;
     _updateIdle(): void;
     readonly idle: Promise<void>;

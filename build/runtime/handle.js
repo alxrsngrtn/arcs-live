@@ -34,10 +34,10 @@ function restore(entry, entityClass) {
 /**
  * Base class for Collections and Singletons.
  */
-export class Handle {
+export class HandleOld {
     // TODO type particleId, marked as string, but called with number
     constructor(storage, idGenerator, name, particleId, canRead, canWrite) {
-        assert(!(storage instanceof Handle));
+        assert(!(storage instanceof HandleOld));
         this._storage = storage;
         this.idGenerator = idGenerator;
         this.name = name || this.storage.name;
@@ -124,7 +124,7 @@ export class Handle {
  * need to be connected to that particle, and the current recipe identifies
  * which handles are connected.
  */
-export class Collection extends Handle {
+export class Collection extends HandleOld {
     async _notify(kind, particle, details) {
         assert(this.canRead, '_notify should not be called for non-readable handles');
         switch (kind) {
@@ -229,7 +229,7 @@ export class Collection extends Handle {
  * the types of handles that need to be connected to that particle, and
  * the current recipe identifies which handles are connected.
  */
-export class Singleton extends Handle {
+export class Singleton extends HandleOld {
     // Called by StorageProxy.
     async _notify(kind, particle, details) {
         assert(this.canRead, '_notify should not be called for non-readable handles');
@@ -345,7 +345,7 @@ class Cursor {
  * operate on BigCollections should do so in the setHandles() call, since BigCollections do not
  * trigger onHandleSync() or onHandleUpdate().
  */
-export class BigCollection extends Handle {
+export class BigCollection extends HandleOld {
     configure(options) {
         throw new Error('BigCollections do not support sync/update configuration');
     }

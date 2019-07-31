@@ -7,6 +7,7 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
+import { IdGenerator } from '../../id.js';
 import { ActiveStore, StorageMode } from '../store.js';
 import { Exists, Driver } from '../drivers/driver-factory.js';
 import { CRDTSingleton } from '../../crdt/crdt-singleton.js';
@@ -64,8 +65,8 @@ export class MockStorageKey extends StorageKey {
     }
 }
 export class MockHandle extends Handle {
-    constructor() {
-        super(...arguments);
+    constructor(storageProxy) {
+        super('handle', storageProxy, IdGenerator.newSession(), {}, true, true);
         this.onSyncCalled = false;
         this.lastUpdate = null;
     }

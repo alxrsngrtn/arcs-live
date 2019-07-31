@@ -15,6 +15,9 @@ import { EntityClass, Entity } from './entity.js';
 import { Store, SingletonStore, CollectionStore, BigCollectionStore } from './store.js';
 import { IdGenerator } from './id.js';
 import { SYMBOL_INTERNALS } from './symbols.js';
+import { Handle as HandleNG } from './storageNG/handle.js';
+import { CRDTTypeRecord } from './crdt/crdt';
+export declare type Handle = HandleOld | HandleNG<CRDTTypeRecord>;
 /**
  * An interface representing anything storable in a Handle. Concretely, this is the {@link Entity}
  * and {@link ClientReference} classes.
@@ -33,7 +36,7 @@ export interface HandleOptions {
 /**
  * Base class for Collections and Singletons.
  */
-export declare abstract class Handle {
+export declare abstract class HandleOld {
     protected _storage: Store;
     private readonly idGenerator;
     readonly name: string;
@@ -67,7 +70,7 @@ export declare abstract class Handle {
  * need to be connected to that particle, and the current recipe identifies
  * which handles are connected.
  */
-export declare class Collection extends Handle {
+export declare class Collection extends HandleOld {
     protected _storage: CollectionStore;
     _notify(kind: string, particle: Particle, details: any): Promise<void>;
     /**
@@ -109,7 +112,7 @@ export declare class Collection extends Handle {
  * the types of handles that need to be connected to that particle, and
  * the current recipe identifies which handles are connected.
  */
-export declare class Singleton extends Handle {
+export declare class Singleton extends HandleOld {
     protected _storage: SingletonStore;
     _notify(kind: string, particle: Particle, details: any): Promise<void>;
     /**
@@ -159,7 +162,7 @@ declare class Cursor {
  * operate on BigCollections should do so in the setHandles() call, since BigCollections do not
  * trigger onHandleSync() or onHandleUpdate().
  */
-export declare class BigCollection extends Handle {
+export declare class BigCollection extends HandleOld {
     protected _storage: BigCollectionStore;
     configure(options: any): void;
     _notify(kind: string, particle: Particle, details: any): Promise<void>;
@@ -193,5 +196,5 @@ export declare class BigCollection extends Handle {
     }): Promise<Cursor>;
     readonly storage: Readonly<BigCollectionStore>;
 }
-export declare function handleFor(storage: Store, idGenerator: IdGenerator, name?: string, particleId?: string, canRead?: boolean, canWrite?: boolean): Handle;
+export declare function handleFor(storage: Store, idGenerator: IdGenerator, name?: string, particleId?: string, canRead?: boolean, canWrite?: boolean): HandleOld;
 export {};

@@ -10,6 +10,7 @@
 import { assert } from '../platform/assert-web.js';
 import { mapStackTrace } from '../platform/sourcemapped-stacktrace-web.js';
 import { SystemException } from './arc-exceptions.js';
+import { HandleOld } from './handle.js';
 import { CrdtCollectionModel } from './storage/crdt-collection-model.js';
 import { BigCollectionType, CollectionType } from './type.js';
 import { Id } from './id.js';
@@ -86,7 +87,8 @@ export class StorageProxy {
         if (!handle.canRead) {
             return;
         }
-        this.observers.push({ particle, handle });
+        assert(handle instanceof HandleOld);
+        this.observers.push({ particle, handle: handle });
         // Attach an event listener to the backing store when the first readable handle is registered.
         if (!this.listenerAttached) {
             this.port.InitializeProxy(this, x => this._onUpdate(x));

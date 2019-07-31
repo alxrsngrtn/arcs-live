@@ -11,17 +11,19 @@ import { assert } from '../../../platform/chai-web.js';
 import { CRDTCollection } from '../../crdt/crdt-collection.js';
 import { CRDTSingleton } from '../../crdt/crdt-singleton.js';
 import { CollectionHandle, SingletonHandle } from '../handle.js';
-import { StorageProxy, StorageProxyScheduler } from '../storage-proxy.js';
+import { StorageProxy } from '../storage-proxy.js';
 import { MockStore } from '../testing/test-storage.js';
+import { IdGenerator } from '../../id.js';
+import { EntityType } from '../../type.js';
 function getCollectionHandle() {
     // tslint:disable-next-line: no-any
     const fakeParticle = {};
-    return new CollectionHandle('me', new StorageProxy(new CRDTCollection(), new MockStore(), new StorageProxyScheduler()), fakeParticle, true, true);
+    return new CollectionHandle('me', new StorageProxy('id', new CRDTCollection(), new MockStore(), EntityType.make([], {}), null), IdGenerator.newSession(), fakeParticle, true, true);
 }
 function getSingletonHandle() {
     // tslint:disable-next-line: no-any
     const fakeParticle = {};
-    return new SingletonHandle('me', new StorageProxy(new CRDTSingleton(), new MockStore(), new StorageProxyScheduler()), fakeParticle, true, true);
+    return new SingletonHandle('me', new StorageProxy('id', new CRDTSingleton(), new MockStore(), EntityType.make([], {}), null), IdGenerator.newSession(), fakeParticle, true, true);
 }
 describe('CollectionHandle', () => {
     it('can add and remove elements', async () => {

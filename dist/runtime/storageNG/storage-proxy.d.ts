@@ -10,6 +10,8 @@
 import { PropagatedException } from '../arc-exceptions.js';
 import { CRDTModel, CRDTOperation, CRDTTypeRecord, VersionMap } from '../crdt/crdt.js';
 import { Particle } from '../particle.js';
+import { ParticleExecutionContext } from '../particle-execution-context.js';
+import { Type } from '../type.js';
 import { Handle } from './handle.js';
 import { ActiveStore, ProxyMessage } from './store.js';
 /**
@@ -19,12 +21,16 @@ export declare class StorageProxy<T extends CRDTTypeRecord> {
     private handles;
     private crdt;
     private id;
+    apiChannelId: string;
     private store;
+    readonly type: Type;
+    pec: ParticleExecutionContext;
     private listenerAttached;
     private keepSynced;
     private synchronized;
     private readonly scheduler;
-    constructor(crdt: CRDTModel<T>, store: ActiveStore<T>, scheduler: StorageProxyScheduler<T>);
+    constructor(apiChannelId: string, crdt: CRDTModel<T>, store: ActiveStore<T>, type: Type, pec: ParticleExecutionContext);
+    idle(): Promise<void>;
     reportExceptionInHost(exception: PropagatedException): void;
     registerHandle(handle: Handle<T>): VersionMap;
     applyOp(op: CRDTOperation): Promise<boolean>;
@@ -61,5 +67,6 @@ export declare class StorageProxyScheduler<T extends CRDTTypeRecord> {
     readonly idle: Promise<void>;
     _schedule(): void;
     _dispatch(): void;
+    _dispatchh(handle: Handle<T>, update: Event): Promise<void>;
 }
 export {};

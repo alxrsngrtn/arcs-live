@@ -1,5 +1,9 @@
-commit 5aae1660711deb733ccf35b99f283accae311fce
-Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
-Date:   Wed Jul 31 16:42:00 2019 +1000
+commit e9f89c03888dff7d1b457db1d495e03d7ef572e6
+Author: galganif <4754402+galganif@users.noreply.github.com>
+Date:   Thu Aug 1 09:11:27 2019 +1000
 
-    Fix filename in DevShell seed example (#3425)
+    add some missing pieces to handleNG, so that it should now be more co… (#3426)
+    
+    * add some missing pieces to handleNG, so that it should now be more compatible with the old handle. define a new Handle type that is the OR of the two handle, all other classes above use this new type. After this I will be able to send updates from the new handle to the particle.
+    
+    * move id to be first argument

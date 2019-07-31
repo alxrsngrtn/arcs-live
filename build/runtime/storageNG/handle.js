@@ -8,15 +8,21 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { assert } from '../../platform/assert-web.js';
+import { UserException } from '../arc-exceptions.js';
 import { CollectionOpTypes } from '../crdt/crdt-collection';
 import { SingletonOpTypes } from '../crdt/crdt-singleton';
+import { Entity } from '../entity.js';
+import { Id } from '../id.js';
+import { EntityType } from '../type.js';
 /**
  * Base class for Handles.
  */
 export class Handle {
-    constructor(key, storageProxy, particle, canRead, canWrite) {
+    constructor(key, storageProxy, idGenerator, particle, canRead, canWrite, name) {
         this.key = key;
+        this.name = name;
         this.storageProxy = storageProxy;
+        this.idGenerator = idGenerator;
         this.particle = particle;
         this.options = {
             keepSynced: true,
@@ -26,13 +32,40 @@ export class Handle {
         };
         this.canRead = canRead;
         this.canWrite = canWrite;
+        const type = this.storageProxy.type.getContainedType() || this.storageProxy.type;
+        if (type instanceof EntityType) {
+            this.entityClass = type.entitySchema.entityClass(this.storageProxy.pec);
+        }
         this.clock = this.storageProxy.registerHandle(this);
     }
+    //TODO: this is used by multiplexer-dom-particle.ts, it probably won't work with this kind of store.
+    get storage() {
+        return this.storageProxy;
+    }
+    get type() {
+        return this.storageProxy.type;
+    }
+    // TODO: after NG migration, this can be renamed to something like "apiChannelId()".
+    get _id() {
+        return this.storageProxy.apiChannelId;
+    }
+    createIdentityFor(entity) {
+        Entity.createIdentity(entity, Id.fromString(this._id), this.idGenerator);
+    }
+    // `options` may contain any of:
+    // - keepSynced (bool): load full data on startup, maintain data in proxy and resync as required
+    // - notifySync (bool): if keepSynced is true, call onHandleSync when the full data is received
+    // - notifyUpdate (bool): call onHandleUpdate for every change event received
+    // - notifyDesync (bool): if keepSynced is true, call onHandleDesync when desync is detected
     configure(options) {
         assert(this.canRead, 'configure can only be called on readable Handles');
-        this.options = options;
+        this.options = { ...this.options, ...options };
     }
-    onDesync() {
+    reportUserExceptionInHost(exception, particle, method) {
+        this.storageProxy.reportExceptionInHost(new UserException(exception, method, this.key, particle.spec.name));
+    }
+    async onDesync() {
+        await this.particle.callOnHandleDesync(this, e => this.reportUserExceptionInHost(e, this.particle, 'onHandleUpdate'));
     }
 }
 /**

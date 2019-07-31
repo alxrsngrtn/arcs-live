@@ -12,6 +12,7 @@ import { CRDTTypeRecord, CRDTOperation } from '../../crdt/crdt.js';
 import { ActiveStore, ProxyMessage, ProxyCallback } from '../store.js';
 import { Exists, StorageDriverProvider, Driver, ReceiveMethod } from '../drivers/driver-factory.js';
 import { StorageKey } from '../storage-key.js';
+import { StorageProxy } from '../storage-proxy.js';
 import { Handle } from '../handle.js';
 /**
  * These classes are intended to provide **extremely** simple fake objects to use
@@ -47,6 +48,7 @@ export declare class MockStorageKey extends StorageKey {
 export declare class MockHandle<T extends CRDTTypeRecord> extends Handle<T> {
     onSyncCalled: boolean;
     lastUpdate: CRDTOperation[];
+    constructor(storageProxy: StorageProxy<T>);
     onSync(): void;
     onUpdate(ops: CRDTOperation[]): void;
 }

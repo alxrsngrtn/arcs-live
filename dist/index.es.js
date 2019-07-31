@@ -871,7 +871,8 @@ class StorageProxy {
         if (!handle.canRead) {
             return;
         }
-        this.observers.push({ particle, handle });
+        assert(handle instanceof HandleOld);
+        this.observers.push({ particle, handle: handle });
         // Attach an event listener to the backing store when the first readable handle is registered.
         if (!this.listenerAttached) {
             this.port.InitializeProxy(this, x => this._onUpdate(x));
@@ -1457,10 +1458,10 @@ function restore(entry, entityClass) {
 /**
  * Base class for Collections and Singletons.
  */
-class Handle {
+class HandleOld {
     // TODO type particleId, marked as string, but called with number
     constructor(storage, idGenerator, name, particleId, canRead, canWrite) {
-        assert(!(storage instanceof Handle));
+        assert(!(storage instanceof HandleOld));
         this._storage = storage;
         this.idGenerator = idGenerator;
         this.name = name || this.storage.name;
@@ -1547,7 +1548,7 @@ class Handle {
  * need to be connected to that particle, and the current recipe identifies
  * which handles are connected.
  */
-class Collection extends Handle {
+class Collection extends HandleOld {
     async _notify(kind, particle, details) {
         assert(this.canRead, '_notify should not be called for non-readable handles');
         switch (kind) {
@@ -1652,7 +1653,7 @@ class Collection extends Handle {
  * the types of handles that need to be connected to that particle, and
  * the current recipe identifies which handles are connected.
  */
-class Singleton extends Handle {
+class Singleton extends HandleOld {
     // Called by StorageProxy.
     async _notify(kind, particle, details) {
         assert(this.canRead, '_notify should not be called for non-readable handles');
@@ -1768,7 +1769,7 @@ class Cursor {
  * operate on BigCollections should do so in the setHandles() call, since BigCollections do not
  * trigger onHandleSync() or onHandleUpdate().
  */
-class BigCollection extends Handle {
+class BigCollection extends HandleOld {
     configure(options) {
         throw new Error('BigCollections do not support sync/update configuration');
     }
@@ -17343,7 +17344,7 @@ class Recipe {
         particle.getSlotConnections().map(conn => conn.remove());
     }
     newHandle() {
-        const handle = new Handle$1(this);
+        const handle = new Handle(this);
         this._handles.push(handle);
         return handle;
     }
@@ -17459,7 +17460,7 @@ class Recipe {
             }
         });
         if (duplicateHandle && options && options.errors) {
-            options.errors.set(duplicateHandle, `Has Duplicate ${duplicateHandle instanceof Handle$1 ? 'Handle' : 'Slot'} '${duplicateHandle.id}'`);
+            options.errors.set(duplicateHandle, `Has Duplicate ${duplicateHandle instanceof Handle ? 'Handle' : 'Slot'} '${duplicateHandle.id}'`);
         }
         return duplicateHandle;
     }
@@ -18246,7 +18247,7 @@ class Slot {
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-class Handle$1 {
+class Handle {
     constructor(recipe) {
         this._id = null;
         this._localName = undefined;
@@ -18437,7 +18438,7 @@ class Handle$1 {
         if (!this.mappedType && this.fate === '`slot') {
             this._mappedType = new SlotType(new SlotInfo(undefined, undefined));
         }
-        const type = Handle$1.resolveEffectiveType(this._mappedType, this._connections);
+        const type = Handle.resolveEffectiveType(this._mappedType, this._connections);
         if (!type) {
             if (options && options.errors) {
                 // TODO: pass options to TypeChecker.processTypeList for better error.
@@ -19685,7 +19686,7 @@ class Manifest {
         const stores = [...this._findAll(manifest => manifest._stores.filter(store => typePredicate(store) && tagPredicate(manifest, store)))];
         // Quick check that a new handle can fulfill the type contract.
         // Rewrite of this method tracked by https://github.com/PolymerLabs/arcs/issues/1636.
-        return stores.filter(s => !!Handle$1.effectiveType(type, [{ type: s.type, direction: (s.type instanceof InterfaceType) ? 'host' : 'inout' }]));
+        return stores.filter(s => !!Handle.effectiveType(type, [{ type: s.type, direction: (s.type instanceof InterfaceType) ? 'host' : 'inout' }]));
     }
     findInterfaceByName(name) {
         return this._find(manifest => manifest._interfaces.find(iface => iface.name === name));
@@ -24932,7 +24933,7 @@ ${this.activeRecipe.toString()}`;
         }
         // Quick check that a new handle can fulfill the type contract.
         // Rewrite of this method tracked by https://github.com/PolymerLabs/arcs/issues/1636.
-        return stores.filter(s => !!Handle$1.effectiveType(type, [{ type: s.type, direction: (s.type instanceof InterfaceType) ? 'host' : 'inout' }]));
+        return stores.filter(s => !!Handle.effectiveType(type, [{ type: s.type, direction: (s.type instanceof InterfaceType) ? 'host' : 'inout' }]));
     }
     findStoreById(id) {
         const store = this.storesById.get(id);
@@ -29129,7 +29130,7 @@ class CoalesceRecipes extends Strategy {
                 const cloneMap = new Map();
                 const recipeClone = handle.recipe.clone(cloneMap);
                 recipeClone.normalize();
-                return Handle$1.effectiveType(cloneMap.get(handle).type, [...cloneMap.get(handle).connections, ...cloneMap.get(otherHandle).connections]);
+                return Handle.effectiveType(cloneMap.get(handle).type, [...cloneMap.get(handle).connections, ...cloneMap.get(otherHandle).connections]);
             }
         }(StrategizerWalker.Independent), this);
     }
@@ -29427,13 +29428,13 @@ class CreateHandleGroup extends Strategy {
                 let maximalGroup = null;
                 for (const writer of freeConnections.filter(({ connSpec }) => connSpec.isOutput)) {
                     const compatibleConnections = [writer];
-                    let effectiveType = Handle$1.effectiveType(null, compatibleConnections.map(cc => cc.connSpec));
+                    let effectiveType = Handle.effectiveType(null, compatibleConnections.map(cc => cc.connSpec));
                     let typeCandidate = null;
                     const involvedParticles = new Set([writer.particle]);
                     let foundSomeReader = false;
                     for (const reader of freeConnections.filter(({ connSpec }) => connSpec.isInput)) {
                         if (!involvedParticles.has(reader.particle) &&
-                            (typeCandidate = Handle$1.effectiveType(effectiveType, [reader.connSpec])) !== null) {
+                            (typeCandidate = Handle.effectiveType(effectiveType, [reader.connSpec])) !== null) {
                             compatibleConnections.push(reader);
                             involvedParticles.add(reader.particle);
                             effectiveType = typeCandidate;
@@ -29445,7 +29446,7 @@ class CreateHandleGroup extends Strategy {
                         continue;
                     for (const otherWriter of freeConnections.filter(({ connSpec }) => connSpec.isOutput)) {
                         if (!involvedParticles.has(otherWriter.particle) &&
-                            (typeCandidate = Handle$1.effectiveType(effectiveType, [otherWriter.connSpec])) !== null) {
+                            (typeCandidate = Handle.effectiveType(effectiveType, [otherWriter.connSpec])) !== null) {
                             compatibleConnections.push(otherWriter);
                             involvedParticles.add(otherWriter.particle);
                             effectiveType = typeCandidate;
@@ -30102,7 +30103,7 @@ class MatchRecipeByVerb extends Strategy {
             return true;
         }
         const connections = [...handleConstraint.handle.connections, connection];
-        return Boolean(Handle$1.effectiveType(handleConstraint.handle.mappedType, connections));
+        return Boolean(Handle.effectiveType(handleConstraint.handle.mappedType, connections));
     }
     static satisfiesSlotConstraints(recipe, slotConstraints) {
         for (const slotName in slotConstraints) {
@@ -31043,7 +31044,7 @@ class RecipeIndex {
             return false;
         }
         // If types don't match.
-        if (!Handle$1.effectiveType(handle.mappedType, [...handle.connections, ...otherHandle.connections])) {
+        if (!Handle.effectiveType(handle.mappedType, [...handle.connections, ...otherHandle.connections])) {
             return false;
         }
         return true;
@@ -31115,7 +31116,7 @@ class RecipeIndex {
             const matchingConns = Object.values(particle.connections).filter(handleConn => {
                 return handleConn.direction !== 'host'
                     && (!handleConn.handle || !handleConn.handle.id || handleConn.handle.id === providedHandleConn.handle.id)
-                    && Handle$1.effectiveType(providedHandleConn.handle.mappedType, [handleConn]);
+                    && Handle.effectiveType(providedHandleConn.handle.mappedType, [handleConn]);
             });
             matchingConns.forEach(matchingConn => {
                 if (this._fatesAndDirectionsMatch(providedHandleConn, matchingConn)) {

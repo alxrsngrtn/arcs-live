@@ -3546,7 +3546,7 @@ class ClientReference extends Reference {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Handle", function() { return Handle; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "HandleOld", function() { return HandleOld; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Collection", function() { return Collection; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Singleton", function() { return Singleton; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "BigCollection", function() { return BigCollection; });
@@ -3596,10 +3596,10 @@ function restore(entry, entityClass) {
 /**
  * Base class for Collections and Singletons.
  */
-class Handle {
+class HandleOld {
     // TODO type particleId, marked as string, but called with number
     constructor(storage, idGenerator, name, particleId, canRead, canWrite) {
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(!(storage instanceof Handle));
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(!(storage instanceof HandleOld));
         this._storage = storage;
         this.idGenerator = idGenerator;
         this.name = name || this.storage.name;
@@ -3686,7 +3686,7 @@ class Handle {
  * need to be connected to that particle, and the current recipe identifies
  * which handles are connected.
  */
-class Collection extends Handle {
+class Collection extends HandleOld {
     async _notify(kind, particle, details) {
         Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(this.canRead, '_notify should not be called for non-readable handles');
         switch (kind) {
@@ -3791,7 +3791,7 @@ class Collection extends Handle {
  * the types of handles that need to be connected to that particle, and
  * the current recipe identifies which handles are connected.
  */
-class Singleton extends Handle {
+class Singleton extends HandleOld {
     // Called by StorageProxy.
     async _notify(kind, particle, details) {
         Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(this.canRead, '_notify should not be called for non-readable handles');
@@ -3907,7 +3907,7 @@ class Cursor {
  * operate on BigCollections should do so in the setHandles() call, since BigCollections do not
  * trigger onHandleSync() or onHandleUpdate().
  */
-class BigCollection extends Handle {
+class BigCollection extends HandleOld {
     configure(options) {
         throw new Error('BigCollections do not support sync/update configuration');
     }
@@ -4091,9 +4091,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
 /* harmony import */ var _platform_sourcemapped_stacktrace_web_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(16);
 /* harmony import */ var _arc_exceptions_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(14);
-/* harmony import */ var _storage_crdt_collection_model_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(17);
-/* harmony import */ var _type_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(8);
-/* harmony import */ var _id_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(18);
+/* harmony import */ var _handle_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(13);
+/* harmony import */ var _storage_crdt_collection_model_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(17);
+/* harmony import */ var _type_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(8);
+/* harmony import */ var _id_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(18);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -4103,6 +4104,7 @@ __webpack_require__.r(__webpack_exports__);
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
+
 
 
 
@@ -4152,10 +4154,10 @@ class StorageProxy {
         this.pec = pec;
     }
     static newProxy(id, type, port, pec, scheduler, name) {
-        if (type instanceof _type_js__WEBPACK_IMPORTED_MODULE_4__["CollectionType"]) {
+        if (type instanceof _type_js__WEBPACK_IMPORTED_MODULE_5__["CollectionType"]) {
             return new CollectionProxy(id, type, port, pec, scheduler, name);
         }
-        if (type instanceof _type_js__WEBPACK_IMPORTED_MODULE_4__["BigCollectionType"]) {
+        if (type instanceof _type_js__WEBPACK_IMPORTED_MODULE_5__["BigCollectionType"]) {
             return new BigCollectionProxy(id, type, port, pec, scheduler, name);
         }
         return new SingletonProxy(id, type, port, pec, scheduler, name);
@@ -4182,7 +4184,8 @@ class StorageProxy {
         if (!handle.canRead) {
             return;
         }
-        this.observers.push({ particle, handle });
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(handle instanceof _handle_js__WEBPACK_IMPORTED_MODULE_3__["HandleOld"]);
+        this.observers.push({ particle, handle: handle });
         // Attach an event listener to the backing store when the first readable handle is registered.
         if (!this.listenerAttached) {
             this.port.InitializeProxy(this, x => this._onUpdate(x));
@@ -4306,7 +4309,7 @@ class StorageProxy {
         }
     }
     generateBarrier() {
-        return this.pec.idGenerator.newChildId(_id_js__WEBPACK_IMPORTED_MODULE_5__["Id"].fromString(this.id), 'barrier').toString();
+        return this.pec.idGenerator.newChildId(_id_js__WEBPACK_IMPORTED_MODULE_6__["Id"].fromString(this.id), 'barrier').toString();
     }
 }
 /**
@@ -4328,14 +4331,14 @@ class StorageProxy {
 class CollectionProxy extends StorageProxy {
     constructor() {
         super(...arguments);
-        this.model = new _storage_crdt_collection_model_js__WEBPACK_IMPORTED_MODULE_3__["CrdtCollectionModel"]();
+        this.model = new _storage_crdt_collection_model_js__WEBPACK_IMPORTED_MODULE_4__["CrdtCollectionModel"]();
     }
     _getModelForSync() {
         return this.model.toList();
     }
     _synchronizeModel(version, model) {
         this.version = version;
-        this.model = new _storage_crdt_collection_model_js__WEBPACK_IMPORTED_MODULE_3__["CrdtCollectionModel"](model);
+        this.model = new _storage_crdt_collection_model_js__WEBPACK_IMPORTED_MODULE_4__["CrdtCollectionModel"](model);
         return true;
     }
     _processUpdate(update, apply = true) {
