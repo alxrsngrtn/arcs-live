@@ -2477,7 +2477,7 @@
         "signature": "8bc1d39a3b8ec61064f9969316a088e314895e7ffd094468dcc0b238f33cb4a6"
       },
       "/home/travis/build/PolymerLabs/arcs/src/tests/slot-composer-test.ts": {
-        "version": "afa5653ec0040e65c6d33a40d2b642cb47d81375bf17bd674fb248bd9c3e3887",
+        "version": "285ab4698ab2535785b2adc91dc735784d8cd1107e38be183f3a14a7d1fd5048",
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "/home/travis/build/PolymerLabs/arcs/src/tests/particles/common-test.ts": {

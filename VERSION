@@ -1,5 +1,9 @@
-commit b40cab56382a69728208ec6694c2ae1daa5c1b6e
-Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
-Date:   Thu Aug 1 10:21:58 2019 +1000
+commit a9a609b450100771cde9e6499f9023f4c9893d0c
+Author: raulverag <42563960+raulverag@users.noreply.github.com>
+Date:   Thu Aug 1 11:16:49 2019 +1000
 
-    Added more tests for 'is from output' check (#3427)
+    Skip a test that keeps causing travis to fail. (#3429)
+    
+    This set of tests is in process of being reworked, so it seems sensible to
+    simply disable this one until the new version is ready, as the travis faiures
+    and other random test failures are slowing everyone down.

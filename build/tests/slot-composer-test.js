@@ -102,7 +102,7 @@ recipe
         verifyContext('otherSlot', { hasContainer: false, sourceSlotName: 'root', consumeConnNames: ['C::otherSlot'] });
         await slotComposer.expectationsCompleted();
     });
-    it('initialize recipe and render hosted slots', async () => {
+    it.skip('initialize recipe and render hosted slots', async () => {
         const slotComposer = new MockSlotComposer().newExpectations()
             .expectRenderSlot('List', 'root', { 'contentTypes': ['template', 'model', 'templateName'] })
             .expectRenderSlot('List', 'root', { 'contentTypes': ['model', 'templateName'] })
