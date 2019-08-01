@@ -1,5 +1,5 @@
 import assert from 'assert';
-import crypto from 'crypto';
+import crypto$1 from 'crypto';
 import fetch from 'node-fetch';
 import fs from 'fs';
 import vm from 'vm';
@@ -8,16 +8,6 @@ import rs from 'jsrsasign';
 import WebCrypto from 'node-webcrypto-ossl';
 import WebSocket from 'ws';
 import os from 'os';
-
-/**
- * @license
- * Copyright (c) 2017 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
 
 /**
  * @license
@@ -15158,7 +15148,7 @@ function peg$parse(input, options) {
             }
             if (s2 !== peg$FAILED) {
                 peg$savedPos = s0;
-                s1 = peg$c312(s1);
+                s1 = peg$c312();
                 s0 = s1;
             }
             else {
@@ -15324,7 +15314,7 @@ function peg$parse(input, options) {
                     }
                     if (s4 !== peg$FAILED) {
                         peg$savedPos = s3;
-                        s4 = peg$c324(s2);
+                        s4 = peg$c324();
                     }
                     s3 = s4;
                 }
@@ -15950,7 +15940,7 @@ const parse = peg$parse;
  * http://polymer.github.io/PATENTS.txt
  */
 async function digest(str) {
-    const sha = crypto.createHash('sha1');
+    const sha = crypto$1.createHash('sha1');
     sha.update(str);
     return Promise.resolve().then(() => sha.digest('hex'));
 }
@@ -20559,36 +20549,6 @@ ${e.message}
         return this._idGenerator;
     }
 }
-
-/**
- * @license
- * Copyright (c) 2017 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-
-/**
- * @license
- * Copyright (c) 2017 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-
-/**
- * @license
- * Copyright (c) 2017 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
 
 /**
  * @license
@@ -26640,16 +26600,6 @@ DriverFactory.providers = [];
 
 /**
  * @license
- * Copyright 2019 Google LLC.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-
-/**
- * @license
  * Copyright (c) 2019 Google Inc. All rights reserved.
  * This code may only be used under the BSD style license found at
  * http://polymer.github.io/LICENSE.txt
@@ -26858,7 +26808,7 @@ class WebCryptoMemoryKeyStorage {
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-const crypto$1 = new WebCrypto();
+const crypto = new WebCrypto();
 
 /* eslint-disable header/header */
 // ISC License (ISC)
@@ -27060,7 +27010,7 @@ class WebCryptoWrappedKey {
     }
     unwrap(privKey) {
         const webPrivKey = privKey;
-        return crypto$1.subtle.unwrapKey('raw', this.wrappedKeyData, webPrivKey.cryptoKey(), {
+        return crypto.subtle.unwrapKey('raw', this.wrappedKeyData, webPrivKey.cryptoKey(), {
             name: privKey.algorithm()
         }, {
             name: STORAGE_KEY_ALGORITHM,
@@ -27119,10 +27069,10 @@ class WebCryptoPublicKey extends WebCryptoStorableKey {
     static sha256(str) {
         // We transform the string into an arraybuffer.
         const buffer = new Uint8Array(str.split('').map(x => x.charCodeAt(0)));
-        return crypto$1.subtle.digest('SHA-256', buffer).then((hash) => WebCryptoPublicKey.hex(hash));
+        return crypto.subtle.digest('SHA-256', buffer).then((hash) => WebCryptoPublicKey.hex(hash));
     }
     fingerprint() {
-        return crypto$1.subtle.exportKey('jwk', this.cryptoKey())
+        return crypto.subtle.exportKey('jwk', this.cryptoKey())
             // Use the modulus 'n' as the fingerprint since 'e' is fixed
             .then(key => WebCryptoPublicKey.digest(key['n']));
     }
@@ -27130,14 +27080,14 @@ class WebCryptoPublicKey extends WebCryptoStorableKey {
 class WebCryptoSessionKey {
     // Visible/Used for testing only.
     decrypt(buffer, iv) {
-        return crypto$1.subtle.decrypt({
+        return crypto.subtle.decrypt({
             name: this.algorithm(),
             iv,
         }, this.sessionKey, buffer);
     }
     // Visible/Used for testing only.
     encrypt(buffer, iv) {
-        return crypto$1.subtle.encrypt({
+        return crypto.subtle.encrypt({
             name: this.algorithm(),
             iv
         }, this.sessionKey, buffer);
@@ -27151,7 +27101,7 @@ class WebCryptoSessionKey {
      * removed once the the key-blessing algorithm is implemented.
      */
     export() {
-        return crypto$1.subtle.exportKey('raw', this.sessionKey).then((raw) => {
+        return crypto.subtle.exportKey('raw', this.sessionKey).then((raw) => {
             const buf = new Uint8Array(raw);
             let res = '';
             buf.forEach((x) => res += (x < 16 ? '0' : '') + x.toString(16));
@@ -27169,7 +27119,7 @@ class WebCryptoSessionKey {
     disposeToWrappedKeyUsing(pkey) {
         try {
             const webPkey = pkey;
-            const rawWrappedKey = crypto$1.subtle.wrapKey('raw', this.sessionKey, pkey.cryptoKey(), {
+            const rawWrappedKey = crypto.subtle.wrapKey('raw', this.sessionKey, pkey.cryptoKey(), {
                 //these are the wrapping key's algorithm options
                 name: webPkey.algorithm(),
             });
@@ -27209,7 +27159,7 @@ class WebCryptoDeviceKey extends WebCryptoStorableKey {
  */
 class WebCryptoKeyGenerator {
     generateWrappedStorageKey(deviceKey) {
-        const generatedKey = crypto$1.subtle.generateKey({ name: 'AES-GCM', length: 256 }, true, ['encrypt', 'decrypt', 'wrapKey', 'unwrapKey']);
+        const generatedKey = crypto.subtle.generateKey({ name: 'AES-GCM', length: 256 }, true, ['encrypt', 'decrypt', 'wrapKey', 'unwrapKey']);
         return generatedKey.then(key => new WebCryptoSessionKey(key))
             .then(skey => skey.disposeToWrappedKeyUsing(deviceKey.publicKey()));
     }
@@ -27222,7 +27172,7 @@ class WebCryptoKeyGenerator {
         throw new Error('Not implemented');
     }
     generateDeviceKey() {
-        const generatedKey = crypto$1.subtle.generateKey({
+        const generatedKey = crypto.subtle.generateKey({
             hash: { name: DEVICE_KEY_HASH_ALGORITHM },
             // TODO: Note, RSA-OAEP is deprecated, we should move to ECDH in the future, but it
             // doesn't use key-wrapping, instead it uses a different mechanism: key-derivation.
@@ -27242,7 +27192,7 @@ class WebCryptoKeyGenerator {
     importKey(pemKey) {
         const key = rs.KEYUTIL.getKey(pemKey);
         const jwk = rs.KEYUTIL.getJWKFromKey(key);
-        return crypto$1.subtle.importKey('jwk', jwk, {
+        return crypto.subtle.importKey('jwk', jwk, {
             name: X509_CERTIFICATE_ALGORITHM,
             hash: { name: X509_CERTIFICATE_HASH_ALGORITHM }
         }, true, ['encrypt', 'wrapKey']).then(ikey => new WebCryptoPublicKey(ikey));
@@ -27337,7 +27287,7 @@ class KeyManager {
     }
 }
 
-var commonjsGlobal = typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
+var commonjsGlobal = typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
 
 /**
  * @license
@@ -27503,16 +27453,6 @@ class DevtoolsChannel extends AbstractDevtoolsChannel {
         }
     }
 }
-
-/**
- * @license
- * Copyright (c) 2018 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
 
 /**
  * @license
@@ -32547,7 +32487,7 @@ class DevtoolsArcInspector {
                     frame.targetClass = 'noLink';
                 }
                 stack.push(frame);
-            }), { sync: false, cacheGlobally: true });
+            }));
         }
         return stack;
     }
@@ -33952,8 +33892,8 @@ class ReplanQueue {
         if (this.changes.length <= 1) {
             return;
         }
-        const now$$1 = this.changes[this.changes.length - 1];
-        const sinceFirstChangeMs = now$$1 - this.changes[0];
+        const now = this.changes[this.changes.length - 1];
+        const sinceFirstChangeMs = now - this.changes[0];
         if (this._canPostponeReplan(sinceFirstChangeMs)) {
             this._cancelReplanIfScheduled();
             let nextReplanDelayMs = this.options.replanDelayMs;
@@ -34117,16 +34057,6 @@ class Planificator {
         return this.searchStore.set(newValues);
     }
 }
-
-/**
- * @license
- * Copyright (c) 2019 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
 
 /**
  * @license
@@ -34376,5 +34306,5 @@ const maybeConnectToDevTools = async () => {
   }
 };
 
-export { Runtime, KeyManager, PlannerShellInterface };
+export { KeyManager, PlannerShellInterface, Runtime };
 //# sourceMappingURL=index.es.js.map

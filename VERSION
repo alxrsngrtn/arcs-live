@@ -1,10 +1,5 @@
-commit e678aadb2e5511e3d5718689dff1ae893bd51153
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Wed Jul 31 23:57:29 2019 -0700
+commit 904ce9cd0061fb75b87140b7433772dbe324c4a3
+Author: Paul Lindner <plindner@google.com>
+Date:   Thu Aug 1 13:24:05 2019 -0700
 
-    fix pipe-shell initialization order (#3431)
-    
-    * fix pipe-shell initialization order
-    ingestion arc can only be initialized after window.ShellApi is set
-    
-    * fix lint
+    Upgrade rollup until it can be removed (#3422)

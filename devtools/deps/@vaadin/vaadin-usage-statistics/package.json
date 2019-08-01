@@ -1,8 +1,8 @@
 {
   "_from": "@vaadin/vaadin-usage-statistics@^2.0.2",
-  "_id": "@vaadin/vaadin-usage-statistics@2.0.4",
+  "_id": "@vaadin/vaadin-usage-statistics@2.0.5",
   "_inBundle": false,
-  "_integrity": "sha512-W954k2x0cy7YSNgvm6g3DukjPUCf6z2V0BsMMPz2masVP34MCi8p9JUvf8FsxABx34U6TCMouxCnNXQaFxX8Og==",
+  "_integrity": "sha512-fWLb4jdJl559PCrhccvnPYS16eoVvGned6cQOq0JetkxqTPDnxpKbqu0b37MFETNa7HGfnI1BHa29SGsqvkFzQ==",
   "_location": "/@vaadin/vaadin-usage-statistics",
   "_phantomChildren": {},
   "_requested": {
@@ -19,10 +19,10 @@
   "_requiredBy": [
     "/@vaadin/vaadin-element-mixin"
   ],
-  "_resolved": "https://registry.npmjs.org/@vaadin/vaadin-usage-statistics/-/vaadin-usage-statistics-2.0.4.tgz",
-  "_shasum": "8938eddb9cf2aa1bec10826e8e426af2876f47b2",
+  "_resolved": "https://registry.npmjs.org/@vaadin/vaadin-usage-statistics/-/vaadin-usage-statistics-2.0.5.tgz",
+  "_shasum": "14973cbf01d45339a7b6edd233fb14c679769bdf",
   "_spec": "@vaadin/vaadin-usage-statistics@^2.0.2",
-  "_where": "/tmp/asset_stagekKeyRh/node_modules/@vaadin/vaadin-element-mixin",
+  "_where": "/tmp/asset_stagex0usXO/node_modules/@vaadin/vaadin-element-mixin",
   "author": {
     "name": "Vaadin Ltd"
   },
@@ -73,9 +73,9 @@
     "type-detect": "1.0.0"
   },
   "scripts": {
-    "disable": "npm config set @vaadin/vaadin-usage-statistics:disabled true && npm run postinstall",
-    "enable": "npm config set @vaadin/vaadin-usage-statistics:disabled false && npm run postinstall",
-    "postinstall": "node check.js"
+    "disable": "npm config set @vaadin/vaadin-usage-statistics:disabled true && npm run postinstall && npm config set @vaadin/vaadin-usage-statistics:optout-logged true",
+    "enable": "npm config set @vaadin/vaadin-usage-statistics:disabled false && npm config set @vaadin/vaadin-usage-statistics:greeting-logged false && npm config set @vaadin/vaadin-usage-statistics:optout-logged false && npm run postinstall",
+    "postinstall": "node check.js && npm config set @vaadin/vaadin-usage-statistics:greeting-logged true"
   },
-  "version": "2.0.4"
+  "version": "2.0.5"
 }
