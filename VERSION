@@ -1,9 +1,10 @@
-commit a9a609b450100771cde9e6499f9023f4c9893d0c
-Author: raulverag <42563960+raulverag@users.noreply.github.com>
-Date:   Thu Aug 1 11:16:49 2019 +1000
+commit e678aadb2e5511e3d5718689dff1ae893bd51153
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Wed Jul 31 23:57:29 2019 -0700
 
-    Skip a test that keeps causing travis to fail. (#3429)
+    fix pipe-shell initialization order (#3431)
     
-    This set of tests is in process of being reworked, so it seems sensible to
-    simply disable this one until the new version is ready, as the travis faiures
-    and other random test failures are slowing everyone down.
+    * fix pipe-shell initialization order
+    ingestion arc can only be initialized after window.ShellApi is set
+    
+    * fix lint
