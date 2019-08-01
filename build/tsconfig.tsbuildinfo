@@ -606,7 +606,7 @@
         "signature": "4c86e04bcbc0a95e6fce540fb1151f3b9e07ffca1f2630061dfc8de54a7c63b3"
       },
       "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/tests/analysis-test.ts": {
-        "version": "63122be3b05e629f864d9a24b420df7fd5b177bd1e23076bf5e40b1a308c834f",
+        "version": "e4eec1df93b4a2910c43e8804f447327293ed7a2527ea08c6188567db1fd80ae",
         "signature": "8e609bb71c20b858c77f0e9f90bb1319db8477b13f9f965f1a1e18524bf50881"
       },
       "/home/travis/build/PolymerLabs/arcs/src/dataflow/analysis/tests/deep-set-test.ts": {
