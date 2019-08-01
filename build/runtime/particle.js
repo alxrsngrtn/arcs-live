@@ -172,6 +172,9 @@ export class Particle {
     getSlot(name) {
         return this.slotProxiesByName.get(name);
     }
+    getSlotNames() {
+        return [...this.slotProxiesByName.keys()];
+    }
     static buildManifest(strings, ...bits) {
         const output = [];
         for (let i = 0; i < bits.length; i++) {

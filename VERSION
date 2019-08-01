@@ -1,5 +1,14 @@
-commit 904ce9cd0061fb75b87140b7433772dbe324c4a3
-Author: Paul Lindner <plindner@google.com>
-Date:   Thu Aug 1 13:24:05 2019 -0700
+commit f55a1dc044acdf6ec956696493c634b2859783e4
+Author: sherry-pra <52428204+sherry-pra@users.noreply.github.com>
+Date:   Thu Aug 1 14:53:25 2019 -0700
 
-    Upgrade rollup until it can be removed (#3422)
+    Implemented reload function (#3382)
+    
+    - Create a new particle and replace the old particle in PEC with the new
+    particle
+    
+    - Create new handles for the new particle and disable the old ones
+    
+    - Set the new handles to the new particles
+    
+    - Transfer the old particle's slotProxies to the new particle

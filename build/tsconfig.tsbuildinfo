@@ -366,8 +366,8 @@
         "signature": "0e4dcf9b109c7ed53a9bd7193b831641bae6346cb4e2bde186c39b4ca3dcd220"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/particle.ts": {
-        "version": "ad878caba985fe50a89e7d0058b7e721d55e7a34dc14d2c09c5b6465cbc86d1e",
-        "signature": "b3d48a5c294e5f099b89cd512ca38bf2903f11dbf741d79b9d1a207e0e39a276"
+        "version": "c63179b3796c34cc92903b3a132f53c54b00bcf338160f6a6ce069dba4ce891e",
+        "signature": "d6b87c5c2b94f04796c1092267d89fcaeee23d32ca8150ccc0e96160c0ae93ab"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/arc-exceptions.ts": {
         "version": "2643097c0de1346fd8bd89913f0ba6350350a64623d36b2c79ae4a3f09c528f3",
@@ -470,8 +470,8 @@
         "signature": "aa6e01ec96f831a155a366cf501d4fb7305584b1b9c4ccaaf8dd1a120ed4176b"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/particle-execution-context.ts": {
-        "version": "891487bd618fdcbe9a48dd63cb90f423f9cbbf5fab40740470f76969a4c98d48",
-        "signature": "375c1f6c571df3ff742045ee691775076148220b2763e88c4bc1fb3f55a0943d"
+        "version": "65fdba0a7dd2c2fea30aaa56f7562cf736775570b5ba720573e46fdc470f322f",
+        "signature": "a3a3df0583c95c145e400fd9779800e2de11079ee3710d3286a66d93bd82b033"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/entity.ts": {
         "version": "d05b48f25c48044e19bd76a959ebdcb2da9d99ab8d5d024f6b92b250394f1dc2",
@@ -3632,6 +3632,7 @@
         "/home/travis/build/PolymerLabs/arcs/src/runtime/message-channel.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/wasm.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/arc-exceptions.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/store.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
       ],

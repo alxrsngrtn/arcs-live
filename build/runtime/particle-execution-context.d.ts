@@ -40,6 +40,9 @@ export declare class ParticleExecutionContext {
     capabilities(hasInnerArcs: boolean): Capabilities;
     private instantiateParticle;
     private reloadParticle;
+    private createHandle;
+    private assignHandle;
+    private createParticleFromSpec;
     private loadWasmParticle;
     readonly relevance: Map<any, any>;
     readonly busy: boolean;
