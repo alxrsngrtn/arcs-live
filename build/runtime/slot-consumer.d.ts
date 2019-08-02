@@ -8,12 +8,11 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { Arc } from './arc.js';
-import { Predicate } from './hot.js';
+import { Consumer, Dictionary, Predicate } from './hot.js';
 import { Description } from './description.js';
 import { SlotConnection } from './recipe/slot-connection.js';
 import { HostedSlotContext, ProvidedSlotContext, SlotContext } from './slot-context.js';
 import { StartRenderOptions, StopRenderOptions } from './particle-execution-host.js';
-import { Dictionary } from './hot.js';
 export interface Content {
     templateName?: string | Map<string, string>;
     model?: Dictionary<any>;
@@ -30,9 +29,9 @@ export declare class SlotConsumer {
     slotContext: SlotContext;
     readonly directlyProvidedSlotContexts: ProvidedSlotContext[];
     readonly hostedSlotContexts: HostedSlotContext[];
-    startRenderCallback: (options: StartRenderOptions) => void;
-    stopRenderCallback: (options: StopRenderOptions) => void;
-    eventHandler: ({}: {}) => void;
+    startRenderCallback: Consumer<StartRenderOptions>;
+    stopRenderCallback: Consumer<StopRenderOptions>;
+    eventHandler: Consumer<{}>;
     readonly containerKind?: string;
     private readonly _renderingBySubId;
     private innerContainerBySlotId;

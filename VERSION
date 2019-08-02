@@ -1,5 +1,5 @@
-commit 11b28e4b3cb280dcb2f3ee4e2e71f03c95c77131
-Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
-Date:   Fri Aug 2 09:00:02 2019 +1000
+commit f336c71e2820a2a8c43e9895b0e90b50db428875
+Author: Paul Lindner <plindner@google.com>
+Date:   Thu Aug 1 17:26:12 2019 -0700
 
-    DevShell: use shell utils createPathMap in DevShellLoader (#3430)
+    Add more Consumer, Dictionary and Precondition usages (#3433)

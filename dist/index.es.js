@@ -33467,6 +33467,36 @@ class UserContext {
   // }
 }
 
+/**
+ * @license
+ * Copyright 2019 Google LLC.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+/**
+ * @fileoverview
+ * Preconditions
+ *
+ * Convenience functions that check whether values are as expected and
+ * also help make Typescript code less nullable/undefined.
+ */
+/**
+ * Returns a given value if it is not undefined and not null.
+ *
+ * @param value Value to check.
+ * @param message Used for the thrown error.
+ * @throws when value is undefined or null.
+ */
+function checkDefined(value, customMessage) {
+    if (value === undefined || value === null) {
+        throw new Error(customMessage || 'undefined or null');
+    }
+    return value;
+}
+
 class SuggestionComposer {
     constructor(arc, slotComposer) {
         this._suggestions = [];
@@ -33968,8 +33998,7 @@ class Planificator {
         if (inspectorFactory) {
             this.inspector = inspectorFactory.create(this);
         }
-        assert(result, 'Result cannot be null.');
-        this.result = result;
+        this.result = checkDefined(result, 'Result cannot be null');
         if (!onlyConsumer) {
             this.producer = new PlanProducer(this.arc, this.result, searchStore, this.inspector, { debug, noSpecEx });
             this.replanQueue = new ReplanQueue(this.producer);

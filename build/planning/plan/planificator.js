@@ -8,6 +8,7 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { assert } from '../../platform/assert-web.js';
+import { checkDefined } from '../../runtime/testing/preconditions.js';
 import { StorageProviderBase } from '../../runtime/storage/storage-provider-base.js';
 import { EntityType } from '../../runtime/type.js';
 import { PlanConsumer } from './plan-consumer.js';
@@ -24,8 +25,7 @@ export class Planificator {
         if (inspectorFactory) {
             this.inspector = inspectorFactory.create(this);
         }
-        assert(result, 'Result cannot be null.');
-        this.result = result;
+        this.result = checkDefined(result, 'Result cannot be null');
         if (!onlyConsumer) {
             this.producer = new PlanProducer(this.arc, this.result, searchStore, this.inspector, { debug, noSpecEx });
             this.replanQueue = new ReplanQueue(this.producer);

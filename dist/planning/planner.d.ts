@@ -7,6 +7,7 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
+import { Consumer } from '../runtime/hot.js';
 import { Arc } from '../runtime/arc.js';
 import { Suggestion } from './plan/suggestion.js';
 import { Speculator } from './speculator.js';
@@ -45,7 +46,7 @@ export declare class Planner implements InspectablePlanner {
     static clearCache(): void;
     private retriveOrCreateSuggestion;
     _shouldSpeculate(plan: any): boolean;
-    _updateGeneration(generations: Generation[], hash: string, handler: (_: AnnotatedDescendant) => void): void;
+    _updateGeneration(generations: Generation[], hash: string, handler: Consumer<AnnotatedDescendant>): void;
     static InitializationStrategies: StrategyDerived[];
     static ResolutionStrategies: StrategyDerived[];
     static AllStrategies: StrategyDerived[];

@@ -7,8 +7,8 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-import { Particle } from './particle';
-import { PECInnerPort } from './api-channel';
+import { Particle } from './particle.js';
+import { PECInnerPort } from './api-channel.js';
 import { Content } from './slot-consumer.js';
 /**
  * A representation of a consumed slot. Retrieved from a particle using
