@@ -424,7 +424,7 @@ function maybeGatherAndSendStats() {
   }], [{
     key: 'version',
     get: function get$1() {
-      return '2.0.1';
+      return '2.0.6';
     }
   }, {
     key: 'firstUseKey',

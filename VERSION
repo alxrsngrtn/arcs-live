@@ -1,5 +1,5 @@
-commit f336c71e2820a2a8c43e9895b0e90b50db428875
-Author: Paul Lindner <plindner@google.com>
-Date:   Thu Aug 1 17:26:12 2019 -0700
+commit dd57b4016f78cef64b92d81814cf1b8f142ab5ae
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Fri Aug 2 07:35:18 2019 -0700
 
-    Add more Consumer, Dictionary and Precondition usages (#3433)
+    rename java NativeParticle to Particle (#3436)
