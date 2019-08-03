@@ -1,5 +1,5 @@
-commit 3a745b302b3c0a4625dd75c88d53607a65b93d10
+commit 08c8adc3b621b47d63dda74f04199e2a0f227b2e
 Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Fri Aug 2 08:07:24 2019 -0700
+Date:   Fri Aug 2 16:54:41 2019 -0700
 
-    refactor non js specific device client implementation into arcs.api (#3437)
+    fix deviceclientjsimpl and externs.js (#3439)
