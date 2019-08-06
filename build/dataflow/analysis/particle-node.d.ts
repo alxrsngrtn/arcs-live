@@ -11,6 +11,7 @@ import { Node, Edge, FlowModifier, FlowCheck } from './graph-internals.js';
 import { Particle } from '../../runtime/recipe/particle.js';
 import { HandleConnectionSpec } from '../../runtime/particle-spec.js';
 import { HandleConnection } from '../../runtime/recipe/handle-connection.js';
+import { Type } from '../../runtime/type.js';
 export declare class ParticleNode extends Node {
     readonly inEdgesByName: Map<string, ParticleInput>;
     readonly outEdgesByName: Map<string, Edge>;
@@ -37,6 +38,7 @@ export declare class ParticleInput implements Edge {
     readonly modifier: FlowModifier;
     check?: FlowCheck;
     constructor(edgeId: string, particleNode: ParticleNode, otherEnd: Node, connection: HandleConnection);
+    readonly type: Type;
 }
 export declare class ParticleOutput implements Edge {
     readonly edgeId: string;
@@ -46,9 +48,17 @@ export declare class ParticleOutput implements Edge {
     readonly connectionName: string;
     readonly connectionSpec: HandleConnectionSpec;
     readonly modifier: FlowModifier;
-    readonly derivesFrom: ParticleInput[];
+    readonly derivesFrom: Edge[];
     constructor(edgeId: string, particleNode: ParticleNode, otherEnd: Node, connection: HandleConnection);
+    readonly type: Type;
     computeDerivedFromEdges(): void;
+    /**
+     * Returns the list of edges from which the given edge could have derived. The
+     * given edge must be a particle output of a Reference type. The logic behind
+     * which input/output edges could be the source of an output reference is
+     * described at go/arcs-dataflow-references.
+     */
+    private getEdgesCompatibleWithReference;
 }
 /** Creates a new node for every given particle. */
 export declare function createParticleNodes(particles: Particle[]): Map<Particle, ParticleNode>;

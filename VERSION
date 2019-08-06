@@ -1,5 +1,7 @@
-commit 08c8adc3b621b47d63dda74f04199e2a0f227b2e
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Fri Aug 2 16:54:41 2019 -0700
+commit 39aaf5a1c30d23107c7b26a558868e541f68dc09
+Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
+Date:   Tue Aug 6 13:12:15 2019 +1000
 
-    fix deviceclientjsimpl and externs.js (#3439)
+    Handle References in the dataflow analyser. (#3442)
+    
+    Logic for dealing with references is described in go/arcs-dataflow-references. We can prune some of the inputs when the output is a reference. We accomplish this by reusing the "derives from" machinery to represent the input edges that didn't get pruned.
