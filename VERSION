@@ -1,7 +1,9 @@
-commit 39aaf5a1c30d23107c7b26a558868e541f68dc09
-Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
-Date:   Tue Aug 6 13:12:15 2019 +1000
+commit 54a015b5711965a56f80a4f4c3d8822b332c4eb6
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Tue Aug 6 09:17:19 2019 -0700
 
-    Handle References in the dataflow analyser. (#3442)
+    java implementation for Id and IdGenerator (#3438)
     
-    Logic for dealing with references is described in go/arcs-dataflow-references. We can prune some of the inputs when the output is a reference. We accomplish this by reusing the "derives from" machinery to represent the input edges that didn't get pruned.
+    * java implementation for Id and IdGenerator
+    
+    * address comment: fix comments indentation
