@@ -1,11 +1,5 @@
-commit 0dc62c66bee2d17d5af07ca0f5c516a638030236
+commit 81697df2adc213a63573e5691129c1778f44d964
 Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
-Date:   Wed Aug 7 10:07:09 2019 +1000
+Date:   Wed Aug 7 10:26:03 2019 +1000
 
-    Add a wasm template/example and basic readme file (#3444)
-    
-    * Add a wasm template/example and basic readme file
-    
-    * Ignore .wasm file existence check in particle definitions test
-    
-    * Review update
+    Tweaked wasm C++ readme formatting (#3447)
