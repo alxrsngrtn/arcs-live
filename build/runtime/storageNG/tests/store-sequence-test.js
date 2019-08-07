@@ -131,9 +131,10 @@ describe('Store Sequence', async () => {
         const sequenceTest = new SequenceTest();
         sequenceTest.setTestConstructor(async () => {
             const runtime = new Runtime();
+            const arc = runtime.newArc('arc', 'volatile://');
             DriverFactory.clearRegistrationsForTesting();
-            VolatileStorageDriverProvider.register();
-            const storageKey = new VolatileStorageKey('unique');
+            VolatileStorageDriverProvider.register(arc);
+            const storageKey = new VolatileStorageKey(arc.id, 'unique');
             const store1 = new Store(storageKey, Exists.ShouldCreate, null, StorageMode.Direct, CRDTCount);
             const activeStore1 = await store1.activate();
             const store2 = new Store(storageKey, Exists.ShouldExist, null, StorageMode.Direct, CRDTCount);
@@ -214,9 +215,10 @@ describe('Store Sequence', async () => {
         const sequenceTest = new SequenceTest();
         sequenceTest.setTestConstructor(async () => {
             const runtime = new Runtime();
+            const arc = runtime.newArc('arc', 'volatile://');
             DriverFactory.clearRegistrationsForTesting();
-            VolatileStorageDriverProvider.register();
-            const storageKey = new VolatileStorageKey('unique');
+            VolatileStorageDriverProvider.register(arc);
+            const storageKey = new VolatileStorageKey(arc.id, 'unique');
             const store1 = new Store(storageKey, Exists.ShouldCreate, null, StorageMode.Direct, CRDTCount);
             const activeStore1 = await store1.activate();
             const store2 = new Store(storageKey, Exists.ShouldExist, null, StorageMode.Direct, CRDTCount);

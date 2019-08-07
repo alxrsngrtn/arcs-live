@@ -20,6 +20,8 @@ import { StorageProviderBase } from './storage/storage-provider-base.js';
 import { StorageProviderFactory } from './storage/storage-provider-factory.js';
 import { ArcType, CollectionType, EntityType, InterfaceType, RelationType, Type, TypeVariable } from './type.js';
 import { Mutex } from './mutex.js';
+import { VolatileMemory, VolatileStorageDriverProvider } from './storageNG/drivers/volatile.js';
+import { DriverFactory } from './storageNG/drivers/driver-factory.js';
 export class Arc {
     constructor({ id, context, pecFactories, slotComposer, loader, storageKey, storageProviderFactory, speculative, innerArc, stub, inspectorFactory }) {
         this._activeRecipe = new Recipe();
@@ -37,6 +39,8 @@ export class Arc {
         this.instantiateMutex = new Mutex();
         this.idGenerator = IdGenerator.newSession();
         this.loadedParticleInfo = new Map();
+        // Volatile storage local to this Arc instance.
+        this.volatileMemory = new VolatileMemory();
         // TODO: context should not be optional.
         this._context = context || new Manifest({ id });
         // TODO: pecFactories should not be optional. update all callers and fix here.
@@ -60,6 +64,8 @@ export class Arc {
         const ports = this.pecFactories.map(f => f(this.generateID(), this.idGenerator));
         this.pec = new ParticleExecutionHost(slotComposer, this, ports);
         this.storageProviderFactory = storageProviderFactory || new StorageProviderFactory(this.id);
+        this.volatileStorageDriverProvider = new VolatileStorageDriverProvider(this);
+        DriverFactory.register(this.volatileStorageDriverProvider);
     }
     get loader() {
         return this._loader;
@@ -85,6 +91,7 @@ export class Arc {
             this.pec.slotComposer.consumers.forEach(consumer => assert(allArcs.includes(consumer.arc)));
             this.pec.slotComposer.dispose();
         }
+        DriverFactory.unregister(this.volatileStorageDriverProvider);
     }
     // Returns a promise that spins sending a single `AwaitIdle` message until it
     // sees no other messages were sent.

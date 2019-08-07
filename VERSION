@@ -1,13 +1,20 @@
-commit 7644e36e121b0377abe66b28cc257e2d2f9f6e54
-Author: raulverag <42563960+raulverag@users.noreply.github.com>
-Date:   Wed Aug 7 15:22:44 2019 +1000
+commit 49b78847f53df12b3db625e4096bb4fe4ad98bd2
+Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
+Date:   Wed Aug 7 17:00:13 2019 +1000
 
-    Syntax parsing for recipe selection triggers (#3448)
+    Added RamDisk storage to storageNG. (#3449)
     
-    * Recipe selector, syntax parsing only
+    VolatileDriver now takes a memory argument, which tells it where to
+    write to.
     
-    * fix lint errors
+    The existing Volatile driver was actually using storage scoped to the
+    whole Arcs Runtime (i.e. it was actually RamDisk storage). I pulled that
+    out into its own thing (RamDiskStorageKey/RamDiskStorageDriverProvider).
+    It uses VolatileDriver to do all its dirty work.
     
-    * support multiple triggers per recipe
+    Modified VolatileStorageKey/VolatileStorageDriverProvider to operate on
+    a single Arc, and gave each Arc instance its own volatile memory
+    instance.
     
-    * change comment on RecipeSelector to indicate semantics still TBD
+    Now Volatile storage is correctly scoped to a running Arc, and RamDisk
+    storage is scoped to the Arcs Runtime.

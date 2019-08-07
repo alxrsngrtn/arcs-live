@@ -30,7 +30,7 @@ export class Driver {
 }
 export class DriverFactory {
     static clearRegistrationsForTesting() {
-        this.providers = [];
+        this.providers = new Set();
     }
     static async driverInstance(storageKey, exists) {
         for (const provider of this.providers) {
@@ -41,7 +41,10 @@ export class DriverFactory {
         return null;
     }
     static register(storageDriverProvider) {
-        this.providers.push(storageDriverProvider);
+        this.providers.add(storageDriverProvider);
+    }
+    static unregister(storageDriverProvider) {
+        this.providers.delete(storageDriverProvider);
     }
     static willSupport(storageKey) {
         for (const provider of this.providers) {
@@ -52,5 +55,5 @@ export class DriverFactory {
         return false;
     }
 }
-DriverFactory.providers = [];
+DriverFactory.providers = new Set();
 //# sourceMappingURL=driver-factory.js.map

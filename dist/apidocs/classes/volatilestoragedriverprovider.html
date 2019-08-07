@@ -66,6 +66,15 @@
 <div class="container container-main">
 	<div class="row">
 		<div class="col-8 col-content">
+			<section class="tsd-panel tsd-comment">
+				<div class="tsd-comment tsd-typography">
+					<div class="lead">
+						<p>Provides Volatile storage drivers. Volatile storage is local to an individual
+							running Arc. It lives for as long as that Arc instance, and then gets
+						deleted when the Arc is stopped.</p>
+					</div>
+				</div>
+			</section>
 			<section class="tsd-panel tsd-hierarchy">
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
@@ -85,6 +94,18 @@
 				<section class="tsd-panel tsd-index-panel">
 					<div class="tsd-index-content">
 						<section class="tsd-index-section ">
+							<h3>Constructors</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-constructor tsd-parent-kind-class"><a href="volatilestoragedriverprovider.html#constructor" class="tsd-kind-icon">constructor</a></li>
+							</ul>
+						</section>
+						<section class="tsd-index-section tsd-is-private tsd-is-private-protected">
+							<h3>Properties</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="volatilestoragedriverprovider.html#arc" class="tsd-kind-icon">arc</a></li>
+							</ul>
+						</section>
+						<section class="tsd-index-section ">
 							<h3>Methods</h3>
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter"><a href="volatilestoragedriverprovider.html#driver" class="tsd-kind-icon">driver</a></li>
@@ -93,6 +114,45 @@
 							</ul>
 						</section>
 					</div>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group ">
+				<h2>Constructors</h2>
+				<section class="tsd-panel tsd-member tsd-kind-constructor tsd-parent-kind-class">
+					<a name="constructor" class="tsd-anchor"></a>
+					<h3>constructor</h3>
+					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">new <wbr>Volatile<wbr>Storage<wbr>Driver<wbr>Provider<span class="tsd-signature-symbol">(</span>arc<span class="tsd-signature-symbol">: </span><a href="arc.html" class="tsd-signature-type">Arc</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="volatilestoragedriverprovider.html" class="tsd-signature-type">VolatileStorageDriverProvider</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/49b7884/src/runtime/storageNG/drivers/volatile.ts#L126">src/runtime/storageNG/drivers/volatile.ts:126</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>arc: <a href="arc.html" class="tsd-signature-type">Arc</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="volatilestoragedriverprovider.html" class="tsd-signature-type">VolatileStorageDriverProvider</a></h4>
+						</li>
+					</ul>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group tsd-is-private tsd-is-private-protected">
+				<h2>Properties</h2>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private">
+					<a name="arc" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> arc</h3>
+					<div class="tsd-signature tsd-kind-icon">arc<span class="tsd-signature-symbol">:</span> <a href="arc.html" class="tsd-signature-type">Arc</a></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/49b7884/src/runtime/storageNG/drivers/volatile.ts#L126">src/runtime/storageNG/drivers/volatile.ts:126</a></li>
+						</ul>
+					</aside>
 				</section>
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
@@ -108,7 +168,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/storagedriverprovider.html">StorageDriverProvider</a>.<a href="../interfaces/storagedriverprovider.html#driver">driver</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/7644e36/src/runtime/storageNG/drivers/volatile.ts#L123">src/runtime/storageNG/drivers/volatile.ts:123</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/49b7884/src/runtime/storageNG/drivers/volatile.ts#L136">src/runtime/storageNG/drivers/volatile.ts:136</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -141,7 +201,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/storagedriverprovider.html">StorageDriverProvider</a>.<a href="../interfaces/storagedriverprovider.html#willsupport">willSupport</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/7644e36/src/runtime/storageNG/drivers/volatile.ts#L119">src/runtime/storageNG/drivers/volatile.ts:119</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/49b7884/src/runtime/storageNG/drivers/volatile.ts#L132">src/runtime/storageNG/drivers/volatile.ts:132</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -158,15 +218,21 @@
 					<a name="register" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagStatic">Static</span> register</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-static">
-						<li class="tsd-signature tsd-kind-icon">register<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+						<li class="tsd-signature tsd-kind-icon">register<span class="tsd-signature-symbol">(</span>arc<span class="tsd-signature-symbol">: </span><a href="arc.html" class="tsd-signature-type">Arc</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/7644e36/src/runtime/storageNG/drivers/volatile.ts#L131">src/runtime/storageNG/drivers/volatile.ts:131</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/49b7884/src/runtime/storageNG/drivers/volatile.ts#L144">src/runtime/storageNG/drivers/volatile.ts:144</a></li>
 								</ul>
 							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>arc: <a href="arc.html" class="tsd-signature-type">Arc</a></h5>
+								</li>
+							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
 						</li>
 					</ul>
@@ -188,6 +254,12 @@
 					<li class="current tsd-kind-class">
 						<a href="volatilestoragedriverprovider.html" class="tsd-kind-icon">Volatile<wbr>Storage<wbr>Driver<wbr>Provider</a>
 						<ul>
+							<li class=" tsd-kind-constructor tsd-parent-kind-class">
+								<a href="volatilestoragedriverprovider.html#constructor" class="tsd-kind-icon">constructor</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
+								<a href="volatilestoragedriverprovider.html#arc" class="tsd-kind-icon">arc</a>
+							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter">
 								<a href="volatilestoragedriverprovider.html#driver" class="tsd-kind-icon">driver</a>
 							</li>

@@ -27,6 +27,7 @@ import { StorageProviderFactory } from './storage/storage-provider-factory.js';
 import { Type } from './type.js';
 import { PecFactory } from './particle-execution-context.js';
 import { InterfaceInfo } from './interface-info.js';
+import { VolatileMemory } from './storageNG/drivers/volatile.js';
 export declare type ArcOptions = Readonly<{
     id: Id;
     context: Manifest;
@@ -78,6 +79,8 @@ export declare class Arc {
         stores: Map<string, StorageProviderBase>;
     }>;
     readonly pec: ParticleExecutionHost;
+    readonly volatileMemory: VolatileMemory;
+    private readonly volatileStorageDriverProvider;
     constructor({ id, context, pecFactories, slotComposer, loader, storageKey, storageProviderFactory, speculative, innerArc, stub, inspectorFactory }: ArcOptions);
     readonly loader: Loader;
     readonly modality: Modality;

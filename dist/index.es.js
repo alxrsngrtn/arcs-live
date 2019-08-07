@@ -24545,6 +24545,173 @@ class PECOuterPortImpl extends PECOuterPort {
 
 /**
  * @license
+ * Copyright (c) 2019 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+var Exists;
+(function (Exists) {
+    Exists[Exists["ShouldExist"] = 0] = "ShouldExist";
+    Exists[Exists["ShouldCreate"] = 1] = "ShouldCreate";
+    Exists[Exists["MayExist"] = 2] = "MayExist";
+})(Exists || (Exists = {}));
+// Interface that drivers must support.
+// 
+// Note the threading of a version number here; each model provided
+// by the driver to the Store (using the receiver) is paired with a version,
+// as is each model sent from the Store to the driver (using Driver.send()).
+// 
+// This threading is used to track whether driver state has changed while
+// the Store is processing a particular model. send() should always fail
+// if the version isn't exactly 1 greater than the current internal version.
+class Driver {
+    constructor(storageKey, exists) {
+        this.storageKey = storageKey;
+        this.exists = exists;
+    }
+}
+class DriverFactory {
+    static clearRegistrationsForTesting() {
+        this.providers = new Set();
+    }
+    static async driverInstance(storageKey, exists) {
+        for (const provider of this.providers) {
+            if (provider.willSupport(storageKey)) {
+                return provider.driver(storageKey, exists);
+            }
+        }
+        return null;
+    }
+    static register(storageDriverProvider) {
+        this.providers.add(storageDriverProvider);
+    }
+    static unregister(storageDriverProvider) {
+        this.providers.delete(storageDriverProvider);
+    }
+    static willSupport(storageKey) {
+        for (const provider of this.providers) {
+            if (provider.willSupport(storageKey)) {
+                return true;
+            }
+        }
+        return false;
+    }
+}
+DriverFactory.providers = new Set();
+
+/**
+ * @license
+ * Copyright (c) 2019 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+class VolatileMemory {
+    constructor() {
+        this.entries = new Map();
+    }
+}
+class VolatileDriver extends Driver {
+    constructor(storageKey, exists, memory) {
+        super(storageKey, exists);
+        this.pendingVersion = 0;
+        this.pendingModel = null;
+        const keyAsString = storageKey.toString();
+        this.memory = memory;
+        switch (exists) {
+            case Exists.ShouldCreate:
+                if (this.memory.entries.has(keyAsString)) {
+                    throw new Error(`requested creation of memory location ${storageKey} can't proceed as location already exists`);
+                }
+                this.data = { data: null, version: 0, drivers: [] };
+                this.memory.entries.set(keyAsString, this.data);
+                break;
+            case Exists.ShouldExist:
+                if (!this.memory.entries.has(keyAsString)) {
+                    throw new Error(`requested connection to memory location ${storageKey} can't proceed as location doesn't exist`);
+                }
+            /* falls through */
+            case Exists.MayExist:
+                {
+                    const data = this.memory.entries.get(keyAsString);
+                    if (data) {
+                        this.data = data;
+                        this.pendingModel = data.data;
+                        this.pendingVersion = data.version;
+                    }
+                    else {
+                        this.data = { data: null, version: 0, drivers: [] };
+                        this.memory.entries.set(keyAsString, this.data);
+                    }
+                    break;
+                }
+            default:
+                throw new Error(`unknown Exists code ${exists}`);
+        }
+        this.data.drivers.push(this);
+    }
+    registerReceiver(receiver) {
+        this.receiver = receiver;
+        if (this.pendingModel) {
+            receiver(this.pendingModel, this.pendingVersion);
+            this.pendingModel = null;
+        }
+    }
+    async send(model, version) {
+        // This needs to contain an "empty" await, otherwise there's
+        // a synchronous send / onReceive loop that can be established
+        // between multiple Stores/Drivers writing to the same location.
+        await 0;
+        if (this.data.version !== version - 1) {
+            return false;
+        }
+        this.data.data = model;
+        this.data.version += 1;
+        this.data.drivers.forEach(driver => {
+            if (driver === this) {
+                return;
+            }
+            driver.receiver(model, this.data.version);
+        });
+        return true;
+    }
+    async write(key, value) {
+        throw new Error('Method not implemented.');
+    }
+    async read(key) {
+        throw new Error('Method not implemented.');
+    }
+}
+/**
+ * Provides Volatile storage drivers. Volatile storage is local to an individual
+ * running Arc. It lives for as long as that Arc instance, and then gets
+ * deleted when the Arc is stopped.
+ */
+class VolatileStorageDriverProvider {
+    constructor(arc) {
+        this.arc = arc;
+    }
+    willSupport(storageKey) {
+        return storageKey.protocol === 'volatile' && storageKey.arcId.equal(this.arc.id);
+    }
+    async driver(storageKey, exists) {
+        if (!this.willSupport(storageKey)) {
+            throw new Error(`This provider does not support storageKey ${storageKey.toString()}`);
+        }
+        return new VolatileDriver(storageKey, exists, this.arc.volatileMemory);
+    }
+    static register(arc) {
+        DriverFactory.register(new VolatileStorageDriverProvider(arc));
+    }
+}
+
+/**
+ * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
  * This code may only be used under the BSD style license found at
  * http://polymer.github.io/LICENSE.txt
@@ -24569,6 +24736,8 @@ class Arc {
         this.instantiateMutex = new Mutex();
         this.idGenerator = IdGenerator.newSession();
         this.loadedParticleInfo = new Map();
+        // Volatile storage local to this Arc instance.
+        this.volatileMemory = new VolatileMemory();
         // TODO: context should not be optional.
         this._context = context || new Manifest({ id });
         // TODO: pecFactories should not be optional. update all callers and fix here.
@@ -24592,6 +24761,8 @@ class Arc {
         const ports = this.pecFactories.map(f => f(this.generateID(), this.idGenerator));
         this.pec = new ParticleExecutionHost(slotComposer, this, ports);
         this.storageProviderFactory = storageProviderFactory || new StorageProviderFactory(this.id);
+        this.volatileStorageDriverProvider = new VolatileStorageDriverProvider(this);
+        DriverFactory.register(this.volatileStorageDriverProvider);
     }
     get loader() {
         return this._loader;
@@ -24617,6 +24788,7 @@ class Arc {
             this.pec.slotComposer.consumers.forEach(consumer => assert(allArcs.includes(consumer.arc)));
             this.pec.slotComposer.dispose();
         }
+        DriverFactory.unregister(this.volatileStorageDriverProvider);
     }
     // Returns a promise that spins sending a single `AwaitIdle` message until it
     // sees no other messages were sent.
@@ -26796,167 +26968,6 @@ class FakeSlotComposer extends SlotComposer {
 
 /**
  * @license
- * Copyright (c) 2019 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-var Exists;
-(function (Exists) {
-    Exists[Exists["ShouldExist"] = 0] = "ShouldExist";
-    Exists[Exists["ShouldCreate"] = 1] = "ShouldCreate";
-    Exists[Exists["MayExist"] = 2] = "MayExist";
-})(Exists || (Exists = {}));
-// Interface that drivers must support.
-// 
-// Note the threading of a version number here; each model provided
-// by the driver to the Store (using the receiver) is paired with a version,
-// as is each model sent from the Store to the driver (using Driver.send()).
-// 
-// This threading is used to track whether driver state has changed while
-// the Store is processing a particular model. send() should always fail
-// if the version isn't exactly 1 greater than the current internal version.
-class Driver {
-    constructor(storageKey, exists) {
-        this.storageKey = storageKey;
-        this.exists = exists;
-    }
-}
-class DriverFactory {
-    static clearRegistrationsForTesting() {
-        this.providers = [];
-    }
-    static async driverInstance(storageKey, exists) {
-        for (const provider of this.providers) {
-            if (provider.willSupport(storageKey)) {
-                return provider.driver(storageKey, exists);
-            }
-        }
-        return null;
-    }
-    static register(storageDriverProvider) {
-        this.providers.push(storageDriverProvider);
-    }
-    static willSupport(storageKey) {
-        for (const provider of this.providers) {
-            if (provider.willSupport(storageKey)) {
-                return true;
-            }
-        }
-        return false;
-    }
-}
-DriverFactory.providers = [];
-
-/**
- * @license
- * Copyright (c) 2019 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-class VolatileMemory {
-    constructor() {
-        this.entries = new Map();
-    }
-}
-class VolatileDriver extends Driver {
-    constructor(storageKey, exists) {
-        super(storageKey, exists);
-        this.pendingVersion = 0;
-        this.pendingModel = null;
-        const keyAsString = storageKey.toString();
-        this.memory = Runtime.getRuntime().getVolatileMemory();
-        switch (exists) {
-            case Exists.ShouldCreate:
-                if (this.memory.entries.has(keyAsString)) {
-                    throw new Error(`requested creation of memory location ${storageKey} can't proceed as location already exists`);
-                }
-                this.data = { data: null, version: 0, drivers: [] };
-                this.memory.entries.set(keyAsString, this.data);
-                break;
-            case Exists.ShouldExist:
-                if (!this.memory.entries.has(keyAsString)) {
-                    throw new Error(`requested connection to memory location ${storageKey} can't proceed as location doesn't exist`);
-                }
-            /* falls through */
-            case Exists.MayExist:
-                {
-                    const data = this.memory.entries.get(keyAsString);
-                    if (data) {
-                        this.data = data;
-                        this.pendingModel = data.data;
-                        this.pendingVersion = data.version;
-                    }
-                    else {
-                        this.data = { data: null, version: 0, drivers: [] };
-                        this.memory.entries.set(keyAsString, this.data);
-                    }
-                    break;
-                }
-            default:
-                throw new Error(`unknown Exists code ${exists}`);
-        }
-        this.data.drivers.push(this);
-    }
-    registerReceiver(receiver) {
-        this.receiver = receiver;
-        if (this.pendingModel) {
-            receiver(this.pendingModel, this.pendingVersion);
-            this.pendingModel = null;
-        }
-    }
-    async send(model, version) {
-        // This needs to contain an "empty" await, otherwise there's
-        // a synchronous send / onReceive loop that can be established
-        // between multiple Stores/Drivers writing to the same location.
-        await 0;
-        if (this.data.version !== version - 1) {
-            return false;
-        }
-        this.data.data = model;
-        this.data.version += 1;
-        this.data.drivers.forEach(driver => {
-            if (driver === this) {
-                return;
-            }
-            driver.receiver(model, this.data.version);
-        });
-        return true;
-    }
-    async write(key, value) {
-        throw new Error('Method not implemented.');
-    }
-    async read(key) {
-        throw new Error('Method not implemented.');
-    }
-}
-class VolatileStorageDriverProvider {
-    willSupport(storageKey) {
-        return storageKey.protocol === 'volatile';
-    }
-    async driver(storageKey, exists) {
-        if (!this.willSupport(storageKey)) {
-            throw new Error(`This provider does not support storageKey ${storageKey.toString()}`);
-        }
-        return new VolatileDriver(storageKey, exists);
-    }
-    static register() {
-        DriverFactory.register(new VolatileStorageDriverProvider());
-    }
-}
-// Note that this will automatically register for any production code
-// that uses volatile drivers; but it won't automatically register in 
-// testing; for safety, call VolatileStorageDriverProvider.register()
-// from your test code somewhere.
-VolatileStorageDriverProvider.register();
-
-/**
- * @license
  * Copyright (c) 2018 Google Inc. All rights reserved.
  * This code may only be used under the BSD style license found at
  * http://polymer.github.io/LICENSE.txt
@@ -26988,15 +26999,15 @@ class Runtime {
         this.loader = loader;
         this.composerClass = composerClass;
         this.context = context || new Manifest({ id: 'manifest:default' });
-        this.volatileMemory = new VolatileMemory();
+        this.ramDiskMemory = new VolatileMemory();
         runtime = this;
         // user information. One persona per runtime for now.
     }
     getCacheService() {
         return this.cacheService;
     }
-    getVolatileMemory() {
-        return this.volatileMemory;
+    getRamDiskMemory() {
+        return this.ramDiskMemory;
     }
     destroy() {
     }

@@ -29,8 +29,9 @@ export declare abstract class Driver<Data> {
 }
 export declare class DriverFactory {
     static clearRegistrationsForTesting(): void;
-    static providers: StorageDriverProvider[];
+    static providers: Set<StorageDriverProvider>;
     static driverInstance<Data>(storageKey: StorageKey, exists: Exists): Promise<Driver<Data>>;
     static register(storageDriverProvider: StorageDriverProvider): void;
+    static unregister(storageDriverProvider: StorageDriverProvider): void;
     static willSupport(storageKey: StorageKey): boolean;
 }

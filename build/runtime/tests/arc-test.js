@@ -24,6 +24,7 @@ import * as util from '../testing/test-util.js';
 import { ArcType } from '../type.js';
 import { Runtime } from '../runtime.js';
 import { RecipeResolver } from '../recipe/recipe-resolver.js';
+import { DriverFactory } from '../storageNG/drivers/driver-factory.js';
 async function setup(storageKeyPrefix) {
     const loader = new Loader();
     const manifest = await Manifest.parse(`
@@ -849,6 +850,22 @@ function getSingletonHandle(store) {
             assert.strictEqual(newArc._stores.length, 1);
             assert.strictEqual(newArc.activeRecipe.toString(), arc.activeRecipe.toString());
             assert.strictEqual(newArc.id.idTreeAsString(), 'test');
+        });
+        it('registers and deregisters its own volatile storage', async () => {
+            const id1 = ArcId.newForTest('test1');
+            const id2 = ArcId.newForTest('test2');
+            const storageKey1 = storageKeyPrefix + id1.toString();
+            const storageKey2 = storageKeyPrefix + id2.toString();
+            DriverFactory.clearRegistrationsForTesting();
+            assert.isEmpty(DriverFactory.providers);
+            const arc1 = new Arc({ id: id1, storageKey: storageKey1, loader: new Loader(), context: new Manifest({ id: id1 }) });
+            assert.strictEqual(DriverFactory.providers.size, 1);
+            const arc2 = new Arc({ id: id2, storageKey: storageKey2, loader: new Loader(), context: new Manifest({ id: id2 }) });
+            assert.strictEqual(DriverFactory.providers.size, 2);
+            arc1.dispose();
+            assert.strictEqual(DriverFactory.providers.size, 1);
+            arc2.dispose();
+            assert.isEmpty(DriverFactory.providers);
         });
     });
 }); // forEach storageKeyPrefix

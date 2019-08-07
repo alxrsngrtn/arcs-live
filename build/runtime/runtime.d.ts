@@ -30,13 +30,13 @@ export declare class Runtime {
     private loader;
     private composerClass;
     private context;
-    private readonly volatileMemory;
+    private readonly ramDiskMemory;
     static getRuntime(): Runtime;
     static clearRuntimeForTesting(): void;
     static newForNodeTesting(context?: Manifest): Runtime;
     constructor(loader?: Loader, composerClass?: new () => SlotComposer, context?: Manifest);
     getCacheService(): RuntimeCacheService;
-    getVolatileMemory(): VolatileMemory;
+    getRamDiskMemory(): VolatileMemory;
     destroy(): void;
     newArc(name: string, storageKeyPrefix: string, options?: RuntimeArcOptions): Arc;
     /**

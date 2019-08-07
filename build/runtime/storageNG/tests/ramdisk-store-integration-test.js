@@ -10,19 +10,19 @@
 import { assert } from '../../../platform/chai-web.js';
 import { Store, StorageMode, ProxyMessageType } from '../store.js';
 import { CRDTCount, CountOpTypes } from '../../crdt/crdt-count.js';
-import { VolatileStorageKey, VolatileStorageDriverProvider } from '../drivers/volatile.js';
+import { RamDiskStorageKey, RamDiskStorageDriverProvider } from '../drivers/ramdisk';
 import { Exists, DriverFactory } from '../drivers/driver-factory.js';
 import { Runtime } from '../../runtime.js';
-describe('Volatile + Store Integration', async () => {
+describe('RamDisk + Store Integration', async () => {
     beforeEach(() => {
-        VolatileStorageDriverProvider.register();
+        RamDiskStorageDriverProvider.register();
     });
     afterEach(() => {
         DriverFactory.clearRegistrationsForTesting();
     });
     it('will store a sequence of model and operation updates as models', async () => {
         const runtime = new Runtime();
-        const storageKey = new VolatileStorageKey('unique');
+        const storageKey = new RamDiskStorageKey('unique');
         const store = new Store(storageKey, Exists.ShouldCreate, null, StorageMode.Direct, CRDTCount);
         const activeStore = await store.activate();
         const count = new CRDTCount();
@@ -34,13 +34,13 @@ describe('Volatile + Store Integration', async () => {
         await activeStore.onProxyMessage({ type: ProxyMessageType.Operations, operations: [
                 { type: CountOpTypes.Increment, actor: 'them', version: { from: 0, to: 1 } }
             ], id: 1 });
-        const volatileEntry = runtime.getVolatileMemory().entries.get(storageKey.toString());
+        const volatileEntry = runtime.getRamDiskMemory().entries.get(storageKey.toString());
         assert.deepEqual(volatileEntry.data, activeStore['localModel'].getData());
         assert.strictEqual(volatileEntry.version, 3);
     });
     it('will store operation updates from multiple sources', async () => {
         const runtime = new Runtime();
-        const storageKey = new VolatileStorageKey('unique');
+        const storageKey = new RamDiskStorageKey('unique');
         const store1 = new Store(storageKey, Exists.ShouldCreate, null, StorageMode.Direct, CRDTCount);
         const activeStore1 = await store1.activate();
         const store2 = new Store(storageKey, Exists.ShouldExist, null, StorageMode.Direct, CRDTCount);
@@ -65,14 +65,14 @@ describe('Volatile + Store Integration', async () => {
         assert.strictEqual(results.filter(a => !a).length, 0);
         await activeStore1.idle();
         await activeStore2.idle();
-        const volatileEntry = runtime.getVolatileMemory().entries.get(storageKey.toString());
+        const volatileEntry = runtime.getRamDiskMemory().entries.get(storageKey.toString());
         assert.deepEqual(volatileEntry.data, activeStore1['localModel'].getData());
         assert.strictEqual(volatileEntry.version, 3);
     });
     it('will store operation updates from multiple sources with some timing delays', async () => {
         // store1.onProxyMessage, DELAY, DELAY, DELAY, store1.onProxyMessage, store2.onProxyMessage, DELAY, DELAY, DELAY, store2.onProxyMessage, DELAY, DELAY, DELAY, DELAY, DELAY
         const runtime = new Runtime();
-        const storageKey = new VolatileStorageKey('unique');
+        const storageKey = new RamDiskStorageKey('unique');
         const store1 = new Store(storageKey, Exists.ShouldCreate, null, StorageMode.Direct, CRDTCount);
         const activeStore1 = await store1.activate();
         const store2 = new Store(storageKey, Exists.ShouldExist, null, StorageMode.Direct, CRDTCount);
@@ -99,9 +99,9 @@ describe('Volatile + Store Integration', async () => {
         assert.strictEqual(results.filter(a => !a).length, 0);
         await activeStore1.idle();
         await activeStore2.idle();
-        const volatileEntry = runtime.getVolatileMemory().entries.get(storageKey.toString());
+        const volatileEntry = runtime.getRamDiskMemory().entries.get(storageKey.toString());
         assert.deepEqual(volatileEntry.data, activeStore1['localModel'].getData());
         assert.strictEqual(volatileEntry.version, 4);
     });
 });
-//# sourceMappingURL=volatile-store-integration-test.js.map
+//# sourceMappingURL=ramdisk-store-integration-test.js.map

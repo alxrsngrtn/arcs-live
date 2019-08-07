@@ -10,7 +10,7 @@
 import { assert } from '../../../platform/chai-web.js';
 import { StorageMode, ProxyMessageType } from '../store.js';
 import { CRDTCount, CountOpTypes } from '../../crdt/crdt-count.js';
-import { VolatileStorageKey, VolatileStorageDriverProvider } from '../drivers/volatile.js';
+import { RamDiskStorageKey, RamDiskStorageDriverProvider } from '../drivers/ramdisk';
 import { Exists, DriverFactory } from '../drivers/driver-factory.js';
 import { Runtime } from '../../runtime.js';
 import { BackingStore } from '../backing-store.js';
@@ -22,16 +22,16 @@ function assertHasModel(message, model) {
         assert.fail('message is not a ModelUpdate');
     }
 }
-describe('Volatile + Backing Store Integration', async () => {
+describe('RamDisk + Backing Store Integration', async () => {
     beforeEach(() => {
-        VolatileStorageDriverProvider.register();
+        RamDiskStorageDriverProvider.register();
     });
     afterEach(() => {
         DriverFactory.clearRegistrationsForTesting();
     });
     it('will allow storage of a number of objects', async () => {
         const runtime = new Runtime();
-        const storageKey = new VolatileStorageKey('unique');
+        const storageKey = new RamDiskStorageKey('unique');
         const store = await BackingStore.construct(storageKey, Exists.ShouldCreate, null, StorageMode.Backing, CRDTCount);
         const count1 = new CRDTCount();
         count1.applyOperation({ type: CountOpTypes.Increment, actor: 'me', version: { from: 0, to: 1 } });
@@ -55,4 +55,4 @@ describe('Volatile + Backing Store Integration', async () => {
         assert.strictEqual(muxId, 'not-a-thing');
     });
 });
-//# sourceMappingURL=volatile-backing-store-integration-test.js.map
+//# sourceMappingURL=ramdisk-backing-store-integration-test.js.map

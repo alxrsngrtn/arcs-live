@@ -39,15 +39,15 @@ export class Runtime {
         this.loader = loader;
         this.composerClass = composerClass;
         this.context = context || new Manifest({ id: 'manifest:default' });
-        this.volatileMemory = new VolatileMemory();
+        this.ramDiskMemory = new VolatileMemory();
         runtime = this;
         // user information. One persona per runtime for now.
     }
     getCacheService() {
         return this.cacheService;
     }
-    getVolatileMemory() {
-        return this.volatileMemory;
+    getRamDiskMemory() {
+        return this.ramDiskMemory;
     }
     destroy() {
     }

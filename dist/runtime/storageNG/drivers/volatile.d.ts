@@ -9,14 +9,17 @@
  */
 import { Driver, ReceiveMethod, StorageDriverProvider, Exists } from './driver-factory.js';
 import { StorageKey } from '../storage-key.js';
+import { Arc } from '../../arc.js';
+import { ArcId } from '../../id.js';
 declare type VolatileEntry<Data> = {
     data: Data;
     version: number;
     drivers: VolatileDriver<Data>[];
 };
 export declare class VolatileStorageKey extends StorageKey {
+    readonly arcId: ArcId;
     readonly unique: string;
-    constructor(unique: string);
+    constructor(arcId: ArcId, unique: string);
     toString(): string;
     childWithComponent(component: string): VolatileStorageKey;
 }
@@ -29,15 +32,22 @@ export declare class VolatileDriver<Data> extends Driver<Data> {
     private pendingModel;
     private receiver;
     private data;
-    constructor(storageKey: StorageKey, exists: Exists);
+    constructor(storageKey: StorageKey, exists: Exists, memory: VolatileMemory);
     registerReceiver(receiver: ReceiveMethod<Data>): void;
     send(model: Data, version: number): Promise<boolean>;
     write(key: StorageKey, value: Data): Promise<void>;
     read(key: StorageKey): Promise<Data>;
 }
+/**
+ * Provides Volatile storage drivers. Volatile storage is local to an individual
+ * running Arc. It lives for as long as that Arc instance, and then gets
+ * deleted when the Arc is stopped.
+ */
 export declare class VolatileStorageDriverProvider implements StorageDriverProvider {
+    private readonly arc;
+    constructor(arc: Arc);
     willSupport(storageKey: StorageKey): boolean;
     driver<Data>(storageKey: StorageKey, exists: Exists): Promise<VolatileDriver<Data>>;
-    static register(): void;
+    static register(arc: Arc): void;
 }
 export {};
