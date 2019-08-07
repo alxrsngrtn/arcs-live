@@ -431,6 +431,9 @@ function buildWasmModule(configFile, logCmd, force) {
         if (cfg.src.length !== 1) {
             throw new Error(`wasm modules must specify exactly one source file (${configFile})`);
         }
+        if (cfg.outDir === '$here') {
+            cfg.outDir = srcDir;
+        }
         const manifestPath = path.join(srcDir, cfg.manifest);
         const srcPath = path.join(srcDir, cfg.src[0]);
         const wasmPath = path.join(cfg.outDir, name);
