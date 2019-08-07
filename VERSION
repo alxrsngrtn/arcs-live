@@ -1,5 +1,5 @@
-commit cdf8fc41b46c29ba268ff8e55a81e267e0ff39e5
-Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
-Date:   Wed Aug 7 10:30:57 2019 +1000
+commit 6b75e7715e605846a1124059dca674b23b6669ef
+Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
+Date:   Wed Aug 7 14:39:55 2019 +1000
 
-    Adds an dataflow example for Autofill (uses references) (#3443)
+    Copy store names when cloning (#3432)

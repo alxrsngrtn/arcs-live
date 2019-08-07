@@ -462,6 +462,7 @@ ${this.activeRecipe.toString()}`;
                     assert(copiedStore.version !== null, `Copied store ${recipeHandle.id} doesn't have version.`);
                     await newStore.cloneFrom(copiedStore);
                     this._tagStore(newStore, this.context.findStoreTags(copiedStoreRef));
+                    newStore.name = copiedStore.name && `Copy of ${copiedStore.name}`;
                     const copiedStoreDesc = this.getStoreDescription(copiedStore);
                     if (copiedStoreDesc) {
                         this.storeDescriptions.set(newStore, copiedStoreDesc);
