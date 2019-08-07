@@ -270,6 +270,7 @@ export interface RecipeNode extends BaseNode {
     verbs: VerbList;
     items: RecipeItem[];
     annotation: Annotation;
+    triggers: Triggers;
 }
 export interface RecipeParticle extends BaseNode {
     kind: 'particle';
@@ -471,6 +472,7 @@ export interface NameAndTagList {
     tags: TagList;
 }
 export declare type Annotation = string;
+export declare type Triggers = [string][][];
 export declare type Indent = number;
 export declare type LocalName = string;
 export declare type Manifest = ManifestItem[];

@@ -26,6 +26,7 @@ export class Recipe {
         this._slots = [];
         this._localName = undefined;
         this.annotation = undefined;
+        this.triggers = [];
         // TODO: Recipes should be collections of records that are tagged
         // with a type. Strategies should register the record types they
         // can handle. ConnectionConstraints should be a different record

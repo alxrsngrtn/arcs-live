@@ -621,6 +621,9 @@ ${e.message}
         if (recipeItem.annotation) {
             recipe.annotation = recipeItem.annotation;
         }
+        if (recipeItem.triggers) {
+            recipe.triggers = recipeItem.triggers;
+        }
         if (recipeItem.verbs) {
             recipe.verbs = recipeItem.verbs;
         }

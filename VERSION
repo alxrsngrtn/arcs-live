@@ -1,5 +1,13 @@
-commit 6b75e7715e605846a1124059dca674b23b6669ef
-Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
-Date:   Wed Aug 7 14:39:55 2019 +1000
+commit 7644e36e121b0377abe66b28cc257e2d2f9f6e54
+Author: raulverag <42563960+raulverag@users.noreply.github.com>
+Date:   Wed Aug 7 15:22:44 2019 +1000
 
-    Copy store names when cloning (#3432)
+    Syntax parsing for recipe selection triggers (#3448)
+    
+    * Recipe selector, syntax parsing only
+    
+    * fix lint errors
+    
+    * support multiple triggers per recipe
+    
+    * change comment on RecipeSelector to indicate semantics still TBD
