@@ -1,11 +1,14 @@
-commit eaaab27273134c75f03b342001eef613d019a715
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Wed Aug 7 12:55:12 2019 -0700
+commit 9f7e228d166e89d528b1839c78c286b7a183fd18
+Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
+Date:   Thu Aug 8 13:48:31 2019 +1000
 
-    pass id generator to java pec (and add other helpful params) (#3446)
+    Improve dependency handling in sigh. (#3441)
     
-    * pass id generator to java pec (and add other helpful params)
+    * Improve dependency handling in sigh.
     
-    * add java version of StorageProxyScheduler (unused yet)
+    - All commands that require optional npm modules will check first and print a helpful message if the dependency is not found.
+    - emsk-npm updated to allow directly calling from a module (rather than using 'npx')
     
-    * address comment: rename ParticleImpl to ParticleBase
+    * Consistencified optional deps requests; added sigh install
+    
+    * Tweaks
