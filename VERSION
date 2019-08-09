@@ -1,5 +1,9 @@
-commit a4646cbeb5c34c3f12f45f11791d0ab17bab8e89
-Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
-Date:   Fri Aug 9 14:19:50 2019 +1000
+commit 8d08ef55507b7bd0b8d29d58ac2ea25ed5c91a5c
+Author: raulverag <42563960+raulverag@users.noreply.github.com>
+Date:   Fri Aug 9 15:05:27 2019 +1000
 
-    Minor updates to wasm C++ readme (#3452)
+    Implements RecipeSelector (#3455)
+    
+    * Implements RecipeSelector with tests
+    
+    * lint fixes

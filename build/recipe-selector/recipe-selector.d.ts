@@ -8,8 +8,16 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { Recipe } from '../runtime/recipe/recipe.js';
+export declare class Match {
+    readonly trigger: [string, string][];
+    readonly recipe: Recipe;
+    constructor(trigger: [string, string][], recipe: Recipe);
+    matches(request: [string, string][]): boolean;
+}
 export declare class RecipeSelector {
     readonly recipes: Recipe[];
+    private _table;
+    readonly table: Match[];
     constructor(recipes: Recipe[]);
-    select(trigger: [string][]): Recipe | null;
+    select(request: [string, string][]): Recipe | null;
 }

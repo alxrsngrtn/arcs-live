@@ -46,7 +46,7 @@ export declare class Recipe implements Cloneable<Recipe> {
     private _localName;
     private _cloneMap;
     annotation: string | undefined;
-    triggers: [string][][];
+    triggers: [string, string][][];
     private readonly _connectionConstraints;
     private readonly _obligations;
     private _verbs;

@@ -472,7 +472,7 @@ export interface NameAndTagList {
     tags: TagList;
 }
 export declare type Annotation = string;
-export declare type Triggers = [string][][];
+export declare type Triggers = [string, string][][];
 export declare type Indent = number;
 export declare type LocalName = string;
 export declare type Manifest = ManifestItem[];
