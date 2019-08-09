@@ -11,6 +11,7 @@ import { assert } from '../platform/assert-web.js';
 import { Entity } from './entity.js';
 import { Particle } from './particle.js';
 import { Singleton } from './handle.js';
+import { UserException } from './arc-exceptions.js';
 // Encodes/decodes the wire format for transferring entities over the wasm boundary.
 // Note that entities must have an id before serializing for use in a wasm particle.
 //
@@ -326,9 +327,10 @@ class KotlinWasmDriver {
 }
 // Holds an instance of a running wasm module, which may contain multiple particles.
 export class WasmContainer {
-    constructor(loader) {
+    constructor(loader, apiPort) {
         this.particleMap = new Map();
         this.loader = loader;
+        this.apiPort = apiPort;
     }
     async initialize(buffer) {
         // TODO: vet the imports/exports on 'module'
@@ -396,11 +398,12 @@ export class WasmContainer {
 }
 // Creates and interfaces to a particle inside a WasmContainer's module.
 export class WasmParticle extends Particle {
-    constructor(container) {
+    constructor(id, container) {
         super();
         this.handleMap = new Map();
         this.revHandleMap = new Map();
         this.converters = new Map();
+        this.id = id;
         this.container = container;
         this.exports = container.exports;
         const fn = `_new${this.spec.name}`;
@@ -518,7 +521,10 @@ export class WasmParticle extends Particle {
     getHandle(wasmHandle) {
         const handle = this.revHandleMap.get(wasmHandle);
         if (!handle) {
-            throw new Error(`wasm particle '${this.spec.name}' attempted to write to unconnected handle`);
+            const err = new Error(`wasm particle '${this.spec.name}' attempted to write to unconnected handle`);
+            const userException = new UserException(err, 'WasmParticle::getHandle', this.id, this.spec.name);
+            this.container.apiPort.ReportExceptionInHost(userException);
+            throw err;
         }
         return handle;
     }

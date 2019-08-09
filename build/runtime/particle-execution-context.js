@@ -226,7 +226,7 @@ export class ParticleExecutionContext {
         let particle;
         if (spec.implFile && spec.implFile.endsWith('.wasm')) {
             // TODO(sherrypra): Make reloading WASM particle re-instantiate the entire container from scratch
-            particle = await this.loadWasmParticle(spec);
+            particle = await this.loadWasmParticle(id, spec);
             particle.setCapabilities(this.capabilities(false));
         }
         else {
@@ -240,7 +240,7 @@ export class ParticleExecutionContext {
         this.particles.set(id, particle);
         return particle;
     }
-    async loadWasmParticle(spec) {
+    async loadWasmParticle(id, spec) {
         assert(spec.name.length > 0);
         let container = this.wasmContainers[spec.implFile];
         if (!container) {
@@ -248,14 +248,14 @@ export class ParticleExecutionContext {
             if (!buffer || buffer.byteLength === 0) {
                 throw new Error(`Failed to load wasm binary '${spec.implFile}'`);
             }
-            container = new WasmContainer(this.loader);
+            container = new WasmContainer(this.loader, this.apiPort);
             await container.initialize(buffer);
             this.wasmContainers[spec.implFile] = container;
         }
         // Particle constructor expects spec to be attached to the class object (and attaches it to
         // the particle instance at that time).
         WasmParticle.spec = spec;
-        const particle = new WasmParticle(container);
+        const particle = new WasmParticle(id, container);
         WasmParticle.spec = null;
         return particle;
     }

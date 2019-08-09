@@ -108,9 +108,7 @@ export declare class VolatileSingleton extends VolatileStorageProvider implement
         stored: boolean;
     };
     get(): Promise<any>;
-    set(value: {
-        id: string;
-    }, originatorId?: string, barrier?: string): Promise<void>;
+    set(value: any, originatorId?: string, barrier?: string): Promise<void>;
     clear(originatorId?: string, barrier?: string): Promise<void>;
 }
 declare class VolatileBigCollection extends VolatileStorageProvider implements BigCollectionStorageProvider {

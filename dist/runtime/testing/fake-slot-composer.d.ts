@@ -9,11 +9,22 @@
  */
 import { SlotComposer, SlotComposerOptions } from '../slot-composer.js';
 import { SlotContext } from '../slot-context.js';
+import { Particle } from '../recipe/particle.js';
+import { Content } from '../slot-consumer.js';
 /**
  * A helper class for NodeJS tests that mimics SlotComposer without relying on DOM APIs.
  */
 export declare class FakeSlotComposer extends SlotComposer {
     constructor(options?: SlotComposerOptions);
-    renderSlot(particle: any, slotName: any, content: any): void;
+    renderSlot(particle: Particle, slotName: string, content: Content): void;
     readonly contexts: SlotContext[];
+}
+/**
+ * A helper SlotComposer that records renderSlot calls.
+ *
+ *   I'm watching you, Wazowski. Always watching...
+ */
+export declare class RozSlotComposer extends FakeSlotComposer {
+    received: [string, string, any][];
+    renderSlot(particle: Particle, slotName: string, content: Content): void;
 }

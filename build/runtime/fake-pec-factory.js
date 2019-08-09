@@ -7,19 +7,15 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-import { Loader } from './loader.js';
 import { MessageChannel } from './message-channel.js';
 import { ParticleExecutionContext } from './particle-execution-context.js';
-import { StubLoader } from './testing/stub-loader.js';
 // TODO: Make this generic so that it can also be used in-browser, or add a
 // separate in-process browser pec-factory.
 export function FakePecFactory(loader) {
     return (pecId, idGenerator) => {
         const channel = new MessageChannel();
-        // Each PEC should get its own loader. Only a StubLoader knows how to be cloned,
-        // so its either a clone of a Stub or a new Loader.
-        const loaderToUse = loader instanceof StubLoader ? loader.clone() : new Loader();
-        const pec = new ParticleExecutionContext(channel.port1, pecId, idGenerator, loaderToUse);
+        // Each PEC should get its own loader.
+        const pec = new ParticleExecutionContext(channel.port1, pecId, idGenerator, loader.clone());
         return channel.port2;
     };
 }

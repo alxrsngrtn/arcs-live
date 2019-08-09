@@ -1,9 +1,15 @@
-commit 8d08ef55507b7bd0b8d29d58ac2ea25ed5c91a5c
-Author: raulverag <42563960+raulverag@users.noreply.github.com>
-Date:   Fri Aug 9 15:05:27 2019 +1000
+commit 3add23d83d071f874735a439d7207f0b25aa25d9
+Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
+Date:   Fri Aug 9 15:17:10 2019 +1000
 
-    Implements RecipeSelector (#3455)
+    Add wasm particle API tests; currently C++ only (#3453)
     
-    * Implements RecipeSelector with tests
+    * Add wasm particle API tests; currently C++ only
     
-    * lint fixes
+    - only executed when invoked via 'sigh wasmTest'; more work required to merge into the standard 'test'
+    - removes the somewhat magic 'linkManifest' option in wasm.json; tests just use explicit file paths
+    - adds RozSlotComposer to simply record renderSlot calls for after-the-fact verification
+    - sets up more versatile Loader.clone() so tests can make custom Loaders more easily
+    - some API tweaks inside the C++ particle code
+    
+    * Review updates

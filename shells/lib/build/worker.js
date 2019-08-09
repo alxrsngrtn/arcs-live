@@ -386,7 +386,7 @@ class ParticleExecutionContext {
         let particle;
         if (spec.implFile && spec.implFile.endsWith('.wasm')) {
             // TODO(sherrypra): Make reloading WASM particle re-instantiate the entire container from scratch
-            particle = await this.loadWasmParticle(spec);
+            particle = await this.loadWasmParticle(id, spec);
             particle.setCapabilities(this.capabilities(false));
         }
         else {
@@ -400,7 +400,7 @@ class ParticleExecutionContext {
         this.particles.set(id, particle);
         return particle;
     }
-    async loadWasmParticle(spec) {
+    async loadWasmParticle(id, spec) {
         Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(spec.name.length > 0);
         let container = this.wasmContainers[spec.implFile];
         if (!container) {
@@ -408,14 +408,14 @@ class ParticleExecutionContext {
             if (!buffer || buffer.byteLength === 0) {
                 throw new Error(`Failed to load wasm binary '${spec.implFile}'`);
             }
-            container = new _wasm_js__WEBPACK_IMPORTED_MODULE_5__["WasmContainer"](this.loader);
+            container = new _wasm_js__WEBPACK_IMPORTED_MODULE_5__["WasmContainer"](this.loader, this.apiPort);
             await container.initialize(buffer);
             this.wasmContainers[spec.implFile] = container;
         }
         // Particle constructor expects spec to be attached to the class object (and attaches it to
         // the particle instance at that time).
         _wasm_js__WEBPACK_IMPORTED_MODULE_5__["WasmParticle"].spec = spec;
-        const particle = new _wasm_js__WEBPACK_IMPORTED_MODULE_5__["WasmParticle"](container);
+        const particle = new _wasm_js__WEBPACK_IMPORTED_MODULE_5__["WasmParticle"](id, container);
         _wasm_js__WEBPACK_IMPORTED_MODULE_5__["WasmParticle"].spec = null;
         return particle;
     }
@@ -5795,6 +5795,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _entity_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(11);
 /* harmony import */ var _particle_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(29);
 /* harmony import */ var _handle_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(13);
+/* harmony import */ var _arc_exceptions_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(14);
 /**
  * @license
  * Copyright (c) 2019 Google Inc. All rights reserved.
@@ -5804,6 +5805,7 @@ __webpack_require__.r(__webpack_exports__);
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
+
 
 
 
@@ -6123,9 +6125,10 @@ class KotlinWasmDriver {
 }
 // Holds an instance of a running wasm module, which may contain multiple particles.
 class WasmContainer {
-    constructor(loader) {
+    constructor(loader, apiPort) {
         this.particleMap = new Map();
         this.loader = loader;
+        this.apiPort = apiPort;
     }
     async initialize(buffer) {
         // TODO: vet the imports/exports on 'module'
@@ -6193,11 +6196,12 @@ class WasmContainer {
 }
 // Creates and interfaces to a particle inside a WasmContainer's module.
 class WasmParticle extends _particle_js__WEBPACK_IMPORTED_MODULE_2__["Particle"] {
-    constructor(container) {
+    constructor(id, container) {
         super();
         this.handleMap = new Map();
         this.revHandleMap = new Map();
         this.converters = new Map();
+        this.id = id;
         this.container = container;
         this.exports = container.exports;
         const fn = `_new${this.spec.name}`;
@@ -6315,7 +6319,10 @@ class WasmParticle extends _particle_js__WEBPACK_IMPORTED_MODULE_2__["Particle"]
     getHandle(wasmHandle) {
         const handle = this.revHandleMap.get(wasmHandle);
         if (!handle) {
-            throw new Error(`wasm particle '${this.spec.name}' attempted to write to unconnected handle`);
+            const err = new Error(`wasm particle '${this.spec.name}' attempted to write to unconnected handle`);
+            const userException = new _arc_exceptions_js__WEBPACK_IMPORTED_MODULE_4__["UserException"](err, 'WasmParticle::getHandle', this.id, this.spec.name);
+            this.container.apiPort.ReportExceptionInHost(userException);
+            throw err;
         }
         return handle;
     }
@@ -6975,6 +6982,9 @@ class Loader {
     unwrapParticle(particleWrapper) {
         Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(this.pec);
         return particleWrapper({ Particle: _particle_js__WEBPACK_IMPORTED_MODULE_7__["Particle"], DomParticle: _dom_particle_js__WEBPACK_IMPORTED_MODULE_5__["DomParticle"], TransformationDomParticle: _transformation_dom_particle_js__WEBPACK_IMPORTED_MODULE_9__["TransformationDomParticle"], MultiplexerDomParticle: _multiplexer_dom_particle_js__WEBPACK_IMPORTED_MODULE_6__["MultiplexerDomParticle"], Reference: _reference_js__WEBPACK_IMPORTED_MODULE_8__["ClientReference"].newClientReference(this.pec), html });
+    }
+    clone() {
+        return new Loader();
     }
 }
 //# sourceMappingURL=loader.js.map

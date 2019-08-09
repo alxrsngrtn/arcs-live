@@ -34,4 +34,5 @@ export declare class Loader {
      * executes the defineParticle() code and returns the results which should be a class definition.
      */
     unwrapParticle(particleWrapper: any): typeof Particle;
+    clone(): Loader;
 }

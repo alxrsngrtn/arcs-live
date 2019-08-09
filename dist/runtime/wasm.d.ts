@@ -13,6 +13,7 @@ import { Particle } from './particle.js';
 import { Handle } from './handle.js';
 import { Content } from './slot-consumer.js';
 import { Loader } from './loader.js';
+import { PECInnerPort } from './api-channel.js';
 export declare class EntityPackager {
     readonly schema: Schema;
     private encoder;
@@ -25,13 +26,14 @@ export declare class EntityPackager {
 declare type WasmAddress = number;
 export declare class WasmContainer {
     loader: Loader;
+    apiPort: PECInnerPort;
     memory: WebAssembly.Memory;
     heapU8: Uint8Array;
     heap32: Int32Array;
     wasm: WebAssembly.Instance;
     exports: any;
     particleMap: Map<number, WasmParticle>;
-    constructor(loader: Loader);
+    constructor(loader: Loader, apiPort: PECInnerPort);
     initialize(buffer: ArrayBuffer): Promise<void>;
     private driverForModule;
     private getParticle;
@@ -42,13 +44,14 @@ export declare class WasmContainer {
     read(idx: WasmAddress): string;
 }
 export declare class WasmParticle extends Particle {
+    private id;
     private container;
     private exports;
     private innerParticle;
     private handleMap;
     private revHandleMap;
     private converters;
-    constructor(container: WasmContainer);
+    constructor(id: string, container: WasmContainer);
     setHandles(handles: ReadonlyMap<string, Handle>): Promise<void>;
     onHandleSync(handle: Handle, model: any): Promise<void>;
     onHandleUpdate(handle: Handle, update: {
