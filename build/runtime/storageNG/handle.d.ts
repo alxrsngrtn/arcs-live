@@ -63,8 +63,8 @@ export declare class CollectionHandle<T extends Referenceable> extends Handle<CR
     remove(entity: T): Promise<boolean>;
     clear(): Promise<boolean>;
     toList(): Promise<T[]>;
-    onUpdate(ops: CollectionOperation<T>[]): void;
-    onSync(): void;
+    onUpdate(ops: CollectionOperation<T>[]): Promise<void>;
+    onSync(): Promise<void>;
 }
 /**
  * A handle on a single entity.
@@ -73,6 +73,6 @@ export declare class SingletonHandle<T extends Referenceable> extends Handle<CRD
     set(entity: T): Promise<boolean>;
     clear(): Promise<boolean>;
     get(): Promise<T>;
-    onUpdate(ops: SingletonOperation<T>[]): void;
-    onSync(): void;
+    onUpdate(ops: SingletonOperation<T>[]): Promise<void>;
+    onSync(): Promise<void>;
 }

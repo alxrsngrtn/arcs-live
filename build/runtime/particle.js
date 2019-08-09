@@ -93,6 +93,7 @@ export class Particle {
      *  - oldData: The previous value of a Singleton before it was updated.
      *  - added: An Array of Entities added to a Collection-backed Handle.
      *  - removed: An Array of Entities removed from a Collection-backed Handle.
+     *  - originator: whether the update originated from this particle.
      */
     // tslint:disable-next-line: no-any
     async onHandleUpdate(handle, update) {

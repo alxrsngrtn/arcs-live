@@ -65,7 +65,7 @@ export class Handle {
         this.storageProxy.reportExceptionInHost(new UserException(exception, method, this.key, particle.spec.name));
     }
     async onDesync() {
-        await this.particle.callOnHandleDesync(this, e => this.reportUserExceptionInHost(e, this.particle, 'onHandleUpdate'));
+        await this.particle.callOnHandleDesync(this, e => this.reportUserExceptionInHost(e, this.particle, 'onHandleDesync'));
     }
 }
 /**
@@ -118,25 +118,21 @@ export class CollectionHandle extends Handle {
     async toList() {
         return this.storageProxy.getParticleView().then(set => [...set]);
     }
-    onUpdate(ops) {
+    async onUpdate(ops) {
         for (const op of ops) {
             // Pass the change up to the particle.
-            // tslint:disable-next-line: no-any
-            const update = {};
+            const update = { originator: (this.key === op.actor) };
             if (op.type === CollectionOpTypes.Add) {
                 update.added = op.added;
             }
             if (op.type === CollectionOpTypes.Remove) {
                 update.removed = op.removed;
             }
-            update.originator = (this.key === op.actor);
-            // TODO: call onHandleUpdate on the particle, eg:
-            // this.particle.onHandleUpdate(this /*handle*/, update);
+            await this.particle.callOnHandleUpdate(this /*handle*/, update, e => this.reportUserExceptionInHost(e, this.particle, 'onHandleUpdate'));
         }
     }
-    onSync() {
-        // TODO: call onHandleSync on the particle, eg:
-        // particle.onHandleSync(this /*handle*/, this.toList() /*model*/);
+    async onSync() {
+        await this.particle.callOnHandleSync(this /*handle*/, this.toList() /*model*/, e => this.reportUserExceptionInHost(e, this.particle, 'onHandleSync'));
     }
 }
 /**
@@ -164,26 +160,22 @@ export class SingletonHandle extends Handle {
     async get() {
         return this.storageProxy.getParticleView();
     }
-    onUpdate(ops) {
+    async onUpdate(ops) {
         for (const op of ops) {
             // Pass the change up to the particle.
-            // tslint:disable-next-line: no-any
-            const update = {};
+            const update = { originator: (this.key === op.actor) };
             if (op.type === SingletonOpTypes.Set) {
-                // TODO: do we also need to set oldData?
+                // TODO: also set oldData?
                 update.data = op.value;
             }
             if (op.type === SingletonOpTypes.Clear) {
-                // TODO: what update should we return here?
+                // TODO: set oldData
             }
-            update.originator = (this.key === op.actor);
-            // TODO: call onHandleUpdate on the particle, eg:
-            // this.particle.onHandleUpdate(this /*handle*/, update);
+            await this.particle.callOnHandleUpdate(this /*handle*/, update, e => this.reportUserExceptionInHost(e, this.particle, 'onHandleUpdate'));
         }
     }
-    onSync() {
-        // TODO: call onHandleSync on the particle, eg:
-        // particle.onHandleSync(this /*handle*/, this.get() /*model*/);
+    async onSync() {
+        await this.particle.callOnHandleSync(this /*handle*/, this.get() /*model*/, e => this.reportUserExceptionInHost(e, this.particle, 'onHandleSync'));
     }
 }
 //# sourceMappingURL=handle.js.map

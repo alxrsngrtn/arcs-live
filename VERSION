@@ -1,14 +1,5 @@
-commit 9f7e228d166e89d528b1839c78c286b7a183fd18
-Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
-Date:   Thu Aug 8 13:48:31 2019 +1000
+commit 066c2616269dff637ba9d7cfb92cec5061f56c89
+Author: galganif <4754402+galganif@users.noreply.github.com>
+Date:   Fri Aug 9 13:56:30 2019 +1000
 
-    Improve dependency handling in sigh. (#3441)
-    
-    * Improve dependency handling in sigh.
-    
-    - All commands that require optional npm modules will check first and print a helpful message if the dependency is not found.
-    - emsk-npm updated to allow directly calling from a module (rather than using 'npx')
-    
-    * Consistencified optional deps requests; added sigh install
-    
-    * Tweaks
+    pass sync and update events from handle to particle (#3450)

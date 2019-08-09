@@ -7,12 +7,12 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-import { IdGenerator } from '../../id.js';
-import { ActiveStore, StorageMode } from '../store.js';
-import { Exists, Driver } from '../drivers/driver-factory.js';
 import { CRDTSingleton } from '../../crdt/crdt-singleton.js';
-import { StorageKey } from '../storage-key.js';
+import { IdGenerator } from '../../id.js';
+import { Driver, Exists } from '../drivers/driver-factory.js';
 import { Handle } from '../handle.js';
+import { StorageKey } from '../storage-key.js';
+import { ActiveStore, StorageMode } from '../store.js';
 /**
  * These classes are intended to provide **extremely** simple fake objects to use
  * when testing StorageNG classes. Methods on these classes should either:
@@ -83,6 +83,22 @@ export class MockStorageDriverProvider {
     }
     async driver(storageKey, exists) {
         return new MockDriver(storageKey, exists);
+    }
+}
+export class MockParticle {
+    constructor() {
+        this.lastUpdate = null;
+        this.onSyncCalled = false;
+        this.onDesyncCalled = false;
+    }
+    async callOnHandleUpdate(handle, update, onException) {
+        this.lastUpdate = update;
+    }
+    async callOnHandleSync(handle, model, onException) {
+        this.onSyncCalled = true;
+    }
+    async callOnHandleDesync(handle, onException) {
+        this.onDesyncCalled = true;
     }
 }
 //# sourceMappingURL=test-storage.js.map

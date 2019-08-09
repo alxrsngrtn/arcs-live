@@ -8,21 +8,19 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { assert } from '../../../platform/chai-web.js';
-import { CRDTCollection } from '../../crdt/crdt-collection.js';
-import { CRDTSingleton } from '../../crdt/crdt-singleton.js';
-import { CollectionHandle, SingletonHandle } from '../handle.js';
-import { StorageProxy } from '../storage-proxy.js';
-import { MockStore } from '../testing/test-storage.js';
+import { CollectionOpTypes, CRDTCollection } from '../../crdt/crdt-collection.js';
+import { CRDTSingleton, SingletonOpTypes } from '../../crdt/crdt-singleton.js';
 import { IdGenerator } from '../../id.js';
 import { EntityType } from '../../type.js';
-function getCollectionHandle() {
-    // tslint:disable-next-line: no-any
-    const fakeParticle = {};
+import { CollectionHandle, SingletonHandle } from '../handle.js';
+import { StorageProxy } from '../storage-proxy.js';
+import { MockParticle, MockStore } from '../testing/test-storage.js';
+function getCollectionHandle(particle) {
+    const fakeParticle = (particle || new MockParticle());
     return new CollectionHandle('me', new StorageProxy('id', new CRDTCollection(), new MockStore(), EntityType.make([], {}), null), IdGenerator.newSession(), fakeParticle, true, true);
 }
-function getSingletonHandle() {
-    // tslint:disable-next-line: no-any
-    const fakeParticle = {};
+function getSingletonHandle(particle) {
+    const fakeParticle = (particle || new MockParticle());
     return new SingletonHandle('me', new StorageProxy('id', new CRDTSingleton(), new MockStore(), EntityType.make([], {}), null), IdGenerator.newSession(), fakeParticle, true, true);
 }
 describe('CollectionHandle', () => {
@@ -54,6 +52,46 @@ describe('CollectionHandle', () => {
         await handle.addMultiple([{ id: 'A' }, { id: 'B' }]);
         assert.sameDeepMembers(await handle.toList(), [{ id: 'A' }, { id: 'B' }]);
     });
+    it('notifies particle on sync event', async () => {
+        const particle = new MockParticle();
+        const handle = getCollectionHandle(particle);
+        await handle.onSync();
+        assert.isTrue(particle.onSyncCalled);
+    });
+    it('notifies particle on desync event', async () => {
+        const particle = new MockParticle();
+        const handle = getCollectionHandle(particle);
+        await handle.onDesync();
+        assert.isTrue(particle.onDesyncCalled);
+    });
+    it('notifies particle of updates', async () => {
+        const particle = new MockParticle();
+        const handle = getCollectionHandle(particle);
+        const op = {
+            type: CollectionOpTypes.Remove,
+            removed: { id: 'id' },
+            actor: 'actor',
+            clock: { 'actor': 1 }
+        };
+        await handle.onUpdate([op]);
+        assert.deepEqual(particle.lastUpdate, { removed: { id: 'id' }, originator: false });
+    });
+    it('can override default options', () => {
+        const handle = getCollectionHandle();
+        assert.deepEqual(handle.options, {
+            keepSynced: true,
+            notifySync: true,
+            notifyUpdate: true,
+            notifyDesync: false,
+        });
+        handle.configure({ notifyDesync: true, notifySync: false });
+        assert.deepEqual(handle.options, {
+            keepSynced: true,
+            notifySync: false,
+            notifyUpdate: true,
+            notifyDesync: true,
+        });
+    });
 });
 describe('SingletonHandle', () => {
     it('can set and clear elements', async () => {
@@ -65,6 +103,30 @@ describe('SingletonHandle', () => {
         assert.deepEqual(await handle.get(), { id: 'B' });
         await handle.clear();
         assert.strictEqual(await handle.get(), null);
+    });
+    it('notifies particle on sync event', async () => {
+        const particle = new MockParticle();
+        const handle = getSingletonHandle(particle);
+        await handle.onSync();
+        assert.isTrue(particle.onSyncCalled);
+    });
+    it('notifies particle on desync event', async () => {
+        const particle = new MockParticle();
+        const handle = getSingletonHandle(particle);
+        await handle.onDesync();
+        assert.isTrue(particle.onDesyncCalled);
+    });
+    it('notifies particle of updates', async () => {
+        const particle = new MockParticle();
+        const handle = getSingletonHandle(particle);
+        const op = {
+            type: SingletonOpTypes.Set,
+            value: { id: 'id' },
+            actor: 'actor',
+            clock: { 'actor': 1 }
+        };
+        await handle.onUpdate([op]);
+        assert.deepEqual(particle.lastUpdate, { data: { id: 'id' }, originator: false });
     });
 });
 //# sourceMappingURL=handle-test.js.map

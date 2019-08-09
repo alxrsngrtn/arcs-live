@@ -8,12 +8,13 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { PropagatedException } from '../../arc-exceptions.js';
-import { CRDTTypeRecord, CRDTOperation } from '../../crdt/crdt.js';
-import { ActiveStore, ProxyMessage, ProxyCallback } from '../store.js';
-import { Exists, StorageDriverProvider, Driver, ReceiveMethod } from '../drivers/driver-factory.js';
+import { CRDTOperation, CRDTTypeRecord } from '../../crdt/crdt.js';
+import { Consumer } from '../../hot.js';
+import { Driver, Exists, ReceiveMethod, StorageDriverProvider } from '../drivers/driver-factory.js';
+import { Handle } from '../handle.js';
 import { StorageKey } from '../storage-key.js';
 import { StorageProxy } from '../storage-proxy.js';
-import { Handle } from '../handle.js';
+import { ActiveStore, ProxyCallback, ProxyMessage } from '../store.js';
 /**
  * These classes are intended to provide **extremely** simple fake objects to use
  * when testing StorageNG classes. Methods on these classes should either:
@@ -55,4 +56,12 @@ export declare class MockHandle<T extends CRDTTypeRecord> extends Handle<T> {
 export declare class MockStorageDriverProvider implements StorageDriverProvider {
     willSupport(storageKey: StorageKey): boolean;
     driver<Data>(storageKey: StorageKey, exists: Exists): Promise<MockDriver<Data>>;
+}
+export declare class MockParticle {
+    lastUpdate: any;
+    onSyncCalled: boolean;
+    onDesyncCalled: boolean;
+    callOnHandleUpdate(handle: Handle<CRDTTypeRecord>, update: any, onException: Consumer<Error>): Promise<void>;
+    callOnHandleSync(handle: Handle<CRDTTypeRecord>, model: any, onException: Consumer<Error>): Promise<void>;
+    callOnHandleDesync(handle: Handle<CRDTTypeRecord>, onException: Consumer<Error>): Promise<void>;
 }
