@@ -1,15 +1,8 @@
-commit 3add23d83d071f874735a439d7207f0b25aa25d9
+commit 12dbe06635521a78f20574e80696443390fdb944
 Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
-Date:   Fri Aug 9 15:17:10 2019 +1000
+Date:   Fri Aug 9 15:22:06 2019 +1000
 
-    Add wasm particle API tests; currently C++ only (#3453)
+    Minor update to wasm template example (#3454)
     
-    * Add wasm particle API tests; currently C++ only
-    
-    - only executed when invoked via 'sigh wasmTest'; more work required to merge into the standard 'test'
-    - removes the somewhat magic 'linkManifest' option in wasm.json; tests just use explicit file paths
-    - adds RozSlotComposer to simply record renderSlot calls for after-the-fact verification
-    - sets up more versatile Loader.clone() so tests can make custom Loaders more easily
-    - some API tweaks inside the C++ particle code
-    
-    * Review updates
+    - tweaked BasicParticle to make calling renderSlot in fireEvent actually do something
+    - removed .gitignore so the build outputs are more visible
