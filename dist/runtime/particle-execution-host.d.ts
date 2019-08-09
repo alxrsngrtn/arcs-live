@@ -34,6 +34,7 @@ export declare class ParticleExecutionHost {
     private idleVersion;
     private idlePromise;
     private idleResolve;
+    readonly particles: Particle[];
     constructor(slotComposer: SlotComposer, arc: Arc, ports: MessagePort[]);
     private choosePortForParticle;
     private getPort;
@@ -42,6 +43,7 @@ export declare class ParticleExecutionHost {
     readonly messageCount: number;
     sendEvent(particle: any, slotName: any, event: any): void;
     instantiate(particle: Particle, stores: Map<string, StorageProviderBase>): void;
+    reload(particle: Particle): void;
     startRender({ particle, slotName, providedSlots, contentTypes }: StartRenderOptions): void;
     stopRender({ particle, slotName }: StopRenderOptions): void;
     innerArcRender(transformationParticle: Particle, transformationSlotName: string, hostedSlotId: string, content: Content): void;

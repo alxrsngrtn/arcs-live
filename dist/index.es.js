@@ -23212,6 +23212,7 @@ class ParticleExecutionHost {
         this._portByParticle = new Map();
         this.nextIdentifier = 0;
         this.idleVersion = 0;
+        this.particles = [];
         this.close = () => {
             ports.forEach(port => port.close());
             this._apiPorts.forEach(apiPort => apiPort.close());
@@ -23251,11 +23252,15 @@ class ParticleExecutionHost {
         this.getPort(particle).UIEvent(particle, slotName, event);
     }
     instantiate(particle, stores) {
+        this.particles.push(particle);
         const apiPort = this.choosePortForParticle(particle);
         stores.forEach((store, name) => {
             apiPort.DefineHandle(store, store.type.resolvedType(), name);
         });
         apiPort.InstantiateParticle(particle, particle.id.toString(), particle.spec, stores);
+    }
+    reload(particle) {
+        this.getPort(particle).ReloadParticle(particle, particle.id.toString());
     }
     startRender({ particle, slotName, providedSlots, contentTypes }) {
         this.getPort(particle).StartRender(particle, slotName, providedSlots, contentTypes);
@@ -32679,6 +32684,37 @@ function enableTracingAdapter(devtoolsChannel) {
 
 /**
  * @license
+ * Copyright (c) 2019 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+/**
+ * Listens to particle reload events for all particles instantiated in an arc and reloads the particles
+ * when their source files change
+ */
+class HotCodeReloader {
+    constructor(arc, arcDevtoolsChannel) {
+        this.arc = arc;
+        arcDevtoolsChannel.listen('particle-reload', (msg) => void this._reload(msg.messageBody));
+    }
+    _reload(filepath) {
+        const arcs = [this.arc];
+        arcs.push(...this.arc.innerArcs);
+        for (const arc of arcs) {
+            for (const particle of arc.pec.particles) {
+                if (particle.spec.implFile === filepath) {
+                    arc.pec.reload(particle);
+                }
+            }
+        }
+    }
+}
+
+/**
+ * @license
  * Copyright (c) 2018 Google Inc. All rights reserved.
  * This code may only be used under the BSD style license found at
  * http://polymer.github.io/LICENSE.txt
@@ -32702,6 +32738,7 @@ class DevtoolsArcInspector {
         this.onceActive = null;
         if (arc.isStub)
             return;
+        this.arc = arc;
         this.onceActive = new Promise(resolve => this.onceActiveResolve = resolve);
         const connectedOnInstantiate = DevtoolsConnection.isConnected;
         void DevtoolsConnection.onceConnected.then(devtoolsChannel => {
@@ -32714,6 +32751,7 @@ class DevtoolsArcInspector {
             this.arcDevtoolsChannel = devtoolsChannel.forArc(arc);
             const unused1 = new ArcStoresFetcher(arc, this.arcDevtoolsChannel);
             const unused2 = new ArcPlannerInvoker(arc, this.arcDevtoolsChannel);
+            const unused3 = new HotCodeReloader(arc, this.arcDevtoolsChannel);
             this.arcDevtoolsChannel.send({
                 messageType: 'arc-available',
                 messageBody: {
@@ -32742,6 +32780,18 @@ class DevtoolsArcInspector {
         this.arcDevtoolsChannel.send({
             messageType: 'recipe-instantiated',
             messageBody: { slotConnections, activeRecipe }
+        });
+        if (!this.arc.isSpeculative)
+            this.updateParticleSet(particles);
+    }
+    updateParticleSet(particles) {
+        const particleSources = [];
+        particles.forEach(particle => {
+            particleSources.push(particle.spec.implFile);
+        });
+        this.arcDevtoolsChannel.send({
+            messageType: 'watch-particle-sources',
+            messageBody: particleSources
         });
     }
     pecMessage(name, pecMsgBody, pecMsgCount, stackString) {

@@ -20,6 +20,7 @@ export class ParticleExecutionHost {
         this._portByParticle = new Map();
         this.nextIdentifier = 0;
         this.idleVersion = 0;
+        this.particles = [];
         this.close = () => {
             ports.forEach(port => port.close());
             this._apiPorts.forEach(apiPort => apiPort.close());
@@ -60,11 +61,15 @@ export class ParticleExecutionHost {
         this.getPort(particle).UIEvent(particle, slotName, event);
     }
     instantiate(particle, stores) {
+        this.particles.push(particle);
         const apiPort = this.choosePortForParticle(particle);
         stores.forEach((store, name) => {
             apiPort.DefineHandle(store, store.type.resolvedType(), name);
         });
         apiPort.InstantiateParticle(particle, particle.id.toString(), particle.spec, stores);
+    }
+    reload(particle) {
+        this.getPort(particle).ReloadParticle(particle, particle.id.toString());
     }
     startRender({ particle, slotName, providedSlots, contentTypes }) {
         this.getPort(particle).StartRender(particle, slotName, providedSlots, contentTypes);

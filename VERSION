@@ -1,8 +1,9 @@
-commit 12dbe06635521a78f20574e80696443390fdb944
-Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
-Date:   Fri Aug 9 15:22:06 2019 +1000
+commit 9c0e55e6da1597ef7611fa517e14615b20baa63e
+Author: sherry-pra <52428204+sherry-pra@users.noreply.github.com>
+Date:   Fri Aug 9 11:43:47 2019 -0700
 
-    Minor update to wasm template example (#3454)
+    Hot Code Reload: Added file watcher and a toggle in devTools (#3411)
     
-    - tweaked BasicParticle to make calling renderSlot in fireEvent actually do something
-    - removed .gitignore so the build outputs are more visible
+    - Adds a toggle in arcs explorer to activate hotcode reload
+    - Creates a WebSocket connection between ALDS and arcs explorer
+    - Builds on prior change of adding a reload function

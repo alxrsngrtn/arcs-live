@@ -12,6 +12,7 @@ import { ArcStoresFetcher } from './arc-stores-fetcher.js';
 import { ArcPlannerInvoker } from './arc-planner-invoker.js';
 import { DevtoolsConnection } from './devtools-connection.js';
 import { enableTracingAdapter } from './tracing-adapter.js';
+import { HotCodeReloader } from './hot-code-reloader.js';
 // Arc-independent handlers for devtools logic.
 void DevtoolsConnection.onceConnected.then(devtoolsChannel => {
     enableTracingAdapter(devtoolsChannel);
@@ -28,6 +29,7 @@ class DevtoolsArcInspector {
         this.onceActive = null;
         if (arc.isStub)
             return;
+        this.arc = arc;
         this.onceActive = new Promise(resolve => this.onceActiveResolve = resolve);
         const connectedOnInstantiate = DevtoolsConnection.isConnected;
         void DevtoolsConnection.onceConnected.then(devtoolsChannel => {
@@ -40,6 +42,7 @@ class DevtoolsArcInspector {
             this.arcDevtoolsChannel = devtoolsChannel.forArc(arc);
             const unused1 = new ArcStoresFetcher(arc, this.arcDevtoolsChannel);
             const unused2 = new ArcPlannerInvoker(arc, this.arcDevtoolsChannel);
+            const unused3 = new HotCodeReloader(arc, this.arcDevtoolsChannel);
             this.arcDevtoolsChannel.send({
                 messageType: 'arc-available',
                 messageBody: {
@@ -68,6 +71,18 @@ class DevtoolsArcInspector {
         this.arcDevtoolsChannel.send({
             messageType: 'recipe-instantiated',
             messageBody: { slotConnections, activeRecipe }
+        });
+        if (!this.arc.isSpeculative)
+            this.updateParticleSet(particles);
+    }
+    updateParticleSet(particles) {
+        const particleSources = [];
+        particles.forEach(particle => {
+            particleSources.push(particle.spec.implFile);
+        });
+        this.arcDevtoolsChannel.send({
+            messageType: 'watch-particle-sources',
+            messageBody: particleSources
         });
     }
     pecMessage(name, pecMsgBody, pecMsgCount, stackString) {
