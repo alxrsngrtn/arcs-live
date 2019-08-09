@@ -1,5 +1,5 @@
-commit 066c2616269dff637ba9d7cfb92cec5061f56c89
-Author: galganif <4754402+galganif@users.noreply.github.com>
-Date:   Fri Aug 9 13:56:30 2019 +1000
+commit a4646cbeb5c34c3f12f45f11791d0ab17bab8e89
+Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
+Date:   Fri Aug 9 14:19:50 2019 +1000
 
-    pass sync and update events from handle to particle (#3450)
+    Minor updates to wasm C++ readme (#3452)
