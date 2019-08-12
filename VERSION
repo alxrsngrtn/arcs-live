@@ -1,9 +1,11 @@
-commit 2f9162206f6b7d9bad9bc15d6223c711c75f4fd8
-Author: Joshua Pratt <jp10010101010000@gmail.com>
-Date:   Mon Aug 12 14:51:33 2019 +1000
+commit fec3dfb5b4aed508e2e204f8762fe9277ef8e1f2
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Mon Aug 12 08:37:42 2019 -0700
 
-    Slandles set test (#3456)
+    StorageProxy java implementation (#3451)
     
-    * Add test to ensure that set slots can be resolved
+    * StorageProxy java implementation
     
-    * More set slandles tests
+    * fix js json forEach implementation
+    
+    * update CollectionProxy to use keys for actor (and minor fixes)
