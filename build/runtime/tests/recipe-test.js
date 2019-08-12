@@ -33,7 +33,7 @@ describe('recipe', () => {
         recipe.handles[0].mappedType = recipe.particles[0].connections['s2'].type;
         const options = { errors: new Map() };
         recipe.normalize(options);
-        assert.strictEqual(4, options.errors.size);
+        assert.strictEqual(4, options.errors.size, 'expects four errors');
         recipe.handles.forEach(handle => assert.isTrue(options.errors.has(handle)));
         options.errors.has(recipe.slots[1]);
     });

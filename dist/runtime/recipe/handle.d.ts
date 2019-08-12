@@ -8,7 +8,7 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { ParticleSpec } from '../particle-spec.js';
-import { Type } from '../type.js';
+import { Type, TypeVariable } from '../type.js';
 import { Slot } from './slot.js';
 import { HandleConnection } from './handle-connection.js';
 import { Recipe, CloneMap, RecipeComponent, IsResolvedOptions, IsValidOptions, ToStringOptions, VariableMap } from './recipe.js';
@@ -61,8 +61,8 @@ export declare class Handle implements Comparable<Handle> {
     static effectiveType(handleType: Type, connections: {
         type?: Type;
         direction?: Direction;
-    }[]): Type | import("../type.js").TypeVariable | import("../type.js").CollectionType<import("../type.js").TypeVariable> | import("../type.js").BigCollectionType<import("../type.js").TypeVariable>;
-    static resolveEffectiveType(handleType: Type, connections: HandleConnection[]): Type | import("../type.js").TypeVariable | import("../type.js").CollectionType<import("../type.js").TypeVariable> | import("../type.js").BigCollectionType<import("../type.js").TypeVariable>;
+    }[]): Type | TypeVariable | import("../type.js").CollectionType<TypeVariable> | import("../type.js").BigCollectionType<TypeVariable>;
+    static resolveEffectiveType(handleType: Type, connections: HandleConnection[]): Type;
     _isValid(options: IsValidOptions): boolean;
     isResolved(options?: IsResolvedOptions): boolean;
     toString(options?: ToStringOptions, nameMap?: Map<RecipeComponent, string>): string;

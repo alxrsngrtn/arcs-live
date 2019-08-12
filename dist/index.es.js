@@ -2718,7 +2718,7 @@ class TypeVariableInfo {
         return new TypeVariableInfo(data.name, data.canWriteSuperset ? Type.fromLiteral(data.canWriteSuperset) : null, data.canReadSubset ? Type.fromLiteral(data.canReadSubset) : null);
     }
     isResolved() {
-        return (this._resolution && this._resolution.isResolved());
+        return this._resolution && this._resolution.isResolved();
     }
 }
 
@@ -17662,13 +17662,14 @@ class Recipe {
         return duplicateHandle;
     }
     _isValid(options = undefined) {
+        const checkAllValid = (list) => list.every(item => item._isValid(options));
         return !this._findDuplicate(this._handles, options)
             && !this._findDuplicate(this._slots, options)
-            && this._handles.every(handle => handle._isValid(options))
-            && this._particles.every(particle => particle._isValid(options))
-            && this._slots.every(slot => slot._isValid(options))
-            && this.handleConnections.every(connection => connection._isValid(options))
-            && this.slotConnections.every(connection => connection._isValid(options))
+            && checkAllValid(this._handles)
+            && checkAllValid(this._particles)
+            && checkAllValid(this._slots)
+            && checkAllValid(this.handleConnections)
+            && checkAllValid(this.slotConnections)
             && (!this.search || this.search.isValid());
     }
     get requires() { return this._requires; }
@@ -18529,11 +18530,11 @@ class Handle {
     _startNormalize() {
         this._localName = null;
         this._tags.sort();
-        const resolvedType = this.type.resolvedType();
-        if (resolvedType.canWriteSuperset && resolvedType.canWriteSuperset.tag === 'Slot') {
+        const resolvedType = this.type && this.type.resolvedType();
+        if (resolvedType && resolvedType.canWriteSuperset && resolvedType.canWriteSuperset.tag === 'Slot') {
             this._fate = this._fate === '?' ? '`slot' : this._fate;
         }
-        if (resolvedType.canReadSubset && resolvedType.canReadSubset.tag === 'Slot') {
+        if (resolvedType && resolvedType.canReadSubset && resolvedType.canReadSubset.tag === 'Slot') {
             this._fate = this._fate === '?' ? '`slot' : this._fate;
         }
         const collectionType = resolvedType && resolvedType.isCollectionType() && resolvedType.collectionType;
@@ -18633,7 +18634,7 @@ class Handle {
             connection.tags.forEach(tag => tags.add(tag));
         }
         if (!this.mappedType && this.fate === '`slot') {
-            this._mappedType = new SlotType(new SlotInfo(undefined, undefined));
+            this._mappedType = TypeVariable.make(this.id, null, null);
         }
         const type = Handle.resolveEffectiveType(this._mappedType, this._connections);
         if (!type) {
@@ -18656,7 +18657,13 @@ class Handle {
             if (this.fate === 'create' || this.fate === '`slot') {
                 mustBeResolved = false;
             }
-            if ((mustBeResolved && !this.type.isResolved()) || !this.type.canEnsureResolved()) {
+            if (!this.type.canEnsureResolved()) {
+                if (options) {
+                    options.details.push('unresolved type (cannot ensure resolved)');
+                }
+                resolved = false;
+            }
+            if (mustBeResolved && !this.type.isResolved()) {
                 if (options) {
                     options.details.push('unresolved type');
                 }

@@ -5368,7 +5368,7 @@ class TypeVariableInfo {
         return new TypeVariableInfo(data.name, data.canWriteSuperset ? _type_js__WEBPACK_IMPORTED_MODULE_2__["Type"].fromLiteral(data.canWriteSuperset) : null, data.canReadSubset ? _type_js__WEBPACK_IMPORTED_MODULE_2__["Type"].fromLiteral(data.canReadSubset) : null);
     }
     isResolved() {
-        return (this._resolution && this._resolution.isResolved());
+        return this._resolution && this._resolution.isResolved();
     }
 }
 //# sourceMappingURL=type-variable-info.js.map

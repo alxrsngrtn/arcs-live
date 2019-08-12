@@ -1,9 +1,9 @@
-commit 9c0e55e6da1597ef7611fa517e14615b20baa63e
-Author: sherry-pra <52428204+sherry-pra@users.noreply.github.com>
-Date:   Fri Aug 9 11:43:47 2019 -0700
+commit 2f9162206f6b7d9bad9bc15d6223c711c75f4fd8
+Author: Joshua Pratt <jp10010101010000@gmail.com>
+Date:   Mon Aug 12 14:51:33 2019 +1000
 
-    Hot Code Reload: Added file watcher and a toggle in devTools (#3411)
+    Slandles set test (#3456)
     
-    - Adds a toggle in arcs explorer to activate hotcode reload
-    - Creates a WebSocket connection between ALDS and arcs explorer
-    - Builds on prior change of adding a reload function
+    * Add test to ensure that set slots can be resolved
+    
+    * More set slandles tests

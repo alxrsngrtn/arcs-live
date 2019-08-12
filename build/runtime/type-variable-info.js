@@ -190,7 +190,7 @@ export class TypeVariableInfo {
         return new TypeVariableInfo(data.name, data.canWriteSuperset ? Type.fromLiteral(data.canWriteSuperset) : null, data.canReadSubset ? Type.fromLiteral(data.canReadSubset) : null);
     }
     isResolved() {
-        return (this._resolution && this._resolution.isResolved());
+        return this._resolution && this._resolution.isResolved();
     }
 }
 //# sourceMappingURL=type-variable-info.js.map

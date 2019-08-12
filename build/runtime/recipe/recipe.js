@@ -206,13 +206,14 @@ export class Recipe {
         return duplicateHandle;
     }
     _isValid(options = undefined) {
+        const checkAllValid = (list) => list.every(item => item._isValid(options));
         return !this._findDuplicate(this._handles, options)
             && !this._findDuplicate(this._slots, options)
-            && this._handles.every(handle => handle._isValid(options))
-            && this._particles.every(particle => particle._isValid(options))
-            && this._slots.every(slot => slot._isValid(options))
-            && this.handleConnections.every(connection => connection._isValid(options))
-            && this.slotConnections.every(connection => connection._isValid(options))
+            && checkAllValid(this._handles)
+            && checkAllValid(this._particles)
+            && checkAllValid(this._slots)
+            && checkAllValid(this.handleConnections)
+            && checkAllValid(this.slotConnections)
             && (!this.search || this.search.isValid());
     }
     get requires() { return this._requires; }
