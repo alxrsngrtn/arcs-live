@@ -20,6 +20,8 @@ export declare class HotReloadServer {
     private watchers;
     private filesToWatch;
     private connected;
+    private chokidar;
     constructor(port: number);
+    init(): Promise<void>;
     start(): void;
 }

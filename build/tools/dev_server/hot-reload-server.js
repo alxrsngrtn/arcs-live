@@ -8,7 +8,6 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import WebSocket from 'ws';
-import chokidar from 'chokidar';
 /**
  * Hot Reload Server is opening a WebSocket connection for Arcs Explorer to support hot code reload feature.
  * This connection allows the two to exchange information about the files that need to be watched and if there
@@ -23,6 +22,13 @@ export class HotReloadServer {
         this.watchers = [];
         this.filesToWatch = [];
         this.connected = false;
+    }
+    async init() {
+        // This will throw if chokidar hasn't been installed, but in that case we shouldn't get here
+        // if this is being launched with sigh.
+        // @ts-ignore TS1323 dynamic import
+        const chokidarModule = await import('chokidar');
+        this.chokidar = chokidarModule.default;
     }
     start() {
         if (this.server === null) {
@@ -39,7 +45,7 @@ export class HotReloadServer {
                     this.filesToWatch.push(file);
                     const local = file.replace(/^https:\/\/\$particles\//, './particles/');
                     console.log(`Watching: ${local}`);
-                    this.watchers.push(chokidar.watch(local).on('change', path => {
+                    this.watchers.push(this.chokidar.watch(local).on('change', path => {
                         console.log(`Detected change: ${path}`);
                         ws.send(file);
                     }));

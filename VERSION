@@ -1,5 +1,11 @@
-commit 83dff6ceb450763e83c2b4467cc326c96540062e
-Author: Ray Cromwell <cromwellian@gmail.com>
-Date:   Tue Aug 13 16:18:59 2019 -0700
+commit 7aedd42ba0ee7749f459e2a9de0febd36c6b30da
+Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
+Date:   Wed Aug 14 09:34:00 2019 +1000
 
-    Fix up Java style issues, add build targets (#3464)
+    Make chokidar module optional for the hot code reload server. (#3463)
+    
+    * Make chokidar module optional for the hot code reload server.
+    
+    * Set up Travis to install required optional deps
+    
+    * Minor update: s/travis-install/sigh-install as the npm script
