@@ -1,11 +1,9 @@
-commit fec3dfb5b4aed508e2e204f8762fe9277ef8e1f2
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Mon Aug 12 08:37:42 2019 -0700
+commit 2fbb524616c1470543015929a95db8b9dec493fe
+Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
+Date:   Tue Aug 13 14:33:02 2019 +1000
 
-    StorageProxy java implementation (#3451)
+    Add missing Java BUILD rule (#3461)
     
-    * StorageProxy java implementation
+    * Add missing Java BUILD rule
     
-    * fix js json forEach implementation
-    
-    * update CollectionProxy to use keys for actor (and minor fixes)
+    * Fixed Dagger Provider method
