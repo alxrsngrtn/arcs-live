@@ -1,9 +1,5 @@
-commit 2fbb524616c1470543015929a95db8b9dec493fe
-Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
-Date:   Tue Aug 13 14:33:02 2019 +1000
+commit 83dff6ceb450763e83c2b4467cc326c96540062e
+Author: Ray Cromwell <cromwellian@gmail.com>
+Date:   Tue Aug 13 16:18:59 2019 -0700
 
-    Add missing Java BUILD rule (#3461)
-    
-    * Add missing Java BUILD rule
-    
-    * Fixed Dagger Provider method
+    Fix up Java style issues, add build targets (#3464)
