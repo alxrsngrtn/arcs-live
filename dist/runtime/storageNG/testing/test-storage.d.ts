@@ -8,7 +8,7 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { PropagatedException } from '../../arc-exceptions.js';
-import { CRDTOperation, CRDTTypeRecord } from '../../crdt/crdt.js';
+import { CRDTConsumerType, CRDTOperation, CRDTTypeRecord } from '../../crdt/crdt.js';
 import { Consumer } from '../../hot.js';
 import { Driver, Exists, ReceiveMethod, StorageDriverProvider } from '../drivers/driver-factory.js';
 import { Handle } from '../handle.js';
@@ -48,10 +48,10 @@ export declare class MockStorageKey extends StorageKey {
 }
 export declare class MockHandle<T extends CRDTTypeRecord> extends Handle<T> {
     onSyncCalled: boolean;
-    lastUpdate: CRDTOperation[];
+    lastUpdate: any;
     constructor(storageProxy: StorageProxy<T>);
     onSync(): void;
-    onUpdate(ops: CRDTOperation[]): void;
+    onUpdate(op: CRDTOperation, oldData: CRDTConsumerType): void;
 }
 export declare class MockStorageDriverProvider implements StorageDriverProvider {
     willSupport(storageKey: StorageKey): boolean;

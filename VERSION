@@ -1,5 +1,5 @@
-commit 1b581130d7411088c6444dbdb86f84624473d42f
-Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
-Date:   Wed Aug 14 10:59:21 2019 +1000
+commit 4c4e6f01d47a60ae15861ec9ebb3d15e01b65cc1
+Author: galganif <4754402+galganif@users.noreply.github.com>
+Date:   Wed Aug 14 11:23:53 2019 +1000
 
-    Fixed broken build: java_library can't have j2cl deps (#3466)
+    pass oldData in updates, as it is part of the particle update for singletons (#3467)

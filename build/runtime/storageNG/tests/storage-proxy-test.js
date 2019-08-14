@@ -36,7 +36,7 @@ describe('StorageProxy', async () => {
             id: 1
         });
         await storageProxy.idle();
-        assert.sameDeepMembers(handle.lastUpdate, [op]);
+        assert.sameDeepMembers(handle.lastUpdate, [op, null]);
     });
     it('will sync before returning the particle view', async () => {
         const mockStore = new MockStore();

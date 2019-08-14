@@ -8,7 +8,7 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { PropagatedException } from '../arc-exceptions.js';
-import { CRDTModel, CRDTOperation, CRDTTypeRecord, VersionMap } from '../crdt/crdt.js';
+import { CRDTConsumerType, CRDTModel, CRDTOperation, CRDTTypeRecord, VersionMap } from '../crdt/crdt.js';
 import { Particle } from '../particle.js';
 import { ParticleExecutionContext } from '../particle-execution-context.js';
 import { Type } from '../type.js';
@@ -53,7 +53,8 @@ declare type Event = {
     type: HandleMessageType.Desync;
 } | {
     type: HandleMessageType.Update;
-    ops: CRDTOperation[];
+    op: CRDTOperation;
+    oldData: CRDTConsumerType;
 };
 export declare class StorageProxyScheduler<T extends CRDTTypeRecord> {
     private _scheduled;
@@ -67,6 +68,6 @@ export declare class StorageProxyScheduler<T extends CRDTTypeRecord> {
     readonly idle: Promise<void>;
     _schedule(): void;
     _dispatch(): void;
-    _dispatchh(handle: Handle<T>, update: Event): Promise<void>;
+    _dispatchUpdate(handle: Handle<T>, update: Event): Promise<void>;
 }
 export {};

@@ -73,6 +73,7 @@ export class StorageProxy {
         return version;
     }
     async applyOp(op) {
+        const oldData = this.crdt.getParticleView();
         if (!this.crdt.applyOperation(op)) {
             return false;
         }
@@ -82,7 +83,7 @@ export class StorageProxy {
             id: this.id
         };
         await this.store.onProxyMessage(message);
-        this.notifyUpdate([op]);
+        this.notifyUpdate(op, oldData);
         return true;
     }
     async getParticleView() {
@@ -101,11 +102,12 @@ export class StorageProxy {
                 this.synchronized = true;
                 this.notifySync();
                 break;
-            case ProxyMessageType.Operations:
+            case ProxyMessageType.Operations: {
                 // Bail if we're not in synchronized mode.
                 if (!this.keepSynced) {
                     return false;
                 }
+                let oldData = this.crdt.getParticleView();
                 for (const op of message.operations) {
                     if (!this.crdt.applyOperation(op)) {
                         // If we cannot cleanly apply ops, sync the whole model.
@@ -113,11 +115,13 @@ export class StorageProxy {
                         await this.notifyDesync();
                         return this.synchronizeModel();
                     }
+                    this.notifyUpdate(op, oldData);
+                    oldData = this.crdt.getParticleView();
                 }
                 // If we have consumed all operations, we've caught up.
                 this.synchronized = true;
-                this.notifyUpdate(message.operations);
                 break;
+            }
             case ProxyMessageType.SyncRequest:
                 await this.store.onProxyMessage({ type: ProxyMessageType.ModelUpdate, model: this.crdt.getData(), id: this.id });
                 break;
@@ -126,10 +130,10 @@ export class StorageProxy {
         }
         return true;
     }
-    notifyUpdate(operations) {
+    notifyUpdate(operation, oldData) {
         for (const handle of this.handles) {
             if (handle.options.notifyUpdate) {
-                this.scheduler.enqueue(handle.particle, handle, { type: HandleMessageType.Update, ops: operations });
+                this.scheduler.enqueue(handle.particle, handle, { type: HandleMessageType.Update, op: operation, oldData });
             }
             else if (handle.options.keepSynced) {
                 // keepSynced but not notifyUpdate, notify of the new model.
@@ -220,13 +224,13 @@ export class StorageProxyScheduler {
             this._queues.delete(particle);
             for (const [handle, queue] of byHandle.entries()) {
                 for (const update of queue) {
-                    this._dispatchh(handle, update).catch(e => handle.storageProxy.reportExceptionInHost(new SystemException(e, 'StorageProxyScheduler::_dispatch', handle.key)));
+                    this._dispatchUpdate(handle, update).catch(e => handle.storageProxy.reportExceptionInHost(new SystemException(e, 'StorageProxyScheduler::_dispatch', handle.key)));
                 }
             }
         }
         this._updateIdle();
     }
-    async _dispatchh(handle, update) {
+    async _dispatchUpdate(handle, update) {
         switch (update.type) {
             case HandleMessageType.Sync:
                 handle.onSync();
@@ -235,7 +239,7 @@ export class StorageProxyScheduler {
                 await handle.onDesync();
                 break;
             case HandleMessageType.Update:
-                handle.onUpdate(update.ops);
+                handle.onUpdate(update.op, update.oldData);
                 break;
             default:
                 console.error('Ignoring unknown update', update);

@@ -73,7 +73,7 @@ describe('CollectionHandle', () => {
             actor: 'actor',
             clock: { 'actor': 1 }
         };
-        await handle.onUpdate([op]);
+        await handle.onUpdate(op, new Set());
         assert.deepEqual(particle.lastUpdate, { removed: { id: 'id' }, originator: false });
     });
     it('can override default options', () => {
@@ -125,8 +125,8 @@ describe('SingletonHandle', () => {
             actor: 'actor',
             clock: { 'actor': 1 }
         };
-        await handle.onUpdate([op]);
-        assert.deepEqual(particle.lastUpdate, { data: { id: 'id' }, originator: false });
+        await handle.onUpdate(op, { id: 'old' });
+        assert.deepEqual(particle.lastUpdate, { data: { id: 'id' }, oldData: { id: 'old' }, originator: false });
     });
 });
 //# sourceMappingURL=handle-test.js.map

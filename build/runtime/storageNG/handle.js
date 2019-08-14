@@ -118,18 +118,16 @@ export class CollectionHandle extends Handle {
     async toList() {
         return this.storageProxy.getParticleView().then(set => [...set]);
     }
-    async onUpdate(ops) {
-        for (const op of ops) {
-            // Pass the change up to the particle.
-            const update = { originator: (this.key === op.actor) };
-            if (op.type === CollectionOpTypes.Add) {
-                update.added = op.added;
-            }
-            if (op.type === CollectionOpTypes.Remove) {
-                update.removed = op.removed;
-            }
-            await this.particle.callOnHandleUpdate(this /*handle*/, update, e => this.reportUserExceptionInHost(e, this.particle, 'onHandleUpdate'));
+    async onUpdate(op, oldData) {
+        // Pass the change up to the particle.
+        const update = { originator: (this.key === op.actor) };
+        if (op.type === CollectionOpTypes.Add) {
+            update.added = op.added;
         }
+        if (op.type === CollectionOpTypes.Remove) {
+            update.removed = op.removed;
+        }
+        await this.particle.callOnHandleUpdate(this /*handle*/, update, e => this.reportUserExceptionInHost(e, this.particle, 'onHandleUpdate'));
     }
     async onSync() {
         await this.particle.callOnHandleSync(this /*handle*/, this.toList() /*model*/, e => this.reportUserExceptionInHost(e, this.particle, 'onHandleSync'));
@@ -160,19 +158,14 @@ export class SingletonHandle extends Handle {
     async get() {
         return this.storageProxy.getParticleView();
     }
-    async onUpdate(ops) {
-        for (const op of ops) {
-            // Pass the change up to the particle.
-            const update = { originator: (this.key === op.actor) };
-            if (op.type === SingletonOpTypes.Set) {
-                // TODO: also set oldData?
-                update.data = op.value;
-            }
-            if (op.type === SingletonOpTypes.Clear) {
-                // TODO: set oldData
-            }
-            await this.particle.callOnHandleUpdate(this /*handle*/, update, e => this.reportUserExceptionInHost(e, this.particle, 'onHandleUpdate'));
+    async onUpdate(op, oldData) {
+        // Pass the change up to the particle.
+        const update = { oldData, originator: (this.key === op.actor) };
+        if (op.type === SingletonOpTypes.Set) {
+            update.data = op.value;
         }
+        // Nothing else to add (beyond oldData) for SingletonOpTypes.Clear.
+        await this.particle.callOnHandleUpdate(this /*handle*/, update, e => this.reportUserExceptionInHost(e, this.particle, 'onHandleUpdate'));
     }
     async onSync() {
         await this.particle.callOnHandleSync(this /*handle*/, this.get() /*model*/, e => this.reportUserExceptionInHost(e, this.particle, 'onHandleSync'));
