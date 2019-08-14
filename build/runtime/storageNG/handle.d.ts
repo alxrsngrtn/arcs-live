@@ -47,7 +47,7 @@ export declare abstract class Handle<T extends CRDTTypeRecord> {
         notifyDesync?: boolean;
     }): void;
     protected reportUserExceptionInHost(exception: Error, particle: Particle, method: string): void;
-    abstract onUpdate(update: T['operation'], oldData: T['consumerType']): void;
+    abstract onUpdate(update: T['operation'], oldData: T['consumerType'], version: VersionMap): void;
     abstract onSync(): void;
     onDesync(): Promise<void>;
 }
@@ -63,7 +63,7 @@ export declare class CollectionHandle<T extends Referenceable> extends Handle<CR
     remove(entity: T): Promise<boolean>;
     clear(): Promise<boolean>;
     toList(): Promise<T[]>;
-    onUpdate(op: CollectionOperation<T>, oldData: Set<T>): Promise<void>;
+    onUpdate(op: CollectionOperation<T>, oldData: Set<T>, version: VersionMap): Promise<void>;
     onSync(): Promise<void>;
 }
 /**
@@ -73,6 +73,6 @@ export declare class SingletonHandle<T extends Referenceable> extends Handle<CRD
     set(entity: T): Promise<boolean>;
     clear(): Promise<boolean>;
     get(): Promise<T>;
-    onUpdate(op: SingletonOperation<T>, oldData: T): Promise<void>;
+    onUpdate(op: SingletonOperation<T>, oldData: T, version: VersionMap): Promise<void>;
     onSync(): Promise<void>;
 }

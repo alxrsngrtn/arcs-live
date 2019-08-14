@@ -66,6 +66,9 @@ export class StorageProxy {
                 handle.onSync();
             }
         }
+        return this.versionCopy();
+    }
+    versionCopy() {
         const version = {};
         for (const [k, v] of Object.entries(this.crdt.getData().version)) {
             version[k] = v;
@@ -88,7 +91,7 @@ export class StorageProxy {
     }
     async getParticleView() {
         await this.synchronizeModel();
-        return this.crdt.getParticleView();
+        return [this.crdt.getParticleView(), this.versionCopy()];
     }
     async getData() {
         await this.synchronizeModel();
@@ -131,9 +134,10 @@ export class StorageProxy {
         return true;
     }
     notifyUpdate(operation, oldData) {
+        const version = this.versionCopy();
         for (const handle of this.handles) {
             if (handle.options.notifyUpdate) {
-                this.scheduler.enqueue(handle.particle, handle, { type: HandleMessageType.Update, op: operation, oldData });
+                this.scheduler.enqueue(handle.particle, handle, { type: HandleMessageType.Update, op: operation, oldData, version });
             }
             else if (handle.options.keepSynced) {
                 // keepSynced but not notifyUpdate, notify of the new model.
@@ -239,7 +243,7 @@ export class StorageProxyScheduler {
                 await handle.onDesync();
                 break;
             case HandleMessageType.Update:
-                handle.onUpdate(update.op, update.oldData);
+                handle.onUpdate(update.op, update.oldData, update.version);
                 break;
             default:
                 console.error('Ignoring unknown update', update);

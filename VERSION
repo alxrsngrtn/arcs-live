@@ -1,5 +1,9 @@
-commit 010a34a4374450552313ddc5a7977b1c3199456f
-Author: raulverag <42563960+raulverag@users.noreply.github.com>
-Date:   Wed Aug 14 12:04:28 2019 +1000
+commit 64254f71bd35766c1461568a0e91ecdd5dfe591b
+Author: galganif <4754402+galganif@users.noreply.github.com>
+Date:   Thu Aug 15 09:06:00 2019 +1000
 
-    Allow dotted values in triggers (#3462)
+    In the NG handle, keep a copy of the most recent clock seen. This is … (#3470)
+    
+    * In the NG handle, keep a copy of the most recent clock seen. This is updated each time we pass data up to the particle, to reflect the version of the model on which the particle is operating.
+    
+    * Typo and formatting fixes.

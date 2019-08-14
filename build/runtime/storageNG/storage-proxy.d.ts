@@ -33,8 +33,9 @@ export declare class StorageProxy<T extends CRDTTypeRecord> {
     idle(): Promise<void>;
     reportExceptionInHost(exception: PropagatedException): void;
     registerHandle(handle: Handle<T>): VersionMap;
+    private versionCopy;
     applyOp(op: CRDTOperation): Promise<boolean>;
-    getParticleView(): Promise<T['consumerType']>;
+    getParticleView(): Promise<[T['consumerType'], VersionMap]>;
     getData(): Promise<T['data']>;
     onMessage(message: ProxyMessage<T>): Promise<boolean>;
     private notifyUpdate;
@@ -55,6 +56,7 @@ declare type Event = {
     type: HandleMessageType.Update;
     op: CRDTOperation;
     oldData: CRDTConsumerType;
+    version: VersionMap;
 };
 export declare class StorageProxyScheduler<T extends CRDTTypeRecord> {
     private _scheduled;

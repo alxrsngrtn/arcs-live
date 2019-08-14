@@ -75,8 +75,8 @@ export class Handle {
  */
 export class CollectionHandle extends Handle {
     async get(id) {
-        const data = await this.storageProxy.getData();
-        return data.values[id].value;
+        const values = await this.toList();
+        return values.find(element => element.id === id);
     }
     async add(entity) {
         this.clock[this.key] = (this.clock[this.key] || 0) + 1;
@@ -116,9 +116,12 @@ export class CollectionHandle extends Handle {
         return true;
     }
     async toList() {
-        return this.storageProxy.getParticleView().then(set => [...set]);
+        const [set, versionMap] = await this.storageProxy.getParticleView();
+        this.clock = versionMap;
+        return [...set];
     }
-    async onUpdate(op, oldData) {
+    async onUpdate(op, oldData, version) {
+        this.clock = version;
         // Pass the change up to the particle.
         const update = { originator: (this.key === op.actor) };
         if (op.type === CollectionOpTypes.Add) {
@@ -156,9 +159,12 @@ export class SingletonHandle extends Handle {
         return this.storageProxy.applyOp(op);
     }
     async get() {
-        return this.storageProxy.getParticleView();
+        const [value, versionMap] = await this.storageProxy.getParticleView();
+        this.clock = versionMap;
+        return value;
     }
-    async onUpdate(op, oldData) {
+    async onUpdate(op, oldData, version) {
+        this.clock = version;
         // Pass the change up to the particle.
         const update = { oldData, originator: (this.key === op.actor) };
         if (op.type === SingletonOpTypes.Set) {
