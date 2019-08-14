@@ -1,5 +1,5 @@
-commit 4c4e6f01d47a60ae15861ec9ebb3d15e01b65cc1
-Author: galganif <4754402+galganif@users.noreply.github.com>
-Date:   Wed Aug 14 11:23:53 2019 +1000
+commit 010a34a4374450552313ddc5a7977b1c3199456f
+Author: raulverag <42563960+raulverag@users.noreply.github.com>
+Date:   Wed Aug 14 12:04:28 2019 +1000
 
-    pass oldData in updates, as it is part of the particle update for singletons (#3467)
+    Allow dotted values in triggers (#3462)
