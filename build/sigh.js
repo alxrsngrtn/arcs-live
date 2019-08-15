@@ -19,6 +19,7 @@ const _DO_NOT_USE_spawn = require('child_process').spawnSync;
 const projectRoot = path.resolve(__dirname, '..');
 process.chdir(projectRoot);
 let keepProcessAlive = false;
+let globalOptions = null;
 const sources = {
     peg: [{
             grammar: 'src/runtime/manifest-parser.peg',
@@ -99,15 +100,39 @@ function getOptionalDependencies(deps, prefix) {
             missing.push(dep);
         }
     }
-    if (missing.length) {
-        throw new Error(`${prefix} requires extra dependencies: run 'tools/sigh install ${missing.join(' ')}' to install`);
+    if (missing.length === 0) {
+        return result;
     }
-    return result;
+    if (!globalOptions.install) {
+        throw new Error(`${prefix} requires extra dependencies: re-run with '--install' or use\n` +
+            `       'tools/sigh install ${missing.join(' ')}' to install manually\n`);
+    }
+    if (!install(missing)) {
+        throw new Error('Failed to install optional dependencies');
+    }
+    return deps.map(dep => require(dep));
 }
 function install(args) {
+    // So... npm install *automatically removes* packages previously installed with --no-save,
+    // and there is no option to prevent that. The workaround is to track which of our optional
+    // dependencies have already been installed, and specify all of them each time a new one is
+    // added. See https://npm.community/t/npm-removes-packages-on-install/9432.
+    const trackingFile = '.sighdeps';
+    let installed = [];
+    if (fs.existsSync(trackingFile)) {
+        const contents = fs.readFileSync(trackingFile, 'utf-8').trim();
+        if (contents) {
+            installed = contents.split('\n');
+        }
+    }
     const sighDeps = require('../package.json').sighDependencies;
     args = args.map(x => (x in sighDeps) ? `${x}@${sighDeps[x]}` : x);
-    return saneSpawn('npm', ['install', '--no-save', ...args], { logCmd: true });
+    const modules = [...new Set([...args, ...installed])];
+    if (!saneSpawn('npm', ['install', '--no-save', ...modules], { logCmd: true })) {
+        return false;
+    }
+    fs.writeFileSync(trackingFile, modules.join('\n') + '\n');
+    return true;
 }
 function* findProjectFiles(dir, exclude, include) {
     const predicate = (include instanceof RegExp) ? (fullPath => include.test(fullPath)) : include;
@@ -937,6 +962,7 @@ function runSteps(command, args) {
         }
         process.exit(2);
     }
+    globalOptions = minimist(args, { boolean: ['install'] });
     console.log(`😌 ${command}`);
     let result = false;
     try {
