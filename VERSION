@@ -1,11 +1,15 @@
-commit ddea434e4ab480d2582c386566032add57b0e9d1
+commit 4e3405ff16d27ebe3e0a71c5c98ea78cc733774d
 Author: Ray Cromwell <cromwellian@gmail.com>
-Date:   Thu Aug 15 13:55:38 2019 -0700
+Date:   Thu Aug 15 15:02:46 2019 -0700
 
-    enable errorprone checks (#3468)
-    
-    * enable errorprone checks
+    Last batch of javaharness lint/errorprone/style fixes (#3476)
     
     * Fix errorprone errors
     
     * fix formatting
+    
+    * fix last batch of lint errors
+    
+    * revert dagger change as it is causing compiler crash
+    
+    * revert bazelrc change
