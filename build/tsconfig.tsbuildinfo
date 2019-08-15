@@ -1242,7 +1242,7 @@
         "signature": "70ec31185ba202997da2613e9400fff44ef0abf3c22f4794f67d658fe0c909b2"
       },
       "/home/travis/build/PolymerLabs/arcs/src/planning/tests/planner-test.ts": {
-        "version": "defede5ea6e971d5abe6eba51621c0b5bb2d47c288ec007e1354ec8f0175716a",
+        "version": "805963710f8084710ae5285322542982878291fb17abd9811d07113432f9a604",
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/testing/manifest-integration-test-setup.ts": {
@@ -2329,7 +2329,7 @@
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/tests/manifest-test.ts": {
-        "version": "a0d3e5bb008fd5e45f1395b0a222ebc30e34d15a6fe99ba0e19c3eebee39f716",
+        "version": "d487f66366477bd391e43d907fb36ae98d5c259278343def4a3ea77f1ab0abd9",
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/tests/multiplexer-test.ts": {

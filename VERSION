@@ -1,8 +1,9 @@
-commit 3557c90be215f783cbd9993fa2e002b1062f5cb1
-Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
-Date:   Thu Aug 15 11:07:00 2019 +1000
+commit 5e3c2ed7f43ce315878d72f922c4e0d860910605
+Author: Joshua Pratt <jp10010101010000@gmail.com>
+Date:   Thu Aug 15 11:13:10 2019 +1000
 
-    sigh: fix optional dependencies and improve UX (#3473)
+    More Set Slandles planner and resolution tests (#3459)
     
-    - workaround for npm's automatic removal of --no-save installed packages
-    - add global --install flag to auto-install optional dependencies
+    * More set slandles tests
+    * Add planner tests for set slots
+    * Rename tests
