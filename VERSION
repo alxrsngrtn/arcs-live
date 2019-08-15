@@ -1,15 +1,15 @@
-commit 4e3405ff16d27ebe3e0a71c5c98ea78cc733774d
-Author: Ray Cromwell <cromwellian@gmail.com>
-Date:   Thu Aug 15 15:02:46 2019 -0700
+commit 95cd2f59dab9560fe934828a0077e9c2258474b5
+Author: Alex Rosengarten <alexrosengarten@gmail.com>
+Date:   Thu Aug 15 16:00:32 2019 -0700
 
-    Last batch of javaharness lint/errorprone/style fixes (#3476)
+    Exercise setup script  (#3391)
     
-    * Fix errorprone errors
+    * setup also builds server
     
-    * fix formatting
+    * travis exercises setup
     
-    * fix last batch of lint errors
+    * outputting versions
     
-    * revert dagger change as it is causing compiler crash
+    * using nvm version 10.15.3
     
-    * revert bazelrc change
+    * added link to travis docs
