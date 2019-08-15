@@ -1,9 +1,11 @@
-commit 25993eefd63cd9038fdc50bdd654996d686454ed
-Author: Joshua Pratt <jp10010101010000@gmail.com>
-Date:   Thu Aug 15 11:26:39 2019 +1000
+commit ddea434e4ab480d2582c386566032add57b0e9d1
+Author: Ray Cromwell <cromwellian@gmail.com>
+Date:   Thu Aug 15 13:55:38 2019 -0700
 
-    Small fixes for multiplexing (#3472)
+    enable errorprone checks (#3468)
     
-    * Small fixes for slandle multiplexing
+    * enable errorprone checks
     
-    * Remove log
+    * Fix errorprone errors
+    
+    * fix formatting
