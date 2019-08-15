@@ -1,9 +1,9 @@
-commit 5e3c2ed7f43ce315878d72f922c4e0d860910605
+commit 25993eefd63cd9038fdc50bdd654996d686454ed
 Author: Joshua Pratt <jp10010101010000@gmail.com>
-Date:   Thu Aug 15 11:13:10 2019 +1000
+Date:   Thu Aug 15 11:26:39 2019 +1000
 
-    More Set Slandles planner and resolution tests (#3459)
+    Small fixes for multiplexing (#3472)
     
-    * More set slandles tests
-    * Add planner tests for set slots
-    * Rename tests
+    * Small fixes for slandle multiplexing
+    
+    * Remove log
