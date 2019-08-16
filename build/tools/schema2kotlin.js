@@ -27,9 +27,9 @@ const typeMap = {
     'B': ['Boolean', 'false', 'decodeBool()'],
 };
 export class Schema2Kotlin extends Schema2Base {
-    // test-Kotlin.file_name.arcs -> TestKotlinFileNameManifest.kt
+    // test-Kotlin.file_name.arcs -> TestKotlinFileName.kt
     outputName(baseName) {
-        const parts = baseName.toLowerCase().split(/[-._]/);
+        const parts = baseName.toLowerCase().replace(/\.arcs$/, '').split(/[-._]/);
         return parts.map(part => part[0].toUpperCase() + part.slice(1)).join('') + '.kt';
     }
     fileHeader(outName) {

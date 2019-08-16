@@ -31,9 +31,9 @@ const typeMap = {
     'B': ['bool', false],
 };
 export class Schema2Cpp extends Schema2Base {
-    // test-CPP.file_name.arcs -> test-cpp-file-name-manifest.h
+    // test-CPP.file_name.arcs -> test-cpp-file-name.h
     outputName(baseName) {
-        return baseName.toLowerCase().replace(/[._]/g, '-') + '.h';
+        return baseName.toLowerCase().replace(/\.arcs$/, '').replace(/[._]/g, '-') + '.h';
     }
     fileHeader(outName) {
         const headerGuard = `_ARCS_${outName.toUpperCase().replace(/[-.]/g, '_')}`;

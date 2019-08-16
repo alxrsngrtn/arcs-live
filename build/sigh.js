@@ -336,21 +336,43 @@ function railroad() {
     }
     return true;
 }
-// Removes .js files in the build dir that don't have a corresponding source file (.js or .ts) in src.
-// Also removes the generated source map and type def files if they exist.
 function cleanObsolete() {
-    const exts = ['js', 'js.map', 'd.ts'];
-    for (const file of [...findProjectFiles('build', /javaharness|sigh\.js/, /\.js$/)]) {
-        const buildBase = file.slice(0, -2); // drop 'js' extension
-        const srcBase = 'src' + buildBase.slice(5); // replace leading 'build' with 'src'
-        if (!fs.existsSync(srcBase + 'ts') && !fs.existsSync(srcBase + 'js')) {
-            console.log('Cleaning obsolete build output:', file);
-            exts.forEach(ext => {
-                const target = buildBase + ext;
-                if (fs.existsSync(target)) {
-                    fs.unlinkSync(target);
+    for (const file of [...findProjectFiles('build', /javaharness|sigh\.js/, /\.(js|h|wasm)$/)]) {
+        if (file.endsWith('.js')) {
+            // js outputs - look for a corresponding source file (.js or .ts) in src.
+            // Also remove the generated source map and type def files if they exist.
+            const buildBase = file.slice(0, -2); // drop 'js' extension
+            const srcBase = 'src' + buildBase.slice(5); // replace leading 'build' with 'src'
+            if (!fs.existsSync(srcBase + 'ts') && !fs.existsSync(srcBase + 'js')) {
+                console.log('Cleaning obsolete build output:', file);
+                ['js', 'js.map', 'd.ts'].forEach(ext => {
+                    const target = buildBase + ext;
+                    if (fs.existsSync(target)) {
+                        fs.unlinkSync(target);
+                    }
+                });
+            }
+        }
+        else {
+            // wasm outputs - look for a corresponding wasm.json config, and check if the module or
+            // genfile names match.
+            // build/path/to/module.wasm -> src/path/to/wasm.json
+            const configFile = path.join('src', path.dirname(file).slice(6), 'wasm.json');
+            const baseName = path.basename(file);
+            let found = false;
+            if (fs.existsSync(configFile)) {
+                const wasmConfig = JSON.parse(fs.readFileSync(configFile, 'utf-8'));
+                for (const [name, cfg] of Object.entries(wasmConfig)) {
+                    if (name === baseName || cfg.genfile === baseName) {
+                        found = true;
+                        break;
+                    }
                 }
-            });
+            }
+            if (!found) {
+                console.log('Cleaning obsolete build output:', file);
+                fs.unlinkSync(file);
+            }
         }
     }
 }
@@ -493,7 +515,6 @@ function setupEmsdk() {
     }
     return emsdk;
 }
-// TODO: detect old headers/modules in cleanObsolete()
 function buildWasmModule(emsdk, counts, configFile, logCmd, force) {
     let wasmConfig;
     try {
@@ -511,12 +532,12 @@ function buildWasmModule(emsdk, counts, configFile, logCmd, force) {
         if (cfg.src.length !== 1) {
             throw new Error(`wasm modules must specify exactly one source file (${configFile})`);
         }
-        if (cfg.outDir === '$here') {
-            cfg.outDir = srcDir;
+        if (cfg.outdir === '$here') {
+            cfg.outdir = srcDir;
         }
         const manifestPath = path.join(srcDir, cfg.manifest);
         const srcPath = path.join(srcDir, cfg.src[0]);
-        const wasmPath = path.join(cfg.outDir, name);
+        const wasmPath = path.join(cfg.outdir, name);
         const target = (path.extname(cfg.src[0]) === '.cc') ? '--cpp' : '--kotlin';
         // Generate the entity class header file from the manifest.
         const updateFlag = force ? [] : ['--update'];
@@ -526,7 +547,8 @@ function buildWasmModule(emsdk, counts, configFile, logCmd, force) {
             'build/tools/schema2packager.js',
             ...updateFlag,
             target,
-            '-o', cfg.outDir,
+            '-d', cfg.outdir,
+            '-f', cfg.genfile,
             manifestPath
         ], { logCmd });
         if (!spawnResult.success) {
@@ -544,7 +566,7 @@ function buildWasmModule(emsdk, counts, configFile, logCmd, force) {
             '-s', `EXPORTED_FUNCTIONS=['_malloc','_free']`,
             '-s', 'EMIT_EMSCRIPTEN_METADATA',
             '-I', 'src/wasm/cpp',
-            '-I', cfg.outDir,
+            '-I', cfg.outdir,
             '-o', wasmPath,
             srcPath
         ], { logCmd });

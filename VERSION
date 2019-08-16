@@ -1,15 +1,9 @@
-commit 95cd2f59dab9560fe934828a0077e9c2258474b5
-Author: Alex Rosengarten <alexrosengarten@gmail.com>
-Date:   Thu Aug 15 16:00:32 2019 -0700
+commit b1ab76a241d715b4319a6324a62f1b6556f6825f
+Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
+Date:   Fri Aug 16 10:33:26 2019 +1000
 
-    Exercise setup script  (#3391)
+    sigh: update cleanObsolete to handle wasm outputs (#3474)
     
-    * setup also builds server
+    * sigh: update cleanObsolete to handle wasm outputs
     
-    * travis exercises setup
-    
-    * outputting versions
-    
-    * using nvm version 10.15.3
-    
-    * added link to travis docs
+    * TODO--

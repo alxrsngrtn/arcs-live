@@ -14,13 +14,10 @@ import { Schema2Kotlin } from './schema2kotlin.js';
 // TODO: schemas with no fields
 // TODO: schemas with no names?  i.e. inline '* {Text s}'
 const opts = minimist(process.argv.slice(2), {
-    string: ['outdir'],
+    string: ['outdir', 'outfile'],
     boolean: ['cpp', 'kotlin', 'update', 'help'],
-    alias: { c: 'cpp', k: 'kotlin', o: 'outdir', u: 'update' },
-    default: {
-        outdir: '.',
-        update: false
-    }
+    alias: { c: 'cpp', k: 'kotlin', d: 'outdir', f: 'outfile', u: 'update' },
+    default: { outdir: '.' }
 });
 if (opts.help || opts._.length === 0) {
     console.log(`
@@ -33,10 +30,10 @@ Description
 Options
   --cpp, -c      generate C++ code
   --kotlin, -k   generate Kotlin code
-  --outdir, -o   output directory; defaults to '.'
+  --outdir, -d   output directory; defaults to '.'
+  --outfile, -f  output filename; if omitted, generated from the manifest name
   --update, -u   only generate if the source file is newer than the destination
   --help         usage info
-
 `);
     process.exit(0);
 }

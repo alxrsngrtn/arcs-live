@@ -2557,19 +2557,19 @@
         "signature": "fd95df5d076cbfed143dc4904d376b5c6d9cb1091b630994ffe2366010afa6b3"
       },
       "/home/travis/build/PolymerLabs/arcs/src/tools/schema2base.ts": {
-        "version": "9be676f814bf1bb4e1698d6d126d18196c1547667566dd7e2c728b365ebcef8c",
+        "version": "6ce2f695fee23b298db53eed42035d66685495ea4aeb1c8a01ef3e788235f9fb",
         "signature": "44c67db51f6f262099ce193695d05ebc7e4cc90de35cfda0e9cf2aaeb8ce1ea5"
       },
       "/home/travis/build/PolymerLabs/arcs/src/tools/schema2cpp.ts": {
-        "version": "9cf5fa1c5af1af9d93489b79497f4ff3bc4901d1d7166c11c35d21f7cc7c2cbd",
+        "version": "fd0aee6f209b66166c0c1a5ee984b5b6c1e0953488f3700d4485372664e727d2",
         "signature": "2399853c21d04efd6ace178ab5736d5ad95a9e1674dc8cee3944fd706556b8a2"
       },
       "/home/travis/build/PolymerLabs/arcs/src/tools/schema2kotlin.ts": {
-        "version": "5fd78d4a771eff9f48496ba099b72aac330a94475be6ed43fd8f12c7defc1e15",
+        "version": "27f239a3865f936ce092342a661f01b31bf02116a8bc2eba7a74130a60ea5cc4",
         "signature": "f88411a821e09edd5e5f268d2563bdba5387c320ea692afaa6e80d8049499a14"
       },
       "/home/travis/build/PolymerLabs/arcs/src/tools/schema2packager.ts": {
-        "version": "28dd704ab4f77cddffcb14876c66c31e536508ba4b8566245373661ebff18aa6",
+        "version": "1d30235412c9b028954e563b73ded9d8307e07d3883da3283cbecf3f8c4a8c84",
         "signature": "8e609bb71c20b858c77f0e9f90bb1319db8477b13f9f965f1a1e18524bf50881"
       },
       "/home/travis/build/PolymerLabs/arcs/node_modules/@types/range-parser/index.d.ts": {
