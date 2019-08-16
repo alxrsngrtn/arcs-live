@@ -59,7 +59,7 @@
 					<a href="noopstorageproxy.html">NoOpStorageProxy</a>
 				</li>
 			</ul>
-			<h1>Class NoOpStorageProxy</h1>
+			<h1>Class NoOpStorageProxy&lt;T&gt;</h1>
 		</div>
 	</div>
 </header>
@@ -78,11 +78,22 @@
 					<p>TODO(sherrypra): Add a unit test to ensure this stays in sync with the real storage APIs</p>
 				</div>
 			</section>
+			<section class="tsd-panel tsd-type-parameters">
+				<h3>Type parameters</h3>
+				<ul class="tsd-type-parameters">
+					<li>
+						<h4>T<span class="tsd-signature-symbol">: </span><a href="../interfaces/crdttyperecord.html" class="tsd-signature-type">CRDTTypeRecord</a></h4>
+					</li>
+				</ul>
+			</section>
 			<section class="tsd-panel tsd-hierarchy">
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
 						<a href="storageproxy.html" class="tsd-signature-type">StorageProxy</a>
+					</li>
+					<li>
+						<span class="tsd-signature-type">StorageProxy</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span>
 						<ul class="tsd-hierarchy">
 							<li>
 								<span class="target">NoOpStorageProxy</span>
@@ -107,23 +118,24 @@
 						<section class="tsd-index-section tsd-is-inherited">
 							<h3>Constructors</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-constructor tsd-parent-kind-class tsd-is-inherited"><a href="noopstorageproxy.html#constructor" class="tsd-kind-icon">constructor</a></li>
+								<li class="tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited"><a href="noopstorageproxy.html#constructor" class="tsd-kind-icon">constructor</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section tsd-is-inherited">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="noopstorageproxy.html#apichannelid" class="tsd-kind-icon">api<wbr>Channel<wbr>Id</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-protected"><a href="noopstorageproxy.html#barrier" class="tsd-kind-icon">barrier</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="noopstorageproxy.html#id" class="tsd-kind-icon">id</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-protected"><a href="noopstorageproxy.html#listenerattached" class="tsd-kind-icon">listener<wbr>Attached</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="noopstorageproxy.html#name" class="tsd-kind-icon">name</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-protected"><a href="noopstorageproxy.html#observers" class="tsd-kind-icon">observers</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="noopstorageproxy.html#pec" class="tsd-kind-icon">pec</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited"><a href="noopstorageproxy.html#pec" class="tsd-kind-icon">pec</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-protected"><a href="noopstorageproxy.html#port" class="tsd-kind-icon">port</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-protected"><a href="noopstorageproxy.html#scheduler" class="tsd-kind-icon">scheduler</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="noopstorageproxy.html#storagekey" class="tsd-kind-icon">storage<wbr>Key</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-protected"><a href="noopstorageproxy.html#synchronized" class="tsd-kind-icon">synchronized</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="noopstorageproxy.html#type" class="tsd-kind-icon">type</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited"><a href="noopstorageproxy.html#type" class="tsd-kind-icon">type</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-protected"><a href="noopstorageproxy.html#version" class="tsd-kind-icon">version</a></li>
 							</ul>
 						</section>
@@ -137,19 +149,31 @@
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="noopstorageproxy.html#_processupdate" class="tsd-kind-icon">_process<wbr>Update</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="noopstorageproxy.html#_processupdates" class="tsd-kind-icon">_process<wbr>Updates</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="noopstorageproxy.html#_synchronizemodel" class="tsd-kind-icon">_synchronize<wbr>Model</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="noopstorageproxy.html#applyop" class="tsd-kind-icon">apply<wbr>Op</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="noopstorageproxy.html#clear" class="tsd-kind-icon">clear</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="noopstorageproxy.html#cursorclose" class="tsd-kind-icon">cursor<wbr>Close</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="noopstorageproxy.html#cursornext" class="tsd-kind-icon">cursor<wbr>Next</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="noopstorageproxy.html#deregister" class="tsd-kind-icon">deregister</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="noopstorageproxy.html#deregisterhandle" class="tsd-kind-icon">deregister<wbr>Handle</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-protected"><a href="noopstorageproxy.html#generatebarrier" class="tsd-kind-icon">generate<wbr>Barrier</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="noopstorageproxy.html#get" class="tsd-kind-icon">get</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="noopstorageproxy.html#getdata" class="tsd-kind-icon">get<wbr>Data</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="noopstorageproxy.html#getparticleview" class="tsd-kind-icon">get<wbr>Particle<wbr>View</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="noopstorageproxy.html#idle" class="tsd-kind-icon">idle</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-protected"><a href="noopstorageproxy.html#notifydesync" class="tsd-kind-icon">notify<wbr>Desync</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-protected"><a href="noopstorageproxy.html#notifysync" class="tsd-kind-icon">notify<wbr>Sync</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-protected"><a href="noopstorageproxy.html#notifyupdate" class="tsd-kind-icon">notify<wbr>Update</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="noopstorageproxy.html#onmessage" class="tsd-kind-icon">on<wbr>Message</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="noopstorageproxy.html#register" class="tsd-kind-icon">register</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="noopstorageproxy.html#registerhandle" class="tsd-kind-icon">register<wbr>Handle</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="noopstorageproxy.html#remove" class="tsd-kind-icon">remove</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="noopstorageproxy.html#reportexceptioninhost" class="tsd-kind-icon">report<wbr>Exception<wbr>InHost</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="noopstorageproxy.html#set" class="tsd-kind-icon">set</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="noopstorageproxy.html#store" class="tsd-kind-icon">store</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="noopstorageproxy.html#stream" class="tsd-kind-icon">stream</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-protected"><a href="noopstorageproxy.html#synchronizemodel" class="tsd-kind-icon">synchronize<wbr>Model</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="noopstorageproxy.html#tolist" class="tsd-kind-icon">to<wbr>List</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-protected"><a href="noopstorageproxy.html#versioncopy" class="tsd-kind-icon">version<wbr>Copy</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-static"><a href="noopstorageproxy.html#newnoopproxy" class="tsd-kind-icon">new<wbr>NoOp<wbr>Proxy</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-static"><a href="noopstorageproxy.html#newproxy" class="tsd-kind-icon">new<wbr>Proxy</a></li>
 							</ul>
@@ -159,18 +183,19 @@
 			</section>
 			<section class="tsd-panel-group tsd-member-group tsd-is-inherited">
 				<h2>Constructors</h2>
-				<section class="tsd-panel tsd-member tsd-kind-constructor tsd-parent-kind-class tsd-is-inherited">
+				<section class="tsd-panel tsd-member tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited">
 					<a name="constructor" class="tsd-anchor"></a>
 					<h3>constructor</h3>
-					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class tsd-is-inherited">
+					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited">
 						<li class="tsd-signature tsd-kind-icon">new <wbr>NoOp<wbr>Storage<wbr>Proxy<span class="tsd-signature-symbol">(</span>id<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, type<span class="tsd-signature-symbol">: </span><a href="type.html" class="tsd-signature-type">Type</a>, port<span class="tsd-signature-symbol">: </span><a href="pecinnerport.html" class="tsd-signature-type">PECInnerPort</a>, pec<span class="tsd-signature-symbol">: </span><a href="particleexecutioncontext.html" class="tsd-signature-type">ParticleExecutionContext</a>, scheduler<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, name<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="noopstorageproxy.html" class="tsd-signature-type">NoOpStorageProxy</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="storageproxy.html">StorageProxy</a>.<a href="storageproxy.html#constructor">constructor</a></p>
+								<p>Overrides StorageProxy.__constructor</p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/b1ab76a/src/runtime/storage-proxy.ts#L77">src/runtime/storage-proxy.ts:77</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/68713f0/src/runtime/storage-proxy.ts#L77">src/runtime/storage-proxy.ts:77</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -201,6 +226,17 @@
 			</section>
 			<section class="tsd-panel-group tsd-member-group tsd-is-inherited">
 				<h2>Properties</h2>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
+					<a name="apichannelid" class="tsd-anchor"></a>
+					<h3>api<wbr>Channel<wbr>Id</h3>
+					<div class="tsd-signature tsd-kind-icon">api<wbr>Channel<wbr>Id<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+					<aside class="tsd-sources">
+						<p>Inherited from <a href="storageproxy.html">StorageProxy</a>.<a href="storageproxy.html#apichannelid">apiChannelId</a></p>
+						<ul>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/68713f0/src/runtime/storageNG/storage-proxy.ts#L29">src/runtime/storageNG/storage-proxy.ts:29</a></li>
+						</ul>
+					</aside>
+				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-protected">
 					<a name="barrier" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagProtected">Protected</span> barrier</h3>
@@ -208,7 +244,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="storageproxy.html">StorageProxy</a>.<a href="storageproxy.html#barrier">barrier</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/b1ab76a/src/runtime/storage-proxy.ts#L77">src/runtime/storage-proxy.ts:77</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/68713f0/src/runtime/storage-proxy.ts#L77">src/runtime/storage-proxy.ts:77</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -220,7 +256,7 @@
 						<p>Implementation of <a href="../interfaces/singletonstore.html">SingletonStore</a>.<a href="../interfaces/singletonstore.html#id">id</a></p>
 						<p>Inherited from <a href="storageproxy.html">StorageProxy</a>.<a href="storageproxy.html#id">id</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/b1ab76a/src/runtime/storage-proxy.ts#L64">src/runtime/storage-proxy.ts:64</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/68713f0/src/runtime/storage-proxy.ts#L64">src/runtime/storage-proxy.ts:64</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -231,7 +267,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="storageproxy.html">StorageProxy</a>.<a href="storageproxy.html#listenerattached">listenerAttached</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/b1ab76a/src/runtime/storage-proxy.ts#L72">src/runtime/storage-proxy.ts:72</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/68713f0/src/runtime/storage-proxy.ts#L72">src/runtime/storage-proxy.ts:72</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -243,7 +279,7 @@
 						<p>Implementation of <a href="../interfaces/singletonstore.html">SingletonStore</a>.<a href="../interfaces/singletonstore.html#name">name</a></p>
 						<p>Inherited from <a href="storageproxy.html">StorageProxy</a>.<a href="storageproxy.html#name">name</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/b1ab76a/src/runtime/storage-proxy.ts#L68">src/runtime/storage-proxy.ts:68</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/68713f0/src/runtime/storage-proxy.ts#L68">src/runtime/storage-proxy.ts:68</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -254,19 +290,20 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="storageproxy.html">StorageProxy</a>.<a href="storageproxy.html#observers">observers</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/b1ab76a/src/runtime/storage-proxy.ts#L75">src/runtime/storage-proxy.ts:75</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/68713f0/src/runtime/storage-proxy.ts#L75">src/runtime/storage-proxy.ts:75</a></li>
 						</ul>
 					</aside>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited">
 					<a name="pec" class="tsd-anchor"></a>
 					<h3>pec</h3>
 					<div class="tsd-signature tsd-kind-icon">pec<span class="tsd-signature-symbol">:</span> <a href="particleexecutioncontext.html" class="tsd-signature-type">ParticleExecutionContext</a></div>
 					<aside class="tsd-sources">
 						<p>Implementation of <a href="../interfaces/singletonstore.html">SingletonStore</a>.<a href="../interfaces/singletonstore.html#pec">pec</a></p>
 						<p>Inherited from <a href="storageproxy.html">StorageProxy</a>.<a href="storageproxy.html#pec">pec</a></p>
+						<p>Overrides StorageProxy.pec</p>
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/b1ab76a/src/runtime/storage-proxy.ts#L69">src/runtime/storage-proxy.ts:69</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/68713f0/src/runtime/storage-proxy.ts#L69">src/runtime/storage-proxy.ts:69</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -277,7 +314,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="storageproxy.html">StorageProxy</a>.<a href="storageproxy.html#port">port</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/b1ab76a/src/runtime/storage-proxy.ts#L66">src/runtime/storage-proxy.ts:66</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/68713f0/src/runtime/storage-proxy.ts#L66">src/runtime/storage-proxy.ts:66</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -288,7 +325,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="storageproxy.html">StorageProxy</a>.<a href="storageproxy.html#scheduler">scheduler</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/b1ab76a/src/runtime/storage-proxy.ts#L67">src/runtime/storage-proxy.ts:67</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/68713f0/src/runtime/storage-proxy.ts#L67">src/runtime/storage-proxy.ts:67</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -299,7 +336,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="storageproxy.html">StorageProxy</a>.<a href="storageproxy.html#storagekey">storageKey</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/b1ab76a/src/runtime/storage-proxy.ts#L63">src/runtime/storage-proxy.ts:63</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/68713f0/src/runtime/storage-proxy.ts#L63">src/runtime/storage-proxy.ts:63</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -310,19 +347,20 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="storageproxy.html">StorageProxy</a>.<a href="storageproxy.html#synchronized">synchronized</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/b1ab76a/src/runtime/storage-proxy.ts#L74">src/runtime/storage-proxy.ts:74</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/68713f0/src/runtime/storage-proxy.ts#L74">src/runtime/storage-proxy.ts:74</a></li>
 						</ul>
 					</aside>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited">
 					<a name="type" class="tsd-anchor"></a>
 					<h3>type</h3>
 					<div class="tsd-signature tsd-kind-icon">type<span class="tsd-signature-symbol">:</span> <a href="type.html" class="tsd-signature-type">Type</a></div>
 					<aside class="tsd-sources">
 						<p>Implementation of <a href="../interfaces/singletonstore.html">SingletonStore</a>.<a href="../interfaces/singletonstore.html#type">type</a></p>
 						<p>Inherited from <a href="storageproxy.html">StorageProxy</a>.<a href="storageproxy.html#type">type</a></p>
+						<p>Overrides StorageProxy.type</p>
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/b1ab76a/src/runtime/storage-proxy.ts#L65">src/runtime/storage-proxy.ts:65</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/68713f0/src/runtime/storage-proxy.ts#L65">src/runtime/storage-proxy.ts:65</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -333,7 +371,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="storageproxy.html">StorageProxy</a>.<a href="storageproxy.html#version">version</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/b1ab76a/src/runtime/storage-proxy.ts#L71">src/runtime/storage-proxy.ts:71</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/68713f0/src/runtime/storage-proxy.ts#L71">src/runtime/storage-proxy.ts:71</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -351,7 +389,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="storageproxy.html">StorageProxy</a>.<a href="storageproxy.html#_getmodelforsync">_getModelForSync</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/b1ab76a/src/runtime/storage-proxy.ts#L579">src/runtime/storage-proxy.ts:579</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/68713f0/src/runtime/storage-proxy.ts#L579">src/runtime/storage-proxy.ts:579</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">object</span>
@@ -372,7 +410,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="storageproxy.html">StorageProxy</a>.<a href="storageproxy.html#_notify">_notify</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/b1ab76a/src/runtime/storage-proxy.ts#L598">src/runtime/storage-proxy.ts:598</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/68713f0/src/runtime/storage-proxy.ts#L598">src/runtime/storage-proxy.ts:598</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -402,7 +440,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="storageproxy.html">StorageProxy</a>.<a href="storageproxy.html#_onsynchronize">_onSynchronize</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/b1ab76a/src/runtime/storage-proxy.ts#L594">src/runtime/storage-proxy.ts:594</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/68713f0/src/runtime/storage-proxy.ts#L594">src/runtime/storage-proxy.ts:594</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -434,7 +472,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="storageproxy.html">StorageProxy</a>.<a href="storageproxy.html#_onupdate">_onUpdate</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/b1ab76a/src/runtime/storage-proxy.ts#L596">src/runtime/storage-proxy.ts:596</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/68713f0/src/runtime/storage-proxy.ts#L596">src/runtime/storage-proxy.ts:596</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -463,7 +501,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="storageproxy.html">StorageProxy</a>.<a href="storageproxy.html#_processupdate">_processUpdate</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/b1ab76a/src/runtime/storage-proxy.ts#L585">src/runtime/storage-proxy.ts:585</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/68713f0/src/runtime/storage-proxy.ts#L585">src/runtime/storage-proxy.ts:585</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -495,7 +533,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="storageproxy.html">StorageProxy</a>.<a href="storageproxy.html#_processupdates">_processUpdates</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/b1ab76a/src/runtime/storage-proxy.ts#L600">src/runtime/storage-proxy.ts:600</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/68713f0/src/runtime/storage-proxy.ts#L600">src/runtime/storage-proxy.ts:600</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -513,7 +551,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="storageproxy.html">StorageProxy</a>.<a href="storageproxy.html#_synchronizemodel">_synchronizeModel</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/b1ab76a/src/runtime/storage-proxy.ts#L582">src/runtime/storage-proxy.ts:582</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/68713f0/src/runtime/storage-proxy.ts#L582">src/runtime/storage-proxy.ts:582</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -529,6 +567,30 @@
 						</li>
 					</ul>
 				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
+					<a name="applyop" class="tsd-anchor"></a>
+					<h3>apply<wbr>Op</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
+						<li class="tsd-signature tsd-kind-icon">apply<wbr>Op<span class="tsd-signature-symbol">(</span>op<span class="tsd-signature-symbol">: </span><a href="../interfaces/crdtoperation.html" class="tsd-signature-type">CRDTOperation</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Overrides <a href="storageproxy.html">StorageProxy</a>.<a href="storageproxy.html#applyop">applyOp</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/68713f0/src/runtime/storageNG/storage-proxy.ts#L231">src/runtime/storageNG/storage-proxy.ts:231</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>op: <a href="../interfaces/crdtoperation.html" class="tsd-signature-type">CRDTOperation</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
 					<a name="clear" class="tsd-anchor"></a>
 					<h3>clear</h3>
@@ -540,7 +602,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/singletonstore.html">SingletonStore</a>.<a href="../interfaces/singletonstore.html#clear">clear</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/b1ab76a/src/runtime/storage-proxy.ts#L612">src/runtime/storage-proxy.ts:612</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/68713f0/src/runtime/storage-proxy.ts#L612">src/runtime/storage-proxy.ts:612</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -564,7 +626,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/bigcollectionstore.html">BigCollectionStore</a>.<a href="../interfaces/bigcollectionstore.html#cursorclose">cursorClose</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/b1ab76a/src/runtime/storage-proxy.ts#L628">src/runtime/storage-proxy.ts:628</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/68713f0/src/runtime/storage-proxy.ts#L628">src/runtime/storage-proxy.ts:628</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -588,7 +650,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/bigcollectionstore.html">BigCollectionStore</a>.<a href="../interfaces/bigcollectionstore.html#cursornext">cursorNext</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/b1ab76a/src/runtime/storage-proxy.ts#L625">src/runtime/storage-proxy.ts:625</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/68713f0/src/runtime/storage-proxy.ts#L625">src/runtime/storage-proxy.ts:625</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -612,9 +674,33 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="storageproxy.html">StorageProxy</a>.<a href="storageproxy.html#deregister">deregister</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/b1ab76a/src/runtime/storage-proxy.ts#L590">src/runtime/storage-proxy.ts:590</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/68713f0/src/runtime/storage-proxy.ts#L590">src/runtime/storage-proxy.ts:590</a></li>
 								</ul>
 							</aside>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
+					<a name="deregisterhandle" class="tsd-anchor"></a>
+					<h3>deregister<wbr>Handle</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
+						<li class="tsd-signature tsd-kind-icon">deregister<wbr>Handle<span class="tsd-signature-symbol">(</span>handle<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Handle</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Overrides <a href="storageproxy.html">StorageProxy</a>.<a href="storageproxy.html#deregisterhandle">deregisterHandle</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/68713f0/src/runtime/storageNG/storage-proxy.ts#L225">src/runtime/storageNG/storage-proxy.ts:225</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>handle: <span class="tsd-signature-type">Handle</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span></h5>
+								</li>
+							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
 						</li>
 					</ul>
@@ -630,7 +716,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="storageproxy.html">StorageProxy</a>.<a href="storageproxy.html#generatebarrier">generateBarrier</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/b1ab76a/src/runtime/storage-proxy.ts#L602">src/runtime/storage-proxy.ts:602</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/68713f0/src/runtime/storage-proxy.ts#L602">src/runtime/storage-proxy.ts:602</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
@@ -648,7 +734,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/bigcollectionstore.html">BigCollectionStore</a>.<a href="../interfaces/bigcollectionstore.html#get">get</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/b1ab76a/src/runtime/storage-proxy.ts#L605">src/runtime/storage-proxy.ts:605</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/68713f0/src/runtime/storage-proxy.ts#L605">src/runtime/storage-proxy.ts:605</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -658,6 +744,147 @@
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
+					<a name="getdata" class="tsd-anchor"></a>
+					<h3>get<wbr>Data</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
+						<li class="tsd-signature tsd-kind-icon">get<wbr>Data<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T[&quot;data&quot;]</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Overrides <a href="storageproxy.html">StorageProxy</a>.<a href="storageproxy.html#getdata">getData</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/68713f0/src/runtime/storageNG/storage-proxy.ts#L237">src/runtime/storageNG/storage-proxy.ts:237</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T[&quot;data&quot;]</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
+					<a name="getparticleview" class="tsd-anchor"></a>
+					<h3>get<wbr>Particle<wbr>View</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
+						<li class="tsd-signature tsd-kind-icon">get<wbr>Particle<wbr>View<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-symbol">[</span><span class="tsd-signature-type">T[&quot;consumerType&quot;]</span><span class="tsd-signature-symbol">, </span><a href="../globals.html#versionmap" class="tsd-signature-type">VersionMap</a><span class="tsd-signature-symbol">]</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Overrides <a href="storageproxy.html">StorageProxy</a>.<a href="storageproxy.html#getparticleview">getParticleView</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/68713f0/src/runtime/storageNG/storage-proxy.ts#L234">src/runtime/storageNG/storage-proxy.ts:234</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-symbol">[</span><span class="tsd-signature-type">T[&quot;consumerType&quot;]</span><span class="tsd-signature-symbol">, </span><a href="../globals.html#versionmap" class="tsd-signature-type">VersionMap</a><span class="tsd-signature-symbol">]</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
+					<a name="idle" class="tsd-anchor"></a>
+					<h3>idle</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
+						<li class="tsd-signature tsd-kind-icon">idle<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Overrides <a href="storageproxy.html">StorageProxy</a>.<a href="storageproxy.html#idle">idle</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/68713f0/src/runtime/storageNG/storage-proxy.ts#L216">src/runtime/storageNG/storage-proxy.ts:216</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-protected">
+					<a name="notifydesync" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagProtected">Protected</span> notify<wbr>Desync</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-protected">
+						<li class="tsd-signature tsd-kind-icon">notify<wbr>Desync<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Overrides <a href="storageproxy.html">StorageProxy</a>.<a href="storageproxy.html#notifydesync">notifyDesync</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/68713f0/src/runtime/storageNG/storage-proxy.ts#L247">src/runtime/storageNG/storage-proxy.ts:247</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-protected">
+					<a name="notifysync" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagProtected">Protected</span> notify<wbr>Sync</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-protected">
+						<li class="tsd-signature tsd-kind-icon">notify<wbr>Sync<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Overrides <a href="storageproxy.html">StorageProxy</a>.<a href="storageproxy.html#notifysync">notifySync</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/68713f0/src/runtime/storageNG/storage-proxy.ts#L245">src/runtime/storageNG/storage-proxy.ts:245</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-protected">
+					<a name="notifyupdate" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagProtected">Protected</span> notify<wbr>Update</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-protected">
+						<li class="tsd-signature tsd-kind-icon">notify<wbr>Update<span class="tsd-signature-symbol">(</span>operation<span class="tsd-signature-symbol">: </span><a href="../interfaces/crdtoperation.html" class="tsd-signature-type">CRDTOperation</a>, oldData<span class="tsd-signature-symbol">: </span><a href="../interfaces/crdtconsumertype.html" class="tsd-signature-type">CRDTConsumerType</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Overrides <a href="storageproxy.html">StorageProxy</a>.<a href="storageproxy.html#notifyupdate">notifyUpdate</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/68713f0/src/runtime/storageNG/storage-proxy.ts#L243">src/runtime/storageNG/storage-proxy.ts:243</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>operation: <a href="../interfaces/crdtoperation.html" class="tsd-signature-type">CRDTOperation</a></h5>
+								</li>
+								<li>
+									<h5>oldData: <a href="../interfaces/crdtconsumertype.html" class="tsd-signature-type">CRDTConsumerType</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
+					<a name="onmessage" class="tsd-anchor"></a>
+					<h3>on<wbr>Message</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
+						<li class="tsd-signature tsd-kind-icon">on<wbr>Message<span class="tsd-signature-symbol">(</span>message<span class="tsd-signature-symbol">: </span><a href="../globals.html#proxymessage" class="tsd-signature-type">ProxyMessage</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Overrides <a href="storageproxy.html">StorageProxy</a>.<a href="storageproxy.html#onmessage">onMessage</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/68713f0/src/runtime/storageNG/storage-proxy.ts#L240">src/runtime/storageNG/storage-proxy.ts:240</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>message: <a href="../globals.html#proxymessage" class="tsd-signature-type">ProxyMessage</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -672,10 +899,34 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="storageproxy.html">StorageProxy</a>.<a href="storageproxy.html#register">register</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/b1ab76a/src/runtime/storage-proxy.ts#L592">src/runtime/storage-proxy.ts:592</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/68713f0/src/runtime/storage-proxy.ts#L592">src/runtime/storage-proxy.ts:592</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
+					<a name="registerhandle" class="tsd-anchor"></a>
+					<h3>register<wbr>Handle</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
+						<li class="tsd-signature tsd-kind-icon">register<wbr>Handle<span class="tsd-signature-symbol">(</span>handle<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Handle</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../globals.html#versionmap" class="tsd-signature-type">VersionMap</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Overrides <a href="storageproxy.html">StorageProxy</a>.<a href="storageproxy.html#registerhandle">registerHandle</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/68713f0/src/runtime/storageNG/storage-proxy.ts#L222">src/runtime/storageNG/storage-proxy.ts:222</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>handle: <span class="tsd-signature-type">Handle</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="../globals.html#versionmap" class="tsd-signature-type">VersionMap</a></h4>
 						</li>
 					</ul>
 				</section>
@@ -690,7 +941,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/bigcollectionstore.html">BigCollectionStore</a>.<a href="../interfaces/bigcollectionstore.html#remove">remove</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/b1ab76a/src/runtime/storage-proxy.ts#L615">src/runtime/storage-proxy.ts:615</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/68713f0/src/runtime/storage-proxy.ts#L615">src/runtime/storage-proxy.ts:615</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -721,7 +972,7 @@
 								<p>Implementation of <a href="../interfaces/singletonstore.html">SingletonStore</a>.<a href="../interfaces/singletonstore.html#reportexceptioninhost">reportExceptionInHost</a></p>
 								<p>Overrides <a href="storageproxy.html">StorageProxy</a>.<a href="storageproxy.html#reportexceptioninhost">reportExceptionInHost</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/b1ab76a/src/runtime/storage-proxy.ts#L588">src/runtime/storage-proxy.ts:588</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/68713f0/src/runtime/storage-proxy.ts#L588">src/runtime/storage-proxy.ts:588</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -744,7 +995,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/b1ab76a/src/runtime/storage-proxy.ts#L631">src/runtime/storage-proxy.ts:631</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/68713f0/src/runtime/storage-proxy.ts#L631">src/runtime/storage-proxy.ts:631</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -771,7 +1022,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/bigcollectionstore.html">BigCollectionStore</a>.<a href="../interfaces/bigcollectionstore.html#store">store</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/b1ab76a/src/runtime/storage-proxy.ts#L609">src/runtime/storage-proxy.ts:609</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/68713f0/src/runtime/storage-proxy.ts#L609">src/runtime/storage-proxy.ts:609</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -801,7 +1052,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/bigcollectionstore.html">BigCollectionStore</a>.<a href="../interfaces/bigcollectionstore.html#stream">stream</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/b1ab76a/src/runtime/storage-proxy.ts#L621">src/runtime/storage-proxy.ts:621</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/68713f0/src/runtime/storage-proxy.ts#L621">src/runtime/storage-proxy.ts:621</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -817,6 +1068,24 @@
 						</li>
 					</ul>
 				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-protected">
+					<a name="synchronizemodel" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagProtected">Protected</span> synchronize<wbr>Model</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-protected">
+						<li class="tsd-signature tsd-kind-icon">synchronize<wbr>Model<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Overrides <a href="storageproxy.html">StorageProxy</a>.<a href="storageproxy.html#synchronizemodel">synchronizeModel</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/68713f0/src/runtime/storageNG/storage-proxy.ts#L249">src/runtime/storageNG/storage-proxy.ts:249</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
 					<a name="tolist" class="tsd-anchor"></a>
 					<h3>to<wbr>List</h3>
@@ -828,10 +1097,28 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/collectionstore.html">CollectionStore</a>.<a href="../interfaces/collectionstore.html#tolist">toList</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/b1ab76a/src/runtime/storage-proxy.ts#L618">src/runtime/storage-proxy.ts:618</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/68713f0/src/runtime/storage-proxy.ts#L618">src/runtime/storage-proxy.ts:618</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/modelvalue.html" class="tsd-signature-type">ModelValue</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-protected">
+					<a name="versioncopy" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagProtected">Protected</span> version<wbr>Copy</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-protected">
+						<li class="tsd-signature tsd-kind-icon">version<wbr>Copy<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../globals.html#versionmap" class="tsd-signature-type">VersionMap</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Overrides <a href="storageproxy.html">StorageProxy</a>.<a href="storageproxy.html#versioncopy">versionCopy</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/68713f0/src/runtime/storageNG/storage-proxy.ts#L227">src/runtime/storageNG/storage-proxy.ts:227</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <a href="../globals.html#versionmap" class="tsd-signature-type">VersionMap</a></h4>
 						</li>
 					</ul>
 				</section>
@@ -846,7 +1133,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="storageproxy.html">StorageProxy</a>.<a href="storageproxy.html#newnoopproxy">newNoOpProxy</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/b1ab76a/src/runtime/storage-proxy.ts#L59">src/runtime/storage-proxy.ts:59</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/68713f0/src/runtime/storage-proxy.ts#L59">src/runtime/storage-proxy.ts:59</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -870,7 +1157,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="storageproxy.html">StorageProxy</a>.<a href="storageproxy.html#newproxy">newProxy</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/b1ab76a/src/runtime/storage-proxy.ts#L49">src/runtime/storage-proxy.ts:49</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/68713f0/src/runtime/storage-proxy.ts#L49">src/runtime/storage-proxy.ts:49</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -917,11 +1204,14 @@
 				<ul class="before-current">
 				</ul>
 				<ul class="current">
-					<li class="current tsd-kind-class">
+					<li class="current tsd-kind-class tsd-has-type-parameter">
 						<a href="noopstorageproxy.html" class="tsd-kind-icon">No<wbr>OpStorage<wbr>Proxy</a>
 						<ul>
-							<li class=" tsd-kind-constructor tsd-parent-kind-class tsd-is-inherited">
+							<li class=" tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited">
 								<a href="noopstorageproxy.html#constructor" class="tsd-kind-icon">constructor</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
+								<a href="noopstorageproxy.html#apichannelid" class="tsd-kind-icon">api<wbr>Channel<wbr>Id</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-protected">
 								<a href="noopstorageproxy.html#barrier" class="tsd-kind-icon">barrier</a>
@@ -938,7 +1228,7 @@
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-protected">
 								<a href="noopstorageproxy.html#observers" class="tsd-kind-icon">observers</a>
 							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited">
 								<a href="noopstorageproxy.html#pec" class="tsd-kind-icon">pec</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-protected">
@@ -953,7 +1243,7 @@
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-protected">
 								<a href="noopstorageproxy.html#synchronized" class="tsd-kind-icon">synchronized</a>
 							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited">
 								<a href="noopstorageproxy.html#type" class="tsd-kind-icon">type</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-protected">
@@ -980,6 +1270,9 @@
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
 								<a href="noopstorageproxy.html#_synchronizemodel" class="tsd-kind-icon">_synchronize<wbr>Model</a>
 							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
+								<a href="noopstorageproxy.html#applyop" class="tsd-kind-icon">apply<wbr>Op</a>
+							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="noopstorageproxy.html#clear" class="tsd-kind-icon">clear</a>
 							</li>
@@ -992,6 +1285,9 @@
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
 								<a href="noopstorageproxy.html#deregister" class="tsd-kind-icon">deregister</a>
 							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
+								<a href="noopstorageproxy.html#deregisterhandle" class="tsd-kind-icon">deregister<wbr>Handle</a>
+							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-protected">
 								<a href="noopstorageproxy.html#generatebarrier" class="tsd-kind-icon">generate<wbr>Barrier</a>
 							</li>
@@ -999,7 +1295,31 @@
 								<a href="noopstorageproxy.html#get" class="tsd-kind-icon">get</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
+								<a href="noopstorageproxy.html#getdata" class="tsd-kind-icon">get<wbr>Data</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
+								<a href="noopstorageproxy.html#getparticleview" class="tsd-kind-icon">get<wbr>Particle<wbr>View</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
+								<a href="noopstorageproxy.html#idle" class="tsd-kind-icon">idle</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-protected">
+								<a href="noopstorageproxy.html#notifydesync" class="tsd-kind-icon">notify<wbr>Desync</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-protected">
+								<a href="noopstorageproxy.html#notifysync" class="tsd-kind-icon">notify<wbr>Sync</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-protected">
+								<a href="noopstorageproxy.html#notifyupdate" class="tsd-kind-icon">notify<wbr>Update</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
+								<a href="noopstorageproxy.html#onmessage" class="tsd-kind-icon">on<wbr>Message</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
 								<a href="noopstorageproxy.html#register" class="tsd-kind-icon">register</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
+								<a href="noopstorageproxy.html#registerhandle" class="tsd-kind-icon">register<wbr>Handle</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="noopstorageproxy.html#remove" class="tsd-kind-icon">remove</a>
@@ -1016,8 +1336,14 @@
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="noopstorageproxy.html#stream" class="tsd-kind-icon">stream</a>
 							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-protected">
+								<a href="noopstorageproxy.html#synchronizemodel" class="tsd-kind-icon">synchronize<wbr>Model</a>
+							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="noopstorageproxy.html#tolist" class="tsd-kind-icon">to<wbr>List</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-protected">
+								<a href="noopstorageproxy.html#versioncopy" class="tsd-kind-icon">version<wbr>Copy</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-static">
 								<a href="noopstorageproxy.html#newnoopproxy" class="tsd-kind-icon">new<wbr>NoOp<wbr>Proxy</a>

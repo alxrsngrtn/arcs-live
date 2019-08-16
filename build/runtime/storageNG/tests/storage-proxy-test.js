@@ -9,12 +9,15 @@
  */
 import { assert } from '../../../platform/chai-web.js';
 import { CRDTSingleton, SingletonOpTypes } from '../../crdt/crdt-singleton.js';
-import { StorageProxy } from '../storage-proxy.js';
+import { StorageProxy, NoOpStorageProxy } from '../storage-proxy.js';
 import { ProxyMessageType } from '../store.js';
 import { MockHandle, MockStore } from '../testing/test-storage.js';
 import { EntityType } from '../../type.js';
 function getStorageProxy(store) {
     return new StorageProxy('id', new CRDTSingleton(), store, EntityType.make([], {}), null /*pec*/);
+}
+function getNoOpStorageProxy() {
+    return new NoOpStorageProxy();
 }
 describe('StorageProxy', async () => {
     it('will apply and propagate operation', async () => {
@@ -93,6 +96,28 @@ describe('StorageProxy', async () => {
         await storageProxy.getParticleView();
         await storageProxy.idle();
         assert.equal(mockStore.lastCapturedException.message, 'SystemException: exception Error raised when invoking system function StorageProxyScheduler::_dispatch on behalf of particle handle: something wrong');
+    });
+});
+describe('NoOpStorageProxy', () => {
+    it('overrides all methods in StorageProxy', async () => {
+        const mockStore = new MockStore();
+        const storageProxy = getStorageProxy(mockStore);
+        const noOpStorageProxy = getNoOpStorageProxy();
+        const properties = [];
+        let proto = Object.getPrototypeOf(storageProxy);
+        while (proto && proto !== Object.prototype) {
+            Object.getOwnPropertyNames(proto).forEach(name => {
+                const desc = Object.getOwnPropertyDescriptor(proto, name);
+                if (desc && typeof desc.value === 'function') {
+                    properties.push(name);
+                }
+            });
+            proto = Object.getPrototypeOf(proto);
+        }
+        const noOpProperties = Object.getOwnPropertyNames(Object.getPrototypeOf(noOpStorageProxy));
+        properties.forEach(property => {
+            assert(noOpProperties.indexOf(property) !== -1, 'Missing function: ' + property);
+        });
     });
 });
 //# sourceMappingURL=storage-proxy-test.js.map

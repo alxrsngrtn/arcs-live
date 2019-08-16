@@ -14,6 +14,7 @@ import { SingletonOpTypes } from '../crdt/crdt-singleton';
 import { Entity } from '../entity.js';
 import { Id } from '../id.js';
 import { EntityType } from '../type.js';
+import { NoOpStorageProxy } from './storage-proxy';
 /**
  * Base class for Handles.
  */
@@ -66,6 +67,10 @@ export class Handle {
     }
     async onDesync() {
         await this.particle.callOnHandleDesync(this, e => this.reportUserExceptionInHost(e, this.particle, 'onHandleDesync'));
+    }
+    disable(particle) {
+        this.storageProxy.deregisterHandle(this);
+        this.storageProxy = new NoOpStorageProxy();
     }
 }
 /**

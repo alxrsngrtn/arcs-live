@@ -22535,8 +22535,7 @@ class ParticleExecutionContext {
         // Create new handles and disable the handles of the old particles
         oldParticle.handles.forEach((oldHandle) => {
             this.createHandle(particle, oldParticle.spec, id, oldHandle.name, oldHandle.storage, handleMap, registerList);
-            if (oldHandle instanceof HandleOld)
-                oldHandle.disable(oldParticle);
+            oldHandle.disable(oldParticle);
         });
         return [particle, async () => {
                 // Set the new handles to the new particle

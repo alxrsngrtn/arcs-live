@@ -1,9 +1,10 @@
-commit b1ab76a241d715b4319a6324a62f1b6556f6825f
-Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
-Date:   Fri Aug 16 10:33:26 2019 +1000
+commit 68713f079a5829e73edc2911c70868e8eec0ccb3
+Author: sherry-pra <52428204+sherry-pra@users.noreply.github.com>
+Date:   Thu Aug 15 23:32:23 2019 -0700
 
-    sigh: update cleanObsolete to handle wasm outputs (#3474)
+    Replicating disable handle function from HandleOld to HandleNG (#3471)
     
-    * sigh: update cleanObsolete to handle wasm outputs
-    
-    * TODO--
+    - Added disable function in storageNG/handle.ts
+    - Added deregisterHandle function in storageNG/storage-proxy.ts
+    - Added a dummy version of StorageProxy (NoOpStorageProxy)
+    - Added a unit test to make sure that NoOpStoragProxy overrides all StorageProxy's functions

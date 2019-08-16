@@ -33,15 +33,32 @@ export declare class StorageProxy<T extends CRDTTypeRecord> {
     idle(): Promise<void>;
     reportExceptionInHost(exception: PropagatedException): void;
     registerHandle(handle: Handle<T>): VersionMap;
-    private versionCopy;
+    deregisterHandle(handleIn: Handle<T>): void;
+    protected versionCopy(): VersionMap;
     applyOp(op: CRDTOperation): Promise<boolean>;
     getParticleView(): Promise<[T['consumerType'], VersionMap]>;
     getData(): Promise<T['data']>;
     onMessage(message: ProxyMessage<T>): Promise<boolean>;
-    private notifyUpdate;
-    private notifySync;
-    private notifyDesync;
-    private synchronizeModel;
+    protected notifyUpdate(operation: CRDTOperation, oldData: CRDTConsumerType): void;
+    protected notifySync(): void;
+    protected notifyDesync(): void;
+    protected synchronizeModel(): Promise<boolean>;
+}
+export declare class NoOpStorageProxy<T extends CRDTTypeRecord> extends StorageProxy<T> {
+    constructor();
+    idle(): Promise<void>;
+    reportExceptionInHost(exception: PropagatedException): void;
+    registerHandle(handle: Handle<T>): VersionMap;
+    deregisterHandle(handle: Handle<T>): void;
+    protected versionCopy(): VersionMap;
+    applyOp(op: CRDTOperation): Promise<boolean>;
+    getParticleView(): Promise<[T['consumerType'], VersionMap]>;
+    getData(): Promise<T['data']>;
+    onMessage(message: ProxyMessage<T>): Promise<boolean>;
+    protected notifyUpdate(operation: CRDTOperation, oldData: CRDTConsumerType): void;
+    protected notifySync(): void;
+    protected notifyDesync(): void;
+    protected synchronizeModel(): Promise<boolean>;
 }
 declare enum HandleMessageType {
     Sync = 0,

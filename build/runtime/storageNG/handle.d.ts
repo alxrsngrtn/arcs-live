@@ -50,6 +50,7 @@ export declare abstract class Handle<T extends CRDTTypeRecord> {
     abstract onUpdate(update: T['operation'], oldData: T['consumerType'], version: VersionMap): void;
     abstract onSync(): void;
     onDesync(): Promise<void>;
+    disable(particle?: Particle): void;
 }
 /**
  * A handle on a set of Entity data. Note that, as a set, a Collection can only

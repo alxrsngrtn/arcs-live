@@ -418,12 +418,12 @@
         "signature": "4725f652b5c8a0c8f2494f4117541e9db18e5b2003940842100b48db319cd0bc"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/storageNG/storage-proxy.ts": {
-        "version": "40889e073a4168c380bf6a5e86a8aa9e5bfb4d0fd8022ca6f2fb21482fb7f3da",
-        "signature": "cd963be5a1e842abda5f1dcc439a581eb8720845cba91a0d08f4addbd077a57e"
+        "version": "3004e30315ed78a17a5221b7b6c6f47a7aba03388a5e29af9d5c62a20f726c8b",
+        "signature": "c22370c7ed6f3f75df04b14c0a6989686e7004ba2ca423af50027a54f32d3554"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/storageNG/handle.ts": {
-        "version": "e510232ffbd14c37a7153f837c1ccc3a768623cab7ba620db8edda95f5bf5ab1",
-        "signature": "61cc2f968fdb50d1ac4bff3ca1bdeb86b87112d896df5653eadd8939797d77c1"
+        "version": "1439e6e6525fdd9705cc0d759669796150eae6da900f791a9b9824dada35ee01",
+        "signature": "7b814d606f22e60fc503a83c45ef0bad57c51c803ef19dd84ecda1e9e8cead32"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/handle.ts": {
         "version": "95ab5a7dbdfcf510cb014d4d9acc180266a74344fb55a4be4d3b275ac5fe2fe7",
@@ -470,7 +470,7 @@
         "signature": "b89fd65e32c340de2417047c7b6e68a695686e961748101071a2e0cbf89f86fc"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/particle-execution-context.ts": {
-        "version": "b88bd87c0c1d18d6fc75e08171f604c6d043fa47da8838557b51ae7329f14e20",
+        "version": "6819da5660cb062b7846ffa98a4b3553de95893e3707d7d1d7b504e137174011",
         "signature": "a3a3df0583c95c145e400fd9779800e2de11079ee3710d3286a66d93bd82b033"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/entity.ts": {
@@ -2253,7 +2253,7 @@
         "signature": "fd95df5d076cbfed143dc4904d376b5c6d9cb1091b630994ffe2366010afa6b3"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/storageNG/tests/storage-proxy-test.ts": {
-        "version": "0283110d3d48d06039fd643552f024184b3be58031c89231ce3de3cc857989d4",
+        "version": "57e83009a24ad63147fc7cab1ed123963f90a857fb3df20b6f5b748e470a4caa",
         "signature": "fd95df5d076cbfed143dc4904d376b5c6d9cb1091b630994ffe2366010afa6b3"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/testing/sequence.ts": {

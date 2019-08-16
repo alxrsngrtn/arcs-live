@@ -68,6 +68,9 @@ export class StorageProxy {
         }
         return this.versionCopy();
     }
+    deregisterHandle(handleIn) {
+        this.handles = this.handles.filter(handle => handle !== handleIn);
+    }
     versionCopy() {
         const version = {};
         for (const [k, v] of Object.entries(this.crdt.getData().version)) {
@@ -161,6 +164,40 @@ export class StorageProxy {
     }
     async synchronizeModel() {
         return this.store.onProxyMessage({ type: ProxyMessageType.SyncRequest, id: this.id });
+    }
+}
+export class NoOpStorageProxy extends StorageProxy {
+    constructor() {
+        super(null, null, null, null, null);
+    }
+    async idle() {
+        return new Promise(resolve => { });
+    }
+    reportExceptionInHost(exception) { }
+    registerHandle(handle) {
+        return {};
+    }
+    deregisterHandle(handle) { }
+    versionCopy() {
+        return null;
+    }
+    async applyOp(op) {
+        return new Promise(resolve => { });
+    }
+    async getParticleView() {
+        return new Promise(resolve => { });
+    }
+    async getData() {
+        return new Promise(resolve => { });
+    }
+    async onMessage(message) {
+        return new Promise(resolve => { });
+    }
+    notifyUpdate(operation, oldData) { }
+    notifySync() { }
+    notifyDesync() { }
+    async synchronizeModel() {
+        return new Promise(resolve => { });
     }
 }
 var HandleMessageType;

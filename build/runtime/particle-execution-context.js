@@ -9,7 +9,7 @@
  */
 import { assert } from '../platform/assert-web.js';
 import { PECInnerPort } from './api-channel.js';
-import { handleFor, HandleOld } from './handle.js';
+import { handleFor } from './handle.js';
 import { SlotProxy } from './slot-proxy.js';
 import { StorageProxy, StorageProxyScheduler } from './storage-proxy.js';
 import { WasmContainer, WasmParticle } from './wasm.js';
@@ -189,8 +189,7 @@ export class ParticleExecutionContext {
         // Create new handles and disable the handles of the old particles
         oldParticle.handles.forEach((oldHandle) => {
             this.createHandle(particle, oldParticle.spec, id, oldHandle.name, oldHandle.storage, handleMap, registerList);
-            if (oldHandle instanceof HandleOld)
-                oldHandle.disable(oldParticle);
+            oldHandle.disable(oldParticle);
         });
         return [particle, async () => {
                 // Set the new handles to the new particle
