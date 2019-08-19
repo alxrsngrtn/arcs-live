@@ -119,7 +119,7 @@ export class HandleConnection {
     }
     toSlotConnection() {
         // TODO: Remove in SLANDLESv2
-        if (!(this.handle && this.handle.type && this.handle.type.slandleType())) {
+        if (!this.handle || this.handle.fate !== '`slot') {
             return undefined;
         }
         const slandle = new SlotConnection(this.name, this.particle);

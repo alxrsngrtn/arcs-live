@@ -1184,7 +1184,14 @@ class ConsumeSlotConnectionSpec {
     // Getters to 'fake' being a Handle.
     get isOptional() { return !this.isRequired; }
     get direction() { return '`consume'; }
-    get type() { return _type_js__WEBPACK_IMPORTED_MODULE_3__["SlotType"].make(this.formFactor, null); } //TODO(jopra): FIX THIS NULL!
+    get type() {
+        //TODO(jopra): FIXME make the null handle optional.
+        const slotT = _type_js__WEBPACK_IMPORTED_MODULE_3__["SlotType"].make(this.formFactor, null);
+        if (this.isSet) {
+            return slotT.collectionOf();
+        }
+        return slotT;
+    }
     get dependentConnections() { return this.provideSlotConnections; }
 }
 class ProvideSlotConnectionSpec extends ConsumeSlotConnectionSpec {
@@ -7908,8 +7915,12 @@ class MultiplexerDomParticle extends _transformation_dom_particle_js__WEBPACK_IM
                 [otherMappedHandles, otherConnections] =
                     await this._mapParticleConnections(listHandleName, particleHandleName, resolvedHostedParticle, this.handles, arc);
             }
-            const hostedSlotName = [...resolvedHostedParticle.slotConnections.keys()][0];
-            const slotName = [...this.spec.slotConnections.values()][0].name;
+            // TODO(jopra): Using the [0] item may not be desired.
+            const hostedSlotName = resolvedHostedParticle.slandleConnectionNames()[0];
+            const slotNames = this.spec.slandleConnectionNames();
+            Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(slotNames.length > 0, 'there must be at least one slot');
+            // TODO(jopra): Using the [0] item may not be desired.
+            const slotName = slotNames[0];
             const slotId = await arc.createSlot(this, slotName, itemHandle._id);
             if (!slotId) {
                 continue;

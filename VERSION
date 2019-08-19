@@ -1,10 +1,8 @@
-commit 68713f079a5829e73edc2911c70868e8eec0ccb3
-Author: sherry-pra <52428204+sherry-pra@users.noreply.github.com>
-Date:   Thu Aug 15 23:32:23 2019 -0700
+commit 37fc9195d2201aa024f05c3017c1feaef3fc2d01
+Author: Joshua Pratt <jp10010101010000@gmail.com>
+Date:   Tue Aug 20 02:34:41 2019 +1000
 
-    Replicating disable handle function from HandleOld to HandleNG (#3471)
+    Initial work for Slandles multiplexer (#3460)
     
-    - Added disable function in storageNG/handle.ts
-    - Added deregisterHandle function in storageNG/storage-proxy.ts
-    - Added a dummy version of StorageProxy (NoOpStorageProxy)
-    - Added a unit test to make sure that NoOpStoragProxy overrides all StorageProxy's functions
+    * Initial work for a Slandles Multiplexer
+    * Fix use of slot type to find slandles (use fate instead)

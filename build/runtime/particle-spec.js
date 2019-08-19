@@ -112,7 +112,14 @@ export class ConsumeSlotConnectionSpec {
     // Getters to 'fake' being a Handle.
     get isOptional() { return !this.isRequired; }
     get direction() { return '`consume'; }
-    get type() { return SlotType.make(this.formFactor, null); } //TODO(jopra): FIX THIS NULL!
+    get type() {
+        //TODO(jopra): FIXME make the null handle optional.
+        const slotT = SlotType.make(this.formFactor, null);
+        if (this.isSet) {
+            return slotT.collectionOf();
+        }
+        return slotT;
+    }
     get dependentConnections() { return this.provideSlotConnections; }
 }
 export class ProvideSlotConnectionSpec extends ConsumeSlotConnectionSpec {

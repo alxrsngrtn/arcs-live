@@ -11,7 +11,7 @@ import { Modality } from './modality.js';
 import { Direction, ParticleClaimStatement, ParticleCheckStatement } from './manifest-ast-nodes.js';
 import { Schema } from './schema.js';
 import { TypeVariableInfo } from './type-variable-info.js';
-import { InterfaceType, SlotType, Type, TypeLiteral } from './type.js';
+import { InterfaceType, Type, TypeLiteral } from './type.js';
 import { Literal } from './hot.js';
 import { Check } from './particle-check.js';
 import { ParticleClaim, Claim } from './particle-claim.js';
@@ -70,7 +70,7 @@ export declare class ConsumeSlotConnectionSpec {
     constructor(slotModel: SerializedSlotConnectionSpec);
     readonly isOptional: boolean;
     readonly direction: string;
-    readonly type: SlotType;
+    readonly type: Type;
     readonly dependentConnections: ProvideSlotConnectionSpec[];
 }
 export declare class ProvideSlotConnectionSpec extends ConsumeSlotConnectionSpec {
