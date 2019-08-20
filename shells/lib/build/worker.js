@@ -1217,7 +1217,7 @@ class ParticleSpec {
         });
         this.implFile = model.implFile;
         this.implBlobUrl = model.implBlobUrl;
-        this.modality = _modality_js__WEBPACK_IMPORTED_MODULE_1__["Modality"].create(model.modality || []);
+        this.modality = model.modality ? _modality_js__WEBPACK_IMPORTED_MODULE_1__["Modality"].create(model.modality) : _modality_js__WEBPACK_IMPORTED_MODULE_1__["Modality"].all;
         this.slotConnections = new Map();
         if (model.slotConnections) {
             model.slotConnections.forEach(s => this.slotConnections.set(s.name, new ConsumeSlotConnectionSpec(s)));
@@ -1494,36 +1494,47 @@ __webpack_require__.r(__webpack_exports__);
 var ModalityName;
 (function (ModalityName) {
     ModalityName["Dom"] = "dom";
-    ModalityName["DomTouch"] = "dom-touch";
+    ModalityName["DomTouch"] = "domTouch";
     ModalityName["Vr"] = "vr";
     ModalityName["Voice"] = "voice";
 })(ModalityName || (ModalityName = {}));
 class Modality {
-    constructor(names) {
+    // `all` true means modality is non restricted and any modality is compatible.
+    // Otherwise, the `names` field in Modality contains the restrictive list of
+    // modalities (an empty list stands for no suitable modalities being available).
+    constructor(all, names = []) {
+        this.all = all;
         this.names = names;
     }
     static create(names) {
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(names.every(name => Modality.all.names.includes(name)), `Unsupported modality in: ${names}`);
-        return new Modality(names);
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(names != null);
+        return new Modality(false, names);
     }
     intersection(other) {
-        return new Modality(this.names.filter(name => other.names.includes(name)));
+        if (this.all && other.all) {
+            return new Modality(true, []);
+        }
+        if (this.all) {
+            return new Modality(false, other.names);
+        }
+        return new Modality(false, this.names.filter(name => other.all || other.names.includes(name)));
+    }
+    static intersection(modalities) {
+        return modalities.reduce((modality, total) => modality.intersection(total), Modality.all);
     }
     isResolved() {
-        return this.names.length > 0;
+        return this.all || this.names.length > 0;
     }
     isCompatible(names) {
         return this.intersection(Modality.create(names)).isResolved();
     }
     static get Name() { return ModalityName; }
 }
-Modality.all = new Modality([
-    Modality.Name.Dom, Modality.Name.DomTouch, Modality.Name.Vr, Modality.Name.Voice
-]);
-Modality.dom = new Modality([Modality.Name.Dom]);
-Modality.domTouch = new Modality([Modality.Name.DomTouch]);
-Modality.voice = new Modality([Modality.Name.Voice]);
-Modality.vr = new Modality([Modality.Name.Vr]);
+Modality.all = new Modality(true, []);
+Modality.dom = new Modality(false, [Modality.Name.Dom]);
+Modality.domTouch = new Modality(false, [Modality.Name.DomTouch]);
+Modality.voice = new Modality(false, [Modality.Name.Voice]);
+Modality.vr = new Modality(false, [Modality.Name.Vr]);
 //# sourceMappingURL=modality.js.map
 
 /***/ }),

@@ -142,8 +142,7 @@ export class Recipe {
         return this.particles.every(p => !p.spec || p.spec.isCompatible(modality));
     }
     get modality() {
-        return this.particles.filter(p => Boolean(p.spec && p.spec.slotConnections.size > 0)).map(p => p.spec.modality)
-            .reduce((modality, total) => modality.intersection(total), Modality.all);
+        return Modality.intersection(this.particles.filter(p => Boolean(p.spec && p.spec.slotConnections.size > 0)).map(p => p.spec.modality));
     }
     allRequiredSlotsPresent(options = undefined) {
         // All required slots and at least one consume slot for each particle must be present in order for the 

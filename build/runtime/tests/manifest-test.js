@@ -89,7 +89,7 @@ schema Person
   in [Product {}] list
   out Person {} person
   modality dom
-  modality dom-touch
+  modality domTouch
   must consume root #master #main
     formFactor big
     must provide action #large
@@ -134,7 +134,7 @@ schema Person
     \`provide [Slot] myProvidedSetCell
   \`consume [Slot] mySetCell
   modality dom
-  modality dom-touch
+  modality domTouch
   description \`hello world \${list}\`
     list \`my special list\``;
         const particleStr1 = `particle NoArgsParticle in 'noArgsParticle.js'

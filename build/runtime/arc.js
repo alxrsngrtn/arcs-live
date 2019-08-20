@@ -11,6 +11,7 @@ import { assert } from '../platform/assert-web.js';
 import { FakePecFactory } from './fake-pec-factory.js';
 import { Id, IdGenerator, ArcId } from './id.js';
 import { Manifest } from './manifest.js';
+import { Modality } from './modality.js';
 import { ParticleExecutionHost } from './particle-execution-host.js';
 import { StorageStub } from './storage-stub.js';
 import { Handle } from './recipe/handle.js';
@@ -74,7 +75,10 @@ export class Arc {
         if (this.pec.slotComposer && this.pec.slotComposer.modality) {
             return this.pec.slotComposer.modality;
         }
-        return this.activeRecipe.modality;
+        if (!this.activeRecipe.isEmpty()) {
+            return this.activeRecipe.modality;
+        }
+        return Modality.intersection(this.context.allRecipes.map(recipe => recipe.modality));
     }
     dispose() {
         for (const innerArc of this.innerArcs) {

@@ -1,8 +1,11 @@
-commit 37fc9195d2201aa024f05c3017c1feaef3fc2d01
-Author: Joshua Pratt <jp10010101010000@gmail.com>
-Date:   Tue Aug 20 02:34:41 2019 +1000
+commit 69862bf620a3e8c0c1d798363bec0922c19fd949
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Mon Aug 19 17:11:06 2019 -0700
 
-    Initial work for Slandles multiplexer (#3460)
+    support arbitrary string for Modality (#3480)
     
-    * Initial work for a Slandles Multiplexer
-    * Fix use of slot type to find slandles (use fate instead)
+    * allow arbitrary string in manifest as modality
+    
+    * get rid of modalities enum
+    
+    * address comment: add boolean to represent non restricted modality

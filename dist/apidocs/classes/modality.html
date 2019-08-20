@@ -87,8 +87,9 @@
 						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="modality.html#all" class="tsd-kind-icon">all</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="modality.html#names" class="tsd-kind-icon">names</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-static"><a href="modality.html#all" class="tsd-kind-icon">all</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-static"><a href="modality.html#all-1" class="tsd-kind-icon">all</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-static"><a href="modality.html#dom" class="tsd-kind-icon">dom</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-static"><a href="modality.html#domtouch" class="tsd-kind-icon">dom<wbr>Touch</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-static"><a href="modality.html#voice" class="tsd-kind-icon">voice</a></li>
@@ -108,6 +109,7 @@
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="modality.html#iscompatible" class="tsd-kind-icon">is<wbr>Compatible</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="modality.html#isresolved" class="tsd-kind-icon">is<wbr>Resolved</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-static"><a href="modality.html#create" class="tsd-kind-icon">create</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-static"><a href="modality.html#intersection-1" class="tsd-kind-icon">intersection</a></li>
 							</ul>
 						</section>
 					</div>
@@ -119,19 +121,22 @@
 					<a name="constructor" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagPrivate">Private</span> constructor</h3>
 					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class tsd-is-private">
-						<li class="tsd-signature tsd-kind-icon">new <wbr>Modality<span class="tsd-signature-symbol">(</span>names<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="modality.html" class="tsd-signature-type">Modality</a></li>
+						<li class="tsd-signature tsd-kind-icon">new <wbr>Modality<span class="tsd-signature-symbol">(</span>all<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span>, names<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="modality.html" class="tsd-signature-type">Modality</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/37fc919/src/runtime/modality.ts#L16">src/runtime/modality.ts:16</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/69862bf/src/runtime/modality.ts#L16">src/runtime/modality.ts:16</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>names: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></h5>
+									<h5>all: <span class="tsd-signature-type">boolean</span></h5>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> names: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> =&nbsp;[]</span></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <a href="modality.html" class="tsd-signature-type">Modality</a></h4>
@@ -142,62 +147,72 @@
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Properties</h2>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="all" class="tsd-anchor"></a>
+					<h3>all</h3>
+					<div class="tsd-signature tsd-kind-icon">all<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/69862bf/src/runtime/modality.ts#L20">src/runtime/modality.ts:20</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
 					<a name="names" class="tsd-anchor"></a>
 					<h3>names</h3>
 					<div class="tsd-signature tsd-kind-icon">names<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/37fc919/src/runtime/modality.ts#L17">src/runtime/modality.ts:17</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/69862bf/src/runtime/modality.ts#L20">src/runtime/modality.ts:20</a></li>
 						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-static">
-					<a name="all" class="tsd-anchor"></a>
+					<a name="all-1" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagStatic">Static</span> all</h3>
-					<div class="tsd-signature tsd-kind-icon">all<span class="tsd-signature-symbol">:</span> <a href="modality.html" class="tsd-signature-type">Modality</a><span class="tsd-signature-symbol"> =&nbsp;new Modality([Modality.Name.Dom, Modality.Name.DomTouch, Modality.Name.Vr, Modality.Name.Voice])</span></div>
+					<div class="tsd-signature tsd-kind-icon">all<span class="tsd-signature-symbol">:</span> <a href="modality.html" class="tsd-signature-type">Modality</a><span class="tsd-signature-symbol"> =&nbsp;new Modality(true, [])</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/37fc919/src/runtime/modality.ts#L37">src/runtime/modality.ts:37</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/69862bf/src/runtime/modality.ts#L51">src/runtime/modality.ts:51</a></li>
 						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-static">
 					<a name="dom" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagStatic">Static</span> dom</h3>
-					<div class="tsd-signature tsd-kind-icon">dom<span class="tsd-signature-symbol">:</span> <a href="modality.html" class="tsd-signature-type">Modality</a><span class="tsd-signature-symbol"> =&nbsp;new Modality([Modality.Name.Dom])</span></div>
+					<div class="tsd-signature tsd-kind-icon">dom<span class="tsd-signature-symbol">:</span> <a href="modality.html" class="tsd-signature-type">Modality</a><span class="tsd-signature-symbol"> =&nbsp;new Modality(false, [Modality.Name.Dom])</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/37fc919/src/runtime/modality.ts#L40">src/runtime/modality.ts:40</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/69862bf/src/runtime/modality.ts#L52">src/runtime/modality.ts:52</a></li>
 						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-static">
 					<a name="domtouch" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagStatic">Static</span> dom<wbr>Touch</h3>
-					<div class="tsd-signature tsd-kind-icon">dom<wbr>Touch<span class="tsd-signature-symbol">:</span> <a href="modality.html" class="tsd-signature-type">Modality</a><span class="tsd-signature-symbol"> =&nbsp;new Modality([Modality.Name.DomTouch])</span></div>
+					<div class="tsd-signature tsd-kind-icon">dom<wbr>Touch<span class="tsd-signature-symbol">:</span> <a href="modality.html" class="tsd-signature-type">Modality</a><span class="tsd-signature-symbol"> =&nbsp;new Modality(false, [Modality.Name.DomTouch])</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/37fc919/src/runtime/modality.ts#L41">src/runtime/modality.ts:41</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/69862bf/src/runtime/modality.ts#L53">src/runtime/modality.ts:53</a></li>
 						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-static">
 					<a name="voice" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagStatic">Static</span> voice</h3>
-					<div class="tsd-signature tsd-kind-icon">voice<span class="tsd-signature-symbol">:</span> <a href="modality.html" class="tsd-signature-type">Modality</a><span class="tsd-signature-symbol"> =&nbsp;new Modality([Modality.Name.Voice])</span></div>
+					<div class="tsd-signature tsd-kind-icon">voice<span class="tsd-signature-symbol">:</span> <a href="modality.html" class="tsd-signature-type">Modality</a><span class="tsd-signature-symbol"> =&nbsp;new Modality(false, [Modality.Name.Voice])</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/37fc919/src/runtime/modality.ts#L42">src/runtime/modality.ts:42</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/69862bf/src/runtime/modality.ts#L54">src/runtime/modality.ts:54</a></li>
 						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-static">
 					<a name="vr" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagStatic">Static</span> vr</h3>
-					<div class="tsd-signature tsd-kind-icon">vr<span class="tsd-signature-symbol">:</span> <a href="modality.html" class="tsd-signature-type">Modality</a><span class="tsd-signature-symbol"> =&nbsp;new Modality([Modality.Name.Vr])</span></div>
+					<div class="tsd-signature tsd-kind-icon">vr<span class="tsd-signature-symbol">:</span> <a href="modality.html" class="tsd-signature-type">Modality</a><span class="tsd-signature-symbol"> =&nbsp;new Modality(false, [Modality.Name.Vr])</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/37fc919/src/runtime/modality.ts#L43">src/runtime/modality.ts:43</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/69862bf/src/runtime/modality.ts#L55">src/runtime/modality.ts:55</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -214,7 +229,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/37fc919/src/runtime/modality.ts#L36">src/runtime/modality.ts:36</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/69862bf/src/runtime/modality.ts#L49">src/runtime/modality.ts:49</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <a href="../enums/modalityname.html" class="tsd-signature-type">ModalityName</a></h4>
@@ -234,7 +249,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/37fc919/src/runtime/modality.ts#L24">src/runtime/modality.ts:24</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/69862bf/src/runtime/modality.ts#L27">src/runtime/modality.ts:27</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -257,7 +272,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/37fc919/src/runtime/modality.ts#L32">src/runtime/modality.ts:32</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/69862bf/src/runtime/modality.ts#L45">src/runtime/modality.ts:45</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -280,7 +295,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/37fc919/src/runtime/modality.ts#L28">src/runtime/modality.ts:28</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/69862bf/src/runtime/modality.ts#L41">src/runtime/modality.ts:41</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
@@ -297,13 +312,36 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/37fc919/src/runtime/modality.ts#L19">src/runtime/modality.ts:19</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/69862bf/src/runtime/modality.ts#L22">src/runtime/modality.ts:22</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
 									<h5>names: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="modality.html" class="tsd-signature-type">Modality</a></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-static">
+					<a name="intersection-1" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagStatic">Static</span> intersection</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-static">
+						<li class="tsd-signature tsd-kind-icon">intersection<span class="tsd-signature-symbol">(</span>modalities<span class="tsd-signature-symbol">: </span><a href="modality.html" class="tsd-signature-type">Modality</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="modality.html" class="tsd-signature-type">Modality</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/69862bf/src/runtime/modality.ts#L37">src/runtime/modality.ts:37</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>modalities: <a href="modality.html" class="tsd-signature-type">Modality</a><span class="tsd-signature-symbol">[]</span></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <a href="modality.html" class="tsd-signature-type">Modality</a></h4>
@@ -331,10 +369,13 @@
 								<a href="modality.html#constructor" class="tsd-kind-icon">constructor</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="modality.html#all" class="tsd-kind-icon">all</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
 								<a href="modality.html#names" class="tsd-kind-icon">names</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-static">
-								<a href="modality.html#all" class="tsd-kind-icon">all</a>
+								<a href="modality.html#all-1" class="tsd-kind-icon">all</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-static">
 								<a href="modality.html#dom" class="tsd-kind-icon">dom</a>
@@ -362,6 +403,9 @@
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-static">
 								<a href="modality.html#create" class="tsd-kind-icon">create</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-static">
+								<a href="modality.html#intersection-1" class="tsd-kind-icon">intersection</a>
 							</li>
 						</ul>
 					</li>
