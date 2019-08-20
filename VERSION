@@ -1,11 +1,5 @@
-commit 69862bf620a3e8c0c1d798363bec0922c19fd949
+commit 2544884a5e8016ac9572acc6da4cc4968cfd7fce
 Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Mon Aug 19 17:11:06 2019 -0700
+Date:   Tue Aug 20 08:57:25 2019 -0700
 
-    support arbitrary string for Modality (#3480)
-    
-    * allow arbitrary string in manifest as modality
-    
-    * get rid of modalities enum
-    
-    * address comment: add boolean to represent non restricted modality
+    restore isRendered data member in SlotProxy.java (#3477)
