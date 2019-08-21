@@ -2561,7 +2561,7 @@
         "signature": "44c67db51f6f262099ce193695d05ebc7e4cc90de35cfda0e9cf2aaeb8ce1ea5"
       },
       "/home/travis/build/PolymerLabs/arcs/src/tools/schema2cpp.ts": {
-        "version": "fd0aee6f209b66166c0c1a5ee984b5b6c1e0953488f3700d4485372664e727d2",
+        "version": "dfe2734756d98daed4824c1ceb7f7a863ffb69ad432aa881c607ffc57eded8dc",
         "signature": "2399853c21d04efd6ace178ab5736d5ad95a9e1674dc8cee3944fd706556b8a2"
       },
       "/home/travis/build/PolymerLabs/arcs/src/tools/schema2kotlin.ts": {

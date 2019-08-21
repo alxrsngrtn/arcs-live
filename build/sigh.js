@@ -528,15 +528,11 @@ function buildWasmModule(emsdk, counts, configFile, logCmd, force) {
     const srcDir = path.dirname(configFile);
     for (const [name, cfg] of Object.entries(wasmConfig)) {
         counts.found++;
-        // TODO: fix arcs.h so more than one source file can be compiled into a module
-        if (cfg.src.length !== 1) {
-            throw new Error(`wasm modules must specify exactly one source file (${configFile})`);
-        }
         if (cfg.outdir === '$here') {
             cfg.outdir = srcDir;
         }
         const manifestPath = path.join(srcDir, cfg.manifest);
-        const srcPath = path.join(srcDir, cfg.src[0]);
+        const srcPaths = ['src/wasm/cpp/arcs.cc', ...cfg.src.map(f => path.join(srcDir, f))];
         const wasmPath = path.join(cfg.outdir, name);
         const target = (path.extname(cfg.src[0]) === '.cc') ? '--cpp' : '--kotlin';
         // Generate the entity class header file from the manifest.
@@ -557,7 +553,7 @@ function buildWasmModule(emsdk, counts, configFile, logCmd, force) {
             continue;
         }
         const headerPath = spawnResult.stdout.trim();
-        if (!force && targetIsUpToDate(wasmPath, ['src/wasm/cpp/arcs.h', headerPath, srcPath], true)) {
+        if (!force && targetIsUpToDate(wasmPath, ['src/wasm/cpp/arcs.h', headerPath, ...srcPaths], true)) {
             continue;
         }
         // Compile the wasm module.
@@ -568,7 +564,7 @@ function buildWasmModule(emsdk, counts, configFile, logCmd, force) {
             '-I', 'src/wasm/cpp',
             '-I', cfg.outdir,
             '-o', wasmPath,
-            srcPath
+            ...srcPaths
         ], { logCmd });
         if (emsdkResult.status !== 0) {
             console.error('\n------------------------------------------------------------------------');
