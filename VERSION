@@ -1,5 +1,5 @@
-commit 107a61ce75473e12512e35de0046cab1128c8e0f
-Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
-Date:   Tue Aug 20 16:09:45 2019 -0700
+commit ca0cf928da4e174a289fbb54a8f83581193170fa
+Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
+Date:   Wed Aug 21 09:14:19 2019 -0700
 
-    Fix pipe-shell deploy.sh script (#3483)
+    emscripten metadata update: new WASM_BACKEND value has been added (#3486)
