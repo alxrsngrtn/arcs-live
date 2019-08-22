@@ -1,5 +1,5 @@
-commit 7d5b7546caebbc533773b2b501ffa1b0ea242ae4
-Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
-Date:   Wed Aug 21 10:52:53 2019 -0700
+commit 8fe3fc56d5124121ed4f1ce23fbb1f01ae69a269
+Author: Walter Korman <wkorman@chromium.org>
+Date:   Thu Aug 22 13:22:26 2019 -0700
 
-    Wasm: allow multiple source files for C++ particles (#3487)
+    Add rudimentary magenta-js service. (#3490)
