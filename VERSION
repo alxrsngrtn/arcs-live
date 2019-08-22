@@ -1,5 +1,5 @@
-commit 8fe3fc56d5124121ed4f1ce23fbb1f01ae69a269
+commit c33d799d73a4bd0ee96c5320410f2a7f2b8e77d2
 Author: Walter Korman <wkorman@chromium.org>
-Date:   Thu Aug 22 13:22:26 2019 -0700
+Date:   Thu Aug 22 15:40:44 2019 -0700
 
-    Add rudimentary magenta-js service. (#3490)
+    Add basic schema for magenta-js sequencing. (#3491)
