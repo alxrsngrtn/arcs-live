@@ -7,6 +7,7 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
+import { RecipeResolver } from '../runtime/recipe/recipe-resolver.js';
 // One entry in the lookup table, i.e. one trigger and the recipe it invokes.
 export class Match {
     constructor(trigger, recipe) {
@@ -57,6 +58,20 @@ export class RecipeSelector {
         const found = this._table.find(match => match.matches(request));
         if (found)
             return found.recipe;
+        return null;
+    }
+}
+export class SimplePlanner {
+    constructor(recipes) {
+        this.recipes = recipes;
+        this._selector = new RecipeSelector(recipes);
+    }
+    async plan(arc, request) {
+        const resolver = new RecipeResolver(arc);
+        const recipe = this._selector.select(request);
+        if (recipe) {
+            return await resolver.resolve(recipe);
+        }
         return null;
     }
 }

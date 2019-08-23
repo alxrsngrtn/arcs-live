@@ -1,5 +1,9 @@
-commit c33d799d73a4bd0ee96c5320410f2a7f2b8e77d2
-Author: Walter Korman <wkorman@chromium.org>
-Date:   Thu Aug 22 15:40:44 2019 -0700
+commit df9bb25c8d168b49d7bac9d51e78266a8e49048a
+Author: raulverag <42563960+raulverag@users.noreply.github.com>
+Date:   Fri Aug 23 12:40:15 2019 +1000
 
-    Add basic schema for magenta-js sequencing. (#3491)
+    Initial implementation of SimplePlanner to accompany RecipeSelector (#3485)
+    
+    * Initial implementation of SimplePlanner to accompany RecipeSelector
+    
+    * tweaked per review comments

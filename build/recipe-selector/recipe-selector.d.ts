@@ -7,6 +7,7 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
+import { Arc } from '../runtime/arc.js';
 import { Recipe } from '../runtime/recipe/recipe.js';
 export declare class Match {
     readonly trigger: [string, string][];
@@ -20,4 +21,10 @@ export declare class RecipeSelector {
     readonly table: Match[];
     constructor(recipes: Recipe[]);
     select(request: [string, string][]): Recipe | null;
+}
+export declare class SimplePlanner {
+    readonly recipes: Recipe[];
+    private _selector;
+    constructor(recipes: Recipe[]);
+    plan(arc: Arc, request: [string, string][]): Promise<Recipe>;
 }

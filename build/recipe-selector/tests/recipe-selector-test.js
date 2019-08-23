@@ -9,8 +9,12 @@
  */
 import { assert } from '../../platform/chai-web.js';
 import { checkDefined } from '../../runtime/testing/preconditions.js';
+import { Arc } from '../../runtime/arc.js';
+import { Loader } from '../../runtime/loader.js';
 import { Manifest } from '../../runtime/manifest.js';
-import { RecipeSelector } from '../recipe-selector.js';
+import { RecipeSelector, SimplePlanner } from '../recipe-selector.js';
+import { FakeSlotComposer } from '../../runtime/testing/fake-slot-composer.js';
+import { ArcId } from '../../runtime/id.js';
 describe('trigger parsing', () => {
     it('trigger annotations parse with one key-value pair', async () => {
         const manifest = await Manifest.parse(`
@@ -279,6 +283,29 @@ describe('recipe-selector', () => {
         assert.equal(rs.select([['key1', 'value1'], ['key2', 'value2']]), recipe1);
         assert.equal(rs.select([['key3', 'value3']]), recipe2);
         assert.isNull(rs.select([['key1', 'value1']]));
+    });
+});
+describe('simple planner', () => {
+    const createArc = (manifest) => new Arc({ id: ArcId.newForTest('test'), slotComposer: new FakeSlotComposer(), loader: new Loader(), context: manifest });
+    it('works with one trigger with one key-value pair and one recipe', async () => {
+        const manifest = await Manifest.parse(`
+      particle P1
+        out Foo {} foo
+        consume root
+      particle P2
+        in Foo {} bar
+      @trigger
+        key1 value1
+      recipe R
+        P1
+          foo -> h
+        P2
+          bar <- h
+    `);
+        const planner = new SimplePlanner(manifest.recipes);
+        const arc = createArc(manifest);
+        const result = await planner.plan(arc, [['key1', 'value1']]);
+        assert.isNotNull(result);
     });
 });
 //# sourceMappingURL=recipe-selector-test.js.map
