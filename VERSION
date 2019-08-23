@@ -1,9 +1,5 @@
-commit df9bb25c8d168b49d7bac9d51e78266a8e49048a
-Author: raulverag <42563960+raulverag@users.noreply.github.com>
-Date:   Fri Aug 23 12:40:15 2019 +1000
+commit 0795040e4e350676f932b71520718f2d855665af
+Author: sherry-pra <52428204+sherry-pra@users.noreply.github.com>
+Date:   Fri Aug 23 10:39:33 2019 -0700
 
-    Initial implementation of SimplePlanner to accompany RecipeSelector (#3485)
-    
-    * Initial implementation of SimplePlanner to accompany RecipeSelector
-    
-    * tweaked per review comments
+    Get the magenta visualizer particle working with a simple demo song (#3492)
