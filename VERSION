@@ -1,5 +1,5 @@
-commit 0795040e4e350676f932b71520718f2d855665af
-Author: sherry-pra <52428204+sherry-pra@users.noreply.github.com>
-Date:   Fri Aug 23 10:39:33 2019 -0700
+commit 003e106424fb42fa158fa42e008db8235871aaef
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Fri Aug 23 12:43:53 2019 -0700
 
-    Get the magenta visualizer particle working with a simple demo song (#3492)
+    fix deploy script to avoid failing when dist/ exists (#3495)
