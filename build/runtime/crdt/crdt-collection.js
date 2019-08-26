@@ -12,31 +12,81 @@ export var CollectionOpTypes;
 (function (CollectionOpTypes) {
     CollectionOpTypes[CollectionOpTypes["Add"] = 0] = "Add";
     CollectionOpTypes[CollectionOpTypes["Remove"] = 1] = "Remove";
+    CollectionOpTypes[CollectionOpTypes["FastForward"] = 2] = "FastForward";
 })(CollectionOpTypes || (CollectionOpTypes = {}));
 export class CRDTCollection {
     constructor() {
         this.model = { values: {}, version: {} };
     }
     merge(other) {
-        const newValues = this.mergeItems(this.model, other);
-        const newVersion = mergeVersions(this.model.version, other.version);
-        this.model.values = newValues;
-        this.model.version = newVersion;
-        // For now this is always returning a model change.
-        const change = {
+        const newClock = mergeVersions(this.model.version, other.version);
+        const merged = {};
+        // Fast-forward op to send to other model. Elements added and removed will
+        // be filled in below.
+        const fastForwardOp = {
+            type: CollectionOpTypes.FastForward,
+            added: [],
+            removed: [],
+            oldClock: other.version,
+            newClock,
+        };
+        for (const otherEntry of Object.values(other.values)) {
+            const value = otherEntry.value;
+            const id = value.id;
+            const thisEntry = this.model.values[id];
+            if (thisEntry) {
+                if (sameVersions(thisEntry.version, otherEntry.version)) {
+                    // Both models have the same value at the same version. Add it to the
+                    // merge.
+                    merged[id] = thisEntry;
+                }
+                else {
+                    // Models have different versions for the same value. Merge the
+                    // versions, and update other.
+                    const mergedVersion = mergeVersions(thisEntry.version, otherEntry.version);
+                    merged[id] = { value, version: mergedVersion };
+                    fastForwardOp.added.push([value, mergedVersion]);
+                }
+            }
+            else if (dominates(this.model.version, otherEntry.version)) {
+                // Value was deleted by this model.
+                fastForwardOp.removed.push(value);
+            }
+            else {
+                // Value was added by other model.
+                merged[id] = otherEntry;
+            }
+        }
+        for (const [id, thisEntry] of Object.entries(this.model.values)) {
+            if (!other.values[id] && !dominates(other.version, thisEntry.version)) {
+                // Value was added by this model.
+                merged[id] = thisEntry;
+                fastForwardOp.added.push([thisEntry.value, thisEntry.version]);
+            }
+        }
+        this.model.values = merged;
+        this.model.version = newClock;
+        const modelChange = {
             changeType: ChangeType.Model,
             modelPostChange: this.model
         };
-        return { modelChange: change, otherChange: change };
+        const otherChange = {
+            changeType: ChangeType.Operations,
+            operations: [fastForwardOp],
+        };
+        return { modelChange, otherChange };
     }
     applyOperation(op) {
-        if (op.type === CollectionOpTypes.Add) {
-            return this.add(op.added, op.actor, op.clock);
+        switch (op.type) {
+            case CollectionOpTypes.Add:
+                return this.add(op.added, op.actor, op.clock);
+            case CollectionOpTypes.Remove:
+                return this.remove(op.removed, op.actor, op.clock);
+            case CollectionOpTypes.FastForward:
+                return this.fastForward(op);
+            default:
+                throw new CRDTError(`Op ${op} not supported`);
         }
-        if (op.type === CollectionOpTypes.Remove) {
-            return this.remove(op.removed, op.actor, op.clock);
-        }
-        throw new CRDTError(`Op ${op} not supported`);
     }
     getData() {
         return this.model;
@@ -74,22 +124,34 @@ export class CRDTCollection {
         delete this.model.values[value.id];
         return true;
     }
-    mergeItems(data1, data2) {
-        const merged = {};
-        for (const { value, version: version2 } of Object.values(data2.values)) {
-            if (this.model.values[value.id]) {
-                merged[value.id] = { value, version: mergeVersions(this.model.values[value.id].version, version2) };
+    fastForward(op) {
+        const currentClock = this.model.version;
+        if (!dominates(currentClock, op.oldClock)) {
+            // Can't apply fast-forward op. Current model's clock is behind oldClock.
+            return false;
+        }
+        if (dominates(currentClock, op.newClock)) {
+            // Current model already knows about everything in this fast-forward op.
+            // Nothing to do, but not an error.
+            return true;
+        }
+        for (const [value, version] of op.added) {
+            const existingValue = this.model.values[value.id];
+            if (existingValue) {
+                existingValue.version = mergeVersions(existingValue.version, version);
             }
-            else if (!dominates(data1.version, version2)) {
-                merged[value.id] = { value, version: version2 };
+            else if (!dominates(currentClock, version)) {
+                this.model.values[value.id] = { value, version };
             }
         }
-        for (const { value, version: version1 } of Object.values(data1.values)) {
-            if (!data2.values[value.id] && !dominates(data2.version, version1)) {
-                merged[value.id] = { value, version: version1 };
+        for (const value of op.removed) {
+            const existingValue = this.model.values[value.id];
+            if (existingValue && dominates(op.newClock, existingValue.version)) {
+                delete this.model.values[value.id];
             }
         }
-        return merged;
+        this.model.version = mergeVersions(currentClock, op.newClock);
+        return true;
     }
 }
 function mergeVersions(version1, version2) {
@@ -102,6 +164,18 @@ function mergeVersions(version1, version2) {
     }
     return merged;
 }
+function sameVersions(version1, version2) {
+    if (Object.keys(version1).length !== Object.keys(version2).length) {
+        return false;
+    }
+    for (const [k, v] of Object.entries(version1)) {
+        if (v !== version2[k]) {
+            return false;
+        }
+    }
+    return true;
+}
+/** Returns true if map1 dominates map2. */
 function dominates(map1, map2) {
     for (const [k, v] of Object.entries(map2)) {
         if ((map1[k] || 0) < v) {

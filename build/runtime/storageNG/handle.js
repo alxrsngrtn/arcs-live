@@ -128,7 +128,7 @@ export class CollectionHandle extends Handle {
     async onUpdate(op, oldData, version) {
         this.clock = version;
         // Pass the change up to the particle.
-        const update = { originator: (this.key === op.actor) };
+        const update = { originator: ('actor' in op && this.key === op.actor) };
         if (op.type === CollectionOpTypes.Add) {
             update.added = op.added;
         }

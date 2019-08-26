@@ -97,10 +97,10 @@
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="crdtcollection.html#add" class="tsd-kind-icon">add</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="crdtcollection.html#applyoperation" class="tsd-kind-icon">apply<wbr>Operation</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="crdtcollection.html#fastforward" class="tsd-kind-icon">fast<wbr>Forward</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="crdtcollection.html#getdata" class="tsd-kind-icon">get<wbr>Data</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="crdtcollection.html#getparticleview" class="tsd-kind-icon">get<wbr>Particle<wbr>View</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="crdtcollection.html#merge" class="tsd-kind-icon">merge</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="crdtcollection.html#mergeitems" class="tsd-kind-icon">merge<wbr>Items</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="crdtcollection.html#remove" class="tsd-kind-icon">remove</a></li>
 							</ul>
 						</section>
@@ -125,7 +125,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/8b7a370/src/runtime/crdt/crdt-collection.ts#L84">src/runtime/crdt/crdt-collection.ts:84</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/860988a/src/runtime/crdt/crdt-collection.ts#L145">src/runtime/crdt/crdt-collection.ts:145</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -154,13 +154,36 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/8b7a370/src/runtime/crdt/crdt-collection.ts#L68">src/runtime/crdt/crdt-collection.ts:68</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/860988a/src/runtime/crdt/crdt-collection.ts#L124">src/runtime/crdt/crdt-collection.ts:124</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
 									<h5>op: <a href="../globals.html#collectionoperation" class="tsd-signature-type">CollectionOperation</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-private">
+					<a name="fastforward" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> fast<wbr>Forward</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private">
+						<li class="tsd-signature tsd-kind-icon">fast<wbr>Forward<span class="tsd-signature-symbol">(</span>op<span class="tsd-signature-symbol">: </span><a href="../globals.html#collectionfastforwardop" class="tsd-signature-type">CollectionFastForwardOp</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/860988a/src/runtime/crdt/crdt-collection.ts#L177">src/runtime/crdt/crdt-collection.ts:177</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>op: <a href="../globals.html#collectionfastforwardop" class="tsd-signature-type">CollectionFastForwardOp</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
@@ -178,7 +201,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/crdtmodel.html">CRDTModel</a>.<a href="../interfaces/crdtmodel.html#getdata">getData</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/8b7a370/src/runtime/crdt/crdt-collection.ts#L77">src/runtime/crdt/crdt-collection.ts:77</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/860988a/src/runtime/crdt/crdt-collection.ts#L137">src/runtime/crdt/crdt-collection.ts:137</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <a href="../globals.html#collectiondata" class="tsd-signature-type">CollectionData</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -196,7 +219,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/crdtmodel.html">CRDTModel</a>.<a href="../interfaces/crdtmodel.html#getparticleview">getParticleView</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/8b7a370/src/runtime/crdt/crdt-collection.ts#L80">src/runtime/crdt/crdt-collection.ts:80</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/860988a/src/runtime/crdt/crdt-collection.ts#L141">src/runtime/crdt/crdt-collection.ts:141</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <a href="../globals.html#rawcollection" class="tsd-signature-type">RawCollection</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -213,7 +236,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/8b7a370/src/runtime/crdt/crdt-collection.ts#L54">src/runtime/crdt/crdt-collection.ts:54</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/860988a/src/runtime/crdt/crdt-collection.ts#L63">src/runtime/crdt/crdt-collection.ts:63</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -235,32 +258,6 @@
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-private">
-					<a name="mergeitems" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagPrivate">Private</span> merge<wbr>Items</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private">
-						<li class="tsd-signature tsd-kind-icon">merge<wbr>Items<span class="tsd-signature-symbol">(</span>data1<span class="tsd-signature-symbol">: </span><a href="../globals.html#collectiondata" class="tsd-signature-type">CollectionData</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span>, data2<span class="tsd-signature-symbol">: </span><a href="../globals.html#collectiondata" class="tsd-signature-type">CollectionData</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/dictionary.html" class="tsd-signature-type">Dictionary</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">object</span><span class="tsd-signature-symbol">&gt;</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/8b7a370/src/runtime/crdt/crdt-collection.ts#L116">src/runtime/crdt/crdt-collection.ts:116</a></li>
-								</ul>
-							</aside>
-							<h4 class="tsd-parameters-title">Parameters</h4>
-							<ul class="tsd-parameters">
-								<li>
-									<h5>data1: <a href="../globals.html#collectiondata" class="tsd-signature-type">CollectionData</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span></h5>
-								</li>
-								<li>
-									<h5>data2: <a href="../globals.html#collectiondata" class="tsd-signature-type">CollectionData</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span></h5>
-								</li>
-							</ul>
-							<h4 class="tsd-returns-title">Returns <a href="../interfaces/dictionary.html" class="tsd-signature-type">Dictionary</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">object</span><span class="tsd-signature-symbol">&gt;</span></h4>
-						</li>
-					</ul>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-private">
 					<a name="remove" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagPrivate">Private</span> remove</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private">
@@ -270,7 +267,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/8b7a370/src/runtime/crdt/crdt-collection.ts#L96">src/runtime/crdt/crdt-collection.ts:96</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/860988a/src/runtime/crdt/crdt-collection.ts#L157">src/runtime/crdt/crdt-collection.ts:157</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -298,7 +295,7 @@
 					<div class="tsd-signature tsd-kind-icon">model<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/8b7a370/src/runtime/crdt/crdt-collection.ts#L52">src/runtime/crdt/crdt-collection.ts:52</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/860988a/src/runtime/crdt/crdt-collection.ts#L61">src/runtime/crdt/crdt-collection.ts:61</a></li>
 						</ul>
 					</aside>
 					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
@@ -307,7 +304,7 @@
 						<div class="tsd-signature tsd-kind-icon">values<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/8b7a370/src/runtime/crdt/crdt-collection.ts#L52">src/runtime/crdt/crdt-collection.ts:52</a></li>
+								<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/860988a/src/runtime/crdt/crdt-collection.ts#L61">src/runtime/crdt/crdt-collection.ts:61</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-type-declaration">
@@ -322,7 +319,7 @@
 						<div class="tsd-signature tsd-kind-icon">version<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/8b7a370/src/runtime/crdt/crdt-collection.ts#L52">src/runtime/crdt/crdt-collection.ts:52</a></li>
+								<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/860988a/src/runtime/crdt/crdt-collection.ts#L61">src/runtime/crdt/crdt-collection.ts:61</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-type-declaration">
@@ -355,6 +352,9 @@
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="crdtcollection.html#applyoperation" class="tsd-kind-icon">apply<wbr>Operation</a>
 							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-private">
+								<a href="crdtcollection.html#fastforward" class="tsd-kind-icon">fast<wbr>Forward</a>
+							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="crdtcollection.html#getdata" class="tsd-kind-icon">get<wbr>Data</a>
 							</li>
@@ -363,9 +363,6 @@
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="crdtcollection.html#merge" class="tsd-kind-icon">merge</a>
-							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-private">
-								<a href="crdtcollection.html#mergeitems" class="tsd-kind-icon">merge<wbr>Items</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-private">
 								<a href="crdtcollection.html#remove" class="tsd-kind-icon">remove</a>

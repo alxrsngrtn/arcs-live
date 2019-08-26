@@ -1,5 +1,9 @@
-commit 8b7a370b90d31dfbdc6393ea806f17910606b886
-Author: Ray Cromwell <cromwellian@gmail.com>
-Date:   Mon Aug 26 13:53:23 2019 -0700
+commit 860988a40309afbc1ccfaeea00eb15d9fbc46d2c
+Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
+Date:   Mon Aug 26 16:02:27 2019 -0700
 
-    Add getArray to PortableJson (#3496)
+    Added CRDT collection fast-forward operation (#3479)
+    
+    * Added fast-forward operation
+    
+    * Review comments

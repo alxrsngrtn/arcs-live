@@ -22,7 +22,8 @@ declare type CollectionData<T extends Referenceable> = {
 };
 export declare enum CollectionOpTypes {
     Add = 0,
-    Remove = 1
+    Remove = 1,
+    FastForward = 2
 }
 export declare type CollectionOperation<T> = {
     type: CollectionOpTypes.Add;
@@ -34,6 +35,13 @@ export declare type CollectionOperation<T> = {
     removed: T;
     actor: string;
     clock: VersionMap;
+} | CollectionFastForwardOp<T>;
+export declare type CollectionFastForwardOp<T> = {
+    type: CollectionOpTypes.FastForward;
+    added: [T, VersionMap][];
+    removed: T[];
+    oldClock: VersionMap;
+    newClock: VersionMap;
 };
 export interface CRDTCollectionTypeRecord<T extends Referenceable> extends CRDTTypeRecord {
     data: CollectionData<T>;
@@ -53,6 +61,6 @@ export declare class CRDTCollection<T extends Referenceable> implements Collecti
     getParticleView(): RawCollection<T>;
     private add;
     private remove;
-    private mergeItems;
+    private fastForward;
 }
 export {};

@@ -89,7 +89,7 @@ describe('CollectionHandle', () => {
         // Swap out storageProxy.applyOp to check the updated clock is passed in the next op.
         let capturedClock;
         handle.storageProxy.applyOp = async (op) => {
-            capturedClock = op.clock;
+            capturedClock = 'clock' in op ? op.clock : null;
             return true;
         };
         // Use an op that does not increment the clock.
