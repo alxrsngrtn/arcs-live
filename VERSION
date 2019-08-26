@@ -1,5 +1,5 @@
-commit 003e106424fb42fa158fa42e008db8235871aaef
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Fri Aug 23 12:43:53 2019 -0700
+commit 8b7a370b90d31dfbdc6393ea806f17910606b886
+Author: Ray Cromwell <cromwellian@gmail.com>
+Date:   Mon Aug 26 13:53:23 2019 -0700
 
-    fix deploy script to avoid failing when dist/ exists (#3495)
+    Add getArray to PortableJson (#3496)
