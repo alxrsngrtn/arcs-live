@@ -1,9 +1,12 @@
 package arcs.webimpl;
 
+import arcs.api.AlertSurface;
 import arcs.api.ArcsEnvironment;
+import arcs.api.ClipboardSurface;
 import arcs.api.DeviceClient;
 import arcs.api.HandleFactory;
 import arcs.api.HandleFactoryImpl;
+import arcs.api.HarnessController;
 import arcs.api.PECInnerPortFactory;
 import arcs.api.PECInnerPortFactoryImpl;
 import arcs.api.ParticleExecutionContext;
@@ -62,4 +65,10 @@ public abstract class WebHarnessModule {
   @Binds
   public abstract PortablePromiseFactory providesPortablePromiseFactory(
       PortablePromiseFactoryImpl impl);
+
+  @Binds
+  public abstract ClipboardSurface provideClipboardSurface(WebClipboardSurface impl);
+
+  @Binds
+  public abstract AlertSurface provideAlertSurface(WebAlertSurface impl);
 }

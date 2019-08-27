@@ -1,9 +1,17 @@
-commit 860988a40309afbc1ccfaeea00eb15d9fbc46d2c
-Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
-Date:   Mon Aug 26 16:02:27 2019 -0700
+commit 2f5921591ffae3ce6185a9014cec68944e0732cf
+Author: Ray Cromwell <cromwellian@gmail.com>
+Date:   Mon Aug 26 16:52:19 2019 -0700
 
-    Added CRDT collection fast-forward operation (#3479)
+    Android api (#3499)
     
-    * Added fast-forward operation
+    * Add Android impl, tests, BUILD files
     
-    * Review comments
+    * wip
+    
+    * add missing files
+    
+    * fix android breakage
+    
+    * Fix nits
+    
+    * Fix nits
