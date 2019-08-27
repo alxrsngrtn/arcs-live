@@ -1,5 +1,9 @@
-commit c42632fdc8f6fbebdbf2be8f7ece9e5d05724db6
-Author: Walter Korman <wkorman@chromium.org>
-Date:   Mon Aug 26 16:59:30 2019 -0700
+commit 1e4b204b20dbf5f27b6cf2bfa7b051a7f4b910a9
+Author: raulverag <42563960+raulverag@users.noreply.github.com>
+Date:   Tue Aug 27 11:19:03 2019 +1000
 
-    Add troubleshooting note for Windows installation. (#3497)
+    Consolidate RecipeSelector into SimplePlanner and move to planning (#3493)
+    
+    * consolidate RecipeSelector into SimplePlanner and move to planning
+    
+    * tweaks per review

@@ -9,6 +9,7 @@
  */
 import { RecipeResolver } from '../runtime/recipe/recipe-resolver.js';
 // One entry in the lookup table, i.e. one trigger and the recipe it invokes.
+// Exported only for testing.
 export class Match {
     constructor(trigger, recipe) {
         this.trigger = trigger;
@@ -29,7 +30,11 @@ export class Match {
         return true;
     }
 }
-export class RecipeSelector {
+/**
+ * A very simple planner that looks up recipes based on triggers in the
+ * manifest file matching requests.
+ */
+export class SimplePlanner {
     // Only recipes with “@trigger” annotations get included in the lookup table.
     // Other recipes are silently ignored. This relies on the triggers array
     // being always present but empty if there are no triggers.
@@ -38,41 +43,36 @@ export class RecipeSelector {
     // the triggers in the triggers field of the recipe.
     constructor(recipes) {
         this.recipes = recipes;
-        this._table = [];
+        this._recipesByTrigger = [];
         recipes.forEach(recipe => {
             recipe.triggers.forEach(trigger => {
-                if (this._table.find(match => match.matches(trigger))) {
-                    throw new Error('Duplicate recipe trigger!');
-                }
-                this._table.push(new Match(trigger, recipe));
+                this._recipesByTrigger.push(new Match(trigger, recipe));
             });
         });
     }
     // For testing only
-    get table() {
-        return this._table;
+    get recipesByTrigger() {
+        return this._recipesByTrigger;
     }
-    // Returns a Recipe or null if no trigger matches the request
-    // The table is consulted in order and the first successful match is returned.
-    select(request) {
-        const found = this._table.find(match => match.matches(request));
-        if (found)
-            return found.recipe;
-        return null;
-    }
-}
-export class SimplePlanner {
-    constructor(recipes) {
-        this.recipes = recipes;
-        this._selector = new RecipeSelector(recipes);
-    }
+    // Returns a Recipe or null if no suitable recipe is found. A suitable recipe
+    // is the first recipe in the table that meets three conditions:
+    // 1 - All pairs in the trigger are in the request.
+    // 2 - The modality of the arc is compatible with the recipe.
+    // 3 - The recipe resolves.
     async plan(arc, request) {
         const resolver = new RecipeResolver(arc);
-        const recipe = this._selector.select(request);
-        if (recipe) {
-            return await resolver.resolve(recipe);
+        const arcModality = arc.modality; // Avoid calling this more than once.
+        for (let i = 0; i < this._recipesByTrigger.length; i++) {
+            const match = this._recipesByTrigger[i];
+            if (match.matches(request)) {
+                if (match.recipe.isCompatible(arcModality)) {
+                    const result = await resolver.resolve(match.recipe);
+                    if (result)
+                        return result;
+                }
+            }
         }
         return null;
     }
 }
-//# sourceMappingURL=recipe-selector.js.map
+//# sourceMappingURL=simple-planner.js.map

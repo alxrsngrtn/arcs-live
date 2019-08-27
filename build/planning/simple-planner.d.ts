@@ -15,16 +15,14 @@ export declare class Match {
     constructor(trigger: [string, string][], recipe: Recipe);
     matches(request: [string, string][]): boolean;
 }
-export declare class RecipeSelector {
-    readonly recipes: Recipe[];
-    private _table;
-    readonly table: Match[];
-    constructor(recipes: Recipe[]);
-    select(request: [string, string][]): Recipe | null;
-}
+/**
+ * A very simple planner that looks up recipes based on triggers in the
+ * manifest file matching requests.
+ */
 export declare class SimplePlanner {
     readonly recipes: Recipe[];
-    private _selector;
+    private _recipesByTrigger;
+    readonly recipesByTrigger: Match[];
     constructor(recipes: Recipe[]);
     plan(arc: Arc, request: [string, string][]): Promise<Recipe>;
 }
