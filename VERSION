@@ -1,17 +1,5 @@
-commit 2f5921591ffae3ce6185a9014cec68944e0732cf
-Author: Ray Cromwell <cromwellian@gmail.com>
-Date:   Mon Aug 26 16:52:19 2019 -0700
+commit c42632fdc8f6fbebdbf2be8f7ece9e5d05724db6
+Author: Walter Korman <wkorman@chromium.org>
+Date:   Mon Aug 26 16:59:30 2019 -0700
 
-    Android api (#3499)
-    
-    * Add Android impl, tests, BUILD files
-    
-    * wip
-    
-    * add missing files
-    
-    * fix android breakage
-    
-    * Fix nits
-    
-    * Fix nits
+    Add troubleshooting note for Windows installation. (#3497)
