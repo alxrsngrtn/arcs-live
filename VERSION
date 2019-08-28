@@ -1,11 +1,9 @@
-commit 291dd718cbafe7f1f84a5c56e4820a8572c35c8e
-Author: Scott J. Miles <sjmiles@google.com>
-Date:   Wed Aug 28 12:37:13 2019 -0700
+commit 7a033abdc251743c3b8612e848bebbd452f8301d
+Author: Ray Cromwell <cromwellian@gmail.com>
+Date:   Wed Aug 28 13:57:34 2019 -0700
 
-    Flatten shells/lib (#3504)
+    getArray changes in javapec impl (#3500)
     
-    * flatten shells/lib
+    * getArray changes in javapec impl
     
-    * fixups
-    
-    * fix license header
+    * Fix nits
