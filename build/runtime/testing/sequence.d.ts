@@ -7,6 +7,7 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
+import { Consumer } from '../hot.js';
 export declare enum ExpectedResponse {
     Void = 0,
     Defer = 1,
@@ -18,13 +19,13 @@ export declare enum SequenceOutput {
 }
 export interface InputResponseObject {
     response?: any;
-    responseCheck?: (value: any) => void;
+    responseCheck?: Consumer<any>;
     type: ExpectedResponse;
 }
 export interface OutputResponseObject {
     response?: any;
     default?: any;
-    onOutput?: (value: any) => void;
+    onOutput?: Consumer<any>;
     type: ExpectedResponse;
 }
 export interface SequenceChange {
@@ -182,7 +183,7 @@ export declare class SequenceTest<T> {
      * @param id The sensor to set an end invariant on
      * @param test a function that takes the final sensor value and asserts properties
      */
-    setEndInvariant(id: string, test: (t: any) => void): void;
+    setEndInvariant(id: string, test: Consumer<any>): void;
     testObject(): T;
     private resetVariables;
     private resetResults;

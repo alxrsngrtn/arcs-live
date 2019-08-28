@@ -18,6 +18,12 @@ export declare type Consumer<T> = (input: T) => void;
 export declare type Runnable = () => void;
 /** A function that converts some input into a boolean, often use for calls like `filter`. */
 export declare type Predicate<T> = (input: T) => boolean;
+export declare class Predicates {
+    /** A Predicate that always succeeds */
+    static readonly alwaysTrue: <T>() => boolean;
+    /** A Predicate that always fails */
+    static readonly alwaysFalse: <T>() => boolean;
+}
 /** A function that maps an input to an output. */
 export declare type Mapper<I, O> = (input: I) => O;
 /**

@@ -8,6 +8,7 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { assert } from '../platform/assert-web.js';
+import { Predicates } from './hot.js';
 import { ProvidedSlotContext } from './slot-context.js';
 export class SlotConsumer {
     constructor(arc, consumeConn, containerKind) {
@@ -40,7 +41,7 @@ export class SlotConsumer {
     findProvidedContext(predicate) {
         return this.generateProvidedContexts(predicate).next().value;
     }
-    *generateProvidedContexts(predicate = (_) => true) {
+    *generateProvidedContexts(predicate = Predicates.alwaysTrue) {
         for (const context of this.directlyProvidedSlotContexts) {
             if (predicate(context))
                 yield context;

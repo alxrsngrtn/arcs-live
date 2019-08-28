@@ -20,6 +20,7 @@ import { SerializedModelEntry } from './storage/crdt-collection-model.js';
 import { StorageProviderBase } from './storage/storage-provider-base.js';
 import { Type } from './type.js';
 import { PropagatedException } from './arc-exceptions.js';
+import { Consumer, Runnable } from './hot.js';
 import { MessagePort } from './message-channel.js';
 declare class ThingMapper {
     _prefix: string;
@@ -104,48 +105,48 @@ export declare abstract class PECInnerPort extends APIPort {
     abstract onInstantiateParticle(id: string, spec: ParticleSpec, proxies: Map<string, StorageProxy>): any;
     abstract onReloadParticle(id: string): any;
     abstract onUIEvent(particle: Particle, slotName: string, event: {}): any;
-    abstract onSimpleCallback(callback: (data: {}) => void, data: {}): any;
+    abstract onSimpleCallback(callback: Consumer<{}>, data: {}): any;
     abstract onAwaitIdle(version: number): any;
     abstract onStartRender(particle: Particle, slotName: string, providedSlots: Map<string, string>, contentTypes: string[]): any;
     abstract onStopRender(particle: Particle, slotName: string): any;
     Render(particle: Particle, slotName: string, content: Content): void;
-    InitializeProxy(handle: StorageProxy, callback: (data: {
+    InitializeProxy(handle: StorageProxy, callback: Consumer<{
         version: number;
-    }) => void): void;
-    SynchronizeProxy(handle: StorageProxy, callback: (data: {
+    }>): void;
+    SynchronizeProxy(handle: StorageProxy, callback: Consumer<{
         version: number;
         model: SerializedModelEntry[];
-    }) => void): void;
-    HandleGet(handle: StorageProxy, callback: (data: {
+    }>): void;
+    HandleGet(handle: StorageProxy, callback: Consumer<{
         id: string;
-    }) => void): void;
-    HandleToList(handle: StorageProxy, callback: (data: {
+    }>): void;
+    HandleToList(handle: StorageProxy, callback: Consumer<{
         id: string;
-    }[]) => void): void;
+    }[]>): void;
     HandleSet(handle: StorageProxy, data: {}, particleId: string, barrier: string): void;
     HandleClear(handle: StorageProxy, particleId: string, barrier: string): void;
-    HandleStore(handle: StorageProxy, callback: () => void, data: {}, particleId: string): void;
-    HandleRemove(handle: StorageProxy, callback: () => void, data: {}, particleId: string): void;
-    HandleRemoveMultiple(handle: StorageProxy, callback: () => void, data: {}, particleId: string): void;
-    HandleStream(handle: StorageProxy, callback: (data: number) => void, pageSize: number, forward: boolean): void;
-    StreamCursorNext(handle: StorageProxy, callback: (value: CursorNextValue) => void, cursorId: string): void;
+    HandleStore(handle: StorageProxy, callback: Runnable, data: {}, particleId: string): void;
+    HandleRemove(handle: StorageProxy, callback: Runnable, data: {}, particleId: string): void;
+    HandleRemoveMultiple(handle: StorageProxy, callback: Runnable, data: {}, particleId: string): void;
+    HandleStream(handle: StorageProxy, callback: Consumer<number>, pageSize: number, forward: boolean): void;
+    StreamCursorNext(handle: StorageProxy, callback: Consumer<CursorNextValue>, cursorId: string): void;
     StreamCursorClose(handle: StorageProxy, cursorId: string): void;
     Idle(version: number, relevance: Map<Particle, number[]>): void;
     GetBackingStore(callback: (proxy: StorageProxy, key: string) => void, storageKey: string, type: Type): void;
     abstract onGetBackingStoreCallback(callback: (proxy: StorageProxy, key: string) => void, type: Type, name: string, id: string, storageKey: string): any;
-    ConstructInnerArc(callback: (arc: string) => void, particle: Particle): void;
-    abstract onConstructArcCallback(callback: (arc: string) => void, arc: string): any;
-    ArcCreateHandle(callback: (proxy: StorageProxy) => void, arc: {}, type: Type, name: string): void;
-    abstract onCreateHandleCallback(callback: (proxy: StorageProxy) => void, type: Type, name: string, id: string): any;
-    ArcMapHandle(callback: (value: string) => void, arc: {}, handle: Handle): void;
-    abstract onMapHandleCallback(callback: (value: string) => void, id: string): any;
+    ConstructInnerArc(callback: Consumer<string>, particle: Particle): void;
+    abstract onConstructArcCallback(callback: Consumer<string>, arc: string): any;
+    ArcCreateHandle(callback: Consumer<StorageProxy>, arc: {}, type: Type, name: string): void;
+    abstract onCreateHandleCallback(callback: Consumer<StorageProxy>, type: Type, name: string, id: string): any;
+    ArcMapHandle(callback: Consumer<string>, arc: {}, handle: Handle): void;
+    abstract onMapHandleCallback(callback: Consumer<string>, id: string): any;
     ServiceRequest(particle: Particle, content: {}, callback: Function): void;
-    ArcCreateSlot(callback: (value: string) => void, arc: {}, transformationParticle: Particle, transformationSlotName: string, handleId: string): void;
-    abstract onCreateSlotCallback(callback: (value: string) => void, hostedSlotId: string): any;
+    ArcCreateSlot(callback: Consumer<string>, arc: {}, transformationParticle: Particle, transformationSlotName: string, handleId: string): void;
+    abstract onCreateSlotCallback(callback: Consumer<string>, hostedSlotId: string): any;
     abstract onInnerArcRender(transformationParticle: Particle, transformationSlotName: string, hostedSlotID: string, content: Content): any;
-    ArcLoadRecipe(arc: {}, recipe: string, callback: (data: {
+    ArcLoadRecipe(arc: {}, recipe: string, callback: Consumer<{
         error?: string;
-    }) => void): void;
+    }>): void;
     ReportExceptionInHost(exception: PropagatedException): void;
     onDevToolsConnected(): void;
 }

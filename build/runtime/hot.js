@@ -7,4 +7,10 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
+export class Predicates {
+}
+/** A Predicate that always succeeds */
+Predicates.alwaysTrue = () => true;
+/** A Predicate that always fails */
+Predicates.alwaysFalse = () => false;
 //# sourceMappingURL=hot.js.map

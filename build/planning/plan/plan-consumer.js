@@ -31,8 +31,12 @@ export class PlanConsumer {
         this.result.registerChangeCallback(() => this.onSuggestionsChanged());
         this._maybeUpdateStrategyExplorer();
     }
-    registerSuggestionsChangedCallback(callback) { this.suggestionsChangeCallbacks.push(callback); }
-    registerVisibleSuggestionsChangedCallback(callback) { this.visibleSuggestionsChangeCallbacks.push(callback); }
+    registerSuggestionsChangedCallback(callback) {
+        this.suggestionsChangeCallbacks.push(callback);
+    }
+    registerVisibleSuggestionsChangedCallback(callback) {
+        this.visibleSuggestionsChangeCallbacks.push(callback);
+    }
     setSuggestFilter(showAll, search) {
         assert(!showAll || !search);
         if (this.suggestFilter.isEquivalent(showAll, search)) {

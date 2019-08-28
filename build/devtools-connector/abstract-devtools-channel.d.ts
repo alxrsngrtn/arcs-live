@@ -8,7 +8,8 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { Arc } from '../runtime/arc.js';
-export declare type DevtoolsListener = (msg: DevtoolsMessage) => void;
+import { Consumer } from '../runtime/hot.js';
+export declare type DevtoolsListener = Consumer<DevtoolsMessage>;
 export declare type DevtoolsMessage = {
     arcId?: string;
     requestId?: string;

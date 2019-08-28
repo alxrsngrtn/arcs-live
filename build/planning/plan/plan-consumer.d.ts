@@ -8,6 +8,7 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { Arc } from '../../runtime/arc.js';
+import { Consumer } from '../../runtime/hot.js';
 import { SuggestionComposer } from '../suggestion-composer.js';
 import { PlanningResult } from './planning-result.js';
 import { Suggestion, SuggestionVisibilityOptions } from './suggestion.js';
@@ -17,23 +18,25 @@ export declare type VisibilityOptions = {
     reasons?: Map<string, SuggestionVisibilityOptions>;
 };
 export declare class PlanConsumer {
-    arc: Arc;
+    readonly arc: Arc;
     result: PlanningResult;
     suggestFilter: SuggestFilter;
     private suggestionsChangeCallbacks;
     private visibleSuggestionsChangeCallbacks;
     suggestionComposer: SuggestionComposer | null;
     currentSuggestions: Suggestion[];
-    inspector?: PlannerInspector;
+    readonly inspector?: PlannerInspector;
     constructor(arc: Arc, result: PlanningResult, inspector?: PlannerInspector);
-    registerSuggestionsChangedCallback(callback: any): void;
-    registerVisibleSuggestionsChangedCallback(callback: any): void;
+    registerSuggestionsChangedCallback(callback: Consumer<{
+        suggestions: Suggestion[];
+    }>): void;
+    registerVisibleSuggestionsChangedCallback(callback: Consumer<Suggestion[]>): void;
     setSuggestFilter(showAll: boolean, search?: string): void;
     onSuggestionsChanged(): void;
     getCurrentSuggestions(options?: VisibilityOptions): Suggestion[];
     dispose(): void;
-    _onSuggestionsChanged(): void;
-    _onMaybeSuggestionsChanged(): void;
-    _initSuggestionComposer(): void;
-    _maybeUpdateStrategyExplorer(): void;
+    private _onSuggestionsChanged;
+    private _onMaybeSuggestionsChanged;
+    private _initSuggestionComposer;
+    private _maybeUpdateStrategyExplorer;
 }

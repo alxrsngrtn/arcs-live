@@ -26028,6 +26028,22 @@ const Template = {
 
 /**
  * @license
+ * Copyright (c) 2019 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+class Predicates {
+}
+/** A Predicate that always succeeds */
+Predicates.alwaysTrue = () => true;
+/** A Predicate that always fails */
+Predicates.alwaysFalse = () => false;
+
+/**
+ * @license
  * Copyright (c) 2018 Google Inc. All rights reserved.
  * This code may only be used under the BSD style license found at
  * http://polymer.github.io/LICENSE.txt
@@ -26205,7 +26221,7 @@ class SlotConsumer {
     findProvidedContext(predicate) {
         return this.generateProvidedContexts(predicate).next().value;
     }
-    *generateProvidedContexts(predicate = (_) => true) {
+    *generateProvidedContexts(predicate = Predicates.alwaysTrue) {
         for (const context of this.directlyProvidedSlotContexts) {
             if (predicate(context))
                 yield context;
@@ -33960,8 +33976,12 @@ class PlanConsumer {
         this.result.registerChangeCallback(() => this.onSuggestionsChanged());
         this._maybeUpdateStrategyExplorer();
     }
-    registerSuggestionsChangedCallback(callback) { this.suggestionsChangeCallbacks.push(callback); }
-    registerVisibleSuggestionsChangedCallback(callback) { this.visibleSuggestionsChangeCallbacks.push(callback); }
+    registerSuggestionsChangedCallback(callback) {
+        this.suggestionsChangeCallbacks.push(callback);
+    }
+    registerVisibleSuggestionsChangedCallback(callback) {
+        this.visibleSuggestionsChangeCallbacks.push(callback);
+    }
     setSuggestFilter(showAll, search) {
         assert(!showAll || !search);
         if (this.suggestFilter.isEquivalent(showAll, search)) {

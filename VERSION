@@ -1,9 +1,12 @@
-commit 1e4b204b20dbf5f27b6cf2bfa7b051a7f4b910a9
-Author: raulverag <42563960+raulverag@users.noreply.github.com>
-Date:   Tue Aug 27 11:19:03 2019 +1000
+commit 287d02873bf5d6a917a00ea84dddb103991a639f
+Author: Paul Lindner <plindner@google.com>
+Date:   Tue Aug 27 17:23:17 2019 -0700
 
-    Consolidate RecipeSelector into SimplePlanner and move to planning (#3493)
+    Improvements to common type usages (#3445)
     
-    * consolidate RecipeSelector into SimplePlanner and move to planning
+    - Implement tests for preconditions and comparable
+    - Add more usages of Consumer<>
+    - Add Predicates class with alwaysFalse/alwaysTrue
     
-    * tweaks per review
+    Code adapted from #3277
+    Addresses #3030
