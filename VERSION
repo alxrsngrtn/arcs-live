@@ -1,9 +1,9 @@
-commit 7a033abdc251743c3b8612e848bebbd452f8301d
-Author: Ray Cromwell <cromwellian@gmail.com>
-Date:   Wed Aug 28 13:57:34 2019 -0700
+commit 23357e8889a658650a7a4f51a11a82aa92459097
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Wed Aug 28 14:48:50 2019 -0700
 
-    getArray changes in javapec impl (#3500)
+    add java arc id generator (#3501)
     
-    * getArray changes in javapec impl
+    * add java arc id generator
     
-    * Fix nits
+    * address comment: add a TODO
