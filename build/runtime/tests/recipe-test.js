@@ -51,7 +51,7 @@ describe('recipe', () => {
         const manifest = await Manifest.parse(`
       particle P1
         consume details
-      recipe MyRecipe 
+      recipe MyRecipe
         require
           A
             consume root
@@ -503,7 +503,7 @@ describe('recipe', () => {
         assert.isTrue(recipe.modality.isCompatible([Modality.Name.Vr]));
         assert.isFalse(recipe.modality.isCompatible([Modality.Name.Dom]));
     });
-    it('comments unfullfilled slot connections', async () => {
+    it('comments unfulfilled slot connections', async () => {
         const recipe = (await Manifest.parse(`
       schema Thing
       particle MyParticle in 'myparticle.js'
@@ -516,7 +516,7 @@ describe('recipe', () => {
     `)).recipes[0];
         assert.isTrue(recipe.normalize());
         assert.isFalse(recipe.isResolved());
-        assert.isTrue(recipe.toString({ showUnresolved: true }).includes('unresolved particle: unfullfilled slot connections'));
+        assert.isTrue(recipe.toString({ showUnresolved: true }).includes('unresolved particle: unfulfilled slot connections'));
     });
     it('particles match if one particle is a subset of another', async () => {
         const recipes = (await Manifest.parse(`
@@ -533,8 +533,8 @@ describe('recipe', () => {
         P0
           consume root as s0
             provide details as s1
-      
-      recipe 
+
+      recipe
         P0
     `)).recipes;
         const recipe1 = recipes[0];
@@ -545,13 +545,13 @@ describe('recipe', () => {
     it('slots with local names are the same in the recipe as they are in the require section', async () => {
         const recipe = (await Manifest.parse(`
       particle P0
-        consume details 
-          provide moreDetails 
+        consume details
+          provide moreDetails
       particle P1
-        consume root 
-          provide details 
-      
-      recipe 
+        consume root
+          provide details
+
+      recipe
         require
           slot as s1
           P1
@@ -570,10 +570,10 @@ describe('recipe', () => {
       schema Type
       particle A
         in Type input
-        consume details 
-      
-      recipe 
-        require 
+        consume details
+
+      recipe
+        require
           B
             output -> h0
             consume root
@@ -587,18 +587,18 @@ describe('recipe', () => {
     it('slots in require section with the same local name match', async () => {
         const recipe = (await Manifest.parse(`
       particle A
-        consume details 
+        consume details
       particle B
         consume details
       particle C
         consume details
 
-      
-      recipe 
-        require 
+
+      recipe
+        require
           A
             consume details as s0
-          B 
+          B
             consume details as s0
         C
           consume details as s0

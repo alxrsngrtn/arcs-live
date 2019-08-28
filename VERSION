@@ -1,11 +1,5 @@
-commit 7da81bbe166480e2cd40ca27b4835547ad7df883
-Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
-Date:   Tue Aug 27 18:59:33 2019 -0700
+commit eaab441a2f2e739548dabca99e7c93adbfde4f4e
+Author: Scott J. Miles <sjmiles@google.com>
+Date:   Wed Aug 28 10:03:47 2019 -0700
 
-    Update WasmTemplate for wasm.json changes (#3478)
-    
-    * Update WasmTemplate for wasm.json changes
-    
-    * Update wasm readme with info about --install flag
-    
-    * s/schema/entities/ for the schema2packager genfile output
+    s/fullfilled/fulfilled/ (#3502)

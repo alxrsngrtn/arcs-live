@@ -17150,7 +17150,7 @@ class Particle {
             const fulfilledSlotConnections = this.getSlotConnections().filter(connection => connection.targetSlot !== undefined);
             if (fulfilledSlotConnections.length === 0) {
                 if (options && options.showUnresolved) {
-                    options.details = `unfullfilled slot connections ${JSON.stringify([...this.spec.slotConnections])}`;
+                    options.details = `unfulfilled slot connections ${JSON.stringify([...this.spec.slotConnections])}`;
                 }
                 return false;
             }
@@ -17306,9 +17306,9 @@ class Particle {
         return slotConn;
     }
     addSlotConnectionAsCopy(name) {
-        // Called when a recipe and all of it's contents are being cloned. 
-        // Each slot connection in the existing recipe has to be created for the clone, 
-        // This method must not create slots for provided slot connections otherwise there 
+        // Called when a recipe and all of it's contents are being cloned.
+        // Each slot connection in the existing recipe has to be created for the clone,
+        // This method must not create slots for provided slot connections otherwise there
         // will be duplicate slots.
         const slotConn = new SlotConnection(name, this);
         this._consumedSlotConnections[name] = slotConn;
