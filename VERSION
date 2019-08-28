@@ -1,12 +1,11 @@
-commit 287d02873bf5d6a917a00ea84dddb103991a639f
-Author: Paul Lindner <plindner@google.com>
-Date:   Tue Aug 27 17:23:17 2019 -0700
+commit 7da81bbe166480e2cd40ca27b4835547ad7df883
+Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
+Date:   Tue Aug 27 18:59:33 2019 -0700
 
-    Improvements to common type usages (#3445)
+    Update WasmTemplate for wasm.json changes (#3478)
     
-    - Implement tests for preconditions and comparable
-    - Add more usages of Consumer<>
-    - Add Predicates class with alwaysFalse/alwaysTrue
+    * Update WasmTemplate for wasm.json changes
     
-    Code adapted from #3277
-    Addresses #3030
+    * Update wasm readme with info about --install flag
+    
+    * s/schema/entities/ for the schema2packager genfile output
