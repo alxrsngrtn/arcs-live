@@ -20,11 +20,13 @@ export class HotCodeReloader {
         const arcs = [this.arc];
         arcs.push(...this.arc.innerArcs);
         for (const arc of arcs) {
+            const particles = [];
             for (const particle of arc.pec.particles) {
                 if (particle.spec.implFile === filepath) {
-                    arc.pec.reload(particle);
+                    particles.push(particle);
                 }
             }
+            arc.pec.reload(particles);
         }
     }
 }

@@ -137,11 +137,15 @@ class ThingMapper {
         floatingPromiseToAudit(this.establishThingMapping(id, thing));
         return id;
     }
-    recreateMappingForThing(thing) {
-        assert(this._reverseIdMap.has(thing));
-        const id = this._reverseIdMap.get(thing);
-        floatingPromiseToAudit(this.establishThingMapping(id, thing));
-        return id;
+    recreateMappingForThing(things) {
+        const ids = [];
+        things.forEach(thing => {
+            assert(this._reverseIdMap.has(thing));
+            const id = this._reverseIdMap.get(thing);
+            floatingPromiseToAudit(this.establishThingMapping(id, thing));
+            ids.push(id);
+        });
+        return ids;
     }
     maybeCreateMappingForThing(thing) {
         if (this.hasMappingForThing(thing)) {
@@ -151,13 +155,21 @@ class ThingMapper {
     }
     async establishThingMapping(id, thing) {
         let continuation;
-        if (Array.isArray(thing)) {
-            [thing, continuation] = thing;
+        if (!Array.isArray(id)) {
+            if (Array.isArray(thing)) {
+                [thing, continuation] = thing;
+            }
+            this._idMap.set(id, thing);
         }
-        this._idMap.set(id, thing);
         if (thing instanceof Promise) {
             assert(continuation == null);
             await this.establishThingMapping(id, await thing);
+        }
+        else if (Array.isArray(id)) {
+            assert(id.length === thing.length);
+            for (let i = 0; i < id.length; i++) {
+                await this.establishThingMapping(id[i], thing[i]);
+            }
         }
         else {
             this._reverseIdMap.set(thing, id);
@@ -390,7 +402,7 @@ export class PECOuterPort extends APIPort {
     Stop() { }
     DefineHandle(store, type, name) { }
     InstantiateParticle(particle, id, spec, stores) { }
-    ReloadParticle(particle, id) { }
+    ReloadParticles(particles, ids) { }
     UIEvent(particle, slotName, event) { }
     SimpleCallback(callback, data) { }
     AwaitIdle(version) { }
@@ -416,8 +428,8 @@ __decorate([
     __param(0, Initializer), __param(1, Identifier), __param(1, Direct), __param(2, ByLiteral(ParticleSpec)), __param(3, ObjectMap(MappingType.Direct, MappingType.Mapped))
 ], PECOuterPort.prototype, "InstantiateParticle", null);
 __decorate([
-    __param(0, OverridingInitializer), __param(1, Identifier), __param(1, Direct)
-], PECOuterPort.prototype, "ReloadParticle", null);
+    __param(0, OverridingInitializer), __param(1, List(MappingType.Direct))
+], PECOuterPort.prototype, "ReloadParticles", null);
 __decorate([
     __param(0, Mapped), __param(1, Direct), __param(2, Direct)
 ], PECOuterPort.prototype, "UIEvent", null);

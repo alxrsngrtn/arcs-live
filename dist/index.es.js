@@ -20942,11 +20942,15 @@ class ThingMapper {
         floatingPromiseToAudit(this.establishThingMapping(id, thing));
         return id;
     }
-    recreateMappingForThing(thing) {
-        assert(this._reverseIdMap.has(thing));
-        const id = this._reverseIdMap.get(thing);
-        floatingPromiseToAudit(this.establishThingMapping(id, thing));
-        return id;
+    recreateMappingForThing(things) {
+        const ids = [];
+        things.forEach(thing => {
+            assert(this._reverseIdMap.has(thing));
+            const id = this._reverseIdMap.get(thing);
+            floatingPromiseToAudit(this.establishThingMapping(id, thing));
+            ids.push(id);
+        });
+        return ids;
     }
     maybeCreateMappingForThing(thing) {
         if (this.hasMappingForThing(thing)) {
@@ -20956,13 +20960,21 @@ class ThingMapper {
     }
     async establishThingMapping(id, thing) {
         let continuation;
-        if (Array.isArray(thing)) {
-            [thing, continuation] = thing;
+        if (!Array.isArray(id)) {
+            if (Array.isArray(thing)) {
+                [thing, continuation] = thing;
+            }
+            this._idMap.set(id, thing);
         }
-        this._idMap.set(id, thing);
         if (thing instanceof Promise) {
             assert(continuation == null);
             await this.establishThingMapping(id, await thing);
+        }
+        else if (Array.isArray(id)) {
+            assert(id.length === thing.length);
+            for (let i = 0; i < id.length; i++) {
+                await this.establishThingMapping(id[i], thing[i]);
+            }
         }
         else {
             this._reverseIdMap.set(thing, id);
@@ -21195,7 +21207,7 @@ class PECOuterPort extends APIPort {
     Stop() { }
     DefineHandle(store, type, name) { }
     InstantiateParticle(particle, id, spec, stores) { }
-    ReloadParticle(particle, id) { }
+    ReloadParticles(particles, ids) { }
     UIEvent(particle, slotName, event) { }
     SimpleCallback(callback, data) { }
     AwaitIdle(version) { }
@@ -21221,8 +21233,8 @@ __decorate([
     __param(0, Initializer), __param(1, Identifier), __param(1, Direct), __param(2, ByLiteral(ParticleSpec)), __param(3, ObjectMap(MappingType.Direct, MappingType.Mapped))
 ], PECOuterPort.prototype, "InstantiateParticle", null);
 __decorate([
-    __param(0, OverridingInitializer), __param(1, Identifier), __param(1, Direct)
-], PECOuterPort.prototype, "ReloadParticle", null);
+    __param(0, OverridingInitializer), __param(1, List(MappingType.Direct))
+], PECOuterPort.prototype, "ReloadParticles", null);
 __decorate([
     __param(0, Mapped), __param(1, Direct), __param(2, Direct)
 ], PECOuterPort.prototype, "UIEvent", null);
@@ -22088,6 +22100,8 @@ class WasmParticle extends Particle$1 {
             this.converters.set(handle, new EntityPackager(handle.entityClass.schema));
         }
         this.exports._init(this.innerParticle);
+        // Setting this.handles since reload function needs to be able to grab all particle's handles
+        this.handles = handles;
     }
     async onHandleSync(handle, model) {
         const wasmHandle = this.handleMap.get(handle);
@@ -22312,8 +22326,8 @@ class ParticleExecutionContext {
             async onInstantiateParticle(id, spec, proxies) {
                 return pec.instantiateParticle(id, spec, proxies);
             }
-            async onReloadParticle(id) {
-                return pec.reloadParticle(id);
+            async onReloadParticles(ids) {
+                return pec.reloadParticles(ids);
             }
             onSimpleCallback(callback, data) {
                 callback(data);
@@ -22435,31 +22449,45 @@ class ParticleExecutionContext {
                 resolve();
             }];
     }
-    async reloadParticle(id) {
-        let resolve;
-        const p = new Promise(res => resolve = res);
-        this.pendingLoads.push(p);
-        // Get the old particle based on the given id and delete the old particle's cache
-        const oldParticle = this.particles.get(id);
-        delete oldParticle.spec.implBlobUrl;
-        // Create a new particle and replace the old one
-        const particle = await this.createParticleFromSpec(id, oldParticle.spec);
-        const handleMap = new Map();
-        const registerList = [];
-        // Create new handles and disable the handles of the old particles
-        oldParticle.handles.forEach((oldHandle) => {
-            this.createHandle(particle, oldParticle.spec, id, oldHandle.name, oldHandle.storage, handleMap, registerList);
-            oldHandle.disable(oldParticle);
+    async reloadParticles(ids) {
+        // Delete old particles' caches
+        ids.forEach(id => {
+            const oldParticle = this.particles.get(id);
+            if (oldParticle.spec.implBlobUrl)
+                delete oldParticle.spec.implBlobUrl;
+            if (oldParticle.spec.implFile.endsWith('.wasm') && this.wasmContainers[oldParticle.spec.implFile]) {
+                // For WASM particles the container will be re-instantiated along with all of the particles
+                this.wasmContainers[oldParticle.spec.implFile] = undefined;
+            }
         });
-        return [particle, async () => {
-                // Set the new handles to the new particle
-                await this.assignHandle(particle, oldParticle.spec, id, handleMap, registerList, p);
-                resolve();
-                // Transfer the slot proxies from the old particle to the new one
-                for (const name of oldParticle.getSlotNames()) {
-                    oldParticle.getSlot(name).rewire(particle);
-                }
-            }];
+        const result = [];
+        // Go through the given array of particles one by one
+        for (const id of ids) {
+            let resolve;
+            const p = new Promise(res => resolve = res);
+            this.pendingLoads.push(p);
+            // Get the old particle
+            const oldParticle = this.particles.get(id);
+            // Create a new particle and replace the old one
+            const particle = await this.createParticleFromSpec(id, oldParticle.spec);
+            const handleMap = new Map();
+            const registerList = [];
+            // Create new handles and disable the handles of the old particles
+            oldParticle.handles.forEach((oldHandle) => {
+                this.createHandle(particle, oldParticle.spec, id, oldHandle.name, oldHandle.storage, handleMap, registerList);
+                oldHandle.disable(oldParticle);
+            });
+            result.push([particle, async () => {
+                    // Set the new handles to the new particle
+                    await this.assignHandle(particle, oldParticle.spec, id, handleMap, registerList, p);
+                    resolve();
+                    // Transfer the slot proxies from the old particle to the new one
+                    for (const name of oldParticle.getSlotNames()) {
+                        oldParticle.getSlot(name).rewire(particle);
+                    }
+                }]);
+        }
+        return result;
     }
     createHandle(particle, spec, id, name, proxy, handleMap, registerList) {
         const connSpec = spec.handleConnectionMap.get(name);
@@ -22484,7 +22512,6 @@ class ParticleExecutionContext {
     async createParticleFromSpec(id, spec) {
         let particle;
         if (spec.implFile && spec.implFile.endsWith('.wasm')) {
-            // TODO(sherrypra): Make reloading WASM particle re-instantiate the entire container from scratch
             particle = await this.loadWasmParticle(id, spec);
             particle.setCapabilities(this.capabilities(false));
         }
@@ -23258,8 +23285,24 @@ class ParticleExecutionHost {
         });
         apiPort.InstantiateParticle(particle, particle.id.toString(), particle.spec, stores);
     }
-    reload(particle) {
-        this.getPort(particle).ReloadParticle(particle, particle.id.toString());
+    reload(particles) {
+        // Create a mapping from port to given list of particles
+        const portMap = new Map();
+        particles.forEach(particle => {
+            const port = this.getPort(particle);
+            let list = portMap.get(port);
+            if (!list) {
+                list = [particle];
+                portMap.set(port, list);
+            }
+            else {
+                list.push(particle);
+            }
+        });
+        // Reload particles based on ports
+        portMap.forEach((particles, port) => {
+            port.ReloadParticles(particles, particles.map(p => p.id.toString()));
+        });
     }
     startRender({ particle, slotName, providedSlots, contentTypes }) {
         this.getPort(particle).StartRender(particle, slotName, providedSlots, contentTypes);
@@ -32726,11 +32769,13 @@ class HotCodeReloader {
         const arcs = [this.arc];
         arcs.push(...this.arc.innerArcs);
         for (const arc of arcs) {
+            const particles = [];
             for (const particle of arc.pec.particles) {
                 if (particle.spec.implFile === filepath) {
-                    arc.pec.reload(particle);
+                    particles.push(particle);
                 }
             }
+            arc.pec.reload(particles);
         }
     }
 }

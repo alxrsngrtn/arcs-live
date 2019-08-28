@@ -68,8 +68,24 @@ export class ParticleExecutionHost {
         });
         apiPort.InstantiateParticle(particle, particle.id.toString(), particle.spec, stores);
     }
-    reload(particle) {
-        this.getPort(particle).ReloadParticle(particle, particle.id.toString());
+    reload(particles) {
+        // Create a mapping from port to given list of particles
+        const portMap = new Map();
+        particles.forEach(particle => {
+            const port = this.getPort(particle);
+            let list = portMap.get(port);
+            if (!list) {
+                list = [particle];
+                portMap.set(port, list);
+            }
+            else {
+                list.push(particle);
+            }
+        });
+        // Reload particles based on ports
+        portMap.forEach((particles, port) => {
+            port.ReloadParticles(particles, particles.map(p => p.id.toString()));
+        });
     }
     startRender({ particle, slotName, providedSlots, contentTypes }) {
         this.getPort(particle).StartRender(particle, slotName, providedSlots, contentTypes);

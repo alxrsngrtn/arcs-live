@@ -1,5 +1,9 @@
-commit eaab441a2f2e739548dabca99e7c93adbfde4f4e
-Author: Scott J. Miles <sjmiles@google.com>
-Date:   Wed Aug 28 10:03:47 2019 -0700
+commit 3386bc43b45c93fd7d3ab87853024f2497c651e3
+Author: sherry-pra <52428204+sherry-pra@users.noreply.github.com>
+Date:   Wed Aug 28 12:02:53 2019 -0700
 
-    s/fullfilled/fulfilled/ (#3502)
+    HotCodeReload: Support for WASM particles (#3458)
+    
+    - Changed the reload function in PEC to accept a list of particles to reload instead of just a single particle
+    - Made the file watcher less responsive to change for wasm files (so it can wait for builds of wasm file to finish
+    first before reloading)

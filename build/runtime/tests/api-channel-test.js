@@ -94,7 +94,7 @@ describe('API channel', function () {
             onGetBackingStoreCallback() { }
             onInnerArcRender() { }
             onInstantiateParticle() { }
-            onReloadParticle() { }
+            onReloadParticles() { }
             onMapHandleCallback() { }
             onSimpleCallback() { }
             onStartRender() { }
