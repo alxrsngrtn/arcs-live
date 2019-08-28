@@ -8,9 +8,7 @@
  * http://polymer.github.io/PATENTS.txt
  */
 
-import {Utils} from '../../lib/runtime/utils.js';
-import {Stores} from '../../lib/runtime/stores.js';
-import {Schemas} from './schemas.js';
+import {Utils} from '../../lib/utils.js';
 
 const manifest = `
 import 'https://$particles/PipeApps/RenderNotification.arcs'

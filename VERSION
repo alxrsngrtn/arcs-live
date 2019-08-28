@@ -1,9 +1,11 @@
-commit 3386bc43b45c93fd7d3ab87853024f2497c651e3
-Author: sherry-pra <52428204+sherry-pra@users.noreply.github.com>
-Date:   Wed Aug 28 12:02:53 2019 -0700
+commit 291dd718cbafe7f1f84a5c56e4820a8572c35c8e
+Author: Scott J. Miles <sjmiles@google.com>
+Date:   Wed Aug 28 12:37:13 2019 -0700
 
-    HotCodeReload: Support for WASM particles (#3458)
+    Flatten shells/lib (#3504)
     
-    - Changed the reload function in PEC to accept a list of particles to reload instead of just a single particle
-    - Made the file watcher less responsive to change for wasm files (so it can wait for builds of wasm file to finish
-    first before reloading)
+    * flatten shells/lib
+    
+    * fixups
+    
+    * fix license header
