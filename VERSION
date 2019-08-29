@@ -1,11 +1,11 @@
-commit 276ee1d460f080638e50a4b911fec7b63e2883a9
-Author: Sarah Heimlich <heimlich@google.com>
-Date:   Wed Aug 28 16:57:03 2019 -0700
+commit d40f859f38c8604e98d295837a6c5add664978bb
+Author: galganif <4754402+galganif@users.noreply.github.com>
+Date:   Thu Aug 29 11:03:41 2019 +1000
 
-    Clean up Kotlin WASM and remove bugs (#3503)
+    when the handle is reading the model, the storage proxy should sync t… (#3484)
     
-    * Updated README.
+    * when the handle is reading the model, the storage proxy should sync the model only if it is not already synchronized
     
-    * Reverted README, changed extension for wasm.manifest, and updated handles so KotlinTestRecipe loads.
+    * pull call to synchronizeModel out of the new promise block to fix lint error
     
-    * Removed bugs in entity generation code and cleaned up the test particle.
+    * rename synchronizeModel to requestSynchronization

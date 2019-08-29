@@ -418,8 +418,8 @@
         "signature": "4725f652b5c8a0c8f2494f4117541e9db18e5b2003940842100b48db319cd0bc"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/storageNG/storage-proxy.ts": {
-        "version": "3004e30315ed78a17a5221b7b6c6f47a7aba03388a5e29af9d5c62a20f726c8b",
-        "signature": "c22370c7ed6f3f75df04b14c0a6989686e7004ba2ca423af50027a54f32d3554"
+        "version": "e54eee05020b1cc40b0697ed183581627f93ddf43fd14c4f8cf793db83610bde",
+        "signature": "acb7c17f54ba20e6cd2acfb02d46bfdf1df0599b9bda636dd2cfdd73f09372ef"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/storageNG/handle.ts": {
         "version": "7a91e5deb50ef0cc878ea9ab88463bcdfee074f24a2573d75304e28a85de5e2e",
@@ -2241,7 +2241,7 @@
         "signature": "fd95df5d076cbfed143dc4904d376b5c6d9cb1091b630994ffe2366010afa6b3"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/storageNG/tests/handle-test.ts": {
-        "version": "5246eba808743ae178aae8cbc6a4ab789e4eb2a1de3bd327dd4c284c2ff34ef1",
+        "version": "13fd386e5f4b1af20b26adeaa8784ac30e30fc8366d0c61568ac688024a6e6cb",
         "signature": "fd95df5d076cbfed143dc4904d376b5c6d9cb1091b630994ffe2366010afa6b3"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/storageNG/tests/ramdisk-backing-store-integration-test.ts": {
@@ -2253,7 +2253,7 @@
         "signature": "fd95df5d076cbfed143dc4904d376b5c6d9cb1091b630994ffe2366010afa6b3"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/storageNG/tests/storage-proxy-test.ts": {
-        "version": "57e83009a24ad63147fc7cab1ed123963f90a857fb3df20b6f5b748e470a4caa",
+        "version": "37af41dae17ea30543dfe7ee034495a6652988627790fb343e234ae0a20caa1b",
         "signature": "fd95df5d076cbfed143dc4904d376b5c6d9cb1091b630994ffe2366010afa6b3"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/testing/sequence.ts": {
@@ -7083,6 +7083,7 @@
         "/home/travis/build/PolymerLabs/arcs/src/runtime/type.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/storageNG/handle.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/storageNG/storage-proxy.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/storageNG/store.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/storageNG/testing/test-storage.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"

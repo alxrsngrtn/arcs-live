@@ -14,18 +14,33 @@ import { IdGenerator } from '../../id.js';
 import { EntityType } from '../../type.js';
 import { CollectionHandle, SingletonHandle } from '../handle.js';
 import { StorageProxy } from '../storage-proxy.js';
+import { ProxyMessageType } from '../store.js';
 import { MockParticle, MockStore } from '../testing/test-storage.js';
-function getCollectionHandle(particle) {
+async function getCollectionHandle(particle) {
     const fakeParticle = (particle || new MockParticle());
-    return new CollectionHandle('me', new StorageProxy('id', new CRDTCollection(), new MockStore(), EntityType.make([], {}), null), IdGenerator.newSession(), fakeParticle, true, true);
+    const handle = new CollectionHandle('me', new StorageProxy('id', new CRDTCollection(), new MockStore(), EntityType.make([], {}), null), IdGenerator.newSession(), fakeParticle, true, true);
+    // Initialize the model.
+    await handle.storageProxy.onMessage({
+        type: ProxyMessageType.ModelUpdate,
+        model: { values: {}, version: {} },
+        id: 1
+    });
+    return handle;
 }
-function getSingletonHandle(particle) {
+async function getSingletonHandle(particle) {
     const fakeParticle = (particle || new MockParticle());
-    return new SingletonHandle('me', new StorageProxy('id', new CRDTSingleton(), new MockStore(), EntityType.make([], {}), null), IdGenerator.newSession(), fakeParticle, true, true);
+    const handle = new SingletonHandle('me', new StorageProxy('id', new CRDTSingleton(), new MockStore(), EntityType.make([], {}), null), IdGenerator.newSession(), fakeParticle, true, true);
+    // Initialize the model.
+    await handle.storageProxy.onMessage({
+        type: ProxyMessageType.ModelUpdate,
+        model: { values: {}, version: {} },
+        id: 1
+    });
+    return handle;
 }
-describe('CollectionHandle', () => {
+describe('CollectionHandle', async () => {
     it('can add and remove elements', async () => {
-        const handle = getCollectionHandle();
+        const handle = await getCollectionHandle();
         assert.isEmpty(handle.toList());
         await handle.add({ id: 'A' });
         assert.sameDeepMembers(await handle.toList(), [{ id: 'A' }]);
@@ -35,39 +50,39 @@ describe('CollectionHandle', () => {
         assert.sameDeepMembers(await handle.toList(), [{ id: 'B' }]);
     });
     it('can get an element by ID', async () => {
-        const handle = getCollectionHandle();
+        const handle = await getCollectionHandle();
         const entity = { id: 'A', property: 'something' };
         await handle.add(entity);
         await handle.add({ id: 'B' });
         assert.deepEqual(await handle.get('A'), entity);
     });
     it('can clear', async () => {
-        const handle = getCollectionHandle();
+        const handle = await getCollectionHandle();
         await handle.add({ id: 'A' });
         await handle.add({ id: 'B' });
         await handle.clear();
         assert.isEmpty(handle.toList());
     });
     it('can add multiple entities', async () => {
-        const handle = getCollectionHandle();
+        const handle = await getCollectionHandle();
         await handle.addMultiple([{ id: 'A' }, { id: 'B' }]);
         assert.sameDeepMembers(await handle.toList(), [{ id: 'A' }, { id: 'B' }]);
     });
     it('notifies particle on sync event', async () => {
         const particle = new MockParticle();
-        const handle = getCollectionHandle(particle);
+        const handle = await getCollectionHandle(particle);
         await handle.onSync();
         assert.isTrue(particle.onSyncCalled);
     });
     it('notifies particle on desync event', async () => {
         const particle = new MockParticle();
-        const handle = getCollectionHandle(particle);
+        const handle = await getCollectionHandle(particle);
         await handle.onDesync();
         assert.isTrue(particle.onDesyncCalled);
     });
     it('notifies particle of updates', async () => {
         const particle = new MockParticle();
-        const handle = getCollectionHandle(particle);
+        const handle = await getCollectionHandle(particle);
         const op = {
             type: CollectionOpTypes.Remove,
             removed: { id: 'id' },
@@ -78,7 +93,7 @@ describe('CollectionHandle', () => {
         assert.deepEqual(particle.lastUpdate, { removed: { id: 'id' }, originator: false });
     });
     it('stores new version map', async () => {
-        const handle = getCollectionHandle();
+        const handle = await getCollectionHandle();
         const versionMap = { 'actor': 1, 'other': 2 };
         // Make storageProxy return the defined version map.
         handle.storageProxy.getParticleView = async () => {
@@ -96,8 +111,8 @@ describe('CollectionHandle', () => {
         await handle.remove({ id: 'id' });
         assert.deepEqual(capturedClock, versionMap);
     });
-    it('can override default options', () => {
-        const handle = getCollectionHandle();
+    it('can override default options', async () => {
+        const handle = await getCollectionHandle();
         assert.deepEqual(handle.options, {
             keepSynced: true,
             notifySync: true,
@@ -113,9 +128,9 @@ describe('CollectionHandle', () => {
         });
     });
 });
-describe('SingletonHandle', () => {
+describe('SingletonHandle', async () => {
     it('can set and clear elements', async () => {
-        const handle = getSingletonHandle();
+        const handle = await getSingletonHandle();
         assert.strictEqual(await handle.get(), null);
         await handle.set({ id: 'A' });
         assert.deepEqual(await handle.get(), { id: 'A' });
@@ -126,19 +141,19 @@ describe('SingletonHandle', () => {
     });
     it('notifies particle on sync event', async () => {
         const particle = new MockParticle();
-        const handle = getSingletonHandle(particle);
+        const handle = await getSingletonHandle(particle);
         await handle.onSync();
         assert.isTrue(particle.onSyncCalled);
     });
     it('notifies particle on desync event', async () => {
         const particle = new MockParticle();
-        const handle = getSingletonHandle(particle);
+        const handle = await getSingletonHandle(particle);
         await handle.onDesync();
         assert.isTrue(particle.onDesyncCalled);
     });
     it('notifies particle of updates', async () => {
         const particle = new MockParticle();
-        const handle = getSingletonHandle(particle);
+        const handle = await getSingletonHandle(particle);
         const op = {
             type: SingletonOpTypes.Set,
             value: { id: 'id' },
@@ -149,7 +164,7 @@ describe('SingletonHandle', () => {
         assert.deepEqual(particle.lastUpdate, { data: { id: 'id' }, oldData: { id: 'old' }, originator: false });
     });
     it('stores new version map', async () => {
-        const handle = getSingletonHandle();
+        const handle = await getSingletonHandle();
         const versionMap = { 'actor': 1, 'other': 2 };
         // Make storageProxy return the defined version map.
         handle.storageProxy.getParticleView = async () => {

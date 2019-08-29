@@ -41,7 +41,7 @@ describe('StorageProxy', async () => {
         await storageProxy.idle();
         assert.sameDeepMembers(handle.lastUpdate, [op, null, { A: 1 }]);
     });
-    it('will sync before returning the particle view', async () => {
+    it('will sync if desynced before returning the particle view', async () => {
         const mockStore = new MockStore();
         const storageProxy = getStorageProxy(mockStore);
         // Register a handle to verify updates are sent back.
@@ -53,12 +53,19 @@ describe('StorageProxy', async () => {
             await storageProxy.onMessage({ type: ProxyMessageType.ModelUpdate, model: crdtData, id: 1 });
             return true;
         };
+        // The first time we get the data, it will need to sync with the store.
         const [result, versionMap] = await storageProxy.getParticleView();
         assert.deepEqual(result, { id: 'e1' });
         assert.deepEqual(versionMap, { A: 1 });
         assert.deepEqual(mockStore.lastCapturedMessage, { type: ProxyMessageType.SyncRequest, id: 1 });
         await storageProxy.idle();
         assert.isTrue(handle.onSyncCalled);
+        // Check that on subsequent data request, we don't need to sync.
+        mockStore.onProxyMessage = async (message) => {
+            assert.fail('should not need to sync');
+            return false;
+        };
+        await storageProxy.getParticleView();
     });
     it('can exchange models with the store', async () => {
         const mockStore = new MockStore();

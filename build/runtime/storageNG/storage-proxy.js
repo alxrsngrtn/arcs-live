@@ -21,6 +21,7 @@ export class StorageProxy {
         this.listenerAttached = false;
         this.keepSynced = false;
         this.synchronized = false;
+        this.modelHasSynced = () => undefined;
         this.apiChannelId = apiChannelId;
         this.crdt = crdt;
         this.store = store;
@@ -55,7 +56,7 @@ export class StorageProxy {
         // TODO: drop back to non-sync mode if all handles re-configure to !keepSynced.
         if (handle.options.keepSynced) {
             if (!this.keepSynced) {
-                this.synchronizeModel().catch(e => {
+                this.requestSynchronization().catch(e => {
                     this.reportExceptionInHost(new SystemException(e, handle.key, 'StorageProxy::registerHandle'));
                 });
                 this.keepSynced = true;
@@ -93,12 +94,20 @@ export class StorageProxy {
         return true;
     }
     async getParticleView() {
-        await this.synchronizeModel();
-        return [this.crdt.getParticleView(), this.versionCopy()];
-    }
-    async getData() {
-        await this.synchronizeModel();
-        return this.crdt.getData();
+        if (this.synchronized) {
+            return [this.crdt.getParticleView(), this.versionCopy()];
+        }
+        else {
+            const promise = new Promise((resolve) => {
+                this.modelHasSynced = () => {
+                    this.modelHasSynced = () => undefined;
+                    resolve([this.crdt.getParticleView(), this.versionCopy()]);
+                };
+            });
+            // Request a new model, it will come back asynchronously with a ModelUpdate message.
+            await this.requestSynchronization();
+            return promise;
+        }
     }
     async onMessage(message) {
         assert(message.id === this.id);
@@ -106,6 +115,7 @@ export class StorageProxy {
             case ProxyMessageType.ModelUpdate:
                 this.crdt.merge(message.model);
                 this.synchronized = true;
+                this.modelHasSynced();
                 this.notifySync();
                 break;
             case ProxyMessageType.Operations: {
@@ -119,7 +129,7 @@ export class StorageProxy {
                         // If we cannot cleanly apply ops, sync the whole model.
                         this.synchronized = false;
                         await this.notifyDesync();
-                        return this.synchronizeModel();
+                        return this.requestSynchronization();
                     }
                     this.notifyUpdate(op, oldData);
                     oldData = this.crdt.getParticleView();
@@ -162,7 +172,7 @@ export class StorageProxy {
             }
         }
     }
-    async synchronizeModel() {
+    async requestSynchronization() {
         return this.store.onProxyMessage({ type: ProxyMessageType.SyncRequest, id: this.id });
     }
 }
@@ -196,7 +206,7 @@ export class NoOpStorageProxy extends StorageProxy {
     notifyUpdate(operation, oldData) { }
     notifySync() { }
     notifyDesync() { }
-    async synchronizeModel() {
+    async requestSynchronization() {
         return new Promise(resolve => { });
     }
 }

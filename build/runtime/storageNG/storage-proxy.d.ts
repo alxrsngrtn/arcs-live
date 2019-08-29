@@ -29,6 +29,7 @@ export declare class StorageProxy<T extends CRDTTypeRecord> {
     private keepSynced;
     private synchronized;
     private readonly scheduler;
+    private modelHasSynced;
     constructor(apiChannelId: string, crdt: CRDTModel<T>, store: ActiveStore<T>, type: Type, pec: ParticleExecutionContext);
     idle(): Promise<void>;
     reportExceptionInHost(exception: PropagatedException): void;
@@ -37,12 +38,11 @@ export declare class StorageProxy<T extends CRDTTypeRecord> {
     protected versionCopy(): VersionMap;
     applyOp(op: CRDTOperation): Promise<boolean>;
     getParticleView(): Promise<[T['consumerType'], VersionMap]>;
-    getData(): Promise<T['data']>;
     onMessage(message: ProxyMessage<T>): Promise<boolean>;
     protected notifyUpdate(operation: CRDTOperation, oldData: CRDTConsumerType): void;
     protected notifySync(): void;
     protected notifyDesync(): void;
-    protected synchronizeModel(): Promise<boolean>;
+    protected requestSynchronization(): Promise<boolean>;
 }
 export declare class NoOpStorageProxy<T extends CRDTTypeRecord> extends StorageProxy<T> {
     constructor();
@@ -58,7 +58,7 @@ export declare class NoOpStorageProxy<T extends CRDTTypeRecord> extends StorageP
     protected notifyUpdate(operation: CRDTOperation, oldData: CRDTConsumerType): void;
     protected notifySync(): void;
     protected notifyDesync(): void;
-    protected synchronizeModel(): Promise<boolean>;
+    protected requestSynchronization(): Promise<boolean>;
 }
 declare enum HandleMessageType {
     Sync = 0,
