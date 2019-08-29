@@ -55,8 +55,8 @@ package arcs
             const decodeType = typeMap[typeChar][2];
             const fixed = field + (keywords.includes(field) ? '_' : '');
             fields.push(`var ${fixed}: ${type} = ${defaultVal}`);
-            decode.push(`"${fixed}" -> {`, `  decoder.validate("${typeChar}")`, `  this.${fixed} = decoder.${decodeType}`, `}`);
-            encode.push(`encoder.encode("${fixed}:${typeChar}", ${fixed})`);
+            decode.push(`"${field}" -> {`, `  decoder.validate("${typeChar}")`, `  this.${fixed} = decoder.${decodeType}`, `}`);
+            encode.push(`encoder.encode("${field}:${typeChar}", ${fixed})`);
         });
         return `\
 

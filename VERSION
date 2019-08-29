@@ -1,21 +1,11 @@
-commit 1883f9552175bdc51743f2991c51d6a65e76545a
+commit 276ee1d460f080638e50a4b911fec7b63e2883a9
 Author: Sarah Heimlich <heimlich@google.com>
-Date:   Wed Aug 28 16:40:14 2019 -0700
+Date:   Wed Aug 28 16:57:03 2019 -0700
 
-    Handle tutorial (#3498)
+    Clean up Kotlin WASM and remove bugs (#3503)
     
-    * Add tutorial for handles.
+    * Updated README.
     
-    e       new file:   particles/Tutorial/6_Handles/Handles.arcs
-    e       new file:   particles/Tutorial/6_Handles/source/displayGreeting.js
-    e       new file:   particles/Tutorial/6_Handles/source/getPerson.js
-    e       modified:   particles/Tutorial/Tutorial.arcs
-    e       modified:   particles/canonical.arcs
+    * Reverted README, changed extension for wasm.manifest, and updated handles so KotlinTestRecipe loads.
     
-    * Clean up.
-    
-    * Updates in line with naming conventions.
-    
-    * Updated javascript file names to capital.
-    
-    * Remove lowercase .js files and comment out Tutorial import.
+    * Removed bugs in entity generation code and cleaned up the test particle.
