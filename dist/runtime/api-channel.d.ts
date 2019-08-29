@@ -110,6 +110,7 @@ export declare abstract class PECInnerPort extends APIPort {
     abstract onStartRender(particle: Particle, slotName: string, providedSlots: Map<string, string>, contentTypes: string[]): any;
     abstract onStopRender(particle: Particle, slotName: string): any;
     Render(particle: Particle, slotName: string, content: Content): void;
+    Output(particle: Particle, content: {}): void;
     InitializeProxy(handle: StorageProxy, callback: Consumer<{
         version: number;
     }>): void;

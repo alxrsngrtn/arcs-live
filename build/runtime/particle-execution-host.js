@@ -281,6 +281,13 @@ class PECOuterPortImpl extends PECOuterPort {
         }
         this.SimpleCallback(callback, error ? { error } : successResponse);
     }
+    // TODO(sjmiles): experimental `output` impl
+    onOutput(particle, content) {
+        const composer = this.arc.pec.slotComposer;
+        if (composer && composer['delegateOutput']) {
+            composer['delegateOutput'](this.arc, particle, content);
+        }
+    }
     onReportExceptionInHost(exception) {
         if (!exception.particleName) {
             exception.particleName = this.arc.loadedParticleInfo.get(exception.particleId).spec.name;

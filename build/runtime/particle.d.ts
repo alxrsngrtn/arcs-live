@@ -18,6 +18,7 @@ import { Entity, EntityRawData, MutableEntityData } from './entity.js';
 export interface Capabilities {
     constructInnerArc?: (particle: Particle) => Promise<InnerArcHandle>;
     serviceRequest?: (particle: Particle, args: any, callback: any) => void;
+    output?: any;
 }
 /**
  * A basic particle. For particles that provide UI, you may like to
@@ -127,6 +128,7 @@ export declare class Particle {
     idFor(entity: Entity): string;
     dataClone(entity: Entity): EntityRawData;
     mutate(entity: Entity, mutation: Consumer<MutableEntityData> | {}): void;
+    output(content: any): void;
     renderSlot(slotName: string, contentTypes: string[]): void;
     renderHostedSlot(slotName: string, hostedSlotId: string, content: Content): void;
     fireEvent(slotName: string, event: {}): void;

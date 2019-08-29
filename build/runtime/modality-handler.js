@@ -8,7 +8,9 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { DescriptionDomFormatter } from './description-dom-formatter.js';
+import { DescriptionFormatter } from './description-formatter.js';
 import { HeadlessSlotDomConsumer } from './headless-slot-dom-consumer.js';
+import { SlotConsumer } from './slot-consumer.js';
 import { SlotDomConsumer } from './slot-dom-consumer.js';
 export class ModalityHandler {
     constructor(slotConsumerClass, descriptionFormatter) {
@@ -20,5 +22,6 @@ export class ModalityHandler {
     }
 }
 ModalityHandler.headlessHandler = new ModalityHandler(HeadlessSlotDomConsumer);
+ModalityHandler.basicHandler = new ModalityHandler(SlotConsumer, DescriptionFormatter);
 ModalityHandler.domHandler = new ModalityHandler(SlotDomConsumer, DescriptionDomFormatter);
 //# sourceMappingURL=modality-handler.js.map

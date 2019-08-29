@@ -15,5 +15,6 @@ export declare class ModalityHandler {
     constructor(slotConsumerClass: typeof SlotConsumer, descriptionFormatter?: typeof DescriptionFormatter);
     static createHeadlessHandler(): ModalityHandler;
     static readonly headlessHandler: ModalityHandler;
+    static readonly basicHandler: ModalityHandler;
     static readonly domHandler: ModalityHandler;
 }

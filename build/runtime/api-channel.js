@@ -471,6 +471,8 @@ let PECInnerPort = class PECInnerPort extends APIPort {
         super(messagePort, 'i');
     }
     Render(particle, slotName, content) { }
+    // TODO(sjmiles): alternate render path for slotObserver (UiBroker)
+    Output(particle, content) { }
     InitializeProxy(handle, callback) { }
     SynchronizeProxy(handle, callback) { }
     HandleGet(handle, callback) { }
@@ -503,6 +505,9 @@ let PECInnerPort = class PECInnerPort extends APIPort {
 __decorate([
     __param(0, Mapped), __param(1, Direct), __param(2, Direct)
 ], PECInnerPort.prototype, "Render", null);
+__decorate([
+    __param(0, Mapped), __param(1, Direct)
+], PECInnerPort.prototype, "Output", null);
 __decorate([
     __param(0, Mapped), __param(1, LocalMapped)
 ], PECInnerPort.prototype, "InitializeProxy", null);

@@ -149,6 +149,10 @@ export class ParticleExecutionContext {
             // TODO(sjmiles): experimental `services` impl
             serviceRequest: (particle, args, callback) => {
                 this.apiPort.ServiceRequest(particle, args, callback);
+            },
+            // TODO(sjmiles): alternate render path via slotObserver (UiBroker)
+            output: (particle, content) => {
+                this.apiPort.Output(particle, content);
             }
         };
         if (hasInnerArcs) {

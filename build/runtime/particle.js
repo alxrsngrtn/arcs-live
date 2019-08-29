@@ -221,6 +221,13 @@ export class Particle {
     mutate(entity, mutation) {
         Entity.mutate(entity, mutation);
     }
+    // TODO(sjmiles): alternate render path for UiBroker
+    output(content) {
+        const { output } = this.capabilities;
+        if (output) {
+            output(this, content);
+        }
+    }
     // abstract
     renderSlot(slotName, contentTypes) { }
     renderHostedSlot(slotName, hostedSlotId, content) { }

@@ -309,6 +309,10 @@ class ParticleExecutionContext {
             // TODO(sjmiles): experimental `services` impl
             serviceRequest: (particle, args, callback) => {
                 this.apiPort.ServiceRequest(particle, args, callback);
+            },
+            // TODO(sjmiles): alternate render path via slotObserver (UiBroker)
+            output: (particle, content) => {
+                this.apiPort.Output(particle, content);
             }
         };
         if (hasInnerArcs) {
@@ -977,6 +981,8 @@ let PECInnerPort = class PECInnerPort extends APIPort {
         super(messagePort, 'i');
     }
     Render(particle, slotName, content) { }
+    // TODO(sjmiles): alternate render path for slotObserver (UiBroker)
+    Output(particle, content) { }
     InitializeProxy(handle, callback) { }
     SynchronizeProxy(handle, callback) { }
     HandleGet(handle, callback) { }
@@ -1009,6 +1015,9 @@ let PECInnerPort = class PECInnerPort extends APIPort {
 __decorate([
     __param(0, Mapped), __param(1, Direct), __param(2, Direct)
 ], PECInnerPort.prototype, "Render", null);
+__decorate([
+    __param(0, Mapped), __param(1, Direct)
+], PECInnerPort.prototype, "Output", null);
 __decorate([
     __param(0, Mapped), __param(1, LocalMapped)
 ], PECInnerPort.prototype, "InitializeProxy", null);
@@ -6688,6 +6697,13 @@ class Particle {
     mutate(entity, mutation) {
         _entity_js__WEBPACK_IMPORTED_MODULE_1__["Entity"].mutate(entity, mutation);
     }
+    // TODO(sjmiles): alternate render path for UiBroker
+    output(content) {
+        const { output } = this.capabilities;
+        if (output) {
+            output(this, content);
+        }
+    }
     // abstract
     renderSlot(slotName, contentTypes) { }
     renderHostedSlot(slotName, hostedSlotId, content) { }
@@ -6703,7 +6719,7 @@ class Particle {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "PlatformLoader", function() { return PlatformLoader; });
 /* harmony import */ var _loader_platform_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(31);
-/* harmony import */ var _platform_log_web_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(42);
+/* harmony import */ var _runtime_log_factory_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(46);
 /**
  * @license
  * Copyright 2019 Google LLC.
@@ -6715,9 +6731,7 @@ __webpack_require__.r(__webpack_exports__);
  */
 
 
-const log = Object(_platform_log_web_js__WEBPACK_IMPORTED_MODULE_1__["logFactory"])('loader-web', 'green');
-const warn = Object(_platform_log_web_js__WEBPACK_IMPORTED_MODULE_1__["logFactory"])('loader-web', 'green', 'warn');
-const error = Object(_platform_log_web_js__WEBPACK_IMPORTED_MODULE_1__["logFactory"])('loader-web', 'green', 'error');
+const { log, warn, error } = Object(_runtime_log_factory_js__WEBPACK_IMPORTED_MODULE_1__["logsFactory"])('loader-web', 'green');
 class PlatformLoader extends _loader_platform_js__WEBPACK_IMPORTED_MODULE_0__["PlatformLoaderBase"] {
     flushCaches() {
         // punt object urls?
@@ -6729,7 +6743,8 @@ class PlatformLoader extends _loader_platform_js__WEBPACK_IMPORTED_MODULE_0__["P
     }
     async provisionObjectUrl(fileName) {
         const raw = await this.loadResource(fileName);
-        const code = `${raw}\n//# sourceURL=${fileName}`;
+        const path = this.resolve(fileName);
+        const code = `${raw}\n//# sourceURL=${path}`;
         return URL.createObjectURL(new Blob([code], { type: 'application/javascript' }));
     }
     // Below here invoked from inside Worker
@@ -6739,7 +6754,7 @@ class PlatformLoader extends _loader_platform_js__WEBPACK_IMPORTED_MODULE_0__["P
             clazz.spec = spec;
         }
         else {
-            warn(`[spec.implFile]::defineParticle() returned no particle.`);
+            warn(`[${spec.implFile}]::defineParticle() returned no particle.`);
         }
         return clazz;
     }
@@ -6747,20 +6762,19 @@ class PlatformLoader extends _loader_platform_js__WEBPACK_IMPORTED_MODULE_0__["P
         // inject path to this particle into the UrlMap,
         // allows "foo.js" particle to invoke "importScripts(resolver('foo/othermodule.js'))"
         this.mapParticleUrl(unresolvedPath);
+        // resolve path
+        const resolvedPath = this.resolve(unresolvedPath);
         // resolved target
-        const url = blobUrl || this.resolve(unresolvedPath);
+        const url = blobUrl || resolvedPath;
         // load wrapped particle
-        const particle = this.loadWrappedParticle(url);
-        // execute particle wrapper, if we have one
-        if (particle) {
+        const wrapper = this.loadWrappedParticle(url, resolvedPath);
+        // unwrap particle wrapper, if we have one
+        if (wrapper) {
             const logger = this.provisionLogger(unresolvedPath);
-            return this.unwrapParticle(particle, logger);
+            return this.unwrapParticle(wrapper, logger);
         }
     }
-    provisionLogger(fileName) {
-        return Object(_platform_log_web_js__WEBPACK_IMPORTED_MODULE_1__["logFactory"])(fileName.split('/').pop(), '#1faa00');
-    }
-    loadWrappedParticle(url) {
+    loadWrappedParticle(url, path) {
         let result;
         // MUST be synchronous from here until deletion
         // of self.defineParticle because we share this
@@ -6778,11 +6792,14 @@ class PlatformLoader extends _loader_platform_js__WEBPACK_IMPORTED_MODULE_0__["P
             importScripts(url);
         }
         catch (x) {
-            error(x);
+            error(`Error loading Particle from [${path}]`, x);
         }
         // clean up
         delete self['defineParticle'];
         return result;
+    }
+    provisionLogger(fileName) {
+        return Object(_runtime_log_factory_js__WEBPACK_IMPORTED_MODULE_1__["logsFactory"])(fileName.split('/').pop(), '#1faa00').log;
     }
 }
 //# sourceMappingURL=loader-web.js.map
@@ -6799,6 +6816,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _runtime_dom_particle_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(37);
 /* harmony import */ var _runtime_multiplexer_dom_particle_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(40);
 /* harmony import */ var _runtime_transformation_dom_particle_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(41);
+/* harmony import */ var _runtime_ui_particle_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(42);
+/* harmony import */ var _runtime_ui_multiplexer_particle_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(44);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -6808,6 +6827,8 @@ __webpack_require__.r(__webpack_exports__);
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
+
+
 
 
 
@@ -6848,19 +6869,21 @@ class PlatformLoaderBase extends _runtime_loader_js__WEBPACK_IMPORTED_MODULE_0__
             this._urlMap[name] = resolved;
         }
         this._urlMap['$here'] = resolved;
+        this._urlMap['$module'] = resolved;
     }
     unwrapParticle(particleWrapper, log) {
-        // TODO(sjmiles): regarding `resolver`:
-        //  resolve method allows particles to request remapping of assets paths
-        //  for use in DOM
-        const resolver = this.resolve.bind(this);
         return particleWrapper({
+            // Particle base
             Particle: _runtime_particle_js__WEBPACK_IMPORTED_MODULE_1__["Particle"],
+            // Dom-flavored Particles (deprecated?)
             DomParticle: _runtime_dom_particle_js__WEBPACK_IMPORTED_MODULE_2__["DomParticle"],
             MultiplexerDomParticle: _runtime_multiplexer_dom_particle_js__WEBPACK_IMPORTED_MODULE_3__["MultiplexerDomParticle"],
-            SimpleParticle: _runtime_dom_particle_js__WEBPACK_IMPORTED_MODULE_2__["DomParticle"],
             TransformationDomParticle: _runtime_transformation_dom_particle_js__WEBPACK_IMPORTED_MODULE_4__["TransformationDomParticle"],
-            resolver,
+            // Ui-flavored Particles
+            UiParticle: _runtime_ui_particle_js__WEBPACK_IMPORTED_MODULE_5__["UiParticle"],
+            UiMultiplexerParticle: _runtime_ui_multiplexer_particle_js__WEBPACK_IMPORTED_MODULE_6__["UiMultiplexerParticle"],
+            // utilities
+            resolver: this.resolve.bind(this),
             log: log || (() => { }),
             html
         });
@@ -8086,6 +8109,671 @@ class TransformationDomParticle extends _dom_particle_js__WEBPACK_IMPORTED_MODUL
 
 /***/ }),
 /* 42 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "UiParticle", function() { return UiParticle; });
+/* harmony import */ var _modalities_dom_components_xen_xen_state_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(38);
+/* harmony import */ var _ui_simple_particle_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(43);
+/**
+ * @license
+ * Copyright (c) 2017 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+
+
+/**
+ * Particle that interoperates with DOM and uses a simple state system
+ * to handle updates.
+ */
+// TODO(sjmiles): seems like this is really `UiStatefulParticle` but it's
+// used so often, I went with the simpler name
+class UiParticle extends Object(_modalities_dom_components_xen_xen_state_js__WEBPACK_IMPORTED_MODULE_0__["XenStateMixin"])(_ui_simple_particle_js__WEBPACK_IMPORTED_MODULE_1__["UiSimpleParticle"]) {
+    /**
+     * Override if necessary, to do things when props change.
+     * Avoid if possible, use `update` instead.
+     */
+    willReceiveProps(...args) {
+    }
+    // affordance so subclasses can avoid `_`
+    _willReceiveProps(...args) {
+        this.willReceiveProps(...args);
+    }
+    /**
+     * Override to do things when props or state change.
+     */
+    update(...args) {
+    }
+    /**
+     * Override to return a dictionary to map into the template.
+     */
+    render(...args) {
+        return {};
+    }
+    /**
+     * Copy values from `state` into the particle's internal state,
+     * triggering an update cycle unless currently updating.
+     */
+    setState(state) {
+        return this._setState(state);
+    }
+    /**
+     * Getters and setters for working with state/props.
+     */
+    get state() {
+        return this._state;
+    }
+    /**
+     * Syntactic sugar: `this.state = {state}` is equivalent to `this.setState(state)`.
+     * This is actually a merge, not an assignment.
+     */
+    set state(state) {
+        this.setState(state);
+    }
+    get props() {
+        return this._props;
+    }
+    _update(...args) {
+        this.update(...args);
+        //
+        if (this.shouldRender(...args)) { // TODO: should shouldRender be slot specific?
+            this.relevance = 1; // TODO: improve relevance signal.
+            this.renderOutput(...args);
+        }
+    }
+    _async(fn) {
+        // asynchrony in Particle code must be bookended with start/doneBusy
+        this.startBusy();
+        const done = () => {
+            try {
+                fn.call(this);
+            }
+            finally {
+                this.doneBusy();
+            }
+        };
+        // TODO(sjmiles): superclass uses Promise.resolve(),
+        // but here use a short timeout for a wider debounce
+        return setTimeout(done, 10);
+    }
+    async setHandles(handles) {
+        this.configureHandles(handles);
+        this.handles = handles;
+        // TODO(sjmiles): we must invalidate at least once, is there a way to know
+        // whether handleSync/update will be called?
+        this._invalidate();
+    }
+    /**
+     * This is called once during particle setup. Override to control sync and update
+     * configuration on specific handles (via their configure() method).
+     * `handles` is a map from names to handle instances.
+     */
+    configureHandles(handles) {
+        // Example: handles.get('foo').configure({keepSynced: false});
+    }
+    async onHandleSync(handle, model) {
+        this._setProperty(handle.name, model);
+    }
+    async onHandleUpdate({ name }, { data, added, removed }) {
+        if (data !== undefined) {
+            //console.log('update.data:', JSON.stringify(data, null, '  '));
+            this._setProps({ [name]: data });
+        }
+        if (added) {
+            //console.log('update.added:', JSON.stringify(added, null, '  '));
+            const prop = (this.props[name] || []).concat(added);
+            // TODO(sjmiles): generally improper to set `this._props` directly, this is a special case
+            this._props[name] = prop;
+            this._setProps({ [name]: prop });
+        }
+        if (removed) {
+            //console.log('update.removed:', JSON.stringify(removed, null, '  '));
+            const prop = this.props[name];
+            if (Array.isArray(prop)) {
+                removed.forEach(removed => {
+                    // TODO(sjmiles): linear search is inefficient
+                    const index = prop.findIndex(entry => this.idFor(entry) === this.idFor(removed));
+                    if (index >= 0) {
+                        prop.splice(index, 1);
+                    }
+                    else {
+                        console.warn(`dom-particle::onHandleUpdate: couldn't find item to remove`);
+                    }
+                });
+                this._setProps({ [name]: prop });
+            }
+        }
+    }
+    fireEvent(slotName, { handler, data }) {
+        if (this[handler]) {
+            // TODO(sjmiles): remove deprecated `this._state` parameter
+            this[handler]({ data }, this._state);
+        }
+    }
+    debounce(key, func, delay) {
+        const subkey = `_debounce_${key}`;
+        const state = this.state;
+        if (!state[subkey]) {
+            state[subkey] = true;
+            this.startBusy();
+        }
+        const idleThenFunc = () => {
+            this.doneBusy();
+            func();
+            state[subkey] = null;
+        };
+        // TODO(sjmiles): rewrite Xen debounce so caller has idle control
+        super._debounce(key, idleThenFunc, delay);
+    }
+}
+//# sourceMappingURL=ui-particle.js.map
+
+/***/ }),
+/* 43 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "UiSimpleParticle", function() { return UiSimpleParticle; });
+/* harmony import */ var _handle_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(13);
+/* harmony import */ var _particle_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(29);
+/**
+ * @license
+ * Copyright (c) 2017 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+
+
+/**
+ * Particle that can render and process events.
+ */
+class UiSimpleParticle extends _particle_js__WEBPACK_IMPORTED_MODULE_1__["Particle"] {
+    /**
+     * Override if necessary, to modify superclass config.
+     */
+    get config() {
+        // TODO(sjmiles): getter that does work is a bad idea, this is temporary
+        return {
+            handleNames: this.spec.inputs.map(i => i.name),
+            // TODO(mmandlis): this.spec needs to be replaced with a particle-spec loaded from
+            // .arcs files, instead of .ptcl ones.
+            slotNames: this.spec.slandleConnectionNames()
+        };
+    }
+    /**
+     * Override to return a template.
+     */
+    get template() {
+        return '';
+    }
+    /**
+     * Override to return a String defining primary markup for the given slot name.
+     */
+    // getTemplate(slotName: string): string {
+    //   // TODO: only supports a single template for now. add multiple templates support.
+    //   return this.template;
+    // }
+    /**
+     * Override to return a String defining the name of the template for the given slot name.
+     */
+    // getTemplateName(slotName: string): string {
+    //   // TODO: only supports a single template for now. add multiple templates support.
+    //   return `default`;
+    // }
+    /**
+     * Override to return false if the Particle isn't ready to `render()`
+     */
+    shouldRender(...args) {
+        return true;
+    }
+    renderOutput(...args) {
+        const renderModel = this.render(...args);
+        if (renderModel) {
+            this.renderModel(renderModel);
+        }
+    }
+    // This is the default output 'packet', other implementations (modalities) could
+    // output other things, or choose different output packets based on hints from 'model'
+    renderModel(model) {
+        this.output({
+            template: this.template,
+            model
+        });
+    }
+    /**
+     * Override to return a dictionary to map into the template.
+     */
+    render(stateArgs) {
+        return {};
+    }
+    _getStateArgs() {
+        return [];
+    }
+    // forceRenderTemplate(slotName: string = ''): void {
+    //   this.slotProxiesByName.forEach((slot: SlotProxy, name: string) => {
+    //     if (!slotName || (name === slotName)) {
+    //       slot.requestedContentTypes.add('template');
+    //     }
+    //   });
+    // }
+    fireEvent(slotName, { handler, data }) {
+        if (this[handler]) {
+            this[handler]({ data });
+        }
+    }
+    async setParticleDescription(pattern) {
+        if (typeof pattern === 'string') {
+            return super.setParticleDescription(pattern);
+        }
+        if (pattern.template && pattern.model) {
+            await super.setDescriptionPattern('_template_', pattern.template);
+            await super.setDescriptionPattern('_model_', JSON.stringify(pattern.model));
+            return undefined;
+        }
+        else {
+            throw new Error('Description pattern must either be string or have template and model');
+        }
+    }
+    /**
+     * Remove all entities from named handle.
+     */
+    async clearHandle(handleName) {
+        const handle = this.handles.get(handleName);
+        if (handle instanceof _handle_js__WEBPACK_IMPORTED_MODULE_0__["Singleton"] || handle instanceof _handle_js__WEBPACK_IMPORTED_MODULE_0__["Collection"]) {
+            await handle.clear();
+        }
+        else {
+            throw new Error('Singleton/Collection required');
+        }
+    }
+    /**
+     * Merge entities from Array into named handle.
+     */
+    async mergeEntitiesToHandle(handleName, entities) {
+        const idMap = {};
+        const handle = this.handles.get(handleName);
+        if (handle instanceof _handle_js__WEBPACK_IMPORTED_MODULE_0__["Collection"]) {
+            const handleEntities = await handle.toList();
+            handleEntities.forEach(entity => idMap[entity.id] = entity);
+            for (const entity of entities) {
+                if (!idMap[this.idFor(entity)]) {
+                    await handle.store(entity);
+                }
+            }
+        }
+        else {
+            throw new Error('Collection required');
+        }
+    }
+    /**
+     * Append entities from Array to named handle.
+     */
+    async appendEntitiesToHandle(handleName, entities) {
+        const handle = this.handles.get(handleName);
+        if (handle) {
+            if (handle instanceof _handle_js__WEBPACK_IMPORTED_MODULE_0__["Collection"] || handle instanceof _handle_js__WEBPACK_IMPORTED_MODULE_0__["BigCollection"]) {
+                await Promise.all(entities.map(entity => handle.store(entity)));
+            }
+            else {
+                throw new Error('Collection required');
+            }
+        }
+    }
+    /**
+     * Create an entity from each rawData, and append to named handle.
+     */
+    async appendRawDataToHandle(handleName, rawDataArray) {
+        const handle = this.handles.get(handleName);
+        if (handle && handle.entityClass) {
+            if (handle instanceof _handle_js__WEBPACK_IMPORTED_MODULE_0__["Collection"] || handle instanceof _handle_js__WEBPACK_IMPORTED_MODULE_0__["BigCollection"]) {
+                const entityClass = handle.entityClass;
+                await Promise.all(rawDataArray.map(raw => handle.store(new entityClass(raw))));
+            }
+            else {
+                throw new Error('Collection required');
+            }
+        }
+    }
+    /**
+     * Modify value of named handle. A new entity is created
+     * from `rawData` (`new [EntityClass](rawData)`).
+     */
+    async updateSingleton(handleName, rawData) {
+        const handle = this.handles.get(handleName);
+        if (handle && handle.entityClass) {
+            if (handle instanceof _handle_js__WEBPACK_IMPORTED_MODULE_0__["Singleton"]) {
+                const entity = new handle.entityClass(rawData);
+                await handle.set(entity);
+                return entity;
+            }
+            else {
+                throw new Error('Singleton required');
+            }
+        }
+        return undefined;
+    }
+    /**
+     * Modify or insert `entity` into named handle.
+     * Modification is done by removing the old entity and reinserting the new one.
+     */
+    async updateCollection(handleName, entity) {
+        // Set the entity into the right place in the set. If we find it
+        // already present replace it, otherwise, add it.
+        // TODO(dstockwell): Replace this with happy entity mutation approach.
+        const handle = this.handles.get(handleName);
+        if (handle) {
+            if (handle instanceof _handle_js__WEBPACK_IMPORTED_MODULE_0__["Collection"] || handle instanceof _handle_js__WEBPACK_IMPORTED_MODULE_0__["BigCollection"]) {
+                await handle.remove(entity);
+                await handle.store(entity);
+            }
+            else {
+                throw new Error('Collection required');
+            }
+        }
+    }
+    // TODO(sjmiles): experimental: high-level handle set
+    async set(name, value) {
+        const handle = this.handles.get(name);
+        if (handle) {
+            // TODO(sjmiles): cannot test class of `handle` because I have no
+            // references to those classes, i.e. `handle is Singleton`, throws
+            // because Singleton is undefined.
+            if (handle.type['isEntity']) {
+                const entity = value.entityClass ? value : new (handle.entityClass)(value);
+                return await handle['set'](entity);
+            }
+            else if (handle.type['isCollection']) {
+                if (Array.isArray(value)) {
+                    await this.clearHandle(name);
+                    await this.appendRawDataToHandle(name, value);
+                }
+            }
+        }
+    }
+    /**
+     * Return array of Entities dereferenced from array of Share-Type Entities
+     */
+    async derefShares(shares) {
+        let entities = [];
+        this.startBusy();
+        try {
+            const derefPromises = shares.map(async (share) => share.ref.dereference());
+            entities = await Promise.all(derefPromises);
+        }
+        finally {
+            this.doneBusy();
+        }
+        return entities;
+    }
+    /**
+     * Returns array of Entities found in BOXED data `box` that are owned by `userid`
+     */
+    async boxQuery(box, userid) {
+        if (!box) {
+            return [];
+        }
+        else {
+            const matches = box.filter(item => userid === item.fromKey);
+            return await this.derefShares(matches);
+        }
+    }
+}
+//# sourceMappingURL=ui-simple-particle.js.map
+
+/***/ }),
+/* 44 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "UiMultiplexerParticle", function() { return UiMultiplexerParticle; });
+/* harmony import */ var _particle_spec_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(5);
+/* harmony import */ var _ui_transformation_particle_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(45);
+/**
+ * @license
+ * Copyright (c) 2017 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+
+
+class UiMultiplexerParticle extends _ui_transformation_particle_js__WEBPACK_IMPORTED_MODULE_1__["UiTransformationParticle"] {
+    async setHandles(handles) {
+        this.plexeds = [];
+        const arc = await this.constructInnerArc();
+        const listHandleName = 'list';
+        const particleHandleName = 'hostedParticle';
+        const particleHandle = handles.get(particleHandleName);
+        let hostedParticle = null;
+        let otherMappedHandles = [];
+        let otherConnections = [];
+        if (particleHandle) {
+            hostedParticle = await particleHandle['get']();
+            if (hostedParticle) {
+                ({ otherMappedHandles, otherConnections } =
+                    await this._mapParticleConnections(listHandleName, particleHandleName, hostedParticle, handles, arc));
+            }
+        }
+        this.setState({
+            arc,
+            type: handles.get(listHandleName).type,
+            hostedParticle,
+            otherMappedHandles,
+            otherConnections
+        });
+        await super.setHandles(handles);
+    }
+    async update({ list }, { arc, type, hostedParticle, otherMappedHandles, otherConnections }, oldProps, oldState) {
+        //console.warn(`[${this.spec.name}]::update`, list, arc);
+        if (!list || !arc) {
+            return;
+        }
+        if (oldProps.list === list && oldState.arc === arc) {
+            return;
+        }
+        if (list.length > 0) {
+            this.relevance = 0.1;
+        }
+        // TODO(sjmiles): needs safety for re-entrant update
+        //const slotIds = [];
+        for (const [index, item] of this.getListEntries(list)) {
+            //const id = await this.updateEntry(index, item, {arc, type, hostedParticle, otherConnections, otherMappedHandles});
+            //slotIds.push(id);
+            await this.updateEntry(index, item, { arc, type, hostedParticle, otherConnections, otherMappedHandles });
+        }
+        //console.warn('m-d-p', slotIds);
+        // clear data from unused particles/handles
+        for (let i = list.length, plexed; (plexed = this.plexeds[i]); i++) {
+            plexed.then(plexed => plexed.handle['clear']());
+        }
+    }
+    async updateEntry(index, item, { hostedParticle, arc, type, otherConnections, otherMappedHandles }) {
+        if (!hostedParticle && !item.renderParticleSpec) {
+            // If we're muxing on behalf of an item with an embedded recipe, the
+            // hosted particle should be retrievable from the item itself. Else we
+            // just skip this item.
+            return;
+        }
+        //console.log(`RenderEx:updateEntry: %c[${index}]`, 'color: #A00; font-weight: bold;');
+        // Map innerArc/slot by index. Index maps closely to rendering contexts.
+        // Rendering contexts are expensive, we want maximal coherence.
+        const plexed = await this.requirePlexed(index, item, { hostedParticle, arc, type, otherConnections, otherMappedHandles });
+        // TODO(sjmiles): work out a proper cast (and conditional), or fix upstream type
+        plexed.handle['set'](item);
+        return plexed.slotId;
+    }
+    async requirePlexed(index, item, { arc, type, hostedParticle, otherConnections, otherMappedHandles }) {
+        let promise = this.plexeds[index];
+        if (!promise) {
+            // eslint-disable-next-line no-async-promise-executor
+            promise = new Promise(async (resolve) => {
+                const handle = await this.acquireItemHandle(index, { arc, item, type });
+                const hosting = await this.resolveHosting(item, { arc, hostedParticle, otherConnections, otherMappedHandles });
+                const result = { arc, handle, hosting, slotId: null };
+                result.slotId = await this.createInnards(item, result);
+                resolve(result);
+            });
+            this.plexeds[index] = promise;
+        }
+        return await promise;
+    }
+    async resolveHosting(item, { arc, hostedParticle, otherConnections, otherMappedHandles }) {
+        return hostedParticle ?
+            { hostedParticle, otherConnections, otherMappedHandles }
+            : await this.resolveHostedParticle(item, arc);
+    }
+    async acquireItemHandle(index, { arc, item, type }) {
+        const handlePromise = arc.createHandle(type.getContainedType(), `item${index}`);
+        return await handlePromise;
+    }
+    async resolveHostedParticle(item, arc) {
+        const hostedParticle = _particle_spec_js__WEBPACK_IMPORTED_MODULE_0__["ParticleSpec"].fromLiteral(JSON.parse(item.renderParticleSpec));
+        // Re-map compatible handles and compute the connections specific
+        // to this item's render particle.
+        const listHandleName = 'list';
+        const particleHandleName = 'renderParticle';
+        const { otherConnections, otherMappedHandles } = await this._mapParticleConnections(listHandleName, particleHandleName, hostedParticle, this.handles, arc);
+        return { otherConnections, otherMappedHandles, hostedParticle };
+    }
+    async _mapParticleConnections(listHandleName, particleHandleName, hostedParticle, handles, arc) {
+        const otherMappedHandles = [];
+        const otherConnections = [];
+        let index = 2;
+        const skipConnectionNames = [listHandleName, particleHandleName];
+        for (const [connectionName, otherHandle] of handles) {
+            if (!skipConnectionNames.includes(connectionName)) {
+                // TODO(wkorman): For items with embedded recipes we may need a map
+                // (perhaps id to index) to make sure we don't map a handle into the inner
+                // arc multiple times unnecessarily.
+                // TODO(lindner): type erasure to avoid mismatch of Store vs Handle in arc.mapHandle
+                // tslint:disable-next-line: no-any
+                const otherHandleStore = otherHandle.storage;
+                otherMappedHandles.push(`use '${await arc.mapHandle(otherHandleStore)}' as v${index}`);
+                //
+                const hostedOtherConnection = hostedParticle.handleConnections.find(conn => conn.isCompatibleType(otherHandle.type));
+                if (hostedOtherConnection) {
+                    otherConnections.push(`${hostedOtherConnection.name} = v${index++}`);
+                    // TODO(wkorman): For items with embedded recipes where we may have a
+                    // different particle rendering each item, we need to track
+                    // |connByHostedConn| keyed on the particle type.
+                    //this._connByHostedConn.set(hostedOtherConnection.name, connectionName);
+                }
+            }
+        }
+        return { otherMappedHandles, otherConnections };
+    }
+    async createInnards(item, { arc, handle, hosting: { hostedParticle, otherMappedHandles, otherConnections } }) {
+        const hostedSlotName = [...hostedParticle.slotConnections.keys()][0];
+        const slotName = [...this.spec.slotConnections.values()][0].name;
+        const slotId = await arc.createSlot(this, slotName, handle._id);
+        if (slotId) {
+            try {
+                const recipe = this.constructInnerRecipe(hostedParticle, item, handle, { name: hostedSlotName, id: slotId }, { connections: otherConnections, handles: otherMappedHandles });
+                await arc.loadRecipe(recipe);
+            }
+            catch (e) {
+                console.warn(e);
+            }
+        }
+        return slotId;
+    }
+    // Called with the list of items and by default returns the direct result of
+    // `Array.entries()`. Subclasses can override this method to alter the item
+    // order or otherwise permute the items as desired before their slots are
+    // created and contents are rendered.
+    getListEntries(list) {
+        return list.entries();
+    }
+}
+//# sourceMappingURL=ui-multiplexer-particle.js.map
+
+/***/ }),
+/* 45 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "UiTransformationParticle", function() { return UiTransformationParticle; });
+/* harmony import */ var _ui_particle_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(42);
+/* harmony import */ var _entity_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(11);
+/**
+ * @license
+ * Copyright (c) 2017 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+
+
+/**
+ * Particle that does transformation.
+ */
+class UiTransformationParticle extends _ui_particle_js__WEBPACK_IMPORTED_MODULE_0__["UiParticle"] {
+    getTemplate(slotName) {
+        // TODO: add support for multiple slots.
+        return this.state.template;
+    }
+    getTemplateName(slotName) {
+        // TODO: add support for multiple slots.
+        return this.state.templateName;
+    }
+    render(props, state) {
+        return state.renderModel;
+    }
+    shouldRender(props, state) {
+        return Boolean((state.template || state.templateName) && state.renderModel);
+    }
+    // Helper methods that may be reused in transformation particles to combine hosted content.
+    static propsToItems(propsValues) {
+        return propsValues ? propsValues.map(e => ({ subId: _entity_js__WEBPACK_IMPORTED_MODULE_1__["Entity"].id(e), ...e })) : [];
+    }
+}
+//# sourceMappingURL=ui-transformation-particle.js.map
+
+/***/ }),
+/* 46 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "logsFactory", function() { return logsFactory; });
+/* harmony import */ var _platform_log_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(47);
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "logFactory", function() { return _platform_log_web_js__WEBPACK_IMPORTED_MODULE_0__["logFactory"]; });
+
+/**
+ * @license
+ * Copyright 2019 Google LLC.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+
+
+const logsFactory = (preamble, color) => ({
+    log: Object(_platform_log_web_js__WEBPACK_IMPORTED_MODULE_0__["logFactory"])(preamble, color, 'log'),
+    warn: Object(_platform_log_web_js__WEBPACK_IMPORTED_MODULE_0__["logFactory"])(preamble, color, 'warn'),
+    error: Object(_platform_log_web_js__WEBPACK_IMPORTED_MODULE_0__["logFactory"])(preamble, color, 'error')
+});
+//# sourceMappingURL=log-factory.js.map
+
+/***/ }),
+/* 47 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";

@@ -21276,6 +21276,8 @@ let PECInnerPort = class PECInnerPort extends APIPort {
         super(messagePort, 'i');
     }
     Render(particle, slotName, content) { }
+    // TODO(sjmiles): alternate render path for slotObserver (UiBroker)
+    Output(particle, content) { }
     InitializeProxy(handle, callback) { }
     SynchronizeProxy(handle, callback) { }
     HandleGet(handle, callback) { }
@@ -21308,6 +21310,9 @@ let PECInnerPort = class PECInnerPort extends APIPort {
 __decorate([
     __param(0, Mapped), __param(1, Direct), __param(2, Direct)
 ], PECInnerPort.prototype, "Render", null);
+__decorate([
+    __param(0, Mapped), __param(1, Direct)
+], PECInnerPort.prototype, "Output", null);
 __decorate([
     __param(0, Mapped), __param(1, LocalMapped)
 ], PECInnerPort.prototype, "InitializeProxy", null);
@@ -21660,6 +21665,13 @@ class Particle$1 {
     }
     mutate(entity, mutation) {
         Entity.mutate(entity, mutation);
+    }
+    // TODO(sjmiles): alternate render path for UiBroker
+    output(content) {
+        const { output } = this.capabilities;
+        if (output) {
+            output(this, content);
+        }
     }
     // abstract
     renderSlot(slotName, contentTypes) { }
@@ -22423,6 +22435,10 @@ class ParticleExecutionContext {
             // TODO(sjmiles): experimental `services` impl
             serviceRequest: (particle, args, callback) => {
                 this.apiPort.ServiceRequest(particle, args, callback);
+            },
+            // TODO(sjmiles): alternate render path via slotObserver (UiBroker)
+            output: (particle, content) => {
+                this.apiPort.Output(particle, content);
             }
         };
         if (hasInnerArcs) {
@@ -23497,6 +23513,13 @@ class PECOuterPortImpl extends PECOuterPort {
             error = 'No recipe defined';
         }
         this.SimpleCallback(callback, error ? { error } : successResponse);
+    }
+    // TODO(sjmiles): experimental `output` impl
+    onOutput(particle, content) {
+        const composer = this.arc.pec.slotComposer;
+        if (composer && composer['delegateOutput']) {
+            composer['delegateOutput'](this.arc, particle, content);
+        }
     }
     onReportExceptionInHost(exception) {
         if (!exception.particleName) {
@@ -25748,19 +25771,21 @@ const locateNodes = function(root, locator, map) {
 /* Annotation Producer */
 // must return `true` for any node whose key we wish to track
 const annotatorImpl = function(node, key, notes, opts) {
+  let tracking = false;
   // hook
   if (opts.annotator && opts.annotator(node, key, notes, opts)) {
-    return true;
+    tracking = true;
   }
   // default
   switch (node.nodeType) {
     case Node.DOCUMENT_FRAGMENT_NODE:
-      return;
+      break;
     case Node.ELEMENT_NODE:
-      return annotateElementNode(node, key, notes);
+      return tracking || annotateElementNode(node, key, notes);
     case Node.TEXT_NODE:
-      return annotateTextNode(node, key, notes);
+      return tracking || annotateTextNode(node, key, notes);
   }
+  return tracking;
 };
 
 const annotateTextNode = function(node, key, notes) {
@@ -25857,6 +25882,8 @@ const listen = function(controller, node, eventName, handlerName) {
   node.addEventListener(eventName, function(e) {
     if (controller[handlerName]) {
       return controller[handlerName](e, e.detail);
+    } else if (controller.defaultHandler) {
+      return controller.defaultHandler(handlerName, e);
     }
   });
 };
@@ -26066,7 +26093,8 @@ const createTemplate = innerHTML => {
 const Template = {
   createTemplate,
   setBoolAttribute,
-  stamp
+  stamp,
+  takeNote
 };
 
 /**
@@ -26796,6 +26824,7 @@ class ModalityHandler {
     }
 }
 ModalityHandler.headlessHandler = new ModalityHandler(HeadlessSlotDomConsumer);
+ModalityHandler.basicHandler = new ModalityHandler(SlotConsumer, DescriptionFormatter);
 ModalityHandler.domHandler = new ModalityHandler(SlotDomConsumer, DescriptionDomFormatter);
 
 /**
@@ -27793,6 +27822,595 @@ class DevtoolsConnection {
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
+/**
+ * Particle that can render and process events.
+ */
+class UiSimpleParticle extends Particle$1 {
+    /**
+     * Override if necessary, to modify superclass config.
+     */
+    get config() {
+        // TODO(sjmiles): getter that does work is a bad idea, this is temporary
+        return {
+            handleNames: this.spec.inputs.map(i => i.name),
+            // TODO(mmandlis): this.spec needs to be replaced with a particle-spec loaded from
+            // .arcs files, instead of .ptcl ones.
+            slotNames: this.spec.slandleConnectionNames()
+        };
+    }
+    /**
+     * Override to return a template.
+     */
+    get template() {
+        return '';
+    }
+    /**
+     * Override to return a String defining primary markup for the given slot name.
+     */
+    // getTemplate(slotName: string): string {
+    //   // TODO: only supports a single template for now. add multiple templates support.
+    //   return this.template;
+    // }
+    /**
+     * Override to return a String defining the name of the template for the given slot name.
+     */
+    // getTemplateName(slotName: string): string {
+    //   // TODO: only supports a single template for now. add multiple templates support.
+    //   return `default`;
+    // }
+    /**
+     * Override to return false if the Particle isn't ready to `render()`
+     */
+    shouldRender(...args) {
+        return true;
+    }
+    renderOutput(...args) {
+        const renderModel = this.render(...args);
+        if (renderModel) {
+            this.renderModel(renderModel);
+        }
+    }
+    // This is the default output 'packet', other implementations (modalities) could
+    // output other things, or choose different output packets based on hints from 'model'
+    renderModel(model) {
+        this.output({
+            template: this.template,
+            model
+        });
+    }
+    /**
+     * Override to return a dictionary to map into the template.
+     */
+    render(stateArgs) {
+        return {};
+    }
+    _getStateArgs() {
+        return [];
+    }
+    // forceRenderTemplate(slotName: string = ''): void {
+    //   this.slotProxiesByName.forEach((slot: SlotProxy, name: string) => {
+    //     if (!slotName || (name === slotName)) {
+    //       slot.requestedContentTypes.add('template');
+    //     }
+    //   });
+    // }
+    fireEvent(slotName, { handler, data }) {
+        if (this[handler]) {
+            this[handler]({ data });
+        }
+    }
+    async setParticleDescription(pattern) {
+        if (typeof pattern === 'string') {
+            return super.setParticleDescription(pattern);
+        }
+        if (pattern.template && pattern.model) {
+            await super.setDescriptionPattern('_template_', pattern.template);
+            await super.setDescriptionPattern('_model_', JSON.stringify(pattern.model));
+            return undefined;
+        }
+        else {
+            throw new Error('Description pattern must either be string or have template and model');
+        }
+    }
+    /**
+     * Remove all entities from named handle.
+     */
+    async clearHandle(handleName) {
+        const handle = this.handles.get(handleName);
+        if (handle instanceof Singleton || handle instanceof Collection) {
+            await handle.clear();
+        }
+        else {
+            throw new Error('Singleton/Collection required');
+        }
+    }
+    /**
+     * Merge entities from Array into named handle.
+     */
+    async mergeEntitiesToHandle(handleName, entities) {
+        const idMap = {};
+        const handle = this.handles.get(handleName);
+        if (handle instanceof Collection) {
+            const handleEntities = await handle.toList();
+            handleEntities.forEach(entity => idMap[entity.id] = entity);
+            for (const entity of entities) {
+                if (!idMap[this.idFor(entity)]) {
+                    await handle.store(entity);
+                }
+            }
+        }
+        else {
+            throw new Error('Collection required');
+        }
+    }
+    /**
+     * Append entities from Array to named handle.
+     */
+    async appendEntitiesToHandle(handleName, entities) {
+        const handle = this.handles.get(handleName);
+        if (handle) {
+            if (handle instanceof Collection || handle instanceof BigCollection) {
+                await Promise.all(entities.map(entity => handle.store(entity)));
+            }
+            else {
+                throw new Error('Collection required');
+            }
+        }
+    }
+    /**
+     * Create an entity from each rawData, and append to named handle.
+     */
+    async appendRawDataToHandle(handleName, rawDataArray) {
+        const handle = this.handles.get(handleName);
+        if (handle && handle.entityClass) {
+            if (handle instanceof Collection || handle instanceof BigCollection) {
+                const entityClass = handle.entityClass;
+                await Promise.all(rawDataArray.map(raw => handle.store(new entityClass(raw))));
+            }
+            else {
+                throw new Error('Collection required');
+            }
+        }
+    }
+    /**
+     * Modify value of named handle. A new entity is created
+     * from `rawData` (`new [EntityClass](rawData)`).
+     */
+    async updateSingleton(handleName, rawData) {
+        const handle = this.handles.get(handleName);
+        if (handle && handle.entityClass) {
+            if (handle instanceof Singleton) {
+                const entity = new handle.entityClass(rawData);
+                await handle.set(entity);
+                return entity;
+            }
+            else {
+                throw new Error('Singleton required');
+            }
+        }
+        return undefined;
+    }
+    /**
+     * Modify or insert `entity` into named handle.
+     * Modification is done by removing the old entity and reinserting the new one.
+     */
+    async updateCollection(handleName, entity) {
+        // Set the entity into the right place in the set. If we find it
+        // already present replace it, otherwise, add it.
+        // TODO(dstockwell): Replace this with happy entity mutation approach.
+        const handle = this.handles.get(handleName);
+        if (handle) {
+            if (handle instanceof Collection || handle instanceof BigCollection) {
+                await handle.remove(entity);
+                await handle.store(entity);
+            }
+            else {
+                throw new Error('Collection required');
+            }
+        }
+    }
+    // TODO(sjmiles): experimental: high-level handle set
+    async set(name, value) {
+        const handle = this.handles.get(name);
+        if (handle) {
+            // TODO(sjmiles): cannot test class of `handle` because I have no
+            // references to those classes, i.e. `handle is Singleton`, throws
+            // because Singleton is undefined.
+            if (handle.type['isEntity']) {
+                const entity = value.entityClass ? value : new (handle.entityClass)(value);
+                return await handle['set'](entity);
+            }
+            else if (handle.type['isCollection']) {
+                if (Array.isArray(value)) {
+                    await this.clearHandle(name);
+                    await this.appendRawDataToHandle(name, value);
+                }
+            }
+        }
+    }
+    /**
+     * Return array of Entities dereferenced from array of Share-Type Entities
+     */
+    async derefShares(shares) {
+        let entities = [];
+        this.startBusy();
+        try {
+            const derefPromises = shares.map(async (share) => share.ref.dereference());
+            entities = await Promise.all(derefPromises);
+        }
+        finally {
+            this.doneBusy();
+        }
+        return entities;
+    }
+    /**
+     * Returns array of Entities found in BOXED data `box` that are owned by `userid`
+     */
+    async boxQuery(box, userid) {
+        if (!box) {
+            return [];
+        }
+        else {
+            const matches = box.filter(item => userid === item.fromKey);
+            return await this.derefShares(matches);
+        }
+    }
+}
+
+/**
+ * @license
+ * Copyright (c) 2017 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+/**
+ * Particle that interoperates with DOM and uses a simple state system
+ * to handle updates.
+ */
+// TODO(sjmiles): seems like this is really `UiStatefulParticle` but it's
+// used so often, I went with the simpler name
+class UiParticle extends XenStateMixin(UiSimpleParticle) {
+    /**
+     * Override if necessary, to do things when props change.
+     * Avoid if possible, use `update` instead.
+     */
+    willReceiveProps(...args) {
+    }
+    // affordance so subclasses can avoid `_`
+    _willReceiveProps(...args) {
+        this.willReceiveProps(...args);
+    }
+    /**
+     * Override to do things when props or state change.
+     */
+    update(...args) {
+    }
+    /**
+     * Override to return a dictionary to map into the template.
+     */
+    render(...args) {
+        return {};
+    }
+    /**
+     * Copy values from `state` into the particle's internal state,
+     * triggering an update cycle unless currently updating.
+     */
+    setState(state) {
+        return this._setState(state);
+    }
+    /**
+     * Getters and setters for working with state/props.
+     */
+    get state() {
+        return this._state;
+    }
+    /**
+     * Syntactic sugar: `this.state = {state}` is equivalent to `this.setState(state)`.
+     * This is actually a merge, not an assignment.
+     */
+    set state(state) {
+        this.setState(state);
+    }
+    get props() {
+        return this._props;
+    }
+    _update(...args) {
+        this.update(...args);
+        //
+        if (this.shouldRender(...args)) { // TODO: should shouldRender be slot specific?
+            this.relevance = 1; // TODO: improve relevance signal.
+            this.renderOutput(...args);
+        }
+    }
+    _async(fn) {
+        // asynchrony in Particle code must be bookended with start/doneBusy
+        this.startBusy();
+        const done = () => {
+            try {
+                fn.call(this);
+            }
+            finally {
+                this.doneBusy();
+            }
+        };
+        // TODO(sjmiles): superclass uses Promise.resolve(),
+        // but here use a short timeout for a wider debounce
+        return setTimeout(done, 10);
+    }
+    async setHandles(handles) {
+        this.configureHandles(handles);
+        this.handles = handles;
+        // TODO(sjmiles): we must invalidate at least once, is there a way to know
+        // whether handleSync/update will be called?
+        this._invalidate();
+    }
+    /**
+     * This is called once during particle setup. Override to control sync and update
+     * configuration on specific handles (via their configure() method).
+     * `handles` is a map from names to handle instances.
+     */
+    configureHandles(handles) {
+        // Example: handles.get('foo').configure({keepSynced: false});
+    }
+    async onHandleSync(handle, model) {
+        this._setProperty(handle.name, model);
+    }
+    async onHandleUpdate({ name }, { data, added, removed }) {
+        if (data !== undefined) {
+            //console.log('update.data:', JSON.stringify(data, null, '  '));
+            this._setProps({ [name]: data });
+        }
+        if (added) {
+            //console.log('update.added:', JSON.stringify(added, null, '  '));
+            const prop = (this.props[name] || []).concat(added);
+            // TODO(sjmiles): generally improper to set `this._props` directly, this is a special case
+            this._props[name] = prop;
+            this._setProps({ [name]: prop });
+        }
+        if (removed) {
+            //console.log('update.removed:', JSON.stringify(removed, null, '  '));
+            const prop = this.props[name];
+            if (Array.isArray(prop)) {
+                removed.forEach(removed => {
+                    // TODO(sjmiles): linear search is inefficient
+                    const index = prop.findIndex(entry => this.idFor(entry) === this.idFor(removed));
+                    if (index >= 0) {
+                        prop.splice(index, 1);
+                    }
+                    else {
+                        console.warn(`dom-particle::onHandleUpdate: couldn't find item to remove`);
+                    }
+                });
+                this._setProps({ [name]: prop });
+            }
+        }
+    }
+    fireEvent(slotName, { handler, data }) {
+        if (this[handler]) {
+            // TODO(sjmiles): remove deprecated `this._state` parameter
+            this[handler]({ data }, this._state);
+        }
+    }
+    debounce(key, func, delay) {
+        const subkey = `_debounce_${key}`;
+        const state = this.state;
+        if (!state[subkey]) {
+            state[subkey] = true;
+            this.startBusy();
+        }
+        const idleThenFunc = () => {
+            this.doneBusy();
+            func();
+            state[subkey] = null;
+        };
+        // TODO(sjmiles): rewrite Xen debounce so caller has idle control
+        super._debounce(key, idleThenFunc, delay);
+    }
+}
+
+/**
+ * @license
+ * Copyright (c) 2017 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+/**
+ * Particle that does transformation.
+ */
+class UiTransformationParticle extends UiParticle {
+    getTemplate(slotName) {
+        // TODO: add support for multiple slots.
+        return this.state.template;
+    }
+    getTemplateName(slotName) {
+        // TODO: add support for multiple slots.
+        return this.state.templateName;
+    }
+    render(props, state) {
+        return state.renderModel;
+    }
+    shouldRender(props, state) {
+        return Boolean((state.template || state.templateName) && state.renderModel);
+    }
+    // Helper methods that may be reused in transformation particles to combine hosted content.
+    static propsToItems(propsValues) {
+        return propsValues ? propsValues.map(e => ({ subId: Entity.id(e), ...e })) : [];
+    }
+}
+
+/**
+ * @license
+ * Copyright (c) 2017 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+class UiMultiplexerParticle extends UiTransformationParticle {
+    async setHandles(handles) {
+        this.plexeds = [];
+        const arc = await this.constructInnerArc();
+        const listHandleName = 'list';
+        const particleHandleName = 'hostedParticle';
+        const particleHandle = handles.get(particleHandleName);
+        let hostedParticle = null;
+        let otherMappedHandles = [];
+        let otherConnections = [];
+        if (particleHandle) {
+            hostedParticle = await particleHandle['get']();
+            if (hostedParticle) {
+                ({ otherMappedHandles, otherConnections } =
+                    await this._mapParticleConnections(listHandleName, particleHandleName, hostedParticle, handles, arc));
+            }
+        }
+        this.setState({
+            arc,
+            type: handles.get(listHandleName).type,
+            hostedParticle,
+            otherMappedHandles,
+            otherConnections
+        });
+        await super.setHandles(handles);
+    }
+    async update({ list }, { arc, type, hostedParticle, otherMappedHandles, otherConnections }, oldProps, oldState) {
+        //console.warn(`[${this.spec.name}]::update`, list, arc);
+        if (!list || !arc) {
+            return;
+        }
+        if (oldProps.list === list && oldState.arc === arc) {
+            return;
+        }
+        if (list.length > 0) {
+            this.relevance = 0.1;
+        }
+        // TODO(sjmiles): needs safety for re-entrant update
+        //const slotIds = [];
+        for (const [index, item] of this.getListEntries(list)) {
+            //const id = await this.updateEntry(index, item, {arc, type, hostedParticle, otherConnections, otherMappedHandles});
+            //slotIds.push(id);
+            await this.updateEntry(index, item, { arc, type, hostedParticle, otherConnections, otherMappedHandles });
+        }
+        //console.warn('m-d-p', slotIds);
+        // clear data from unused particles/handles
+        for (let i = list.length, plexed; (plexed = this.plexeds[i]); i++) {
+            plexed.then(plexed => plexed.handle['clear']());
+        }
+    }
+    async updateEntry(index, item, { hostedParticle, arc, type, otherConnections, otherMappedHandles }) {
+        if (!hostedParticle && !item.renderParticleSpec) {
+            // If we're muxing on behalf of an item with an embedded recipe, the
+            // hosted particle should be retrievable from the item itself. Else we
+            // just skip this item.
+            return;
+        }
+        //console.log(`RenderEx:updateEntry: %c[${index}]`, 'color: #A00; font-weight: bold;');
+        // Map innerArc/slot by index. Index maps closely to rendering contexts.
+        // Rendering contexts are expensive, we want maximal coherence.
+        const plexed = await this.requirePlexed(index, item, { hostedParticle, arc, type, otherConnections, otherMappedHandles });
+        // TODO(sjmiles): work out a proper cast (and conditional), or fix upstream type
+        plexed.handle['set'](item);
+        return plexed.slotId;
+    }
+    async requirePlexed(index, item, { arc, type, hostedParticle, otherConnections, otherMappedHandles }) {
+        let promise = this.plexeds[index];
+        if (!promise) {
+            // eslint-disable-next-line no-async-promise-executor
+            promise = new Promise(async (resolve) => {
+                const handle = await this.acquireItemHandle(index, { arc, item, type });
+                const hosting = await this.resolveHosting(item, { arc, hostedParticle, otherConnections, otherMappedHandles });
+                const result = { arc, handle, hosting, slotId: null };
+                result.slotId = await this.createInnards(item, result);
+                resolve(result);
+            });
+            this.plexeds[index] = promise;
+        }
+        return await promise;
+    }
+    async resolveHosting(item, { arc, hostedParticle, otherConnections, otherMappedHandles }) {
+        return hostedParticle ?
+            { hostedParticle, otherConnections, otherMappedHandles }
+            : await this.resolveHostedParticle(item, arc);
+    }
+    async acquireItemHandle(index, { arc, item, type }) {
+        const handlePromise = arc.createHandle(type.getContainedType(), `item${index}`);
+        return await handlePromise;
+    }
+    async resolveHostedParticle(item, arc) {
+        const hostedParticle = ParticleSpec.fromLiteral(JSON.parse(item.renderParticleSpec));
+        // Re-map compatible handles and compute the connections specific
+        // to this item's render particle.
+        const listHandleName = 'list';
+        const particleHandleName = 'renderParticle';
+        const { otherConnections, otherMappedHandles } = await this._mapParticleConnections(listHandleName, particleHandleName, hostedParticle, this.handles, arc);
+        return { otherConnections, otherMappedHandles, hostedParticle };
+    }
+    async _mapParticleConnections(listHandleName, particleHandleName, hostedParticle, handles, arc) {
+        const otherMappedHandles = [];
+        const otherConnections = [];
+        let index = 2;
+        const skipConnectionNames = [listHandleName, particleHandleName];
+        for (const [connectionName, otherHandle] of handles) {
+            if (!skipConnectionNames.includes(connectionName)) {
+                // TODO(wkorman): For items with embedded recipes we may need a map
+                // (perhaps id to index) to make sure we don't map a handle into the inner
+                // arc multiple times unnecessarily.
+                // TODO(lindner): type erasure to avoid mismatch of Store vs Handle in arc.mapHandle
+                // tslint:disable-next-line: no-any
+                const otherHandleStore = otherHandle.storage;
+                otherMappedHandles.push(`use '${await arc.mapHandle(otherHandleStore)}' as v${index}`);
+                //
+                const hostedOtherConnection = hostedParticle.handleConnections.find(conn => conn.isCompatibleType(otherHandle.type));
+                if (hostedOtherConnection) {
+                    otherConnections.push(`${hostedOtherConnection.name} = v${index++}`);
+                    // TODO(wkorman): For items with embedded recipes where we may have a
+                    // different particle rendering each item, we need to track
+                    // |connByHostedConn| keyed on the particle type.
+                    //this._connByHostedConn.set(hostedOtherConnection.name, connectionName);
+                }
+            }
+        }
+        return { otherMappedHandles, otherConnections };
+    }
+    async createInnards(item, { arc, handle, hosting: { hostedParticle, otherMappedHandles, otherConnections } }) {
+        const hostedSlotName = [...hostedParticle.slotConnections.keys()][0];
+        const slotName = [...this.spec.slotConnections.values()][0].name;
+        const slotId = await arc.createSlot(this, slotName, handle._id);
+        if (slotId) {
+            try {
+                const recipe = this.constructInnerRecipe(hostedParticle, item, handle, { name: hostedSlotName, id: slotId }, { connections: otherConnections, handles: otherMappedHandles });
+                await arc.loadRecipe(recipe);
+            }
+            catch (e) {
+                console.warn(e);
+            }
+        }
+        return slotId;
+    }
+    // Called with the list of items and by default returns the direct result of
+    // `Array.entries()`. Subclasses can override this method to alter the item
+    // order or otherwise permute the items as desired before their slots are
+    // created and contents are rendered.
+    getListEntries(list) {
+        return list.entries();
+    }
+}
+
+/**
+ * @license
+ * Copyright (c) 2017 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
 const html$1 = (strings, ...values) => (strings[0] + values.map((v, i) => v + strings[i + 1]).join('')).trim();
 class PlatformLoaderBase extends Loader {
     constructor(urlMap) {
@@ -27828,19 +28446,21 @@ class PlatformLoaderBase extends Loader {
             this._urlMap[name] = resolved;
         }
         this._urlMap['$here'] = resolved;
+        this._urlMap['$module'] = resolved;
     }
     unwrapParticle(particleWrapper, log) {
-        // TODO(sjmiles): regarding `resolver`:
-        //  resolve method allows particles to request remapping of assets paths
-        //  for use in DOM
-        const resolver = this.resolve.bind(this);
         return particleWrapper({
+            // Particle base
             Particle: Particle$1,
+            // Dom-flavored Particles (deprecated?)
             DomParticle,
             MultiplexerDomParticle,
-            SimpleParticle: DomParticle,
             TransformationDomParticle,
-            resolver,
+            // Ui-flavored Particles
+            UiParticle,
+            UiMultiplexerParticle,
+            // utilities
+            resolver: this.resolve.bind(this),
             log: log || (() => { }),
             html: html$1
         });

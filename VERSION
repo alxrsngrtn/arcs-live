@@ -1,11 +1,15 @@
-commit d40f859f38c8604e98d295837a6c5add664978bb
-Author: galganif <4754402+galganif@users.noreply.github.com>
-Date:   Thu Aug 29 11:03:41 2019 +1000
+commit 00c7838503694b1eb633e2ed16eb394bfac884d0
+Author: Scott J. Miles <sjmiles@google.com>
+Date:   Thu Aug 29 12:49:41 2019 -0700
 
-    when the handle is reading the model, the storage proxy should sync t… (#3484)
+    UIParticle Core (#3506)
     
-    * when the handle is reading the model, the storage proxy should sync the model only if it is not already synchronized
+    * fix annotator plugin feature
     
-    * pull call to synchronizeModel out of the new promise block to fix lint error
+    * add ui-* implementation bits, enable via `smoke-shell`
     
-    * rename synchronizeModel to requestSynchronization
+    * bob and weave wrt tslint
+    
+    * bob and weave wrt tslint
+    
+    * fix reference hack, ty @mmandlis

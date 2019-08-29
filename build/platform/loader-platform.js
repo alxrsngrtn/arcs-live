@@ -12,6 +12,8 @@ import { Particle } from '../runtime/particle.js';
 import { DomParticle } from '../runtime/dom-particle.js';
 import { MultiplexerDomParticle } from '../runtime/multiplexer-dom-particle.js';
 import { TransformationDomParticle } from '../runtime/transformation-dom-particle.js';
+import { UiParticle } from '../runtime/ui-particle.js';
+import { UiMultiplexerParticle } from '../runtime/ui-multiplexer-particle.js';
 const html = (strings, ...values) => (strings[0] + values.map((v, i) => v + strings[i + 1]).join('')).trim();
 export class PlatformLoaderBase extends Loader {
     constructor(urlMap) {
@@ -47,19 +49,21 @@ export class PlatformLoaderBase extends Loader {
             this._urlMap[name] = resolved;
         }
         this._urlMap['$here'] = resolved;
+        this._urlMap['$module'] = resolved;
     }
     unwrapParticle(particleWrapper, log) {
-        // TODO(sjmiles): regarding `resolver`:
-        //  resolve method allows particles to request remapping of assets paths
-        //  for use in DOM
-        const resolver = this.resolve.bind(this);
         return particleWrapper({
+            // Particle base
             Particle,
+            // Dom-flavored Particles (deprecated?)
             DomParticle,
             MultiplexerDomParticle,
-            SimpleParticle: DomParticle,
             TransformationDomParticle,
-            resolver,
+            // Ui-flavored Particles
+            UiParticle,
+            UiMultiplexerParticle,
+            // utilities
+            resolver: this.resolve.bind(this),
             log: log || (() => { }),
             html
         });
