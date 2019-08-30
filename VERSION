@@ -1,15 +1,7 @@
-commit 00c7838503694b1eb633e2ed16eb394bfac884d0
-Author: Scott J. Miles <sjmiles@google.com>
-Date:   Thu Aug 29 12:49:41 2019 -0700
+commit e1cb000c2ca9d421542eac900e7bf1038290c477
+Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
+Date:   Thu Aug 29 20:31:13 2019 -0700
 
-    UIParticle Core (#3506)
+    Simplifies fast-forward ops into a series of add ops. (#3511)
     
-    * fix annotator plugin feature
-    
-    * add ui-* implementation bits, enable via `smoke-shell`
-    
-    * bob and weave wrt tslint
-    
-    * bob and weave wrt tslint
-    
-    * fix reference hack, ty @mmandlis
+    Only works when a single actor was responsible for the changes. Must be add ops only (no removes), and must be in incremental order.

@@ -63,4 +63,10 @@ export declare class CRDTCollection<T extends Referenceable> implements Collecti
     private remove;
     private fastForward;
 }
+/**
+ * Converts a simple fast-forward operation into a sequence of regular ops.
+ * Currently only supports converting add ops made by a single actor. Returns
+ * null if it could not simplify the fast-forward operation.
+ */
+export declare function simplifyFastForwardOp<T>(fastForwardOp: CollectionFastForwardOp<T>): CollectionOperation<T>[];
 export {};
