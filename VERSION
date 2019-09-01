@@ -1,7 +1,9 @@
-commit e1cb000c2ca9d421542eac900e7bf1038290c477
-Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
-Date:   Thu Aug 29 20:31:13 2019 -0700
+commit 19dc48c5bbffd1eccbd03f2a9de1b736a0bceef7
+Author: Ray Cromwell <cromwellian@gmail.com>
+Date:   Sat Aug 31 21:35:27 2019 -0700
 
-    Simplifies fast-forward ops into a series of add ops. (#3511)
+    Cleanups needed for import (#3513)
     
-    Only works when a single actor was responsible for the changes. Must be add ops only (no removes), and must be in incremental order.
+    * Cleanups needed for import
+    
+    * fix nits
