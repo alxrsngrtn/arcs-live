@@ -1,9 +1,7 @@
-commit 19dc48c5bbffd1eccbd03f2a9de1b736a0bceef7
-Author: Ray Cromwell <cromwellian@gmail.com>
-Date:   Sat Aug 31 21:35:27 2019 -0700
+commit d34c320974d34f3ead8a63409b14d93cb2bc42da
+Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
+Date:   Sun Sep 1 17:18:36 2019 -0700
 
-    Cleanups needed for import (#3513)
+    Tidy up the implementation of simplyFastForwardOp (#3512)
     
-    * Cleanups needed for import
-    
-    * fix nits
+    * Tidy up the implementation of simplyFastForwardOp
