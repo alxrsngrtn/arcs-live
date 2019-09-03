@@ -1,19 +1,5 @@
-commit 115b2e9c5bd30571fbcc776fc57f425dc214e88b
-Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
-Date:   Tue Sep 3 00:01:04 2019 -0700
+commit ebc352bc9abc34bb79b772f80d03aa615f291cbe
+Author: Ray Cromwell <cromwellian@gmail.com>
+Date:   Tue Sep 3 08:32:54 2019 -0700
 
-    Bazel arcs_cc_schema rule for generating C++ headers from .arcs schemas (#3514)
-    
-    * Created a bazel arcs_cc_schema rule for generating C++ header files from
-    .arcs schema files.
-    
-    This works by running the sigh schema2pkg command in the repository root
-    directory, and writing the results into the expected bazel-out folder.
-    
-    Other sigh commands can be trivially wrapped in the same way.
-    
-    * Missing build file
-    
-    * Switched to use expand_template() instead of write()
-    
-    * Fixed header guard
+    Fixups for errorprone (#3516)
