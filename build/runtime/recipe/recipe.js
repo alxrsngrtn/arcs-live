@@ -82,7 +82,7 @@ export class Recipe {
         const idx = this._particles.indexOf(particle);
         assert(idx > -1);
         this._particles.splice(idx, 1);
-        particle.getSlotConnections().map(conn => conn.remove());
+        particle.getSlotConnections().forEach(conn => conn.remove());
     }
     newHandle() {
         const handle = new Handle(this);
@@ -483,11 +483,11 @@ export class Recipe {
             nameMap.set(item, localName);
         };
         i = 0;
-        this.particles.map(particle => mapName(particle, 'particle'));
+        this.particles.forEach(particle => mapName(particle, 'particle'));
         i = 0;
-        this.handles.map(handle => mapName(handle, 'handle'));
+        this.handles.forEach(handle => mapName(handle, 'handle'));
         i = 0;
-        this.slots.map(slot => mapName(slot, 'slot'));
+        this.slots.forEach(slot => mapName(slot, 'slot'));
         return nameMap;
     }
     // TODO: Add a normalize() which strips local names and puts and nested

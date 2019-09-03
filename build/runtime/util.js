@@ -68,4 +68,14 @@ export function setDiffCustom(from, to, keyFn) {
  * TODO: Remove all usages of this function and then delete it.
  */
 export function floatingPromiseToAudit(promise) { }
+/**
+ * Noop function that can be used to supress the tsetse must-use-promises rule.
+ *
+ * Example Usage:
+ *   async function x() {
+ *     await doA();
+ *     noAwait(doB());
+ *   }
+ */
+export function noAwait(result) { }
 //# sourceMappingURL=util.js.map

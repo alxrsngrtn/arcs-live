@@ -86,7 +86,7 @@ export class InterfaceInfo {
         return 'InterfaceInfo';
     }
     mergeTypeVariablesByName(variableMap) {
-        this.typeVars.map(({ object, field }) => object[field] = object[field].mergeTypeVariablesByName(variableMap));
+        this.typeVars.forEach(({ object, field }) => object[field] = object[field].mergeTypeVariablesByName(variableMap));
     }
     get canReadSubset() {
         return this._cloneAndUpdate(typeVar => typeVar.canReadSubset);

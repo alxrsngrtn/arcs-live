@@ -131,7 +131,7 @@ export class SlotConsumer {
         if (!this.consumeConn)
             return null; // TODO: remove null ability
         const descriptions = new Map();
-        Object.values(this.consumeConn.particle.connections).map(handleConn => {
+        Object.values(this.consumeConn.particle.connections).forEach(handleConn => {
             if (handleConn.handle) {
                 descriptions[`${handleConn.name}.description`] =
                     this.description.getHandleDescription(handleConn.handle).toString();

@@ -10,6 +10,7 @@
 import { ChangeType, CRDTError } from '../crdt/crdt.js';
 import { DriverFactory } from './drivers/driver-factory.js';
 import { ActiveStore, ProxyMessageType } from './store-interface.js';
+import { noAwait } from '../util.js';
 export var DirectStoreState;
 (function (DirectStoreState) {
     DirectStoreState["Idle"] = "Idle";
@@ -211,12 +212,14 @@ export class DirectStore extends ActiveStore {
                     }
                 }
                 const change = { changeType: ChangeType.Operations, operations: message.operations };
-                void this.processModelChange(change, null, this.version, false);
+                // to make tsetse checks happy
+                noAwait(this.processModelChange(change, null, this.version, false));
                 return true;
             }
             case ProxyMessageType.ModelUpdate: {
                 const { modelChange, otherChange } = this.localModel.merge(message.model);
-                void this.processModelChange(modelChange, otherChange, this.version, false);
+                // to make tsetse checks happy
+                noAwait(this.processModelChange(modelChange, otherChange, this.version, false));
                 return true;
             }
             default:

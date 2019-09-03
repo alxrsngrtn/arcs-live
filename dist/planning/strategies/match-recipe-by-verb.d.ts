@@ -7,7 +7,6 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-/// <reference types="core-js" />
 import { HandleConnectionSpec, ConsumeSlotConnectionSpec } from '../../runtime/particle-spec.js';
 import { Handle } from '../../runtime/recipe/handle.js';
 import { Slot } from '../../runtime/recipe/slot.js';
@@ -16,18 +15,19 @@ import { Recipe } from '../../runtime/recipe/recipe.js';
 import { Strategy } from '../strategizer.js';
 import { GenerateParams, Descendant } from '../../runtime/recipe/walker.js';
 import { Direction } from '../../runtime/manifest-ast-nodes.js';
+import { Dictionary } from '../../runtime/hot.js';
 declare type HandleConstraint = {
     handle: Handle;
     direction: Direction;
 };
 declare type SlotConstraint = {
     targetSlot: Slot;
-    providedSlots: Dict<Slot>;
+    providedSlots: Dictionary<Slot>;
 };
 export declare class MatchRecipeByVerb extends Strategy {
     generate(inputParams: GenerateParams<Recipe>): Promise<Descendant<Recipe>[]>;
     static satisfiesHandleConstraints(recipe: Recipe, handleConstraints: {
-        named: Dict<HandleConstraint>;
+        named: Dictionary<HandleConstraint>;
         unnamed: HandleConstraint[];
     }): boolean;
     static satisfiesUnnamedHandleConnection(recipe: Recipe, handleConstraint: HandleConstraint): boolean;
@@ -36,7 +36,7 @@ export declare class MatchRecipeByVerb extends Strategy {
     static connectionMatchesConstraint(connection: {
         direction: Direction;
     }, handleConstraint: HandleConstraint): boolean;
-    static satisfiesSlotConstraints(recipe: Recipe, slotConstraints: Dict<SlotConstraint>): boolean;
+    static satisfiesSlotConstraints(recipe: Recipe, slotConstraints: Dictionary<SlotConstraint>): boolean;
     static satisfiesSlotConnection(recipe: Recipe, slotName: string, constraints: SlotConstraint): boolean;
     static slotsMatchConstraint(particle: Particle, slotSpecs: ReadonlyMap<string, ConsumeSlotConnectionSpec>, name: string, constraints: any): boolean;
 }

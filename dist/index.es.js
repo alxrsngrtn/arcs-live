@@ -148,7 +148,7 @@ class InterfaceInfo {
         return 'InterfaceInfo';
     }
     mergeTypeVariablesByName(variableMap) {
-        this.typeVars.map(({ object, field }) => object[field] = object[field].mergeTypeVariablesByName(variableMap));
+        this.typeVars.forEach(({ object, field }) => object[field] = object[field].mergeTypeVariablesByName(variableMap));
     }
     get canReadSubset() {
         return this._cloneAndUpdate(typeVar => typeVar.canReadSubset);
@@ -4335,7 +4335,7 @@ class DescriptionFormatter {
     // tslint:disable-next-line: no-any
     _combineSelectedDescriptions(selectedDescriptions, options = {}) {
         const suggestions = [];
-        selectedDescriptions.map(particle => {
+        selectedDescriptions.forEach(particle => {
             if (!this.seenParticles.has(particle._particle)) {
                 suggestions.push(this.patternToSuggestion(particle.pattern, particle));
             }
@@ -16643,7 +16643,7 @@ class RecipeUtil {
                 newMatches = newMatches.concat(RecipeUtil._assignHandlesToEmptyPosition(shape, match, [thisHandle], nullHandles));
             }
             else {
-                newMatches.concat(match);
+                newMatches = newMatches.concat(match);
             }
         }
         return newMatches;
@@ -17521,7 +17521,7 @@ class Recipe {
         const idx = this._particles.indexOf(particle);
         assert(idx > -1);
         this._particles.splice(idx, 1);
-        particle.getSlotConnections().map(conn => conn.remove());
+        particle.getSlotConnections().forEach(conn => conn.remove());
     }
     newHandle() {
         const handle = new Handle(this);
@@ -17922,11 +17922,11 @@ class Recipe {
             nameMap.set(item, localName);
         };
         i = 0;
-        this.particles.map(particle => mapName(particle, 'particle'));
+        this.particles.forEach(particle => mapName(particle, 'particle'));
         i = 0;
-        this.handles.map(handle => mapName(handle, 'handle'));
+        this.handles.forEach(handle => mapName(handle, 'handle'));
         i = 0;
-        this.slots.map(slot => mapName(slot, 'slot'));
+        this.slots.forEach(slot => mapName(slot, 'slot'));
         return nameMap;
     }
     // TODO: Add a normalize() which strips local names and puts and nested
@@ -26382,7 +26382,7 @@ class SlotConsumer {
         if (!this.consumeConn)
             return null; // TODO: remove null ability
         const descriptions = new Map();
-        Object.values(this.consumeConn.particle.connections).map(handleConn => {
+        Object.values(this.consumeConn.particle.connections).forEach(handleConn => {
             if (handleConn.handle) {
                 descriptions[`${handleConn.name}.description`] =
                     this.description.getHandleDescription(handleConn.handle).toString();

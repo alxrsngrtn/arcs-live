@@ -29,3 +29,15 @@ export declare function setDiffCustom<T, U>(from: T[], to: T[], keyFn: (T: any) 
  * TODO: Remove all usages of this function and then delete it.
  */
 export declare function floatingPromiseToAudit<T>(promise: Promise<T>): void;
+/**
+ * Noop function that can be used to supress the tsetse must-use-promises rule.
+ *
+ * Example Usage:
+ *   async function x() {
+ *     await doA();
+ *     noAwait(doB());
+ *   }
+ */
+export declare function noAwait(result: {
+    then: Function;
+}): void;

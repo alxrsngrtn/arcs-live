@@ -2636,7 +2636,7 @@ class InterfaceInfo {
         return 'InterfaceInfo';
     }
     mergeTypeVariablesByName(variableMap) {
-        this.typeVars.map(({ object, field }) => object[field] = object[field].mergeTypeVariablesByName(variableMap));
+        this.typeVars.forEach(({ object, field }) => object[field] = object[field].mergeTypeVariablesByName(variableMap));
     }
     get canReadSubset() {
         return this._cloneAndUpdate(typeVar => typeVar.canReadSubset);
@@ -5686,6 +5686,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "setDiff", function() { return setDiff; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "setDiffCustom", function() { return setDiffCustom; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "floatingPromiseToAudit", function() { return floatingPromiseToAudit; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "noAwait", function() { return noAwait; });
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
 /**
  * @license
@@ -5757,6 +5758,16 @@ function setDiffCustom(from, to, keyFn) {
  * TODO: Remove all usages of this function and then delete it.
  */
 function floatingPromiseToAudit(promise) { }
+/**
+ * Noop function that can be used to supress the tsetse must-use-promises rule.
+ *
+ * Example Usage:
+ *   async function x() {
+ *     await doA();
+ *     noAwait(doB());
+ *   }
+ */
+function noAwait(result) { }
 //# sourceMappingURL=util.js.map
 
 /***/ }),
