@@ -10,7 +10,7 @@
 import { logFactory } from '../platform/log-web.js';
 export { logFactory };
 export declare const logsFactory: (preamble: any, color: any) => {
-    log: any;
-    warn: any;
-    error: any;
+    log: (...args: any) => void;
+    warn: (...args: any) => void;
+    error: (...args: any) => void;
 };

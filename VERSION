@@ -1,5 +1,13 @@
-commit fdc726867e0750e4b46a52751e045717dea0a5de
-Author: yuangu-google <yuangu@google.com>
-Date:   Wed Sep 4 13:01:42 2019 -0700
+commit 210a7a994ec43b9f8f15c999d86d62c4b9831323
+Author: Ray Cromwell <cromwellian@gmail.com>
+Date:   Wed Sep 4 13:43:43 2019 -0700
 
-    Add .aswb used by Android Stuido to .gitignore. (#3529)
+    Fixes needed for blaze compilation (#3521)
+    
+    * Fixes needed for blaze compilation
+    
+    * fix header
+    
+    * bisect build issue
+    
+    * bisect build issue
