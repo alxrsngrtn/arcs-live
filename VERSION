@@ -1,9 +1,14 @@
-commit 2621e3e4b78038e4f0d7e8410bed863686153629
-Author: Ray Cromwell <cromwellian@gmail.com>
-Date:   Tue Sep 3 14:46:34 2019 -0700
+commit fec334976fea38e322dc00ce688f65fbd3b80ca9
+Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
+Date:   Wed Sep 4 11:48:13 2019 +1000
 
-    Fixes for ts_library/tsetse builds (#3517)
+    Wasm C++: fix entity id handling and add "internal" unit tests (#3518)
     
-    * Fixes for ts_library/tsetse builds
+    - Since new entities don't have an Arcs id, the various equality
+    operators and the hash function need to look at all fields (op== was
+    originally only looking at internal_id).
     
-    * add noAwait
+    - Added a crude unit test framework for checking the internal C++ code;
+    starting with the generated entity classes.
+    
+    - Fixed a few compiler warnings as well.

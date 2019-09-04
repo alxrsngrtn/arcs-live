@@ -187,7 +187,8 @@ describe('wasm tests (C++)', () => {
         assert.strictEqual(clock.tag, '');
         assert.match(clock.payload, /^value:20[0-9]{2}-[0-9]{2}-[0-9]{2};$/); // eg. 'value:2019-11-07;'
     });
-    it('missing registerHandle', async () => {
+    // TODO: fix PEC -> host error handling
+    it.skip('missing registerHandle', async () => {
         assertThrowsAsync(async () => await setup(`
       import '${schemasFile}'
 
@@ -198,6 +199,40 @@ describe('wasm tests (C++)', () => {
         MissingRegisterHandleTest
           input <- h1
     `), `Wasm particle failed to connect handle 'input'`);
+    });
+    it('entity class API', async () => {
+        const { stores } = await setup(`
+      import '${schemasFile}'
+
+      particle EntityClassApiTest in '${wasmFile}'
+        out [Data] errors
+
+      recipe
+        EntityClassApiTest
+          errors -> h1
+      `);
+        const errStore = stores.get('errors');
+        const errors = (await errStore.toList()).map(e => e.rawData.txt);
+        if (errors.length > 0) {
+            assert.fail(`${errors.length} errors found:\n${errors.join('\n')}`);
+        }
+    });
+    it('special schema fields', async () => {
+        const { stores } = await setup(`
+      import '${schemasFile}'
+
+      particle SpecialSchemaFieldsTest in '${wasmFile}'
+        out [Data] errors
+
+      recipe
+        SpecialSchemaFieldsTest
+          errors -> h1
+      `);
+        const errStore = stores.get('errors');
+        const errors = (await errStore.toList()).map(e => e.rawData.txt);
+        if (errors.length > 0) {
+            assert.fail(`${errors.length} errors found:\n${errors.join('\n')}`);
+        }
     });
 });
 //# sourceMappingURL=wasm-cpp-test.js.map
