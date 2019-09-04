@@ -1,14 +1,13 @@
-commit fec334976fea38e322dc00ce688f65fbd3b80ca9
-Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
-Date:   Wed Sep 4 11:48:13 2019 +1000
+commit 67597dadcc801195305e9cd8e4815ecd89476e52
+Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
+Date:   Tue Sep 3 23:45:28 2019 -0700
 
-    Wasm C++: fix entity id handling and add "internal" unit tests (#3518)
+    Added BUILD rules for C++ wasm compilation with Emscripten (#3524)
     
-    - Since new entities don't have an Arcs id, the various equality
-    operators and the hash function need to look at all fields (op== was
-    originally only looking at internal_id).
+    * Added BUILD rules for C++ wasm compilation with Emscripten
     
-    - Added a crude unit test framework for checking the internal C++ code;
-    starting with the generated entity classes.
+    Not actually used anywhere yet
     
-    - Fixed a few compiler warnings as well.
+    * Fixed comment
+    
+    * Moved arg
