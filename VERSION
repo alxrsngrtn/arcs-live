@@ -1,5 +1,5 @@
-commit 7903956e6c61d8074737fe3b05137a0821c88647
-Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
-Date:   Thu Sep 5 04:44:03 2019 +1000
+commit fdc726867e0750e4b46a52751e045717dea0a5de
+Author: yuangu-google <yuangu@google.com>
+Date:   Wed Sep 4 13:01:42 2019 -0700
 
-    Wasm (C++): allow particles without schemas (#3522)
+    Add .aswb used by Android Stuido to .gitignore. (#3529)
