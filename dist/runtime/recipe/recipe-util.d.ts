@@ -7,7 +7,6 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-/// <reference types="core-js" />
 import { ParticleSpec, HandleConnectionSpec } from '../particle-spec.js';
 import { HandleConnection } from './handle-connection.js';
 import { Direction, DirectionArrow } from '../manifest-ast-nodes.js';
@@ -50,7 +49,7 @@ export declare class RecipeUtil {
     static _buildNewParticleMatches(recipe: Recipe, shapeParticle: Particle, match: Match, newMatches: Match[]): void;
     static _assignHandlesToEmptyPosition(shape: Shape, match: Match, emptyHandles: Handle[], nullHandles: Handle[]): Match[];
     static find(recipe: Recipe, shape: Shape): {
-        match: Dict<RecipeUtilComponent>;
+        match: Dictionary<RecipeUtilComponent>;
         score: number;
     }[];
     static constructImmediateValueHandle(connection: HandleConnection, particleSpec: ParticleSpec, id: Id): Handle;

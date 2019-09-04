@@ -194,16 +194,16 @@
         "signature": "ab5d1b0fe99c12a3dc68eb52a97eb035fbbd5c70e4e1df1a426ea8bcbb5f4e3f"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/recipe-util.ts": {
-        "version": "1e072b5ff3b43ea20b05d1b86ae847dd67148322038b8da6ebdaf43d2fb6f353",
-        "signature": "8006bb2e9039809445f52d65cddf1c507564b5f561bde7aa4e5edfb2c8631297"
+        "version": "32de97605ec5a290d53f5b87c10d94c6b0831067a14439c6252638bb553bdb14",
+        "signature": "c0590035b74904e19a3a17cc1320600e146883313f895abc76e698548978c467"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/handle-connection.ts": {
         "version": "15d2937bc9d8b25684fe3e1fdb727d6ff4a36db9018934b9847ddcfae7c33953",
         "signature": "0f5b3d55c7475fcb3d44c4fb6f71c0e361e99ed2b67b27a737725b855e3b55a4"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/recipe/particle.ts": {
-        "version": "467305aeda9bc615c0fccad0162d7dcd57e09bdf7fff861e8080931ea8ab813b",
-        "signature": "4e3313f74c3c7081e7beebdde8b987aa2b47ef083170e03a63d4f085810d192c"
+        "version": "aea8952a8b0db31e5e2c809f1144ed11343cc0d02f702f339ac076451f91ff12",
+        "signature": "18dc6df639717dee86c98aff554783eaee24dd6bd15b08a190da40128a06ba42"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/arc-inspector.ts": {
         "version": "9986e4437cbe2b871eedf0b0ed48d1026cc5a62d3899741ee56cbafab3f49f08",
@@ -226,8 +226,8 @@
         "signature": "fb1f30d1fc9e05eb8dfec9acc2379c0c4ee1bfdb0ead6f29d9405031cb4c2a69"
       },
       "/home/travis/build/PolymerLabs/arcs/modalities/dom/components/xen/xen-state.d.ts": {
-        "version": "76f84286dff5debeb9b22d7b70885b8c5870bb32d188e76cac5c8becffc005a3",
-        "signature": "76f84286dff5debeb9b22d7b70885b8c5870bb32d188e76cac5c8becffc005a3"
+        "version": "f61bb0ebc59780a5d2461fc7c65d2150be526cd048fcead3167d2d4bc9db106f",
+        "signature": "f61bb0ebc59780a5d2461fc7c65d2150be526cd048fcead3167d2d4bc9db106f"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/relevance.ts": {
         "version": "328304bb7f31f31d00014c30a35c21407a4f2edd8aa3395223103cbe11ccc852",

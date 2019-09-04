@@ -1,5 +1,5 @@
-commit 60e6e0a77bf10b2900cd9b52df7610c6ab02a1d6
-Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Thu Sep 5 00:16:45 2019 +0200
+commit 4dc5167c0213fb4307e3bd09b4dc636a94823d88
+Author: Ray Cromwell <cromwellian@gmail.com>
+Date:   Wed Sep 4 16:06:57 2019 -0700
 
-    Fixes issues with layout in devtools (#3528)
+    Fix typescript errors for import (#3531)

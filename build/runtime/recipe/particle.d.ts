@@ -7,7 +7,6 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-/// <reference types="core-js" />
 import { ParticleSpec, ConsumeSlotConnectionSpec } from '../particle-spec.js';
 import { Type } from '../type.js';
 import { HandleConnection } from './handle-connection.js';
@@ -46,7 +45,7 @@ export declare class Particle implements Comparable<Particle> {
     localName: string;
     id: Id;
     name: string;
-    readonly connections: Dict<HandleConnection>;
+    readonly connections: Dictionary<HandleConnection>;
     readonly unnamedConnections: HandleConnection[];
     readonly primaryVerb: string;
     verbs: string[];
