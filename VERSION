@@ -1,17 +1,5 @@
-commit 9f8c2a30285184483b3619d099589e6b09b3678c
-Author: Sarah Heimlich <heimlich@google.com>
-Date:   Wed Sep 4 14:01:06 2019 -0700
+commit 60e6e0a77bf10b2900cd9b52df7610c6ab02a1d6
+Author: Piotr Swigon <piotr.swigon@gmail.com>
+Date:   Thu Sep 5 00:16:45 2019 +0200
 
-    WIP Kotlin tutorial particles (#3510)
-    
-    * Prep to create kotlin tutorial particles.
-    
-    * Added Kotlin HelloWorld Tutorial.
-    
-    * Add Kotlin BasicTemplates tutorial, update build to handle both tutorials.
-    
-    * Added the third Kotlin tutorial (JsonStore).
-    
-    * Clean up for PR.
-    
-    * More clean ups for PR.
+    Fixes issues with layout in devtools (#3528)
