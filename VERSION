@@ -1,13 +1,5 @@
-commit 67597dadcc801195305e9cd8e4815ecd89476e52
-Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
-Date:   Tue Sep 3 23:45:28 2019 -0700
+commit 7903956e6c61d8074737fe3b05137a0821c88647
+Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
+Date:   Thu Sep 5 04:44:03 2019 +1000
 
-    Added BUILD rules for C++ wasm compilation with Emscripten (#3524)
-    
-    * Added BUILD rules for C++ wasm compilation with Emscripten
-    
-    Not actually used anywhere yet
-    
-    * Fixed comment
-    
-    * Moved arg
+    Wasm (C++): allow particles without schemas (#3522)
