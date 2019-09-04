@@ -1,13 +1,17 @@
-commit 210a7a994ec43b9f8f15c999d86d62c4b9831323
-Author: Ray Cromwell <cromwellian@gmail.com>
-Date:   Wed Sep 4 13:43:43 2019 -0700
+commit 9f8c2a30285184483b3619d099589e6b09b3678c
+Author: Sarah Heimlich <heimlich@google.com>
+Date:   Wed Sep 4 14:01:06 2019 -0700
 
-    Fixes needed for blaze compilation (#3521)
+    WIP Kotlin tutorial particles (#3510)
     
-    * Fixes needed for blaze compilation
+    * Prep to create kotlin tutorial particles.
     
-    * fix header
+    * Added Kotlin HelloWorld Tutorial.
     
-    * bisect build issue
+    * Add Kotlin BasicTemplates tutorial, update build to handle both tutorials.
     
-    * bisect build issue
+    * Added the third Kotlin tutorial (JsonStore).
+    
+    * Clean up for PR.
+    
+    * More clean ups for PR.
