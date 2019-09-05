@@ -1,5 +1,8 @@
-commit 9f89eb04aa3206de4c9ed6c76989a67bdcd089e6
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Thu Sep 5 10:59:52 2019 -0700
+commit f9e93be88223b2a60fb54987e7f46956418cd66e
+Author: yuangu-google <yuangu@google.com>
+Date:   Thu Sep 5 14:02:23 2019 -0700
 
-    fix an import path in pipe.js (#3532)
+    Refactor javaharness code (#3536)
+    
+    * Refactor javaharness. Split demo related code out of api and impl for
+    each platform.
