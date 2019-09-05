@@ -1,8 +1,7 @@
-commit f9e93be88223b2a60fb54987e7f46956418cd66e
-Author: yuangu-google <yuangu@google.com>
-Date:   Thu Sep 5 14:02:23 2019 -0700
+commit e9861fdf2283b55b7da99c05efceb11aa5f26637
+Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
+Date:   Fri Sep 6 09:17:51 2019 +1000
 
-    Refactor javaharness code (#3536)
+    Remove traps on id/rawData/dataClone field names in Entity. (#3535)
     
-    * Refactor javaharness. Split demo related code out of api and impl for
-    each platform.
+    These were set up to catch incorrect usage of the old Entity interface. It should be safe to clean them up now.

@@ -76,9 +76,6 @@ export declare abstract class Entity implements Storable {
     [index: string]: any;
     [SYMBOL_INTERNALS]: EntityInternals;
     toString(): string;
-    readonly id: void;
-    readonly rawData: void;
-    readonly dataClone: void;
     static createEntityClass(schema: Schema, context: ParticleExecutionContext): EntityClass;
     static id(entity: Entity): string;
     static entityClass(entity: Entity): EntityClass;

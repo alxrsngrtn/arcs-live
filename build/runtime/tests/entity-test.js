@@ -66,8 +66,7 @@ describe('Entity', () => {
         assert.deepEqual(entityClass.key, { tag: 'entity', schema });
         assert.strictEqual(entityClass.schema, schema);
     });
-    // TODO: restore this test the temporary id/rawData/dataClone traps are gone
-    it.skip('schema fields can use the same names as internal fields and methods', async () => {
+    it('schema fields can use the same names as internal fields and methods', async () => {
         const manifest = await Manifest.parse(`
       schema Shadow
         // internal fields
@@ -86,7 +85,7 @@ describe('Entity', () => {
         const e = new entityClass(data);
         Entity.identify(e, 'arcs-id');
         // Reading the schema fields should match the input data fields.
-        // TODO: [restore] assert.strictEqual(e.id, 'schema-id');
+        assert.strictEqual(e.id, 'schema-id');
         assert.isFalse(e.mutable);
         assert.strictEqual(e.schema, 'url');
         assert.strictEqual(e.type, 81);
