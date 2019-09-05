@@ -2528,6 +2528,10 @@
         "version": "237aadd4516335edf19d358a3459ab7e278ba19dc744f9f341ebbfadae2e1422",
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
+      "/home/travis/build/PolymerLabs/arcs/src/tests/hotreload-integration-test.ts": {
+        "version": "8301ed638bb03787796c19d421a85e951619232169cda4b46a2c6138f1aa7e75",
+        "signature": "43a5176681925d9f51b139647154e4a52c2eb1b1a64bb428595000952bcbc7f1"
+      },
       "/home/travis/build/PolymerLabs/arcs/src/tests/multiplexer-integration-test.ts": {
         "version": "8ecdf13f7c6495e8b04fe38bb48ab272189d790c1b24499e08bbc8bae19c11da",
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
@@ -7815,6 +7819,19 @@
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
       ],
+      "/home/travis/build/PolymerLabs/arcs/src/tests/hotreload-integration-test.ts": [
+        "/home/travis/build/PolymerLabs/arcs/src/platform/chai-web.d.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/testing/stub-loader.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/manifest.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/id.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/loader.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/testing/fake-slot-composer.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/fake-pec-factory.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/headless-slot-dom-consumer.ts",
+        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
+        "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
+      ],
       "/home/travis/build/PolymerLabs/arcs/src/tests/multiplexer-integration-test.ts": [
         "/home/travis/build/PolymerLabs/arcs/src/platform/chai-web.d.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts",
@@ -11862,6 +11879,7 @@
       "/home/travis/build/PolymerLabs/arcs/src/services/tests/random-test.ts",
       "/home/travis/build/PolymerLabs/arcs/src/tests/arc-integration-test.ts",
       "/home/travis/build/PolymerLabs/arcs/src/tests/demo-flow-test.ts",
+      "/home/travis/build/PolymerLabs/arcs/src/tests/hotreload-integration-test.ts",
       "/home/travis/build/PolymerLabs/arcs/src/tests/multiplexer-integration-test.ts",
       "/home/travis/build/PolymerLabs/arcs/src/tests/recipe-descriptions-test.ts",
       "/home/travis/build/PolymerLabs/arcs/src/tests/slot-composer-test.ts",

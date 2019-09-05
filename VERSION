@@ -1,13 +1,5 @@
-commit 1e5d3c9867ab9380b0306e0ef35886ba9914579c
-Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
-Date:   Thu Sep 5 10:36:25 2019 +1000
+commit 30888dc524833c5c67e317849bd4368606f041fc
+Author: sherry-pra <52428204+sherry-pra@users.noreply.github.com>
+Date:   Wed Sep 4 18:19:59 2019 -0700
 
-    sigh: include wasm in build/test steps when emsdk is installed (#3526)
-    
-    * sigh: include wasm in build/test steps when emsdk is installed
-    
-    Running 'build' or 'test' without emsdk installed will now skip the wasm-related bits.
-    The 'wasm' command always fails if emsdk isn't found.
-    The '--install' flag still works in all cases.
-    
-    * Fix lint error
+    Added integration tests for reloading js and wasm particle (#3520)
