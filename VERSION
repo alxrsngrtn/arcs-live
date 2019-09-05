@@ -1,5 +1,5 @@
-commit 30888dc524833c5c67e317849bd4368606f041fc
-Author: sherry-pra <52428204+sherry-pra@users.noreply.github.com>
-Date:   Wed Sep 4 18:19:59 2019 -0700
+commit 9b823e2ca181a98805db5a05967e0c3162658d48
+Author: Piotr Swigon <piotr.swigon@gmail.com>
+Date:   Thu Sep 5 19:26:55 2019 +0200
 
-    Added integration tests for reloading js and wasm particle (#3520)
+    Embarassing fix after #3528 (#3538)
