@@ -43,16 +43,17 @@ const buildLS = buildPath('./src/tools/language-server', () => {
     getOptionalDependencies(['vscode-jsonrpc', 'vscode-languageserver'], 'The languageServer command');
 });
 const webpackLS = webpackPkg('webpack-languageserver');
+const wasmOptional = args => wasm(true, args);
+const wasmRequired = args => wasm(false, args);
 const steps = {
     languageServer: [peg, build, buildLS, webpackLS, languageServer],
     peg: [peg, railroad],
     railroad: [railroad],
-    test: [peg, railroad, build, runTests],
+    test: [peg, railroad, build, wasmOptional, runTests],
     webpack: [peg, railroad, build, webpack],
     webpackTools: [peg, build, webpackTools],
-    build: [peg, build],
-    wasm: [peg, build, wasm],
-    wasmTest: [peg, build, wasm, runTests],
+    build: [peg, build, wasmOptional],
+    wasm: [peg, build, wasmRequired],
     watch: [watch],
     lint: [peg, build, lint, tslint],
     tslint: [peg, build, tslint],
@@ -66,7 +67,7 @@ const steps = {
     flowcheck: [peg, build, flowcheck],
     licenses: [build],
     install: [install],
-    default: [check, peg, railroad, build, runTestsOrHealthOnCron, webpack, webpackTools, lint, tslint],
+    default: [check, peg, railroad, build, wasmOptional, runTestsOrHealthOnCron, webpack, webpackTools, lint, tslint],
 };
 const eslintCache = '.eslint_sigh_cache';
 const coverageDir = 'coverage';
@@ -104,8 +105,12 @@ function getOptionalDependencies(deps, prefix) {
         return result;
     }
     if (!globalOptions.install) {
-        throw new Error(`${prefix} requires extra dependencies: re-run with '--install' or use\n` +
-            `       'tools/sigh install ${missing.join(' ')}' to install manually\n`);
+        throw new class MissingDeps extends Error {
+            constructor() {
+                super(`${prefix} requires extra dependencies: re-run with '--install' or use\n` +
+                    `       'tools/sigh install ${missing.join(' ')}' to install manually\n`);
+            }
+        }();
     }
     if (!install(missing)) {
         throw new Error('Failed to install optional dependencies');
@@ -450,18 +455,24 @@ function link(srcFiles) {
 // With no args, finds all 'wasm.json' files to generate C++ headers and compile wasm modules.
 // Otherwise only the requested configs are processed (e.g. tools/sigh wasm src/wasm/cpp/wasm.json)
 // Other options: --trace to show commands used, --force to disable timestamp checks
-function wasm(args) {
+function wasm(optional, args) {
     // TODO: https://github.com/PolymerLabs/arcs/issues/3418
-    if (process.platform !== 'linux') {
-        console.log(`Skipping step; wasm builds are not yet supported on ${process.platform}`);
+    if (process.platform !== 'linux' || isTravisDaily) {
+        console.log(`Skipping step; wasm builds are not yet supported on ${isTravisDaily ? 'Travis' : process.platform}`);
         return true;
     }
-    const emsdk = setupEmsdk();
-    if (!emsdk) {
-        if (isTravisDaily) {
-            console.log('Disabling wasm builds for Travis execution');
+    let emsdk;
+    try {
+        emsdk = setupEmsdk();
+    }
+    catch (e) {
+        if (optional && e.constructor.name === 'MissingDeps') {
+            console.log('Skipping step and disabling wasm; emsdk is not installed');
             return true;
         }
+        throw e;
+    }
+    if (!emsdk) {
         return false;
     }
     testFlags.enableWasm = true;
