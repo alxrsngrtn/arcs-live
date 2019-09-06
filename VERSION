@@ -1,7 +1,5 @@
-commit e9861fdf2283b55b7da99c05efceb11aa5f26637
-Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
-Date:   Fri Sep 6 09:17:51 2019 +1000
+commit b390dd5e26ea0a27927ca1afc38b25aaef6db2dc
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Thu Sep 5 23:50:05 2019 -0700
 
-    Remove traps on id/rawData/dataClone field names in Entity. (#3535)
-    
-    These were set up to catch incorrect usage of the old Entity interface. It should be safe to clean them up now.
+    update javaharness readme post refactoring (#3540)
