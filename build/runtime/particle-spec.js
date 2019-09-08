@@ -212,7 +212,7 @@ export class ParticleSpec {
         return (this.verbs.length > 0) ? this.verbs[0] : undefined;
     }
     isCompatible(modality) {
-        return this.slotConnections.size === 0 || this.modality.intersection(modality).isResolved();
+        return this.slandleConnectionNames().length === 0 || this.modality.intersection(modality).isResolved();
     }
     setImplBlobUrl(url) {
         this.model.implBlobUrl = this.implBlobUrl = url;

@@ -56,6 +56,7 @@ export declare class Particle implements Comparable<Particle> {
     ensureConnectionName(name: string): HandleConnection;
     getSlotConnectionNames(): string[];
     getSlandleConnectionByName(name: string): SlotConnection;
+    getSlandleConnectionBySpec(spec: ConsumeSlotConnectionSpec): SlotConnection;
     getSlotConnectionByName(name: string): SlotConnection;
     getSlotConnectionBySpec(spec: ConsumeSlotConnectionSpec): SlotConnection;
     getSlandleConnections(): SlotConnection[];

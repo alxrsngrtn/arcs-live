@@ -4087,7 +4087,7 @@ class ParticleSpec {
         return (this.verbs.length > 0) ? this.verbs[0] : undefined;
     }
     isCompatible(modality) {
-        return this.slotConnections.size === 0 || this.modality.intersection(modality).isResolved();
+        return this.slandleConnectionNames().length === 0 || this.modality.intersection(modality).isResolved();
     }
     setImplBlobUrl(url) {
         this.model.implBlobUrl = this.implBlobUrl = url;
@@ -17220,6 +17220,9 @@ class Particle {
         }
         return this._consumedSlotConnections[name];
     }
+    getSlandleConnectionBySpec(spec) {
+        return this.getSlandleConnections().find(slotConn => slotConn.getSlotSpec() === spec);
+    }
     getSlotConnectionByName(name) {
         return this._consumedSlotConnections[name];
     }
@@ -17576,7 +17579,7 @@ class Recipe {
         return this.particles.every(p => !p.spec || p.spec.isCompatible(modality));
     }
     get modality() {
-        return Modality.intersection(this.particles.filter(p => Boolean(p.spec && p.spec.slotConnections.size > 0)).map(p => p.spec.modality));
+        return Modality.intersection(this.particles.filter(p => Boolean(p.spec && p.spec.slandleConnectionNames().length > 0)).map(p => p.spec.modality));
     }
     allRequiredSlotsPresent(options = undefined) {
         // All required slots and at least one consume slot for each particle must be present in order for the 
@@ -22931,7 +22934,7 @@ class SlotUtils {
     }
     // Returns all possible slot candidates, sorted by "quality"
     static findAllSlotCandidates(particle, slotSpec, arc) {
-        const slotConn = particle.getSlotConnectionByName(slotSpec.name);
+        const slotConn = particle.getSlandleConnectionByName(slotSpec.name);
         return {
             // Note: during manfiest parsing, target slot is only set in slot connection, if the slot exists in the recipe.
             // If this slot is internal to the recipe, it has the sourceConnection set to the providing connection
@@ -22954,7 +22957,7 @@ class SlotUtils {
         if (!SlotUtils.specMatch(slotSpec, slot.spec)) {
             return false;
         }
-        const potentialSlotConn = particle.getSlotConnectionBySpec(slotSpec);
+        const potentialSlotConn = particle.getSlandleConnectionBySpec(slotSpec);
         if (!SlotUtils.tagsOrNameMatch(slotSpec, slot.spec, potentialSlotConn, slot)) {
             return false;
         }

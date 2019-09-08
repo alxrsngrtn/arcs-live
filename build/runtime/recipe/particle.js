@@ -236,6 +236,9 @@ export class Particle {
         }
         return this._consumedSlotConnections[name];
     }
+    getSlandleConnectionBySpec(spec) {
+        return this.getSlandleConnections().find(slotConn => slotConn.getSlotSpec() === spec);
+    }
     getSlotConnectionByName(name) {
         return this._consumedSlotConnections[name];
     }

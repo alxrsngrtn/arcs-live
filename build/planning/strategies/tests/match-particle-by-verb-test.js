@@ -67,7 +67,7 @@ describe('MatchParticleByVerb', () => {
         planner.init(arc, { strategyArgs: StrategyTestHelper.createTestStrategyArgs(arc) });
         const plans = await planner.plan(1000);
         assert.lengthOf(plans, 2);
-        assert.deepEqual([['SimpleJumper'], ['StarJumper']], plans.map(plan => plan.particles.map(particle => particle.name)));
+        assert.deepEqual(plans.map(plan => plan.particles.map(particle => particle.name)), [['SimpleJumper'], ['StarJumper']]);
     });
 });
 //# sourceMappingURL=match-particle-by-verb-test.js.map

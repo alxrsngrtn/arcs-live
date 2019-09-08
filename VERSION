@@ -1,5 +1,11 @@
-commit b390dd5e26ea0a27927ca1afc38b25aaef6db2dc
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Thu Sep 5 23:50:05 2019 -0700
+commit decb85959d45646583af363614c3d3e8641ba889
+Author: Joshua Pratt <jp10010101010000@gmail.com>
+Date:   Mon Sep 9 09:45:49 2019 +1000
 
-    update javaharness readme post refactoring (#3540)
+    Slandles multiplexing (#3505)
+    
+    * Fixes for slandles multiplexer
+    * Tests for slandle multiplexing modalities
+    * Count slandles instead of slots for slot matching
+    * Match slandle specs not just slot specs
+    * Use new modality syntax for domTouch
