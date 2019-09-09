@@ -11,6 +11,8 @@ export declare class Modality {
     static create(names: string[]): Modality;
     intersection(other: Modality): Modality;
     static intersection(modalities: Modality[]): Modality;
+    union(other: Modality): Modality;
+    static union(modalities: Modality[]): Modality;
     isResolved(): boolean;
     isCompatible(names: string[]): boolean;
     static readonly Name: typeof ModalityName;

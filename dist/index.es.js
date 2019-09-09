@@ -49,6 +49,17 @@ class Modality {
     static intersection(modalities) {
         return modalities.reduce((modality, total) => modality.intersection(total), Modality.all);
     }
+    union(other) {
+        if (this.all || other.all) {
+            return Modality.all;
+        }
+        return new Modality(false, [...new Set(this.names.concat(other.names))]);
+    }
+    static union(modalities) {
+        return modalities.length === 0
+            ? Modality.all
+            : modalities.reduce((modality, total) => modality.union(total), Modality.create([]));
+    }
     isResolved() {
         return this.all || this.names.length > 0;
     }
@@ -23763,7 +23774,7 @@ class Arc {
         if (!this.activeRecipe.isEmpty()) {
             return this.activeRecipe.modality;
         }
-        return Modality.intersection(this.context.allRecipes.map(recipe => recipe.modality));
+        return Modality.union(this.context.allRecipes.map(recipe => recipe.modality));
     }
     dispose() {
         for (const innerArc of this.innerArcs) {

@@ -39,6 +39,17 @@ export class Modality {
     static intersection(modalities) {
         return modalities.reduce((modality, total) => modality.intersection(total), Modality.all);
     }
+    union(other) {
+        if (this.all || other.all) {
+            return Modality.all;
+        }
+        return new Modality(false, [...new Set(this.names.concat(other.names))]);
+    }
+    static union(modalities) {
+        return modalities.length === 0
+            ? Modality.all
+            : modalities.reduce((modality, total) => modality.union(total), Modality.create([]));
+    }
     isResolved() {
         return this.all || this.names.length > 0;
     }

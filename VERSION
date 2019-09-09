@@ -1,5 +1,13 @@
-commit 6165097fbf184f9b1fe5d8da3cf687d349ea845a
-Author: yuangu-google <yuangu@google.com>
-Date:   Mon Sep 9 10:23:11 2019 -0700
+commit 92b646bf22f829d709f2ec3161c0d6fbfd22ee32
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Mon Sep 9 16:17:13 2019 -0700
 
-    Add scenarios to demo app. (#3542)
+    new rendering in Java PEC (#3543)
+    
+    * Adapt new rendering in Java PEC and implement 2 primitive renderers.
+    
+    * comment out old rendering in java pec and pipes-shell
+    
+    * address comments: add todo, lowercase method names
+    
+    * address comment: revert most pipes-shell changes
