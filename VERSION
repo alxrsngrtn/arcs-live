@@ -1,5 +1,13 @@
-commit da3bcf6e46743686e3ecb47d0f3c875ff1bb5709
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Mon Sep 9 17:43:19 2019 -0700
+commit 9c45faaf943820a418f53de9affbeb27a073b89d
+Author: Joshua Pratt <jp10010101010000@gmail.com>
+Date:   Tue Sep 10 12:58:26 2019 +1000
 
-    fix slot-composer initialization in spawn.js (post #3543) (#3546)
+    Add vs code extension (#3534)
+    
+    * Initial check in of Vscode Client
+    
+    * Rewrite language server to use vscode connection manager and interfaces
+    
+    * Fixup interactions between language server and client and npm install
+    
+    * Install packages, remove unused imports and use path.resolve

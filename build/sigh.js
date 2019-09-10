@@ -40,13 +40,13 @@ const build = buildPath('.', cleanObsolete);
 const webpack = webpackPkg('webpack');
 const webpackTools = webpackPkg('webpack-tools');
 const buildLS = buildPath('./src/tools/language-server', () => {
-    getOptionalDependencies(['vscode-jsonrpc', 'vscode-languageserver'], 'The languageServer command');
+    getOptionalDependencies(['vscode-jsonrpc', 'vscode-languageserver'], 'Build the languageServer');
 });
 const webpackLS = webpackPkg('webpack-languageserver');
 const wasmOptional = args => wasm(true, args);
 const wasmRequired = args => wasm(false, args);
 const steps = {
-    languageServer: [peg, build, buildLS, webpackLS, languageServer],
+    languageServer: [peg, build, buildLS, webpackLS],
     peg: [peg, railroad],
     railroad: [railroad],
     test: [peg, railroad, build, wasmOptional, runTests],
@@ -258,11 +258,6 @@ function linkUnit(dummySrc, dummyDest) {
         return false;
     }
     return true;
-}
-function languageServer() {
-    keepProcessAlive = true; // Tell the runner to not exit.
-    // Opens a language server on port 2089
-    return saneSpawn('tools/language-server', []);
 }
 function peg() {
     const peg = require('pegjs');
@@ -1017,6 +1012,6 @@ function runSteps(command, args) {
     return result;
 }
 const result = runSteps(process.argv[2] || 'default', process.argv.slice(3));
-if (!keepProcessAlive) { // the watch command or languageServer command is running.
+if (!keepProcessAlive) { // the watch command is running.
     process.exit(result ? 0 : 1);
 }
