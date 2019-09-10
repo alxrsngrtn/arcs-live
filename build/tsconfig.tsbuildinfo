@@ -299,7 +299,7 @@
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/volatile-storage.ts": {
         "version": "5183347d18ab88a72585e5a0b8e41a45a3dd9a55c5b46e4f215ec390ed056349",
-        "signature": "9b89381590a07111bb3fc30ed8ce3b16ee89a1910ec2640eec52329c321c1c7f"
+        "signature": "ef0832e35325bd5cca3ef984b75f9b05f12cce55c864ca3c919631a5f3857a4d"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/synthetic-types.ts": {
         "version": "3a7f010bb2fb2b42de43fdae4b84a506717caa8830f48eb099153352afe7d33a",
@@ -2529,7 +2529,7 @@
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "/home/travis/build/PolymerLabs/arcs/src/tests/hotreload-integration-test.ts": {
-        "version": "8301ed638bb03787796c19d421a85e951619232169cda4b46a2c6138f1aa7e75",
+        "version": "0a884f56d095d0f8c9b68e33f8cdd45a76634e9e6c7d9aa917cdbe9d0c4938b0",
         "signature": "43a5176681925d9f51b139647154e4a52c2eb1b1a64bb428595000952bcbc7f1"
       },
       "/home/travis/build/PolymerLabs/arcs/src/tests/multiplexer-integration-test.ts": {
@@ -2677,8 +2677,8 @@
         "signature": "8bc1d39a3b8ec61064f9969316a088e314895e7ffd094468dcc0b238f33cb4a6"
       },
       "/home/travis/build/PolymerLabs/arcs/src/wasm/cpp/tests/wasm-cpp-test.ts": {
-        "version": "02b2f7a86570467c5ed2fe4840fb1238124142c73c6044f61185c7df5cf69403",
-        "signature": "8e609bb71c20b858c77f0e9f90bb1319db8477b13f9f965f1a1e18524bf50881"
+        "version": "85baa5004594c2edaf7ef7f5d04e289ef69456fa19770be546751400a8e65e66",
+        "signature": "97ae39ce2411e60af41db50e11b3048c2b48322f144dcadb5272343ec368356a"
       },
       "/home/travis/build/PolymerLabs/arcs/node_modules/@types/core-js/index.d.ts": {
         "version": "5460ae88d9b594d35dc17bfad15bd02abbe147134b092b95533a73f281130a5f",
@@ -8107,6 +8107,8 @@
         "/home/travis/build/PolymerLabs/arcs/src/runtime/testing/fake-slot-composer.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/volatile-storage.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/testing/test-util.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/services/clock-service.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/services/random-service.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
       ],
@@ -8276,6 +8278,10 @@
       "/home/travis/build/PolymerLabs/arcs/node_modules/typescript/lib/lib.esnext.intl.d.ts": [
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
+      ],
+      "/home/travis/build/PolymerLabs/arcs/src/wasm/cpp/tests/wasm-cpp-test.ts": [
+        "/home/travis/build/PolymerLabs/arcs/src/services/clock-service.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/services/random-service.ts"
       ],
       "/home/travis/build/PolymerLabs/arcs/src/services/tests/random-test.ts": [
         "/home/travis/build/PolymerLabs/arcs/src/services/random-service.ts"

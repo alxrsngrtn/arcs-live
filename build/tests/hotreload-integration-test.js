@@ -21,8 +21,8 @@ class StubWasmLoader extends Loader {
         this.reloaded = false;
     }
     async loadWasmBinary(spec) {
-        const file = this.reloaded ? 'test-module-new.wasm' : 'test-module-old.wasm';
-        return super.loadWasmBinary({ implFile: `build/tests/source/${file}` });
+        const file = this.reloaded ? 'wasm-particle-new.wasm' : 'wasm-particle-old.wasm';
+        return super.loadWasmBinary({ implFile: `bazel-bin/src/tests/source/${file}` });
     }
     clone() {
         return this;
@@ -77,15 +77,15 @@ describe('Hot Code Reload for JS Particle', async () => {
 });
 describe('Hot Code Reload for WASM Particle', async () => {
     before(function () {
-        if (!global['testFlags'].enableWasm) {
+        if (!global['testFlags'].bazel) {
             this.skip();
         }
     });
     it('updates model and template', async () => {
-        // StubWasmLoader returns test-module-old.wasm or test-module-new.wasm instead of
-        // test-module.wasm based on the reloaded flag
+        // StubWasmLoader returns wasm-particle-old.wasm or wasm-particle-new.wasm instead of
+        // wasm-particle.wasm based on the reloaded flag
         const context = await Manifest.parse(`
-      particle HotReloadTest in 'build/tests/source/test-module.wasm'
+      particle HotReloadTest in 'bazel-bin/src/tests/source/wasm-particle.wasm'
         consume root
 
       recipe

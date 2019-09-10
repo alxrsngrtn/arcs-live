@@ -43,6 +43,7 @@ const buildLS = buildPath('./src/tools/language-server', () => {
     getOptionalDependencies(['vscode-jsonrpc', 'vscode-languageserver'], 'Build the languageServer');
 });
 const webpackLS = webpackPkg('webpack-languageserver');
+// TODO(csilvestrini): Remove wasm stuff from sigh entirely.
 const wasmOptional = args => wasm(true, args);
 const wasmRequired = args => wasm(false, args);
 const steps = {
@@ -87,7 +88,10 @@ const nodeFlags = [
 const isTravisDaily = (process.env.TRAVIS_EVENT_TYPE === 'cron');
 // Flags for unit tests; use `global['testFlags'].foo` to access them.
 const testFlags = {
+    // TODO(csilvestrini): Delete this flag.
     enableWasm: false,
+    /** If true, runs tests flagged as bazel tests. */
+    bazel: false,
 };
 // tslint:disable-next-line: no-any
 function getOptionalDependencies(deps, prefix) {
@@ -693,10 +697,20 @@ function runTests(args) {
         explore: ['explore'],
         coverage: ['coverage'],
         exceptions: ['exceptions'],
-        boolean: ['manual', 'sequence', 'all'],
+        boolean: ['manual', 'sequence', 'all', 'bazel'],
         repeat: ['repeat'],
         alias: { g: 'grep' },
     });
+    if (options.bazel) {
+        if (!options.file) {
+            console.error('If the --bazel flag is set then the --file flag must be supplied too.');
+            return false;
+        }
+        // Enables unit tests that are marked as requiring bazel. These tests are
+        // usually skipped; they should generally only be supplied by bazel when it
+        // invokes sigh directly.
+        testFlags.bazel = true;
+    }
     const testsInDir = dir => findProjectFiles(dir, buildExclude, fullPath => {
         // TODO(wkorman): Integrate shell testing more deeply into sigh testing. For
         // now we skip including shell tests in the normal sigh test flow and intend

@@ -32,7 +32,7 @@ export declare class VolatileStorage extends StorageBase {
     localIDBase: number;
     constructor(arcId: Id);
     construct(id: string, type: Type, keyFragment: string): Promise<VolatileStorageProvider>;
-    _construct(id: any, type: any, keyFragment: any): Promise<VolatileCollection | VolatileSingleton | VolatileBigCollection>;
+    _construct(id: any, type: any, keyFragment: any): Promise<VolatileSingleton | VolatileCollection | VolatileBigCollection>;
     constructKey(keyFragment: string): string;
     connect(id: string, type: Type, key: string): Promise<VolatileStorageProvider>;
     baseStorageKey(type: Type): string;
@@ -43,7 +43,7 @@ export declare abstract class VolatileStorageProvider extends StorageProviderBas
     backingStore: VolatileCollection | null;
     protected storageEngine: VolatileStorage;
     private pendingBackingStore;
-    static newProvider(type: any, storageEngine: any, name: any, id: any, key: any): VolatileCollection | VolatileSingleton | VolatileBigCollection;
+    static newProvider(type: any, storageEngine: any, name: any, id: any, key: any): VolatileSingleton | VolatileCollection | VolatileBigCollection;
     ensureBackingStore(): Promise<VolatileCollection>;
     abstract backingType(): Type;
     fromLiteral({ version, model }: {

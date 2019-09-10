@@ -1,9 +1,19 @@
-commit c8809bf27b345ddccf4e70df4f9500764e31064a
+commit 7b46f739a5b78e767e53f21aec57326025bf2413
 Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
-Date:   Mon Sep 9 20:33:08 2019 -0700
+Date:   Mon Sep 9 22:10:56 2019 -0700
 
-    Added arcs_ts_test and run_in_repo_test BUILD rules. (#3547)
+    Migrates C++ wasm code and tests to bazel (#3549)
     
-    * Added arcs_ts_test and run_in_repo_test BUILD rules.
+    * Converted src/wasm/cpp/... to bazel
     
-    This lets us run TypeScript tests using Bazel (which just invokes sigh)
+    * Fixed unit test
+    
+    * Fixed src/tests/...
+    
+    * Added --bazel flag to sigh
+    
+    * Added check for bazel flag to cpp tests
+    
+    * Cleanup
+    
+    * Fixed hotreload test
