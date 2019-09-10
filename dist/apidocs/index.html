@@ -111,7 +111,10 @@
 				<p>1) Install node.</p>
 				<pre><code>   $ nvm install <span class="hljs-number">10</span></code></pre><p>1) If you need to update npm to a later version (our build checks for the
 				minimum required version):</p>
-				<pre><code>   $ <span class="hljs-built_in">npm</span> install -g <span class="hljs-built_in">npm</span>   <span class="hljs-comment"># can use npm@6.3.0 to install a specific version</span></code></pre>
+				<pre><code>   $ <span class="hljs-built_in">npm</span> install -g <span class="hljs-built_in">npm</span>   <span class="hljs-comment"># can use npm@6.3.0 to install a specific version</span></code></pre><p>1) Optional: install Bazel (required for building/running WebAssembly particles,
+					optional if you only want to develop using JavaScript). See the
+					<code>./tools/setup</code> script for the correct version of Bazel to install. See the
+				<a href="src/wasm/cpp/README.md">C++ wasm instructions</a> for more info.</p>
 				<a href="#installing-within-the-arcs-project" id="installing-within-the-arcs-project" style="color: inherit; text-decoration: none;">
 					<h3>Installing within the Arcs project:</h3>
 				</a>
@@ -196,6 +199,11 @@ $ npm run <span class="hljs-keyword">test</span>-<span class="hljs-keyword">with
 				<p>This also works for unit tests: <code>./tools/sigh test --grep &#39;regex&#39;</code>. In addition,
 					for unit tests you can run only a single test case by using <code>it.only()</code> instead
 				of <code>it()</code>, or a single suite using <code>describe.only()</code> instead of <code>describe()</code>.</p>
+				<a href="#webassembly-tests" id="webassembly-tests" style="color: inherit; text-decoration: none;">
+					<h3>WebAssembly tests</h3>
+				</a>
+				<p>Test using Bazel (run from your repo root):</p>
+				<pre><code>bazel test <span class="hljs-regexp">//</span>src<span class="hljs-regexp">/wasm/</span>... <span class="hljs-regexp">//</span>src<span class="hljs-regexp">/tests/</span>...</code></pre>
 				<a href="#debugging-tests" id="debugging-tests" style="color: inherit; text-decoration: none;">
 					<h3>Debugging tests</h3>
 				</a>

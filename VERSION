@@ -1,5 +1,7 @@
-commit 9f8876440503dc1f26008a5d8b9f583795431cea
+commit 29a21ccb79286bb972d006886900c4b82edd9bd4
 Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
-Date:   Mon Sep 9 23:05:11 2019 -0700
+Date:   Mon Sep 9 23:41:35 2019 -0700
 
-    Run bazel tests on travis (#3551)
+    Updated the C++ wasm README file. (#3550)
+    
+    Also updated the example to use bazel.
