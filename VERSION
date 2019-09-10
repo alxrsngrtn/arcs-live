@@ -1,13 +1,9 @@
-commit 9c45faaf943820a418f53de9affbeb27a073b89d
-Author: Joshua Pratt <jp10010101010000@gmail.com>
-Date:   Tue Sep 10 12:58:26 2019 +1000
+commit c8809bf27b345ddccf4e70df4f9500764e31064a
+Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
+Date:   Mon Sep 9 20:33:08 2019 -0700
 
-    Add vs code extension (#3534)
+    Added arcs_ts_test and run_in_repo_test BUILD rules. (#3547)
     
-    * Initial check in of Vscode Client
+    * Added arcs_ts_test and run_in_repo_test BUILD rules.
     
-    * Rewrite language server to use vscode connection manager and interfaces
-    
-    * Fixup interactions between language server and client and npm install
-    
-    * Install packages, remove unused imports and use path.resolve
+    This lets us run TypeScript tests using Bazel (which just invokes sigh)
