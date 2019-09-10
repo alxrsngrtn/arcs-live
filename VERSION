@@ -1,13 +1,5 @@
-commit 92b646bf22f829d709f2ec3161c0d6fbfd22ee32
+commit da3bcf6e46743686e3ecb47d0f3c875ff1bb5709
 Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Mon Sep 9 16:17:13 2019 -0700
+Date:   Mon Sep 9 17:43:19 2019 -0700
 
-    new rendering in Java PEC (#3543)
-    
-    * Adapt new rendering in Java PEC and implement 2 primitive renderers.
-    
-    * comment out old rendering in java pec and pipes-shell
-    
-    * address comments: add todo, lowercase method names
-    
-    * address comment: revert most pipes-shell changes
+    fix slot-composer initialization in spawn.js (post #3543) (#3546)
