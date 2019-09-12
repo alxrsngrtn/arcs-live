@@ -1,7 +1,5 @@
-commit e818609ae9c40ca164e873c96dd93707185f9b1b
-Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
-Date:   Thu Sep 12 13:27:06 2019 +1000
+commit 7592d8aaeb01d6507ce91a078d0507bdad9c9f41
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Thu Sep 12 08:31:01 2019 -0700
 
-    Update ChromeDriver version to 76. (#3562)
-    
-    Hopefully fixes issue with mismatching Chrome versions in #3402
+    add runArc method to Runtime to fetch an already running arc, if exists (#3561)

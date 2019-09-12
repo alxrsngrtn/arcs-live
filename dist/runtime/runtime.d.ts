@@ -29,8 +29,9 @@ export declare class Runtime {
     private cacheService;
     private loader;
     private composerClass;
-    private context;
+    readonly context: Manifest;
     private readonly ramDiskMemory;
+    private readonly arcById;
     static getRuntime(): Runtime;
     static clearRuntimeForTesting(): void;
     static newForNodeTesting(context?: Manifest): Runtime;
@@ -39,6 +40,13 @@ export declare class Runtime {
     getRamDiskMemory(): VolatileMemory;
     destroy(): void;
     newArc(name: string, storageKeyPrefix: string, options?: RuntimeArcOptions): Arc;
+    /**
+     * Given an arc name, return either:
+     * (1) the already running arc
+     * (2) a deserialized arc (TODO: needs implementation)
+     * (3) a newly created arc
+     */
+    runArc(name: string, storageKeyPrefix: string, options?: RuntimeArcOptions): Arc;
     /**
      * Given an arc, returns it's description as a string.
      */

@@ -27050,6 +27050,16 @@ class FakeSlotComposer extends SlotComposer {
 // currently imported by ArcsLib.js. Once that refactoring is done, we can
 // think about what the api should actually look like.
 class Runtime {
+    constructor(loader, composerClass, context) {
+        this.arcById = new Map();
+        this.cacheService = new RuntimeCacheService();
+        this.loader = loader;
+        this.composerClass = composerClass;
+        this.context = context || new Manifest({ id: 'manifest:default' });
+        this.ramDiskMemory = new VolatileMemory();
+        runtime = this;
+        // user information. One persona per runtime for now.
+    }
     static getRuntime() {
         if (runtime == null) {
             runtime = new Runtime();
@@ -27065,15 +27075,6 @@ class Runtime {
     static newForNodeTesting(context) {
         return new Runtime(new Loader(), FakeSlotComposer, context);
     }
-    constructor(loader, composerClass, context) {
-        this.cacheService = new RuntimeCacheService();
-        this.loader = loader;
-        this.composerClass = composerClass;
-        this.context = context || new Manifest({ id: 'manifest:default' });
-        this.ramDiskMemory = new VolatileMemory();
-        runtime = this;
-        // user information. One persona per runtime for now.
-    }
     getCacheService() {
         return this.cacheService;
     }
@@ -27088,6 +27089,19 @@ class Runtime {
         return new Arc({ id, storageKey, loader: this.loader, slotComposer: new this.composerClass(), context: this.context, ...options });
     }
     // Stuff the shell needs
+    /**
+     * Given an arc name, return either:
+     * (1) the already running arc
+     * (2) a deserialized arc (TODO: needs implementation)
+     * (3) a newly created arc
+     */
+    runArc(name, storageKeyPrefix, options) {
+        if (!this.arcById[name]) {
+            // TODO: Support deserializing serialized arcs.
+            this.arcById[name] = this.newArc(name, storageKeyPrefix, options);
+        }
+        return this.arcById[name];
+    }
     /**
      * Given an arc, returns it's description as a string.
      */

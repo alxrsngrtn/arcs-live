@@ -294,8 +294,8 @@
         "signature": "1caf0bf54edc18e0f7bc0bb764e1a91e110d5080b3faa107fa2061281f47da41"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/runtime.ts": {
-        "version": "5b9a31d0b5a2ec42898e1a4c542b9514de330399240fcae0170d01217e74ddb5",
-        "signature": "611685c465bfe441cf39a87380e7743a5da2fd74681989fc1e00c5f6b1f6dca6"
+        "version": "aaf18c269dffdffd16752703dcd899b2c4f8adb7b4ef0a1f1b27727454f33ce0",
+        "signature": "596ac9ed70e41e15a7a2b69cab71ffc3803bd160c243508f3ebb42894ec80386"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/volatile-storage.ts": {
         "version": "5183347d18ab88a72585e5a0b8e41a45a3dd9a55c5b46e4f215ec390ed056349",
