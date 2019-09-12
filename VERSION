@@ -1,11 +1,5 @@
-commit c959d6bdedd115a0bcafdc6c38ba0845a53619c3
-Author: sherry-pra <52428204+sherry-pra@users.noreply.github.com>
-Date:   Thu Sep 12 11:58:18 2019 -0700
+commit c3ee114954ca438afcee4214119448f8068e209b
+Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
+Date:   Fri Sep 13 09:00:22 2019 +1000
 
-    Add tests that make sure new handles are working after reload: (#3539)
-    
-    - Created handle test for JS and WASM particles
-    - Made the NoOpStorageProxy also receives an id (since handle id is
-    taken from the storage and sometimes it's still called and parsed even
-    after reload)
-    - Fixed some typo in NoOpStorageProxy
+    DevShell: add a 'log' URL param (#3565)
