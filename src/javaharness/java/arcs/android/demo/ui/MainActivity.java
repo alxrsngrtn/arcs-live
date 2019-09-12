@@ -1,4 +1,4 @@
-package arcs.android.demo;
+package arcs.android.demo.ui;
 
 import android.app.Activity;
 import android.content.ComponentName;
@@ -8,6 +8,8 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
 import android.widget.Button;
+import arcs.android.demo.service.ArcsService;
+
 /**
  * Main class for the Bazel Android "Hello, World" app.
  */
@@ -45,6 +47,9 @@ public class MainActivity extends Activity {
     toggleConnectionButton = findViewById(R.id.toggle_service_connection);
     toggleConnectionButton.setOnClickListener(v -> toggleConnection());
 
+    Button autofillDemoButton = findViewById(R.id.autofill_demo_button);
+    autofillDemoButton.setOnClickListener(v -> startAutofillDemo());
+
     updateBtn();
   }
 
@@ -64,5 +69,10 @@ public class MainActivity extends Activity {
   private void updateBtn() {
     Log.d(TAG, "updateBtn");
     toggleConnectionButton.setText(connected ? "Disconnect" : "Connect");
+  }
+
+  private void startAutofillDemo() {
+    Intent intent = new Intent(this, AutofillDemoActivity.class);
+    startActivity(intent);
   }
 }

@@ -1,5 +1,7 @@
-commit 74518a8e6e58e49c87eb72cf1eafa528063af97a
+commit e818609ae9c40ca164e873c96dd93707185f9b1b
 Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
-Date:   Tue Sep 10 00:10:08 2019 -0700
+Date:   Thu Sep 12 13:27:06 2019 +1000
 
-    Fix link in readme (#3554)
+    Update ChromeDriver version to 76. (#3562)
+    
+    Hopefully fixes issue with mismatching Chrome versions in #3402

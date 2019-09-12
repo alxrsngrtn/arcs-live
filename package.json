@@ -55,7 +55,7 @@
     "@wdio/sync": "^5.11.0",
     "c8": "^4.1.5",
     "chai": "^4.2.0",
-    "chromedriver": "^75.1.0",
+    "chromedriver": "^76.0.1",
     "concurrently": "^4.1.0",
     "cross-env": "^5.2.0",
     "eslint": "^6.0.1",
@@ -108,7 +108,6 @@
   },
   "sighDependencies": {
     "chokidar": "^3.0.2",
-    "emsdk-npm": "github:mykmartin/emsdk-npm#arcs",
     "request": "^2.88.0",
     "vscode-jsonrpc": "^4.0.0",
     "vscode-languageserver": "^5.2.1"
@@ -125,7 +124,6 @@
   },
   "engines": {
     "node": ">= 10.13.0",
-    "npm": ">= 6.9.0",
-    "emsdk": ">= 1.38.42"
+    "npm": ">= 6.9.0"
   }
 }
