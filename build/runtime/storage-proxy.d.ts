@@ -46,7 +46,7 @@ export declare type SerializedEntity = {
  */
 export declare abstract class StorageProxy implements Store {
     static newProxy(id: string, type: Type, port: PECInnerPort, pec: ParticleExecutionContext, scheduler: any, name: string): CollectionProxy | BigCollectionProxy | SingletonProxy;
-    static newNoOpProxy(type: Type): NoOpStorageProxy;
+    static newNoOpProxy(id: string, type: Type): NoOpStorageProxy;
     storageKey: string;
     readonly id: string;
     readonly type: Type;

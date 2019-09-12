@@ -1,5 +1,11 @@
-commit 4498acfcb2fe0d4ef5572c8ecbf190d2200f49ff
-Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Thu Sep 12 19:54:37 2019 +0200
+commit c959d6bdedd115a0bcafdc6c38ba0845a53619c3
+Author: sherry-pra <52428204+sherry-pra@users.noreply.github.com>
+Date:   Thu Sep 12 11:58:18 2019 -0700
 
-    Fix tutorial URL in dev shell (#3537)
+    Add tests that make sure new handles are working after reload: (#3539)
+    
+    - Created handle test for JS and WASM particles
+    - Made the NoOpStorageProxy also receives an id (since handle id is
+    taken from the storage and sometimes it's still called and parsed even
+    after reload)
+    - Fixed some typo in NoOpStorageProxy

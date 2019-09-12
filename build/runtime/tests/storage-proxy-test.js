@@ -183,7 +183,7 @@ class TestEngine {
         return StorageProxy.newProxy('X' + this._idCounters[1]++, store.type, this, fakePec, this._scheduler, store.name);
     }
     newNoOpProxy(store) {
-        return StorageProxy.newNoOpProxy(store.type);
+        return StorageProxy.newNoOpProxy(store.id, store.type);
     }
     newHandle(store, proxy, particle, canRead, canWrite) {
         return handleFor(proxy, this._idGenerator, store.name, particle.id, canRead, canWrite);
@@ -665,7 +665,7 @@ describe('storage-proxy', () => {
             });
             proto = Object.getPrototypeOf(proto);
         }
-        const noOpProxy = engine.newNoOpProxy({ type: engine.type });
+        const noOpProxy = engine.newNoOpProxy({ id: 'test', type: engine.type });
         const noOpProperties = Object.getOwnPropertyNames(Object.getPrototypeOf(noOpProxy));
         properties.forEach(property => {
             assert(noOpProperties.indexOf(property) !== -1);

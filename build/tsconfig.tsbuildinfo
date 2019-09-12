@@ -382,8 +382,8 @@
         "signature": "72c40c6f2e61d63e346ed8715847bd9b379f195ed653d6524d0b5f0bd0cc729a"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/storage-proxy.ts": {
-        "version": "244cee6eeba029c362fef57288081eb7f2a0552fe21b29075c38037c504d1ae2",
-        "signature": "b6ba0e4999aeaf85c90d66fa6536fe372c9514d8543a03cc8551d1cf8883e927"
+        "version": "14af2ee3950f9d46fae8262f0e02c9b32ad69849376f7edac5321e2dccf7aed3",
+        "signature": "b2e06d4b59cba54101599ba5a68de2f182f414cb29f0a53b874ce585a29315ee"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/symbols.ts": {
         "version": "86ce7b9192e71b15024531b512d64dc971e42ba1856684193f470edfa4ccbb0e",
@@ -430,7 +430,7 @@
         "signature": "7b814d606f22e60fc503a83c45ef0bad57c51c803ef19dd84ecda1e9e8cead32"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/handle.ts": {
-        "version": "95ab5a7dbdfcf510cb014d4d9acc180266a74344fb55a4be4d3b275ac5fe2fe7",
+        "version": "7338ee79c8fb9d08f279c9c59361ec49232209514bcfda85531195c12da6f784",
         "signature": "888c08c94f389c3d104f19c0ba199885a87820312e05efcb3aed4e06eb60ec6e"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/dom-particle-base.ts": {
@@ -2421,7 +2421,7 @@
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/tests/storage-proxy-test.ts": {
-        "version": "22a71fd65c8ee859e055ae6de04cbcbbf784fc08844f74a7bad88aa7dd3dce13",
+        "version": "521be96fafa6ade5219c853d72125574c8931901fcabea967070ed1f921671ab",
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/tests/synthetic-storage-test.ts": {
@@ -2529,7 +2529,7 @@
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "/home/travis/build/PolymerLabs/arcs/src/tests/hotreload-integration-test.ts": {
-        "version": "0a884f56d095d0f8c9b68e33f8cdd45a76634e9e6c7d9aa917cdbe9d0c4938b0",
+        "version": "cedde9fbf206223db79d282fc5d63094072c5bad2cea1eb1753f51b102f59030",
         "signature": "43a5176681925d9f51b139647154e4a52c2eb1b1a64bb428595000952bcbc7f1"
       },
       "/home/travis/build/PolymerLabs/arcs/src/tests/multiplexer-integration-test.ts": {
@@ -7829,6 +7829,8 @@
         "/home/travis/build/PolymerLabs/arcs/src/runtime/testing/fake-slot-composer.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/fake-pec-factory.ts",
         "/home/travis/build/PolymerLabs/arcs/src/runtime/headless-slot-dom-consumer.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/storage/storage-provider-base.ts",
+        "/home/travis/build/PolymerLabs/arcs/src/runtime/testing/test-util.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/util.d.ts",
         "/home/travis/build/PolymerLabs/arcs/node_modules/@types/node/ts3.1/util.d.ts"
       ],

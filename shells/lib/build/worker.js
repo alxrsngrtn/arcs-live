@@ -3771,7 +3771,7 @@ class HandleOld {
         }
         // Set this handle's storage to a no-operation storage proxy so any actions that need to be
         // taken by this handle in the future (due to some async operations) will do nothing and finish quietly
-        this._storage = _storage_proxy_js__WEBPACK_IMPORTED_MODULE_4__["StorageProxy"].newNoOpProxy(this.storage.type);
+        this._storage = _storage_proxy_js__WEBPACK_IMPORTED_MODULE_4__["StorageProxy"].newNoOpProxy(this.storage.id, this.storage.type);
     }
 }
 /**
@@ -4257,8 +4257,8 @@ class StorageProxy {
         }
         return new SingletonProxy(id, type, port, pec, scheduler, name);
     }
-    static newNoOpProxy(type) {
-        return new NoOpStorageProxy(null, type, null, null, null, 'NoOpStorage');
+    static newNoOpProxy(id, type) {
+        return new NoOpStorageProxy(id, type, null, null, null, 'NoOpStorage');
     }
     reportExceptionInHost(exception) {
         // TODO: Encapsulate source-mapping of the stack trace once there are more users of the port.RaiseSystemException() call.
@@ -4745,10 +4745,10 @@ class NoOpStorageProxy extends StorageProxy {
         return new Promise(resolve => { });
     }
     async cursorClose(cursorId) {
-        throw new Promise(resolve => { });
+        return new Promise(resolve => { });
     }
     async set(entity, particleId) {
-        throw new Promise(resolve => { });
+        return new Promise(resolve => { });
     }
 }
 class StorageProxyScheduler {
