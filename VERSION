@@ -1,5 +1,5 @@
-commit 7592d8aaeb01d6507ce91a078d0507bdad9c9f41
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Thu Sep 12 08:31:01 2019 -0700
+commit 4498acfcb2fe0d4ef5572c8ecbf190d2200f49ff
+Author: Piotr Swigon <piotr.swigon@gmail.com>
+Date:   Thu Sep 12 19:54:37 2019 +0200
 
-    add runArc method to Runtime to fetch an already running arc, if exists (#3561)
+    Fix tutorial URL in dev shell (#3537)
