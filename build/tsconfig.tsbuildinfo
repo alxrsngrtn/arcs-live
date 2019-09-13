@@ -518,8 +518,8 @@
         "signature": "386225870fe7ff2b410dda3c36ac04396b8a67965f6edaa5f9fff1d1796548f6"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/manifest.ts": {
-        "version": "fdabb42382f8ab7d5f1d82014344ea26dc37ff3ec8809fa8a4114b910e68457c",
-        "signature": "c4967d7afdd51f3c9989a96c8c1c4d31172cfb3dc382a297b18ab466308fdf42"
+        "version": "bdef62442462c3bd782773d83009cc676ab68a076bc652e22631ec2323baaa17",
+        "signature": "ba1f2c1bc350af2be39157bd5ed6cb3e8c17485b39ad18e9e514308879b3ade0"
       },
       "/home/travis/build/PolymerLabs/arcs/src/platform/atob-web.ts": {
         "version": "83bd58cde323a7612560e333b3542a3ab39d1f645c1e1e22e54f4a66622b9e7c",
@@ -2365,7 +2365,7 @@
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/tests/manifest-test.ts": {
-        "version": "2eacb616b8d0d9f7147f8777539c1fa79cd04fcc79064ab8d37899539e497fc1",
+        "version": "249614bad53827687b753894959610ad7b65b8ccb66544c908c8ea5c2e2cd064",
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/tests/multiplexer-test.ts": {

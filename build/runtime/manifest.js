@@ -134,6 +134,9 @@ export class Manifest {
     get schemas() {
         return this._schemas;
     }
+    get allSchemas() {
+        return [...new Set(this._findAll(manifest => Object.values(manifest._schemas)))];
+    }
     get fileName() {
         return this._fileName;
     }

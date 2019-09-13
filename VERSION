@@ -1,14 +1,35 @@
-commit c818b125e1d862868de66ed295ccd4ccc18bd9ff
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Fri Sep 13 12:15:12 2019 -0700
+commit 044ed9ae0b24aa0c95724d66c462d324dfce73d1
+Author: Sarah Heimlich <heimlich@google.com>
+Date:   Fri Sep 13 14:59:42 2019 -0700
 
-    Trigger ingestion arc instantiation from Java (#3569)
+    Add allSchemas to manifest.ts (#3545)
     
-    * Trigger ingestion arc instantiation from Java
-    + dummy web clipboard implementation for demo purposes.
+    * Updating schema2base to work in multiple folders and to recursively find schemas in the target.
     
-    * address comments
+    * Updating utils path.
     
-    * move pec-port initialization out of pipe.js
+    * Updated README with instructions for running schema2pkg for Kotlin.
     
-    * rename runarc to runArc
+    * Updated path in Utils.init call
+    
+    * schema2base clean up
+    
+    * Updates on file pathing and added null-case tests for allSchemas
+    
+    * Fixed curly brace issue.
+    
+    * Added tests for a schema with multiple fields.
+    
+    * Switched from it inside of it to it inside of describe to ensure tests were executing.
+    
+    * Added a test with an external store
+    
+    * Added complex manifest tests.
+    
+    * Adding final tests and improving test asserts.
+    
+    * Removing changes to schema2base.ts for a second PR.
+    
+    * Removed the chicken for grep.
+    
+    * Updating variable name to lower camel case.

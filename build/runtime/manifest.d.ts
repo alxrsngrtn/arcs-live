@@ -66,6 +66,7 @@ export declare class Manifest {
     readonly allParticles: ParticleSpec[];
     readonly imports: Manifest[];
     readonly schemas: Dictionary<Schema>;
+    readonly allSchemas: Schema[];
     readonly fileName: string;
     readonly stores: StorageStub[];
     readonly allStores: StorageStub[];
