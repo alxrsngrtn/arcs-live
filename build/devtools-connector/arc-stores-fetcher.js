@@ -9,13 +9,29 @@
  */
 export class ArcStoresFetcher {
     constructor(arc, arcDevtoolsChannel) {
+        this.watchedHandles = new Set();
         this.arc = arc;
+        this.arcDevtoolsChannel = arcDevtoolsChannel;
         arcDevtoolsChannel.listen('fetch-stores', async () => arcDevtoolsChannel.send({
             messageType: 'fetch-stores-result',
-            messageBody: await this._listStores()
+            messageBody: await this.listStores()
         }));
     }
-    async _listStores() {
+    onRecipeInstantiated() {
+        for (const store of this.arc._stores) {
+            if (!this.watchedHandles.has(store.id)) {
+                this.watchedHandles.add(store.id);
+                store.on('change', async () => this.arcDevtoolsChannel.send({
+                    messageType: 'store-value-changed',
+                    messageBody: {
+                        id: store.id.toString(),
+                        value: await this.dereference(store)
+                    }
+                }), this);
+            }
+        }
+    }
+    async listStores() {
         const find = (manifest) => {
             let tags = [...manifest.storeTags];
             if (manifest.imports) {
@@ -24,28 +40,13 @@ export class ArcStoresFetcher {
             return tags;
         };
         return {
-            arcStores: await this._digestStores([...this.arc.storeTags]),
-            contextStores: await this._digestStores(find(this.arc.context))
+            arcStores: await this.digestStores([...this.arc.storeTags]),
+            contextStores: await this.digestStores(find(this.arc.context))
         };
     }
-    async _digestStores(stores) {
+    async digestStores(stores) {
         const result = [];
         for (const [store, tags] of stores) {
-            // tslint:disable-next-line: no-any
-            let value;
-            if (store.toList) {
-                value = await store.toList();
-            }
-            else if (store.get) {
-                value = await store.get();
-            }
-            else {
-                value = `(don't know how to dereference)`;
-            }
-            // TODO: Fix issues with WebRTC message splitting.
-            if (JSON.stringify(value).length > 50000) {
-                value = 'too large for WebRTC';
-            }
             result.push({
                 name: store.name,
                 tags: tags ? [...tags] : [],
@@ -53,10 +54,22 @@ export class ArcStoresFetcher {
                 storage: store.storageKey,
                 type: store.type,
                 description: store.description,
-                value
+                value: await this.dereference(store)
             });
         }
         return result;
+    }
+    // tslint:disable-next-line: no-any
+    async dereference(store) {
+        if (store.toList) {
+            return store.toList();
+        }
+        else if (store.get) {
+            return store.get();
+        }
+        else {
+            return `(don't know how to dereference)`;
+        }
     }
 }
 //# sourceMappingURL=arc-stores-fetcher.js.map

@@ -27724,15 +27724,13 @@ class AbstractDevtoolsChannel {
     forArc(arc) {
         return new ArcDevtoolsChannel(arc, this);
     }
-    _handleMessage(msg) {
+    async _handleMessage(msg) {
         const listeners = this.messageListeners.get(`${msg.arcId}/${msg.messageType}`);
         if (!listeners) {
             console.warn(`No one is listening to ${msg.messageType} message`);
         }
         else {
-            for (const listener of listeners) {
-                listener(msg);
-            }
+            await Promise.all(listeners.map(l => l(msg)));
         }
     }
     _empty() {
@@ -27790,7 +27788,7 @@ class DevtoolsChannel extends AbstractDevtoolsChannel {
                     DevtoolsBroker.markConnected();
                 }
                 else {
-                    this._handleMessage(JSON.parse(msg));
+                    void this._handleMessage(JSON.parse(msg));
                 }
             });
         });
@@ -28537,13 +28535,29 @@ const pecIndustry = loader => {
  */
 class ArcStoresFetcher {
     constructor(arc, arcDevtoolsChannel) {
+        this.watchedHandles = new Set();
         this.arc = arc;
+        this.arcDevtoolsChannel = arcDevtoolsChannel;
         arcDevtoolsChannel.listen('fetch-stores', async () => arcDevtoolsChannel.send({
             messageType: 'fetch-stores-result',
-            messageBody: await this._listStores()
+            messageBody: await this.listStores()
         }));
     }
-    async _listStores() {
+    onRecipeInstantiated() {
+        for (const store of this.arc._stores) {
+            if (!this.watchedHandles.has(store.id)) {
+                this.watchedHandles.add(store.id);
+                store.on('change', async () => this.arcDevtoolsChannel.send({
+                    messageType: 'store-value-changed',
+                    messageBody: {
+                        id: store.id.toString(),
+                        value: await this.dereference(store)
+                    }
+                }), this);
+            }
+        }
+    }
+    async listStores() {
         const find = (manifest) => {
             let tags = [...manifest.storeTags];
             if (manifest.imports) {
@@ -28552,28 +28566,13 @@ class ArcStoresFetcher {
             return tags;
         };
         return {
-            arcStores: await this._digestStores([...this.arc.storeTags]),
-            contextStores: await this._digestStores(find(this.arc.context))
+            arcStores: await this.digestStores([...this.arc.storeTags]),
+            contextStores: await this.digestStores(find(this.arc.context))
         };
     }
-    async _digestStores(stores) {
+    async digestStores(stores) {
         const result = [];
         for (const [store, tags] of stores) {
-            // tslint:disable-next-line: no-any
-            let value;
-            if (store.toList) {
-                value = await store.toList();
-            }
-            else if (store.get) {
-                value = await store.get();
-            }
-            else {
-                value = `(don't know how to dereference)`;
-            }
-            // TODO: Fix issues with WebRTC message splitting.
-            if (JSON.stringify(value).length > 50000) {
-                value = 'too large for WebRTC';
-            }
             result.push({
                 name: store.name,
                 tags: tags ? [...tags] : [],
@@ -28581,10 +28580,22 @@ class ArcStoresFetcher {
                 storage: store.storageKey,
                 type: store.type,
                 description: store.description,
-                value
+                value: await this.dereference(store)
             });
         }
         return result;
+    }
+    // tslint:disable-next-line: no-any
+    async dereference(store) {
+        if (store.toList) {
+            return store.toList();
+        }
+        else if (store.get) {
+            return store.get();
+        }
+        else {
+            return `(don't know how to dereference)`;
+        }
     }
 }
 
@@ -33203,7 +33214,7 @@ class InitialRecipe extends Strategy {
 class ArcPlannerInvoker {
     constructor(arc, arcDevtoolsChannel) {
         this.arc = arc;
-        arcDevtoolsChannel.listen('fetch-strategies', () => arcDevtoolsChannel.send({
+        arcDevtoolsChannel.listen('fetch-strategies', async () => arcDevtoolsChannel.send({
             messageType: 'fetch-strategies-result',
             messageBody: Planner.AllStrategies.map(s => s.name)
         }));
@@ -33459,9 +33470,9 @@ class DevtoolsArcInspector {
                 });
             }
             this.arcDevtoolsChannel = devtoolsChannel.forArc(arc);
-            const unused1 = new ArcStoresFetcher(arc, this.arcDevtoolsChannel);
-            const unused2 = new ArcPlannerInvoker(arc, this.arcDevtoolsChannel);
-            const unused3 = new HotCodeReloader(arc, this.arcDevtoolsChannel);
+            this.storesFetcher = new ArcStoresFetcher(arc, this.arcDevtoolsChannel);
+            const unused1 = new ArcPlannerInvoker(arc, this.arcDevtoolsChannel);
+            const unused2 = new HotCodeReloader(arc, this.arcDevtoolsChannel);
             this.arcDevtoolsChannel.send({
                 messageType: 'arc-available',
                 messageBody: {
@@ -33476,6 +33487,7 @@ class DevtoolsArcInspector {
     recipeInstantiated(particles, activeRecipe) {
         if (!DevtoolsConnection.isConnected)
             return;
+        this.storesFetcher.onRecipeInstantiated();
         const truncate = ({ id, name }) => ({ id, name });
         const slotConnections = [];
         particles.forEach(p => p.getSlotConnections().forEach(cs => {

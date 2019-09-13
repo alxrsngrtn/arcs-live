@@ -7,14 +7,14 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-import { assert } from '../../../platform/chai-web.js';
-import { DevtoolsForTests } from '../../../devtools-connector/devtools-connection.js';
-import { devtoolsArcInspectorFactory } from '../../../devtools-connector/devtools-arc-inspector.js';
-import { MockSlotComposer } from '../../testing/mock-slot-composer.js';
-import { StubLoader } from '../../testing/stub-loader.js';
-import { Manifest } from '../../manifest.js';
-import { Runtime } from '../../runtime.js';
-describe('OuterPortAttachment', () => {
+import { assert } from '../../platform/chai-web.js';
+import { DevtoolsForTests } from '../devtools-connection.js';
+import { devtoolsArcInspectorFactory } from '../devtools-arc-inspector.js';
+import { MockSlotComposer } from '../../runtime/testing/mock-slot-composer.js';
+import { StubLoader } from '../../runtime/testing/stub-loader.js';
+import { Manifest } from '../../runtime/manifest.js';
+import { Runtime } from '../../runtime/runtime.js';
+describe('DevtoolsArcInspector', () => {
     before(() => DevtoolsForTests.ensureStub());
     after(() => DevtoolsForTests.reset());
     it('produces PEC Log messages on devtools channel', async () => {
@@ -56,6 +56,7 @@ describe('OuterPortAttachment', () => {
             spec: {
                 name: 'P',
                 description: {},
+                implBlobUrl: undefined,
                 implFile: 'p.js',
                 modality: ['dom'],
                 slotConnections: [],
@@ -72,4 +73,4 @@ describe('OuterPortAttachment', () => {
         });
     });
 });
-//# sourceMappingURL=outer-port-attachments-test.js.map
+//# sourceMappingURL=devtools-arc-inspector-test.js.map

@@ -9,25 +9,13 @@
  */
 import { Arc } from '../runtime/arc.js';
 import { ArcDevtoolsChannel } from './abstract-devtools-channel.js';
-import { StorageStub } from '../runtime/storage-stub.js';
-import { StorageProviderBase } from '../runtime/storage/storage-provider-base.js';
-import { Type } from '../runtime/type.js';
-declare type Result = {
-    name: string;
-    tags: string[];
-    id: string;
-    storage: string;
-    type: Type;
-    description: string;
-    value: any;
-};
 export declare class ArcStoresFetcher {
     private arc;
+    private arcDevtoolsChannel;
+    private watchedHandles;
     constructor(arc: Arc, arcDevtoolsChannel: ArcDevtoolsChannel);
-    _listStores(): Promise<{
-        arcStores: Result[];
-        contextStores: Result[];
-    }>;
-    _digestStores(stores: [StorageProviderBase | StorageStub, string[] | Set<string>][]): Promise<Result[]>;
+    onRecipeInstantiated(): void;
+    private listStores;
+    private digestStores;
+    private dereference;
 }
-export {};

@@ -35,7 +35,7 @@ class InitialRecipe extends Strategy {
 export class ArcPlannerInvoker {
     constructor(arc, arcDevtoolsChannel) {
         this.arc = arc;
-        arcDevtoolsChannel.listen('fetch-strategies', () => arcDevtoolsChannel.send({
+        arcDevtoolsChannel.listen('fetch-strategies', async () => arcDevtoolsChannel.send({
             messageType: 'fetch-strategies-result',
             messageBody: Planner.AllStrategies.map(s => s.name)
         }));

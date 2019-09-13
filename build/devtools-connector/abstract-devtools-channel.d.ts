@@ -8,26 +8,26 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { Arc } from '../runtime/arc.js';
-import { Consumer } from '../runtime/hot.js';
-export declare type DevtoolsListener = Consumer<DevtoolsMessage>;
+import { AsyncConsumer } from '../runtime/hot.js';
+export declare type DevtoolsListener = AsyncConsumer<DevtoolsMessage>;
 export declare type DevtoolsMessage = {
     arcId?: string;
     requestId?: string;
     messageType: string;
-    messageBody: any;
+    messageBody?: any;
     meta?: {
         arcId: string;
     };
 };
 export declare class AbstractDevtoolsChannel {
-    debouncedMessages: DevtoolsMessage[];
-    messageListeners: Map<string, DevtoolsListener[]>;
-    timer: any;
+    private debouncedMessages;
+    private messageListeners;
+    private timer;
     constructor();
     send(message: DevtoolsMessage): void;
     listen(arcOrId: Arc | string, messageType: string, listener: DevtoolsListener): void;
     forArc(arc: Arc): ArcDevtoolsChannel | AbstractDevtoolsChannel;
-    _handleMessage(msg: DevtoolsMessage): void;
+    _handleMessage(msg: DevtoolsMessage): Promise<void>;
     _empty(): void;
     _flush(_messages: DevtoolsMessage[]): void;
     ensureNoCycle(object: any, objectPath?: {}[]): void;

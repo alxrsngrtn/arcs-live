@@ -1,5 +1,5 @@
-commit 1192ea63310272f4ad93a40886d694a086c5c96d
-Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
-Date:   Fri Sep 13 14:08:08 2019 +1000
+commit f698433292e22afcecddc87b947c8dd598a76718
+Author: Piotr Swigon <piotr.swigon@gmail.com>
+Date:   Fri Sep 13 10:40:05 2019 +0200
 
-    Removed development build script for wasm C++ (#3571)
+    Provide live updates of stores (#3567)

@@ -42,15 +42,13 @@ export class AbstractDevtoolsChannel {
     forArc(arc) {
         return new ArcDevtoolsChannel(arc, this);
     }
-    _handleMessage(msg) {
+    async _handleMessage(msg) {
         const listeners = this.messageListeners.get(`${msg.arcId}/${msg.messageType}`);
         if (!listeners) {
             console.warn(`No one is listening to ${msg.messageType} message`);
         }
         else {
-            for (const listener of listeners) {
-                listener(msg);
-            }
+            await Promise.all(listeners.map(l => l(msg)));
         }
     }
     _empty() {

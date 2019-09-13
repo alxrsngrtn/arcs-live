@@ -7,8 +7,7 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-import { DevtoolsMessage, DevtoolsListener } from '../abstract-devtools-channel';
-import { Arc } from '../../runtime/arc';
+import { DevtoolsMessage, AbstractDevtoolsChannel } from '../abstract-devtools-channel.js';
 /**
  * @license
  * Copyright (c) 2018 Google Inc. All rights reserved.
@@ -18,12 +17,11 @@ import { Arc } from '../../runtime/arc';
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-export declare class DevtoolsChannelStub {
-    _messages: DevtoolsMessage[];
+export declare class DevtoolsChannelStub extends AbstractDevtoolsChannel {
+    private _messages;
     constructor();
     readonly messages: DevtoolsMessage[];
     send(message: DevtoolsMessage): void;
-    listen(arcOrId: Arc | string, messageType: string, listener: DevtoolsListener): void;
+    receive(message: DevtoolsMessage): Promise<void>;
     clear(): void;
-    forArc(arc: Arc): this;
 }

@@ -8,6 +8,7 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { DevtoolsChannel } from '../platform/devtools-channel-web.js';
+import { DevtoolsChannelStub } from './testing/devtools-channel-stub.js';
 export declare class DevtoolsConnection {
     static readonly isConnected: boolean;
     static readonly onceConnected: Promise<DevtoolsChannel>;
@@ -15,7 +16,7 @@ export declare class DevtoolsConnection {
     static ensure(): void;
 }
 export declare class DevtoolsForTests {
-    static readonly channel: any;
+    static readonly channel: DevtoolsChannelStub;
     static ensureStub(): void;
     static reset(): void;
 }

@@ -84,7 +84,12 @@
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<span class="target">DevtoolsChannelStub</span>
+						<a href="abstractdevtoolschannel.html" class="tsd-signature-type">AbstractDevtoolsChannel</a>
+						<ul class="tsd-hierarchy">
+							<li>
+								<span class="target">DevtoolsChannelStub</span>
+							</li>
+						</ul>
 					</li>
 				</ul>
 			</section>
@@ -95,13 +100,13 @@
 						<section class="tsd-index-section ">
 							<h3>Constructors</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-constructor tsd-parent-kind-class"><a href="devtoolschannelstub.html#constructor" class="tsd-kind-icon">constructor</a></li>
+								<li class="tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite"><a href="devtoolschannelstub.html#constructor" class="tsd-kind-icon">constructor</a></li>
 							</ul>
 						</section>
-						<section class="tsd-index-section ">
+						<section class="tsd-index-section tsd-is-private tsd-is-private-protected">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="devtoolschannelstub.html#_messages" class="tsd-kind-icon">_messages</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="devtoolschannelstub.html#_messages" class="tsd-kind-icon">_messages</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
@@ -113,10 +118,15 @@
 						<section class="tsd-index-section ">
 							<h3>Methods</h3>
 							<ul class="tsd-index-list">
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="devtoolschannelstub.html#_empty" class="tsd-kind-icon">_empty</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="devtoolschannelstub.html#_flush" class="tsd-kind-icon">_flush</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="devtoolschannelstub.html#_handlemessage" class="tsd-kind-icon">_handle<wbr>Message</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="devtoolschannelstub.html#clear" class="tsd-kind-icon">clear</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="devtoolschannelstub.html#forarc" class="tsd-kind-icon">for<wbr>Arc</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="devtoolschannelstub.html#listen" class="tsd-kind-icon">listen</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="devtoolschannelstub.html#send" class="tsd-kind-icon">send</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="devtoolschannelstub.html#ensurenocycle" class="tsd-kind-icon">ensure<wbr>NoCycle</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="devtoolschannelstub.html#forarc" class="tsd-kind-icon">for<wbr>Arc</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="devtoolschannelstub.html#listen" class="tsd-kind-icon">listen</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="devtoolschannelstub.html#receive" class="tsd-kind-icon">receive</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="devtoolschannelstub.html#send" class="tsd-kind-icon">send</a></li>
 							</ul>
 						</section>
 					</div>
@@ -124,17 +134,18 @@
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Constructors</h2>
-				<section class="tsd-panel tsd-member tsd-kind-constructor tsd-parent-kind-class">
+				<section class="tsd-panel tsd-member tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite">
 					<a name="constructor" class="tsd-anchor"></a>
 					<h3>constructor</h3>
-					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class">
+					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite">
 						<li class="tsd-signature tsd-kind-icon">new <wbr>Devtools<wbr>Channel<wbr>Stub<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="devtoolschannelstub.html" class="tsd-signature-type">DevtoolsChannelStub</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
+								<p>Overrides <a href="abstractdevtoolschannel.html">AbstractDevtoolsChannel</a>.<a href="abstractdevtoolschannel.html#constructor">constructor</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1192ea6/src/devtools-connector/testing/devtools-channel-stub.ts#L24">src/devtools-connector/testing/devtools-channel-stub.ts:24</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/f698433/src/devtools-connector/testing/devtools-channel-stub.ts#L23">src/devtools-connector/testing/devtools-channel-stub.ts:23</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <a href="devtoolschannelstub.html" class="tsd-signature-type">DevtoolsChannelStub</a></h4>
@@ -142,15 +153,15 @@
 					</ul>
 				</section>
 			</section>
-			<section class="tsd-panel-group tsd-member-group ">
+			<section class="tsd-panel-group tsd-member-group tsd-is-private tsd-is-private-protected">
 				<h2>Properties</h2>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private">
 					<a name="_messages" class="tsd-anchor"></a>
-					<h3>_messages</h3>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> _messages</h3>
 					<div class="tsd-signature tsd-kind-icon">_messages<span class="tsd-signature-symbol">:</span> <a href="../globals.html#devtoolsmessage" class="tsd-signature-type">DevtoolsMessage</a><span class="tsd-signature-symbol">[]</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1192ea6/src/devtools-connector/testing/devtools-channel-stub.ts#L24">src/devtools-connector/testing/devtools-channel-stub.ts:24</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/f698433/src/devtools-connector/testing/devtools-channel-stub.ts#L23">src/devtools-connector/testing/devtools-channel-stub.ts:23</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -167,7 +178,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1192ea6/src/devtools-connector/testing/devtools-channel-stub.ts#L30">src/devtools-connector/testing/devtools-channel-stub.ts:30</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/f698433/src/devtools-connector/testing/devtools-channel-stub.ts#L30">src/devtools-connector/testing/devtools-channel-stub.ts:30</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">object</span><span class="tsd-signature-symbol">[]</span></h4>
@@ -177,6 +188,72 @@
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Methods</h2>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+					<a name="_empty" class="tsd-anchor"></a>
+					<h3>_empty</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+						<li class="tsd-signature tsd-kind-icon">_empty<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from <a href="abstractdevtoolschannel.html">AbstractDevtoolsChannel</a>.<a href="abstractdevtoolschannel.html#_empty">_empty</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/f698433/src/devtools-connector/abstract-devtools-channel.ts#L74">src/devtools-connector/abstract-devtools-channel.ts:74</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+					<a name="_flush" class="tsd-anchor"></a>
+					<h3>_flush</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+						<li class="tsd-signature tsd-kind-icon">_flush<span class="tsd-signature-symbol">(</span>_messages<span class="tsd-signature-symbol">: </span><a href="../globals.html#devtoolsmessage" class="tsd-signature-type">DevtoolsMessage</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from <a href="abstractdevtoolschannel.html">AbstractDevtoolsChannel</a>.<a href="abstractdevtoolschannel.html#_flush">_flush</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/f698433/src/devtools-connector/abstract-devtools-channel.ts#L81">src/devtools-connector/abstract-devtools-channel.ts:81</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>_messages: <a href="../globals.html#devtoolsmessage" class="tsd-signature-type">DevtoolsMessage</a><span class="tsd-signature-symbol">[]</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+					<a name="_handlemessage" class="tsd-anchor"></a>
+					<h3>_handle<wbr>Message</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+						<li class="tsd-signature tsd-kind-icon">_handle<wbr>Message<span class="tsd-signature-symbol">(</span>msg<span class="tsd-signature-symbol">: </span><a href="../globals.html#devtoolsmessage" class="tsd-signature-type">DevtoolsMessage</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from <a href="abstractdevtoolschannel.html">AbstractDevtoolsChannel</a>.<a href="abstractdevtoolschannel.html#_handlemessage">_handleMessage</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/f698433/src/devtools-connector/abstract-devtools-channel.ts#L65">src/devtools-connector/abstract-devtools-channel.ts:65</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>msg: <a href="../globals.html#devtoolsmessage" class="tsd-signature-type">DevtoolsMessage</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
 					<a name="clear" class="tsd-anchor"></a>
 					<h3>clear</h3>
@@ -187,24 +264,52 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1192ea6/src/devtools-connector/testing/devtools-channel-stub.ts#L42">src/devtools-connector/testing/devtools-channel-stub.ts:42</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/f698433/src/devtools-connector/testing/devtools-channel-stub.ts#L43">src/devtools-connector/testing/devtools-channel-stub.ts:43</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
 						</li>
 					</ul>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
-					<a name="forarc" class="tsd-anchor"></a>
-					<h3>for<wbr>Arc</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">for<wbr>Arc<span class="tsd-signature-symbol">(</span>arc<span class="tsd-signature-symbol">: </span><a href="arc.html" class="tsd-signature-type">Arc</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">this</span></li>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+					<a name="ensurenocycle" class="tsd-anchor"></a>
+					<h3>ensure<wbr>NoCycle</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+						<li class="tsd-signature tsd-kind-icon">ensure<wbr>NoCycle<span class="tsd-signature-symbol">(</span>object<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, objectPath<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">__type</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
+								<p>Inherited from <a href="abstractdevtoolschannel.html">AbstractDevtoolsChannel</a>.<a href="abstractdevtoolschannel.html#ensurenocycle">ensureNoCycle</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1192ea6/src/devtools-connector/testing/devtools-channel-stub.ts#L46">src/devtools-connector/testing/devtools-channel-stub.ts:46</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/f698433/src/devtools-connector/abstract-devtools-channel.ts#L86">src/devtools-connector/abstract-devtools-channel.ts:86</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>object: <span class="tsd-signature-type">any</span></h5>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> objectPath: <span class="tsd-signature-type">__type</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> =&nbsp;[]</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+					<a name="forarc" class="tsd-anchor"></a>
+					<h3>for<wbr>Arc</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+						<li class="tsd-signature tsd-kind-icon">for<wbr>Arc<span class="tsd-signature-symbol">(</span>arc<span class="tsd-signature-symbol">: </span><a href="arc.html" class="tsd-signature-type">Arc</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="arcdevtoolschannel.html" class="tsd-signature-type">ArcDevtoolsChannel</a><span class="tsd-signature-symbol"> | </span><a href="abstractdevtoolschannel.html" class="tsd-signature-type">AbstractDevtoolsChannel</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from <a href="abstractdevtoolschannel.html">AbstractDevtoolsChannel</a>.<a href="abstractdevtoolschannel.html#forarc">forArc</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/f698433/src/devtools-connector/abstract-devtools-channel.ts#L61">src/devtools-connector/abstract-devtools-channel.ts:61</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -213,21 +318,25 @@
 									<h5>arc: <a href="arc.html" class="tsd-signature-type">Arc</a></h5>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4>
+							<h4 class="tsd-returns-title">Returns <a href="arcdevtoolschannel.html" class="tsd-signature-type">ArcDevtoolsChannel</a>
+								<span class="tsd-signature-symbol"> | </span>
+								<a href="abstractdevtoolschannel.html" class="tsd-signature-type">AbstractDevtoolsChannel</a>
+							</h4>
 						</li>
 					</ul>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
 					<a name="listen" class="tsd-anchor"></a>
 					<h3>listen</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
 						<li class="tsd-signature tsd-kind-icon">listen<span class="tsd-signature-symbol">(</span>arcOrId<span class="tsd-signature-symbol">: </span><a href="arc.html" class="tsd-signature-type">Arc</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span>, messageType<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, listener<span class="tsd-signature-symbol">: </span><a href="../globals.html#devtoolslistener" class="tsd-signature-type">DevtoolsListener</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
+								<p>Inherited from <a href="abstractdevtoolschannel.html">AbstractDevtoolsChannel</a>.<a href="abstractdevtoolschannel.html#listen">listen</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1192ea6/src/devtools-connector/testing/devtools-channel-stub.ts#L38">src/devtools-connector/testing/devtools-channel-stub.ts:38</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/f698433/src/devtools-connector/abstract-devtools-channel.ts#L49">src/devtools-connector/abstract-devtools-channel.ts:49</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -247,16 +356,40 @@
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
-					<a name="send" class="tsd-anchor"></a>
-					<h3>send</h3>
+					<a name="receive" class="tsd-anchor"></a>
+					<h3>receive</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">send<span class="tsd-signature-symbol">(</span>message<span class="tsd-signature-symbol">: </span><a href="../globals.html#devtoolsmessage" class="tsd-signature-type">DevtoolsMessage</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+						<li class="tsd-signature tsd-kind-icon">receive<span class="tsd-signature-symbol">(</span>message<span class="tsd-signature-symbol">: </span><a href="../globals.html#devtoolsmessage" class="tsd-signature-type">DevtoolsMessage</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1192ea6/src/devtools-connector/testing/devtools-channel-stub.ts#L34">src/devtools-connector/testing/devtools-channel-stub.ts:34</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/f698433/src/devtools-connector/testing/devtools-channel-stub.ts#L39">src/devtools-connector/testing/devtools-channel-stub.ts:39</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>message: <a href="../globals.html#devtoolsmessage" class="tsd-signature-type">DevtoolsMessage</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
+					<a name="send" class="tsd-anchor"></a>
+					<h3>send</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
+						<li class="tsd-signature tsd-kind-icon">send<span class="tsd-signature-symbol">(</span>message<span class="tsd-signature-symbol">: </span><a href="../globals.html#devtoolsmessage" class="tsd-signature-type">DevtoolsMessage</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Overrides <a href="abstractdevtoolschannel.html">AbstractDevtoolsChannel</a>.<a href="abstractdevtoolschannel.html#send">send</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/f698433/src/devtools-connector/testing/devtools-channel-stub.ts#L34">src/devtools-connector/testing/devtools-channel-stub.ts:34</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -286,25 +419,40 @@
 					<li class="current tsd-kind-class">
 						<a href="devtoolschannelstub.html" class="tsd-kind-icon">Devtools<wbr>Channel<wbr>Stub</a>
 						<ul>
-							<li class=" tsd-kind-constructor tsd-parent-kind-class">
+							<li class=" tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite">
 								<a href="devtoolschannelstub.html#constructor" class="tsd-kind-icon">constructor</a>
 							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class">
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
 								<a href="devtoolschannelstub.html#_messages" class="tsd-kind-icon">_messages</a>
 							</li>
 							<li class=" tsd-kind-get-signature tsd-parent-kind-class">
 								<a href="devtoolschannelstub.html#messages" class="tsd-kind-icon">messages</a>
 							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+								<a href="devtoolschannelstub.html#_empty" class="tsd-kind-icon">_empty</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+								<a href="devtoolschannelstub.html#_flush" class="tsd-kind-icon">_flush</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+								<a href="devtoolschannelstub.html#_handlemessage" class="tsd-kind-icon">_handle<wbr>Message</a>
+							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="devtoolschannelstub.html#clear" class="tsd-kind-icon">clear</a>
 							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class">
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+								<a href="devtoolschannelstub.html#ensurenocycle" class="tsd-kind-icon">ensure<wbr>NoCycle</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
 								<a href="devtoolschannelstub.html#forarc" class="tsd-kind-icon">for<wbr>Arc</a>
 							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class">
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
 								<a href="devtoolschannelstub.html#listen" class="tsd-kind-icon">listen</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="devtoolschannelstub.html#receive" class="tsd-kind-icon">receive</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
 								<a href="devtoolschannelstub.html#send" class="tsd-kind-icon">send</a>
 							</li>
 						</ul>

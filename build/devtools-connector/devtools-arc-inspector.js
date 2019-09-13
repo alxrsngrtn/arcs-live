@@ -40,9 +40,9 @@ class DevtoolsArcInspector {
                 });
             }
             this.arcDevtoolsChannel = devtoolsChannel.forArc(arc);
-            const unused1 = new ArcStoresFetcher(arc, this.arcDevtoolsChannel);
-            const unused2 = new ArcPlannerInvoker(arc, this.arcDevtoolsChannel);
-            const unused3 = new HotCodeReloader(arc, this.arcDevtoolsChannel);
+            this.storesFetcher = new ArcStoresFetcher(arc, this.arcDevtoolsChannel);
+            const unused1 = new ArcPlannerInvoker(arc, this.arcDevtoolsChannel);
+            const unused2 = new HotCodeReloader(arc, this.arcDevtoolsChannel);
             this.arcDevtoolsChannel.send({
                 messageType: 'arc-available',
                 messageBody: {
@@ -57,6 +57,7 @@ class DevtoolsArcInspector {
     recipeInstantiated(particles, activeRecipe) {
         if (!DevtoolsConnection.isConnected)
             return;
+        this.storesFetcher.onRecipeInstantiated();
         const truncate = ({ id, name }) => ({ id, name });
         const slotConnections = [];
         particles.forEach(p => p.getSlotConnections().forEach(cs => {

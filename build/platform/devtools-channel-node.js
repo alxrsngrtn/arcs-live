@@ -21,7 +21,7 @@ export class DevtoolsChannel extends AbstractDevtoolsChannel {
                     DevtoolsBroker.markConnected();
                 }
                 else {
-                    this._handleMessage(JSON.parse(msg));
+                    void this._handleMessage(JSON.parse(msg));
                 }
             });
         });

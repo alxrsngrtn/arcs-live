@@ -14,6 +14,8 @@
 export declare type Producer<T> = () => T;
 /** A function that takes a value of type `T` as input. */
 export declare type Consumer<T> = (input: T) => void;
+/** A function that takes a value of type `T` as input and can be awaited for completion. */
+export declare type AsyncConsumer<T> = (input: T) => Promise<void>;
 /** A function that just runs; it takes no values and returns nothing. */
 export declare type Runnable = () => void;
 /** A function that converts some input into a boolean, often use for calls like `filter`. */
