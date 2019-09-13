@@ -1,5 +1,14 @@
-commit f698433292e22afcecddc87b947c8dd598a76718
-Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Fri Sep 13 10:40:05 2019 +0200
+commit c818b125e1d862868de66ed295ccd4ccc18bd9ff
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Fri Sep 13 12:15:12 2019 -0700
 
-    Provide live updates of stores (#3567)
+    Trigger ingestion arc instantiation from Java (#3569)
+    
+    * Trigger ingestion arc instantiation from Java
+    + dummy web clipboard implementation for demo purposes.
+    
+    * address comments
+    
+    * move pec-port initialization out of pipe.js
+    
+    * rename runarc to runArc
