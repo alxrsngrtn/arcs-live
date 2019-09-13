@@ -1,5 +1,5 @@
-commit c3ee114954ca438afcee4214119448f8068e209b
+commit 27828edc1f4b99ca2a8bb85d4897939f2f5d2a02
 Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
-Date:   Fri Sep 13 09:00:22 2019 +1000
+Date:   Fri Sep 13 13:00:34 2019 +1000
 
-    DevShell: add a 'log' URL param (#3565)
+    Improved API comments for C++ Particle class declaration (#3570)
