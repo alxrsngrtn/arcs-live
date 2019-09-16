@@ -1,5 +1,5 @@
-commit cc160ede7582f460519e47e0e1a4a4702ba75623
-Author: shans <shane.stephens@gmail.com>
-Date:   Mon Sep 16 13:54:44 2019 -0400
+commit 3130fcdc2ab42f25c56fe16f315f4649b3d508b0
+Author: Piotr Swigon <piotr.swigon@gmail.com>
+Date:   Mon Sep 16 11:47:56 2019 -0700
 
-    [WIP] Reference mode store (#3523)
+    Log to the console if Shell is waiting for remote Arcs Explorer (#3581)
