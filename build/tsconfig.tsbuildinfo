@@ -2677,7 +2677,7 @@
         "signature": "30610a77f0a00651a242a4128fb87fabbfea5f5064e17607356e3bd35f69f3be"
       },
       "/home/travis/build/PolymerLabs/arcs/src/tools/dev_server/dev-server.ts": {
-        "version": "7511a2158aa57765c116c225c52e0e86bcbda2c9ee556413f29e75ddd1102688",
+        "version": "43e96cca867ea713cc7e6498483bd7abdb7ae530ff0873de4f2cc94a809dcd44",
         "signature": "fd95df5d076cbfed143dc4904d376b5c6d9cb1091b630994ffe2366010afa6b3"
       },
       "/home/travis/build/PolymerLabs/arcs/src/tools/tests/bundle-test.ts": {

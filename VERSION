@@ -1,7 +1,5 @@
-commit 3119f6501548366339f8d753da32673da24897b0
-Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
-Date:   Tue Sep 17 07:49:57 2019 +1000
+commit b6679fc8e23feab69d49ede0d39fce1b2c9609f7
+Author: Piotr Swigon <piotr.swigon@gmail.com>
+Date:   Mon Sep 16 16:41:16 2019 -0700
 
-    Rename ambiguous methods involving the word "handle". (#3578)
-    
-    handleMessage -> processMessage, since "handle" means something special.
+    Don't swallow errors in ALDS (#3580)
