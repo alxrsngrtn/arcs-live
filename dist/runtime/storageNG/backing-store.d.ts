@@ -17,19 +17,21 @@ export declare type MultiplexedProxyCallback<T extends CRDTTypeRecord> = (messag
  * A store that allows multiple CRDT models to be stored as sub-keys of a single storageKey location.
  */
 export declare class BackingStore<T extends CRDTTypeRecord> {
-    private storageKey;
+    storageKey: StorageKey;
     private exists;
     private type;
     private mode;
-    private modelConstructor;
+    modelConstructor: new () => CRDTModel<T>;
     private stores;
     private callbacks;
     private nextCallbackId;
     private constructor();
     on(callback: MultiplexedProxyCallback<T>): number;
     off(callback: number): void;
-    processStoreCallback(muxId: string, message: ProxyMessage<T>): Promise<boolean>;
+    getLocalModel(muxId: string): CRDTModel<T>;
+    private setupStore;
     onProxyMessage(message: ProxyMessage<T>, muxId: string): Promise<boolean>;
     static construct<T extends CRDTTypeRecord>(storageKey: StorageKey, exists: Exists, type: Type, mode: StorageMode, modelConstructor: new () => CRDTModel<T>): Promise<BackingStore<T>>;
     idle(): Promise<void>;
+    processStoreCallback(muxId: string, message: ProxyMessage<T>): Promise<boolean>;
 }

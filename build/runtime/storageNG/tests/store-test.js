@@ -91,7 +91,7 @@ describe('Store', async () => {
                 }
                 throw new Error();
             });
-            const result = activeStore.onProxyMessage({ type: ProxyMessageType.Operations, operations: [operation], id });
+            const result = activeStore.onProxyMessage({ type: ProxyMessageType.Operations, operations: [operation], id: id + 1 });
         });
     });
     it('will only send a model response to the requesting proxy', async () => {

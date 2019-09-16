@@ -29,16 +29,35 @@ export class BackingStore {
     off(callback) {
         this.callbacks.delete(callback);
     }
-    async processStoreCallback(muxId, message) {
-        return Promise.all([...this.callbacks.values()].map(callback => callback(message, muxId))).then(a => a.reduce((a, b) => a && b));
+    getLocalModel(muxId) {
+        const store = this.stores[muxId];
+        if (store == null) {
+            this.stores[muxId] = { type: 'pending', promise: this.setupStore(muxId) };
+            return null;
+        }
+        if (store.type === 'pending') {
+            return null;
+        }
+        else {
+            return store.store.localModel;
+        }
+    }
+    async setupStore(muxId) {
+        const store = await DirectStore.construct(this.storageKey.childWithComponent(muxId), this.exists, this.type, this.mode, this.modelConstructor);
+        const id = store.on(msg => this.processStoreCallback(muxId, msg));
+        const record = { store, id, type: 'record' };
+        this.stores[muxId] = record;
+        return record;
     }
     async onProxyMessage(message, muxId) {
-        if (this.stores[muxId] == null) {
-            const store = await DirectStore.construct(this.storageKey.childWithComponent(muxId), this.exists, this.type, this.mode, this.modelConstructor);
-            const id = store.on(msg => this.processStoreCallback(muxId, msg));
-            this.stores[muxId] = { store, id };
+        let storeRecord = this.stores[muxId];
+        if (storeRecord == null) {
+            storeRecord = await this.setupStore(muxId);
         }
-        const { store, id } = this.stores[muxId];
+        if (storeRecord.type === 'pending') {
+            storeRecord = await storeRecord.promise;
+        }
+        const { store, id } = storeRecord;
         message.id = id;
         return store.onProxyMessage(message);
     }
@@ -46,7 +65,16 @@ export class BackingStore {
         return new BackingStore(storageKey, exists, type, mode, modelConstructor);
     }
     async idle() {
-        await Promise.all(Object.values(this.stores).map(({ store }) => store.idle()));
+        const stores = [];
+        for (const store of Object.values(this.stores)) {
+            if (store.type === 'record') {
+                stores.push(store.store);
+            }
+        }
+        await Promise.all(stores.map(store => store.idle()));
+    }
+    async processStoreCallback(muxId, message) {
+        return Promise.all([...this.callbacks.values()].map(callback => callback(message, muxId))).then(a => a.reduce((a, b) => a && b));
     }
 }
 //# sourceMappingURL=backing-store.js.map

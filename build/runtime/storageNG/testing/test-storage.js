@@ -64,6 +64,18 @@ export class MockStorageKey extends StorageKey {
         throw new Error('Method not implemented.');
     }
 }
+export class MockHierarchicalStorageKey extends StorageKey {
+    constructor(segment = '') {
+        super('testing-hierarchy');
+        this.value = segment;
+    }
+    toString() {
+        return `${this.protocol}://${this.value}`;
+    }
+    childWithComponent(component) {
+        return new MockHierarchicalStorageKey(this.value + component);
+    }
+}
 export class MockHandle extends Handle {
     constructor(storageProxy) {
         super('handle', storageProxy, IdGenerator.newSession(), {}, true, true);

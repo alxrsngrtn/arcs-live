@@ -46,6 +46,12 @@ export declare class MockStorageKey extends StorageKey {
     toString(): string;
     childWithComponent(component: string): StorageKey;
 }
+export declare class MockHierarchicalStorageKey extends StorageKey {
+    value: string;
+    constructor(segment?: string);
+    toString(): string;
+    childWithComponent(component: string): MockHierarchicalStorageKey;
+}
 export declare class MockHandle<T extends CRDTTypeRecord> extends Handle<T> {
     onSyncCalled: boolean;
     lastUpdate: any;

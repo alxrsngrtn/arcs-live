@@ -39,6 +39,9 @@ export class CRDTEntity {
                 allOps = false;
             }
         }
+        for (const versionKey of Object.keys(other.version)) {
+            this.model.version[versionKey] = Math.max(this.model.version[versionKey] || 0, other.version[versionKey]);
+        }
         if (allOps) {
             const modelOps = [];
             const otherOps = [];
@@ -46,20 +49,20 @@ export class CRDTEntity {
                 for (const operation of singletonChanges[singleton].modelChange.operations) {
                     let op;
                     if (operation.type === SingletonOpTypes.Set) {
-                        op = { type: EntityOpTypes.Set, value: operation.value, actor: operation.actor, clock: operation.clock, field: singleton };
+                        op = { ...operation, type: EntityOpTypes.Set, field: singleton };
                     }
                     else {
-                        op = { type: EntityOpTypes.Clear, actor: operation.actor, clock: operation.clock, field: singleton };
+                        op = { ...operation, type: EntityOpTypes.Clear, field: singleton };
                     }
                     modelOps.push(op);
                 }
                 for (const operation of singletonChanges[singleton].otherChange.operations) {
                     let op;
                     if (operation.type === SingletonOpTypes.Set) {
-                        op = { type: EntityOpTypes.Set, value: operation.value, actor: operation.actor, clock: operation.clock, field: singleton };
+                        op = { ...operation, type: EntityOpTypes.Set, field: singleton };
                     }
                     else {
-                        op = { type: EntityOpTypes.Clear, actor: operation.actor, clock: operation.clock, field: singleton };
+                        op = { ...operation, type: EntityOpTypes.Clear, field: singleton };
                     }
                     otherOps.push(op);
                 }
@@ -68,20 +71,20 @@ export class CRDTEntity {
                 for (const operation of collectionChanges[collection].modelChange.operations) {
                     let op;
                     if (operation.type === CollectionOpTypes.Add) {
-                        op = { type: EntityOpTypes.Add, value: operation.added, actor: operation.actor, clock: operation.clock, field: collection };
+                        op = { ...operation, type: EntityOpTypes.Add, field: collection };
                     }
                     else {
-                        op = { type: EntityOpTypes.Remove, value: operation.removed, actor: operation.actor, clock: operation.clock, field: collection };
+                        op = { ...operation, type: EntityOpTypes.Remove, field: collection };
                     }
                     modelOps.push(op);
                 }
                 for (const operation of collectionChanges[collection].otherChange.operations) {
                     let op;
                     if (operation.type === CollectionOpTypes.Add) {
-                        op = { type: EntityOpTypes.Add, value: operation.added, actor: operation.actor, clock: operation.clock, field: collection };
+                        op = { ...operation, type: EntityOpTypes.Add, field: collection };
                     }
                     else {
-                        op = { type: EntityOpTypes.Remove, value: operation.removed, actor: operation.actor, clock: operation.clock, field: collection };
+                        op = { ...operation, type: EntityOpTypes.Remove, field: collection };
                     }
                     otherOps.push(op);
                 }
@@ -112,18 +115,27 @@ export class CRDTEntity {
                 throw new Error(`Invalid field: ${op.field} does not exist`);
             }
         }
-        switch (op.type) {
-            case EntityOpTypes.Set:
-                return this.model.singletons[op.field].applyOperation({ type: SingletonOpTypes.Set, actor: op.actor, value: op.value, clock: op.clock });
-            case EntityOpTypes.Clear:
-                return this.model.singletons[op.field].applyOperation({ type: SingletonOpTypes.Clear, actor: op.actor, clock: op.clock });
-            case EntityOpTypes.Add:
-                return this.model.collections[op.field].applyOperation({ type: CollectionOpTypes.Add, actor: op.actor, clock: op.clock, added: op.value });
-            case EntityOpTypes.Remove:
-                return this.model.collections[op.field].applyOperation({ type: CollectionOpTypes.Remove, actor: op.actor, clock: op.clock, removed: op.value });
-            default:
-                throw new Error(`Unexpected op ${op} for Entity CRDT`);
+        const apply = () => {
+            switch (op.type) {
+                case EntityOpTypes.Set:
+                    return this.model.singletons[op.field].applyOperation({ ...op, type: SingletonOpTypes.Set });
+                case EntityOpTypes.Clear:
+                    return this.model.singletons[op.field].applyOperation({ ...op, type: SingletonOpTypes.Clear });
+                case EntityOpTypes.Add:
+                    return this.model.collections[op.field].applyOperation({ ...op, type: CollectionOpTypes.Add });
+                case EntityOpTypes.Remove:
+                    return this.model.collections[op.field].applyOperation({ ...op, type: CollectionOpTypes.Remove });
+                default:
+                    throw new Error(`Unexpected op ${op} for Entity CRDT`);
+            }
+        };
+        if (apply()) {
+            for (const versionKey of Object.keys(op.clock)) {
+                this.model.version[versionKey] = Math.max(this.model.version[versionKey] || 0, op.clock[versionKey]);
+            }
+            return true;
         }
+        return false;
     }
     getData() {
         const singletons = {};

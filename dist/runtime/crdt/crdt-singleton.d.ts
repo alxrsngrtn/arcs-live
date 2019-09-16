@@ -22,16 +22,18 @@ export declare enum SingletonOpTypes {
     Set = 0,
     Clear = 1
 }
-export declare type SingletonOperation<T> = {
+export declare type SingletonOperationClear = {
     type: SingletonOpTypes.Clear;
     actor: string;
     clock: VersionMap;
-} | {
+};
+export declare type SingletonOperationSet<T> = {
     type: SingletonOpTypes.Set;
     value: T;
     actor: string;
     clock: VersionMap;
 };
+export declare type SingletonOperation<T> = SingletonOperationClear | SingletonOperationSet<T>;
 export interface CRDTSingletonTypeRecord<T extends Referenceable> extends CRDTTypeRecord {
     data: SingletonData<T>;
     operation: SingletonOperation<T>;

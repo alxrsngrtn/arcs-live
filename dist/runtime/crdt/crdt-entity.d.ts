@@ -56,14 +56,14 @@ declare type SetOp<Singleton, Field extends keyof Singleton> = {
 declare type AddOp<Collection, Field extends keyof Collection> = {
     type: EntityOpTypes.Add;
     field: Field;
-    value: Collection[Field];
+    added: Collection[Field];
     actor: string;
     clock: VersionMap;
 };
 declare type RemoveOp<Collection, Field extends keyof Collection> = {
     type: EntityOpTypes.Remove;
     field: Field;
-    value: Collection[Field];
+    removed: Collection[Field];
     actor: string;
     clock: VersionMap;
 };

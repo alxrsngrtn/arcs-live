@@ -375,6 +375,7 @@ function buildPath(path, preprocess) {
     return fn;
 }
 function tsc(path) {
+    console.log(saneSpawnWithOutput('node_modules/.bin/tsc', ['--version']).stdout);
     const result = saneSpawnWithOutput('node_modules/.bin/tsc', ['--diagnostics', '-p', path]);
     if (result.success) {
         console.log(result.stdout);

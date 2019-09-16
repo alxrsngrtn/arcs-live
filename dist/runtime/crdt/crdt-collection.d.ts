@@ -13,7 +13,7 @@ declare type RawCollection<T> = Set<T>;
 export interface Referenceable {
     id: string;
 }
-declare type CollectionData<T extends Referenceable> = {
+export declare type CollectionData<T extends Referenceable> = {
     values: Dictionary<{
         value: T;
         version: VersionMap;
@@ -25,17 +25,6 @@ export declare enum CollectionOpTypes {
     Remove = 1,
     FastForward = 2
 }
-export declare type CollectionOperation<T> = {
-    type: CollectionOpTypes.Add;
-    added: T;
-    actor: string;
-    clock: VersionMap;
-} | {
-    type: CollectionOpTypes.Remove;
-    removed: T;
-    actor: string;
-    clock: VersionMap;
-} | CollectionFastForwardOp<T>;
 export declare type CollectionFastForwardOp<T> = {
     type: CollectionOpTypes.FastForward;
     added: [T, VersionMap][];
@@ -43,6 +32,19 @@ export declare type CollectionFastForwardOp<T> = {
     oldClock: VersionMap;
     newClock: VersionMap;
 };
+export declare type CollectionOperationAdd<T> = {
+    type: CollectionOpTypes.Add;
+    added: T;
+    actor: string;
+    clock: VersionMap;
+};
+export declare type CollectionOperationRemove<T> = {
+    type: CollectionOpTypes.Remove;
+    removed: T;
+    actor: string;
+    clock: VersionMap;
+};
+export declare type CollectionOperation<T> = CollectionOperationAdd<T> | CollectionOperationRemove<T> | CollectionFastForwardOp<T>;
 export interface CRDTCollectionTypeRecord<T extends Referenceable> extends CRDTTypeRecord {
     data: CollectionData<T>;
     operation: CollectionOperation<T>;

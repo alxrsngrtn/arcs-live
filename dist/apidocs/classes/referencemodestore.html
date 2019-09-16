@@ -1,0 +1,1535 @@
+<!doctype html>
+<html class="default no-js">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>ReferenceModeStore | arcs</title>
+	<meta name="description" content="">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="../assets/css/main.css">
+</head>
+<body>
+<header>
+	<div class="tsd-page-toolbar">
+		<div class="container">
+			<div class="table-wrap">
+				<div class="table-cell" id="tsd-search" data-index="../assets/js/search.js" data-base="..">
+					<div class="field">
+						<label for="tsd-search-field" class="tsd-widget search no-caption">Search</label>
+						<input id="tsd-search-field" type="text" />
+					</div>
+					<ul class="results">
+						<li class="state loading">Preparing search index...</li>
+						<li class="state failure">The search index is not available</li>
+					</ul>
+					<a href="../index.html" class="title">arcs</a>
+				</div>
+				<div class="table-cell" id="tsd-widgets">
+					<div id="tsd-filter">
+						<a href="#" class="tsd-widget options no-caption" data-toggle="options">Options</a>
+						<div class="tsd-filter-group">
+							<div class="tsd-select" id="tsd-filter-visibility">
+								<span class="tsd-select-label">All</span>
+								<ul class="tsd-select-list">
+									<li data-value="public">Public</li>
+									<li data-value="protected">Public/Protected</li>
+									<li data-value="private" class="selected">All</li>
+								</ul>
+							</div>
+							<input type="checkbox" id="tsd-filter-inherited" checked />
+							<label class="tsd-widget" for="tsd-filter-inherited">Inherited</label>
+							<input type="checkbox" id="tsd-filter-externals" checked />
+							<label class="tsd-widget" for="tsd-filter-externals">Externals</label>
+							<input type="checkbox" id="tsd-filter-only-exported" />
+							<label class="tsd-widget" for="tsd-filter-only-exported">Only exported</label>
+						</div>
+					</div>
+					<a href="#" class="tsd-widget menu no-caption" data-toggle="menu">Menu</a>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="tsd-page-title">
+		<div class="container">
+			<ul class="tsd-breadcrumb">
+				<li>
+					<a href="../globals.html">Globals</a>
+				</li>
+				<li>
+					<a href="referencemodestore.html">ReferenceModeStore</a>
+				</li>
+			</ul>
+			<h1>Class ReferenceModeStore&lt;Entity, S, C, ReferenceContainer, Container&gt;</h1>
+		</div>
+	</div>
+</header>
+<div class="container container-main">
+	<div class="row">
+		<div class="col-8 col-content">
+			<section class="tsd-panel tsd-comment">
+				<div class="tsd-comment tsd-typography">
+					<div class="lead">
+						<p>ReferenceModeStores adapt between a collection (CRDTCollection or CRDTSingleton) of entities from the perspective of their public API,
+						and a collection of references + a backing store of entity CRDTs from an internal storage perspective.</p>
+					</div>
+					<p>ReferenceModeStores maintain a queue of incoming updates (the receiveQueue) and process them one at a time. When possible, the results
+						of this processing are immediately sent upwards (to connected StorageProxies) and downwards (to storage). However, there are a few
+					caveats:</p>
+					<ul>
+						<li>incoming operations and models from StorageProxies may require several writes to storage - one for each modified entity, and one
+						to the container store. These are processed serially, so that a container doesn&#39;t get updated if backing store modifications fail.</li>
+						<li>updates from the container store need to be blocked on ensuring the required data is also available in the backing store.
+						The holdQueue ensures that these blocks are tracked and processed appropriately.</li>
+						<li>updates should always be sent in order, so a blocked send should block subsequent sends too. The pendingSends queue ensures that all
+						outgoing updates are sent in the correct order.</li>
+					</ul>
+				</div>
+			</section>
+			<section class="tsd-panel tsd-type-parameters">
+				<h3>Type parameters</h3>
+				<ul class="tsd-type-parameters">
+					<li>
+						<h4>Entity<span class="tsd-signature-symbol">: </span><a href="../interfaces/referenceable.html" class="tsd-signature-type">Referenceable</a></h4>
+					</li>
+					<li>
+						<h4>S<span class="tsd-signature-symbol">: </span><a href="../interfaces/dictionary.html" class="tsd-signature-type">Dictionary</a><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/referenceable.html" class="tsd-signature-type">Referenceable</a><span class="tsd-signature-symbol">&gt;</span></h4>
+					</li>
+					<li>
+						<h4>C<span class="tsd-signature-symbol">: </span><a href="../interfaces/dictionary.html" class="tsd-signature-type">Dictionary</a><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/referenceable.html" class="tsd-signature-type">Referenceable</a><span class="tsd-signature-symbol">&gt;</span></h4>
+					</li>
+					<li>
+						<h4>ReferenceContainer<span class="tsd-signature-symbol">: </span><a href="../interfaces/crdtsingletontyperecord.html" class="tsd-signature-type">CRDTSingletonTypeRecord</a><span class="tsd-signature-symbol">&lt;</span><a href="reference.html" class="tsd-signature-type">Reference</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> | </span><a href="../interfaces/crdtcollectiontyperecord.html" class="tsd-signature-type">CRDTCollectionTypeRecord</a><span class="tsd-signature-symbol">&lt;</span><a href="reference.html" class="tsd-signature-type">Reference</a><span class="tsd-signature-symbol">&gt;</span></h4>
+					</li>
+					<li>
+						<h4>Container<span class="tsd-signature-symbol">: </span><a href="../interfaces/crdtsingletontyperecord.html" class="tsd-signature-type">CRDTSingletonTypeRecord</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Entity</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> | </span><a href="../interfaces/crdtcollectiontyperecord.html" class="tsd-signature-type">CRDTCollectionTypeRecord</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Entity</span><span class="tsd-signature-symbol">&gt;</span></h4>
+					</li>
+				</ul>
+			</section>
+			<section class="tsd-panel tsd-hierarchy">
+				<h3>Hierarchy</h3>
+				<ul class="tsd-hierarchy">
+					<li>
+						<a href="activestore.html" class="tsd-signature-type">ActiveStore</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Container</span><span class="tsd-signature-symbol">&gt;</span>
+						<ul class="tsd-hierarchy">
+							<li>
+								<span class="target">ReferenceModeStore</span>
+							</li>
+						</ul>
+					</li>
+				</ul>
+			</section>
+			<section class="tsd-panel">
+				<h3>Implements</h3>
+				<ul class="tsd-hierarchy">
+					<li><span class="tsd-signature-type">object</span></li>
+				</ul>
+			</section>
+			<section class="tsd-panel-group tsd-index-group">
+				<h2>Index</h2>
+				<section class="tsd-panel tsd-index-panel">
+					<div class="tsd-index-content">
+						<section class="tsd-index-section tsd-is-inherited">
+							<h3>Constructors</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-constructor tsd-parent-kind-class tsd-is-inherited"><a href="referencemodestore.html#constructor" class="tsd-kind-icon">constructor</a></li>
+							</ul>
+						</section>
+						<section class="tsd-index-section ">
+							<h3>Properties</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="referencemodestore.html#backingstore" class="tsd-kind-icon">backing<wbr>Store</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="referencemodestore.html#blockcounter" class="tsd-kind-icon">block<wbr>Counter</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="referencemodestore.html#callbacks" class="tsd-kind-icon">callbacks</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="referencemodestore.html#containerstore" class="tsd-kind-icon">container<wbr>Store</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="referencemodestore.html#crdtkey" class="tsd-kind-icon">crdt<wbr>Key</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="referencemodestore.html#exists" class="tsd-kind-icon">exists</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="referencemodestore.html#holdqueue" class="tsd-kind-icon">hold<wbr>Queue</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="referencemodestore.html#mode" class="tsd-kind-icon">mode</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="referencemodestore.html#modelconstructor" class="tsd-kind-icon">model<wbr>Constructor</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="referencemodestore.html#nextcallbackid" class="tsd-kind-icon">next<wbr>CallbackID</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="referencemodestore.html#pendingsends" class="tsd-kind-icon">pending<wbr>Sends</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="referencemodestore.html#receivequeue" class="tsd-kind-icon">receive<wbr>Queue</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="referencemodestore.html#storagekey" class="tsd-kind-icon">storage<wbr>Key</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="referencemodestore.html#type" class="tsd-kind-icon">type</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="referencemodestore.html#versions" class="tsd-kind-icon">versions</a></li>
+							</ul>
+						</section>
+						<section class="tsd-index-section ">
+							<h3>Methods</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter tsd-is-private"><a href="referencemodestore.html#clonemap" class="tsd-kind-icon">clone<wbr>Map</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="referencemodestore.html#constructpendingidsandmodel" class="tsd-kind-icon">construct<wbr>Pending<wbr>Ids<wbr>And<wbr>Model</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="referencemodestore.html#enqueue" class="tsd-kind-icon">enqueue</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="referencemodestore.html#enqueueblockingsend" class="tsd-kind-icon">enqueue<wbr>Blocking<wbr>Send</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="referencemodestore.html#enqueuesend" class="tsd-kind-icon">enqueue<wbr>Send</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="referencemodestore.html#entityfrommodel" class="tsd-kind-icon">entity<wbr>From<wbr>Model</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="referencemodestore.html#entitytomodel" class="tsd-kind-icon">entity<wbr>ToModel</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="referencemodestore.html#handlebackingstore" class="tsd-kind-icon">handle<wbr>Backing<wbr>Store</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="referencemodestore.html#handlecontainerstore" class="tsd-kind-icon">handle<wbr>Container<wbr>Store</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="referencemodestore.html#handleproxymessage" class="tsd-kind-icon">handle<wbr>Proxy<wbr>Message</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="referencemodestore.html#idle" class="tsd-kind-icon">idle</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="referencemodestore.html#off" class="tsd-kind-icon">off</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="referencemodestore.html#on" class="tsd-kind-icon">on</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="referencemodestore.html#onbackingstore" class="tsd-kind-icon">on<wbr>Backing<wbr>Store</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="referencemodestore.html#oncontainerstore" class="tsd-kind-icon">on<wbr>Container<wbr>Store</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="referencemodestore.html#onproxymessage" class="tsd-kind-icon">on<wbr>Proxy<wbr>Message</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter tsd-is-private"><a href="referencemodestore.html#operationelement" class="tsd-kind-icon">operation<wbr>Element</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter tsd-is-private"><a href="referencemodestore.html#processop" class="tsd-kind-icon">process<wbr>Op</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="referencemodestore.html#processpendingsends" class="tsd-kind-icon">process<wbr>Pending<wbr>Sends</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="referencemodestore.html#processqueue" class="tsd-kind-icon">process<wbr>Queue</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="referencemodestore.html#registerstorecallbacks" class="tsd-kind-icon">register<wbr>Store<wbr>Callbacks</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="referencemodestore.html#reportexceptioninhost" class="tsd-kind-icon">report<wbr>Exception<wbr>InHost</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="referencemodestore.html#send" class="tsd-kind-icon">send</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="referencemodestore.html#sendexcept" class="tsd-kind-icon">send<wbr>Except</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="referencemodestore.html#updatebackingstore" class="tsd-kind-icon">update<wbr>Backing<wbr>Store</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter tsd-is-private"><a href="referencemodestore.html#updateop" class="tsd-kind-icon">update<wbr>Op</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter tsd-is-static"><a href="referencemodestore.html#construct" class="tsd-kind-icon">construct</a></li>
+							</ul>
+						</section>
+					</div>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group tsd-is-inherited">
+				<h2>Constructors</h2>
+				<section class="tsd-panel tsd-member tsd-kind-constructor tsd-parent-kind-class tsd-is-inherited">
+					<a name="constructor" class="tsd-anchor"></a>
+					<h3>constructor</h3>
+					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class tsd-is-inherited">
+						<li class="tsd-signature tsd-kind-icon">new <wbr>Reference<wbr>Mode<wbr>Store<span class="tsd-signature-symbol">(</span>storageKey<span class="tsd-signature-symbol">: </span><a href="storagekey.html" class="tsd-signature-type">StorageKey</a>, exists<span class="tsd-signature-symbol">: </span><a href="../enums/exists.html" class="tsd-signature-type">Exists</a>, type<span class="tsd-signature-symbol">: </span><a href="type.html" class="tsd-signature-type">Type</a>, mode<span class="tsd-signature-symbol">: </span><a href="../enums/storagemode.html" class="tsd-signature-type">StorageMode</a>, modelConstructor<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">object</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="referencemodestore.html" class="tsd-signature-type">ReferenceModeStore</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from <a href="activestore.html">ActiveStore</a>.<a href="activestore.html#constructor">constructor</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/cc160ed/src/runtime/storageNG/store-interface.ts#L48">src/runtime/storageNG/store-interface.ts:48</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>storageKey: <a href="storagekey.html" class="tsd-signature-type">StorageKey</a></h5>
+								</li>
+								<li>
+									<h5>exists: <a href="../enums/exists.html" class="tsd-signature-type">Exists</a></h5>
+								</li>
+								<li>
+									<h5>type: <a href="type.html" class="tsd-signature-type">Type</a></h5>
+								</li>
+								<li>
+									<h5>mode: <a href="../enums/storagemode.html" class="tsd-signature-type">StorageMode</a></h5>
+								</li>
+								<li>
+									<h5>modelConstructor: <span class="tsd-signature-type">object</span></h5>
+									<ul class="tsd-parameters">
+									</ul>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="referencemodestore.html" class="tsd-signature-type">ReferenceModeStore</a></h4>
+						</li>
+					</ul>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group ">
+				<h2>Properties</h2>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="backingstore" class="tsd-anchor"></a>
+					<h3>backing<wbr>Store</h3>
+					<div class="tsd-signature tsd-kind-icon">backing<wbr>Store<span class="tsd-signature-symbol">:</span> <a href="backingstore.html" class="tsd-signature-type">BackingStore</a><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/crdtentitytyperecord.html" class="tsd-signature-type">CRDTEntityTypeRecord</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">S</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">C</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/cc160ed/src/runtime/storageNG/reference-mode-store.ts#L64">src/runtime/storageNG/reference-mode-store.ts:64</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private">
+					<a name="blockcounter" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> block<wbr>Counter</h3>
+					<div class="tsd-signature tsd-kind-icon">block<wbr>Counter<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> =&nbsp;0</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/cc160ed/src/runtime/storageNG/reference-mode-store.ts#L109">src/runtime/storageNG/reference-mode-store.ts:109</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private">
+					<a name="callbacks" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> callbacks</h3>
+					<div class="tsd-signature tsd-kind-icon">callbacks<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Map</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">, </span><a href="../globals.html#proxycallback" class="tsd-signature-type">ProxyCallback</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Container</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> =&nbsp;new Map()</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/cc160ed/src/runtime/storageNG/reference-mode-store.ts#L70">src/runtime/storageNG/reference-mode-store.ts:70</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="containerstore" class="tsd-anchor"></a>
+					<h3>container<wbr>Store</h3>
+					<div class="tsd-signature tsd-kind-icon">container<wbr>Store<span class="tsd-signature-symbol">:</span> <a href="directstore.html" class="tsd-signature-type">DirectStore</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">ReferenceContainer</span><span class="tsd-signature-symbol">&gt;</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/cc160ed/src/runtime/storageNG/reference-mode-store.ts#L65">src/runtime/storageNG/reference-mode-store.ts:65</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private">
+					<a name="crdtkey" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> crdt<wbr>Key</h3>
+					<div class="tsd-signature tsd-kind-icon">crdt<wbr>Key<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> =&nbsp;(Math.random() * Math.pow(2, 64)) + &#x27;&#x27;</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/cc160ed/src/runtime/storageNG/reference-mode-store.ts#L80">src/runtime/storageNG/reference-mode-store.ts:80</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
+					<a name="exists" class="tsd-anchor"></a>
+					<h3>exists</h3>
+					<div class="tsd-signature tsd-kind-icon">exists<span class="tsd-signature-symbol">:</span> <a href="../enums/exists.html" class="tsd-signature-type">Exists</a></div>
+					<aside class="tsd-sources">
+						<p>Inherited from <a href="activestore.html">ActiveStore</a>.<a href="activestore.html#exists">exists</a></p>
+						<ul>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/cc160ed/src/runtime/storageNG/store-interface.ts#L45">src/runtime/storageNG/store-interface.ts:45</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private">
+					<a name="holdqueue" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> hold<wbr>Queue</h3>
+					<div class="tsd-signature tsd-kind-icon">hold<wbr>Queue<span class="tsd-signature-symbol">:</span> <a href="holdqueue.html" class="tsd-signature-type">HoldQueue</a><span class="tsd-signature-symbol"> =&nbsp;new HoldQueue()</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/cc160ed/src/runtime/storageNG/reference-mode-store.ts#L104">src/runtime/storageNG/reference-mode-store.ts:104</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
+					<a name="mode" class="tsd-anchor"></a>
+					<h3>mode</h3>
+					<div class="tsd-signature tsd-kind-icon">mode<span class="tsd-signature-symbol">:</span> <a href="../enums/storagemode.html" class="tsd-signature-type">StorageMode</a></div>
+					<aside class="tsd-sources">
+						<p>Inherited from <a href="activestore.html">ActiveStore</a>.<a href="activestore.html#mode">mode</a></p>
+						<ul>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/cc160ed/src/runtime/storageNG/store-interface.ts#L47">src/runtime/storageNG/store-interface.ts:47</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
+					<a name="modelconstructor" class="tsd-anchor"></a>
+					<h3>model<wbr>Constructor</h3>
+					<div class="tsd-signature tsd-kind-icon">model<wbr>Constructor<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
+					<aside class="tsd-sources">
+						<p>Inherited from <a href="activestore.html">ActiveStore</a>.<a href="activestore.html#modelconstructor">modelConstructor</a></p>
+						<ul>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/cc160ed/src/runtime/storageNG/store-interface.ts#L48">src/runtime/storageNG/store-interface.ts:48</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-type-declaration">
+						<h4>Type declaration</h4>
+						<ul class="tsd-parameters">
+						</ul>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private">
+					<a name="nextcallbackid" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> next<wbr>CallbackID</h3>
+					<div class="tsd-signature tsd-kind-icon">next<wbr>CallbackID<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> =&nbsp;1</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/cc160ed/src/runtime/storageNG/reference-mode-store.ts#L71">src/runtime/storageNG/reference-mode-store.ts:71</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private">
+					<a name="pendingsends" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> pending<wbr>Sends</h3>
+					<div class="tsd-signature tsd-kind-icon">pending<wbr>Sends<span class="tsd-signature-symbol">:</span> <a href="../globals.html#blockablerunnable" class="tsd-signature-type">BlockableRunnable</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> =&nbsp;[]</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/cc160ed/src/runtime/storageNG/reference-mode-store.ts#L99">src/runtime/storageNG/reference-mode-store.ts:99</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private">
+					<a name="receivequeue" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> receive<wbr>Queue</h3>
+					<div class="tsd-signature tsd-kind-icon">receive<wbr>Queue<span class="tsd-signature-symbol">:</span> <a href="../globals.html#enqueuedmessage" class="tsd-signature-type">EnqueuedMessage</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Container</span><span class="tsd-signature-symbol">, </span><a href="../interfaces/crdtentitytyperecord.html" class="tsd-signature-type">CRDTEntityTypeRecord</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">S</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">C</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">ReferenceContainer</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> =&nbsp;[]</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/cc160ed/src/runtime/storageNG/reference-mode-store.ts#L93">src/runtime/storageNG/reference-mode-store.ts:93</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
+					<a name="storagekey" class="tsd-anchor"></a>
+					<h3>storage<wbr>Key</h3>
+					<div class="tsd-signature tsd-kind-icon">storage<wbr>Key<span class="tsd-signature-symbol">:</span> <a href="storagekey.html" class="tsd-signature-type">StorageKey</a></div>
+					<aside class="tsd-sources">
+						<p>Inherited from <a href="activestore.html">ActiveStore</a>.<a href="activestore.html#storagekey">storageKey</a></p>
+						<ul>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/cc160ed/src/runtime/storageNG/store-interface.ts#L44">src/runtime/storageNG/store-interface.ts:44</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
+					<a name="type" class="tsd-anchor"></a>
+					<h3>type</h3>
+					<div class="tsd-signature tsd-kind-icon">type<span class="tsd-signature-symbol">:</span> <a href="type.html" class="tsd-signature-type">Type</a></div>
+					<aside class="tsd-sources">
+						<p>Inherited from <a href="activestore.html">ActiveStore</a>.<a href="activestore.html#type">type</a></p>
+						<ul>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/cc160ed/src/runtime/storageNG/store-interface.ts#L46">src/runtime/storageNG/store-interface.ts:46</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private">
+					<a name="versions" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> versions</h3>
+					<div class="tsd-signature tsd-kind-icon">versions<span class="tsd-signature-symbol">:</span> <a href="../interfaces/dictionary.html" class="tsd-signature-type">Dictionary</a><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/dictionary.html" class="tsd-signature-type">Dictionary</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/cc160ed/src/runtime/storageNG/reference-mode-store.ts#L86">src/runtime/storageNG/reference-mode-store.ts:86</a></li>
+						</ul>
+					</aside>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group ">
+				<h2>Methods</h2>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter tsd-is-private">
+					<a name="clonemap" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> clone<wbr>Map</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter tsd-is-private">
+						<li class="tsd-signature tsd-kind-icon">clone<wbr>Map&lt;V&gt;<span class="tsd-signature-symbol">(</span>map<span class="tsd-signature-symbol">: </span><a href="../interfaces/dictionary.html" class="tsd-signature-type">Dictionary</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">V</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/dictionary.html" class="tsd-signature-type">Dictionary</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">V</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/cc160ed/src/runtime/storageNG/reference-mode-store.ts#L462">src/runtime/storageNG/reference-mode-store.ts:462</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-type-parameters-title">Type parameters</h4>
+							<ul class="tsd-type-parameters">
+								<li>
+									<h4>V</h4>
+								</li>
+							</ul>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>map: <a href="../interfaces/dictionary.html" class="tsd-signature-type">Dictionary</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">V</span><span class="tsd-signature-symbol">&gt;</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="../interfaces/dictionary.html" class="tsd-signature-type">Dictionary</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">V</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-private">
+					<a name="constructpendingidsandmodel" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> construct<wbr>Pending<wbr>Ids<wbr>And<wbr>Model</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private">
+						<li class="tsd-signature tsd-kind-icon">construct<wbr>Pending<wbr>Ids<wbr>And<wbr>Model<span class="tsd-signature-symbol">(</span>data<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">ReferenceContainer[&quot;data&quot;]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">object</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/cc160ed/src/runtime/storageNG/reference-mode-store.ts#L474">src/runtime/storageNG/reference-mode-store.ts:474</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Returns a function that can construct a CRDTModel of a Container of Entities based off the
+										provided Container of References. Any referenced IDs that are not yet available in the backing
+										store are returned in the pendingIds list. The returned function should not be invoked until
+									all references in pendingIds have valid backing in the backing store.</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>data: <span class="tsd-signature-type">ReferenceContainer[&quot;data&quot;]</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">object</span></h4>
+							<ul class="tsd-parameters">
+								<li class="tsd-parameter">
+									<h5>model<span class="tsd-signature-symbol">: </span><a href="../globals.html#producer" class="tsd-signature-type">Producer</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Container[&quot;data&quot;]</span><span class="tsd-signature-symbol">&gt;</span></h5>
+								</li>
+								<li class="tsd-parameter">
+									<h5>pending<wbr>Ids<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">object</span><span class="tsd-signature-symbol">[]</span></h5>
+								</li>
+							</ul>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-private">
+					<a name="enqueue" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> enqueue</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private">
+						<li class="tsd-signature tsd-kind-icon">enqueue<span class="tsd-signature-symbol">(</span>entry<span class="tsd-signature-symbol">: </span><a href="../globals.html#preenqueuedmessage" class="tsd-signature-type">PreEnqueuedMessage</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Container</span><span class="tsd-signature-symbol">, </span><a href="../interfaces/crdtentitytyperecord.html" class="tsd-signature-type">CRDTEntityTypeRecord</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">S</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">C</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">ReferenceContainer</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/cc160ed/src/runtime/storageNG/reference-mode-store.ts#L166">src/runtime/storageNG/reference-mode-store.ts:166</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>enqueue an incoming update onto the object-wide queue and return a promise that will be resolved
+									when the update is processed.</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>entry: <a href="../globals.html#preenqueuedmessage" class="tsd-signature-type">PreEnqueuedMessage</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Container</span><span class="tsd-signature-symbol">, </span><a href="../interfaces/crdtentitytyperecord.html" class="tsd-signature-type">CRDTEntityTypeRecord</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">S</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">C</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">ReferenceContainer</span><span class="tsd-signature-symbol">&gt;</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-private">
+					<a name="enqueueblockingsend" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> enqueue<wbr>Blocking<wbr>Send</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private">
+						<li class="tsd-signature tsd-kind-icon">enqueue<wbr>Blocking<wbr>Send<span class="tsd-signature-symbol">(</span>entities<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">object</span><span class="tsd-signature-symbol">[]</span>, runnable<span class="tsd-signature-symbol">: </span><a href="../globals.html#runnable" class="tsd-signature-type">Runnable</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/cc160ed/src/runtime/storageNG/reference-mode-store.ts#L381">src/runtime/storageNG/reference-mode-store.ts:381</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Enqueues a send function on the send queue, deferring execution until the
+									provided id list is available in the backing store.</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>entities: <span class="tsd-signature-type">object</span><span class="tsd-signature-symbol">[]</span></h5>
+								</li>
+								<li>
+									<h5>runnable: <a href="../globals.html#runnable" class="tsd-signature-type">Runnable</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-private">
+					<a name="enqueuesend" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> enqueue<wbr>Send</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private">
+						<li class="tsd-signature tsd-kind-icon">enqueue<wbr>Send<span class="tsd-signature-symbol">(</span>runnable<span class="tsd-signature-symbol">: </span><a href="../globals.html#runnable" class="tsd-signature-type">Runnable</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/cc160ed/src/runtime/storageNG/reference-mode-store.ts#L369">src/runtime/storageNG/reference-mode-store.ts:369</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Enqueues a sending function on the send queue. If the send queue is empty then
+									the function is immediately invoked.</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>runnable: <a href="../globals.html#runnable" class="tsd-signature-type">Runnable</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-private">
+					<a name="entityfrommodel" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> entity<wbr>From<wbr>Model</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private">
+						<li class="tsd-signature tsd-kind-icon">entity<wbr>From<wbr>Model<span class="tsd-signature-symbol">(</span>model<span class="tsd-signature-symbol">: </span><a href="../globals.html#entitydata" class="tsd-signature-type">EntityData</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">S</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">C</span><span class="tsd-signature-symbol">&gt;</span>, id<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Entity</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/cc160ed/src/runtime/storageNG/reference-mode-store.ts#L440">src/runtime/storageNG/reference-mode-store.ts:440</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Convert the provided CRDT model into an entity.</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>model: <a href="../globals.html#entitydata" class="tsd-signature-type">EntityData</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">S</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">C</span><span class="tsd-signature-symbol">&gt;</span></h5>
+								</li>
+								<li>
+									<h5>id: <span class="tsd-signature-type">string</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Entity</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-private">
+					<a name="entitytomodel" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> entity<wbr>ToModel</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private">
+						<li class="tsd-signature tsd-kind-icon">entity<wbr>ToModel<span class="tsd-signature-symbol">(</span>entity<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Entity</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../globals.html#entitydata" class="tsd-signature-type">EntityData</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">S</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">C</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/cc160ed/src/runtime/storageNG/reference-mode-store.ts#L404">src/runtime/storageNG/reference-mode-store.ts:404</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Convert the provided entity to a CRDT Model of the entity. This requires synthesizing
+									a version map for the CRDT model, which is also provided as an output.</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>entity: <span class="tsd-signature-type">Entity</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="../globals.html#entitydata" class="tsd-signature-type">EntityData</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">S</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">C</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-private">
+					<a name="handlebackingstore" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> handle<wbr>Backing<wbr>Store</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private">
+						<li class="tsd-signature tsd-kind-icon">handle<wbr>Backing<wbr>Store<span class="tsd-signature-symbol">(</span>message<span class="tsd-signature-symbol">: </span><a href="../globals.html#proxymessage" class="tsd-signature-type">ProxyMessage</a><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/crdtentitytyperecord.html" class="tsd-signature-type">CRDTEntityTypeRecord</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">S</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">C</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span>, muxId<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/cc160ed/src/runtime/storageNG/reference-mode-store.ts#L278">src/runtime/storageNG/reference-mode-store.ts:278</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Handle an update from the backing store.</p>
+								</div>
+								<p>Model and Operation updates are routed directly to the holdQueue, where they may unblock
+								pending sends but will not have any other action.</p>
+								<p>Syncs should never occur as operation/model updates to the backing store are generated
+								by this ReferenceModeStore object and hence should never be out-of-order.</p>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>message: <a href="../globals.html#proxymessage" class="tsd-signature-type">ProxyMessage</a><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/crdtentitytyperecord.html" class="tsd-signature-type">CRDTEntityTypeRecord</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">S</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">C</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h5>
+								</li>
+								<li>
+									<h5>muxId: <span class="tsd-signature-type">string</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-private">
+					<a name="handlecontainerstore" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> handle<wbr>Container<wbr>Store</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private">
+						<li class="tsd-signature tsd-kind-icon">handle<wbr>Container<wbr>Store<span class="tsd-signature-symbol">(</span>message<span class="tsd-signature-symbol">: </span><a href="../globals.html#proxymessage" class="tsd-signature-type">ProxyMessage</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">ReferenceContainer</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/cc160ed/src/runtime/storageNG/reference-mode-store.ts#L213">src/runtime/storageNG/reference-mode-store.ts:213</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Handle an update from the container store.</p>
+								</div>
+								<p>Operations and Models either enqueue an immediate send (if all referenced entities
+									are available in the backing store) or enqueue a blocked send (if some referenced
+								entities are not yet present).</p>
+								<p>Note that the blocking mechanism isn&#39;t version-aware, so removes followed by
+									adds may not correctly sync. If this turns out to be a problem then we can
+									add version information to references and update the blocking store to gate
+								on a version as well as presence.</p>
+								<p>Sync requests are propagated upwards to the storage proxy.</p>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>message: <a href="../globals.html#proxymessage" class="tsd-signature-type">ProxyMessage</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">ReferenceContainer</span><span class="tsd-signature-symbol">&gt;</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-private">
+					<a name="handleproxymessage" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> handle<wbr>Proxy<wbr>Message</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private">
+						<li class="tsd-signature tsd-kind-icon">handle<wbr>Proxy<wbr>Message<span class="tsd-signature-symbol">(</span>message<span class="tsd-signature-symbol">: </span><a href="../globals.html#proxymessage" class="tsd-signature-type">ProxyMessage</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Container</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/cc160ed/src/runtime/storageNG/reference-mode-store.ts#L307">src/runtime/storageNG/reference-mode-store.ts:307</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Handle an update from an upstream StorageProxy.</p>
+								</div>
+								<p>Model and Operation updates apply first to the backing store, then to the container store.
+									Backing store updates should never fail as updates are locally generated.
+								For Operations:</p>
+								<ul>
+									<li>If the container store update succeeds, then the update is mirrored to non-sending StorageProxies.</li>
+									<li>If the container store update fails, then a <code>false</code> return value ensures that the upstream proxy
+										will request a sync.
+									Model updates should not fail.</li>
+								</ul>
+								<p>Sync requests are handled by directly constructing and sending a model</p>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>message: <a href="../globals.html#proxymessage" class="tsd-signature-type">ProxyMessage</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Container</span><span class="tsd-signature-symbol">&gt;</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+					<a name="idle" class="tsd-anchor"></a>
+					<h3>idle</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+						<li class="tsd-signature tsd-kind-icon">idle<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from <a href="activestore.html">ActiveStore</a>.<a href="activestore.html#idle">idle</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/cc160ed/src/runtime/storageNG/store-interface.ts#L58">src/runtime/storageNG/store-interface.ts:58</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
+					<a name="off" class="tsd-anchor"></a>
+					<h3>off</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
+						<li class="tsd-signature tsd-kind-icon">off<span class="tsd-signature-symbol">(</span>callback<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Overrides <a href="activestore.html">ActiveStore</a>.<a href="activestore.html#off">off</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/cc160ed/src/runtime/storageNG/reference-mode-store.ts#L132">src/runtime/storageNG/reference-mode-store.ts:132</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>callback: <span class="tsd-signature-type">number</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
+					<a name="on" class="tsd-anchor"></a>
+					<h3>on</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
+						<li class="tsd-signature tsd-kind-icon">on<span class="tsd-signature-symbol">(</span>callback<span class="tsd-signature-symbol">: </span><a href="../globals.html#proxycallback" class="tsd-signature-type">ProxyCallback</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Container</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Overrides <a href="activestore.html">ActiveStore</a>.<a href="activestore.html#on">on</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/cc160ed/src/runtime/storageNG/reference-mode-store.ts#L127">src/runtime/storageNG/reference-mode-store.ts:127</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>callback: <a href="../globals.html#proxycallback" class="tsd-signature-type">ProxyCallback</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Container</span><span class="tsd-signature-symbol">&gt;</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="onbackingstore" class="tsd-anchor"></a>
+					<h3>on<wbr>Backing<wbr>Store</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">on<wbr>Backing<wbr>Store<span class="tsd-signature-symbol">(</span>message<span class="tsd-signature-symbol">: </span><a href="../globals.html#proxymessage" class="tsd-signature-type">ProxyMessage</a><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/crdtentitytyperecord.html" class="tsd-signature-type">CRDTEntityTypeRecord</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">S</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">C</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span>, muxId<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/cc160ed/src/runtime/storageNG/reference-mode-store.ts#L154">src/runtime/storageNG/reference-mode-store.ts:154</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>message: <a href="../globals.html#proxymessage" class="tsd-signature-type">ProxyMessage</a><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/crdtentitytyperecord.html" class="tsd-signature-type">CRDTEntityTypeRecord</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">S</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">C</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h5>
+								</li>
+								<li>
+									<h5>muxId: <span class="tsd-signature-type">string</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="oncontainerstore" class="tsd-anchor"></a>
+					<h3>on<wbr>Container<wbr>Store</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">on<wbr>Container<wbr>Store<span class="tsd-signature-symbol">(</span>message<span class="tsd-signature-symbol">: </span><a href="../globals.html#proxymessage" class="tsd-signature-type">ProxyMessage</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">ReferenceContainer</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/cc160ed/src/runtime/storageNG/reference-mode-store.ts#L150">src/runtime/storageNG/reference-mode-store.ts:150</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Messages are enqueued onto an object-wide queue and processed in order.
+										Internally, each handler (handleContainerStore, handleBackingStore, handleProxyMessage)
+									should not return until the response relevant to the message has been received.</p>
+								</div>
+								<p>When handling proxy messages, this implies 2 rounds of update - first the backing
+									store needs to be updated, and once that has completed then the container store needs
+								to be updated.</p>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>message: <a href="../globals.html#proxymessage" class="tsd-signature-type">ProxyMessage</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">ReferenceContainer</span><span class="tsd-signature-symbol">&gt;</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
+					<a name="onproxymessage" class="tsd-anchor"></a>
+					<h3>on<wbr>Proxy<wbr>Message</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
+						<li class="tsd-signature tsd-kind-icon">on<wbr>Proxy<wbr>Message<span class="tsd-signature-symbol">(</span>message<span class="tsd-signature-symbol">: </span><a href="../globals.html#proxymessage" class="tsd-signature-type">ProxyMessage</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Container</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Overrides <a href="activestore.html">ActiveStore</a>.<a href="activestore.html#onproxymessage">onProxyMessage</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/cc160ed/src/runtime/storageNG/reference-mode-store.ts#L158">src/runtime/storageNG/reference-mode-store.ts:158</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>message: <a href="../globals.html#proxymessage" class="tsd-signature-type">ProxyMessage</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Container</span><span class="tsd-signature-symbol">&gt;</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter tsd-is-private">
+					<a name="operationelement" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> operation<wbr>Element</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter tsd-is-private">
+						<li class="tsd-signature tsd-kind-icon">operation<wbr>Element&lt;T&gt;<span class="tsd-signature-symbol">(</span>operation<span class="tsd-signature-symbol">: </span><a href="../globals.html#referencemodeoperation" class="tsd-signature-type">ReferenceModeOperation</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/cc160ed/src/runtime/storageNG/reference-mode-store.ts#L566">src/runtime/storageNG/reference-mode-store.ts:566</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Return the element referenced by the provided operation, or null if the operation is a clear operation.</p>
+								</div>
+							</div>
+							<h4 class="tsd-type-parameters-title">Type parameters</h4>
+							<ul class="tsd-type-parameters">
+								<li>
+									<h4>T<span class="tsd-signature-symbol">: </span><a href="../interfaces/referenceable.html" class="tsd-signature-type">Referenceable</a></h4>
+								</li>
+							</ul>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>operation: <a href="../globals.html#referencemodeoperation" class="tsd-signature-type">ReferenceModeOperation</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">T</span>
+								<span class="tsd-signature-symbol"> | </span>
+								<span class="tsd-signature-type">null</span>
+							</h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter tsd-is-private">
+					<a name="processop" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> process<wbr>Op</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter tsd-is-private">
+						<li class="tsd-signature tsd-kind-icon">process<wbr>Op&lt;T, U&gt;<span class="tsd-signature-symbol">(</span>onAdd<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">function</span>, onRemove<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">function</span>, onSet<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">function</span>, onClear<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">function</span>, operation<span class="tsd-signature-symbol">: </span><a href="../globals.html#referencemodeoperation" class="tsd-signature-type">ReferenceModeOperation</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">U</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/cc160ed/src/runtime/storageNG/reference-mode-store.ts#L535">src/runtime/storageNG/reference-mode-store.ts:535</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Apply the an add, remove, set or clear method to the provided operation
+									based on the operation type.</p>
+								</div>
+							</div>
+							<h4 class="tsd-type-parameters-title">Type parameters</h4>
+							<ul class="tsd-type-parameters">
+								<li>
+									<h4>T<span class="tsd-signature-symbol">: </span><a href="../interfaces/referenceable.html" class="tsd-signature-type">Referenceable</a></h4>
+								</li>
+								<li>
+									<h4>U</h4>
+								</li>
+							</ul>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>onAdd: <span class="tsd-signature-type">function</span></h5>
+									<ul class="tsd-parameters">
+										<li class="tsd-parameter-siganture">
+											<ul class="tsd-signatures tsd-kind-type-literal tsd-is-not-exported">
+												<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>op<span class="tsd-signature-symbol">: </span><a href="../globals.html#collectionoperationadd" class="tsd-signature-type">CollectionOperationAdd</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">U</span></li>
+											</ul>
+											<ul class="tsd-descriptions">
+												<li class="tsd-description">
+													<h4 class="tsd-parameters-title">Parameters</h4>
+													<ul class="tsd-parameters">
+														<li>
+															<h5>op: <a href="../globals.html#collectionoperationadd" class="tsd-signature-type">CollectionOperationAdd</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span></h5>
+														</li>
+													</ul>
+													<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">U</span></h4>
+												</li>
+											</ul>
+										</li>
+									</ul>
+								</li>
+								<li>
+									<h5>onRemove: <span class="tsd-signature-type">function</span></h5>
+									<ul class="tsd-parameters">
+										<li class="tsd-parameter-siganture">
+											<ul class="tsd-signatures tsd-kind-type-literal tsd-is-not-exported">
+												<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>op<span class="tsd-signature-symbol">: </span><a href="../globals.html#collectionoperationremove" class="tsd-signature-type">CollectionOperationRemove</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">U</span></li>
+											</ul>
+											<ul class="tsd-descriptions">
+												<li class="tsd-description">
+													<h4 class="tsd-parameters-title">Parameters</h4>
+													<ul class="tsd-parameters">
+														<li>
+															<h5>op: <a href="../globals.html#collectionoperationremove" class="tsd-signature-type">CollectionOperationRemove</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span></h5>
+														</li>
+													</ul>
+													<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">U</span></h4>
+												</li>
+											</ul>
+										</li>
+									</ul>
+								</li>
+								<li>
+									<h5>onSet: <span class="tsd-signature-type">function</span></h5>
+									<ul class="tsd-parameters">
+										<li class="tsd-parameter-siganture">
+											<ul class="tsd-signatures tsd-kind-type-literal tsd-is-not-exported">
+												<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>op<span class="tsd-signature-symbol">: </span><a href="../globals.html#singletonoperationset" class="tsd-signature-type">SingletonOperationSet</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">U</span></li>
+											</ul>
+											<ul class="tsd-descriptions">
+												<li class="tsd-description">
+													<h4 class="tsd-parameters-title">Parameters</h4>
+													<ul class="tsd-parameters">
+														<li>
+															<h5>op: <a href="../globals.html#singletonoperationset" class="tsd-signature-type">SingletonOperationSet</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span></h5>
+														</li>
+													</ul>
+													<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">U</span></h4>
+												</li>
+											</ul>
+										</li>
+									</ul>
+								</li>
+								<li>
+									<h5>onClear: <span class="tsd-signature-type">function</span></h5>
+									<ul class="tsd-parameters">
+										<li class="tsd-parameter-siganture">
+											<ul class="tsd-signatures tsd-kind-type-literal tsd-is-not-exported">
+												<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>op<span class="tsd-signature-symbol">: </span><a href="../globals.html#singletonoperationclear" class="tsd-signature-type">SingletonOperationClear</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">U</span></li>
+											</ul>
+											<ul class="tsd-descriptions">
+												<li class="tsd-description">
+													<h4 class="tsd-parameters-title">Parameters</h4>
+													<ul class="tsd-parameters">
+														<li>
+															<h5>op: <a href="../globals.html#singletonoperationclear" class="tsd-signature-type">SingletonOperationClear</a></h5>
+														</li>
+													</ul>
+													<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">U</span></h4>
+												</li>
+											</ul>
+										</li>
+									</ul>
+								</li>
+								<li>
+									<h5>operation: <a href="../globals.html#referencemodeoperation" class="tsd-signature-type">ReferenceModeOperation</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">U</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-private">
+					<a name="processpendingsends" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> process<wbr>Pending<wbr>Sends</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private">
+						<li class="tsd-signature tsd-kind-icon">process<wbr>Pending<wbr>Sends<span class="tsd-signature-symbol">(</span>block<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/cc160ed/src/runtime/storageNG/reference-mode-store.ts#L391">src/runtime/storageNG/reference-mode-store.ts:391</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Process any sends in the pending send queue, including sends blocked on the
+									provided block. This should only be called by the holdQueue.</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>block: <span class="tsd-signature-type">string</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-private">
+					<a name="processqueue" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> process<wbr>Queue</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private">
+						<li class="tsd-signature tsd-kind-icon">process<wbr>Queue<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/cc160ed/src/runtime/storageNG/reference-mode-store.ts#L176">src/runtime/storageNG/reference-mode-store.ts:176</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-private">
+					<a name="registerstorecallbacks" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> register<wbr>Store<wbr>Callbacks</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private">
+						<li class="tsd-signature tsd-kind-icon">register<wbr>Store<wbr>Callbacks<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/cc160ed/src/runtime/storageNG/reference-mode-store.ts#L136">src/runtime/storageNG/reference-mode-store.ts:136</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
+					<a name="reportexceptioninhost" class="tsd-anchor"></a>
+					<h3>report<wbr>Exception<wbr>InHost</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
+						<li class="tsd-signature tsd-kind-icon">report<wbr>Exception<wbr>InHost<span class="tsd-signature-symbol">(</span>exception<span class="tsd-signature-symbol">: </span><a href="propagatedexception.html" class="tsd-signature-type">PropagatedException</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Overrides <a href="activestore.html">ActiveStore</a>.<a href="activestore.html#reportexceptioninhost">reportExceptionInHost</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/cc160ed/src/runtime/storageNG/reference-mode-store.ts#L123">src/runtime/storageNG/reference-mode-store.ts:123</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>exception: <a href="propagatedexception.html" class="tsd-signature-type">PropagatedException</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-private">
+					<a name="send" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> send</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private">
+						<li class="tsd-signature tsd-kind-icon">send<span class="tsd-signature-symbol">(</span>message<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Partial</span><span class="tsd-signature-symbol">&lt;</span><a href="../globals.html#proxymessage" class="tsd-signature-type">ProxyMessage</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Container</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/cc160ed/src/runtime/storageNG/reference-mode-store.ts#L504">src/runtime/storageNG/reference-mode-store.ts:504</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Add appropriate ids and send the provided message on all registered StorageProxy callbacks.</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>message: <span class="tsd-signature-type">Partial</span><span class="tsd-signature-symbol">&lt;</span><a href="../globals.html#proxymessage" class="tsd-signature-type">ProxyMessage</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Container</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-private">
+					<a name="sendexcept" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> send<wbr>Except</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private">
+						<li class="tsd-signature tsd-kind-icon">send<wbr>Except<span class="tsd-signature-symbol">(</span>message<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Partial</span><span class="tsd-signature-symbol">&lt;</span><a href="../globals.html#proxymessage" class="tsd-signature-type">ProxyMessage</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Container</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span>, notTo<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/cc160ed/src/runtime/storageNG/reference-mode-store.ts#L514">src/runtime/storageNG/reference-mode-store.ts:514</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Add appropriate ids and send the provided message on all registered StorageProxy callbacks,
+									except for the callback identified by the provided callback ID.</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>message: <span class="tsd-signature-type">Partial</span><span class="tsd-signature-symbol">&lt;</span><a href="../globals.html#proxymessage" class="tsd-signature-type">ProxyMessage</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Container</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h5>
+								</li>
+								<li>
+									<h5>notTo: <span class="tsd-signature-type">number</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-private">
+					<a name="updatebackingstore" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> update<wbr>Backing<wbr>Store</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private">
+						<li class="tsd-signature tsd-kind-icon">update<wbr>Backing<wbr>Store<span class="tsd-signature-symbol">(</span>entity<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Entity</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/cc160ed/src/runtime/storageNG/reference-mode-store.ts#L526">src/runtime/storageNG/reference-mode-store.ts:526</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Write the provided entity to the backing store.</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>entity: <span class="tsd-signature-type">Entity</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter tsd-is-private">
+					<a name="updateop" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> update<wbr>Op</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter tsd-is-private">
+						<li class="tsd-signature tsd-kind-icon">update<wbr>Op&lt;T, U&gt;<span class="tsd-signature-symbol">(</span>operation<span class="tsd-signature-symbol">: </span><a href="../globals.html#referencemodeoperation" class="tsd-signature-type">ReferenceModeOperation</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span>, getValue<span class="tsd-signature-symbol">: </span><a href="../globals.html#producer" class="tsd-signature-type">Producer</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">U</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../globals.html#referencemodeoperation" class="tsd-signature-type">ReferenceModeOperation</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">U</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/cc160ed/src/runtime/storageNG/reference-mode-store.ts#L573">src/runtime/storageNG/reference-mode-store.ts:573</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Update the provided operation&#39;s element using the provided producer.</p>
+								</div>
+							</div>
+							<h4 class="tsd-type-parameters-title">Type parameters</h4>
+							<ul class="tsd-type-parameters">
+								<li>
+									<h4>T<span class="tsd-signature-symbol">: </span><a href="../interfaces/referenceable.html" class="tsd-signature-type">Referenceable</a></h4>
+								</li>
+								<li>
+									<h4>U<span class="tsd-signature-symbol">: </span><a href="../interfaces/referenceable.html" class="tsd-signature-type">Referenceable</a></h4>
+								</li>
+							</ul>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>operation: <a href="../globals.html#referencemodeoperation" class="tsd-signature-type">ReferenceModeOperation</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span></h5>
+								</li>
+								<li>
+									<h5>getValue: <a href="../globals.html#producer" class="tsd-signature-type">Producer</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">U</span><span class="tsd-signature-symbol">&gt;</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="../globals.html#referencemodeoperation" class="tsd-signature-type">ReferenceModeOperation</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">U</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter tsd-is-static">
+					<a name="construct" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagStatic">Static</span> construct</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter tsd-is-static">
+						<li class="tsd-signature tsd-kind-icon">construct&lt;Entity, S, C, ReferenceContainer, Container&gt;<span class="tsd-signature-symbol">(</span>backingKey<span class="tsd-signature-symbol">: </span><a href="storagekey.html" class="tsd-signature-type">StorageKey</a>, storageKey<span class="tsd-signature-symbol">: </span><a href="storagekey.html" class="tsd-signature-type">StorageKey</a>, exists<span class="tsd-signature-symbol">: </span><a href="../enums/exists.html" class="tsd-signature-type">Exists</a>, type<span class="tsd-signature-symbol">: </span><a href="type.html" class="tsd-signature-type">Type</a>, backingConstructor<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">object</span>, referenceConstructor<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">object</span>, modelConstructor<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">object</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="referencemodestore.html" class="tsd-signature-type">ReferenceModeStore</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Entity</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">S</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">C</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">ReferenceContainer</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">Container</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/cc160ed/src/runtime/storageNG/reference-mode-store.ts#L111">src/runtime/storageNG/reference-mode-store.ts:111</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-type-parameters-title">Type parameters</h4>
+							<ul class="tsd-type-parameters">
+								<li>
+									<h4>Entity<span class="tsd-signature-symbol">: </span><a href="../interfaces/referenceable.html" class="tsd-signature-type">Referenceable</a></h4>
+								</li>
+								<li>
+									<h4>S<span class="tsd-signature-symbol">: </span><a href="../interfaces/dictionary.html" class="tsd-signature-type">Dictionary</a><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/referenceable.html" class="tsd-signature-type">Referenceable</a><span class="tsd-signature-symbol">&gt;</span></h4>
+								</li>
+								<li>
+									<h4>C<span class="tsd-signature-symbol">: </span><a href="../interfaces/dictionary.html" class="tsd-signature-type">Dictionary</a><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/referenceable.html" class="tsd-signature-type">Referenceable</a><span class="tsd-signature-symbol">&gt;</span></h4>
+								</li>
+								<li>
+									<h4>ReferenceContainer<span class="tsd-signature-symbol">: </span><a href="../interfaces/crdtsingletontyperecord.html" class="tsd-signature-type">CRDTSingletonTypeRecord</a><span class="tsd-signature-symbol">&lt;</span><a href="reference.html" class="tsd-signature-type">Reference</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> | </span><a href="../interfaces/crdtcollectiontyperecord.html" class="tsd-signature-type">CRDTCollectionTypeRecord</a><span class="tsd-signature-symbol">&lt;</span><a href="reference.html" class="tsd-signature-type">Reference</a><span class="tsd-signature-symbol">&gt;</span></h4>
+								</li>
+								<li>
+									<h4>Container<span class="tsd-signature-symbol">: </span><a href="../interfaces/crdtsingletontyperecord.html" class="tsd-signature-type">CRDTSingletonTypeRecord</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Entity</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> | </span><a href="../interfaces/crdtcollectiontyperecord.html" class="tsd-signature-type">CRDTCollectionTypeRecord</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Entity</span><span class="tsd-signature-symbol">&gt;</span></h4>
+								</li>
+							</ul>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>backingKey: <a href="storagekey.html" class="tsd-signature-type">StorageKey</a></h5>
+								</li>
+								<li>
+									<h5>storageKey: <a href="storagekey.html" class="tsd-signature-type">StorageKey</a></h5>
+								</li>
+								<li>
+									<h5>exists: <a href="../enums/exists.html" class="tsd-signature-type">Exists</a></h5>
+								</li>
+								<li>
+									<h5>type: <a href="type.html" class="tsd-signature-type">Type</a></h5>
+								</li>
+								<li>
+									<h5>backingConstructor: <span class="tsd-signature-type">object</span></h5>
+									<ul class="tsd-parameters">
+									</ul>
+								</li>
+								<li>
+									<h5>referenceConstructor: <span class="tsd-signature-type">object</span></h5>
+									<ul class="tsd-parameters">
+									</ul>
+								</li>
+								<li>
+									<h5>modelConstructor: <span class="tsd-signature-type">object</span></h5>
+									<ul class="tsd-parameters">
+									</ul>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="referencemodestore.html" class="tsd-signature-type">ReferenceModeStore</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Entity</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">S</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">C</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">ReferenceContainer</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">Container</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+			</section>
+		</div>
+		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
+			<nav class="tsd-navigation primary">
+				<ul>
+					<li class="globals  ">
+						<a href="../globals.html"><em>Globals</em></a>
+					</li>
+				</ul>
+			</nav>
+			<nav class="tsd-navigation secondary menu-sticky">
+				<ul class="before-current">
+				</ul>
+				<ul class="current">
+					<li class="current tsd-kind-class tsd-has-type-parameter">
+						<a href="referencemodestore.html" class="tsd-kind-icon">Reference<wbr>Mode<wbr>Store</a>
+						<ul>
+							<li class=" tsd-kind-constructor tsd-parent-kind-class tsd-is-inherited">
+								<a href="referencemodestore.html#constructor" class="tsd-kind-icon">constructor</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="referencemodestore.html#backingstore" class="tsd-kind-icon">backing<wbr>Store</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
+								<a href="referencemodestore.html#blockcounter" class="tsd-kind-icon">block<wbr>Counter</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
+								<a href="referencemodestore.html#callbacks" class="tsd-kind-icon">callbacks</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="referencemodestore.html#containerstore" class="tsd-kind-icon">container<wbr>Store</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
+								<a href="referencemodestore.html#crdtkey" class="tsd-kind-icon">crdt<wbr>Key</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
+								<a href="referencemodestore.html#exists" class="tsd-kind-icon">exists</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
+								<a href="referencemodestore.html#holdqueue" class="tsd-kind-icon">hold<wbr>Queue</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
+								<a href="referencemodestore.html#mode" class="tsd-kind-icon">mode</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
+								<a href="referencemodestore.html#modelconstructor" class="tsd-kind-icon">model<wbr>Constructor</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
+								<a href="referencemodestore.html#nextcallbackid" class="tsd-kind-icon">next<wbr>CallbackID</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
+								<a href="referencemodestore.html#pendingsends" class="tsd-kind-icon">pending<wbr>Sends</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
+								<a href="referencemodestore.html#receivequeue" class="tsd-kind-icon">receive<wbr>Queue</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
+								<a href="referencemodestore.html#storagekey" class="tsd-kind-icon">storage<wbr>Key</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
+								<a href="referencemodestore.html#type" class="tsd-kind-icon">type</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
+								<a href="referencemodestore.html#versions" class="tsd-kind-icon">versions</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter tsd-is-private">
+								<a href="referencemodestore.html#clonemap" class="tsd-kind-icon">clone<wbr>Map</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-private">
+								<a href="referencemodestore.html#constructpendingidsandmodel" class="tsd-kind-icon">construct<wbr>Pending<wbr>Ids<wbr>And<wbr>Model</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-private">
+								<a href="referencemodestore.html#enqueue" class="tsd-kind-icon">enqueue</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-private">
+								<a href="referencemodestore.html#enqueueblockingsend" class="tsd-kind-icon">enqueue<wbr>Blocking<wbr>Send</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-private">
+								<a href="referencemodestore.html#enqueuesend" class="tsd-kind-icon">enqueue<wbr>Send</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-private">
+								<a href="referencemodestore.html#entityfrommodel" class="tsd-kind-icon">entity<wbr>From<wbr>Model</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-private">
+								<a href="referencemodestore.html#entitytomodel" class="tsd-kind-icon">entity<wbr>ToModel</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-private">
+								<a href="referencemodestore.html#handlebackingstore" class="tsd-kind-icon">handle<wbr>Backing<wbr>Store</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-private">
+								<a href="referencemodestore.html#handlecontainerstore" class="tsd-kind-icon">handle<wbr>Container<wbr>Store</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-private">
+								<a href="referencemodestore.html#handleproxymessage" class="tsd-kind-icon">handle<wbr>Proxy<wbr>Message</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+								<a href="referencemodestore.html#idle" class="tsd-kind-icon">idle</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
+								<a href="referencemodestore.html#off" class="tsd-kind-icon">off</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
+								<a href="referencemodestore.html#on" class="tsd-kind-icon">on</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="referencemodestore.html#onbackingstore" class="tsd-kind-icon">on<wbr>Backing<wbr>Store</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="referencemodestore.html#oncontainerstore" class="tsd-kind-icon">on<wbr>Container<wbr>Store</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
+								<a href="referencemodestore.html#onproxymessage" class="tsd-kind-icon">on<wbr>Proxy<wbr>Message</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter tsd-is-private">
+								<a href="referencemodestore.html#operationelement" class="tsd-kind-icon">operation<wbr>Element</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter tsd-is-private">
+								<a href="referencemodestore.html#processop" class="tsd-kind-icon">process<wbr>Op</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-private">
+								<a href="referencemodestore.html#processpendingsends" class="tsd-kind-icon">process<wbr>Pending<wbr>Sends</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-private">
+								<a href="referencemodestore.html#processqueue" class="tsd-kind-icon">process<wbr>Queue</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-private">
+								<a href="referencemodestore.html#registerstorecallbacks" class="tsd-kind-icon">register<wbr>Store<wbr>Callbacks</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
+								<a href="referencemodestore.html#reportexceptioninhost" class="tsd-kind-icon">report<wbr>Exception<wbr>InHost</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-private">
+								<a href="referencemodestore.html#send" class="tsd-kind-icon">send</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-private">
+								<a href="referencemodestore.html#sendexcept" class="tsd-kind-icon">send<wbr>Except</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-private">
+								<a href="referencemodestore.html#updatebackingstore" class="tsd-kind-icon">update<wbr>Backing<wbr>Store</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter tsd-is-private">
+								<a href="referencemodestore.html#updateop" class="tsd-kind-icon">update<wbr>Op</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter tsd-is-static">
+								<a href="referencemodestore.html#construct" class="tsd-kind-icon">construct</a>
+							</li>
+						</ul>
+					</li>
+				</ul>
+				<ul class="after-current">
+				</ul>
+			</nav>
+		</div>
+	</div>
+</div>
+<footer class="with-border-bottom">
+	<div class="container">
+		<h2>Legend</h2>
+		<div class="tsd-legend-group">
+			<ul class="tsd-legend">
+				<li class="tsd-kind-module"><span class="tsd-kind-icon">Module</span></li>
+				<li class="tsd-kind-object-literal"><span class="tsd-kind-icon">Object literal</span></li>
+				<li class="tsd-kind-variable"><span class="tsd-kind-icon">Variable</span></li>
+				<li class="tsd-kind-function"><span class="tsd-kind-icon">Function</span></li>
+				<li class="tsd-kind-function tsd-has-type-parameter"><span class="tsd-kind-icon">Function with type parameter</span></li>
+				<li class="tsd-kind-index-signature"><span class="tsd-kind-icon">Index signature</span></li>
+				<li class="tsd-kind-type-alias"><span class="tsd-kind-icon">Type alias</span></li>
+				<li class="tsd-kind-type-alias tsd-has-type-parameter"><span class="tsd-kind-icon">Type alias with type parameter</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-enum"><span class="tsd-kind-icon">Enumeration</span></li>
+				<li class="tsd-kind-enum-member"><span class="tsd-kind-icon">Enumeration member</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-enum"><span class="tsd-kind-icon">Property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-enum"><span class="tsd-kind-icon">Method</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-interface"><span class="tsd-kind-icon">Interface</span></li>
+				<li class="tsd-kind-interface tsd-has-type-parameter"><span class="tsd-kind-icon">Interface with type parameter</span></li>
+				<li class="tsd-kind-constructor tsd-parent-kind-interface"><span class="tsd-kind-icon">Constructor</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-interface"><span class="tsd-kind-icon">Property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-interface"><span class="tsd-kind-icon">Method</span></li>
+				<li class="tsd-kind-index-signature tsd-parent-kind-interface"><span class="tsd-kind-icon">Index signature</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-class"><span class="tsd-kind-icon">Class</span></li>
+				<li class="tsd-kind-class tsd-has-type-parameter"><span class="tsd-kind-icon">Class with type parameter</span></li>
+				<li class="tsd-kind-constructor tsd-parent-kind-class"><span class="tsd-kind-icon">Constructor</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-class"><span class="tsd-kind-icon">Property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class"><span class="tsd-kind-icon">Method</span></li>
+				<li class="tsd-kind-accessor tsd-parent-kind-class"><span class="tsd-kind-icon">Accessor</span></li>
+				<li class="tsd-kind-index-signature tsd-parent-kind-class"><span class="tsd-kind-icon">Index signature</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-constructor tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited constructor</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited method</span></li>
+				<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited accessor</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-protected"><span class="tsd-kind-icon">Protected property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-protected"><span class="tsd-kind-icon">Protected method</span></li>
+				<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-protected"><span class="tsd-kind-icon">Protected accessor</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private method</span></li>
+				<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private accessor</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-static"><span class="tsd-kind-icon">Static property</span></li>
+				<li class="tsd-kind-call-signature tsd-parent-kind-class tsd-is-static"><span class="tsd-kind-icon">Static method</span></li>
+			</ul>
+		</div>
+	</div>
+</footer>
+<div class="container tsd-generator">
+	<p>Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p>
+</div>
+<div class="overlay"></div>
+<script src="../assets/js/main.js"></script>
+<script>if (location.protocol == 'file:') document.write('<script src="../assets/js/search.js"><' + '/script>');</script>
+</body>
+</html>

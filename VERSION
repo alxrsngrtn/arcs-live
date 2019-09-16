@@ -1,25 +1,5 @@
-commit 8f363cbd8ea0c453af8e4c8b2f1822f1623ed654
-Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
-Date:   Mon Sep 16 09:55:43 2019 +1000
+commit cc160ede7582f460519e47e0e1a4a4702ba75623
+Author: shans <shane.stephens@gmail.com>
+Date:   Mon Sep 16 13:54:44 2019 -0400
 
-    Added ArcsServiceBridge to Arcs Java API. (#3572)
-    
-    * Added ArcsServiceBridge to Arcs Java API.
-    
-    This class implements the ArcsEnvironment interface, except instead of
-    talking to JS it talks to the IArcsService. It's not actually hooked up
-    to anything yet. We're going to add Particle code to use the Bridge.
-    
-    I've added a android.client package; this is intended to be for all the
-    code which lives in "client" particles, i.e. clients of the ArcsService,
-    i.e. particles which live in a different service.
-    
-    I'm planning to create a similar android.host package, which is going
-    to be for code that lives on the ArcsService-side which needs to
-    communicate with the clients.
-    
-    The ArcsServiceStarter interface is the mechanism by which Arcs code is
-    able to start up the ArcsService (the latter lives inside the app; only
-    it is able to correctly create the explicit intent needed to start the service).
-    
-    * Review comments
+    [WIP] Reference mode store (#3523)

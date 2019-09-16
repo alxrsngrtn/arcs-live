@@ -80,17 +80,25 @@ export class DirectStore extends ActiveStore {
         }
         this.applyPendingDriverModels();
     }
-    deliverCallbacks(thisChange) {
+    deliverCallbacks(thisChange, messageFromDriver, channel) {
         if (thisChange.changeType === ChangeType.Operations && thisChange.operations.length > 0) {
-            this.callbacks.forEach((cb, id) => cb({ type: ProxyMessageType.Operations, operations: thisChange.operations, id }));
+            this.callbacks.forEach((cb, id) => {
+                if (messageFromDriver || channel !== id) {
+                    void cb({ type: ProxyMessageType.Operations, operations: thisChange.operations, id });
+                }
+            });
         }
         else if (thisChange.changeType === ChangeType.Model) {
-            this.callbacks.forEach((cb, id) => cb({ type: ProxyMessageType.ModelUpdate, model: thisChange.modelPostChange, id }));
+            this.callbacks.forEach((cb, id) => {
+                if (messageFromDriver || channel !== id) {
+                    void cb({ type: ProxyMessageType.ModelUpdate, model: thisChange.modelPostChange, id });
+                }
+            });
         }
     }
-    async processModelChange(modelChange, otherChange, version, fromDriver) {
-        this.deliverCallbacks(modelChange);
-        await this.updateStateAndAct(this.noDriverSideChanges(modelChange, otherChange, fromDriver), version, fromDriver);
+    async processModelChange(modelChange, otherChange, version, channel) {
+        this.deliverCallbacks(modelChange, /* messageFromDriver= */ false, channel);
+        await this.updateStateAndAct(this.noDriverSideChanges(modelChange, otherChange, false), version, false);
     }
     // This function implements a state machine that controls when data is sent to the driver.
     // You can see the state machine in all its glory at the following URL:
@@ -166,7 +174,7 @@ export class DirectStore extends ActiveStore {
             for (const { model, version } of models) {
                 try {
                     const { modelChange, otherChange } = this.localModel.merge(model);
-                    this.deliverCallbacks(modelChange);
+                    this.deliverCallbacks(modelChange, /* messageFromDriver= */ true, 0);
                     noDriverSideChanges = noDriverSideChanges && this.noDriverSideChanges(modelChange, otherChange, true);
                     theVersion = version;
                 }
@@ -208,18 +216,19 @@ export class DirectStore extends ActiveStore {
             case ProxyMessageType.Operations: {
                 for (const operation of message.operations) {
                     if (!this.localModel.applyOperation(operation)) {
+                        await this.callbacks.get(message.id)({ type: ProxyMessageType.SyncRequest, id: message.id });
                         return false;
                     }
                 }
                 const change = { changeType: ChangeType.Operations, operations: message.operations };
                 // to make tsetse checks happy
-                noAwait(this.processModelChange(change, null, this.version, false));
+                noAwait(this.processModelChange(change, null, this.version, message.id));
                 return true;
             }
             case ProxyMessageType.ModelUpdate: {
                 const { modelChange, otherChange } = this.localModel.merge(message.model);
                 // to make tsetse checks happy
-                noAwait(this.processModelChange(modelChange, otherChange, this.version, false));
+                noAwait(this.processModelChange(modelChange, otherChange, this.version, message.id));
                 return true;
             }
             default:
