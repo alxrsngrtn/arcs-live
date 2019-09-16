@@ -1,5 +1,11 @@
-commit 3130fcdc2ab42f25c56fe16f315f4649b3d508b0
-Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Mon Sep 16 11:47:56 2019 -0700
+commit 810c748b229c7b44137444ca45494f3de00329d7
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Mon Sep 16 11:52:00 2019 -0700
 
-    Log to the console if Shell is waiting for remote Arcs Explorer (#3581)
+    rewire readyListeners in javaharness and use for ingestion-arc instantiation (#3575)
+    
+    * rewire readyListeners in javaharness and use for ingestion-arc instantiation
+    
+    * address comment: fireReadyEvent instead of injecting listeners
+    
+    * compatible changes for data-listeners (restored deprecated functionality to be compatible across components)
