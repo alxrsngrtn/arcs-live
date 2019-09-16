@@ -1,35 +1,25 @@
-commit 044ed9ae0b24aa0c95724d66c462d324dfce73d1
-Author: Sarah Heimlich <heimlich@google.com>
-Date:   Fri Sep 13 14:59:42 2019 -0700
+commit 8f363cbd8ea0c453af8e4c8b2f1822f1623ed654
+Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
+Date:   Mon Sep 16 09:55:43 2019 +1000
 
-    Add allSchemas to manifest.ts (#3545)
+    Added ArcsServiceBridge to Arcs Java API. (#3572)
     
-    * Updating schema2base to work in multiple folders and to recursively find schemas in the target.
+    * Added ArcsServiceBridge to Arcs Java API.
     
-    * Updating utils path.
+    This class implements the ArcsEnvironment interface, except instead of
+    talking to JS it talks to the IArcsService. It's not actually hooked up
+    to anything yet. We're going to add Particle code to use the Bridge.
     
-    * Updated README with instructions for running schema2pkg for Kotlin.
+    I've added a android.client package; this is intended to be for all the
+    code which lives in "client" particles, i.e. clients of the ArcsService,
+    i.e. particles which live in a different service.
     
-    * Updated path in Utils.init call
+    I'm planning to create a similar android.host package, which is going
+    to be for code that lives on the ArcsService-side which needs to
+    communicate with the clients.
     
-    * schema2base clean up
+    The ArcsServiceStarter interface is the mechanism by which Arcs code is
+    able to start up the ArcsService (the latter lives inside the app; only
+    it is able to correctly create the explicit intent needed to start the service).
     
-    * Updates on file pathing and added null-case tests for allSchemas
-    
-    * Fixed curly brace issue.
-    
-    * Added tests for a schema with multiple fields.
-    
-    * Switched from it inside of it to it inside of describe to ensure tests were executing.
-    
-    * Added a test with an external store
-    
-    * Added complex manifest tests.
-    
-    * Adding final tests and improving test asserts.
-    
-    * Removing changes to schema2base.ts for a second PR.
-    
-    * Removed the chicken for grep.
-    
-    * Updating variable name to lower camel case.
+    * Review comments
