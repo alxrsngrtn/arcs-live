@@ -2669,8 +2669,8 @@
         "signature": "ae93711bcd18b94a75a15177052d2cecb313ef3d4869f6c058221e152c188da0"
       },
       "/home/travis/build/PolymerLabs/arcs/node_modules/chokidar/types/index.d.ts": {
-        "version": "c55b3a2c2478025ba62d052ce0186996698fe8f5987abcdeb71140ebfec69d82",
-        "signature": "c55b3a2c2478025ba62d052ce0186996698fe8f5987abcdeb71140ebfec69d82"
+        "version": "b315d2ac7ae4ebbd909ede0f20bc9d623c7b766f58bc9c4e32c026592afe8d70",
+        "signature": "b315d2ac7ae4ebbd909ede0f20bc9d623c7b766f58bc9c4e32c026592afe8d70"
       },
       "/home/travis/build/PolymerLabs/arcs/src/tools/dev_server/hot-reload-server.ts": {
         "version": "6a822bb3911fca78b52622a5ec95cce99c89a007bb400411dc3ba86517698547",

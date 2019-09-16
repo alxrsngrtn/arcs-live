@@ -1,11 +1,7 @@
-commit 810c748b229c7b44137444ca45494f3de00329d7
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Mon Sep 16 11:52:00 2019 -0700
+commit 3119f6501548366339f8d753da32673da24897b0
+Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
+Date:   Tue Sep 17 07:49:57 2019 +1000
 
-    rewire readyListeners in javaharness and use for ingestion-arc instantiation (#3575)
+    Rename ambiguous methods involving the word "handle". (#3578)
     
-    * rewire readyListeners in javaharness and use for ingestion-arc instantiation
-    
-    * address comment: fireReadyEvent instead of injecting listeners
-    
-    * compatible changes for data-listeners (restored deprecated functionality to be compatible across components)
+    handleMessage -> processMessage, since "handle" means something special.
