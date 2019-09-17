@@ -1,9 +1,9 @@
-commit c027df0365e210164b96f30ca58b12494d076960
-Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
-Date:   Tue Sep 17 16:14:19 2019 +1000
+commit 4f3c8221a2b5e1e8454fee73b9dbb6ca574ac719
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Tue Sep 17 08:32:26 2019 -0700
 
-    Automatically include core runtime ts files as wasm test deps (#3579)
+    reinstantiate non-factory particle (#3584)
     
-    * Automaticall include core runtime ts files as wasm test deps
+    * reinstantiate non-factory particle
     
-    * s/core/core_srcs
+    * address comments

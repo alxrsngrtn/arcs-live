@@ -109,7 +109,12 @@ export declare class Arc {
         patterns: string[];
     }[];
     loadedParticleSpecs(): ParticleSpec[];
+    reinstantiateParticle(recipeParticle: Particle): Promise<void>;
     _instantiateParticle(recipeParticle: Particle): Promise<void>;
+    _getParticleInstantiationInfo(recipeParticle: Particle): Promise<{
+        spec: ParticleSpec;
+        stores: Map<string, StorageProviderBase>;
+    }>;
     private _provisionSpecUrl;
     generateID(component?: string): Id;
     readonly _stores: (StorageProviderBase)[];

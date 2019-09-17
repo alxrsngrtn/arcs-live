@@ -21219,6 +21219,7 @@ class PECOuterPort extends APIPort {
     Stop() { }
     DefineHandle(store, type, name) { }
     InstantiateParticle(particle, id, spec, stores) { }
+    ReinstantiateParticle(id, spec, stores) { }
     ReloadParticles(particles, ids) { }
     UIEvent(particle, slotName, event) { }
     SimpleCallback(callback, data) { }
@@ -21244,6 +21245,9 @@ __decorate([
 __decorate([
     __param(0, Initializer), __param(1, Identifier), __param(1, Direct), __param(2, ByLiteral(ParticleSpec)), __param(3, ObjectMap(MappingType.Direct, MappingType.Mapped))
 ], PECOuterPort.prototype, "InstantiateParticle", null);
+__decorate([
+    __param(0, Identifier), __param(0, Direct), __param(1, ByLiteral(ParticleSpec)), __param(2, ObjectMap(MappingType.Direct, MappingType.Mapped))
+], PECOuterPort.prototype, "ReinstantiateParticle", null);
 __decorate([
     __param(0, OverridingInitializer), __param(1, List(MappingType.Direct))
 ], PECOuterPort.prototype, "ReloadParticles", null);
@@ -22350,6 +22354,9 @@ class ParticleExecutionContext {
             async onInstantiateParticle(id, spec, proxies) {
                 return pec.instantiateParticle(id, spec, proxies);
             }
+            async onReinstantiateParticle(id, spec, proxies) {
+                assert(false, `Not implemented`);
+            }
             async onReloadParticles(ids) {
                 return pec.reloadParticles(ids);
             }
@@ -23313,6 +23320,14 @@ class ParticleExecutionHost {
         });
         apiPort.InstantiateParticle(particle, particle.id.toString(), particle.spec, stores);
     }
+    reinstantiate(particle, stores) {
+        assert(this.particles.find(p => p === particle), `Cannot reinstantiate nonexistent particle ${particle.name}`);
+        const apiPort = this.getPort(particle);
+        stores.forEach((store, name) => {
+            apiPort.DefineHandle(store, store.type.resolvedType(), name);
+        });
+        apiPort.ReinstantiateParticle(particle.id.toString(), particle.spec, stores);
+    }
     reload(particles) {
         // Create a mapping from port to given list of particles
         const portMap = new Map();
@@ -24035,10 +24050,18 @@ ${this.activeRecipe.toString()}`;
     loadedParticleSpecs() {
         return [...this.loadedParticleInfo.values()].map(({ spec }) => spec);
     }
+    async reinstantiateParticle(recipeParticle) {
+        const info = await this._getParticleInstantiationInfo(recipeParticle);
+        this.pec.reinstantiate(recipeParticle, info.stores);
+    }
     async _instantiateParticle(recipeParticle) {
         if (!recipeParticle.id) {
             recipeParticle.id = this.generateID('particle');
         }
+        const info = await this._getParticleInstantiationInfo(recipeParticle);
+        this.pec.instantiate(recipeParticle, info.stores);
+    }
+    async _getParticleInstantiationInfo(recipeParticle) {
         const info = { spec: recipeParticle.spec, stores: new Map() };
         this.loadedParticleInfo.set(recipeParticle.id.toString(), info);
         // if supported, provide particle caching via a BloblUrl representing spec.implFile
@@ -24051,7 +24074,7 @@ ${this.activeRecipe.toString()}`;
                 info.stores.set(name, store);
             }
         }
-        this.pec.instantiate(recipeParticle, info.stores);
+        return info;
     }
     async _provisionSpecUrl(spec) {
         if (!spec.implBlobUrl) {

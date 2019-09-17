@@ -402,6 +402,7 @@ export class PECOuterPort extends APIPort {
     Stop() { }
     DefineHandle(store, type, name) { }
     InstantiateParticle(particle, id, spec, stores) { }
+    ReinstantiateParticle(id, spec, stores) { }
     ReloadParticles(particles, ids) { }
     UIEvent(particle, slotName, event) { }
     SimpleCallback(callback, data) { }
@@ -427,6 +428,9 @@ __decorate([
 __decorate([
     __param(0, Initializer), __param(1, Identifier), __param(1, Direct), __param(2, ByLiteral(ParticleSpec)), __param(3, ObjectMap(MappingType.Direct, MappingType.Mapped))
 ], PECOuterPort.prototype, "InstantiateParticle", null);
+__decorate([
+    __param(0, Identifier), __param(0, Direct), __param(1, ByLiteral(ParticleSpec)), __param(2, ObjectMap(MappingType.Direct, MappingType.Mapped))
+], PECOuterPort.prototype, "ReinstantiateParticle", null);
 __decorate([
     __param(0, OverridingInitializer), __param(1, List(MappingType.Direct))
 ], PECOuterPort.prototype, "ReloadParticles", null);

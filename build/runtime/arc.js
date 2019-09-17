@@ -336,10 +336,18 @@ ${this.activeRecipe.toString()}`;
     loadedParticleSpecs() {
         return [...this.loadedParticleInfo.values()].map(({ spec }) => spec);
     }
+    async reinstantiateParticle(recipeParticle) {
+        const info = await this._getParticleInstantiationInfo(recipeParticle);
+        this.pec.reinstantiate(recipeParticle, info.stores);
+    }
     async _instantiateParticle(recipeParticle) {
         if (!recipeParticle.id) {
             recipeParticle.id = this.generateID('particle');
         }
+        const info = await this._getParticleInstantiationInfo(recipeParticle);
+        this.pec.instantiate(recipeParticle, info.stores);
+    }
+    async _getParticleInstantiationInfo(recipeParticle) {
         const info = { spec: recipeParticle.spec, stores: new Map() };
         this.loadedParticleInfo.set(recipeParticle.id.toString(), info);
         // if supported, provide particle caching via a BloblUrl representing spec.implFile
@@ -352,7 +360,7 @@ ${this.activeRecipe.toString()}`;
                 info.stores.set(name, store);
             }
         }
-        this.pec.instantiate(recipeParticle, info.stores);
+        return info;
     }
     async _provisionSpecUrl(spec) {
         if (!spec.implBlobUrl) {

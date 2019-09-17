@@ -55,6 +55,7 @@ export declare abstract class PECOuterPort extends APIPort {
     Stop(): void;
     DefineHandle(store: StorageProviderBase, type: Type, name: string): void;
     InstantiateParticle(particle: recipeParticle.Particle, id: string, spec: ParticleSpec, stores: Map<string, StorageProviderBase>): void;
+    ReinstantiateParticle(id: string, spec: ParticleSpec, stores: Map<string, StorageProviderBase>): void;
     ReloadParticles(particles: recipeParticle.Particle[], ids: string[]): void;
     UIEvent(particle: recipeParticle.Particle, slotName: string, event: {}): void;
     SimpleCallback(callback: number, data: {}): void;
@@ -103,6 +104,7 @@ export declare abstract class PECInnerPort extends APIPort {
     abstract onStop(): any;
     abstract onDefineHandle(identifier: string, type: Type, name: string): any;
     abstract onInstantiateParticle(id: string, spec: ParticleSpec, proxies: Map<string, StorageProxy>): any;
+    abstract onReinstantiateParticle(id: string, spec: ParticleSpec, proxies: Map<string, StorageProxy>): any;
     abstract onReloadParticles(ids: string[]): any;
     abstract onUIEvent(particle: Particle, slotName: string, event: {}): any;
     abstract onSimpleCallback(callback: Consumer<{}>, data: {}): any;

@@ -137,6 +137,7 @@
 							<h3>Methods</h3>
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="arc.html#_doinstantiate" class="tsd-kind-icon">_do<wbr>Instantiate</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="arc.html#_getparticleinstantiationinfo" class="tsd-kind-icon">_get<wbr>Particle<wbr>Instantiation<wbr>Info</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="arc.html#_instantiateparticle" class="tsd-kind-icon">_instantiate<wbr>Particle</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="arc.html#_ondatachange" class="tsd-kind-icon">_on<wbr>Data<wbr>Change</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="arc.html#_provisionspecurl" class="tsd-kind-icon">_provision<wbr>Spec<wbr>Url</a></li>
@@ -165,6 +166,7 @@
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="arc.html#mergeintoactiverecipe" class="tsd-kind-icon">merge<wbr>Into<wbr>Active<wbr>Recipe</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="arc.html#ondatachange" class="tsd-kind-icon">on<wbr>Data<wbr>Change</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="arc.html#persistserialization" class="tsd-kind-icon">persist<wbr>Serialization</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="arc.html#reinstantiateparticle" class="tsd-kind-icon">reinstantiate<wbr>Particle</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="arc.html#serialize" class="tsd-kind-icon">serialize</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="arc.html#tocontextstring" class="tsd-kind-icon">to<wbr>Context<wbr>String</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-static"><a href="arc.html#_typetokey" class="tsd-kind-icon">_type<wbr>ToKey</a></li>
@@ -186,7 +188,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c027df0/src/runtime/arc.ts#L101">src/runtime/arc.ts:101</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/4f3c822/src/runtime/arc.ts#L101">src/runtime/arc.ts:101</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -243,7 +245,7 @@
 					<div class="tsd-signature tsd-kind-icon">_active<wbr>Recipe<span class="tsd-signature-symbol">:</span> <a href="recipe.html" class="tsd-signature-type">Recipe</a><span class="tsd-signature-symbol"> =&nbsp;new Recipe()</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c027df0/src/runtime/arc.ts#L73">src/runtime/arc.ts:73</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/4f3c822/src/runtime/arc.ts#L73">src/runtime/arc.ts:73</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -253,7 +255,7 @@
 					<div class="tsd-signature tsd-kind-icon">_context<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Manifest</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c027df0/src/runtime/arc.ts#L68">src/runtime/arc.ts:68</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/4f3c822/src/runtime/arc.ts#L68">src/runtime/arc.ts:68</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -263,7 +265,7 @@
 					<div class="tsd-signature tsd-kind-icon">_loader<span class="tsd-signature-symbol">:</span> <a href="loader.html" class="tsd-signature-type">Loader</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c027df0/src/runtime/arc.ts#L76">src/runtime/arc.ts:76</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/4f3c822/src/runtime/arc.ts#L76">src/runtime/arc.ts:76</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -273,7 +275,7 @@
 					<div class="tsd-signature tsd-kind-icon">_recipe<wbr>Deltas<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> =&nbsp;[]</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c027df0/src/runtime/arc.ts#L74">src/runtime/arc.ts:74</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/4f3c822/src/runtime/arc.ts#L74">src/runtime/arc.ts:74</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -283,7 +285,7 @@
 					<div class="tsd-signature tsd-kind-icon">data<wbr>Change<wbr>Callbacks<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Map</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">object</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">function</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> =&nbsp;new Map&lt;object, Runnable&gt;()</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c027df0/src/runtime/arc.ts#L77">src/runtime/arc.ts:77</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/4f3c822/src/runtime/arc.ts#L77">src/runtime/arc.ts:77</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -293,7 +295,7 @@
 					<div class="tsd-signature tsd-kind-icon">id<span class="tsd-signature-symbol">:</span> <a href="id.html" class="tsd-signature-type">Id</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c027df0/src/runtime/arc.ts#L94">src/runtime/arc.ts:94</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/4f3c822/src/runtime/arc.ts#L94">src/runtime/arc.ts:94</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -303,7 +305,7 @@
 					<div class="tsd-signature tsd-kind-icon">id<wbr>Generator<span class="tsd-signature-symbol">:</span> <a href="idgenerator.html" class="tsd-signature-type">IdGenerator</a><span class="tsd-signature-symbol"> =&nbsp;IdGenerator.newSession()</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c027df0/src/runtime/arc.ts#L95">src/runtime/arc.ts:95</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/4f3c822/src/runtime/arc.ts#L95">src/runtime/arc.ts:95</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -313,7 +315,7 @@
 					<div class="tsd-signature tsd-kind-icon">inner<wbr>Arcs<wbr>ByParticle<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Map</span><span class="tsd-signature-symbol">&lt;</span><a href="particle.html" class="tsd-signature-type">Particle</a><span class="tsd-signature-symbol">, </span><a href="arc.html" class="tsd-signature-type">Arc</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> =&nbsp;new Map()</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c027df0/src/runtime/arc.ts#L91">src/runtime/arc.ts:91</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/4f3c822/src/runtime/arc.ts#L91">src/runtime/arc.ts:91</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -323,7 +325,7 @@
 					<div class="tsd-signature tsd-kind-icon">inspector<span class="tsd-signature-symbol">:</span> <a href="../interfaces/arcinspector.html" class="tsd-signature-type">ArcInspector</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c027df0/src/runtime/arc.ts#L90">src/runtime/arc.ts:90</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/4f3c822/src/runtime/arc.ts#L90">src/runtime/arc.ts:90</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -333,7 +335,7 @@
 					<div class="tsd-signature tsd-kind-icon">inspector<wbr>Factory<span class="tsd-signature-symbol">:</span> <a href="../interfaces/arcinspectorfactory.html" class="tsd-signature-type">ArcInspectorFactory</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c027df0/src/runtime/arc.ts#L89">src/runtime/arc.ts:89</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/4f3c822/src/runtime/arc.ts#L89">src/runtime/arc.ts:89</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -343,7 +345,7 @@
 					<div class="tsd-signature tsd-kind-icon">instantiate<wbr>Mutex<span class="tsd-signature-symbol">:</span> <a href="mutex.html" class="tsd-signature-type">Mutex</a><span class="tsd-signature-symbol"> =&nbsp;new Mutex()</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c027df0/src/runtime/arc.ts#L92">src/runtime/arc.ts:92</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/4f3c822/src/runtime/arc.ts#L92">src/runtime/arc.ts:92</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -353,7 +355,7 @@
 					<div class="tsd-signature tsd-kind-icon">is<wbr>Inner<wbr>Arc<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c027df0/src/runtime/arc.ts#L71">src/runtime/arc.ts:71</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/4f3c822/src/runtime/arc.ts#L71">src/runtime/arc.ts:71</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -363,7 +365,7 @@
 					<div class="tsd-signature tsd-kind-icon">is<wbr>Speculative<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c027df0/src/runtime/arc.ts#L70">src/runtime/arc.ts:70</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/4f3c822/src/runtime/arc.ts#L70">src/runtime/arc.ts:70</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -373,7 +375,7 @@
 					<div class="tsd-signature tsd-kind-icon">is<wbr>Stub<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c027df0/src/runtime/arc.ts#L72">src/runtime/arc.ts:72</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/4f3c822/src/runtime/arc.ts#L72">src/runtime/arc.ts:72</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -383,7 +385,7 @@
 					<div class="tsd-signature tsd-kind-icon">loaded<wbr>Particle<wbr>Info<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Map</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">object</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> =&nbsp;new Map&lt;string, {spec: ParticleSpec, stores: Map&lt;string, StorageProviderBase&gt;}&gt;()</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c027df0/src/runtime/arc.ts#L96">src/runtime/arc.ts:96</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/4f3c822/src/runtime/arc.ts#L96">src/runtime/arc.ts:96</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -393,7 +395,7 @@
 					<div class="tsd-signature tsd-kind-icon">pec<span class="tsd-signature-symbol">:</span> <a href="particleexecutionhost.html" class="tsd-signature-type">ParticleExecutionHost</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c027df0/src/runtime/arc.ts#L97">src/runtime/arc.ts:97</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/4f3c822/src/runtime/arc.ts#L97">src/runtime/arc.ts:97</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -403,7 +405,7 @@
 					<div class="tsd-signature tsd-kind-icon">pec<wbr>Factories<span class="tsd-signature-symbol">:</span> <a href="../globals.html#pecfactory" class="tsd-signature-type">PecFactory</a><span class="tsd-signature-symbol">[]</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c027df0/src/runtime/arc.ts#L69">src/runtime/arc.ts:69</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/4f3c822/src/runtime/arc.ts#L69">src/runtime/arc.ts:69</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -413,7 +415,7 @@
 					<div class="tsd-signature tsd-kind-icon">storage<wbr>Key<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c027df0/src/runtime/arc.ts#L82">src/runtime/arc.ts:82</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/4f3c822/src/runtime/arc.ts#L82">src/runtime/arc.ts:82</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -423,7 +425,7 @@
 					<div class="tsd-signature tsd-kind-icon">storage<wbr>Keys<span class="tsd-signature-symbol">:</span> <a href="../interfaces/dictionary.html" class="tsd-signature-type">Dictionary</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c027df0/src/runtime/arc.ts#L81">src/runtime/arc.ts:81</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/4f3c822/src/runtime/arc.ts#L81">src/runtime/arc.ts:81</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -433,7 +435,7 @@
 					<div class="tsd-signature tsd-kind-icon">storage<wbr>Provider<wbr>Factory<span class="tsd-signature-symbol">:</span> <a href="storageproviderfactory.html" class="tsd-signature-type">StorageProviderFactory</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c027df0/src/runtime/arc.ts#L83">src/runtime/arc.ts:83</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/4f3c822/src/runtime/arc.ts#L83">src/runtime/arc.ts:83</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -443,7 +445,7 @@
 					<div class="tsd-signature tsd-kind-icon">store<wbr>Descriptions<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Map</span><span class="tsd-signature-symbol">&lt;</span><a href="storageproviderbase.html" class="tsd-signature-type">StorageProviderBase</a><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> =&nbsp;new Map&lt;StorageProviderBase, string&gt;()</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c027df0/src/runtime/arc.ts#L87">src/runtime/arc.ts:87</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/4f3c822/src/runtime/arc.ts#L87">src/runtime/arc.ts:87</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -453,7 +455,7 @@
 					<div class="tsd-signature tsd-kind-icon">store<wbr>Tags<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Map</span><span class="tsd-signature-symbol">&lt;</span><a href="storageproviderbase.html" class="tsd-signature-type">StorageProviderBase</a><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">Set</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> =&nbsp;new Map&lt;StorageProviderBase, Set&lt;string&gt;&gt;()</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c027df0/src/runtime/arc.ts#L85">src/runtime/arc.ts:85</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/4f3c822/src/runtime/arc.ts#L85">src/runtime/arc.ts:85</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -463,7 +465,7 @@
 					<div class="tsd-signature tsd-kind-icon">stores<wbr>ById<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Map</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">, </span><a href="storageproviderbase.html" class="tsd-signature-type">StorageProviderBase</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> =&nbsp;new Map&lt;string, StorageProviderBase&gt;()</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c027df0/src/runtime/arc.ts#L79">src/runtime/arc.ts:79</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/4f3c822/src/runtime/arc.ts#L79">src/runtime/arc.ts:79</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -473,7 +475,7 @@
 					<div class="tsd-signature tsd-kind-icon">volatile<wbr>Memory<span class="tsd-signature-symbol">:</span> <a href="volatilememory.html" class="tsd-signature-type">VolatileMemory</a><span class="tsd-signature-symbol"> =&nbsp;new VolatileMemory()</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c027df0/src/runtime/arc.ts#L100">src/runtime/arc.ts:100</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/4f3c822/src/runtime/arc.ts#L100">src/runtime/arc.ts:100</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -483,7 +485,7 @@
 					<div class="tsd-signature tsd-kind-icon">volatile<wbr>Storage<wbr>Driver<wbr>Provider<span class="tsd-signature-symbol">:</span> <a href="volatilestoragedriverprovider.html" class="tsd-signature-type">VolatileStorageDriverProvider</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c027df0/src/runtime/arc.ts#L101">src/runtime/arc.ts:101</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/4f3c822/src/runtime/arc.ts#L101">src/runtime/arc.ts:101</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -493,7 +495,7 @@
 					<div class="tsd-signature tsd-kind-icon">wait<wbr>For<wbr>Idle<wbr>Promise<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c027df0/src/runtime/arc.ts#L88">src/runtime/arc.ts:88</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/4f3c822/src/runtime/arc.ts#L88">src/runtime/arc.ts:88</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -510,7 +512,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c027df0/src/runtime/arc.ts#L473">src/runtime/arc.ts:473</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/4f3c822/src/runtime/arc.ts#L483">src/runtime/arc.ts:483</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <a href="storageproviderbase.html" class="tsd-signature-type">StorageProviderBase</a><span class="tsd-signature-symbol">[]</span></h4>
@@ -527,7 +529,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c027df0/src/runtime/arc.ts#L425">src/runtime/arc.ts:425</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/4f3c822/src/runtime/arc.ts#L425">src/runtime/arc.ts:425</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <a href="recipe.html" class="tsd-signature-type">Recipe</a></h4>
@@ -544,7 +546,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c027df0/src/runtime/arc.ts#L210">src/runtime/arc.ts:210</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/4f3c822/src/runtime/arc.ts#L210">src/runtime/arc.ts:210</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <a href="arc.html" class="tsd-signature-type">Arc</a><span class="tsd-signature-symbol">[]</span></h4>
@@ -561,7 +563,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c027df0/src/runtime/arc.ts#L426">src/runtime/arc.ts:426</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/4f3c822/src/runtime/arc.ts#L426">src/runtime/arc.ts:426</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <a href="recipe.html" class="tsd-signature-type">Recipe</a><span class="tsd-signature-symbol">[]</span></h4>
@@ -578,7 +580,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c027df0/src/runtime/arc.ts#L821">src/runtime/arc.ts:821</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/4f3c822/src/runtime/arc.ts#L831">src/runtime/arc.ts:831</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
@@ -595,7 +597,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c027df0/src/runtime/arc.ts#L421">src/runtime/arc.ts:421</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/4f3c822/src/runtime/arc.ts#L421">src/runtime/arc.ts:421</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Manifest</span></h4>
@@ -612,7 +614,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c027df0/src/runtime/arc.ts#L825">src/runtime/arc.ts:825</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/4f3c822/src/runtime/arc.ts#L835">src/runtime/arc.ts:835</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <a href="idgenerator.html" class="tsd-signature-type">IdGenerator</a></h4>
@@ -629,7 +631,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c027df0/src/runtime/arc.ts#L184">src/runtime/arc.ts:184</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/4f3c822/src/runtime/arc.ts#L184">src/runtime/arc.ts:184</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -646,7 +648,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c027df0/src/runtime/arc.ts#L204">src/runtime/arc.ts:204</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/4f3c822/src/runtime/arc.ts#L204">src/runtime/arc.ts:204</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <a href="arc.html" class="tsd-signature-type">Arc</a><span class="tsd-signature-symbol">[]</span></h4>
@@ -663,7 +665,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c027df0/src/runtime/arc.ts#L133">src/runtime/arc.ts:133</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/4f3c822/src/runtime/arc.ts#L133">src/runtime/arc.ts:133</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <a href="loader.html" class="tsd-signature-type">Loader</a></h4>
@@ -680,7 +682,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c027df0/src/runtime/arc.ts#L137">src/runtime/arc.ts:137</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/4f3c822/src/runtime/arc.ts#L137">src/runtime/arc.ts:137</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <a href="modality.html" class="tsd-signature-type">Modality</a></h4>
@@ -697,7 +699,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c027df0/src/runtime/arc.ts#L428">src/runtime/arc.ts:428</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/4f3c822/src/runtime/arc.ts#L428">src/runtime/arc.ts:428</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">object</span><span class="tsd-signature-symbol">[]</span></h4>
@@ -714,7 +716,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c027df0/src/runtime/arc.ts#L427">src/runtime/arc.ts:427</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/4f3c822/src/runtime/arc.ts#L427">src/runtime/arc.ts:427</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <a href="recipe.html" class="tsd-signature-type">Recipe</a><span class="tsd-signature-symbol">[]</span></h4>
@@ -734,7 +736,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c027df0/src/runtime/arc.ts#L630">src/runtime/arc.ts:630</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/4f3c822/src/runtime/arc.ts#L640">src/runtime/arc.ts:640</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -748,6 +750,29 @@
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="_getparticleinstantiationinfo" class="tsd-anchor"></a>
+					<h3>_get<wbr>Particle<wbr>Instantiation<wbr>Info</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">_get<wbr>Particle<wbr>Instantiation<wbr>Info<span class="tsd-signature-symbol">(</span>recipeParticle<span class="tsd-signature-symbol">: </span><a href="particle.html" class="tsd-signature-type">Particle</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">object</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/4f3c822/src/runtime/arc.ts#L447">src/runtime/arc.ts:447</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>recipeParticle: <a href="particle.html" class="tsd-signature-type">Particle</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">object</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
 					<a name="_instantiateparticle" class="tsd-anchor"></a>
 					<h3>_instantiate<wbr>Particle</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
@@ -757,7 +782,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c027df0/src/runtime/arc.ts#L434">src/runtime/arc.ts:434</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/4f3c822/src/runtime/arc.ts#L439">src/runtime/arc.ts:439</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -780,7 +805,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c027df0/src/runtime/arc.ts#L698">src/runtime/arc.ts:698</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/4f3c822/src/runtime/arc.ts#L708">src/runtime/arc.ts:708</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -797,7 +822,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c027df0/src/runtime/arc.ts#L455">src/runtime/arc.ts:455</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/4f3c822/src/runtime/arc.ts#L465">src/runtime/arc.ts:465</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -820,7 +845,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c027df0/src/runtime/arc.ts#L677">src/runtime/arc.ts:677</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/4f3c822/src/runtime/arc.ts#L687">src/runtime/arc.ts:687</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -846,7 +871,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c027df0/src/runtime/arc.ts#L227">src/runtime/arc.ts:227</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/4f3c822/src/runtime/arc.ts#L227">src/runtime/arc.ts:227</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -875,7 +900,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c027df0/src/runtime/arc.ts#L309">src/runtime/arc.ts:309</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/4f3c822/src/runtime/arc.ts#L309">src/runtime/arc.ts:309</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -892,7 +917,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c027df0/src/runtime/arc.ts#L341">src/runtime/arc.ts:341</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/4f3c822/src/runtime/arc.ts#L341">src/runtime/arc.ts:341</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
@@ -909,7 +934,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c027df0/src/runtime/arc.ts#L362">src/runtime/arc.ts:362</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/4f3c822/src/runtime/arc.ts#L362">src/runtime/arc.ts:362</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
@@ -926,7 +951,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c027df0/src/runtime/arc.ts#L691">src/runtime/arc.ts:691</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/4f3c822/src/runtime/arc.ts#L701">src/runtime/arc.ts:701</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -952,7 +977,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c027df0/src/runtime/arc.ts#L168">src/runtime/arc.ts:168</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/4f3c822/src/runtime/arc.ts#L168">src/runtime/arc.ts:168</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -969,7 +994,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c027df0/src/runtime/arc.ts#L708">src/runtime/arc.ts:708</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/4f3c822/src/runtime/arc.ts#L718">src/runtime/arc.ts:718</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -992,7 +1017,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c027df0/src/runtime/arc.ts#L478">src/runtime/arc.ts:478</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/4f3c822/src/runtime/arc.ts#L488">src/runtime/arc.ts:488</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="arc.html" class="tsd-signature-type">Arc</a><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -1009,7 +1034,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c027df0/src/runtime/arc.ts#L214">src/runtime/arc.ts:214</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/4f3c822/src/runtime/arc.ts#L214">src/runtime/arc.ts:214</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1032,7 +1057,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c027df0/src/runtime/arc.ts#L645">src/runtime/arc.ts:645</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/4f3c822/src/runtime/arc.ts#L655">src/runtime/arc.ts:655</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1067,7 +1092,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c027df0/src/runtime/arc.ts#L147">src/runtime/arc.ts:147</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/4f3c822/src/runtime/arc.ts#L147">src/runtime/arc.ts:147</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -1084,7 +1109,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c027df0/src/runtime/arc.ts#L198">src/runtime/arc.ts:198</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/4f3c822/src/runtime/arc.ts#L198">src/runtime/arc.ts:198</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1107,7 +1132,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c027df0/src/runtime/arc.ts#L769">src/runtime/arc.ts:769</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/4f3c822/src/runtime/arc.ts#L779">src/runtime/arc.ts:779</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1133,7 +1158,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c027df0/src/runtime/arc.ts#L777">src/runtime/arc.ts:777</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/4f3c822/src/runtime/arc.ts#L787">src/runtime/arc.ts:787</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1156,7 +1181,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c027df0/src/runtime/arc.ts#L737">src/runtime/arc.ts:737</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/4f3c822/src/runtime/arc.ts#L747">src/runtime/arc.ts:747</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1187,7 +1212,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c027df0/src/runtime/arc.ts#L469">src/runtime/arc.ts:469</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/4f3c822/src/runtime/arc.ts#L479">src/runtime/arc.ts:479</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1210,7 +1235,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c027df0/src/runtime/arc.ts#L784">src/runtime/arc.ts:784</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/4f3c822/src/runtime/arc.ts#L794">src/runtime/arc.ts:794</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1233,7 +1258,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c027df0/src/runtime/arc.ts#L789">src/runtime/arc.ts:789</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/4f3c822/src/runtime/arc.ts#L799">src/runtime/arc.ts:799</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1266,7 +1291,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c027df0/src/runtime/arc.ts#L536">src/runtime/arc.ts:536</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/4f3c822/src/runtime/arc.ts#L546">src/runtime/arc.ts:546</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1303,7 +1328,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c027df0/src/runtime/arc.ts#L800">src/runtime/arc.ts:800</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/4f3c822/src/runtime/arc.ts#L810">src/runtime/arc.ts:810</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1326,7 +1351,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c027df0/src/runtime/arc.ts#L430">src/runtime/arc.ts:430</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/4f3c822/src/runtime/arc.ts#L430">src/runtime/arc.ts:430</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <a href="particlespec.html" class="tsd-signature-type">ParticleSpec</a><span class="tsd-signature-symbol">[]</span></h4>
@@ -1343,7 +1368,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c027df0/src/runtime/arc.ts#L549">src/runtime/arc.ts:549</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/4f3c822/src/runtime/arc.ts#L559">src/runtime/arc.ts:559</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1366,7 +1391,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c027df0/src/runtime/arc.ts#L704">src/runtime/arc.ts:704</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/4f3c822/src/runtime/arc.ts#L714">src/runtime/arc.ts:714</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1392,13 +1417,36 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c027df0/src/runtime/arc.ts#L387">src/runtime/arc.ts:387</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/4f3c822/src/runtime/arc.ts#L387">src/runtime/arc.ts:387</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
 									<h5>serialization: <span class="tsd-signature-type">string</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="reinstantiateparticle" class="tsd-anchor"></a>
+					<h3>reinstantiate<wbr>Particle</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">reinstantiate<wbr>Particle<span class="tsd-signature-symbol">(</span>recipeParticle<span class="tsd-signature-symbol">: </span><a href="particle.html" class="tsd-signature-type">Particle</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/4f3c822/src/runtime/arc.ts#L434">src/runtime/arc.ts:434</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>recipeParticle: <a href="particle.html" class="tsd-signature-type">Particle</a></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -1415,7 +1463,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c027df0/src/runtime/arc.ts#L369">src/runtime/arc.ts:369</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/4f3c822/src/runtime/arc.ts#L369">src/runtime/arc.ts:369</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -1432,7 +1480,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c027df0/src/runtime/arc.ts#L804">src/runtime/arc.ts:804</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/4f3c822/src/runtime/arc.ts#L814">src/runtime/arc.ts:814</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
@@ -1449,7 +1497,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c027df0/src/runtime/arc.ts#L718">src/runtime/arc.ts:718</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/4f3c822/src/runtime/arc.ts#L728">src/runtime/arc.ts:728</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1477,7 +1525,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c027df0/src/runtime/arc.ts#L397">src/runtime/arc.ts:397</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/4f3c822/src/runtime/arc.ts#L397">src/runtime/arc.ts:397</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1654,6 +1702,9 @@
 								<a href="arc.html#_doinstantiate" class="tsd-kind-icon">_do<wbr>Instantiate</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="arc.html#_getparticleinstantiationinfo" class="tsd-kind-icon">_get<wbr>Particle<wbr>Instantiation<wbr>Info</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="arc.html#_instantiateparticle" class="tsd-kind-icon">_instantiate<wbr>Particle</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
@@ -1736,6 +1787,9 @@
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="arc.html#persistserialization" class="tsd-kind-icon">persist<wbr>Serialization</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="arc.html#reinstantiateparticle" class="tsd-kind-icon">reinstantiate<wbr>Particle</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="arc.html#serialize" class="tsd-kind-icon">serialize</a>

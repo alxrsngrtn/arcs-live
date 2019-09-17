@@ -212,6 +212,9 @@ class ParticleExecutionContext {
             async onInstantiateParticle(id, spec, proxies) {
                 return pec.instantiateParticle(id, spec, proxies);
             }
+            async onReinstantiateParticle(id, spec, proxies) {
+                Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(false, `Not implemented`);
+            }
             async onReloadParticles(ids) {
                 return pec.reloadParticles(ids);
             }
@@ -912,6 +915,7 @@ class PECOuterPort extends APIPort {
     Stop() { }
     DefineHandle(store, type, name) { }
     InstantiateParticle(particle, id, spec, stores) { }
+    ReinstantiateParticle(id, spec, stores) { }
     ReloadParticles(particles, ids) { }
     UIEvent(particle, slotName, event) { }
     SimpleCallback(callback, data) { }
@@ -937,6 +941,9 @@ __decorate([
 __decorate([
     __param(0, Initializer), __param(1, Identifier), __param(1, Direct), __param(2, ByLiteral(_particle_spec_js__WEBPACK_IMPORTED_MODULE_1__["ParticleSpec"])), __param(3, ObjectMap(MappingType.Direct, MappingType.Mapped))
 ], PECOuterPort.prototype, "InstantiateParticle", null);
+__decorate([
+    __param(0, Identifier), __param(0, Direct), __param(1, ByLiteral(_particle_spec_js__WEBPACK_IMPORTED_MODULE_1__["ParticleSpec"])), __param(2, ObjectMap(MappingType.Direct, MappingType.Mapped))
+], PECOuterPort.prototype, "ReinstantiateParticle", null);
 __decorate([
     __param(0, OverridingInitializer), __param(1, List(MappingType.Direct))
 ], PECOuterPort.prototype, "ReloadParticles", null);

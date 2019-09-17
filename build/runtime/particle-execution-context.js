@@ -52,6 +52,9 @@ export class ParticleExecutionContext {
             async onInstantiateParticle(id, spec, proxies) {
                 return pec.instantiateParticle(id, spec, proxies);
             }
+            async onReinstantiateParticle(id, spec, proxies) {
+                assert(false, `Not implemented`);
+            }
             async onReloadParticles(ids) {
                 return pec.reloadParticles(ids);
             }
