@@ -462,7 +462,7 @@
         "signature": "f2d8b054448cb4886900f4baa77e8b41c7d00a7a3bd25a90752e325aab5e14c3"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/arc.ts": {
-        "version": "f4b26dcbc49adaac74df49096c214678c5928c28f023c6c1efed0ac0ffada1dd",
+        "version": "549d8b7bd505ddbff40c9509d37ad3052b282e67a2d432b61d8ab09d235d16ce",
         "signature": "1d844d4f5e1b0dd0750562dfb3e86cc46ba7d6541d45a80b77407e24f6192ba5"
       },
       "/home/travis/build/PolymerLabs/arcs/src/runtime/api-channel.ts": {

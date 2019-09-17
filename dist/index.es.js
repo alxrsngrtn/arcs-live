@@ -24036,7 +24036,9 @@ ${this.activeRecipe.toString()}`;
         return [...this.loadedParticleInfo.values()].map(({ spec }) => spec);
     }
     async _instantiateParticle(recipeParticle) {
-        recipeParticle.id = this.generateID('particle');
+        if (!recipeParticle.id) {
+            recipeParticle.id = this.generateID('particle');
+        }
         const info = { spec: recipeParticle.spec, stores: new Map() };
         this.loadedParticleInfo.set(recipeParticle.id.toString(), info);
         // if supported, provide particle caching via a BloblUrl representing spec.implFile
