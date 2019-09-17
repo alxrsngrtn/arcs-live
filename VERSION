@@ -1,11 +1,9 @@
-commit 4697dc42c3d0835b2942531b8ee83887b3f23bdc
-Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
-Date:   Tue Sep 17 15:57:10 2019 +1000
+commit c027df0365e210164b96f30ca58b12494d076960
+Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
+Date:   Tue Sep 17 16:14:19 2019 +1000
 
-    Added PecPortManager and RemotePecPort (#3586)
+    Automatically include core runtime ts files as wasm test deps (#3579)
     
-    * Added PecPortManager and RemotePecPort
+    * Automaticall include core runtime ts files as wasm test deps
     
-    * Reverted AndroidHarnessModule
-    
-    * Clean up PecPortManager
+    * s/core/core_srcs
