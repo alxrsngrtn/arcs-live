@@ -1,10 +1,15 @@
-commit b6d8c86490bb1fa83ed9fbefa52f58b1f23d6454
-Author: Paul Lindner <plindner@google.com>
-Date:   Tue Sep 17 15:20:14 2019 -0700
+commit ba515f287216cae5908d733e421ab2f5701f7d4f
+Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
+Date:   Wed Sep 18 08:51:51 2019 +1000
 
-    Upgrade to Typescript 3.5.3 (#3574)
+    Adds IArcsService.registerRemotePec() and RemotePec class. (#3587)
     
-    - Update dependencies on lint and tfjs
-    - Disable new operator-linebreak lint rule
-    - Fix Lint inssues in mock-slot-composer.ts and sequence.ts
-    - Add skipLibCheck for tfjs as that is recommended in https://www.tensorflow.org/js/tutorials/setup#typescript
+    This is some basic functionality for hooking a remote pec up to the main
+    pec. In theory messages should be sendable to and from the remote pec,
+    although I haven't tested this yet.
+    
+    Also rejiggered the ArcsServiceBridge async code quite a lot. It still
+    looks overly complicated to me, I think there's a better way of doing
+    it.
+    
+    There's a lot of TODOs scattered around :-(
