@@ -1,9 +1,11 @@
-commit 00cb20fb50f5849a527bb4a35baf3cf64d7eb987
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Mon Sep 16 18:02:14 2019 -0700
+commit 4697dc42c3d0835b2942531b8ee83887b3f23bdc
+Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
+Date:   Tue Sep 17 15:57:10 2019 +1000
 
-    Non-factory instantiation of a Toast recipe (#3577)
+    Added PecPortManager and RemotePecPort (#3586)
     
-    * Non-factory instantiation of a Toast recipe
+    * Added PecPortManager and RemotePecPort
     
-    * address comments
+    * Reverted AndroidHarnessModule
+    
+    * Clean up PecPortManager
