@@ -17,5 +17,5 @@ export declare type BundleEntry = {
  * @param bundleName path to the output bundle, e.g. './awesome.zip'
  * @param verbose whether to print bundled files to stdout
  */
-export declare function bundle(entryPoints: string[], bundleName: string, verbose: boolean): Promise<{}>;
+export declare function bundle(entryPoints: string[], bundleName: string, verbose: boolean): Promise<unknown>;
 export declare function bundleListing(...entryPoints: string[]): Promise<BundleEntry[]>;

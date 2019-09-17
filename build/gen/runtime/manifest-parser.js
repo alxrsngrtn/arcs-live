@@ -6,6 +6,17 @@
 // tslint:disable: switch-default
 // tslint:disable: object-literal-shorthand
 export class SyntaxError extends Error {
+    constructor(message, expected, found, location) {
+        super();
+        this.message = message;
+        this.expected = expected;
+        this.found = found;
+        this.location = location;
+        this.name = "SyntaxError";
+        if (typeof Error.captureStackTrace === "function") {
+            Error.captureStackTrace(this, SyntaxError);
+        }
+    }
     static buildMessage(expected, found) {
         function hex(ch) {
             return ch.charCodeAt(0).toString(16).toUpperCase();
@@ -82,17 +93,6 @@ export class SyntaxError extends Error {
             return found1 ? "\"" + literalEscape(found1) + "\"" : "end of input";
         }
         return "Expected " + describeExpected(expected) + " but " + describeFound(found) + " found.";
-    }
-    constructor(message, expected, found, location) {
-        super();
-        this.message = message;
-        this.expected = expected;
-        this.found = found;
-        this.location = location;
-        this.name = "SyntaxError";
-        if (typeof Error.captureStackTrace === "function") {
-            Error.captureStackTrace(this, SyntaxError);
-        }
     }
 }
 function peg$parse(input, options) {

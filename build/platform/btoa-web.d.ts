@@ -7,4 +7,7 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-export declare const btoa: (rawString: string) => string;
+export declare const btoa: ((rawString: string) => string) & {
+    (rawString: string): string;
+    (data: string): string;
+};

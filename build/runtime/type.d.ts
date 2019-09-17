@@ -91,7 +91,7 @@ export declare class TypeVariable extends Type {
     static make(name: string, canWriteSuperset?: Type, canReadSubset?: Type): TypeVariable;
     readonly isVariable: boolean;
     mergeTypeVariablesByName(variableMap: Map<string, Type>): Type;
-    resolvedType(): any;
+    resolvedType(): Type | this;
     _canEnsureResolved(): boolean;
     maybeEnsureResolved(): boolean;
     readonly canWriteSuperset: Type;

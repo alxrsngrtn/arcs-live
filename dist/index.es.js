@@ -5209,6 +5209,17 @@ class Description {
 // tslint:disable: switch-default
 // tslint:disable: object-literal-shorthand
 class SyntaxError extends Error {
+    constructor(message, expected, found, location) {
+        super();
+        this.message = message;
+        this.expected = expected;
+        this.found = found;
+        this.location = location;
+        this.name = "SyntaxError";
+        if (typeof Error.captureStackTrace === "function") {
+            Error.captureStackTrace(this, SyntaxError);
+        }
+    }
     static buildMessage(expected, found) {
         function hex(ch) {
             return ch.charCodeAt(0).toString(16).toUpperCase();
@@ -5285,17 +5296,6 @@ class SyntaxError extends Error {
             return found1 ? "\"" + literalEscape(found1) + "\"" : "end of input";
         }
         return "Expected " + describeExpected(expected) + " but " + describeFound(found) + " found.";
-    }
-    constructor(message, expected, found, location) {
-        super();
-        this.message = message;
-        this.expected = expected;
-        this.found = found;
-        this.location = location;
-        this.name = "SyntaxError";
-        if (typeof Error.captureStackTrace === "function") {
-            Error.captureStackTrace(this, SyntaxError);
-        }
     }
 }
 function peg$parse(input, options) {
@@ -27454,6 +27454,9 @@ class WebCryptoPublicKey extends WebCryptoStorableKey {
     }
 }
 class WebCryptoSessionKey {
+    constructor(sessionKey) {
+        this.sessionKey = sessionKey;
+    }
     // Visible/Used for testing only.
     decrypt(buffer, iv) {
         return crypto.subtle.decrypt({
@@ -27467,9 +27470,6 @@ class WebCryptoSessionKey {
             name: this.algorithm(),
             iv
         }, this.sessionKey, buffer);
-    }
-    constructor(sessionKey) {
-        this.sessionKey = sessionKey;
     }
     /**
      * This encodes the session key as a hexadecimal string.

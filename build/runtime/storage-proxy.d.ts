@@ -118,7 +118,7 @@ export declare class CollectionProxy extends StorageProxy implements CollectionS
         originatorId: string;
     };
     toList(): Promise<ModelValue[]>;
-    get(id: string): Promise<{}>;
+    get(id: string): Promise<unknown>;
     store(value: any, keys: string[], particleId: string): Promise<void>;
     clear(particleId: any): Promise<void>;
     remove(id: any, keys: any, particleId: any): Promise<void>;
@@ -188,7 +188,7 @@ export declare class NoOpStorageProxy extends StorageProxy implements Collection
     _notify(kind: string, details: any, predicate?: (ignored: HandleOptions) => boolean): void;
     _processUpdates(): void;
     protected generateBarrier(): string;
-    get(id?: string): Promise<{}>;
+    get(id?: string): Promise<unknown>;
     store(value: any, keys: string[], particleId?: string): Promise<void>;
     clear(particleId: string): Promise<void>;
     remove(id: string, keys: string[], particleId?: string): Promise<void>;

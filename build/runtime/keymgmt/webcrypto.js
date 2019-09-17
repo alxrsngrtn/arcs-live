@@ -123,6 +123,9 @@ class WebCryptoPublicKey extends WebCryptoStorableKey {
     }
 }
 class WebCryptoSessionKey {
+    constructor(sessionKey) {
+        this.sessionKey = sessionKey;
+    }
     // Visible/Used for testing only.
     decrypt(buffer, iv) {
         return crypto.subtle.decrypt({
@@ -136,9 +139,6 @@ class WebCryptoSessionKey {
             name: this.algorithm(),
             iv
         }, this.sessionKey, buffer);
-    }
-    constructor(sessionKey) {
-        this.sessionKey = sessionKey;
     }
     /**
      * This encodes the session key as a hexadecimal string.

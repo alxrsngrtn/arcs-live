@@ -1,9 +1,10 @@
-commit 4f3c8221a2b5e1e8454fee73b9dbb6ca574ac719
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Tue Sep 17 08:32:26 2019 -0700
+commit b6d8c86490bb1fa83ed9fbefa52f58b1f23d6454
+Author: Paul Lindner <plindner@google.com>
+Date:   Tue Sep 17 15:20:14 2019 -0700
 
-    reinstantiate non-factory particle (#3584)
+    Upgrade to Typescript 3.5.3 (#3574)
     
-    * reinstantiate non-factory particle
-    
-    * address comments
+    - Update dependencies on lint and tfjs
+    - Disable new operator-linebreak lint rule
+    - Fix Lint inssues in mock-slot-composer.ts and sequence.ts
+    - Add skipLibCheck for tfjs as that is recommended in https://www.tensorflow.org/js/tutorials/setup#typescript

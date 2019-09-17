@@ -60,7 +60,7 @@ export declare class ResultInspector {
      * This clears the contents of the observed store after each call, allowing repeated independent
      * checks in the same test. The order of expectations is not significant.
      */
-    verify(...expectations: any[]): Promise<{}>;
+    verify(...expectations: any[]): Promise<unknown>;
 }
 export declare function assertSingletonWillChangeTo(arc: Arc, store: any, field: string, expectation: any): Promise<void>;
 export declare function assertSingletonIs(store: any, field: string, expectation: any): Promise<void>;

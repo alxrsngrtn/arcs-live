@@ -63,7 +63,7 @@ export declare class MockSlotComposer extends FakeSlotComposer {
     /**
      * Returns promise to completion of all expectations.
      */
-    expectationsCompleted(): Promise<void> | Promise<{}>;
+    expectationsCompleted(): Promise<void>;
     assertExpectationsCompleted(): boolean;
     /**
      * Sends an event to the given particle and slot.

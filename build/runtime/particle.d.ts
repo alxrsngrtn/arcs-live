@@ -116,7 +116,7 @@ export declare class Particle {
     /**
      * Request (outerPEC) service invocations.
      */
-    service(request: any): Promise<{}>;
+    service(request: any): Promise<unknown>;
     /**
      * Returns the slot with provided name.
      */

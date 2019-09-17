@@ -58,11 +58,11 @@ export declare class TestHelper {
     /**
      * Verifies data in handle |connectionName| of |particleName| with the given handler.
      */
-    verifyData(particleName: string, connectionName: string, expectationHandler: any): Promise<{}>;
+    verifyData(particleName: string, connectionName: string, expectationHandler: any): Promise<unknown>;
     /**
      * Verifies the size of data collection in handle |connectionName| of |particleName|.
      */
-    verifySetSize(particleName: string, connectionName: string, expectedSetSize: number): Promise<{}>;
+    verifySetSize(particleName: string, connectionName: string, expectedSetSize: number): Promise<unknown>;
     verifySlots(numConsumers: number, verifyHandler: any): void;
     log(message: any): void;
 }

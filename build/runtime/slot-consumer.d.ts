@@ -43,7 +43,7 @@ export declare class SlotConsumer {
     addRenderingBySubId(subId: string | undefined, rendering: Rendering): void;
     addHostedSlotContexts(context: HostedSlotContext): void;
     readonly allProvidedSlotContexts: ProvidedSlotContext[];
-    findProvidedContext(predicate: Predicate<ProvidedSlotContext>): ProvidedSlotContext;
+    findProvidedContext(predicate: Predicate<ProvidedSlotContext>): any;
     private generateProvidedContexts;
     onContainerUpdate(newContainer: any, originalContainer: any): void;
     createProvidedContexts(): SlotContext | ConcatArray<SlotContext>;
