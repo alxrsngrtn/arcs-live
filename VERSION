@@ -1,15 +1,9 @@
-commit ba515f287216cae5908d733e421ab2f5701f7d4f
+commit 1b3a9632c783c87af80e7cb6a1458db21eb9fd6f
 Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
-Date:   Wed Sep 18 08:51:51 2019 +1000
+Date:   Wed Sep 18 12:09:25 2019 +1000
 
-    Adds IArcsService.registerRemotePec() and RemotePec class. (#3587)
+    Tweaked particles symlink in javaharness. (#3588)
     
-    This is some basic functionality for hooking a remote pec up to the main
-    pec. In theory messages should be sendable to and from the remote pec,
-    although I haven't tested this yet.
+    particles/WasmTemplate had a BUILD file with paths that don't resolve in the javaharness WORKSPACE file. I've deleted the symlink to particles and replaced it with a folder with a PipeApps symlink inside it. If we need other folders we can add additional symlinks.
     
-    Also rejiggered the ArcsServiceBridge async code quite a lot. It still
-    looks overly complicated to me, I think there's a better way of doing
-    it.
-    
-    There's a lot of TODOs scattered around :-(
+    This should let us run `bazel build ...` and `bazel test ...` from inside the javaharness folder without bazel query errors.
