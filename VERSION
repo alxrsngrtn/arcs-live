@@ -1,9 +1,9 @@
-commit ce9ce4e610cc1a09e33e12d76454cc63d9a3d888
+commit a54ffd2703561c6abad36f1f914374576a1946e7
 Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
-Date:   Wed Sep 18 12:10:11 2019 +1000
+Date:   Wed Sep 18 12:10:22 2019 +1000
 
-    Fix build errors in javaharness j2cl (#3589)
+    Fix Java tests: add missing java dep (#3590)
     
-    Error was that I was referencing an android interface IRemotePecCallback from the arcs.api package. I switched to a Consumer<String> instead.
+    This missing dep was causing the java test to fail (but oddly doesn't seem to be necessary when building the android targets...)
     
-    Javaharness now builds with `bazel build ...` without errors
+    Running `bazel test ...` now passes!
