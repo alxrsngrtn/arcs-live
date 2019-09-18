@@ -1,9 +1,9 @@
-commit 1b3a9632c783c87af80e7cb6a1458db21eb9fd6f
+commit ce9ce4e610cc1a09e33e12d76454cc63d9a3d888
 Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
-Date:   Wed Sep 18 12:09:25 2019 +1000
+Date:   Wed Sep 18 12:10:11 2019 +1000
 
-    Tweaked particles symlink in javaharness. (#3588)
+    Fix build errors in javaharness j2cl (#3589)
     
-    particles/WasmTemplate had a BUILD file with paths that don't resolve in the javaharness WORKSPACE file. I've deleted the symlink to particles and replaced it with a folder with a PipeApps symlink inside it. If we need other folders we can add additional symlinks.
+    Error was that I was referencing an android interface IRemotePecCallback from the arcs.api package. I switched to a Consumer<String> instead.
     
-    This should let us run `bazel build ...` and `bazel test ...` from inside the javaharness folder without bazel query errors.
+    Javaharness now builds with `bazel build ...` without errors
