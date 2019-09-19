@@ -378,7 +378,7 @@
         "signature": "86874e4389dafbe12250f44f6ee48b07da634c7e761a5f887e56f426b3a4a826"
       },
       "../src/runtime/particle.ts": {
-        "version": "3e640af0b8f8fd65ffe8396063aa730d1ccd8e500860fe349af95e5b35b7b860",
+        "version": "1314b5b9f8c15de962e376400bf9d443c7d1e9daff0bdc862cf4e630274d78ab",
         "signature": "29b4595a7e44ac239c14fe8b6fa132c4737a5fb170bfd3f8a70f64905aebfc81"
       },
       "../src/runtime/arc-exceptions.ts": {
@@ -478,7 +478,7 @@
         "signature": "e2fb02bc9326fa90282fac6781cd03911182f446be8e73db733cd232c71b456a"
       },
       "../src/runtime/wasm.ts": {
-        "version": "1a1f80468e8d8977d516b7b6ef7c92bbd899763770613797b064ef46b5acb13b",
+        "version": "6aba64267a29eaf7031ca177262cb7a420e654d663d2a26a7c1fe9e6b4298a31",
         "signature": "b89fd65e32c340de2417047c7b6e68a695686e961748101071a2e0cbf89f86fc"
       },
       "../src/runtime/particle-execution-context.ts": {
@@ -2557,7 +2557,7 @@
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "../src/tests/hotreload-integration-test.ts": {
-        "version": "cedde9fbf206223db79d282fc5d63094072c5bad2cea1eb1753f51b102f59030",
+        "version": "a5a77ebd353a9b452cdf78beb5d94fba3f8d2e3db2e5a85e6612232d1397be68",
         "signature": "43a5176681925d9f51b139647154e4a52c2eb1b1a64bb428595000952bcbc7f1"
       },
       "../src/tests/multiplexer-integration-test.ts": {

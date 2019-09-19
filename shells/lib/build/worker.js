@@ -6309,8 +6309,6 @@ class WasmParticle extends _particle_js__WEBPACK_IMPORTED_MODULE_2__["Particle"]
             this.converters.set(handle, new EntityPackager(handle.entityClass.schema));
         }
         this.exports._init(this.innerParticle);
-        // Setting this.handles since reload function needs to be able to grab all particle's handles
-        this.handles = handles;
     }
     async onHandleSync(handle, model) {
         const wasmHandle = this.handleMap.get(handle);
@@ -6551,6 +6549,7 @@ class Particle {
         }
     }
     async callSetHandles(handles, onException) {
+        this.handles = handles;
         await this.invokeSafely(async (p) => p.setHandles(handles), onException);
     }
     /**

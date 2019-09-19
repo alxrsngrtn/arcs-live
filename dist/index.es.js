@@ -21512,6 +21512,7 @@ class Particle$1 {
         }
     }
     async callSetHandles(handles, onException) {
+        this.handles = handles;
         await this.invokeSafely(async (p) => p.setHandles(handles), onException);
     }
     /**
@@ -22128,8 +22129,6 @@ class WasmParticle extends Particle$1 {
             this.converters.set(handle, new EntityPackager(handle.entityClass.schema));
         }
         this.exports._init(this.innerParticle);
-        // Setting this.handles since reload function needs to be able to grab all particle's handles
-        this.handles = handles;
     }
     async onHandleSync(handle, model) {
         const wasmHandle = this.handleMap.get(handle);

@@ -99,7 +99,6 @@ describe('Hot Code Reload for JS Particle', async () => {
             'A.js': `defineParticle(({Particle}) => {
         return class extends Particle {
           async setHandles(handles) {
-            this.handles = handles;
             this.handleOut = handles.get('personOut');
           }
           onHandleSync(handle, model) {
@@ -130,7 +129,6 @@ describe('Hot Code Reload for JS Particle', async () => {
         loader._fileMap['A.js'] = `defineParticle(({Particle}) => {
       return class extends Particle {
         async setHandles(handles) {
-          this.handles = handles;
           this.handleOut = handles.get('personOut');
         }
         onHandleSync(handle, model) {

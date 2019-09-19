@@ -1,9 +1,9 @@
-commit a54ffd2703561c6abad36f1f914374576a1946e7
-Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
-Date:   Wed Sep 18 12:10:22 2019 +1000
+commit a8e389188fd2274e0e37cedf9086a3cc927e3e90
+Author: sherry-pra <52428204+sherry-pra@users.noreply.github.com>
+Date:   Thu Sep 19 16:11:02 2019 -0700
 
-    Fix Java tests: add missing java dep (#3590)
+    Explicitly setting the handles field in a particle: (#3595)
     
-    This missing dep was causing the java test to fail (but oddly doesn't seem to be necessary when building the android targets...)
-    
-    Running `bazel test ...` now passes!
+    - Hot code reload functionality depends on this field to get all the
+    handles and create copies of them
+    - Avoid always having to define handles in while overriding setHandles

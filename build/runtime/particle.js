@@ -51,6 +51,7 @@ export class Particle {
         }
     }
     async callSetHandles(handles, onException) {
+        this.handles = handles;
         await this.invokeSafely(async (p) => p.setHandles(handles), onException);
     }
     /**

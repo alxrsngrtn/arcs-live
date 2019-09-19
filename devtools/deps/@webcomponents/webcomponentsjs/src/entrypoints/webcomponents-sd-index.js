@@ -1,4 +1,4 @@
-/// BareSpecifier=@webcomponents/webcomponentsjs/entrypoints/webcomponents-sd-ce-index
+/// BareSpecifier=@webcomponents/webcomponentsjs/src/entrypoints/webcomponents-sd-index
 /**
 @license
 Copyright (c) 2017 The Polymer Project Authors. All rights reserved.
@@ -11,10 +11,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 'use strict';
 
 /*
- * Polyfills loaded: Custom Elements, Shady DOM/Shady CSS
- * Used in: Safari 9, Firefox, Edge
+ * Polyfills loaded: Shady DOM/Shady CSS
+ * Used in: Firefox when CE is implemented
  */
 
-import '../node_modules/@webcomponents/shadydom/src/shadydom.js';
-import '../node_modules/@webcomponents/custom-elements/src/custom-elements.js';
-import '../node_modules/@webcomponents/shadycss/entrypoints/scoping-shim.js';
+import '../../node_modules/@webcomponents/shadydom/src/shadydom.js';
+import '../../node_modules/@webcomponents/shadycss/entrypoints/scoping-shim.js';

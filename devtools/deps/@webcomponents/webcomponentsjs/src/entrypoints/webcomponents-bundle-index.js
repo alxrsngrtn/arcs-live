@@ -1,4 +1,4 @@
-/// BareSpecifier=@webcomponents/webcomponentsjs/entrypoints/webcomponents-bundle-index
+/// BareSpecifier=@webcomponents/webcomponentsjs/src/entrypoints/webcomponents-bundle-index
 /**
 @license
 Copyright (c) 2018 The Polymer Project Authors. All rights reserved.
