@@ -1,17 +1,7 @@
-commit 4de071bcf39d0cccf2777717470509313cef1580
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Thu Sep 19 22:17:30 2019 -0700
+commit 344d94372f2e8522b7b075a6e7ec5201fde0c312
+Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
+Date:   Fri Sep 20 16:21:24 2019 +1000
 
-    E2e dummy autofill (#3594)
+    Fix race condition when calling start ArcsService.startArc(). (#3599)
     
-    * Added dummy Java and JS code for an AutofillParticle example.
-    
-    It doesn't work yet. The particle is not hooked up to anything. It needs to be attached to the RemotePec, its handles need to be initialized, and we need to actually run the arc.
-    
-    * e2e simple autofill prototype (based on #3592)
-    
-    * Update ArcsService to provide `startArc` method
-    
-    * map recent-people store into demo recipe to suggest from
-    
-    * address comments
+    If the ArcsService was not already fully started (i.e. ready event received from Arcs), then the runArc message would fail. Now we wait until onReady has been called before trying to start the arc.
