@@ -1,9 +1,5 @@
-commit 11c84e238ec15fade037352f4015ce63874477ce
+commit 53b6948ae4fc88353fe7106c8ef1caaf4f9c0194
 Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
-Date:   Fri Sep 20 12:23:14 2019 +1000
+Date:   Fri Sep 20 14:47:36 2019 +1000
 
-    Wasm C++ build updates (#3597)
-    
-    - Add a dependency on the main schema2pkg source files for arcs_*_schema rules
-    - Add a build target for the working files under src/wasm/cpp
-    - Rename working.h to entity-class.h, to be used as reference
+    Internal rework for accessing private fields of generated entity classes. (#3598)

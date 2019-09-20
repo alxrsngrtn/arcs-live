@@ -51,12 +51,12 @@ export class Schema2Cpp extends Schema2Base {
         const fields = [];
         const api = [];
         const clone = [];
+        const hash = [];
         const equals = [];
         const less = [];
         const decode = [];
         const encode = [];
         const toString = [];
-        const hash = [];
         const fieldCount = this.processSchema(schema, (field, typeChar) => {
             const type = typeMap[typeChar][0];
             const isString = typeMap[typeChar][1];
@@ -66,18 +66,18 @@ export class Schema2Cpp extends Schema2Base {
             fields.push(`${type} ${field}_ = ${type}();`, `bool ${valid} = false;`, ``);
             api.push(`${ref1}${type}${ref2} ${fixed}() const { return ${field}_; }`, `void set_${field}(${ref1}${type}${ref2} value) { ${field}_ = value; ${valid} = true; }`, `void clear_${field}() { ${field}_ = ${type}(); ${valid} = false; }`, `bool has_${field}() const { return ${valid}; }`, ``);
             clone.push(`clone.${field}_ = entity.${field}_;`, `clone.${valid} = entity.${valid};`);
-            equals.push(`(a.has_${field}() ? (b.has_${field}() && a.${fixed}() == b.${fixed}()) : !b.has_${field}())`);
-            less.push(`if (a.has_${field}() != b.has_${field}()) {`, `  return !a.has_${field}();`);
+            hash.push(`if (entity.${valid})`, `  internal::hash_combine(h, entity.${field}_);`);
+            equals.push(`(a.${valid} ? (b.${valid} && a.${field}_ == b.${field}_) : !b.${valid})`);
+            less.push(`if (a.${valid} != b.${valid}) {`, `  return !a.${valid};`);
             if (isString) {
-                less.push(`} else {`, `  cmp = a.${fixed}().compare(b.${fixed}());`, `  if (cmp != 0) return cmp < 0;`, `}`);
+                less.push(`} else {`, `  cmp = a.${field}_.compare(b.${field}_);`, `  if (cmp != 0) return cmp < 0;`, `}`);
             }
             else {
-                less.push(`} else if (a.${fixed}() != b.${fixed}()) {`, `  return a.${fixed}() < b.${fixed}();`, `}`);
+                less.push(`} else if (a.${field}_ != b.${field}_) {`, `  return a.${field}_ < b.${field}_;`, `}`);
             }
             decode.push(`} else if (name == "${field}") {`, `  decoder.validate("${typeChar}");`, `  decoder.decode(entity->${field}_);`, `  entity->${valid} = true;`);
-            encode.push(`if (entity.has_${field}())`, `  encoder.encode("${field}:${typeChar}", entity.${fixed}());`);
-            toString.push(`if (entity.has_${field}())`, `  printer.add("${field}: ", entity.${fixed}());`);
-            hash.push(`if (entity.has_${field}())`, `  arcs::internal::hash_combine(h, entity.${fixed}());`);
+            encode.push(`if (entity.${valid})`, `  encoder.encode("${field}:${typeChar}", entity.${field}_);`);
+            toString.push(`if (entity.${valid})`, `  printer.add("${field}: ", entity.${field}_);`);
         });
         return `\
 
@@ -105,9 +105,6 @@ public:
     return false;
   }
 
-  // For internal use, testing and debugging; do not use this value for any production purpose.
-  const std::string& _internal_id() const { return _internal_id_; }
-
 private:
   // Allow private copying for use in Handles.
   ${name}(const ${name}&) = default;
@@ -119,20 +116,26 @@ private:
 
   friend class Singleton<${name}>;
   friend class Collection<${name}>;
-  friend ${name} clone_entity<${name}>(const ${name}& entity);
-  friend void internal::decode_entity<${name}>(${name}* entity, const char* str);
-  friend class internal::TestHelper;
+  friend class internal::Accessor<${name}>;
 };
 
 template<>
-inline ${name} clone_entity(const ${name}& entity) {
+inline ${name} internal::Accessor<${name}>::clone_entity(const ${name}& entity) {
   ${name} clone;
   ${clone.join('\n  ')}
   return clone;
 }
 
 template<>
-inline bool fields_equal(const ${name}& a, const ${name}& b) {
+inline size_t internal::Accessor<${name}>::hash_entity(const ${name}& entity) {
+  size_t h = 0;
+  internal::hash_combine(h, entity._internal_id_);
+  ${hash.join('\n  ')}
+  return h;
+}
+
+template<>
+inline bool internal::Accessor<${name}>::fields_equal(const ${name}& a, const ${name}& b) {
   return ${equals.join(' && \n         ')};
 }
 
@@ -141,15 +144,15 @@ inline bool ${name}::operator==(const ${name}& other) const {
 }
 
 template<>
-inline std::string entity_to_str(const ${name}& entity, const char* join) {
+inline std::string internal::Accessor<${name}>::entity_to_str(const ${name}& entity, const char* join) {
   internal::StringPrinter printer;
-  printer.addId(entity._internal_id());
+  printer.addId(entity._internal_id_);
   ${toString.join('\n  ')}
   return printer.result(join);
 }
 
 template<>
-inline void internal::decode_entity(${name}* entity, const char* str) {
+inline void internal::Accessor<${name}>::decode_entity(${name}* entity, const char* str) {
   if (str == nullptr) return;
   internal::StringDecoder decoder(str);
   decoder.decode(entity->_internal_id_);
@@ -164,9 +167,9 @@ inline void internal::decode_entity(${name}* entity, const char* str) {
 }
 
 template<>
-inline std::string internal::encode_entity(const ${name}& entity) {
+inline std::string internal::Accessor<${name}>::encode_entity(const ${name}& entity) {
   internal::StringEncoder encoder;
-  encoder.encode("", entity._internal_id());
+  encoder.encode("", entity._internal_id_);
   ${encode.join('\n  ')}
   return encoder.result();
 }
@@ -177,10 +180,7 @@ inline std::string internal::encode_entity(const ${name}& entity) {
 template<>
 struct std::hash<arcs::${name}> {
   size_t operator()(const arcs::${name}& entity) const {
-    size_t h = 0;
-    arcs::internal::hash_combine(h, entity._internal_id());
-    ${hash.join('\n    ')}
-    return h;
+    return arcs::hash_entity(entity);
   }
 };
 `;
