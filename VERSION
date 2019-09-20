@@ -1,9 +1,9 @@
-commit a8e389188fd2274e0e37cedf9086a3cc927e3e90
-Author: sherry-pra <52428204+sherry-pra@users.noreply.github.com>
-Date:   Thu Sep 19 16:11:02 2019 -0700
+commit 11c84e238ec15fade037352f4015ce63874477ce
+Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
+Date:   Fri Sep 20 12:23:14 2019 +1000
 
-    Explicitly setting the handles field in a particle: (#3595)
+    Wasm C++ build updates (#3597)
     
-    - Hot code reload functionality depends on this field to get all the
-    handles and create copies of them
-    - Avoid always having to define handles in while overriding setHandles
+    - Add a dependency on the main schema2pkg source files for arcs_*_schema rules
+    - Add a build target for the working files under src/wasm/cpp
+    - Rename working.h to entity-class.h, to be used as reference
