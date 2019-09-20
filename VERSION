@@ -1,7 +1,7 @@
-commit 344d94372f2e8522b7b075a6e7ec5201fde0c312
+commit 798339d04aabe46a21375fcc14063524b0a99e1b
 Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
-Date:   Fri Sep 20 16:21:24 2019 +1000
+Date:   Sat Sep 21 03:07:03 2019 +1000
 
-    Fix race condition when calling start ArcsService.startArc(). (#3599)
+    Improved Autofill demo. (#3600)
     
-    If the ArcsService was not already fully started (i.e. ready event received from Arcs), then the runArc message would fail. Now we wait until onReady has been called before trying to start the arc.
+    Now it only autofills a single field at a time. Tapping on a different field will trigger an explicit autofill request (currently crashes because the PEC doesn't get shutdown properly)
