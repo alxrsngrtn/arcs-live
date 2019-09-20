@@ -351,7 +351,9 @@ ${this.activeRecipe.toString()}`;
         const info = { spec: recipeParticle.spec, stores: new Map() };
         this.loadedParticleInfo.set(recipeParticle.id.toString(), info);
         // if supported, provide particle caching via a BloblUrl representing spec.implFile
-        await this._provisionSpecUrl(recipeParticle.spec);
+        if (!recipeParticle.isJavaParticle()) {
+            await this._provisionSpecUrl(recipeParticle.spec);
+        }
         for (const [name, connection] of Object.entries(recipeParticle.connections)) {
             if (connection.handle.fate !== '`slot') {
                 const store = this.findStoreById(connection.handle.id);

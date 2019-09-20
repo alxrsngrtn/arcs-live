@@ -470,7 +470,7 @@
         "signature": "f2d8b054448cb4886900f4baa77e8b41c7d00a7a3bd25a90752e325aab5e14c3"
       },
       "../src/runtime/arc.ts": {
-        "version": "c51dafb6b4bd55ce8d510e55b24c7b0d361b2625435b91cef0369fb50c77d944",
+        "version": "c7df31bf664bbd4a809478f3aa72f058c36f4fb79b5c39b3c3da41c020447a70",
         "signature": "9db1ecab7db5a3c0ed568d4ee5797f49434da04af2be2fa1e50765acccf53245"
       },
       "../src/runtime/api-channel.ts": {

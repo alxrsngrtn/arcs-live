@@ -1,5 +1,17 @@
-commit 53b6948ae4fc88353fe7106c8ef1caaf4f9c0194
-Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
-Date:   Fri Sep 20 14:47:36 2019 +1000
+commit 4de071bcf39d0cccf2777717470509313cef1580
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Thu Sep 19 22:17:30 2019 -0700
 
-    Internal rework for accessing private fields of generated entity classes. (#3598)
+    E2e dummy autofill (#3594)
+    
+    * Added dummy Java and JS code for an AutofillParticle example.
+    
+    It doesn't work yet. The particle is not hooked up to anything. It needs to be attached to the RemotePec, its handles need to be initialized, and we need to actually run the arc.
+    
+    * e2e simple autofill prototype (based on #3592)
+    
+    * Update ArcsService to provide `startArc` method
+    
+    * map recent-people store into demo recipe to suggest from
+    
+    * address comments
