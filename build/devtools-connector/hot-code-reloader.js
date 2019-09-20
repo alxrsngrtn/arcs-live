@@ -14,6 +14,7 @@
 export class HotCodeReloader {
     constructor(arc, arcDevtoolsChannel) {
         this.arc = arc;
+        this.arcDevtoolsChannel = arcDevtoolsChannel;
         arcDevtoolsChannel.listen('particle-reload', (msg) => void this._reload(msg.messageBody));
     }
     _reload(filepath) {
@@ -28,6 +29,16 @@ export class HotCodeReloader {
             }
             arc.pec.reload(particles);
         }
+    }
+    updateParticleSet(particles) {
+        const particleSources = [];
+        particles.forEach(particle => {
+            particleSources.push(particle.spec.implFile);
+        });
+        this.arcDevtoolsChannel.send({
+            messageType: 'watch-particle-sources',
+            messageBody: particleSources
+        });
     }
 }
 //# sourceMappingURL=hot-code-reloader.js.map

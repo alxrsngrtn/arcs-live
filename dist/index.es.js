@@ -33446,6 +33446,7 @@ function enableTracingAdapter(devtoolsChannel) {
 class HotCodeReloader {
     constructor(arc, arcDevtoolsChannel) {
         this.arc = arc;
+        this.arcDevtoolsChannel = arcDevtoolsChannel;
         arcDevtoolsChannel.listen('particle-reload', (msg) => void this._reload(msg.messageBody));
     }
     _reload(filepath) {
@@ -33460,6 +33461,16 @@ class HotCodeReloader {
             }
             arc.pec.reload(particles);
         }
+    }
+    updateParticleSet(particles) {
+        const particleSources = [];
+        particles.forEach(particle => {
+            particleSources.push(particle.spec.implFile);
+        });
+        this.arcDevtoolsChannel.send({
+            messageType: 'watch-particle-sources',
+            messageBody: particleSources
+        });
     }
 }
 
@@ -33501,7 +33512,7 @@ class DevtoolsArcInspector {
             this.arcDevtoolsChannel = devtoolsChannel.forArc(arc);
             this.storesFetcher = new ArcStoresFetcher(arc, this.arcDevtoolsChannel);
             const unused1 = new ArcPlannerInvoker(arc, this.arcDevtoolsChannel);
-            const unused2 = new HotCodeReloader(arc, this.arcDevtoolsChannel);
+            this.hotCodeReloader = new HotCodeReloader(arc, this.arcDevtoolsChannel);
             this.arcDevtoolsChannel.send({
                 messageType: 'arc-available',
                 messageBody: {
@@ -33533,17 +33544,7 @@ class DevtoolsArcInspector {
             messageBody: { slotConnections, activeRecipe }
         });
         if (!this.arc.isSpeculative)
-            this.updateParticleSet(particles);
-    }
-    updateParticleSet(particles) {
-        const particleSources = [];
-        particles.forEach(particle => {
-            particleSources.push(particle.spec.implFile);
-        });
-        this.arcDevtoolsChannel.send({
-            messageType: 'watch-particle-sources',
-            messageBody: particleSources
-        });
+            this.hotCodeReloader.updateParticleSet(particles);
     }
     pecMessage(name, pecMsgBody, pecMsgCount, stackString) {
         if (!DevtoolsConnection.isConnected)

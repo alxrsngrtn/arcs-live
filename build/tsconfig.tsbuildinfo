@@ -822,11 +822,11 @@
         "signature": "12367c989f3e0ca81e94bcfb04747a52796e4913d72f71e29ea5caca4f1b078d"
       },
       "../src/devtools-connector/hot-code-reloader.ts": {
-        "version": "f453a29a009034652070df0e4ef15f2e33f3189539d2c7d37f28d2417ea826b1",
-        "signature": "f94fc5be37ae1243226ba8ef8fb6ccc314d30642fcf423f7e39cbf8c84c8a195"
+        "version": "0a39869231b04f27f89d5a1d14b6b06776dd830fbd5bfd64b7e1ace5169178d0",
+        "signature": "5f764000c0935ed79663b189731d23f75b262f878758de3366bc8e2389fef5e5"
       },
       "../src/devtools-connector/devtools-arc-inspector.ts": {
-        "version": "9f67d986aac56beeea4b5e8e628593a2967e7aea3d6f2811635d14958db5f1ed",
+        "version": "93ffc306778cd4ffd3c428df6ecbf38a496ddfc7db7ec2a5fada11fa1bd5b3d6",
         "signature": "914efdd9819f19afa229ed6da2f106eba0d791e2a1f9f4dad415d477e7eeec63"
       },
       "../src/devtools-connector/devtools-planner-inspector.ts": {
@@ -2689,7 +2689,7 @@
         "signature": "b315d2ac7ae4ebbd909ede0f20bc9d623c7b766f58bc9c4e32c026592afe8d70"
       },
       "../src/tools/dev_server/hot-reload-server.ts": {
-        "version": "6a822bb3911fca78b52622a5ec95cce99c89a007bb400411dc3ba86517698547",
+        "version": "225a4d52786eb0a99435e25264c079dc318f789279b3371efb7d5200d8f57e2f",
         "signature": "30610a77f0a00651a242a4128fb87fabbfea5f5064e17607356e3bd35f69f3be"
       },
       "../src/tools/dev_server/dev-server.ts": {
@@ -8176,6 +8176,7 @@
       ],
       "../src/tools/dev_server/hot-reload-server.ts": [
         "../node_modules/@types/ws/index.d.ts",
+        "../node_modules/@types/node/fs.d.ts",
         "../node_modules/chokidar/types/index.d.ts",
         "../node_modules/@types/node/util.d.ts",
         "../node_modules/@types/node/ts3.1/util.d.ts"
@@ -9260,7 +9261,8 @@
       ],
       "../src/devtools-connector/hot-code-reloader.ts": [
         "../src/runtime/arc.ts",
-        "../src/devtools-connector/abstract-devtools-channel.ts"
+        "../src/devtools-connector/abstract-devtools-channel.ts",
+        "../src/runtime/recipe/particle.ts"
       ],
       "../src/devtools-connector/devtools-arc-inspector.ts": [
         "../src/runtime/arc-inspector.ts"

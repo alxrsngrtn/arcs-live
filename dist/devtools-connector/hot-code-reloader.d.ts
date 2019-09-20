@@ -9,12 +9,15 @@
  */
 import { Arc } from '../runtime/arc.js';
 import { ArcDevtoolsChannel } from './abstract-devtools-channel.js';
+import { Particle } from '../runtime/recipe/particle.js';
 /**
  * Listens to particle reload events for all particles instantiated in an arc and reloads the particles
  * when their source files change
  */
 export declare class HotCodeReloader {
     private arc;
+    private arcDevtoolsChannel;
     constructor(arc: Arc, arcDevtoolsChannel: ArcDevtoolsChannel);
     _reload(filepath: string): void;
+    updateParticleSet(particles: Particle[]): void;
 }

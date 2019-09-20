@@ -1,15 +1,9 @@
-commit 1a2da0e9b76b8408d9d9ab8c22b5badeb0316c4a
-Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
-Date:   Sat Sep 21 04:04:43 2019 +1000
+commit 56e8cf8d71d0d9d8fc06d7bd21bd443ad702d774
+Author: sherry-pra <52428204+sherry-pra@users.noreply.github.com>
+Date:   Fri Sep 20 14:36:03 2019 -0700
 
-    Updated RemotePec to allow starting and stopping of arcs. (#3602)
+    Added a hot code reload panel in devtools: (#3593)
     
-    * Improved Autofill demo.
-    
-    Now it only autofills a single field at a time. Tapping on a different field will trigger an explicit autofill request (currently crashes because the PEC doesn't get shutdown properly)
-    
-    * Updated RemotePec to allow starting and stopping of arcs.
-    
-    We can't actually stop a running Arc (the Arcs Runtime doesn't support that), so all we can do is clean up the PEC (both the instance running in the remote service and the RemotePecPort running in the arcs service).
-    
-    Also tidied up RemotePec.init() to be runArc() and to use proper IDs.
+    - Contains a list of reloadable particles and their source files
+    - Reload log for each particles
+    - Move the HCR toggle inside this panel

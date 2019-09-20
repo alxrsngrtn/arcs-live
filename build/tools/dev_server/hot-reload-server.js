@@ -8,6 +8,7 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import WebSocket from 'ws';
+import * as fs from 'fs';
 /**
  * Hot Reload Server is opening a WebSocket connection for Arcs Explorer to support hot code reload feature.
  * This connection allows the two to exchange information about the files that need to be watched and if there
@@ -39,19 +40,24 @@ export class HotReloadServer {
             ws.on('message', msg => {
                 this.watchers.forEach(watcher => watcher.close());
                 this.watchers = [];
+                const watchedFiles = this.filesToWatch;
                 this.filesToWatch = [];
                 const files = JSON.parse(msg.toString());
                 for (const file of files) {
-                    this.filesToWatch.push(file);
                     let local = file.replace(/^https:\/\/\$particles\//, './particles/');
                     local = local.replace(/^https:\/\/\$arcs\//, './');
-                    console.log(`Watching: ${local}`);
+                    if (!fs.existsSync(local))
+                        continue;
+                    if (!watchedFiles.includes(file)) {
+                        ws.send(JSON.stringify({ operation: 'watch', path: file }));
+                        console.log(`Watching: ${local}`);
+                    }
+                    this.filesToWatch.push(file);
                     let watcher;
                     if (local.endsWith('.wasm')) {
                         watcher = this.chokidar.watch(local, {
                             awaitWriteFinish: true,
-                            atomic: true,
-                            usePolling: true
+                            atomic: true
                         });
                     }
                     else {
@@ -59,7 +65,7 @@ export class HotReloadServer {
                     }
                     watcher.on('change', async (path) => {
                         console.log(`Detected change: ${path}`);
-                        ws.send(file);
+                        ws.send(JSON.stringify({ operation: 'reload', path: file }));
                     });
                     watcher.on('raw', (event, path) => {
                         if (event === 'rename') {
@@ -72,7 +78,7 @@ export class HotReloadServer {
                 if (!this.connected) {
                     this.connected = true;
                     this.filesToWatch.forEach(file => {
-                        ws.send(file);
+                        ws.send(JSON.stringify({ operation: 'reload', path: file }));
                     });
                 }
             });
