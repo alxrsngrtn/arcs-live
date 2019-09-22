@@ -175,7 +175,17 @@ export class Collection extends HandleOld {
         return this._restore(await this.storage.toList());
     }
     _restore(list) {
-        return (list !== null) ? list.map(a => restore(a, this.entityClass)) : null;
+        if (list == null) {
+            return null;
+        }
+        const containedType = this.type.getContainedType();
+        if (containedType instanceof EntityType) {
+            return list.map(e => restore(e, this.entityClass));
+        }
+        if (containedType instanceof ReferenceType) {
+            return list.map(r => new Reference(r, containedType, this.storage.pec));
+        }
+        throw new Error(`Don't know how to deliver handle data of type ${this.type}`);
     }
     /**
      * Stores a new entity into the Handle.
@@ -416,9 +426,9 @@ export function handleFor(storage, idGenerator, name = null, particleId = '', ca
     else {
         handle = new Singleton(storage, idGenerator, name, particleId, canRead, canWrite);
     }
-    const type = storage.type.getContainedType() || storage.type;
-    if (type instanceof EntityType) {
-        handle.entityClass = type.entitySchema.entityClass(storage.pec);
+    const schema = storage.type.getEntitySchema();
+    if (schema) {
+        handle.entityClass = schema.entityClass(storage.pec);
     }
     return handle;
 }

@@ -438,7 +438,7 @@
         "signature": "7b814d606f22e60fc503a83c45ef0bad57c51c803ef19dd84ecda1e9e8cead32"
       },
       "../src/runtime/handle.ts": {
-        "version": "7338ee79c8fb9d08f279c9c59361ec49232209514bcfda85531195c12da6f784",
+        "version": "fee85ce39d995203fc4185d2479080e5b95c5b0f6aac0584ae1d5f4f21120e70",
         "signature": "888c08c94f389c3d104f19c0ba199885a87820312e05efcb3aed4e06eb60ec6e"
       },
       "../src/runtime/dom-particle-base.ts": {
@@ -494,8 +494,8 @@
         "signature": "81bac4a083b387a4d57d65afb09a3dc9924d6da977108f1152de7b61b3599e62"
       },
       "../src/runtime/type.ts": {
-        "version": "f7b82206b08ffbb8528b441b6426bfbac728c9a52896afeb339dc851aa70e1e6",
-        "signature": "a8ef9af4c38500b5cb9857d90a40f2b3b4cb34bb2ac9cd14b368cae3f365957b"
+        "version": "00b344b2171361d0c4d2ab5459bcd989927372ce6e9e35fb11a9c28e52ac2d22",
+        "signature": "e7c18f2c2e2ed7e10b3a055fad51ab1ac3fc43bc61874381730845e38e86d032"
       },
       "../src/runtime/recipe/type-checker.ts": {
         "version": "0d29294f4265accd54bc7718d8b0855000fb1647f4846d8c186fad7b9b467d98",
@@ -2433,7 +2433,7 @@
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "../src/runtime/tests/reference-test.ts": {
-        "version": "17287d9d5489742efaee177b5daad531cd7cf5fe693a6ef2a41d9e08e5db3530",
+        "version": "5115e47d83808fd36f7fbf848cac63533cc1be4c8fbfd73d123b010784b1d06c",
         "signature": "8bc1d39a3b8ec61064f9969316a088e314895e7ffd094468dcc0b238f33cb4a6"
       },
       "../src/runtime/tests/runtime-manifest-integration-test.ts": {

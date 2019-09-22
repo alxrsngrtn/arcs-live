@@ -629,6 +629,9 @@ export class ReferenceType extends Type {
     toString(options = undefined) {
         return 'Reference<' + this.referredType.toString() + '>';
     }
+    getEntitySchema() {
+        return this.referredType.getEntitySchema();
+    }
 }
 export class ArcType extends Type {
     constructor() {

@@ -1,9 +1,5 @@
-commit 56e8cf8d71d0d9d8fc06d7bd21bd443ad702d774
-Author: sherry-pra <52428204+sherry-pra@users.noreply.github.com>
-Date:   Fri Sep 20 14:36:03 2019 -0700
+commit 656c9ea62b6bf5689f4b42aff3f2d524e1f321b6
+Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
+Date:   Mon Sep 23 09:15:26 2019 +1000
 
-    Added a hot code reload panel in devtools: (#3593)
-    
-    - Contains a list of reloadable particles and their source files
-    - Reload log for each particles
-    - Move the HCR toggle inside this panel
+    Update handles to allow collections of references (#3591)

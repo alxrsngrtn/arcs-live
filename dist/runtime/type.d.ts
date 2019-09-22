@@ -198,6 +198,7 @@ export declare class ReferenceType extends Type {
     _cloneWithResolutions(variableMap: Map<TypeVariableInfo | Schema, TypeVariableInfo | Schema>): ReferenceType;
     toLiteral(): TypeLiteral;
     toString(options?: any): string;
+    getEntitySchema(): Schema;
 }
 export declare class ArcType extends Type {
     constructor();
