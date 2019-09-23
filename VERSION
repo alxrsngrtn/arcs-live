@@ -1,5 +1,9 @@
-commit dcd259e2396f67728ccad86bf0a38db9fb4c256f
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Sun Sep 22 18:51:36 2019 -0700
+commit cee3dd3a80eb800dca541c741e11d34c2e9b74ab
+Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
+Date:   Tue Sep 24 02:46:57 2019 +1000
 
-    prototype remote rendering (#3605)
+    Refactor ArcsServiceBridge. (#3606)
+    
+    It used to swallow up exceptions, due to the way the futures were being
+    used (the return values were being ignored). Now it uses a thread pool
+    executor, and exceptions get thrown correctly.
