@@ -1,43 +1,9 @@
-commit 5006a56101fd665db62972b0766b6b1d67b915bc
-Author: Alex Rosengarten <alxr@google.com>
-Date:   Mon Sep 23 10:07:25 2019 -0700
+commit 6c743f93a71fc5272c5f4389d9f763f41224430a
+Author: Scott J. Miles <sjmiles@google.com>
+Date:   Mon Sep 23 15:51:07 2019 -0700
 
-    Update Bash Setup Script (#3596)
+    Code from hackathon android project (#3541)
     
-    * added install sign deps step
+    * hackathon android project
     
-    * OSX + Mac pre-requisites and Bazel install
-    
-    * rm set -x
-    
-    * fixed `nvm use` issue
-    
-    added TODO for addressing windows. Currently failing early.
-    
-    * Updated docs
-    
-    * fix -- linux: `_` --> `-`
-    
-    * Fail instead of warn when can't detect os
-    
-    * rename: PKG --> SCRIPT
-    
-    * added filename output, fixing travis
-    
-    * attempt at fix: rm subshell
-    
-    * - Explicit choice in output path
-    - minor revert: using []
-    - only adding path to profile it it doesn't exist.
-    
-    * Fixed warnings, made cleaner
-    - added append_once function to make side effects clean
-    - fixed some warnings.
-    
-    * rm redundant sigh-install from travis
-    
-    * added travis advert
-    
-    * installing specific sigh dep, not all of them
-    
-    * Minor verbiage change
+    * include Cats particles
