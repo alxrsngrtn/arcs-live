@@ -1,9 +1,43 @@
-commit cee3dd3a80eb800dca541c741e11d34c2e9b74ab
-Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
-Date:   Tue Sep 24 02:46:57 2019 +1000
+commit 5006a56101fd665db62972b0766b6b1d67b915bc
+Author: Alex Rosengarten <alxr@google.com>
+Date:   Mon Sep 23 10:07:25 2019 -0700
 
-    Refactor ArcsServiceBridge. (#3606)
+    Update Bash Setup Script (#3596)
     
-    It used to swallow up exceptions, due to the way the futures were being
-    used (the return values were being ignored). Now it uses a thread pool
-    executor, and exceptions get thrown correctly.
+    * added install sign deps step
+    
+    * OSX + Mac pre-requisites and Bazel install
+    
+    * rm set -x
+    
+    * fixed `nvm use` issue
+    
+    added TODO for addressing windows. Currently failing early.
+    
+    * Updated docs
+    
+    * fix -- linux: `_` --> `-`
+    
+    * Fail instead of warn when can't detect os
+    
+    * rename: PKG --> SCRIPT
+    
+    * added filename output, fixing travis
+    
+    * attempt at fix: rm subshell
+    
+    * - Explicit choice in output path
+    - minor revert: using []
+    - only adding path to profile it it doesn't exist.
+    
+    * Fixed warnings, made cleaner
+    - added append_once function to make side effects clean
+    - fixed some warnings.
+    
+    * rm redundant sigh-install from travis
+    
+    * added travis advert
+    
+    * installing specific sigh dep, not all of them
+    
+    * Minor verbiage change
