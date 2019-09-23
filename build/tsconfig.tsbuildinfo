@@ -442,7 +442,7 @@
         "signature": "888c08c94f389c3d104f19c0ba199885a87820312e05efcb3aed4e06eb60ec6e"
       },
       "../src/runtime/dom-particle-base.ts": {
-        "version": "49596d3f1ca18b8673d79bbb52ef09bb0fb50dd600d9ae99eccc9c166900c012",
+        "version": "7227dd19b61e630fe9c2ef74e646f64b9142477c74ddb778af5ffce4d9ceffb4",
         "signature": "bf1f9815ff16f44295f505f392ad42099cfa92f1544546334997d75bfe8e816b"
       },
       "../src/runtime/dom-particle.ts": {
@@ -470,7 +470,7 @@
         "signature": "f2d8b054448cb4886900f4baa77e8b41c7d00a7a3bd25a90752e325aab5e14c3"
       },
       "../src/runtime/arc.ts": {
-        "version": "c7df31bf664bbd4a809478f3aa72f058c36f4fb79b5c39b3c3da41c020447a70",
+        "version": "466d30bc9257cbd0b529da42091389a12fcda32a9a80bc1826b5c1bf4e39548b",
         "signature": "9db1ecab7db5a3c0ed568d4ee5797f49434da04af2be2fa1e50765acccf53245"
       },
       "../src/runtime/api-channel.ts": {
@@ -1382,7 +1382,7 @@
         "signature": "9615d2d878c06c0c35f6b3f4d2a619d3b5568d91f90f3d8844beb86d62bd3fa0"
       },
       "../src/runtime/ui-simple-particle.ts": {
-        "version": "0eed0ac847300d7a6480a84666e5bc8704aa7cc20de93d677c50be88d4f53d5a",
+        "version": "ea388bc931abb2f3d670363b33da3bb99dc8661a9c0ad24b84d63d4190b35475",
         "signature": "57339d723af31aec62876f6948bc5ea4572f95b476b705e6e59dc5a43a24f354"
       },
       "../src/runtime/ui-particle.ts": {
@@ -2189,8 +2189,8 @@
         "signature": "aff514b5ca3f500524542842c93fa7ade3927c4166596d8d37b3ad1fa3d1d014"
       },
       "../src/runtime/ui-slot-composer.ts": {
-        "version": "320af6d39b8dcb95accbe9b3f84e4b2d22198f065853687c5b33eebdb3fe120c",
-        "signature": "770b70507d6bae9047e31d24624ddf3d23055371532696365612a83ea4b316d1"
+        "version": "03e86e30b93c21926610e394393cc7370f3c6faae7f5b9064f329e96e5b656ed",
+        "signature": "2d41f734fe7d57dfc539d1354b548ba5c8725010b6d03ac8bb6e681baaa90115"
       },
       "../src/runtime/webassembly.d.ts": {
         "version": "69c071da516d4ec2a68db95444e55e425fc2057136133f7015954ee8e6f3af14",
@@ -5625,7 +5625,6 @@
         "../src/runtime/entity.ts",
         "../src/runtime/handle.ts",
         "../src/runtime/particle.ts",
-        "../src/runtime/slot-proxy.ts",
         "../node_modules/@types/node/util.d.ts",
         "../node_modules/@types/node/ts3.1/util.d.ts"
       ],

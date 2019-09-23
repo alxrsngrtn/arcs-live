@@ -44,3 +44,4 @@ bazel-arcs
 .ijwb
 .sighdeps
 **/.aswb/**
+.gradle
