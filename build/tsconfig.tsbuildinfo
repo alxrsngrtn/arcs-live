@@ -2189,7 +2189,7 @@
         "signature": "aff514b5ca3f500524542842c93fa7ade3927c4166596d8d37b3ad1fa3d1d014"
       },
       "../src/runtime/ui-slot-composer.ts": {
-        "version": "57b992743c7f06126938994f358aa64f7666919147f960ab8b178047e383a03e",
+        "version": "320af6d39b8dcb95accbe9b3f84e4b2d22198f065853687c5b33eebdb3fe120c",
         "signature": "770b70507d6bae9047e31d24624ddf3d23055371532696365612a83ea4b316d1"
       },
       "../src/runtime/webassembly.d.ts": {
