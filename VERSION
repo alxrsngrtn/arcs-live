@@ -1,5 +1,5 @@
-commit 6627e251fe6cbb0c8b61960439b7654afe4b4ac6
-Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
-Date:   Tue Sep 24 10:12:38 2019 +1000
+commit cf47c43c26e21452a833122c0080ccbd91ea5598
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Mon Sep 23 17:46:20 2019 -0700
 
-    s/willSync/allSynced/ for onHandleSync in Kotlin (#3564)
+    address comments from #3605 (#3611)
