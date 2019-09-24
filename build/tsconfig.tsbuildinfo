@@ -2633,7 +2633,7 @@
         "signature": "44c67db51f6f262099ce193695d05ebc7e4cc90de35cfda0e9cf2aaeb8ce1ea5"
       },
       "../src/tools/schema2cpp.ts": {
-        "version": "153950bc2e35c4d12a4199639c6155f6217ce33f597f33961e1fc304fcd0dbb2",
+        "version": "0ea2f60728eb30b99f762b154a508287492517a2c8689148f7ec5eb31a5c9397",
         "signature": "2399853c21d04efd6ace178ab5736d5ad95a9e1674dc8cee3944fd706556b8a2"
       },
       "../src/tools/schema2kotlin.ts": {
@@ -2705,7 +2705,7 @@
         "signature": "8bc1d39a3b8ec61064f9969316a088e314895e7ffd094468dcc0b238f33cb4a6"
       },
       "../src/wasm/cpp/tests/wasm-cpp-test.ts": {
-        "version": "85baa5004594c2edaf7ef7f5d04e289ef69456fa19770be546751400a8e65e66",
+        "version": "5f9c2222c5a9fe7d5bec1c861505871114aefdd22c0d69c9964e14f8a6a65b32",
         "signature": "97ae39ce2411e60af41db50e11b3048c2b48322f144dcadb5272343ec368356a"
       },
       "../node_modules/@types/core-js/index.d.ts": {

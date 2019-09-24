@@ -1,5 +1,10 @@
-commit cf47c43c26e21452a833122c0080ccbd91ea5598
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Mon Sep 23 17:46:20 2019 -0700
+commit e1569e52fea8fb792b85d5a154595bef50d1dcc2
+Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
+Date:   Tue Sep 24 11:28:07 2019 +1000
 
-    address comments from #3605 (#3611)
+    Wasm C++: move template type to Accessor methods and delete schemaless test (#3609)
+    
+    Having the template type on the static Accessor methods means the
+    compiler can infer the type from the argument.
+    
+    The schemaless test was only relevant for sigh-based builds.

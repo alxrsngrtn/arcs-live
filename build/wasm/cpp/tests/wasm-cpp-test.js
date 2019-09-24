@@ -237,21 +237,5 @@ describe('wasm tests (C++)', () => {
             assert.fail(`${errors.length} errors found:\n${errors.join('\n')}`);
         }
     });
-    it('schemaless manifests', async () => {
-        const { arc, stores, slotComposer } = await setup(`
-      import '${schemasFile}'
-
-      particle SchemalessTest in '${buildDir}/schemaless.wasm'
-        consume root
-
-      recipe
-        slot 'rootslotid-root' as slot1
-        SchemalessTest
-          consume root as slot1
-      `);
-        assert.deepStrictEqual(slotComposer.received, [
-            ['SchemalessTest', 'root', { template: 'no schemas here!', model: {} }],
-        ]);
-    });
 });
 //# sourceMappingURL=wasm-cpp-test.js.map
