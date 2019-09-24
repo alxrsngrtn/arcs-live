@@ -1,5 +1,8 @@
-commit fc8a7a6fb3eb3cf63db36eea70c441582f0262d9
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Mon Sep 23 18:57:48 2019 -0700
+commit 3afc4da20a0cd2959cb4ae46d106f1466306bb0c
+Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
+Date:   Tue Sep 24 12:02:24 2019 +1000
 
-    Generate and propagate provided slot id for android "pull" particle (#3615)
+    Wasm C++: test rework in preparation for references (#3616)
+    
+    Also replace the STL map test with set; the map one wasn't actually
+    testing the behaviour of the class operators (op<) correctly.
