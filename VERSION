@@ -1,5 +1,5 @@
-commit 8cf0ccc60c5397f449825200b8e14ea8d5b3489a
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Tue Sep 24 09:26:58 2019 -0700
+commit bdebf976a78d2ceb9de2b2b8eef502ac81c9574e
+Author: Piotr Swigon <piotr.swigon@gmail.com>
+Date:   Tue Sep 24 09:41:40 2019 -0700
 
-    shared stores in runtime context (#3618)
+    Make particles rectangles and handles circles (#3620)
