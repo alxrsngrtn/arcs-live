@@ -28,7 +28,7 @@ import { logFactory } from '../platform/log-web.js';
 import { Services } from '../runtime/services.js';
 import { Instant } from '../common/time/instant.js';
 import { TimeUnit } from '../common/time/timeunit.js';
-const log = logFactory('tfjs-service');
+const log = logFactory('clock-service');
 Services.register('clock', {
     now: ({ timeUnit }) => {
         try {

@@ -2509,7 +2509,7 @@
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "../src/services/clock-service.ts": {
-        "version": "427caedd739bf025a4c8c92621492e1f3a26a1232e287e1de3a788c3b65369ef",
+        "version": "b9982edf4d6a533aa3d0745740d44f3bd267041132d783330713bb6419aef8bc",
         "signature": "43a5176681925d9f51b139647154e4a52c2eb1b1a64bb428595000952bcbc7f1"
       },
       "../src/services/magenta-service.ts": {
