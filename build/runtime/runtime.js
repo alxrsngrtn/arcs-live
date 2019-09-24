@@ -71,6 +71,14 @@ export class Runtime {
         }
         return this.arcById[name];
     }
+    // TODO: This is a temporary method to allow sharing stores with other Arcs.
+    registerStore(store, tags) {
+        if (!this.context.findStoreById(store.id) && tags.includes('shared')) {
+            // tslint:disable-next-line: no-any
+            this.context['_addStore'](store, tags);
+        }
+        // TODO: clear stores, when arc is being disposed.
+    }
     /**
      * Given an arc, returns it's description as a string.
      */

@@ -21,6 +21,7 @@ import { StorageProviderBase } from './storage/storage-provider-base.js';
 import { StorageProviderFactory } from './storage/storage-provider-factory.js';
 import { ArcType, CollectionType, EntityType, InterfaceType, RelationType, Type, TypeVariable } from './type.js';
 import { Mutex } from './mutex.js';
+import { Runtime } from './runtime.js';
 import { VolatileMemory, VolatileStorageDriverProvider } from './storageNG/drivers/volatile.js';
 import { DriverFactory } from './storageNG/drivers/driver-factory.js';
 export class Arc {
@@ -568,6 +569,7 @@ ${this.activeRecipe.toString()}`;
         this.storeTags.set(store, new Set(tags));
         this.storageKeys[store.id] = store.storageKey;
         store.on('change', () => this._onDataChange(), this);
+        Runtime.getRuntime().registerStore(store, tags);
     }
     _tagStore(store, tags) {
         assert(this.storesById.has(store.id) && this.storeTags.has(store), `Store not registered '${store.id}'`);

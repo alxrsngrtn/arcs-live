@@ -13,6 +13,7 @@ import { RuntimeCacheService } from './runtime-cache.js';
 import { PecFactory } from './particle-execution-context.js';
 import { SlotComposer } from './slot-composer.js';
 import { Loader } from './loader.js';
+import { StorageProviderBase } from './storage/storage-provider-base.js';
 import { StorageProviderFactory } from './storage/storage-provider-factory.js';
 import { ArcInspectorFactory } from './arc-inspector.js';
 import { VolatileMemory } from './storageNG/drivers/volatile.js';
@@ -47,6 +48,7 @@ export declare class Runtime {
      * (3) a newly created arc
      */
     runArc(name: string, storageKeyPrefix: string, options?: RuntimeArcOptions): Arc;
+    registerStore(store: StorageProviderBase, tags: string[]): void;
     /**
      * Given an arc, returns it's description as a string.
      */

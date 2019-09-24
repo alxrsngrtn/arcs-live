@@ -302,8 +302,8 @@
         "signature": "1caf0bf54edc18e0f7bc0bb764e1a91e110d5080b3faa107fa2061281f47da41"
       },
       "../src/runtime/runtime.ts": {
-        "version": "aaf18c269dffdffd16752703dcd899b2c4f8adb7b4ef0a1f1b27727454f33ce0",
-        "signature": "596ac9ed70e41e15a7a2b69cab71ffc3803bd160c243508f3ebb42894ec80386"
+        "version": "54bc74d5fd5053aab5b37ffc3b1a090097b04592eb044aee1e8e8b5a717a61b5",
+        "signature": "e8ee30a2d87e07ad679082bc98045ed85ab998b5e399689a34fea5da8fc46a6f"
       },
       "../src/runtime/storage/volatile-storage.ts": {
         "version": "5183347d18ab88a72585e5a0b8e41a45a3dd9a55c5b46e4f215ec390ed056349",
@@ -470,7 +470,7 @@
         "signature": "f2d8b054448cb4886900f4baa77e8b41c7d00a7a3bd25a90752e325aab5e14c3"
       },
       "../src/runtime/arc.ts": {
-        "version": "466d30bc9257cbd0b529da42091389a12fcda32a9a80bc1826b5c1bf4e39548b",
+        "version": "7985c5db7ca05d16c139a5c8e10b35e44419083ebe3966f916e294473e992c2f",
         "signature": "9db1ecab7db5a3c0ed568d4ee5797f49434da04af2be2fa1e50765acccf53245"
       },
       "../src/runtime/api-channel.ts": {
@@ -3254,8 +3254,11 @@
         "../src/runtime/runtime-cache.ts",
         "../src/runtime/id.ts",
         "../src/runtime/particle-execution-context.ts",
+        "../src/runtime/recipe/handle.ts",
         "../src/runtime/slot-composer.ts",
         "../src/runtime/loader.ts",
+        "../src/runtime/storage-stub.ts",
+        "../src/runtime/storage/storage-provider-base.ts",
         "../src/runtime/storage/storage-provider-factory.ts",
         "../src/runtime/arc-inspector.ts",
         "../src/runtime/testing/fake-slot-composer.ts",
@@ -3708,6 +3711,7 @@
         "../src/runtime/particle-execution-context.ts",
         "../src/runtime/interface-info.ts",
         "../src/runtime/mutex.ts",
+        "../src/runtime/runtime.ts",
         "../src/runtime/storageNG/drivers/volatile.ts",
         "../src/runtime/storageNG/drivers/driver-factory.ts",
         "../node_modules/@types/node/util.d.ts",
@@ -8593,7 +8597,8 @@
         "../src/runtime/slot-composer.ts",
         "../src/runtime/runtime-cache.ts",
         "../src/runtime/storageNG/drivers/volatile.ts",
-        "../src/runtime/arc.ts"
+        "../src/runtime/arc.ts",
+        "../src/runtime/storage/storage-provider-base.ts"
       ],
       "../src/runtime/storage/volatile-storage.ts": [
         "../src/runtime/hot.ts",
