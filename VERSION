@@ -1,9 +1,63 @@
-commit 54ed5e78281619d2ace25cabf21e6f8e862dd906
-Author: Sarah Heimlich <heimlich@google.com>
-Date:   Tue Sep 24 10:56:25 2019 -0700
+commit fe2e91df115d655b22fd0733246852632d25573d
+Author: Alex Rosengarten <alxr@google.com>
+Date:   Tue Sep 24 13:47:23 2019 -0700
 
-    Add error for updateSingleton with invalid handle (#3622)
+    Bazel Support for Kotlin-->Wasm Compilation (#3612)
     
-    * Showing where the error message should be.
+    * added schema2kotlin bazel build def
     
-    * Update to throw an error.
+    * nit: grammar
+    
+    * bazel rule to download + make available kotlin native compiler
+    
+    * fix: var rename
+    
+    * - TODO: fix kotlinc_wrapper
+    - created kt binary rule
+    - simplified kotlinc.BUILD
+    - cleaned up repo.bzl
+    
+    * pointing to macos repo
+    
+    * cleanup defs + potential optimization
+    
+    * trying to manually download konan deps
+    
+    * messy, but got it working!
+    
+    * cleanup
+    
+    * Got libraries working!
+    
+    * cleanup
+    
+    * attempt 0: host-multi-platform
+    
+    * - instruct bazel to download all platform versions (windows, macos, linux), let Bazel decide which one is actually needed
+    - modify the wrapper script to detect which platform was *actually* downloaded, then only use *that platform's* dependencies
+    
+    * force add important build file
+    
+    * - added sha256s
+    - rm redundant file
+    - fixed future bugs re: extension
+    
+    * cleanup
+    
+    * Merged with upstream; resolved minor conflicts
+    
+    * kebab --> snake
+    
+    * Ran buildifier
+    
+    * ran buildifier again, just in case
+    
+    * - --> _
+    
+    * typos
+    
+    * PLATFORMS : Dict
+    
+    * added back BUILD
+    
+    * bugfix: cutoff
