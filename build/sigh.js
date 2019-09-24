@@ -759,7 +759,7 @@ function health(args) {
         testOptions.push('--all');
     }
     // Generating coverage report from tests.
-    runSteps('test', testOptions);
+    const testResult = runSteps('test', testOptions);
     if (options.tests) {
         return saneSpawn('node_modules/.bin/c8', ['report']);
     }
@@ -796,11 +796,11 @@ function health(args) {
     show('Points available', '', points.toFixed(1), 'go/arcs-paydown');
     line();
     if (options.uploadCodeHealthStats) {
-        return uploadCodeHealthStats(request, healthInformation);
+        uploadCodeHealthStats(request, healthInformation, testResult);
     }
-    return true;
+    return testResult;
 }
-function uploadCodeHealthStats(request, data) {
+function uploadCodeHealthStats(request, data, testResult) {
     console.log('Uploading health data');
     const trigger = 'https://us-central1-arcs-screenshot-uploader.cloudfunctions.net/arcs-health-uploader';
     const branchTo = process.env.TRAVIS_BRANCH || 'unknown-branch';
@@ -812,12 +812,13 @@ function uploadCodeHealthStats(request, data) {
         if (error || response.statusCode !== 200) {
             console.error(error);
             console.error(response.toJSON());
-            return;
         }
-        console.log(`Upload response status: ${response.statusCode}`);
+        else {
+            console.log(`Upload response status: ${response.statusCode}`);
+        }
+        process.exit(testResult ? 0 : 1);
     });
     keepProcessAlive = true; // Tell the runner to not exit.
-    return true;
 }
 function spawnTool(toolPath, args) {
     return saneSpawn('node', [...nodeFlags, '--no-warnings', toolPath, ...args]);
