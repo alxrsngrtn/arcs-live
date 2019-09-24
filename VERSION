@@ -1,29 +1,5 @@
-commit 86612378cf876a1aad37a2eade58d5cbe31d1fda
-Author: Scott J. Miles <sjmiles@google.com>
-Date:   Mon Sep 23 16:26:39 2019 -0700
+commit 6627e251fe6cbb0c8b61960439b7654afe4b4ac6
+Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
+Date:   Tue Sep 24 10:12:38 2019 +1000
 
-    Plumb UiBroker compatibility into pipes-shell (#3582)
-    
-    * gitignore .gradle
-    
-    * composerFactory no longer a top-level concern, device render now delegated to UiBroker/slotObserver
-    
-    * enable apps that use "classic" e2e sharing/ingestion support
-    
-    * event support for remote surfaces
-    
-    * pull it all together
-    
-    * web-surface implementation for remote ui
-    
-    * update deployment pieces
-    
-    * alternate particles to support ui-broker apps/demos
-    
-    * more deploy updates
-    
-    * fix LINT error (missing semi)
-    
-    * avoid id conflict, identify 'classic' ingestion arc
-    
-    * ws
+    s/willSync/allSynced/ for onHandleSync in Kotlin (#3564)
