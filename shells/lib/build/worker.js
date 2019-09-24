@@ -411,7 +411,7 @@ class ParticleExecutionContext {
         else {
             const clazz = await this.loader.loadParticleClass(spec);
             if (!clazz) {
-                return Promise.reject(new Error(`Could not load particle ${id} ${spec.name}`));
+                return Promise.reject(new Error(`Unknown error loading particle ${id} ${spec.name}`));
             }
             particle = new clazz();
             particle.setCapabilities(this.capabilities(true));
@@ -7031,7 +7031,7 @@ class Loader {
         });
     }
     async _loadURL(url) {
-        const fetcher = (url) => Object(_platform_fetch_web_js__WEBPACK_IMPORTED_MODULE_1__["fetch"])(url).then(async (res) => res.ok ? res.text() : undefined);
+        const fetcher = (url) => Object(_platform_fetch_web_js__WEBPACK_IMPORTED_MODULE_1__["fetch"])(url).then(async (res) => res.ok ? res.text() : Promise.reject(new Error(`HTTP ${res.status}: ${res.statusText}`)));
         if (/\/\/schema.org\//.test(url)) {
             if (url.endsWith('/Thing')) {
                 return fetcher('https://schema.org/Product.jsonld').then(data => _converters_jsonldToManifest_js__WEBPACK_IMPORTED_MODULE_4__["JsonldToManifest"].convert(data, { '@id': 'schema:Thing' }));

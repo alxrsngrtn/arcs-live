@@ -458,7 +458,7 @@
         "signature": "91eb49952d74ed32935a8e7cadd8aa7c610bdfa9bbf7f41aab4fca638a6f5e5d"
       },
       "../src/runtime/loader.ts": {
-        "version": "3d94eebf7ac4bbe607d9a603f612505f8122ee13c36ac753eec97fccbbcdb788",
+        "version": "8472f9f3ea50f37c8f0eecc35020c3a289daf76f09ab475236856130e0981616",
         "signature": "aada06877d833c5c090730084c8d2c6fdfd9f593e61ca60e7419a687621e44e2"
       },
       "../src/runtime/testing/stub-loader.ts": {
@@ -482,7 +482,7 @@
         "signature": "b89fd65e32c340de2417047c7b6e68a695686e961748101071a2e0cbf89f86fc"
       },
       "../src/runtime/particle-execution-context.ts": {
-        "version": "c8f43aafec78902a788a113edd2c722089e1231047a6233ab55f7813aaa00146",
+        "version": "748510e86bfa8275b9d0e675eb1d209f756674bb0a8c833040339fe7716cbf38",
         "signature": "ec0d11140cee33d9ee710cfaae29b9bb266a564b90b2126c736911a2b18f599b"
       },
       "../src/runtime/entity.ts": {
