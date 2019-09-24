@@ -1,8 +1,9 @@
-commit 3afc4da20a0cd2959cb4ae46d106f1466306bb0c
-Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
-Date:   Tue Sep 24 12:02:24 2019 +1000
+commit 93dc57c7b4cb0e7685806b19eccee6863e53c02d
+Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
+Date:   Tue Sep 24 15:05:23 2019 +1000
 
-    Wasm C++: test rework in preparation for references (#3616)
+    Fix null pointer exception in error msg (#3617)
     
-    Also replace the STL map test with set; the map one wasn't actually
-    testing the behaviour of the class operators (op<) correctly.
+    * Fix null pointer exception in error msg
+    
+    * Added recipe to debug msg
