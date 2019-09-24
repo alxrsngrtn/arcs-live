@@ -1,5 +1,9 @@
-commit bdebf976a78d2ceb9de2b2b8eef502ac81c9574e
-Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Tue Sep 24 09:41:40 2019 -0700
+commit 54ed5e78281619d2ace25cabf21e6f8e862dd906
+Author: Sarah Heimlich <heimlich@google.com>
+Date:   Tue Sep 24 10:56:25 2019 -0700
 
-    Make particles rectangles and handles circles (#3620)
+    Add error for updateSingleton with invalid handle (#3622)
+    
+    * Showing where the error message should be.
+    
+    * Update to throw an error.

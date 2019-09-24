@@ -24912,7 +24912,9 @@ class DomParticleBase extends Particle$1 {
                 throw new Error('Singleton required');
             }
         }
-        return undefined;
+        else {
+            throw new Error(`Handle ${handleName} does not exist`);
+        }
     }
     /**
      * Modify or insert `entity` into named handle.

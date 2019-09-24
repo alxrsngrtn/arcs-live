@@ -442,7 +442,7 @@
         "signature": "888c08c94f389c3d104f19c0ba199885a87820312e05efcb3aed4e06eb60ec6e"
       },
       "../src/runtime/dom-particle-base.ts": {
-        "version": "7227dd19b61e630fe9c2ef74e646f64b9142477c74ddb778af5ffce4d9ceffb4",
+        "version": "7a2a4375f0c9625a6d6a5386adcb4b178436062ddeb0a35276cac9efa3a08474",
         "signature": "bf1f9815ff16f44295f505f392ad42099cfa92f1544546334997d75bfe8e816b"
       },
       "../src/runtime/dom-particle.ts": {

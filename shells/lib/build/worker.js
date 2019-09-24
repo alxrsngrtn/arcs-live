@@ -7843,7 +7843,9 @@ class DomParticleBase extends _particle_js__WEBPACK_IMPORTED_MODULE_1__["Particl
                 throw new Error('Singleton required');
             }
         }
-        return undefined;
+        else {
+            throw new Error(`Handle ${handleName} does not exist`);
+        }
     }
     /**
      * Modify or insert `entity` into named handle.
