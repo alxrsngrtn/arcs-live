@@ -1,5 +1,9 @@
-commit 37dd5c6271affb922d1c90090a12f9efa6d10d3c
-Author: Han Hua <1268323+hhua@users.noreply.github.com>
-Date:   Tue Sep 24 15:43:37 2019 -0700
+commit 1e4b2c8453bc7a38c15ecb17f4da10f79bd6bb12
+Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
+Date:   Wed Sep 25 11:28:30 2019 +1000
 
-    Rename log prefix for clock-service. (#3624)
+    Moved android hackathon demo to ./hackathon/android. (#3619)
+    
+    * Moved android hackathon demo to ./hackathon/android.
+    
+    * Exclude hackathon stuff from sigh lint
