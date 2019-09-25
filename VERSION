@@ -1,68 +1,9 @@
-commit c02a227b02089345aeb38c28509e31c68cd02528
-Author: Alex Rosengarten <alxr@google.com>
-Date:   Wed Sep 25 08:23:15 2019 -0700
+commit cdd8264a757a74950615bee8daf7b9454ea0a740
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Wed Sep 25 09:55:14 2019 -0700
 
-    Using new Kotlin-->Wasm build_defs for Example Particles (#3623)
+    long running arc with a CapturePerson particle rejoining existing arc (#3626)
     
-    * added schema2kotlin bazel build def
+    * long running arc; particle capture person rejoining existing arc
     
-    * nit: grammar
-    
-    * bazel rule to download + make available kotlin native compiler
-    
-    * fix: var rename
-    
-    * - TODO: fix kotlinc_wrapper
-    - created kt binary rule
-    - simplified kotlinc.BUILD
-    - cleaned up repo.bzl
-    
-    * pointing to macos repo
-    
-    * cleanup defs + potential optimization
-    
-    * trying to manually download konan deps
-    
-    * messy, but got it working!
-    
-    * cleanup
-    
-    * Got libraries working!
-    
-    * cleanup
-    
-    * attempt 0: host-multi-platform
-    
-    * - instruct bazel to download all platform versions (windows, macos, linux), let Bazel decide which one is actually needed
-    - modify the wrapper script to detect which platform was *actually* downloaded, then only use *that platform's* dependencies
-    
-    * force add important build file
-    
-    * - added sha256s
-    - rm redundant file
-    - fixed future bugs re: extension
-    
-    * cleanup
-    
-    * Merged with upstream; resolved minor conflicts
-    
-    * added entrypoints to wasm binary rule
-    
-    * kotlin --> wasm working with current particles
-    
-    * added other src, oops
-    
-    * manifest pointing to bazel output :)
-    
-    * updated -- rel paths
-    
-    * updates + fixes to build defs
-    - rm kotlin-native (favoring kotlin_native)
-    - added `entry_point` to binary definition
-    - bugfix: fixed binary replacement (no more cutoff)
-    
-    * rm gradle build
-    
-    * updated README instructions
-    
-    * Buildifier
+    * address comments
