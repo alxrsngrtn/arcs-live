@@ -145,7 +145,6 @@
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="referencemodestore.html#exists" class="tsd-kind-icon">exists</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="referencemodestore.html#holdqueue" class="tsd-kind-icon">hold<wbr>Queue</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="referencemodestore.html#mode" class="tsd-kind-icon">mode</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="referencemodestore.html#modelconstructor" class="tsd-kind-icon">model<wbr>Constructor</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="referencemodestore.html#nextcallbackid" class="tsd-kind-icon">next<wbr>CallbackID</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="referencemodestore.html#pendingsends" class="tsd-kind-icon">pending<wbr>Sends</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="referencemodestore.html#receivequeue" class="tsd-kind-icon">receive<wbr>Queue</a></li>
@@ -168,6 +167,7 @@
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="referencemodestore.html#handlecontainerstore" class="tsd-kind-icon">handle<wbr>Container<wbr>Store</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="referencemodestore.html#handleproxymessage" class="tsd-kind-icon">handle<wbr>Proxy<wbr>Message</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="referencemodestore.html#idle" class="tsd-kind-icon">idle</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="referencemodestore.html#newbackinginstance" class="tsd-kind-icon">new<wbr>Backing<wbr>Instance</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="referencemodestore.html#off" class="tsd-kind-icon">off</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="referencemodestore.html#on" class="tsd-kind-icon">on</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="referencemodestore.html#onbackingstore" class="tsd-kind-icon">on<wbr>Backing<wbr>Store</a></li>
@@ -195,14 +195,14 @@
 					<a name="constructor" class="tsd-anchor"></a>
 					<h3>constructor</h3>
 					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class tsd-is-inherited">
-						<li class="tsd-signature tsd-kind-icon">new <wbr>Reference<wbr>Mode<wbr>Store<span class="tsd-signature-symbol">(</span>storageKey<span class="tsd-signature-symbol">: </span><a href="storagekey.html" class="tsd-signature-type">StorageKey</a>, exists<span class="tsd-signature-symbol">: </span><a href="../enums/exists.html" class="tsd-signature-type">Exists</a>, type<span class="tsd-signature-symbol">: </span><a href="type.html" class="tsd-signature-type">Type</a>, mode<span class="tsd-signature-symbol">: </span><a href="../enums/storagemode.html" class="tsd-signature-type">StorageMode</a>, modelConstructor<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">object</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="referencemodestore.html" class="tsd-signature-type">ReferenceModeStore</a></li>
+						<li class="tsd-signature tsd-kind-icon">new <wbr>Reference<wbr>Mode<wbr>Store<span class="tsd-signature-symbol">(</span>storageKey<span class="tsd-signature-symbol">: </span><a href="storagekey.html" class="tsd-signature-type">StorageKey</a>, exists<span class="tsd-signature-symbol">: </span><a href="../enums/exists.html" class="tsd-signature-type">Exists</a>, type<span class="tsd-signature-symbol">: </span><a href="type.html" class="tsd-signature-type">Type</a>, mode<span class="tsd-signature-symbol">: </span><a href="../enums/storagemode.html" class="tsd-signature-type">StorageMode</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="referencemodestore.html" class="tsd-signature-type">ReferenceModeStore</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="activestore.html">ActiveStore</a>.<a href="activestore.html#constructor">constructor</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1e4b2c8/src/runtime/storageNG/store-interface.ts#L48">src/runtime/storageNG/store-interface.ts:48</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9f45ca0/src/runtime/storageNG/store-interface.ts#L46">src/runtime/storageNG/store-interface.ts:46</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -219,11 +219,6 @@
 								<li>
 									<h5>mode: <a href="../enums/storagemode.html" class="tsd-signature-type">StorageMode</a></h5>
 								</li>
-								<li>
-									<h5>modelConstructor: <span class="tsd-signature-type">object</span></h5>
-									<ul class="tsd-parameters">
-									</ul>
-								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <a href="referencemodestore.html" class="tsd-signature-type">ReferenceModeStore</a></h4>
 						</li>
@@ -238,7 +233,7 @@
 					<div class="tsd-signature tsd-kind-icon">backing<wbr>Store<span class="tsd-signature-symbol">:</span> <a href="backingstore.html" class="tsd-signature-type">BackingStore</a><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/crdtentitytyperecord.html" class="tsd-signature-type">CRDTEntityTypeRecord</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">S</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">C</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1e4b2c8/src/runtime/storageNG/reference-mode-store.ts#L64">src/runtime/storageNG/reference-mode-store.ts:64</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9f45ca0/src/runtime/storageNG/reference-mode-store.ts#L81">src/runtime/storageNG/reference-mode-store.ts:81</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -248,7 +243,7 @@
 					<div class="tsd-signature tsd-kind-icon">block<wbr>Counter<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> =&nbsp;0</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1e4b2c8/src/runtime/storageNG/reference-mode-store.ts#L109">src/runtime/storageNG/reference-mode-store.ts:109</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9f45ca0/src/runtime/storageNG/reference-mode-store.ts#L126">src/runtime/storageNG/reference-mode-store.ts:126</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -258,7 +253,7 @@
 					<div class="tsd-signature tsd-kind-icon">callbacks<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Map</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">, </span><a href="../globals.html#proxycallback" class="tsd-signature-type">ProxyCallback</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Container</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> =&nbsp;new Map()</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1e4b2c8/src/runtime/storageNG/reference-mode-store.ts#L70">src/runtime/storageNG/reference-mode-store.ts:70</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9f45ca0/src/runtime/storageNG/reference-mode-store.ts#L87">src/runtime/storageNG/reference-mode-store.ts:87</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -268,7 +263,7 @@
 					<div class="tsd-signature tsd-kind-icon">container<wbr>Store<span class="tsd-signature-symbol">:</span> <a href="directstore.html" class="tsd-signature-type">DirectStore</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">ReferenceContainer</span><span class="tsd-signature-symbol">&gt;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1e4b2c8/src/runtime/storageNG/reference-mode-store.ts#L65">src/runtime/storageNG/reference-mode-store.ts:65</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9f45ca0/src/runtime/storageNG/reference-mode-store.ts#L82">src/runtime/storageNG/reference-mode-store.ts:82</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -278,7 +273,7 @@
 					<div class="tsd-signature tsd-kind-icon">crdt<wbr>Key<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> =&nbsp;(Math.random() * Math.pow(2, 64)) + &#x27;&#x27;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1e4b2c8/src/runtime/storageNG/reference-mode-store.ts#L80">src/runtime/storageNG/reference-mode-store.ts:80</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9f45ca0/src/runtime/storageNG/reference-mode-store.ts#L97">src/runtime/storageNG/reference-mode-store.ts:97</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -289,7 +284,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="activestore.html">ActiveStore</a>.<a href="activestore.html#exists">exists</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1e4b2c8/src/runtime/storageNG/store-interface.ts#L45">src/runtime/storageNG/store-interface.ts:45</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9f45ca0/src/runtime/storageNG/store-interface.ts#L44">src/runtime/storageNG/store-interface.ts:44</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -299,7 +294,7 @@
 					<div class="tsd-signature tsd-kind-icon">hold<wbr>Queue<span class="tsd-signature-symbol">:</span> <a href="holdqueue.html" class="tsd-signature-type">HoldQueue</a><span class="tsd-signature-symbol"> =&nbsp;new HoldQueue()</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1e4b2c8/src/runtime/storageNG/reference-mode-store.ts#L104">src/runtime/storageNG/reference-mode-store.ts:104</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9f45ca0/src/runtime/storageNG/reference-mode-store.ts#L121">src/runtime/storageNG/reference-mode-store.ts:121</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -310,25 +305,9 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="activestore.html">ActiveStore</a>.<a href="activestore.html#mode">mode</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1e4b2c8/src/runtime/storageNG/store-interface.ts#L47">src/runtime/storageNG/store-interface.ts:47</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9f45ca0/src/runtime/storageNG/store-interface.ts#L46">src/runtime/storageNG/store-interface.ts:46</a></li>
 						</ul>
 					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
-					<a name="modelconstructor" class="tsd-anchor"></a>
-					<h3>model<wbr>Constructor</h3>
-					<div class="tsd-signature tsd-kind-icon">model<wbr>Constructor<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
-					<aside class="tsd-sources">
-						<p>Inherited from <a href="activestore.html">ActiveStore</a>.<a href="activestore.html#modelconstructor">modelConstructor</a></p>
-						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1e4b2c8/src/runtime/storageNG/store-interface.ts#L48">src/runtime/storageNG/store-interface.ts:48</a></li>
-						</ul>
-					</aside>
-					<div class="tsd-type-declaration">
-						<h4>Type declaration</h4>
-						<ul class="tsd-parameters">
-						</ul>
-					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private">
 					<a name="nextcallbackid" class="tsd-anchor"></a>
@@ -336,7 +315,7 @@
 					<div class="tsd-signature tsd-kind-icon">next<wbr>CallbackID<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> =&nbsp;1</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1e4b2c8/src/runtime/storageNG/reference-mode-store.ts#L71">src/runtime/storageNG/reference-mode-store.ts:71</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9f45ca0/src/runtime/storageNG/reference-mode-store.ts#L88">src/runtime/storageNG/reference-mode-store.ts:88</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -346,7 +325,7 @@
 					<div class="tsd-signature tsd-kind-icon">pending<wbr>Sends<span class="tsd-signature-symbol">:</span> <a href="../globals.html#blockablerunnable" class="tsd-signature-type">BlockableRunnable</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> =&nbsp;[]</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1e4b2c8/src/runtime/storageNG/reference-mode-store.ts#L99">src/runtime/storageNG/reference-mode-store.ts:99</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9f45ca0/src/runtime/storageNG/reference-mode-store.ts#L116">src/runtime/storageNG/reference-mode-store.ts:116</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -356,7 +335,7 @@
 					<div class="tsd-signature tsd-kind-icon">receive<wbr>Queue<span class="tsd-signature-symbol">:</span> <a href="../globals.html#enqueuedmessage" class="tsd-signature-type">EnqueuedMessage</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Container</span><span class="tsd-signature-symbol">, </span><a href="../interfaces/crdtentitytyperecord.html" class="tsd-signature-type">CRDTEntityTypeRecord</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">S</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">C</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">ReferenceContainer</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> =&nbsp;[]</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1e4b2c8/src/runtime/storageNG/reference-mode-store.ts#L93">src/runtime/storageNG/reference-mode-store.ts:93</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9f45ca0/src/runtime/storageNG/reference-mode-store.ts#L110">src/runtime/storageNG/reference-mode-store.ts:110</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -367,7 +346,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="activestore.html">ActiveStore</a>.<a href="activestore.html#storagekey">storageKey</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1e4b2c8/src/runtime/storageNG/store-interface.ts#L44">src/runtime/storageNG/store-interface.ts:44</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9f45ca0/src/runtime/storageNG/store-interface.ts#L43">src/runtime/storageNG/store-interface.ts:43</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -378,7 +357,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="activestore.html">ActiveStore</a>.<a href="activestore.html#type">type</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1e4b2c8/src/runtime/storageNG/store-interface.ts#L46">src/runtime/storageNG/store-interface.ts:46</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9f45ca0/src/runtime/storageNG/store-interface.ts#L45">src/runtime/storageNG/store-interface.ts:45</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -388,7 +367,7 @@
 					<div class="tsd-signature tsd-kind-icon">versions<span class="tsd-signature-symbol">:</span> <a href="../interfaces/dictionary.html" class="tsd-signature-type">Dictionary</a><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/dictionary.html" class="tsd-signature-type">Dictionary</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1e4b2c8/src/runtime/storageNG/reference-mode-store.ts#L86">src/runtime/storageNG/reference-mode-store.ts:86</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9f45ca0/src/runtime/storageNG/reference-mode-store.ts#L103">src/runtime/storageNG/reference-mode-store.ts:103</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -405,7 +384,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1e4b2c8/src/runtime/storageNG/reference-mode-store.ts#L462">src/runtime/storageNG/reference-mode-store.ts:462</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9f45ca0/src/runtime/storageNG/reference-mode-store.ts#L485">src/runtime/storageNG/reference-mode-store.ts:485</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -434,7 +413,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1e4b2c8/src/runtime/storageNG/reference-mode-store.ts#L474">src/runtime/storageNG/reference-mode-store.ts:474</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9f45ca0/src/runtime/storageNG/reference-mode-store.ts#L497">src/runtime/storageNG/reference-mode-store.ts:497</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -473,7 +452,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1e4b2c8/src/runtime/storageNG/reference-mode-store.ts#L166">src/runtime/storageNG/reference-mode-store.ts:166</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9f45ca0/src/runtime/storageNG/reference-mode-store.ts#L189">src/runtime/storageNG/reference-mode-store.ts:189</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -502,7 +481,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1e4b2c8/src/runtime/storageNG/reference-mode-store.ts#L381">src/runtime/storageNG/reference-mode-store.ts:381</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9f45ca0/src/runtime/storageNG/reference-mode-store.ts#L404">src/runtime/storageNG/reference-mode-store.ts:404</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -534,7 +513,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1e4b2c8/src/runtime/storageNG/reference-mode-store.ts#L369">src/runtime/storageNG/reference-mode-store.ts:369</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9f45ca0/src/runtime/storageNG/reference-mode-store.ts#L392">src/runtime/storageNG/reference-mode-store.ts:392</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -563,7 +542,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1e4b2c8/src/runtime/storageNG/reference-mode-store.ts#L440">src/runtime/storageNG/reference-mode-store.ts:440</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9f45ca0/src/runtime/storageNG/reference-mode-store.ts#L463">src/runtime/storageNG/reference-mode-store.ts:463</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -594,7 +573,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1e4b2c8/src/runtime/storageNG/reference-mode-store.ts#L404">src/runtime/storageNG/reference-mode-store.ts:404</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9f45ca0/src/runtime/storageNG/reference-mode-store.ts#L427">src/runtime/storageNG/reference-mode-store.ts:427</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -623,7 +602,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1e4b2c8/src/runtime/storageNG/reference-mode-store.ts#L278">src/runtime/storageNG/reference-mode-store.ts:278</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9f45ca0/src/runtime/storageNG/reference-mode-store.ts#L301">src/runtime/storageNG/reference-mode-store.ts:301</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -658,7 +637,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1e4b2c8/src/runtime/storageNG/reference-mode-store.ts#L213">src/runtime/storageNG/reference-mode-store.ts:213</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9f45ca0/src/runtime/storageNG/reference-mode-store.ts#L236">src/runtime/storageNG/reference-mode-store.ts:236</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -694,7 +673,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1e4b2c8/src/runtime/storageNG/reference-mode-store.ts#L307">src/runtime/storageNG/reference-mode-store.ts:307</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9f45ca0/src/runtime/storageNG/reference-mode-store.ts#L330">src/runtime/storageNG/reference-mode-store.ts:330</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -733,10 +712,27 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="activestore.html">ActiveStore</a>.<a href="activestore.html#idle">idle</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1e4b2c8/src/runtime/storageNG/store-interface.ts#L58">src/runtime/storageNG/store-interface.ts:58</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9f45ca0/src/runtime/storageNG/store-interface.ts#L55">src/runtime/storageNG/store-interface.ts:55</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-private">
+					<a name="newbackinginstance" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> new<wbr>Backing<wbr>Instance</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private">
+						<li class="tsd-signature tsd-kind-icon">new<wbr>Backing<wbr>Instance<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/crdtmodel.html" class="tsd-signature-type">CRDTModel</a><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/crdtentitytyperecord.html" class="tsd-signature-type">CRDTEntityTypeRecord</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">S</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">C</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9f45ca0/src/runtime/storageNG/reference-mode-store.ts#L554">src/runtime/storageNG/reference-mode-store.ts:554</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <a href="../interfaces/crdtmodel.html" class="tsd-signature-type">CRDTModel</a><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/crdtentitytyperecord.html" class="tsd-signature-type">CRDTEntityTypeRecord</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">S</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">C</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -751,7 +747,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="activestore.html">ActiveStore</a>.<a href="activestore.html#off">off</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1e4b2c8/src/runtime/storageNG/reference-mode-store.ts#L132">src/runtime/storageNG/reference-mode-store.ts:132</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9f45ca0/src/runtime/storageNG/reference-mode-store.ts#L155">src/runtime/storageNG/reference-mode-store.ts:155</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -775,7 +771,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="activestore.html">ActiveStore</a>.<a href="activestore.html#on">on</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1e4b2c8/src/runtime/storageNG/reference-mode-store.ts#L127">src/runtime/storageNG/reference-mode-store.ts:127</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9f45ca0/src/runtime/storageNG/reference-mode-store.ts#L150">src/runtime/storageNG/reference-mode-store.ts:150</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -798,7 +794,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1e4b2c8/src/runtime/storageNG/reference-mode-store.ts#L154">src/runtime/storageNG/reference-mode-store.ts:154</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9f45ca0/src/runtime/storageNG/reference-mode-store.ts#L177">src/runtime/storageNG/reference-mode-store.ts:177</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -824,7 +820,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1e4b2c8/src/runtime/storageNG/reference-mode-store.ts#L150">src/runtime/storageNG/reference-mode-store.ts:150</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9f45ca0/src/runtime/storageNG/reference-mode-store.ts#L173">src/runtime/storageNG/reference-mode-store.ts:173</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -858,7 +854,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="activestore.html">ActiveStore</a>.<a href="activestore.html#onproxymessage">onProxyMessage</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1e4b2c8/src/runtime/storageNG/reference-mode-store.ts#L158">src/runtime/storageNG/reference-mode-store.ts:158</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9f45ca0/src/runtime/storageNG/reference-mode-store.ts#L181">src/runtime/storageNG/reference-mode-store.ts:181</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -881,7 +877,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1e4b2c8/src/runtime/storageNG/reference-mode-store.ts#L566">src/runtime/storageNG/reference-mode-store.ts:566</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9f45ca0/src/runtime/storageNG/reference-mode-store.ts#L594">src/runtime/storageNG/reference-mode-store.ts:594</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -918,7 +914,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1e4b2c8/src/runtime/storageNG/reference-mode-store.ts#L535">src/runtime/storageNG/reference-mode-store.ts:535</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9f45ca0/src/runtime/storageNG/reference-mode-store.ts#L563">src/runtime/storageNG/reference-mode-store.ts:563</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1040,7 +1036,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1e4b2c8/src/runtime/storageNG/reference-mode-store.ts#L391">src/runtime/storageNG/reference-mode-store.ts:391</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9f45ca0/src/runtime/storageNG/reference-mode-store.ts#L414">src/runtime/storageNG/reference-mode-store.ts:414</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1069,7 +1065,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1e4b2c8/src/runtime/storageNG/reference-mode-store.ts#L176">src/runtime/storageNG/reference-mode-store.ts:176</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9f45ca0/src/runtime/storageNG/reference-mode-store.ts#L199">src/runtime/storageNG/reference-mode-store.ts:199</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -1086,7 +1082,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1e4b2c8/src/runtime/storageNG/reference-mode-store.ts#L136">src/runtime/storageNG/reference-mode-store.ts:136</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9f45ca0/src/runtime/storageNG/reference-mode-store.ts#L159">src/runtime/storageNG/reference-mode-store.ts:159</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -1104,7 +1100,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="activestore.html">ActiveStore</a>.<a href="activestore.html#reportexceptioninhost">reportExceptionInHost</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1e4b2c8/src/runtime/storageNG/reference-mode-store.ts#L123">src/runtime/storageNG/reference-mode-store.ts:123</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9f45ca0/src/runtime/storageNG/reference-mode-store.ts#L146">src/runtime/storageNG/reference-mode-store.ts:146</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1127,7 +1123,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1e4b2c8/src/runtime/storageNG/reference-mode-store.ts#L504">src/runtime/storageNG/reference-mode-store.ts:504</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9f45ca0/src/runtime/storageNG/reference-mode-store.ts#L527">src/runtime/storageNG/reference-mode-store.ts:527</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1155,7 +1151,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1e4b2c8/src/runtime/storageNG/reference-mode-store.ts#L514">src/runtime/storageNG/reference-mode-store.ts:514</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9f45ca0/src/runtime/storageNG/reference-mode-store.ts#L537">src/runtime/storageNG/reference-mode-store.ts:537</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1187,7 +1183,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1e4b2c8/src/runtime/storageNG/reference-mode-store.ts#L526">src/runtime/storageNG/reference-mode-store.ts:526</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9f45ca0/src/runtime/storageNG/reference-mode-store.ts#L549">src/runtime/storageNG/reference-mode-store.ts:549</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1215,7 +1211,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1e4b2c8/src/runtime/storageNG/reference-mode-store.ts#L573">src/runtime/storageNG/reference-mode-store.ts:573</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9f45ca0/src/runtime/storageNG/reference-mode-store.ts#L601">src/runtime/storageNG/reference-mode-store.ts:601</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1249,13 +1245,13 @@
 					<a name="construct" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagStatic">Static</span> construct</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter tsd-is-static">
-						<li class="tsd-signature tsd-kind-icon">construct&lt;Entity, S, C, ReferenceContainer, Container&gt;<span class="tsd-signature-symbol">(</span>backingKey<span class="tsd-signature-symbol">: </span><a href="storagekey.html" class="tsd-signature-type">StorageKey</a>, storageKey<span class="tsd-signature-symbol">: </span><a href="storagekey.html" class="tsd-signature-type">StorageKey</a>, exists<span class="tsd-signature-symbol">: </span><a href="../enums/exists.html" class="tsd-signature-type">Exists</a>, type<span class="tsd-signature-symbol">: </span><a href="type.html" class="tsd-signature-type">Type</a>, backingConstructor<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">object</span>, referenceConstructor<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">object</span>, modelConstructor<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">object</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="referencemodestore.html" class="tsd-signature-type">ReferenceModeStore</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Entity</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">S</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">C</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">ReferenceContainer</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">Container</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">construct&lt;Entity, S, C, ReferenceContainer, Container&gt;<span class="tsd-signature-symbol">(</span>storageKey<span class="tsd-signature-symbol">: </span><a href="referencemodestoragekey.html" class="tsd-signature-type">ReferenceModeStorageKey</a>, exists<span class="tsd-signature-symbol">: </span><a href="../enums/exists.html" class="tsd-signature-type">Exists</a>, type<span class="tsd-signature-symbol">: </span><a href="type.html" class="tsd-signature-type">Type</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="referencemodestore.html" class="tsd-signature-type">ReferenceModeStore</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Entity</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">S</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">C</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">ReferenceContainer</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">Container</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1e4b2c8/src/runtime/storageNG/reference-mode-store.ts#L111">src/runtime/storageNG/reference-mode-store.ts:111</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9f45ca0/src/runtime/storageNG/reference-mode-store.ts#L128">src/runtime/storageNG/reference-mode-store.ts:128</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -1279,31 +1275,13 @@
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>backingKey: <a href="storagekey.html" class="tsd-signature-type">StorageKey</a></h5>
-								</li>
-								<li>
-									<h5>storageKey: <a href="storagekey.html" class="tsd-signature-type">StorageKey</a></h5>
+									<h5>storageKey: <a href="referencemodestoragekey.html" class="tsd-signature-type">ReferenceModeStorageKey</a></h5>
 								</li>
 								<li>
 									<h5>exists: <a href="../enums/exists.html" class="tsd-signature-type">Exists</a></h5>
 								</li>
 								<li>
 									<h5>type: <a href="type.html" class="tsd-signature-type">Type</a></h5>
-								</li>
-								<li>
-									<h5>backingConstructor: <span class="tsd-signature-type">object</span></h5>
-									<ul class="tsd-parameters">
-									</ul>
-								</li>
-								<li>
-									<h5>referenceConstructor: <span class="tsd-signature-type">object</span></h5>
-									<ul class="tsd-parameters">
-									</ul>
-								</li>
-								<li>
-									<h5>modelConstructor: <span class="tsd-signature-type">object</span></h5>
-									<ul class="tsd-parameters">
-									</ul>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="referencemodestore.html" class="tsd-signature-type">ReferenceModeStore</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Entity</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">S</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">C</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">ReferenceContainer</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">Container</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -1353,9 +1331,6 @@
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
 								<a href="referencemodestore.html#mode" class="tsd-kind-icon">mode</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
-								<a href="referencemodestore.html#modelconstructor" class="tsd-kind-icon">model<wbr>Constructor</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
 								<a href="referencemodestore.html#nextcallbackid" class="tsd-kind-icon">next<wbr>CallbackID</a>
@@ -1407,6 +1382,9 @@
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
 								<a href="referencemodestore.html#idle" class="tsd-kind-icon">idle</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-private">
+								<a href="referencemodestore.html#newbackinginstance" class="tsd-kind-icon">new<wbr>Backing<wbr>Instance</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
 								<a href="referencemodestore.html#off" class="tsd-kind-icon">off</a>

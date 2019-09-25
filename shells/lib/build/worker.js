@@ -91,7 +91,7 @@
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* WEBPACK VAR INJECTION */(function(global) {/* harmony import */ var _build_runtime_particle_execution_context_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(2);
-/* harmony import */ var _build_platform_loader_web_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(30);
+/* harmony import */ var _build_platform_loader_web_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(35);
 /* harmony import */ var _build_runtime_id_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(18);
 /**
  * @license
@@ -154,9 +154,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
 /* harmony import */ var _api_channel_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(4);
 /* harmony import */ var _handle_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(13);
-/* harmony import */ var _slot_proxy_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(27);
+/* harmony import */ var _slot_proxy_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(32);
 /* harmony import */ var _storage_proxy_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(15);
-/* harmony import */ var _wasm_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(28);
+/* harmony import */ var _wasm_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(33);
 /* harmony import */ var _arc_exceptions_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(14);
 /**
  * @license
@@ -510,7 +510,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _particle_spec_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(5);
 /* harmony import */ var _type_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(8);
 /* harmony import */ var _arc_exceptions_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(14);
-/* harmony import */ var _util_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(26);
+/* harmony import */ var _util_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(31);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -1109,8 +1109,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _modality_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(6);
 /* harmony import */ var _recipe_type_checker_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(7);
 /* harmony import */ var _type_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(8);
-/* harmony import */ var _particle_check_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(24);
-/* harmony import */ var _particle_claim_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(25);
+/* harmony import */ var _particle_check_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(29);
+/* harmony import */ var _particle_claim_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(30);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -1882,6 +1882,7 @@ class TypeChecker {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Type", function() { return Type; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CountType", function() { return CountType; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "EntityType", function() { return EntityType; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "TypeVariable", function() { return TypeVariable; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CollectionType", function() { return CollectionType; });
@@ -1894,9 +1895,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "HandleType", function() { return HandleType; });
 /* harmony import */ var _interface_info_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(9);
 /* harmony import */ var _schema_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(10);
-/* harmony import */ var _slot_info_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(21);
-/* harmony import */ var _synthetic_types_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(22);
-/* harmony import */ var _type_variable_info_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(23);
+/* harmony import */ var _slot_info_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(25);
+/* harmony import */ var _synthetic_types_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(26);
+/* harmony import */ var _type_variable_info_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(27);
+/* harmony import */ var _crdt_crdt_count_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(28);
+/* harmony import */ var _crdt_crdt_collection_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(23);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -1906,6 +1909,8 @@ __webpack_require__.r(__webpack_exports__);
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
+
+
 
 
 
@@ -2023,6 +2028,9 @@ class Type {
     isTypeContainer() {
         return false;
     }
+    get isReference() {
+        return false;
+    }
     collectionOf() {
         return new CollectionType(this);
     }
@@ -2090,6 +2098,20 @@ class Type {
     toPrettyString() {
         return null;
     }
+    crdtInstanceConstructor() {
+        return null;
+    }
+}
+class CountType extends Type {
+    constructor() {
+        super('Count');
+    }
+    toLiteral() {
+        return { tag: 'Count' };
+    }
+    crdtInstanceConstructor() {
+        return _crdt_crdt_count_js__WEBPACK_IMPORTED_MODULE_5__["CRDTCount"];
+    }
 }
 class EntityType extends Type {
     constructor(schema) {
@@ -2141,6 +2163,9 @@ class EntityType extends Type {
                 .trim();
         }
         return JSON.stringify(this.entitySchema.toLiteral());
+    }
+    crdtInstanceConstructor() {
+        return this.entitySchema.crdtConstructor();
     }
 }
 class TypeVariable extends Type {
@@ -2294,6 +2319,9 @@ class CollectionType extends Type {
             return entitySchema.description.plural;
         }
         return `${this.collectionType.toPrettyString()} List`;
+    }
+    crdtInstanceConstructor() {
+        return _crdt_crdt_collection_js__WEBPACK_IMPORTED_MODULE_6__["CRDTCollection"];
     }
 }
 class BigCollectionType extends Type {
@@ -2971,6 +2999,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Schema", function() { return Schema; });
 /* harmony import */ var _entity_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(11);
 /* harmony import */ var _type_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(8);
+/* harmony import */ var _crdt_crdt_entity_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(21);
+/* harmony import */ var _crdt_crdt_singleton_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(24);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -2980,6 +3010,8 @@ __webpack_require__.r(__webpack_exports__);
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
+
+
 
 
 class Schema {
@@ -3127,6 +3159,27 @@ class Schema {
     }
     entityClass(context = null) {
         return _entity_js__WEBPACK_IMPORTED_MODULE_0__["Entity"].createEntityClass(this, context);
+    }
+    crdtConstructor() {
+        const singletons = {};
+        const collections = {};
+        // TODO(shans) do this properly
+        for (const [field, { type }] of Object.entries(this.fields)) {
+            if (type === 'Text') {
+                singletons[field] = new _crdt_crdt_singleton_js__WEBPACK_IMPORTED_MODULE_3__["CRDTSingleton"]();
+            }
+            else if (type === 'Number') {
+                singletons[field] = new _crdt_crdt_singleton_js__WEBPACK_IMPORTED_MODULE_3__["CRDTSingleton"]();
+            }
+            else {
+                throw new Error(`Big Scary Exception: entity field ${field} of type ${type} doesn't yet have a CRDT mapping implemented`);
+            }
+        }
+        return class EntityCRDT extends _crdt_crdt_entity_js__WEBPACK_IMPORTED_MODULE_2__["CRDTEntity"] {
+            constructor() {
+                super(singletons, collections);
+            }
+        };
     }
     toInlineSchemaString(options) {
         const names = this.names.join(' ') || '*';
@@ -5179,6 +5232,558 @@ const SYMBOL_INTERNALS = Symbol('internals');
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "EntityOpTypes", function() { return EntityOpTypes; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CRDTEntity", function() { return CRDTEntity; });
+/* harmony import */ var _crdt_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(22);
+/* harmony import */ var _crdt_collection_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(23);
+/* harmony import */ var _crdt_singleton_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(24);
+/**
+ * @license
+ * Copyright (c) 2019 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+
+
+
+var EntityOpTypes;
+(function (EntityOpTypes) {
+    EntityOpTypes[EntityOpTypes["Set"] = 0] = "Set";
+    EntityOpTypes[EntityOpTypes["Clear"] = 1] = "Clear";
+    EntityOpTypes[EntityOpTypes["Add"] = 2] = "Add";
+    EntityOpTypes[EntityOpTypes["Remove"] = 3] = "Remove";
+})(EntityOpTypes || (EntityOpTypes = {}));
+class CRDTEntity {
+    constructor(singletons, collections) {
+        this.model = { singletons, collections, version: {} };
+    }
+    merge(other) {
+        const singletonChanges = {};
+        const collectionChanges = {};
+        let allOps = true;
+        for (const singleton of Object.keys(this.model.singletons)) {
+            singletonChanges[singleton] = this.model.singletons[singleton].merge(other.singletons[singleton]);
+            if (singletonChanges[singleton].modelChange.changeType === _crdt_js__WEBPACK_IMPORTED_MODULE_0__["ChangeType"].Model ||
+                singletonChanges[singleton].otherChange.changeType === _crdt_js__WEBPACK_IMPORTED_MODULE_0__["ChangeType"].Model) {
+                allOps = false;
+            }
+        }
+        for (const collection of Object.keys(this.model.collections)) {
+            collectionChanges[collection] = this.model.collections[collection].merge(other.collections[collection]);
+            if (collectionChanges[collection].modelChange.changeType === _crdt_js__WEBPACK_IMPORTED_MODULE_0__["ChangeType"].Model ||
+                collectionChanges[collection].otherChange.changeType === _crdt_js__WEBPACK_IMPORTED_MODULE_0__["ChangeType"].Model) {
+                allOps = false;
+            }
+        }
+        for (const versionKey of Object.keys(other.version)) {
+            this.model.version[versionKey] = Math.max(this.model.version[versionKey] || 0, other.version[versionKey]);
+        }
+        if (allOps) {
+            const modelOps = [];
+            const otherOps = [];
+            for (const singleton of Object.keys(singletonChanges)) {
+                for (const operation of singletonChanges[singleton].modelChange.operations) {
+                    let op;
+                    if (operation.type === _crdt_singleton_js__WEBPACK_IMPORTED_MODULE_2__["SingletonOpTypes"].Set) {
+                        op = { ...operation, type: EntityOpTypes.Set, field: singleton };
+                    }
+                    else {
+                        op = { ...operation, type: EntityOpTypes.Clear, field: singleton };
+                    }
+                    modelOps.push(op);
+                }
+                for (const operation of singletonChanges[singleton].otherChange.operations) {
+                    let op;
+                    if (operation.type === _crdt_singleton_js__WEBPACK_IMPORTED_MODULE_2__["SingletonOpTypes"].Set) {
+                        op = { ...operation, type: EntityOpTypes.Set, field: singleton };
+                    }
+                    else {
+                        op = { ...operation, type: EntityOpTypes.Clear, field: singleton };
+                    }
+                    otherOps.push(op);
+                }
+            }
+            for (const collection of Object.keys(collectionChanges)) {
+                for (const operation of collectionChanges[collection].modelChange.operations) {
+                    let op;
+                    if (operation.type === _crdt_collection_js__WEBPACK_IMPORTED_MODULE_1__["CollectionOpTypes"].Add) {
+                        op = { ...operation, type: EntityOpTypes.Add, field: collection };
+                    }
+                    else {
+                        op = { ...operation, type: EntityOpTypes.Remove, field: collection };
+                    }
+                    modelOps.push(op);
+                }
+                for (const operation of collectionChanges[collection].otherChange.operations) {
+                    let op;
+                    if (operation.type === _crdt_collection_js__WEBPACK_IMPORTED_MODULE_1__["CollectionOpTypes"].Add) {
+                        op = { ...operation, type: EntityOpTypes.Add, field: collection };
+                    }
+                    else {
+                        op = { ...operation, type: EntityOpTypes.Remove, field: collection };
+                    }
+                    otherOps.push(op);
+                }
+            }
+            return { modelChange: { changeType: _crdt_js__WEBPACK_IMPORTED_MODULE_0__["ChangeType"].Operations, operations: modelOps },
+                otherChange: { changeType: _crdt_js__WEBPACK_IMPORTED_MODULE_0__["ChangeType"].Operations, operations: otherOps } };
+        }
+        else {
+            // need to map this.model to get the data out.
+            const change = { changeType: _crdt_js__WEBPACK_IMPORTED_MODULE_0__["ChangeType"].Model, modelPostChange: this.getData() };
+            return { modelChange: change, otherChange: change };
+        }
+    }
+    applyOperation(op) {
+        if (op.type === EntityOpTypes.Set || op.type === EntityOpTypes.Clear) {
+            if (!this.model.singletons[op.field]) {
+                if (this.model.collections[op.field]) {
+                    throw new Error(`Can't apply ${op.type === EntityOpTypes.Set ? 'Set' : 'Clear'} operation to collection field ${op.field}`);
+                }
+                throw new Error(`Invalid field: ${op.field} does not exist`);
+            }
+        }
+        else {
+            if (!this.model.collections[op.field]) {
+                if (this.model.singletons[op.field]) {
+                    throw new Error(`Can't apply ${op.type === EntityOpTypes.Add ? 'Add' : 'Remove'} operation to singleton field ${op.field}`);
+                }
+                throw new Error(`Invalid field: ${op.field} does not exist`);
+            }
+        }
+        const apply = () => {
+            switch (op.type) {
+                case EntityOpTypes.Set:
+                    return this.model.singletons[op.field].applyOperation({ ...op, type: _crdt_singleton_js__WEBPACK_IMPORTED_MODULE_2__["SingletonOpTypes"].Set });
+                case EntityOpTypes.Clear:
+                    return this.model.singletons[op.field].applyOperation({ ...op, type: _crdt_singleton_js__WEBPACK_IMPORTED_MODULE_2__["SingletonOpTypes"].Clear });
+                case EntityOpTypes.Add:
+                    return this.model.collections[op.field].applyOperation({ ...op, type: _crdt_collection_js__WEBPACK_IMPORTED_MODULE_1__["CollectionOpTypes"].Add });
+                case EntityOpTypes.Remove:
+                    return this.model.collections[op.field].applyOperation({ ...op, type: _crdt_collection_js__WEBPACK_IMPORTED_MODULE_1__["CollectionOpTypes"].Remove });
+                default:
+                    throw new Error(`Unexpected op ${op} for Entity CRDT`);
+            }
+        };
+        if (apply()) {
+            for (const versionKey of Object.keys(op.clock)) {
+                this.model.version[versionKey] = Math.max(this.model.version[versionKey] || 0, op.clock[versionKey]);
+            }
+            return true;
+        }
+        return false;
+    }
+    getData() {
+        const singletons = {};
+        const collections = {};
+        Object.keys(this.model.singletons).forEach(singleton => {
+            singletons[singleton] = this.model.singletons[singleton].getData();
+        });
+        Object.keys(this.model.collections).forEach(collection => {
+            collections[collection] = this.model.collections[collection].getData();
+        });
+        return { singletons, collections, version: this.model.version };
+    }
+    getParticleView() {
+        const result = { singletons: {}, collections: {} };
+        for (const key of Object.keys(this.model.singletons)) {
+            result.singletons[key] = this.model.singletons[key].getParticleView();
+        }
+        for (const key of Object.keys(this.model.collections)) {
+            result.collections[key] = this.model.collections[key].getParticleView();
+        }
+        return result;
+    }
+}
+//# sourceMappingURL=crdt-entity.js.map
+
+/***/ }),
+/* 22 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CRDTError", function() { return CRDTError; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ChangeType", function() { return ChangeType; });
+/**
+ * @license
+ * Copyright (c) 2019 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+class CRDTError extends Error {
+}
+// A CRDT Change represents a delta between model states. Where possible,
+// this delta should be expressed as a sequence of operations; in which case
+// changeType will be ChangeType.Operations.
+// Sometimes it isn't possible to express a delta as operations. In this case,
+// changeType will be ChangeType.Model, and a full post-merge model will be supplied.
+// A CRDT Change is parameterized by the operations that can be represented, and the data representation
+// of the model.
+var ChangeType;
+(function (ChangeType) {
+    ChangeType[ChangeType["Operations"] = 0] = "Operations";
+    ChangeType[ChangeType["Model"] = 1] = "Model";
+})(ChangeType || (ChangeType = {}));
+//# sourceMappingURL=crdt.js.map
+
+/***/ }),
+/* 23 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CollectionOpTypes", function() { return CollectionOpTypes; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CRDTCollection", function() { return CRDTCollection; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "simplifyFastForwardOp", function() { return simplifyFastForwardOp; });
+/* harmony import */ var _crdt_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(22);
+/**
+ * @license
+ * Copyright (c) 2019 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+
+var CollectionOpTypes;
+(function (CollectionOpTypes) {
+    CollectionOpTypes[CollectionOpTypes["Add"] = 0] = "Add";
+    CollectionOpTypes[CollectionOpTypes["Remove"] = 1] = "Remove";
+    CollectionOpTypes[CollectionOpTypes["FastForward"] = 2] = "FastForward";
+})(CollectionOpTypes || (CollectionOpTypes = {}));
+class CRDTCollection {
+    constructor() {
+        this.model = { values: {}, version: {} };
+    }
+    merge(other) {
+        const newClock = mergeVersions(this.model.version, other.version);
+        const merged = {};
+        // Fast-forward op to send to other model. Elements added and removed will
+        // be filled in below.
+        const fastForwardOp = {
+            type: CollectionOpTypes.FastForward,
+            added: [],
+            removed: [],
+            oldClock: other.version,
+            newClock,
+        };
+        for (const otherEntry of Object.values(other.values)) {
+            const value = otherEntry.value;
+            const id = value.id;
+            const thisEntry = this.model.values[id];
+            if (thisEntry) {
+                if (sameVersions(thisEntry.version, otherEntry.version)) {
+                    // Both models have the same value at the same version. Add it to the
+                    // merge.
+                    merged[id] = thisEntry;
+                }
+                else {
+                    // Models have different versions for the same value. Merge the
+                    // versions, and update other.
+                    const mergedVersion = mergeVersions(thisEntry.version, otherEntry.version);
+                    merged[id] = { value, version: mergedVersion };
+                    fastForwardOp.added.push([value, mergedVersion]);
+                }
+            }
+            else if (dominates(this.model.version, otherEntry.version)) {
+                // Value was deleted by this model.
+                fastForwardOp.removed.push(value);
+            }
+            else {
+                // Value was added by other model.
+                merged[id] = otherEntry;
+            }
+        }
+        for (const [id, thisEntry] of Object.entries(this.model.values)) {
+            if (!other.values[id] && !dominates(other.version, thisEntry.version)) {
+                // Value was added by this model.
+                merged[id] = thisEntry;
+                fastForwardOp.added.push([thisEntry.value, thisEntry.version]);
+            }
+        }
+        const operations = simplifyFastForwardOp(fastForwardOp) || [fastForwardOp];
+        this.model.values = merged;
+        this.model.version = newClock;
+        const modelChange = {
+            changeType: _crdt_js__WEBPACK_IMPORTED_MODULE_0__["ChangeType"].Model,
+            modelPostChange: this.model
+        };
+        const otherChange = {
+            changeType: _crdt_js__WEBPACK_IMPORTED_MODULE_0__["ChangeType"].Operations,
+            operations,
+        };
+        return { modelChange, otherChange };
+    }
+    applyOperation(op) {
+        switch (op.type) {
+            case CollectionOpTypes.Add:
+                return this.add(op.added, op.actor, op.clock);
+            case CollectionOpTypes.Remove:
+                return this.remove(op.removed, op.actor, op.clock);
+            case CollectionOpTypes.FastForward:
+                return this.fastForward(op);
+            default:
+                throw new _crdt_js__WEBPACK_IMPORTED_MODULE_0__["CRDTError"](`Op ${op} not supported`);
+        }
+    }
+    getData() {
+        return this.model;
+    }
+    getParticleView() {
+        return new Set(Object.values(this.model.values).map(entry => entry.value));
+    }
+    add(value, key, version) {
+        // Only accept an add if it is immediately consecutive to the clock for that actor.
+        const expectedClockValue = (this.model.version[key] || 0) + 1;
+        if (!(expectedClockValue === version[key] || 0)) {
+            return false;
+        }
+        this.model.version[key] = version[key];
+        const previousVersion = this.model.values[value.id] ? this.model.values[value.id].version : {};
+        this.model.values[value.id] = { value, version: mergeVersions(version, previousVersion) };
+        return true;
+    }
+    remove(value, key, version) {
+        if (!this.model.values[value.id]) {
+            return false;
+        }
+        const clockValue = (version[key] || 0);
+        // Removes do not increment the clock.
+        const expectedClockValue = (this.model.version[key] || 0);
+        if (!(expectedClockValue === clockValue)) {
+            return false;
+        }
+        // Cannot remove an element unless version is higher for all other actors as
+        // well.
+        if (!dominates(version, this.model.values[value.id].version)) {
+            return false;
+        }
+        this.model.version[key] = clockValue;
+        delete this.model.values[value.id];
+        return true;
+    }
+    fastForward(op) {
+        const currentClock = this.model.version;
+        if (!dominates(currentClock, op.oldClock)) {
+            // Can't apply fast-forward op. Current model's clock is behind oldClock.
+            return false;
+        }
+        if (dominates(currentClock, op.newClock)) {
+            // Current model already knows about everything in this fast-forward op.
+            // Nothing to do, but not an error.
+            return true;
+        }
+        for (const [value, version] of op.added) {
+            const existingValue = this.model.values[value.id];
+            if (existingValue) {
+                existingValue.version = mergeVersions(existingValue.version, version);
+            }
+            else if (!dominates(currentClock, version)) {
+                this.model.values[value.id] = { value, version };
+            }
+        }
+        for (const value of op.removed) {
+            const existingValue = this.model.values[value.id];
+            if (existingValue && dominates(op.newClock, existingValue.version)) {
+                delete this.model.values[value.id];
+            }
+        }
+        this.model.version = mergeVersions(currentClock, op.newClock);
+        return true;
+    }
+}
+function mergeVersions(version1, version2) {
+    const merged = {};
+    for (const [k, v] of Object.entries(version1)) {
+        merged[k] = v;
+    }
+    for (const [k, v] of Object.entries(version2)) {
+        merged[k] = Math.max(v, version1[k] || 0);
+    }
+    return merged;
+}
+function sameVersions(version1, version2) {
+    if (Object.keys(version1).length !== Object.keys(version2).length) {
+        return false;
+    }
+    for (const [k, v] of Object.entries(version1)) {
+        if (v !== version2[k]) {
+            return false;
+        }
+    }
+    return true;
+}
+/** Returns true if map1 dominates map2. */
+function dominates(map1, map2) {
+    for (const [k, v] of Object.entries(map2)) {
+        if ((map1[k] || 0) < v) {
+            return false;
+        }
+    }
+    return true;
+}
+/**
+ * Converts a simple fast-forward operation into a sequence of regular ops.
+ * Currently only supports converting add ops made by a single actor. Returns
+ * null if it could not simplify the fast-forward operation.
+ */
+function simplifyFastForwardOp(fastForwardOp) {
+    if (fastForwardOp.removed.length > 0) {
+        // Remove ops can't be replayed in order.
+        return null;
+    }
+    if (fastForwardOp.added.length === 0) {
+        // Just a version bump, no add ops to replay.
+        return null;
+    }
+    const actor = getSingleActorIncrement(fastForwardOp.oldClock, fastForwardOp.newClock);
+    if (actor === null) {
+        return null;
+    }
+    // Sort the add ops in increasing order by the actor's version.
+    const addOps = [...fastForwardOp.added].sort(([elem1, v1], [elem2, v2]) => (v1[actor] || 0) - (v2[actor] || 0));
+    let expectedVersion = fastForwardOp.oldClock[actor];
+    for (const [elem, version] of addOps) {
+        if (++expectedVersion !== version[actor]) {
+            // The add op didn't match the expected increment-by-one pattern. Can't
+            // replay it properly.
+            return null;
+        }
+    }
+    // If we reach here then all added versions are incremented by one.
+    // Check the final clock.
+    const expectedClock = { ...fastForwardOp.oldClock };
+    expectedClock[actor] = expectedVersion;
+    if (!sameVersions(expectedClock, fastForwardOp.newClock)) {
+        return null;
+    }
+    return addOps.map(([elem, version]) => ({
+        type: CollectionOpTypes.Add,
+        added: elem,
+        actor,
+        clock: version,
+    }));
+}
+/**
+ * Given two version maps, returns the actor who incremented their version. If
+ * there's more than one such actor, returns null.
+ */
+function getSingleActorIncrement(oldVersion, newVersion) {
+    if (Object.keys(oldVersion).length !== Object.keys(newVersion).length) {
+        return null;
+    }
+    const incrementedActors = Object.entries(oldVersion).filter(([k, v]) => newVersion[k] > v);
+    return incrementedActors.length === 1 ? incrementedActors[0][0] : null;
+}
+//# sourceMappingURL=crdt-collection.js.map
+
+/***/ }),
+/* 24 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SingletonOpTypes", function() { return SingletonOpTypes; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CRDTSingleton", function() { return CRDTSingleton; });
+/* harmony import */ var _crdt_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(22);
+/* harmony import */ var _crdt_collection_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(23);
+/**
+ * @license
+ * Copyright (c) 2019 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+
+
+var SingletonOpTypes;
+(function (SingletonOpTypes) {
+    SingletonOpTypes[SingletonOpTypes["Set"] = 0] = "Set";
+    SingletonOpTypes[SingletonOpTypes["Clear"] = 1] = "Clear";
+})(SingletonOpTypes || (SingletonOpTypes = {}));
+class CRDTSingleton {
+    constructor() {
+        this.collection = new _crdt_collection_js__WEBPACK_IMPORTED_MODULE_1__["CRDTCollection"]();
+    }
+    merge(other) {
+        this.collection.merge(other);
+        // We cannot pass through the collection ops, so always return the updated model.
+        const change = {
+            changeType: _crdt_js__WEBPACK_IMPORTED_MODULE_0__["ChangeType"].Model,
+            modelPostChange: this.collection.getData()
+        };
+        return { modelChange: change, otherChange: change };
+    }
+    applyOperation(op) {
+        if (op.type === SingletonOpTypes.Clear) {
+            return this.clear(op.actor, op.clock);
+        }
+        if (op.type === SingletonOpTypes.Set) {
+            // Remove does not require an increment, but the caller of this method will have incremented
+            // its version, so we hack a version with t-1 for this actor.
+            const removeClock = {};
+            for (const [k, v] of Object.entries(op.clock)) {
+                removeClock[k] = v;
+            }
+            removeClock[op.actor] = op.clock[op.actor] - 1;
+            if (!this.clear(op.actor, removeClock)) {
+                return false;
+            }
+            const addOp = {
+                type: _crdt_collection_js__WEBPACK_IMPORTED_MODULE_1__["CollectionOpTypes"].Add,
+                added: op.value,
+                actor: op.actor,
+                clock: op.clock,
+            };
+            if (!this.collection.applyOperation(addOp)) {
+                return false;
+            }
+        }
+        return true;
+    }
+    getData() {
+        return this.collection.getData();
+    }
+    getParticleView() {
+        // Return any value.
+        return [...this.collection.getParticleView()].sort()[0] || null;
+    }
+    clear(actor, clock) {
+        // Clear all existing values if our clock allows it.
+        for (const value of Object.values(this.collection.getData().values)) {
+            const removeOp = {
+                type: _crdt_collection_js__WEBPACK_IMPORTED_MODULE_1__["CollectionOpTypes"].Remove,
+                removed: value.value,
+                actor,
+                clock,
+            };
+            // If any value fails to remove, we haven't cleared the value and we fail the whole op.
+            //if (!this.collection.applyOperation(removeOp)) {
+            //   return false;
+            // }
+            this.collection.applyOperation(removeOp);
+        }
+        return true;
+    }
+}
+//# sourceMappingURL=crdt-singleton.js.map
+
+/***/ }),
+/* 25 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SlotInfo", function() { return SlotInfo; });
 /**
  * @license
@@ -5204,7 +5809,7 @@ class SlotInfo {
 //# sourceMappingURL=slot-info.js.map
 
 /***/ }),
-/* 22 */
+/* 26 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -5244,7 +5849,7 @@ class ArcHandle {
 //# sourceMappingURL=synthetic-types.js.map
 
 /***/ }),
-/* 23 */
+/* 27 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -5451,7 +6056,107 @@ class TypeVariableInfo {
 //# sourceMappingURL=type-variable-info.js.map
 
 /***/ }),
-/* 24 */
+/* 28 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CountOpTypes", function() { return CountOpTypes; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CRDTCount", function() { return CRDTCount; });
+/* harmony import */ var _crdt_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(22);
+/**
+ * @license
+ * Copyright (c) 2019 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+
+var CountOpTypes;
+(function (CountOpTypes) {
+    CountOpTypes[CountOpTypes["Increment"] = 0] = "Increment";
+    CountOpTypes[CountOpTypes["MultiIncrement"] = 1] = "MultiIncrement";
+})(CountOpTypes || (CountOpTypes = {}));
+class CRDTCount {
+    constructor() {
+        this.model = { values: {}, version: {} };
+    }
+    merge(other) {
+        const otherChanges = [];
+        const thisChanges = [];
+        for (const key of Object.keys(other.values)) {
+            const thisValue = this.model.values[key] || 0;
+            const otherValue = other.values[key] || 0;
+            const thisVersion = this.model.version[key] || 0;
+            const otherVersion = other.version[key] || 0;
+            if (thisValue > otherValue) {
+                if (otherVersion >= thisVersion) {
+                    throw new _crdt_js__WEBPACK_IMPORTED_MODULE_0__["CRDTError"]('Divergent versions encountered when merging CRDTCount models');
+                }
+                otherChanges.push({ type: CountOpTypes.MultiIncrement, value: thisValue - otherValue, actor: key,
+                    version: { from: otherVersion, to: thisVersion } });
+            }
+            else if (otherValue > thisValue) {
+                if (thisVersion >= otherVersion) {
+                    throw new _crdt_js__WEBPACK_IMPORTED_MODULE_0__["CRDTError"]('Divergent versions encountered when merging CRDTCount models');
+                }
+                thisChanges.push({ type: CountOpTypes.MultiIncrement, value: otherValue - thisValue, actor: key,
+                    version: { from: thisVersion, to: otherVersion } });
+                this.model.values[key] = otherValue;
+                this.model.version[key] = otherVersion;
+            }
+        }
+        for (const key of Object.keys(this.model.values)) {
+            if (other.values[key]) {
+                continue;
+            }
+            if (other.version[key]) {
+                throw new _crdt_js__WEBPACK_IMPORTED_MODULE_0__["CRDTError"](`CRDTCount model has version but no value for key ${key}`);
+            }
+            otherChanges.push({ type: CountOpTypes.MultiIncrement, value: this.model.values[key], actor: key,
+                version: { from: 0, to: this.model.version[key] } });
+        }
+        return { modelChange: { changeType: _crdt_js__WEBPACK_IMPORTED_MODULE_0__["ChangeType"].Operations, operations: thisChanges }, otherChange: { changeType: _crdt_js__WEBPACK_IMPORTED_MODULE_0__["ChangeType"].Operations, operations: otherChanges } };
+    }
+    applyOperation(op) {
+        let value;
+        if (op.version.from !== (this.model.version[op.actor] || 0)) {
+            return false;
+        }
+        if (op.version.to <= op.version.from) {
+            return false;
+        }
+        if (op.type === CountOpTypes.MultiIncrement) {
+            if (op.value < 0) {
+                return false;
+            }
+            value = (this.model.values[op.actor] || 0) + op.value;
+        }
+        else {
+            value = (this.model.values[op.actor] || 0) + 1;
+        }
+        this.model.values[op.actor] = value;
+        this.model.version[op.actor] = op.version.to;
+        return true;
+    }
+    cloneMap(map) {
+        const result = {};
+        Object.keys(map).forEach(key => result[key] = map[key]);
+        return result;
+    }
+    getData() {
+        return { values: this.cloneMap(this.model.values), version: this.cloneMap(this.model.version) };
+    }
+    getParticleView() {
+        return Object.values(this.model.values).reduce((prev, current) => prev + current, 0);
+    }
+}
+//# sourceMappingURL=crdt-count.js.map
+
+/***/ }),
+/* 29 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -5622,7 +6327,7 @@ function createCheck(checkTarget, astNode, handleConnectionMap) {
 //# sourceMappingURL=particle-check.js.map
 
 /***/ }),
-/* 25 */
+/* 30 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -5704,7 +6409,7 @@ function createParticleClaim(handle, astNode, handleConnectionMap) {
 //# sourceMappingURL=particle-claim.js.map
 
 /***/ }),
-/* 26 */
+/* 31 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -5797,7 +6502,7 @@ function noAwait(result) { }
 //# sourceMappingURL=util.js.map
 
 /***/ }),
-/* 27 */
+/* 32 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -5871,7 +6576,7 @@ class SlotProxy {
 //# sourceMappingURL=slot-proxy.js.map
 
 /***/ }),
-/* 28 */
+/* 33 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -5881,7 +6586,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "WasmParticle", function() { return WasmParticle; });
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
 /* harmony import */ var _entity_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(11);
-/* harmony import */ var _particle_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(29);
+/* harmony import */ var _particle_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(34);
 /* harmony import */ var _handle_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(13);
 /* harmony import */ var _arc_exceptions_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(14);
 /**
@@ -6501,7 +7206,7 @@ class WasmParticle extends _particle_js__WEBPACK_IMPORTED_MODULE_2__["Particle"]
 //# sourceMappingURL=wasm.js.map
 
 /***/ }),
-/* 29 */
+/* 34 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -6748,14 +7453,14 @@ class Particle {
 //# sourceMappingURL=particle.js.map
 
 /***/ }),
-/* 30 */
+/* 35 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "PlatformLoader", function() { return PlatformLoader; });
-/* harmony import */ var _loader_platform_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(31);
-/* harmony import */ var _runtime_log_factory_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(46);
+/* harmony import */ var _loader_platform_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(36);
+/* harmony import */ var _runtime_log_factory_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(51);
 /**
  * @license
  * Copyright 2019 Google LLC.
@@ -6841,19 +7546,19 @@ class PlatformLoader extends _loader_platform_js__WEBPACK_IMPORTED_MODULE_0__["P
 //# sourceMappingURL=loader-web.js.map
 
 /***/ }),
-/* 31 */
+/* 36 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "PlatformLoaderBase", function() { return PlatformLoaderBase; });
-/* harmony import */ var _runtime_loader_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(32);
-/* harmony import */ var _runtime_particle_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(29);
-/* harmony import */ var _runtime_dom_particle_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(37);
-/* harmony import */ var _runtime_multiplexer_dom_particle_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(40);
-/* harmony import */ var _runtime_transformation_dom_particle_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(41);
-/* harmony import */ var _runtime_ui_particle_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(42);
-/* harmony import */ var _runtime_ui_multiplexer_particle_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(44);
+/* harmony import */ var _runtime_loader_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(37);
+/* harmony import */ var _runtime_particle_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(34);
+/* harmony import */ var _runtime_dom_particle_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(42);
+/* harmony import */ var _runtime_multiplexer_dom_particle_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(45);
+/* harmony import */ var _runtime_transformation_dom_particle_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(46);
+/* harmony import */ var _runtime_ui_particle_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(47);
+/* harmony import */ var _runtime_ui_multiplexer_particle_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(49);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -6928,22 +7633,22 @@ class PlatformLoaderBase extends _runtime_loader_js__WEBPACK_IMPORTED_MODULE_0__
 //# sourceMappingURL=loader-platform.js.map
 
 /***/ }),
-/* 32 */
+/* 37 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Loader", function() { return Loader; });
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
-/* harmony import */ var _platform_fetch_web_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(33);
-/* harmony import */ var _platform_fs_web_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(34);
-/* harmony import */ var _platform_vm_web_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(35);
-/* harmony import */ var _converters_jsonldToManifest_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(36);
-/* harmony import */ var _dom_particle_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(37);
-/* harmony import */ var _multiplexer_dom_particle_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(40);
-/* harmony import */ var _particle_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(29);
+/* harmony import */ var _platform_fetch_web_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(38);
+/* harmony import */ var _platform_fs_web_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(39);
+/* harmony import */ var _platform_vm_web_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(40);
+/* harmony import */ var _converters_jsonldToManifest_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(41);
+/* harmony import */ var _dom_particle_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(42);
+/* harmony import */ var _multiplexer_dom_particle_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(45);
+/* harmony import */ var _particle_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(34);
 /* harmony import */ var _reference_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(12);
-/* harmony import */ var _transformation_dom_particle_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(41);
+/* harmony import */ var _transformation_dom_particle_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(46);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -7098,7 +7803,7 @@ class Loader {
 //# sourceMappingURL=loader.js.map
 
 /***/ }),
-/* 33 */
+/* 38 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -7122,7 +7827,7 @@ const localFetch = fetch;
 //# sourceMappingURL=fetch-web.js.map
 
 /***/ }),
-/* 34 */
+/* 39 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -7142,7 +7847,7 @@ const fs = {};
 
 
 /***/ }),
-/* 35 */
+/* 40 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -7162,7 +7867,7 @@ const vm = {};
 
 
 /***/ }),
-/* 36 */
+/* 41 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -7277,14 +7982,14 @@ class JsonldToManifest {
 //# sourceMappingURL=jsonldToManifest.js.map
 
 /***/ }),
-/* 37 */
+/* 42 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "DomParticle", function() { return DomParticle; });
-/* harmony import */ var _modalities_dom_components_xen_xen_state_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(38);
-/* harmony import */ var _dom_particle_base_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(39);
+/* harmony import */ var _modalities_dom_components_xen_xen_state_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(43);
+/* harmony import */ var _dom_particle_base_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(44);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -7457,7 +8162,7 @@ class DomParticle extends Object(_modalities_dom_components_xen_xen_state_js__WE
 //# sourceMappingURL=dom-particle.js.map
 
 /***/ }),
-/* 38 */
+/* 43 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -7610,14 +8315,14 @@ const XenStateMixin = Base => class extends Base {
 
 
 /***/ }),
-/* 39 */
+/* 44 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "DomParticleBase", function() { return DomParticleBase; });
 /* harmony import */ var _handle_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(13);
-/* harmony import */ var _particle_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(29);
+/* harmony import */ var _particle_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(34);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -7897,7 +8602,7 @@ class DomParticleBase extends _particle_js__WEBPACK_IMPORTED_MODULE_1__["Particl
 //# sourceMappingURL=dom-particle-base.js.map
 
 /***/ }),
-/* 40 */
+/* 45 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -7905,7 +8610,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "MultiplexerDomParticle", function() { return MultiplexerDomParticle; });
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
 /* harmony import */ var _particle_spec_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(5);
-/* harmony import */ var _transformation_dom_particle_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(41);
+/* harmony import */ var _transformation_dom_particle_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(46);
 /* harmony import */ var _entity_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(11);
 /**
  * @license
@@ -8090,13 +8795,13 @@ class MultiplexerDomParticle extends _transformation_dom_particle_js__WEBPACK_IM
 //# sourceMappingURL=multiplexer-dom-particle.js.map
 
 /***/ }),
-/* 41 */
+/* 46 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "TransformationDomParticle", function() { return TransformationDomParticle; });
-/* harmony import */ var _dom_particle_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(37);
+/* harmony import */ var _dom_particle_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(42);
 /* harmony import */ var _entity_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(11);
 /**
  * @license
@@ -8146,14 +8851,14 @@ class TransformationDomParticle extends _dom_particle_js__WEBPACK_IMPORTED_MODUL
 //# sourceMappingURL=transformation-dom-particle.js.map
 
 /***/ }),
-/* 42 */
+/* 47 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "UiParticle", function() { return UiParticle; });
-/* harmony import */ var _modalities_dom_components_xen_xen_state_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(38);
-/* harmony import */ var _ui_simple_particle_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(43);
+/* harmony import */ var _modalities_dom_components_xen_xen_state_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(43);
+/* harmony import */ var _ui_simple_particle_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(48);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -8312,14 +9017,14 @@ class UiParticle extends Object(_modalities_dom_components_xen_xen_state_js__WEB
 //# sourceMappingURL=ui-particle.js.map
 
 /***/ }),
-/* 43 */
+/* 48 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "UiSimpleParticle", function() { return UiSimpleParticle; });
 /* harmony import */ var _handle_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(13);
-/* harmony import */ var _particle_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(29);
+/* harmony import */ var _particle_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(34);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -8568,14 +9273,14 @@ class UiSimpleParticle extends _particle_js__WEBPACK_IMPORTED_MODULE_1__["Partic
 //# sourceMappingURL=ui-simple-particle.js.map
 
 /***/ }),
-/* 44 */
+/* 49 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "UiMultiplexerParticle", function() { return UiMultiplexerParticle; });
 /* harmony import */ var _particle_spec_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(5);
-/* harmony import */ var _ui_transformation_particle_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(45);
+/* harmony import */ var _ui_transformation_particle_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(50);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -8738,13 +9443,13 @@ class UiMultiplexerParticle extends _ui_transformation_particle_js__WEBPACK_IMPO
 //# sourceMappingURL=ui-multiplexer-particle.js.map
 
 /***/ }),
-/* 45 */
+/* 50 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "UiTransformationParticle", function() { return UiTransformationParticle; });
-/* harmony import */ var _ui_particle_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(42);
+/* harmony import */ var _ui_particle_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(47);
 /* harmony import */ var _entity_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(11);
 /**
  * @license
@@ -8783,13 +9488,13 @@ class UiTransformationParticle extends _ui_particle_js__WEBPACK_IMPORTED_MODULE_
 //# sourceMappingURL=ui-transformation-particle.js.map
 
 /***/ }),
-/* 46 */
+/* 51 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "logsFactory", function() { return logsFactory; });
-/* harmony import */ var _platform_log_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(47);
+/* harmony import */ var _platform_log_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(52);
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "logFactory", function() { return _platform_log_web_js__WEBPACK_IMPORTED_MODULE_0__["logFactory"]; });
 
 /**
@@ -8811,7 +9516,7 @@ const logsFactory = (preamble, color) => ({
 //# sourceMappingURL=log-factory.js.map
 
 /***/ }),
-/* 47 */
+/* 52 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";

@@ -10,6 +10,7 @@
 import { Exists } from './drivers/driver-factory.js';
 import { StorageMode, ActiveStore, ProxyMessageType } from './store-interface';
 import { DirectStore } from './direct-store.js';
+import { ReferenceModeStore, ReferenceModeStorageKey } from './reference-mode-store.js';
 export { StorageMode, ActiveStore, ProxyMessageType };
 // A representation of a store. Note that initially a constructed store will be
 // inactive - it will not connect to a driver, will not accept connections from 
@@ -17,12 +18,14 @@ export { StorageMode, ActiveStore, ProxyMessageType };
 //
 // Calling 'activate() will generate an interactive store and return it. 
 export class Store {
-    constructor(storageKey, exists, type, mode, modelConstructor) {
+    constructor(storageKey, exists, type, id, name = '') {
+        this.version = 0; // TODO(shans): Needs to become the version vector, and is also probably only available on activated storage?
         this.storageKey = storageKey;
         this.exists = exists;
         this.type = type;
-        this.mode = mode;
-        this.modelConstructor = modelConstructor;
+        this.mode = storageKey instanceof ReferenceModeStorageKey ? StorageMode.ReferenceMode : StorageMode.Direct;
+        this.id = id;
+        this.name = name;
     }
     async activate() {
         if (Store.constructors.get(this.mode) == null) {
@@ -32,13 +35,13 @@ export class Store {
         if (constructor == null) {
             throw new Error(`No constructor registered for mode ${this.mode}`);
         }
-        const activeStore = await constructor.construct(this.storageKey, this.exists, this.type, this.mode, this.modelConstructor);
+        const activeStore = await constructor.construct(this.storageKey, this.exists, this.type, this.mode);
         this.exists = Exists.ShouldExist;
         return activeStore;
     }
 }
 Store.constructors = new Map([
     [StorageMode.Direct, DirectStore],
-    [StorageMode.ReferenceMode, null]
+    [StorageMode.ReferenceMode, ReferenceModeStore]
 ]);
 //# sourceMappingURL=store.js.map

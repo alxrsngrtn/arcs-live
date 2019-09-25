@@ -22,8 +22,8 @@ export class DirectStore extends ActiveStore {
     /*
      * This class should only ever be constructed via the static construct method
      */
-    constructor(storageKey, exists, type, mode, modelConstructor) {
-        super(storageKey, exists, type, mode, modelConstructor);
+    constructor(storageKey, exists, type, mode) {
+        super(storageKey, exists, type, mode);
         this.callbacks = new Map();
         this.nextCallbackID = 1;
         this.version = 0;
@@ -62,9 +62,9 @@ export class DirectStore extends ActiveStore {
             this.pendingResolves = [];
         }
     }
-    static async construct(storageKey, exists, type, mode, modelConstructor) {
-        const me = new DirectStore(storageKey, exists, type, mode, modelConstructor);
-        me.localModel = new modelConstructor();
+    static async construct(storageKey, exists, type, mode) {
+        const me = new DirectStore(storageKey, exists, type, mode);
+        me.localModel = new (type.crdtInstanceConstructor())();
         me.driver = await DriverFactory.driverInstance(storageKey, exists);
         if (me.driver == null) {
             throw new CRDTError(`No driver exists to support storage key ${storageKey}`);

@@ -14,15 +14,18 @@ import { StorageKey } from './storage-key.js';
 import { StoreInterface, StorageMode, ActiveStore, ProxyMessageType, ProxyMessage, ProxyCallback } from './store-interface';
 export { StorageMode, ActiveStore, ProxyMessageType, ProxyMessage, ProxyCallback };
 declare type StoreConstructor = {
-    construct<T extends CRDTTypeRecord>(storageKey: StorageKey, exists: Exists, type: Type, mode: StorageMode, modelConstructor: new () => CRDTModel<T>): Promise<ActiveStore<T>>;
+    construct<T extends CRDTTypeRecord>(storageKey: StorageKey, exists: Exists, type: Type, mode: StorageMode): Promise<ActiveStore<T>>;
 };
 export declare class Store<T extends CRDTTypeRecord> implements StoreInterface<T> {
     readonly storageKey: StorageKey;
     exists: Exists;
     readonly type: Type;
     readonly mode: StorageMode;
+    readonly id: string;
+    readonly name: string;
+    readonly version: number;
     modelConstructor: new () => CRDTModel<T>;
     static readonly constructors: Map<StorageMode, StoreConstructor>;
-    constructor(storageKey: StorageKey, exists: Exists, type: Type, mode: StorageMode, modelConstructor: new () => CRDTModel<T>);
+    constructor(storageKey: StorageKey, exists: Exists, type: Type, id: string, name?: string);
     activate(): Promise<ActiveStore<T>>;
 }

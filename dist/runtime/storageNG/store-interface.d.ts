@@ -8,7 +8,7 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { PropagatedException } from '../arc-exceptions.js';
-import { CRDTModel, CRDTTypeRecord } from '../crdt/crdt.js';
+import { CRDTTypeRecord } from '../crdt/crdt.js';
 import { Type } from '../type.js';
 import { Exists } from './drivers/driver-factory.js';
 import { StorageKey } from './storage-key.js';
@@ -45,15 +45,13 @@ export declare type StoreInterface<T extends CRDTTypeRecord> = {
     exists: Exists;
     readonly type: Type;
     readonly mode: StorageMode;
-    modelConstructor: new () => CRDTModel<T>;
 };
 export declare abstract class ActiveStore<T extends CRDTTypeRecord> implements StoreInterface<T> {
     readonly storageKey: StorageKey;
     exists: Exists;
     readonly type: Type;
     readonly mode: StorageMode;
-    modelConstructor: new () => CRDTModel<T>;
-    constructor(storageKey: StorageKey, exists: Exists, type: Type, mode: StorageMode, modelConstructor: new () => CRDTModel<T>);
+    constructor(storageKey: StorageKey, exists: Exists, type: Type, mode: StorageMode);
     idle(): Promise<void>;
     abstract on(callback: ProxyCallback<T>): number;
     abstract off(callback: number): void;

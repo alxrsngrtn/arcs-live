@@ -9,10 +9,12 @@
  */
 import { SingletonOpTypes, CRDTSingleton } from '../crdt/crdt-singleton.js';
 import { CollectionOpTypes, CRDTCollection } from '../crdt/crdt-collection.js';
-import { ActiveStore, ProxyMessageType, StorageMode } from './store.js';
+import { ActiveStore, ProxyMessageType, StorageMode } from './store-interface.js';
 import { BackingStore } from './backing-store.js';
 import { CRDTEntity } from '../crdt/crdt-entity.js';
 import { DirectStore } from './direct-store.js';
+import { StorageKey } from './storage-key.js';
+import { CollectionType, ReferenceType } from '../type.js';
 export class ReferenceCollection extends CRDTCollection {
 }
 export class ReferenceSingleton extends CRDTSingleton {
@@ -23,6 +25,22 @@ var ReferenceModeUpdateSource;
     ReferenceModeUpdateSource[ReferenceModeUpdateSource["BackingStore"] = 1] = "BackingStore";
     ReferenceModeUpdateSource[ReferenceModeUpdateSource["StorageProxy"] = 2] = "StorageProxy";
 })(ReferenceModeUpdateSource || (ReferenceModeUpdateSource = {}));
+export class ReferenceModeStorageKey extends StorageKey {
+    constructor(backingKey, storageKey) {
+        super('reference-mode');
+        this.backingKey = backingKey;
+        this.storageKey = storageKey;
+    }
+    embedKey(key) {
+        return key.toString().replace(/\{/g, '{{').replace(/\}/g, '}}');
+    }
+    toString() {
+        return `${this.protocol}://{${this.embedKey(this.backingKey)}}{${this.embedKey(this.storageKey)}}`;
+    }
+    childWithComponent(component) {
+        return new ReferenceModeStorageKey(this.backingKey, this.storageKey.childWithComponent(component));
+    }
+}
 /**
  * ReferenceModeStores adapt between a collection (CRDTCollection or CRDTSingleton) of entities from the perspective of their public API,
  * and a collection of references + a backing store of entity CRDTs from an internal storage perspective.
@@ -79,10 +97,18 @@ export class ReferenceModeStore extends ActiveStore {
          */
         this.blockCounter = 0;
     }
-    static async construct(backingKey, storageKey, exists, type, backingConstructor, referenceConstructor, modelConstructor) {
-        const result = new ReferenceModeStore(storageKey, exists, type, StorageMode.ReferenceMode, modelConstructor);
-        result.backingStore = await BackingStore.construct(backingKey, exists, type, StorageMode.Backing, backingConstructor);
-        result.containerStore = await DirectStore.construct(storageKey, exists, type, StorageMode.Direct, referenceConstructor);
+    static async construct(storageKey, exists, type) {
+        const result = new ReferenceModeStore(storageKey, exists, type, StorageMode.ReferenceMode);
+        result.backingStore = await BackingStore.construct(storageKey.backingKey, exists, type.getContainedType(), StorageMode.Backing);
+        let refType;
+        if (type.isCollectionType()) {
+            refType = new CollectionType(new ReferenceType(type.getContainedType()));
+        }
+        else {
+            // TODO(shans) probably need a singleton type here now.
+            refType = new ReferenceType(type.getContainedType());
+        }
+        result.containerStore = await DirectStore.construct(storageKey.storageKey, exists, type, StorageMode.Direct);
         result.registerStoreCallbacks();
         return result;
     }
@@ -358,7 +384,7 @@ export class ReferenceModeStore extends ActiveStore {
             this.versions[entity.id] = {};
         }
         const entityVersion = this.versions[entity.id];
-        const model = new this.backingStore.modelConstructor().getData();
+        const model = this.newBackingInstance().getData();
         let maxVersion = 0;
         for (const key of Object.keys(entity)) {
             if (key === 'id') {
@@ -440,7 +466,7 @@ export class ReferenceModeStore extends ActiveStore {
             const model = { values: {}, version: this.cloneMap(data.version) };
             for (const id of Object.keys(data.values)) {
                 const version = data.values[id].value.version;
-                const entity = Object.keys(version).length === 0 ? new this.backingStore.modelConstructor() : this.backingStore.getLocalModel(id);
+                const entity = Object.keys(version).length === 0 ? this.newBackingInstance() : this.backingStore.getLocalModel(id);
                 model.values[id] = { value: this.entityFromModel(entity.getData(), id), version: data.values[id].version };
             }
             return model;
@@ -473,6 +499,10 @@ export class ReferenceModeStore extends ActiveStore {
     async updateBackingStore(entity) {
         const model = this.entityToModel(entity);
         return this.backingStore.onProxyMessage({ type: ProxyMessageType.ModelUpdate, model, id: 1 }, entity.id);
+    }
+    newBackingInstance() {
+        const instanceConstructor = this.type.getContainedType().crdtInstanceConstructor();
+        return new instanceConstructor();
     }
     /**
      * Apply the an add, remove, set or clear method to the provided operation

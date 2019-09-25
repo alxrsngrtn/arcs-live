@@ -12,6 +12,8 @@ import { Schema } from './schema.js';
 import { SlotInfo } from './slot-info.js';
 import { ArcInfo } from './synthetic-types.js';
 import { TypeVariableInfo } from './type-variable-info.js';
+import { CRDTCount } from './crdt/crdt-count.js';
+import { CRDTCollection } from './crdt/crdt-collection.js';
 export class Type {
     constructor(tag) {
         this.tag = tag;
@@ -124,6 +126,9 @@ export class Type {
     isTypeContainer() {
         return false;
     }
+    get isReference() {
+        return false;
+    }
     collectionOf() {
         return new CollectionType(this);
     }
@@ -191,6 +196,20 @@ export class Type {
     toPrettyString() {
         return null;
     }
+    crdtInstanceConstructor() {
+        return null;
+    }
+}
+export class CountType extends Type {
+    constructor() {
+        super('Count');
+    }
+    toLiteral() {
+        return { tag: 'Count' };
+    }
+    crdtInstanceConstructor() {
+        return CRDTCount;
+    }
 }
 export class EntityType extends Type {
     constructor(schema) {
@@ -242,6 +261,9 @@ export class EntityType extends Type {
                 .trim();
         }
         return JSON.stringify(this.entitySchema.toLiteral());
+    }
+    crdtInstanceConstructor() {
+        return this.entitySchema.crdtConstructor();
     }
 }
 export class TypeVariable extends Type {
@@ -395,6 +417,9 @@ export class CollectionType extends Type {
             return entitySchema.description.plural;
         }
         return `${this.collectionType.toPrettyString()} List`;
+    }
+    crdtInstanceConstructor() {
+        return CRDTCollection;
     }
 }
 export class BigCollectionType extends Type {

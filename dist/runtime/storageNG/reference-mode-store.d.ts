@@ -9,12 +9,12 @@
  */
 import { CRDTSingletonTypeRecord, CRDTSingleton } from '../crdt/crdt-singleton.js';
 import { CRDTCollectionTypeRecord, Referenceable, CRDTCollection } from '../crdt/crdt-collection.js';
-import { ActiveStore, ProxyCallback, ProxyMessage } from './store.js';
+import { ActiveStore, ProxyCallback, ProxyMessage } from './store-interface.js';
 import { BackingStore } from './backing-store.js';
 import { CRDTEntityTypeRecord } from '../crdt/crdt-entity.js';
 import { DirectStore } from './direct-store.js';
 import { StorageKey } from './storage-key.js';
-import { VersionMap, CRDTModel } from '../crdt/crdt.js';
+import { VersionMap } from '../crdt/crdt.js';
 import { Exists } from './drivers/driver-factory.js';
 import { Type } from '../type.js';
 import { Dictionary } from '../hot.js';
@@ -29,6 +29,14 @@ export declare class ReferenceCollection extends CRDTCollection<Reference> {
 export declare class ReferenceSingleton extends CRDTSingleton<Reference> {
 }
 export declare type ReferenceModeOperation<T extends Referenceable> = CRDTSingletonTypeRecord<T>['operation'] | CRDTCollectionTypeRecord<T>['operation'];
+export declare class ReferenceModeStorageKey extends StorageKey {
+    backingKey: StorageKey;
+    storageKey: StorageKey;
+    constructor(backingKey: StorageKey, storageKey: StorageKey);
+    embedKey(key: StorageKey): string;
+    toString(): string;
+    childWithComponent(component: string): StorageKey;
+}
 /**
  * ReferenceModeStores adapt between a collection (CRDTCollection or CRDTSingleton) of entities from the perspective of their public API,
  * and a collection of references + a backing store of entity CRDTs from an internal storage perspective.
@@ -55,7 +63,7 @@ export declare class ReferenceModeStore<Entity extends Referenceable, S extends 
     private pendingSends;
     private holdQueue;
     private blockCounter;
-    static construct<Entity extends Referenceable, S extends Dictionary<Referenceable>, C extends Dictionary<Referenceable>, ReferenceContainer extends CRDTSingletonTypeRecord<Reference> | CRDTCollectionTypeRecord<Reference>, Container extends CRDTSingletonTypeRecord<Entity> | CRDTCollectionTypeRecord<Entity>>(backingKey: StorageKey, storageKey: StorageKey, exists: Exists, type: Type, backingConstructor: new () => CRDTModel<CRDTEntityTypeRecord<S, C>>, referenceConstructor: new () => CRDTModel<ReferenceContainer>, modelConstructor: new () => CRDTModel<Container>): Promise<ReferenceModeStore<Entity, S, C, ReferenceContainer, Container>>;
+    static construct<Entity extends Referenceable, S extends Dictionary<Referenceable>, C extends Dictionary<Referenceable>, ReferenceContainer extends CRDTSingletonTypeRecord<Reference> | CRDTCollectionTypeRecord<Reference>, Container extends CRDTSingletonTypeRecord<Entity> | CRDTCollectionTypeRecord<Entity>>(storageKey: ReferenceModeStorageKey, exists: Exists, type: Type): Promise<ReferenceModeStore<Entity, S, C, ReferenceContainer, Container>>;
     reportExceptionInHost(exception: PropagatedException): void;
     on(callback: ProxyCallback<Container>): number;
     off(callback: number): void;
@@ -162,6 +170,7 @@ export declare class ReferenceModeStore<Entity extends Referenceable, S extends 
      * Write the provided entity to the backing store.
      */
     private updateBackingStore;
+    private newBackingInstance;
     /**
      * Apply the an add, remove, set or clear method to the provided operation
      * based on the operation type.

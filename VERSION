@@ -1,9 +1,14 @@
-commit 1e4b2c8453bc7a38c15ecb17f4da10f79bd6bb12
-Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
-Date:   Wed Sep 25 11:28:30 2019 +1000
+commit 9f45ca0d5224a50b30c66f1d6c084896d0dc8318
+Author: shans <shane.stephens@gmail.com>
+Date:   Wed Sep 25 11:40:53 2019 +1000
 
-    Moved android hackathon demo to ./hackathon/android. (#3619)
+    Unify Store construction. (#3613)
     
-    * Moved android hackathon demo to ./hackathon/android.
+    * Add constructors for CRDTs to types and unify constructors for different
+    stores.
     
-    * Exclude hackathon stuff from sigh lint
+    * Fix some issues with runtime
+    
+    * Don't need different CRDTCollection types
+    
+    * review comments

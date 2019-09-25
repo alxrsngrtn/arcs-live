@@ -21,7 +21,6 @@ export declare class BackingStore<T extends CRDTTypeRecord> {
     private exists;
     private type;
     private mode;
-    modelConstructor: new () => CRDTModel<T>;
     private stores;
     private callbacks;
     private nextCallbackId;
@@ -31,7 +30,7 @@ export declare class BackingStore<T extends CRDTTypeRecord> {
     getLocalModel(muxId: string): CRDTModel<T>;
     private setupStore;
     onProxyMessage(message: ProxyMessage<T>, muxId: string): Promise<boolean>;
-    static construct<T extends CRDTTypeRecord>(storageKey: StorageKey, exists: Exists, type: Type, mode: StorageMode, modelConstructor: new () => CRDTModel<T>): Promise<BackingStore<T>>;
+    static construct<T extends CRDTTypeRecord>(storageKey: StorageKey, exists: Exists, type: Type, mode: StorageMode): Promise<BackingStore<T>>;
     idle(): Promise<void>;
     processStoreCallback(muxId: string, message: ProxyMessage<T>): Promise<boolean>;
 }

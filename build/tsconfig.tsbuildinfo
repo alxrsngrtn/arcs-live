@@ -302,7 +302,7 @@
         "signature": "1caf0bf54edc18e0f7bc0bb764e1a91e110d5080b3faa107fa2061281f47da41"
       },
       "../src/runtime/runtime.ts": {
-        "version": "54bc74d5fd5053aab5b37ffc3b1a090097b04592eb044aee1e8e8b5a717a61b5",
+        "version": "515d1f6ca63d897c3eca1056e98698e5038b5cb2b92d55c8ace54a0f4d0c7eea",
         "signature": "e8ee30a2d87e07ad679082bc98045ed85ab998b5e399689a34fea5da8fc46a6f"
       },
       "../src/runtime/storage/volatile-storage.ts": {
@@ -414,20 +414,28 @@
         "signature": "4de19dc3da115f1a9469359b6227ebf89ec59c73934a848233e9dce3cf09a3f5"
       },
       "../src/runtime/storageNG/store-interface.ts": {
-        "version": "9be0990780338ac0d5e99d2418b9d6addaccc80048b671fbb4c10f843a516162",
-        "signature": "a14f7ac4ed624e65b639933b4f6589451ef59aba57d5a5ec5c46fc66bccc439a"
+        "version": "e872a4b801a4ecd2f6d90dfb55fb0e169011666c9bebd3101320a892add9193f",
+        "signature": "af0174812c12eee7edc73773193f911a748bbf6735b3f55ed73ff03d27d5e0ea"
       },
       "../src/runtime/storageNG/direct-store.ts": {
-        "version": "cb4c7320030e71b832945bc681046762525e8974208776c54cd3c38b0c6eb060",
-        "signature": "54ab9a49d3b40e8f9cf5bf9e34e21541d2ada58f59f18cb56e087a49ab6cb17a"
+        "version": "0771e944cf1b63c37f7a13380a85d82655d327c96f2f6ba83bae6533cda7b2ee",
+        "signature": "8129ec26061259de03a2fe9e8c88199ae395faf2cc5af05a0f3b83f6aa80eef7"
       },
       "../src/runtime/storageNG/backing-store.ts": {
-        "version": "083b62ce0a69c2dd026c05684e2e7b2a93f6b4213763f4709a2e865902d2ac23",
-        "signature": "e110847bef5446170eeec742b0ea66ddc66f0751c365dc6eaf36de91f9da04a8"
+        "version": "7ee25cc9ba6fca943769094580bf3cff8b1014902c2bd84aea3b4779e43b6401",
+        "signature": "cd7c4e8b4d3d25e3cffe26c35a1f8256cbee78515bce6b1446bb9f5aa23ad81e"
+      },
+      "../src/runtime/crdt/crdt-entity.ts": {
+        "version": "f73694b9be66726bcc5639519077e675d58abf1930f0ab58feee52ab041c8e3b",
+        "signature": "362ce6c9e7048d0c4a97f29c27b27de7ee17135bff0ff20885eadaaa0cc569ed"
+      },
+      "../src/runtime/storageNG/reference-mode-store.ts": {
+        "version": "493ef89b7bfbe2daf2e530e50e0c1050eb440e2365fd8818d56351266dfe1238",
+        "signature": "e4574f3b1622e9e4d8a6c255ec7f62b091fa8c33b52e82b042582bd449b65202"
       },
       "../src/runtime/storageNG/store.ts": {
-        "version": "8df1ef1c51df7208d6da5c6c6dbf9bab56351dbb09dd6d51ee84e18665f905e0",
-        "signature": "4725f652b5c8a0c8f2494f4117541e9db18e5b2003940842100b48db319cd0bc"
+        "version": "a760b82a2ebbc041c1d42d4663c8e8e55c8d80b207a40e6e7cb4bf32ca64d735",
+        "signature": "812aa92176ff5864265f12a501bb2f5e30de50ce82f81cea05d284746be3cd73"
       },
       "../src/runtime/storageNG/storage-proxy.ts": {
         "version": "e54eee05020b1cc40b0697ed183581627f93ddf43fd14c4f8cf793db83610bde",
@@ -490,12 +498,16 @@
         "signature": "ffa3afb80f8cc77cd72c01393cd3c5f4c4c9a0786b045cf6f032d9ab94a582c1"
       },
       "../src/runtime/schema.ts": {
-        "version": "53824db141ec8c72d21b97903ece80872b8f645a8e000c119c7cdd8fd7671ee7",
-        "signature": "81bac4a083b387a4d57d65afb09a3dc9924d6da977108f1152de7b61b3599e62"
+        "version": "8e2859c61622a14ecbda927dfc56d19d487afc7ac9b382efca738a8127b0baac",
+        "signature": "0d34a813d16ab16eca25e02e330243fd0e23f0204d55fcb50569623cb46384a0"
+      },
+      "../src/runtime/crdt/crdt-count.ts": {
+        "version": "612998865bcd38ba54ea48a37877d4b305aa54f132aaadf4d25e2b53b2c1f138",
+        "signature": "50f22c6414d93bc2b5f52da8ecccca67927c7b89aabb4e86903900a576ab1356"
       },
       "../src/runtime/type.ts": {
-        "version": "00b344b2171361d0c4d2ab5459bcd989927372ce6e9e35fb11a9c28e52ac2d22",
-        "signature": "e7c18f2c2e2ed7e10b3a055fad51ab1ac3fc43bc61874381730845e38e86d032"
+        "version": "8f6130d0b5d543c369110fee9b6cbd04b83fe045a22da00552bfee4c419f784a",
+        "signature": "374d95fc243309ee9dc204260691bd0a8a0fbae56e23064e5e307634a5366b3c"
       },
       "../src/runtime/recipe/type-checker.ts": {
         "version": "0d29294f4265accd54bc7718d8b0855000fb1647f4846d8c186fad7b9b467d98",
@@ -2220,14 +2232,6 @@
         "version": "27b2a37e4ebe0341c986cc9972af4f8325e27c08dcbbb9d435486b72bae575b0",
         "signature": "f7da0f8f9dfe8c0fc06a51cb8d840e54e1b4b8f0c64985075c4a81a7158fb84f"
       },
-      "../src/runtime/crdt/crdt-count.ts": {
-        "version": "612998865bcd38ba54ea48a37877d4b305aa54f132aaadf4d25e2b53b2c1f138",
-        "signature": "50f22c6414d93bc2b5f52da8ecccca67927c7b89aabb4e86903900a576ab1356"
-      },
-      "../src/runtime/crdt/crdt-entity.ts": {
-        "version": "b35455476131941ee09bb8dbf36080996232ddf80a504bd684e692a835175ada",
-        "signature": "f204e5be774f2e28f7532d50f4b6f6b49494a90d7ac5f1d9d05eaa503e925904"
-      },
       "../src/runtime/crdt/tests/crdt-collection-test.ts": {
         "version": "b4f1b58512e6c841728bc809e5ce65c8090c394f857e51288433e264c5805fc3",
         "signature": "8bc1d39a3b8ec61064f9969316a088e314895e7ffd094468dcc0b238f33cb4a6"
@@ -2264,10 +2268,6 @@
         "version": "9e93bab291637ee8054fc668da3ccd8614b85bee2fa29889eebd202737b52c2e",
         "signature": "5406f2b5b660359a22c32b8503f291bbb78f3360b140e9004b96850b20953d4e"
       },
-      "../src/runtime/storageNG/reference-mode-store.ts": {
-        "version": "7b64d809cdfc3ae835405736044b8cdb6856476d166f72affa6e5479adf01868",
-        "signature": "693df9001bacf52686df3c8745869ba50f162823c2be7a2343120972645eedf9"
-      },
       "../src/runtime/storageNG/drivers/ramdisk.ts": {
         "version": "3518f9d81a71f5dd85adcbd4464bbedb731551677303a4d73f2086d6f92cf18c",
         "signature": "1b2b0c3de428c5e70dd50ddeb60ebe84498b0ae5f6d206e5e3edf9079d5cdb80"
@@ -2289,11 +2289,11 @@
         "signature": "fd95df5d076cbfed143dc4904d376b5c6d9cb1091b630994ffe2366010afa6b3"
       },
       "../src/runtime/storageNG/testing/test-storage.ts": {
-        "version": "d71ab7b19c8a7099aee8d409f27efd51571db025f35072c3f89191dbd06e6107",
+        "version": "29cc1118f161870f9231ff544ffd71a64780e192e374e6f971f0f844913a35a7",
         "signature": "1ef0e2bee9f030e565c277a560d826ac209c6747149c2dd7509c7761b2aa8ff6"
       },
       "../src/runtime/storageNG/tests/firebase-store-integration-test.ts": {
-        "version": "49b2a97594079232ceea0d9da7b49939106a4b682d70e83c9d33b0a4a3e7de00",
+        "version": "29e4258eb796b451d83a307f6a28ae8080a36c5e83974b77505c0568a4185b04",
         "signature": "fd95df5d076cbfed143dc4904d376b5c6d9cb1091b630994ffe2366010afa6b3"
       },
       "../src/runtime/storageNG/tests/handle-test.ts": {
@@ -2301,15 +2301,15 @@
         "signature": "fd95df5d076cbfed143dc4904d376b5c6d9cb1091b630994ffe2366010afa6b3"
       },
       "../src/runtime/storageNG/tests/ramdisk-backing-store-integration-test.ts": {
-        "version": "52afff4d03b29a2a7e334167eb510f30aa04a78b8951441b1a1797c935364352",
+        "version": "0345fd6e92613fe1119af8aafc26ac24dddbc9d9172cb666ffd2be8c2aa58555",
         "signature": "fd95df5d076cbfed143dc4904d376b5c6d9cb1091b630994ffe2366010afa6b3"
       },
       "../src/runtime/storageNG/tests/ramdisk-store-integration-test.ts": {
-        "version": "df85c00da614777e58095dc8e66749419eaa20517f9e613f5bdcb71581b67628",
+        "version": "c21b4c1c3b9933f66c6b3e7b8488fd8aa85126097e748f5d6a3d225296ee7c33",
         "signature": "fd95df5d076cbfed143dc4904d376b5c6d9cb1091b630994ffe2366010afa6b3"
       },
       "../src/runtime/storageNG/tests/reference-mode-store-test.ts": {
-        "version": "11682f37d428aa05a9ff73c90b50a3deaa711305f7a1e6ede5dab3347df6430b",
+        "version": "74cbe7a0fc31c3db7c638802f7b3c4eafceb9288805cbf84dbc44d89b69e0724",
         "signature": "fd95df5d076cbfed143dc4904d376b5c6d9cb1091b630994ffe2366010afa6b3"
       },
       "../src/runtime/storageNG/tests/storage-proxy-test.ts": {
@@ -2321,11 +2321,11 @@
         "signature": "18ed1a63d0019c28cba80715295b3b2a0763daf0a90315d2414a70d753607613"
       },
       "../src/runtime/storageNG/tests/store-sequence-test.ts": {
-        "version": "3e65144fd9c18858995a47affbba6661be18a1848bd53254b10abbae391b4eec",
+        "version": "f5b65ceaf7e3ba12cc2fe2ca2673042015a7baca9f753831c7920ef2c1b81db9",
         "signature": "fd95df5d076cbfed143dc4904d376b5c6d9cb1091b630994ffe2366010afa6b3"
       },
       "../src/runtime/storageNG/tests/store-test.ts": {
-        "version": "c75620428bfc1a5570467fbd655745d94663cac4b41d0d99971cac392d6b96af",
+        "version": "2741685b16f75cb99d447fbdfd29a30184cf502bf85aec14bb7d12014909adff",
         "signature": "fd95df5d076cbfed143dc4904d376b5c6d9cb1091b630994ffe2366010afa6b3"
       },
       "../src/runtime/testing/callback-tracker.ts": {
@@ -3562,14 +3562,38 @@
         "../node_modules/@types/node/util.d.ts",
         "../node_modules/@types/node/ts3.1/util.d.ts"
       ],
+      "../src/runtime/crdt/crdt-entity.ts": [
+        "../src/runtime/crdt/crdt.ts",
+        "../src/runtime/crdt/crdt-collection.ts",
+        "../src/runtime/crdt/crdt-singleton.ts",
+        "../src/runtime/hot.ts",
+        "../node_modules/@types/node/util.d.ts",
+        "../node_modules/@types/node/ts3.1/util.d.ts"
+      ],
+      "../src/runtime/storageNG/reference-mode-store.ts": [
+        "../src/runtime/crdt/crdt-singleton.ts",
+        "../src/runtime/crdt/crdt-collection.ts",
+        "../src/runtime/storageNG/store-interface.ts",
+        "../src/runtime/storageNG/backing-store.ts",
+        "../src/runtime/crdt/crdt-entity.ts",
+        "../src/runtime/storageNG/direct-store.ts",
+        "../src/runtime/storageNG/storage-key.ts",
+        "../src/runtime/crdt/crdt.ts",
+        "../src/runtime/storageNG/drivers/driver-factory.ts",
+        "../src/runtime/type.ts",
+        "../src/runtime/hot.ts",
+        "../src/runtime/arc-exceptions.ts",
+        "../node_modules/@types/node/util.d.ts",
+        "../node_modules/@types/node/ts3.1/util.d.ts"
+      ],
       "../src/runtime/storageNG/store.ts": [
         "../src/runtime/crdt/crdt.ts",
         "../src/runtime/type.ts",
         "../src/runtime/storageNG/drivers/driver-factory.ts",
         "../src/runtime/storageNG/storage-key.ts",
         "../src/runtime/storageNG/store-interface.ts",
-        "../src/runtime/storageNG/backing-store.ts",
         "../src/runtime/storageNG/direct-store.ts",
+        "../src/runtime/storageNG/reference-mode-store.ts",
         "../node_modules/@types/node/util.d.ts",
         "../node_modules/@types/node/ts3.1/util.d.ts"
       ],
@@ -3793,18 +3817,30 @@
         "../src/runtime/particle-execution-context.ts",
         "../src/runtime/type.ts",
         "../src/runtime/hot.ts",
+        "../src/runtime/crdt/crdt-entity.ts",
+        "../src/runtime/crdt/crdt-collection.ts",
+        "../src/runtime/handle.ts",
+        "../src/runtime/crdt/crdt-singleton.ts",
+        "../node_modules/@types/node/util.d.ts",
+        "../node_modules/@types/node/ts3.1/util.d.ts"
+      ],
+      "../src/runtime/crdt/crdt-count.ts": [
+        "../src/runtime/crdt/crdt.ts",
+        "../src/runtime/hot.ts",
         "../node_modules/@types/node/util.d.ts",
         "../node_modules/@types/node/ts3.1/util.d.ts"
       ],
       "../src/runtime/type.ts": [
         "../src/runtime/id.ts",
         "../src/runtime/interface-info.ts",
-        "../src/runtime/recipe/type-checker.ts",
         "../src/runtime/schema.ts",
         "../src/runtime/slot-info.ts",
         "../src/runtime/synthetic-types.ts",
         "../src/runtime/type-variable-info.ts",
         "../src/runtime/hot.ts",
+        "../src/runtime/crdt/crdt.ts",
+        "../src/runtime/crdt/crdt-count.ts",
+        "../src/runtime/crdt/crdt-collection.ts",
         "../node_modules/@types/node/util.d.ts",
         "../node_modules/@types/node/ts3.1/util.d.ts"
       ],
@@ -7091,20 +7127,6 @@
         "../node_modules/@types/node/util.d.ts",
         "../node_modules/@types/node/ts3.1/util.d.ts"
       ],
-      "../src/runtime/crdt/crdt-count.ts": [
-        "../src/runtime/crdt/crdt.ts",
-        "../src/runtime/hot.ts",
-        "../node_modules/@types/node/util.d.ts",
-        "../node_modules/@types/node/ts3.1/util.d.ts"
-      ],
-      "../src/runtime/crdt/crdt-entity.ts": [
-        "../src/runtime/crdt/crdt.ts",
-        "../src/runtime/crdt/crdt-collection.ts",
-        "../src/runtime/crdt/crdt-singleton.ts",
-        "../src/runtime/hot.ts",
-        "../node_modules/@types/node/util.d.ts",
-        "../node_modules/@types/node/ts3.1/util.d.ts"
-      ],
       "../src/runtime/crdt/tests/crdt-collection-test.ts": [
         "../src/platform/chai-web.d.ts",
         "../src/runtime/crdt/crdt.ts",
@@ -7185,22 +7207,6 @@
         "../node_modules/@types/node/util.d.ts",
         "../node_modules/@types/node/ts3.1/util.d.ts"
       ],
-      "../src/runtime/storageNG/reference-mode-store.ts": [
-        "../src/runtime/crdt/crdt-singleton.ts",
-        "../src/runtime/crdt/crdt-collection.ts",
-        "../src/runtime/storageNG/store.ts",
-        "../src/runtime/storageNG/backing-store.ts",
-        "../src/runtime/crdt/crdt-entity.ts",
-        "../src/runtime/storageNG/direct-store.ts",
-        "../src/runtime/storageNG/storage-key.ts",
-        "../src/runtime/crdt/crdt.ts",
-        "../src/runtime/storageNG/drivers/driver-factory.ts",
-        "../src/runtime/type.ts",
-        "../src/runtime/hot.ts",
-        "../src/runtime/arc-exceptions.ts",
-        "../node_modules/@types/node/util.d.ts",
-        "../node_modules/@types/node/ts3.1/util.d.ts"
-      ],
       "../src/runtime/storageNG/drivers/ramdisk.ts": [
         "../src/runtime/storageNG/storage-key.ts",
         "../src/runtime/runtime.ts",
@@ -7258,6 +7264,7 @@
         "../src/runtime/storageNG/storage-key.ts",
         "../src/runtime/storageNG/storage-proxy.ts",
         "../src/runtime/storageNG/store.ts",
+        "../src/runtime/type.ts",
         "../node_modules/@types/node/util.d.ts",
         "../node_modules/@types/node/ts3.1/util.d.ts"
       ],
@@ -7268,6 +7275,7 @@
         "../src/runtime/storageNG/drivers/driver-factory.ts",
         "../src/runtime/runtime.ts",
         "../src/runtime/storageNG/testing/mock-firebase.ts",
+        "../src/runtime/type.ts",
         "../node_modules/@types/node/util.d.ts",
         "../node_modules/@types/node/ts3.1/util.d.ts"
       ],
@@ -7294,6 +7302,7 @@
         "../src/runtime/storageNG/drivers/driver-factory.ts",
         "../src/runtime/runtime.ts",
         "../src/runtime/storageNG/backing-store.ts",
+        "../src/runtime/type.ts",
         "../node_modules/@types/node/util.d.ts",
         "../node_modules/@types/node/ts3.1/util.d.ts"
       ],
@@ -7304,6 +7313,7 @@
         "../src/runtime/storageNG/drivers/ramdisk.ts",
         "../src/runtime/storageNG/drivers/driver-factory.ts",
         "../src/runtime/runtime.ts",
+        "../src/runtime/type.ts",
         "../node_modules/@types/node/util.d.ts",
         "../node_modules/@types/node/ts3.1/util.d.ts"
       ],
@@ -7311,14 +7321,14 @@
         "../src/platform/chai-web.d.ts",
         "../src/runtime/storageNG/store.ts",
         "../src/runtime/storageNG/drivers/driver-factory.ts",
-        "../src/runtime/crdt/crdt-count.ts",
-        "../src/runtime/storageNG/storage-key.ts",
         "../src/runtime/storageNG/direct-store.ts",
         "../src/runtime/storageNG/testing/test-storage.ts",
         "../src/runtime/storageNG/reference-mode-store.ts",
         "../src/runtime/crdt/crdt-entity.ts",
         "../src/runtime/crdt/crdt-collection.ts",
         "../src/runtime/crdt/crdt-singleton.ts",
+        "../src/runtime/type.ts",
+        "../src/runtime/schema.ts",
         "../node_modules/@types/node/util.d.ts",
         "../node_modules/@types/node/ts3.1/util.d.ts"
       ],
@@ -7354,6 +7364,7 @@
         "../src/runtime/storageNG/drivers/firebase.ts",
         "../src/runtime/storageNG/testing/test-storage.ts",
         "../src/runtime/arc.ts",
+        "../src/runtime/type.ts",
         "../node_modules/@types/node/util.d.ts",
         "../node_modules/@types/node/ts3.1/util.d.ts"
       ],
@@ -7365,6 +7376,7 @@
         "../src/runtime/storageNG/storage-key.ts",
         "../src/runtime/storageNG/direct-store.ts",
         "../src/runtime/storageNG/testing/test-storage.ts",
+        "../src/runtime/type.ts",
         "../node_modules/@types/node/util.d.ts",
         "../node_modules/@types/node/ts3.1/util.d.ts"
       ],
@@ -8778,6 +8790,26 @@
         "../src/runtime/storageNG/drivers/driver-factory.ts",
         "../src/runtime/type.ts"
       ],
+      "../src/runtime/crdt/crdt-entity.ts": [
+        "../src/runtime/crdt/crdt-singleton.ts",
+        "../src/runtime/crdt/crdt-collection.ts",
+        "../src/runtime/crdt/crdt.ts",
+        "../src/runtime/hot.ts"
+      ],
+      "../src/runtime/storageNG/reference-mode-store.ts": [
+        "../src/runtime/storageNG/storage-key.ts",
+        "../src/runtime/crdt/crdt.ts",
+        "../src/runtime/crdt/crdt-collection.ts",
+        "../src/runtime/crdt/crdt-singleton.ts",
+        "../src/runtime/hot.ts",
+        "../src/runtime/storageNG/backing-store.ts",
+        "../src/runtime/crdt/crdt-entity.ts",
+        "../src/runtime/storageNG/direct-store.ts",
+        "../src/runtime/storageNG/drivers/driver-factory.ts",
+        "../src/runtime/type.ts",
+        "../src/runtime/arc-exceptions.ts",
+        "../src/runtime/storageNG/store-interface.ts"
+      ],
       "../src/runtime/storageNG/store.ts": [
         "../src/runtime/storageNG/store-interface.ts",
         "../src/runtime/crdt/crdt.ts",
@@ -8921,14 +8953,25 @@
         "../src/runtime/handle.ts"
       ],
       "../src/runtime/schema.ts": [
+        "../src/runtime/crdt/crdt-entity.ts",
+        "../src/runtime/crdt/crdt.ts",
         "../src/runtime/hot.ts",
         "../src/runtime/type.ts",
         "../src/runtime/particle-execution-context.ts",
-        "../src/runtime/entity.ts"
+        "../src/runtime/entity.ts",
+        "../src/runtime/crdt/crdt-collection.ts"
+      ],
+      "../src/runtime/crdt/crdt-count.ts": [
+        "../src/runtime/hot.ts",
+        "../src/runtime/crdt/crdt.ts"
       ],
       "../src/runtime/type.ts": [
+        "../src/runtime/crdt/crdt-collection.ts",
         "../src/runtime/hot.ts",
+        "../src/runtime/crdt/crdt-entity.ts",
+        "../src/runtime/crdt/crdt.ts",
         "../src/runtime/schema.ts",
+        "../src/runtime/crdt/crdt-count.ts",
         "../src/runtime/type-variable-info.ts",
         "../src/runtime/interface-info.ts",
         "../src/runtime/slot-info.ts",
@@ -11198,16 +11241,6 @@
         "../src/runtime/keymgmt/keys.ts",
         "../src/runtime/keymgmt/manager.ts"
       ],
-      "../src/runtime/crdt/crdt-count.ts": [
-        "../src/runtime/hot.ts",
-        "../src/runtime/crdt/crdt.ts"
-      ],
-      "../src/runtime/crdt/crdt-entity.ts": [
-        "../src/runtime/crdt/crdt.ts",
-        "../src/runtime/hot.ts",
-        "../src/runtime/crdt/crdt-collection.ts",
-        "../src/runtime/crdt/crdt-singleton.ts"
-      ],
       "../src/runtime/storageNG/drivers/firebase.ts": [
         "../src/runtime/storageNG/storage-key.ts",
         "../src/platform/firebase-web.d.ts",
@@ -11222,20 +11255,6 @@
         "../src/runtime/recipe/connection-constraint.ts",
         "../src/runtime/recipe/walker.ts",
         "../src/runtime/recipe/recipe-walker.ts"
-      ],
-      "../src/runtime/storageNG/reference-mode-store.ts": [
-        "../src/runtime/storageNG/storage-key.ts",
-        "../src/runtime/crdt/crdt.ts",
-        "../src/runtime/crdt/crdt-collection.ts",
-        "../src/runtime/crdt/crdt-singleton.ts",
-        "../src/runtime/hot.ts",
-        "../src/runtime/storageNG/backing-store.ts",
-        "../src/runtime/crdt/crdt-entity.ts",
-        "../src/runtime/storageNG/direct-store.ts",
-        "../src/runtime/storageNG/drivers/driver-factory.ts",
-        "../src/runtime/type.ts",
-        "../src/runtime/arc-exceptions.ts",
-        "../src/runtime/storageNG/store.ts"
       ],
       "../src/runtime/storageNG/drivers/ramdisk.ts": [
         "../src/runtime/storageNG/storage-key.ts",
@@ -11528,6 +11547,8 @@
       "../src/runtime/storageNG/store-interface.ts",
       "../src/runtime/storageNG/direct-store.ts",
       "../src/runtime/storageNG/backing-store.ts",
+      "../src/runtime/crdt/crdt-entity.ts",
+      "../src/runtime/storageNG/reference-mode-store.ts",
       "../src/runtime/storageNG/store.ts",
       "../src/runtime/storageNG/storage-proxy.ts",
       "../src/runtime/storageNG/handle.ts",
@@ -11545,6 +11566,7 @@
       "../src/runtime/particle-execution-context.ts",
       "../src/runtime/entity.ts",
       "../src/runtime/schema.ts",
+      "../src/runtime/crdt/crdt-count.ts",
       "../src/runtime/type.ts",
       "../src/runtime/recipe/type-checker.ts",
       "../src/runtime/particle-check.ts",
@@ -11977,8 +11999,6 @@
       "../src/runtime/keymgmt/webcrypto.ts",
       "../src/runtime/keymgmt/manager.ts",
       "../src/runtime/webmain.ts",
-      "../src/runtime/crdt/crdt-count.ts",
-      "../src/runtime/crdt/crdt-entity.ts",
       "../src/runtime/crdt/tests/crdt-collection-test.ts",
       "../src/runtime/crdt/tests/crdt-count-test.ts",
       "../src/runtime/crdt/tests/crdt-entity-test.ts",
@@ -11988,7 +12008,6 @@
       "../src/runtime/manual_tests/firebase-test.ts",
       "../src/runtime/manual_tests/loader-test.ts",
       "../src/runtime/recipe/constraint-walker.ts",
-      "../src/runtime/storageNG/reference-mode-store.ts",
       "../src/runtime/storageNG/drivers/ramdisk.ts",
       "../src/runtime/storageNG/testing/mock-firebase.ts",
       "../src/runtime/storageNG/drivers/tests/firebase-test.ts",

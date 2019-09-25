@@ -12,12 +12,11 @@ import { DirectStore } from './direct-store.js';
  * A store that allows multiple CRDT models to be stored as sub-keys of a single storageKey location.
  */
 export class BackingStore {
-    constructor(storageKey, exists, type, mode, modelConstructor) {
+    constructor(storageKey, exists, type, mode) {
         this.storageKey = storageKey;
         this.exists = exists;
         this.type = type;
         this.mode = mode;
-        this.modelConstructor = modelConstructor;
         this.stores = {};
         this.callbacks = new Map();
         this.nextCallbackId = 1;
@@ -43,7 +42,7 @@ export class BackingStore {
         }
     }
     async setupStore(muxId) {
-        const store = await DirectStore.construct(this.storageKey.childWithComponent(muxId), this.exists, this.type, this.mode, this.modelConstructor);
+        const store = await DirectStore.construct(this.storageKey.childWithComponent(muxId), this.exists, this.type, this.mode);
         const id = store.on(msg => this.processStoreCallback(muxId, msg));
         const record = { store, id, type: 'record' };
         this.stores[muxId] = record;
@@ -61,8 +60,8 @@ export class BackingStore {
         message.id = id;
         return store.onProxyMessage(message);
     }
-    static async construct(storageKey, exists, type, mode, modelConstructor) {
-        return new BackingStore(storageKey, exists, type, mode, modelConstructor);
+    static async construct(storageKey, exists, type, mode) {
+        return new BackingStore(storageKey, exists, type, mode);
     }
     async idle() {
         const stores = [];

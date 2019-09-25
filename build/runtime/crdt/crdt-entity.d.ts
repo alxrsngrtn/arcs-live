@@ -24,10 +24,10 @@ declare type SingletonEntityData<S extends Identified> = {
 declare type CollectionEntityData<S extends Identified> = {
     [P in keyof S]: CRDTCollectionTypeRecord<S[P]>['data'];
 };
-declare type SingletonEntityModel<S extends Identified> = {
+export declare type SingletonEntityModel<S extends Identified> = {
     [P in keyof S]: CRDTSingleton<S[P]>;
 };
-declare type CollectionEntityModel<S extends Identified> = {
+export declare type CollectionEntityModel<S extends Identified> = {
     [P in keyof S]: CRDTCollection<S[P]>;
 };
 export declare type EntityData<S extends Identified, C extends Identified> = {
@@ -81,7 +81,7 @@ export interface CRDTEntityTypeRecord<S extends Identified, C extends Identified
 declare type EntityModel<S extends Identified, C extends Identified> = CRDTModel<CRDTEntityTypeRecord<S, C>>;
 declare type EntityChange<S extends Identified, C extends Identified> = CRDTChange<CRDTEntityTypeRecord<S, C>>;
 export declare class CRDTEntity<S extends Identified, C extends Identified> implements EntityModel<S, C> {
-    private model;
+    model: EntityInternalModel<S, C>;
     constructor(singletons: SingletonEntityModel<S>, collections: CollectionEntityModel<C>);
     merge(other: EntityData<S, C>): {
         modelChange: EntityChange<S, C>;

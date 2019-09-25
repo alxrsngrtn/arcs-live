@@ -7,12 +7,12 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-import { CRDTSingleton } from '../../crdt/crdt-singleton.js';
 import { IdGenerator } from '../../id.js';
 import { Driver, Exists } from '../drivers/driver-factory.js';
 import { Handle } from '../handle.js';
 import { StorageKey } from '../storage-key.js';
 import { ActiveStore, StorageMode } from '../store.js';
+import { CountType } from '../../type.js';
 /**
  * These classes are intended to provide **extremely** simple fake objects to use
  * when testing StorageNG classes. Methods on these classes should either:
@@ -35,7 +35,7 @@ export class MockDriver extends Driver {
 }
 export class MockStore extends ActiveStore {
     constructor() {
-        super(new MockStorageKey(), Exists.ShouldCreate, null, StorageMode.Direct, CRDTSingleton);
+        super(new MockStorageKey(), Exists.ShouldCreate, new CountType(), StorageMode.Direct);
         this.lastCapturedMessage = null;
         this.lastCapturedException = null;
     }

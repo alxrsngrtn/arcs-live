@@ -14,11 +14,14 @@ import { SlotInfo } from './slot-info.js';
 import { ArcInfo } from './synthetic-types.js';
 import { TypeVariableInfo } from './type-variable-info.js';
 import { Predicate, Literal } from './hot.js';
+import { CRDTTypeRecord, CRDTModel } from './crdt/crdt.js';
+import { CRDTCount } from './crdt/crdt-count.js';
+import { CRDTCollection } from './crdt/crdt-collection.js';
 export interface TypeLiteral extends Literal {
     tag: string;
     data?: any;
 }
-export declare type Tag = 'Entity' | 'TypeVariable' | 'Collection' | 'BigCollection' | 'Relation' | 'Interface' | 'Slot' | 'Reference' | 'Arc' | 'Handle';
+export declare type Tag = 'Entity' | 'TypeVariable' | 'Collection' | 'BigCollection' | 'Relation' | 'Interface' | 'Slot' | 'Reference' | 'Arc' | 'Handle' | 'Count';
 export declare abstract class Type {
     tag: Tag;
     protected constructor(tag: Tag);
@@ -40,6 +43,7 @@ export declare abstract class Type {
     readonly hasUnresolvedVariable: boolean;
     getContainedType(): Type | null;
     isTypeContainer(): boolean;
+    readonly isReference: boolean;
     collectionOf(): CollectionType<this>;
     bigCollectionOf(): BigCollectionType<this>;
     resolvedType(): Type;
@@ -70,6 +74,12 @@ export declare abstract class Type {
     toString(options?: any): string;
     getEntitySchema(): Schema | null;
     toPrettyString(): string | null;
+    crdtInstanceConstructor<T extends CRDTTypeRecord>(): (new () => CRDTModel<T>) | null;
+}
+export declare class CountType extends Type {
+    constructor();
+    toLiteral(): TypeLiteral;
+    crdtInstanceConstructor(): typeof CRDTCount;
 }
 export declare class EntityType extends Type {
     readonly entitySchema: Schema;
@@ -84,6 +94,23 @@ export declare class EntityType extends Type {
     getEntitySchema(): Schema;
     _cloneWithResolutions(variableMap: any): EntityType;
     toPrettyString(): string;
+    crdtInstanceConstructor(): {
+        new (): {
+            model: import("./crdt/crdt-entity.js").EntityInternalModel<import("./hot.js").Dictionary<import("./crdt/crdt-collection.js").Referenceable>, import("./hot.js").Dictionary<import("./crdt/crdt-collection.js").Referenceable>>;
+            merge(other: import("./crdt/crdt-entity.js").EntityData<import("./hot.js").Dictionary<import("./crdt/crdt-collection.js").Referenceable>, import("./hot.js").Dictionary<import("./crdt/crdt-collection.js").Referenceable>>): {
+                modelChange: import("./crdt/crdt.js").CRDTChange<import("./crdt/crdt-entity.js").CRDTEntityTypeRecord<import("./hot.js").Dictionary<import("./crdt/crdt-collection.js").Referenceable>, import("./hot.js").Dictionary<import("./crdt/crdt-collection.js").Referenceable>>>;
+                otherChange: import("./crdt/crdt.js").CRDTChange<import("./crdt/crdt-entity.js").CRDTEntityTypeRecord<import("./hot.js").Dictionary<import("./crdt/crdt-collection.js").Referenceable>, import("./hot.js").Dictionary<import("./crdt/crdt-collection.js").Referenceable>>>;
+            };
+            applyOperation(op: import("./crdt/crdt-entity.js").EntityOperation<import("./hot.js").Dictionary<import("./crdt/crdt-collection.js").Referenceable>, import("./hot.js").Dictionary<import("./crdt/crdt-collection.js").Referenceable>>): boolean;
+            getData(): import("./crdt/crdt-entity.js").EntityData<import("./hot.js").Dictionary<import("./crdt/crdt-collection.js").Referenceable>, import("./hot.js").Dictionary<import("./crdt/crdt-collection.js").Referenceable>>;
+            getParticleView(): {
+                singletons: import("./hot.js").Dictionary<import("./crdt/crdt-collection.js").Referenceable>;
+                collections: {
+                    [x: string]: Set<import("./crdt/crdt-collection.js").Referenceable>;
+                };
+            };
+        };
+    };
 }
 export declare class TypeVariable extends Type {
     readonly variable: TypeVariableInfo;
@@ -123,6 +150,7 @@ export declare class CollectionType<T extends Type> extends Type {
     toString(options?: any): string;
     getEntitySchema(): Schema;
     toPrettyString(): string;
+    crdtInstanceConstructor(): typeof CRDTCollection;
 }
 export declare class BigCollectionType<T extends Type> extends Type {
     readonly bigCollectionType: T;

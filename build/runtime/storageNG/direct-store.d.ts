@@ -34,7 +34,7 @@ export declare class DirectStore<T extends CRDTTypeRecord> extends ActiveStore<T
     idle(): Promise<void>;
     private setState;
     private notifyIdle;
-    static construct<T extends CRDTTypeRecord>(storageKey: StorageKey, exists: Exists, type: Type, mode: StorageMode, modelConstructor: new () => CRDTModel<T>): Promise<DirectStore<T>>;
+    static construct<T extends CRDTTypeRecord>(storageKey: StorageKey, exists: Exists, type: Type, mode: StorageMode): Promise<DirectStore<T>>;
     onReceive(model: T['data'], version: number): Promise<void>;
     private deliverCallbacks;
     private processModelChange;

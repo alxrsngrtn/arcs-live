@@ -2329,6 +2329,509 @@ function sanitizeEntry(type, value, name, context) {
 
 /**
  * @license
+ * Copyright (c) 2019 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+class CRDTError extends Error {
+}
+// A CRDT Change represents a delta between model states. Where possible,
+// this delta should be expressed as a sequence of operations; in which case
+// changeType will be ChangeType.Operations.
+// Sometimes it isn't possible to express a delta as operations. In this case,
+// changeType will be ChangeType.Model, and a full post-merge model will be supplied.
+// A CRDT Change is parameterized by the operations that can be represented, and the data representation
+// of the model.
+var ChangeType;
+(function (ChangeType) {
+    ChangeType[ChangeType["Operations"] = 0] = "Operations";
+    ChangeType[ChangeType["Model"] = 1] = "Model";
+})(ChangeType || (ChangeType = {}));
+
+/**
+ * @license
+ * Copyright (c) 2019 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+var CollectionOpTypes;
+(function (CollectionOpTypes) {
+    CollectionOpTypes[CollectionOpTypes["Add"] = 0] = "Add";
+    CollectionOpTypes[CollectionOpTypes["Remove"] = 1] = "Remove";
+    CollectionOpTypes[CollectionOpTypes["FastForward"] = 2] = "FastForward";
+})(CollectionOpTypes || (CollectionOpTypes = {}));
+class CRDTCollection {
+    constructor() {
+        this.model = { values: {}, version: {} };
+    }
+    merge(other) {
+        const newClock = mergeVersions(this.model.version, other.version);
+        const merged = {};
+        // Fast-forward op to send to other model. Elements added and removed will
+        // be filled in below.
+        const fastForwardOp = {
+            type: CollectionOpTypes.FastForward,
+            added: [],
+            removed: [],
+            oldClock: other.version,
+            newClock,
+        };
+        for (const otherEntry of Object.values(other.values)) {
+            const value = otherEntry.value;
+            const id = value.id;
+            const thisEntry = this.model.values[id];
+            if (thisEntry) {
+                if (sameVersions(thisEntry.version, otherEntry.version)) {
+                    // Both models have the same value at the same version. Add it to the
+                    // merge.
+                    merged[id] = thisEntry;
+                }
+                else {
+                    // Models have different versions for the same value. Merge the
+                    // versions, and update other.
+                    const mergedVersion = mergeVersions(thisEntry.version, otherEntry.version);
+                    merged[id] = { value, version: mergedVersion };
+                    fastForwardOp.added.push([value, mergedVersion]);
+                }
+            }
+            else if (dominates(this.model.version, otherEntry.version)) {
+                // Value was deleted by this model.
+                fastForwardOp.removed.push(value);
+            }
+            else {
+                // Value was added by other model.
+                merged[id] = otherEntry;
+            }
+        }
+        for (const [id, thisEntry] of Object.entries(this.model.values)) {
+            if (!other.values[id] && !dominates(other.version, thisEntry.version)) {
+                // Value was added by this model.
+                merged[id] = thisEntry;
+                fastForwardOp.added.push([thisEntry.value, thisEntry.version]);
+            }
+        }
+        const operations = simplifyFastForwardOp(fastForwardOp) || [fastForwardOp];
+        this.model.values = merged;
+        this.model.version = newClock;
+        const modelChange = {
+            changeType: ChangeType.Model,
+            modelPostChange: this.model
+        };
+        const otherChange = {
+            changeType: ChangeType.Operations,
+            operations,
+        };
+        return { modelChange, otherChange };
+    }
+    applyOperation(op) {
+        switch (op.type) {
+            case CollectionOpTypes.Add:
+                return this.add(op.added, op.actor, op.clock);
+            case CollectionOpTypes.Remove:
+                return this.remove(op.removed, op.actor, op.clock);
+            case CollectionOpTypes.FastForward:
+                return this.fastForward(op);
+            default:
+                throw new CRDTError(`Op ${op} not supported`);
+        }
+    }
+    getData() {
+        return this.model;
+    }
+    getParticleView() {
+        return new Set(Object.values(this.model.values).map(entry => entry.value));
+    }
+    add(value, key, version) {
+        // Only accept an add if it is immediately consecutive to the clock for that actor.
+        const expectedClockValue = (this.model.version[key] || 0) + 1;
+        if (!(expectedClockValue === version[key] || 0)) {
+            return false;
+        }
+        this.model.version[key] = version[key];
+        const previousVersion = this.model.values[value.id] ? this.model.values[value.id].version : {};
+        this.model.values[value.id] = { value, version: mergeVersions(version, previousVersion) };
+        return true;
+    }
+    remove(value, key, version) {
+        if (!this.model.values[value.id]) {
+            return false;
+        }
+        const clockValue = (version[key] || 0);
+        // Removes do not increment the clock.
+        const expectedClockValue = (this.model.version[key] || 0);
+        if (!(expectedClockValue === clockValue)) {
+            return false;
+        }
+        // Cannot remove an element unless version is higher for all other actors as
+        // well.
+        if (!dominates(version, this.model.values[value.id].version)) {
+            return false;
+        }
+        this.model.version[key] = clockValue;
+        delete this.model.values[value.id];
+        return true;
+    }
+    fastForward(op) {
+        const currentClock = this.model.version;
+        if (!dominates(currentClock, op.oldClock)) {
+            // Can't apply fast-forward op. Current model's clock is behind oldClock.
+            return false;
+        }
+        if (dominates(currentClock, op.newClock)) {
+            // Current model already knows about everything in this fast-forward op.
+            // Nothing to do, but not an error.
+            return true;
+        }
+        for (const [value, version] of op.added) {
+            const existingValue = this.model.values[value.id];
+            if (existingValue) {
+                existingValue.version = mergeVersions(existingValue.version, version);
+            }
+            else if (!dominates(currentClock, version)) {
+                this.model.values[value.id] = { value, version };
+            }
+        }
+        for (const value of op.removed) {
+            const existingValue = this.model.values[value.id];
+            if (existingValue && dominates(op.newClock, existingValue.version)) {
+                delete this.model.values[value.id];
+            }
+        }
+        this.model.version = mergeVersions(currentClock, op.newClock);
+        return true;
+    }
+}
+function mergeVersions(version1, version2) {
+    const merged = {};
+    for (const [k, v] of Object.entries(version1)) {
+        merged[k] = v;
+    }
+    for (const [k, v] of Object.entries(version2)) {
+        merged[k] = Math.max(v, version1[k] || 0);
+    }
+    return merged;
+}
+function sameVersions(version1, version2) {
+    if (Object.keys(version1).length !== Object.keys(version2).length) {
+        return false;
+    }
+    for (const [k, v] of Object.entries(version1)) {
+        if (v !== version2[k]) {
+            return false;
+        }
+    }
+    return true;
+}
+/** Returns true if map1 dominates map2. */
+function dominates(map1, map2) {
+    for (const [k, v] of Object.entries(map2)) {
+        if ((map1[k] || 0) < v) {
+            return false;
+        }
+    }
+    return true;
+}
+/**
+ * Converts a simple fast-forward operation into a sequence of regular ops.
+ * Currently only supports converting add ops made by a single actor. Returns
+ * null if it could not simplify the fast-forward operation.
+ */
+function simplifyFastForwardOp(fastForwardOp) {
+    if (fastForwardOp.removed.length > 0) {
+        // Remove ops can't be replayed in order.
+        return null;
+    }
+    if (fastForwardOp.added.length === 0) {
+        // Just a version bump, no add ops to replay.
+        return null;
+    }
+    const actor = getSingleActorIncrement(fastForwardOp.oldClock, fastForwardOp.newClock);
+    if (actor === null) {
+        return null;
+    }
+    // Sort the add ops in increasing order by the actor's version.
+    const addOps = [...fastForwardOp.added].sort(([elem1, v1], [elem2, v2]) => (v1[actor] || 0) - (v2[actor] || 0));
+    let expectedVersion = fastForwardOp.oldClock[actor];
+    for (const [elem, version] of addOps) {
+        if (++expectedVersion !== version[actor]) {
+            // The add op didn't match the expected increment-by-one pattern. Can't
+            // replay it properly.
+            return null;
+        }
+    }
+    // If we reach here then all added versions are incremented by one.
+    // Check the final clock.
+    const expectedClock = { ...fastForwardOp.oldClock };
+    expectedClock[actor] = expectedVersion;
+    if (!sameVersions(expectedClock, fastForwardOp.newClock)) {
+        return null;
+    }
+    return addOps.map(([elem, version]) => ({
+        type: CollectionOpTypes.Add,
+        added: elem,
+        actor,
+        clock: version,
+    }));
+}
+/**
+ * Given two version maps, returns the actor who incremented their version. If
+ * there's more than one such actor, returns null.
+ */
+function getSingleActorIncrement(oldVersion, newVersion) {
+    if (Object.keys(oldVersion).length !== Object.keys(newVersion).length) {
+        return null;
+    }
+    const incrementedActors = Object.entries(oldVersion).filter(([k, v]) => newVersion[k] > v);
+    return incrementedActors.length === 1 ? incrementedActors[0][0] : null;
+}
+
+/**
+ * @license
+ * Copyright (c) 2019 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+var SingletonOpTypes;
+(function (SingletonOpTypes) {
+    SingletonOpTypes[SingletonOpTypes["Set"] = 0] = "Set";
+    SingletonOpTypes[SingletonOpTypes["Clear"] = 1] = "Clear";
+})(SingletonOpTypes || (SingletonOpTypes = {}));
+class CRDTSingleton {
+    constructor() {
+        this.collection = new CRDTCollection();
+    }
+    merge(other) {
+        this.collection.merge(other);
+        // We cannot pass through the collection ops, so always return the updated model.
+        const change = {
+            changeType: ChangeType.Model,
+            modelPostChange: this.collection.getData()
+        };
+        return { modelChange: change, otherChange: change };
+    }
+    applyOperation(op) {
+        if (op.type === SingletonOpTypes.Clear) {
+            return this.clear(op.actor, op.clock);
+        }
+        if (op.type === SingletonOpTypes.Set) {
+            // Remove does not require an increment, but the caller of this method will have incremented
+            // its version, so we hack a version with t-1 for this actor.
+            const removeClock = {};
+            for (const [k, v] of Object.entries(op.clock)) {
+                removeClock[k] = v;
+            }
+            removeClock[op.actor] = op.clock[op.actor] - 1;
+            if (!this.clear(op.actor, removeClock)) {
+                return false;
+            }
+            const addOp = {
+                type: CollectionOpTypes.Add,
+                added: op.value,
+                actor: op.actor,
+                clock: op.clock,
+            };
+            if (!this.collection.applyOperation(addOp)) {
+                return false;
+            }
+        }
+        return true;
+    }
+    getData() {
+        return this.collection.getData();
+    }
+    getParticleView() {
+        // Return any value.
+        return [...this.collection.getParticleView()].sort()[0] || null;
+    }
+    clear(actor, clock) {
+        // Clear all existing values if our clock allows it.
+        for (const value of Object.values(this.collection.getData().values)) {
+            const removeOp = {
+                type: CollectionOpTypes.Remove,
+                removed: value.value,
+                actor,
+                clock,
+            };
+            // If any value fails to remove, we haven't cleared the value and we fail the whole op.
+            //if (!this.collection.applyOperation(removeOp)) {
+            //   return false;
+            // }
+            this.collection.applyOperation(removeOp);
+        }
+        return true;
+    }
+}
+
+/**
+ * @license
+ * Copyright (c) 2019 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+var EntityOpTypes;
+(function (EntityOpTypes) {
+    EntityOpTypes[EntityOpTypes["Set"] = 0] = "Set";
+    EntityOpTypes[EntityOpTypes["Clear"] = 1] = "Clear";
+    EntityOpTypes[EntityOpTypes["Add"] = 2] = "Add";
+    EntityOpTypes[EntityOpTypes["Remove"] = 3] = "Remove";
+})(EntityOpTypes || (EntityOpTypes = {}));
+class CRDTEntity {
+    constructor(singletons, collections) {
+        this.model = { singletons, collections, version: {} };
+    }
+    merge(other) {
+        const singletonChanges = {};
+        const collectionChanges = {};
+        let allOps = true;
+        for (const singleton of Object.keys(this.model.singletons)) {
+            singletonChanges[singleton] = this.model.singletons[singleton].merge(other.singletons[singleton]);
+            if (singletonChanges[singleton].modelChange.changeType === ChangeType.Model ||
+                singletonChanges[singleton].otherChange.changeType === ChangeType.Model) {
+                allOps = false;
+            }
+        }
+        for (const collection of Object.keys(this.model.collections)) {
+            collectionChanges[collection] = this.model.collections[collection].merge(other.collections[collection]);
+            if (collectionChanges[collection].modelChange.changeType === ChangeType.Model ||
+                collectionChanges[collection].otherChange.changeType === ChangeType.Model) {
+                allOps = false;
+            }
+        }
+        for (const versionKey of Object.keys(other.version)) {
+            this.model.version[versionKey] = Math.max(this.model.version[versionKey] || 0, other.version[versionKey]);
+        }
+        if (allOps) {
+            const modelOps = [];
+            const otherOps = [];
+            for (const singleton of Object.keys(singletonChanges)) {
+                for (const operation of singletonChanges[singleton].modelChange.operations) {
+                    let op;
+                    if (operation.type === SingletonOpTypes.Set) {
+                        op = { ...operation, type: EntityOpTypes.Set, field: singleton };
+                    }
+                    else {
+                        op = { ...operation, type: EntityOpTypes.Clear, field: singleton };
+                    }
+                    modelOps.push(op);
+                }
+                for (const operation of singletonChanges[singleton].otherChange.operations) {
+                    let op;
+                    if (operation.type === SingletonOpTypes.Set) {
+                        op = { ...operation, type: EntityOpTypes.Set, field: singleton };
+                    }
+                    else {
+                        op = { ...operation, type: EntityOpTypes.Clear, field: singleton };
+                    }
+                    otherOps.push(op);
+                }
+            }
+            for (const collection of Object.keys(collectionChanges)) {
+                for (const operation of collectionChanges[collection].modelChange.operations) {
+                    let op;
+                    if (operation.type === CollectionOpTypes.Add) {
+                        op = { ...operation, type: EntityOpTypes.Add, field: collection };
+                    }
+                    else {
+                        op = { ...operation, type: EntityOpTypes.Remove, field: collection };
+                    }
+                    modelOps.push(op);
+                }
+                for (const operation of collectionChanges[collection].otherChange.operations) {
+                    let op;
+                    if (operation.type === CollectionOpTypes.Add) {
+                        op = { ...operation, type: EntityOpTypes.Add, field: collection };
+                    }
+                    else {
+                        op = { ...operation, type: EntityOpTypes.Remove, field: collection };
+                    }
+                    otherOps.push(op);
+                }
+            }
+            return { modelChange: { changeType: ChangeType.Operations, operations: modelOps },
+                otherChange: { changeType: ChangeType.Operations, operations: otherOps } };
+        }
+        else {
+            // need to map this.model to get the data out.
+            const change = { changeType: ChangeType.Model, modelPostChange: this.getData() };
+            return { modelChange: change, otherChange: change };
+        }
+    }
+    applyOperation(op) {
+        if (op.type === EntityOpTypes.Set || op.type === EntityOpTypes.Clear) {
+            if (!this.model.singletons[op.field]) {
+                if (this.model.collections[op.field]) {
+                    throw new Error(`Can't apply ${op.type === EntityOpTypes.Set ? 'Set' : 'Clear'} operation to collection field ${op.field}`);
+                }
+                throw new Error(`Invalid field: ${op.field} does not exist`);
+            }
+        }
+        else {
+            if (!this.model.collections[op.field]) {
+                if (this.model.singletons[op.field]) {
+                    throw new Error(`Can't apply ${op.type === EntityOpTypes.Add ? 'Add' : 'Remove'} operation to singleton field ${op.field}`);
+                }
+                throw new Error(`Invalid field: ${op.field} does not exist`);
+            }
+        }
+        const apply = () => {
+            switch (op.type) {
+                case EntityOpTypes.Set:
+                    return this.model.singletons[op.field].applyOperation({ ...op, type: SingletonOpTypes.Set });
+                case EntityOpTypes.Clear:
+                    return this.model.singletons[op.field].applyOperation({ ...op, type: SingletonOpTypes.Clear });
+                case EntityOpTypes.Add:
+                    return this.model.collections[op.field].applyOperation({ ...op, type: CollectionOpTypes.Add });
+                case EntityOpTypes.Remove:
+                    return this.model.collections[op.field].applyOperation({ ...op, type: CollectionOpTypes.Remove });
+                default:
+                    throw new Error(`Unexpected op ${op} for Entity CRDT`);
+            }
+        };
+        if (apply()) {
+            for (const versionKey of Object.keys(op.clock)) {
+                this.model.version[versionKey] = Math.max(this.model.version[versionKey] || 0, op.clock[versionKey]);
+            }
+            return true;
+        }
+        return false;
+    }
+    getData() {
+        const singletons = {};
+        const collections = {};
+        Object.keys(this.model.singletons).forEach(singleton => {
+            singletons[singleton] = this.model.singletons[singleton].getData();
+        });
+        Object.keys(this.model.collections).forEach(collection => {
+            collections[collection] = this.model.collections[collection].getData();
+        });
+        return { singletons, collections, version: this.model.version };
+    }
+    getParticleView() {
+        const result = { singletons: {}, collections: {} };
+        for (const key of Object.keys(this.model.singletons)) {
+            result.singletons[key] = this.model.singletons[key].getParticleView();
+        }
+        for (const key of Object.keys(this.model.collections)) {
+            result.collections[key] = this.model.collections[key].getParticleView();
+        }
+        return result;
+    }
+}
+
+/**
+ * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
  * This code may only be used under the BSD style license found at
  * http://polymer.github.io/LICENSE.txt
@@ -2481,6 +2984,27 @@ class Schema {
     }
     entityClass(context = null) {
         return Entity.createEntityClass(this, context);
+    }
+    crdtConstructor() {
+        const singletons = {};
+        const collections = {};
+        // TODO(shans) do this properly
+        for (const [field, { type }] of Object.entries(this.fields)) {
+            if (type === 'Text') {
+                singletons[field] = new CRDTSingleton();
+            }
+            else if (type === 'Number') {
+                singletons[field] = new CRDTSingleton();
+            }
+            else {
+                throw new Error(`Big Scary Exception: entity field ${field} of type ${type} doesn't yet have a CRDT mapping implemented`);
+            }
+        }
+        return class EntityCRDT extends CRDTEntity {
+            constructor() {
+                super(singletons, collections);
+            }
+        };
     }
     toInlineSchemaString(options) {
         const names = this.names.join(' ') || '*';
@@ -2751,6 +3275,21 @@ class TypeVariableInfo {
 
 /**
  * @license
+ * Copyright (c) 2019 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+var CountOpTypes;
+(function (CountOpTypes) {
+    CountOpTypes[CountOpTypes["Increment"] = 0] = "Increment";
+    CountOpTypes[CountOpTypes["MultiIncrement"] = 1] = "MultiIncrement";
+})(CountOpTypes || (CountOpTypes = {}));
+
+/**
+ * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
  * This code may only be used under the BSD style license found at
  * http://polymer.github.io/LICENSE.txt
@@ -2870,6 +3409,9 @@ class Type {
     isTypeContainer() {
         return false;
     }
+    get isReference() {
+        return false;
+    }
     collectionOf() {
         return new CollectionType(this);
     }
@@ -2937,6 +3479,9 @@ class Type {
     toPrettyString() {
         return null;
     }
+    crdtInstanceConstructor() {
+        return null;
+    }
 }
 class EntityType extends Type {
     constructor(schema) {
@@ -2988,6 +3533,9 @@ class EntityType extends Type {
                 .trim();
         }
         return JSON.stringify(this.entitySchema.toLiteral());
+    }
+    crdtInstanceConstructor() {
+        return this.entitySchema.crdtConstructor();
     }
 }
 class TypeVariable extends Type {
@@ -3141,6 +3689,9 @@ class CollectionType extends Type {
             return entitySchema.description.plural;
         }
         return `${this.collectionType.toPrettyString()} List`;
+    }
+    crdtInstanceConstructor() {
+        return CRDTCollection;
     }
 }
 class BigCollectionType extends Type {
@@ -27135,7 +27686,8 @@ class Runtime {
     newArc(name, storageKeyPrefix, options) {
         const id = IdGenerator.newSession().newArcId(name);
         const storageKey = storageKeyPrefix + id.toString();
-        return new Arc({ id, storageKey, loader: this.loader, slotComposer: new this.composerClass(), context: this.context, ...options });
+        const slotComposer = this.composerClass ? new this.composerClass() : null;
+        return new Arc({ id, storageKey, loader: this.loader, slotComposer, context: this.context, ...options });
     }
     // Stuff the shell needs
     /**

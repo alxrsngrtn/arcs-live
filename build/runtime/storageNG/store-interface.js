@@ -27,12 +27,11 @@ export var ProxyMessageType;
 // A representation of an active store. Subclasses of this class provide specific
 // behaviour as controlled by the provided StorageMode.
 export class ActiveStore {
-    constructor(storageKey, exists, type, mode, modelConstructor) {
+    constructor(storageKey, exists, type, mode) {
         this.storageKey = storageKey;
         this.exists = exists;
         this.type = type;
         this.mode = mode;
-        this.modelConstructor = modelConstructor;
     }
     async idle() {
         return Promise.resolve();

@@ -9,6 +9,8 @@
  */
 import { Entity } from './entity.js';
 import { EntityType, Type } from './type.js';
+import { CRDTEntity } from './crdt/crdt-entity.js';
+import { CRDTSingleton } from './crdt/crdt-singleton.js';
 export class Schema {
     // For convenience, primitive field types can be specified as {name: 'Type'}
     // in `fields`; the constructor will convert these to the correct schema form.
@@ -154,6 +156,27 @@ export class Schema {
     }
     entityClass(context = null) {
         return Entity.createEntityClass(this, context);
+    }
+    crdtConstructor() {
+        const singletons = {};
+        const collections = {};
+        // TODO(shans) do this properly
+        for (const [field, { type }] of Object.entries(this.fields)) {
+            if (type === 'Text') {
+                singletons[field] = new CRDTSingleton();
+            }
+            else if (type === 'Number') {
+                singletons[field] = new CRDTSingleton();
+            }
+            else {
+                throw new Error(`Big Scary Exception: entity field ${field} of type ${type} doesn't yet have a CRDT mapping implemented`);
+            }
+        }
+        return class EntityCRDT extends CRDTEntity {
+            constructor() {
+                super(singletons, collections);
+            }
+        };
     }
     toInlineSchemaString(options) {
         const names = this.names.join(' ') || '*';
