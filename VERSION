@@ -1,14 +1,68 @@
-commit 9f45ca0d5224a50b30c66f1d6c084896d0dc8318
-Author: shans <shane.stephens@gmail.com>
-Date:   Wed Sep 25 11:40:53 2019 +1000
+commit c02a227b02089345aeb38c28509e31c68cd02528
+Author: Alex Rosengarten <alxr@google.com>
+Date:   Wed Sep 25 08:23:15 2019 -0700
 
-    Unify Store construction. (#3613)
+    Using new Kotlin-->Wasm build_defs for Example Particles (#3623)
     
-    * Add constructors for CRDTs to types and unify constructors for different
-    stores.
+    * added schema2kotlin bazel build def
     
-    * Fix some issues with runtime
+    * nit: grammar
     
-    * Don't need different CRDTCollection types
+    * bazel rule to download + make available kotlin native compiler
     
-    * review comments
+    * fix: var rename
+    
+    * - TODO: fix kotlinc_wrapper
+    - created kt binary rule
+    - simplified kotlinc.BUILD
+    - cleaned up repo.bzl
+    
+    * pointing to macos repo
+    
+    * cleanup defs + potential optimization
+    
+    * trying to manually download konan deps
+    
+    * messy, but got it working!
+    
+    * cleanup
+    
+    * Got libraries working!
+    
+    * cleanup
+    
+    * attempt 0: host-multi-platform
+    
+    * - instruct bazel to download all platform versions (windows, macos, linux), let Bazel decide which one is actually needed
+    - modify the wrapper script to detect which platform was *actually* downloaded, then only use *that platform's* dependencies
+    
+    * force add important build file
+    
+    * - added sha256s
+    - rm redundant file
+    - fixed future bugs re: extension
+    
+    * cleanup
+    
+    * Merged with upstream; resolved minor conflicts
+    
+    * added entrypoints to wasm binary rule
+    
+    * kotlin --> wasm working with current particles
+    
+    * added other src, oops
+    
+    * manifest pointing to bazel output :)
+    
+    * updated -- rel paths
+    
+    * updates + fixes to build defs
+    - rm kotlin-native (favoring kotlin_native)
+    - added `entry_point` to binary definition
+    - bugfix: fixed binary replacement (no more cutoff)
+    
+    * rm gradle build
+    
+    * updated README instructions
+    
+    * Buildifier
