@@ -1,28 +1,9 @@
-commit 299c0f1947187303075a4c09f3c60e96fd1bd553
-Author: Alex Rosengarten <alxr@google.com>
-Date:   Wed Sep 25 19:44:47 2019 -0700
+commit b5318f9efe9ccd7fc8da20cb2cf0da8568f7c9ab
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Thu Sep 26 08:23:35 2019 -0700
 
-    Wasm Compilation + Hot Code Reloading (#3627)
+    runtime context: unregister stores of disposed arcs and add tests (#3632)
     
-    * add iml to gitignore
+    * runtime context: unregister stores of disposed arcs and add tests
     
-    * Cleaned up wasm sdk
-    
-    * Created Native/Wasm example
-    
-    * Cleaned up build files
-    
-    * Using Schema gen rules instead of checked in entities
-    
-    * Ran buildifier
-    
-    * no need for binary in build file
-    
-    * Merged WasmTemplate and Native/Wasm
-    - WasmTemplate build had an error. I replicated the project in Native/Wasm to the point where it produces the same error.
-    
-    * updated README
-    
-    * pointing to wasm sources
-    
-    * Expose Wasm particles to webshell
+    * address comments

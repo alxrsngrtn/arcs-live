@@ -32,7 +32,7 @@ export declare class Runtime {
     private composerClass;
     readonly context: Manifest;
     private readonly ramDiskMemory;
-    private readonly arcById;
+    readonly arcById: Map<string, Arc>;
     static getRuntime(): Runtime;
     static clearRuntimeForTesting(): void;
     static newForNodeTesting(context?: Manifest): Runtime;
@@ -48,7 +48,9 @@ export declare class Runtime {
      * (3) a newly created arc
      */
     runArc(name: string, storageKeyPrefix: string, options?: RuntimeArcOptions): Arc;
+    stop(name: string): void;
     registerStore(store: StorageProviderBase, tags: string[]): void;
+    unregisterStore(storeId: string): void;
     /**
      * Given an arc, returns it's description as a string.
      */

@@ -302,8 +302,8 @@
         "signature": "1caf0bf54edc18e0f7bc0bb764e1a91e110d5080b3faa107fa2061281f47da41"
       },
       "../src/runtime/runtime.ts": {
-        "version": "515d1f6ca63d897c3eca1056e98698e5038b5cb2b92d55c8ace54a0f4d0c7eea",
-        "signature": "e8ee30a2d87e07ad679082bc98045ed85ab998b5e399689a34fea5da8fc46a6f"
+        "version": "2c3b930a6e5a721e671bf3f6ed26abcc47876843401a9bd294451808db018e81",
+        "signature": "c8b279f9b16ea914e84ad5251a0941170f5c200ae462b452128fa17b88e606b0"
       },
       "../src/runtime/storage/volatile-storage.ts": {
         "version": "5183347d18ab88a72585e5a0b8e41a45a3dd9a55c5b46e4f215ec390ed056349",
@@ -478,7 +478,7 @@
         "signature": "f2d8b054448cb4886900f4baa77e8b41c7d00a7a3bd25a90752e325aab5e14c3"
       },
       "../src/runtime/arc.ts": {
-        "version": "7985c5db7ca05d16c139a5c8e10b35e44419083ebe3966f916e294473e992c2f",
+        "version": "e9db15ea8091adee21ad0680aba0d13855718b1d8700f14fdfcd3c6e0e6e1981",
         "signature": "9db1ecab7db5a3c0ed568d4ee5797f49434da04af2be2fa1e50765acccf53245"
       },
       "../src/runtime/api-channel.ts": {
@@ -2441,7 +2441,7 @@
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "../src/runtime/tests/runtime-test.ts": {
-        "version": "6090fb3c30e7b0266221f7482dc2576743ff41881db3aae2e14f5b2bf9374ec2",
+        "version": "e3bdc0e5602eff076b5de7941b3f61541b3f043a1bc5362af75124b68737f8a9",
         "signature": "8bc1d39a3b8ec61064f9969316a088e314895e7ffd094468dcc0b238f33cb4a6"
       },
       "../src/runtime/tests/schema-test.ts": {
@@ -3248,6 +3248,7 @@
         "../node_modules/@types/node/ts3.1/util.d.ts"
       ],
       "../src/runtime/runtime.ts": [
+        "../src/platform/assert-web.ts",
         "../src/runtime/description.ts",
         "../src/runtime/manifest.ts",
         "../src/runtime/arc.ts",
@@ -7695,6 +7696,7 @@
         "../src/runtime/runtime.ts",
         "../src/runtime/testing/fake-slot-composer.ts",
         "../src/runtime/id.ts",
+        "../src/runtime/testing/stub-loader.ts",
         "../node_modules/@types/node/util.d.ts",
         "../node_modules/@types/node/ts3.1/util.d.ts"
       ],
@@ -8605,11 +8607,11 @@
         "../src/runtime/storage/storage-provider-factory.ts",
         "../src/runtime/arc-inspector.ts",
         "../src/runtime/manifest.ts",
+        "../src/runtime/arc.ts",
         "../src/runtime/loader.ts",
         "../src/runtime/slot-composer.ts",
         "../src/runtime/runtime-cache.ts",
         "../src/runtime/storageNG/drivers/volatile.ts",
-        "../src/runtime/arc.ts",
         "../src/runtime/storage/storage-provider-base.ts"
       ],
       "../src/runtime/storage/volatile-storage.ts": [

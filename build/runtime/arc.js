@@ -101,6 +101,9 @@ export class Arc {
             this.pec.slotComposer.dispose();
         }
         DriverFactory.unregister(this.volatileStorageDriverProvider);
+        for (const store of this._stores) {
+            Runtime.getRuntime().unregisterStore(store.id);
+        }
     }
     // Returns a promise that spins sending a single `AwaitIdle` message until it
     // sees no other messages were sent.

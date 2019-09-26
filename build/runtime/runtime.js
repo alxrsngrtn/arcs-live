@@ -7,6 +7,7 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
+import { assert } from '../platform/assert-web.js';
 import { Description } from './description.js';
 import { Manifest } from './manifest.js';
 import { Arc } from './arc.js';
@@ -66,11 +67,16 @@ export class Runtime {
      * (3) a newly created arc
      */
     runArc(name, storageKeyPrefix, options) {
-        if (!this.arcById[name]) {
+        if (!this.arcById.has(name)) {
             // TODO: Support deserializing serialized arcs.
-            this.arcById[name] = this.newArc(name, storageKeyPrefix, options);
+            this.arcById.set(name, this.newArc(name, storageKeyPrefix, options));
         }
-        return this.arcById[name];
+        return this.arcById.get(name);
+    }
+    stop(name) {
+        assert(this.arcById.has(name), `Cannot stop nonexistent arc ${name}`);
+        this.arcById.get(name).dispose();
+        this.arcById.delete(name);
     }
     // TODO: This is a temporary method to allow sharing stores with other Arcs.
     registerStore(store, tags) {
@@ -79,6 +85,14 @@ export class Runtime {
             this.context['_addStore'](store, tags);
         }
         // TODO: clear stores, when arc is being disposed.
+    }
+    unregisterStore(storeId) {
+        const index = this.context.stores.findIndex(store => store.id === storeId);
+        if (index >= 0) {
+            const store = this.context.stores[index];
+            this.context.storeTags.delete(store);
+            this.context.stores.splice(index, 1);
+        }
     }
     /**
      * Given an arc, returns it's description as a string.
