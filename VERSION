@@ -1,9 +1,28 @@
-commit cdd8264a757a74950615bee8daf7b9454ea0a740
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Wed Sep 25 09:55:14 2019 -0700
+commit 299c0f1947187303075a4c09f3c60e96fd1bd553
+Author: Alex Rosengarten <alxr@google.com>
+Date:   Wed Sep 25 19:44:47 2019 -0700
 
-    long running arc with a CapturePerson particle rejoining existing arc (#3626)
+    Wasm Compilation + Hot Code Reloading (#3627)
     
-    * long running arc; particle capture person rejoining existing arc
+    * add iml to gitignore
     
-    * address comments
+    * Cleaned up wasm sdk
+    
+    * Created Native/Wasm example
+    
+    * Cleaned up build files
+    
+    * Using Schema gen rules instead of checked in entities
+    
+    * Ran buildifier
+    
+    * no need for binary in build file
+    
+    * Merged WasmTemplate and Native/Wasm
+    - WasmTemplate build had an error. I replicated the project in Native/Wasm to the point where it produces the same error.
+    
+    * updated README
+    
+    * pointing to wasm sources
+    
+    * Expose Wasm particles to webshell
