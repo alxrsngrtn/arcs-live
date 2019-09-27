@@ -9224,8 +9224,13 @@ class UiSimpleParticle extends _particle_js__WEBPACK_IMPORTED_MODULE_1__["Partic
         }
     }
     // TODO(sjmiles): experimental: high-level handle set
-    async set(name, value) {
-        const handle = this.handles.get(name);
+    // if handleName is an Singleton, then
+    // - value can be a POJO or an Entity, value is `set`
+    // if handleName is a Collection, then
+    // - values must be an array of POJO
+    // ^ needs more cases!
+    async set(handleName, value) {
+        const handle = this.handles.get(handleName);
         if (handle) {
             // TODO(sjmiles): cannot test class of `handle` because I have no
             // references to those classes, i.e. `handle is Singleton`, throws

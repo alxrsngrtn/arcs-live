@@ -1,5 +1,45 @@
-commit 92b5f8677b7a48affee8774b66fac977f0d7859d
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Thu Sep 26 17:45:01 2019 -0700
+commit 63b5560bc920fbaa8d642350add320b5e2cfe426
+Author: Scott J. Miles <sjmiles@google.com>
+Date:   Fri Sep 27 13:22:24 2019 -0700
 
-    java library refactoring and cleanup (1st pr of some) (#3640)
+    Update web-shell to use UiParticle, introduce broker-shell (#3637)
+    
+    * ui-slot-composer::sendEvent
+    
+    * port universal-shell as broker-shell
+    
+    * convert to UiParticle
+    
+    * add some info to xen explainer
+    
+    * add Google-owned media server as acceptable image endpoint (source of user avatars for restaurant reviews)
+    
+    * s/universal-shell/broker-shell
+    
+    * update arc-component/element to use UiSlotComposer
+    
+    * use new method to find particle from id that doesn't require arc reference
+    
+    * add recipes to the pipes-shell context
+    
+    * standardize on arc-element (over web-arc), fixup usage of logsFactory, take over suggestion rendering
+    
+    * did npm i
+    
+    * make Reservations work
+    
+    * fix suggestions
+    
+    * debug logs for events
+    
+    * update Products demo to UiParticle
+    
+    * Update PlaylistItem
+    
+    * add code note
+    
+    * fixups
+    
+    * New planificator sends a notification that used to be missed, updating the test counts.
+    
+    * remove dead code

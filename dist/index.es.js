@@ -24378,7 +24378,7 @@ class Arc {
         }
         DriverFactory.unregister(this.volatileStorageDriverProvider);
         for (const store of this._stores) {
-            Runtime.getRuntime().unregisterStore(store.id);
+            Runtime.getRuntime().unregisterStore(store.id, [...this.findStoreTags(store)]);
         }
     }
     // Returns a promise that spins sending a single `AwaitIdle` message until it
@@ -24634,7 +24634,7 @@ ${this.activeRecipe.toString()}`;
     async _getParticleInstantiationInfo(recipeParticle) {
         const info = { spec: recipeParticle.spec, stores: new Map() };
         this.loadedParticleInfo.set(recipeParticle.id.toString(), info);
-        // if supported, provide particle caching via a BloblUrl representing spec.implFile
+        // if supported, provide particle caching via a BlobUrl representing spec.implFile
         if (!recipeParticle.isJavaParticle()) {
             await this._provisionSpecUrl(recipeParticle.spec);
         }
@@ -27719,7 +27719,10 @@ class Runtime {
         }
         // TODO: clear stores, when arc is being disposed.
     }
-    unregisterStore(storeId) {
+    unregisterStore(storeId, tags) {
+        if (!tags.includes('shared')) {
+            return;
+        }
         const index = this.context.stores.findIndex(store => store.id === storeId);
         if (index >= 0) {
             const store = this.context.stores[index];
@@ -28656,8 +28659,13 @@ class UiSimpleParticle extends Particle$1 {
         }
     }
     // TODO(sjmiles): experimental: high-level handle set
-    async set(name, value) {
-        const handle = this.handles.get(name);
+    // if handleName is an Singleton, then
+    // - value can be a POJO or an Entity, value is `set`
+    // if handleName is a Collection, then
+    // - values must be an array of POJO
+    // ^ needs more cases!
+    async set(handleName, value) {
+        const handle = this.handles.get(handleName);
         if (handle) {
             // TODO(sjmiles): cannot test class of `handle` because I have no
             // references to those classes, i.e. `handle is Singleton`, throws
@@ -35314,6 +35322,8 @@ class PlanConsumer {
     }
     registerVisibleSuggestionsChangedCallback(callback) {
         this.visibleSuggestionsChangeCallbacks.push(callback);
+        // TODO(sjmiles): notify new listener about current state
+        callback(this.getCurrentSuggestions());
     }
     setSuggestFilter(showAll, search) {
         assert(!showAll || !search);

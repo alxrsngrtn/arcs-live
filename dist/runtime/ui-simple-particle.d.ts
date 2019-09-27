@@ -78,7 +78,7 @@ export declare class UiSimpleParticle extends Particle {
      * Modification is done by removing the old entity and reinserting the new one.
      */
     updateCollection(handleName: string, entity: Entity): Promise<void>;
-    set(name: any, value: any): Promise<any>;
+    set(handleName: any, value: any): Promise<any>;
     /**
      * Return array of Entities dereferenced from array of Share-Type Entities
      */

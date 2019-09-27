@@ -302,8 +302,8 @@
         "signature": "1caf0bf54edc18e0f7bc0bb764e1a91e110d5080b3faa107fa2061281f47da41"
       },
       "../src/runtime/runtime.ts": {
-        "version": "2c3b930a6e5a721e671bf3f6ed26abcc47876843401a9bd294451808db018e81",
-        "signature": "c8b279f9b16ea914e84ad5251a0941170f5c200ae462b452128fa17b88e606b0"
+        "version": "3327013e21edbbabfbb493d7e37c3be0f15daf65b9ce242b86cbd8c2260b83be",
+        "signature": "1850a1df1ed7f49b06b57a2cc7267d97ac3327216911f663d561d0a56a869099"
       },
       "../src/runtime/storage/volatile-storage.ts": {
         "version": "5183347d18ab88a72585e5a0b8e41a45a3dd9a55c5b46e4f215ec390ed056349",
@@ -478,7 +478,7 @@
         "signature": "f2d8b054448cb4886900f4baa77e8b41c7d00a7a3bd25a90752e325aab5e14c3"
       },
       "../src/runtime/arc.ts": {
-        "version": "e9db15ea8091adee21ad0680aba0d13855718b1d8700f14fdfcd3c6e0e6e1981",
+        "version": "72c5893abf250f5cbec78967c5aee526c4d2d8cff0c87178fe1c97cf09e66135",
         "signature": "9db1ecab7db5a3c0ed568d4ee5797f49434da04af2be2fa1e50765acccf53245"
       },
       "../src/runtime/api-channel.ts": {
@@ -798,7 +798,7 @@
         "signature": "55534ada5c9912c9301a9641e968b9978f1bce14e0647a5018231a458a5e4c8f"
       },
       "../src/planning/plan/plan-consumer.ts": {
-        "version": "7cc2bb8dfc95f241f77d63b155c279a330e04c25f73af58b1d5cec495021c741",
+        "version": "43c8f92d1e9bf7abc68b6f2265121f8ad498caba06339e3cd8abe423111fef90",
         "signature": "fa9a8811b2c20da5fc12f4ce9dd3056671ca64e6f0e9a95c7f6b7232c17da575"
       },
       "../src/planning/planner-inspector.ts": {
@@ -1174,7 +1174,7 @@
         "signature": "f3ea307bbc9acf5f20f39d3c51e478776218c04c8de67ec72948130081508c72"
       },
       "../src/planning/plan/tests/plan-consumer-test.ts": {
-        "version": "11798fe1bff41ac496dd15c724bf10b7c486ad7e0c2ddbd704f5b86c149a7d77",
+        "version": "31b8600d45f80e420f91f84386180be70ac336192cc520550921bf90b8fe74b2",
         "signature": "de02016bff8df10c3a9e77f9ed8e56f6d786f1adbcddc74f4fa35b0250121cb2"
       },
       "../src/planning/plan/tests/plan-producer-test.ts": {
@@ -1394,8 +1394,8 @@
         "signature": "9615d2d878c06c0c35f6b3f4d2a619d3b5568d91f90f3d8844beb86d62bd3fa0"
       },
       "../src/runtime/ui-simple-particle.ts": {
-        "version": "ea388bc931abb2f3d670363b33da3bb99dc8661a9c0ad24b84d63d4190b35475",
-        "signature": "57339d723af31aec62876f6948bc5ea4572f95b476b705e6e59dc5a43a24f354"
+        "version": "e086de847335218b712d09d3c3d375af6bc4d45d9282e581e65277ec4af31963",
+        "signature": "fef5b0ff234eeeaf5cacfd794acc9366f83b55814f631da641d5f5aaecdcd0db"
       },
       "../src/runtime/ui-particle.ts": {
         "version": "a4919ec546c2846eb2c752eb69994c6f396196e8c924204982708ca8c6f5e348",
@@ -2201,7 +2201,7 @@
         "signature": "aff514b5ca3f500524542842c93fa7ade3927c4166596d8d37b3ad1fa3d1d014"
       },
       "../src/runtime/ui-slot-composer.ts": {
-        "version": "74d74c804704b8258102b7ac72d3d2d3f504552aaf397395375e416e8bec4f2d",
+        "version": "05777e5915e4ddd5097056f5fca62b36461acdaf12d88483500d7208b975bd63",
         "signature": "2d41f734fe7d57dfc539d1354b548ba5c8725010b6d03ac8bb6e681baaa90115"
       },
       "../src/runtime/webassembly.d.ts": {

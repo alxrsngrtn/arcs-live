@@ -31,6 +31,8 @@ import 'https://$particles/PipeApps/Ingestion.arcs'
 import 'https://$particles/PipeApps/AndroidAutofill.arcs'
 // UIBroker/demo particles below here
 import 'https://$particles/Pipes/Pipes.arcs'
+import 'https://$particles/Restaurants/Restaurants.arcs'
+import 'https://$particles/Notification/Notification.arcs'
 `;
 
 export const initPipe = async (client, paths, storage) => {
@@ -71,7 +73,7 @@ const populateDispatcher = (dispatcher, storage, context, env) => {
     // TODO: eventually this should replace `spawn`. currently adding a parallel
     // API call, to not affect existing demos.
     runArc: async (msg, tid, bus) => {
-      return await runArc(msg, tid, bus, runtime, env);
+      return await runArc(msg, bus, runtime, env);
     },
     stopArc: async (msg, tid, bus) => {
       return await stopArc(msg, runtime);

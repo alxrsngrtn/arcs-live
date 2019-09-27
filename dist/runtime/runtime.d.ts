@@ -50,7 +50,7 @@ export declare class Runtime {
     runArc(name: string, storageKeyPrefix: string, options?: RuntimeArcOptions): Arc;
     stop(name: string): void;
     registerStore(store: StorageProviderBase, tags: string[]): void;
-    unregisterStore(storeId: string): void;
+    unregisterStore(storeId: string, tags: string[]): void;
     /**
      * Given an arc, returns it's description as a string.
      */

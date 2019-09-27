@@ -102,7 +102,7 @@ export class Arc {
         }
         DriverFactory.unregister(this.volatileStorageDriverProvider);
         for (const store of this._stores) {
-            Runtime.getRuntime().unregisterStore(store.id);
+            Runtime.getRuntime().unregisterStore(store.id, [...this.findStoreTags(store)]);
         }
     }
     // Returns a promise that spins sending a single `AwaitIdle` message until it
@@ -358,7 +358,7 @@ ${this.activeRecipe.toString()}`;
     async _getParticleInstantiationInfo(recipeParticle) {
         const info = { spec: recipeParticle.spec, stores: new Map() };
         this.loadedParticleInfo.set(recipeParticle.id.toString(), info);
-        // if supported, provide particle caching via a BloblUrl representing spec.implFile
+        // if supported, provide particle caching via a BlobUrl representing spec.implFile
         if (!recipeParticle.isJavaParticle()) {
             await this._provisionSpecUrl(recipeParticle.spec);
         }

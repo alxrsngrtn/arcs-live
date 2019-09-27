@@ -36,6 +36,8 @@ export class PlanConsumer {
     }
     registerVisibleSuggestionsChangedCallback(callback) {
         this.visibleSuggestionsChangeCallbacks.push(callback);
+        // TODO(sjmiles): notify new listener about current state
+        callback(this.getCurrentSuggestions());
     }
     setSuggestFilter(showAll, search) {
         assert(!showAll || !search);
