@@ -1,9 +1,5 @@
-commit b5318f9efe9ccd7fc8da20cb2cf0da8568f7c9ab
+commit 92b5f8677b7a48affee8774b66fac977f0d7859d
 Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Thu Sep 26 08:23:35 2019 -0700
+Date:   Thu Sep 26 17:45:01 2019 -0700
 
-    runtime context: unregister stores of disposed arcs and add tests (#3632)
-    
-    * runtime context: unregister stores of disposed arcs and add tests
-    
-    * address comments
+    java library refactoring and cleanup (1st pr of some) (#3640)
