@@ -1,45 +1,5 @@
-commit 63b5560bc920fbaa8d642350add320b5e2cfe426
-Author: Scott J. Miles <sjmiles@google.com>
-Date:   Fri Sep 27 13:22:24 2019 -0700
+commit aea5a54ec030390e0fdbc9204d6ec7ac7094169f
+Author: Sarah Heimlich <heimlich@google.com>
+Date:   Fri Sep 27 14:18:36 2019 -0700
 
-    Update web-shell to use UiParticle, introduce broker-shell (#3637)
-    
-    * ui-slot-composer::sendEvent
-    
-    * port universal-shell as broker-shell
-    
-    * convert to UiParticle
-    
-    * add some info to xen explainer
-    
-    * add Google-owned media server as acceptable image endpoint (source of user avatars for restaurant reviews)
-    
-    * s/universal-shell/broker-shell
-    
-    * update arc-component/element to use UiSlotComposer
-    
-    * use new method to find particle from id that doesn't require arc reference
-    
-    * add recipes to the pipes-shell context
-    
-    * standardize on arc-element (over web-arc), fixup usage of logsFactory, take over suggestion rendering
-    
-    * did npm i
-    
-    * make Reservations work
-    
-    * fix suggestions
-    
-    * debug logs for events
-    
-    * update Products demo to UiParticle
-    
-    * Update PlaylistItem
-    
-    * add code note
-    
-    * fixups
-    
-    * New planificator sends a notification that used to be missed, updating the test counts.
-    
-    * remove dead code
+    Tutorial 4. (#3643)
