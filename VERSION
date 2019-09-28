@@ -1,5 +1,9 @@
-commit 7497ac350882d17375b6ff9767e3b6dab6dd66ae
+commit babec386878a194ec6a3f594544d4b7a56d38b0e
 Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Fri Sep 27 17:33:28 2019 -0700
+Date:   Fri Sep 27 18:47:50 2019 -0700
 
-    delete arcs android javaharness web implementation (#3645)
+    add modality to ui-slot-composer rendering content packet (#3636)
+    
+    * add modality to ui-slot-composer rendering content packet
+    
+    * only update modality, if not set by the particle

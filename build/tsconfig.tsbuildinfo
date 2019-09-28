@@ -2201,7 +2201,7 @@
         "signature": "aff514b5ca3f500524542842c93fa7ade3927c4166596d8d37b3ad1fa3d1d014"
       },
       "../src/runtime/ui-slot-composer.ts": {
-        "version": "05777e5915e4ddd5097056f5fca62b36461acdaf12d88483500d7208b975bd63",
+        "version": "d8c2938f89e11608555333982c774072ac5925255c4e061d435884ef837ebdc1",
         "signature": "2d41f734fe7d57dfc539d1354b548ba5c8725010b6d03ac8bb6e681baaa90115"
       },
       "../src/runtime/webassembly.d.ts": {
