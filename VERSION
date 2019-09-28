@@ -1,5 +1,5 @@
-commit aea5a54ec030390e0fdbc9204d6ec7ac7094169f
-Author: Sarah Heimlich <heimlich@google.com>
-Date:   Fri Sep 27 14:18:36 2019 -0700
+commit c8e4c33c7db6fa24cd0f67648f9c08789e596c7a
+Author: Ray Cromwell <cromwellian@gmail.com>
+Date:   Fri Sep 27 17:28:19 2019 -0700
 
-    Tutorial 4. (#3643)
+    Fix comformance errors, exported must be explicitly specified (#3647)
