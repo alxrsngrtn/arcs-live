@@ -1,5 +1,5 @@
-commit c8e4c33c7db6fa24cd0f67648f9c08789e596c7a
-Author: Ray Cromwell <cromwellian@gmail.com>
-Date:   Fri Sep 27 17:28:19 2019 -0700
+commit 7497ac350882d17375b6ff9767e3b6dab6dd66ae
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Fri Sep 27 17:33:28 2019 -0700
 
-    Fix comformance errors, exported must be explicitly specified (#3647)
+    delete arcs android javaharness web implementation (#3645)
