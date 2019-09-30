@@ -27711,15 +27711,18 @@ class Runtime {
         this.arcById.get(name).dispose();
         this.arcById.delete(name);
     }
-    // TODO: This is a temporary method to allow sharing stores with other Arcs.
+    // Temporary method to allow sharing stores with other Arcs (until Context
+    // is properly implemented)
     registerStore(store, tags) {
+        // #shared tag indicates that a store should be made available to all arcs.
         if (!this.context.findStoreById(store.id) && tags.includes('shared')) {
             // tslint:disable-next-line: no-any
             this.context['_addStore'](store, tags);
         }
-        // TODO: clear stores, when arc is being disposed.
     }
+    // Temporary method to allow sharing stores with other Arcs.
     unregisterStore(storeId, tags) {
+        // #shared tag indicates that a store was made available to all arcs.
         if (!tags.includes('shared')) {
             return;
         }

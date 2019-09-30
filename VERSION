@@ -1,21 +1,5 @@
-commit 8f6f30bafb5dee330d4fac555678f0ebc08a3f3e
-Author: Alex Rosengarten <alxr@google.com>
-Date:   Mon Sep 30 12:41:56 2019 -0700
+commit 5c64921e92c0b89842ceb47474476436303513d3
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Mon Sep 30 16:17:29 2019 -0700
 
-    Kotlin cleanup + Tutorial Build (#3644)
-    
-    * rm duplicated particle api
-    
-    * rm stale gradle build files
-    
-    * rename particle_sdk --> arcs
-    
-    * converted tutorial 1 to bazel build
-    
-    * tutorial 2 converted to bazel
-    
-    * - Waiting on loader patch from #3638 to fix schema / entity generator
-    
-    * buildifier for kotlin tutorials
-    
-    * added default entrypoint
+    update runtime comments on shared tag (#3650)
