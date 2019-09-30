@@ -1,9 +1,21 @@
-commit babec386878a194ec6a3f594544d4b7a56d38b0e
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Fri Sep 27 18:47:50 2019 -0700
+commit 8f6f30bafb5dee330d4fac555678f0ebc08a3f3e
+Author: Alex Rosengarten <alxr@google.com>
+Date:   Mon Sep 30 12:41:56 2019 -0700
 
-    add modality to ui-slot-composer rendering content packet (#3636)
+    Kotlin cleanup + Tutorial Build (#3644)
     
-    * add modality to ui-slot-composer rendering content packet
+    * rm duplicated particle api
     
-    * only update modality, if not set by the particle
+    * rm stale gradle build files
+    
+    * rename particle_sdk --> arcs
+    
+    * converted tutorial 1 to bazel build
+    
+    * tutorial 2 converted to bazel
+    
+    * - Waiting on loader patch from #3638 to fix schema / entity generator
+    
+    * buildifier for kotlin tutorials
+    
+    * added default entrypoint
