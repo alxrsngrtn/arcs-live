@@ -51,6 +51,7 @@ export declare class WasmParticle extends Particle {
     private revHandleMap;
     private converters;
     constructor(id: string, container: WasmContainer);
+    renderOutput(): void;
     setHandles(handles: ReadonlyMap<string, Handle>): Promise<void>;
     onHandleSync(handle: Handle, model: any): Promise<void>;
     onHandleUpdate(handle: Handle, update: {
@@ -70,8 +71,19 @@ export declare class WasmParticle extends Particle {
     private getHandle;
     private decodeEntity;
     private ensureIdentified;
+    output(content: any): void;
+    onRenderOutput(templatePtr: WasmAddress, modelPtr: WasmAddress): void;
+    /**
+     * @deprecated for contexts using UiBroker (e.g Kotlin)
+     */
     renderSlot(slotName: string, contentTypes: string[]): void;
+    /**
+     * @deprecated for contexts using UiBroker (e.g Kotlin)
+     */
     renderHostedSlot(slotName: string, hostedSlotId: string, content: Content): void;
+    /**
+     * @deprecated for contexts using UiBroker (e.g Kotlin)
+     */
     renderImpl(slotNamePtr: WasmAddress, templatePtr: WasmAddress, modelPtr: WasmAddress): void;
     serviceRequest(callPtr: WasmAddress, argsPtr: WasmAddress, tagPtr: WasmAddress): Promise<void>;
     fireEvent(slotName: string, event: any): void;

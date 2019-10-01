@@ -486,8 +486,8 @@
         "signature": "bbffdbab87ddeadcc8b0d7b8317c1afd78182efe09408b99e2fd00e4b7dd5fdf"
       },
       "../src/runtime/wasm.ts": {
-        "version": "be8a6b8b22326ea84bdbdef084badda10bce8ff3402c35a15daa52e96bbb56ef",
-        "signature": "e2ea60510a922d11685f315d388550d8aa47c030fa77f59c8febd3c4620bcf74"
+        "version": "71a5562eaa19eb28690b1db52958362589cfdc67285f0593410494cb8484184b",
+        "signature": "3e88d9fddaddb1cd659d8d53aa24d0eb1e61780a6d188255190d9d1c32c51607"
       },
       "../src/runtime/particle-execution-context.ts": {
         "version": "748510e86bfa8275b9d0e675eb1d209f756674bb0a8c833040339fe7716cbf38",

@@ -1,5 +1,13 @@
-commit 5c1ea7867d786c61ba95c1804da05f30155c1292
-Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Tue Oct 1 13:10:21 2019 -0700
+commit d13ee6693283b9147f5db8277ee9b08bb27d3b23
+Author: Scott J. Miles <sjmiles@google.com>
+Date:   Tue Oct 1 14:58:13 2019 -0700
 
-    Improve error reporting for in-particle syntax-errors (#3660)
+    Kotlin-wasm changes to support UiBroker (#3652)
+    
+    * copy changes from other PR, minus confusing whitespace changes
+    
+    * fix comment
+    
+    * add missing external
+    
+    * s/var/val
