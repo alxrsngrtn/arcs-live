@@ -1,13 +1,5 @@
-commit d13ee6693283b9147f5db8277ee9b08bb27d3b23
-Author: Scott J. Miles <sjmiles@google.com>
-Date:   Tue Oct 1 14:58:13 2019 -0700
+commit 8f4d646b9e08362fe4a32abdc516b78b5ba05e4a
+Author: Sarah Heimlich <heimlich@google.com>
+Date:   Tue Oct 1 16:07:36 2019 -0700
 
-    Kotlin-wasm changes to support UiBroker (#3652)
-    
-    * copy changes from other PR, minus confusing whitespace changes
-    
-    * fix comment
-    
-    * add missing external
-    
-    * s/var/val
+    UI Broker + Kotlin Bazel integration. (#3672)
