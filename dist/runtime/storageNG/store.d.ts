@@ -12,20 +12,19 @@ import { Type } from '../type.js';
 import { Exists } from './drivers/driver-factory.js';
 import { StorageKey } from './storage-key.js';
 import { StoreInterface, StorageMode, ActiveStore, ProxyMessageType, ProxyMessage, ProxyCallback } from './store-interface.js';
-import { UnifiedStore } from '../arc.js';
+import { UnifiedStore } from './unified-store.js';
 import { Consumer } from '../hot.js';
 export { StorageMode, ActiveStore, ProxyMessageType, ProxyMessage, ProxyCallback };
 declare type StoreConstructor = {
     construct<T extends CRDTTypeRecord>(storageKey: StorageKey, exists: Exists, type: Type, mode: StorageMode): Promise<ActiveStore<T>>;
 };
-export declare class Store<T extends CRDTTypeRecord> implements StoreInterface<T>, UnifiedStore {
-    source: string;
-    _compareTo(other: UnifiedStore): number;
+export declare class Store<T extends CRDTTypeRecord> extends UnifiedStore implements StoreInterface<T> {
     toString(tags: string[]): string;
     toLiteral(): Promise<any>;
     cloneFrom(store: UnifiedStore): void;
     modelForSynchronization(): {};
     on(type: string, fn: Consumer<{}>, target: {}): void;
+    source: string;
     description: string;
     readonly storageKey: StorageKey;
     exists: Exists;

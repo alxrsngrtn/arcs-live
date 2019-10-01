@@ -9,7 +9,7 @@
  */
 import { Strategy } from '../strategizer.js';
 import { StorageStub } from '../../runtime/storage-stub.js';
-import { UnifiedStore } from '../../runtime/arc.js';
+import { UnifiedStore } from '../../runtime/storageNG/unified-store.js';
 export declare class AssignHandles extends Strategy {
     generate(inputParams: any): any;
     getMappableStores(fate: any, type: any, tags: string[], counts: any): Map<UnifiedStore | StorageStub, string>;

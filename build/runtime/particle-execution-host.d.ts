@@ -7,12 +7,13 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-import { Arc, UnifiedStore } from './arc.js';
+import { UnifiedStore } from './storageNG/unified-store.js';
 import { Runnable } from './hot.js';
 import { MessagePort } from './message-channel.js';
 import { Particle } from './recipe/particle.js';
 import { SlotComposer } from './slot-composer.js';
 import { Content } from './slot-consumer.js';
+import { Arc } from './arc.js';
 export declare type StartRenderOptions = {
     particle: Particle;
     slotName: string;

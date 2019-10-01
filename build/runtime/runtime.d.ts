@@ -8,7 +8,8 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { Manifest } from './manifest.js';
-import { Arc, UnifiedStore } from './arc.js';
+import { Arc } from './arc.js';
+import { UnifiedStore } from './storageNG/unified-store.js';
 import { RuntimeCacheService } from './runtime-cache.js';
 import { ArcId } from './id.js';
 import { PecFactory } from './particle-execution-context.js';

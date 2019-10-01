@@ -8,7 +8,7 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { assert } from '../../platform/assert-web.js';
-import { compareNumbers, compareStrings } from '../recipe/comparable.js';
+import { UnifiedStore } from '../storageNG/unified-store.js';
 var EventKind;
 (function (EventKind) {
     EventKind["change"] = "Change";
@@ -39,8 +39,9 @@ export class ChangeEvent {
 /**
  * Docs TBD
  */
-export class StorageProviderBase {
+export class StorageProviderBase extends UnifiedStore {
     constructor(type, name, id, key) {
+        super();
         this.referenceMode = false;
         assert(id, 'id must be provided when constructing StorageProviders');
         assert(!type.hasUnresolvedVariable, 'Storage types must be concrete');
@@ -103,22 +104,6 @@ export class StorageProviderBase {
         for (const callback of callbacks) {
             callback(details);
         }
-    }
-    _compareTo(other) {
-        let cmp;
-        cmp = compareStrings(this.name, other.name);
-        if (cmp !== 0)
-            return cmp;
-        cmp = compareNumbers(this.version, other.version);
-        if (cmp !== 0)
-            return cmp;
-        cmp = compareStrings(this.source, other.source);
-        if (cmp !== 0)
-            return cmp;
-        cmp = compareStrings(this.id, other.id);
-        if (cmp !== 0)
-            return cmp;
-        return 0;
     }
     toString(handleTags) {
         const results = [];

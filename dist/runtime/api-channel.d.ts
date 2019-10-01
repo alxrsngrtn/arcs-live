@@ -7,7 +7,8 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-import { Arc, UnifiedStore } from './arc.js';
+import { Arc } from './arc.js';
+import { UnifiedStore } from './storageNG/unified-store.js';
 import { ArcInspector } from './arc-inspector.js';
 import { Handle } from './handle.js';
 import { ParticleSpec } from './particle-spec.js';

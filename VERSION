@@ -1,5 +1,9 @@
-commit 8f4d646b9e08362fe4a32abdc516b78b5ba05e4a
-Author: Sarah Heimlich <heimlich@google.com>
-Date:   Tue Oct 1 16:07:36 2019 -0700
+commit 87f0aca02bc3e20a21afdac55b7138cf59937244
+Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
+Date:   Wed Oct 2 09:33:15 2019 +1000
 
-    UI Broker + Kotlin Bazel integration. (#3672)
+    Converted UnifiedStore interface to base class (#3662)
+    
+    Common functionality for old- and new-style stores will be moved to this
+    base class (starting with _compareTo in this PR). Other common methods
+    will be added there as well.

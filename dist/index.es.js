@@ -5341,6 +5341,49 @@ function compareComparables(o1, o2) {
 
 /**
  * @license
+ * Copyright (c) 2019 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+/**
+ * This is a temporary interface used to unify old-style stores (storage/StorageProviderBase) and new-style stores (storageNG/Store).
+ * We should be able to remove this once we've switched across to the NG stack.
+ *
+ * Note that for old-style stores, StorageStubs are used *sometimes* to represent storage which isn't activated. For new-style stores,
+ * Store itself represents an inactive store, and needs to be activated using activate(). This will present some integration
+ * challenges :)
+ *
+ * Note also that old-style stores use strings for Storage Keys, while NG storage uses storageNG/StorageKey subclasses. This provides
+ * a simple test for determining whether a store is old or new.
+ *
+ * Common functionality between old- and new-style stores goes in this class.
+ * Once the old-style stores are deleted, this class can be merged into the new
+ * Store class.
+ */
+class UnifiedStore {
+    _compareTo(other) {
+        let cmp;
+        cmp = compareStrings(this.name, other.name);
+        if (cmp !== 0)
+            return cmp;
+        cmp = compareNumbers(this.version, other.version);
+        if (cmp !== 0)
+            return cmp;
+        cmp = compareStrings(this.source, other.source);
+        if (cmp !== 0)
+            return cmp;
+        cmp = compareStrings(this.id, other.id);
+        if (cmp !== 0)
+            return cmp;
+        return 0;
+    }
+}
+
+/**
+ * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
  * This code may only be used under the BSD style license found at
  * http://polymer.github.io/LICENSE.txt
@@ -5378,8 +5421,9 @@ class ChangeEvent {
 /**
  * Docs TBD
  */
-class StorageProviderBase {
+class StorageProviderBase extends UnifiedStore {
     constructor(type, name, id, key) {
+        super();
         this.referenceMode = false;
         assert(id, 'id must be provided when constructing StorageProviders');
         assert(!type.hasUnresolvedVariable, 'Storage types must be concrete');
@@ -5442,22 +5486,6 @@ class StorageProviderBase {
         for (const callback of callbacks) {
             callback(details);
         }
-    }
-    _compareTo(other) {
-        let cmp;
-        cmp = compareStrings(this.name, other.name);
-        if (cmp !== 0)
-            return cmp;
-        cmp = compareNumbers(this.version, other.version);
-        if (cmp !== 0)
-            return cmp;
-        cmp = compareStrings(this.source, other.source);
-        if (cmp !== 0)
-            return cmp;
-        cmp = compareStrings(this.id, other.id);
-        if (cmp !== 0)
-            return cmp;
-        return 0;
     }
     toString(handleTags) {
         const results = [];
@@ -25395,8 +25423,9 @@ function isSingletonOperation(operation) {
 // StorageProxy objects, and no data will be read or written.
 //
 // Calling 'activate()' will generate an interactive store and return it.
-class Store {
+class Store extends UnifiedStore {
     constructor(storageKey, exists, type, id, name = '') {
+        super();
         this.version = 0; // TODO(shans): Needs to become the version vector, and is also probably only available on activated storage?
         this.storageKey = storageKey;
         this.exists = exists;
@@ -25404,9 +25433,6 @@ class Store {
         this.mode = storageKey instanceof ReferenceModeStorageKey ? StorageMode.ReferenceMode : StorageMode.Direct;
         this.id = id;
         this.name = name;
-    }
-    _compareTo(other) {
-        throw new Error('Method not implemented.');
     }
     toString(tags) {
         throw new Error('Method not implemented.');

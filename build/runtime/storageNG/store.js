@@ -11,14 +11,16 @@ import { Exists } from './drivers/driver-factory.js';
 import { StorageMode, ActiveStore, ProxyMessageType } from './store-interface.js';
 import { DirectStore } from './direct-store.js';
 import { ReferenceModeStore, ReferenceModeStorageKey } from './reference-mode-store.js';
+import { UnifiedStore } from './unified-store.js';
 export { StorageMode, ActiveStore, ProxyMessageType };
 // A representation of a store. Note that initially a constructed store will be
 // inactive - it will not connect to a driver, will not accept connections from
 // StorageProxy objects, and no data will be read or written.
 //
 // Calling 'activate()' will generate an interactive store and return it.
-export class Store {
+export class Store extends UnifiedStore {
     constructor(storageKey, exists, type, id, name = '') {
+        super();
         this.version = 0; // TODO(shans): Needs to become the version vector, and is also probably only available on activated storage?
         this.storageKey = storageKey;
         this.exists = exists;
@@ -26,9 +28,6 @@ export class Store {
         this.mode = storageKey instanceof ReferenceModeStorageKey ? StorageMode.ReferenceMode : StorageMode.Direct;
         this.id = id;
         this.name = name;
-    }
-    _compareTo(other) {
-        throw new Error('Method not implemented.');
     }
     toString(tags) {
         throw new Error('Method not implemented.');
