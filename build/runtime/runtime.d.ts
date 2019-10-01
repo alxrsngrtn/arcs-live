@@ -8,15 +8,16 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { Manifest } from './manifest.js';
-import { Arc } from './arc.js';
+import { Arc, UnifiedStore } from './arc.js';
 import { RuntimeCacheService } from './runtime-cache.js';
+import { ArcId } from './id.js';
 import { PecFactory } from './particle-execution-context.js';
 import { SlotComposer } from './slot-composer.js';
 import { Loader } from './loader.js';
-import { StorageProviderBase } from './storage/storage-provider-base.js';
 import { StorageProviderFactory } from './storage/storage-provider-factory.js';
 import { ArcInspectorFactory } from './arc-inspector.js';
 import { VolatileMemory } from './storageNG/drivers/volatile.js';
+import { StorageKey } from './storageNG/storage-key.js';
 export declare type RuntimeArcOptions = Readonly<{
     pecFactories?: PecFactory[];
     storageProviderFactory?: StorageProviderFactory;
@@ -40,7 +41,7 @@ export declare class Runtime {
     getCacheService(): RuntimeCacheService;
     getRamDiskMemory(): VolatileMemory;
     destroy(): void;
-    newArc(name: string, storageKeyPrefix: string, options?: RuntimeArcOptions): Arc;
+    newArc(name: string, storageKeyPrefix: string | ((arcId: ArcId) => StorageKey), options?: RuntimeArcOptions): Arc;
     /**
      * Given an arc name, return either:
      * (1) the already running arc
@@ -49,7 +50,7 @@ export declare class Runtime {
      */
     runArc(name: string, storageKeyPrefix: string, options?: RuntimeArcOptions): Arc;
     stop(name: string): void;
-    registerStore(store: StorageProviderBase, tags: string[]): void;
+    registerStore(store: UnifiedStore, tags: string[]): void;
     unregisterStore(storeId: string, tags: string[]): void;
     /**
      * Given an arc, returns it's description as a string.

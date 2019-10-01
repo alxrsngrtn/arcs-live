@@ -17,6 +17,7 @@ import { Store, BigCollectionStore, CollectionStore, SingletonStore } from '../s
 import { PropagatedException } from '../arc-exceptions.js';
 import { Dictionary, Consumer } from '../hot.js';
 import { ClaimIsTag } from '../particle-claim.js';
+import { UnifiedStore } from '../arc.js';
 declare type Callback = Consumer<Dictionary<any>>;
 /**
  * Methods that must be implemented by a Singleton Storage Provider
@@ -88,7 +89,7 @@ export declare class ChangeEvent {
 /**
  * Docs TBD
  */
-export declare abstract class StorageProviderBase implements Comparable<StorageProviderBase>, Store {
+export declare abstract class StorageProviderBase implements Comparable<StorageProviderBase>, Store, UnifiedStore {
     private listeners;
     private nextLocalID;
     private readonly _type;
@@ -116,7 +117,7 @@ export declare abstract class StorageProviderBase implements Comparable<StorageP
      * @param details details about the change
      */
     protected _fire(kindStr: 'change', details: ChangeEvent): Promise<void>;
-    _compareTo(other: StorageProviderBase): number;
+    _compareTo(other: UnifiedStore): number;
     toString(handleTags?: string[]): string;
     readonly apiChannelMappingId: string;
     dispose(): void;
@@ -127,7 +128,7 @@ export declare abstract class StorageProviderBase implements Comparable<StorageP
         version: number;
         model: SerializedModelEntry[];
     }>;
-    abstract cloneFrom(store: StorageProviderBase | StorageStub): any;
+    abstract cloneFrom(store: UnifiedStore | StorageStub): void;
     abstract ensureBackingStore(): any;
     abstract backingStore: any;
     /**

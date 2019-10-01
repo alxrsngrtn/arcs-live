@@ -7,7 +7,7 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-import { Arc } from './arc.js';
+import { Arc, UnifiedStore } from './arc.js';
 import { ArcInspector } from './arc-inspector.js';
 import { Handle } from './handle.js';
 import { ParticleSpec } from './particle-spec.js';
@@ -53,9 +53,9 @@ export declare class APIPort {
 export declare abstract class PECOuterPort extends APIPort {
     constructor(messagePort: MessagePort, arc: Arc);
     Stop(): void;
-    DefineHandle(store: StorageProviderBase, type: Type, name: string): void;
-    InstantiateParticle(particle: recipeParticle.Particle, id: string, spec: ParticleSpec, stores: Map<string, StorageProviderBase>): void;
-    ReinstantiateParticle(id: string, spec: ParticleSpec, stores: Map<string, StorageProviderBase>): void;
+    DefineHandle(store: UnifiedStore, type: Type, name: string): void;
+    InstantiateParticle(particle: recipeParticle.Particle, id: string, spec: ParticleSpec, stores: Map<string, UnifiedStore>): void;
+    ReinstantiateParticle(id: string, spec: ParticleSpec, stores: Map<string, UnifiedStore>): void;
     ReloadParticles(particles: recipeParticle.Particle[], ids: string[]): void;
     UIEvent(particle: recipeParticle.Particle, slotName: string, event: {}): void;
     SimpleCallback(callback: number, data: {}): void;
@@ -63,8 +63,8 @@ export declare abstract class PECOuterPort extends APIPort {
     StartRender(particle: recipeParticle.Particle, slotName: string, providedSlots: Map<string, string>, contentTypes: string[]): void;
     StopRender(particle: recipeParticle.Particle, slotName: string): void;
     abstract onRender(particle: recipeParticle.Particle, slotName: string, content: Content): any;
-    abstract onInitializeProxy(handle: StorageProviderBase, callback: number): any;
-    abstract onSynchronizeProxy(handle: StorageProviderBase, callback: number): any;
+    abstract onInitializeProxy(handle: UnifiedStore, callback: number): any;
+    abstract onSynchronizeProxy(handle: UnifiedStore, callback: number): any;
     abstract onHandleGet(handle: StorageProviderBase, callback: number): any;
     abstract onHandleToList(handle: StorageProviderBase, callback: number): any;
     abstract onHandleSet(handle: StorageProviderBase, data: {}, particleId: string, barrier: string): any;
@@ -80,11 +80,11 @@ export declare abstract class PECOuterPort extends APIPort {
     abstract onStreamCursorClose(handle: StorageProviderBase, cursorId: number): any;
     abstract onIdle(version: number, relevance: Map<recipeParticle.Particle, number[]>): any;
     abstract onGetBackingStore(callback: number, storageKey: string, type: Type): any;
-    GetBackingStoreCallback(store: StorageProviderBase, callback: number, type: Type, name: string, id: string, storageKey: string): void;
+    GetBackingStoreCallback(store: UnifiedStore, callback: number, type: Type, name: string, id: string, storageKey: string): void;
     abstract onConstructInnerArc(callback: number, particle: recipeParticle.Particle): any;
     ConstructArcCallback(callback: number, arc: {}): void;
     abstract onArcCreateHandle(callback: number, arc: {}, type: Type, name: string): any;
-    CreateHandleCallback(handle: StorageProviderBase, callback: number, type: Type, name: string, id: string): void;
+    CreateHandleCallback(handle: UnifiedStore, callback: number, type: Type, name: string, id: string): void;
     abstract onArcMapHandle(callback: number, arc: Arc, handle: recipeHandle.Handle): any;
     MapHandleCallback(newHandle: {}, callback: number, id: string): void;
     abstract onArcCreateSlot(callback: number, arc: Arc, transformationParticle: recipeParticle.Particle, transformationSlotName: string, handleId: string): any;

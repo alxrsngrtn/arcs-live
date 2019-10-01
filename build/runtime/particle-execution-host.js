@@ -176,6 +176,7 @@ class PECOuterPortImpl extends PECOuterPort {
     }
     async onGetBackingStore(callback, storageKey, type) {
         if (!storageKey) {
+            // XXX
             storageKey = this.arc.storageProviderFactory.baseStorageKey(type, this.arc.storageKey || 'volatile');
         }
         const store = await this.arc.storageProviderFactory.baseStorageFor(type, storageKey);

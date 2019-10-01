@@ -7,10 +7,10 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-import { StorageProviderBase } from '../../runtime/storage/storage-provider-base.js';
 import { Strategy } from '../strategizer.js';
 import { StorageStub } from '../../runtime/storage-stub.js';
+import { UnifiedStore } from '../../runtime/arc.js';
 export declare class AssignHandles extends Strategy {
     generate(inputParams: any): any;
-    getMappableStores(fate: any, type: any, tags: string[], counts: any): Map<StorageProviderBase | StorageStub, string>;
+    getMappableStores(fate: any, type: any, tags: string[], counts: any): Map<UnifiedStore | StorageStub, string>;
 }

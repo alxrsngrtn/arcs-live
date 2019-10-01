@@ -10,7 +10,7 @@
 import { ArcInspector, ArcInspectorFactory } from './arc-inspector.js';
 import { Id, IdGenerator } from './id.js';
 import { Loader } from './loader.js';
-import { Runnable } from './hot.js';
+import { Runnable, Consumer } from './hot.js';
 import { Manifest } from './manifest.js';
 import { MessagePort } from './message-channel.js';
 import { Modality } from './modality.js';
@@ -28,13 +28,14 @@ import { Type } from './type.js';
 import { PecFactory } from './particle-execution-context.js';
 import { InterfaceInfo } from './interface-info.js';
 import { VolatileMemory } from './storageNG/drivers/volatile.js';
+import { StorageKey } from './storageNG/storage-key.js';
 export declare type ArcOptions = Readonly<{
     id: Id;
     context: Manifest;
     pecFactories?: PecFactory[];
     slotComposer?: SlotComposer;
     loader: Loader;
-    storageKey?: string;
+    storageKey?: string | StorageKey;
     storageProviderFactory?: StorageProviderFactory;
     speculative?: boolean;
     innerArc?: boolean;
@@ -51,6 +52,33 @@ declare type DeserializeArcOptions = Readonly<{
     context: Manifest;
     inspectorFactory?: ArcInspectorFactory;
 }>;
+/**
+ * This is a temporary interface used to unify old-style stores (storage/StorageProviderBase) and new-style stores (storageNG/Store).
+ * We should be able to remove this once we've switched across to the NG stack.
+ *
+ * Note that for old-style stores, StorageStubs are used *sometimes* to represent storage which isn't activated. For new-style stores,
+ * Store itself represents an inactive store, and needs to be activated using activate(). This will present some integration
+ * challenges :)
+ *
+ * Note also that old-style stores use strings for Storage Keys, while NG storage uses storageNG/StorageKey subclasses. This provides
+ * a simple test for determining whether a store is old or new.
+ */
+export interface UnifiedStore {
+    id: string;
+    name: string;
+    source: string;
+    type: Type;
+    storageKey: string | StorageKey;
+    version?: number;
+    referenceMode: boolean;
+    _compareTo(other: UnifiedStore): number;
+    toString(tags: string[]): string;
+    toLiteral: () => Promise<any>;
+    cloneFrom(store: UnifiedStore): void;
+    modelForSynchronization(): {};
+    on(type: string, fn: Consumer<{}>, target: {}): void;
+    description: string;
+}
 export declare class Arc {
     private readonly _context;
     private readonly pecFactories;
@@ -63,9 +91,9 @@ export declare class Arc {
     private readonly dataChangeCallbacks;
     private readonly storesById;
     private storageKeys;
-    readonly storageKey?: string;
+    readonly storageKey?: string | StorageKey;
     storageProviderFactory: StorageProviderFactory;
-    readonly storeTags: Map<StorageProviderBase, Set<string>>;
+    readonly storeTags: Map<UnifiedStore, Set<string>>;
     private readonly storeDescriptions;
     private waitForIdlePromise;
     private readonly inspectorFactory?;
@@ -76,7 +104,7 @@ export declare class Arc {
     private readonly idGenerator;
     loadedParticleInfo: Map<string, {
         spec: ParticleSpec;
-        stores: Map<string, StorageProviderBase>;
+        stores: Map<string, UnifiedStore>;
     }>;
     readonly pec: ParticleExecutionHost;
     readonly volatileMemory: VolatileMemory;
@@ -91,7 +119,7 @@ export declare class Arc {
     readonly innerArcs: Arc[];
     readonly allDescendingArcs: Arc[];
     createInnerArc(transformationParticle: Particle): Arc;
-    private _serializeHandle;
+    private _serializeStore;
     private _serializeHandles;
     private _serializeParticles;
     private _serializeStorageKey;
@@ -113,11 +141,11 @@ export declare class Arc {
     _instantiateParticle(recipeParticle: Particle): Promise<void>;
     _getParticleInstantiationInfo(recipeParticle: Particle): Promise<{
         spec: ParticleSpec;
-        stores: Map<string, StorageProviderBase>;
+        stores: Map<string, UnifiedStore>;
     }>;
     private _provisionSpecUrl;
     generateID(component?: string): Id;
-    readonly _stores: (StorageProviderBase)[];
+    readonly _stores: UnifiedStore[];
     cloneForSpeculativeExecution(): Promise<Arc>;
     /**
      * Instantiates the given recipe in the Arc.
@@ -139,24 +167,24 @@ export declare class Arc {
         slots: Slot[];
     }>;
     private _doInstantiate;
-    createStore(type: Type, name?: string, id?: string, tags?: string[], storageKey?: string): Promise<StorageProviderBase>;
-    _registerStore(store: StorageProviderBase, tags?: string[]): void;
-    _tagStore(store: StorageProviderBase, tags: Set<string>): void;
+    createStore(type: Type, name?: string, id?: string, tags?: string[], storageKey?: string | StorageKey): Promise<UnifiedStore>;
+    _registerStore(store: UnifiedStore, tags?: string[]): void;
+    _tagStore(store: UnifiedStore, tags: Set<string>): void;
     _onDataChange(): void;
     onDataChange(callback: Runnable, registration: object): void;
     clearDataChange(registration: object): void;
     static _typeToKey(type: Type): string | InterfaceInfo | null;
     findStoresByType(type: Type, options?: {
         tags: string[];
-    }): StorageProviderBase[];
-    findStoreById(id: string): StorageProviderBase | StorageStub;
-    findStoreTags(store: StorageProviderBase | StorageStub): Set<string>;
+    }): UnifiedStore[];
+    findStoreById(id: string): UnifiedStore | StorageStub;
+    findStoreTags(store: UnifiedStore | StorageStub): Set<string>;
     getStoreDescription(store: StorageProviderBase): string;
     getVersionByStore({ includeArc, includeContext }: {
         includeArc?: boolean;
         includeContext?: boolean;
     }): {};
-    keyForId(id: string): string;
+    keyForId(id: string): string | StorageKey;
     toContextString(): string;
     readonly apiChannelMappingId: string;
     readonly idGeneratorForTesting: IdGenerator;

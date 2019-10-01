@@ -11,5 +11,11 @@ export class StorageKey {
     constructor(protocol) {
         this.protocol = protocol;
     }
+    childKeyForArcInfo() {
+        return this.childWithComponent('arc-info');
+    }
+    childKeyForHandle(id) {
+        return this.childWithComponent(`handle/${id}`);
+    }
 }
 //# sourceMappingURL=storage-key.js.map

@@ -7,13 +7,12 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-import { Arc } from './arc.js';
+import { Arc, UnifiedStore } from './arc.js';
 import { Runnable } from './hot.js';
 import { MessagePort } from './message-channel.js';
 import { Particle } from './recipe/particle.js';
 import { SlotComposer } from './slot-composer.js';
 import { Content } from './slot-consumer.js';
-import { StorageProviderBase } from './storage/storage-provider-base.js';
 export declare type StartRenderOptions = {
     particle: Particle;
     slotName: string;
@@ -42,8 +41,8 @@ export declare class ParticleExecutionHost {
     readonly idle: Promise<Map<Particle, number[]>> | undefined;
     readonly messageCount: number;
     sendEvent(particle: any, slotName: any, event: any): void;
-    instantiate(particle: Particle, stores: Map<string, StorageProviderBase>): void;
-    reinstantiate(particle: Particle, stores: Map<string, StorageProviderBase>): void;
+    instantiate(particle: Particle, stores: Map<string, UnifiedStore>): void;
+    reinstantiate(particle: Particle, stores: Map<string, UnifiedStore>): void;
     reload(particles: Particle[]): void;
     startRender({ particle, slotName, providedSlots, contentTypes }: StartRenderOptions): void;
     stopRender({ particle, slotName }: StopRenderOptions): void;

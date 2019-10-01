@@ -15,6 +15,7 @@ import { Recipe, CloneMap, RecipeComponent, IsResolvedOptions, IsValidOptions, T
 import { Comparable } from './comparable.js';
 import { Fate, Direction } from '../manifest-ast-nodes.js';
 import { ClaimIsTag, Claim } from '../particle-claim.js';
+import { StorageKey } from '../storageNG/storage-key.js';
 export declare class Handle implements Comparable<Handle> {
     private readonly _recipe;
     private _id;
@@ -49,12 +50,12 @@ export declare class Handle implements Comparable<Handle> {
         id: string;
         type: Type;
         originalId?: string;
-        storageKey?: string;
+        storageKey?: string | StorageKey;
         claims?: ClaimIsTag[];
     }): void;
     localName: string;
     readonly connections: HandleConnection[];
-    storageKey: string;
+    storageKey: string | StorageKey;
     pattern: string;
     mappedType: Type;
     immediateValue: ParticleSpec;

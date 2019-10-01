@@ -53,11 +53,21 @@ export class Runtime {
     }
     destroy() {
     }
+    // TODO(shans): Clean up once old storage is removed.
+    // Note that this incorrectly assumes every storage key can be of the form `prefix` + `arcId`.
+    // Should ids be provided to the Arc constructor, or should they be constructed by the Arc?
+    // How best to provide default storage to an arc given whatever we decide?
     newArc(name, storageKeyPrefix, options) {
         const id = IdGenerator.newSession().newArcId(name);
-        const storageKey = storageKeyPrefix + id.toString();
         const slotComposer = this.composerClass ? new this.composerClass() : null;
-        return new Arc({ id, storageKey, loader: this.loader, slotComposer, context: this.context, ...options });
+        if (typeof storageKeyPrefix === 'string') {
+            const storageKey = storageKeyPrefix + id.toString();
+            return new Arc({ id, storageKey, loader: this.loader, slotComposer, context: this.context, ...options });
+        }
+        else {
+            const storageKey = storageKeyPrefix(id);
+            return new Arc({ id, storageKey, loader: this.loader, slotComposer, context: this.context, ...options });
+        }
     }
     // Stuff the shell needs
     /**
@@ -78,10 +88,8 @@ export class Runtime {
         this.arcById.get(name).dispose();
         this.arcById.delete(name);
     }
-    // Temporary method to allow sharing stores with other Arcs (until Context
-    // is properly implemented)
+    // TODO: This is a temporary method to allow sharing stores with other Arcs.
     registerStore(store, tags) {
-        // #shared tag indicates that a store should be made available to all arcs.
         if (!this.context.findStoreById(store.id) && tags.includes('shared')) {
             // tslint:disable-next-line: no-any
             this.context['_addStore'](store, tags);

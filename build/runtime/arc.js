@@ -23,7 +23,8 @@ import { ArcType, CollectionType, EntityType, InterfaceType, RelationType, Type,
 import { Mutex } from './mutex.js';
 import { Runtime } from './runtime.js';
 import { VolatileMemory, VolatileStorageDriverProvider } from './storageNG/drivers/volatile.js';
-import { DriverFactory } from './storageNG/drivers/driver-factory.js';
+import { DriverFactory, Exists } from './storageNG/drivers/driver-factory.js';
+import { Store } from './storageNG/store.js';
 export class Arc {
     constructor({ id, context, pecFactories, slotComposer, loader, storageKey, storageProviderFactory, speculative, innerArc, stub, inspectorFactory }) {
         this._activeRecipe = new Recipe();
@@ -157,24 +158,30 @@ export class Arc {
         particleInnerArcs.push(innerArc);
         return innerArc;
     }
-    async _serializeHandle(handle, context, id) {
-        const type = handle.type.getContainedType() || handle.type;
+    async _serializeStore(store, context, id) {
+        const type = store.type.getContainedType() || store.type;
         if (type instanceof InterfaceType) {
             context.interfaces += type.interfaceInfo.toString() + '\n';
         }
-        const key = this.storageProviderFactory.parseStringAsKey(handle.storageKey);
-        const tags = this.storeTags.get(handle) || new Set();
+        let key;
+        if (typeof store.storageKey === 'string') {
+            key = this.storageProviderFactory.parseStringAsKey(store.storageKey);
+        }
+        else {
+            key = store.storageKey;
+        }
+        const tags = this.storeTags.get(store) || new Set();
         const handleTags = [...tags].map(a => `#${a}`).join(' ');
-        const actualHandle = this.activeRecipe.findHandle(handle.id);
+        const actualHandle = this.activeRecipe.findHandle(store.id);
         const originalId = actualHandle ? actualHandle.originalId : null;
-        let combinedId = `'${handle.id}'`;
+        let combinedId = `'${store.id}'`;
         if (originalId) {
             combinedId += `!!'${originalId}'`;
         }
         switch (key.protocol) {
             case 'firebase':
             case 'pouchdb':
-                context.handles += `store ${id} of ${handle.type.toString()} ${combinedId} @${handle.version === null ? 0 : handle.version} ${handleTags} at '${handle.storageKey}'\n`;
+                context.handles += `store ${id} of ${store.type.toString()} ${combinedId} @${store.version === null ? 0 : store.version} ${handleTags} at '${store.storageKey}'\n`;
                 break;
             case 'volatile': {
                 // TODO(sjmiles): emit empty data for stores marked `volatile`: shell will supply data
@@ -182,7 +189,7 @@ export class Arc {
                 let serializedData = [];
                 if (!volatile) {
                     // TODO: include keys in serialized [big]collections?
-                    serializedData = (await handle.toLiteral()).model.map((model) => {
+                    serializedData = (await store.toLiteral()).model.map((model) => {
                         const { id, value } = model;
                         const index = model['index']; // TODO: Invalid Type
                         if (value == null) {
@@ -204,16 +211,16 @@ export class Arc {
                         return result;
                     });
                 }
-                if (handle.referenceMode && serializedData.length > 0) {
+                if (store.referenceMode && serializedData.length > 0) {
                     const storageKey = serializedData[0].storageKey;
                     if (!context.dataResources.has(storageKey)) {
                         const storeId = `${id}_Data`;
                         context.dataResources.set(storageKey, storeId);
                         // TODO: can't just reach into the store for the backing Store like this, should be an
                         // accessor that loads-on-demand in the storage objects.
-                        if (handle instanceof StorageProviderBase) {
-                            await handle.ensureBackingStore();
-                            await this._serializeHandle(handle.backingStore, context, storeId);
+                        if (store instanceof StorageProviderBase) {
+                            await store.ensureBackingStore();
+                            await this._serializeStore(store.backingStore, context, storeId);
                         }
                     }
                     const storeId = context.dataResources.get(storageKey);
@@ -225,7 +232,7 @@ export class Arc {
                     + indent + 'start\n'
                     + data.split('\n').map(line => indent + line).join('\n')
                     + '\n';
-                context.handles += `store ${id} of ${handle.type.toString()} ${combinedId} @${handle.version || 0} ${handleTags} in ${id}Resource\n`;
+                context.handles += `store ${id} of ${store.type.toString()} ${combinedId} @${store.version || 0} ${handleTags} in ${id}Resource\n`;
                 break;
             }
             default:
@@ -252,11 +259,11 @@ export class Arc {
         for (const url of importSet.values()) {
             context.resources += `import '${url}'\n`;
         }
-        for (const handle of this._stores) {
-            if (!handlesToSerialize.has(handle.id) || contextSet.has(handle.id)) {
+        for (const store of this._stores) {
+            if (!handlesToSerialize.has(store.id) || contextSet.has(store.id)) {
                 continue;
             }
-            await this._serializeHandle(handle, context, `Store${id++}`);
+            await this._serializeStore(store, context, `Store${id++}`);
         }
         return context.resources + context.interfaces + context.handles;
     }
@@ -304,7 +311,13 @@ ${this.activeRecipe.toString()}`;
     // contents of the serialized arc before persisting.
     async persistSerialization(serialization) {
         const storage = this.storageProviderFactory;
-        const key = storage.parseStringAsKey(this.storageKey).childKeyForArcInfo();
+        let key;
+        if (typeof this.storageKey === 'string') {
+            key = storage.parseStringAsKey(this.storageKey).childKeyForArcInfo();
+        }
+        else {
+            key = this.storageKey.childKeyForArcInfo();
+        }
         const arcInfoType = new ArcType();
         const store = await storage.connectOrConstruct('store', arcInfoType, key.toString());
         store.referenceMode = false;
@@ -520,9 +533,14 @@ ${this.activeRecipe.toString()}`;
                 assert(storageKey, `couldn't find storage key for handle '${recipeHandle}'`);
                 const type = recipeHandle.type.resolvedType();
                 assert(type.isResolved());
-                const store = await this.storageProviderFactory.connect(recipeHandle.id, type, storageKey);
-                assert(store, `store '${recipeHandle.id}' was not found (${storageKey})`);
-                this._registerStore(store, recipeHandle.tags);
+                if (typeof storageKey === 'string') {
+                    const store = await this.storageProviderFactory.connect(recipeHandle.id, type, storageKey);
+                    assert(store, `store '${recipeHandle.id}' was not found (${storageKey})`);
+                    this._registerStore(store, recipeHandle.tags);
+                }
+                else {
+                    throw new Error('Need to implement storageNG code path here!');
+                }
             }
         }
         return { handles, particles, slots };
@@ -547,22 +565,31 @@ ${this.activeRecipe.toString()}`;
         if (id == undefined) {
             id = this.generateID().toString();
         }
-        if (storageKey == undefined && this.storageKey) {
-            storageKey =
-                this.storageProviderFactory.parseStringAsKey(this.storageKey)
-                    .childKeyForHandle(id)
-                    .toString();
+        if (storageKey == undefined) {
+            if (typeof this.storageKey === 'string') {
+                storageKey = this.storageProviderFactory.parseStringAsKey(this.storageKey).childKeyForHandle(id).toString();
+            }
+            else if (this.storageKey) {
+                storageKey = this.storageKey.childKeyForHandle(id);
+            }
         }
         // TODO(sjmiles): use `volatile` for volatile stores
         const hasVolatileTag = (tags) => tags && tags.includes('volatile');
         if (storageKey == undefined || hasVolatileTag(tags)) {
             storageKey = 'volatile';
         }
-        const store = await this.storageProviderFactory.construct(id, type, storageKey);
-        assert(store, `failed to create store with id [${id}]`);
-        store.name = name;
-        this._registerStore(store, tags);
-        return store;
+        if (typeof storageKey === 'string') {
+            const store = await this.storageProviderFactory.construct(id, type, storageKey);
+            assert(store, `failed to create store with id [${id}]`);
+            store.name = name;
+            this._registerStore(store, tags);
+            return store;
+        }
+        else {
+            const store = new Store(storageKey, Exists.ShouldCreate, type, id, name);
+            this._registerStore(store, tags);
+            return store;
+        }
     }
     _registerStore(store, tags) {
         assert(!this.storesById.has(store.id), `Store already registered '${store.id}'`);

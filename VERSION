@@ -1,19 +1,15 @@
-commit a783f178ae9232cc03eead758ef467b214d960ad
+commit 1cb1477f6547c2ff6728603b269e640394437089
 Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
-Date:   Tue Oct 1 15:21:48 2019 +1000
+Date:   Tue Oct 1 15:44:01 2019 +1000
 
-    Added lint check for imports missing the .js extension (#3654)
+    Add UnifiedStore interface (#3658)
     
-    * Added lint check for imports missing the .js extension
+    * Add UnifiedStore interface
     
-    Also fixed all the existing imports that were missing a .js extension.
+    Lots of callsites migrated to use the UnifiedStore interface instead of
+    talking to the old storage directly. This will let us migrate to the new
+    storage more easily.
     
-    These dodgy imports work fine most of the time, but cause issues with
-    things like wdio tests for some reason. Now we have a lint check, no one
-    can ever forget to do this ever again...
+    Cloned from Shane's PR #3633
     
-    There were a couple of package imports that confused the linter and
-    needed to manually disable the lint check (e.g. import
-    'firebase/storage')
-    
-    * Revert server/ and exclude from linting.
+    * Fix one more method to use UnifiedStore

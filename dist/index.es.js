@@ -19891,6 +19891,16 @@ function setDiffCustom(from, to, keyFn) {
  * TODO: Remove all usages of this function and then delete it.
  */
 function floatingPromiseToAudit(promise) { }
+/**
+ * Noop function that can be used to supress the tsetse must-use-promises rule.
+ *
+ * Example Usage:
+ *   async function x() {
+ *     await doA();
+ *     noAwait(doB());
+ *   }
+ */
+function noAwait(result) { }
 
 /**
  * @license
@@ -20021,7 +20031,12 @@ class SyntheticCollection extends StorageProviderBase {
         this.model = [];
         for (const handle of handles || []) {
             if (this.storageFactory.isPersistent(handle.storageKey)) {
-                this.model.push(new ArcHandle(handle.id, handle.storageKey, handle.mappedType, handle.tags));
+                if (typeof handle.storageKey === 'string') {
+                    this.model.push(new ArcHandle(handle.id, handle.storageKey, handle.mappedType, handle.tags));
+                }
+                else {
+                    throw new Error(`Can't use old storage stack with NG StorageKey objects`);
+                }
             }
         }
         if (fireEvent) {
@@ -23991,6 +24006,7 @@ class PECOuterPortImpl extends PECOuterPort {
     }
     async onGetBackingStore(callback, storageKey, type) {
         if (!storageKey) {
+            // XXX
             storageKey = this.arc.storageProviderFactory.baseStorageKey(type, this.arc.storageKey || 'volatile');
         }
         const store = await this.arc.storageProviderFactory.baseStorageFor(type, storageKey);
@@ -24185,6 +24201,27 @@ DriverFactory.providers = new Set();
 
 /**
  * @license
+ * Copyright 2019 Google LLC.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+class StorageKey {
+    constructor(protocol) {
+        this.protocol = protocol;
+    }
+    childKeyForArcInfo() {
+        return this.childWithComponent('arc-info');
+    }
+    childKeyForHandle(id) {
+        return this.childWithComponent(`handle/${id}`);
+    }
+}
+
+/**
+ * @license
  * Copyright (c) 2019 Google Inc. All rights reserved.
  * This code may only be used under the BSD style license found at
  * http://polymer.github.io/LICENSE.txt
@@ -24290,6 +24327,1022 @@ class VolatileStorageDriverProvider {
         DriverFactory.register(new VolatileStorageDriverProvider(arc));
     }
 }
+
+/**
+ * @license
+ * Copyright (c) 2019 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+/**
+ * This file exists to break a circular dependency between Store and the ActiveStore implementations.
+ * Source code outside of the storageNG directory should not import this file directly; instead use
+ * store.ts, which re-exports all the useful symbols.
+ */
+var StorageMode;
+(function (StorageMode) {
+    StorageMode[StorageMode["Direct"] = 0] = "Direct";
+    StorageMode[StorageMode["Backing"] = 1] = "Backing";
+    StorageMode[StorageMode["ReferenceMode"] = 2] = "ReferenceMode";
+})(StorageMode || (StorageMode = {}));
+var ProxyMessageType;
+(function (ProxyMessageType) {
+    ProxyMessageType[ProxyMessageType["SyncRequest"] = 0] = "SyncRequest";
+    ProxyMessageType[ProxyMessageType["ModelUpdate"] = 1] = "ModelUpdate";
+    ProxyMessageType[ProxyMessageType["Operations"] = 2] = "Operations";
+})(ProxyMessageType || (ProxyMessageType = {}));
+// A representation of an active store. Subclasses of this class provide specific
+// behaviour as controlled by the provided StorageMode.
+class ActiveStore {
+    constructor(storageKey, exists, type, mode) {
+        this.storageKey = storageKey;
+        this.exists = exists;
+        this.type = type;
+        this.mode = mode;
+    }
+    async idle() {
+        return Promise.resolve();
+    }
+}
+
+/**
+ * @license
+ * Copyright (c) 2019 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+var DirectStoreState;
+(function (DirectStoreState) {
+    DirectStoreState["Idle"] = "Idle";
+    DirectStoreState["AwaitingResponse"] = "AwaitingResponse";
+    DirectStoreState["AwaitingResponseDirty"] = "AwaitingResponseDirty";
+    DirectStoreState["AwaitingDriverModel"] = "AwaitingDriverModel";
+})(DirectStoreState || (DirectStoreState = {}));
+class DirectStore extends ActiveStore {
+    /*
+     * This class should only ever be constructed via the static construct method
+     */
+    constructor(storageKey, exists, type, mode) {
+        super(storageKey, exists, type, mode);
+        this.callbacks = new Map();
+        this.nextCallbackID = 1;
+        this.version = 0;
+        this.pendingException = null;
+        this.pendingResolves = [];
+        this.pendingRejects = [];
+        this.pendingDriverModels = [];
+        this.state = DirectStoreState.Idle;
+    }
+    async idle() {
+        if (this.pendingException) {
+            return Promise.reject(this.pendingException);
+        }
+        if (this.state === DirectStoreState.Idle) {
+            return Promise.resolve();
+        }
+        return new Promise((resolve, reject) => {
+            this.pendingResolves.push(resolve);
+            this.pendingRejects.push(reject);
+        });
+    }
+    setState(state) {
+        this.state = state;
+        if (state === DirectStoreState.Idle) {
+            // If we are already idle, this won't notify external parties.
+            this.notifyIdle();
+        }
+    }
+    notifyIdle() {
+        if (this.pendingException) {
+            // this is termination.
+            this.pendingRejects.forEach(reject => reject(this.pendingException));
+        }
+        else {
+            this.pendingResolves.forEach(resolve => resolve());
+            this.pendingResolves = [];
+        }
+    }
+    static async construct(storageKey, exists, type, mode) {
+        const me = new DirectStore(storageKey, exists, type, mode);
+        me.localModel = new (type.crdtInstanceConstructor())();
+        me.driver = await DriverFactory.driverInstance(storageKey, exists);
+        if (me.driver == null) {
+            throw new CRDTError(`No driver exists to support storage key ${storageKey}`);
+        }
+        me.driver.registerReceiver(me.onReceive.bind(me));
+        return me;
+    }
+    // The driver will invoke this method when it has an updated remote model
+    async onReceive(model, version) {
+        this.pendingDriverModels.push({ model, version });
+        if (this.state === DirectStoreState.AwaitingResponse || this.state === DirectStoreState.AwaitingResponseDirty) {
+            return;
+        }
+        this.applyPendingDriverModels();
+    }
+    deliverCallbacks(thisChange, messageFromDriver, channel) {
+        if (thisChange.changeType === ChangeType.Operations && thisChange.operations.length > 0) {
+            this.callbacks.forEach((cb, id) => {
+                if (messageFromDriver || channel !== id) {
+                    void cb({ type: ProxyMessageType.Operations, operations: thisChange.operations, id });
+                }
+            });
+        }
+        else if (thisChange.changeType === ChangeType.Model) {
+            this.callbacks.forEach((cb, id) => {
+                if (messageFromDriver || channel !== id) {
+                    void cb({ type: ProxyMessageType.ModelUpdate, model: thisChange.modelPostChange, id });
+                }
+            });
+        }
+    }
+    async processModelChange(modelChange, otherChange, version, channel) {
+        this.deliverCallbacks(modelChange, /* messageFromDriver= */ false, channel);
+        await this.updateStateAndAct(this.noDriverSideChanges(modelChange, otherChange, false), version, false);
+    }
+    // This function implements a state machine that controls when data is sent to the driver.
+    // You can see the state machine in all its glory at the following URL:
+    //
+    // https://github.com/PolymerLabs/arcs/wiki/Store-object-State-Machine
+    //
+    async updateStateAndAct(noDriverSideChanges, version, messageFromDriver) {
+        // Don't send to the driver if we're already in sync and there are no driver-side changes.
+        if (noDriverSideChanges) {
+            // Need to record the driver version so that we can continue to send.
+            this.setState(DirectStoreState.Idle);
+            this.version = version;
+            return;
+        }
+        switch (this.state) {
+            case DirectStoreState.AwaitingDriverModel:
+                if (!messageFromDriver) {
+                    return;
+                }
+            /* falls through */
+            case DirectStoreState.Idle:
+                // This loop implements sending -> AwaitingResponse -> AwaitingResponseDirty -> sending.
+                // Breakouts happen if:
+                //  (1) a response arrives while still AwaitingResponse. This returns the store to Idle.
+                //  (2) a negative response arrives. This means we're now waiting for driver models
+                //      (AwaitingDriverModel). Note that in this case we are likely to end up back in
+                //      this loop when a driver model arrives.
+                while (true) {
+                    this.setState(DirectStoreState.AwaitingResponse);
+                    // Work around a typescript compiler bug. Apparently typescript won't guarantee that
+                    // a Map key you've just set will exist, but is happy to assure you that a private
+                    // member variable couldn't possibly change in any function outside the local scope
+                    // when within a switch statement. 
+                    this.state = DirectStoreState.AwaitingResponse;
+                    this.version = ++version;
+                    const response = await this.driver.send(this.localModel.getData(), version);
+                    if (response) {
+                        if (this.state === DirectStoreState.AwaitingResponse) {
+                            this.setState(DirectStoreState.Idle);
+                            this.applyPendingDriverModels();
+                            break;
+                        }
+                        if (this.state !== DirectStoreState.AwaitingResponseDirty) {
+                            // This shouldn't be possible as only a 'nack' should put us into
+                            // AwaitingDriverModel, and only the above code should put us back
+                            // into Idle.
+                            throw new Error('reached impossible state in store state machine');
+                        }
+                        // fallthrough to re-execute the loop.
+                    }
+                    else {
+                        this.setState(DirectStoreState.AwaitingDriverModel);
+                        this.applyPendingDriverModels();
+                        break;
+                    }
+                }
+                return;
+            case DirectStoreState.AwaitingResponse:
+                this.setState(DirectStoreState.AwaitingResponseDirty);
+                return;
+            case DirectStoreState.AwaitingResponseDirty:
+                return;
+            default:
+                throw new Error('reached impossible default state in switch statement');
+        }
+    }
+    applyPendingDriverModels() {
+        if (this.pendingDriverModels.length > 0) {
+            const models = this.pendingDriverModels;
+            this.pendingDriverModels = [];
+            let noDriverSideChanges = true;
+            let theVersion = 0;
+            for (const { model, version } of models) {
+                try {
+                    const { modelChange, otherChange } = this.localModel.merge(model);
+                    this.deliverCallbacks(modelChange, /* messageFromDriver= */ true, 0);
+                    noDriverSideChanges = noDriverSideChanges && this.noDriverSideChanges(modelChange, otherChange, true);
+                    theVersion = version;
+                }
+                catch (e) {
+                    this.pendingException = e;
+                    this.notifyIdle();
+                    return;
+                }
+            }
+            void this.updateStateAndAct(noDriverSideChanges, theVersion, true);
+        }
+    }
+    // Note that driver-side changes are stored in 'otherChange' when the merged operations/model is sent
+    // from the driver, and 'thisChange' when the merged operations/model is sent from a storageProxy.
+    // In the former case, we want to look at what has changed between what the driver sent us and what
+    // we now have. In the latter, the driver is only as up-to-date as our local model before we've
+    // applied the operations.
+    noDriverSideChanges(thisChange, otherChange, messageFromDriver) {
+        if (messageFromDriver) {
+            return otherChange.changeType === ChangeType.Operations && otherChange.operations.length === 0;
+        }
+        else {
+            return thisChange.changeType === ChangeType.Operations && thisChange.operations.length === 0;
+        }
+    }
+    // Operation or model updates from connected StorageProxies will arrive here.
+    // Additionally, StorageProxy objects may request a SyncRequest, which will
+    // result in an up-to-date model being sent back to that StorageProxy.
+    // a return value of true implies that the message was accepted, a
+    // return value of false requires that the proxy send a model sync 
+    async onProxyMessage(message) {
+        if (this.pendingException) {
+            throw this.pendingException;
+        }
+        switch (message.type) {
+            case ProxyMessageType.SyncRequest:
+                await this.callbacks.get(message.id)({ type: ProxyMessageType.ModelUpdate, model: this.localModel.getData(), id: message.id });
+                return true;
+            case ProxyMessageType.Operations: {
+                for (const operation of message.operations) {
+                    if (!this.localModel.applyOperation(operation)) {
+                        await this.callbacks.get(message.id)({ type: ProxyMessageType.SyncRequest, id: message.id });
+                        return false;
+                    }
+                }
+                const change = { changeType: ChangeType.Operations, operations: message.operations };
+                // to make tsetse checks happy
+                noAwait(this.processModelChange(change, null, this.version, message.id));
+                return true;
+            }
+            case ProxyMessageType.ModelUpdate: {
+                const { modelChange, otherChange } = this.localModel.merge(message.model);
+                // to make tsetse checks happy
+                noAwait(this.processModelChange(modelChange, otherChange, this.version, message.id));
+                return true;
+            }
+            default:
+                throw new CRDTError('Invalid operation provided to onProxyMessage');
+        }
+    }
+    on(callback) {
+        const id = this.nextCallbackID++;
+        this.callbacks.set(id, callback);
+        return id;
+    }
+    off(callback) {
+        this.callbacks.delete(callback);
+    }
+    reportExceptionInHost(exception) {
+        this.pendingException = exception;
+        this.notifyIdle();
+    }
+}
+
+/**
+ * @license
+ * Copyright (c) 2019 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+/**
+ * A store that allows multiple CRDT models to be stored as sub-keys of a single storageKey location.
+ */
+class BackingStore {
+    constructor(storageKey, exists, type, mode) {
+        this.storageKey = storageKey;
+        this.exists = exists;
+        this.type = type;
+        this.mode = mode;
+        this.stores = {};
+        this.callbacks = new Map();
+        this.nextCallbackId = 1;
+    }
+    on(callback) {
+        this.callbacks.set(this.nextCallbackId, callback);
+        return this.nextCallbackId++;
+    }
+    off(callback) {
+        this.callbacks.delete(callback);
+    }
+    getLocalModel(muxId) {
+        const store = this.stores[muxId];
+        if (store == null) {
+            this.stores[muxId] = { type: 'pending', promise: this.setupStore(muxId) };
+            return null;
+        }
+        if (store.type === 'pending') {
+            return null;
+        }
+        else {
+            return store.store.localModel;
+        }
+    }
+    async setupStore(muxId) {
+        const store = await DirectStore.construct(this.storageKey.childWithComponent(muxId), this.exists, this.type, this.mode);
+        const id = store.on(msg => this.processStoreCallback(muxId, msg));
+        const record = { store, id, type: 'record' };
+        this.stores[muxId] = record;
+        return record;
+    }
+    async onProxyMessage(message, muxId) {
+        let storeRecord = this.stores[muxId];
+        if (storeRecord == null) {
+            storeRecord = await this.setupStore(muxId);
+        }
+        if (storeRecord.type === 'pending') {
+            storeRecord = await storeRecord.promise;
+        }
+        const { store, id } = storeRecord;
+        message.id = id;
+        return store.onProxyMessage(message);
+    }
+    static async construct(storageKey, exists, type, mode) {
+        return new BackingStore(storageKey, exists, type, mode);
+    }
+    async idle() {
+        const stores = [];
+        for (const store of Object.values(this.stores)) {
+            if (store.type === 'record') {
+                stores.push(store.store);
+            }
+        }
+        await Promise.all(stores.map(store => store.idle()));
+    }
+    async processStoreCallback(muxId, message) {
+        return Promise.all([...this.callbacks.values()].map(callback => callback(message, muxId))).then(a => a.reduce((a, b) => a && b));
+    }
+}
+
+/**
+ * @license
+ * Copyright (c) 2019 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+var ReferenceModeUpdateSource;
+(function (ReferenceModeUpdateSource) {
+    ReferenceModeUpdateSource[ReferenceModeUpdateSource["Container"] = 0] = "Container";
+    ReferenceModeUpdateSource[ReferenceModeUpdateSource["BackingStore"] = 1] = "BackingStore";
+    ReferenceModeUpdateSource[ReferenceModeUpdateSource["StorageProxy"] = 2] = "StorageProxy";
+})(ReferenceModeUpdateSource || (ReferenceModeUpdateSource = {}));
+class ReferenceModeStorageKey extends StorageKey {
+    constructor(backingKey, storageKey) {
+        super('reference-mode');
+        this.backingKey = backingKey;
+        this.storageKey = storageKey;
+    }
+    embedKey(key) {
+        return key.toString().replace(/\{/g, '{{').replace(/\}/g, '}}');
+    }
+    toString() {
+        return `${this.protocol}://{${this.embedKey(this.backingKey)}}{${this.embedKey(this.storageKey)}}`;
+    }
+    childWithComponent(component) {
+        return new ReferenceModeStorageKey(this.backingKey, this.storageKey.childWithComponent(component));
+    }
+}
+/**
+ * ReferenceModeStores adapt between a collection (CRDTCollection or CRDTSingleton) of entities from the perspective of their public API,
+ * and a collection of references + a backing store of entity CRDTs from an internal storage perspective.
+ *
+ * ReferenceModeStores maintain a queue of incoming updates (the receiveQueue) and process them one at a time. When possible, the results
+ * of this processing are immediately sent upwards (to connected StorageProxies) and downwards (to storage). However, there are a few
+ * caveats:
+ * - incoming operations and models from StorageProxies may require several writes to storage - one for each modified entity, and one
+ *   to the container store. These are processed serially, so that a container doesn't get updated if backing store modifications fail.
+ * - updates from the container store need to be blocked on ensuring the required data is also available in the backing store.
+ *   The holdQueue ensures that these blocks are tracked and processed appropriately.
+ * - updates should always be sent in order, so a blocked send should block subsequent sends too. The pendingSends queue ensures that all
+ *   outgoing updates are sent in the correct order.
+ *
+ */
+class ReferenceModeStore extends ActiveStore {
+    constructor() {
+        super(...arguments);
+        /*
+         * Registered callbacks to Storage Proxies
+         */
+        this.callbacks = new Map();
+        this.nextCallbackID = 1;
+        /*
+         * A randomly generated key that is used for synthesized entity CRDT modifications.
+         *
+         * When entity updates are received by instances of ReferenceModeStore, they're non-CRDT blobs of data.
+         * The ReferenceModeStore needs to convert them to tracked CRDTs, which means it needs to synthesize
+         * updates. This key is used as the unique write key for those updates.
+         */
+        this.crdtKey = (Math.random() * Math.pow(2, 64)) + '';
+        /*
+         * The versions dictionary tracks the maximum write version for each entity ID, to ensure synthesized
+         * updates can be correctly applied downstream.
+         */
+        this.versions = {};
+        /*
+         * A queue of incoming updates from the backing store, container store, and connected proxies.
+         * These are dealt with atomically, to avoid transient states where an operation has only been partially
+         * processed (e.g. backing written but container update not written).
+         */
+        this.receiveQueue = [];
+        /*
+         * A queue of send Runnables. Some of these may be blocked on entities becoming available in the
+         * backing store.
+         */
+        this.pendingSends = [];
+        /*
+         * A queue of blocks to the pendingSends queue.
+         */
+        this.holdQueue = new HoldQueue();
+        /*
+         * An incrementing ID to uniquely identify each blocked send.
+         */
+        this.blockCounter = 0;
+    }
+    static async construct(storageKey, exists, type) {
+        const result = new ReferenceModeStore(storageKey, exists, type, StorageMode.ReferenceMode);
+        result.backingStore = await BackingStore.construct(storageKey.backingKey, exists, type.getContainedType(), StorageMode.Backing);
+        let refType;
+        if (type.isCollectionType()) {
+            refType = new CollectionType(new ReferenceType(type.getContainedType()));
+        }
+        else {
+            // TODO(shans) probably need a singleton type here now.
+            refType = new ReferenceType(type.getContainedType());
+        }
+        result.containerStore = await DirectStore.construct(storageKey.storageKey, exists, type, StorageMode.Direct);
+        result.registerStoreCallbacks();
+        return result;
+    }
+    reportExceptionInHost(exception) {
+        // TODO(shans): Figure out idle / exception store for reference mode stores.
+    }
+    on(callback) {
+        const id = this.nextCallbackID++;
+        this.callbacks.set(id, callback);
+        return id;
+    }
+    off(callback) {
+        this.callbacks.delete(callback);
+    }
+    registerStoreCallbacks() {
+        this.backingStore.on(this.onBackingStore.bind(this));
+        this.containerStore.on(this.onContainerStore.bind(this));
+    }
+    /**
+     * Messages are enqueued onto an object-wide queue and processed in order.
+     * Internally, each handler (handleContainerStore, handleBackingStore, handleProxyMessage)
+     * should not return until the response relevant to the message has been received.
+     *
+     * When handling proxy messages, this implies 2 rounds of update - first the backing
+     * store needs to be updated, and once that has completed then the container store needs
+     * to be updated.
+     */
+    async onContainerStore(message) {
+        return this.enqueue({ from: ReferenceModeUpdateSource.Container, message });
+    }
+    async onBackingStore(message, muxId) {
+        return this.enqueue({ from: ReferenceModeUpdateSource.BackingStore, message, muxId });
+    }
+    async onProxyMessage(message) {
+        return this.enqueue({ from: ReferenceModeUpdateSource.StorageProxy, message });
+    }
+    /**
+     * enqueue an incoming update onto the object-wide queue and return a promise that will be resolved
+     * when the update is processed.
+     */
+    async enqueue(entry) {
+        return new Promise((resolve, reject) => {
+            const startProcessing = this.receiveQueue.length === 0;
+            this.receiveQueue.push({ ...entry, promise: resolve });
+            if (startProcessing) {
+                void this.processQueue();
+            }
+        });
+    }
+    async processQueue() {
+        while (this.receiveQueue.length > 0) {
+            // ths.receiveQueue.length === 0 is used as a signal to start processing (see enqueue). As
+            // this method is asynchronous, we can't remove the current element until it's processed
+            // or we'll potentially get duplicate calls to processQueue.
+            const nextMessage = this.receiveQueue[0];
+            switch (nextMessage.from) {
+                case ReferenceModeUpdateSource.StorageProxy:
+                    nextMessage.promise(await this.handleProxyMessage(nextMessage.message));
+                    break;
+                case ReferenceModeUpdateSource.BackingStore:
+                    nextMessage.promise(await this.handleBackingStore(nextMessage.message, nextMessage.muxId));
+                    break;
+                case ReferenceModeUpdateSource.Container:
+                    nextMessage.promise(await this.handleContainerStore(nextMessage.message));
+                    break;
+                default:
+                    throw new Error('invalid message type');
+            }
+            this.receiveQueue.shift();
+        }
+    }
+    /**
+     * Handle an update from the container store.
+     *
+     * Operations and Models either enqueue an immediate send (if all referenced entities
+     * are available in the backing store) or enqueue a blocked send (if some referenced
+     * entities are not yet present).
+     *
+     * Note that the blocking mechanism isn't version-aware, so removes followed by
+     * adds may not correctly sync. If this turns out to be a problem then we can
+     * add version information to references and update the blocking store to gate
+     * on a version as well as presence.
+     *
+     * Sync requests are propagated upwards to the storage proxy.
+     */
+    async handleContainerStore(message) {
+        switch (message.type) {
+            case ProxyMessageType.Operations: {
+                for (const operation of message.operations) {
+                    const reference = this.operationElement(operation);
+                    let getEntity;
+                    if (reference) {
+                        const entityCRDT = this.backingStore.getLocalModel(reference.id);
+                        if (!entityCRDT) {
+                            this.enqueueBlockingSend([reference], () => {
+                                const entityCRDT = this.backingStore.getLocalModel(reference.id);
+                                const getEntity = () => this.entityFromModel(entityCRDT.getData(), reference.id);
+                                const upstreamOp = this.updateOp(operation, getEntity);
+                                void this.send({ type: ProxyMessageType.Operations, operations: [upstreamOp] });
+                            });
+                            break;
+                        }
+                        getEntity = () => this.entityFromModel(entityCRDT.getData(), reference.id);
+                    }
+                    else {
+                        getEntity = () => null;
+                    }
+                    this.enqueueSend(() => {
+                        const upstreamOp = this.updateOp(operation, getEntity);
+                        void this.send({ type: ProxyMessageType.Operations, operations: [upstreamOp] });
+                    });
+                }
+                break;
+            }
+            case ProxyMessageType.ModelUpdate: {
+                const data = message.model;
+                const { pendingIds, model } = this.constructPendingIdsAndModel(data);
+                const send = () => void this.send({ type: ProxyMessageType.ModelUpdate, model: model() });
+                if (pendingIds.length === 0) {
+                    this.enqueueSend(send);
+                }
+                else {
+                    this.enqueueBlockingSend(pendingIds, send);
+                }
+                break;
+            }
+            case ProxyMessageType.SyncRequest: {
+                this.enqueueSend(() => {
+                    void this.send({ type: ProxyMessageType.SyncRequest });
+                });
+                break;
+            }
+            default: {
+                throw new Error('Unexpected ProxyMessageType');
+            }
+        }
+        return true;
+    }
+    /**
+     * Handle an update from the backing store.
+     *
+     * Model and Operation updates are routed directly to the holdQueue, where they may unblock
+     * pending sends but will not have any other action.
+     *
+     * Syncs should never occur as operation/model updates to the backing store are generated
+     * by this ReferenceModeStore object and hence should never be out-of-order.
+     */
+    async handleBackingStore(message, muxId) {
+        switch (message.type) {
+            case ProxyMessageType.ModelUpdate:
+                this.holdQueue.processID(muxId, message.model.version);
+                break;
+            case ProxyMessageType.Operations:
+                this.holdQueue.processID(muxId, message.operations[message.operations.length - 1].clock);
+                break;
+            case ProxyMessageType.SyncRequest:
+                throw new Error('Unexpected SyncRequest from backing store');
+            default:
+                throw new Error('Unexpected ProxyMessageType');
+        }
+        return true;
+    }
+    /**
+     * Handle an update from an upstream StorageProxy.
+     *
+     * Model and Operation updates apply first to the backing store, then to the container store.
+     * Backing store updates should never fail as updates are locally generated.
+     * For Operations:
+     * - If the container store update succeeds, then the update is mirrored to non-sending StorageProxies.
+     * - If the container store update fails, then a `false` return value ensures that the upstream proxy
+     *   will request a sync.
+     * Model updates should not fail.
+     *
+     * Sync requests are handled by directly constructing and sending a model
+     */
+    async handleProxyMessage(message) {
+        switch (message.type) {
+            case ProxyMessageType.Operations: {
+                const operations = message.operations;
+                for (const operation of operations) {
+                    const entity = this.operationElement(operation);
+                    let reference = null;
+                    if (entity) {
+                        await this.updateBackingStore(entity);
+                        const version = this.backingStore.getLocalModel(entity.id).getData().version;
+                        reference = { id: entity.id, storageKey: this.backingStore.storageKey, version };
+                    }
+                    const containerMessage = this.updateOp(operation, () => reference);
+                    const response = await this.containerStore.onProxyMessage({ type: ProxyMessageType.Operations, operations: [containerMessage], id: 1 });
+                    if (response) {
+                        this.enqueueSend(() => void this.sendExcept(message, message.id));
+                    }
+                    else {
+                        return false;
+                    }
+                }
+                break;
+            }
+            case ProxyMessageType.ModelUpdate: {
+                const { version, values } = message.model;
+                const newValues = {};
+                const backingStoreReceipts = [];
+                Object.entries(values).forEach(([id, { value, version }]) => {
+                    backingStoreReceipts.push(this.updateBackingStore(value).then(success => {
+                        if (success) {
+                            const entityVersion = this.backingStore.getLocalModel(id).getData().version;
+                            newValues[id] = { value: { id, storageKey: this.backingStore.storageKey, version: entityVersion }, version };
+                        }
+                        return success;
+                    }));
+                });
+                await Promise.all(backingStoreReceipts);
+                const model = { version, values: newValues };
+                await this.containerStore.onProxyMessage({ type: ProxyMessageType.ModelUpdate, model, id: 1 });
+                this.enqueueSend(() => this.sendExcept(message, message.id));
+                break;
+            }
+            case ProxyMessageType.SyncRequest: {
+                const { pendingIds, model } = this.constructPendingIdsAndModel(this.containerStore.localModel.getData());
+                const send = () => void this.callbacks.get(message.id)({ type: ProxyMessageType.ModelUpdate, model: model(), id: message.id });
+                if (pendingIds.length === 0) {
+                    this.enqueueSend(send);
+                }
+                else {
+                    this.enqueueBlockingSend(pendingIds, send);
+                }
+                break;
+            }
+            default:
+                throw new Error('Unexpected ProxyMessageType');
+        }
+        return true;
+    }
+    /**
+     * Enqueues a sending function on the send queue. If the send queue is empty then
+     * the function is immediately invoked.
+     */
+    enqueueSend(runnable) {
+        if (this.pendingSends.length === 0) {
+            runnable();
+        }
+        else {
+            this.pendingSends.push({ fn: runnable });
+        }
+    }
+    /**
+     * Enqueues a send function on the send queue, deferring execution until the
+     * provided id list is available in the backing store.
+     */
+    enqueueBlockingSend(entities, runnable) {
+        const block = (this.blockCounter++) + '';
+        this.pendingSends.push({ fn: runnable, block });
+        this.holdQueue.enqueue(entities, () => this.processPendingSends(block));
+    }
+    /**
+     * Process any sends in the pending send queue, including sends blocked on the
+     * provided block. This should only be called by the holdQueue.
+     */
+    processPendingSends(block) {
+        while (this.pendingSends.length > 0) {
+            if (this.pendingSends[0].block == null || this.pendingSends[0].block === block) {
+                const send = this.pendingSends.shift();
+                send.fn();
+            }
+        }
+    }
+    /**
+     * Convert the provided entity to a CRDT Model of the entity. This requires synthesizing
+     * a version map for the CRDT model, which is also provided as an output.
+     */
+    entityToModel(entity) {
+        if (this.versions[entity.id] == undefined) {
+            this.versions[entity.id] = {};
+        }
+        const entityVersion = this.versions[entity.id];
+        const model = this.newBackingInstance().getData();
+        let maxVersion = 0;
+        for (const key of Object.keys(entity)) {
+            if (key === 'id') {
+                continue;
+            }
+            if (entityVersion[key] == undefined) {
+                entityVersion[key] = 0;
+            }
+            const version = { [this.crdtKey]: ++entityVersion[key] };
+            maxVersion = Math.max(maxVersion, entityVersion[key]);
+            if (model.singletons[key]) {
+                model.singletons[key].values = { [entity[key].id]: { value: entity[key], version } };
+                model.singletons[key].version = version;
+            }
+            else if (model.collections[key]) {
+                model.collections[key].values = {};
+                for (const value of entity[key]) {
+                    model.collections[key].values[value.id] = { value, version };
+                }
+                model.collections[key].version = version;
+            }
+            else {
+                throw new Error(`key ${key} not found for model ${model}`);
+            }
+        }
+        model.version = { [this.crdtKey]: maxVersion };
+        return model;
+    }
+    /**
+     * Convert the provided CRDT model into an entity.
+     */
+    entityFromModel(model, id) {
+        const entity = { id };
+        const singletons = {};
+        for (const field of Object.keys(model.singletons)) {
+            singletons[field] = new CRDTSingleton();
+        }
+        const collections = {};
+        for (const field of Object.keys(model.collections)) {
+            collections[field] = new CRDTCollection();
+        }
+        const entityCRDT = new CRDTEntity(singletons, collections);
+        entityCRDT.merge(model);
+        const data = entityCRDT.getParticleView();
+        for (const [key, value] of Object.entries(data.singletons)) {
+            entity[key] = value;
+        }
+        for (const [key, value] of Object.entries(data.collections)) {
+            entity[key] = value;
+        }
+        return entity;
+    }
+    cloneMap(map) {
+        const result = {};
+        Object.entries(map).forEach(([key, value]) => result[key] = value);
+        return result;
+    }
+    /**
+     * Returns a function that can construct a CRDTModel of a Container of Entities based off the
+     * provided Container of References. Any referenced IDs that are not yet available in the backing
+     * store are returned in the pendingIds list. The returned function should not be invoked until
+     * all references in pendingIds have valid backing in the backing store.
+     */
+    constructPendingIdsAndModel(data) {
+        const pendingIds = [];
+        for (const id of Object.keys(data.values)) {
+            const version = data.values[id].value.version;
+            if (Object.keys(version).length === 0) {
+                // This object is requested at an empty version, which means that it's new and can be directly constructed
+                // rather than waiting for an update.
+                continue;
+            }
+            const backingModel = this.backingStore.getLocalModel(id);
+            if ((backingModel == null) || !versionIsLarger(backingModel.getData().version, version)) {
+                pendingIds.push({ id, version });
+            }
+        }
+        const fn = () => {
+            const model = { values: {}, version: this.cloneMap(data.version) };
+            for (const id of Object.keys(data.values)) {
+                const version = data.values[id].value.version;
+                const entity = Object.keys(version).length === 0 ? this.newBackingInstance() : this.backingStore.getLocalModel(id);
+                model.values[id] = { value: this.entityFromModel(entity.getData(), id), version: data.values[id].version };
+            }
+            return model;
+        };
+        return { pendingIds, model: fn };
+    }
+    /**
+     * Add appropriate ids and send the provided message on all registered StorageProxy callbacks.
+     */
+    async send(message) {
+        for (const key of this.callbacks.keys()) {
+            void this.callbacks.get(key)({ ...message, id: key });
+        }
+    }
+    /**
+     * Add appropriate ids and send the provided message on all registered StorageProxy callbacks,
+     * except for the callback identified by the provided callback ID.
+     */
+    async sendExcept(message, notTo) {
+        for (const key of this.callbacks.keys()) {
+            if (key === notTo) {
+                continue;
+            }
+            void this.callbacks.get(key)({ ...message, id: key });
+        }
+    }
+    /**
+     * Write the provided entity to the backing store.
+     */
+    async updateBackingStore(entity) {
+        const model = this.entityToModel(entity);
+        return this.backingStore.onProxyMessage({ type: ProxyMessageType.ModelUpdate, model, id: 1 }, entity.id);
+    }
+    newBackingInstance() {
+        const instanceConstructor = this.type.getContainedType().crdtInstanceConstructor();
+        return new instanceConstructor();
+    }
+    /**
+     * Apply the an add, remove, set or clear method to the provided operation
+     * based on the operation type.
+     */
+    processOp(onAdd, onRemove, onSet, onClear, operation) {
+        if (isCollectionOperation(operation)) {
+            switch (operation.type) {
+                case CollectionOpTypes.Add:
+                    return onAdd(operation);
+                case CollectionOpTypes.Remove:
+                    return onRemove(operation);
+                default:
+                    throw new Error('unexpected operation type');
+            }
+        }
+        else if (isSingletonOperation(operation)) {
+            switch (operation.type) {
+                case SingletonOpTypes.Set:
+                    return onSet(operation);
+                case SingletonOpTypes.Clear:
+                    return onClear(operation);
+                default:
+                    throw new Error('unexpected operation type');
+            }
+        }
+        throw new Error('unexpected operation type');
+    }
+    /**
+     * Return the element referenced by the provided operation, or null if the operation is a clear operation.
+     */
+    operationElement(operation) {
+        return this.processOp(addOp => addOp.added, removeOp => removeOp.removed, setOp => setOp.value, clearOp => null, operation);
+    }
+    /**
+     * Update the provided operation's element using the provided producer.
+     */
+    updateOp(operation, getValue) {
+        const add = addOp => ({ ...addOp, added: getValue() });
+        const remove = removeOp => ({ ...removeOp, removed: getValue() });
+        const set = setOp => ({ ...setOp, value: getValue() });
+        const clear = clearOp => clearOp;
+        return this.processOp(add, remove, set, clear, operation);
+    }
+}
+function versionIsLarger(larger, smaller) {
+    for (const key in Object.keys(smaller)) {
+        if (larger[key] < smaller[key]) {
+            return false;
+        }
+    }
+    return true;
+}
+class HoldQueue {
+    constructor() {
+        this.queue = {};
+    }
+    enqueue(entities, onRelease) {
+        const ids = {};
+        for (const { id, version } of entities) {
+            ids[id] = version;
+        }
+        const holdRecord = { ids, onRelease };
+        for (const entity of entities) {
+            if (!this.queue[entity.id]) {
+                this.queue[entity.id] = [];
+            }
+            this.queue[entity.id].push(holdRecord);
+        }
+    }
+    processID(id, version) {
+        const records = this.queue[id];
+        if (!records) {
+            return;
+        }
+        for (const record of records) {
+            if (versionIsLarger(version, record.ids[id])) {
+                delete record.ids[id];
+                if (Object.keys(record.ids).length === 0) {
+                    record.onRelease();
+                }
+            }
+        }
+        this.queue[id] = [];
+    }
+}
+function isCollectionOperation(operation) {
+    return Boolean(operation['added'] || operation['removed']);
+}
+function isSingletonOperation(operation) {
+    return !isCollectionOperation(operation);
+}
+
+/**
+ * @license
+ * Copyright (c) 2019 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+// A representation of a store. Note that initially a constructed store will be
+// inactive - it will not connect to a driver, will not accept connections from
+// StorageProxy objects, and no data will be read or written.
+//
+// Calling 'activate()' will generate an interactive store and return it.
+class Store {
+    constructor(storageKey, exists, type, id, name = '') {
+        this.version = 0; // TODO(shans): Needs to become the version vector, and is also probably only available on activated storage?
+        this.storageKey = storageKey;
+        this.exists = exists;
+        this.type = type;
+        this.mode = storageKey instanceof ReferenceModeStorageKey ? StorageMode.ReferenceMode : StorageMode.Direct;
+        this.id = id;
+        this.name = name;
+    }
+    _compareTo(other) {
+        throw new Error('Method not implemented.');
+    }
+    toString(tags) {
+        throw new Error('Method not implemented.');
+    }
+    // tslint:disable-next-line no-any
+    async toLiteral() {
+        throw new Error('Method not implemented.');
+    }
+    cloneFrom(store) {
+        throw new Error('Method not implemented.');
+    }
+    modelForSynchronization() {
+        throw new Error('Method not implemented.');
+    }
+    on(type, fn, target) {
+        throw new Error('Method not implemented.');
+    }
+    async activate() {
+        if (Store.constructors.get(this.mode) == null) {
+            throw new Error(`StorageMode ${this.mode} not yet implemented`);
+        }
+        const constructor = Store.constructors.get(this.mode);
+        if (constructor == null) {
+            throw new Error(`No constructor registered for mode ${this.mode}`);
+        }
+        const activeStore = await constructor.construct(this.storageKey, this.exists, this.type, this.mode);
+        this.exists = Exists.ShouldExist;
+        return activeStore;
+    }
+    // TODO(shans): DELETEME once we've switched to this storage stack
+    get referenceMode() {
+        return this.mode === StorageMode.ReferenceMode;
+    }
+}
+Store.constructors = new Map([
+    [StorageMode.Direct, DirectStore],
+    [StorageMode.ReferenceMode, ReferenceModeStore]
+]);
 
 /**
  * @license
@@ -24433,24 +25486,30 @@ class Arc {
         particleInnerArcs.push(innerArc);
         return innerArc;
     }
-    async _serializeHandle(handle, context, id) {
-        const type = handle.type.getContainedType() || handle.type;
+    async _serializeStore(store, context, id) {
+        const type = store.type.getContainedType() || store.type;
         if (type instanceof InterfaceType) {
             context.interfaces += type.interfaceInfo.toString() + '\n';
         }
-        const key = this.storageProviderFactory.parseStringAsKey(handle.storageKey);
-        const tags = this.storeTags.get(handle) || new Set();
+        let key;
+        if (typeof store.storageKey === 'string') {
+            key = this.storageProviderFactory.parseStringAsKey(store.storageKey);
+        }
+        else {
+            key = store.storageKey;
+        }
+        const tags = this.storeTags.get(store) || new Set();
         const handleTags = [...tags].map(a => `#${a}`).join(' ');
-        const actualHandle = this.activeRecipe.findHandle(handle.id);
+        const actualHandle = this.activeRecipe.findHandle(store.id);
         const originalId = actualHandle ? actualHandle.originalId : null;
-        let combinedId = `'${handle.id}'`;
+        let combinedId = `'${store.id}'`;
         if (originalId) {
             combinedId += `!!'${originalId}'`;
         }
         switch (key.protocol) {
             case 'firebase':
             case 'pouchdb':
-                context.handles += `store ${id} of ${handle.type.toString()} ${combinedId} @${handle.version === null ? 0 : handle.version} ${handleTags} at '${handle.storageKey}'\n`;
+                context.handles += `store ${id} of ${store.type.toString()} ${combinedId} @${store.version === null ? 0 : store.version} ${handleTags} at '${store.storageKey}'\n`;
                 break;
             case 'volatile': {
                 // TODO(sjmiles): emit empty data for stores marked `volatile`: shell will supply data
@@ -24458,7 +25517,7 @@ class Arc {
                 let serializedData = [];
                 if (!volatile) {
                     // TODO: include keys in serialized [big]collections?
-                    serializedData = (await handle.toLiteral()).model.map((model) => {
+                    serializedData = (await store.toLiteral()).model.map((model) => {
                         const { id, value } = model;
                         const index = model['index']; // TODO: Invalid Type
                         if (value == null) {
@@ -24480,16 +25539,16 @@ class Arc {
                         return result;
                     });
                 }
-                if (handle.referenceMode && serializedData.length > 0) {
+                if (store.referenceMode && serializedData.length > 0) {
                     const storageKey = serializedData[0].storageKey;
                     if (!context.dataResources.has(storageKey)) {
                         const storeId = `${id}_Data`;
                         context.dataResources.set(storageKey, storeId);
                         // TODO: can't just reach into the store for the backing Store like this, should be an
                         // accessor that loads-on-demand in the storage objects.
-                        if (handle instanceof StorageProviderBase) {
-                            await handle.ensureBackingStore();
-                            await this._serializeHandle(handle.backingStore, context, storeId);
+                        if (store instanceof StorageProviderBase) {
+                            await store.ensureBackingStore();
+                            await this._serializeStore(store.backingStore, context, storeId);
                         }
                     }
                     const storeId = context.dataResources.get(storageKey);
@@ -24501,7 +25560,7 @@ class Arc {
                     + indent + 'start\n'
                     + data.split('\n').map(line => indent + line).join('\n')
                     + '\n';
-                context.handles += `store ${id} of ${handle.type.toString()} ${combinedId} @${handle.version || 0} ${handleTags} in ${id}Resource\n`;
+                context.handles += `store ${id} of ${store.type.toString()} ${combinedId} @${store.version || 0} ${handleTags} in ${id}Resource\n`;
                 break;
             }
             default:
@@ -24528,11 +25587,11 @@ class Arc {
         for (const url of importSet.values()) {
             context.resources += `import '${url}'\n`;
         }
-        for (const handle of this._stores) {
-            if (!handlesToSerialize.has(handle.id) || contextSet.has(handle.id)) {
+        for (const store of this._stores) {
+            if (!handlesToSerialize.has(store.id) || contextSet.has(store.id)) {
                 continue;
             }
-            await this._serializeHandle(handle, context, `Store${id++}`);
+            await this._serializeStore(store, context, `Store${id++}`);
         }
         return context.resources + context.interfaces + context.handles;
     }
@@ -24580,7 +25639,13 @@ ${this.activeRecipe.toString()}`;
     // contents of the serialized arc before persisting.
     async persistSerialization(serialization) {
         const storage = this.storageProviderFactory;
-        const key = storage.parseStringAsKey(this.storageKey).childKeyForArcInfo();
+        let key;
+        if (typeof this.storageKey === 'string') {
+            key = storage.parseStringAsKey(this.storageKey).childKeyForArcInfo();
+        }
+        else {
+            key = this.storageKey.childKeyForArcInfo();
+        }
         const arcInfoType = new ArcType();
         const store = await storage.connectOrConstruct('store', arcInfoType, key.toString());
         store.referenceMode = false;
@@ -24796,9 +25861,14 @@ ${this.activeRecipe.toString()}`;
                 assert(storageKey, `couldn't find storage key for handle '${recipeHandle}'`);
                 const type = recipeHandle.type.resolvedType();
                 assert(type.isResolved());
-                const store = await this.storageProviderFactory.connect(recipeHandle.id, type, storageKey);
-                assert(store, `store '${recipeHandle.id}' was not found (${storageKey})`);
-                this._registerStore(store, recipeHandle.tags);
+                if (typeof storageKey === 'string') {
+                    const store = await this.storageProviderFactory.connect(recipeHandle.id, type, storageKey);
+                    assert(store, `store '${recipeHandle.id}' was not found (${storageKey})`);
+                    this._registerStore(store, recipeHandle.tags);
+                }
+                else {
+                    throw new Error('Need to implement storageNG code path here!');
+                }
             }
         }
         return { handles, particles, slots };
@@ -24823,22 +25893,31 @@ ${this.activeRecipe.toString()}`;
         if (id == undefined) {
             id = this.generateID().toString();
         }
-        if (storageKey == undefined && this.storageKey) {
-            storageKey =
-                this.storageProviderFactory.parseStringAsKey(this.storageKey)
-                    .childKeyForHandle(id)
-                    .toString();
+        if (storageKey == undefined) {
+            if (typeof this.storageKey === 'string') {
+                storageKey = this.storageProviderFactory.parseStringAsKey(this.storageKey).childKeyForHandle(id).toString();
+            }
+            else if (this.storageKey) {
+                storageKey = this.storageKey.childKeyForHandle(id);
+            }
         }
         // TODO(sjmiles): use `volatile` for volatile stores
         const hasVolatileTag = (tags) => tags && tags.includes('volatile');
         if (storageKey == undefined || hasVolatileTag(tags)) {
             storageKey = 'volatile';
         }
-        const store = await this.storageProviderFactory.construct(id, type, storageKey);
-        assert(store, `failed to create store with id [${id}]`);
-        store.name = name;
-        this._registerStore(store, tags);
-        return store;
+        if (typeof storageKey === 'string') {
+            const store = await this.storageProviderFactory.construct(id, type, storageKey);
+            assert(store, `failed to create store with id [${id}]`);
+            store.name = name;
+            this._registerStore(store, tags);
+            return store;
+        }
+        else {
+            const store = new Store(storageKey, Exists.ShouldCreate, type, id, name);
+            this._registerStore(store, tags);
+            return store;
+        }
     }
     _registerStore(store, tags) {
         assert(!this.storesById.has(store.id), `Store already registered '${store.id}'`);
@@ -27686,11 +28765,21 @@ class Runtime {
     }
     destroy() {
     }
+    // TODO(shans): Clean up once old storage is removed.
+    // Note that this incorrectly assumes every storage key can be of the form `prefix` + `arcId`.
+    // Should ids be provided to the Arc constructor, or should they be constructed by the Arc?
+    // How best to provide default storage to an arc given whatever we decide?
     newArc(name, storageKeyPrefix, options) {
         const id = IdGenerator.newSession().newArcId(name);
-        const storageKey = storageKeyPrefix + id.toString();
         const slotComposer = this.composerClass ? new this.composerClass() : null;
-        return new Arc({ id, storageKey, loader: this.loader, slotComposer, context: this.context, ...options });
+        if (typeof storageKeyPrefix === 'string') {
+            const storageKey = storageKeyPrefix + id.toString();
+            return new Arc({ id, storageKey, loader: this.loader, slotComposer, context: this.context, ...options });
+        }
+        else {
+            const storageKey = storageKeyPrefix(id);
+            return new Arc({ id, storageKey, loader: this.loader, slotComposer, context: this.context, ...options });
+        }
     }
     // Stuff the shell needs
     /**
@@ -27711,10 +28800,8 @@ class Runtime {
         this.arcById.get(name).dispose();
         this.arcById.delete(name);
     }
-    // Temporary method to allow sharing stores with other Arcs (until Context
-    // is properly implemented)
+    // TODO: This is a temporary method to allow sharing stores with other Arcs.
     registerStore(store, tags) {
-        // #shared tag indicates that a store should be made available to all arcs.
         if (!this.context.findStoreById(store.id) && tags.includes('shared')) {
             // tslint:disable-next-line: no-any
             this.context['_addStore'](store, tags);
@@ -35791,11 +36878,17 @@ class Planificator {
         });
     }
     static constructSuggestionKey(arc, storageKeyBase) {
+        if (typeof arc.storageKey !== 'string') {
+            throw new Error(`Planner doesn't work with new-style storage yet!`);
+        }
         const arcStorageKey = arc.storageProviderFactory.parseStringAsKey(arc.storageKey);
         const keybase = arc.storageProviderFactory.parseStringAsKey(storageKeyBase || arcStorageKey.base());
         return keybase.childKeyForSuggestions(planificatorId, arcStorageKey.arcId);
     }
     static constructSearchKey(arc) {
+        if (typeof arc.storageKey !== 'string') {
+            throw new Error(`Planner doesn't work with new-style storage yet!`);
+        }
         const arcStorageKey = arc.storageProviderFactory.parseStringAsKey(arc.storageKey);
         const keybase = arc.storageProviderFactory.parseStringAsKey(arcStorageKey.base());
         return keybase.childKeyForSearch(planificatorId);
