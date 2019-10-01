@@ -1418,7 +1418,7 @@
         "signature": "e7ba1e6a6d3bc1a2b76b1cadb46a215e27796ca2661f0ae508ba2f837531c266"
       },
       "../src/platform/loader-web.ts": {
-        "version": "5d00d4181f0978b06c24a6599a513ca077971f54a0aaeb4f10826f42a016438b",
+        "version": "163e01fa56bf9346a5d1774dbe5ed95df66e947d3a812f37123e6520179d177f",
         "signature": "e5e51abed42c8a2054dea476ec0fa34eba9467f9d160796d4f9fc667970071c6"
       },
       "../node_modules/@types/mocha/index.d.ts": {

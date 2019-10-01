@@ -69,11 +69,14 @@ export class PlatformLoader extends PlatformLoaderBase {
             // import (execute) particle code
             importScripts(url);
         }
-        catch (x) {
-            error(`Error loading Particle from [${path}]`, x);
+        catch (e) {
+            e.message = `Error loading Particle from '${path}': ${e.message}`;
+            throw e;
         }
-        // clean up
-        delete self['defineParticle'];
+        finally {
+            // clean up
+            delete self['defineParticle'];
+        }
         return result;
     }
     provisionLogger(fileName) {
