@@ -88,6 +88,7 @@ export declare class Recipe implements Cloneable<Recipe> {
     isEmpty(): boolean;
     findHandle(id: string): Handle;
     findSlot(id: string): Slot;
+    findParticle(id: string): Particle;
     patterns: string[];
     description: any;
     digest(): Promise<string>;

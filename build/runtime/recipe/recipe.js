@@ -278,6 +278,14 @@ export class Recipe {
         }
         return null;
     }
+    findParticle(id) {
+        for (const particle of this.particles) {
+            if (particle.id.toString() === id) {
+                return particle;
+            }
+        }
+        return null;
+    }
     get patterns() {
         return this._patterns;
     }

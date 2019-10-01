@@ -186,8 +186,8 @@
         "signature": "1545aea4be1c7f8a3c63dac6e27be104d97d9c8370f5cb81990bf9f4b783be3e"
       },
       "../src/runtime/recipe/recipe.ts": {
-        "version": "acd7f4e62b37fe0d58e8302ee42da0c3ea38e4e14bef3bec26d51159580f66c5",
-        "signature": "ee3ce9e06df7be29d9ed79355464b235b6bc8e69eca001191c77a38c74a0ab1f"
+        "version": "6295896afd1715f321d5048fc5e33c2888f78dc1ae8b0aa4b3aa8b7a23da29ff",
+        "signature": "cd7f260b1b7a45dc3a3ed399a41b74142d428f09b042a40875a9ad1b2ca75804"
       },
       "../src/runtime/recipe/slot.ts": {
         "version": "1f73a107053426e4ab9d9f10366f95d729c9ea0f953403284773cee9f9a77d4c",
@@ -306,8 +306,8 @@
         "signature": "1caf0bf54edc18e0f7bc0bb764e1a91e110d5080b3faa107fa2061281f47da41"
       },
       "../src/runtime/runtime.ts": {
-        "version": "fe7a703410424b1ddda28b4aed8035a4ff808061a23a405821c6b0b07097982d",
-        "signature": "a6d939a8e9af2169f60204733d56cb9a14f4a11aec9945a851ff2b888356be8e"
+        "version": "7c62da3f9efd295564cb1cdce4e05461f25ebf81d9532c6c723ed844d152a4a0",
+        "signature": "da05c9cdcaf7d5ef1f3d01c7c68b22ca81863555a8db2e049b14b32b7a94a472"
       },
       "../src/runtime/storage/volatile-storage.ts": {
         "version": "5183347d18ab88a72585e5a0b8e41a45a3dd9a55c5b46e4f215ec390ed056349",
@@ -2201,7 +2201,7 @@
         "signature": "aff514b5ca3f500524542842c93fa7ade3927c4166596d8d37b3ad1fa3d1d014"
       },
       "../src/runtime/ui-slot-composer.ts": {
-        "version": "d8c2938f89e11608555333982c774072ac5925255c4e061d435884ef837ebdc1",
+        "version": "16b1d1758a96e9c224d0f3bba41a85606efb4d01f5a3278c4fae3cb4328eb8fd",
         "signature": "2d41f734fe7d57dfc539d1354b548ba5c8725010b6d03ac8bb6e681baaa90115"
       },
       "../src/runtime/webassembly.d.ts": {

@@ -18290,6 +18290,14 @@ class Recipe {
         }
         return null;
     }
+    findParticle(id) {
+        for (const particle of this.particles) {
+            if (particle.id.toString() === id) {
+                return particle;
+            }
+        }
+        return null;
+    }
     get patterns() {
         return this._patterns;
     }
@@ -28860,6 +28868,9 @@ class Runtime {
         assert(this.arcById.has(name), `Cannot stop nonexistent arc ${name}`);
         this.arcById.get(name).dispose();
         this.arcById.delete(name);
+    }
+    findArcByParticleId(particleId) {
+        return [...this.arcById.values()].find(arc => !!arc.activeRecipe.findParticle(particleId));
     }
     // TODO: This is a temporary method to allow sharing stores with other Arcs.
     registerStore(store, tags) {

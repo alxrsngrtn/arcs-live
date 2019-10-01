@@ -88,6 +88,9 @@ export class Runtime {
         this.arcById.get(name).dispose();
         this.arcById.delete(name);
     }
+    findArcByParticleId(particleId) {
+        return [...this.arcById.values()].find(arc => !!arc.activeRecipe.findParticle(particleId));
+    }
     // TODO: This is a temporary method to allow sharing stores with other Arcs.
     registerStore(store, tags) {
         if (!this.context.findStoreById(store.id) && tags.includes('shared')) {

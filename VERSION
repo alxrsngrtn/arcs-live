@@ -1,11 +1,9 @@
-commit 92e504d4fe92638632cac438d9b7d6925b8d7407
-Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
-Date:   Tue Oct 1 16:01:10 2019 +1000
+commit 8d9d50d68596985fbfaa76b50d35cc2112d20bfa
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Tue Oct 1 10:03:58 2019 -0700
 
-    Support reference-typed handles in C++ wasm particles. (#3655)
+    handle ui event (for notification renderer demo) (#3653)
     
-    * Support reference-typed handles in C++ wasm particles.
+    * handle ui event (for notification renderer demo)
     
-    This does not update Kotlin or provide support for Reference schema fields.
-    
-    * Add types
+    * address comments + tweak notification id

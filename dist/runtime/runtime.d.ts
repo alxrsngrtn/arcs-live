@@ -50,6 +50,7 @@ export declare class Runtime {
      */
     runArc(name: string, storageKeyPrefix: string, options?: RuntimeArcOptions): Arc;
     stop(name: string): void;
+    findArcByParticleId(particleId: string): Arc;
     registerStore(store: UnifiedStore, tags: string[]): void;
     unregisterStore(storeId: string, tags: string[]): void;
     /**
