@@ -9,7 +9,7 @@
  */
 import fs from 'fs';
 import path from 'path';
-import { Manifest } from '../runtime/manifest.js';
+import { Utils } from '../../shells/lib/utils.js';
 export class Schema2Base {
     constructor(opts) {
         this.opts = opts;
@@ -26,16 +26,18 @@ export class Schema2Base {
         }
     }
     async processFile(src) {
+        Utils.init('../..');
         const outName = this.opts.outfile || this.outputName(path.basename(src));
         const outPath = path.join(this.opts.outdir, outName);
         console.log(outPath);
         if (this.opts.update && fs.existsSync(outPath) && fs.statSync(outPath).mtimeMs > fs.statSync(src).mtimeMs) {
             return;
         }
-        const contents = fs.readFileSync(src, 'utf-8');
-        const manifest = await Manifest.parse(contents);
+        const srcPath = `${process.cwd()}/${src}`;
+        const manifest = await Utils.parse(`import '${srcPath}'`);
         // Collect declared schemas along with any inlined in particle connections.
-        const schemas = { ...manifest.schemas };
+        const schemas = {};
+        manifest.allSchemas.forEach(schema => schemas[schema.name] = schema);
         for (const particle of manifest.particles) {
             for (const connection of particle.connections) {
                 const schema = connection.type.getEntitySchema();

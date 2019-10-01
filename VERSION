@@ -1,9 +1,21 @@
-commit 8d9d50d68596985fbfaa76b50d35cc2112d20bfa
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Tue Oct 1 10:03:58 2019 -0700
+commit 9d3ccc86b6c59e8823b3d8c4fb49c0a0420a7f0d
+Author: Sarah Heimlich <heimlich@google.com>
+Date:   Tue Oct 1 10:09:33 2019 -0700
 
-    handle ui event (for notification renderer demo) (#3653)
+    Schema2pkg utils (#3638)
     
-    * handle ui event (for notification renderer demo)
+    * Updating schema2base to work in multiple folders and to recursively find schemas in the target.
     
-    * address comments + tweak notification id
+    * Updating utils path.
+    
+    * Updated README with instructions for running schema2pkg for Kotlin.
+    
+    * Updated path in Utils.init call
+    
+    * schema2base clean up
+    
+    * Updates on file pathing and added null-case tests for allSchemas
+    
+    * simplified utils init
+    
+    * revert changes to docs
