@@ -7,9 +7,9 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-import { StorageKey } from '../storage-key';
-import { StorageDriverProvider, Exists } from './driver-factory';
-import { VolatileDriver } from './volatile';
+import { StorageKey } from '../storage-key.js';
+import { StorageDriverProvider, Exists } from './driver-factory.js';
+import { VolatileDriver } from './volatile.js';
 export declare class RamDiskStorageKey extends StorageKey {
     readonly unique: string;
     constructor(unique: string);

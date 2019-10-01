@@ -132,9 +132,12 @@ __webpack_require__.r(__webpack_exports__);
  * http://polymer.github.io/PATENTS.txt
  */
 
+/* eslint-disable import/extensions */
+
 
 
 window.firebase = {firebase: (firebase_app__WEBPACK_IMPORTED_MODULE_0___default())};
+
 
 /***/ }),
 

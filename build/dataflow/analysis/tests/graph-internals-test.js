@@ -7,10 +7,10 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-import { Flow, FlowModifier, TagOperation } from '../graph-internals';
+import { Flow, FlowModifier, TagOperation } from '../graph-internals.js';
 import { assert } from '../../../platform/chai-web.js';
-import { TestEdge, TestNode } from '../testing/flow-graph-testing';
-import { ClaimIsTag } from '../../../runtime/particle-claim';
+import { TestEdge, TestNode } from '../testing/flow-graph-testing.js';
+import { ClaimIsTag } from '../../../runtime/particle-claim.js';
 describe('Flow', () => {
     it('starts empty', () => {
         const flow = new Flow();

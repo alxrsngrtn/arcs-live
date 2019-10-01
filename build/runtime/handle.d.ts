@@ -16,7 +16,7 @@ import { Store, SingletonStore, CollectionStore, BigCollectionStore } from './st
 import { IdGenerator } from './id.js';
 import { SYMBOL_INTERNALS } from './symbols.js';
 import { Handle as HandleNG } from './storageNG/handle.js';
-import { CRDTTypeRecord } from './crdt/crdt';
+import { CRDTTypeRecord } from './crdt/crdt.js';
 export declare type Handle = HandleOld | HandleNG<CRDTTypeRecord>;
 /**
  * An interface representing anything storable in a Handle. Concretely, this is the {@link Entity}

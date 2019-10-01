@@ -7,10 +7,10 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-import { StorageKey } from '../storage-key';
-import { Runtime } from '../../runtime';
-import { DriverFactory } from './driver-factory';
-import { VolatileDriver } from './volatile';
+import { StorageKey } from '../storage-key.js';
+import { Runtime } from '../../runtime.js';
+import { DriverFactory } from './driver-factory.js';
+import { VolatileDriver } from './volatile.js';
 export class RamDiskStorageKey extends StorageKey {
     constructor(unique) {
         super('ramdisk');
@@ -47,7 +47,7 @@ export class RamDiskStorageDriverProvider {
     }
 }
 // Note that this will automatically register for any production code
-// that uses ramdisk drivers; but it won't automatically register in 
+// that uses ramdisk drivers; but it won't automatically register in
 // testing; for safety, call RamDiskStorageDriverProvider.register()
 // from your test code somewhere.
 RamDiskStorageDriverProvider.register();

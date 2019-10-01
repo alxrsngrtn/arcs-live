@@ -7,14 +7,14 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-import { CRDTTypeRecord, VersionMap } from '../crdt/crdt';
-import { CollectionOperation, CRDTCollectionTypeRecord, Referenceable } from '../crdt/crdt-collection';
-import { CRDTSingletonTypeRecord, SingletonOperation } from '../crdt/crdt-singleton';
-import { Particle } from '../particle';
+import { CRDTTypeRecord, VersionMap } from '../crdt/crdt.js';
+import { CollectionOperation, CRDTCollectionTypeRecord, Referenceable } from '../crdt/crdt-collection.js';
+import { CRDTSingletonTypeRecord, SingletonOperation } from '../crdt/crdt-singleton.js';
+import { Particle } from '../particle.js';
 import { Entity, EntityClass } from '../entity.js';
 import { IdGenerator } from '../id.js';
 import { Type } from '../type.js';
-import { StorageProxy } from './storage-proxy';
+import { StorageProxy } from './storage-proxy.js';
 export interface HandleOptions {
     keepSynced: boolean;
     notifySync: boolean;

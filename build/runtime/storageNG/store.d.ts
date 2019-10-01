@@ -11,7 +11,7 @@ import { CRDTModel, CRDTTypeRecord } from '../crdt/crdt.js';
 import { Type } from '../type.js';
 import { Exists } from './drivers/driver-factory.js';
 import { StorageKey } from './storage-key.js';
-import { StoreInterface, StorageMode, ActiveStore, ProxyMessageType, ProxyMessage, ProxyCallback } from './store-interface';
+import { StoreInterface, StorageMode, ActiveStore, ProxyMessageType, ProxyMessage, ProxyCallback } from './store-interface.js';
 export { StorageMode, ActiveStore, ProxyMessageType, ProxyMessage, ProxyCallback };
 declare type StoreConstructor = {
     construct<T extends CRDTTypeRecord>(storageKey: StorageKey, exists: Exists, type: Type, mode: StorageMode): Promise<ActiveStore<T>>;

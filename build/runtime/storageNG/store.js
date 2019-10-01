@@ -8,15 +8,15 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { Exists } from './drivers/driver-factory.js';
-import { StorageMode, ActiveStore, ProxyMessageType } from './store-interface';
+import { StorageMode, ActiveStore, ProxyMessageType } from './store-interface.js';
 import { DirectStore } from './direct-store.js';
 import { ReferenceModeStore, ReferenceModeStorageKey } from './reference-mode-store.js';
 export { StorageMode, ActiveStore, ProxyMessageType };
 // A representation of a store. Note that initially a constructed store will be
-// inactive - it will not connect to a driver, will not accept connections from 
+// inactive - it will not connect to a driver, will not accept connections from
 // StorageProxy objects, and no data will be read or written.
 //
-// Calling 'activate() will generate an interactive store and return it. 
+// Calling 'activate() will generate an interactive store and return it.
 export class Store {
     constructor(storageKey, exists, type, id, name = '') {
         this.version = 0; // TODO(shans): Needs to become the version vector, and is also probably only available on activated storage?

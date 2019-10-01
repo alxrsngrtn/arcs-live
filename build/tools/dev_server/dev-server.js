@@ -11,9 +11,9 @@ import express from 'express';
 import http from 'http';
 import minimist from 'minimist';
 import morgan from 'morgan';
-import { status } from './status-handler';
-import { ExplorerProxy } from './explorer-proxy';
-import { HotReloadServer } from './hot-reload-server';
+import { status } from './status-handler.js';
+import { ExplorerProxy } from './explorer-proxy.js';
+import { HotReloadServer } from './hot-reload-server.js';
 // ALDS - Arcs Local Development Server.
 //
 // It consists of 2 components:

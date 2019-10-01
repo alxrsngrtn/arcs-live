@@ -7,8 +7,8 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-import { ClaimType } from './particle-claim';
-import { CheckType } from './particle-check';
+import { ClaimType } from './particle-claim.js';
+import { CheckType } from './particle-check.js';
 /**
  * Complete set of tokens used by `manifest-parser.peg`. To use this you
  * need to follow some simple guidelines:

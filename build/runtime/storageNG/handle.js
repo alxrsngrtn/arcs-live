@@ -9,12 +9,12 @@
  */
 import { assert } from '../../platform/assert-web.js';
 import { UserException } from '../arc-exceptions.js';
-import { CollectionOpTypes } from '../crdt/crdt-collection';
-import { SingletonOpTypes } from '../crdt/crdt-singleton';
+import { CollectionOpTypes } from '../crdt/crdt-collection.js';
+import { SingletonOpTypes } from '../crdt/crdt-singleton.js';
 import { Entity } from '../entity.js';
 import { Id } from '../id.js';
 import { EntityType } from '../type.js';
-import { NoOpStorageProxy } from './storage-proxy';
+import { NoOpStorageProxy } from './storage-proxy.js';
 /**
  * Base class for Handles.
  */

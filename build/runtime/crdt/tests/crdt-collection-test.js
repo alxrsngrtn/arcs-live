@@ -8,8 +8,8 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { assert } from '../../../platform/chai-web.js';
-import { ChangeType } from '../crdt';
-import { CollectionOpTypes, CRDTCollection, simplifyFastForwardOp } from '../crdt-collection';
+import { ChangeType } from '../crdt.js';
+import { CollectionOpTypes, CRDTCollection, simplifyFastForwardOp } from '../crdt-collection.js';
 /** Creates an Add operation. */
 function addOp(id, actor, clock) {
     return { type: CollectionOpTypes.Add, added: { id }, clock, actor };

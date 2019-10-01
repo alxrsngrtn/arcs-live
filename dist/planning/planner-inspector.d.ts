@@ -7,9 +7,9 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-import { Arc } from '../runtime/arc';
-import { PlanningResult, SerializableGeneration } from './plan/planning-result';
-import { Suggestion } from './plan/suggestion';
+import { Arc } from '../runtime/arc.js';
+import { PlanningResult, SerializableGeneration } from './plan/planning-result.js';
+import { Suggestion } from './plan/suggestion.js';
 import { VisibilityOptions } from './plan/plan-consumer.js';
 export interface PlannerInspectorFactory {
     create(planner: InspectablePlanner): PlannerInspector;

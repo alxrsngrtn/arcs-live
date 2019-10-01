@@ -7,7 +7,7 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-import { DeviceKey, Key, PublicKey, RecoveryKey, WrappedKey } from './keys';
+import { DeviceKey, Key, PublicKey, RecoveryKey, WrappedKey } from './keys.js';
 /**
  * Generates the 4 types of keys: Wrapped Storage Keys, DeviceKeys, RecoveryKeys, and Persona Keys.
  * Also allows importing public keys in x509 format.
