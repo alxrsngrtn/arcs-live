@@ -1,5 +1,9 @@
-commit 5c64921e92c0b89842ceb47474476436303513d3
+commit a12af0bdf3ea71ef06bd0245cbc9252a14b0cd6f
 Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Mon Sep 30 16:17:29 2019 -0700
+Date:   Mon Sep 30 17:18:37 2019 -0700
 
-    update runtime comments on shared tag (#3650)
+    introduce Arcs interface (#3642)
+    
+    * introduce Arcs interface, get rid of RemotePec
+    
+    * address comments

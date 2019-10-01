@@ -302,7 +302,7 @@
         "signature": "1caf0bf54edc18e0f7bc0bb764e1a91e110d5080b3faa107fa2061281f47da41"
       },
       "../src/runtime/runtime.ts": {
-        "version": "b4d5ae008e72544ad18e0a7b5e2245368bc8b986fea6a23b6e9b578efe13c553",
+        "version": "d5c6e80ab993b5603118c78d00b8d8ea101d58ce7ebd758e47b6000ea7775c47",
         "signature": "1850a1df1ed7f49b06b57a2cc7267d97ac3327216911f663d561d0a56a869099"
       },
       "../src/runtime/storage/volatile-storage.ts": {
