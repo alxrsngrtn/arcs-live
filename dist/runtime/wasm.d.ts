@@ -7,21 +7,20 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-import { Schema } from './schema.js';
 import { Entity } from './entity.js';
+import { Storable } from './handle.js';
 import { Particle } from './particle.js';
 import { Handle } from './handle.js';
 import { Content } from './slot-consumer.js';
 import { Loader } from './loader.js';
 import { PECInnerPort } from './api-channel.js';
 export declare class EntityPackager {
-    readonly schema: Schema;
     private encoder;
     private decoder;
-    constructor(schema: Schema);
+    constructor(handle: Handle);
     encodeSingleton(entity: Entity): string;
     encodeCollection(entities: Entity[]): string;
-    decodeSingleton(str: string): Entity;
+    decodeSingleton(str: string): Storable;
 }
 declare type WasmAddress = number;
 export declare class WasmContainer {
@@ -67,6 +66,7 @@ export declare class WasmParticle extends Particle {
     collectionStore(wasmHandle: WasmAddress, entityPtr: WasmAddress): WasmAddress;
     collectionRemove(wasmHandle: WasmAddress, entityPtr: WasmAddress): void;
     collectionClear(wasmHandle: WasmAddress): void;
+    dereference(wasmHandle: WasmAddress, refIdPtr: WasmAddress, continuationId: number): Promise<void>;
     private getHandle;
     private decodeEntity;
     private ensureIdentified;

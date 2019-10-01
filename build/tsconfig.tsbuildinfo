@@ -486,8 +486,8 @@
         "signature": "bbffdbab87ddeadcc8b0d7b8317c1afd78182efe09408b99e2fd00e4b7dd5fdf"
       },
       "../src/runtime/wasm.ts": {
-        "version": "6aba64267a29eaf7031ca177262cb7a420e654d663d2a26a7c1fe9e6b4298a31",
-        "signature": "b89fd65e32c340de2417047c7b6e68a695686e961748101071a2e0cbf89f86fc"
+        "version": "be8a6b8b22326ea84bdbdef084badda10bce8ff3402c35a15daa52e96bbb56ef",
+        "signature": "e2ea60510a922d11685f315d388550d8aa47c030fa77f59c8febd3c4620bcf74"
       },
       "../src/runtime/particle-execution-context.ts": {
         "version": "748510e86bfa8275b9d0e675eb1d209f756674bb0a8c833040339fe7716cbf38",
@@ -2481,7 +2481,7 @@
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "../src/runtime/tests/wasm-test.ts": {
-        "version": "2155912e7fccf383dfca256df770db3c749badf466812fa40c0a91e58541b0cc",
+        "version": "ccbc1c8cb33b8faf61653606c1451aa3ae29e756b21034e942a0284a9fd95f73",
         "signature": "fd95df5d076cbfed143dc4904d376b5c6d9cb1091b630994ffe2366010afa6b3"
       },
       "../src/runtime/tests/recipe/comparable-test.ts": {
@@ -2633,7 +2633,7 @@
         "signature": "44c67db51f6f262099ce193695d05ebc7e4cc90de35cfda0e9cf2aaeb8ce1ea5"
       },
       "../src/tools/schema2cpp.ts": {
-        "version": "0ea2f60728eb30b99f762b154a508287492517a2c8689148f7ec5eb31a5c9397",
+        "version": "b4d1b2562dd2b6a60ff9b7adc8b0b803b9a42f491c4b670fbff24ce6991359e1",
         "signature": "2399853c21d04efd6ace178ab5736d5ad95a9e1674dc8cee3944fd706556b8a2"
       },
       "../src/tools/schema2kotlin.ts": {
@@ -2705,7 +2705,7 @@
         "signature": "8bc1d39a3b8ec61064f9969316a088e314895e7ffd094468dcc0b238f33cb4a6"
       },
       "../src/wasm/cpp/tests/wasm-cpp-test.ts": {
-        "version": "5f9c2222c5a9fe7d5bec1c861505871114aefdd22c0d69c9964e14f8a6a65b32",
+        "version": "ca2f5f770e0a88ac35ffb2813b89b9522c0abdf805073917553a17952db22145",
         "signature": "97ae39ce2411e60af41db50e11b3048c2b48322f144dcadb5272343ec368356a"
       },
       "../node_modules/@types/core-js/index.d.ts": {
@@ -3773,13 +3773,16 @@
         "../src/platform/assert-web.ts",
         "../src/runtime/schema.ts",
         "../src/runtime/entity.ts",
-        "../src/runtime/particle.ts",
+        "../src/runtime/reference.ts",
+        "../src/runtime/type.ts",
         "../src/runtime/handle.ts",
+        "../src/runtime/particle.ts",
         "../src/runtime/slot-consumer.ts",
         "../src/runtime/hot.ts",
         "../src/runtime/loader.ts",
         "../src/runtime/api-channel.ts",
         "../src/runtime/arc-exceptions.ts",
+        "../src/runtime/particle-execution-context.ts",
         "../node_modules/@types/node/util.d.ts",
         "../node_modules/@types/node/ts3.1/util.d.ts"
       ],
@@ -7803,6 +7806,7 @@
         "../src/runtime/type.ts",
         "../src/runtime/reference.ts",
         "../src/runtime/entity.ts",
+        "../src/runtime/handle.ts",
         "../node_modules/@types/node/util.d.ts",
         "../node_modules/@types/node/ts3.1/util.d.ts"
       ],
@@ -8240,6 +8244,7 @@
         "../src/runtime/testing/fake-slot-composer.ts",
         "../src/runtime/storage/volatile-storage.ts",
         "../src/runtime/testing/test-util.ts",
+        "../src/runtime/type.ts",
         "../src/services/clock-service.ts",
         "../src/services/random-service.ts",
         "../node_modules/@types/node/util.d.ts",
@@ -8940,11 +8945,10 @@
         "../src/runtime/handle.ts"
       ],
       "../src/runtime/wasm.ts": [
-        "../src/runtime/schema.ts",
+        "../src/runtime/handle.ts",
         "../src/runtime/entity.ts",
         "../src/runtime/loader.ts",
         "../src/runtime/api-channel.ts",
-        "../src/runtime/handle.ts",
         "../src/runtime/slot-consumer.ts",
         "../src/runtime/particle.ts"
       ],

@@ -6586,9 +6586,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "WasmParticle", function() { return WasmParticle; });
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
 /* harmony import */ var _entity_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(11);
-/* harmony import */ var _particle_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(34);
-/* harmony import */ var _handle_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(13);
-/* harmony import */ var _arc_exceptions_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(14);
+/* harmony import */ var _reference_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(12);
+/* harmony import */ var _type_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(8);
+/* harmony import */ var _particle_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(34);
+/* harmony import */ var _handle_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(13);
+/* harmony import */ var _arc_exceptions_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(14);
 /**
  * @license
  * Copyright (c) 2019 Google Inc. All rights reserved.
@@ -6598,6 +6600,8 @@ __webpack_require__.r(__webpack_exports__);
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
+
+
 
 
 
@@ -6615,48 +6619,64 @@ __webpack_require__.r(__webpack_exports__);
 //
 //  <collection> = <num-entities>:<length>:<encoded><length>:<encoded> ...
 //
+//  <reference> = <length>:<id>|<length>:<storage-key>|
+//
 // Examples:
 //   Singleton:   4:id05|txt:T3:abc|lnk:U10:http://def|num:N37:|flg:B1|
 //   Collection:  3:29:4:id12|txt:T4:qwer|num:N9.2:|18:6:id2670|num:N-7:|15:5:id501|flg:B0|
+//   Reference:   5:id461|65:volatile://!684596363489092:example^^volatile-Result {Text value}|
 //
 // The encoder classes also support a "Dictionary" format of key:value string pairs:
 //   <size>:<key-len>:<key><value-len>:<value><key-len>:<key><value-len>:<value>...
 class EntityPackager {
-    constructor(schema) {
-        this.encoder = new StringEncoder();
-        this.decoder = new StringDecoder();
+    constructor(handle) {
+        const schema = handle.entityClass.schema;
         Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(schema.names.length > 0, 'At least one schema name is required for entity packaging');
+        let refType = null;
+        if (handle.type instanceof _type_js__WEBPACK_IMPORTED_MODULE_3__["ReferenceType"]) {
+            refType = handle.type;
+        }
+        else if (handle.type.getContainedType() instanceof _type_js__WEBPACK_IMPORTED_MODULE_3__["ReferenceType"]) {
+            refType = handle.type.getContainedType();
+        }
+        this.encoder = new StringEncoder(schema);
+        this.decoder = new StringDecoder(schema, refType, handle.storage.pec);
+    }
+    encodeSingleton(entity) {
+        return this.encoder.encodeSingleton(entity);
+    }
+    encodeCollection(entities) {
+        return this.encoder.encodeCollection(entities);
+    }
+    decodeSingleton(str) {
+        return this.decoder.decodeSingleton(str);
+    }
+}
+function encodeStr(str) {
+    return str.length + ':' + str;
+}
+class StringEncoder {
+    constructor(schema) {
         this.schema = schema;
     }
     encodeSingleton(entity) {
-        return this.encoder.encodeSingleton(this.schema, entity);
+        if (entity instanceof _reference_js__WEBPACK_IMPORTED_MODULE_2__["Reference"]) {
+            const { id, storageKey } = entity.dataClone();
+            return encodeStr(id) + '|' + encodeStr(storageKey) + '|';
+        }
+        else {
+            const id = _entity_js__WEBPACK_IMPORTED_MODULE_1__["Entity"].id(entity);
+            let encoded = encodeStr(id) + '|';
+            for (const [name, value] of Object.entries(entity)) {
+                encoded += this.encodeField(this.schema.fields[name], name, value);
+            }
+            return encoded;
+        }
     }
     encodeCollection(entities) {
-        return this.encoder.encodeCollection(this.schema, entities);
-    }
-    decodeSingleton(str) {
-        const { id, data } = this.decoder.decodeSingleton(str);
-        const entity = new (this.schema.entityClass())(data);
-        if (id !== '') {
-            _entity_js__WEBPACK_IMPORTED_MODULE_1__["Entity"].identify(entity, id);
-        }
-        return entity;
-    }
-}
-class StringEncoder {
-    encodeSingleton(schema, entity) {
-        const id = _entity_js__WEBPACK_IMPORTED_MODULE_1__["Entity"].id(entity);
-        let encoded = id.length + ':' + id + '|';
-        for (const [name, value] of Object.entries(entity)) {
-            encoded += this.encodeField(schema.fields[name], name, value);
-        }
-        return encoded;
-    }
-    encodeCollection(schema, entities) {
         let encoded = entities.length + ':';
         for (const entity of entities) {
-            const str = this.encodeSingleton(schema, entity);
-            encoded += str.length + ':' + str;
+            encoded += encodeStr(this.encodeSingleton(entity));
         }
         return encoded;
     }
@@ -6664,7 +6684,7 @@ class StringEncoder {
         const entries = Object.entries(dict);
         let encoded = entries.length + ':';
         for (const [key, value] of entries) {
-            encoded += key.length + ':' + key + value.length + ':' + value;
+            encoded += encodeStr(key) + encodeStr(value);
         }
         return encoded;
     }
@@ -6685,7 +6705,7 @@ class StringEncoder {
         switch (type) {
             case 'Text':
             case 'URL':
-                return value.length + ':' + value;
+                return encodeStr(value);
             case 'Number':
                 return value + ':';
             case 'Boolean':
@@ -6699,19 +6719,36 @@ class StringEncoder {
     }
 }
 class StringDecoder {
+    constructor(schema = null, referenceType = null, pec = null) {
+        this.schema = schema;
+        this.referenceType = referenceType;
+        this.pec = pec;
+    }
     decodeSingleton(str) {
         this.str = str;
         const len = Number(this.upTo(':'));
         const id = this.chomp(len);
         this.validate('|');
-        const data = {};
-        while (this.str.length > 0) {
-            const name = this.upTo(':');
-            const typeChar = this.chomp(1);
-            data[name] = this.decodeValue(typeChar);
+        if (this.referenceType) {
+            const keyLen = Number(this.upTo(':'));
+            const storageKey = this.chomp(keyLen);
             this.validate('|');
+            return new _reference_js__WEBPACK_IMPORTED_MODULE_2__["Reference"]({ id, storageKey }, this.referenceType, this.pec);
         }
-        return { id, data };
+        else {
+            const data = {};
+            while (this.str.length > 0) {
+                const name = this.upTo(':');
+                const typeChar = this.chomp(1);
+                data[name] = this.decodeValue(typeChar);
+                this.validate('|');
+            }
+            const entity = new (this.schema.entityClass())(data);
+            if (id !== '') {
+                _entity_js__WEBPACK_IMPORTED_MODULE_1__["Entity"].identify(entity, id);
+            }
+            return entity;
+        }
     }
     decodeDictionary(str) {
         this.str = str;
@@ -6943,6 +6980,7 @@ class WasmContainer {
             _collectionStore: (p, handle, entity) => this.getParticle(p).collectionStore(handle, entity),
             _collectionRemove: (p, handle, entity) => this.getParticle(p).collectionRemove(handle, entity),
             _collectionClear: (p, handle) => this.getParticle(p).collectionClear(handle),
+            _dereference: (p, handle, refId, continuationId) => this.getParticle(p).dereference(handle, refId, continuationId),
             _render: (p, slotName, template, model) => this.getParticle(p).renderImpl(slotName, template, model),
             _serviceRequest: (p, call, args, tag) => this.getParticle(p).serviceRequest(call, args, tag),
             _resolveUrl: (url) => this.resolve(url),
@@ -6993,7 +7031,7 @@ class WasmContainer {
     }
 }
 // Creates and interfaces to a particle inside a WasmContainer's module.
-class WasmParticle extends _particle_js__WEBPACK_IMPORTED_MODULE_2__["Particle"] {
+class WasmParticle extends _particle_js__WEBPACK_IMPORTED_MODULE_4__["Particle"] {
     constructor(id, container) {
         super();
         this.handleMap = new Map();
@@ -7024,7 +7062,7 @@ class WasmParticle extends _particle_js__WEBPACK_IMPORTED_MODULE_2__["Particle"]
             }
             this.handleMap.set(handle, wasmHandle);
             this.revHandleMap.set(wasmHandle, handle);
-            this.converters.set(handle, new EntityPackager(handle.entityClass.schema));
+            this.converters.set(handle, new EntityPackager(handle));
         }
         this.exports._init(this.innerParticle);
     }
@@ -7039,7 +7077,7 @@ class WasmParticle extends _particle_js__WEBPACK_IMPORTED_MODULE_2__["Particle"]
             throw new Error('cannot find handle ' + handle.name);
         }
         let encoded;
-        if (handle instanceof _handle_js__WEBPACK_IMPORTED_MODULE_3__["Singleton"]) {
+        if (handle instanceof _handle_js__WEBPACK_IMPORTED_MODULE_5__["Singleton"]) {
             encoded = converter.encodeSingleton(model);
         }
         else {
@@ -7061,7 +7099,7 @@ class WasmParticle extends _particle_js__WEBPACK_IMPORTED_MODULE_2__["Particle"]
         }
         let p1 = 0;
         let p2 = 0;
-        if (handle instanceof _handle_js__WEBPACK_IMPORTED_MODULE_3__["Singleton"]) {
+        if (handle instanceof _handle_js__WEBPACK_IMPORTED_MODULE_5__["Singleton"]) {
             if (update.data) {
                 p1 = this.container.store(converter.encodeSingleton(update.data));
             }
@@ -7114,11 +7152,37 @@ class WasmParticle extends _particle_js__WEBPACK_IMPORTED_MODULE_2__["Particle"]
         const collection = this.getHandle(wasmHandle);
         void collection.clear();
     }
+    // Called by particles to retrieve the entity held by a reference-typed handle.
+    async dereference(wasmHandle, refIdPtr, continuationId) {
+        const handle = this.getHandle(wasmHandle);
+        const converter = this.converters.get(handle);
+        if (!converter) {
+            throw new Error('cannot find handle ' + handle.name);
+        }
+        const refId = this.container.read(refIdPtr);
+        let ref;
+        if (handle instanceof _handle_js__WEBPACK_IMPORTED_MODULE_5__["Singleton"]) {
+            ref = await handle.get();
+        }
+        else if (handle instanceof _handle_js__WEBPACK_IMPORTED_MODULE_5__["Collection"]) {
+            ref = await handle.get(refId);
+        }
+        else {
+            throw new Error(`wasm particle '${this.spec.name}' dereferenced an unsupported handle type ${handle._id}`);
+        }
+        let p = 0;
+        if (ref) {
+            const entity = await ref.dereference();
+            p = this.container.store(converter.encodeSingleton(entity));
+        }
+        this.exports._dereferenceResponse(this.innerParticle, continuationId, p);
+        this.container.free(p);
+    }
     getHandle(wasmHandle) {
         const handle = this.revHandleMap.get(wasmHandle);
         if (!handle) {
             const err = new Error(`wasm particle '${this.spec.name}' attempted to write to unconnected handle`);
-            const userException = new _arc_exceptions_js__WEBPACK_IMPORTED_MODULE_4__["UserException"](err, 'WasmParticle::getHandle', this.id, this.spec.name);
+            const userException = new _arc_exceptions_js__WEBPACK_IMPORTED_MODULE_6__["UserException"](err, 'WasmParticle::getHandle', this.id, this.spec.name);
             this.container.apiPort.ReportExceptionInHost(userException);
             throw err;
         }
@@ -7130,7 +7194,8 @@ class WasmParticle extends _particle_js__WEBPACK_IMPORTED_MODULE_2__["Particle"]
     }
     ensureIdentified(entity, handle) {
         let p = 0;
-        if (!_entity_js__WEBPACK_IMPORTED_MODULE_1__["Entity"].isIdentified(entity)) {
+        // TODO: rework Reference/Entity internals to avoid this instance check?
+        if (entity instanceof _entity_js__WEBPACK_IMPORTED_MODULE_1__["Entity"] && !_entity_js__WEBPACK_IMPORTED_MODULE_1__["Entity"].isIdentified(entity)) {
             handle.createIdentityFor(entity);
             p = this.container.store(_entity_js__WEBPACK_IMPORTED_MODULE_1__["Entity"].id(entity));
         }

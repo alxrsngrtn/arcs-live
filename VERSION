@@ -1,15 +1,11 @@
-commit 1cb1477f6547c2ff6728603b269e640394437089
-Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
-Date:   Tue Oct 1 15:44:01 2019 +1000
+commit 92e504d4fe92638632cac438d9b7d6925b8d7407
+Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
+Date:   Tue Oct 1 16:01:10 2019 +1000
 
-    Add UnifiedStore interface (#3658)
+    Support reference-typed handles in C++ wasm particles. (#3655)
     
-    * Add UnifiedStore interface
+    * Support reference-typed handles in C++ wasm particles.
     
-    Lots of callsites migrated to use the UnifiedStore interface instead of
-    talking to the old storage directly. This will let us migrate to the new
-    storage more easily.
+    This does not update Kotlin or provide support for Reference schema fields.
     
-    Cloned from Shane's PR #3633
-    
-    * Fix one more method to use UnifiedStore
+    * Add types
