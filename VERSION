@@ -1,23 +1,5 @@
-commit 4934e69da41ee4bab502d04373d64e5d3561b4d4
-Author: Joshua Pratt <jp10010101010000@gmail.com>
-Date:   Wed Oct 2 10:30:34 2019 +1000
+commit 6c9168bec8f7a472dcffab557e1ca1ae6082f049
+Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
+Date:   Wed Oct 2 13:07:02 2019 +1000
 
-    Slandles delegation (#3648)
-    
-    * Add tests for slandle dependency
-    
-    * Identify and create dependent connections for slandles
-    
-    * Add types
-    
-    * Skip slandles
-    
-    * Only supply consuming slandle connections
-    
-    * Use slot prefixed suffixes for slot ids
-    
-    * One more 'slot' id
-    
-    * Removing debugging console
-    
-    * Fix typo
+    Fix build error from #3649 (#3678)

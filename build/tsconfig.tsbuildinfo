@@ -494,7 +494,7 @@
         "signature": "3e88d9fddaddb1cd659d8d53aa24d0eb1e61780a6d188255190d9d1c32c51607"
       },
       "../src/runtime/particle-execution-context.ts": {
-        "version": "748510e86bfa8275b9d0e675eb1d209f756674bb0a8c833040339fe7716cbf38",
+        "version": "82a69d1b8939306097732ca0b414a84a64f270934efc00c1f7cc7aaa13b343be",
         "signature": "ec0d11140cee33d9ee710cfaae29b9bb266a564b90b2126c736911a2b18f599b"
       },
       "../src/runtime/entity.ts": {
