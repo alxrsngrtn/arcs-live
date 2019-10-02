@@ -27315,7 +27315,15 @@ class Loader {
      */
     unwrapParticle(particleWrapper) {
         assert(this.pec);
-        return particleWrapper({ Particle: Particle$1, DomParticle, TransformationDomParticle, MultiplexerDomParticle, Reference: ClientReference.newClientReference(this.pec), html });
+        return particleWrapper({
+            Particle: Particle$1,
+            DomParticle,
+            SimpleParticle: DomParticle,
+            TransformationDomParticle,
+            MultiplexerDomParticle,
+            Reference: ClientReference.newClientReference(this.pec),
+            html
+        });
     }
     clone() {
         return new Loader();

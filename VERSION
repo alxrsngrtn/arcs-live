@@ -1,19 +1,9 @@
-commit 68cd3f36c36b6adb60ccd1f2d9df498b696f6fcf
+commit 8a25b3c56b82e2b4c3fe98d489e52205fbde53ee
 Author: Scott J. Miles <sjmiles@google.com>
-Date:   Wed Oct 2 13:31:45 2019 -0700
+Date:   Wed Oct 2 13:54:51 2019 -0700
 
-    Convert dev-shell to UiBroker (#3673)
+    Blanket replace `DomParticle` with `SimpleParticle` (#3674)
     
-    * add tiny module to house UiSlotComposer init
+    * Update the Particle corpus to use SimpleParticle instead of DomParticle
     
-    * remove old SlotComposer support, use UiSlotComposer
-    
-    * fix paths to work in a general serving context
-    
-    * xen-renderer can snarf slotids directly out of the DOM instead of via JS config
-    
-    * make SimpleParticle an alias for UiParticle, then use it
-    
-    * unroll and then dispose of ui-composer.js
-    
-    * remove dead file
+    * plumb a SimpleParticle alias into base loader

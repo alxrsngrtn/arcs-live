@@ -7941,7 +7941,15 @@ class Loader {
      */
     unwrapParticle(particleWrapper) {
         Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(this.pec);
-        return particleWrapper({ Particle: _particle_js__WEBPACK_IMPORTED_MODULE_7__["Particle"], DomParticle: _dom_particle_js__WEBPACK_IMPORTED_MODULE_5__["DomParticle"], TransformationDomParticle: _transformation_dom_particle_js__WEBPACK_IMPORTED_MODULE_9__["TransformationDomParticle"], MultiplexerDomParticle: _multiplexer_dom_particle_js__WEBPACK_IMPORTED_MODULE_6__["MultiplexerDomParticle"], Reference: _reference_js__WEBPACK_IMPORTED_MODULE_8__["ClientReference"].newClientReference(this.pec), html });
+        return particleWrapper({
+            Particle: _particle_js__WEBPACK_IMPORTED_MODULE_7__["Particle"],
+            DomParticle: _dom_particle_js__WEBPACK_IMPORTED_MODULE_5__["DomParticle"],
+            SimpleParticle: _dom_particle_js__WEBPACK_IMPORTED_MODULE_5__["DomParticle"],
+            TransformationDomParticle: _transformation_dom_particle_js__WEBPACK_IMPORTED_MODULE_9__["TransformationDomParticle"],
+            MultiplexerDomParticle: _multiplexer_dom_particle_js__WEBPACK_IMPORTED_MODULE_6__["MultiplexerDomParticle"],
+            Reference: _reference_js__WEBPACK_IMPORTED_MODULE_8__["ClientReference"].newClientReference(this.pec),
+            html
+        });
     }
     clone() {
         return new Loader();

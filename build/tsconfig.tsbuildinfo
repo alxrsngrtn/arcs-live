@@ -470,7 +470,7 @@
         "signature": "91eb49952d74ed32935a8e7cadd8aa7c610bdfa9bbf7f41aab4fca638a6f5e5d"
       },
       "../src/runtime/loader.ts": {
-        "version": "8472f9f3ea50f37c8f0eecc35020c3a289daf76f09ab475236856130e0981616",
+        "version": "336c059010e6e5ac0e60a739ab69c955975836021be0d32ec69ec730c0134c5e",
         "signature": "aada06877d833c5c090730084c8d2c6fdfd9f593e61ca60e7419a687621e44e2"
       },
       "../src/runtime/testing/stub-loader.ts": {
