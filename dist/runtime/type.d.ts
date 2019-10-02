@@ -17,11 +17,12 @@ import { Predicate, Literal } from './hot.js';
 import { CRDTTypeRecord, CRDTModel } from './crdt/crdt.js';
 import { CRDTCount } from './crdt/crdt-count.js';
 import { CRDTCollection } from './crdt/crdt-collection.js';
+import { CRDTSingleton } from './crdt/crdt-singleton.js';
 export interface TypeLiteral extends Literal {
     tag: string;
     data?: any;
 }
-export declare type Tag = 'Entity' | 'TypeVariable' | 'Collection' | 'BigCollection' | 'Relation' | 'Interface' | 'Slot' | 'Reference' | 'Arc' | 'Handle' | 'Count';
+export declare type Tag = 'Entity' | 'TypeVariable' | 'Collection' | 'BigCollection' | 'Relation' | 'Interface' | 'Slot' | 'Reference' | 'Arc' | 'Handle' | 'Count' | 'Singleton';
 export declare abstract class Type {
     tag: Tag;
     protected constructor(tag: Tag);
@@ -80,6 +81,13 @@ export declare class CountType extends Type {
     constructor();
     toLiteral(): TypeLiteral;
     crdtInstanceConstructor(): typeof CRDTCount;
+}
+export declare class SingletonType<T extends Type> extends Type {
+    private readonly innerType;
+    constructor(type: T);
+    toLiteral(): TypeLiteral;
+    getContainedType(): T;
+    crdtInstanceConstructor(): typeof CRDTSingleton;
 }
 export declare class EntityType extends Type {
     readonly entitySchema: Schema;

@@ -8,13 +8,13 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { assert } from '../../../platform/chai-web.js';
-import { CRDTSingleton, SingletonOpTypes } from '../../crdt/crdt-singleton.js';
+import { SingletonOpTypes } from '../../crdt/crdt-singleton.js';
 import { StorageProxy, NoOpStorageProxy } from '../storage-proxy.js';
 import { ProxyMessageType } from '../store.js';
 import { MockHandle, MockStore } from '../testing/test-storage.js';
-import { EntityType } from '../../type.js';
+import { EntityType, SingletonType } from '../../type.js';
 function getStorageProxy(store) {
-    return new StorageProxy('id', new CRDTSingleton(), store, EntityType.make([], {}));
+    return new StorageProxy('id', store, new SingletonType(EntityType.make([], {})));
 }
 function getNoOpStorageProxy() {
     return new NoOpStorageProxy();

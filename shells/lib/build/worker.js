@@ -1908,6 +1908,7 @@ class TypeChecker {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Type", function() { return Type; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CountType", function() { return CountType; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SingletonType", function() { return SingletonType; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "EntityType", function() { return EntityType; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "TypeVariable", function() { return TypeVariable; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CollectionType", function() { return CollectionType; });
@@ -1925,6 +1926,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _type_variable_info_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(27);
 /* harmony import */ var _crdt_crdt_count_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(28);
 /* harmony import */ var _crdt_crdt_collection_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(23);
+/* harmony import */ var _crdt_crdt_singleton_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(24);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -1934,6 +1936,7 @@ __webpack_require__.r(__webpack_exports__);
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
+
 
 
 
@@ -2136,6 +2139,21 @@ class CountType extends Type {
     }
     crdtInstanceConstructor() {
         return _crdt_crdt_count_js__WEBPACK_IMPORTED_MODULE_5__["CRDTCount"];
+    }
+}
+class SingletonType extends Type {
+    constructor(type) {
+        super('Singleton');
+        this.innerType = type;
+    }
+    toLiteral() {
+        return { tag: 'Singleton' };
+    }
+    getContainedType() {
+        return this.innerType;
+    }
+    crdtInstanceConstructor() {
+        return _crdt_crdt_singleton_js__WEBPACK_IMPORTED_MODULE_7__["CRDTSingleton"];
     }
 }
 class EntityType extends Type {

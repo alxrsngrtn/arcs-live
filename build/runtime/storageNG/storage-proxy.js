@@ -10,21 +10,22 @@
 import { mapStackTrace } from '../../platform/sourcemapped-stacktrace-web.js';
 import { SystemException } from '../arc-exceptions.js';
 import { CRDTError } from '../crdt/crdt.js';
+import { EntityType } from '../type.js';
 import { ProxyMessageType } from './store.js';
 /**
  * Mediates between one or more Handles and the backing store. The store can be outside the PEC or
  * directly connected to the StorageProxy.
  */
 export class StorageProxy {
-    constructor(apiChannelId, crdt, storeProvider, type) {
+    constructor(apiChannelId, storeProvider, type) {
         this.handles = [];
         this.listenerAttached = false;
         this.keepSynced = false;
         this.synchronized = false;
         this.modelHasSynced = () => undefined;
         this.apiChannelId = apiChannelId;
-        this.crdt = crdt;
         this.store = storeProvider.getStorageEndpoint(this);
+        this.crdt = new (type.crdtInstanceConstructor())();
         this.type = type;
         this.scheduler = new StorageProxyScheduler();
     }
@@ -179,7 +180,7 @@ export class StorageProxy {
 }
 export class NoOpStorageProxy extends StorageProxy {
     constructor() {
-        super(null, null, { getStorageEndpoint() { } }, null);
+        super(null, { getStorageEndpoint() { } }, EntityType.make([], {}));
     }
     async idle() {
         return new Promise(resolve => { });

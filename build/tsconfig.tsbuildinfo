@@ -394,8 +394,8 @@
         "signature": "1fbb0cebcfb95f1ec7765e3b94fb4d333ee7c12923b9ff39abf7b9d76787bc34"
       },
       "../src/runtime/storageNG/storage-proxy.ts": {
-        "version": "fa8db378d1fdb908b245246cbe8e5cd8bf52d9f46bca735f3329c60e57edbf4b",
-        "signature": "500c2a6203bf37f30e4dae42290f2c78b56f53ce93af97e66dc34822825c0002"
+        "version": "61923904985351f0e34248998f5b826cfd754b7d5f32f1c37f0830a9bcbada11",
+        "signature": "a358531560d4e2a49cc34077433efde00649050354de88202c168bce927375f5"
       },
       "../src/runtime/storageNG/store-interface.ts": {
         "version": "58d662c66e5e4215fe6dbcaf9ed884dbe569dbf1c6eb6226b73360b4a46c2179",
@@ -510,8 +510,8 @@
         "signature": "50f22c6414d93bc2b5f52da8ecccca67927c7b89aabb4e86903900a576ab1356"
       },
       "../src/runtime/type.ts": {
-        "version": "8f6130d0b5d543c369110fee9b6cbd04b83fe045a22da00552bfee4c419f784a",
-        "signature": "374d95fc243309ee9dc204260691bd0a8a0fbae56e23064e5e307634a5366b3c"
+        "version": "205ab52344e31b1f98fc9e4f4b63fa155285ec273434d2711b06b9f49840eeff",
+        "signature": "20df5968514f727cf40579be87b83e1edb6ed2de377108d6fe08c102ba9489a0"
       },
       "../src/runtime/recipe/type-checker.ts": {
         "version": "0d29294f4265accd54bc7718d8b0855000fb1647f4846d8c186fad7b9b467d98",
@@ -2301,7 +2301,7 @@
         "signature": "fd95df5d076cbfed143dc4904d376b5c6d9cb1091b630994ffe2366010afa6b3"
       },
       "../src/runtime/storageNG/tests/handle-test.ts": {
-        "version": "a87f5feb2d1c973bb21d32d45abb5c0ff489cda1a7a9a008c17d3ace0d2f75da",
+        "version": "3d67e786363e2b530beec4560fcfdf7677db3911ca0ead5fd10959ed764466fa",
         "signature": "fd95df5d076cbfed143dc4904d376b5c6d9cb1091b630994ffe2366010afa6b3"
       },
       "../src/runtime/storageNG/tests/ramdisk-backing-store-integration-test.ts": {
@@ -2317,7 +2317,7 @@
         "signature": "fd95df5d076cbfed143dc4904d376b5c6d9cb1091b630994ffe2366010afa6b3"
       },
       "../src/runtime/storageNG/tests/storage-proxy-test.ts": {
-        "version": "cc40684f0bb51f194ff2d3650ddd89e59b79a5b16e6ab9825ffdfacce79fcc70",
+        "version": "263c663d844c12a9697a1063980e00d09b3fefc00dcc3823ff2a3a9907805ddc",
         "signature": "fd95df5d076cbfed143dc4904d376b5c6d9cb1091b630994ffe2366010afa6b3"
       },
       "../src/runtime/testing/sequence.ts": {
@@ -3878,6 +3878,7 @@
         "../src/runtime/crdt/crdt.ts",
         "../src/runtime/crdt/crdt-count.ts",
         "../src/runtime/crdt/crdt-collection.ts",
+        "../src/runtime/crdt/crdt-singleton.ts",
         "../node_modules/@types/node/util.d.ts",
         "../node_modules/@types/node/ts3.1/util.d.ts"
       ],
@@ -9033,6 +9034,7 @@
         "../src/runtime/crdt/crdt.ts",
         "../src/runtime/schema.ts",
         "../src/runtime/crdt/crdt-count.ts",
+        "../src/runtime/crdt/crdt-singleton.ts",
         "../src/runtime/type-variable-info.ts",
         "../src/runtime/interface-info.ts",
         "../src/runtime/slot-info.ts",

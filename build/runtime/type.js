@@ -14,6 +14,7 @@ import { ArcInfo } from './synthetic-types.js';
 import { TypeVariableInfo } from './type-variable-info.js';
 import { CRDTCount } from './crdt/crdt-count.js';
 import { CRDTCollection } from './crdt/crdt-collection.js';
+import { CRDTSingleton } from './crdt/crdt-singleton.js';
 export class Type {
     constructor(tag) {
         this.tag = tag;
@@ -209,6 +210,21 @@ export class CountType extends Type {
     }
     crdtInstanceConstructor() {
         return CRDTCount;
+    }
+}
+export class SingletonType extends Type {
+    constructor(type) {
+        super('Singleton');
+        this.innerType = type;
+    }
+    toLiteral() {
+        return { tag: 'Singleton' };
+    }
+    getContainedType() {
+        return this.innerType;
+    }
+    crdtInstanceConstructor() {
+        return CRDTSingleton;
     }
 }
 export class EntityType extends Type {

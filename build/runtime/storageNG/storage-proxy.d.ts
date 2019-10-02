@@ -8,7 +8,7 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { PropagatedException } from '../arc-exceptions.js';
-import { CRDTConsumerType, CRDTModel, CRDTOperation, CRDTTypeRecord, VersionMap } from '../crdt/crdt.js';
+import { CRDTConsumerType, CRDTOperation, CRDTTypeRecord, VersionMap } from '../crdt/crdt.js';
 import { Particle } from '../particle.js';
 import { ParticleExecutionContext } from '../particle-execution-context.js';
 import { Type } from '../type.js';
@@ -29,7 +29,7 @@ export declare class StorageProxy<T extends CRDTTypeRecord> {
     private synchronized;
     private readonly scheduler;
     private modelHasSynced;
-    constructor(apiChannelId: string, crdt: CRDTModel<T>, storeProvider: StorageCommunicationEndpointProvider<T>, type: Type);
+    constructor(apiChannelId: string, storeProvider: StorageCommunicationEndpointProvider<T>, type: Type);
     readonly pec: ParticleExecutionContext;
     idle(): Promise<void>;
     reportExceptionInHost(exception: PropagatedException): void;
