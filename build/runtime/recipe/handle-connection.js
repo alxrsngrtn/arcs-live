@@ -125,6 +125,18 @@ export class HandleConnection {
         const slandle = new SlotConnection(this.name, this.particle);
         slandle.tags = this.tags;
         slandle.targetSlot = this.handle && this.handle.toSlot();
+        if (this.spec) {
+            this.spec.dependentConnections.forEach(connSpec => {
+                const conn = this.particle.getConnectionByName(connSpec.name);
+                if (!conn)
+                    return;
+                const slandleConn = conn.toSlotConnection();
+                if (!slandleConn)
+                    return;
+                assert(!slandle.providedSlots[conn.spec.name], `provided slot '${conn.spec.name}' already exists`);
+                slandle.providedSlots[conn.spec.name] = slandleConn.targetSlot;
+            });
+        }
         return slandle;
     }
     get isOptional() {

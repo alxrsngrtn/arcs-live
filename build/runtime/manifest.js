@@ -832,93 +832,103 @@ ${e.message}
                 });
             }
         }
-        for (const [particle, item] of items.byParticle) {
-            for (const connectionItem of item.connections) {
-                let connection;
-                if (connectionItem.param === '*') {
-                    connection = particle.addUnnamedConnection();
+        const newConnection = (particle, connectionItem) => {
+            let connection;
+            if (connectionItem.param === '*') {
+                connection = particle.addUnnamedConnection();
+            }
+            else {
+                connection = particle.connections[connectionItem.param];
+                if (!connection) {
+                    connection = particle.addConnectionName(connectionItem.param);
+                }
+                // TODO: else, merge tags? merge directions?
+            }
+            connection.tags = connectionItem.target ? connectionItem.target.tags : [];
+            const direction = arrowToDirection(connectionItem.dir);
+            if (!connectionMatchesHandleDirection(direction, connection.direction)) {
+                throw new ManifestError(connectionItem.location, `'${connectionItem.dir}' (${direction}) not compatible with '${connection.direction}' param of '${particle.name}'`);
+            }
+            else if (connection.direction === 'any') {
+                if (connectionItem.param !== '*' && particle.spec !== undefined) {
+                    throw new ManifestError(connectionItem.location, `param '${connectionItem.param}' is not defined by '${particle.name}'`);
+                }
+                connection.direction = direction;
+            }
+            let targetHandle;
+            let targetParticle;
+            if (connectionItem.target && connectionItem.target.name) {
+                let entry = items.byName.get(connectionItem.target.name);
+                if (!entry) {
+                    const handle = recipe.newHandle();
+                    handle.tags = [];
+                    handle.localName = connectionItem.target.name;
+                    if (connection.direction === '`consume' || connection.direction === '`provide') {
+                        // TODO(jopra): This is something of a hack to catch users who have not forward-declared their slandles.
+                        handle.fate = '`slot';
+                    }
+                    else {
+                        handle.fate = 'create';
+                    }
+                    // TODO: item does not exist on handle.
+                    handle['item'] = { kind: 'handle' };
+                    entry = { item: handle['item'], handle };
+                    items.byName.set(handle.localName, entry);
+                    items.byHandle.set(handle, handle['item']);
+                }
+                else if (!entry.item) {
+                    throw new ManifestError(connectionItem.location, `did not expect '${entry}' expected handle or particle`);
+                }
+                if (entry.item.kind === 'handle' || entry.item.kind === 'requireHandle') {
+                    targetHandle = entry.handle;
+                }
+                else if (entry.item.kind === 'particle') {
+                    targetParticle = entry.particle;
                 }
                 else {
-                    connection = particle.connections[connectionItem.param];
-                    if (!connection) {
-                        connection = particle.addConnectionName(connectionItem.param);
-                    }
-                    // TODO: else, merge tags? merge directions?
+                    throw new ManifestError(connectionItem.location, `did not expect ${entry.item.kind}`);
                 }
-                connection.tags = connectionItem.target ? connectionItem.target.tags : [];
-                const direction = arrowToDirection(connectionItem.dir);
-                if (!connectionMatchesHandleDirection(direction, connection.direction)) {
-                    throw new ManifestError(connectionItem.location, `'${connectionItem.dir}' (${direction}) not compatible with '${connection.direction}' param of '${particle.name}'`);
+            }
+            // Handle implicit handle connections in the form `param = SomeParticle`
+            if (connectionItem.target && connectionItem.target.particle) {
+                const hostedParticle = manifest.findParticleByName(connectionItem.target.particle);
+                if (!hostedParticle) {
+                    throw new ManifestError(connectionItem.target.location, `Could not find hosted particle '${connectionItem.target.particle}'`);
                 }
-                else if (connection.direction === 'any') {
-                    if (connectionItem.param !== '*' && particle.spec !== undefined) {
-                        throw new ManifestError(connectionItem.location, `param '${connectionItem.param}' is not defined by '${particle.name}'`);
-                    }
-                    connection.direction = direction;
+                targetHandle = RecipeUtil.constructImmediateValueHandle(connection, hostedParticle, manifest.generateID());
+                if (!targetHandle) {
+                    throw new ManifestError(connectionItem.target.location, `Hosted particle '${hostedParticle.name}' does not match interface '${connection.name}'`);
                 }
-                let targetHandle;
-                let targetParticle;
-                if (connectionItem.target && connectionItem.target.name) {
-                    let entry = items.byName.get(connectionItem.target.name);
-                    if (!entry) {
-                        const handle = recipe.newHandle();
-                        handle.tags = [];
-                        handle.localName = connectionItem.target.name;
-                        handle.fate = 'create';
-                        // TODO: item does not exist on handle.
-                        handle['item'] = { kind: 'handle' };
-                        entry = { item: handle['item'], handle };
-                        items.byName.set(handle.localName, entry);
-                        items.byHandle.set(handle, handle['item']);
-                    }
-                    else if (!entry.item) {
-                        throw new ManifestError(connectionItem.location, `did not expect '${entry}' expected handle or particle`);
-                    }
-                    if (entry.item.kind === 'handle' || entry.item.kind === 'requireHandle') {
-                        targetHandle = entry.handle;
-                    }
-                    else if (entry.item.kind === 'particle') {
-                        targetParticle = entry.particle;
-                    }
-                    else {
-                        throw new ManifestError(connectionItem.location, `did not expect ${entry.item.kind}`);
-                    }
-                }
-                // Handle implicit handle connections in the form `param = SomeParticle`
-                if (connectionItem.target && connectionItem.target.particle) {
-                    const hostedParticle = manifest.findParticleByName(connectionItem.target.particle);
-                    if (!hostedParticle) {
-                        throw new ManifestError(connectionItem.target.location, `Could not find hosted particle '${connectionItem.target.particle}'`);
-                    }
-                    targetHandle = RecipeUtil.constructImmediateValueHandle(connection, hostedParticle, manifest.generateID());
-                    if (!targetHandle) {
-                        throw new ManifestError(connectionItem.target.location, `Hosted particle '${hostedParticle.name}' does not match interface '${connection.name}'`);
-                    }
-                }
-                if (targetParticle) {
-                    let targetConnection;
-                    // TODO(lindner): replaced param with name since param is not defined, but name/particle are...
-                    if (connectionItem.target.name) {
-                        targetConnection = targetParticle.connections[connectionItem.target.name];
-                        if (!targetConnection) {
-                            targetConnection = targetParticle.addConnectionName(connectionItem.target.name);
-                            // TODO: direction?
-                        }
-                    }
-                    else {
-                        targetConnection = targetParticle.addUnnamedConnection();
+            }
+            if (targetParticle) {
+                let targetConnection;
+                // TODO(lindner): replaced param with name since param is not defined, but name/particle are...
+                if (connectionItem.target.name) {
+                    targetConnection = targetParticle.connections[connectionItem.target.name];
+                    if (!targetConnection) {
+                        targetConnection = targetParticle.addConnectionName(connectionItem.target.name);
                         // TODO: direction?
                     }
-                    targetHandle = targetConnection.handle;
-                    if (!targetHandle) {
-                        // TODO: tags?
-                        targetHandle = recipe.newHandle();
-                        targetConnection.connectToHandle(targetHandle);
-                    }
                 }
-                if (targetHandle) {
-                    connection.connectToHandle(targetHandle);
+                else {
+                    targetConnection = targetParticle.addUnnamedConnection();
+                    // TODO: direction?
                 }
+                targetHandle = targetConnection.handle;
+                if (!targetHandle) {
+                    // TODO: tags?
+                    targetHandle = recipe.newHandle();
+                    targetConnection.connectToHandle(targetHandle);
+                }
+            }
+            if (targetHandle) {
+                connection.connectToHandle(targetHandle);
+            }
+            connectionItem.dependentConnections.forEach(item => newConnection(particle, item));
+        };
+        for (const [particle, item] of items.byParticle) {
+            for (const connectionItem of item.connections) {
+                newConnection(particle, connectionItem);
             }
             for (const slotConnectionItem of item.slotConnections) {
                 let targetSlot = items.byName.get(slotConnectionItem.name);

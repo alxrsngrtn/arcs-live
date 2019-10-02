@@ -154,8 +154,7 @@ export class Recipe {
             let atLeastOneSlotConnection = false;
             let usesSlandles = false;
             for (const handleSpec of Object.values(particle.spec.connections)) {
-                if (handleSpec.type.isSlot() ||
-                    (handleSpec.type.isCollectionType() && handleSpec.type.collectionType.isSlot())) {
+                if (handleSpec.type.slandleType()) {
                     usesSlandles = true;
                 }
             }

@@ -32,7 +32,7 @@ export class SlotConsumer {
         this._renderingBySubId.set(subId, rendering);
     }
     addHostedSlotContexts(context) {
-        context.containerAvailable = Boolean(this.slotContext.containerAvailable);
+        context.containerAvailable = Boolean(this.slotContext && this.slotContext.containerAvailable);
         this.hostedSlotContexts.push(context);
     }
     get allProvidedSlotContexts() {

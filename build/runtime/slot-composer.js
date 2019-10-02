@@ -76,7 +76,7 @@ export class SlotComposer {
     createHostedSlot(innerArc, transformationParticle, transformationSlotName, storeId) {
         const transformationSlotConsumer = this.getSlotConsumer(transformationParticle, transformationSlotName);
         assert(transformationSlotConsumer, `Transformation particle ${transformationParticle.name} with consumed ${transformationSlotName} not found`);
-        const hostedSlotId = innerArc.generateID().toString();
+        const hostedSlotId = innerArc.generateID('slot').toString();
         this._contexts.push(new HostedSlotContext(hostedSlotId, transformationSlotConsumer, storeId));
         return hostedSlotId;
     }

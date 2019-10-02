@@ -1,9 +1,23 @@
-commit 87f0aca02bc3e20a21afdac55b7138cf59937244
-Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
-Date:   Wed Oct 2 09:33:15 2019 +1000
+commit 4934e69da41ee4bab502d04373d64e5d3561b4d4
+Author: Joshua Pratt <jp10010101010000@gmail.com>
+Date:   Wed Oct 2 10:30:34 2019 +1000
 
-    Converted UnifiedStore interface to base class (#3662)
+    Slandles delegation (#3648)
     
-    Common functionality for old- and new-style stores will be moved to this
-    base class (starting with _compareTo in this PR). Other common methods
-    will be added there as well.
+    * Add tests for slandle dependency
+    
+    * Identify and create dependent connections for slandles
+    
+    * Add types
+    
+    * Skip slandles
+    
+    * Only supply consuming slandle connections
+    
+    * Use slot prefixed suffixes for slot ids
+    
+    * One more 'slot' id
+    
+    * Removing debugging console
+    
+    * Fix typo

@@ -168,8 +168,7 @@ export class Suggestion {
                 options.reasons.push(label);
             }
         };
-        const slandles = this.plan.handles.filter(handle => handle.type.isSlot()
-            || handle.type.isCollectionType() && handle.type.collectionType.isSlot()).length;
+        const slandles = this.plan.handles.filter(handle => handle.fate === '`slot').length;
         if (slandles + this.plan.slots.length === 0) {
             logReason(`No slots`);
             return false;

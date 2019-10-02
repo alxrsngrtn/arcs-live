@@ -17,7 +17,7 @@ export class MatchFreeHandlesToConnections extends Strategy {
         return StrategizerWalker.over(this.getResults(inputParams), new class extends StrategizerWalker {
             onHandle(recipe, handle) {
                 if (handle.connections.length > 0) {
-                    return;
+                    return undefined;
                 }
                 const matchingConnections = recipe.getFreeConnections();
                 return matchingConnections.map(({ particle, connSpec }) => {

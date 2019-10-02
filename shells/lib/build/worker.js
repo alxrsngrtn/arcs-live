@@ -1132,13 +1132,13 @@ function asType(t) {
 function asTypeLiteral(t) {
     return (t instanceof _type_js__WEBPACK_IMPORTED_MODULE_3__["Type"]) ? t.toLiteral() : t;
 }
-function isRoot({ name, tags, id, type }) {
+function isRoot({ name, tags, id, type, fate }) {
     const rootNames = [
         'root',
         'toproot',
         'modal'
     ];
-    if (type && !type.slandleType()) {
+    if ((fate && fate !== '`slot') || (type && !type.slandleType())) {
         // If this is a handle that is not a Slandle, it cannot be a root slot.
         return false;
     }
@@ -1188,9 +1188,9 @@ class HandleConnectionSpec {
             isRequired: !this.isOptional,
             isSet,
             type: slotType,
-            handles: [slotInfo.handle],
+            handles: slotInfo.handle ? [slotInfo.handle] : [],
             formFactor: slotInfo.formFactor,
-            provideSlotConnections: [],
+            provideSlotConnections: this.dependentConnections.map(conn => conn.toSlotConnectionSpec()),
         };
     }
     get isInput() {

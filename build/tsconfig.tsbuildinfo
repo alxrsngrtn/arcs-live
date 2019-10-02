@@ -186,7 +186,7 @@
         "signature": "1545aea4be1c7f8a3c63dac6e27be104d97d9c8370f5cb81990bf9f4b783be3e"
       },
       "../src/runtime/recipe/recipe.ts": {
-        "version": "6295896afd1715f321d5048fc5e33c2888f78dc1ae8b0aa4b3aa8b7a23da29ff",
+        "version": "fb23c03f7cebb05aadb78633401eedc37b926b23378154c6da17f1187bc3703f",
         "signature": "cd7f260b1b7a45dc3a3ed399a41b74142d428f09b042a40875a9ad1b2ca75804"
       },
       "../src/runtime/recipe/slot.ts": {
@@ -210,11 +210,11 @@
         "signature": "c0590035b74904e19a3a17cc1320600e146883313f895abc76e698548978c467"
       },
       "../src/runtime/recipe/handle-connection.ts": {
-        "version": "15d2937bc9d8b25684fe3e1fdb727d6ff4a36db9018934b9847ddcfae7c33953",
+        "version": "4587d3b9c2b0042294bbe7b224ca09655494752c063e40cd9250a74d71a655e6",
         "signature": "0f5b3d55c7475fcb3d44c4fb6f71c0e361e99ed2b67b27a737725b855e3b55a4"
       },
       "../src/runtime/recipe/particle.ts": {
-        "version": "9d4525274e3af66396b418fb78b7e9ef3ef4fc35623aea7be909fd626d3c48bd",
+        "version": "d59abe2584891cb75136b755565125036db53f1c61f799cbf09646a6ebc72d5f",
         "signature": "48ee89089870cafcf1aff05b59507df345d7ae92c362b9abe5af551ef7d98327"
       },
       "../src/runtime/arc-inspector.ts": {
@@ -294,7 +294,7 @@
         "signature": "3309ecbd50ef76633d39a67db2576ed36d800c60eb7b7536d949bc9586288490"
       },
       "../src/runtime/slot-composer.ts": {
-        "version": "315f8a52af506ecf82bdccbb70191381774454b4d3c7671c3386f01db050634b",
+        "version": "d94f1716ec396c69ce94094d79a81aa9b4618d2848940a76e1e0643ccb1d409a",
         "signature": "082a64ebe6a840c79624ea596e352962290d05b241be337465d1aef543f10a03"
       },
       "../src/runtime/testing/fake-slot-composer.ts": {
@@ -366,7 +366,7 @@
         "signature": "8cca63506a5b06bd6685172cfb968abe957345091b809c8ff2fc9a646cba7288"
       },
       "../src/runtime/recipe/recipe-resolver.ts": {
-        "version": "bf5b5502b974b164237274c47ee51c9cdd5b6dd39a9db511fe48da50ff4133fb",
+        "version": "f7b9dfc043b55c20aa06cd5eb32ec0ef76579c39246c67f95d6ef719149d6496",
         "signature": "6523c69bef2039fc094b0a3552b3f5447f880613af8b2e246e967a2a3c56efd5"
       },
       "../src/runtime/services.ts": {
@@ -374,11 +374,11 @@
         "signature": "a37f1b0347d4dae7a16754e444957d55c425434f5abe1347c1617e7381a9bb2a"
       },
       "../src/runtime/particle-execution-host.ts": {
-        "version": "565c9faabe8e82650dd680f6e58757bf467a2f39bff2fac4445116c7ca58dcfd",
+        "version": "bcacf12cfd66da0f94484a77e13a5d2a80036c13fe558fea38cfef1c6f963895",
         "signature": "dc42231353b6ad064a437e7e876d93e5743063e9acbc58645392d4d4ffad4d61"
       },
       "../src/runtime/slot-consumer.ts": {
-        "version": "b42e4906456aeafd52216fdbe067c765f2eecfea197c4d68df2c5764b9829ad5",
+        "version": "f725d658ed329377db1f842ee2796d4013cfe572143a1e0ded0ef2ccd3bce8f4",
         "signature": "889601531865e7755b79f7957f8333a331916602c665574365ca5f7cec2f485a"
       },
       "../src/runtime/slot-proxy.ts": {
@@ -482,7 +482,7 @@
         "signature": "f2d8b054448cb4886900f4baa77e8b41c7d00a7a3bd25a90752e325aab5e14c3"
       },
       "../src/runtime/arc.ts": {
-        "version": "551d066b2780b0b35bff25bd1b83551bc4e0790b94204c973d3d13beed38b695",
+        "version": "9726601321b4a13cfc129fe22b0b6dcef5613d32ec49520447acf77502ffb5fb",
         "signature": "1f60a80b1bbcafc7688d80cf5f2b0ae8e8e82ded192d044ca122e19ab3399fed"
       },
       "../src/runtime/api-channel.ts": {
@@ -522,16 +522,16 @@
         "signature": "5f81ab9527a7fce014911edd1abd6e86326348360a48f3344bb9eabb33b7753e"
       },
       "../src/runtime/particle-spec.ts": {
-        "version": "aa0b77624d7251a9acbf54bb964eb378d8288d528d5c03827ddba7b8ee00f3cd",
-        "signature": "7ac9bc8c044ea33d1dce8e4c135f7011ca5429276da56551fa1e37cf4a8c28a8"
+        "version": "7fdfa9cb632a5a877c809fe4bfa51adeec84e49d4bde92fea7bca28835ea1ff0",
+        "signature": "fed6d96abcedd4c828945e67e59023b905dffeae5a63c6d2f15163b0b72b3e8b"
       },
       "../src/runtime/particle-claim.ts": {
         "version": "a93ee9f35301cacbe3a63d18349700aff89f16ec14fbd833024138660c28aa31",
         "signature": "75bc5f22059210323a192a97ea60f029862fe72a4f9e10e3b6dc71c02539198b"
       },
       "../src/runtime/manifest-ast-nodes.ts": {
-        "version": "ba84207cf7f97637303a59d0ef4c435d839d38b6cc21d462a683f199113da710",
-        "signature": "9cbcb20f5b9698343a7174df813a0279c418a71c22d0c82fdad67067092280a6"
+        "version": "c97bca81b09880a7ac1749344d700a7267df2e3f9da14b36f62b0a224f73b0a5",
+        "signature": "7af80505eed7a2e7c87dfa4a39fde3e5b7d98c4eb9329106379fc469c630e713"
       },
       "../src/gen/runtime/manifest-parser.ts": {
         "version": "e343923222caafd1bf7444f6788ee217e09d0e4779f7c273b120187f109504c1",
@@ -542,7 +542,7 @@
         "signature": "386225870fe7ff2b410dda3c36ac04396b8a67965f6edaa5f9fff1d1796548f6"
       },
       "../src/runtime/manifest.ts": {
-        "version": "bdef62442462c3bd782773d83009cc676ab68a076bc652e22631ec2323baaa17",
+        "version": "6ad8e3d828c0cf9d449a66fa81fabcf7078932b51f45d40c162180c154404521",
         "signature": "ba1f2c1bc350af2be39157bd5ed6cb3e8c17485b39ad18e9e514308879b3ade0"
       },
       "../src/platform/atob-web.ts": {
@@ -686,7 +686,7 @@
         "signature": "09e339afdbd224f2a7cf55896c3d190be97c9223bdaeececaa7ea7c1972c432e"
       },
       "../src/planning/plan/suggestion.ts": {
-        "version": "cf84737b5a50bb92951b7406c16696f27b2774fde9e4ca047a94d6478d022b6b",
+        "version": "92c791fa07fae88f0f9c934abc9d9c1628c87bef0c7bafb2897b66701a72ed85",
         "signature": "51eb22f8bbbf6febec347af27933b3ffd94b0dc50ddbcaa27cd657da47297a7d"
       },
       "../src/planning/plan/planning-result.ts": {
@@ -730,7 +730,7 @@
         "signature": "b421a6cb21b6d238da9ee3b249e1c4e7466b58fa19f74cb20cd4626da027481c"
       },
       "../src/planning/strategies/match-free-handles-to-connections.ts": {
-        "version": "d5549bf3b6fc11e272e919fa3ed0f6ef8cc70e06b54045dd278974471ae9af67",
+        "version": "96650ed1da3735ce9fc53c94bb7219a5768b83b0800e4ff6ff499b2bb112523b",
         "signature": "8cc923cadbabdef8385de82106373a3f17f274b6bbb92b354d614ba5c80b216e"
       },
       "../src/planning/strategies/resolve-recipe.ts": {
@@ -2205,7 +2205,7 @@
         "signature": "aff514b5ca3f500524542842c93fa7ade3927c4166596d8d37b3ad1fa3d1d014"
       },
       "../src/runtime/ui-slot-composer.ts": {
-        "version": "16b1d1758a96e9c224d0f3bba41a85606efb4d01f5a3278c4fae3cb4328eb8fd",
+        "version": "d27f45083e0def15101723536fd23207f98cd730c3dde3ba8b2ac02358bb5d85",
         "signature": "2d41f734fe7d57dfc539d1354b548ba5c8725010b6d03ac8bb6e681baaa90115"
       },
       "../src/runtime/webassembly.d.ts": {
@@ -2393,7 +2393,7 @@
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "../src/runtime/tests/manifest-test.ts": {
-        "version": "249614bad53827687b753894959610ad7b65b8ccb66544c908c8ea5c2e2cd064",
+        "version": "6224c32df6d1d7d9c71b029fa3c2b179897f91285b5f19c02b7728057a65b402",
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "../src/runtime/tests/multiplexer-test.ts": {
@@ -2405,7 +2405,7 @@
         "signature": "8bc1d39a3b8ec61064f9969316a088e314895e7ffd094468dcc0b238f33cb4a6"
       },
       "../src/runtime/tests/particle-api-test.ts": {
-        "version": "241dbfe2395d71befb9f519cf4488f3d2929aa0d93e108e4edb46298d5ad62e1",
+        "version": "c7d491da7b46e9f3d4501fe8887547d187b51fc1ad60a9fdf5d4f89d397f656c",
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "../src/runtime/tests/particle-execution-context-test.ts": {
@@ -2573,7 +2573,7 @@
         "signature": "8bc1d39a3b8ec61064f9969316a088e314895e7ffd094468dcc0b238f33cb4a6"
       },
       "../src/tests/slot-composer-test.ts": {
-        "version": "285ab4698ab2535785b2adc91dc735784d8cd1107e38be183f3a14a7d1fd5048",
+        "version": "cfb6b764a4f187eb7754b8471a3e1ccea728459f6e5464f20404586f03c0ef2b",
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "../src/tests/particles/common-test.ts": {
@@ -4298,6 +4298,7 @@
       ],
       "../src/planning/strategies/match-free-handles-to-connections.ts": [
         "../src/runtime/recipe/recipe.ts",
+        "../src/runtime/recipe/handle.ts",
         "../src/planning/strategizer.ts",
         "../node_modules/@types/node/util.d.ts",
         "../node_modules/@types/node/ts3.1/util.d.ts"

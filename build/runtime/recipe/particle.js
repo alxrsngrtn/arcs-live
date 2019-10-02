@@ -155,8 +155,7 @@ export class Particle {
             }
             return false;
         }
-        const slandleConnections = Object.values(this.connections).filter(connection => connection.type.isSlot()
-            || (connection.type.isCollectionType() && connection.type.getContainedType().isSlot()));
+        const slandleConnections = Object.values(this.connections).filter(connection => Boolean(connection.type.slandleType()));
         if (slandleConnections.length === 0 && this.spec.slotConnections.size > 0) {
             const fulfilledSlotConnections = this.getSlotConnections().filter(connection => connection.targetSlot !== undefined);
             if (fulfilledSlotConnections.length === 0) {
@@ -247,7 +246,7 @@ export class Particle {
     }
     getSlandleConnections() {
         // TODO(jopra): Revisit when slots are removed.
-        return [...Object.values(this._consumedSlotConnections), ...this.allConnections().map(conn => conn.toSlotConnection()).filter(conn => conn)];
+        return [...Object.values(this._consumedSlotConnections), ...this.allConnections().map(conn => conn.direction === '`consume' && conn.toSlotConnection()).filter(conn => conn)];
     }
     getSlotConnections() {
         // TODO(jopra): Revisit when slots are removed.

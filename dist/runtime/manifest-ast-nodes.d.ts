@@ -295,6 +295,7 @@ export interface RecipeParticleConnection extends BaseNode {
     param: string;
     dir: DirectionArrow;
     target: ParticleConnectionTargetComponents;
+    dependentConnections: RecipeParticleConnection[];
 }
 export declare type RecipeParticleItem = RecipeParticleSlotConnection | RecipeParticleConnection;
 export interface ParticleConnectionTargetComponents extends BaseNode {

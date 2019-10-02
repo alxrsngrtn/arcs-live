@@ -24,11 +24,12 @@ declare type SerializedHandleConnectionSpec = {
     dependentConnections: SerializedHandleConnectionSpec[];
     check?: string;
 };
-export declare function isRoot({ name, tags, id, type }: {
+export declare function isRoot({ name, tags, id, type, fate }: {
     name: string;
     tags: string[];
     id?: string;
     type?: Type;
+    fate?: string;
 }): boolean;
 export declare class HandleConnectionSpec {
     rawData: SerializedHandleConnectionSpec;
