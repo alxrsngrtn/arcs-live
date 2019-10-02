@@ -282,8 +282,8 @@ declare class FirebaseBackingStore extends FirebaseStorageProvider implements Co
     _persistChangesImpl(): Promise<void>;
     enableReferenceMode(): void;
     ensureBackingStore(): Promise<FirebaseBackingStore>;
-    on(kindStr: any, callback: any, target: any): void;
-    off(kindStr: any, callback: any): void;
+    on(callback: any): void;
+    off(callback: any): void;
     toLiteral(): Promise<{
         version: number;
         model: SerializedModelEntry[];

@@ -89,8 +89,7 @@ export declare class ChangeEvent {
  * Docs TBD
  */
 export declare abstract class StorageProviderBase extends UnifiedStore implements Store {
-    private listeners;
-    private nextLocalID;
+    private readonly listeners;
     private readonly _type;
     protected readonly _storageKey: string;
     referenceMode: boolean;
@@ -107,15 +106,12 @@ export declare abstract class StorageProviderBase extends UnifiedStore implement
     readonly storageKey: string;
     readonly type: Type;
     reportExceptionInHost(exception: PropagatedException): void;
-    on(kindStr: string, callback: Callback, target: any): void;
-    off(kindStr: string, callback: Callback): void;
+    on(callback: Callback): void;
+    off(callback: Callback): void;
     /**
      * Propagate updates to change listeners.
-     *
-     * @param kindStr the type of event, only 'change' is supported.
-     * @param details details about the change
      */
-    protected _fire(kindStr: 'change', details: ChangeEvent): Promise<void>;
+    protected _fire(details: ChangeEvent): Promise<void>;
     toString(handleTags?: string[]): string;
     readonly apiChannelMappingId: string;
     dispose(): void;

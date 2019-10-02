@@ -96,7 +96,7 @@ describe('synthetic storage ', () => {
       recipe
         use Store0 #taggy #waggy as handle0
         use Store1 as handle1`);
-        synth.on('change', () => assert.fail('change event should not fire for initial value'), {});
+        synth.on(() => assert.fail('change event should not fire for initial value'));
         const list = await synth.toList();
         assert.deepEqual(list.map(h => flatten(h)), ['firebase://xx.firebaseio.com/yy [Foo {}] <taggy,waggy>',
             'pouchdb://aa.pouchdb.org/bb [Bar {}] <>']);
@@ -114,7 +114,7 @@ describe('synthetic storage ', () => {
         // and the only way to detect this is the change event fired by the synthetic collection.
         let resolver;
         const eventPromise = new Promise(resolve => resolver = resolve);
-        synth.on('change', e => resolver(e), {});
+        synth.on(e => resolver(e));
         await targetStore.set(new ArcType().newInstance(id, `
       schema Bar
       store Store0 of [Bar] at 'pouchdb://aa.pouchdb.org/bb'

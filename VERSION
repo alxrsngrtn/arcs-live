@@ -1,5 +1,8 @@
-commit 6c9168bec8f7a472dcffab557e1ca1ae6082f049
+commit 5bcfcb27b88e98716d9e5c63c26de79b9722b066
 Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
-Date:   Wed Oct 2 13:07:02 2019 +1000
+Date:   Wed Oct 2 13:39:09 2019 +1000
 
-    Fix build error from #3649 (#3678)
+    Simplify StorageProviderBase methods: on, off, _fire (#3677)
+    
+    They didn't need the change/target params. This will make it fit better
+    with the new store's API

@@ -124,7 +124,7 @@ class PECOuterPortImpl extends PECOuterPort {
     }
     onInitializeProxy(handle, callback) {
         const target = {};
-        handle.on('change', data => this.SimpleCallback(callback, data), target);
+        handle.on(data => this.SimpleCallback(callback, data));
     }
     async onSynchronizeProxy(handle, callback) {
         const data = await handle.modelForSynchronization();

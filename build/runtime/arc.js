@@ -603,7 +603,7 @@ ${this.activeRecipe.toString()}`;
         this.storesById.set(store.id, store);
         this.storeTags.set(store, new Set(tags));
         this.storageKeys[store.id] = store.storageKey;
-        store.on('change', () => this._onDataChange(), this);
+        store.on(() => this._onDataChange());
         Runtime.getRuntime().registerStore(store, tags);
     }
     _tagStore(store, tags) {

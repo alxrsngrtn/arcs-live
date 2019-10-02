@@ -98,7 +98,7 @@ export class Planificator {
         this.arc.onDataChange(this.dataChangeCallback, this);
         this.arc.context.allStores.forEach(store => {
             if (store instanceof StorageProviderBase) {
-                store.on('change', this.dataChangeCallback, this);
+                store.on(this.dataChangeCallback);
             }
         });
     }
@@ -106,7 +106,7 @@ export class Planificator {
         this.arc.clearDataChange(this);
         this.arc.context.allStores.forEach(store => {
             if (store instanceof StorageProviderBase) {
-                store.off('change', this.dataChangeCallback);
+                store.off(this.dataChangeCallback);
             }
         });
     }

@@ -274,7 +274,7 @@ export class VolatileCollection extends VolatileStorageProvider {
             item.effective = this._model.add(value.id, value, keys);
         }
         this.version++;
-        await this._fire('change', new ChangeEvent({ add: [item], version: this.version, originatorId }));
+        await this._fire(new ChangeEvent({ add: [item], version: this.version, originatorId }));
     }
     async removeMultiple(items, originatorId = null) {
         if (items.length === 0) {
@@ -290,7 +290,7 @@ export class VolatileCollection extends VolatileStorageProvider {
             }
         });
         this.version++;
-        await this._fire('change', new ChangeEvent({ remove: items, version: this.version, originatorId }));
+        await this._fire(new ChangeEvent({ remove: items, version: this.version, originatorId }));
     }
     async remove(id, keys = [], originatorId = null) {
         if (keys.length === 0) {
@@ -300,7 +300,7 @@ export class VolatileCollection extends VolatileStorageProvider {
         if (value !== null) {
             const effective = this._model.remove(id, keys);
             this.version++;
-            await this._fire('change', new ChangeEvent({ remove: [{ value, keys, effective }], version: this.version, originatorId }));
+            await this._fire(new ChangeEvent({ remove: [{ value, keys, effective }], version: this.version, originatorId }));
         }
     }
     clearItemsForTesting() {
@@ -410,7 +410,7 @@ export class VolatileSingleton extends VolatileStorageProvider {
         }
         this.version++;
         const data = this.referenceMode ? value : this._stored;
-        await this._fire('change', new ChangeEvent({ data, version: this.version, originatorId, barrier }));
+        await this._fire(new ChangeEvent({ data, version: this.version, originatorId, barrier }));
     }
     async clear(originatorId = null, barrier = null) {
         await this.set(null, originatorId, barrier);

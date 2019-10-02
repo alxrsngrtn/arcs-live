@@ -24,7 +24,7 @@ export class CallbackTracker {
         this.expectedEvents = expectedEvents;
         // tslint:disable-next-line: no-any
         this.events = [];
-        storageProvider.on('change', (val) => this.changeEvent(val), {});
+        storageProvider.on((val) => this.changeEvent(val));
     }
     // called for each change event
     // tslint:disable-next-line: no-any

@@ -25,7 +25,7 @@ export class PlanningResult {
         this.store = store;
         if (this.store) {
             this.storeCallback = () => this.load();
-            this.store.on('change', this.storeCallback, this);
+            this.store.on(this.storeCallback);
         }
     }
     registerChangeCallback(callback) {
@@ -59,7 +59,7 @@ export class PlanningResult {
     }
     dispose() {
         this.changeCallbacks = [];
-        this.store.off('change', this.storeCallback);
+        this.store.off(this.storeCallback);
         this.store.dispose();
     }
     static formatSerializableGenerations(generations) {

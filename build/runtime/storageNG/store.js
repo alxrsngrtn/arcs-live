@@ -42,7 +42,7 @@ export class Store extends UnifiedStore {
     modelForSynchronization() {
         throw new Error('Method not implemented.');
     }
-    on(type, fn, target) {
+    on(fn) {
         throw new Error('Method not implemented.');
     }
     async activate() {

@@ -23,7 +23,7 @@ export declare class Store<T extends CRDTTypeRecord> extends UnifiedStore implem
     toLiteral(): Promise<any>;
     cloneFrom(store: UnifiedStore): void;
     modelForSynchronization(): {};
-    on(type: string, fn: Consumer<{}>, target: {}): void;
+    on(fn: Consumer<{}>): void;
     source: string;
     description: string;
     readonly storageKey: StorageKey;

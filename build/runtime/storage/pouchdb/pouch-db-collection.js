@@ -63,7 +63,7 @@ export class PouchDbCollection extends PouchDbStorageProvider {
         // fire?
         const updatedCrdtModelLiteral = doc.model;
         const dataToFire = updatedCrdtModelLiteral.length === 0 ? null : updatedCrdtModelLiteral[0].value;
-        await this._fire('change', new ChangeEvent({ data: dataToFire, version: this.version }));
+        await this._fire(new ChangeEvent({ data: dataToFire, version: this.version }));
     }
     /** @inheritDoc */
     async modelForSynchronization() {
@@ -203,7 +203,7 @@ export class PouchDbCollection extends PouchDbStorageProvider {
             });
         }
         // Notify Listeners
-        await this._fire('change', new ChangeEvent({ add: [item], version: this.version, originatorId }));
+        await this._fire(new ChangeEvent({ add: [item], version: this.version, originatorId }));
     }
     async removeMultiple(items, originatorId) {
         await this.initialized;
@@ -225,7 +225,7 @@ export class PouchDbCollection extends PouchDbStorageProvider {
             doc.model = crdtmodel.toLiteral();
             return doc;
         });
-        await this._fire('change', new ChangeEvent({ remove: items, version: this.version, originatorId }));
+        await this._fire(new ChangeEvent({ remove: items, version: this.version, originatorId }));
     }
     /**
      * Remove ids from a collection for specific keys.
@@ -244,7 +244,7 @@ export class PouchDbCollection extends PouchDbStorageProvider {
             if (value !== null) {
                 const effective = crdtmodel.remove(id, keys);
                 // TODO(lindner): isolate side effects...
-                await this._fire('change', new ChangeEvent({ remove: [{ value, keys, effective }], version: this.version, originatorId }));
+                await this._fire(new ChangeEvent({ remove: [{ value, keys, effective }], version: this.version, originatorId }));
             }
             doc.model = crdtmodel.toLiteral();
             return doc;
@@ -263,7 +263,7 @@ export class PouchDbCollection extends PouchDbStorageProvider {
         // TODO(lindner): handle referenceMode
         // TODO(lindner): calculate added/removed keys from previousModel/model
         // TODO(lindner): fire change events here?
-        //   this._fire('change', new ChangeEvent({add, remove, version: this.version}));
+        //   this._fire(new ChangeEvent({add, remove, version: this.version}));
     }
     /**
      * Gets the latest CrdtCollectionModel from storage.

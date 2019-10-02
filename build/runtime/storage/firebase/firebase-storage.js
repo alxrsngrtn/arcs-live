@@ -366,11 +366,11 @@ class FirebaseVariable extends FirebaseStorageProvider {
             const version = this.version;
             await this.ensureBackingStore().then(async (store) => {
                 const data = await store.get(this.value.id);
-                await this._fire('change', new ChangeEvent({ data, version }));
+                await this._fire(new ChangeEvent({ data, version }));
             });
         }
         else {
-            await this._fire('change', new ChangeEvent({ data: data.value || null, version: this.version }));
+            await this._fire(new ChangeEvent({ data: data.value || null, version: this.version }));
         }
     }
     get _hasLocalChanges() {
@@ -461,7 +461,7 @@ class FirebaseVariable extends FirebaseStorageProvider {
         }
         this.localModified = true;
         await this._persistChanges();
-        await this._fire('change', new ChangeEvent({ data: value, version, originatorId, barrier }));
+        await this._fire(new ChangeEvent({ data: value, version, originatorId, barrier }));
     }
     async clear(originatorId = null, barrier = null) {
         return this.set(null, originatorId, barrier);
@@ -480,7 +480,7 @@ class FirebaseVariable extends FirebaseStorageProvider {
         this.localModified = true;
         this.resolveInitialized();
         // TODO: do we need to fire an event here?
-        await this._fire('change', new ChangeEvent({ data: this.referenceMode ? data : this.value, version: this.version }));
+        await this._fire(new ChangeEvent({ data: this.referenceMode ? data : this.value, version: this.version }));
         await this._persistChanges();
     }
     async modelForSynchronization() {
@@ -697,11 +697,11 @@ class FirebaseCollection extends FirebaseStorageProvider {
                 values.forEach(value => valueMap[value.id] = value);
                 const addPrimitives = add.map(({ value, keys, effective }) => ({ value: valueMap[value.id], keys, effective }));
                 const removePrimitives = remove.map(({ value, keys, effective }) => ({ value: valueMap[value.id], keys, effective }));
-                await this._fire('change', new ChangeEvent({ add: addPrimitives, remove: removePrimitives, version: this.version }));
+                await this._fire(new ChangeEvent({ add: addPrimitives, remove: removePrimitives, version: this.version }));
             });
         }
         else {
-            await this._fire('change', new ChangeEvent({ add, remove, version: this.version }));
+            await this._fire(new ChangeEvent({ add, remove, version: this.version }));
         }
     }
     get versionForTesting() {
@@ -740,7 +740,7 @@ class FirebaseCollection extends FirebaseStorageProvider {
         this.version++;
         // 2. Notify listeners.
         items = items.filter(item => item.value);
-        await this._fire('change', new ChangeEvent({ remove: items, version: this.version, originatorId }));
+        await this._fire(new ChangeEvent({ remove: items, version: this.version, originatorId }));
         // 3. Add this modification to the set of local changes that need to be persisted.
         items.forEach(item => {
             if (!this.localChanges.has(item.id)) {
@@ -769,7 +769,7 @@ class FirebaseCollection extends FirebaseStorageProvider {
         const effective = this.model.remove(id, keys);
         this.version++;
         // 2. Notify listeners.
-        await this._fire('change', new ChangeEvent({ remove: [{ value, keys, effective }], version: this.version, originatorId }));
+        await this._fire(new ChangeEvent({ remove: [{ value, keys, effective }], version: this.version, originatorId }));
         // 3. Add this modification to the set of local changes that need to be persisted.
         if (!this.localChanges.has(id)) {
             this.localChanges.set(id, { add: [], remove: [] });
@@ -799,7 +799,7 @@ class FirebaseCollection extends FirebaseStorageProvider {
             this.version++;
         }
         // 2. Notify listeners.
-        await this._fire('change', new ChangeEvent({ add: [{ value, keys, effective }], version: this.version, originatorId }));
+        await this._fire(new ChangeEvent({ add: [{ value, keys, effective }], version: this.version, originatorId }));
         // 3. Add this modification to the set of local changes that need to be persisted.
         if (!this.localChanges.has(id)) {
             this.localChanges.set(id, { add: [], remove: [] });
@@ -1390,10 +1390,10 @@ class FirebaseBackingStore extends FirebaseStorageProvider {
     async ensureBackingStore() {
         throw new Error('FirebaseBackingStore does not implement ensureBackingStore');
     }
-    on(kindStr, callback, target) {
+    on(callback) {
         throw new Error('FirebaseBackingStore does not implement on');
     }
-    off(kindStr, callback) {
+    off(callback) {
         throw new Error('FirebaseBackingStore does not implement off');
     }
     async toLiteral() {

@@ -5391,10 +5391,6 @@ class UnifiedStore {
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-var EventKind;
-(function (EventKind) {
-    EventKind["change"] = "Change";
-})(EventKind || (EventKind = {}));
 class StorageBase {
     constructor(arcId) {
         this.arcId = arcId;
@@ -5424,17 +5420,16 @@ class ChangeEvent {
 class StorageProviderBase extends UnifiedStore {
     constructor(type, name, id, key) {
         super();
+        this.listeners = new Set();
         this.referenceMode = false;
         assert(id, 'id must be provided when constructing StorageProviders');
         assert(!type.hasUnresolvedVariable, 'Storage types must be concrete');
         this._type = type;
-        this.listeners = new Map();
         this.name = name;
         this.version = 0;
         this.id = id;
         this.source = null;
         this._storageKey = key;
-        this.nextLocalID = 0;
     }
     enableReferenceMode() {
         this.referenceMode = true;
@@ -5450,37 +5445,18 @@ class StorageProviderBase extends UnifiedStore {
         throw exception;
     }
     // TODO: add 'once' which returns a promise.
-    on(kindStr, callback, target) {
-        assert(target !== undefined, 'must provide a target to register a storage event handler');
-        const kind = EventKind[kindStr];
-        const listeners = this.listeners.get(kind) || new Map();
-        listeners.set(callback, { target });
-        this.listeners.set(kind, listeners);
+    on(callback) {
+        this.listeners.add(callback);
     }
-    off(kindStr, callback) {
-        const kind = EventKind[kindStr];
-        const listeners = this.listeners.get(kind);
-        if (listeners) {
-            listeners.delete(callback);
-        }
+    off(callback) {
+        this.listeners.delete(callback);
     }
     // TODO: rename to _fireAsync so it's clear that callers are not re-entrant.
     /**
      * Propagate updates to change listeners.
-     *
-     * @param kindStr the type of event, only 'change' is supported.
-     * @param details details about the change
      */
-    async _fire(kindStr, details) {
-        const kind = EventKind[kindStr];
-        const listenerMap = this.listeners.get(kind);
-        if (!listenerMap || listenerMap.size === 0) {
-            return;
-        }
-        const callbacks = [];
-        for (const [callback] of listenerMap.entries()) {
-            callbacks.push(callback);
-        }
+    async _fire(details) {
+        const callbacks = [...this.listeners];
         // Yield so that event firing is not re-entrant with mutation.
         await 0;
         for (const callback of callbacks) {
@@ -19634,7 +19610,7 @@ class VolatileCollection extends VolatileStorageProvider {
             item.effective = this._model.add(value.id, value, keys);
         }
         this.version++;
-        await this._fire('change', new ChangeEvent({ add: [item], version: this.version, originatorId }));
+        await this._fire(new ChangeEvent({ add: [item], version: this.version, originatorId }));
     }
     async removeMultiple(items, originatorId = null) {
         if (items.length === 0) {
@@ -19650,7 +19626,7 @@ class VolatileCollection extends VolatileStorageProvider {
             }
         });
         this.version++;
-        await this._fire('change', new ChangeEvent({ remove: items, version: this.version, originatorId }));
+        await this._fire(new ChangeEvent({ remove: items, version: this.version, originatorId }));
     }
     async remove(id, keys = [], originatorId = null) {
         if (keys.length === 0) {
@@ -19660,7 +19636,7 @@ class VolatileCollection extends VolatileStorageProvider {
         if (value !== null) {
             const effective = this._model.remove(id, keys);
             this.version++;
-            await this._fire('change', new ChangeEvent({ remove: [{ value, keys, effective }], version: this.version, originatorId }));
+            await this._fire(new ChangeEvent({ remove: [{ value, keys, effective }], version: this.version, originatorId }));
         }
     }
     clearItemsForTesting() {
@@ -19770,7 +19746,7 @@ class VolatileSingleton extends VolatileStorageProvider {
         }
         this.version++;
         const data = this.referenceMode ? value : this._stored;
-        await this._fire('change', new ChangeEvent({ data, version: this.version, originatorId, barrier }));
+        await this._fire(new ChangeEvent({ data, version: this.version, originatorId, barrier }));
     }
     async clear(originatorId = null, barrier = null) {
         await this.set(null, originatorId, barrier);
@@ -20059,7 +20035,7 @@ class SyntheticCollection extends StorageProviderBase {
         this.initialized = (async () => {
             const data = await targetStore.get();
             await this.process(data, false);
-            targetStore.on('change', details => this.process(details.data, true), this);
+            targetStore.on(details => this.process(details.data, true));
         })();
     }
     async process(data, fireEvent) {
@@ -20089,7 +20065,7 @@ class SyntheticCollection extends StorageProviderBase {
             const diff = setDiffCustom(oldModel, this.model, JSON.stringify);
             const add = diff.add.map(arcHandle => ({ value: arcHandle }));
             const remove = diff.remove.map(arcHandle => ({ value: arcHandle }));
-            await this._fire('change', new ChangeEvent({ add, remove }));
+            await this._fire(new ChangeEvent({ add, remove }));
         }
     }
     async toList() {
@@ -24104,8 +24080,7 @@ class PECOuterPortImpl extends PECOuterPort {
         }
     }
     onInitializeProxy(handle, callback) {
-        const target = {};
-        handle.on('change', data => this.SimpleCallback(callback, data), target);
+        handle.on(data => this.SimpleCallback(callback, data));
     }
     async onSynchronizeProxy(handle, callback) {
         const data = await handle.modelForSynchronization();
@@ -25468,7 +25443,7 @@ class Store extends UnifiedStore {
     modelForSynchronization() {
         throw new Error('Method not implemented.');
     }
-    on(type, fn, target) {
+    on(fn) {
         throw new Error('Method not implemented.');
     }
     async activate() {
@@ -26080,7 +26055,7 @@ ${this.activeRecipe.toString()}`;
         this.storesById.set(store.id, store);
         this.storeTags.set(store, new Set(tags));
         this.storageKeys[store.id] = store.storageKey;
-        store.on('change', () => this._onDataChange(), this);
+        store.on(() => this._onDataChange());
         Runtime.getRuntime().registerStore(store, tags);
     }
     _tagStore(store, tags) {
@@ -30427,13 +30402,13 @@ class ArcStoresFetcher {
         for (const store of this.arc._stores) {
             if (!this.watchedHandles.has(store.id)) {
                 this.watchedHandles.add(store.id);
-                store.on('change', async () => this.arcDevtoolsChannel.send({
+                store.on(async () => this.arcDevtoolsChannel.send({
                     messageType: 'store-value-changed',
                     messageBody: {
                         id: store.id.toString(),
                         value: await this.dereference(store)
                     }
-                }), this);
+                }));
             }
         }
     }
@@ -31050,7 +31025,7 @@ class PlanningResult {
         this.store = store;
         if (this.store) {
             this.storeCallback = () => this.load();
-            this.store.on('change', this.storeCallback, this);
+            this.store.on(this.storeCallback);
         }
     }
     registerChangeCallback(callback) {
@@ -31084,7 +31059,7 @@ class PlanningResult {
     }
     dispose() {
         this.changeCallbacks = [];
-        this.store.off('change', this.storeCallback);
+        this.store.off(this.storeCallback);
         this.store.dispose();
     }
     static formatSerializableGenerations(generations) {
@@ -35913,7 +35888,7 @@ class UserArcs {
   async foundArcsStore(store) {
     log$3('foundArcsStore', Boolean(store));
     await this.publishInitialChanges(this.listeners);
-    store.on('change', changes => this.arcsStoreChange(changes), this);
+    store.on(changes => this.arcsStoreChange(changes));
   }
   arcsStoreChange(changes) {
     this.publish(changes, this.listeners);
@@ -36006,7 +35981,7 @@ const SingleUserContext = class {
     if (observer) {
       this.observers[key] = null;
       //log(`UNobserving [${key}]`);
-      observer.store.off('change', observer.cb);
+      observer.store.off(observer.cb);
     }
   }
   async observeStore(store, key, cb) {
@@ -36029,7 +36004,7 @@ const SingleUserContext = class {
             cb({data});
           }
         }
-        this.observers[key] = {key, store, cb: store.on('change', cb, this)};
+        this.observers[key] = {key, store, cb: store.on(cb)};
       }
     }
   }
@@ -36338,7 +36313,7 @@ class UserContext {
   // async updateFriends({storage, userid, context}, state) {
   //   if (state.friendsStore) {
   //     log('discarding old PROFILE_friends');
-  //     state.friendsStore.off('change', state.friendsStoreCb);
+  //     state.friendsStore.off(state.friendsStoreCb);
   //     state.friendsStore = null;
   //   }
   //   const friendsStore = await context.findStoreById('PROFILE_friends');
@@ -36348,7 +36323,7 @@ class UserContext {
   //     // get current data
   //     const friends = await friendsStore.toList();
   //     // listen for changes
-  //     friendsStore.on('change', friendsStoreCb, this);
+  //     friendsStore.on(friendsStoreCb);
   //     // process friends already in store
   //     this.onFriendsChange(storage, context, {add: friends.map(f => ({value: f}))});
   //     this.state = {friendsStore, friendsStoreCb};
@@ -36715,7 +36690,7 @@ class PlanProducer {
         this.inspector = inspector;
         if (this.searchStore) {
             this.searchStoreCallback = () => this.onSearchChanged();
-            this.searchStore.on('change', this.searchStoreCallback, this);
+            this.searchStore.on(this.searchStoreCallback);
         }
         this.debug = debug;
         this.noSpecEx = noSpecEx;
@@ -36767,7 +36742,7 @@ class PlanProducer {
     }
     dispose() {
         if (this.searchStore) {
-            this.searchStore.off('change', this.searchStoreCallback);
+            this.searchStore.off(this.searchStoreCallback);
         }
     }
     async produceSuggestions(options = {}) {
@@ -37021,7 +36996,7 @@ class Planificator {
         this.arc.onDataChange(this.dataChangeCallback, this);
         this.arc.context.allStores.forEach(store => {
             if (store instanceof StorageProviderBase) {
-                store.on('change', this.dataChangeCallback, this);
+                store.on(this.dataChangeCallback);
             }
         });
     }
@@ -37029,7 +37004,7 @@ class Planificator {
         this.arc.clearDataChange(this);
         this.arc.context.allStores.forEach(store => {
             if (store instanceof StorageProviderBase) {
-                store.off('change', this.dataChangeCallback);
+                store.off(this.dataChangeCallback);
             }
         });
     }

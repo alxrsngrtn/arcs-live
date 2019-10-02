@@ -9,10 +9,6 @@
  */
 import { assert } from '../../platform/assert-web.js';
 import { UnifiedStore } from '../storageNG/unified-store.js';
-var EventKind;
-(function (EventKind) {
-    EventKind["change"] = "Change";
-})(EventKind || (EventKind = {}));
 export class StorageBase {
     constructor(arcId) {
         this.arcId = arcId;
@@ -42,17 +38,16 @@ export class ChangeEvent {
 export class StorageProviderBase extends UnifiedStore {
     constructor(type, name, id, key) {
         super();
+        this.listeners = new Set();
         this.referenceMode = false;
         assert(id, 'id must be provided when constructing StorageProviders');
         assert(!type.hasUnresolvedVariable, 'Storage types must be concrete');
         this._type = type;
-        this.listeners = new Map();
         this.name = name;
         this.version = 0;
         this.id = id;
         this.source = null;
         this._storageKey = key;
-        this.nextLocalID = 0;
     }
     enableReferenceMode() {
         this.referenceMode = true;
@@ -68,37 +63,18 @@ export class StorageProviderBase extends UnifiedStore {
         throw exception;
     }
     // TODO: add 'once' which returns a promise.
-    on(kindStr, callback, target) {
-        assert(target !== undefined, 'must provide a target to register a storage event handler');
-        const kind = EventKind[kindStr];
-        const listeners = this.listeners.get(kind) || new Map();
-        listeners.set(callback, { target });
-        this.listeners.set(kind, listeners);
+    on(callback) {
+        this.listeners.add(callback);
     }
-    off(kindStr, callback) {
-        const kind = EventKind[kindStr];
-        const listeners = this.listeners.get(kind);
-        if (listeners) {
-            listeners.delete(callback);
-        }
+    off(callback) {
+        this.listeners.delete(callback);
     }
     // TODO: rename to _fireAsync so it's clear that callers are not re-entrant.
     /**
      * Propagate updates to change listeners.
-     *
-     * @param kindStr the type of event, only 'change' is supported.
-     * @param details details about the change
      */
-    async _fire(kindStr, details) {
-        const kind = EventKind[kindStr];
-        const listenerMap = this.listeners.get(kind);
-        if (!listenerMap || listenerMap.size === 0) {
-            return;
-        }
-        const callbacks = [];
-        for (const [callback] of listenerMap.entries()) {
-            callbacks.push(callback);
-        }
+    async _fire(details) {
+        const callbacks = [...this.listeners];
         // Yield so that event firing is not re-entrant with mutation.
         await 0;
         for (const callback of callbacks) {
