@@ -30405,6 +30405,9 @@ class PlatformLoaderBase extends Loader {
             // Ui-flavored Particles
             UiParticle,
             UiMultiplexerParticle,
+            // Aliasing
+            ReactiveParticle: UiParticle,
+            SimpleParticle: UiParticle,
             // utilities
             resolver: this.resolve.bind(this),
             log: log || (() => { }),

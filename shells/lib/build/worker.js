@@ -7767,6 +7767,9 @@ class PlatformLoaderBase extends _runtime_loader_js__WEBPACK_IMPORTED_MODULE_0__
             // Ui-flavored Particles
             UiParticle: _runtime_ui_particle_js__WEBPACK_IMPORTED_MODULE_5__["UiParticle"],
             UiMultiplexerParticle: _runtime_ui_multiplexer_particle_js__WEBPACK_IMPORTED_MODULE_6__["UiMultiplexerParticle"],
+            // Aliasing
+            ReactiveParticle: _runtime_ui_particle_js__WEBPACK_IMPORTED_MODULE_5__["UiParticle"],
+            SimpleParticle: _runtime_ui_particle_js__WEBPACK_IMPORTED_MODULE_5__["UiParticle"],
             // utilities
             resolver: this.resolve.bind(this),
             log: log || (() => { }),
