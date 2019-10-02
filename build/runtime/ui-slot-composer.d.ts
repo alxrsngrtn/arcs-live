@@ -53,6 +53,7 @@ export declare class UiSlotComposer {
     disposeContexts(): void;
     observeSlots(slotObserver: any): void;
     disposeObserver(): void;
-    sendEvent(particleId: any, eventlet: any): void;
+    sendEvent(particleId: string, eventlet: any): void;
+    _findConsumer(id: any): SlotConsumer;
     delegateOutput(arc: Arc, particle: Particle, content: any): void;
 }

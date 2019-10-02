@@ -1,5 +1,23 @@
-commit 483982ccb0538e018c23b4afca61859411a69630
-Author: Alex Rosengarten <alxr@google.com>
-Date:   Wed Oct 2 15:48:52 2019 -0700
+commit 05b139906c671158a5ef3d45f8521038e136b503
+Author: Scott J. Miles <sjmiles@google.com>
+Date:   Wed Oct 2 16:30:08 2019 -0700
 
-    calling helper method instead of newly private method (#3689)
+    Fixes to ui-slot-composer (event, content object) (#3690)
+    
+    * make sure to compare particle.ids as String
+    
+    * ui-slot-composer should not modify the render content that comes out of Particle, it should only wrap it
+    
+    * slight rearranging
+    
+    * add note about `modality` info
+    
+    * broker-shell contains a UIBroker that needed updating
+    
+    * use the slotComposer for event sending
+    
+    * s/top/toproot
+    
+    * require `particleId` parameter to be String
+    
+    * add missing semi
