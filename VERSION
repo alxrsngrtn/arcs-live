@@ -1,5 +1,5 @@
-commit f5b8fc100254a3619f49f66ab2afad5d5c48ccc4
-Author: galganif <4754402+galganif@users.noreply.github.com>
-Date:   Wed Oct 2 16:15:00 2019 +1000
+commit f5c2329a4cf7011aaa506198d9afecd850787b5f
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Wed Oct 2 09:11:52 2019 -0700
 
-    remove crdt parameter from store constructor, empty model can be obtained from the type (#3682)
+    Move ArcsService outside demo/ folder (#3684)

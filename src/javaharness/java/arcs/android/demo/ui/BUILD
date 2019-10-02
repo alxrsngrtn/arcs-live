@@ -17,6 +17,7 @@ android_library(
         "//java/arcs/android/impl",
         "//java/arcs/android/client",
         "//java/arcs/android/demo/service",
+        "//java/arcs/android/service",
         "//java/arcs/api:api-android",
         "@com_google_dagger",
         "@flogger//jar",
