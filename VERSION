@@ -1,5 +1,5 @@
-commit f5c2329a4cf7011aaa506198d9afecd850787b5f
+commit 25d8078bd27e813f1b3bb2b91981a82903c7333b
 Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Wed Oct 2 09:11:52 2019 -0700
+Date:   Wed Oct 2 10:27:53 2019 -0700
 
-    Move ArcsService outside demo/ folder (#3684)
+    use org.junit.Assert in PortableJsonAndroidImplTest (to get rid of the warning) (#3669)
