@@ -298,7 +298,7 @@
         "signature": "3309ecbd50ef76633d39a67db2576ed36d800c60eb7b7536d949bc9586288490"
       },
       "../src/runtime/slot-composer.ts": {
-        "version": "d94f1716ec396c69ce94094d79a81aa9b4618d2848940a76e1e0643ccb1d409a",
+        "version": "bf3c4333ff127f3acca87574f874da670a5c8bbf93cf8eef2cc27f06b6ce38dc",
         "signature": "082a64ebe6a840c79624ea596e352962290d05b241be337465d1aef543f10a03"
       },
       "../src/runtime/testing/fake-slot-composer.ts": {
@@ -842,7 +842,7 @@
         "signature": "5f764000c0935ed79663b189731d23f75b262f878758de3366bc8e2389fef5e5"
       },
       "../src/devtools-connector/devtools-arc-inspector.ts": {
-        "version": "93ffc306778cd4ffd3c428df6ecbf38a496ddfc7db7ec2a5fada11fa1bd5b3d6",
+        "version": "cf056ec5fea769aa7bcf9a60dedcc163943691c1a68d4dc7070e67a5fc644947",
         "signature": "914efdd9819f19afa229ed6da2f106eba0d791e2a1f9f4dad415d477e7eeec63"
       },
       "../src/devtools-connector/devtools-planner-inspector.ts": {
@@ -858,7 +858,7 @@
         "signature": "0c6e757e9d0682b57b757909dd3a76c1d8243d044fbae0c9cae850be614637b7"
       },
       "../src/devtools-connector/tests/devtools-arc-inspector-test.ts": {
-        "version": "d8185cdd8da26b876a2ac15b39b07019d143b137b2a047e48ad921a37d8af3ba",
+        "version": "73109e312bab195467f4da335b9b61711d47882f9596bd6b79b2e74f451d294a",
         "signature": "8bc1d39a3b8ec61064f9969316a088e314895e7ffd094468dcc0b238f33cb4a6"
       },
       "../src/planning/plan/plan-producer.ts": {

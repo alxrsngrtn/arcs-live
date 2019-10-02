@@ -1,9 +1,5 @@
-commit 8a25b3c56b82e2b4c3fe98d489e52205fbde53ee
-Author: Scott J. Miles <sjmiles@google.com>
-Date:   Wed Oct 2 13:54:51 2019 -0700
+commit 5760599b6b83a9da3bb316917d9910cce10069a4
+Author: Piotr Swigon <piotr.swigon@gmail.com>
+Date:   Wed Oct 2 14:44:25 2019 -0700
 
-    Blanket replace `DomParticle` with `SimpleParticle` (#3674)
-    
-    * Update the Particle corpus to use SimpleParticle instead of DomParticle
-    
-    * plumb a SimpleParticle alias into base loader
+    Freezes messages coming across the pec as a defense against divergence (#3688)
