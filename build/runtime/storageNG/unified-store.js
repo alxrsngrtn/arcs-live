@@ -8,6 +8,7 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { compareStrings, compareNumbers } from '../recipe/comparable.js';
+import { assert } from '../../platform/assert-web.js';
 /**
  * This is a temporary interface used to unify old-style stores (storage/StorageProviderBase) and new-style stores (storageNG/Store).
  * We should be able to remove this once we've switched across to the NG stack.
@@ -24,6 +25,21 @@ import { compareStrings, compareNumbers } from '../recipe/comparable.js';
  * Store class.
  */
 export class UnifiedStore {
+    cloneFrom(store) { }
+    async modelForSynchronization() {
+        return await this.toLiteral();
+    }
+    on(fn) { }
+    /**
+     * Hack to cast this UnifiedStore to the old-style class StorageStub.
+     * TODO: Fix all usages of this method to handle new-style stores, and then
+     * delete.
+     */
+    castToStorageStub() {
+        // Can't use instanceof; causes circular dependencies.
+        assert(this.unifiedStoreType === 'StorageStub', 'Not a StorageStub!');
+        return this;
+    }
     _compareTo(other) {
         let cmp;
         cmp = compareStrings(this.name, other.name);

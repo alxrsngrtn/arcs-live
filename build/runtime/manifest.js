@@ -164,14 +164,14 @@ export class Manifest {
     // TODO: newParticle, Schema, etc.
     // TODO: simplify() / isValid().
     async createStore(type, name, id, tags, claims, storageKey) {
-        return this.newStorageStub(type, name, id, storageKey, tags, null, claims);
+        return this.newStore(type, name, id, storageKey, tags, null, claims);
     }
     _addStore(store, tags) {
         this._stores.push(store);
         this.storeTags.set(store, tags ? tags : []);
         return store;
     }
-    newStorageStub(type, name, id, storageKey, tags, originalId, claims, description, version, source, referenceMode, model) {
+    newStore(type, name, id, storageKey, tags, originalId, claims, description, version, source, referenceMode, model) {
         if (source) {
             this.storeManifestUrls.set(id, this.fileName);
         }
@@ -1002,7 +1002,7 @@ ${e.message}
         // Instead of creating links to remote firebase during manifest parsing,
         // we generate storage stubs that contain the relevant information.
         if (item.origin === 'storage') {
-            return manifest.newStorageStub(type, name, id, item.source, tags, originalId, claims, item.description, item.version);
+            return manifest.newStore(type, name, id, item.source, tags, originalId, claims, item.description, item.version);
         }
         let json;
         let source;
@@ -1098,7 +1098,7 @@ ${e.message}
         }
         const version = item.version || 0;
         const storageKey = manifest.storageProviderFactory._storageForKey('volatile').constructKey('volatile');
-        return manifest.newStorageStub(type, name, id, storageKey, tags, originalId, claims, item.description, version, item.source, referenceMode, model);
+        return manifest.newStore(type, name, id, storageKey, tags, originalId, claims, item.description, version, item.source, referenceMode, model);
     }
     _newRecipe(name) {
         const recipe = new Recipe(name);

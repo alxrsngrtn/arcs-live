@@ -19,10 +19,10 @@ declare type StoreConstructor = {
     construct<T extends CRDTTypeRecord>(storageKey: StorageKey, exists: Exists, type: Type, mode: StorageMode): Promise<ActiveStore<T>>;
 };
 export declare class Store<T extends CRDTTypeRecord> extends UnifiedStore implements StoreInterface<T> {
+    protected unifiedStoreType: 'Store';
     toString(tags: string[]): string;
     toLiteral(): Promise<any>;
     cloneFrom(store: UnifiedStore): void;
-    modelForSynchronization(): {};
     on(fn: Consumer<{}>): void;
     source: string;
     description: string;

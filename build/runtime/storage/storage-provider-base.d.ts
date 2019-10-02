@@ -89,6 +89,7 @@ export declare class ChangeEvent {
  * Docs TBD
  */
 export declare abstract class StorageProviderBase extends UnifiedStore implements Store {
+    protected unifiedStoreType: 'StorageProviderBase';
     private readonly listeners;
     private readonly _type;
     protected readonly _storageKey: string;

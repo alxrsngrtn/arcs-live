@@ -1300,7 +1300,7 @@ ${particleStr1}
         const manifest = await Manifest.load('the.manifest', loader);
         const storageStub = manifest.findStoreByName('Store0');
         assert(storageStub);
-        const store = await storageStub.inflate();
+        const store = await storageStub.castToStorageStub().inflate();
         assert(store);
         const sessionId = manifest.idGeneratorForTesting.currentSessionIdForTesting;
         assert.deepEqual(await store.toList(), [
@@ -1344,7 +1344,7 @@ Error parsing JSON from 'EntityList' (Unexpected token h in JSON at position 1)'
 
       store Store0 of [Thing] in EntityList
     `, { fileName: 'the.manifest' });
-        const store = (await manifest.findStoreByName('Store0').inflate());
+        const store = (await manifest.findStoreByName('Store0').castToStorageStub().inflate());
         assert(store);
         const sessionId = manifest.idGeneratorForTesting.currentSessionIdForTesting;
         // TODO(shans): address as part of storage refactor
@@ -2166,13 +2166,13 @@ resource SomeName
         const manifest = await Manifest.parse(`
       particle P1
         out S {} a
-        consume root 
+        consume root
           provide details
       particle P2
         in S {} b
           consume details
-      
-      recipe 
+
+      recipe
         require
           handle as h0
           slot as s0
@@ -2447,7 +2447,7 @@ resource SomeName
           [{"nobId": "12345"}]
       `);
             assert.lengthOf(manifest.stores, 1);
-            const store = manifest.stores[0];
+            const store = manifest.stores[0].castToStorageStub();
             assert.lengthOf(store.claims, 2);
             assert.strictEqual(store.claims[0].tag, 'property1');
             assert.strictEqual(store.claims[1].tag, 'property2');
@@ -2660,9 +2660,9 @@ resource SomeName
         schema Foo
           Text name
           Number age
-        
+
         store FooStore of Foo in 'b'
-        
+
         particle Bar
           recipe Food
             Bar`;

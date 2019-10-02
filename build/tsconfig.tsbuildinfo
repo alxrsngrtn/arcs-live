@@ -249,25 +249,29 @@
         "version": "328304bb7f31f31d00014c30a35c21407a4f2edd8aa3395223103cbe11ccc852",
         "signature": "ebb72886b7ce28c415894342efe531c4d9e03707e36600e53a8124e7c9edb097"
       },
-      "../src/runtime/storageNG/unified-store.ts": {
-        "version": "147262f1b6846d561660d8b5da8775fd874539d9d75f1aa377f4b02c40bd94fe",
-        "signature": "b2014eaa3b839228219e7216ad67a300d513a00c96409a32921414734e5900a5"
-      },
       "../src/runtime/storage/crdt-collection-model.ts": {
         "version": "1b8d22fc1f40e91ceab5fb466d752d4ebfa1cf0c6d985f7d24f7036a3d76bba5",
         "signature": "1af81ae760359eebfe9d895a79492563d87a206103871709777d55960812dab5"
-      },
-      "../src/runtime/description-formatter.ts": {
-        "version": "8e099838f35b049c18f91d1d0c88efdd453aa211dc3c50b2cd3569d6b151b240",
-        "signature": "f3f7f93889cc4226a8c3c1aa64736c09b29d299bb6c2363238960b30c85d8a9d"
       },
       "../src/runtime/storage/key-base.ts": {
         "version": "bfc0aeb5d0839398629a86f1bc2b764b8add3dfadae33b403b2e0aa44d52a90b",
         "signature": "a3e9e8e4a62650394e3c766c15a389369ba3420a53fc0455e683bda0e38fc3d1"
       },
+      "../src/runtime/store.ts": {
+        "version": "a4e693ac59c8b82d46da43d474cc664c764af514d51fb6419ebb76166d0d14fc",
+        "signature": "2a21b8a0362f11b1404744661dd580f92b7a67605b238162ba6a102701238f1b"
+      },
+      "../src/runtime/storage/storage-provider-base.ts": {
+        "version": "a2ae3d8b520a0e67cbe1623bfeba76c173108f31048916a566f287545f83195e",
+        "signature": "060865ee341ca58b49e4dffdc53537bcf1fa380dca5ddfe6ac116788c9c831c6"
+      },
       "../src/runtime/runtime-cache.ts": {
         "version": "1b32e50e4d6bc291bb07bc8ec515856d1b373b982fe60f4c6d66ae1f7e59407b",
         "signature": "26731e3019e5722c8b60d0b15fc209d3573825cddf9096d1687e9131b7f8dd04"
+      },
+      "../src/runtime/description-formatter.ts": {
+        "version": "8e099838f35b049c18f91d1d0c88efdd453aa211dc3c50b2cd3569d6b151b240",
+        "signature": "f3f7f93889cc4226a8c3c1aa64736c09b29d299bb6c2363238960b30c85d8a9d"
       },
       "../src/runtime/description-dom-formatter.ts": {
         "version": "cad6408e653b284476f5f56242493645f7f3f69077d8f9d58fd5bb41158fb265",
@@ -338,16 +342,12 @@
         "signature": "2f38a817702e90c031039dfd5f5985c632d89a062b087dea8a750a0eef8a8fd6"
       },
       "../src/runtime/storage-stub.ts": {
-        "version": "3c7e90542d4bd64b8156c4e75fbc01c8ee99b76eedf8b602bd4dcf94264e55a6",
-        "signature": "f9b7da70bbc3d51c685dc57921be79562c8e1161a15a1f44c5b4bd6e9f8f45a4"
+        "version": "f7e908a76ea9cb11c88efbb9c1b8a981b430456c3adaefaff8549654f042539a",
+        "signature": "90331b88d754c210be5bb07b47feee48a6d68faa8ec11e4b41f3b2540edb0a7f"
       },
-      "../src/runtime/store.ts": {
-        "version": "a4e693ac59c8b82d46da43d474cc664c764af514d51fb6419ebb76166d0d14fc",
-        "signature": "2a21b8a0362f11b1404744661dd580f92b7a67605b238162ba6a102701238f1b"
-      },
-      "../src/runtime/storage/storage-provider-base.ts": {
-        "version": "cf3f7a793cbfd70cec5f71d93cb0327a778977b8f02f1a6f19015484b6bd0b1f",
-        "signature": "6439ce9901febed07e1b6888c05d1c2cf161dbbe66bdc6fb5d4139a03cc4385e"
+      "../src/runtime/storageNG/unified-store.ts": {
+        "version": "637e5445ee606f63872dbe2334a39be708ae174b06bef53c13d1dbc4f059c40b",
+        "signature": "e4b5ceb3e548d81ce9e62e62ef7500a76bc41e4cd0651dd0e38d097a96859448"
       },
       "../src/runtime/description.ts": {
         "version": "d85171167e250da60ff35004e973fcfc3d83bbdb6d1b2c55b196cfdedc0fffd1",
@@ -418,8 +418,8 @@
         "signature": "e4574f3b1622e9e4d8a6c255ec7f62b091fa8c33b52e82b042582bd449b65202"
       },
       "../src/runtime/storageNG/store.ts": {
-        "version": "5a59472458f1c917a03ef15fd3e1e34699dc2a370aaa71482f4bc8e6a50246f6",
-        "signature": "e3adf0319fc402dc94510032d44f930d575d1e8fd4b59d359422b2a5791e1526"
+        "version": "235867009c85fb0bfc80087747f86429bb71c8480903e2380065c58ebecc1ce2",
+        "signature": "2b4e0916e09e3a296797952116df554bc8a2d2b7398e8cbab7760ed94fe55e58"
       },
       "../src/runtime/particle-execution-host.ts": {
         "version": "81e6975d08acda6eaea4da3647b41922337dd45b347b6f243c87811b0d1b8f3b",
@@ -482,7 +482,7 @@
         "signature": "f2d8b054448cb4886900f4baa77e8b41c7d00a7a3bd25a90752e325aab5e14c3"
       },
       "../src/runtime/arc.ts": {
-        "version": "c66c0220ab33c3a5d919d25cc8e219c9f6dea7ef8911c51f7232f6b2cd75205a",
+        "version": "2e592f789efd5d659f6744c555688e4e04cd2b262a316fb84ae36144ed398e3b",
         "signature": "1f60a80b1bbcafc7688d80cf5f2b0ae8e8e82ded192d044ca122e19ab3399fed"
       },
       "../src/runtime/api-channel.ts": {
@@ -542,8 +542,8 @@
         "signature": "386225870fe7ff2b410dda3c36ac04396b8a67965f6edaa5f9fff1d1796548f6"
       },
       "../src/runtime/manifest.ts": {
-        "version": "6ad8e3d828c0cf9d449a66fa81fabcf7078932b51f45d40c162180c154404521",
-        "signature": "ba1f2c1bc350af2be39157bd5ed6cb3e8c17485b39ad18e9e514308879b3ade0"
+        "version": "14ffa224d2c19bed9a7f86d46d8d41334c058c8483282bffa9cf86abb7715e5c",
+        "signature": "2c6bc3d79a637dcfdf6f83b096259be0c51deec47ae4875f217c59da1a6e0cbd"
       },
       "../src/platform/atob-web.ts": {
         "version": "83bd58cde323a7612560e333b3542a3ab39d1f645c1e1e22e54f4a66622b9e7c",
@@ -822,7 +822,7 @@
         "signature": "10fcbb9da4af9b476cc305777ef041fc1843e23c703fbc0a457d9455e5a55563"
       },
       "../src/devtools-connector/arc-stores-fetcher.ts": {
-        "version": "0125828cb0fa38b7fd783b4f6e8576074b93a73c79c1800c1e85f2ac3d342d36",
+        "version": "d346a8c2b94ea0edb715794cd2b9c0b25d631c9f2e499572774cb8a65a42cfa3",
         "signature": "5079c21e00cd5a84b5bbde16aee8ad85bfcc3898ad6a30e27d85724a4c338c5e"
       },
       "../src/devtools-connector/testing/devtools-channel-stub.ts": {
@@ -1270,7 +1270,7 @@
         "signature": "8bc1d39a3b8ec61064f9969316a088e314895e7ffd094468dcc0b238f33cb4a6"
       },
       "../src/planning/strategies/tests/search-tokens-to-handles-test.ts": {
-        "version": "713655831dab8d26137f39c54874c9906472e9bdd050a07c158e4d26fd5914ab",
+        "version": "dc2168ee68ea05cab9ba199eba6411a8984ba78ed10c9c3a9dc17a757772af8f",
         "signature": "8bc1d39a3b8ec61064f9969316a088e314895e7ffd094468dcc0b238f33cb4a6"
       },
       "../src/planning/strategies/tests/search-tokens-to-particles-test.ts": {
@@ -2393,7 +2393,7 @@
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "../src/runtime/tests/manifest-test.ts": {
-        "version": "6224c32df6d1d7d9c71b029fa3c2b179897f91285b5f19c02b7728057a65b402",
+        "version": "ffa69fe6179a86c2b4440b1baaae4c4814e9b6bbbdbb6526d8b744c5edac4cb6",
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "../src/runtime/tests/multiplexer-test.ts": {
@@ -2565,7 +2565,7 @@
         "signature": "43a5176681925d9f51b139647154e4a52c2eb1b1a64bb428595000952bcbc7f1"
       },
       "../src/tests/multiplexer-integration-test.ts": {
-        "version": "8ecdf13f7c6495e8b04fe38bb48ab272189d790c1b24499e08bbc8bae19c11da",
+        "version": "a98eb0202d81c3f09bf88ef403befe694f83971ae4cf7f0ea196dab55ab7cf79",
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "../src/tests/recipe-descriptions-test.ts": {
@@ -3150,17 +3150,41 @@
         "../node_modules/@types/node/util.d.ts",
         "../node_modules/@types/node/ts3.1/util.d.ts"
       ],
-      "../src/runtime/storageNG/unified-store.ts": [
-        "../src/runtime/recipe/comparable.ts",
-        "../src/runtime/type.ts",
-        "../src/runtime/storageNG/storage-key.ts",
+      "../src/runtime/storage/crdt-collection-model.ts": [
+        "../src/platform/assert-web.ts",
         "../src/runtime/hot.ts",
         "../node_modules/@types/node/util.d.ts",
         "../node_modules/@types/node/ts3.1/util.d.ts"
       ],
-      "../src/runtime/storage/crdt-collection-model.ts": [
+      "../src/runtime/storage/key-base.ts": [
+        "../node_modules/@types/node/util.d.ts",
+        "../node_modules/@types/node/ts3.1/util.d.ts"
+      ],
+      "../src/runtime/store.ts": [
+        "../src/runtime/arc-exceptions.ts",
+        "../src/runtime/type.ts",
+        "../src/runtime/particle-execution-context.ts",
+        "../src/runtime/storage/crdt-collection-model.ts",
+        "../node_modules/@types/node/util.d.ts",
+        "../node_modules/@types/node/ts3.1/util.d.ts"
+      ],
+      "../src/runtime/storage/storage-provider-base.ts": [
         "../src/platform/assert-web.ts",
+        "../src/runtime/id.ts",
+        "../src/runtime/recipe/comparable.ts",
+        "../src/runtime/type.ts",
+        "../src/runtime/storage-stub.ts",
+        "../src/runtime/storage/crdt-collection-model.ts",
+        "../src/runtime/storage/key-base.ts",
+        "../src/runtime/store.ts",
+        "../src/runtime/arc-exceptions.ts",
         "../src/runtime/hot.ts",
+        "../src/runtime/particle-claim.ts",
+        "../src/runtime/storageNG/unified-store.ts",
+        "../node_modules/@types/node/util.d.ts",
+        "../node_modules/@types/node/ts3.1/util.d.ts"
+      ],
+      "../src/runtime/runtime-cache.ts": [
         "../node_modules/@types/node/util.d.ts",
         "../node_modules/@types/node/ts3.1/util.d.ts"
       ],
@@ -3173,14 +3197,6 @@
         "../src/runtime/type.ts",
         "../src/runtime/storage/crdt-collection-model.ts",
         "../src/runtime/hot.ts",
-        "../node_modules/@types/node/util.d.ts",
-        "../node_modules/@types/node/ts3.1/util.d.ts"
-      ],
-      "../src/runtime/storage/key-base.ts": [
-        "../node_modules/@types/node/util.d.ts",
-        "../node_modules/@types/node/ts3.1/util.d.ts"
-      ],
-      "../src/runtime/runtime-cache.ts": [
         "../node_modules/@types/node/util.d.ts",
         "../node_modules/@types/node/ts3.1/util.d.ts"
       ],
@@ -3348,30 +3364,17 @@
         "../src/runtime/storage/storage-provider-factory.ts",
         "../src/runtime/type.ts",
         "../src/runtime/storage/volatile-storage.ts",
+        "../src/runtime/storageNG/unified-store.ts",
         "../node_modules/@types/node/util.d.ts",
         "../node_modules/@types/node/ts3.1/util.d.ts"
       ],
-      "../src/runtime/store.ts": [
-        "../src/runtime/arc-exceptions.ts",
-        "../src/runtime/type.ts",
-        "../src/runtime/particle-execution-context.ts",
-        "../src/runtime/storage/crdt-collection-model.ts",
-        "../node_modules/@types/node/util.d.ts",
-        "../node_modules/@types/node/ts3.1/util.d.ts"
-      ],
-      "../src/runtime/storage/storage-provider-base.ts": [
-        "../src/platform/assert-web.ts",
-        "../src/runtime/id.ts",
+      "../src/runtime/storageNG/unified-store.ts": [
         "../src/runtime/recipe/comparable.ts",
         "../src/runtime/type.ts",
-        "../src/runtime/storage-stub.ts",
-        "../src/runtime/storage/crdt-collection-model.ts",
-        "../src/runtime/storage/key-base.ts",
-        "../src/runtime/store.ts",
-        "../src/runtime/arc-exceptions.ts",
+        "../src/runtime/storageNG/storage-key.ts",
         "../src/runtime/hot.ts",
-        "../src/runtime/particle-claim.ts",
-        "../src/runtime/storageNG/unified-store.ts",
+        "../src/runtime/storage-stub.ts",
+        "../src/platform/assert-web.ts",
         "../node_modules/@types/node/util.d.ts",
         "../node_modules/@types/node/ts3.1/util.d.ts"
       ],
@@ -3947,12 +3950,12 @@
         "../src/runtime/recipe/search.ts",
         "../src/runtime/recipe/type-checker.ts",
         "../src/runtime/schema.ts",
-        "../src/runtime/storage/storage-provider-base.ts",
         "../src/runtime/storage/storage-provider-factory.ts",
         "../src/runtime/type.ts",
         "../src/runtime/particle-claim.ts",
-        "../src/runtime/storage-stub.ts",
         "../src/runtime/storage/volatile-storage.ts",
+        "../src/runtime/storageNG/unified-store.ts",
+        "../src/runtime/storage-stub.ts",
         "../node_modules/@types/node/util.d.ts",
         "../node_modules/@types/node/ts3.1/util.d.ts"
       ],
@@ -4597,7 +4600,6 @@
         "../src/runtime/arc.ts",
         "../src/devtools-connector/abstract-devtools-channel.ts",
         "../src/runtime/manifest.ts",
-        "../src/runtime/storage-stub.ts",
         "../src/runtime/storage/storage-provider-base.ts",
         "../src/runtime/type.ts",
         "../src/runtime/storageNG/storage-key.ts",
@@ -8581,13 +8583,25 @@
         "../src/runtime/arc.ts",
         "../src/runtime/recipe/recipe.ts"
       ],
-      "../src/runtime/storageNG/unified-store.ts": [
-        "../src/runtime/type.ts",
-        "../src/runtime/storageNG/storage-key.ts",
-        "../src/runtime/hot.ts",
-        "../src/runtime/recipe/comparable.ts"
-      ],
       "../src/runtime/storage/crdt-collection-model.ts": [
+        "../src/runtime/hot.ts"
+      ],
+      "../src/runtime/store.ts": [
+        "../src/runtime/type.ts",
+        "../src/runtime/particle-execution-context.ts",
+        "../src/runtime/arc-exceptions.ts",
+        "../src/runtime/storage/crdt-collection-model.ts"
+      ],
+      "../src/runtime/storage/storage-provider-base.ts": [
+        "../src/runtime/store.ts",
+        "../src/runtime/storage-stub.ts",
+        "../src/runtime/id.ts",
+        "../src/runtime/type.ts",
+        "../src/runtime/storage/key-base.ts",
+        "../src/runtime/particle-claim.ts",
+        "../src/runtime/arc-exceptions.ts",
+        "../src/runtime/storage/crdt-collection-model.ts",
+        "../src/runtime/storageNG/unified-store.ts",
         "../src/runtime/hot.ts"
       ],
       "../src/runtime/description-formatter.ts": [
@@ -8692,25 +8706,15 @@
         "../src/runtime/type.ts",
         "../src/runtime/storage/storage-provider-factory.ts",
         "../src/runtime/particle-claim.ts",
-        "../src/runtime/storage/storage-provider-base.ts"
+        "../src/runtime/storage/storage-provider-base.ts",
+        "../src/runtime/storageNG/unified-store.ts"
       ],
-      "../src/runtime/store.ts": [
+      "../src/runtime/storageNG/unified-store.ts": [
         "../src/runtime/type.ts",
-        "../src/runtime/particle-execution-context.ts",
-        "../src/runtime/arc-exceptions.ts",
-        "../src/runtime/storage/crdt-collection-model.ts"
-      ],
-      "../src/runtime/storage/storage-provider-base.ts": [
-        "../src/runtime/store.ts",
+        "../src/runtime/storageNG/storage-key.ts",
+        "../src/runtime/hot.ts",
         "../src/runtime/storage-stub.ts",
-        "../src/runtime/id.ts",
-        "../src/runtime/type.ts",
-        "../src/runtime/storage/key-base.ts",
-        "../src/runtime/particle-claim.ts",
-        "../src/runtime/arc-exceptions.ts",
-        "../src/runtime/storage/crdt-collection-model.ts",
-        "../src/runtime/storageNG/unified-store.ts",
-        "../src/runtime/hot.ts"
+        "../src/runtime/recipe/comparable.ts"
       ],
       "../src/runtime/description.ts": [
         "../src/runtime/recipe/recipe.ts",
@@ -9062,7 +9066,7 @@
       ],
       "../src/runtime/manifest.ts": [
         "../src/runtime/manifest-ast-nodes.ts",
-        "../src/runtime/storage-stub.ts",
+        "../src/runtime/storageNG/unified-store.ts",
         "../src/runtime/id.ts",
         "../src/runtime/storage/storage-provider-factory.ts",
         "../src/runtime/recipe/recipe.ts",
@@ -9073,7 +9077,6 @@
         "../src/runtime/manifest-meta.ts",
         "../src/runtime/type.ts",
         "../src/runtime/particle-claim.ts",
-        "../src/runtime/storage/storage-provider-base.ts",
         "../src/runtime/loader.ts"
       ],
       "../node_modules/firebase/index.d.ts": [
@@ -11560,11 +11563,12 @@
       "../modalities/dom/components/xen/xen-state.d.ts",
       "../src/runtime/arc-exceptions.ts",
       "../src/runtime/relevance.ts",
-      "../src/runtime/storageNG/unified-store.ts",
       "../src/runtime/storage/crdt-collection-model.ts",
-      "../src/runtime/description-formatter.ts",
       "../src/runtime/storage/key-base.ts",
+      "../src/runtime/store.ts",
+      "../src/runtime/storage/storage-provider-base.ts",
       "../src/runtime/runtime-cache.ts",
+      "../src/runtime/description-formatter.ts",
       "../src/runtime/description-dom-formatter.ts",
       "../modalities/dom/components/xen/xen-template.d.ts",
       "../src/runtime/slot-context.ts",
@@ -11583,8 +11587,7 @@
       "../src/runtime/mutex.ts",
       "../src/runtime/storage/storage-provider-factory.ts",
       "../src/runtime/storage-stub.ts",
-      "../src/runtime/store.ts",
-      "../src/runtime/storage/storage-provider-base.ts",
+      "../src/runtime/storageNG/unified-store.ts",
       "../src/runtime/description.ts",
       "../src/runtime/message-channel.ts",
       "../src/runtime/recipe/recipe-walker.ts",

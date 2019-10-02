@@ -21,6 +21,7 @@ export { ActiveStore, ProxyMessageType, StorageMode };
 export class Store extends UnifiedStore {
     constructor(storageKey, exists, type, id, name = '') {
         super();
+        this.unifiedStoreType = 'Store';
         this.version = 0; // TODO(shans): Needs to become the version vector, and is also probably only available on activated storage?
         this.storageKey = storageKey;
         this.exists = exists;
@@ -37,9 +38,6 @@ export class Store extends UnifiedStore {
         throw new Error('Method not implemented.');
     }
     cloneFrom(store) {
-        throw new Error('Method not implemented.');
-    }
-    modelForSynchronization() {
         throw new Error('Method not implemented.');
     }
     on(fn) {

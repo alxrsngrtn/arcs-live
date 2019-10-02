@@ -5364,6 +5364,21 @@ function compareComparables(o1, o2) {
  * Store class.
  */
 class UnifiedStore {
+    cloneFrom(store) { }
+    async modelForSynchronization() {
+        return await this.toLiteral();
+    }
+    on(fn) { }
+    /**
+     * Hack to cast this UnifiedStore to the old-style class StorageStub.
+     * TODO: Fix all usages of this method to handle new-style stores, and then
+     * delete.
+     */
+    castToStorageStub() {
+        // Can't use instanceof; causes circular dependencies.
+        assert(this.unifiedStoreType === 'StorageStub', 'Not a StorageStub!');
+        return this;
+    }
     _compareTo(other) {
         let cmp;
         cmp = compareStrings(this.name, other.name);
@@ -5513,10 +5528,11 @@ class StorageProviderBase extends UnifiedStore {
  */
 // TODO(shans): Make sure that after refactor Storage objects have a lifecycle and can be directly used
 // deflated rather than requiring this stub.
-class StorageStub {
+class StorageStub extends UnifiedStore {
     constructor(type, id, name, storageKey, storageProviderFactory, originalId, 
     /** Trust tags claimed by this data store. */
     claims, description, version, source, referenceMode = false, model) {
+        super();
         this.type = type;
         this.id = id;
         this.name = name;
@@ -5529,6 +5545,7 @@ class StorageStub {
         this.source = source;
         this.referenceMode = referenceMode;
         this.model = model;
+        this.unifiedStoreType = 'StorageStub';
     }
     async inflate(storageProviderFactory) {
         const factory = storageProviderFactory || this.storageProviderFactory;
@@ -20404,14 +20421,14 @@ class Manifest {
     // TODO: newParticle, Schema, etc.
     // TODO: simplify() / isValid().
     async createStore(type, name, id, tags, claims, storageKey) {
-        return this.newStorageStub(type, name, id, storageKey, tags, null, claims);
+        return this.newStore(type, name, id, storageKey, tags, null, claims);
     }
     _addStore(store, tags) {
         this._stores.push(store);
         this.storeTags.set(store, tags ? tags : []);
         return store;
     }
-    newStorageStub(type, name, id, storageKey, tags, originalId, claims, description, version, source, referenceMode, model) {
+    newStore(type, name, id, storageKey, tags, originalId, claims, description, version, source, referenceMode, model) {
         if (source) {
             this.storeManifestUrls.set(id, this.fileName);
         }
@@ -21242,7 +21259,7 @@ ${e.message}
         // Instead of creating links to remote firebase during manifest parsing,
         // we generate storage stubs that contain the relevant information.
         if (item.origin === 'storage') {
-            return manifest.newStorageStub(type, name, id, item.source, tags, originalId, claims, item.description, item.version);
+            return manifest.newStore(type, name, id, item.source, tags, originalId, claims, item.description, item.version);
         }
         let json;
         let source;
@@ -21338,7 +21355,7 @@ ${e.message}
         }
         const version = item.version || 0;
         const storageKey = manifest.storageProviderFactory._storageForKey('volatile').constructKey('volatile');
-        return manifest.newStorageStub(type, name, id, storageKey, tags, originalId, claims, item.description, version, item.source, referenceMode, model);
+        return manifest.newStore(type, name, id, storageKey, tags, originalId, claims, item.description, version, item.source, referenceMode, model);
     }
     _newRecipe(name) {
         const recipe = new Recipe(name);
@@ -25477,6 +25494,7 @@ function isSingletonOperation(operation) {
 class Store extends UnifiedStore {
     constructor(storageKey, exists, type, id, name = '') {
         super();
+        this.unifiedStoreType = 'Store';
         this.version = 0; // TODO(shans): Needs to become the version vector, and is also probably only available on activated storage?
         this.storageKey = storageKey;
         this.exists = exists;
@@ -25493,9 +25511,6 @@ class Store extends UnifiedStore {
         throw new Error('Method not implemented.');
     }
     cloneFrom(store) {
-        throw new Error('Method not implemented.');
-    }
-    modelForSynchronization() {
         throw new Error('Method not implemented.');
     }
     on(fn) {
@@ -25845,7 +25860,7 @@ ${this.activeRecipe.toString()}`;
         });
         await Promise.all(manifest.stores.map(async (storeStub) => {
             const tags = manifest.storeTags.get(storeStub);
-            const store = await storeStub.inflate();
+            const store = await storeStub.castToStorageStub().inflate();
             arc._registerStore(store, tags);
         }));
         const recipe = manifest.activeRecipe.clone();

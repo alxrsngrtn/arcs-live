@@ -9,12 +9,14 @@
  */
 import { assert } from '../platform/assert-web.js';
 import { compareStrings } from './recipe/comparable.js';
+import { UnifiedStore } from './storageNG/unified-store.js';
 // TODO(shans): Make sure that after refactor Storage objects have a lifecycle and can be directly used
 // deflated rather than requiring this stub.
-export class StorageStub {
+export class StorageStub extends UnifiedStore {
     constructor(type, id, name, storageKey, storageProviderFactory, originalId, 
     /** Trust tags claimed by this data store. */
     claims, description, version, source, referenceMode = false, model) {
+        super();
         this.type = type;
         this.id = id;
         this.name = name;
@@ -27,6 +29,7 @@ export class StorageStub {
         this.source = source;
         this.referenceMode = referenceMode;
         this.model = model;
+        this.unifiedStoreType = 'StorageStub';
     }
     async inflate(storageProviderFactory) {
         const factory = storageProviderFactory || this.storageProviderFactory;

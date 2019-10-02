@@ -1,8 +1,15 @@
-commit 8abd1e152e2e788395667c8f32eacd60c7a9d954
-Author: galganif <4754402+galganif@users.noreply.github.com>
-Date:   Wed Oct 2 14:13:52 2019 +1000
+commit a880b34f1f74b7cd692f11f9db82ea7157eed4e6
+Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
+Date:   Wed Oct 2 15:19:07 2019 +1000
 
-    Allow storage proxy to talk with either an active store or a pec across the api channel. (#3676)
+    Make StorageStub extend UnifiedStore, and use in Manifest parsing (#3679)
     
-    Allow storage proxy to talk with either an active store or a pec across the api channel.
-    fixes #3631
+    * Make StorageStub extend UnifiedStore, and use in Manifest parsing
+    
+    Also added a new hacky method to cast from UnifiedStore to StorageStub.
+    This will make it easier to track down all the places we need to update
+    to handle the new storage api.
+    
+    * review comments
+    
+    * Break circular dependency using tags
