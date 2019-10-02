@@ -14,7 +14,7 @@ import { ProxyMessageType } from '../store.js';
 import { MockHandle, MockStore } from '../testing/test-storage.js';
 import { EntityType } from '../../type.js';
 function getStorageProxy(store) {
-    return new StorageProxy('id', new CRDTSingleton(), store, EntityType.make([], {}), null /*pec*/);
+    return new StorageProxy('id', new CRDTSingleton(), store, EntityType.make([], {}));
 }
 function getNoOpStorageProxy() {
     return new NoOpStorageProxy();

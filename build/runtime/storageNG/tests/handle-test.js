@@ -18,7 +18,7 @@ import { ProxyMessageType } from '../store.js';
 import { MockParticle, MockStore } from '../testing/test-storage.js';
 async function getCollectionHandle(particle) {
     const fakeParticle = (particle || new MockParticle());
-    const handle = new CollectionHandle('me', new StorageProxy('id', new CRDTCollection(), new MockStore(), EntityType.make([], {}), null), IdGenerator.newSession(), fakeParticle, true, true);
+    const handle = new CollectionHandle('me', new StorageProxy('id', new CRDTCollection(), new MockStore(), EntityType.make([], {})), IdGenerator.newSession(), fakeParticle, true, true);
     // Initialize the model.
     await handle.storageProxy.onMessage({
         type: ProxyMessageType.ModelUpdate,
@@ -29,7 +29,7 @@ async function getCollectionHandle(particle) {
 }
 async function getSingletonHandle(particle) {
     const fakeParticle = (particle || new MockParticle());
-    const handle = new SingletonHandle('me', new StorageProxy('id', new CRDTSingleton(), new MockStore(), EntityType.make([], {}), null), IdGenerator.newSession(), fakeParticle, true, true);
+    const handle = new SingletonHandle('me', new StorageProxy('id', new CRDTSingleton(), new MockStore(), EntityType.make([], {})), IdGenerator.newSession(), fakeParticle, true, true);
     // Initialize the model.
     await handle.storageProxy.onMessage({
         type: ProxyMessageType.ModelUpdate,

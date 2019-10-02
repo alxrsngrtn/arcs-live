@@ -489,6 +489,8 @@ let PECInnerPort = class PECInnerPort extends APIPort {
     HandleStream(handle, callback, pageSize, forward) { }
     StreamCursorNext(handle, callback, cursorId) { }
     StreamCursorClose(handle, cursorId) { }
+    Register(handle, messagesCallback, idCallback) { }
+    ProxyMessage(handle, message, callback) { }
     Idle(version, relevance) { }
     GetBackingStore(callback, storageKey, type) { }
     ConstructInnerArc(callback, particle) { }
@@ -548,6 +550,16 @@ __decorate([
 __decorate([
     __param(0, Mapped), __param(1, Direct)
 ], PECInnerPort.prototype, "StreamCursorClose", null);
+__decorate([
+    __param(0, Mapped),
+    __param(1, LocalMapped),
+    __param(2, LocalMapped)
+], PECInnerPort.prototype, "Register", null);
+__decorate([
+    __param(0, Mapped),
+    __param(1, Direct),
+    __param(2, LocalMapped)
+], PECInnerPort.prototype, "ProxyMessage", null);
 __decorate([
     __param(0, Direct), __param(1, ObjectMap(MappingType.Mapped, MappingType.Direct))
 ], PECInnerPort.prototype, "Idle", null);

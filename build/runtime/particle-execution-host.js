@@ -171,6 +171,17 @@ class PECOuterPortImpl extends PECOuterPort {
     onStreamCursorClose(handle, cursorId) {
         handle.cursorClose(cursorId);
     }
+    async onRegister(store, messagesCallback, idCallback) {
+        const id = store.on(async (data) => {
+            this.SimpleCallback(messagesCallback, data);
+            return Promise.resolve(true);
+        });
+        this.SimpleCallback(idCallback, id);
+    }
+    async onProxyMessage(store, message, callback) {
+        const res = await store.onProxyMessage(message);
+        this.SimpleCallback(callback, res);
+    }
     onIdle(version, relevance) {
         this.arc.pec.resolveIfIdle(version, relevance);
     }

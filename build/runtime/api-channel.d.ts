@@ -23,6 +23,9 @@ import { Type } from './type.js';
 import { PropagatedException } from './arc-exceptions.js';
 import { Consumer, Runnable } from './hot.js';
 import { MessagePort } from './message-channel.js';
+import { StorageProxy as StorageProxyNG } from './storageNG/storage-proxy.js';
+import { CRDTTypeRecord } from './crdt/crdt.js';
+import { ActiveStore, ProxyCallback, ProxyMessage } from './storageNG/store.js';
 declare class ThingMapper {
     _prefix: string;
     _nextIdentifier: number;
@@ -79,6 +82,8 @@ export declare abstract class PECOuterPort extends APIPort {
     abstract onHandleStream(handle: StorageProviderBase, callback: number, pageSize: number, forward: boolean): any;
     abstract onStreamCursorNext(handle: StorageProviderBase, callback: number, cursorId: number): any;
     abstract onStreamCursorClose(handle: StorageProviderBase, cursorId: number): any;
+    abstract onRegister(handle: ActiveStore<CRDTTypeRecord>, messagesCallback: number, idCallback: number): any;
+    abstract onProxyMessage(handle: ActiveStore<CRDTTypeRecord>, message: ProxyMessage<CRDTTypeRecord>, callback: number): any;
     abstract onIdle(version: number, relevance: Map<recipeParticle.Particle, number[]>): any;
     abstract onGetBackingStore(callback: number, storageKey: string, type: Type): any;
     GetBackingStoreCallback(store: UnifiedStore, callback: number, type: Type, name: string, id: string, storageKey: string): void;
@@ -135,6 +140,8 @@ export declare abstract class PECInnerPort extends APIPort {
     HandleStream(handle: StorageProxy, callback: Consumer<number>, pageSize: number, forward: boolean): void;
     StreamCursorNext(handle: StorageProxy, callback: Consumer<CursorNextValue>, cursorId: string): void;
     StreamCursorClose(handle: StorageProxy, cursorId: string): void;
+    Register(handle: StorageProxyNG<CRDTTypeRecord>, messagesCallback: ProxyCallback<CRDTTypeRecord>, idCallback: Consumer<number>): void;
+    ProxyMessage(handle: StorageProxyNG<CRDTTypeRecord>, message: ProxyMessage<CRDTTypeRecord>, callback: Consumer<Promise<boolean>>): void;
     Idle(version: number, relevance: Map<Particle, number[]>): void;
     GetBackingStore(callback: (proxy: StorageProxy, key: string) => void, storageKey: string, type: Type): void;
     abstract onGetBackingStoreCallback(callback: (proxy: StorageProxy, key: string) => void, type: Type, name: string, id: string, storageKey: string): any;

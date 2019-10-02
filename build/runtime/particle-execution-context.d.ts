@@ -12,6 +12,9 @@ import { Id, IdGenerator } from './id.js';
 import { Loader } from './loader.js';
 import { Particle, Capabilities } from './particle.js';
 import { StorageProxy } from './storage-proxy.js';
+import { StorageProxy as StorageProxyNG } from './storageNG/storage-proxy.js';
+import { CRDTTypeRecord } from './crdt/crdt.js';
+import { StorageCommunicationEndpoint, StorageCommunicationEndpointProvider } from './storageNG/store.js';
 import { Type } from './type.js';
 import { MessagePort } from './message-channel.js';
 export declare type PecFactory = (pecId: Id, idGenerator: IdGenerator) => MessagePort;
@@ -23,7 +26,7 @@ export declare type InnerArcHandle = {
         error?: string;
     }>;
 };
-export declare class ParticleExecutionContext {
+export declare class ParticleExecutionContext implements StorageCommunicationEndpointProvider<CRDTTypeRecord> {
     private readonly apiPort;
     private readonly particles;
     private readonly pecId;
@@ -35,6 +38,7 @@ export declare class ParticleExecutionContext {
     readonly idGenerator: IdGenerator;
     constructor(port: MessagePort, pecId: Id, idGenerator: IdGenerator, loader: Loader);
     generateID(): string;
+    getStorageEndpoint(storageProxy: StorageProxyNG<CRDTTypeRecord>): StorageCommunicationEndpoint<CRDTTypeRecord>;
     innerArcHandle(arcId: string, particleId: string): InnerArcHandle;
     getStorageProxy(storageKey: any, type: any): StorageProxy | Promise<StorageProxy>;
     capabilities(hasInnerArcs: boolean): Capabilities;

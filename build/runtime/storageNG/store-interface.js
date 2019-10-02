@@ -36,5 +36,21 @@ export class ActiveStore {
     async idle() {
         return Promise.resolve();
     }
+    getStorageEndpoint() {
+        const store = this;
+        let id;
+        return {
+            async onProxyMessage(message) {
+                message.id = id;
+                return store.onProxyMessage(message);
+            },
+            setCallback(callback) {
+                id = store.on(callback);
+            },
+            reportExceptionInHost(exception) {
+                store.reportExceptionInHost(exception);
+            }
+        };
+    }
 }
 //# sourceMappingURL=store-interface.js.map

@@ -13,24 +13,24 @@ import { Particle } from '../particle.js';
 import { ParticleExecutionContext } from '../particle-execution-context.js';
 import { Type } from '../type.js';
 import { Handle } from './handle.js';
-import { ActiveStore, ProxyMessage } from './store.js';
+import { ProxyMessage, StorageCommunicationEndpointProvider } from './store.js';
 /**
- * TODO: describe this class.
+ * Mediates between one or more Handles and the backing store. The store can be outside the PEC or
+ * directly connected to the StorageProxy.
  */
 export declare class StorageProxy<T extends CRDTTypeRecord> {
     private handles;
     private crdt;
-    private id;
     apiChannelId: string;
     private store;
     readonly type: Type;
-    pec: ParticleExecutionContext;
     private listenerAttached;
     private keepSynced;
     private synchronized;
     private readonly scheduler;
     private modelHasSynced;
-    constructor(apiChannelId: string, crdt: CRDTModel<T>, store: ActiveStore<T>, type: Type, pec: ParticleExecutionContext);
+    constructor(apiChannelId: string, crdt: CRDTModel<T>, storeProvider: StorageCommunicationEndpointProvider<T>, type: Type);
+    readonly pec: ParticleExecutionContext;
     idle(): Promise<void>;
     reportExceptionInHost(exception: PropagatedException): void;
     registerHandle(handle: Handle<T>): VersionMap;

@@ -1,5 +1,8 @@
-commit 5744731cc28ccb51cc17ab68cbab54b7eebca630
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Tue Oct 1 20:49:07 2019 -0700
+commit 8abd1e152e2e788395667c8f32eacd60c7a9d954
+Author: galganif <4754402+galganif@users.noreply.github.com>
+Date:   Wed Oct 2 14:13:52 2019 +1000
 
-    unittests for ArcData (#3668)
+    Allow storage proxy to talk with either an active store or a pec across the api channel. (#3676)
+    
+    Allow storage proxy to talk with either an active store or a pec across the api channel.
+    fixes #3631

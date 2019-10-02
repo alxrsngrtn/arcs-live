@@ -74,6 +74,12 @@
 					</li>
 				</ul>
 			</section>
+			<section class="tsd-panel">
+				<h3>Implements</h3>
+				<ul class="tsd-hierarchy">
+					<li><a href="../interfaces/storagecommunicationendpointprovider.html" class="tsd-signature-type">StorageCommunicationEndpointProvider</a><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/crdttyperecord.html" class="tsd-signature-type">CRDTTypeRecord</a><span class="tsd-signature-symbol">&gt;</span></li>
+				</ul>
+			</section>
 			<section class="tsd-panel-group tsd-index-group">
 				<h2>Index</h2>
 				<section class="tsd-panel tsd-index-panel">
@@ -114,6 +120,7 @@
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="particleexecutioncontext.html#createhandle" class="tsd-kind-icon">create<wbr>Handle</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="particleexecutioncontext.html#createparticlefromspec" class="tsd-kind-icon">create<wbr>Particle<wbr>From<wbr>Spec</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="particleexecutioncontext.html#generateid" class="tsd-kind-icon">generateID</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="particleexecutioncontext.html#getstorageendpoint" class="tsd-kind-icon">get<wbr>Storage<wbr>Endpoint</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="particleexecutioncontext.html#getstorageproxy" class="tsd-kind-icon">get<wbr>Storage<wbr>Proxy</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="particleexecutioncontext.html#innerarchandle" class="tsd-kind-icon">inner<wbr>Arc<wbr>Handle</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="particleexecutioncontext.html#instantiateparticle" class="tsd-kind-icon">instantiate<wbr>Particle</a></li>
@@ -136,7 +143,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/5744731/src/runtime/particle-execution-context.ts#L49">src/runtime/particle-execution-context.ts:49</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/8abd1e1/src/runtime/particle-execution-context.ts#L53">src/runtime/particle-execution-context.ts:53</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -167,7 +174,7 @@
 					<div class="tsd-signature tsd-kind-icon">api<wbr>Port<span class="tsd-signature-symbol">:</span> <a href="pecinnerport.html" class="tsd-signature-type">PECInnerPort</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/5744731/src/runtime/particle-execution-context.ts#L40">src/runtime/particle-execution-context.ts:40</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/8abd1e1/src/runtime/particle-execution-context.ts#L44">src/runtime/particle-execution-context.ts:44</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -177,17 +184,17 @@
 					<div class="tsd-signature tsd-kind-icon">id<wbr>Generator<span class="tsd-signature-symbol">:</span> <a href="idgenerator.html" class="tsd-signature-type">IdGenerator</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/5744731/src/runtime/particle-execution-context.ts#L49">src/runtime/particle-execution-context.ts:49</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/8abd1e1/src/runtime/particle-execution-context.ts#L53">src/runtime/particle-execution-context.ts:53</a></li>
 						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private">
 					<a name="keyedproxies" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagPrivate">Private</span> keyed<wbr>Proxies</h3>
-					<div class="tsd-signature tsd-kind-icon">keyed<wbr>Proxies<span class="tsd-signature-symbol">:</span> <a href="../interfaces/dictionary.html" class="tsd-signature-type">Dictionary</a><span class="tsd-signature-symbol">&lt;</span><a href="storageproxy.html" class="tsd-signature-type">StorageProxy</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="storageproxy.html" class="tsd-signature-type">StorageProxy</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></div>
+					<div class="tsd-signature tsd-kind-icon">keyed<wbr>Proxies<span class="tsd-signature-symbol">:</span> <a href="../interfaces/dictionary.html" class="tsd-signature-type">Dictionary</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">StorageProxy</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">StorageProxy</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/5744731/src/runtime/particle-execution-context.ts#L46">src/runtime/particle-execution-context.ts:46</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/8abd1e1/src/runtime/particle-execution-context.ts#L50">src/runtime/particle-execution-context.ts:50</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -197,7 +204,7 @@
 					<div class="tsd-signature tsd-kind-icon">loader<span class="tsd-signature-symbol">:</span> <a href="loader.html" class="tsd-signature-type">Loader</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/5744731/src/runtime/particle-execution-context.ts#L43">src/runtime/particle-execution-context.ts:43</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/8abd1e1/src/runtime/particle-execution-context.ts#L47">src/runtime/particle-execution-context.ts:47</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -207,7 +214,7 @@
 					<div class="tsd-signature tsd-kind-icon">particles<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Map</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">Particle</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> =&nbsp;new Map&lt;string, Particle&gt;()</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/5744731/src/runtime/particle-execution-context.ts#L41">src/runtime/particle-execution-context.ts:41</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/8abd1e1/src/runtime/particle-execution-context.ts#L45">src/runtime/particle-execution-context.ts:45</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -217,7 +224,7 @@
 					<div class="tsd-signature tsd-kind-icon">pec<wbr>Id<span class="tsd-signature-symbol">:</span> <a href="id.html" class="tsd-signature-type">Id</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/5744731/src/runtime/particle-execution-context.ts#L42">src/runtime/particle-execution-context.ts:42</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/8abd1e1/src/runtime/particle-execution-context.ts#L46">src/runtime/particle-execution-context.ts:46</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -227,17 +234,17 @@
 					<div class="tsd-signature tsd-kind-icon">pending<wbr>Loads<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> =&nbsp;&lt;Promise&lt;void&gt;[]&gt;[]</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/5744731/src/runtime/particle-execution-context.ts#L44">src/runtime/particle-execution-context.ts:44</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/8abd1e1/src/runtime/particle-execution-context.ts#L48">src/runtime/particle-execution-context.ts:48</a></li>
 						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private">
 					<a name="scheduler" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagPrivate">Private</span> scheduler</h3>
-					<div class="tsd-signature tsd-kind-icon">scheduler<span class="tsd-signature-symbol">:</span> <a href="storageproxyscheduler.html" class="tsd-signature-type">StorageProxyScheduler</a><span class="tsd-signature-symbol"> =&nbsp;new StorageProxyScheduler()</span></div>
+					<div class="tsd-signature tsd-kind-icon">scheduler<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">StorageProxyScheduler</span><span class="tsd-signature-symbol"> =&nbsp;new StorageProxyScheduler()</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/5744731/src/runtime/particle-execution-context.ts#L45">src/runtime/particle-execution-context.ts:45</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/8abd1e1/src/runtime/particle-execution-context.ts#L49">src/runtime/particle-execution-context.ts:49</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -247,7 +254,7 @@
 					<div class="tsd-signature tsd-kind-icon">wasm<wbr>Containers<span class="tsd-signature-symbol">:</span> <a href="../interfaces/dictionary.html" class="tsd-signature-type">Dictionary</a><span class="tsd-signature-symbol">&lt;</span><a href="wasmcontainer.html" class="tsd-signature-type">WasmContainer</a><span class="tsd-signature-symbol">&gt;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/5744731/src/runtime/particle-execution-context.ts#L47">src/runtime/particle-execution-context.ts:47</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/8abd1e1/src/runtime/particle-execution-context.ts#L51">src/runtime/particle-execution-context.ts:51</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -264,7 +271,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/5744731/src/runtime/particle-execution-context.ts#L366">src/runtime/particle-execution-context.ts:366</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/8abd1e1/src/runtime/particle-execution-context.ts#L390">src/runtime/particle-execution-context.ts:390</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
@@ -281,7 +288,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/5744731/src/runtime/particle-execution-context.ts#L376">src/runtime/particle-execution-context.ts:376</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/8abd1e1/src/runtime/particle-execution-context.ts#L400">src/runtime/particle-execution-context.ts:400</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -298,7 +305,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/5744731/src/runtime/particle-execution-context.ts#L354">src/runtime/particle-execution-context.ts:354</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/8abd1e1/src/runtime/particle-execution-context.ts#L378">src/runtime/particle-execution-context.ts:378</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Map</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -318,7 +325,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/5744731/src/runtime/particle-execution-context.ts#L303">src/runtime/particle-execution-context.ts:303</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/8abd1e1/src/runtime/particle-execution-context.ts#L327">src/runtime/particle-execution-context.ts:327</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -356,7 +363,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/5744731/src/runtime/particle-execution-context.ts#L204">src/runtime/particle-execution-context.ts:204</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/8abd1e1/src/runtime/particle-execution-context.ts#L228">src/runtime/particle-execution-context.ts:228</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -379,7 +386,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/5744731/src/runtime/particle-execution-context.ts#L292">src/runtime/particle-execution-context.ts:292</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/8abd1e1/src/runtime/particle-execution-context.ts#L316">src/runtime/particle-execution-context.ts:316</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -420,7 +427,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/5744731/src/runtime/particle-execution-context.ts#L316">src/runtime/particle-execution-context.ts:316</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/8abd1e1/src/runtime/particle-execution-context.ts#L340">src/runtime/particle-execution-context.ts:340</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -446,7 +453,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/5744731/src/runtime/particle-execution-context.ts#L149">src/runtime/particle-execution-context.ts:149</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/8abd1e1/src/runtime/particle-execution-context.ts#L153">src/runtime/particle-execution-context.ts:153</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
@@ -454,16 +461,39 @@
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
-					<a name="getstorageproxy" class="tsd-anchor"></a>
-					<h3>get<wbr>Storage<wbr>Proxy</h3>
+					<a name="getstorageendpoint" class="tsd-anchor"></a>
+					<h3>get<wbr>Storage<wbr>Endpoint</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">get<wbr>Storage<wbr>Proxy<span class="tsd-signature-symbol">(</span>storageKey<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, type<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="storageproxy.html" class="tsd-signature-type">StorageProxy</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="storageproxy.html" class="tsd-signature-type">StorageProxy</a><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">get<wbr>Storage<wbr>Endpoint<span class="tsd-signature-symbol">(</span>storageProxy<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">StorageProxyNG</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/crdttyperecord.html" class="tsd-signature-type">CRDTTypeRecord</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/storagecommunicationendpoint.html" class="tsd-signature-type">StorageCommunicationEndpoint</a><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/crdttyperecord.html" class="tsd-signature-type">CRDTTypeRecord</a><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/5744731/src/runtime/particle-execution-context.ts#L192">src/runtime/particle-execution-context.ts:192</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/8abd1e1/src/runtime/particle-execution-context.ts#L157">src/runtime/particle-execution-context.ts:157</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>storageProxy: <span class="tsd-signature-type">StorageProxyNG</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/crdttyperecord.html" class="tsd-signature-type">CRDTTypeRecord</a><span class="tsd-signature-symbol">&gt;</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="../interfaces/storagecommunicationendpoint.html" class="tsd-signature-type">StorageCommunicationEndpoint</a><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/crdttyperecord.html" class="tsd-signature-type">CRDTTypeRecord</a><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="getstorageproxy" class="tsd-anchor"></a>
+					<h3>get<wbr>Storage<wbr>Proxy</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">get<wbr>Storage<wbr>Proxy<span class="tsd-signature-symbol">(</span>storageKey<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, type<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">StorageProxy</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">StorageProxy</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/8abd1e1/src/runtime/particle-execution-context.ts#L216">src/runtime/particle-execution-context.ts:216</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -475,9 +505,9 @@
 									<h5>type: <span class="tsd-signature-type">any</span></h5>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <a href="storageproxy.html" class="tsd-signature-type">StorageProxy</a>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">StorageProxy</span>
 								<span class="tsd-signature-symbol"> | </span>
-								<span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="storageproxy.html" class="tsd-signature-type">StorageProxy</a><span class="tsd-signature-symbol">&gt;</span>
+								<span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">StorageProxy</span><span class="tsd-signature-symbol">&gt;</span>
 							</h4>
 						</li>
 					</ul>
@@ -492,7 +522,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/5744731/src/runtime/particle-execution-context.ts#L153">src/runtime/particle-execution-context.ts:153</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/8abd1e1/src/runtime/particle-execution-context.ts#L177">src/runtime/particle-execution-context.ts:177</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -512,13 +542,13 @@
 					<a name="instantiateparticle" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagPrivate">Private</span> instantiate<wbr>Particle</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private">
-						<li class="tsd-signature tsd-kind-icon">instantiate<wbr>Particle<span class="tsd-signature-symbol">(</span>id<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, spec<span class="tsd-signature-symbol">: </span><a href="particlespec.html" class="tsd-signature-type">ParticleSpec</a>, proxies<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">ReadonlyMap</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">, </span><a href="storageproxy.html" class="tsd-signature-type">StorageProxy</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-symbol">[</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">function</span><span class="tsd-signature-symbol">]</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">instantiate<wbr>Particle<span class="tsd-signature-symbol">(</span>id<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, spec<span class="tsd-signature-symbol">: </span><a href="particlespec.html" class="tsd-signature-type">ParticleSpec</a>, proxies<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">ReadonlyMap</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">StorageProxy</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-symbol">[</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">function</span><span class="tsd-signature-symbol">]</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/5744731/src/runtime/particle-execution-context.ts#L226">src/runtime/particle-execution-context.ts:226</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/8abd1e1/src/runtime/particle-execution-context.ts#L250">src/runtime/particle-execution-context.ts:250</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -530,7 +560,7 @@
 									<h5>spec: <a href="particlespec.html" class="tsd-signature-type">ParticleSpec</a></h5>
 								</li>
 								<li>
-									<h5>proxies: <span class="tsd-signature-type">ReadonlyMap</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">, </span><a href="storageproxy.html" class="tsd-signature-type">StorageProxy</a><span class="tsd-signature-symbol">&gt;</span></h5>
+									<h5>proxies: <span class="tsd-signature-type">ReadonlyMap</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">StorageProxy</span><span class="tsd-signature-symbol">&gt;</span></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-symbol">[</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">function</span><span class="tsd-signature-symbol">]</span><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -547,7 +577,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/5744731/src/runtime/particle-execution-context.ts#L331">src/runtime/particle-execution-context.ts:331</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/8abd1e1/src/runtime/particle-execution-context.ts#L355">src/runtime/particle-execution-context.ts:355</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -573,7 +603,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/5744731/src/runtime/particle-execution-context.ts#L246">src/runtime/particle-execution-context.ts:246</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/8abd1e1/src/runtime/particle-execution-context.ts#L270">src/runtime/particle-execution-context.ts:270</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -656,6 +686,9 @@
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="particleexecutioncontext.html#generateid" class="tsd-kind-icon">generateID</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="particleexecutioncontext.html#getstorageendpoint" class="tsd-kind-icon">get<wbr>Storage<wbr>Endpoint</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="particleexecutioncontext.html#getstorageproxy" class="tsd-kind-icon">get<wbr>Storage<wbr>Proxy</a>

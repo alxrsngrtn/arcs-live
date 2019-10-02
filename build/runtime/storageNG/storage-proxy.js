@@ -7,16 +7,16 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-import { assert } from '../../platform/assert-web.js';
 import { mapStackTrace } from '../../platform/sourcemapped-stacktrace-web.js';
 import { SystemException } from '../arc-exceptions.js';
 import { CRDTError } from '../crdt/crdt.js';
 import { ProxyMessageType } from './store.js';
 /**
- * TODO: describe this class.
+ * Mediates between one or more Handles and the backing store. The store can be outside the PEC or
+ * directly connected to the StorageProxy.
  */
 export class StorageProxy {
-    constructor(apiChannelId, crdt, store, type, pec) {
+    constructor(apiChannelId, crdt, storeProvider, type) {
         this.handles = [];
         this.listenerAttached = false;
         this.keepSynced = false;
@@ -24,10 +24,13 @@ export class StorageProxy {
         this.modelHasSynced = () => undefined;
         this.apiChannelId = apiChannelId;
         this.crdt = crdt;
-        this.store = store;
+        this.store = storeProvider.getStorageEndpoint(this);
         this.type = type;
-        this.pec = pec;
         this.scheduler = new StorageProxyScheduler();
+    }
+    // TODO: remove this after migration.
+    get pec() {
+        throw new Error('StorageProxyNG does not have a pec.');
     }
     async idle() {
         return this.scheduler.idle;
@@ -48,7 +51,7 @@ export class StorageProxy {
         this.handles.push(handle);
         // Attach an event listener to the backing store when the first readable handle is registered.
         if (!this.listenerAttached) {
-            this.id = this.store.on(x => this.onMessage(x));
+            this.store.setCallback(x => this.onMessage(x));
             this.listenerAttached = true;
         }
         // Change to synchronized mode as soon as we get any handle configured with keepSynced and send
@@ -87,7 +90,6 @@ export class StorageProxy {
         const message = {
             type: ProxyMessageType.Operations,
             operations: [op],
-            id: this.id
         };
         await this.store.onProxyMessage(message);
         this.notifyUpdate(op, oldData);
@@ -110,7 +112,6 @@ export class StorageProxy {
         }
     }
     async onMessage(message) {
-        assert(message.id === this.id);
         switch (message.type) {
             case ProxyMessageType.ModelUpdate:
                 this.crdt.merge(message.model);
@@ -139,7 +140,7 @@ export class StorageProxy {
                 break;
             }
             case ProxyMessageType.SyncRequest:
-                await this.store.onProxyMessage({ type: ProxyMessageType.ModelUpdate, model: this.crdt.getData(), id: this.id });
+                await this.store.onProxyMessage({ type: ProxyMessageType.ModelUpdate, model: this.crdt.getData() });
                 break;
             default:
                 throw new CRDTError(`Invalid operation provided to onMessage, message: ${message}`);
@@ -173,12 +174,12 @@ export class StorageProxy {
         }
     }
     async requestSynchronization() {
-        return this.store.onProxyMessage({ type: ProxyMessageType.SyncRequest, id: this.id });
+        return this.store.onProxyMessage({ type: ProxyMessageType.SyncRequest });
     }
 }
 export class NoOpStorageProxy extends StorageProxy {
     constructor() {
-        super(null, null, null, null, null);
+        super(null, null, { getStorageEndpoint() { } }, null);
     }
     async idle() {
         return new Promise(resolve => { });

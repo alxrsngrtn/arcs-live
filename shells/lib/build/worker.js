@@ -261,6 +261,22 @@ class ParticleExecutionContext {
     generateID() {
         return this.idGenerator.newChildId(this.pecId).toString();
     }
+    getStorageEndpoint(storageProxy) {
+        const pec = this;
+        let id;
+        return {
+            async onProxyMessage(message) {
+                message.id = await id;
+                return new Promise((resolve) => pec.apiPort.ProxyMessage(storageProxy, message, ret => resolve(ret)));
+            },
+            setCallback(callback) {
+                id = new Promise((resolve) => pec.apiPort.Register(storageProxy, x => storageProxy.onMessage(x), retId => resolve(retId)));
+            },
+            reportExceptionInHost(exception) {
+                pec.apiPort.ReportExceptionInHost(exception);
+            }
+        };
+    }
     innerArcHandle(arcId, particleId) {
         const pec = this;
         return {
@@ -999,6 +1015,8 @@ let PECInnerPort = class PECInnerPort extends APIPort {
     HandleStream(handle, callback, pageSize, forward) { }
     StreamCursorNext(handle, callback, cursorId) { }
     StreamCursorClose(handle, cursorId) { }
+    Register(handle, messagesCallback, idCallback) { }
+    ProxyMessage(handle, message, callback) { }
     Idle(version, relevance) { }
     GetBackingStore(callback, storageKey, type) { }
     ConstructInnerArc(callback, particle) { }
@@ -1058,6 +1076,16 @@ __decorate([
 __decorate([
     __param(0, Mapped), __param(1, Direct)
 ], PECInnerPort.prototype, "StreamCursorClose", null);
+__decorate([
+    __param(0, Mapped),
+    __param(1, LocalMapped),
+    __param(2, LocalMapped)
+], PECInnerPort.prototype, "Register", null);
+__decorate([
+    __param(0, Mapped),
+    __param(1, Direct),
+    __param(2, LocalMapped)
+], PECInnerPort.prototype, "ProxyMessage", null);
 __decorate([
     __param(0, Direct), __param(1, ObjectMap(MappingType.Mapped, MappingType.Direct))
 ], PECInnerPort.prototype, "Idle", null);

@@ -12,6 +12,7 @@ import { CRDTTypeRecord } from '../crdt/crdt.js';
 import { Type } from '../type.js';
 import { Exists } from './drivers/driver-factory.js';
 import { StorageKey } from './storage-key.js';
+import { StorageProxy } from './storage-proxy.js';
 /**
  * This file exists to break a circular dependency between Store and the ActiveStore implementations.
  * Source code outside of the storageNG directory should not import this file directly; instead use
@@ -29,15 +30,15 @@ export declare enum ProxyMessageType {
 }
 export declare type ProxyMessage<T extends CRDTTypeRecord> = {
     type: ProxyMessageType.SyncRequest;
-    id: number;
+    id?: number;
 } | {
     type: ProxyMessageType.ModelUpdate;
     model: T['data'];
-    id: number;
+    id?: number;
 } | {
     type: ProxyMessageType.Operations;
     operations: T['operation'][];
-    id: number;
+    id?: number;
 };
 export declare type ProxyCallback<T extends CRDTTypeRecord> = (message: ProxyMessage<T>) => Promise<boolean>;
 export declare type StoreInterface<T extends CRDTTypeRecord> = {
@@ -46,7 +47,15 @@ export declare type StoreInterface<T extends CRDTTypeRecord> = {
     readonly type: Type;
     readonly mode: StorageMode;
 };
-export declare abstract class ActiveStore<T extends CRDTTypeRecord> implements StoreInterface<T> {
+export interface StorageCommunicationEndpoint<T extends CRDTTypeRecord> {
+    setCallback(callback: ProxyCallback<T>): void;
+    reportExceptionInHost(exception: PropagatedException): void;
+    onProxyMessage(message: ProxyMessage<T>): Promise<boolean>;
+}
+export interface StorageCommunicationEndpointProvider<T extends CRDTTypeRecord> {
+    getStorageEndpoint(storageProxy: StorageProxy<T>): StorageCommunicationEndpoint<T>;
+}
+export declare abstract class ActiveStore<T extends CRDTTypeRecord> implements StoreInterface<T>, StorageCommunicationEndpointProvider<T> {
     readonly storageKey: StorageKey;
     exists: Exists;
     readonly type: Type;
@@ -57,4 +66,9 @@ export declare abstract class ActiveStore<T extends CRDTTypeRecord> implements S
     abstract off(callback: number): void;
     abstract onProxyMessage(message: ProxyMessage<T>): Promise<boolean>;
     abstract reportExceptionInHost(exception: PropagatedException): void;
+    getStorageEndpoint(): {
+        onProxyMessage(message: ProxyMessage<T>): Promise<boolean>;
+        setCallback(callback: ProxyCallback<T>): void;
+        reportExceptionInHost(exception: PropagatedException): void;
+    };
 }

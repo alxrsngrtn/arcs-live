@@ -101,6 +101,22 @@ export class ParticleExecutionContext {
     generateID() {
         return this.idGenerator.newChildId(this.pecId).toString();
     }
+    getStorageEndpoint(storageProxy) {
+        const pec = this;
+        let id;
+        return {
+            async onProxyMessage(message) {
+                message.id = await id;
+                return new Promise((resolve) => pec.apiPort.ProxyMessage(storageProxy, message, ret => resolve(ret)));
+            },
+            setCallback(callback) {
+                id = new Promise((resolve) => pec.apiPort.Register(storageProxy, x => storageProxy.onMessage(x), retId => resolve(retId)));
+            },
+            reportExceptionInHost(exception) {
+                pec.apiPort.ReportExceptionInHost(exception);
+            }
+        };
+    }
     innerArcHandle(arcId, particleId) {
         const pec = this;
         return {
