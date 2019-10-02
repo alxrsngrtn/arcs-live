@@ -1,8 +1,5 @@
-commit 5bcfcb27b88e98716d9e5c63c26de79b9722b066
-Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
-Date:   Wed Oct 2 13:39:09 2019 +1000
+commit 5744731cc28ccb51cc17ab68cbab54b7eebca630
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Tue Oct 1 20:49:07 2019 -0700
 
-    Simplify StorageProviderBase methods: on, off, _fire (#3677)
-    
-    They didn't need the change/target params. This will make it fit better
-    with the new store's API
+    unittests for ArcData (#3668)
