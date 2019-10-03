@@ -1,13 +1,9 @@
-commit 68fd5cfef31bb8aee38bacc1a95b2ac444aa2481
+commit e4135cf799dbc9602397952896e95a5b06c85185
 Author: Alex Rosengarten <alxr@google.com>
-Date:   Thu Oct 3 10:54:20 2019 -0700
+Date:   Thu Oct 3 15:18:46 2019 -0700
 
-    Flowcheck / schema2* loader (#3671)
+    CICD: Building Native/Wasm particles (#3694)
     
-    * Found correct use of utils for several sigh tools
-    - flowcheck updated with fix from schema2pkg
-    - schema2pkg using proper var
+    * CICD: Building Native/Wasm particles
     
-    * str cat --> str interpolation
-    
-    * rm unused import
+    * `noshow`s
