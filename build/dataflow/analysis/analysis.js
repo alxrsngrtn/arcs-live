@@ -88,7 +88,7 @@ export class EdgeExpression {
         const modifier = edge.modifier || new FlowModifier();
         const parentEdges = edge.start.inEdgesFromOutEdge(edge);
         if (parentEdges.length > 0) {
-            // Indicate that this edge inherits from its parents (and apply 
+            // Indicate that this edge inherits from its parents (and apply
             // modifiers).
             parentEdges.forEach(e => this.inheritFromEdge(e, modifier));
         }

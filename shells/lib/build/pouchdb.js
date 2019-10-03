@@ -387,6 +387,7 @@ __webpack_require__.r(__webpack_exports__);
 
 window.PouchDB = {PouchDB: pouchdb__WEBPACK_IMPORTED_MODULE_0__["default"], PouchDbMemory: pouchdb_adapter_memory__WEBPACK_IMPORTED_MODULE_1__["default"], PouchDbDebug: pouchdb_debug__WEBPACK_IMPORTED_MODULE_2__["default"]};
 
+
 /***/ }),
 /* 67 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {

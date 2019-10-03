@@ -32,7 +32,7 @@ function createChainOfEdges(...nodeIds) {
         edges.push(new TestEdge(firstNode, secondNode, firstNode.nodeId + '->' + secondNode.nodeId));
     }
     // Mark the first node in the chain as having ingress, so the whole chain is
-    // valid. 
+    // valid.
     nodes[0].ingress = true;
     return edges;
 }

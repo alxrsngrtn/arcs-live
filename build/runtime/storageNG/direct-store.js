@@ -131,7 +131,7 @@ export class DirectStore extends ActiveStore {
                     // Work around a typescript compiler bug. Apparently typescript won't guarantee that
                     // a Map key you've just set will exist, but is happy to assure you that a private
                     // member variable couldn't possibly change in any function outside the local scope
-                    // when within a switch statement. 
+                    // when within a switch statement.
                     this.state = DirectStoreState.AwaitingResponse;
                     this.version = ++version;
                     const response = await this.driver.send(this.localModel.getData(), version);
@@ -204,7 +204,7 @@ export class DirectStore extends ActiveStore {
     // Additionally, StorageProxy objects may request a SyncRequest, which will
     // result in an up-to-date model being sent back to that StorageProxy.
     // a return value of true implies that the message was accepted, a
-    // return value of false requires that the proxy send a model sync 
+    // return value of false requires that the proxy send a model sync
     async onProxyMessage(message) {
         if (this.pendingException) {
             throw this.pendingException;

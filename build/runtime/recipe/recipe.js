@@ -145,7 +145,7 @@ export class Recipe {
         return Modality.intersection(this.particles.filter(p => Boolean(p.spec && p.spec.slandleConnectionNames().length > 0)).map(p => p.spec.modality));
     }
     allRequiredSlotsPresent(options = undefined) {
-        // All required slots and at least one consume slot for each particle must be present in order for the 
+        // All required slots and at least one consume slot for each particle must be present in order for the
         // recipe to be considered resolved.
         for (const particle of this.particles) {
             if (particle.spec.slotConnections.size === 0) {

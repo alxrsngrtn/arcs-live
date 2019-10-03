@@ -138,7 +138,7 @@
         "signature": "c9c5e9fe98ddcd940f8e7dc64d53dbacafadf919e8c5860701c9b64a9d5c3a8a"
       },
       "../src/runtime/id.ts": {
-        "version": "a1394fa0f8d5143220104bea5269410fab7dafe776a6e8eca93162eaf898ff1f",
+        "version": "b3a9912ef56ef30631d77048d009b5575bbda1dca5930694b78d0a36955a0783",
         "signature": "a855ef24384aa9052ccffe8fc2005e43f3bed515e2cbb01c97ed459b7768da22"
       },
       "../src/platform/assert-web.ts": {
@@ -154,7 +154,7 @@
         "signature": "edc8104acc921b34de3bba6cd5837d06b595db3441cbf4617b399dd1d9dacef2"
       },
       "../src/runtime/interface-info.ts": {
-        "version": "d9ac5666c4552ff538290a811f7721f6ede68556d765d612c21113ecc4dd4cee",
+        "version": "35a4270805ade90b2004efea75b21ef39c3793b63b94e335bfd828a50548e40b",
         "signature": "f3a8eb8225764908b3beaa422b458c2291a753b108130759eb8b6d09246681bf"
       },
       "../src/runtime/type-variable-info.ts": {
@@ -170,7 +170,7 @@
         "signature": "3343b37a02fb1d5d29e95c4cf938a395120f1a62789b455bfacba67c4b7154c7"
       },
       "../src/runtime/recipe/connection-constraint.ts": {
-        "version": "39051a31f34fc0792a1b9aea7dce47a40dd63e84f93dec368e7bff327483a497",
+        "version": "aa1937bbe1600ccffdfd39fe7c6db5ff3e3a79e603327f66824f0b8c97e0a8f2",
         "signature": "1a1ef5efedef97c133116d62ff98017637866ac8447b4a0ba41a6e7dd1d4f0fe"
       },
       "../src/runtime/recipe/search.ts": {
@@ -182,15 +182,15 @@
         "signature": "55f5349ef1be5c124bbde7a6f885aaf0f1c47d8e22dd945a36bb14fc55f43710"
       },
       "../src/runtime/recipe/walker.ts": {
-        "version": "8f40d5a6fc11d4c0d13dfd5e305126c589beed4540c17d2a6ec95602206fcb6f",
+        "version": "421ecf07c75c1d65f3ba9dbaea663401c95aee1084dcd5d7acfd3945e5af512a",
         "signature": "1545aea4be1c7f8a3c63dac6e27be104d97d9c8370f5cb81990bf9f4b783be3e"
       },
       "../src/runtime/recipe/recipe.ts": {
-        "version": "fb23c03f7cebb05aadb78633401eedc37b926b23378154c6da17f1187bc3703f",
+        "version": "5cb1eabd63e151f33db6dc001dba2945469515f2563afe1fd11e89ae9a9bb973",
         "signature": "cd7f260b1b7a45dc3a3ed399a41b74142d428f09b042a40875a9ad1b2ca75804"
       },
       "../src/runtime/recipe/slot.ts": {
-        "version": "1f73a107053426e4ab9d9f10366f95d729c9ea0f953403284773cee9f9a77d4c",
+        "version": "fd46441d0ed13ad977f9d94fa82922ed7c77e310de6472e507c8fc269e249acd",
         "signature": "f238eb00375ccbf9eeb8e96a54e29a7cacbbb4ab7e966d7f8a5fa0ff8ccd58a0"
       },
       "../src/runtime/slot-info.ts": {
@@ -198,7 +198,7 @@
         "signature": "2e25d6a84e1f37aa6c260353854eb89d1c4f60d30cb6951d2673a033fa062ff3"
       },
       "../src/runtime/storageNG/storage-key.ts": {
-        "version": "468465c38c67373ee05e7fe468250bb52521e57c6982f36a5fa207a7ed83ebf5",
+        "version": "7e3138cb62b2c1226cb54d6acf7aadcd07b984a3c66b44f90407f6a802fe3f19",
         "signature": "b7fa49726506f2bc542e75950bd559b4b7631f6bb4944bc89e889b190c96ec6c"
       },
       "../src/runtime/recipe/handle.ts": {
@@ -206,7 +206,7 @@
         "signature": "16796312ddb3bfbfe86f426298d62335dcd6c9bbb0d5c9d46d491113bc1e4a74"
       },
       "../src/runtime/recipe/recipe-util.ts": {
-        "version": "32de97605ec5a290d53f5b87c10d94c6b0831067a14439c6252638bb553bdb14",
+        "version": "dde22bb16865aa909b05898429c92e415b54ae7a71b4c62f8d2f37101434f559",
         "signature": "c0590035b74904e19a3a17cc1320600e146883313f895abc76e698548978c467"
       },
       "../src/runtime/recipe/handle-connection.ts": {
@@ -218,7 +218,7 @@
         "signature": "48ee89089870cafcf1aff05b59507df345d7ae92c362b9abe5af551ef7d98327"
       },
       "../src/runtime/arc-inspector.ts": {
-        "version": "9986e4437cbe2b871eedf0b0ed48d1026cc5a62d3899741ee56cbafab3f49f08",
+        "version": "f55daee892e45e8c6d10c63ffa7c7a39ef1f16c0e6e8e980fb042905bca7fc6e",
         "signature": "a4f2a782c08f419c070d844605e3d60b02506b32b4de0bc8aad4c4500cd85aa2"
       },
       "../src/platform/fetch-web.ts": {
@@ -266,7 +266,7 @@
         "signature": "060865ee341ca58b49e4dffdc53537bcf1fa380dca5ddfe6ac116788c9c831c6"
       },
       "../src/runtime/runtime-cache.ts": {
-        "version": "1b32e50e4d6bc291bb07bc8ec515856d1b373b982fe60f4c6d66ae1f7e59407b",
+        "version": "6cc69dfe4e1bdf906455cfeb90bfaa9e2af89931599e79cb14dff71aeb600e76",
         "signature": "26731e3019e5722c8b60d0b15fc209d3573825cddf9096d1687e9131b7f8dd04"
       },
       "../src/runtime/description-formatter.ts": {
@@ -274,7 +274,7 @@
         "signature": "f3f7f93889cc4226a8c3c1aa64736c09b29d299bb6c2363238960b30c85d8a9d"
       },
       "../src/runtime/description-dom-formatter.ts": {
-        "version": "cad6408e653b284476f5f56242493645f7f3f69077d8f9d58fd5bb41158fb265",
+        "version": "dc35b1a39780fff94d8cf0c046fa383c220e4eed017c9f33704cfba65557ce65",
         "signature": "c6aee857291d998de1bec1ecb35483ea7b27d75804234c3c985ba7e661af0282"
       },
       "../modalities/dom/components/xen/xen-template.d.ts": {
@@ -282,7 +282,7 @@
         "signature": "4e24f7fa6ab8c0eae2116267d50f9165d20cc036987f2dbe2db9affed08f3996"
       },
       "../src/runtime/slot-context.ts": {
-        "version": "fd48c50fca103f567aa97bdf56eb0504d3115408b46c8398b436b79db48a018b",
+        "version": "f1674934f94a40748c8ddafc2dcca7e93a610be8f6c9e3b042a6bdcda7f2ccb2",
         "signature": "3c5cde6937e959b2b7ba8544b857398b4ae726fc7bf7294392d74ba74ea3637f"
       },
       "../src/runtime/slot-dom-consumer.ts": {
@@ -306,11 +306,11 @@
         "signature": "90c1a68b23e12258f5e09d7b5fb773e771892fe9ee7533ce4cec349471c226f5"
       },
       "../src/runtime/storageNG/drivers/driver-factory.ts": {
-        "version": "5d529312e08baaaa3c2faaa5a34d3df8936492e7df742826721d9e77ed502f66",
+        "version": "a3143bf6dd36623bb78133180055eb23e904ba5035b03e5cb8bbbd7bb0da91f5",
         "signature": "7665deb48be3d6fd7673b14049781883cffbb28fdd4e07217a0e5e7197cb1fd1"
       },
       "../src/runtime/storageNG/drivers/volatile.ts": {
-        "version": "457ece8a60ce35cadfe24870b8041789a4f813349203172bf3af4b293e405adb",
+        "version": "918a9aee84d0fc9ddaf847099941e65c75fe430ebffd7bf7b3095339fbf7cc52",
         "signature": "1caf0bf54edc18e0f7bc0bb764e1a91e110d5080b3faa107fa2061281f47da41"
       },
       "../src/runtime/runtime.ts": {
@@ -334,7 +334,7 @@
         "signature": "7daca5a6eaf62b4682e03e290eb8fcd7eb8bc92885b50cc4eada16dfb501b5f4"
       },
       "../src/runtime/mutex.ts": {
-        "version": "fe8cfcf2a603978d004a354d6472527e0f8c151b977d01a6a8028f3f25293ecc",
+        "version": "94deca042e1f398b75d078f763212d8ff7415d8388582a7d505e5e3d6119a6e5",
         "signature": "11aee506c154a5e85806ec683fecf9088e22eb74ba70f226e29c11fafeb974c6"
       },
       "../src/runtime/storage/storage-provider-factory.ts": {
@@ -358,11 +358,11 @@
         "signature": "40f3e862c7b1e6cee79ba8e4d8ed49bb7d63596b7be270080bf14a0cd68c6661"
       },
       "../src/runtime/recipe/recipe-walker.ts": {
-        "version": "f6f8364c58df77538830e3bdadacca8a8f489ab1e078ccb1fef70c4ec661d37c",
+        "version": "acf65cc681f842c918d9e828e1642b84a1de5ba14420fb1ae56d9096ac8aae98",
         "signature": "ebb73bc76ceab04809d2a0d3d6b5b44a794016307eff53272dd7bb629d66b116"
       },
       "../src/runtime/recipe/slot-utils.ts": {
-        "version": "2b44b5c73e9a87483707becb83a3e3c2bd4cbcd5993a4dee1bf28ebaa429ab76",
+        "version": "df8cb4f4dd60914e38242e9b158c416751b0cfdc2260c03ce6d3bc9915839210",
         "signature": "8cca63506a5b06bd6685172cfb968abe957345091b809c8ff2fc9a646cba7288"
       },
       "../src/runtime/recipe/recipe-resolver.ts": {
@@ -374,7 +374,7 @@
         "signature": "a37f1b0347d4dae7a16754e444957d55c425434f5abe1347c1617e7381a9bb2a"
       },
       "../src/runtime/crdt/crdt.ts": {
-        "version": "6e4ff2e347b54b98c87ee80da8cdcd0e2e1a44f662dfea02b57cbd5748d684b4",
+        "version": "c55cf57a3a6fdae2f8de94abcc23e7a5491c41fa099c135321209d564ef90bcb",
         "signature": "3b5f0271525b93678f631cb72cd1f4a694594b28006f68e55055b58e5b4cb794"
       },
       "../src/platform/sourcemapped-stacktrace-web.ts": {
@@ -382,7 +382,7 @@
         "signature": "72c40c6f2e61d63e346ed8715847bd9b379f195ed653d6524d0b5f0bd0cc729a"
       },
       "../src/runtime/crdt/crdt-collection.ts": {
-        "version": "96c3b8c331853599b7b80fe3cafec3639eb125b52591acbab175be4fdcbb2df0",
+        "version": "6f23fc5471b8b9f421e00ae0287627918bd2d8f2ce892bc6eb7c55cf1e47a7fe",
         "signature": "56f86180345fdee1e9188557a6a33761d89bf226303ec4df831098269a6bcfbb"
       },
       "../src/runtime/crdt/crdt-singleton.ts": {
@@ -402,19 +402,19 @@
         "signature": "39f6786f00c7e315d600522bf5cc71cf426416adf9de6806c6ecdcfa9978d826"
       },
       "../src/runtime/storageNG/direct-store.ts": {
-        "version": "0771e944cf1b63c37f7a13380a85d82655d327c96f2f6ba83bae6533cda7b2ee",
+        "version": "c6a31181c95aa762210120a23497b489f26a3f27f928c8fe6886a3470273263e",
         "signature": "8129ec26061259de03a2fe9e8c88199ae395faf2cc5af05a0f3b83f6aa80eef7"
       },
       "../src/runtime/storageNG/backing-store.ts": {
-        "version": "7ee25cc9ba6fca943769094580bf3cff8b1014902c2bd84aea3b4779e43b6401",
+        "version": "8bc48b39e76663201cbf22e8485ed89a3678b3813c5108864fd829a307813027",
         "signature": "cd7c4e8b4d3d25e3cffe26c35a1f8256cbee78515bce6b1446bb9f5aa23ad81e"
       },
       "../src/runtime/crdt/crdt-entity.ts": {
-        "version": "f73694b9be66726bcc5639519077e675d58abf1930f0ab58feee52ab041c8e3b",
+        "version": "d60d3654ee199380dd25727258655938b67bb0b757162729c766eed28a06b895",
         "signature": "362ce6c9e7048d0c4a97f29c27b27de7ee17135bff0ff20885eadaaa0cc569ed"
       },
       "../src/runtime/storageNG/reference-mode-store.ts": {
-        "version": "493ef89b7bfbe2daf2e530e50e0c1050eb440e2365fd8818d56351266dfe1238",
+        "version": "8b68bbfcd8d17d415a1fa373f47da1439681511f34fe89187b86d71e3f1ca4fa",
         "signature": "e4574f3b1622e9e4d8a6c255ec7f62b091fa8c33b52e82b042582bd449b65202"
       },
       "../src/runtime/storageNG/store.ts": {
@@ -426,11 +426,11 @@
         "signature": "dc42231353b6ad064a437e7e876d93e5743063e9acbc58645392d4d4ffad4d61"
       },
       "../src/runtime/slot-consumer.ts": {
-        "version": "f725d658ed329377db1f842ee2796d4013cfe572143a1e0ded0ef2ccd3bce8f4",
+        "version": "77ce6c663b9683dfcdbec1a047772a22dfdc300b616944a2005ab1498229da3e",
         "signature": "889601531865e7755b79f7957f8333a331916602c665574365ca5f7cec2f485a"
       },
       "../src/runtime/slot-proxy.ts": {
-        "version": "d45e3c610c649052a27010dfc8b2375be28b7317dd159baab4261243b2171b06",
+        "version": "f49325a25c827941121d1c5264faee3a8deb2112a71b1ac90178595df63b765a",
         "signature": "86874e4389dafbe12250f44f6ee48b07da634c7e761a5f887e56f426b3a4a826"
       },
       "../src/runtime/particle.ts": {
@@ -438,7 +438,7 @@
         "signature": "29b4595a7e44ac239c14fe8b6fa132c4737a5fb170bfd3f8a70f64905aebfc81"
       },
       "../src/runtime/storage-proxy.ts": {
-        "version": "14af2ee3950f9d46fae8262f0e02c9b32ad69849376f7edac5321e2dccf7aed3",
+        "version": "70f4b83557beeec836f8da4881313ce364bac728378819e7870ce9ab78b76559",
         "signature": "a0d95acea436f414bd7b684ccd854793f7349abcc93915f915f17fe0136271ab"
       },
       "../src/runtime/symbols.ts": {
@@ -474,7 +474,7 @@
         "signature": "aada06877d833c5c090730084c8d2c6fdfd9f593e61ca60e7419a687621e44e2"
       },
       "../src/runtime/testing/stub-loader.ts": {
-        "version": "332758ce6f1d8f7892cf28ef0eb515612fd731f3ee9bf4d325b019aee9dd92c1",
+        "version": "e8fb96a8e379bd53832fb1ef6896ae079f6ab9ca789f4eb8e0892c2fa9f3bc01",
         "signature": "981c1047c27ef4327e7f141f57f45fdc54d4e477101aecc5ace173ad88c1d898"
       },
       "../src/runtime/fake-pec-factory.ts": {
@@ -506,11 +506,11 @@
         "signature": "0d34a813d16ab16eca25e02e330243fd0e23f0204d55fcb50569623cb46384a0"
       },
       "../src/runtime/crdt/crdt-count.ts": {
-        "version": "612998865bcd38ba54ea48a37877d4b305aa54f132aaadf4d25e2b53b2c1f138",
+        "version": "68c6b2d1ff6a7a1ce07662eebf71cc882a87fb2a490efb72efe603081ecd74e1",
         "signature": "50f22c6414d93bc2b5f52da8ecccca67927c7b89aabb4e86903900a576ab1356"
       },
       "../src/runtime/type.ts": {
-        "version": "205ab52344e31b1f98fc9e4f4b63fa155285ec273434d2711b06b9f49840eeff",
+        "version": "a03e71b049e0df163357514151df531d6c19434ca3c037ce580a9d895b98e1d1",
         "signature": "20df5968514f727cf40579be87b83e1edb6ed2de377108d6fe08c102ba9489a0"
       },
       "../src/runtime/recipe/type-checker.ts": {
@@ -522,7 +522,7 @@
         "signature": "5f81ab9527a7fce014911edd1abd6e86326348360a48f3344bb9eabb33b7753e"
       },
       "../src/runtime/particle-spec.ts": {
-        "version": "7fdfa9cb632a5a877c809fe4bfa51adeec84e49d4bde92fea7bca28835ea1ff0",
+        "version": "852ddb3f8a3a44cb68016b4e1a7e03dfaf184bfafbd2767c54713a8d7a69b398",
         "signature": "fed6d96abcedd4c828945e67e59023b905dffeae5a63c6d2f15163b0b72b3e8b"
       },
       "../src/runtime/particle-claim.ts": {
@@ -602,27 +602,27 @@
         "signature": "0f35244c9a5054093c480b02eb1fefc9de1507a73f446183a7482824634de3d3"
       },
       "../src/dataflow/analysis/graph-internals.ts": {
-        "version": "334c7da9615e84af1e4c5a0ac955173ecf710c71fc1112539807b69c5a378f82",
+        "version": "c0a0cde190761f62209a7abb8c4db787f6ce43518e0db89f70d83efbfff2c831",
         "signature": "8849de5c7c20d246dc1cf98dce8b522c010f88d64b3b8e8ea693fc2347727632"
       },
       "../src/dataflow/analysis/particle-node.ts": {
-        "version": "a7d143e1d3bf0ce650aacb86a16408d3417719e9b6f0121055166e181c6eae75",
+        "version": "b81e84ccaa2008fc58ca4b77d630b66bd8ba2b3b206e1331a38ea6aa6a6b1b76",
         "signature": "0e807a9c134c924deb048fc997554e7b3c6c44c689155c789e1b15ac23bde113"
       },
       "../src/dataflow/analysis/handle-node.ts": {
-        "version": "273880da1acc6b7bfdfb506200e22513de6237cf5cb7372289c3454386e42dfb",
+        "version": "58d97d8bf85a95586a9ce48349e65d5be455c1299449f65bd78c2185080145a8",
         "signature": "59872da9310a0c14e2179690cc706ef86db803b0eabe6fe797e2b5464c967887"
       },
       "../src/dataflow/analysis/slot-node.ts": {
-        "version": "1b4970927f64afb0f8b9b3841e131c0c60ab276b44eae2dc1e56f5e267f521f4",
+        "version": "4b2f3d2585541ee69f2b5349d53d4356d87158f041d7abe58d24e84b33345a09",
         "signature": "b214f1d9912f28c40d01f56662a2d3951b3534f9db86f210f4f56a1f7abc5c5e"
       },
       "../src/dataflow/analysis/flow-graph.ts": {
-        "version": "2900f9c222f69a971101e4557b5084c0d96dc0cf77df633452ace32f1002fdc5",
+        "version": "eefa21782bb91654ea5c2bb0e6b4734fec92e123eeea6c54521049d2e39b1273",
         "signature": "bc1a2fdd443718106e606c4ebac7f90afa10efa598856de0afd6a160efe002dc"
       },
       "../src/dataflow/analysis/analysis.ts": {
-        "version": "87995c3e0bdfbbadd35ccaeb837159ae19b51bc92f770b1408688ba62d829bc9",
+        "version": "520ccd69f456aef7ee38f8c9d9345b3b1caf39a0535fe6a4723a27bd081a06f9",
         "signature": "6f2e3e2bfa48fb94c74f78fd9ba6f8c3172b5be64254abab6503d20e2c49d9fe"
       },
       "../src/dataflow/analysis/testing/flow-graph-testing.ts": {
@@ -634,7 +634,7 @@
         "signature": "aa657cc3c9324f71d7c84ac68f4e20b1eedea2e1e8b93efd81051208cf69c5f6"
       },
       "../src/dataflow/analysis/tests/analysis-test.ts": {
-        "version": "9c80902d18e90001a67518edcff7664a5eb0095e48d5be72ee59a87fdab63cd7",
+        "version": "bb4f2bbe94fa7d660828debc9277643953564e6a761d666fcd531c0da8ab8019",
         "signature": "8e609bb71c20b858c77f0e9f90bb1319db8477b13f9f965f1a1e18524bf50881"
       },
       "../src/dataflow/analysis/tests/deep-set-test.ts": {
@@ -646,7 +646,7 @@
         "signature": "535087ae214f316cbb0a3a17fb44a767c4789b7b69c4bd2c8d37fa8d5845a81f"
       },
       "../src/dataflow/analysis/tests/flow-graph-test.ts": {
-        "version": "2cd9f687494a05d4ea521522f5d7d53d8059db2daf44b6b003628f1f15f24ae1",
+        "version": "e75d44c1d74d3ffae054b01c24b7846f051d91482e9e170ad604361db79ed547",
         "signature": "43a5176681925d9f51b139647154e4a52c2eb1b1a64bb428595000952bcbc7f1"
       },
       "../src/dataflow/analysis/tests/graph-internals-test.ts": {
@@ -662,7 +662,7 @@
         "signature": "43a5176681925d9f51b139647154e4a52c2eb1b1a64bb428595000952bcbc7f1"
       },
       "../src/devtools-connector/abstract-devtools-channel.ts": {
-        "version": "0d57cc9a3b52d454a1a8fc10d28e043e5ec8a1e644a653fc081feea43e88bdd9",
+        "version": "d71b6f49f51a89820bf5d1b589464a7da8a564f2af29c7985ad9c17ec956bb0a",
         "signature": "c031ca1b9ae58b3b9c445cd37d23db2df9e3f99ec2947818f80f8a7b3ea43c5d"
       },
       "../src/platform/date-web.ts": {
@@ -694,7 +694,7 @@
         "signature": "0199ca5a951679cb8d9ab5dd3eba61e843e6926d31f79908a3abff17cd4a3652"
       },
       "../src/planning/speculator.ts": {
-        "version": "b9053f8868f857cb6cdc1a8a5497f6e71e75f40640142e65a25f2697418ae6f2",
+        "version": "5f573408d0a500549bbd57a24377775e0e4c2bb69a4feeef5926e7ee04103e89",
         "signature": "659309dea86c2598407e72b108951dd2b6fd99ee27990dbda6f8fbcec98153ad"
       },
       "../src/planning/strategizer.ts": {
@@ -722,7 +722,7 @@
         "signature": "c08aa4583a92c6e3d83ae1d122c449e8b08c0102ea261254c9f7d980caea6a14"
       },
       "../src/planning/strategies/convert-constraints-to-connections.ts": {
-        "version": "2db676ff3b327691d4e2ec4448a528047de9096809ab8217fc8b5e03e3e708d5",
+        "version": "246aba3550ca2292a1a7439bee01a4493c1ef5c68d2611fc009905ded31a2fc3",
         "signature": "95a9de353cd1aa8f2d1b88f2f0e1d7237ca260b459e7ea2b738460b2b83b8101"
       },
       "../src/planning/strategies/create-handle-group.ts": {
@@ -750,11 +750,11 @@
         "signature": "40f80febed8e85fe6fc919c2af60dab5c546cb1c631e0c6caa68bc3622dfb8d8"
       },
       "../src/planning/strategies/init-search.ts": {
-        "version": "e71892509fc953ae6e88bab8977db91819a7daf2c2c5207d90202850ea1f3a5c",
+        "version": "8e7000039a1e0e77e48c833ef2e14a68c7f86de70f7b6f809f350b23b2cc0e72",
         "signature": "278221ff7af1e3464857ab8e650055c6c935ff800ea40abe4ab4cadde5912ef3"
       },
       "../src/planning/strategies/map-slots.ts": {
-        "version": "4394a53b2dad7e0f6712ae57e1ea0acdc06d211028aa1927e574afe4c6614d63",
+        "version": "80936e731af8a41a40045f72078413e8a2d225c3c2c91094593bf3775a1c11e8",
         "signature": "3b692fcf907c90524a7eee124958f49b6e4da97cd1373ab1396d03fbf7cec23b"
       },
       "../src/planning/strategies/match-particle-by-verb.ts": {
@@ -774,7 +774,7 @@
         "signature": "b0c9adcc7d5a71be013d3271c5abef29188ddc581448a1610b1d911756fc84b3"
       },
       "../src/planning/recipe-index.ts": {
-        "version": "a09b637c98fb2ffc3e0dda8696653bfbe13da7faba9b1abacac72e0596c83817",
+        "version": "1b86fa62e0cceaeefb4162458969079a25945f416715666deaf78ae29b3ab9e0",
         "signature": "8533fb6e592775ca5ecbdf7cac74cb03b22dd83804e112ee5e423e9ce2338db4"
       },
       "../src/planning/strategies/coalesce-recipes.ts": {
@@ -818,7 +818,7 @@
         "signature": "2ae8da58b68c98f0a4a740cc1fa5cc81e566d02b1e6eb4bdbf175e46ed738b06"
       },
       "../src/devtools-connector/arc-planner-invoker.ts": {
-        "version": "591f05c6728966214f223417d5a153442612fecee33ed4d949b2c519db36fedf",
+        "version": "f8c9ca6e02a41f6a593cdd34010a55a3b7ad1917cbcee6f152b22ac0962b66b8",
         "signature": "10fcbb9da4af9b476cc305777ef041fc1843e23c703fbc0a457d9455e5a55563"
       },
       "../src/devtools-connector/arc-stores-fetcher.ts": {
@@ -838,11 +838,11 @@
         "signature": "12367c989f3e0ca81e94bcfb04747a52796e4913d72f71e29ea5caca4f1b078d"
       },
       "../src/devtools-connector/hot-code-reloader.ts": {
-        "version": "0a39869231b04f27f89d5a1d14b6b06776dd830fbd5bfd64b7e1ace5169178d0",
+        "version": "a878295373a497e15ddc5e266e7941dc8c3fcc249a7e0a9626000db8110fe4f4",
         "signature": "5f764000c0935ed79663b189731d23f75b262f878758de3366bc8e2389fef5e5"
       },
       "../src/devtools-connector/devtools-arc-inspector.ts": {
-        "version": "cf056ec5fea769aa7bcf9a60dedcc163943691c1a68d4dc7070e67a5fc644947",
+        "version": "61ee4ea130e96885d00920f58cbd6ba480ecaa3b6103b003f2ca100097e3ffca",
         "signature": "914efdd9819f19afa229ed6da2f106eba0d791e2a1f9f4dad415d477e7eeec63"
       },
       "../src/devtools-connector/devtools-planner-inspector.ts": {
@@ -878,7 +878,7 @@
         "signature": "e84082a386fc5392d63b71b9011ddc0d916bcdfe2dd29570973d2773c77c21b6"
       },
       "../src/planning/simple-planner.ts": {
-        "version": "0ac66cb68a93ef8479e16df715fcdf6d8f48233cd187c17a46b289e638e334bf",
+        "version": "40283540d1ef206672283759a0e15edb886a82ed2b101318512125607df49dc7",
         "signature": "fbe73297c292a4be4a063a0e248ce8cc7a07b48fde740d80171ad01920e7c636"
       },
       "../node_modules/@types/debug/index.d.ts": {
@@ -1186,7 +1186,7 @@
         "signature": "8e609bb71c20b858c77f0e9f90bb1319db8477b13f9f965f1a1e18524bf50881"
       },
       "../src/planning/plan/tests/planificator-test.ts": {
-        "version": "96c0613952b985cd851819ac150d56c44018308f1e60adf5c7601911b4e5140f",
+        "version": "96f7456621fad2ed4bb8a0cc0d54acddfb0d3fefd16565eeb13cd6fe0ee59402",
         "signature": "8e609bb71c20b858c77f0e9f90bb1319db8477b13f9f965f1a1e18524bf50881"
       },
       "../src/planning/plan/tests/planning-result-test.ts": {
@@ -1194,7 +1194,7 @@
         "signature": "8e609bb71c20b858c77f0e9f90bb1319db8477b13f9f965f1a1e18524bf50881"
       },
       "../src/planning/plan/tests/replan-queue-test.ts": {
-        "version": "aaf654ad7c6599d5dffa4728b0bffcab732d5a33bd1e53221f87e633f29613d5",
+        "version": "e1cdafe1574cf280d2087d2f5d2b0b4db6283534b37c7e53640aa3bd31518cc6",
         "signature": "8e609bb71c20b858c77f0e9f90bb1319db8477b13f9f965f1a1e18524bf50881"
       },
       "../src/planning/plan/tests/suggestion-test.ts": {
@@ -1218,7 +1218,7 @@
         "signature": "8bc1d39a3b8ec61064f9969316a088e314895e7ffd094468dcc0b238f33cb4a6"
       },
       "../src/planning/strategies/tests/convert-constraints-to-connections-test.ts": {
-        "version": "208d5ee9dbfcd6148dd66ba741b445522af3b60c8bbf53838c7fe381d466fd5b",
+        "version": "f8c4d4ef9f11615cdb6127239e4ebc3a01be857415d66b34645ab6f91ee31c8e",
         "signature": "8e609bb71c20b858c77f0e9f90bb1319db8477b13f9f965f1a1e18524bf50881"
       },
       "../src/planning/strategies/tests/create-description-handle-test.ts": {
@@ -1234,7 +1234,7 @@
         "signature": "8bc1d39a3b8ec61064f9969316a088e314895e7ffd094468dcc0b238f33cb4a6"
       },
       "../src/planning/strategies/tests/find-required-particle-test.ts": {
-        "version": "e2b1f0d4c837ff3ffc1cbe5f92fa8687ee188f073b5194f35a986e452f7570dd",
+        "version": "2dd38ea7fa446b3c2f08bb4cf77686b90219bc29b4eb5e572fe33b1db6bace79",
         "signature": "fd95df5d076cbfed143dc4904d376b5c6d9cb1091b630994ffe2366010afa6b3"
       },
       "../src/planning/strategies/tests/group-handle-connections-test.ts": {
@@ -1250,7 +1250,7 @@
         "signature": "8bc1d39a3b8ec61064f9969316a088e314895e7ffd094468dcc0b238f33cb4a6"
       },
       "../src/planning/strategies/tests/map-slots-test.ts": {
-        "version": "193f1c970454dcb1e1cd3dd51e69ca74e6712d21295223c6196d4c289489d6f0",
+        "version": "9e7ba89067635e02890c69627a0e2cff4f726f3ea4b460e69f66e90d435fb74b",
         "signature": "8bc1d39a3b8ec61064f9969316a088e314895e7ffd094468dcc0b238f33cb4a6"
       },
       "../src/planning/strategies/tests/match-particle-by-verb-test.ts": {
@@ -1258,7 +1258,7 @@
         "signature": "8bc1d39a3b8ec61064f9969316a088e314895e7ffd094468dcc0b238f33cb4a6"
       },
       "../src/planning/strategies/tests/match-recipe-by-verb-test.ts": {
-        "version": "8334b6a655e9e018e38bc0c7deab501cc8ce5d6d757928af253f390dadb238c5",
+        "version": "fd0b5714568f1efa447611ce692d0207caf091f9536fa53d6327cb26af153be4",
         "signature": "8bc1d39a3b8ec61064f9969316a088e314895e7ffd094468dcc0b238f33cb4a6"
       },
       "../src/planning/strategies/tests/resolve-recipe-test.ts": {
@@ -1278,7 +1278,7 @@
         "signature": "8bc1d39a3b8ec61064f9969316a088e314895e7ffd094468dcc0b238f33cb4a6"
       },
       "../src/planning/strategies/tests/strategy-sequence-test.ts": {
-        "version": "188b2527adbe9ce5b51aca2f558b692b780ead30c499d3adb7a389440d8f7090",
+        "version": "d8b6f8fef024b435bb8301909c29b727437ea2b835e248f49d335ba106d6fa2d",
         "signature": "8e609bb71c20b858c77f0e9f90bb1319db8477b13f9f965f1a1e18524bf50881"
       },
       "../src/planning/testing/arcs-planning-testing.ts": {
@@ -1286,7 +1286,7 @@
         "signature": "70ec31185ba202997da2613e9400fff44ef0abf3c22f4794f67d658fe0c909b2"
       },
       "../src/planning/tests/planner-test.ts": {
-        "version": "805963710f8084710ae5285322542982878291fb17abd9811d07113432f9a604",
+        "version": "eb1d17b55c0bbfb99fc29f4c6751a4517200f91fae16514851d0851cea626055",
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "../src/runtime/testing/manifest-integration-test-setup.ts": {
@@ -1298,11 +1298,11 @@
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "../src/planning/tests/recipe-index-test.ts": {
-        "version": "6917ad6c9c17d62938e99622ff0177bd213abb7a53fb3365387203e7b99b857f",
+        "version": "3720822afecff02da61f5952445b9b21e32b672e87f537cf27e2c753552c6b50",
         "signature": "8bc1d39a3b8ec61064f9969316a088e314895e7ffd094468dcc0b238f33cb4a6"
       },
       "../src/planning/tests/simple-planner-test.ts": {
-        "version": "7e4c0a079484331f4e8ebc0aa318dd5725824b47ea790165853b6a1ed67d37c4",
+        "version": "bb37db199e7bef0dd1a7503b560de10d6e4ece52689fbdc09956324ad9510f94",
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "../src/planning/tests/speculator-test.ts": {
@@ -1406,7 +1406,7 @@
         "signature": "4a7ee9371fcf168cbbf101994fd4d28d680a022018d5d100a870f0fb38a52049"
       },
       "../src/runtime/ui-transformation-particle.ts": {
-        "version": "e0773b63b53b8cc4a705e88a9fec84aee64df660341ee85be1ad3539840275ac",
+        "version": "2b4f46eec76cf6a66c30a68eb2bf150f1a5d5fd73dc8c9214dce8f8fd17c4ed5",
         "signature": "41c13adf4011d0f681542725c89446f40e3a6015bc486d34bec8f990796e2d20"
       },
       "../src/runtime/ui-multiplexer-particle.ts": {
@@ -1442,7 +1442,7 @@
         "signature": "6883b5fb9fb91a9a6d7db86639399ff4c366bc339de5d3cbc67facb6ebd32fc1"
       },
       "../src/platform/pec-industry-node.ts": {
-        "version": "8857b69d733471be23a8006b41a27611c4a1af4599b4be132f65052c60cfae6d",
+        "version": "11273f63e0ca1f2bbe385c4f4c8bc59ffc57470b373ca8c55b5dc8d130cd721b",
         "signature": "4adb9d9051b01ed14f59e27c77023e8168dc20df65249fdb9a660f11b1d33055"
       },
       "../src/platform/pec-industry-web.ts": {
@@ -1450,7 +1450,7 @@
         "signature": "92676e58c4eb58a7594bd8a9ac1229809ddf3691de8f7a2dff275ecfb697e14c"
       },
       "../src/platform/pouchdb-node.ts": {
-        "version": "de91b7f9ba4834d5f976a05a4051ebb02c5ed7e4732fe080f27047003758e5e4",
+        "version": "8193f04c9ec5a6c823ac4b3fb95aa4c75954bb5746735c297179a2f51a8a5b36",
         "signature": "879406ae5d3456ebf174917bdef4f360f4292bf4ce3f65d8003b6319939b2b1a"
       },
       "../node_modules/protobufjs/index.d.ts": {
@@ -2241,11 +2241,11 @@
         "signature": "8bc1d39a3b8ec61064f9969316a088e314895e7ffd094468dcc0b238f33cb4a6"
       },
       "../src/runtime/crdt/tests/crdt-count-test.ts": {
-        "version": "33003c8673610165c2df2424b06c9ea6630064a10d85be2170c4df700b9471fd",
+        "version": "9a4cdaf27c4f21400d480dc16c651a72848fd1f0315c9f4720a3475284c54105",
         "signature": "fd95df5d076cbfed143dc4904d376b5c6d9cb1091b630994ffe2366010afa6b3"
       },
       "../src/runtime/crdt/tests/crdt-entity-test.ts": {
-        "version": "b3ba5ad7b7a774bfe9c574de328ec78ee391c7943990c46ce87d7d14a0ae6616",
+        "version": "c5ff611778e3855588ca5c8e0138056da1aea91c458916664f40fcf632a3acb6",
         "signature": "8bc1d39a3b8ec61064f9969316a088e314895e7ffd094468dcc0b238f33cb4a6"
       },
       "../src/runtime/crdt/tests/crdt-singleton-test.ts": {
@@ -2253,11 +2253,11 @@
         "signature": "8bc1d39a3b8ec61064f9969316a088e314895e7ffd094468dcc0b238f33cb4a6"
       },
       "../src/runtime/storageNG/drivers/firebase.ts": {
-        "version": "ecdd4799e3f80536acd608418cc567f6b6fe6cb5f6bf83a6b6786df0ed582e1c",
+        "version": "1b266d3d1b06310857e1742734128728901646adee314d8a2cc2fd08fea20c8d",
         "signature": "34a4b3a84747d0740f0bb9b1722734dd8d59b78ed1cc00b42d69597103027b3c"
       },
       "../src/runtime/manual_tests/firebase-ng-test.ts": {
-        "version": "a81abcedf8db6a8320a376f2c9a64e8b44c282257d99b77de218404fa6cf9d5b",
+        "version": "ef882548b052d683a79cc6248f76797fdb5899315b20a06f5b41bc86c9bfaab2",
         "signature": "fd95df5d076cbfed143dc4904d376b5c6d9cb1091b630994ffe2366010afa6b3"
       },
       "../src/runtime/manual_tests/firebase-test.ts": {
@@ -2277,11 +2277,11 @@
         "signature": "b2001479c20635531e7177bdaf326f6e5a116a70e93483f3e6e9b26a7fc46b2d"
       },
       "../src/runtime/storageNG/testing/mock-firebase.ts": {
-        "version": "5a29561539f400338e3c21de847c86780b304d5cf7dc97b7bfd1439b2333e544",
+        "version": "d98c764325f86b40a0eac1c322abf522428521d18e2c522ec939c81c056722d6",
         "signature": "8f5a620739fe50aeaf57d49ad4ea706c68679355ccf9ee65c43b078ba6f26ced"
       },
       "../src/runtime/storageNG/drivers/tests/firebase-test.ts": {
-        "version": "1b924239113d2d66970024491ce4cd477c63fbeb3e8c9756b9bb17bc53cd82ac",
+        "version": "ba7df445241880451811a6191fe64ce2ae20cf327518d7e6b67fc02c84ae1b3b",
         "signature": "fd95df5d076cbfed143dc4904d376b5c6d9cb1091b630994ffe2366010afa6b3"
       },
       "../src/runtime/storageNG/drivers/tests/ramdisk-test.ts": {
@@ -2297,7 +2297,7 @@
         "signature": "1ef0e2bee9f030e565c277a560d826ac209c6747149c2dd7509c7761b2aa8ff6"
       },
       "../src/runtime/storageNG/tests/firebase-store-integration-test.ts": {
-        "version": "29e4258eb796b451d83a307f6a28ae8080a36c5e83974b77505c0568a4185b04",
+        "version": "c9fcb8e82eb75482bfdad11ed760d7a77db7771bbd99d5fe96ec3b494f517b41",
         "signature": "fd95df5d076cbfed143dc4904d376b5c6d9cb1091b630994ffe2366010afa6b3"
       },
       "../src/runtime/storageNG/tests/handle-test.ts": {
@@ -2313,7 +2313,7 @@
         "signature": "fd95df5d076cbfed143dc4904d376b5c6d9cb1091b630994ffe2366010afa6b3"
       },
       "../src/runtime/storageNG/tests/reference-mode-store-test.ts": {
-        "version": "74cbe7a0fc31c3db7c638802f7b3c4eafceb9288805cbf84dbc44d89b69e0724",
+        "version": "12694d5bc0ef04e4dce50a3179ac592910a910f54a7ad63db6f85e59a6646be9",
         "signature": "fd95df5d076cbfed143dc4904d376b5c6d9cb1091b630994ffe2366010afa6b3"
       },
       "../src/runtime/storageNG/tests/storage-proxy-test.ts": {
@@ -2321,15 +2321,15 @@
         "signature": "fd95df5d076cbfed143dc4904d376b5c6d9cb1091b630994ffe2366010afa6b3"
       },
       "../src/runtime/testing/sequence.ts": {
-        "version": "8b3403ecf80145be356066117cd0b75fbdecacadfae7980fff1cfd226932be10",
+        "version": "07ecdde0c47036483335ea678c9158a9ab106db37026f769b538d0a9974a2952",
         "signature": "18ed1a63d0019c28cba80715295b3b2a0763daf0a90315d2414a70d753607613"
       },
       "../src/runtime/storageNG/tests/store-sequence-test.ts": {
-        "version": "f5b65ceaf7e3ba12cc2fe2ca2673042015a7baca9f753831c7920ef2c1b81db9",
+        "version": "f9a36b745431989092c03aa31e9ce3e3caea3e6b1fabb5366a48cd4889d479e9",
         "signature": "fd95df5d076cbfed143dc4904d376b5c6d9cb1091b630994ffe2366010afa6b3"
       },
       "../src/runtime/storageNG/tests/store-test.ts": {
-        "version": "2741685b16f75cb99d447fbdfd29a30184cf502bf85aec14bb7d12014909adff",
+        "version": "47aaf0abc909ff73a1f143212498533208e0d583e79c60667de6ddfbc8781840",
         "signature": "fd95df5d076cbfed143dc4904d376b5c6d9cb1091b630994ffe2366010afa6b3"
       },
       "../src/runtime/testing/callback-tracker.ts": {
@@ -2337,7 +2337,7 @@
         "signature": "de98b2596fde11c47205b5d100a0a772bf89b472641123bb3284bbf7dae1fa61"
       },
       "../src/runtime/testing/test/sequence-test.ts": {
-        "version": "8eece77555319dd29d59dd7cd8cf661af642400a3ff8c51f729afe01ef343a20",
+        "version": "2dffc5b56af03e19a0e835accb2e9f407a4bb94e2ac19c59dcc4cc54790dcc34",
         "signature": "fd95df5d076cbfed143dc4904d376b5c6d9cb1091b630994ffe2366010afa6b3"
       },
       "../src/runtime/tests/akms-test.ts": {
@@ -2345,11 +2345,11 @@
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "../src/runtime/tests/api-channel-test.ts": {
-        "version": "ef85cb770327ea0532981141100660fcad76a41bd69408d30d1829407d1066bb",
+        "version": "e1f58af2df64b6d17e03a406d01a0ff27b928b0b5f8dd1cc3b4a2da84344d1d5",
         "signature": "8bc1d39a3b8ec61064f9969316a088e314895e7ffd094468dcc0b238f33cb4a6"
       },
       "../src/runtime/tests/arc-test.ts": {
-        "version": "7031738b003edde05a00e4292bdf586948d8b86fd02e21b293dea787e7fb8a22",
+        "version": "80d9c471b0f9b9f33342e936d4a66d50fe712502ddfff749cca929c46219378d",
         "signature": "600636836c17982e77369e742e2b185b3a695f0407d06b57f41cbf45b0a11d8b"
       },
       "../src/runtime/tests/bytes-test.ts": {
@@ -2357,7 +2357,7 @@
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "../src/runtime/tests/data-layer-test.ts": {
-        "version": "f6196ed3069b7a7e226e4bf0e1c18024ded40ebb912491b72dc7cbb44e3d2538",
+        "version": "a3c5f14bd59706b18cceaec22b4c75dc1d49e61da35a7f864e2ac264cbb63248",
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "../src/runtime/tests/description-test.ts": {
@@ -2373,15 +2373,15 @@
         "signature": "8e609bb71c20b858c77f0e9f90bb1319db8477b13f9f965f1a1e18524bf50881"
       },
       "../src/runtime/tests/id-test.ts": {
-        "version": "404b85209c1bd6f12e60df1713014b9d99b4337f1b10520c5376b226a2721eb5",
+        "version": "67f6086819266f4b7c7d23ab5ba15f2cc3ec79936b0eaa3a77cca64e59976838",
         "signature": "8bc1d39a3b8ec61064f9969316a088e314895e7ffd094468dcc0b238f33cb4a6"
       },
       "../src/runtime/tests/interface-info-test.ts": {
-        "version": "6f97d4bb14f1340088fb46f6c74f3d61f17bb8459f33d694850a235c5ad4472f",
+        "version": "14e62acb6b06db2a1b001a20ef3baee0091165699ddbcfdd752b44752b3aedb1",
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "../src/runtime/tests/json-id-to-manifest-test.ts": {
-        "version": "c713e8ec799e0caed4c6b61cf0d438d40e7c1b1f336cb3ce5e6ef23bac8a3bbf",
+        "version": "6c0ef4031d5ae2a23f69b8afc33c3ec9489a90c459903fbc24e33cce7f6d5d6f",
         "signature": "fd95df5d076cbfed143dc4904d376b5c6d9cb1091b630994ffe2366010afa6b3"
       },
       "../src/runtime/tests/loader-test.ts": {
@@ -2401,11 +2401,11 @@
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "../src/runtime/tests/mutex-test.ts": {
-        "version": "93683a11f87d580c0eefe103eae727923e1480a956af021f1d9d8d3a18694fd3",
+        "version": "798bdd0dec922d3d8d08399e551aaa7dff2454d8c50ca95b1dea90cad3e41eed",
         "signature": "8bc1d39a3b8ec61064f9969316a088e314895e7ffd094468dcc0b238f33cb4a6"
       },
       "../src/runtime/tests/particle-api-test.ts": {
-        "version": "c7d491da7b46e9f3d4501fe8887547d187b51fc1ad60a9fdf5d4f89d397f656c",
+        "version": "e0e97e9314b9f7dae7aad27fba67bb75f492449b57d02a10cd537d51c337be9a",
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "../src/runtime/tests/particle-execution-context-test.ts": {
@@ -2417,7 +2417,7 @@
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "../src/runtime/tests/particle-interface-loading-with-slots-test.ts": {
-        "version": "69bd64e5f08ab0cf5295c1657bfc658ac2c4b3e387b0fd49b57ba2ba761c8e3f",
+        "version": "0c80ab253e6348b0a6c99ad350afec4b5ba46e30a5c2688f0f3aeeb2b33fe45b",
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "../src/runtime/tests/preconditions-test.ts": {
@@ -2425,7 +2425,7 @@
         "signature": "8e609bb71c20b858c77f0e9f90bb1319db8477b13f9f965f1a1e18524bf50881"
       },
       "../src/runtime/tests/recipe-resolver-test.ts": {
-        "version": "48bd6faae1defb50d1fe0e6f523f3aee709d810675436d650a099023e83a7adf",
+        "version": "04aa9c60f1b7d83aa1a31061511d9b4179ec4315448187732dd1dde9cc995ff5",
         "signature": "8bc1d39a3b8ec61064f9969316a088e314895e7ffd094468dcc0b238f33cb4a6"
       },
       "../src/runtime/tests/recipe-test.ts": {
@@ -2457,7 +2457,7 @@
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "../src/runtime/tests/storage-proxy-test.ts": {
-        "version": "521be96fafa6ade5219c853d72125574c8931901fcabea967070ed1f921671ab",
+        "version": "3017cd9da78a9e4abeafb9c3196af0c5c8f4889923cc420541f442710495a63b",
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "../src/runtime/tests/synthetic-storage-test.ts": {
@@ -2473,15 +2473,15 @@
         "signature": "8bc1d39a3b8ec61064f9969316a088e314895e7ffd094468dcc0b238f33cb4a6"
       },
       "../src/runtime/tests/type-checker-test.ts": {
-        "version": "92794b7fd6a53e35b50d8a8cc76fab6fae9d822afbc6e8dc966d99f6f2073bce",
+        "version": "e554a62af32689a944021daa1a6e831bf6583a680d52245cd034a709c69f1573",
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "../src/runtime/tests/type-test.ts": {
-        "version": "9ce3d1f9cd65bdd980b6450b57c0a3ddf4cac2e1dcbd3cbd95675e4af0adf02b",
+        "version": "985a1be25f1104dfae84c382cb7ed9c9e13d3810274b4c3454caf830df2135b3",
         "signature": "8bc1d39a3b8ec61064f9969316a088e314895e7ffd094468dcc0b238f33cb4a6"
       },
       "../src/runtime/tests/volatile-storage-test.ts": {
-        "version": "1ef52ec0468b8e3088c9cb8563663ffbb5c34584683b8ba8d78f3830fb53e660",
+        "version": "e6072bb47761d5267f91d441b790243e60d544a58a262d7409b5b0d29ec7a1c3",
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "../src/runtime/tests/wasm-test.ts": {
@@ -2597,7 +2597,7 @@
         "signature": "8bc1d39a3b8ec61064f9969316a088e314895e7ffd094468dcc0b238f33cb4a6"
       },
       "../src/tests/particles/particles-test.ts": {
-        "version": "490970e858c6e146e417836a0b7abd51ed1f69cd9b57867e6625cf54d4b65078",
+        "version": "887d2243a09ec65a1b8fe025e101c7a6ddf4bf86344a3631d496fd569d321eaa",
         "signature": "8e609bb71c20b858c77f0e9f90bb1319db8477b13f9f965f1a1e18524bf50881"
       },
       "../src/tests/particles/products-test.ts": {
@@ -2625,7 +2625,7 @@
         "signature": "0edac467ab32db119a7cab8904665f2ba2a89ffe97132833405dcca3871f6e33"
       },
       "../src/tools/bundle.ts": {
-        "version": "3f217a88794a906a430c329deeff9136900a66b99d01be1f497e1ff1edb42e8e",
+        "version": "4886f1d0367461c1485c017d3414395f1912f60871d92df912988761685c060c",
         "signature": "04da10519853e79fececaa6857bd1b3880a40418c3f5bf7c9a42fdcf297433df"
       },
       "../src/tools/bundle-cli.ts": {
@@ -2633,7 +2633,7 @@
         "signature": "fd95df5d076cbfed143dc4904d376b5c6d9cb1091b630994ffe2366010afa6b3"
       },
       "../src/tools/schema2base.ts": {
-        "version": "1378f45538d3eec82e49218e4dd3c2c9b2cb99da9a74e09ac7ad03f2cea2a06d",
+        "version": "777323ec63681a1632afa6caf82736c42c0b4d413d908e0abf5b460a7d2ab634",
         "signature": "44c67db51f6f262099ce193695d05ebc7e4cc90de35cfda0e9cf2aaeb8ce1ea5"
       },
       "../src/tools/schema2cpp.ts": {

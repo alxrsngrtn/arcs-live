@@ -101,7 +101,7 @@ class TestCollection {
         this._version = (version !== undefined) ? version : this._version + 1;
         if (sendEvent) {
             const item = { value: { id, storageKey: `volatile://${this._arcId}^^volatile-Thing {Text value}` }, effective, keys };
-            // Hard coding the storageKey here is a bit cheeky, but the TestEngine class 
+            // Hard coding the storageKey here is a bit cheeky, but the TestEngine class
             // enforces the schema and arcID is plumbed through.
             const event = { remove: [item], version: this._version, originatorId };
             this._listeners.forEach(cb => cb(event));
@@ -540,7 +540,7 @@ describe('storage-proxy', () => {
         // Read the handle again; the read should still be able to complete locally.
         await fooHandle.get();
         await engine.verify();
-        // Update the backing store with a concurrent write. This should not surface 
+        // Update the backing store with a concurrent write. This should not surface
         // in the handle.
         fooStore.set(engine.newEntity('concurrent'));
         await engine.verify();

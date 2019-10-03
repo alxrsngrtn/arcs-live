@@ -18189,7 +18189,7 @@ class Recipe {
         return Modality.intersection(this.particles.filter(p => Boolean(p.spec && p.spec.slandleConnectionNames().length > 0)).map(p => p.spec.modality));
     }
     allRequiredSlotsPresent(options = undefined) {
-        // All required slots and at least one consume slot for each particle must be present in order for the 
+        // All required slots and at least one consume slot for each particle must be present in order for the
         // recipe to be considered resolved.
         for (const particle of this.particles) {
             if (particle.spec.slotConnections.size === 0) {
@@ -24338,11 +24338,11 @@ var Exists;
     Exists[Exists["MayExist"] = 2] = "MayExist";
 })(Exists || (Exists = {}));
 // Interface that drivers must support.
-// 
+//
 // Note the threading of a version number here; each model provided
 // by the driver to the Store (using the receiver) is paired with a version,
 // as is each model sent from the Store to the driver (using Driver.send()).
-// 
+//
 // This threading is used to track whether driver state has changed while
 // the Store is processing a particular model. send() should always fail
 // if the version isn't exactly 1 greater than the current internal version.
@@ -24695,7 +24695,7 @@ class DirectStore extends ActiveStore {
                     // Work around a typescript compiler bug. Apparently typescript won't guarantee that
                     // a Map key you've just set will exist, but is happy to assure you that a private
                     // member variable couldn't possibly change in any function outside the local scope
-                    // when within a switch statement. 
+                    // when within a switch statement.
                     this.state = DirectStoreState.AwaitingResponse;
                     this.version = ++version;
                     const response = await this.driver.send(this.localModel.getData(), version);
@@ -24768,7 +24768,7 @@ class DirectStore extends ActiveStore {
     // Additionally, StorageProxy objects may request a SyncRequest, which will
     // result in an up-to-date model being sent back to that StorageProxy.
     // a return value of true implies that the message was accepted, a
-    // return value of false requires that the proxy send a model sync 
+    // return value of false requires that the proxy send a model sync
     async onProxyMessage(message) {
         if (this.pendingException) {
             throw this.pendingException;
@@ -32627,8 +32627,8 @@ class MapSlots extends Strategy {
                 }
                 // If there are any local slots, prefer them over remote slots.
                 // TODO: There should not be any preference over local slots vs. remote slots.
-                // Strategies should be responsible for making all possible recipes. Ranking of 
-                // recipes is done later. 
+                // Strategies should be responsible for making all possible recipes. Ranking of
+                // recipes is done later.
                 const slotList = local.length > 0 ? local : remote;
                 return slotList.map(slot => ((recipe, particle, slotSpec) => {
                     const newSlotConnection = particle.addSlotConnection(slotSpec.name);
@@ -32637,7 +32637,7 @@ class MapSlots extends Strategy {
                 }));
             }
             // TODO: this deals with cases where a SlotConnection has been
-            // created during parsing, so that provided slots inside the 
+            // created during parsing, so that provided slots inside the
             // connection can be connected to consume connections.
             // Long term, we shouldn't have to do this, so we won't need
             // to deal with the case of a disconnected SlotConnection.
@@ -34319,7 +34319,7 @@ class FlowModifier {
     }
     toUniqueString() {
         const elements = [];
-        // The edgeIds list is ordered, but for de-duping we still want to sort them. 
+        // The edgeIds list is ordered, but for de-duping we still want to sort them.
         for (const edgeId of this.edgeIds.asSet()) {
             elements.push('+edge:' + edgeId);
         }
@@ -34561,7 +34561,7 @@ class HandleNode extends Node$1 {
         this.nodeId = nodeId;
         this.storeId = handle.id;
         // Handles with the 'use', 'map' or 'copy' fate can come from sources
-        // external to the recipe, and so should be treated as ingress. 
+        // external to the recipe, and so should be treated as ingress.
         if (handle.fate !== 'create') {
             this.ingress = true;
         }
@@ -34923,7 +34923,7 @@ class EdgeExpression {
         const modifier = edge.modifier || new FlowModifier();
         const parentEdges = edge.start.inEdgesFromOutEdge(edge);
         if (parentEdges.length > 0) {
-            // Indicate that this edge inherits from its parents (and apply 
+            // Indicate that this edge inherits from its parents (and apply
             // modifiers).
             parentEdges.forEach(e => this.inheritFromEdge(e, modifier));
         }

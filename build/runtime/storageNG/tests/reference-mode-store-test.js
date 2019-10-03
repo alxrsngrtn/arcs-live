@@ -196,7 +196,7 @@ describe('Reference Mode Store', async () => {
         const driver = activeStore.containerStore['driver'];
         driver.send = async (model) => { throw new Error('Should not be invoked'); };
         // Note that this assumes no asynchrony inside store.ts. This is guarded by the following
-        // test, which will fail if driver.receiver() doesn't synchronously invoke driver.send(). 
+        // test, which will fail if driver.receiver() doesn't synchronously invoke driver.send().
         await driver.receiver(referenceCollection.getData(), 1);
     });
     it('will resend failed driver updates after merging', async () => {

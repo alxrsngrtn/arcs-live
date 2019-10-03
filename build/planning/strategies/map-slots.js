@@ -21,8 +21,8 @@ export class MapSlots extends Strategy {
                 }
                 // If there are any local slots, prefer them over remote slots.
                 // TODO: There should not be any preference over local slots vs. remote slots.
-                // Strategies should be responsible for making all possible recipes. Ranking of 
-                // recipes is done later. 
+                // Strategies should be responsible for making all possible recipes. Ranking of
+                // recipes is done later.
                 const slotList = local.length > 0 ? local : remote;
                 return slotList.map(slot => ((recipe, particle, slotSpec) => {
                     const newSlotConnection = particle.addSlotConnection(slotSpec.name);
@@ -31,7 +31,7 @@ export class MapSlots extends Strategy {
                 }));
             }
             // TODO: this deals with cases where a SlotConnection has been
-            // created during parsing, so that provided slots inside the 
+            // created during parsing, so that provided slots inside the
             // connection can be connected to consume connections.
             // Long term, we shouldn't have to do this, so we won't need
             // to deal with the case of a disconnected SlotConnection.

@@ -199,7 +199,7 @@ export class FlowModifier {
     }
     toUniqueString() {
         const elements = [];
-        // The edgeIds list is ordered, but for de-duping we still want to sort them. 
+        // The edgeIds list is ordered, but for de-duping we still want to sort them.
         for (const edgeId of this.edgeIds.asSet()) {
             elements.push('+edge:' + edgeId);
         }
