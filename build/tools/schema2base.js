@@ -33,8 +33,7 @@ export class Schema2Base {
         if (this.opts.update && fs.existsSync(outPath) && fs.statSync(outPath).mtimeMs > fs.statSync(src).mtimeMs) {
             return;
         }
-        const srcPath = `${process.cwd()}/${src}`;
-        const manifest = await Utils.parse(`import '${srcPath}'`);
+        const manifest = await Utils.parse(`import '${src}'`);
         // Collect declared schemas along with any inlined in particle connections.
         const schemas = {};
         manifest.allSchemas.forEach(schema => schemas[schema.name] = schema);

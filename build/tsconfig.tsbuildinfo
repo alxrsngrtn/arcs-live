@@ -658,7 +658,7 @@
         "signature": "43a5176681925d9f51b139647154e4a52c2eb1b1a64bb428595000952bcbc7f1"
       },
       "../src/dataflow/cli/flowcheck.ts": {
-        "version": "9ef79955473728769494aa553654df09fd0f2089263cb64210e6704f180a1a5a",
+        "version": "532f2ad924bd1b350b22facae6859063d9ba4fe1abf5ce777d8f38c7b5497aa4",
         "signature": "43a5176681925d9f51b139647154e4a52c2eb1b1a64bb428595000952bcbc7f1"
       },
       "../src/devtools-connector/abstract-devtools-channel.ts": {
@@ -2633,7 +2633,7 @@
         "signature": "fd95df5d076cbfed143dc4904d376b5c6d9cb1091b630994ffe2366010afa6b3"
       },
       "../src/tools/schema2base.ts": {
-        "version": "777323ec63681a1632afa6caf82736c42c0b4d413d908e0abf5b460a7d2ab634",
+        "version": "da69500551f9aa31f0043fe3d7dfd94c80ff8fcdf048faae89122d8a2118edb0",
         "signature": "44c67db51f6f262099ce193695d05ebc7e4cc90de35cfda0e9cf2aaeb8ce1ea5"
       },
       "../src/tools/schema2cpp.ts": {
@@ -4160,8 +4160,6 @@
       ],
       "../src/dataflow/cli/flowcheck.ts": [
         "../src/dataflow/analysis/flow-graph.ts",
-        "../src/runtime/loader.ts",
-        "../src/runtime/manifest.ts",
         "../src/dataflow/analysis/analysis.ts",
         "../node_modules/@types/node/util.d.ts",
         "../node_modules/@types/node/ts3.1/util.d.ts"
@@ -8131,7 +8129,6 @@
         "../node_modules/@types/node/path.d.ts",
         "../node_modules/@types/minimist/index.d.ts",
         "../src/runtime/schema.ts",
-        "../src/runtime/manifest.ts",
         "../src/runtime/hot.ts",
         "../node_modules/@types/node/util.d.ts",
         "../node_modules/@types/node/ts3.1/util.d.ts"
