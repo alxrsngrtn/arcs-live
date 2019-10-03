@@ -1,5 +1,5 @@
-commit 6172905ee1cb5e2c386634a5a3244eabc1b67446
-Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
-Date:   Thu Oct 3 11:01:15 2019 +1000
+commit a66579c3a0e8356949ee375c4e22d866008764e0
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Wed Oct 2 18:06:04 2019 -0700
 
-    Lint warning for trailing whitespace and eof newline (#3680)
+    update java renderers to match the updated rendering packet format (#3692)
