@@ -1,7 +1,5 @@
-commit bd842c9117094d608d86cbc97555966ccb723e17
-Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
-Date:   Thu Oct 3 11:57:42 2019 +1000
+commit 544075fe3af591018628ac241278b920186739a1
+Author: Sarah Heimlich <heimlich@google.com>
+Date:   Thu Oct 3 06:31:44 2019 -0700
 
-    Migrate a bunch of StorageStub usages to UnifiedStore (#3693)
-    
-    Didn't get them all, just the easy ones.
+    Tutorial 1 Text (#3691)
