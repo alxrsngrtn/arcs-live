@@ -506,7 +506,7 @@ ${this.activeRecipe.toString()}`;
                 }
                 else if (['copy', 'map'].includes(recipeHandle.fate)) {
                     const copiedStoreRef = this.context.findStoreById(recipeHandle.id);
-                    const copiedStore = await copiedStoreRef.inflate(this.storageProviderFactory);
+                    const copiedStore = await copiedStoreRef.castToStorageStub().inflate(this.storageProviderFactory);
                     assert(copiedStore, `Cannot find store ${recipeHandle.id}`);
                     assert(copiedStore.version !== null, `Copied store ${recipeHandle.id} doesn't have version.`);
                     await newStore.cloneFrom(copiedStore);

@@ -16,13 +16,11 @@ import { MessagePort } from './message-channel.js';
 import { Modality } from './modality.js';
 import { ParticleExecutionHost } from './particle-execution-host.js';
 import { ParticleSpec } from './particle-spec.js';
-import { StorageStub } from './storage-stub.js';
 import { Handle } from './recipe/handle.js';
 import { Particle } from './recipe/particle.js';
 import { Recipe } from './recipe/recipe.js';
 import { Slot } from './recipe/slot.js';
 import { SlotComposer } from './slot-composer.js';
-import { StorageProviderBase } from './storage/storage-provider-base.js';
 import { StorageProviderFactory } from './storage/storage-provider-factory.js';
 import { Type } from './type.js';
 import { PecFactory } from './particle-execution-context.js';
@@ -151,9 +149,9 @@ export declare class Arc {
     findStoresByType(type: Type, options?: {
         tags: string[];
     }): UnifiedStore[];
-    findStoreById(id: string): UnifiedStore | StorageStub;
-    findStoreTags(store: UnifiedStore | StorageStub): Set<string>;
-    getStoreDescription(store: StorageProviderBase): string;
+    findStoreById(id: string): UnifiedStore;
+    findStoreTags(store: UnifiedStore): Set<string>;
+    getStoreDescription(store: UnifiedStore): string;
     getVersionByStore({ includeArc, includeContext }: {
         includeArc?: boolean;
         includeContext?: boolean;

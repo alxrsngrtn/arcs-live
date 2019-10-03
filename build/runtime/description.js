@@ -10,8 +10,6 @@
 import { assert } from '../platform/assert-web.js';
 import { DescriptionFormatter } from './description-formatter.js';
 import { BigCollectionType, CollectionType, EntityType, InterfaceType } from './type.js';
-import { StorageProviderBase } from './storage/storage-provider-base.js';
-import { StorageStub } from './storage-stub.js';
 export class Description {
     constructor(storeDescById = {}, 
     // TODO(mmandlis): replace Particle[] with serializable json objects.
@@ -30,7 +28,7 @@ export class Description {
         const storeDescById = {};
         for (const { id } of plan.handles) {
             const store = arc.findStoreById(id);
-            if (store && store instanceof StorageProviderBase) {
+            if (store) {
                 storeDescById[id] = arc.getStoreDescription(store);
             }
         }
@@ -48,7 +46,7 @@ export class Description {
         const storeDescById = {};
         for (const { id } of arc.activeRecipe.handles) {
             const store = arc.findStoreById(id);
-            if (store && store instanceof StorageProviderBase) {
+            if (store) {
                 storeDescById[id] = arc.getStoreDescription(store);
             }
         }
@@ -127,7 +125,7 @@ export class Description {
         return {};
     }
     static async _prepareStoreValue(store) {
-        if (!store || (store instanceof StorageStub)) {
+        if (!store) {
             return undefined;
         }
         if (store.type instanceof CollectionType) {

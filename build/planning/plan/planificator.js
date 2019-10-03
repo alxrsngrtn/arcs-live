@@ -9,7 +9,6 @@
  */
 import { assert } from '../../platform/assert-web.js';
 import { checkDefined } from '../../runtime/testing/preconditions.js';
-import { StorageProviderBase } from '../../runtime/storage/storage-provider-base.js';
 import { EntityType } from '../../runtime/type.js';
 import { PlanConsumer } from './plan-consumer.js';
 import { PlanProducer, Trigger } from './plan-producer.js';
@@ -97,17 +96,13 @@ export class Planificator {
     _listenToArcStores() {
         this.arc.onDataChange(this.dataChangeCallback, this);
         this.arc.context.allStores.forEach(store => {
-            if (store instanceof StorageProviderBase) {
-                store.on(this.dataChangeCallback);
-            }
+            store.on(this.dataChangeCallback);
         });
     }
     _unlistenToArcStores() {
         this.arc.clearDataChange(this);
         this.arc.context.allStores.forEach(store => {
-            if (store instanceof StorageProviderBase) {
-                store.off(this.dataChangeCallback);
-            }
+            store.off(this.dataChangeCallback);
         });
     }
     static constructSuggestionKey(arc, storageKeyBase) {

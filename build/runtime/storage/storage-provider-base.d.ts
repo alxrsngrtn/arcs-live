@@ -9,7 +9,6 @@
  */
 import { Id } from '../id.js';
 import { Type } from '../type.js';
-import { StorageStub } from '../storage-stub.js';
 import { SerializedModelEntry } from './crdt-collection-model.js';
 import { KeyBase } from './key-base.js';
 import { Store, BigCollectionStore, CollectionStore, SingletonStore } from '../store.js';
@@ -42,7 +41,7 @@ export interface CollectionStorageProvider extends StorageProviderBase, Collecti
  */
 export interface BigCollectionStorageProvider extends StorageProviderBase, BigCollectionStore {
     cursorVersion(cursorId: number): any;
-    cloneFrom(store: StorageProviderBase | StorageStub): any;
+    cloneFrom(store: UnifiedStore): any;
     clearItemsForTesting(): void;
 }
 export declare abstract class StorageBase {
@@ -123,7 +122,7 @@ export declare abstract class StorageProviderBase extends UnifiedStore implement
         version: number;
         model: SerializedModelEntry[];
     }>;
-    abstract cloneFrom(store: UnifiedStore | StorageStub): void;
+    abstract cloneFrom(store: UnifiedStore): void;
     abstract ensureBackingStore(): any;
     abstract backingStore: any;
     /**

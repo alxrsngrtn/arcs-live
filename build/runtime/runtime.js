@@ -94,7 +94,6 @@ export class Runtime {
     // TODO: This is a temporary method to allow sharing stores with other Arcs.
     registerStore(store, tags) {
         if (!this.context.findStoreById(store.id) && tags.includes('shared')) {
-            // tslint:disable-next-line: no-any
             this.context['_addStore'](store, tags);
         }
     }

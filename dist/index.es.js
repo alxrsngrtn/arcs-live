@@ -5304,336 +5304,6 @@ DescriptionFormatter.tokensInnerRegex = /\${([a-zA-Z0-9.]+)}(?:\.([_a-zA-Z]+))?/
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-function compareNulls(o1, o2) {
-    if (o1 === o2)
-        return 0;
-    if (o1 === null)
-        return -1;
-    return 1;
-}
-function compareStrings(s1, s2) {
-    if (s1 == null || s2 == null)
-        return compareNulls(s1, s2);
-    return s1.localeCompare(s2);
-}
-function compareNumbers(n1, n2) {
-    if (n1 == null || n2 == null)
-        return compareNulls(n1, n2);
-    return n1 - n2;
-}
-function compareArrays(a1, a2, compare) {
-    assert(a1 != null);
-    assert(a2 != null);
-    if (a1.length !== a2.length)
-        return compareNumbers(a1.length, a2.length);
-    for (let i = 0; i < a1.length; i++) {
-        let result;
-        if ((result = compare(a1[i], a2[i])) !== 0)
-            return result;
-    }
-    return 0;
-}
-function compareComparables(o1, o2) {
-    if (o1 == null || o2 == null)
-        return compareNulls(o1, o2);
-    return o1._compareTo(o2);
-}
-
-/**
- * @license
- * Copyright (c) 2019 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-/**
- * This is a temporary interface used to unify old-style stores (storage/StorageProviderBase) and new-style stores (storageNG/Store).
- * We should be able to remove this once we've switched across to the NG stack.
- *
- * Note that for old-style stores, StorageStubs are used *sometimes* to represent storage which isn't activated. For new-style stores,
- * Store itself represents an inactive store, and needs to be activated using activate(). This will present some integration
- * challenges :)
- *
- * Note also that old-style stores use strings for Storage Keys, while NG storage uses storageNG/StorageKey subclasses. This provides
- * a simple test for determining whether a store is old or new.
- *
- * Common functionality between old- and new-style stores goes in this class.
- * Once the old-style stores are deleted, this class can be merged into the new
- * Store class.
- */
-class UnifiedStore {
-    cloneFrom(store) { }
-    async modelForSynchronization() {
-        return await this.toLiteral();
-    }
-    on(fn) { }
-    /**
-     * Hack to cast this UnifiedStore to the old-style class StorageStub.
-     * TODO: Fix all usages of this method to handle new-style stores, and then
-     * delete.
-     */
-    castToStorageStub() {
-        // Can't use instanceof; causes circular dependencies.
-        assert(this.unifiedStoreType === 'StorageStub', 'Not a StorageStub!');
-        return this;
-    }
-    _compareTo(other) {
-        let cmp;
-        cmp = compareStrings(this.name, other.name);
-        if (cmp !== 0)
-            return cmp;
-        cmp = compareNumbers(this.version, other.version);
-        if (cmp !== 0)
-            return cmp;
-        cmp = compareStrings(this.source, other.source);
-        if (cmp !== 0)
-            return cmp;
-        cmp = compareStrings(this.id, other.id);
-        if (cmp !== 0)
-            return cmp;
-        return 0;
-    }
-}
-
-/**
- * @license
- * Copyright (c) 2017 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-class StorageBase {
-    constructor(arcId) {
-        this.arcId = arcId;
-        this._debug = false;
-        assert(arcId !== undefined, 'Arcs with storage must have ids');
-    }
-    /**
-     * Turn on debugginf for this storage provider.  Providers should
-     * subclass this and react to changes in the debug value.
-     */
-    set debug(d) {
-        this._debug = d;
-    }
-    /**
-     * Provides graceful shutdown for tests.
-     */
-    async shutdown() { }
-}
-class ChangeEvent {
-    constructor(args) {
-        Object.assign(this, args);
-    }
-}
-/**
- * Docs TBD
- */
-class StorageProviderBase extends UnifiedStore {
-    constructor(type, name, id, key) {
-        super();
-        this.listeners = new Set();
-        this.referenceMode = false;
-        assert(id, 'id must be provided when constructing StorageProviders');
-        assert(!type.hasUnresolvedVariable, 'Storage types must be concrete');
-        this._type = type;
-        this.name = name;
-        this.version = 0;
-        this.id = id;
-        this.source = null;
-        this._storageKey = key;
-    }
-    enableReferenceMode() {
-        this.referenceMode = true;
-    }
-    get storageKey() {
-        return this._storageKey;
-    }
-    get type() {
-        return this._type;
-    }
-    reportExceptionInHost(exception) {
-        // This class lives in the host, so it's safe to just rethrow the exception here.
-        throw exception;
-    }
-    // TODO: add 'once' which returns a promise.
-    on(callback) {
-        this.listeners.add(callback);
-    }
-    off(callback) {
-        this.listeners.delete(callback);
-    }
-    // TODO: rename to _fireAsync so it's clear that callers are not re-entrant.
-    /**
-     * Propagate updates to change listeners.
-     */
-    async _fire(details) {
-        const callbacks = [...this.listeners];
-        // Yield so that event firing is not re-entrant with mutation.
-        await 0;
-        for (const callback of callbacks) {
-            callback(details);
-        }
-    }
-    toString(handleTags) {
-        const results = [];
-        const handleStr = [];
-        handleStr.push(`store`);
-        if (this.name) {
-            handleStr.push(`${this.name}`);
-        }
-        handleStr.push(`of ${this.type.toString()}`);
-        if (this.id) {
-            handleStr.push(`'${this.id}'`);
-        }
-        if (handleTags && handleTags.length) {
-            handleStr.push(`${handleTags.join(' ')}`);
-        }
-        if (this.source) {
-            handleStr.push(`in '${this.source}'`);
-        }
-        results.push(handleStr.join(' '));
-        if (this.claims && this.claims.length > 0) {
-            results.push(`  claim is ${this.claims.map(claim => claim.tag).join(' and is ')}`);
-        }
-        if (this.description) {
-            results.push(`  description \`${this.description}\``);
-        }
-        return results.join('\n');
-    }
-    get apiChannelMappingId() {
-        return this.id;
-    }
-    // TODO: make abstract?
-    dispose() { }
-    /**
-     * Called by Particle Execution Host to synchronize it's proxy.
-     */
-    async modelForSynchronization() {
-        return this.toLiteral();
-    }
-}
-
-/**
- * @license
- * Copyright (c) 2019 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-// TODO(shans): Make sure that after refactor Storage objects have a lifecycle and can be directly used
-// deflated rather than requiring this stub.
-class StorageStub extends UnifiedStore {
-    constructor(type, id, name, storageKey, storageProviderFactory, originalId, 
-    /** Trust tags claimed by this data store. */
-    claims, description, version, source, referenceMode = false, model) {
-        super();
-        this.type = type;
-        this.id = id;
-        this.name = name;
-        this.storageKey = storageKey;
-        this.storageProviderFactory = storageProviderFactory;
-        this.originalId = originalId;
-        this.claims = claims;
-        this.description = description;
-        this.version = version;
-        this.source = source;
-        this.referenceMode = referenceMode;
-        this.model = model;
-        this.unifiedStoreType = 'StorageStub';
-    }
-    async inflate(storageProviderFactory) {
-        const factory = storageProviderFactory || this.storageProviderFactory;
-        const store = this.isBackedByManifest()
-            ? await factory.construct(this.id, this.type, this.storageKey)
-            : await factory.connect(this.id, this.type, this.storageKey);
-        assert(store != null, 'inflating missing storageKey ' + this.storageKey);
-        if (this.isBackedByManifest()) {
-            // Constructed store: set the reference mode according to the stub.
-            store.referenceMode = this.referenceMode;
-        }
-        else {
-            // Connected store: sync the stub's reference mode with the store.
-            this.referenceMode = store.referenceMode;
-        }
-        store.originalId = this.originalId;
-        store.name = this.name;
-        store.source = this.source;
-        store.description = this.description;
-        if (this.isBackedByManifest()) {
-            await store.fromLiteral({ version: this.version, model: this.model });
-        }
-        return store;
-    }
-    toLiteral() {
-        return undefined; // Fake to match StorageProviderBase;
-    }
-    isBackedByManifest() {
-        return (this.version !== undefined && !!this.model);
-    }
-    toString(handleTags) {
-        const results = [];
-        const handleStr = [];
-        handleStr.push(`store`);
-        if (this.name) {
-            handleStr.push(`${this.name}`);
-        }
-        handleStr.push(`of ${this.type.toString()}`);
-        if (this.id) {
-            handleStr.push(`'${this.id}'`);
-        }
-        if (this.originalId) {
-            handleStr.push(`!!${this.originalId}`);
-        }
-        if (this.version !== undefined) {
-            handleStr.push(`@${this.version}`);
-        }
-        if (handleTags && handleTags.length) {
-            handleStr.push(`${handleTags.join(' ')}`);
-        }
-        if (this.source) {
-            handleStr.push(`in '${this.source}'`);
-        }
-        else if (this.storageKey) {
-            handleStr.push(`at '${this.storageKey}'`);
-        }
-        // TODO(shans): there's a 'this.source' in StorageProviderBase which is sometimes
-        // serialized here too - could it ever be part of StorageStub?
-        results.push(handleStr.join(' '));
-        if (this.claims.length > 0) {
-            results.push(`  claim is ${this.claims.map(claim => claim.tag).join(' and is ')}`);
-        }
-        if (this.description) {
-            results.push(`  description \`${this.description}\``);
-        }
-        return results.join('\n');
-    }
-    _compareTo(other) {
-        let cmp;
-        cmp = compareStrings(this.name, other.name);
-        if (cmp !== 0)
-            return cmp;
-        cmp = compareStrings(this.id, other.id);
-        if (cmp !== 0)
-            return cmp;
-        return 0;
-    }
-}
-
-/**
- * @license
- * Copyright (c) 2017 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
 class Description {
     constructor(storeDescById = {}, 
     // TODO(mmandlis): replace Particle[] with serializable json objects.
@@ -5652,7 +5322,7 @@ class Description {
         const storeDescById = {};
         for (const { id } of plan.handles) {
             const store = arc.findStoreById(id);
-            if (store && store instanceof StorageProviderBase) {
+            if (store) {
                 storeDescById[id] = arc.getStoreDescription(store);
             }
         }
@@ -5670,7 +5340,7 @@ class Description {
         const storeDescById = {};
         for (const { id } of arc.activeRecipe.handles) {
             const store = arc.findStoreById(id);
-            if (store && store instanceof StorageProviderBase) {
+            if (store) {
                 storeDescById[id] = arc.getStoreDescription(store);
             }
         }
@@ -5749,7 +5419,7 @@ class Description {
         return {};
     }
     static async _prepareStoreValue(store) {
-        if (!store || (store instanceof StorageStub)) {
+        if (!store) {
             return undefined;
         }
         if (store.type instanceof CollectionType) {
@@ -16753,6 +16423,50 @@ class ManifestMeta {
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
+function compareNulls(o1, o2) {
+    if (o1 === o2)
+        return 0;
+    if (o1 === null)
+        return -1;
+    return 1;
+}
+function compareStrings(s1, s2) {
+    if (s1 == null || s2 == null)
+        return compareNulls(s1, s2);
+    return s1.localeCompare(s2);
+}
+function compareNumbers(n1, n2) {
+    if (n1 == null || n2 == null)
+        return compareNulls(n1, n2);
+    return n1 - n2;
+}
+function compareArrays(a1, a2, compare) {
+    assert(a1 != null);
+    assert(a2 != null);
+    if (a1.length !== a2.length)
+        return compareNumbers(a1.length, a2.length);
+    for (let i = 0; i < a1.length; i++) {
+        let result;
+        if ((result = compare(a1[i], a2[i])) !== 0)
+            return result;
+    }
+    return 0;
+}
+function compareComparables(o1, o2) {
+    if (o1 == null || o2 == null)
+        return compareNulls(o1, o2);
+    return o1._compareTo(o2);
+}
+
+/**
+ * @license
+ * Copyright (c) 2017 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
 class EndPoint {
 }
 class ParticleEndPoint extends EndPoint {
@@ -19365,6 +19079,190 @@ class KeyBase {
 
 /**
  * @license
+ * Copyright (c) 2019 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+/**
+ * This is a temporary interface used to unify old-style stores (storage/StorageProviderBase) and new-style stores (storageNG/Store).
+ * We should be able to remove this once we've switched across to the NG stack.
+ *
+ * Note that for old-style stores, StorageStubs are used *sometimes* to represent storage which isn't activated. For new-style stores,
+ * Store itself represents an inactive store, and needs to be activated using activate(). This will present some integration
+ * challenges :)
+ *
+ * Note also that old-style stores use strings for Storage Keys, while NG storage uses storageNG/StorageKey subclasses. This provides
+ * a simple test for determining whether a store is old or new.
+ *
+ * Common functionality between old- and new-style stores goes in this class.
+ * Once the old-style stores are deleted, this class can be merged into the new
+ * Store class.
+ */
+class UnifiedStore {
+    cloneFrom(store) { }
+    async modelForSynchronization() {
+        return await this.toLiteral();
+    }
+    on(fn) { }
+    off(fn) { }
+    /**
+     * Hack to cast this UnifiedStore to the old-style class StorageStub.
+     * TODO: Fix all usages of this method to handle new-style stores, and then
+     * delete.
+     */
+    castToStorageStub() {
+        // Can't use instanceof; causes circular dependencies.
+        assert(this.unifiedStoreType === 'StorageStub', 'Not a StorageStub!');
+        return this;
+    }
+    // TODO: Delete this method when the old-style storage is deleted.
+    reportExceptionInHost(exception) {
+        // This class lives in the host, so it's safe to just rethrow the exception.
+        throw exception;
+    }
+    _compareTo(other) {
+        let cmp;
+        cmp = compareStrings(this.name, other.name);
+        if (cmp !== 0)
+            return cmp;
+        cmp = compareNumbers(this.version, other.version);
+        if (cmp !== 0)
+            return cmp;
+        cmp = compareStrings(this.source, other.source);
+        if (cmp !== 0)
+            return cmp;
+        cmp = compareStrings(this.id, other.id);
+        if (cmp !== 0)
+            return cmp;
+        return 0;
+    }
+}
+
+/**
+ * @license
+ * Copyright (c) 2017 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+class StorageBase {
+    constructor(arcId) {
+        this.arcId = arcId;
+        this._debug = false;
+        assert(arcId !== undefined, 'Arcs with storage must have ids');
+    }
+    /**
+     * Turn on debugginf for this storage provider.  Providers should
+     * subclass this and react to changes in the debug value.
+     */
+    set debug(d) {
+        this._debug = d;
+    }
+    /**
+     * Provides graceful shutdown for tests.
+     */
+    async shutdown() { }
+}
+class ChangeEvent {
+    constructor(args) {
+        Object.assign(this, args);
+    }
+}
+/**
+ * Docs TBD
+ */
+class StorageProviderBase extends UnifiedStore {
+    constructor(type, name, id, key) {
+        super();
+        this.listeners = new Set();
+        this.referenceMode = false;
+        assert(id, 'id must be provided when constructing StorageProviders');
+        assert(!type.hasUnresolvedVariable, 'Storage types must be concrete');
+        this._type = type;
+        this.name = name;
+        this.version = 0;
+        this.id = id;
+        this.source = null;
+        this._storageKey = key;
+    }
+    enableReferenceMode() {
+        this.referenceMode = true;
+    }
+    get storageKey() {
+        return this._storageKey;
+    }
+    get type() {
+        return this._type;
+    }
+    reportExceptionInHost(exception) {
+        // This class lives in the host, so it's safe to just rethrow the exception here.
+        throw exception;
+    }
+    // TODO: add 'once' which returns a promise.
+    on(callback) {
+        this.listeners.add(callback);
+    }
+    off(callback) {
+        this.listeners.delete(callback);
+    }
+    // TODO: rename to _fireAsync so it's clear that callers are not re-entrant.
+    /**
+     * Propagate updates to change listeners.
+     */
+    async _fire(details) {
+        const callbacks = [...this.listeners];
+        // Yield so that event firing is not re-entrant with mutation.
+        await 0;
+        for (const callback of callbacks) {
+            callback(details);
+        }
+    }
+    toString(handleTags) {
+        const results = [];
+        const handleStr = [];
+        handleStr.push(`store`);
+        if (this.name) {
+            handleStr.push(`${this.name}`);
+        }
+        handleStr.push(`of ${this.type.toString()}`);
+        if (this.id) {
+            handleStr.push(`'${this.id}'`);
+        }
+        if (handleTags && handleTags.length) {
+            handleStr.push(`${handleTags.join(' ')}`);
+        }
+        if (this.source) {
+            handleStr.push(`in '${this.source}'`);
+        }
+        results.push(handleStr.join(' '));
+        if (this.claims && this.claims.length > 0) {
+            results.push(`  claim is ${this.claims.map(claim => claim.tag).join(' and is ')}`);
+        }
+        if (this.description) {
+            results.push(`  description \`${this.description}\``);
+        }
+        return results.join('\n');
+    }
+    get apiChannelMappingId() {
+        return this.id;
+    }
+    // TODO: make abstract?
+    dispose() { }
+    /**
+     * Called by Particle Execution Host to synchronize it's proxy.
+     */
+    async modelForSynchronization() {
+        return this.toLiteral();
+    }
+}
+
+/**
+ * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
  * This code may only be used under the BSD style license found at
  * http://polymer.github.io/LICENSE.txt
@@ -20271,6 +20169,114 @@ class StorageProviderFactory {
         for (const s of Object.values(this._storageInstances)) {
             await s.storage.shutdown();
         }
+    }
+}
+
+/**
+ * @license
+ * Copyright (c) 2019 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+// TODO(shans): Make sure that after refactor Storage objects have a lifecycle and can be directly used
+// deflated rather than requiring this stub.
+class StorageStub extends UnifiedStore {
+    constructor(type, id, name, storageKey, storageProviderFactory, originalId, 
+    /** Trust tags claimed by this data store. */
+    claims, description, version, source, referenceMode = false, model) {
+        super();
+        this.type = type;
+        this.id = id;
+        this.name = name;
+        this.storageKey = storageKey;
+        this.storageProviderFactory = storageProviderFactory;
+        this.originalId = originalId;
+        this.claims = claims;
+        this.description = description;
+        this.version = version;
+        this.source = source;
+        this.referenceMode = referenceMode;
+        this.model = model;
+        this.unifiedStoreType = 'StorageStub';
+    }
+    async inflate(storageProviderFactory) {
+        const factory = storageProviderFactory || this.storageProviderFactory;
+        const store = this.isBackedByManifest()
+            ? await factory.construct(this.id, this.type, this.storageKey)
+            : await factory.connect(this.id, this.type, this.storageKey);
+        assert(store != null, 'inflating missing storageKey ' + this.storageKey);
+        if (this.isBackedByManifest()) {
+            // Constructed store: set the reference mode according to the stub.
+            store.referenceMode = this.referenceMode;
+        }
+        else {
+            // Connected store: sync the stub's reference mode with the store.
+            this.referenceMode = store.referenceMode;
+        }
+        store.originalId = this.originalId;
+        store.name = this.name;
+        store.source = this.source;
+        store.description = this.description;
+        if (this.isBackedByManifest()) {
+            await store.fromLiteral({ version: this.version, model: this.model });
+        }
+        return store;
+    }
+    toLiteral() {
+        return undefined; // Fake to match StorageProviderBase;
+    }
+    isBackedByManifest() {
+        return (this.version !== undefined && !!this.model);
+    }
+    toString(handleTags) {
+        const results = [];
+        const handleStr = [];
+        handleStr.push(`store`);
+        if (this.name) {
+            handleStr.push(`${this.name}`);
+        }
+        handleStr.push(`of ${this.type.toString()}`);
+        if (this.id) {
+            handleStr.push(`'${this.id}'`);
+        }
+        if (this.originalId) {
+            handleStr.push(`!!${this.originalId}`);
+        }
+        if (this.version !== undefined) {
+            handleStr.push(`@${this.version}`);
+        }
+        if (handleTags && handleTags.length) {
+            handleStr.push(`${handleTags.join(' ')}`);
+        }
+        if (this.source) {
+            handleStr.push(`in '${this.source}'`);
+        }
+        else if (this.storageKey) {
+            handleStr.push(`at '${this.storageKey}'`);
+        }
+        // TODO(shans): there's a 'this.source' in StorageProviderBase which is sometimes
+        // serialized here too - could it ever be part of StorageStub?
+        results.push(handleStr.join(' '));
+        if (this.claims.length > 0) {
+            results.push(`  claim is ${this.claims.map(claim => claim.tag).join(' and is ')}`);
+        }
+        if (this.description) {
+            results.push(`  description \`${this.description}\``);
+        }
+        return results.join('\n');
+    }
+    _compareTo(other) {
+        let cmp;
+        cmp = compareStrings(this.name, other.name);
+        if (cmp !== 0)
+            return cmp;
+        cmp = compareStrings(this.id, other.id);
+        if (cmp !== 0)
+            return cmp;
+        return 0;
     }
 }
 
@@ -26028,7 +26034,7 @@ ${this.activeRecipe.toString()}`;
                 }
                 else if (['copy', 'map'].includes(recipeHandle.fate)) {
                     const copiedStoreRef = this.context.findStoreById(recipeHandle.id);
-                    const copiedStore = await copiedStoreRef.inflate(this.storageProviderFactory);
+                    const copiedStore = await copiedStoreRef.castToStorageStub().inflate(this.storageProviderFactory);
                     assert(copiedStore, `Cannot find store ${recipeHandle.id}`);
                     assert(copiedStore.version !== null, `Copied store ${recipeHandle.id} doesn't have version.`);
                     await newStore.cloneFrom(copiedStore);
@@ -29016,7 +29022,6 @@ class Runtime {
     // TODO: This is a temporary method to allow sharing stores with other Arcs.
     registerStore(store, tags) {
         if (!this.context.findStoreById(store.id) && tags.includes('shared')) {
-            // tslint:disable-next-line: no-any
             this.context['_addStore'](store, tags);
         }
     }
@@ -37094,17 +37099,13 @@ class Planificator {
     _listenToArcStores() {
         this.arc.onDataChange(this.dataChangeCallback, this);
         this.arc.context.allStores.forEach(store => {
-            if (store instanceof StorageProviderBase) {
-                store.on(this.dataChangeCallback);
-            }
+            store.on(this.dataChangeCallback);
         });
     }
     _unlistenToArcStores() {
         this.arc.clearDataChange(this);
         this.arc.context.allStores.forEach(store => {
-            if (store instanceof StorageProviderBase) {
-                store.off(this.dataChangeCallback);
-            }
+            store.off(this.dataChangeCallback);
         });
     }
     static constructSuggestionKey(arc, storageKeyBase) {

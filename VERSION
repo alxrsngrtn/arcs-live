@@ -1,5 +1,7 @@
-commit a66579c3a0e8356949ee375c4e22d866008764e0
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Wed Oct 2 18:06:04 2019 -0700
+commit bd842c9117094d608d86cbc97555966ccb723e17
+Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
+Date:   Thu Oct 3 11:57:42 2019 +1000
 
-    update java renderers to match the updated rendering packet format (#3692)
+    Migrate a bunch of StorageStub usages to UnifiedStore (#3693)
+    
+    Didn't get them all, just the easy ones.

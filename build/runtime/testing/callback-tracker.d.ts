@@ -7,8 +7,8 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-import { StorageProviderBase } from '../storage/storage-provider-base.js';
 import { Dictionary } from '../hot.js';
+import { UnifiedStore } from '../storageNG/unified-store.js';
 /**
  * Simple class to verify callbacks used in the Arcs storage APIs.
  *
@@ -22,7 +22,7 @@ import { Dictionary } from '../hot.js';
 export declare class CallbackTracker {
     expectedEvents: number;
     events: Dictionary<any>[];
-    constructor(storageProvider: StorageProviderBase, expectedEvents?: number);
+    constructor(storageProvider: UnifiedStore, expectedEvents?: number);
     changeEvent(c: Dictionary<any>): void;
     /**
      * Tests that the number of expected callbacks are executed.

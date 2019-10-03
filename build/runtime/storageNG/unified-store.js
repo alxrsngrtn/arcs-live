@@ -30,6 +30,7 @@ export class UnifiedStore {
         return await this.toLiteral();
     }
     on(fn) { }
+    off(fn) { }
     /**
      * Hack to cast this UnifiedStore to the old-style class StorageStub.
      * TODO: Fix all usages of this method to handle new-style stores, and then
@@ -39,6 +40,11 @@ export class UnifiedStore {
         // Can't use instanceof; causes circular dependencies.
         assert(this.unifiedStoreType === 'StorageStub', 'Not a StorageStub!');
         return this;
+    }
+    // TODO: Delete this method when the old-style storage is deleted.
+    reportExceptionInHost(exception) {
+        // This class lives in the host, so it's safe to just rethrow the exception.
+        throw exception;
     }
     _compareTo(other) {
         let cmp;

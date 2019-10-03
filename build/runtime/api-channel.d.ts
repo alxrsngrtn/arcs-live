@@ -18,7 +18,6 @@ import * as recipeParticle from './recipe/particle.js';
 import { StorageProxy } from './storage-proxy.js';
 import { Content } from './slot-consumer.js';
 import { SerializedModelEntry } from './storage/crdt-collection-model.js';
-import { StorageProviderBase } from './storage/storage-provider-base.js';
 import { Type } from './type.js';
 import { PropagatedException } from './arc-exceptions.js';
 import { Consumer, Runnable } from './hot.js';
@@ -26,6 +25,7 @@ import { MessagePort } from './message-channel.js';
 import { StorageProxy as StorageProxyNG } from './storageNG/storage-proxy.js';
 import { CRDTTypeRecord } from './crdt/crdt.js';
 import { ActiveStore, ProxyCallback, ProxyMessage } from './storageNG/store.js';
+import { StorageProviderBase } from './storage/storage-provider-base.js';
 declare class ThingMapper {
     _prefix: string;
     _nextIdentifier: number;
@@ -67,8 +67,8 @@ export declare abstract class PECOuterPort extends APIPort {
     StartRender(particle: recipeParticle.Particle, slotName: string, providedSlots: Map<string, string>, contentTypes: string[]): void;
     StopRender(particle: recipeParticle.Particle, slotName: string): void;
     abstract onRender(particle: recipeParticle.Particle, slotName: string, content: Content): any;
-    abstract onInitializeProxy(handle: UnifiedStore, callback: number): any;
-    abstract onSynchronizeProxy(handle: UnifiedStore, callback: number): any;
+    abstract onInitializeProxy(handle: StorageProviderBase, callback: number): any;
+    abstract onSynchronizeProxy(handle: StorageProviderBase, callback: number): any;
     abstract onHandleGet(handle: StorageProviderBase, callback: number): any;
     abstract onHandleToList(handle: StorageProviderBase, callback: number): any;
     abstract onHandleSet(handle: StorageProviderBase, data: {}, particleId: string, barrier: string): any;
