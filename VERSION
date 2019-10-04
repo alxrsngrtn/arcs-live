@@ -1,5 +1,11 @@
-commit 2a37b5d22e83e8a3e6d43e3b25673b3aecfdb188
-Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
-Date:   Fri Oct 4 10:38:43 2019 +1000
+commit 9289d4c37c7c92ac4787e2f46276a5359e87e309
+Author: Joshua Pratt <jp10010101010000@gmail.com>
+Date:   Fri Oct 4 10:55:03 2019 +1000
 
-    Wasm tiny fix: only decode ids when removing from collections (#3681)
+    Parser type hardening (#3685)
+    
+    * Remove AstNode.SlotType model
+    
+    * Add kinds
+    
+    * Fix object expansion performing kind overwriting

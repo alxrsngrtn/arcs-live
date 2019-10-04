@@ -58,17 +58,19 @@ export declare function isTypeVariable(node: BaseNode): node is TypeVariable;
 export interface SlotType extends BaseNode {
     kind: 'slot-type';
     fields: SlotField[];
-    model: {
-        formFactor: string;
-        handle: string;
-    };
 }
 export declare function isSlotType(node: BaseNode): node is SlotType;
 export declare function slandleType(arg: ParticleHandleConnection): SlotType | undefined;
+export interface ParticleHandleDescription extends BaseNode {
+    kind: 'handle-description';
+    name: string;
+    pattern: string;
+}
 export interface Description extends BaseNode {
     kind: 'description';
     name: 'pattern';
-    description: Description[];
+    description: ParticleHandleDescription[];
+    patterns: (string | ParticleHandleDescription)[];
 }
 export interface HandleRef extends BaseNode {
     kind: 'handle-ref';
@@ -98,7 +100,8 @@ export interface ManifestStorageClaim extends BaseNode {
     kind: 'manifest-storage-claim';
     tags: string[];
 }
-export interface ManifestStorageSource {
+export interface ManifestStorageSource extends BaseNode {
+    kind: 'manifest-storage-source';
     origin: string;
     source: string;
 }
@@ -135,7 +138,7 @@ export interface Particle extends BaseNode {
     modality?: string[];
     slots?: ParticleSlotConnection[];
     description?: Description;
-    hasParticleArgument?: boolean;
+    hasParticleHandleConnection?: boolean;
     trustChecks?: ParticleCheckStatement[];
     trustClaims?: ParticleClaimStatement[];
     ref?: ParticleRef | '*';
@@ -226,11 +229,6 @@ export interface ParticleHandleConnection extends BaseNode {
     tags: TagList;
 }
 export declare type ParticleItem = ParticleModality | ParticleSlotConnection | Description | ParticleHandleConnection;
-export interface ParticleHandleDescription extends BaseNode {
-    kind: 'handle-description';
-    name: string;
-    pattern: string;
-}
 export interface ParticleInterface extends BaseNode {
     kind: 'interface';
     verb: string;
@@ -260,7 +258,7 @@ export interface ParticleProvidedSlotHandle extends BaseNode {
 }
 export interface ParticleRef extends BaseNode {
     kind: 'particle-ref';
-    name: string;
+    name?: string;
     verbs: VerbList;
     tags: TagList;
 }
@@ -269,8 +267,8 @@ export interface RecipeNode extends BaseNode {
     name: string;
     verbs: VerbList;
     items: RecipeItem[];
-    annotation: Annotation;
-    triggers: Triggers;
+    annotation?: string;
+    triggers?: Triggers;
 }
 export interface RecipeParticle extends BaseNode {
     kind: 'particle';
@@ -283,7 +281,6 @@ export interface RequireHandleSection extends BaseNode {
     kind: 'requireHandle';
     name: string;
     ref: HandleRef;
-    fate: Fate;
 }
 export interface RecipeRequire extends BaseNode {
     kind: 'require';
@@ -340,30 +337,35 @@ export interface RecipeSlot extends BaseNode {
     ref: HandleRef;
     name: string | null;
 }
-export interface ConnectionTarget extends BaseNode {
-    kind: 'connection-target';
-    targetType: 'verb' | 'tag' | 'localName' | 'particle';
-    name?: string;
-    particle?: string;
-    verbs?: VerbList;
-    param: string;
-    tags?: TagList;
-}
+export declare type ConnectionTarget = VerbConnectionTarget | TagConnectionTarget | NameConnectionTarget | ParticleConnectionTarget;
 export interface VerbConnectionTarget extends BaseNode {
+    kind: 'connection-target';
     targetType: 'verb';
+    verbs: VerbList;
+    param: string;
+    tags: TagList;
 }
 export interface TagConnectionTarget extends BaseNode {
+    kind: 'connection-target';
     targetType: 'tag';
+    tags: TagList;
 }
 export interface NameConnectionTarget extends BaseNode {
+    kind: 'connection-target';
     name: string;
     targetType: 'localName';
+    param: string;
+    tags: TagList;
 }
 export interface ParticleConnectionTarget extends BaseNode {
+    kind: 'connection-target';
     particle: string;
     targetType: 'particle';
+    param: string;
+    tags: TagList;
 }
 export interface ConnectionTargetHandleComponents extends BaseNode {
+    kind: 'connection-target-handle-components';
     param: string;
     tags: TagList;
 }
@@ -419,6 +421,7 @@ export interface SchemaInlineField extends BaseNode {
     type: SchemaType;
 }
 export interface SchemaSpec extends BaseNode {
+    kind: 'schema';
     names: string[];
     parents: string[];
 }
@@ -468,11 +471,15 @@ export interface TypeName extends BaseNode {
     kind: 'type-name';
     name: string;
 }
-export interface NameAndTagList {
+export interface NameAndTagList extends BaseNode {
     name: string;
     tags: TagList;
 }
-export declare type Annotation = string;
+export interface Annotation extends BaseNode {
+    kind: 'annotation';
+    triggerSet: Triggers;
+    simpleAnnotation?: string;
+}
 export declare type Triggers = [string, string][][];
 export declare type Indent = number;
 export declare type LocalName = string;

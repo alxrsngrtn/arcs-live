@@ -5,6 +5,8 @@
 // tslint:disable: interface-name
 // tslint:disable: switch-default
 // tslint:disable: object-literal-shorthand
+import { CheckType } from '../../runtime/particle-check.js';
+import { ClaimType } from '../../runtime/particle-claim.js';
 export class SyntaxError extends Error {
     constructor(message, expected, found, location) {
         super();
@@ -102,8 +104,8 @@ function peg$parse(input, options) {
     let peg$startRuleFunction = peg$parseManifest;
     const peg$c0 = function (items) {
         const result = items.map(item => {
-            const manifestItem = item[2];
             const annotations = item[0];
+            const manifestItem = item[2];
             manifestItem.triggers = annotations.triggerSet;
             manifestItem.annotation = annotations.simpleAnnotation;
             return manifestItem;
@@ -112,10 +114,11 @@ function peg$parse(input, options) {
         return result;
     };
     const peg$c1 = function (triggerSet, simpleAnnotation) {
-        return {
+        return toAstNode({
+            kind: 'annotation',
             triggerSet: triggerSet.map(trigger => trigger[1]),
             simpleAnnotation: optional(simpleAnnotation, s => s[1], null),
-        };
+        });
     };
     const peg$c2 = peg$otherExpectation("a trigger for a recipe");
     const peg$c3 = "@trigger";
@@ -132,12 +135,11 @@ function peg$parse(input, options) {
     const peg$c10 = "resource";
     const peg$c11 = peg$literalExpectation("resource", false);
     const peg$c12 = function (name, body) {
-        return {
+        return toAstNode({
             kind: 'resource',
             name,
-            data: body,
-            location: location()
-        };
+            data: body
+        });
     };
     const peg$c13 = "start";
     const peg$c14 = peg$literalExpectation("start", false);
@@ -175,9 +177,8 @@ function peg$parse(input, options) {
                 error(`Unknown ManifestStorageItem: ${item}`);
             }
         }
-        return {
+        return toAstNode({
             kind: 'store',
-            location: location(),
             name,
             type,
             id: optional(id, id => id[1], null),
@@ -188,15 +189,15 @@ function peg$parse(input, options) {
             origin: source.origin,
             description,
             claim,
-        };
+        });
     };
     const peg$c27 = "in";
     const peg$c28 = peg$literalExpectation("in", false);
-    const peg$c29 = function (source) { return { origin: 'file', source }; };
-    const peg$c30 = function (source) { return { origin: 'resource', source }; };
+    const peg$c29 = function (source) { return toAstNode({ kind: 'manifest-storage-source', origin: 'file', source }); };
+    const peg$c30 = function (source) { return toAstNode({ kind: 'manifest-storage-source', origin: 'resource', source }); };
     const peg$c31 = "at";
     const peg$c32 = peg$literalExpectation("at", false);
-    const peg$c33 = function (source) { return { origin: 'storage', source }; };
+    const peg$c33 = function (source) { return toAstNode({ kind: 'manifest-storage-source', origin: 'storage', source }); };
     const peg$c34 = "description";
     const peg$c35 = peg$literalExpectation("description", false);
     const peg$c36 = "claim";
@@ -206,20 +207,18 @@ function peg$parse(input, options) {
     const peg$c40 = "and";
     const peg$c41 = peg$literalExpectation("and", false);
     const peg$c42 = function (tag, rest) {
-        return {
+        return toAstNode({
             kind: 'manifest-storage-claim',
-            location: location(),
             tags: [tag, ...rest.map(item => item[5])],
-        };
+        });
     };
     const peg$c43 = "import";
     const peg$c44 = peg$literalExpectation("import", false);
     const peg$c45 = function (path) {
-        return {
+        return toAstNode({
             kind: 'import',
-            location: location(),
             path,
-        };
+        });
     };
     const peg$c46 = peg$otherExpectation("an interface");
     const peg$c47 = "interface";
@@ -229,13 +228,12 @@ function peg$parse(input, options) {
     const peg$c51 = ">";
     const peg$c52 = peg$literalExpectation(">", false);
     const peg$c53 = function (name, typeVars, items) {
-        return {
+        return toAstNode({
             kind: 'interface',
-            location: location(),
             name,
             args: optional(items, extractIndented, []).filter(item => item.kind === 'interface-argument'),
             slots: optional(items, extractIndented, []).filter(item => item.kind === 'interface-slot'),
-        };
+        });
     };
     const peg$c54 = "*";
     const peg$c55 = peg$literalExpectation("*", false);
@@ -244,13 +242,12 @@ function peg$parse(input, options) {
         if (direction === 'host') {
             error(`Interface cannot have arguments with a 'host' direction.`);
         }
-        return {
+        return toAstNode({
             kind: 'interface-argument',
-            location: location(),
             direction,
             type: optional(type, ty => ty[0], null),
             name,
-        };
+        });
     };
     const peg$c57 = "must";
     const peg$c58 = peg$literalExpectation("must", false);
@@ -261,32 +258,31 @@ function peg$parse(input, options) {
     const peg$c63 = "set of";
     const peg$c64 = peg$literalExpectation("set of", false);
     const peg$c65 = function (isRequired, direction, isSet, name) {
-        return {
+        return toAstNode({
             kind: 'interface-slot',
-            location: location(),
             name: optional(name, isRequired => name[1], null),
             isRequired: optional(isRequired, isRequired => isRequired[0] === 'must', false),
             direction,
             isSet: !!isSet,
-        };
+        });
     };
     const peg$c66 = "meta";
     const peg$c67 = peg$literalExpectation("meta", false);
     const peg$c68 = function (items) {
         items = items ? extractIndented(items) : [];
-        return { kind: 'meta', items: items, location: location() };
+        return toAstNode({ kind: 'meta', items: items });
     };
     const peg$c69 = "name";
     const peg$c70 = peg$literalExpectation("name", false);
     const peg$c71 = ":";
     const peg$c72 = peg$literalExpectation(":", false);
     const peg$c73 = function (name) {
-        return { key: 'name', value: name, location: location(), kind: 'name' };
+        return toAstNode({ key: 'name', value: name, kind: 'name' });
     };
     const peg$c74 = "storageKey";
     const peg$c75 = peg$literalExpectation("storageKey", false);
     const peg$c76 = function (key) {
-        return { key: 'storageKey', value: key, location: location(), kind: 'storageKey' };
+        return toAstNode({ key: 'storageKey', value: key, kind: 'storageKey' });
     };
     const peg$c77 = "particle";
     const peg$c78 = peg$literalExpectation("particle", false);
@@ -339,9 +335,8 @@ function peg$parse(input, options) {
             // Add default modality
             modality.push('dom');
         }
-        return {
+        return toAstNode({
             kind: 'particle',
-            location: location(),
             name,
             implFile: optional(implFile, implFile => implFile[3], null),
             verbs,
@@ -352,16 +347,15 @@ function peg$parse(input, options) {
             hasParticleHandleConnection,
             trustClaims,
             trustChecks,
-        };
+        });
     };
     const peg$c80 = peg$otherExpectation("a particle item");
     const peg$c81 = function (handle, expression) {
-        return {
+        return toAstNode({
             kind: 'particle-trust-claim',
-            location: location(),
             handle,
             expression,
-        };
+        });
     };
     const peg$c82 = function (first, rest) {
         return [first, ...rest.map(item => item[3])];
@@ -369,43 +363,39 @@ function peg$parse(input, options) {
     const peg$c83 = "not";
     const peg$c84 = peg$literalExpectation("not", false);
     const peg$c85 = function (not, tag) {
-        return {
+        return toAstNode({
             kind: 'particle-trust-claim-is-tag',
-            claimType: 'is-tag',
-            location: location(),
+            claimType: ClaimType.IsTag,
             isNot: not != null,
             tag,
-        };
+        });
     };
     const peg$c86 = "derives from";
     const peg$c87 = peg$literalExpectation("derives from", false);
     const peg$c88 = function (handle) {
-        return {
+        return toAstNode({
             kind: 'particle-trust-claim-derives-from',
-            claimType: 'derives-from',
-            location: location(),
+            claimType: ClaimType.DerivesFrom,
             parentHandle: handle,
-        };
+        });
     };
     const peg$c89 = "check";
     const peg$c90 = peg$literalExpectation("check", false);
     const peg$c91 = function (target, expression) {
-        return {
+        return toAstNode({
             kind: 'particle-trust-check',
-            location: location(),
             target,
             expression,
-        };
+        });
     };
     const peg$c92 = "data";
     const peg$c93 = peg$literalExpectation("data", false);
     const peg$c94 = function (name, isSlot) {
-        return {
+        return toAstNode({
             kind: 'particle-check-target',
-            location: location(),
             targetType: isSlot ? 'slot' : 'handle',
             name,
-        };
+        });
     };
     const peg$c95 = "or";
     const peg$c96 = peg$literalExpectation("or", false);
@@ -418,12 +408,11 @@ function peg$parse(input, options) {
             expected(`You cannot combine 'and' and 'or' operations in a single check expression. You must nest them inside parentheses.`);
         }
         const operator = rest[0][1];
-        return {
+        return toAstNode({
             kind: 'particle-trust-check-boolean-expression',
-            location: location(),
             operator,
             children: [left, ...rest.map(item => item[3])],
-        };
+        });
     };
     const peg$c98 = function (condition) { return condition; };
     const peg$c99 = "(";
@@ -431,49 +420,45 @@ function peg$parse(input, options) {
     const peg$c101 = ")";
     const peg$c102 = peg$literalExpectation(")", false);
     const peg$c103 = function (isNot, tag) {
-        return {
+        return toAstNode({
             kind: 'particle-trust-check-has-tag',
-            checkType: 'has-tag',
-            location: location(),
+            checkType: CheckType.HasTag,
             isNot: !!isNot,
             tag,
-        };
+        });
     };
     const peg$c104 = "from";
     const peg$c105 = peg$literalExpectation("from", false);
     const peg$c106 = "handle";
     const peg$c107 = peg$literalExpectation("handle", false);
     const peg$c108 = function (isNot, parentHandle) {
-        return {
+        return toAstNode({
             kind: 'particle-trust-check-is-from-handle',
-            checkType: 'is-from-handle',
-            location: location(),
+            checkType: CheckType.IsFromHandle,
             isNot: !!isNot,
             parentHandle,
-        };
+        });
     };
     const peg$c109 = "output";
     const peg$c110 = peg$literalExpectation("output", false);
     const peg$c111 = function (isNot, output) {
-        return {
+        return toAstNode({
             kind: 'particle-trust-check-is-from-output',
-            checkType: 'is-from-output',
-            location: location(),
+            checkType: CheckType.IsFromOutput,
             isNot: !!isNot,
             output,
-        };
+        });
     };
     const peg$c112 = function (isNot, storeRef) {
-        return {
+        return toAstNode({
             kind: 'particle-trust-check-is-from-store',
-            checkType: 'is-from-store',
-            location: location(),
+            checkType: CheckType.IsFromStore,
             isNot: !!isNot,
             storeRef,
-        };
+        });
     };
-    const peg$c113 = function (name) { return { kind: 'store-reference', location: location(), type: 'name', store: name }; };
-    const peg$c114 = function (id) { return { kind: 'store-reference', location: location(), type: 'id', store: id }; };
+    const peg$c113 = function (name) { return toAstNode({ kind: 'store-reference', type: 'name', store: name }); };
+    const peg$c114 = function (id) { return toAstNode({ kind: 'store-reference', type: 'id', store: id }); };
     const peg$c115 = function (arg, dependentConnections) {
         arg.dependentConnections = optional(dependentConnections, extractIndented, []);
         return arg;
@@ -481,16 +466,15 @@ function peg$parse(input, options) {
     const peg$c116 = "?";
     const peg$c117 = peg$literalExpectation("?", false);
     const peg$c118 = function (direction, isOptional, type, nametag) {
-        return {
+        return toAstNode({
             kind: 'particle-argument',
-            location: location(),
             direction,
             type: type,
             isOptional: !!isOptional,
             dependentConnections: [],
             name: nametag.name,
             tags: nametag.tags,
-        };
+        });
     };
     const peg$c119 = peg$otherExpectation("a direction (e.g. inout, in, out, host, `consume, `provide, any)");
     const peg$c120 = "inout";
@@ -533,29 +517,26 @@ function peg$parse(input, options) {
     const peg$c145 = "]";
     const peg$c146 = peg$literalExpectation("]", false);
     const peg$c147 = function (type) {
-        return {
+        return toAstNode({
             kind: 'collection-type',
-            location: location(),
             type,
-        };
+        });
     };
     const peg$c148 = "BigCollection<";
     const peg$c149 = peg$literalExpectation("BigCollection<", false);
     const peg$c150 = function (type) {
-        return {
+        return toAstNode({
             kind: 'big-collection-type',
-            location: location(),
             type,
-        };
+        });
     };
     const peg$c151 = "Reference<";
     const peg$c152 = peg$literalExpectation("Reference<", false);
     const peg$c153 = function (type) {
-        return {
+        return toAstNode({
             kind: 'reference-type',
-            location: location(),
             type,
-        };
+        });
     };
     const peg$c154 = peg$otherExpectation("a type variable (e.g. ~foo)");
     const peg$c155 = "~";
@@ -563,12 +544,11 @@ function peg$parse(input, options) {
     const peg$c157 = "with";
     const peg$c158 = peg$literalExpectation("with", false);
     const peg$c159 = function (name, constraint) {
-        return {
+        return toAstNode({
             kind: 'variable-type',
-            location: location(),
             name,
             constraint: optional(constraint, constraint => constraint[3], null),
-        };
+        });
     };
     const peg$c160 = "Slot";
     const peg$c161 = peg$literalExpectation("Slot", false);
@@ -585,26 +565,23 @@ function peg$parse(input, options) {
             const data = fields[2];
             return [data[0]].concat(data[1].map(tail => tail[2]));
         }, []);
-        return {
+        return toAstNode({
             kind: 'slot-type',
-            location: location(),
-            fields
-        };
+            fields,
+        });
     };
     const peg$c171 = function (name, value) {
-        return {
+        return toAstNode({
             kind: 'slot-field',
-            location: location(),
             name,
             value
-        };
+        });
     };
     const peg$c172 = function (name) {
-        return {
+        return toAstNode({
             kind: 'type-name',
-            location: location(),
             name,
-        };
+        });
     };
     const peg$c173 = function (head, tail) {
         return [head, ...tail.map(a => a[2])];
@@ -612,11 +589,10 @@ function peg$parse(input, options) {
     const peg$c174 = "modality";
     const peg$c175 = peg$literalExpectation("modality", false);
     const peg$c176 = function (modality) {
-        return {
+        return toAstNode({
             kind: 'particle-modality',
-            location: location(),
             modality,
-        };
+        });
     };
     const peg$c177 = function (isRequired, isSet, name, tags, items) {
         let formFactor = null;
@@ -636,16 +612,15 @@ function peg$parse(input, options) {
                 error('Unsupported particle slot item ', item);
             }
         });
-        return {
+        return toAstNode({
             kind: 'particle-slot',
-            location: location(),
             name,
             tags: optional(tags, tags => tags[1], []),
             isRequired: optional(isRequired, isRequired => isRequired[0] === 'must', false),
             isSet: !!isSet,
             formFactor,
             provideSlotConnections
-        };
+        });
     };
     const peg$c178 = "formFactor";
     const peg$c179 = peg$literalExpectation("formFactor", false);
@@ -658,11 +633,10 @@ function peg$parse(input, options) {
     const peg$c186 = "small";
     const peg$c187 = peg$literalExpectation("small", false);
     const peg$c188 = function (formFactor) {
-        return {
+        return toAstNode({
             kind: 'form-factor',
-            location: location(),
             formFactor
-        };
+        });
     };
     const peg$c189 = function (isRequired, isSet, name, tags, items) {
         let formFactor = null;
@@ -679,23 +653,21 @@ function peg$parse(input, options) {
                 handles.push(item.handle);
             }
         });
-        return {
+        return toAstNode({
             kind: 'provided-slot',
-            location: location(),
             name,
             tags: optional(tags, tags => tags[1], []),
             isRequired: optional(isRequired, isRequired => isRequired[0] === 'must', false),
             isSet: !!isSet,
             formFactor,
             handles
-        };
+        });
     };
     const peg$c190 = function (handle) {
-        return {
+        return toAstNode({
             kind: 'particle-provided-slot-handle',
-            location: location(),
             handle,
-        };
+        });
     };
     const peg$c191 = function (pattern, handleDescriptions) {
         handleDescriptions = optional(handleDescriptions, extractIndented, []);
@@ -722,24 +694,22 @@ function peg$parse(input, options) {
         };
     };
     const peg$c192 = function (name, pattern) {
-        return {
+        return toAstNode({
             kind: 'handle-description',
-            location: location(),
             name,
             pattern,
-        };
+        });
     };
     const peg$c193 = "recipe";
     const peg$c194 = peg$literalExpectation("recipe", false);
     const peg$c195 = function (name, verbs, items) {
         verbs = optional(verbs, parsedOutput => parsedOutput[1], []);
-        return {
+        return toAstNode({
             kind: 'recipe',
-            location: location(),
             name: optional(name, name => name[1], null),
             verbs,
             items: optional(items, extractIndented, []),
-        };
+        });
     };
     const peg$c196 = "as";
     const peg$c197 = peg$literalExpectation("as", false);
@@ -763,24 +733,22 @@ function peg$parse(input, options) {
                 }
             }
         }
-        return {
+        return toAstNode({
             kind: 'particle',
-            location: location(),
             name: optional(name, name => name[1], null),
             ref,
             connections: handleConnections,
             slotConnections: slotConnections,
-        };
+        });
     };
     const peg$c203 = function (param, dir, target, dependentConnections) {
-        return {
+        return toAstNode({
             kind: 'handle-connection',
-            location: location(),
             param,
             dir,
             target: optional(target, target => target[1], null),
             dependentConnections: optional(dependentConnections, extractIndented, []),
-        };
+        });
     };
     const peg$c204 = function (param, tags) {
         param = optional(param, param => param, null);
@@ -794,102 +762,94 @@ function peg$parse(input, options) {
                 name = param;
             }
         }
-        return {
+        return toAstNode({
             kind: 'handle-connection-components',
-            location: location(),
             name,
             particle,
             tags: optional(tags, tags => tags, []),
-        };
+        });
     };
     const peg$c205 = function (direction, ref, name, dependentSlotConnections) {
-        return {
+        return toAstNode({
             kind: 'slot-connection',
-            location: location(),
             direction,
             param: ref.param,
             tags: ref.tags,
             name: optional(name, name => name[1], null),
             dependentSlotConnections: optional(dependentSlotConnections, extractIndented, []),
-        };
+        });
     };
     const peg$c206 = function (param, tags) {
-        return {
+        return toAstNode({
             kind: 'slot-connection-ref',
-            location: location(),
             param,
             tags: tags || [],
-        };
+        });
     };
     const peg$c207 = function (from, direction, to) {
-        return {
+        return toAstNode({
             kind: 'connection',
-            location: location(),
             direction,
             from,
             to,
-        };
+        });
     };
     const peg$c208 = "search";
     const peg$c209 = peg$literalExpectation("search", false);
     const peg$c210 = "tokens";
     const peg$c211 = peg$literalExpectation("tokens", false);
     const peg$c212 = function (phrase, tokens) {
-        return {
+        return toAstNode({
             kind: 'search',
-            location: location(),
             phrase,
             tokens: optional(tokens, tokens => tokens[1][2].map(t => t[1]), null)
-        };
+        });
     };
     const peg$c213 = function (verbs, components) {
-        const { param, tags } = optional(components, components => components, { param: null, tags: [] });
-        return {
+        const { param, tags } = components || { param: null, tags: [] };
+        return toAstNode({
             kind: 'connection-target',
-            location: location(),
             targetType: 'verb',
             verbs,
             param,
             tags
-        };
+        });
     };
     const peg$c214 = function (tags) {
-        return {
+        return toAstNode({
             kind: 'connection-target',
-            location: location(),
             targetType: 'tag',
             tags
-        };
+        });
     };
     const peg$c215 = function (name, components) {
-        const { param, tags } = optional(components, components => components, { param: null, tags: [] });
-        return {
+        const { param, tags } = components || { param: null, tags: [] };
+        return toAstNode({
             kind: 'connection-target',
             targetType: 'localName',
-            location: location(),
             name,
             param,
             tags
-        };
+        });
     };
     const peg$c216 = function (particle, components) {
-        const { param, tags } = optional(components, components => components, { param: null, tags: [] });
-        return {
+        const { param, tags } = components || { param: null, tags: [] };
+        return toAstNode({
             kind: 'connection-target',
             targetType: 'particle',
-            location: location(),
             particle,
             param,
             tags
-        };
+        });
     };
     const peg$c217 = ".";
     const peg$c218 = peg$literalExpectation(".", false);
     const peg$c219 = function (param, tags) {
-        return {
+        return toAstNode({
+            kind: 'connection-target-handle-components',
             param: optional(param, param => param, null),
             tags: optional(tags, tags => tags[1], []),
-        };
+        });
     };
     const peg$c220 = "use";
     const peg$c221 = peg$literalExpectation("use", false);
@@ -902,30 +862,27 @@ function peg$parse(input, options) {
     const peg$c228 = "`slot";
     const peg$c229 = peg$literalExpectation("`slot", false);
     const peg$c230 = function (type, ref, name) {
-        return {
+        return toAstNode({
             kind: 'handle',
-            location: location(),
             name: optional(name, name => name[1], null),
             ref: optional(ref, ref => ref[1], emptyRef()),
             fate: type
-        };
+        });
     };
     const peg$c231 = "require";
     const peg$c232 = peg$literalExpectation("require", false);
     const peg$c233 = function (items) {
-        return {
+        return toAstNode({
             kind: 'require',
-            location: location(),
             items: extractIndented(items),
-        };
+        });
     };
     const peg$c234 = function (name, ref) {
-        return {
+        return toAstNode({
             kind: 'requireHandle',
-            location: location(),
             name: optional(name, name => name[1], null),
             ref: optional(ref, ref => ref[1], emptyRef()),
-        };
+        });
     };
     const peg$c235 = "#";
     const peg$c236 = peg$literalExpectation("#", false);
@@ -937,118 +894,109 @@ function peg$parse(input, options) {
     const peg$c242 = function (verb) { return verb; };
     const peg$c243 = function (tags) { return tags; };
     const peg$c244 = function (name, tags) {
-        return {
-            location: location(),
+        return toAstNode({
+            kind: 'name-and-tag-list',
             name: name,
             tags: tags = optional(tags, list => list[1], [])
-        };
+        });
     };
     const peg$c245 = function (name) {
-        return {
-            location: location(),
+        return toAstNode({
+            kind: 'name-and-tag-list',
             name: name,
             tags: []
-        };
+        });
     };
     const peg$c246 = function (tags) {
-        return {
-            location: location(),
+        return toAstNode({
+            kind: 'name-and-tag-list',
             name: tags[0],
             tags: tags
-        };
+        });
     };
     const peg$c247 = function (name) {
-        return {
+        return toAstNode({
             kind: 'particle-ref',
-            location: location(),
             name,
             verbs: [],
             tags: []
-        };
+        });
     };
     const peg$c248 = function (verb) {
-        return {
+        return toAstNode({
             kind: 'particle-ref',
-            location: location(),
             verbs: [verb],
             tags: []
-        };
+        });
     };
     const peg$c249 = function (id, tags) {
-        return {
+        return toAstNode({
             kind: 'handle-ref',
-            location: location(),
             id,
             tags: tags || [],
-        };
+        });
     };
     const peg$c250 = function (name, tags) {
-        return {
+        return toAstNode({
             kind: 'handle-ref',
-            location: location(),
             name,
             tags: tags || [],
-        };
+        });
     };
     const peg$c251 = function (tags) {
-        return {
+        return toAstNode({
             kind: 'handle-ref',
-            location: location(),
             tags,
-        };
+        });
     };
     const peg$c252 = "slot";
     const peg$c253 = peg$literalExpectation("slot", false);
     const peg$c254 = function (ref, name) {
-        return {
+        return toAstNode({
             kind: 'slot',
-            location: location(),
             ref: optional(ref, ref => ref[1], emptyRef()),
             name: optional(name, name => name[1], '')
-        };
+        });
     };
     const peg$c255 = function (names, fields) {
-        return {
+        return toAstNode({
             kind: 'schema-inline',
-            location: location(),
             names: optional(names, names => names.map(name => name[0]).filter(name => name !== '*'), []),
             fields: optional(fields, fields => [fields[0], ...fields[1].map(tail => tail[2])], []),
-        };
+        });
     };
     const peg$c256 = function (type, name) {
-        return {
+        return toAstNode({
             kind: 'schema-inline-field',
-            location: location(),
             name,
             type: optional(type, type => type[0], null),
-        };
+        });
     };
     const peg$c257 = "schema";
     const peg$c258 = peg$literalExpectation("schema", false);
     const peg$c259 = function (names, parents) {
-        return {
+        return toAstNode({
+            kind: 'schema',
             names: names.map(name => name[1]).filter(name => name !== '*'),
             parents: optional(parents, parents => parents, []),
-        };
+        });
     };
     const peg$c260 = "alias";
     const peg$c261 = peg$literalExpectation("alias", false);
     const peg$c262 = function (spec, alias, items) {
-        return {
+        return toAstNode({
+            ...spec,
             kind: 'schema',
-            location: location(),
             items: optional(items, extractIndented, []),
-            alias,
-            ...spec
-        };
+            alias
+        });
     };
     const peg$c263 = function (spec, items) {
-        return {
+        return toAstNode({
+            ...spec,
             kind: 'schema',
-            location: location(),
-            items: optional(items, extractIndented, []),
-            ...spec
-        };
+            items: optional(items, extractIndented, [])
+        });
     };
     const peg$c264 = "extends";
     const peg$c265 = peg$literalExpectation("extends", false);
@@ -1056,26 +1004,23 @@ function peg$parse(input, options) {
         return [first, ...(rest.map(item => item[3]))];
     };
     const peg$c267 = function (type, name) {
-        return {
+        return toAstNode({
             kind: 'schema-field',
-            location: location(),
             type,
             name,
-        };
+        });
     };
     const peg$c268 = function (schema) {
-        return {
+        return toAstNode({
             kind: 'schema-collection',
-            location: location(),
             schema
-        };
+        });
     };
     const peg$c269 = function (schema) {
-        return {
+        return toAstNode({
             kind: 'schema-reference',
-            location: location(),
             schema
-        };
+        });
     };
     const peg$c270 = "Text";
     const peg$c271 = peg$literalExpectation("Text", false);
@@ -1088,25 +1033,24 @@ function peg$parse(input, options) {
     const peg$c278 = "Bytes";
     const peg$c279 = peg$literalExpectation("Bytes", false);
     const peg$c280 = function (type) {
-        return {
+        return toAstNode({
             kind: 'schema-primitive',
-            location: location(),
             type
-        };
+        });
     };
     const peg$c281 = function (first, rest) {
         const types = [first];
         for (const type of rest) {
             types.push(type[3]);
         }
-        return { kind: 'schema-union', location: location(), types };
+        return toAstNode({ kind: 'schema-union', types });
     };
     const peg$c282 = function (first, rest) {
         const types = [first];
         for (const type of rest) {
             types.push(type[3]);
         }
-        return { kind: 'schema-tuple', location: location(), types };
+        return toAstNode({ kind: 'schema-tuple', types });
     };
     const peg$c283 = peg$otherExpectation("a version number (e.g. @012)");
     const peg$c284 = /^[0-9]/;
@@ -1392,7 +1336,7 @@ function peg$parse(input, options) {
     }
     function peg$parseManifestItem() {
         let s0;
-        s0 = peg$parseRecipe();
+        s0 = peg$parseRecipeNode();
         if (s0 === peg$FAILED) {
             s0 = peg$parseParticle();
             if (s0 === peg$FAILED) {
@@ -6310,7 +6254,7 @@ function peg$parse(input, options) {
         }
         return s0;
     }
-    function peg$parseRecipe() {
+    function peg$parseRecipeNode() {
         let s0, s1, s2, s3, s4, s5, s6, s7, s8, s9, s10;
         s0 = peg$currPos;
         if (input.substr(peg$currPos, 6) === peg$c193) {
@@ -10907,6 +10851,9 @@ function peg$parse(input, options) {
             }
             checkNormal(result[key]);
         }
+    }
+    function toAstNode(data) {
+        return { ...data, location: location() };
     }
     peg$result = peg$startRuleFunction();
     if (peg$result !== peg$FAILED && peg$currPos === input.length) {

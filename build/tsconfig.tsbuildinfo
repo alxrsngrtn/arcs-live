@@ -530,11 +530,11 @@
         "signature": "75bc5f22059210323a192a97ea60f029862fe72a4f9e10e3b6dc71c02539198b"
       },
       "../src/runtime/manifest-ast-nodes.ts": {
-        "version": "c97bca81b09880a7ac1749344d700a7267df2e3f9da14b36f62b0a224f73b0a5",
-        "signature": "7af80505eed7a2e7c87dfa4a39fde3e5b7d98c4eb9329106379fc469c630e713"
+        "version": "5bce8b3673bd1861c3b7663becc4dfa0fe981becd688760284ed2d0c8c8af0f2",
+        "signature": "168e09b0a14e046fb8cc66b723b366c60164a468f1383efa7cfcfb41c954fb86"
       },
       "../src/gen/runtime/manifest-parser.ts": {
-        "version": "e343923222caafd1bf7444f6788ee217e09d0e4779f7c273b120187f109504c1",
+        "version": "57000ea46de6d3eba64edb3c96404174ee408b2cee35acce020908a972fd47a8",
         "signature": "ff2c763c7895327196fd3eb358dcc775b25f27bdae513079cc287433af262427"
       },
       "../src/runtime/manifest-meta.ts": {
@@ -542,7 +542,7 @@
         "signature": "386225870fe7ff2b410dda3c36ac04396b8a67965f6edaa5f9fff1d1796548f6"
       },
       "../src/runtime/manifest.ts": {
-        "version": "14ffa224d2c19bed9a7f86d46d8d41334c058c8483282bffa9cf86abb7715e5c",
+        "version": "c83c467e20416906a61aef04428b5cdb378f4677bc5b66feaa2419228a42f718",
         "signature": "2c6bc3d79a637dcfdf6f83b096259be0c51deec47ae4875f217c59da1a6e0cbd"
       },
       "../src/platform/atob-web.ts": {
@@ -3920,6 +3920,8 @@
       ],
       "../src/gen/runtime/manifest-parser.ts": [
         "../src/runtime/manifest-ast-nodes.ts",
+        "../src/runtime/particle-check.ts",
+        "../src/runtime/particle-claim.ts",
         "../node_modules/@types/node/util.d.ts",
         "../node_modules/@types/node/ts3.1/util.d.ts"
       ],

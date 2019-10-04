@@ -86,9 +86,11 @@
 						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-inherited"><a href="particleconnectiontarget.html#kind" class="tsd-kind-icon">kind</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-overwrite"><a href="particleconnectiontarget.html#kind" class="tsd-kind-icon">kind</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-inherited"><a href="particleconnectiontarget.html#location" class="tsd-kind-icon">location</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="particleconnectiontarget.html#param" class="tsd-kind-icon">param</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="particleconnectiontarget.html#particle" class="tsd-kind-icon">particle</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="particleconnectiontarget.html#tags" class="tsd-kind-icon">tags</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="particleconnectiontarget.html#targettype" class="tsd-kind-icon">target<wbr>Type</a></li>
 							</ul>
 						</section>
@@ -97,14 +99,14 @@
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Properties</h2>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-overwrite">
 					<a name="kind" class="tsd-anchor"></a>
 					<h3>kind</h3>
-					<div class="tsd-signature tsd-kind-icon">kind<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+					<div class="tsd-signature tsd-kind-icon">kind<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">"connection-target"</span></div>
 					<aside class="tsd-sources">
-						<p>Inherited from <a href="../classes/basenode.html">BaseNode</a>.<a href="../classes/basenode.html#kind">kind</a></p>
+						<p>Overrides <a href="../classes/basenode.html">BaseNode</a>.<a href="../classes/basenode.html#kind">kind</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/2a37b5d/src/runtime/manifest-ast-nodes.ts#L42">src/runtime/manifest-ast-nodes.ts:42</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9289d4c/src/runtime/manifest-ast-nodes.ts#L449">src/runtime/manifest-ast-nodes.ts:449</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -115,7 +117,17 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="../classes/basenode.html">BaseNode</a>.<a href="../classes/basenode.html#location">location</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/2a37b5d/src/runtime/manifest-ast-nodes.ts#L43">src/runtime/manifest-ast-nodes.ts:43</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9289d4c/src/runtime/manifest-ast-nodes.ts#L43">src/runtime/manifest-ast-nodes.ts:43</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="param" class="tsd-anchor"></a>
+					<h3>param</h3>
+					<div class="tsd-signature tsd-kind-icon">param<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9289d4c/src/runtime/manifest-ast-nodes.ts#L452">src/runtime/manifest-ast-nodes.ts:452</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -125,7 +137,17 @@
 					<div class="tsd-signature tsd-kind-icon">particle<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/2a37b5d/src/runtime/manifest-ast-nodes.ts#L451">src/runtime/manifest-ast-nodes.ts:451</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9289d4c/src/runtime/manifest-ast-nodes.ts#L450">src/runtime/manifest-ast-nodes.ts:450</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="tags" class="tsd-anchor"></a>
+					<h3>tags</h3>
+					<div class="tsd-signature tsd-kind-icon">tags<span class="tsd-signature-symbol">:</span> <a href="../globals.html#taglist" class="tsd-signature-type">TagList</a></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9289d4c/src/runtime/manifest-ast-nodes.ts#L453">src/runtime/manifest-ast-nodes.ts:453</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -135,7 +157,7 @@
 					<div class="tsd-signature tsd-kind-icon">target<wbr>Type<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">"particle"</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/2a37b5d/src/runtime/manifest-ast-nodes.ts#L452">src/runtime/manifest-ast-nodes.ts:452</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9289d4c/src/runtime/manifest-ast-nodes.ts#L451">src/runtime/manifest-ast-nodes.ts:451</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -156,14 +178,20 @@
 					<li class="current tsd-kind-interface">
 						<a href="particleconnectiontarget.html" class="tsd-kind-icon">Particle<wbr>Connection<wbr>Target</a>
 						<ul>
-							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
+							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-overwrite">
 								<a href="particleconnectiontarget.html#kind" class="tsd-kind-icon">kind</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
 								<a href="particleconnectiontarget.html#location" class="tsd-kind-icon">location</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="particleconnectiontarget.html#param" class="tsd-kind-icon">param</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
 								<a href="particleconnectiontarget.html#particle" class="tsd-kind-icon">particle</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="particleconnectiontarget.html#tags" class="tsd-kind-icon">tags</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
 								<a href="particleconnectiontarget.html#targettype" class="tsd-kind-icon">target<wbr>Type</a>
