@@ -288,7 +288,7 @@ class EmscriptenWasmDriver {
             _systemError: (msg) => { throw new Error(container.read(msg)); },
             abortOnCannotGrowMemory: (size) => { throw new Error(`abortOnCannotGrowMemory(${size})`); },
             // Logging
-            _setLogInfo: (file, line) => this.logInfo = [container.read(file), line],
+            _setLogInfo: (file, line) => this.logInfo = [container.read(file).split(/[/\\]/).pop(), line],
             ___syscall146: (which, varargs) => this.sysWritev(container, which, varargs),
         });
     }

@@ -23,12 +23,12 @@ const keywords = [
     'typename', 'union', 'unsigned', 'using', 'virtual', 'void', 'volatile', 'wchar_t', 'while',
     'xor', 'xor_eq'
 ];
-// type-char to [cpp-type, is-string]
 const typeMap = {
-    'T': ['std::string', true],
-    'U': ['URL', true],
-    'N': ['double', false],
-    'B': ['bool', false],
+    'T': { type: () => 'std::string', returnByRef: true, setByRef: true, useCompare: true },
+    'U': { type: () => 'URL', returnByRef: true, setByRef: true, useCompare: true },
+    'N': { type: () => 'double', returnByRef: false, setByRef: false, useCompare: false },
+    'B': { type: () => 'bool', returnByRef: false, setByRef: false, useCompare: false },
+    'R': { type: name => `Ref<${name}>`, returnByRef: false, setByRef: true, useCompare: false },
 };
 export class Schema2Cpp extends Schema2Base {
     // test-CPP.file_name.arcs -> test-cpp-file-name.h
@@ -57,19 +57,20 @@ export class Schema2Cpp extends Schema2Base {
         const decode = [];
         const encode = [];
         const toString = [];
-        const fieldCount = this.processSchema(schema, (field, typeChar) => {
-            const type = typeMap[typeChar][0];
-            const isString = typeMap[typeChar][1];
-            const [ref1, ref2] = isString ? ['const ', '&'] : ['', ''];
+        const fieldCount = this.processSchema(schema, (field, typeChar, refName) => {
+            const typeInfo = typeMap[typeChar];
+            const type = typeInfo.type(refName);
+            const [r1, r2] = typeInfo.returnByRef ? ['const ', '&'] : ['', ''];
+            const [s1, s2] = typeInfo.setByRef ? ['const ', '&'] : ['', ''];
             const fixed = (keywords.includes(field) ? '_' : '') + field;
             const valid = `${field}_valid_`;
             fields.push(`${type} ${field}_ = ${type}();`, `bool ${valid} = false;`, ``);
-            api.push(`${ref1}${type}${ref2} ${fixed}() const { return ${field}_; }`, `void set_${field}(${ref1}${type}${ref2} value) { ${field}_ = value; ${valid} = true; }`, `void clear_${field}() { ${field}_ = ${type}(); ${valid} = false; }`, `bool has_${field}() const { return ${valid}; }`, ``);
+            api.push(`${r1}${type}${r2} ${fixed}() const { return ${field}_; }`, `void set_${field}(${s1}${type}${s2} value) { ${field}_ = value; ${valid} = true; }`, `void clear_${field}() { ${field}_ = ${type}(); ${valid} = false; }`, `bool has_${field}() const { return ${valid}; }`, ``);
             clone.push(`clone.${field}_ = entity.${field}_;`, `clone.${valid} = entity.${valid};`);
             hash.push(`if (entity.${valid})`, `  internal::hash_combine(h, entity.${field}_);`);
             equals.push(`(a.${valid} ? (b.${valid} && a.${field}_ == b.${field}_) : !b.${valid})`);
             less.push(`if (a.${valid} != b.${valid}) {`, `  return !a.${valid};`);
-            if (isString) {
+            if (typeInfo.useCompare) {
                 less.push(`} else {`, `  cmp = a.${field}_.compare(b.${field}_);`, `  if (cmp != 0) return cmp < 0;`, `}`);
             }
             else {

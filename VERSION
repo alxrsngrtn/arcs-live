@@ -1,5 +1,7 @@
-commit 6f294a5217d6e2c99a9686e838d3633cef150b99
+commit 86b8b45959f661591a16e270458dfdf3da699079
 Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
-Date:   Fri Oct 4 11:10:32 2019 +1000
+Date:   Fri Oct 4 11:41:24 2019 +1000
 
-    Wasm C++: ensure empty schema generates valid entity class (#3683)
+    Wasm C++: first step for supporting reference-typed schema fields. (#3695)
+    
+    This is primarily adding handling of references to the schema2pkg tool.

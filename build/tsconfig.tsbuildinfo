@@ -490,7 +490,7 @@
         "signature": "1d4d7ff53894b5a222ea5c2726736b3be7efce39132f2f73ab1a0637c4d8cc19"
       },
       "../src/runtime/wasm.ts": {
-        "version": "71a5562eaa19eb28690b1db52958362589cfdc67285f0593410494cb8484184b",
+        "version": "6992a9ed988aa67a9dcd25f397eee04722cab540af2ed947756d2b8c13263a29",
         "signature": "3e88d9fddaddb1cd659d8d53aa24d0eb1e61780a6d188255190d9d1c32c51607"
       },
       "../src/runtime/particle-execution-context.ts": {
@@ -2633,15 +2633,15 @@
         "signature": "fd95df5d076cbfed143dc4904d376b5c6d9cb1091b630994ffe2366010afa6b3"
       },
       "../src/tools/schema2base.ts": {
-        "version": "da69500551f9aa31f0043fe3d7dfd94c80ff8fcdf048faae89122d8a2118edb0",
-        "signature": "44c67db51f6f262099ce193695d05ebc7e4cc90de35cfda0e9cf2aaeb8ce1ea5"
+        "version": "91475dafa2037ec59d15c2ff20849cb7b21cf2630f9d0149295fa16864f61549",
+        "signature": "989fa9dda3d76b91e35018ca7ec535028076ae2bf57f57d071c60f91ae43c5f9"
       },
       "../src/tools/schema2cpp.ts": {
-        "version": "c34eb2237bc237ab1e5072699d7c17a2d6c9bd3f1b6e08fef44152d5a3e44dfc",
+        "version": "4f4977124a0e3a1ecb80d7b8adde1d2d3bc70799939bd0c2831b42a6ab6ae9a7",
         "signature": "2399853c21d04efd6ace178ab5736d5ad95a9e1674dc8cee3944fd706556b8a2"
       },
       "../src/tools/schema2kotlin.ts": {
-        "version": "61d8af6efafc758e21148e5e8a4f798b70ff943d6836507e24089138a4770bb2",
+        "version": "762a7ecb392219fe2ef3d806a6e746af2a7c691fc016766d399c68b309247795",
         "signature": "f88411a821e09edd5e5f268d2563bdba5387c320ea692afaa6e80d8049499a14"
       },
       "../src/tools/schema2packager.ts": {

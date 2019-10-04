@@ -5,8 +5,9 @@ export declare abstract class Schema2Base {
     constructor(opts: minimist.ParsedArgs);
     call(): Promise<void>;
     private processFile;
-    protected processSchema(schema: Schema, processField: (field: string, typeChar: string) => void): number;
+    protected processSchema(schema: Schema, processField: (field: string, typeChar: string, refName: string) => void): number;
     private typeSummary;
+    private inlineSchemaName;
     abstract outputName(baseName: string): string;
     abstract fileHeader(outName: string): string;
     abstract fileFooter(): string;
