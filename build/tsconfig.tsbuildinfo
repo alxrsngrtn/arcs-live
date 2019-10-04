@@ -2637,7 +2637,7 @@
         "signature": "44c67db51f6f262099ce193695d05ebc7e4cc90de35cfda0e9cf2aaeb8ce1ea5"
       },
       "../src/tools/schema2cpp.ts": {
-        "version": "b4d1b2562dd2b6a60ff9b7adc8b0b803b9a42f491c4b670fbff24ce6991359e1",
+        "version": "c34eb2237bc237ab1e5072699d7c17a2d6c9bd3f1b6e08fef44152d5a3e44dfc",
         "signature": "2399853c21d04efd6ace178ab5736d5ad95a9e1674dc8cee3944fd706556b8a2"
       },
       "../src/tools/schema2kotlin.ts": {

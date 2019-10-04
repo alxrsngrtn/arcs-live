@@ -1,11 +1,5 @@
-commit 9289d4c37c7c92ac4787e2f46276a5359e87e309
-Author: Joshua Pratt <jp10010101010000@gmail.com>
-Date:   Fri Oct 4 10:55:03 2019 +1000
+commit 6f294a5217d6e2c99a9686e838d3633cef150b99
+Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
+Date:   Fri Oct 4 11:10:32 2019 +1000
 
-    Parser type hardening (#3685)
-    
-    * Remove AstNode.SlotType model
-    
-    * Add kinds
-    
-    * Fix object expansion performing kind overwriting
+    Wasm C++: ensure empty schema generates valid entity class (#3683)

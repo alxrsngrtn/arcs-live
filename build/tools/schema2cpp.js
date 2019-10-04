@@ -79,6 +79,9 @@ export class Schema2Cpp extends Schema2Base {
             encode.push(`if (entity.${valid})`, `  encoder.encode("${field}:${typeChar}", entity.${field}_);`);
             toString.push(`if (entity.${valid})`, `  printer.add("${field}: ", entity.${field}_);`);
         });
+        if (fieldCount === 0) {
+            equals.push('true');
+        }
         return `\
 
 namespace arcs {
