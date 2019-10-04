@@ -1,33 +1,9 @@
-commit 7e75718c6161911ada67f589e83de270ed045883
-Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
-Date:   Fri Oct 4 17:12:40 2019 +1000
+commit bea5bad85b10464fc150c255ce9e124fd42e9f92
+Author: Ray Cromwell <cromwellian@gmail.com>
+Date:   Fri Oct 4 14:25:42 2019 -0700
 
-    Create UnifiedActiveStore interface (#3699)
+    Refactor Entity out of Particle for use by kt_schema targets (#3700)
     
-    * Create UnifiedActiveStore interface
+    * Refactor Entity out of Particle for use by kt_schema targets
     
-    There are now two main "Unified" classes/interfaces:
-    1. UnifiedStore: contains information about a store, can be "activated"
-    into a...
-    2. UnifiedActiveStore: a store which has been connected to storage. Each
-    active store remembers its "base store", i.e. the UnifiedStore from
-    which is was activated.
-    
-    In the new world, UnifiedStore == Store, UnifiedActiveStore ==
-    ActiveStore.
-    
-    It's always possible to go back to the UnifiedStore instance (which
-    contains most of the interesting properties like name, id, type, etc.).
-    Activating a store more than once should produce the same instance
-    again.
-    
-    In the old world, StorageProviderBase acts as both a UnifiedStore and a
-    UnifiedActiveStore. Throughout the codebase, we interchange between
-    active/inactive stores at will, so cleaning this up is going to be
-    interesting...
-    
-    There are some properties on UnifiedStore that should be on
-    UnifiedActiveStore, and there are a bunch of duplicates in
-    UnifiedActiveStore that should be deleted.
-    
-    * Fix promise handling
+    * Add tutorial BUILD
