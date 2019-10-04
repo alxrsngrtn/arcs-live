@@ -119,6 +119,7 @@
 					<li><a href="../interfaces/comparable.html" class="tsd-signature-type">Comparable</a><span class="tsd-signature-symbol">&lt;</span><a href="unifiedstore.html" class="tsd-signature-type">UnifiedStore</a><span class="tsd-signature-symbol">&gt;</span></li>
 					<li><a href="store.html" class="tsd-signature-type">Store</a></li>
 					<li><a href="store.html" class="tsd-signature-type">Store</a></li>
+					<li><a href="../interfaces/unifiedactivestore.html" class="tsd-signature-type">UnifiedActiveStore</a></li>
 					<li><a href="../interfaces/collectionstorageprovider.html" class="tsd-signature-type">CollectionStorageProvider</a></li>
 				</ul>
 			</section>
@@ -165,6 +166,7 @@
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-get-signature tsd-parent-kind-class tsd-is-overwrite tsd-is-not-exported"><a href="firebasecollection.html#_haslocalchanges" class="tsd-kind-icon">_has<wbr>Local<wbr>Changes</a></li>
 								<li class="tsd-kind-get-signature tsd-parent-kind-class tsd-is-inherited tsd-is-not-exported"><a href="firebasecollection.html#apichannelmappingid" class="tsd-kind-icon">api<wbr>Channel<wbr>Mapping<wbr>Id</a></li>
+								<li class="tsd-kind-get-signature tsd-parent-kind-class tsd-is-inherited tsd-is-not-exported"><a href="firebasecollection.html#basestore" class="tsd-kind-icon">base<wbr>Store</a></li>
 								<li class="tsd-kind-get-signature tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited tsd-is-not-exported"><a href="firebasecollection.html#storagekey" class="tsd-kind-icon">storage<wbr>Key</a></li>
 								<li class="tsd-kind-get-signature tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited tsd-is-not-exported"><a href="firebasecollection.html#type" class="tsd-kind-icon">type</a></li>
 								<li class="tsd-kind-get-signature tsd-parent-kind-class tsd-is-not-exported"><a href="firebasecollection.html#versionfortesting" class="tsd-kind-icon">version<wbr>For<wbr>Testing</a></li>
@@ -179,6 +181,7 @@
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-not-exported"><a href="firebasecollection.html#_persistchangesimpl" class="tsd-kind-icon">_persist<wbr>Changes<wbr>Impl</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-not-exported"><a href="firebasecollection.html#_tolist" class="tsd-kind-icon">_to<wbr>List</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-not-exported"><a href="firebasecollection.html#_transaction" class="tsd-kind-icon">_transaction</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited tsd-is-not-exported"><a href="firebasecollection.html#activate" class="tsd-kind-icon">activate</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-not-exported"><a href="firebasecollection.html#backingtype" class="tsd-kind-icon">backing<wbr>Type</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-not-exported"><a href="firebasecollection.html#casttostoragestub" class="tsd-kind-icon">cast<wbr>ToStorage<wbr>Stub</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-not-exported"><a href="firebasecollection.html#clonefrom" class="tsd-kind-icon">clone<wbr>From</a></li>
@@ -191,8 +194,8 @@
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-not-exported"><a href="firebasecollection.html#legacyoff" class="tsd-kind-icon">legacy<wbr>Off</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-not-exported"><a href="firebasecollection.html#legacyon" class="tsd-kind-icon">legacy<wbr>On</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-not-exported"><a href="firebasecollection.html#modelforsynchronization" class="tsd-kind-icon">model<wbr>For<wbr>Synchronization</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited tsd-is-not-exported"><a href="firebasecollection.html#off" class="tsd-kind-icon">off</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited tsd-is-not-exported"><a href="firebasecollection.html#on" class="tsd-kind-icon">on</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-not-exported"><a href="firebasecollection.html#off" class="tsd-kind-icon">off</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-not-exported"><a href="firebasecollection.html#on" class="tsd-kind-icon">on</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-not-exported"><a href="firebasecollection.html#remotestatechanged" class="tsd-kind-icon">remote<wbr>State<wbr>Changed</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-not-exported"><a href="firebasecollection.html#remove" class="tsd-kind-icon">remove</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-not-exported"><a href="firebasecollection.html#removemultiple" class="tsd-kind-icon">remove<wbr>Multiple</a></li>
@@ -221,7 +224,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="firebasestorageprovider.html">FirebaseStorageProvider</a>.<a href="firebasestorageprovider.html#constructor">constructor</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9ffa03c/src/runtime/storage/firebase/firebase-storage.ts#L656">src/runtime/storage/firebase/firebase-storage.ts:656</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/7e75718/src/runtime/storage/firebase/firebase-storage.ts#L656">src/runtime/storage/firebase/firebase-storage.ts:656</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -257,7 +260,7 @@
 						<p>Implementation of <a href="../interfaces/collectionstorageprovider.html">CollectionStorageProvider</a>.<a href="../interfaces/collectionstorageprovider.html#_storagekey">_storageKey</a></p>
 						<p>Inherited from <a href="storageproviderbase.html">StorageProviderBase</a>.<a href="storageproviderbase.html#_storagekey">_storageKey</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9ffa03c/src/runtime/storage/storage-provider-base.ts#L114">src/runtime/storage/storage-provider-base.ts:114</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/7e75718/src/runtime/storage/storage-provider-base.ts#L114">src/runtime/storage/storage-provider-base.ts:114</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -267,7 +270,7 @@
 					<div class="tsd-signature tsd-kind-icon">add<wbr>Suppressions<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Map</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">object</span><span class="tsd-signature-symbol">&gt;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9ffa03c/src/runtime/storage/firebase/firebase-storage.ts#L649">src/runtime/storage/firebase/firebase-storage.ts:649</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/7e75718/src/runtime/storage/firebase/firebase-storage.ts#L649">src/runtime/storage/firebase/firebase-storage.ts:649</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -280,7 +283,7 @@
 						<p>Inherited from <a href="firebasestorageprovider.html">FirebaseStorageProvider</a>.<a href="firebasestorageprovider.html#backingstore">backingStore</a></p>
 						<p>Overrides <a href="storageproviderbase.html">StorageProviderBase</a>.<a href="storageproviderbase.html#backingstore">backingStore</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9ffa03c/src/runtime/storage/firebase/firebase-storage.ts#L253">src/runtime/storage/firebase/firebase-storage.ts:253</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/7e75718/src/runtime/storage/firebase/firebase-storage.ts#L253">src/runtime/storage/firebase/firebase-storage.ts:253</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -292,7 +295,7 @@
 						<p>Implementation of <a href="../interfaces/collectionstorageprovider.html">CollectionStorageProvider</a>.<a href="../interfaces/collectionstorageprovider.html#claims">claims</a></p>
 						<p>Inherited from <a href="storageproviderbase.html">StorageProviderBase</a>.<a href="storageproviderbase.html#claims">claims</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9ffa03c/src/runtime/storage/storage-provider-base.ts#L124">src/runtime/storage/storage-provider-base.ts:124</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/7e75718/src/runtime/storage/storage-provider-base.ts#L124">src/runtime/storage/storage-provider-base.ts:124</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -310,7 +313,7 @@
 						<p>Inherited from <a href="storageproviderbase.html">StorageProviderBase</a>.<a href="storageproviderbase.html#description">description</a></p>
 						<p>Overrides <a href="unifiedstore.html">UnifiedStore</a>.<a href="unifiedstore.html#description">description</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9ffa03c/src/runtime/storage/storage-provider-base.ts#L122">src/runtime/storage/storage-provider-base.ts:122</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/7e75718/src/runtime/storage/storage-provider-base.ts#L122">src/runtime/storage/storage-provider-base.ts:122</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -323,7 +326,7 @@
 						<p>Inherited from <a href="storageproviderbase.html">StorageProviderBase</a>.<a href="storageproviderbase.html#id">id</a></p>
 						<p>Overrides <a href="unifiedstore.html">UnifiedStore</a>.<a href="unifiedstore.html#id">id</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9ffa03c/src/runtime/storage/storage-provider-base.ts#L118">src/runtime/storage/storage-provider-base.ts:118</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/7e75718/src/runtime/storage/storage-provider-base.ts#L118">src/runtime/storage/storage-provider-base.ts:118</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -333,7 +336,7 @@
 					<div class="tsd-signature tsd-kind-icon">initialized<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9ffa03c/src/runtime/storage/firebase/firebase-storage.ts#L652">src/runtime/storage/firebase/firebase-storage.ts:652</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/7e75718/src/runtime/storage/firebase/firebase-storage.ts#L652">src/runtime/storage/firebase/firebase-storage.ts:652</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -343,7 +346,7 @@
 					<div class="tsd-signature tsd-kind-icon">local<wbr>Changes<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Map</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">object</span><span class="tsd-signature-symbol">&gt;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9ffa03c/src/runtime/storage/firebase/firebase-storage.ts#L648">src/runtime/storage/firebase/firebase-storage.ts:648</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/7e75718/src/runtime/storage/firebase/firebase-storage.ts#L648">src/runtime/storage/firebase/firebase-storage.ts:648</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -353,7 +356,7 @@
 					<div class="tsd-signature tsd-kind-icon">local<wbr>Key<wbr>Id<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> =&nbsp;Date.now()</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9ffa03c/src/runtime/storage/firebase/firebase-storage.ts#L655">src/runtime/storage/firebase/firebase-storage.ts:655</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/7e75718/src/runtime/storage/firebase/firebase-storage.ts#L655">src/runtime/storage/firebase/firebase-storage.ts:655</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -363,7 +366,7 @@
 					<div class="tsd-signature tsd-kind-icon">model<span class="tsd-signature-symbol">:</span> <a href="crdtcollectionmodel.html" class="tsd-signature-type">CrdtCollectionModel</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9ffa03c/src/runtime/storage/firebase/firebase-storage.ts#L650">src/runtime/storage/firebase/firebase-storage.ts:650</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/7e75718/src/runtime/storage/firebase/firebase-storage.ts#L650">src/runtime/storage/firebase/firebase-storage.ts:650</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -376,7 +379,7 @@
 						<p>Inherited from <a href="storageproviderbase.html">StorageProviderBase</a>.<a href="storageproviderbase.html#name">name</a></p>
 						<p>Overrides <a href="unifiedstore.html">UnifiedStore</a>.<a href="unifiedstore.html#name">name</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9ffa03c/src/runtime/storage/storage-provider-base.ts#L120">src/runtime/storage/storage-provider-base.ts:120</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/7e75718/src/runtime/storage/storage-provider-base.ts#L120">src/runtime/storage/storage-provider-base.ts:120</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -388,7 +391,7 @@
 						<p>Implementation of <a href="../interfaces/collectionstorageprovider.html">CollectionStorageProvider</a>.<a href="../interfaces/collectionstorageprovider.html#originalid">originalId</a></p>
 						<p>Inherited from <a href="storageproviderbase.html">StorageProviderBase</a>.<a href="storageproviderbase.html#originalid">originalId</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9ffa03c/src/runtime/storage/storage-provider-base.ts#L119">src/runtime/storage/storage-provider-base.ts:119</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/7e75718/src/runtime/storage/storage-provider-base.ts#L119">src/runtime/storage/storage-provider-base.ts:119</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -398,7 +401,7 @@
 					<div class="tsd-signature tsd-kind-icon">pending<wbr>Writes<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> =&nbsp;[]</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9ffa03c/src/runtime/storage/firebase/firebase-storage.ts#L653">src/runtime/storage/firebase/firebase-storage.ts:653</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/7e75718/src/runtime/storage/firebase/firebase-storage.ts#L653">src/runtime/storage/firebase/firebase-storage.ts:653</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -409,7 +412,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="firebasestorageprovider.html">FirebaseStorageProvider</a>.<a href="firebasestorageprovider.html#persisting">persisting</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9ffa03c/src/runtime/storage/firebase/firebase-storage.ts#L251">src/runtime/storage/firebase/firebase-storage.ts:251</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/7e75718/src/runtime/storage/firebase/firebase-storage.ts#L251">src/runtime/storage/firebase/firebase-storage.ts:251</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -420,7 +423,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="firebasestorageprovider.html">FirebaseStorageProvider</a>.<a href="firebasestorageprovider.html#reference">reference</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9ffa03c/src/runtime/storage/firebase/firebase-storage.ts#L252">src/runtime/storage/firebase/firebase-storage.ts:252</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/7e75718/src/runtime/storage/firebase/firebase-storage.ts#L252">src/runtime/storage/firebase/firebase-storage.ts:252</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -433,7 +436,7 @@
 						<p>Inherited from <a href="storageproviderbase.html">StorageProviderBase</a>.<a href="storageproviderbase.html#referencemode">referenceMode</a></p>
 						<p>Overrides <a href="unifiedstore.html">UnifiedStore</a>.<a href="unifiedstore.html#referencemode">referenceMode</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9ffa03c/src/runtime/storage/storage-provider-base.ts#L115">src/runtime/storage/storage-provider-base.ts:115</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/7e75718/src/runtime/storage/storage-provider-base.ts#L115">src/runtime/storage/storage-provider-base.ts:115</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -443,7 +446,7 @@
 					<div class="tsd-signature tsd-kind-icon">remote<wbr>State<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9ffa03c/src/runtime/storage/firebase/firebase-storage.ts#L651">src/runtime/storage/firebase/firebase-storage.ts:651</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/7e75718/src/runtime/storage/firebase/firebase-storage.ts#L651">src/runtime/storage/firebase/firebase-storage.ts:651</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-type-declaration">
@@ -461,7 +464,7 @@
 					<div class="tsd-signature tsd-kind-icon">resolve<wbr>Initialized<span class="tsd-signature-symbol">:</span> <a href="../globals.html#runnable" class="tsd-signature-type">Runnable</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9ffa03c/src/runtime/storage/firebase/firebase-storage.ts#L654">src/runtime/storage/firebase/firebase-storage.ts:654</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/7e75718/src/runtime/storage/firebase/firebase-storage.ts#L654">src/runtime/storage/firebase/firebase-storage.ts:654</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -474,7 +477,7 @@
 						<p>Inherited from <a href="storageproviderbase.html">StorageProviderBase</a>.<a href="storageproviderbase.html#source">source</a></p>
 						<p>Overrides <a href="unifiedstore.html">UnifiedStore</a>.<a href="unifiedstore.html#source">source</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9ffa03c/src/runtime/storage/storage-provider-base.ts#L121">src/runtime/storage/storage-provider-base.ts:121</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/7e75718/src/runtime/storage/storage-provider-base.ts#L121">src/runtime/storage/storage-provider-base.ts:121</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -485,7 +488,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="firebasestorageprovider.html">FirebaseStorageProvider</a>.<a href="firebasestorageprovider.html#storageengine">storageEngine</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9ffa03c/src/runtime/storage/firebase/firebase-storage.ts#L254">src/runtime/storage/firebase/firebase-storage.ts:254</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/7e75718/src/runtime/storage/firebase/firebase-storage.ts#L254">src/runtime/storage/firebase/firebase-storage.ts:254</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -498,7 +501,7 @@
 						<p>Inherited from <a href="storageproviderbase.html">StorageProviderBase</a>.<a href="storageproviderbase.html#unifiedstoretype">unifiedStoreType</a></p>
 						<p>Overrides <a href="unifiedstore.html">UnifiedStore</a>.<a href="unifiedstore.html#unifiedstoretype">unifiedStoreType</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9ffa03c/src/runtime/storage/storage-provider-base.ts#L107">src/runtime/storage/storage-provider-base.ts:107</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/7e75718/src/runtime/storage/storage-provider-base.ts#L107">src/runtime/storage/storage-provider-base.ts:107</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -508,7 +511,7 @@
 					<div class="tsd-signature tsd-kind-icon">value<wbr>Change<wbr>Callback<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">function</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9ffa03c/src/runtime/storage/firebase/firebase-storage.ts#L656">src/runtime/storage/firebase/firebase-storage.ts:656</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/7e75718/src/runtime/storage/firebase/firebase-storage.ts#L656">src/runtime/storage/firebase/firebase-storage.ts:656</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-type-declaration">
@@ -545,7 +548,7 @@
 						<p>Inherited from <a href="storageproviderbase.html">StorageProviderBase</a>.<a href="storageproviderbase.html#version">version</a></p>
 						<p>Overrides <a href="unifiedstore.html">UnifiedStore</a>.<a href="unifiedstore.html#version">version</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9ffa03c/src/runtime/storage/storage-provider-base.ts#L117">src/runtime/storage/storage-provider-base.ts:117</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/7e75718/src/runtime/storage/storage-provider-base.ts#L117">src/runtime/storage/storage-provider-base.ts:117</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -563,7 +566,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="firebasestorageprovider.html">FirebaseStorageProvider</a>.<a href="firebasestorageprovider.html#_haslocalchanges">_hasLocalChanges</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9ffa03c/src/runtime/storage/firebase/firebase-storage.ts#L952">src/runtime/storage/firebase/firebase-storage.ts:952</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/7e75718/src/runtime/storage/firebase/firebase-storage.ts#L952">src/runtime/storage/firebase/firebase-storage.ts:952</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
@@ -581,10 +584,28 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="storageproviderbase.html">StorageProviderBase</a>.<a href="storageproviderbase.html#apichannelmappingid">apiChannelMappingId</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9ffa03c/src/runtime/storage/storage-provider-base.ts#L223">src/runtime/storage/storage-provider-base.ts:223</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/7e75718/src/runtime/storage/storage-provider-base.ts#L235">src/runtime/storage/storage-provider-base.ts:235</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class tsd-is-inherited tsd-is-not-exported">
+					<a name="basestore" class="tsd-anchor"></a>
+					<h3>base<wbr>Store</h3>
+					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class tsd-is-inherited tsd-is-not-exported">
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> baseStore<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="storageproviderbase.html" class="tsd-signature-type">StorageProviderBase</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from <a href="storageproviderbase.html">StorageProviderBase</a>.<a href="storageproviderbase.html#basestore">baseStore</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/7e75718/src/runtime/storage/storage-provider-base.ts#L145">src/runtime/storage/storage-provider-base.ts:145</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <a href="storageproviderbase.html" class="tsd-signature-type">StorageProviderBase</a></h4>
 						</li>
 					</ul>
 				</section>
@@ -600,7 +621,7 @@
 								<p>Inherited from <a href="storageproviderbase.html">StorageProviderBase</a>.<a href="storageproviderbase.html#storagekey">storageKey</a></p>
 								<p>Overrides <a href="unifiedstore.html">UnifiedStore</a>.<a href="unifiedstore.html#storagekey">storageKey</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9ffa03c/src/runtime/storage/storage-provider-base.ts#L142">src/runtime/storage/storage-provider-base.ts:142</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/7e75718/src/runtime/storage/storage-provider-base.ts#L149">src/runtime/storage/storage-provider-base.ts:149</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
@@ -619,7 +640,7 @@
 								<p>Inherited from <a href="storageproviderbase.html">StorageProviderBase</a>.<a href="storageproviderbase.html#type">type</a></p>
 								<p>Overrides <a href="unifiedstore.html">UnifiedStore</a>.<a href="unifiedstore.html#type">type</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9ffa03c/src/runtime/storage/storage-provider-base.ts#L146">src/runtime/storage/storage-provider-base.ts:146</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/7e75718/src/runtime/storage/storage-provider-base.ts#L153">src/runtime/storage/storage-provider-base.ts:153</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <a href="type.html" class="tsd-signature-type">Type</a></h4>
@@ -636,7 +657,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9ffa03c/src/runtime/storage/firebase/firebase-storage.ts#L828">src/runtime/storage/firebase/firebase-storage.ts:828</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/7e75718/src/runtime/storage/firebase/firebase-storage.ts#L828">src/runtime/storage/firebase/firebase-storage.ts:828</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
@@ -658,7 +679,7 @@
 								<p>Implementation of <a href="../interfaces/collectionstorageprovider.html">CollectionStorageProvider</a>.<a href="../interfaces/collectionstorageprovider.html#_compareto">_compareTo</a></p>
 								<p>Inherited from <a href="unifiedstore.html">UnifiedStore</a>.<a href="unifiedstore.html#_compareto">_compareTo</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9ffa03c/src/runtime/storageNG/unified-store.ts#L85">src/runtime/storageNG/unified-store.ts:85</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/7e75718/src/runtime/storageNG/unified-store.ts#L74">src/runtime/storageNG/unified-store.ts:74</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -683,7 +704,7 @@
 								<p>Implementation of <a href="../interfaces/collectionstorageprovider.html">CollectionStorageProvider</a>.<a href="../interfaces/collectionstorageprovider.html#_fire">_fire</a></p>
 								<p>Inherited from <a href="storageproviderbase.html">StorageProviderBase</a>.<a href="storageproviderbase.html#_fire">_fire</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9ffa03c/src/runtime/storage/storage-provider-base.ts#L181">src/runtime/storage/storage-provider-base.ts:181</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/7e75718/src/runtime/storage/storage-provider-base.ts#L193">src/runtime/storage/storage-provider-base.ts:193</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -712,7 +733,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="firebasestorageprovider.html">FirebaseStorageProvider</a>.<a href="firebasestorageprovider.html#_persistchanges">_persistChanges</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9ffa03c/src/runtime/storage/firebase/firebase-storage.ts#L328">src/runtime/storage/firebase/firebase-storage.ts:328</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/7e75718/src/runtime/storage/firebase/firebase-storage.ts#L328">src/runtime/storage/firebase/firebase-storage.ts:328</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -730,7 +751,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="firebasestorageprovider.html">FirebaseStorageProvider</a>.<a href="firebasestorageprovider.html#_persistchangesimpl">_persistChangesImpl</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9ffa03c/src/runtime/storage/firebase/firebase-storage.ts#L956">src/runtime/storage/firebase/firebase-storage.ts:956</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/7e75718/src/runtime/storage/firebase/firebase-storage.ts#L956">src/runtime/storage/firebase/firebase-storage.ts:956</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -747,7 +768,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9ffa03c/src/runtime/storage/firebase/firebase-storage.ts#L1062">src/runtime/storage/firebase/firebase-storage.ts:1062</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/7e75718/src/runtime/storage/firebase/firebase-storage.ts#L1062">src/runtime/storage/firebase/firebase-storage.ts:1062</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/serializedmodelentry.html" class="tsd-signature-type">SerializedModelEntry</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -765,7 +786,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="firebasestorageprovider.html">FirebaseStorageProvider</a>.<a href="firebasestorageprovider.html#_transaction">_transaction</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9ffa03c/src/runtime/storage/firebase/firebase-storage.ts#L301">src/runtime/storage/firebase/firebase-storage.ts:301</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/7e75718/src/runtime/storage/firebase/firebase-storage.ts#L301">src/runtime/storage/firebase/firebase-storage.ts:301</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -775,6 +796,26 @@
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited tsd-is-not-exported">
+					<a name="activate" class="tsd-anchor"></a>
+					<h3>activate</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited tsd-is-not-exported">
+						<li class="tsd-signature tsd-kind-icon">activate<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/unifiedactivestore.html" class="tsd-signature-type">UnifiedActiveStore</a><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Implementation of <a href="../interfaces/collectionstorageprovider.html">CollectionStorageProvider</a>.<a href="../interfaces/collectionstorageprovider.html#activate">activate</a></p>
+								<p>Inherited from <a href="storageproviderbase.html">StorageProviderBase</a>.<a href="storageproviderbase.html#activate">activate</a></p>
+								<p>Overrides <a href="unifiedstore.html">UnifiedStore</a>.<a href="unifiedstore.html#activate">activate</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/7e75718/src/runtime/storage/storage-provider-base.ts#L184">src/runtime/storage/storage-provider-base.ts:184</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/unifiedactivestore.html" class="tsd-signature-type">UnifiedActiveStore</a><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -789,7 +830,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="firebasestorageprovider.html">FirebaseStorageProvider</a>.<a href="firebasestorageprovider.html#backingtype">backingType</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9ffa03c/src/runtime/storage/firebase/firebase-storage.ts#L701">src/runtime/storage/firebase/firebase-storage.ts:701</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/7e75718/src/runtime/storage/firebase/firebase-storage.ts#L701">src/runtime/storage/firebase/firebase-storage.ts:701</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <a href="type.html" class="tsd-signature-type">Type</a></h4>
@@ -808,7 +849,7 @@
 								<p>Implementation of <a href="../interfaces/collectionstorageprovider.html">CollectionStorageProvider</a>.<a href="../interfaces/collectionstorageprovider.html#casttostoragestub">castToStorageStub</a></p>
 								<p>Inherited from <a href="unifiedstore.html">UnifiedStore</a>.<a href="unifiedstore.html#casttostoragestub">castToStorageStub</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9ffa03c/src/runtime/storageNG/unified-store.ts#L73">src/runtime/storageNG/unified-store.ts:73</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/7e75718/src/runtime/storageNG/unified-store.ts#L62">src/runtime/storageNG/unified-store.ts:62</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -833,7 +874,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="storageproviderbase.html">StorageProviderBase</a>.<a href="storageproviderbase.html#clonefrom">cloneFrom</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9ffa03c/src/runtime/storage/firebase/firebase-storage.ts#L1118">src/runtime/storage/firebase/firebase-storage.ts:1118</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/7e75718/src/runtime/storage/firebase/firebase-storage.ts#L1118">src/runtime/storage/firebase/firebase-storage.ts:1118</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -858,7 +899,7 @@
 								<p>Implementation of <a href="../interfaces/collectionstorageprovider.html">CollectionStorageProvider</a>.<a href="../interfaces/collectionstorageprovider.html#dispose">dispose</a></p>
 								<p>Overrides <a href="storageproviderbase.html">StorageProviderBase</a>.<a href="storageproviderbase.html#dispose">dispose</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9ffa03c/src/runtime/storage/firebase/firebase-storage.ts#L697">src/runtime/storage/firebase/firebase-storage.ts:697</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/7e75718/src/runtime/storage/firebase/firebase-storage.ts#L697">src/runtime/storage/firebase/firebase-storage.ts:697</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -877,7 +918,7 @@
 								<p>Implementation of <a href="../interfaces/collectionstorageprovider.html">CollectionStorageProvider</a>.<a href="../interfaces/collectionstorageprovider.html#enablereferencemode">enableReferenceMode</a></p>
 								<p>Inherited from <a href="storageproviderbase.html">StorageProviderBase</a>.<a href="storageproviderbase.html#enablereferencemode">enableReferenceMode</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9ffa03c/src/runtime/storage/storage-provider-base.ts#L138">src/runtime/storage/storage-provider-base.ts:138</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/7e75718/src/runtime/storage/storage-provider-base.ts#L138">src/runtime/storage/storage-provider-base.ts:138</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -897,7 +938,7 @@
 								<p>Inherited from <a href="firebasestorageprovider.html">FirebaseStorageProvider</a>.<a href="firebasestorageprovider.html#ensurebackingstore">ensureBackingStore</a></p>
 								<p>Overrides <a href="storageproviderbase.html">StorageProviderBase</a>.<a href="storageproviderbase.html#ensurebackingstore">ensureBackingStore</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9ffa03c/src/runtime/storage/firebase/firebase-storage.ts#L274">src/runtime/storage/firebase/firebase-storage.ts:274</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/7e75718/src/runtime/storage/firebase/firebase-storage.ts#L274">src/runtime/storage/firebase/firebase-storage.ts:274</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="firebasebackingstore.html" class="tsd-signature-type">FirebaseBackingStore</a><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -914,7 +955,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9ffa03c/src/runtime/storage/firebase/firebase-storage.ts#L1151">src/runtime/storage/firebase/firebase-storage.ts:1151</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/7e75718/src/runtime/storage/firebase/firebase-storage.ts#L1151">src/runtime/storage/firebase/firebase-storage.ts:1151</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -946,7 +987,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/collectionstorageprovider.html">CollectionStorageProvider</a>.<a href="../interfaces/collectionstorageprovider.html#get">get</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9ffa03c/src/runtime/storage/firebase/firebase-storage.ts#L832">src/runtime/storage/firebase/firebase-storage.ts:832</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/7e75718/src/runtime/storage/firebase/firebase-storage.ts#L832">src/runtime/storage/firebase/firebase-storage.ts:832</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -970,7 +1011,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/collectionstorageprovider.html">CollectionStorageProvider</a>.<a href="../interfaces/collectionstorageprovider.html#getmultiple">getMultiple</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9ffa03c/src/runtime/storage/firebase/firebase-storage.ts#L1097">src/runtime/storage/firebase/firebase-storage.ts:1097</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/7e75718/src/runtime/storage/firebase/firebase-storage.ts#L1097">src/runtime/storage/firebase/firebase-storage.ts:1097</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -995,7 +1036,7 @@
 								<p>Implementation of <a href="../interfaces/collectionstorageprovider.html">CollectionStorageProvider</a>.<a href="../interfaces/collectionstorageprovider.html#legacyoff">legacyOff</a></p>
 								<p>Inherited from <a href="storageproviderbase.html">StorageProviderBase</a>.<a href="storageproviderbase.html#legacyoff">legacyOff</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9ffa03c/src/runtime/storage/storage-provider-base.ts#L173">src/runtime/storage/storage-provider-base.ts:173</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/7e75718/src/runtime/storage/storage-provider-base.ts#L180">src/runtime/storage/storage-provider-base.ts:180</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1020,7 +1061,7 @@
 								<p>Implementation of <a href="../interfaces/collectionstorageprovider.html">CollectionStorageProvider</a>.<a href="../interfaces/collectionstorageprovider.html#legacyon">legacyOn</a></p>
 								<p>Inherited from <a href="storageproviderbase.html">StorageProviderBase</a>.<a href="storageproviderbase.html#legacyon">legacyOn</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9ffa03c/src/runtime/storage/storage-provider-base.ts#L167">src/runtime/storage/storage-provider-base.ts:167</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/7e75718/src/runtime/storage/storage-provider-base.ts#L174">src/runtime/storage/storage-provider-base.ts:174</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1045,17 +1086,17 @@
 								<p>Implementation of <a href="../interfaces/collectionstorageprovider.html">CollectionStorageProvider</a>.<a href="../interfaces/collectionstorageprovider.html#modelforsynchronization">modelForSynchronization</a></p>
 								<p>Overrides <a href="storageproviderbase.html">StorageProviderBase</a>.<a href="storageproviderbase.html#modelforsynchronization">modelForSynchronization</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9ffa03c/src/runtime/storage/firebase/firebase-storage.ts#L1088">src/runtime/storage/firebase/firebase-storage.ts:1088</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/7e75718/src/runtime/storage/firebase/firebase-storage.ts#L1088">src/runtime/storage/firebase/firebase-storage.ts:1088</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">object</span><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited tsd-is-not-exported">
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-not-exported">
 					<a name="off" class="tsd-anchor"></a>
 					<h3>off</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited tsd-is-not-exported">
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-not-exported">
 						<li class="tsd-signature tsd-kind-icon">off<span class="tsd-signature-symbol">(</span>callbackId<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
@@ -1063,9 +1104,8 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/collectionstorageprovider.html">CollectionStorageProvider</a>.<a href="../interfaces/collectionstorageprovider.html#off">off</a></p>
 								<p>Inherited from <a href="storageproviderbase.html">StorageProviderBase</a>.<a href="storageproviderbase.html#off">off</a></p>
-								<p>Overrides <a href="unifiedstore.html">UnifiedStore</a>.<a href="unifiedstore.html#off">off</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9ffa03c/src/runtime/storage/storage-provider-base.ts#L161">src/runtime/storage/storage-provider-base.ts:161</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/7e75718/src/runtime/storage/storage-provider-base.ts#L168">src/runtime/storage/storage-provider-base.ts:168</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1078,10 +1118,10 @@
 						</li>
 					</ul>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited tsd-is-not-exported">
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-not-exported">
 					<a name="on" class="tsd-anchor"></a>
 					<h3>on</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited tsd-is-not-exported">
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-not-exported">
 						<li class="tsd-signature tsd-kind-icon">on<span class="tsd-signature-symbol">(</span>callback<span class="tsd-signature-symbol">: </span><a href="../globals.html#proxycallback" class="tsd-signature-type">ProxyCallback</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">null</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
@@ -1089,9 +1129,8 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/collectionstorageprovider.html">CollectionStorageProvider</a>.<a href="../interfaces/collectionstorageprovider.html#on">on</a></p>
 								<p>Inherited from <a href="storageproviderbase.html">StorageProviderBase</a>.<a href="storageproviderbase.html#on">on</a></p>
-								<p>Overrides <a href="unifiedstore.html">UnifiedStore</a>.<a href="unifiedstore.html#on">on</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9ffa03c/src/runtime/storage/storage-provider-base.ts#L155">src/runtime/storage/storage-provider-base.ts:155</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/7e75718/src/runtime/storage/storage-provider-base.ts#L162">src/runtime/storage/storage-provider-base.ts:162</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1114,7 +1153,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9ffa03c/src/runtime/storage/firebase/firebase-storage.ts#L705">src/runtime/storage/firebase/firebase-storage.ts:705</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/7e75718/src/runtime/storage/firebase/firebase-storage.ts#L705">src/runtime/storage/firebase/firebase-storage.ts:705</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1137,7 +1176,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9ffa03c/src/runtime/storage/firebase/firebase-storage.ts#L885">src/runtime/storage/firebase/firebase-storage.ts:885</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/7e75718/src/runtime/storage/firebase/firebase-storage.ts#L885">src/runtime/storage/firebase/firebase-storage.ts:885</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1166,7 +1205,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9ffa03c/src/runtime/storage/firebase/firebase-storage.ts#L845">src/runtime/storage/firebase/firebase-storage.ts:845</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/7e75718/src/runtime/storage/firebase/firebase-storage.ts#L845">src/runtime/storage/firebase/firebase-storage.ts:845</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1195,7 +1234,7 @@
 								<p>Inherited from <a href="storageproviderbase.html">StorageProviderBase</a>.<a href="storageproviderbase.html#reportexceptioninhost">reportExceptionInHost</a></p>
 								<p>Overrides <a href="unifiedstore.html">UnifiedStore</a>.<a href="unifiedstore.html#reportexceptioninhost">reportExceptionInHost</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9ffa03c/src/runtime/storage/storage-provider-base.ts#L150">src/runtime/storage/storage-provider-base.ts:150</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/7e75718/src/runtime/storage/storage-provider-base.ts#L157">src/runtime/storage/storage-provider-base.ts:157</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1218,7 +1257,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9ffa03c/src/runtime/storage/firebase/firebase-storage.ts#L918">src/runtime/storage/firebase/firebase-storage.ts:918</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/7e75718/src/runtime/storage/firebase/firebase-storage.ts#L918">src/runtime/storage/firebase/firebase-storage.ts:918</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1247,7 +1286,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9ffa03c/src/runtime/storage/firebase/firebase-storage.ts#L1103">src/runtime/storage/firebase/firebase-storage.ts:1103</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/7e75718/src/runtime/storage/firebase/firebase-storage.ts#L1103">src/runtime/storage/firebase/firebase-storage.ts:1103</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1277,7 +1316,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/collectionstorageprovider.html">CollectionStorageProvider</a>.<a href="../interfaces/collectionstorageprovider.html#tolist">toList</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9ffa03c/src/runtime/storage/firebase/firebase-storage.ts#L1093">src/runtime/storage/firebase/firebase-storage.ts:1093</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/7e75718/src/runtime/storage/firebase/firebase-storage.ts#L1093">src/runtime/storage/firebase/firebase-storage.ts:1093</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/modelvalue.html" class="tsd-signature-type">ModelValue</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -1296,7 +1335,7 @@
 								<p>Implementation of <a href="../interfaces/collectionstorageprovider.html">CollectionStorageProvider</a>.<a href="../interfaces/collectionstorageprovider.html#toliteral">toLiteral</a></p>
 								<p>Overrides <a href="storageproviderbase.html">StorageProviderBase</a>.<a href="storageproviderbase.html#toliteral">toLiteral</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9ffa03c/src/runtime/storage/firebase/firebase-storage.ts#L1140">src/runtime/storage/firebase/firebase-storage.ts:1140</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/7e75718/src/runtime/storage/firebase/firebase-storage.ts#L1140">src/runtime/storage/firebase/firebase-storage.ts:1140</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">object</span><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -1316,7 +1355,7 @@
 								<p>Inherited from <a href="storageproviderbase.html">StorageProviderBase</a>.<a href="storageproviderbase.html#tostring">toString</a></p>
 								<p>Overrides <a href="unifiedstore.html">UnifiedStore</a>.<a href="unifiedstore.html#tostring">toString</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9ffa03c/src/runtime/storage/storage-provider-base.ts#L196">src/runtime/storage/storage-provider-base.ts:196</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/7e75718/src/runtime/storage/storage-provider-base.ts#L208">src/runtime/storage/storage-provider-base.ts:208</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1340,7 +1379,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="firebasestorageprovider.html">FirebaseStorageProvider</a>.<a href="firebasestorageprovider.html#newprovider">newProvider</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/9ffa03c/src/runtime/storage/firebase/firebase-storage.ts#L288">src/runtime/storage/firebase/firebase-storage.ts:288</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/7e75718/src/runtime/storage/firebase/firebase-storage.ts#L288">src/runtime/storage/firebase/firebase-storage.ts:288</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1473,6 +1512,9 @@
 							<li class=" tsd-kind-get-signature tsd-parent-kind-class tsd-is-inherited tsd-is-not-exported">
 								<a href="firebasecollection.html#apichannelmappingid" class="tsd-kind-icon">api<wbr>Channel<wbr>Mapping<wbr>Id</a>
 							</li>
+							<li class=" tsd-kind-get-signature tsd-parent-kind-class tsd-is-inherited tsd-is-not-exported">
+								<a href="firebasecollection.html#basestore" class="tsd-kind-icon">base<wbr>Store</a>
+							</li>
 							<li class=" tsd-kind-get-signature tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited tsd-is-not-exported">
 								<a href="firebasecollection.html#storagekey" class="tsd-kind-icon">storage<wbr>Key</a>
 							</li>
@@ -1499,6 +1541,9 @@
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-not-exported">
 								<a href="firebasecollection.html#_transaction" class="tsd-kind-icon">_transaction</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited tsd-is-not-exported">
+								<a href="firebasecollection.html#activate" class="tsd-kind-icon">activate</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-not-exported">
 								<a href="firebasecollection.html#backingtype" class="tsd-kind-icon">backing<wbr>Type</a>
@@ -1536,10 +1581,10 @@
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-not-exported">
 								<a href="firebasecollection.html#modelforsynchronization" class="tsd-kind-icon">model<wbr>For<wbr>Synchronization</a>
 							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited tsd-is-not-exported">
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-not-exported">
 								<a href="firebasecollection.html#off" class="tsd-kind-icon">off</a>
 							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited tsd-is-not-exported">
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-not-exported">
 								<a href="firebasecollection.html#on" class="tsd-kind-icon">on</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">

@@ -20,11 +20,16 @@ import { assert } from '../../platform/chai-web.js';
  */
 // TODO(lindner): make this more generic when we have a mocking toolkit available
 export class CallbackTracker {
-    constructor(storageProvider, expectedEvents = 0) {
+    constructor(expectedEvents) {
         this.expectedEvents = expectedEvents;
         // tslint:disable-next-line: no-any
         this.events = [];
-        storageProvider.on(async (val) => this.changeEvent(val));
+    }
+    static async create(store, expectedEvents = 0) {
+        const tracker = new CallbackTracker(expectedEvents);
+        const activeStore = await store.activate();
+        activeStore.on(async (val) => tracker.changeEvent(val));
+        return tracker;
     }
     // called for each change event
     // tslint:disable-next-line: no-any

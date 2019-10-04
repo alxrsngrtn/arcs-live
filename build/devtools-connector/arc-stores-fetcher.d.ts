@@ -14,7 +14,7 @@ export declare class ArcStoresFetcher {
     private arcDevtoolsChannel;
     private watchedHandles;
     constructor(arc: Arc, arcDevtoolsChannel: ArcDevtoolsChannel);
-    onRecipeInstantiated(): void;
+    onRecipeInstantiated(): Promise<void>;
     private listStores;
     private digestStores;
     private dereference;

@@ -33,20 +33,10 @@ export class Store extends UnifiedStore {
     toString(tags) {
         throw new Error('Method not implemented.');
     }
-    // tslint:disable-next-line no-any
-    async toLiteral() {
-        throw new Error('Method not implemented.');
-    }
-    cloneFrom(store) {
-        throw new Error('Method not implemented.');
-    }
-    on(callback) {
-        throw new Error('Method not implemented.');
-    }
-    off(callbackId) {
-        throw new Error('Method not implemented.');
-    }
     async activate() {
+        if (this.activeStore) {
+            return this.activeStore;
+        }
         if (Store.constructors.get(this.mode) == null) {
             throw new Error(`StorageMode ${this.mode} not yet implemented`);
         }
@@ -54,8 +44,9 @@ export class Store extends UnifiedStore {
         if (constructor == null) {
             throw new Error(`No constructor registered for mode ${this.mode}`);
         }
-        const activeStore = await constructor.construct(this.storageKey, this.exists, this.type, this.mode);
+        const activeStore = await constructor.construct(this.storageKey, this.exists, this.type, this.mode, this);
         this.exists = Exists.ShouldExist;
+        this.activeStore = activeStore;
         return activeStore;
     }
     // TODO(shans): DELETEME once we've switched to this storage stack

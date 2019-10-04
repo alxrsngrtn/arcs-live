@@ -189,7 +189,8 @@ export class Arc {
                 let serializedData = [];
                 if (!volatile) {
                     // TODO: include keys in serialized [big]collections?
-                    serializedData = (await store.toLiteral()).model.map((model) => {
+                    const activeStore = await store.activate();
+                    serializedData = (await activeStore.toLiteral()).model.map((model) => {
                         const { id, value } = model;
                         const index = model['index']; // TODO: Invalid Type
                         if (value == null) {
@@ -339,7 +340,7 @@ ${this.activeRecipe.toString()}`;
         await Promise.all(manifest.stores.map(async (storeStub) => {
             const tags = manifest.storeTags.get(storeStub);
             const store = await storeStub.castToStorageStub().inflate();
-            arc._registerStore(store, tags);
+            await arc._registerStore(store, tags);
         }));
         const recipe = manifest.activeRecipe.clone();
         const options = { errors: new Map() };
@@ -417,7 +418,7 @@ ${this.activeRecipe.toString()}`;
         const storeMap = new Map();
         for (const store of this._stores) {
             const clone = await arc.storageProviderFactory.construct(store.id, store.type, 'volatile');
-            await clone.cloneFrom(store);
+            await clone.cloneFrom(await store.activate());
             storeMap.set(store, clone);
             if (this.storeDescriptions.has(store)) {
                 arc.storeDescriptions.set(clone, this.storeDescriptions.get(store));
@@ -440,7 +441,7 @@ ${this.activeRecipe.toString()}`;
         }
         for (const v of storeMap.values()) {
             // FIXME: Tags
-            arc._registerStore(v, []);
+            await arc._registerStore(v, []);
         }
         return arc;
     }
@@ -509,7 +510,8 @@ ${this.activeRecipe.toString()}`;
                     const copiedStore = await copiedStoreRef.castToStorageStub().inflate(this.storageProviderFactory);
                     assert(copiedStore, `Cannot find store ${recipeHandle.id}`);
                     assert(copiedStore.version !== null, `Copied store ${recipeHandle.id} doesn't have version.`);
-                    await newStore.cloneFrom(copiedStore);
+                    const activeStore = await newStore.activate();
+                    await activeStore.cloneFrom(copiedStore);
                     this._tagStore(newStore, this.context.findStoreTags(copiedStoreRef));
                     newStore.name = copiedStore.name && `Copy of ${copiedStore.name}`;
                     const copiedStoreDesc = this.getStoreDescription(copiedStore);
@@ -541,7 +543,7 @@ ${this.activeRecipe.toString()}`;
                 if (typeof storageKey === 'string') {
                     const store = await this.storageProviderFactory.connect(recipeHandle.id, type, storageKey);
                     assert(store, `store '${recipeHandle.id}' was not found (${storageKey})`);
-                    this._registerStore(store, recipeHandle.tags);
+                    await this._registerStore(store, recipeHandle.tags);
                 }
                 else {
                     throw new Error('Need to implement storageNG code path here!');
@@ -559,7 +561,7 @@ ${this.activeRecipe.toString()}`;
             await this.pec.slotComposer.initializeRecipe(this, particles);
         }
         if (this.inspector) {
-            this.inspector.recipeInstantiated(particles, this.activeRecipe.toString());
+            await this.inspector.recipeInstantiated(particles, this.activeRecipe.toString());
         }
     }
     async createStore(type, name, id, tags, storageKey) {
@@ -583,27 +585,27 @@ ${this.activeRecipe.toString()}`;
         if (storageKey == undefined || hasVolatileTag(tags)) {
             storageKey = 'volatile';
         }
+        let store;
         if (typeof storageKey === 'string') {
-            const store = await this.storageProviderFactory.construct(id, type, storageKey);
+            store = await this.storageProviderFactory.construct(id, type, storageKey);
             assert(store, `failed to create store with id [${id}]`);
             store.name = name;
-            this._registerStore(store, tags);
-            return store;
         }
         else {
-            const store = new Store(storageKey, Exists.ShouldCreate, type, id, name);
-            this._registerStore(store, tags);
-            return store;
+            store = new Store(storageKey, Exists.ShouldCreate, type, id, name);
         }
+        await this._registerStore(store, tags);
+        return store;
     }
-    _registerStore(store, tags) {
+    async _registerStore(store, tags) {
         assert(!this.storesById.has(store.id), `Store already registered '${store.id}'`);
         tags = tags || [];
         tags = Array.isArray(tags) ? tags : [tags];
         this.storesById.set(store.id, store);
         this.storeTags.set(store, new Set(tags));
         this.storageKeys[store.id] = store.storageKey;
-        store.on(async () => this._onDataChange());
+        const activeStore = await store.activate();
+        activeStore.on(async () => this._onDataChange());
         Runtime.getRuntime().registerStore(store, tags);
     }
     _tagStore(store, tags) {

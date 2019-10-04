@@ -32,7 +32,7 @@ export declare class VolatileStorage extends StorageBase {
     localIDBase: number;
     constructor(arcId: Id);
     construct(id: string, type: Type, keyFragment: string): Promise<VolatileStorageProvider>;
-    _construct(id: any, type: any, keyFragment: any): Promise<VolatileCollection | VolatileBigCollection | VolatileSingleton>;
+    _construct(id: any, type: any, keyFragment: any): Promise<VolatileStorageProvider>;
     constructKey(keyFragment: string): string;
     connect(id: string, type: Type, key: string): Promise<VolatileStorageProvider>;
     baseStorageKey(type: Type): string;

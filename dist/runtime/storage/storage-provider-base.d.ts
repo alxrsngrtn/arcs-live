@@ -15,7 +15,7 @@ import { Store, BigCollectionStore, CollectionStore, SingletonStore } from '../s
 import { PropagatedException } from '../arc-exceptions.js';
 import { Dictionary, Consumer } from '../hot.js';
 import { ClaimIsTag } from '../particle-claim.js';
-import { UnifiedStore } from '../storageNG/unified-store.js';
+import { UnifiedStore, UnifiedActiveStore } from '../storageNG/unified-store.js';
 import { ProxyCallback } from '../storageNG/store.js';
 declare type Callback = Consumer<Dictionary<any>>;
 /**
@@ -42,7 +42,7 @@ export interface CollectionStorageProvider extends StorageProviderBase, Collecti
  */
 export interface BigCollectionStorageProvider extends StorageProviderBase, BigCollectionStore {
     cursorVersion(cursorId: number): any;
-    cloneFrom(store: UnifiedStore): any;
+    cloneFrom(store: UnifiedActiveStore): any;
     clearItemsForTesting(): void;
 }
 export declare abstract class StorageBase {
@@ -88,7 +88,7 @@ export declare class ChangeEvent {
 /**
  * Docs TBD
  */
-export declare abstract class StorageProviderBase extends UnifiedStore implements Store {
+export declare abstract class StorageProviderBase extends UnifiedStore implements Store, UnifiedActiveStore {
     protected unifiedStoreType: 'StorageProviderBase';
     private readonly legacyListeners;
     private nextCallbackId;
@@ -106,6 +106,7 @@ export declare abstract class StorageProviderBase extends UnifiedStore implement
     claims: ClaimIsTag[];
     protected constructor(type: Type, name: string, id: string, key: string);
     enableReferenceMode(): void;
+    readonly baseStore: StorageProviderBase;
     readonly storageKey: string;
     readonly type: Type;
     reportExceptionInHost(exception: PropagatedException): void;
@@ -113,6 +114,7 @@ export declare abstract class StorageProviderBase extends UnifiedStore implement
     off(callbackId: number): void;
     legacyOn(callback: Callback): void;
     legacyOff(callback: Callback): void;
+    activate(): Promise<UnifiedActiveStore>;
     /**
      * Propagate updates to change listeners.
      */
@@ -127,7 +129,7 @@ export declare abstract class StorageProviderBase extends UnifiedStore implement
         version: number;
         model: SerializedModelEntry[];
     }>;
-    abstract cloneFrom(store: UnifiedStore): void;
+    abstract cloneFrom(store: UnifiedActiveStore): Promise<void>;
     abstract ensureBackingStore(): any;
     abstract backingStore: any;
     /**

@@ -8,7 +8,7 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { assert } from '../../../platform/chai-web.js';
-import { StorageMode, ProxyMessageType } from '../store.js';
+import { StorageMode, ProxyMessageType, Store } from '../store.js';
 import { CRDTCount, CountOpTypes } from '../../crdt/crdt-count.js';
 import { RamDiskStorageKey, RamDiskStorageDriverProvider } from '../drivers/ramdisk.js';
 import { Exists, DriverFactory } from '../drivers/driver-factory.js';
@@ -33,7 +33,8 @@ describe('RamDisk + Backing Store Integration', async () => {
     it('will allow storage of a number of objects', async () => {
         const runtime = new Runtime();
         const storageKey = new RamDiskStorageKey('unique');
-        const store = await BackingStore.construct(storageKey, Exists.ShouldCreate, new CountType(), StorageMode.Backing);
+        const baseStore = new Store(storageKey, Exists.ShouldCreate, new CountType(), 'base-store-id');
+        const store = await BackingStore.construct(storageKey, Exists.ShouldCreate, new CountType(), StorageMode.Backing, baseStore);
         const count1 = new CRDTCount();
         count1.applyOperation({ type: CountOpTypes.Increment, actor: 'me', version: { from: 0, to: 1 } });
         const count2 = new CRDTCount();

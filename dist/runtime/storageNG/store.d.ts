@@ -15,15 +15,11 @@ import { StoreInterface, StorageMode, ActiveStore, ProxyMessageType, ProxyMessag
 import { UnifiedStore } from './unified-store.js';
 export { ActiveStore, ProxyCallback, ProxyMessage, ProxyMessageType, StorageCommunicationEndpoint, StorageCommunicationEndpointProvider, StorageMode };
 declare type StoreConstructor = {
-    construct<T extends CRDTTypeRecord>(storageKey: StorageKey, exists: Exists, type: Type, mode: StorageMode): Promise<ActiveStore<T>>;
+    construct<T extends CRDTTypeRecord>(storageKey: StorageKey, exists: Exists, type: Type, mode: StorageMode, baseStore: Store<T>): Promise<ActiveStore<T>>;
 };
 export declare class Store<T extends CRDTTypeRecord> extends UnifiedStore implements StoreInterface<T> {
     protected unifiedStoreType: 'Store';
     toString(tags: string[]): string;
-    toLiteral(): Promise<any>;
-    cloneFrom(store: UnifiedStore): void;
-    on(callback: ProxyCallback<null>): number;
-    off(callbackId: number): void;
     source: string;
     description: string;
     readonly storageKey: StorageKey;
@@ -34,6 +30,7 @@ export declare class Store<T extends CRDTTypeRecord> extends UnifiedStore implem
     readonly name: string;
     readonly version: number;
     modelConstructor: new () => CRDTModel<T>;
+    private activeStore;
     static readonly constructors: Map<StorageMode, StoreConstructor>;
     constructor(storageKey: StorageKey, exists: Exists, type: Type, id: string, name?: string);
     activate(): Promise<ActiveStore<T>>;

@@ -96,8 +96,8 @@ export class Planificator {
     _listenToArcStores() {
         this.arc.onDataChange(this.dataChangeCallback, this);
         this.storeCallbackIds = new Map();
-        this.arc.context.allStores.map(store => {
-            const callbackId = store.on(async () => {
+        this.arc.context.allStores.forEach(async (store) => {
+            const callbackId = (await store.activate()).on(async () => {
                 this.replanQueue.addChange();
                 return true;
             });
@@ -106,9 +106,9 @@ export class Planificator {
     }
     _unlistenToArcStores() {
         this.arc.clearDataChange(this);
-        this.arc.context.allStores.forEach(store => {
+        this.arc.context.allStores.forEach(async (store) => {
             const callbackId = this.storeCallbackIds.get(store);
-            store.off(callbackId);
+            (await store.activate()).off(callbackId);
         });
     }
     static constructSuggestionKey(arc, storageKeyBase) {

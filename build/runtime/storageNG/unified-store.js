@@ -25,10 +25,6 @@ import { assert } from '../../platform/assert-web.js';
  * Store class.
  */
 export class UnifiedStore {
-    cloneFrom(store) { }
-    async modelForSynchronization() {
-        return await this.toLiteral();
-    }
     /**
      * Hack to cast this UnifiedStore to the old-style class StorageStub.
      * TODO: Fix all usages of this method to handle new-style stores, and then

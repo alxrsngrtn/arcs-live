@@ -54,10 +54,10 @@ class DevtoolsArcInspector {
             this.onceActiveResolve();
         });
     }
-    recipeInstantiated(particles, activeRecipe) {
+    async recipeInstantiated(particles, activeRecipe) {
         if (!DevtoolsConnection.isConnected)
             return;
-        this.storesFetcher.onRecipeInstantiated();
+        await this.storesFetcher.onRecipeInstantiated();
         const truncate = ({ id, name }) => ({ id, name });
         const slotConnections = [];
         particles.forEach(p => p.getSlotConnections().forEach(cs => {

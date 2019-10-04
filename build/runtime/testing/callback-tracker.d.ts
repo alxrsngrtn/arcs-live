@@ -22,7 +22,8 @@ import { UnifiedStore } from '../storageNG/unified-store.js';
 export declare class CallbackTracker {
     expectedEvents: number;
     events: Dictionary<any>[];
-    constructor(storageProvider: UnifiedStore, expectedEvents?: number);
+    private constructor();
+    static create(store: UnifiedStore, expectedEvents?: number): Promise<CallbackTracker>;
     changeEvent(c: Dictionary<any>): boolean;
     /**
      * Tests that the number of expected callbacks are executed.

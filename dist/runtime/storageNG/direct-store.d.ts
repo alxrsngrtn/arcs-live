@@ -13,6 +13,7 @@ import { Type } from '../type.js';
 import { Exists, Driver } from './drivers/driver-factory.js';
 import { StorageKey } from './storage-key.js';
 import { ActiveStore, ProxyCallback, StorageMode, ProxyMessage } from './store-interface.js';
+import { Store } from './store.js';
 export declare enum DirectStoreState {
     Idle = "Idle",
     AwaitingResponse = "AwaitingResponse",
@@ -34,7 +35,7 @@ export declare class DirectStore<T extends CRDTTypeRecord> extends ActiveStore<T
     idle(): Promise<void>;
     private setState;
     private notifyIdle;
-    static construct<T extends CRDTTypeRecord>(storageKey: StorageKey, exists: Exists, type: Type, mode: StorageMode): Promise<DirectStore<T>>;
+    static construct<T extends CRDTTypeRecord>(storageKey: StorageKey, exists: Exists, type: Type, mode: StorageMode, baseStore: Store<T>): Promise<DirectStore<T>>;
     onReceive(model: T['data'], version: number): Promise<void>;
     private deliverCallbacks;
     private processModelChange;

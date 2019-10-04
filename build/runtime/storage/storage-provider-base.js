@@ -54,6 +54,12 @@ export class StorageProviderBase extends UnifiedStore {
     enableReferenceMode() {
         this.referenceMode = true;
     }
+    // Required to implement interface UnifiedActiveStore. Each
+    // StorageProviderBase instance is both a UnifiedStore and a
+    // UnifiedActiveStore.
+    get baseStore() {
+        return this;
+    }
     get storageKey() {
         return this._storageKey;
     }
@@ -81,6 +87,10 @@ export class StorageProviderBase extends UnifiedStore {
     // migrated to the new API (unless they're going to be deleted).
     legacyOff(callback) {
         this.legacyListeners.delete(callback);
+    }
+    async activate() {
+        // All StorageProviderBase instances are already active.
+        return this;
     }
     // TODO: rename to _fireAsync so it's clear that callers are not re-entrant.
     /**

@@ -27,14 +27,26 @@ export var ProxyMessageType;
 // A representation of an active store. Subclasses of this class provide specific
 // behaviour as controlled by the provided StorageMode.
 export class ActiveStore {
-    constructor(storageKey, exists, type, mode) {
+    // TODO: Lots of these params can be pulled from baseStore.
+    constructor(storageKey, exists, type, mode, baseStore) {
         this.storageKey = storageKey;
         this.exists = exists;
         this.type = type;
         this.mode = mode;
+        this.baseStore = baseStore;
     }
     async idle() {
         return Promise.resolve();
+    }
+    // tslint:disable-next-line no-any
+    async toLiteral() {
+        throw new Error('Method not implemented.');
+    }
+    async cloneFrom(store) {
+        throw new Error('Method not implemented.');
+    }
+    async modelForSynchronization() {
+        return this.toLiteral();
     }
     getStorageEndpoint() {
         const store = this;

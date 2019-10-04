@@ -35,7 +35,7 @@ export class MockDriver extends Driver {
 }
 export class MockStore extends ActiveStore {
     constructor() {
-        super(new MockStorageKey(), Exists.ShouldCreate, new CountType(), StorageMode.Direct);
+        super(new MockStorageKey(), Exists.ShouldCreate, new CountType(), StorageMode.Direct, /* baseStore= */ null);
         this.lastCapturedMessage = null;
         this.lastCapturedException = null;
     }

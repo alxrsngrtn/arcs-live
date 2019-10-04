@@ -140,7 +140,7 @@ export declare class Arc {
     }>;
     private _doInstantiate;
     createStore(type: Type, name?: string, id?: string, tags?: string[], storageKey?: string | StorageKey): Promise<UnifiedStore>;
-    _registerStore(store: UnifiedStore, tags?: string[]): void;
+    _registerStore(store: UnifiedStore, tags?: string[]): Promise<void>;
     _tagStore(store: UnifiedStore, tags: Set<string>): void;
     _onDataChange(): boolean;
     onDataChange(callback: Runnable, registration: object): void;

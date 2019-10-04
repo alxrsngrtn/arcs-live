@@ -19041,10 +19041,6 @@ class KeyBase {
  * Store class.
  */
 class UnifiedStore {
-    cloneFrom(store) { }
-    async modelForSynchronization() {
-        return await this.toLiteral();
-    }
     /**
      * Hack to cast this UnifiedStore to the old-style class StorageStub.
      * TODO: Fix all usages of this method to handle new-style stores, and then
@@ -19132,6 +19128,12 @@ class StorageProviderBase extends UnifiedStore {
     enableReferenceMode() {
         this.referenceMode = true;
     }
+    // Required to implement interface UnifiedActiveStore. Each
+    // StorageProviderBase instance is both a UnifiedStore and a
+    // UnifiedActiveStore.
+    get baseStore() {
+        return this;
+    }
     get storageKey() {
         return this._storageKey;
     }
@@ -19159,6 +19161,10 @@ class StorageProviderBase extends UnifiedStore {
     // migrated to the new API (unless they're going to be deleted).
     legacyOff(callback) {
         this.legacyListeners.delete(callback);
+    }
+    async activate() {
+        // All StorageProviderBase instances are already active.
+        return this;
     }
     // TODO: rename to _fireAsync so it's clear that callers are not re-entrant.
     /**
@@ -19287,12 +19293,12 @@ class VolatileStorage extends StorageBase {
     }
     async _construct(id, type, keyFragment) {
         const key = this.constructKey(keyFragment);
-        // TODO(shanestephens): should pass in factory, not 'this' here.
-        const provider = VolatileStorageProvider.newProvider(type, this, undefined, id, key);
-        if (this._memoryMap[key] !== undefined) {
-            return null;
+        let provider = this._memoryMap[key];
+        if (!provider) {
+            // TODO(shanestephens): should pass in factory, not 'this' here.
+            provider = VolatileStorageProvider.newProvider(type, this, undefined, id, key);
+            this._memoryMap[key] = provider;
         }
-        this._memoryMap[key] = provider;
         return provider;
     }
     constructKey(keyFragment) {
@@ -20166,6 +20172,9 @@ class StorageStub extends UnifiedStore {
         return -1;
     }
     off(callback) { }
+    async activate() {
+        return this.inflate();
+    }
     async inflate(storageProviderFactory) {
         const factory = storageProviderFactory || this.storageProviderFactory;
         const store = this.isBackedByManifest()
@@ -24249,10 +24258,10 @@ class PECOuterPortImpl extends PECOuterPort {
                         // in Arc.deserialize.
                         for (const store of manifest.stores) {
                             if (store instanceof StorageStub) {
-                                this.arc._registerStore(await store.inflate(), []);
+                                await this.arc._registerStore(await store.inflate(), []);
                             }
                             else {
-                                this.arc._registerStore(store, []);
+                                await this.arc._registerStore(store, []);
                             }
                         }
                         // TODO: Awaiting this promise causes tests to fail...
@@ -24509,14 +24518,26 @@ var ProxyMessageType;
 // A representation of an active store. Subclasses of this class provide specific
 // behaviour as controlled by the provided StorageMode.
 class ActiveStore {
-    constructor(storageKey, exists, type, mode) {
+    // TODO: Lots of these params can be pulled from baseStore.
+    constructor(storageKey, exists, type, mode, baseStore) {
         this.storageKey = storageKey;
         this.exists = exists;
         this.type = type;
         this.mode = mode;
+        this.baseStore = baseStore;
     }
     async idle() {
         return Promise.resolve();
+    }
+    // tslint:disable-next-line no-any
+    async toLiteral() {
+        throw new Error('Method not implemented.');
+    }
+    async cloneFrom(store) {
+        throw new Error('Method not implemented.');
+    }
+    async modelForSynchronization() {
+        return this.toLiteral();
     }
     getStorageEndpoint() {
         const store = this;
@@ -24556,8 +24577,8 @@ class DirectStore extends ActiveStore {
     /*
      * This class should only ever be constructed via the static construct method
      */
-    constructor(storageKey, exists, type, mode) {
-        super(storageKey, exists, type, mode);
+    constructor(storageKey, exists, type, mode, baseStore) {
+        super(storageKey, exists, type, mode, baseStore);
         this.callbacks = new Map();
         this.nextCallbackID = 1;
         this.version = 0;
@@ -24596,8 +24617,8 @@ class DirectStore extends ActiveStore {
             this.pendingResolves = [];
         }
     }
-    static async construct(storageKey, exists, type, mode) {
-        const me = new DirectStore(storageKey, exists, type, mode);
+    static async construct(storageKey, exists, type, mode, baseStore) {
+        const me = new DirectStore(storageKey, exists, type, mode, baseStore);
         me.localModel = new (type.crdtInstanceConstructor())();
         me.driver = await DriverFactory.driverInstance(storageKey, exists);
         if (me.driver == null) {
@@ -24796,11 +24817,12 @@ class DirectStore extends ActiveStore {
  * A store that allows multiple CRDT models to be stored as sub-keys of a single storageKey location.
  */
 class BackingStore {
-    constructor(storageKey, exists, type, mode) {
+    constructor(storageKey, exists, type, mode, baseStore) {
         this.storageKey = storageKey;
         this.exists = exists;
         this.type = type;
         this.mode = mode;
+        this.baseStore = baseStore;
         this.stores = {};
         this.callbacks = new Map();
         this.nextCallbackId = 1;
@@ -24826,7 +24848,7 @@ class BackingStore {
         }
     }
     async setupStore(muxId) {
-        const store = await DirectStore.construct(this.storageKey.childWithComponent(muxId), this.exists, this.type, this.mode);
+        const store = await DirectStore.construct(this.storageKey.childWithComponent(muxId), this.exists, this.type, this.mode, this.baseStore);
         const id = store.on(msg => this.processStoreCallback(muxId, msg));
         const record = { store, id, type: 'record' };
         this.stores[muxId] = record;
@@ -24844,8 +24866,8 @@ class BackingStore {
         message.id = id;
         return store.onProxyMessage(message);
     }
-    static async construct(storageKey, exists, type, mode) {
-        return new BackingStore(storageKey, exists, type, mode);
+    static async construct(storageKey, exists, type, mode, baseStore) {
+        return new BackingStore(storageKey, exists, type, mode, baseStore);
     }
     async idle() {
         const stores = [];
@@ -24948,9 +24970,9 @@ class ReferenceModeStore extends ActiveStore {
          */
         this.blockCounter = 0;
     }
-    static async construct(storageKey, exists, type) {
-        const result = new ReferenceModeStore(storageKey, exists, type, StorageMode.ReferenceMode);
-        result.backingStore = await BackingStore.construct(storageKey.backingKey, exists, type.getContainedType(), StorageMode.Backing);
+    static async construct(storageKey, exists, type, unusedMode, baseStore) {
+        const result = new ReferenceModeStore(storageKey, exists, type, StorageMode.ReferenceMode, baseStore);
+        result.backingStore = await BackingStore.construct(storageKey.backingKey, exists, type.getContainedType(), StorageMode.Backing, baseStore);
         let refType;
         if (type.isCollectionType()) {
             refType = new CollectionType(new ReferenceType(type.getContainedType()));
@@ -24959,7 +24981,7 @@ class ReferenceModeStore extends ActiveStore {
             // TODO(shans) probably need a singleton type here now.
             refType = new ReferenceType(type.getContainedType());
         }
-        result.containerStore = await DirectStore.construct(storageKey.storageKey, exists, type, StorageMode.Direct);
+        result.containerStore = await DirectStore.construct(storageKey.storageKey, exists, type, StorageMode.Direct, baseStore);
         result.registerStoreCallbacks();
         return result;
     }
@@ -25476,20 +25498,10 @@ class Store extends UnifiedStore {
     toString(tags) {
         throw new Error('Method not implemented.');
     }
-    // tslint:disable-next-line no-any
-    async toLiteral() {
-        throw new Error('Method not implemented.');
-    }
-    cloneFrom(store) {
-        throw new Error('Method not implemented.');
-    }
-    on(callback) {
-        throw new Error('Method not implemented.');
-    }
-    off(callbackId) {
-        throw new Error('Method not implemented.');
-    }
     async activate() {
+        if (this.activeStore) {
+            return this.activeStore;
+        }
         if (Store.constructors.get(this.mode) == null) {
             throw new Error(`StorageMode ${this.mode} not yet implemented`);
         }
@@ -25497,8 +25509,9 @@ class Store extends UnifiedStore {
         if (constructor == null) {
             throw new Error(`No constructor registered for mode ${this.mode}`);
         }
-        const activeStore = await constructor.construct(this.storageKey, this.exists, this.type, this.mode);
+        const activeStore = await constructor.construct(this.storageKey, this.exists, this.type, this.mode, this);
         this.exists = Exists.ShouldExist;
+        this.activeStore = activeStore;
         return activeStore;
     }
     // TODO(shans): DELETEME once we've switched to this storage stack
@@ -25684,7 +25697,8 @@ class Arc {
                 let serializedData = [];
                 if (!volatile) {
                     // TODO: include keys in serialized [big]collections?
-                    serializedData = (await store.toLiteral()).model.map((model) => {
+                    const activeStore = await store.activate();
+                    serializedData = (await activeStore.toLiteral()).model.map((model) => {
                         const { id, value } = model;
                         const index = model['index']; // TODO: Invalid Type
                         if (value == null) {
@@ -25834,7 +25848,7 @@ ${this.activeRecipe.toString()}`;
         await Promise.all(manifest.stores.map(async (storeStub) => {
             const tags = manifest.storeTags.get(storeStub);
             const store = await storeStub.castToStorageStub().inflate();
-            arc._registerStore(store, tags);
+            await arc._registerStore(store, tags);
         }));
         const recipe = manifest.activeRecipe.clone();
         const options = { errors: new Map() };
@@ -25912,7 +25926,7 @@ ${this.activeRecipe.toString()}`;
         const storeMap = new Map();
         for (const store of this._stores) {
             const clone = await arc.storageProviderFactory.construct(store.id, store.type, 'volatile');
-            await clone.cloneFrom(store);
+            await clone.cloneFrom(await store.activate());
             storeMap.set(store, clone);
             if (this.storeDescriptions.has(store)) {
                 arc.storeDescriptions.set(clone, this.storeDescriptions.get(store));
@@ -25935,7 +25949,7 @@ ${this.activeRecipe.toString()}`;
         }
         for (const v of storeMap.values()) {
             // FIXME: Tags
-            arc._registerStore(v, []);
+            await arc._registerStore(v, []);
         }
         return arc;
     }
@@ -26004,7 +26018,8 @@ ${this.activeRecipe.toString()}`;
                     const copiedStore = await copiedStoreRef.castToStorageStub().inflate(this.storageProviderFactory);
                     assert(copiedStore, `Cannot find store ${recipeHandle.id}`);
                     assert(copiedStore.version !== null, `Copied store ${recipeHandle.id} doesn't have version.`);
-                    await newStore.cloneFrom(copiedStore);
+                    const activeStore = await newStore.activate();
+                    await activeStore.cloneFrom(copiedStore);
                     this._tagStore(newStore, this.context.findStoreTags(copiedStoreRef));
                     newStore.name = copiedStore.name && `Copy of ${copiedStore.name}`;
                     const copiedStoreDesc = this.getStoreDescription(copiedStore);
@@ -26036,7 +26051,7 @@ ${this.activeRecipe.toString()}`;
                 if (typeof storageKey === 'string') {
                     const store = await this.storageProviderFactory.connect(recipeHandle.id, type, storageKey);
                     assert(store, `store '${recipeHandle.id}' was not found (${storageKey})`);
-                    this._registerStore(store, recipeHandle.tags);
+                    await this._registerStore(store, recipeHandle.tags);
                 }
                 else {
                     throw new Error('Need to implement storageNG code path here!');
@@ -26054,7 +26069,7 @@ ${this.activeRecipe.toString()}`;
             await this.pec.slotComposer.initializeRecipe(this, particles);
         }
         if (this.inspector) {
-            this.inspector.recipeInstantiated(particles, this.activeRecipe.toString());
+            await this.inspector.recipeInstantiated(particles, this.activeRecipe.toString());
         }
     }
     async createStore(type, name, id, tags, storageKey) {
@@ -26078,27 +26093,27 @@ ${this.activeRecipe.toString()}`;
         if (storageKey == undefined || hasVolatileTag(tags)) {
             storageKey = 'volatile';
         }
+        let store;
         if (typeof storageKey === 'string') {
-            const store = await this.storageProviderFactory.construct(id, type, storageKey);
+            store = await this.storageProviderFactory.construct(id, type, storageKey);
             assert(store, `failed to create store with id [${id}]`);
             store.name = name;
-            this._registerStore(store, tags);
-            return store;
         }
         else {
-            const store = new Store(storageKey, Exists.ShouldCreate, type, id, name);
-            this._registerStore(store, tags);
-            return store;
+            store = new Store(storageKey, Exists.ShouldCreate, type, id, name);
         }
+        await this._registerStore(store, tags);
+        return store;
     }
-    _registerStore(store, tags) {
+    async _registerStore(store, tags) {
         assert(!this.storesById.has(store.id), `Store already registered '${store.id}'`);
         tags = tags || [];
         tags = Array.isArray(tags) ? tags : [tags];
         this.storesById.set(store.id, store);
         this.storeTags.set(store, new Set(tags));
         this.storageKeys[store.id] = store.storageKey;
-        store.on(async () => this._onDataChange());
+        const activeStore = await store.activate();
+        activeStore.on(async () => this._onDataChange());
         Runtime.getRuntime().registerStore(store, tags);
     }
     _tagStore(store, tags) {
@@ -30455,11 +30470,11 @@ class ArcStoresFetcher {
             messageBody: await this.listStores()
         }));
     }
-    onRecipeInstantiated() {
+    async onRecipeInstantiated() {
         for (const store of this.arc._stores) {
             if (!this.watchedHandles.has(store.id)) {
                 this.watchedHandles.add(store.id);
-                store.on(async () => {
+                (await store.activate()).on(async () => {
                     this.arcDevtoolsChannel.send({
                         messageType: 'store-value-changed',
                         messageBody: {
@@ -35408,10 +35423,10 @@ class DevtoolsArcInspector {
             this.onceActiveResolve();
         });
     }
-    recipeInstantiated(particles, activeRecipe) {
+    async recipeInstantiated(particles, activeRecipe) {
         if (!DevtoolsConnection.isConnected)
             return;
-        this.storesFetcher.onRecipeInstantiated();
+        await this.storesFetcher.onRecipeInstantiated();
         const truncate = ({ id, name }) => ({ id, name });
         const slotConnections = [];
         particles.forEach(p => p.getSlotConnections().forEach(cs => {
@@ -37069,8 +37084,8 @@ class Planificator {
     _listenToArcStores() {
         this.arc.onDataChange(this.dataChangeCallback, this);
         this.storeCallbackIds = new Map();
-        this.arc.context.allStores.map(store => {
-            const callbackId = store.on(async () => {
+        this.arc.context.allStores.forEach(async (store) => {
+            const callbackId = (await store.activate()).on(async () => {
                 this.replanQueue.addChange();
                 return true;
             });
@@ -37079,9 +37094,9 @@ class Planificator {
     }
     _unlistenToArcStores() {
         this.arc.clearDataChange(this);
-        this.arc.context.allStores.forEach(store => {
+        this.arc.context.allStores.forEach(async (store) => {
             const callbackId = this.storeCallbackIds.get(store);
-            store.off(callbackId);
+            (await store.activate()).off(callbackId);
         });
     }
     static constructSuggestionKey(arc, storageKeyBase) {

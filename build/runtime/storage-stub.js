@@ -39,6 +39,9 @@ export class StorageStub extends UnifiedStore {
         return -1;
     }
     off(callback) { }
+    async activate() {
+        return this.inflate();
+    }
     async inflate(storageProviderFactory) {
         const factory = storageProviderFactory || this.storageProviderFactory;
         const store = this.isBackedByManifest()

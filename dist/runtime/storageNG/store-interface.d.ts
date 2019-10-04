@@ -13,6 +13,8 @@ import { Type } from '../type.js';
 import { Exists } from './drivers/driver-factory.js';
 import { StorageKey } from './storage-key.js';
 import { StorageProxy } from './storage-proxy.js';
+import { UnifiedActiveStore } from './unified-store.js';
+import { Store } from './store.js';
 /**
  * This file exists to break a circular dependency between Store and the ActiveStore implementations.
  * Source code outside of the storageNG directory should not import this file directly; instead use
@@ -55,13 +57,17 @@ export interface StorageCommunicationEndpoint<T extends CRDTTypeRecord> {
 export interface StorageCommunicationEndpointProvider<T extends CRDTTypeRecord> {
     getStorageEndpoint(storageProxy: StorageProxy<T>): StorageCommunicationEndpoint<T>;
 }
-export declare abstract class ActiveStore<T extends CRDTTypeRecord> implements StoreInterface<T>, StorageCommunicationEndpointProvider<T> {
+export declare abstract class ActiveStore<T extends CRDTTypeRecord> implements StoreInterface<T>, StorageCommunicationEndpointProvider<T>, UnifiedActiveStore {
     readonly storageKey: StorageKey;
     exists: Exists;
     readonly type: Type;
     readonly mode: StorageMode;
-    constructor(storageKey: StorageKey, exists: Exists, type: Type, mode: StorageMode);
+    readonly baseStore: Store<T>;
+    constructor(storageKey: StorageKey, exists: Exists, type: Type, mode: StorageMode, baseStore: Store<T>);
     idle(): Promise<void>;
+    toLiteral(): Promise<any>;
+    cloneFrom(store: UnifiedActiveStore): Promise<void>;
+    modelForSynchronization(): Promise<{}>;
     abstract on(callback: ProxyCallback<T>): number;
     abstract off(callback: number): void;
     abstract onProxyMessage(message: ProxyMessage<T>): Promise<boolean>;

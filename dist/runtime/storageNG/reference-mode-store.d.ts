@@ -9,16 +9,17 @@
  */
 import { CRDTSingletonTypeRecord, CRDTSingleton } from '../crdt/crdt-singleton.js';
 import { CRDTCollectionTypeRecord, Referenceable, CRDTCollection } from '../crdt/crdt-collection.js';
-import { ActiveStore, ProxyCallback, ProxyMessage } from './store-interface.js';
+import { ActiveStore, ProxyCallback, ProxyMessage, StorageMode } from './store-interface.js';
 import { BackingStore } from './backing-store.js';
 import { CRDTEntityTypeRecord } from '../crdt/crdt-entity.js';
 import { DirectStore } from './direct-store.js';
 import { StorageKey } from './storage-key.js';
-import { VersionMap } from '../crdt/crdt.js';
+import { VersionMap, CRDTTypeRecord } from '../crdt/crdt.js';
 import { Exists } from './drivers/driver-factory.js';
 import { Type } from '../type.js';
 import { Dictionary } from '../hot.js';
 import { PropagatedException } from '../arc-exceptions.js';
+import { Store } from './store.js';
 export declare type Reference = {
     id: string;
     storageKey: StorageKey;
@@ -63,7 +64,7 @@ export declare class ReferenceModeStore<Entity extends Referenceable, S extends 
     private pendingSends;
     private holdQueue;
     private blockCounter;
-    static construct<Entity extends Referenceable, S extends Dictionary<Referenceable>, C extends Dictionary<Referenceable>, ReferenceContainer extends CRDTSingletonTypeRecord<Reference> | CRDTCollectionTypeRecord<Reference>, Container extends CRDTSingletonTypeRecord<Entity> | CRDTCollectionTypeRecord<Entity>>(storageKey: ReferenceModeStorageKey, exists: Exists, type: Type): Promise<ReferenceModeStore<Entity, S, C, ReferenceContainer, Container>>;
+    static construct<Entity extends Referenceable, S extends Dictionary<Referenceable>, C extends Dictionary<Referenceable>, ReferenceContainer extends CRDTSingletonTypeRecord<Reference> | CRDTCollectionTypeRecord<Reference>, Container extends CRDTSingletonTypeRecord<Entity> | CRDTCollectionTypeRecord<Entity>>(storageKey: ReferenceModeStorageKey, exists: Exists, type: Type, unusedMode: StorageMode, baseStore: Store<CRDTTypeRecord>): Promise<ReferenceModeStore<Entity, S, C, ReferenceContainer, Container>>;
     reportExceptionInHost(exception: PropagatedException): void;
     on(callback: ProxyCallback<Container>): number;
     off(callback: number): void;

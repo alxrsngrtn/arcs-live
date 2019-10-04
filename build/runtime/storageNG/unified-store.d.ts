@@ -38,13 +38,9 @@ export declare abstract class UnifiedStore implements Comparable<UnifiedStore>, 
     abstract version?: number;
     abstract referenceMode: boolean;
     abstract toString(tags?: string[]): string;
-    abstract toLiteral(): Promise<any>;
+    abstract activate(): Promise<UnifiedActiveStore>;
     abstract source?: string;
     abstract description: string;
-    cloneFrom(store: UnifiedStore): void;
-    modelForSynchronization(): Promise<{}>;
-    abstract on(callback: ProxyCallback<null>): number;
-    abstract off(callback: number): void;
     /**
      * Hack to cast this UnifiedStore to the old-style class StorageStub.
      * TODO: Fix all usages of this method to handle new-style stores, and then
@@ -53,4 +49,13 @@ export declare abstract class UnifiedStore implements Comparable<UnifiedStore>, 
     castToStorageStub(): StorageStub;
     reportExceptionInHost(exception: PropagatedException): void;
     _compareTo(other: UnifiedStore): number;
+}
+export interface UnifiedActiveStore {
+    /** The UnifiedStore instance from which this store was activated. */
+    readonly baseStore: UnifiedStore;
+    toLiteral(): Promise<any>;
+    cloneFrom(store: UnifiedActiveStore): Promise<void>;
+    modelForSynchronization(): Promise<{}>;
+    on(callback: ProxyCallback<null>): number;
+    off(callback: number): void;
 }
