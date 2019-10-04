@@ -95,14 +95,20 @@ export class Planificator {
     }
     _listenToArcStores() {
         this.arc.onDataChange(this.dataChangeCallback, this);
-        this.arc.context.allStores.forEach(store => {
-            store.on(this.dataChangeCallback);
+        this.storeCallbackIds = new Map();
+        this.arc.context.allStores.map(store => {
+            const callbackId = store.on(async () => {
+                this.replanQueue.addChange();
+                return true;
+            });
+            this.storeCallbackIds.set(store, callbackId);
         });
     }
     _unlistenToArcStores() {
         this.arc.clearDataChange(this);
         this.arc.context.allStores.forEach(store => {
-            store.off(this.dataChangeCallback);
+            const callbackId = this.storeCallbackIds.get(store);
+            store.off(callbackId);
         });
     }
     static constructSuggestionKey(arc, storageKeyBase) {

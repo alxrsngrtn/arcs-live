@@ -603,7 +603,7 @@ ${this.activeRecipe.toString()}`;
         this.storesById.set(store.id, store);
         this.storeTags.set(store, new Set(tags));
         this.storageKeys[store.id] = store.storageKey;
-        store.on(() => this._onDataChange());
+        store.on(async () => this._onDataChange());
         Runtime.getRuntime().registerStore(store, tags);
     }
     _tagStore(store, tags) {
@@ -616,6 +616,7 @@ ${this.activeRecipe.toString()}`;
         for (const callback of this.dataChangeCallbacks.values()) {
             callback();
         }
+        return true;
     }
     onDataChange(callback, registration) {
         this.dataChangeCallbacks.set(registration, callback);

@@ -24,12 +24,13 @@ export class CallbackTracker {
         this.expectedEvents = expectedEvents;
         // tslint:disable-next-line: no-any
         this.events = [];
-        storageProvider.on((val) => this.changeEvent(val));
+        storageProvider.on(async (val) => this.changeEvent(val));
     }
     // called for each change event
     // tslint:disable-next-line: no-any
     changeEvent(c) {
         this.events.push(c);
+        return true;
     }
     /**
      * Tests that the number of expected callbacks are executed.

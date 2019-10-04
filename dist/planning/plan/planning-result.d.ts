@@ -29,7 +29,7 @@ export declare class PlanningResult {
     generations: SerializableGeneration[];
     contextual: boolean;
     store?: SingletonStorageProvider;
-    private storeCallback;
+    private storeCallbackId;
     private changeCallbacks;
     private envOptions;
     constructor(envOptions: EnvOptions, store?: SingletonStorageProvider);

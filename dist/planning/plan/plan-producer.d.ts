@@ -8,7 +8,6 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { Arc } from '../../runtime/arc.js';
-import { Consumer } from '../../runtime/hot.js';
 import { SingletonStorageProvider } from '../../runtime/storage/storage-provider-base.js';
 import { Planner, Generation } from '../planner.js';
 import { RecipeIndex } from '../recipe-index.js';
@@ -46,7 +45,7 @@ export declare class PlanProducer {
     stateChangedCallbacks: ((isPlanning: boolean) => void)[];
     search: string;
     searchStore?: SingletonStorageProvider;
-    searchStoreCallback: Consumer<{}>;
+    searchStoreCallbackId: number;
     debug: boolean;
     noSpecEx: boolean;
     inspector?: PlannerInspector;
@@ -56,7 +55,7 @@ export declare class PlanProducer {
     });
     isPlanning: boolean;
     registerStateChangedCallback(callback: any): void;
-    onSearchChanged(): Promise<void>;
+    onSearchChanged(): Promise<boolean>;
     dispose(): void;
     produceSuggestions(options?: SuggestionOptions): Promise<void>;
     runPlanner(options: any, generations: Generation[]): Promise<Suggestion[]>;

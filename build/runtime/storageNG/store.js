@@ -40,7 +40,10 @@ export class Store extends UnifiedStore {
     cloneFrom(store) {
         throw new Error('Method not implemented.');
     }
-    on(fn) {
+    on(callback) {
+        throw new Error('Method not implemented.');
+    }
+    off(callbackId) {
         throw new Error('Method not implemented.');
     }
     async activate() {

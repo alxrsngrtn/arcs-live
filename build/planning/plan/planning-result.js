@@ -24,8 +24,7 @@ export class PlanningResult {
         assert(envOptions.loader, `loader cannot be null`);
         this.store = store;
         if (this.store) {
-            this.storeCallback = () => this.load();
-            this.store.on(this.storeCallback);
+            this.storeCallbackId = this.store.on(() => this.load());
         }
     }
     registerChangeCallback(callback) {
@@ -59,7 +58,7 @@ export class PlanningResult {
     }
     dispose() {
         this.changeCallbacks = [];
-        this.store.off(this.storeCallback);
+        this.store.off(this.storeCallbackId);
         this.store.dispose();
     }
     static formatSerializableGenerations(generations) {

@@ -1,8 +1,8 @@
 import { ClaimIsTag } from './particle-claim.js';
-import { StorageProviderBase } from './storage/storage-provider-base.js';
 import { StorageProviderFactory } from './storage/storage-provider-factory.js';
 import { Type } from './type.js';
 import { UnifiedStore } from './storageNG/unified-store.js';
+import { ProxyCallback } from './storageNG/store.js';
 export declare class StorageStub extends UnifiedStore {
     readonly type: Type;
     readonly id: string;
@@ -21,9 +21,11 @@ export declare class StorageStub extends UnifiedStore {
     constructor(type: Type, id: string, name: string, storageKey: string, storageProviderFactory: StorageProviderFactory, originalId: string, 
     /** Trust tags claimed by this data store. */
     claims: ClaimIsTag[], description: string, version?: number, source?: string, referenceMode?: boolean, model?: {}[]);
-    inflate(storageProviderFactory?: StorageProviderFactory): Promise<StorageProviderBase>;
+    on(callback: ProxyCallback<null>): number;
+    off(callback: number): void;
+    inflate(storageProviderFactory?: StorageProviderFactory): Promise<import("./storage/storage-provider-base.js").StorageProviderBase>;
     toLiteral(): any;
     isBackedByManifest(): boolean;
     toString(handleTags: string[]): string;
-    _compareTo(other: StorageProviderBase): number;
+    _compareTo(other: UnifiedStore): number;
 }

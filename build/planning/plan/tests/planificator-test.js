@@ -70,8 +70,7 @@ describe('remote planificator', () => {
         return await new Promise(resolve => setTimeout(resolve, ms));
     }
     async function verifyReplanning(producePlanificator, expectedSuggestions, expectedDescriptions = []) {
-        assert.isTrue(producePlanificator.producer.isPlanning);
-        // Wait for the planner finish.
+        // Wait for the planner to finish.
         while (producePlanificator.producer.isPlanning) {
             await delay(100);
         }

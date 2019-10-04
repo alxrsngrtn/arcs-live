@@ -16,6 +16,7 @@ import { PlanProducer } from './plan-producer.js';
 import { PlanningResult } from './planning-result.js';
 import { ReplanQueue } from './replan-queue.js';
 import { PlannerInspector, PlannerInspectorFactory } from '../planner-inspector.js';
+import { UnifiedStore } from '../../runtime/storageNG/unified-store.js';
 export declare type PlanificatorOptions = {
     storageKeyBase?: string;
     debug?: boolean;
@@ -31,6 +32,7 @@ export declare class Planificator {
     producer?: PlanProducer;
     replanQueue?: ReplanQueue;
     dataChangeCallback: Runnable;
+    storeCallbackIds: Map<UnifiedStore, number>;
     search: string | null;
     searchStore: SingletonStorageProvider;
     inspector: PlannerInspector | undefined;

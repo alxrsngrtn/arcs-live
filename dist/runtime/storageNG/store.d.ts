@@ -13,7 +13,6 @@ import { Exists } from './drivers/driver-factory.js';
 import { StorageKey } from './storage-key.js';
 import { StoreInterface, StorageMode, ActiveStore, ProxyMessageType, ProxyMessage, ProxyCallback, StorageCommunicationEndpoint, StorageCommunicationEndpointProvider } from './store-interface.js';
 import { UnifiedStore } from './unified-store.js';
-import { Consumer } from '../hot.js';
 export { ActiveStore, ProxyCallback, ProxyMessage, ProxyMessageType, StorageCommunicationEndpoint, StorageCommunicationEndpointProvider, StorageMode };
 declare type StoreConstructor = {
     construct<T extends CRDTTypeRecord>(storageKey: StorageKey, exists: Exists, type: Type, mode: StorageMode): Promise<ActiveStore<T>>;
@@ -23,7 +22,8 @@ export declare class Store<T extends CRDTTypeRecord> extends UnifiedStore implem
     toString(tags: string[]): string;
     toLiteral(): Promise<any>;
     cloneFrom(store: UnifiedStore): void;
-    on(fn: Consumer<{}>): void;
+    on(callback: ProxyCallback<null>): number;
+    off(callbackId: number): void;
     source: string;
     description: string;
     readonly storageKey: StorageKey;

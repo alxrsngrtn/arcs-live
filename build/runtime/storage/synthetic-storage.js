@@ -116,7 +116,7 @@ class SyntheticCollection extends StorageProviderBase {
         this.initialized = (async () => {
             const data = await targetStore.get();
             await this.process(data, false);
-            targetStore.on(details => this.process(details.data, true));
+            targetStore.legacyOn(details => this.process(details.data, true));
         })();
     }
     async process(data, fireEvent) {

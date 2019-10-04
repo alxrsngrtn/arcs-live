@@ -38,7 +38,9 @@ export class ChangeEvent {
 export class StorageProviderBase extends UnifiedStore {
     constructor(type, name, id, key) {
         super();
-        this.listeners = new Set();
+        this.legacyListeners = new Set();
+        this.nextCallbackId = 0;
+        this.listeners = new Map();
         this.referenceMode = false;
         assert(id, 'id must be provided when constructing StorageProviders');
         assert(!type.hasUnresolvedVariable, 'Storage types must be concrete');
@@ -62,23 +64,40 @@ export class StorageProviderBase extends UnifiedStore {
         // This class lives in the host, so it's safe to just rethrow the exception here.
         throw exception;
     }
-    // TODO: add 'once' which returns a promise.
     on(callback) {
-        this.listeners.add(callback);
+        const id = this.nextCallbackId++;
+        this.listeners.set(id, callback);
+        return id;
     }
-    off(callback) {
-        this.listeners.delete(callback);
+    off(callbackId) {
+        this.listeners.delete(callbackId);
+    }
+    // Equivalent to `on`, but for the old storage stack. Callers should be
+    // migrated to the new API (unless they're going to be deleted).
+    legacyOn(callback) {
+        this.legacyListeners.add(callback);
+    }
+    // Equivalent to `off`, but for the old storage stack. Callers should be
+    // migrated to the new API (unless they're going to be deleted).
+    legacyOff(callback) {
+        this.legacyListeners.delete(callback);
     }
     // TODO: rename to _fireAsync so it's clear that callers are not re-entrant.
     /**
      * Propagate updates to change listeners.
      */
     async _fire(details) {
-        const callbacks = [...this.listeners];
+        const callbacks = [...this.listeners.values()];
+        const legacyCallbacks = [...this.legacyListeners];
         // Yield so that event firing is not re-entrant with mutation.
         await 0;
-        for (const callback of callbacks) {
+        for (const callback of legacyCallbacks) {
             callback(details);
+        }
+        for (const callback of callbacks) {
+            // HACK: This callback expects a ProxyMessage, which we don't actually
+            // have here. Just pass null, what could go wrong!
+            await callback(null);
         }
     }
     toString(handleTags) {

@@ -29,8 +29,6 @@ export class UnifiedStore {
     async modelForSynchronization() {
         return await this.toLiteral();
     }
-    on(fn) { }
-    off(fn) { }
     /**
      * Hack to cast this UnifiedStore to the old-style class StorageStub.
      * TODO: Fix all usages of this method to handle new-style stores, and then

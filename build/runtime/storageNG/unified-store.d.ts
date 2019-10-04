@@ -10,10 +10,10 @@
 import { Comparable } from '../recipe/comparable.js';
 import { Type } from '../type.js';
 import { StorageKey } from './storage-key.js';
-import { Consumer } from '../hot.js';
 import { StorageStub } from '../storage-stub.js';
 import { Store as OldStore } from '../store.js';
 import { PropagatedException } from '../arc-exceptions.js';
+import { ProxyCallback } from './store.js';
 /**
  * This is a temporary interface used to unify old-style stores (storage/StorageProviderBase) and new-style stores (storageNG/Store).
  * We should be able to remove this once we've switched across to the NG stack.
@@ -43,8 +43,8 @@ export declare abstract class UnifiedStore implements Comparable<UnifiedStore>, 
     abstract description: string;
     cloneFrom(store: UnifiedStore): void;
     modelForSynchronization(): Promise<{}>;
-    on(fn: Consumer<{}>): void;
-    off(fn: Consumer<{}>): void;
+    abstract on(callback: ProxyCallback<null>): number;
+    abstract off(callback: number): void;
     /**
      * Hack to cast this UnifiedStore to the old-style class StorageStub.
      * TODO: Fix all usages of this method to handle new-style stores, and then

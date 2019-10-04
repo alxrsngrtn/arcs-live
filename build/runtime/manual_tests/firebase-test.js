@@ -65,7 +65,7 @@ describe('firebase', function () {
             const value = 'Hi there' + Math.random();
             const variable = await storage.construct('test0', barType, newStoreKey('variable'));
             let events = 0;
-            variable.on(() => events++);
+            variable.legacyOn(() => events++);
             await variable.set({ id: 'test0:test', value });
             const result = await variable.get();
             assert.strictEqual(result.value, value);
@@ -164,7 +164,7 @@ describe('firebase', function () {
             const value2 = 'Goodbye' + Math.random();
             const collection = await storage.construct('test1', barType.collectionOf(), newStoreKey('collection'));
             let events = 0;
-            collection.on(() => events++);
+            collection.legacyOn(() => events++);
             await collection.store({ id: 'id0', value: value1 }, ['key0']);
             await collection.store({ id: 'id1', value: value2 }, ['key1']);
             let result = await collection.get('id0');

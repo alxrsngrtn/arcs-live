@@ -19045,8 +19045,6 @@ class UnifiedStore {
     async modelForSynchronization() {
         return await this.toLiteral();
     }
-    on(fn) { }
-    off(fn) { }
     /**
      * Hack to cast this UnifiedStore to the old-style class StorageStub.
      * TODO: Fix all usages of this method to handle new-style stores, and then
@@ -19118,7 +19116,9 @@ class ChangeEvent {
 class StorageProviderBase extends UnifiedStore {
     constructor(type, name, id, key) {
         super();
-        this.listeners = new Set();
+        this.legacyListeners = new Set();
+        this.nextCallbackId = 0;
+        this.listeners = new Map();
         this.referenceMode = false;
         assert(id, 'id must be provided when constructing StorageProviders');
         assert(!type.hasUnresolvedVariable, 'Storage types must be concrete');
@@ -19142,23 +19142,40 @@ class StorageProviderBase extends UnifiedStore {
         // This class lives in the host, so it's safe to just rethrow the exception here.
         throw exception;
     }
-    // TODO: add 'once' which returns a promise.
     on(callback) {
-        this.listeners.add(callback);
+        const id = this.nextCallbackId++;
+        this.listeners.set(id, callback);
+        return id;
     }
-    off(callback) {
-        this.listeners.delete(callback);
+    off(callbackId) {
+        this.listeners.delete(callbackId);
+    }
+    // Equivalent to `on`, but for the old storage stack. Callers should be
+    // migrated to the new API (unless they're going to be deleted).
+    legacyOn(callback) {
+        this.legacyListeners.add(callback);
+    }
+    // Equivalent to `off`, but for the old storage stack. Callers should be
+    // migrated to the new API (unless they're going to be deleted).
+    legacyOff(callback) {
+        this.legacyListeners.delete(callback);
     }
     // TODO: rename to _fireAsync so it's clear that callers are not re-entrant.
     /**
      * Propagate updates to change listeners.
      */
     async _fire(details) {
-        const callbacks = [...this.listeners];
+        const callbacks = [...this.listeners.values()];
+        const legacyCallbacks = [...this.legacyListeners];
         // Yield so that event firing is not re-entrant with mutation.
         await 0;
-        for (const callback of callbacks) {
+        for (const callback of legacyCallbacks) {
             callback(details);
+        }
+        for (const callback of callbacks) {
+            // HACK: This callback expects a ProxyMessage, which we don't actually
+            // have here. Just pass null, what could go wrong!
+            await callback(null);
         }
     }
     toString(handleTags) {
@@ -19889,7 +19906,7 @@ class SyntheticCollection extends StorageProviderBase {
         this.initialized = (async () => {
             const data = await targetStore.get();
             await this.process(data, false);
-            targetStore.on(details => this.process(details.data, true));
+            targetStore.legacyOn(details => this.process(details.data, true));
         })();
     }
     async process(data, fireEvent) {
@@ -20141,6 +20158,14 @@ class StorageStub extends UnifiedStore {
         this.model = model;
         this.unifiedStoreType = 'StorageStub';
     }
+    // No-op implementations for `on` and `off`.
+    // TODO: These methods should not live on UnifiedStore; they only work on
+    // active stores (e.g. StorageProviderBase). Move them to a new
+    // UnifiedActiveStore interface.
+    on(callback) {
+        return -1;
+    }
+    off(callback) { }
     async inflate(storageProviderFactory) {
         const factory = storageProviderFactory || this.storageProviderFactory;
         const store = this.isBackedByManifest()
@@ -24070,7 +24095,7 @@ class PECOuterPortImpl extends PECOuterPort {
         }
     }
     onInitializeProxy(handle, callback) {
-        handle.on(data => this.SimpleCallback(callback, data));
+        handle.legacyOn(data => this.SimpleCallback(callback, data));
     }
     async onSynchronizeProxy(handle, callback) {
         const data = await handle.modelForSynchronization();
@@ -25458,7 +25483,10 @@ class Store extends UnifiedStore {
     cloneFrom(store) {
         throw new Error('Method not implemented.');
     }
-    on(fn) {
+    on(callback) {
+        throw new Error('Method not implemented.');
+    }
+    off(callbackId) {
         throw new Error('Method not implemented.');
     }
     async activate() {
@@ -26070,7 +26098,7 @@ ${this.activeRecipe.toString()}`;
         this.storesById.set(store.id, store);
         this.storeTags.set(store, new Set(tags));
         this.storageKeys[store.id] = store.storageKey;
-        store.on(() => this._onDataChange());
+        store.on(async () => this._onDataChange());
         Runtime.getRuntime().registerStore(store, tags);
     }
     _tagStore(store, tags) {
@@ -26083,6 +26111,7 @@ ${this.activeRecipe.toString()}`;
         for (const callback of this.dataChangeCallbacks.values()) {
             callback();
         }
+        return true;
     }
     onDataChange(callback, registration) {
         this.dataChangeCallbacks.set(registration, callback);
@@ -30430,13 +30459,16 @@ class ArcStoresFetcher {
         for (const store of this.arc._stores) {
             if (!this.watchedHandles.has(store.id)) {
                 this.watchedHandles.add(store.id);
-                store.on(async () => this.arcDevtoolsChannel.send({
-                    messageType: 'store-value-changed',
-                    messageBody: {
-                        id: store.id.toString(),
-                        value: await this.dereference(store)
-                    }
-                }));
+                store.on(async () => {
+                    this.arcDevtoolsChannel.send({
+                        messageType: 'store-value-changed',
+                        messageBody: {
+                            id: store.id.toString(),
+                            value: await this.dereference(store)
+                        }
+                    });
+                    return true;
+                });
             }
         }
     }
@@ -31052,8 +31084,7 @@ class PlanningResult {
         assert(envOptions.loader, `loader cannot be null`);
         this.store = store;
         if (this.store) {
-            this.storeCallback = () => this.load();
-            this.store.on(this.storeCallback);
+            this.storeCallbackId = this.store.on(() => this.load());
         }
     }
     registerChangeCallback(callback) {
@@ -31087,7 +31118,7 @@ class PlanningResult {
     }
     dispose() {
         this.changeCallbacks = [];
-        this.store.off(this.storeCallback);
+        this.store.off(this.storeCallbackId);
         this.store.dispose();
     }
     static formatSerializableGenerations(generations) {
@@ -36732,8 +36763,7 @@ class PlanProducer {
         this.searchStore = searchStore;
         this.inspector = inspector;
         if (this.searchStore) {
-            this.searchStoreCallback = () => this.onSearchChanged();
-            this.searchStore.on(this.searchStoreCallback);
+            this.searchStoreCallbackId = this.searchStore.on(() => this.onSearchChanged());
         }
         this.debug = debug;
         this.noSpecEx = noSpecEx;
@@ -36754,15 +36784,15 @@ class PlanProducer {
         const arcId = this.arc.id.idTreeAsString();
         const value = values.find(value => value.arc === arcId);
         if (!value) {
-            return;
+            return false;
         }
         if (value.search === this.search) {
-            return;
+            return false;
         }
         this.search = value.search;
         if (!this.search) {
             // search string turned empty, no need to replan, going back to contextual suggestions.
-            return;
+            return false;
         }
         const options = {
             // If we're searching but currently only have contextual suggestions,
@@ -36782,10 +36812,11 @@ class PlanProducer {
             }
         }
         await this.produceSuggestions(options);
+        return true;
     }
     dispose() {
         if (this.searchStore) {
-            this.searchStore.off(this.searchStoreCallback);
+            this.searchStore.off(this.searchStoreCallbackId);
         }
     }
     async produceSuggestions(options = {}) {
@@ -37037,14 +37068,20 @@ class Planificator {
     }
     _listenToArcStores() {
         this.arc.onDataChange(this.dataChangeCallback, this);
-        this.arc.context.allStores.forEach(store => {
-            store.on(this.dataChangeCallback);
+        this.storeCallbackIds = new Map();
+        this.arc.context.allStores.map(store => {
+            const callbackId = store.on(async () => {
+                this.replanQueue.addChange();
+                return true;
+            });
+            this.storeCallbackIds.set(store, callbackId);
         });
     }
     _unlistenToArcStores() {
         this.arc.clearDataChange(this);
         this.arc.context.allStores.forEach(store => {
-            store.off(this.dataChangeCallback);
+            const callbackId = this.storeCallbackIds.get(store);
+            store.off(callbackId);
         });
     }
     static constructSuggestionKey(arc, storageKeyBase) {

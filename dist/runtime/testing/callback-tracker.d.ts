@@ -23,7 +23,7 @@ export declare class CallbackTracker {
     expectedEvents: number;
     events: Dictionary<any>[];
     constructor(storageProvider: UnifiedStore, expectedEvents?: number);
-    changeEvent(c: Dictionary<any>): void;
+    changeEvent(c: Dictionary<any>): boolean;
     /**
      * Tests that the number of expected callbacks are executed.
      * If the DEBUG environment variable is set always display accumulated events

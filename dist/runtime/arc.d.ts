@@ -142,7 +142,7 @@ export declare class Arc {
     createStore(type: Type, name?: string, id?: string, tags?: string[], storageKey?: string | StorageKey): Promise<UnifiedStore>;
     _registerStore(store: UnifiedStore, tags?: string[]): void;
     _tagStore(store: UnifiedStore, tags: Set<string>): void;
-    _onDataChange(): void;
+    _onDataChange(): boolean;
     onDataChange(callback: Runnable, registration: object): void;
     clearDataChange(registration: object): void;
     static _typeToKey(type: Type): string | InterfaceInfo | null;

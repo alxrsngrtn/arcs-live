@@ -16,6 +16,7 @@ import { PropagatedException } from '../arc-exceptions.js';
 import { Dictionary, Consumer } from '../hot.js';
 import { ClaimIsTag } from '../particle-claim.js';
 import { UnifiedStore } from '../storageNG/unified-store.js';
+import { ProxyCallback } from '../storageNG/store.js';
 declare type Callback = Consumer<Dictionary<any>>;
 /**
  * Methods that must be implemented by a Singleton Storage Provider
@@ -89,6 +90,8 @@ export declare class ChangeEvent {
  */
 export declare abstract class StorageProviderBase extends UnifiedStore implements Store {
     protected unifiedStoreType: 'StorageProviderBase';
+    private readonly legacyListeners;
+    private nextCallbackId;
     private readonly listeners;
     private readonly _type;
     protected readonly _storageKey: string;
@@ -106,8 +109,10 @@ export declare abstract class StorageProviderBase extends UnifiedStore implement
     readonly storageKey: string;
     readonly type: Type;
     reportExceptionInHost(exception: PropagatedException): void;
-    on(callback: Callback): void;
-    off(callback: Callback): void;
+    on(callback: ProxyCallback<null>): number;
+    off(callbackId: number): void;
+    legacyOn(callback: Callback): void;
+    legacyOff(callback: Callback): void;
     /**
      * Propagate updates to change listeners.
      */

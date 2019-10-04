@@ -31,6 +31,14 @@ export class StorageStub extends UnifiedStore {
         this.model = model;
         this.unifiedStoreType = 'StorageStub';
     }
+    // No-op implementations for `on` and `off`.
+    // TODO: These methods should not live on UnifiedStore; they only work on
+    // active stores (e.g. StorageProviderBase). Move them to a new
+    // UnifiedActiveStore interface.
+    on(callback) {
+        return -1;
+    }
+    off(callback) { }
     async inflate(storageProviderFactory) {
         const factory = storageProviderFactory || this.storageProviderFactory;
         const store = this.isBackedByManifest()
