@@ -1,15 +1,5 @@
-commit b257c23577af63dcfcf5d2c0cf13dad2a1cf8a49
-Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
-Date:   Fri Oct 4 12:56:06 2019 +1000
+commit 9ffa03c401e6f1e300ecc4f5970ad3fb9b529a58
+Author: Ray Cromwell <cromwellian@gmail.com>
+Date:   Thu Oct 3 20:11:16 2019 -0700
 
-    Refactor StorageProviderBase.on() and .off() (#3697)
-    
-    * Refactor StorageProviderBase.on() and .off()
-    
-    These methods now have the same API as the new storage stack's on and
-    off methods. The old behaviour is preserved in legacyOn and legacyOff
-    methods (there's a bunch of tests that rely on that old behaviour, but
-    they are all specific to the old storage stack and so will be deleted
-    later).
-    
-    * Review comments
+    Merge bazel workspaces (#3696)
