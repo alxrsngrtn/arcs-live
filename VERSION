@@ -1,9 +1,5 @@
-commit bea5bad85b10464fc150c255ce9e124fd42e9f92
-Author: Ray Cromwell <cromwellian@gmail.com>
-Date:   Fri Oct 4 14:25:42 2019 -0700
+commit b91fbbaa1defb7da0410d278aa4bc0c94482a9c6
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Sun Oct 6 07:26:09 2019 -0700
 
-    Refactor Entity out of Particle for use by kt_schema targets (#3700)
-    
-    * Refactor Entity out of Particle for use by kt_schema targets
-    
-    * Add tutorial BUILD
+    No portable promise (after workspace move) (#3656)

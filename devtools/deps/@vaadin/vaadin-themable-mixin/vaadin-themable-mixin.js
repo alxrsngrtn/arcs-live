@@ -14,20 +14,7 @@ export const ThemableMixin = superClass => class VaadinThemableMixin extends The
 
     const template = this.prototype._template;
 
-    let hasOwnTemplate = false;
-    if (this.template instanceof HTMLTemplateElement) {
-      const parent = this.template.parentElement;
-      if (parent) {
-        // <dom-module> template
-        if (parent.id === this.is) {
-          hasOwnTemplate = true;
-        }
-      } else if (this.hasOwnProperty('template')) {
-        // static get template()
-        hasOwnTemplate = true;
-      }
-    }
-
+    const hasOwnTemplate = this.template && this.template.parentElement && this.template.parentElement.id === this.is;
     const inheritedTemplate = Object.getPrototypeOf(this.prototype)._template;
     if (inheritedTemplate && !hasOwnTemplate) {
       // The element doesn't define its own template -> include the theme modules from the inherited template
