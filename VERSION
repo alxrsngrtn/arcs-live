@@ -1,5 +1,5 @@
-commit b91fbbaa1defb7da0410d278aa4bc0c94482a9c6
+commit 7b3270c4cdb3474c5bafe12386cbd0e23931a430
 Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Sun Oct 6 07:26:09 2019 -0700
+Date:   Mon Oct 7 05:56:56 2019 -0700
 
-    No portable promise (after workspace move) (#3656)
+    remove all j2cl targets from BUILD files (#3687)
