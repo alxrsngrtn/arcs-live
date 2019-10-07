@@ -28,6 +28,11 @@ export class Particle {
         }
     }
     /**
+     * Called after handles are synced, override to provide initial processing.
+     */
+    ready() {
+    }
+    /**
      * This sets the capabilities for this particle.  This can only
      * be called once.
      */
@@ -38,10 +43,11 @@ export class Particle {
         }
         this.capabilities = capabilities || {};
     }
+    // tslint:disable-next-line: no-any
     async invokeSafely(fun, err) {
         try {
             this.startBusy();
-            await fun(this);
+            return await fun(this);
         }
         catch (e) {
             err(e);
@@ -53,6 +59,11 @@ export class Particle {
     async callSetHandles(handles, onException) {
         this.handles = handles;
         await this.invokeSafely(async (p) => p.setHandles(handles), onException);
+        this._handlesToSync = this._countInputHandles(handles);
+        if (!this._handlesToSync) {
+            // onHandleSync is called IFF there are input handles, otherwise we are ready now
+            this.ready();
+        }
     }
     /**
      * This method is invoked with a handle for each store this particle
@@ -64,8 +75,21 @@ export class Particle {
      */
     async setHandles(handles) {
     }
+    _countInputHandles(handles) {
+        let count = 0;
+        for (const [name, handle] of handles) {
+            if (handle.canRead) {
+                count++;
+            }
+        }
+        return count;
+    }
     async callOnHandleSync(handle, model, onException) {
         await this.invokeSafely(async (p) => p.onHandleSync(handle, model), onException);
+        // once we've synced each readable handle, we are ready to start
+        if (--this._handlesToSync === 0) {
+            this.ready();
+        }
     }
     /**
      * Called for handles that are configured with both keepSynced and notifySync, when they are

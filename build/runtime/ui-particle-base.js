@@ -12,7 +12,7 @@ import { Particle } from './particle.js';
 /**
  * Particle that can render and process events.
  */
-export class UiSimpleParticle extends Particle {
+export class UiParticleBase extends Particle {
     /**
      * Override if necessary, to modify superclass config.
      */
@@ -68,7 +68,7 @@ export class UiSimpleParticle extends Particle {
     /**
      * Override to return a dictionary to map into the template.
      */
-    render(stateArgs) {
+    render(...args) {
         return {};
     }
     _getStateArgs() {
@@ -248,4 +248,4 @@ export class UiSimpleParticle extends Particle {
         }
     }
 }
-//# sourceMappingURL=ui-simple-particle.js.map
+//# sourceMappingURL=ui-particle-base.js.map

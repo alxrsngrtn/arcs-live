@@ -17,7 +17,7 @@ export declare type RenderModel = object;
 /**
  * Particle that can render and process events.
  */
-export declare class UiSimpleParticle extends Particle {
+export declare class UiParticleBase extends Particle {
     private currentSlotName;
     /**
      * Override if necessary, to modify superclass config.
@@ -42,7 +42,7 @@ export declare class UiSimpleParticle extends Particle {
     /**
      * Override to return a dictionary to map into the template.
      */
-    render(stateArgs?: any): RenderModel;
+    render(...args: any[]): RenderModel;
     protected _getStateArgs(): any[];
     fireEvent(slotName: string, { handler, data }: {
         handler: any;

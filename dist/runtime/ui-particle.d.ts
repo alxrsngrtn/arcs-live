@@ -8,10 +8,10 @@
  * http://polymer.github.io/PATENTS.txt
  */
 /// <reference types="node" />
-import { UiSimpleParticle, RenderModel } from './ui-simple-particle.js';
+import { UiParticleBase } from './ui-particle-base.js';
 import { Handle } from './handle.js';
 import { Runnable } from './hot.js';
-export interface UiStatefulParticle extends UiSimpleParticle {
+export interface UiStatefulParticle extends UiParticleBase {
     _invalidate(): void;
 }
 export interface UiParticle extends UiStatefulParticle {
@@ -33,10 +33,6 @@ export declare class UiParticle extends UiParticle_base {
      */
     update(...args: any[]): void;
     /**
-     * Override to return a dictionary to map into the template.
-     */
-    render(...args: any[]): RenderModel;
-    /**
      * Copy values from `state` into the particle's internal state,
      * triggering an update cycle unless currently updating.
      */
@@ -46,20 +42,15 @@ export declare class UiParticle extends UiParticle_base {
      */
     /**
     * Syntactic sugar: `this.state = {state}` is equivalent to `this.setState(state)`.
-    * This is actually a merge, not an assignment.
+    * This is a merge, not an assignment.
     */
     state: any;
     readonly props: any;
+    _shouldUpdate(): boolean;
     _update(...args: any[]): void;
     _async(fn: any): NodeJS.Timeout;
-    setHandles(handles: ReadonlyMap<string, Handle>): Promise<void>;
-    /**
-     * This is called once during particle setup. Override to control sync and update
-     * configuration on specific handles (via their configure() method).
-     * `handles` is a map from names to handle instances.
-     */
-    configureHandles(handles: ReadonlyMap<string, Handle>): void;
-    onHandleSync(handle: Handle, model: RenderModel): Promise<void>;
+    ready(): void;
+    onHandleSync(handle: Handle, model: any): Promise<void>;
     onHandleUpdate({ name }: Handle, { data, added, removed }: {
         data: any;
         added: any;

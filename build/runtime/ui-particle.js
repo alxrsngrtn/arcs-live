@@ -8,14 +8,14 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { XenStateMixin } from '../../modalities/dom/components/xen/xen-state.js';
-import { UiSimpleParticle } from './ui-simple-particle.js';
+import { UiParticleBase } from './ui-particle-base.js';
 /**
  * Particle that interoperates with DOM and uses a simple state system
  * to handle updates.
  */
 // TODO(sjmiles): seems like this is really `UiStatefulParticle` but it's
 // used so often, I went with the simpler name
-export class UiParticle extends XenStateMixin(UiSimpleParticle) {
+export class UiParticle extends XenStateMixin(UiParticleBase) {
     /**
      * Override if necessary, to do things when props change.
      * Avoid if possible, use `update` instead.
@@ -32,12 +32,6 @@ export class UiParticle extends XenStateMixin(UiSimpleParticle) {
     update(...args) {
     }
     /**
-     * Override to return a dictionary to map into the template.
-     */
-    render(...args) {
-        return {};
-    }
-    /**
      * Copy values from `state` into the particle's internal state,
      * triggering an update cycle unless currently updating.
      */
@@ -52,7 +46,7 @@ export class UiParticle extends XenStateMixin(UiSimpleParticle) {
     }
     /**
      * Syntactic sugar: `this.state = {state}` is equivalent to `this.setState(state)`.
-     * This is actually a merge, not an assignment.
+     * This is a merge, not an assignment.
      */
     set state(state) {
         this.setState(state);
@@ -60,9 +54,12 @@ export class UiParticle extends XenStateMixin(UiSimpleParticle) {
     get props() {
         return this._props;
     }
+    _shouldUpdate() {
+        // do not update() unless all handles are sync'd
+        return this._handlesToSync <= 0;
+    }
     _update(...args) {
-        this.update(...args);
-        //
+        /*const updateDirective =*/ this.update(...args);
         if (this.shouldRender(...args)) { // TODO: should shouldRender be slot specific?
             this.relevance = 1; // TODO: improve relevance signal.
             this.renderOutput(...args);
@@ -83,20 +80,9 @@ export class UiParticle extends XenStateMixin(UiSimpleParticle) {
         // but here use a short timeout for a wider debounce
         return setTimeout(done, 10);
     }
-    async setHandles(handles) {
-        this.configureHandles(handles);
-        this.handles = handles;
-        // TODO(sjmiles): we must invalidate at least once, is there a way to know
-        // whether handleSync/update will be called?
+    ready() {
+        // ensure we `update()` at least once
         this._invalidate();
-    }
-    /**
-     * This is called once during particle setup. Override to control sync and update
-     * configuration on specific handles (via their configure() method).
-     * `handles` is a map from names to handle instances.
-     */
-    configureHandles(handles) {
-        // Example: handles.get('foo').configure({keepSynced: false});
     }
     async onHandleSync(handle, model) {
         this._setProperty(handle.name, model);

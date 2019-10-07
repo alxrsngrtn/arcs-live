@@ -1,5 +1,5 @@
-commit 2654ccd4f9fbb2d7fa782f7f82b1b91474e79c1f
-Author: Sarah Heimlich <heimlich@google.com>
-Date:   Mon Oct 7 09:54:46 2019 -0700
+commit be78d159958cee5e2f39c471447c5da95e6fc92d
+Author: Ray Cromwell <cromwellian@gmail.com>
+Date:   Mon Oct 7 14:11:30 2019 -0700
 
-    Text for tutorial 1 (#3707)
+    Fix workspace error (#3714)

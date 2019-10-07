@@ -9,8 +9,9 @@
  */
 import WebSocket from 'ws';
 const reset = `\x1b[0m`;
-const green = (text) => `\x1b[32m${text}${reset}`;
-const red = (text) => `\x1b[31m${text}${reset}`;
+export const green = (text) => `\x1b[32m${text}${reset}`;
+export const red = (text) => `\x1b[31m${text}${reset}`;
+export const bold = (text) => `\x1b[1m${text}${reset}`;
 /**
  * Explorer Proxy is opening 2 WebSocket connections: one for the Arcs Runtime
  * and one for Arcs Explorer. It allows exchanging messages between the two, but

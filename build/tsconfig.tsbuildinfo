@@ -434,8 +434,8 @@
         "signature": "86874e4389dafbe12250f44f6ee48b07da634c7e761a5f887e56f426b3a4a826"
       },
       "../src/runtime/particle.ts": {
-        "version": "1314b5b9f8c15de962e376400bf9d443c7d1e9daff0bdc862cf4e630274d78ab",
-        "signature": "29b4595a7e44ac239c14fe8b6fa132c4737a5fb170bfd3f8a70f64905aebfc81"
+        "version": "fb8e957dc2977594a918af6b31a2175a750b7c2ea40881ae9b6d2056da2b662f",
+        "signature": "ea11760a3d83b6957c9a8b157adb99a154916d9fa6b3b03f1decd74896f06222"
       },
       "../src/runtime/storage-proxy.ts": {
         "version": "70f4b83557beeec836f8da4881313ce364bac728378819e7870ce9ab78b76559",
@@ -1397,13 +1397,13 @@
         "version": "e8b07ace52fd2e50e33f9b9b61b275d42e4f1373dde1a0edbec52a051b134b6d",
         "signature": "9615d2d878c06c0c35f6b3f4d2a619d3b5568d91f90f3d8844beb86d62bd3fa0"
       },
-      "../src/runtime/ui-simple-particle.ts": {
-        "version": "e086de847335218b712d09d3c3d375af6bc4d45d9282e581e65277ec4af31963",
-        "signature": "fef5b0ff234eeeaf5cacfd794acc9366f83b55814f631da641d5f5aaecdcd0db"
+      "../src/runtime/ui-particle-base.ts": {
+        "version": "e4aed467988b3fda941c0cc30916e6bb8974539243f72727afbe1f0c99ece31e",
+        "signature": "5ce845cfe658f8dc9bc5d6ee8f988dfa09446671ab4b71de6c7af59227e6a668"
       },
       "../src/runtime/ui-particle.ts": {
-        "version": "a4919ec546c2846eb2c752eb69994c6f396196e8c924204982708ca8c6f5e348",
-        "signature": "4a7ee9371fcf168cbbf101994fd4d28d680a022018d5d100a870f0fb38a52049"
+        "version": "10f4d4b6abbbbd2c4250708647ff67e53ee672c7e923b6cd5e7bd5c90e64aa86",
+        "signature": "00ebc835f5a0ad79a982ce1be3cbb6e64ea9b97b2535916cdd1228aa45dcfd00"
       },
       "../src/runtime/ui-transformation-particle.ts": {
         "version": "2b4f46eec76cf6a66c30a68eb2bf150f1a5d5fd73dc8c9214dce8f8fd17c4ed5",
@@ -2681,8 +2681,8 @@
         "signature": "d331c83227ae5b3090f0d46fc6738d96b6959b2365571fa56d052acec81a5a1a"
       },
       "../src/tools/dev_server/explorer-proxy.ts": {
-        "version": "af9f3e44a97d1c7177dab1eb4ee5ba86cbed60a125a73934c2a8bc177e68675a",
-        "signature": "c5fd5833a48c4ebb113dd7713bc276c14b3e5f2c83f84973f64765a57715d5ba"
+        "version": "2556bcfaded65fcc1618db6db2c684b29c9ae755f4bd0f700b95752d0ac03e62",
+        "signature": "18e0d59617690c349bb3dc272c734903cd94eb7e6d35c4810a27b2412e8c2fbb"
       },
       "../src/tools/dev_server/status-handler.ts": {
         "version": "2de53880043f8ac51aadbb82bd4f38871a90a308ffc97d3ebc7d7fccdca8c77f",
@@ -2697,7 +2697,7 @@
         "signature": "30610a77f0a00651a242a4128fb87fabbfea5f5064e17607356e3bd35f69f3be"
       },
       "../src/tools/dev_server/dev-server.ts": {
-        "version": "14eab14e79679d146faf32a6b00f82692528e983bad080111b72d32e43d7944e",
+        "version": "da165d509cb03b1cd5a5d29d1297edc234757b1ca6e10cd93c90091010b4294d",
         "signature": "fd95df5d076cbfed143dc4904d376b5c6d9cb1091b630994ffe2366010afa6b3"
       },
       "../src/tools/tests/bundle-test.ts": {
@@ -5698,7 +5698,7 @@
         "../node_modules/@types/node/util.d.ts",
         "../node_modules/@types/node/ts3.1/util.d.ts"
       ],
-      "../src/runtime/ui-simple-particle.ts": [
+      "../src/runtime/ui-particle-base.ts": [
         "../src/runtime/entity.ts",
         "../src/runtime/handle.ts",
         "../src/runtime/particle.ts",
@@ -5707,7 +5707,7 @@
       ],
       "../src/runtime/ui-particle.ts": [
         "../modalities/dom/components/xen/xen-state.d.ts",
-        "../src/runtime/ui-simple-particle.ts",
+        "../src/runtime/ui-particle-base.ts",
         "../src/runtime/handle.ts",
         "../src/runtime/hot.ts",
         "../node_modules/@types/node/util.d.ts",
@@ -9934,12 +9934,12 @@
       "../src/platform/image-node.ts": [
         "../src/platform/image-web.ts"
       ],
-      "../src/runtime/ui-simple-particle.ts": [
+      "../src/runtime/ui-particle-base.ts": [
         "../src/runtime/entity.ts",
         "../src/runtime/particle.ts"
       ],
       "../src/runtime/ui-particle.ts": [
-        "../src/runtime/ui-simple-particle.ts",
+        "../src/runtime/ui-particle-base.ts",
         "../src/runtime/handle.ts",
         "../src/runtime/hot.ts"
       ],
@@ -11855,7 +11855,7 @@
       "../src/platform/fs-node.ts",
       "../src/platform/image-web.ts",
       "../src/platform/image-node.ts",
-      "../src/runtime/ui-simple-particle.ts",
+      "../src/runtime/ui-particle-base.ts",
       "../src/runtime/ui-particle.ts",
       "../src/runtime/ui-transformation-particle.ts",
       "../src/runtime/ui-multiplexer-particle.ts",

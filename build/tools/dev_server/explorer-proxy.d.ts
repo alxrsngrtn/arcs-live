@@ -9,6 +9,9 @@
  */
 /// <reference types="node" />
 import { Server } from 'http';
+export declare const green: (text: string) => string;
+export declare const red: (text: string) => string;
+export declare const bold: (text: string) => string;
 /**
  * Explorer Proxy is opening 2 WebSocket connections: one for the Arcs Runtime
  * and one for Arcs Explorer. It allows exchanging messages between the two, but

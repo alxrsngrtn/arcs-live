@@ -22108,6 +22108,11 @@ class Particle$1 {
         }
     }
     /**
+     * Called after handles are synced, override to provide initial processing.
+     */
+    ready() {
+    }
+    /**
      * This sets the capabilities for this particle.  This can only
      * be called once.
      */
@@ -22118,10 +22123,11 @@ class Particle$1 {
         }
         this.capabilities = capabilities || {};
     }
+    // tslint:disable-next-line: no-any
     async invokeSafely(fun, err) {
         try {
             this.startBusy();
-            await fun(this);
+            return await fun(this);
         }
         catch (e) {
             err(e);
@@ -22133,6 +22139,11 @@ class Particle$1 {
     async callSetHandles(handles, onException) {
         this.handles = handles;
         await this.invokeSafely(async (p) => p.setHandles(handles), onException);
+        this._handlesToSync = this._countInputHandles(handles);
+        if (!this._handlesToSync) {
+            // onHandleSync is called IFF there are input handles, otherwise we are ready now
+            this.ready();
+        }
     }
     /**
      * This method is invoked with a handle for each store this particle
@@ -22144,8 +22155,21 @@ class Particle$1 {
      */
     async setHandles(handles) {
     }
+    _countInputHandles(handles) {
+        let count = 0;
+        for (const [name, handle] of handles) {
+            if (handle.canRead) {
+                count++;
+            }
+        }
+        return count;
+    }
     async callOnHandleSync(handle, model, onException) {
         await this.invokeSafely(async (p) => p.onHandleSync(handle, model), onException);
+        // once we've synced each readable handle, we are ready to start
+        if (--this._handlesToSync === 0) {
+            this.ready();
+        }
     }
     /**
      * Called for handles that are configured with both keepSynced and notifySync, when they are
@@ -29765,7 +29789,7 @@ class DevtoolsConnection {
 /**
  * Particle that can render and process events.
  */
-class UiSimpleParticle extends Particle$1 {
+class UiParticleBase extends Particle$1 {
     /**
      * Override if necessary, to modify superclass config.
      */
@@ -29821,7 +29845,7 @@ class UiSimpleParticle extends Particle$1 {
     /**
      * Override to return a dictionary to map into the template.
      */
-    render(stateArgs) {
+    render(...args) {
         return {};
     }
     _getStateArgs() {
@@ -30017,7 +30041,7 @@ class UiSimpleParticle extends Particle$1 {
  */
 // TODO(sjmiles): seems like this is really `UiStatefulParticle` but it's
 // used so often, I went with the simpler name
-class UiParticle extends XenStateMixin(UiSimpleParticle) {
+class UiParticle extends XenStateMixin(UiParticleBase) {
     /**
      * Override if necessary, to do things when props change.
      * Avoid if possible, use `update` instead.
@@ -30034,12 +30058,6 @@ class UiParticle extends XenStateMixin(UiSimpleParticle) {
     update(...args) {
     }
     /**
-     * Override to return a dictionary to map into the template.
-     */
-    render(...args) {
-        return {};
-    }
-    /**
      * Copy values from `state` into the particle's internal state,
      * triggering an update cycle unless currently updating.
      */
@@ -30054,7 +30072,7 @@ class UiParticle extends XenStateMixin(UiSimpleParticle) {
     }
     /**
      * Syntactic sugar: `this.state = {state}` is equivalent to `this.setState(state)`.
-     * This is actually a merge, not an assignment.
+     * This is a merge, not an assignment.
      */
     set state(state) {
         this.setState(state);
@@ -30062,9 +30080,12 @@ class UiParticle extends XenStateMixin(UiSimpleParticle) {
     get props() {
         return this._props;
     }
+    _shouldUpdate() {
+        // do not update() unless all handles are sync'd
+        return this._handlesToSync <= 0;
+    }
     _update(...args) {
-        this.update(...args);
-        //
+        /*const updateDirective =*/ this.update(...args);
         if (this.shouldRender(...args)) { // TODO: should shouldRender be slot specific?
             this.relevance = 1; // TODO: improve relevance signal.
             this.renderOutput(...args);
@@ -30085,20 +30106,9 @@ class UiParticle extends XenStateMixin(UiSimpleParticle) {
         // but here use a short timeout for a wider debounce
         return setTimeout(done, 10);
     }
-    async setHandles(handles) {
-        this.configureHandles(handles);
-        this.handles = handles;
-        // TODO(sjmiles): we must invalidate at least once, is there a way to know
-        // whether handleSync/update will be called?
+    ready() {
+        // ensure we `update()` at least once
         this._invalidate();
-    }
-    /**
-     * This is called once during particle setup. Override to control sync and update
-     * configuration on specific handles (via their configure() method).
-     * `handles` is a map from names to handle instances.
-     */
-    configureHandles(handles) {
-        // Example: handles.get('foo').configure({keepSynced: false});
     }
     async onHandleSync(handle, model) {
         this._setProperty(handle.name, model);

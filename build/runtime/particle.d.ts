@@ -33,15 +33,20 @@ export declare class Particle {
     private _idle;
     private _idleResolver;
     private _busy;
+    protected _handlesToSync: number;
     protected slotProxiesByName: Map<string, SlotProxy>;
     private capabilities;
     constructor();
+    /**
+     * Called after handles are synced, override to provide initial processing.
+     */
+    protected ready(): void;
     /**
      * This sets the capabilities for this particle.  This can only
      * be called once.
      */
     setCapabilities(capabilities: Capabilities): void;
-    private invokeSafely;
+    protected invokeSafely(fun: (p: this) => Promise<any>, err: Consumer<Error>): Promise<any>;
     callSetHandles(handles: ReadonlyMap<string, Handle>, onException: Consumer<Error>): Promise<void>;
     /**
      * This method is invoked with a handle for each store this particle
@@ -52,6 +57,7 @@ export declare class Particle {
      * @param handles a map from handle names to store handles.
      */
     protected setHandles(handles: ReadonlyMap<string, Handle>): Promise<void>;
+    private _countInputHandles;
     callOnHandleSync(handle: Handle, model: any, onException: Consumer<Error>): Promise<void>;
     /**
      * Called for handles that are configured with both keepSynced and notifySync, when they are
