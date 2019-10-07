@@ -1,5 +1,5 @@
-commit be78d159958cee5e2f39c471447c5da95e6fc92d
-Author: Ray Cromwell <cromwellian@gmail.com>
-Date:   Mon Oct 7 14:11:30 2019 -0700
+commit ac7879163c80dbd2a932897536256c7447d57cef
+Author: yuangu-google <yuangu@google.com>
+Date:   Mon Oct 7 16:11:06 2019 -0700
 
-    Fix workspace error (#3714)
+    Fix Android demo. (#3717)
