@@ -1,9 +1,9 @@
-commit 1395805eb0770d103c71ed575cf2b20e24d266dd
-Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
-Date:   Tue Oct 8 17:08:13 2019 +1100
+commit 5677222bb432dfdbd858125407b8174a5fe62175
+Author: Ray Cromwell <cromwellian@gmail.com>
+Date:   Mon Oct 7 23:54:26 2019 -0700
 
-    Replace a few simple usages of hacky toStorageStub() with real API (#3722)
+    Fix errorprone checks (#3718)
     
-    * Replace a few simple usages of hacky toStorageStub() with real API
+    * Fix errorprone checks
     
-    * Fix issues
+    * Fix bazelrc, add missing suppression
