@@ -127,6 +127,11 @@ export class CollectionHandle extends Handle {
     }
     async onUpdate(op, oldData, version) {
         this.clock = version;
+        // FastForward cannot be expressed in terms of ordered added/removed, so pass a full model to
+        // the particle.
+        if (op.type === CollectionOpTypes.FastForward) {
+            return this.onSync();
+        }
         // Pass the change up to the particle.
         const update = { originator: ('actor' in op && this.key === op.actor) };
         if (op.type === CollectionOpTypes.Add) {
