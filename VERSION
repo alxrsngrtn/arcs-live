@@ -1,11 +1,11 @@
-commit 35226bcfacb8321406197271a8862f6065180f20
-Author: yuangu-google <yuangu@google.com>
-Date:   Tue Oct 8 10:50:47 2019 -0700
+commit d7b0fb930ce041b04467b7979b9c2820ff97c399
+Author: Ray Cromwell <cromwellian@gmail.com>
+Date:   Tue Oct 8 12:30:15 2019 -0700
 
-    Update .gitignore to ignore all hidden files/dirs. (#3698)
+    Add rules for arcs_manifest/particle/deployable (#3703)
     
-    * Update .gitignore to ignore all hidden files/dirs.
+    * Add rules for arcs_manifest/particle/deployable
     
-    * Revert.
+    * arcs_deployable -> arcs_kt_wasm_binary
     
-    * Update .gitignore.
+    * add missing dep
