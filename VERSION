@@ -1,11 +1,5 @@
-commit d7b0fb930ce041b04467b7979b9c2820ff97c399
-Author: Ray Cromwell <cromwellian@gmail.com>
-Date:   Tue Oct 8 12:30:15 2019 -0700
+commit ae4b5b5791e10efdd77d35b7fbaa5a7091a00e10
+Author: Sarah Heimlich <heimlich@google.com>
+Date:   Tue Oct 8 12:58:20 2019 -0700
 
-    Add rules for arcs_manifest/particle/deployable (#3703)
-    
-    * Add rules for arcs_manifest/particle/deployable
-    
-    * arcs_deployable -> arcs_kt_wasm_binary
-    
-    * add missing dep
+    Updated Kotlin tutorial BUILD file. (#3728)
