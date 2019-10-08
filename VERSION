@@ -1,9 +1,11 @@
-commit 5677222bb432dfdbd858125407b8174a5fe62175
-Author: Ray Cromwell <cromwellian@gmail.com>
-Date:   Mon Oct 7 23:54:26 2019 -0700
+commit 35226bcfacb8321406197271a8862f6065180f20
+Author: yuangu-google <yuangu@google.com>
+Date:   Tue Oct 8 10:50:47 2019 -0700
 
-    Fix errorprone checks (#3718)
+    Update .gitignore to ignore all hidden files/dirs. (#3698)
     
-    * Fix errorprone checks
+    * Update .gitignore to ignore all hidden files/dirs.
     
-    * Fix bazelrc, add missing suppression
+    * Revert.
+    
+    * Update .gitignore.
