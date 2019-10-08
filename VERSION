@@ -1,5 +1,11 @@
-commit 099f66a990ef4d52bde96bdbe2de3a4b8437228d
-Author: galganif <4754402+galganif@users.noreply.github.com>
-Date:   Wed Oct 9 10:23:38 2019 +1100
+commit 2b9e6fdf8b71e7e5adc2a140b0e8c519ab23da14
+Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
+Date:   Wed Oct 9 10:31:22 2019 +1100
 
-    handle fastforward ops (#3731)
+    Updates Javaharness instructions (#3723)
+    
+    * Update javaharness instructions
+    
+    Also added .bazelproject file to make it easier to get started.
+    
+    * Add troubleshooting section
