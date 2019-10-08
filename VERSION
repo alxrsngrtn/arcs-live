@@ -1,5 +1,8 @@
-commit ac7879163c80dbd2a932897536256c7447d57cef
-Author: yuangu-google <yuangu@google.com>
-Date:   Mon Oct 7 16:11:06 2019 -0700
+commit 9d0eae47e7cd79c813e3878224f09073cb3170f3
+Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
+Date:   Tue Oct 8 15:59:46 2019 +1100
 
-    Fix Android demo. (#3717)
+    Clean up the Store constructor interface. (#3719)
+    
+    It's started getting too many arguments, so I made it take an options
+    parameter. Should make it easier to extend in the future.

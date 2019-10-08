@@ -24543,12 +24543,12 @@ var ProxyMessageType;
 // behaviour as controlled by the provided StorageMode.
 class ActiveStore {
     // TODO: Lots of these params can be pulled from baseStore.
-    constructor(storageKey, exists, type, mode, baseStore) {
-        this.storageKey = storageKey;
-        this.exists = exists;
-        this.type = type;
-        this.mode = mode;
-        this.baseStore = baseStore;
+    constructor(options) {
+        this.storageKey = options.storageKey;
+        this.exists = options.exists;
+        this.type = options.type;
+        this.mode = options.mode;
+        this.baseStore = options.baseStore;
     }
     async idle() {
         return Promise.resolve();
@@ -24601,8 +24601,8 @@ class DirectStore extends ActiveStore {
     /*
      * This class should only ever be constructed via the static construct method
      */
-    constructor(storageKey, exists, type, mode, baseStore) {
-        super(storageKey, exists, type, mode, baseStore);
+    constructor(options) {
+        super(options);
         this.callbacks = new Map();
         this.nextCallbackID = 1;
         this.version = 0;
@@ -24641,12 +24641,12 @@ class DirectStore extends ActiveStore {
             this.pendingResolves = [];
         }
     }
-    static async construct(storageKey, exists, type, mode, baseStore) {
-        const me = new DirectStore(storageKey, exists, type, mode, baseStore);
-        me.localModel = new (type.crdtInstanceConstructor())();
-        me.driver = await DriverFactory.driverInstance(storageKey, exists);
+    static async construct(options) {
+        const me = new DirectStore(options);
+        me.localModel = new (options.type.crdtInstanceConstructor())();
+        me.driver = await DriverFactory.driverInstance(options.storageKey, options.exists);
         if (me.driver == null) {
-            throw new CRDTError(`No driver exists to support storage key ${storageKey}`);
+            throw new CRDTError(`No driver exists to support storage key ${options.storageKey}`);
         }
         me.driver.registerReceiver(me.onReceive.bind(me));
         return me;
@@ -24841,15 +24841,12 @@ class DirectStore extends ActiveStore {
  * A store that allows multiple CRDT models to be stored as sub-keys of a single storageKey location.
  */
 class BackingStore {
-    constructor(storageKey, exists, type, mode, baseStore) {
-        this.storageKey = storageKey;
-        this.exists = exists;
-        this.type = type;
-        this.mode = mode;
-        this.baseStore = baseStore;
+    constructor(options) {
         this.stores = {};
         this.callbacks = new Map();
         this.nextCallbackId = 1;
+        this.storageKey = options.storageKey;
+        this.options = options;
     }
     on(callback) {
         this.callbacks.set(this.nextCallbackId, callback);
@@ -24872,7 +24869,7 @@ class BackingStore {
         }
     }
     async setupStore(muxId) {
-        const store = await DirectStore.construct(this.storageKey.childWithComponent(muxId), this.exists, this.type, this.mode, this.baseStore);
+        const store = await DirectStore.construct({ ...this.options, storageKey: this.storageKey.childWithComponent(muxId) });
         const id = store.on(msg => this.processStoreCallback(muxId, msg));
         const record = { store, id, type: 'record' };
         this.stores[muxId] = record;
@@ -24890,8 +24887,8 @@ class BackingStore {
         message.id = id;
         return store.onProxyMessage(message);
     }
-    static async construct(storageKey, exists, type, mode, baseStore) {
-        return new BackingStore(storageKey, exists, type, mode, baseStore);
+    static async construct(options) {
+        return new BackingStore(options);
     }
     async idle() {
         const stores = [];
@@ -24994,9 +24991,16 @@ class ReferenceModeStore extends ActiveStore {
          */
         this.blockCounter = 0;
     }
-    static async construct(storageKey, exists, type, unusedMode, baseStore) {
-        const result = new ReferenceModeStore(storageKey, exists, type, StorageMode.ReferenceMode, baseStore);
-        result.backingStore = await BackingStore.construct(storageKey.backingKey, exists, type.getContainedType(), StorageMode.Backing, baseStore);
+    static async construct(options) {
+        const result = new ReferenceModeStore(options);
+        const { storageKey, type } = options;
+        result.backingStore = await BackingStore.construct({
+            storageKey: storageKey.backingKey,
+            type: type.getContainedType(),
+            mode: StorageMode.Backing,
+            exists: options.exists,
+            baseStore: options.baseStore,
+        });
         let refType;
         if (type.isCollectionType()) {
             refType = new CollectionType(new ReferenceType(type.getContainedType()));
@@ -25005,7 +25009,13 @@ class ReferenceModeStore extends ActiveStore {
             // TODO(shans) probably need a singleton type here now.
             refType = new ReferenceType(type.getContainedType());
         }
-        result.containerStore = await DirectStore.construct(storageKey.storageKey, exists, type, StorageMode.Direct, baseStore);
+        result.containerStore = await DirectStore.construct({
+            storageKey: storageKey.storageKey,
+            type,
+            mode: StorageMode.Direct,
+            exists: options.exists,
+            baseStore: options.baseStore
+        });
         result.registerStoreCallbacks();
         return result;
     }
@@ -25533,7 +25543,13 @@ class Store extends UnifiedStore {
         if (constructor == null) {
             throw new Error(`No constructor registered for mode ${this.mode}`);
         }
-        const activeStore = await constructor.construct(this.storageKey, this.exists, this.type, this.mode, this);
+        const activeStore = await constructor.construct({
+            storageKey: this.storageKey,
+            exists: this.exists,
+            type: this.type,
+            mode: this.mode,
+            baseStore: this,
+        });
         this.exists = Exists.ShouldExist;
         this.activeStore = activeStore;
         return activeStore;

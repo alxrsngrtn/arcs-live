@@ -49,6 +49,16 @@ export declare type StoreInterface<T extends CRDTTypeRecord> = {
     readonly type: Type;
     readonly mode: StorageMode;
 };
+export declare type StoreConstructorOptions<T extends CRDTTypeRecord> = {
+    storageKey: StorageKey;
+    exists: Exists;
+    type: Type;
+    mode: StorageMode;
+    baseStore: Store<T>;
+};
+export declare type StoreConstructor = {
+    construct<T extends CRDTTypeRecord>(options: StoreConstructorOptions<T>): Promise<ActiveStore<T>>;
+};
 export interface StorageCommunicationEndpoint<T extends CRDTTypeRecord> {
     setCallback(callback: ProxyCallback<T>): void;
     reportExceptionInHost(exception: PropagatedException): void;
@@ -63,7 +73,7 @@ export declare abstract class ActiveStore<T extends CRDTTypeRecord> implements S
     readonly type: Type;
     readonly mode: StorageMode;
     readonly baseStore: Store<T>;
-    constructor(storageKey: StorageKey, exists: Exists, type: Type, mode: StorageMode, baseStore: Store<T>);
+    constructor(options: StoreConstructorOptions<T>);
     idle(): Promise<void>;
     toLiteral(): Promise<any>;
     cloneFrom(store: UnifiedActiveStore): Promise<void>;

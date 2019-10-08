@@ -97,9 +97,16 @@ export class ReferenceModeStore extends ActiveStore {
          */
         this.blockCounter = 0;
     }
-    static async construct(storageKey, exists, type, unusedMode, baseStore) {
-        const result = new ReferenceModeStore(storageKey, exists, type, StorageMode.ReferenceMode, baseStore);
-        result.backingStore = await BackingStore.construct(storageKey.backingKey, exists, type.getContainedType(), StorageMode.Backing, baseStore);
+    static async construct(options) {
+        const result = new ReferenceModeStore(options);
+        const { storageKey, type } = options;
+        result.backingStore = await BackingStore.construct({
+            storageKey: storageKey.backingKey,
+            type: type.getContainedType(),
+            mode: StorageMode.Backing,
+            exists: options.exists,
+            baseStore: options.baseStore,
+        });
         let refType;
         if (type.isCollectionType()) {
             refType = new CollectionType(new ReferenceType(type.getContainedType()));
@@ -108,7 +115,13 @@ export class ReferenceModeStore extends ActiveStore {
             // TODO(shans) probably need a singleton type here now.
             refType = new ReferenceType(type.getContainedType());
         }
-        result.containerStore = await DirectStore.construct(storageKey.storageKey, exists, type, StorageMode.Direct, baseStore);
+        result.containerStore = await DirectStore.construct({
+            storageKey: storageKey.storageKey,
+            type,
+            mode: StorageMode.Direct,
+            exists: options.exists,
+            baseStore: options.baseStore
+        });
         result.registerStoreCallbacks();
         return result;
     }

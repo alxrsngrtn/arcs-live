@@ -11,12 +11,9 @@ import { CRDTModel, CRDTTypeRecord } from '../crdt/crdt.js';
 import { Type } from '../type.js';
 import { Exists } from './drivers/driver-factory.js';
 import { StorageKey } from './storage-key.js';
-import { StoreInterface, StorageMode, ActiveStore, ProxyMessageType, ProxyMessage, ProxyCallback, StorageCommunicationEndpoint, StorageCommunicationEndpointProvider } from './store-interface.js';
+import { StoreInterface, StorageMode, ActiveStore, ProxyMessageType, ProxyMessage, ProxyCallback, StorageCommunicationEndpoint, StorageCommunicationEndpointProvider, StoreConstructor } from './store-interface.js';
 import { UnifiedStore } from './unified-store.js';
 export { ActiveStore, ProxyCallback, ProxyMessage, ProxyMessageType, StorageCommunicationEndpoint, StorageCommunicationEndpointProvider, StorageMode };
-declare type StoreConstructor = {
-    construct<T extends CRDTTypeRecord>(storageKey: StorageKey, exists: Exists, type: Type, mode: StorageMode, baseStore: Store<T>): Promise<ActiveStore<T>>;
-};
 export declare class Store<T extends CRDTTypeRecord> extends UnifiedStore implements StoreInterface<T> {
     protected unifiedStoreType: 'Store';
     toString(tags: string[]): string;

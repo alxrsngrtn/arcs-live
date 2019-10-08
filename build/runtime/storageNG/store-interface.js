@@ -28,12 +28,12 @@ export var ProxyMessageType;
 // behaviour as controlled by the provided StorageMode.
 export class ActiveStore {
     // TODO: Lots of these params can be pulled from baseStore.
-    constructor(storageKey, exists, type, mode, baseStore) {
-        this.storageKey = storageKey;
-        this.exists = exists;
-        this.type = type;
-        this.mode = mode;
-        this.baseStore = baseStore;
+    constructor(options) {
+        this.storageKey = options.storageKey;
+        this.exists = options.exists;
+        this.type = options.type;
+        this.mode = options.mode;
+        this.baseStore = options.baseStore;
     }
     async idle() {
         return Promise.resolve();

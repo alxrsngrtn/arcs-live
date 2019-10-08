@@ -44,7 +44,13 @@ export class Store extends UnifiedStore {
         if (constructor == null) {
             throw new Error(`No constructor registered for mode ${this.mode}`);
         }
-        const activeStore = await constructor.construct(this.storageKey, this.exists, this.type, this.mode, this);
+        const activeStore = await constructor.construct({
+            storageKey: this.storageKey,
+            exists: this.exists,
+            type: this.type,
+            mode: this.mode,
+            baseStore: this,
+        });
         this.exists = Exists.ShouldExist;
         this.activeStore = activeStore;
         return activeStore;
