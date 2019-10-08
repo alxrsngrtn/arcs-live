@@ -482,7 +482,7 @@
         "signature": "f2d8b054448cb4886900f4baa77e8b41c7d00a7a3bd25a90752e325aab5e14c3"
       },
       "../src/runtime/arc.ts": {
-        "version": "566ae7f12b144b6c4004799e298ccc6d665336f9bcad6da2856b4c9ebaed4abc",
+        "version": "2184f9d9430fef8bd6194f83148221417a3dcc965149bf35aa43b7d28391bae5",
         "signature": "f5a76c9d0f56d9aea76b7b9af419daaf2bd80e4ad350672331b144aafec7a76f"
       },
       "../src/runtime/api-channel.ts": {
@@ -1270,7 +1270,7 @@
         "signature": "8bc1d39a3b8ec61064f9969316a088e314895e7ffd094468dcc0b238f33cb4a6"
       },
       "../src/planning/strategies/tests/search-tokens-to-handles-test.ts": {
-        "version": "66f9d5e41a3431a4af23d66fe661a832cc2529a1c631600deff50191cbb958af",
+        "version": "dfc2e5ee2b74b254a5aeb86a84933d8e3f18037f8c383b624ef64c3cd12056de",
         "signature": "8bc1d39a3b8ec61064f9969316a088e314895e7ffd094468dcc0b238f33cb4a6"
       },
       "../src/planning/strategies/tests/search-tokens-to-particles-test.ts": {
@@ -2401,7 +2401,7 @@
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "../src/runtime/tests/manifest-test.ts": {
-        "version": "ffa69fe6179a86c2b4440b1baaae4c4814e9b6bbbdbb6526d8b744c5edac4cb6",
+        "version": "6183776268964794fa7400cdae6779fad196e330ec57a93130a1ab4b57076058",
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "../src/runtime/tests/multiplexer-test.ts": {

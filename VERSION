@@ -1,9 +1,9 @@
-commit c2b2d50f237281b2e8af7268618751bc9b3b8e8c
+commit 1395805eb0770d103c71ed575cf2b20e24d266dd
 Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
-Date:   Tue Oct 8 16:06:52 2019 +1100
+Date:   Tue Oct 8 17:08:13 2019 +1100
 
-    Adds parsing ability to new StorageKey classes (#3721)
+    Replace a few simple usages of hacky toStorageStub() with real API (#3722)
     
-    * StorageKeyParser
+    * Replace a few simple usages of hacky toStorageStub() with real API
     
-    * Review comments
+    * Fix issues
