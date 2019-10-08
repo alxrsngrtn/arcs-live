@@ -1,13 +1,5 @@
-commit c8a6545b5b442a0d4c804a88e5b9a3416a2cd04f
-Author: Scott J. Miles <sjmiles@google.com>
-Date:   Tue Oct 8 15:59:56 2019 -0700
+commit 2efbc721d89330f70ba66e7a1d645d79bb25fef3
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Tue Oct 8 19:09:13 2019 -0400
 
-    Modify xen-renderer to handle frozen render-packets (#3732)
-    
-    * clone frozen objects before mutation
-    
-    * clone frozen render model objects before mutating
-    
-    * GooglePlacesAPI is now producing irrational ratings, truncate
-    
-    * use modern syntax
+    refactor ArcData (in preparation for multi particle support) (#3726)
