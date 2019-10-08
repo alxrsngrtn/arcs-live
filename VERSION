@@ -1,5 +1,5 @@
-commit ae4b5b5791e10efdd77d35b7fbaa5a7091a00e10
-Author: Sarah Heimlich <heimlich@google.com>
-Date:   Tue Oct 8 12:58:20 2019 -0700
+commit 97b62623629eff49245bd2c2c41066509199c23e
+Author: Piotr Swigon <piotr.swigon@gmail.com>
+Date:   Tue Oct 8 15:05:40 2019 -0700
 
-    Updated Kotlin tutorial BUILD file. (#3728)
+    Move pec message freezing to API Channel to always freeze (#3730)

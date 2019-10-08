@@ -486,8 +486,8 @@
         "signature": "f5a76c9d0f56d9aea76b7b9af419daaf2bd80e4ad350672331b144aafec7a76f"
       },
       "../src/runtime/api-channel.ts": {
-        "version": "94bac6645afb90ba67be6e47d6229dc6c747e956b6633761c90e386b74b1b946",
-        "signature": "1d4d7ff53894b5a222ea5c2726736b3be7efce39132f2f73ab1a0637c4d8cc19"
+        "version": "dbd15c32840a4e791823db3a8795d625ac728a7acbafd65bda9dac87ab104c88",
+        "signature": "c39b1d7f70b4c0897e75d1b8ecde32c8388c6381406f6df06b80300dbb1a4009"
       },
       "../src/runtime/wasm.ts": {
         "version": "6992a9ed988aa67a9dcd25f397eee04722cab540af2ed947756d2b8c13263a29",
@@ -842,7 +842,7 @@
         "signature": "5f764000c0935ed79663b189731d23f75b262f878758de3366bc8e2389fef5e5"
       },
       "../src/devtools-connector/devtools-arc-inspector.ts": {
-        "version": "013b1db15fa56828cb3ad5d066fc1578863036a8502fc1cd240b987a6d3f4fc4",
+        "version": "345e4aff0ecaff4629919dc76555f066022cdd7c1c1f3d00abdd6b2dd1c0a8e5",
         "signature": "914efdd9819f19afa229ed6da2f106eba0d791e2a1f9f4dad415d477e7eeec63"
       },
       "../src/devtools-connector/devtools-planner-inspector.ts": {

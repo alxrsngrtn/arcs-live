@@ -56,6 +56,7 @@ export declare class APIPort {
 }
 export declare abstract class PECOuterPort extends APIPort {
     constructor(messagePort: MessagePort, arc: Arc);
+    _processMessage(e: any): Promise<void>;
     Stop(): void;
     DefineHandle(store: UnifiedStore, type: Type, name: string): void;
     InstantiateParticle(particle: recipeParticle.Particle, id: string, spec: ParticleSpec, stores: Map<string, UnifiedStore>): void;
