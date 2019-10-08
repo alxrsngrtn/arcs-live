@@ -22,6 +22,7 @@ export declare class VolatileStorageKey extends StorageKey {
     constructor(arcId: ArcId, unique: string);
     toString(): string;
     childWithComponent(component: string): VolatileStorageKey;
+    static fromString(key: string): VolatileStorageKey;
 }
 export declare class VolatileMemory {
     entries: Map<string, VolatileEntry<unknown>>;

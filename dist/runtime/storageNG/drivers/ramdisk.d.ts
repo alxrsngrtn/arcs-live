@@ -15,6 +15,7 @@ export declare class RamDiskStorageKey extends StorageKey {
     constructor(unique: string);
     toString(): string;
     childWithComponent(component: string): RamDiskStorageKey;
+    static fromString(key: string): RamDiskStorageKey;
 }
 /**
  * Provides RamDisk storage drivers. RamDisk storage is shared amongst all Arcs,

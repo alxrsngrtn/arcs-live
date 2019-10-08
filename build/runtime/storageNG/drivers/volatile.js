@@ -9,6 +9,7 @@
  */
 import { Driver, Exists, DriverFactory } from './driver-factory.js';
 import { StorageKey } from '../storage-key.js';
+import { ArcId } from '../../id.js';
 export class VolatileStorageKey extends StorageKey {
     constructor(arcId, unique) {
         super('volatile');
@@ -20,6 +21,14 @@ export class VolatileStorageKey extends StorageKey {
     }
     childWithComponent(component) {
         return new VolatileStorageKey(this.arcId, `${this.unique}/${component}`);
+    }
+    static fromString(key) {
+        const match = key.match(/^volatile:\/\/([^/]+)\/(.*)$/);
+        if (!match) {
+            throw new Error(`Not a valid VolatileStorageKey: ${key}.`);
+        }
+        const [_, arcId, unique] = match;
+        return new VolatileStorageKey(ArcId.fromString(arcId), unique);
     }
 }
 export class VolatileMemory {

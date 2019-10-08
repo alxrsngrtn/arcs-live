@@ -362,8 +362,8 @@
         "signature": "90c1a68b23e12258f5e09d7b5fb773e771892fe9ee7533ce4cec349471c226f5"
       },
       "../src/runtime/storageNG/drivers/volatile.ts": {
-        "version": "918a9aee84d0fc9ddaf847099941e65c75fe430ebffd7bf7b3095339fbf7cc52",
-        "signature": "1caf0bf54edc18e0f7bc0bb764e1a91e110d5080b3faa107fa2061281f47da41"
+        "version": "0bc3d27901748abc7f88232620306a26ca5989a8d1de3b2500a6c4da48fe533d",
+        "signature": "af120c39fff2ad72a48d2b3b4a240ce8a4427a6ad47de56681d972da74bba906"
       },
       "../src/runtime/runtime.ts": {
         "version": "f3255c932025c8c31caca9d4f1bc207b96040a966ebcae64a43400b8b7926d4c",
@@ -2253,8 +2253,8 @@
         "signature": "8bc1d39a3b8ec61064f9969316a088e314895e7ffd094468dcc0b238f33cb4a6"
       },
       "../src/runtime/storageNG/drivers/firebase.ts": {
-        "version": "1b266d3d1b06310857e1742734128728901646adee314d8a2cc2fd08fea20c8d",
-        "signature": "34a4b3a84747d0740f0bb9b1722734dd8d59b78ed1cc00b42d69597103027b3c"
+        "version": "5d77cd04e07cd6572cef2a4991b72306fed129bfaebbf981d2e63e403fe2f8f5",
+        "signature": "f439c9002b77da798e7b074a5c34ff1729c6c43898fe899465d92f0161cdcb69"
       },
       "../src/runtime/manual_tests/firebase-ng-test.ts": {
         "version": "ef882548b052d683a79cc6248f76797fdb5899315b20a06f5b41bc86c9bfaab2",
@@ -2273,8 +2273,12 @@
         "signature": "3f7c98597624caffe956adaf05c30fc4f057970258007028146ab190b77a87dc"
       },
       "../src/runtime/storageNG/drivers/ramdisk.ts": {
-        "version": "13e2218e866f0b6d58ca7f0e4ecac3b00d982bab92f6f590a40140e416657882",
-        "signature": "b2001479c20635531e7177bdaf326f6e5a116a70e93483f3e6e9b26a7fc46b2d"
+        "version": "acbd37be40623dacb3e812254cb0ab3233c6531954459d457e2632855bf17efb",
+        "signature": "819d99afd1bd571a9e5bd8294bfb41d5d34c8b716de41daa219df8a10d793fea"
+      },
+      "../src/runtime/storageNG/storage-key-parser.ts": {
+        "version": "b72430674ed5fadff8865d8c1589cbc8fc63797916d46020bd62156d9ec9268c",
+        "signature": "8ef9453dcbfa29ffef1fd28d215625bdb2730644a74ff977494d36c9c2f4f86f"
       },
       "../src/runtime/storageNG/testing/mock-firebase.ts": {
         "version": "d98c764325f86b40a0eac1c322abf522428521d18e2c522ec939c81c056722d6",
@@ -2315,6 +2319,10 @@
       "../src/runtime/storageNG/tests/reference-mode-store-test.ts": {
         "version": "db4030b599f92da0c0c4c0a3a1871505d42c44f5765551d2a7ac5d7fdba5dbcf",
         "signature": "fd95df5d076cbfed143dc4904d376b5c6d9cb1091b630994ffe2366010afa6b3"
+      },
+      "../src/runtime/storageNG/tests/storage-key-test.ts": {
+        "version": "8dc795bd9d57be9fcaf0b171d8e509691e24254034a2854e44c8f44e7f5a7d7f",
+        "signature": "43a5176681925d9f51b139647154e4a52c2eb1b1a64bb428595000952bcbc7f1"
       },
       "../src/runtime/storageNG/tests/storage-proxy-test.ts": {
         "version": "263c663d844c12a9697a1063980e00d09b3fefc00dcc3823ff2a3a9907805ddc",
@@ -7251,6 +7259,14 @@
         "../node_modules/@types/node/util.d.ts",
         "../node_modules/@types/node/ts3.1/util.d.ts"
       ],
+      "../src/runtime/storageNG/storage-key-parser.ts": [
+        "../src/runtime/storageNG/storage-key.ts",
+        "../src/runtime/storageNG/drivers/volatile.ts",
+        "../src/runtime/storageNG/drivers/firebase.ts",
+        "../src/runtime/storageNG/drivers/ramdisk.ts",
+        "../node_modules/@types/node/util.d.ts",
+        "../node_modules/@types/node/ts3.1/util.d.ts"
+      ],
       "../src/runtime/storageNG/testing/mock-firebase.ts": [
         "../src/runtime/storageNG/drivers/firebase.ts",
         "../src/runtime/storageNG/storage-key.ts",
@@ -7364,6 +7380,15 @@
         "../src/runtime/crdt/crdt-singleton.ts",
         "../src/runtime/type.ts",
         "../src/runtime/schema.ts",
+        "../node_modules/@types/node/util.d.ts",
+        "../node_modules/@types/node/ts3.1/util.d.ts"
+      ],
+      "../src/runtime/storageNG/tests/storage-key-test.ts": [
+        "../src/runtime/storageNG/storage-key-parser.ts",
+        "../src/platform/chai-web.d.ts",
+        "../src/runtime/storageNG/drivers/volatile.ts",
+        "../src/runtime/storageNG/drivers/firebase.ts",
+        "../src/runtime/storageNG/drivers/ramdisk.ts",
         "../node_modules/@types/node/util.d.ts",
         "../node_modules/@types/node/ts3.1/util.d.ts"
       ],
@@ -11317,6 +11342,9 @@
         "../src/runtime/storageNG/drivers/driver-factory.ts",
         "../src/runtime/storageNG/drivers/volatile.ts"
       ],
+      "../src/runtime/storageNG/storage-key-parser.ts": [
+        "../src/runtime/storageNG/storage-key.ts"
+      ],
       "../src/runtime/storageNG/testing/mock-firebase.ts": [
         "../src/runtime/storageNG/storage-key.ts",
         "../src/runtime/storageNG/drivers/driver-factory.ts",
@@ -12066,6 +12094,7 @@
       "../src/runtime/manual_tests/loader-test.ts",
       "../src/runtime/recipe/constraint-walker.ts",
       "../src/runtime/storageNG/drivers/ramdisk.ts",
+      "../src/runtime/storageNG/storage-key-parser.ts",
       "../src/runtime/storageNG/testing/mock-firebase.ts",
       "../src/runtime/storageNG/drivers/tests/firebase-test.ts",
       "../src/runtime/storageNG/drivers/tests/ramdisk-test.ts",
@@ -12076,6 +12105,7 @@
       "../src/runtime/storageNG/tests/ramdisk-backing-store-integration-test.ts",
       "../src/runtime/storageNG/tests/ramdisk-store-integration-test.ts",
       "../src/runtime/storageNG/tests/reference-mode-store-test.ts",
+      "../src/runtime/storageNG/tests/storage-key-test.ts",
       "../src/runtime/storageNG/tests/storage-proxy-test.ts",
       "../src/runtime/testing/sequence.ts",
       "../src/runtime/storageNG/tests/store-sequence-test.ts",

@@ -1,8 +1,9 @@
-commit 9d0eae47e7cd79c813e3878224f09073cb3170f3
+commit c2b2d50f237281b2e8af7268618751bc9b3b8e8c
 Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
-Date:   Tue Oct 8 15:59:46 2019 +1100
+Date:   Tue Oct 8 16:06:52 2019 +1100
 
-    Clean up the Store constructor interface. (#3719)
+    Adds parsing ability to new StorageKey classes (#3721)
     
-    It's started getting too many arguments, so I made it take an options
-    parameter. Should make it easier to extend in the future.
+    * StorageKeyParser
+    
+    * Review comments

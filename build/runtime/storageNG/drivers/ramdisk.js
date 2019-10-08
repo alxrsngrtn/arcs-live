@@ -22,6 +22,14 @@ export class RamDiskStorageKey extends StorageKey {
     childWithComponent(component) {
         return new RamDiskStorageKey(`${this.unique}/${component}`);
     }
+    static fromString(key) {
+        const match = key.match(/^ramdisk:\/\/(.*)$/);
+        if (!match) {
+            throw new Error(`Not a valid RamDiskStorageKey: ${key}.`);
+        }
+        const unique = match[1];
+        return new RamDiskStorageKey(unique);
+    }
 }
 /**
  * Provides RamDisk storage drivers. RamDisk storage is shared amongst all Arcs,
