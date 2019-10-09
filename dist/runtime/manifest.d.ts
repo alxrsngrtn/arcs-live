@@ -78,9 +78,21 @@ export declare class Manifest {
         key: string;
         value: string;
     }[]): void;
-    createStore(type: Type, name: string, id: string, tags: string[], claims?: ClaimIsTag[], storageKey?: string): Promise<UnifiedStore>;
     _addStore(store: UnifiedStore, tags: string[]): UnifiedStore;
-    newStore(type: Type, name: string, id: string, storageKey: string, tags: string[], originalId: string, claims: ClaimIsTag[], description?: string, version?: number, source?: string, referenceMode?: boolean, model?: {}[]): UnifiedStore;
+    newStore(opts: {
+        type: Type;
+        name: string;
+        id: string;
+        storageKey: string;
+        tags: string[];
+        claims?: ClaimIsTag[];
+        originalId?: string;
+        description?: string;
+        version?: number;
+        source?: string;
+        referenceMode?: boolean;
+        model?: {}[];
+    }): UnifiedStore;
     _find<a>(manifestFinder: ManifestFinder<a>): a;
     _findAll<a>(manifestFinder: ManifestFinderGenerator<a>): IterableIterator<a>;
     findSchemaByName(name: string): Schema;

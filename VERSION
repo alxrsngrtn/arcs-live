@@ -1,8 +1,7 @@
-commit 6e3e6db19b47a3cbd102ef7590e6bfa0f32998ae
+commit b7850f2dc39543e032416022c1b6d346bd2c6eb0
 Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
-Date:   Wed Oct 9 10:44:27 2019 +1100
+Date:   Wed Oct 9 11:40:16 2019 +1100
 
-    Added new flag for the storage migration. (#3724)
+    Make Manifest.newStore use options argument (#3735)
     
-    Updated Arc class to use Flags to control store creation. Many other
-    parts of the codebase will need to be gradually migrated as well.
+    This will make it slightly easier to update for new NG stores

@@ -19112,6 +19112,7 @@ class ChangeEvent {
 class StorageProviderBase extends UnifiedStore {
     constructor(type, name, id, key) {
         super();
+        this.unifiedStoreType = 'StorageProviderBase';
         this.legacyListeners = new Set();
         this.nextCallbackId = 0;
         this.listeners = new Map();
@@ -20399,19 +20400,17 @@ class Manifest {
     }
     // TODO: newParticle, Schema, etc.
     // TODO: simplify() / isValid().
-    async createStore(type, name, id, tags, claims, storageKey) {
-        return this.newStore(type, name, id, storageKey, tags, null, claims);
-    }
     _addStore(store, tags) {
         this._stores.push(store);
         this.storeTags.set(store, tags ? tags : []);
         return store;
     }
-    newStore(type, name, id, storageKey, tags, originalId, claims, description, version, source, referenceMode, model) {
-        if (source) {
-            this.storeManifestUrls.set(id, this.fileName);
+    newStore(opts) {
+        if (opts.source) {
+            this.storeManifestUrls.set(opts.id, this.fileName);
         }
-        return this._addStore(new StorageStub(type, id, name, storageKey, this.storageProviderFactory, originalId, claims, description, version, source, referenceMode, model), tags);
+        const store = new StorageStub(opts.type, opts.id, opts.name, opts.storageKey, this.storageProviderFactory, opts.originalId, opts.claims, opts.description, opts.version, opts.source, opts.referenceMode, opts.model);
+        return this._addStore(store, opts.tags);
     }
     _find(manifestFinder) {
         let result = manifestFinder(this);
@@ -21238,7 +21237,17 @@ ${e.message}
         // Instead of creating links to remote firebase during manifest parsing,
         // we generate storage stubs that contain the relevant information.
         if (item.origin === 'storage') {
-            return manifest.newStore(type, name, id, item.source, tags, originalId, claims, item.description, item.version);
+            return manifest.newStore({
+                type,
+                name,
+                id,
+                storageKey: item.source,
+                tags,
+                originalId,
+                claims,
+                description: item.description,
+                version: item.version,
+            });
         }
         let json;
         let source;
@@ -21334,7 +21343,20 @@ ${e.message}
         }
         const version = item.version || 0;
         const storageKey = manifest.storageProviderFactory._storageForKey('volatile').constructKey('volatile');
-        return manifest.newStore(type, name, id, storageKey, tags, originalId, claims, item.description, version, item.source, referenceMode, model);
+        return manifest.newStore({
+            type,
+            name,
+            id,
+            storageKey,
+            tags,
+            originalId,
+            claims,
+            description: item.description,
+            version,
+            source: item.source,
+            referenceMode,
+            model,
+        });
     }
     _newRecipe(name) {
         const recipe = new Recipe(name);

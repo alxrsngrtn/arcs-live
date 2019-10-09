@@ -38,6 +38,7 @@ export class ChangeEvent {
 export class StorageProviderBase extends UnifiedStore {
     constructor(type, name, id, key) {
         super();
+        this.unifiedStoreType = 'StorageProviderBase';
         this.legacyListeners = new Set();
         this.nextCallbackId = 0;
         this.listeners = new Map();
