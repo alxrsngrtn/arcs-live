@@ -1,7 +1,5 @@
-commit b7850f2dc39543e032416022c1b6d346bd2c6eb0
-Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
-Date:   Wed Oct 9 11:40:16 2019 +1100
+commit 1877e67d35c38004d4c425f96c6ff2c74b816da5
+Author: Sarah Heimlich <heimlich@google.com>
+Date:   Wed Oct 9 11:35:43 2019 -0700
 
-    Make Manifest.newStore use options argument (#3735)
-    
-    This will make it slightly easier to update for new NG stores
+    Updating tutorial BUILD file and adding to travis. (#3729)
