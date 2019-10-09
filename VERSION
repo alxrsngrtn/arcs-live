@@ -1,5 +1,12 @@
-commit 1877e67d35c38004d4c425f96c6ff2c74b816da5
-Author: Sarah Heimlich <heimlich@google.com>
-Date:   Wed Oct 9 11:35:43 2019 -0700
+commit 253d9674b39dc8d2fdc57f16e7890e8bddeb373f
+Author: ianull <ianchang@google.com>
+Date:   Wed Oct 9 15:10:30 2019 -0700
 
-    Updating tutorial BUILD file and adding to travis. (#3729)
+    Fix style issues at Arcs APIs (#3736)
+    
+    Clean up all issues the linter reports except for
+    Missing a Javadoc comment. [GoogleMissingJavadocType]
+    
+    TESTED=bazel build //javaharness/java/arcs/android/demo/app:app
+    
+    Signed-off-by: ianull <ianchang@google.com>
