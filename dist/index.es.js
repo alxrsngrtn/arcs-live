@@ -27617,6 +27617,320 @@ class MultiplexerDomParticle extends TransformationDomParticle {
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
+/**
+ * Particle that can render and process events.
+ */
+class UiParticleBase extends Particle$1 {
+    /**
+     * Override if necessary, to modify superclass config.
+     */
+    get config() {
+        // TODO(sjmiles): getter that does work is a bad idea, this is temporary
+        return {
+            handleNames: this.spec.inputs.map(i => i.name),
+            // TODO(mmandlis): this.spec needs to be replaced with a particle-spec loaded from
+            // .arcs files, instead of .ptcl ones.
+            slotNames: this.spec.slandleConnectionNames()
+        };
+    }
+    /**
+     * Override to return a template.
+     */
+    get template() {
+        return '';
+    }
+    /**
+     * Override to return false if the Particle isn't ready to `render()`
+     */
+    shouldRender(...args) {
+        return true;
+    }
+    renderOutput(...args) {
+        const renderModel = this.render(...args);
+        if (renderModel) {
+            this.renderModel(renderModel);
+        }
+    }
+    // This is the default output 'packet', other implementations (modalities) could
+    // output other things, or choose different output packets based on hints from 'model'
+    renderModel(model) {
+        this.output({
+            template: this.template,
+            model
+        });
+    }
+    /**
+     * Override to return a dictionary to map into the template.
+     */
+    render(...args) {
+        return {};
+    }
+    fireEvent(slotName, { handler, data }) {
+        if (this[handler]) {
+            this[handler]({ data });
+        }
+    }
+    async setParticleDescription(pattern) {
+        if (typeof pattern === 'string') {
+            return super.setParticleDescription(pattern);
+        }
+        if (pattern.template && pattern.model) {
+            await super.setDescriptionPattern('_template_', pattern.template);
+            await super.setDescriptionPattern('_model_', JSON.stringify(pattern.model));
+            return undefined;
+        }
+        else {
+            throw new Error('Description pattern must either be string or have template and model');
+        }
+    }
+    /**
+     * Invoke async function `task` with Particle busy-guard.
+     */
+    // tslint:disable-next-line: no-any
+    async await(task) {
+        return await this.invokeSafely(task, err => { throw err; });
+    }
+    /**
+     * Set a singleton value. Value can be an Entity or a POJO.
+     */
+    async set(handleName, value) {
+        const handle = this._requireHandle(handleName);
+        if (!(handle instanceof Singleton)) {
+            throw new Error(`Cannot set non-Singleton handle [${handleName}]`);
+        }
+        if (Array.isArray(value)) {
+            throw new Error(`Cannot set an Array to Singleton handle [${handleName}]`);
+        }
+        return this.await(async (p) => await handle.set(this._requireEntity(value, handle.entityClass)));
+    }
+    /**
+     * Add to a collection. Value can be an Entity or a POJO (or an Array of such values).
+     */
+    async add(handleName, value) {
+        const handle = this._requireHandle(handleName);
+        if (!(handle instanceof Collection)) {
+            throw new Error(`Cannot add to non-Collection handle [${handleName}]`);
+        }
+        const entityClass = handle.entityClass;
+        const data = Array.isArray(value) ? value : [value];
+        return this.await(async (p) => {
+            // remove pre-existing Entities (we will then re-add them, which is the mutation cycle)
+            await this._remove(handle, data);
+            // add (store) Entities, or Entities created from values
+            await Promise.all(data.map(value => handle.store(this._requireEntity(value, entityClass))));
+        });
+    }
+    _requireEntity(value, entityClass) {
+        return (value instanceof Entity) ? value : new (entityClass)(value);
+    }
+    /**
+     * Remove from a collection. Value must be an Entity or an array of Entities.
+     */
+    async remove(handleName, value) {
+        const handle = this._requireHandle(handleName);
+        if (!(handle instanceof Collection)) {
+            throw new Error(`Cannot remove from a non-Collection handle [${handleName}]`);
+        }
+        return this._remove(handle, value);
+    }
+    async _remove(handle, value) {
+        const data = Array.isArray(value) ? value : [value];
+        return this.await(async (p) => Promise.all(data.map(async (value) => {
+            if (value instanceof Entity) {
+                await handle.remove(value);
+            }
+        })));
+    }
+    /**
+     * Remove all entities from named handle.
+     */
+    async clear(handleName) {
+        const handle = this._requireHandle(handleName);
+        if (!(handle instanceof Singleton) && !(handle instanceof Collection)) {
+            throw new Error('Can only clear Singleton or Collection handles');
+        }
+        return this.await(p => handle.clear());
+    }
+    /**
+     * Return the named handle or throw.
+     */
+    _requireHandle(handleName) {
+        const handle = this.handles.get(handleName);
+        if (!handle) {
+            throw new Error(`Could not find handle [${handleName}]`);
+        }
+        return handle;
+    }
+    /**
+     * Return array of Entities dereferenced from array of Share-Type Entities
+     */
+    async derefShares(shares) {
+        return this.await(async (p) => {
+            const derefPromises = shares.map(async (share) => share.ref.dereference());
+            return await Promise.all(derefPromises);
+        });
+    }
+    /**
+     * Returns array of Entities found in BOXED data `box` that are owned by `userid`
+     */
+    async boxQuery(box, userid) {
+        if (!box) {
+            return [];
+        }
+        const matches = box.filter(item => userid === item.fromKey);
+        return await this.derefShares(matches);
+    }
+}
+
+/**
+ * @license
+ * Copyright (c) 2017 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+/**
+ * Particle that interoperates with DOM and uses a simple state system
+ * to handle updates.
+ */
+// TODO(sjmiles): seems like this is really `UiStatefulParticle` but it's
+// used so often, I went with the simpler name
+class UiParticle extends XenStateMixin(UiParticleBase) {
+    /**
+     * Override if necessary, to do things when props change.
+     * Avoid if possible, use `update` instead.
+     */
+    willReceiveProps(...args) {
+    }
+    // affordance so subclasses can avoid `_`
+    _willReceiveProps(...args) {
+        this.willReceiveProps(...args);
+    }
+    /**
+     * Override to do things when props or state change.
+     */
+    update(...args) {
+    }
+    /**
+     * Copy values from `state` into the particle's internal state,
+     * triggering an update cycle unless currently updating.
+     */
+    setState(state) {
+        return this._setState(state);
+    }
+    /**
+     * Getters and setters for working with state/props.
+     */
+    get state() {
+        return this._state;
+    }
+    /**
+     * Syntactic sugar: `this.state = {state}` is equivalent to `this.setState(state)`.
+     * This is a merge, not an assignment.
+     */
+    set state(state) {
+        this.setState(state);
+    }
+    get props() {
+        return this._props;
+    }
+    _shouldUpdate() {
+        // do not update() unless all handles are sync'd
+        return this._handlesToSync <= 0;
+    }
+    _update(...args) {
+        /*const updateDirective =*/ this.update(...args);
+        if (this.shouldRender(...args)) { // TODO: should shouldRender be slot specific?
+            this.relevance = 1; // TODO: improve relevance signal.
+            this.renderOutput(...args);
+        }
+    }
+    _async(fn) {
+        // asynchrony in Particle code must be bookended with start/doneBusy
+        this.startBusy();
+        const done = () => {
+            try {
+                fn.call(this);
+            }
+            finally {
+                this.doneBusy();
+            }
+        };
+        // TODO(sjmiles): superclass uses Promise.resolve(),
+        // but here use a short timeout for a wider debounce
+        return setTimeout(done, 10);
+    }
+    ready() {
+        // ensure we `update()` at least once
+        this._invalidate();
+    }
+    async onHandleSync(handle, model) {
+        this._setProperty(handle.name, model);
+    }
+    async onHandleUpdate({ name }, { data, added, removed }) {
+        if (data !== undefined) {
+            //console.log('update.data:', JSON.stringify(data, null, '  '));
+            this._setProps({ [name]: data });
+        }
+        if (added) {
+            //console.log('update.added:', JSON.stringify(added, null, '  '));
+            const prop = (this.props[name] || []).concat(added);
+            // TODO(sjmiles): generally improper to set `this._props` directly, this is a special case
+            this._props[name] = prop;
+            this._setProps({ [name]: prop });
+        }
+        if (removed) {
+            //console.log('update.removed:', JSON.stringify(removed, null, '  '));
+            const prop = this.props[name];
+            if (Array.isArray(prop)) {
+                removed.forEach(removed => {
+                    // TODO(sjmiles): linear search is inefficient
+                    const index = prop.findIndex(entry => this.idFor(entry) === this.idFor(removed));
+                    if (index >= 0) {
+                        prop.splice(index, 1);
+                    }
+                    else {
+                        console.warn(`dom-particle::onHandleUpdate: couldn't find item to remove`);
+                    }
+                });
+                this._setProps({ [name]: prop });
+            }
+        }
+    }
+    fireEvent(slotName, { handler, data }) {
+        if (this[handler]) {
+            // TODO(sjmiles): remove deprecated `this._state` parameter
+            this[handler]({ data }, this._state);
+        }
+    }
+    debounce(key, func, delay) {
+        const subkey = `_debounce_${key}`;
+        const state = this.state;
+        if (!state[subkey]) {
+            state[subkey] = true;
+            this.startBusy();
+        }
+        const idleThenFunc = () => {
+            this.doneBusy();
+            func();
+            state[subkey] = null;
+        };
+        // TODO(sjmiles): rewrite Xen debounce so caller has idle control
+        super._debounce(key, idleThenFunc, delay);
+    }
+}
+
+/**
+ * @license
+ * Copyright (c) 2017 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
 const html = (strings, ...values) => (strings[0] + values.map((v, i) => v + strings[i + 1]).join('')).trim();
 class Loader {
     path(fileName) {
@@ -27743,7 +28057,7 @@ class Loader {
         return particleWrapper({
             Particle: Particle$1,
             DomParticle,
-            SimpleParticle: DomParticle,
+            SimpleParticle: UiParticle,
             TransformationDomParticle,
             MultiplexerDomParticle,
             Reference: ClientReference.newClientReference(this.pec),
@@ -30186,395 +30500,6 @@ class DevtoolsConnection {
     static ensure() {
         if (!channel)
             channel = new DevtoolsChannel();
-    }
-}
-
-/**
- * @license
- * Copyright (c) 2017 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-/**
- * Particle that can render and process events.
- */
-class UiParticleBase extends Particle$1 {
-    /**
-     * Override if necessary, to modify superclass config.
-     */
-    get config() {
-        // TODO(sjmiles): getter that does work is a bad idea, this is temporary
-        return {
-            handleNames: this.spec.inputs.map(i => i.name),
-            // TODO(mmandlis): this.spec needs to be replaced with a particle-spec loaded from
-            // .arcs files, instead of .ptcl ones.
-            slotNames: this.spec.slandleConnectionNames()
-        };
-    }
-    /**
-     * Override to return a template.
-     */
-    get template() {
-        return '';
-    }
-    /**
-     * Override to return a String defining primary markup for the given slot name.
-     */
-    // getTemplate(slotName: string): string {
-    //   // TODO: only supports a single template for now. add multiple templates support.
-    //   return this.template;
-    // }
-    /**
-     * Override to return a String defining the name of the template for the given slot name.
-     */
-    // getTemplateName(slotName: string): string {
-    //   // TODO: only supports a single template for now. add multiple templates support.
-    //   return `default`;
-    // }
-    /**
-     * Override to return false if the Particle isn't ready to `render()`
-     */
-    shouldRender(...args) {
-        return true;
-    }
-    renderOutput(...args) {
-        const renderModel = this.render(...args);
-        if (renderModel) {
-            this.renderModel(renderModel);
-        }
-    }
-    // This is the default output 'packet', other implementations (modalities) could
-    // output other things, or choose different output packets based on hints from 'model'
-    renderModel(model) {
-        this.output({
-            template: this.template,
-            model
-        });
-    }
-    /**
-     * Override to return a dictionary to map into the template.
-     */
-    render(...args) {
-        return {};
-    }
-    _getStateArgs() {
-        return [];
-    }
-    // forceRenderTemplate(slotName: string = ''): void {
-    //   this.slotProxiesByName.forEach((slot: SlotProxy, name: string) => {
-    //     if (!slotName || (name === slotName)) {
-    //       slot.requestedContentTypes.add('template');
-    //     }
-    //   });
-    // }
-    fireEvent(slotName, { handler, data }) {
-        if (this[handler]) {
-            this[handler]({ data });
-        }
-    }
-    async setParticleDescription(pattern) {
-        if (typeof pattern === 'string') {
-            return super.setParticleDescription(pattern);
-        }
-        if (pattern.template && pattern.model) {
-            await super.setDescriptionPattern('_template_', pattern.template);
-            await super.setDescriptionPattern('_model_', JSON.stringify(pattern.model));
-            return undefined;
-        }
-        else {
-            throw new Error('Description pattern must either be string or have template and model');
-        }
-    }
-    /**
-     * Remove all entities from named handle.
-     */
-    async clearHandle(handleName) {
-        const handle = this.handles.get(handleName);
-        if (handle instanceof Singleton || handle instanceof Collection) {
-            await handle.clear();
-        }
-        else {
-            throw new Error('Singleton/Collection required');
-        }
-    }
-    /**
-     * Merge entities from Array into named handle.
-     */
-    async mergeEntitiesToHandle(handleName, entities) {
-        const idMap = {};
-        const handle = this.handles.get(handleName);
-        if (handle instanceof Collection) {
-            const handleEntities = await handle.toList();
-            handleEntities.forEach(entity => idMap[entity.id] = entity);
-            for (const entity of entities) {
-                if (!idMap[this.idFor(entity)]) {
-                    await handle.store(entity);
-                }
-            }
-        }
-        else {
-            throw new Error('Collection required');
-        }
-    }
-    /**
-     * Append entities from Array to named handle.
-     */
-    async appendEntitiesToHandle(handleName, entities) {
-        const handle = this.handles.get(handleName);
-        if (handle) {
-            if (handle instanceof Collection || handle instanceof BigCollection) {
-                await Promise.all(entities.map(entity => handle.store(entity)));
-            }
-            else {
-                throw new Error('Collection required');
-            }
-        }
-    }
-    /**
-     * Create an entity from each rawData, and append to named handle.
-     */
-    async appendRawDataToHandle(handleName, rawDataArray) {
-        const handle = this.handles.get(handleName);
-        if (handle && handle.entityClass) {
-            if (handle instanceof Collection || handle instanceof BigCollection) {
-                const entityClass = handle.entityClass;
-                await Promise.all(rawDataArray.map(raw => handle.store(new entityClass(raw))));
-            }
-            else {
-                throw new Error('Collection required');
-            }
-        }
-    }
-    /**
-     * Modify value of named handle. A new entity is created
-     * from `rawData` (`new [EntityClass](rawData)`).
-     */
-    async updateSingleton(handleName, rawData) {
-        const handle = this.handles.get(handleName);
-        if (handle && handle.entityClass) {
-            if (handle instanceof Singleton) {
-                const entity = new handle.entityClass(rawData);
-                await handle.set(entity);
-                return entity;
-            }
-            else {
-                throw new Error('Singleton required');
-            }
-        }
-        return undefined;
-    }
-    /**
-     * Modify or insert `entity` into named handle.
-     * Modification is done by removing the old entity and reinserting the new one.
-     */
-    async updateCollection(handleName, entity) {
-        // Set the entity into the right place in the set. If we find it
-        // already present replace it, otherwise, add it.
-        // TODO(dstockwell): Replace this with happy entity mutation approach.
-        const handle = this.handles.get(handleName);
-        if (handle) {
-            if (handle instanceof Collection || handle instanceof BigCollection) {
-                await handle.remove(entity);
-                await handle.store(entity);
-            }
-            else {
-                throw new Error('Collection required');
-            }
-        }
-    }
-    // TODO(sjmiles): experimental: high-level handle set
-    // if handleName is an Singleton, then
-    // - value can be a POJO or an Entity, value is `set`
-    // if handleName is a Collection, then
-    // - values must be an array of POJO
-    // ^ needs more cases!
-    async set(handleName, value) {
-        const handle = this.handles.get(handleName);
-        if (handle) {
-            // TODO(sjmiles): cannot test class of `handle` because I have no
-            // references to those classes, i.e. `handle is Singleton`, throws
-            // because Singleton is undefined.
-            if (handle.type['isEntity']) {
-                const entity = value.entityClass ? value : new (handle.entityClass)(value);
-                return await handle['set'](entity);
-            }
-            else if (handle.type['isCollection']) {
-                if (Array.isArray(value)) {
-                    await this.clearHandle(name);
-                    await this.appendRawDataToHandle(name, value);
-                }
-            }
-        }
-    }
-    /**
-     * Return array of Entities dereferenced from array of Share-Type Entities
-     */
-    async derefShares(shares) {
-        let entities = [];
-        this.startBusy();
-        try {
-            const derefPromises = shares.map(async (share) => share.ref.dereference());
-            entities = await Promise.all(derefPromises);
-        }
-        finally {
-            this.doneBusy();
-        }
-        return entities;
-    }
-    /**
-     * Returns array of Entities found in BOXED data `box` that are owned by `userid`
-     */
-    async boxQuery(box, userid) {
-        if (!box) {
-            return [];
-        }
-        else {
-            const matches = box.filter(item => userid === item.fromKey);
-            return await this.derefShares(matches);
-        }
-    }
-}
-
-/**
- * @license
- * Copyright (c) 2017 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-/**
- * Particle that interoperates with DOM and uses a simple state system
- * to handle updates.
- */
-// TODO(sjmiles): seems like this is really `UiStatefulParticle` but it's
-// used so often, I went with the simpler name
-class UiParticle extends XenStateMixin(UiParticleBase) {
-    /**
-     * Override if necessary, to do things when props change.
-     * Avoid if possible, use `update` instead.
-     */
-    willReceiveProps(...args) {
-    }
-    // affordance so subclasses can avoid `_`
-    _willReceiveProps(...args) {
-        this.willReceiveProps(...args);
-    }
-    /**
-     * Override to do things when props or state change.
-     */
-    update(...args) {
-    }
-    /**
-     * Copy values from `state` into the particle's internal state,
-     * triggering an update cycle unless currently updating.
-     */
-    setState(state) {
-        return this._setState(state);
-    }
-    /**
-     * Getters and setters for working with state/props.
-     */
-    get state() {
-        return this._state;
-    }
-    /**
-     * Syntactic sugar: `this.state = {state}` is equivalent to `this.setState(state)`.
-     * This is a merge, not an assignment.
-     */
-    set state(state) {
-        this.setState(state);
-    }
-    get props() {
-        return this._props;
-    }
-    _shouldUpdate() {
-        // do not update() unless all handles are sync'd
-        return this._handlesToSync <= 0;
-    }
-    _update(...args) {
-        /*const updateDirective =*/ this.update(...args);
-        if (this.shouldRender(...args)) { // TODO: should shouldRender be slot specific?
-            this.relevance = 1; // TODO: improve relevance signal.
-            this.renderOutput(...args);
-        }
-    }
-    _async(fn) {
-        // asynchrony in Particle code must be bookended with start/doneBusy
-        this.startBusy();
-        const done = () => {
-            try {
-                fn.call(this);
-            }
-            finally {
-                this.doneBusy();
-            }
-        };
-        // TODO(sjmiles): superclass uses Promise.resolve(),
-        // but here use a short timeout for a wider debounce
-        return setTimeout(done, 10);
-    }
-    ready() {
-        // ensure we `update()` at least once
-        this._invalidate();
-    }
-    async onHandleSync(handle, model) {
-        this._setProperty(handle.name, model);
-    }
-    async onHandleUpdate({ name }, { data, added, removed }) {
-        if (data !== undefined) {
-            //console.log('update.data:', JSON.stringify(data, null, '  '));
-            this._setProps({ [name]: data });
-        }
-        if (added) {
-            //console.log('update.added:', JSON.stringify(added, null, '  '));
-            const prop = (this.props[name] || []).concat(added);
-            // TODO(sjmiles): generally improper to set `this._props` directly, this is a special case
-            this._props[name] = prop;
-            this._setProps({ [name]: prop });
-        }
-        if (removed) {
-            //console.log('update.removed:', JSON.stringify(removed, null, '  '));
-            const prop = this.props[name];
-            if (Array.isArray(prop)) {
-                removed.forEach(removed => {
-                    // TODO(sjmiles): linear search is inefficient
-                    const index = prop.findIndex(entry => this.idFor(entry) === this.idFor(removed));
-                    if (index >= 0) {
-                        prop.splice(index, 1);
-                    }
-                    else {
-                        console.warn(`dom-particle::onHandleUpdate: couldn't find item to remove`);
-                    }
-                });
-                this._setProps({ [name]: prop });
-            }
-        }
-    }
-    fireEvent(slotName, { handler, data }) {
-        if (this[handler]) {
-            // TODO(sjmiles): remove deprecated `this._state` parameter
-            this[handler]({ data }, this._state);
-        }
-    }
-    debounce(key, func, delay) {
-        const subkey = `_debounce_${key}`;
-        const state = this.state;
-        if (!state[subkey]) {
-            state[subkey] = true;
-            this.startBusy();
-        }
-        const idleThenFunc = () => {
-            this.doneBusy();
-            func();
-            state[subkey] = null;
-        };
-        // TODO(sjmiles): rewrite Xen debounce so caller has idle control
-        super._debounce(key, idleThenFunc, delay);
     }
 }
 

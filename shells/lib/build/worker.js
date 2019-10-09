@@ -7741,9 +7741,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "PlatformLoaderBase", function() { return PlatformLoaderBase; });
 /* harmony import */ var _runtime_loader_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(37);
 /* harmony import */ var _runtime_particle_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(34);
-/* harmony import */ var _runtime_dom_particle_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(42);
-/* harmony import */ var _runtime_multiplexer_dom_particle_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(45);
-/* harmony import */ var _runtime_transformation_dom_particle_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(46);
+/* harmony import */ var _runtime_dom_particle_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(43);
+/* harmony import */ var _runtime_multiplexer_dom_particle_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(46);
+/* harmony import */ var _runtime_transformation_dom_particle_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(42);
 /* harmony import */ var _runtime_ui_particle_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(47);
 /* harmony import */ var _runtime_ui_multiplexer_particle_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(49);
 /**
@@ -7834,11 +7834,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _platform_fs_web_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(39);
 /* harmony import */ var _platform_vm_web_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(40);
 /* harmony import */ var _converters_jsonldToManifest_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(41);
-/* harmony import */ var _dom_particle_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(42);
-/* harmony import */ var _multiplexer_dom_particle_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(45);
-/* harmony import */ var _particle_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(34);
-/* harmony import */ var _reference_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(12);
-/* harmony import */ var _transformation_dom_particle_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(46);
+/* harmony import */ var _reference_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(12);
+/* harmony import */ var _particle_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(34);
+/* harmony import */ var _transformation_dom_particle_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(42);
+/* harmony import */ var _dom_particle_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(43);
+/* harmony import */ var _multiplexer_dom_particle_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(46);
+/* harmony import */ var _ui_particle_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(47);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -7848,6 +7849,7 @@ __webpack_require__.r(__webpack_exports__);
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
+
 
 
 
@@ -7985,12 +7987,12 @@ class Loader {
     unwrapParticle(particleWrapper) {
         Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(this.pec);
         return particleWrapper({
-            Particle: _particle_js__WEBPACK_IMPORTED_MODULE_7__["Particle"],
-            DomParticle: _dom_particle_js__WEBPACK_IMPORTED_MODULE_5__["DomParticle"],
-            SimpleParticle: _dom_particle_js__WEBPACK_IMPORTED_MODULE_5__["DomParticle"],
-            TransformationDomParticle: _transformation_dom_particle_js__WEBPACK_IMPORTED_MODULE_9__["TransformationDomParticle"],
-            MultiplexerDomParticle: _multiplexer_dom_particle_js__WEBPACK_IMPORTED_MODULE_6__["MultiplexerDomParticle"],
-            Reference: _reference_js__WEBPACK_IMPORTED_MODULE_8__["ClientReference"].newClientReference(this.pec),
+            Particle: _particle_js__WEBPACK_IMPORTED_MODULE_6__["Particle"],
+            DomParticle: _dom_particle_js__WEBPACK_IMPORTED_MODULE_8__["DomParticle"],
+            SimpleParticle: _ui_particle_js__WEBPACK_IMPORTED_MODULE_10__["UiParticle"],
+            TransformationDomParticle: _transformation_dom_particle_js__WEBPACK_IMPORTED_MODULE_7__["TransformationDomParticle"],
+            MultiplexerDomParticle: _multiplexer_dom_particle_js__WEBPACK_IMPORTED_MODULE_9__["MultiplexerDomParticle"],
+            Reference: _reference_js__WEBPACK_IMPORTED_MODULE_5__["ClientReference"].newClientReference(this.pec),
             html
         });
     }
@@ -8185,9 +8187,65 @@ class JsonldToManifest {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "TransformationDomParticle", function() { return TransformationDomParticle; });
+/* harmony import */ var _dom_particle_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(43);
+/* harmony import */ var _entity_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(11);
+/**
+ * @license
+ * Copyright (c) 2017 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+
+
+// Regex to separate style and template.
+const re = /<style>((?:.|[\r\n])*)<\/style>((?:.|[\r\n])*)/;
+/**
+ * Particle that does transformation stuff with DOM.
+ */
+class TransformationDomParticle extends _dom_particle_js__WEBPACK_IMPORTED_MODULE_0__["DomParticle"] {
+    getTemplate(slotName) {
+        // TODO: add support for multiple slots.
+        return this._state.template;
+    }
+    getTemplateName(slotName) {
+        // TODO: add support for multiple slots.
+        return this._state.templateName;
+    }
+    render(props, state) {
+        return state.renderModel;
+    }
+    shouldRender(props, state) {
+        return Boolean((state.template || state.templateName) && state.renderModel);
+    }
+    renderHostedSlot(slotName, hostedSlotId, content) {
+        this.combineHostedTemplate(slotName, hostedSlotId, content);
+        this.combineHostedModel(slotName, hostedSlotId, content);
+    }
+    // abstract
+    combineHostedTemplate(slotName, hostedSlotId, content) {
+    }
+    combineHostedModel(slotName, hostedSlotId, content) {
+    }
+    // Helper methods that may be reused in transformation particles to combine hosted content.
+    static propsToItems(propsValues) {
+        return propsValues ? propsValues.map(e => ({ subId: _entity_js__WEBPACK_IMPORTED_MODULE_1__["Entity"].id(e), ...e })) : [];
+    }
+}
+//# sourceMappingURL=transformation-dom-particle.js.map
+
+/***/ }),
+/* 43 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "DomParticle", function() { return DomParticle; });
-/* harmony import */ var _modalities_dom_components_xen_xen_state_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(43);
-/* harmony import */ var _dom_particle_base_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(44);
+/* harmony import */ var _modalities_dom_components_xen_xen_state_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(44);
+/* harmony import */ var _dom_particle_base_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(45);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -8360,7 +8418,7 @@ class DomParticle extends Object(_modalities_dom_components_xen_xen_state_js__WE
 //# sourceMappingURL=dom-particle.js.map
 
 /***/ }),
-/* 43 */
+/* 44 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -8513,7 +8571,7 @@ const XenStateMixin = Base => class extends Base {
 
 
 /***/ }),
-/* 44 */
+/* 45 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -8800,7 +8858,7 @@ class DomParticleBase extends _particle_js__WEBPACK_IMPORTED_MODULE_1__["Particl
 //# sourceMappingURL=dom-particle-base.js.map
 
 /***/ }),
-/* 45 */
+/* 46 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -8808,7 +8866,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "MultiplexerDomParticle", function() { return MultiplexerDomParticle; });
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
 /* harmony import */ var _particle_spec_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(5);
-/* harmony import */ var _transformation_dom_particle_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(46);
+/* harmony import */ var _transformation_dom_particle_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(42);
 /* harmony import */ var _entity_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(11);
 /**
  * @license
@@ -8993,69 +9051,13 @@ class MultiplexerDomParticle extends _transformation_dom_particle_js__WEBPACK_IM
 //# sourceMappingURL=multiplexer-dom-particle.js.map
 
 /***/ }),
-/* 46 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "TransformationDomParticle", function() { return TransformationDomParticle; });
-/* harmony import */ var _dom_particle_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(42);
-/* harmony import */ var _entity_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(11);
-/**
- * @license
- * Copyright (c) 2017 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-
-
-// Regex to separate style and template.
-const re = /<style>((?:.|[\r\n])*)<\/style>((?:.|[\r\n])*)/;
-/**
- * Particle that does transformation stuff with DOM.
- */
-class TransformationDomParticle extends _dom_particle_js__WEBPACK_IMPORTED_MODULE_0__["DomParticle"] {
-    getTemplate(slotName) {
-        // TODO: add support for multiple slots.
-        return this._state.template;
-    }
-    getTemplateName(slotName) {
-        // TODO: add support for multiple slots.
-        return this._state.templateName;
-    }
-    render(props, state) {
-        return state.renderModel;
-    }
-    shouldRender(props, state) {
-        return Boolean((state.template || state.templateName) && state.renderModel);
-    }
-    renderHostedSlot(slotName, hostedSlotId, content) {
-        this.combineHostedTemplate(slotName, hostedSlotId, content);
-        this.combineHostedModel(slotName, hostedSlotId, content);
-    }
-    // abstract
-    combineHostedTemplate(slotName, hostedSlotId, content) {
-    }
-    combineHostedModel(slotName, hostedSlotId, content) {
-    }
-    // Helper methods that may be reused in transformation particles to combine hosted content.
-    static propsToItems(propsValues) {
-        return propsValues ? propsValues.map(e => ({ subId: _entity_js__WEBPACK_IMPORTED_MODULE_1__["Entity"].id(e), ...e })) : [];
-    }
-}
-//# sourceMappingURL=transformation-dom-particle.js.map
-
-/***/ }),
 /* 47 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "UiParticle", function() { return UiParticle; });
-/* harmony import */ var _modalities_dom_components_xen_xen_state_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(43);
+/* harmony import */ var _modalities_dom_components_xen_xen_state_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(44);
 /* harmony import */ var _ui_particle_base_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(48);
 /**
  * @license
@@ -9207,8 +9209,9 @@ class UiParticle extends Object(_modalities_dom_components_xen_xen_state_js__WEB
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "UiParticleBase", function() { return UiParticleBase; });
-/* harmony import */ var _handle_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(13);
-/* harmony import */ var _particle_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(34);
+/* harmony import */ var _entity_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(11);
+/* harmony import */ var _handle_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(13);
+/* harmony import */ var _particle_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(34);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -9220,10 +9223,11 @@ __webpack_require__.r(__webpack_exports__);
  */
 
 
+
 /**
  * Particle that can render and process events.
  */
-class UiParticleBase extends _particle_js__WEBPACK_IMPORTED_MODULE_1__["Particle"] {
+class UiParticleBase extends _particle_js__WEBPACK_IMPORTED_MODULE_2__["Particle"] {
     /**
      * Override if necessary, to modify superclass config.
      */
@@ -9242,20 +9246,6 @@ class UiParticleBase extends _particle_js__WEBPACK_IMPORTED_MODULE_1__["Particle
     get template() {
         return '';
     }
-    /**
-     * Override to return a String defining primary markup for the given slot name.
-     */
-    // getTemplate(slotName: string): string {
-    //   // TODO: only supports a single template for now. add multiple templates support.
-    //   return this.template;
-    // }
-    /**
-     * Override to return a String defining the name of the template for the given slot name.
-     */
-    // getTemplateName(slotName: string): string {
-    //   // TODO: only supports a single template for now. add multiple templates support.
-    //   return `default`;
-    // }
     /**
      * Override to return false if the Particle isn't ready to `render()`
      */
@@ -9282,16 +9272,6 @@ class UiParticleBase extends _particle_js__WEBPACK_IMPORTED_MODULE_1__["Particle
     render(...args) {
         return {};
     }
-    _getStateArgs() {
-        return [];
-    }
-    // forceRenderTemplate(slotName: string = ''): void {
-    //   this.slotProxiesByName.forEach((slot: SlotProxy, name: string) => {
-    //     if (!slotName || (name === slotName)) {
-    //       slot.requestedContentTypes.add('template');
-    //     }
-    //   });
-    // }
     fireEvent(slotName, { handler, data }) {
         if (this[handler]) {
             this[handler]({ data });
@@ -9311,140 +9291,91 @@ class UiParticleBase extends _particle_js__WEBPACK_IMPORTED_MODULE_1__["Particle
         }
     }
     /**
+     * Invoke async function `task` with Particle busy-guard.
+     */
+    // tslint:disable-next-line: no-any
+    async await(task) {
+        return await this.invokeSafely(task, err => { throw err; });
+    }
+    /**
+     * Set a singleton value. Value can be an Entity or a POJO.
+     */
+    async set(handleName, value) {
+        const handle = this._requireHandle(handleName);
+        if (!(handle instanceof _handle_js__WEBPACK_IMPORTED_MODULE_1__["Singleton"])) {
+            throw new Error(`Cannot set non-Singleton handle [${handleName}]`);
+        }
+        if (Array.isArray(value)) {
+            throw new Error(`Cannot set an Array to Singleton handle [${handleName}]`);
+        }
+        return this.await(async (p) => await handle.set(this._requireEntity(value, handle.entityClass)));
+    }
+    /**
+     * Add to a collection. Value can be an Entity or a POJO (or an Array of such values).
+     */
+    async add(handleName, value) {
+        const handle = this._requireHandle(handleName);
+        if (!(handle instanceof _handle_js__WEBPACK_IMPORTED_MODULE_1__["Collection"])) {
+            throw new Error(`Cannot add to non-Collection handle [${handleName}]`);
+        }
+        const entityClass = handle.entityClass;
+        const data = Array.isArray(value) ? value : [value];
+        return this.await(async (p) => {
+            // remove pre-existing Entities (we will then re-add them, which is the mutation cycle)
+            await this._remove(handle, data);
+            // add (store) Entities, or Entities created from values
+            await Promise.all(data.map(value => handle.store(this._requireEntity(value, entityClass))));
+        });
+    }
+    _requireEntity(value, entityClass) {
+        return (value instanceof _entity_js__WEBPACK_IMPORTED_MODULE_0__["Entity"]) ? value : new (entityClass)(value);
+    }
+    /**
+     * Remove from a collection. Value must be an Entity or an array of Entities.
+     */
+    async remove(handleName, value) {
+        const handle = this._requireHandle(handleName);
+        if (!(handle instanceof _handle_js__WEBPACK_IMPORTED_MODULE_1__["Collection"])) {
+            throw new Error(`Cannot remove from a non-Collection handle [${handleName}]`);
+        }
+        return this._remove(handle, value);
+    }
+    async _remove(handle, value) {
+        const data = Array.isArray(value) ? value : [value];
+        return this.await(async (p) => Promise.all(data.map(async (value) => {
+            if (value instanceof _entity_js__WEBPACK_IMPORTED_MODULE_0__["Entity"]) {
+                await handle.remove(value);
+            }
+        })));
+    }
+    /**
      * Remove all entities from named handle.
      */
-    async clearHandle(handleName) {
-        const handle = this.handles.get(handleName);
-        if (handle instanceof _handle_js__WEBPACK_IMPORTED_MODULE_0__["Singleton"] || handle instanceof _handle_js__WEBPACK_IMPORTED_MODULE_0__["Collection"]) {
-            await handle.clear();
+    async clear(handleName) {
+        const handle = this._requireHandle(handleName);
+        if (!(handle instanceof _handle_js__WEBPACK_IMPORTED_MODULE_1__["Singleton"]) && !(handle instanceof _handle_js__WEBPACK_IMPORTED_MODULE_1__["Collection"])) {
+            throw new Error('Can only clear Singleton or Collection handles');
         }
-        else {
-            throw new Error('Singleton/Collection required');
-        }
+        return this.await(p => handle.clear());
     }
     /**
-     * Merge entities from Array into named handle.
+     * Return the named handle or throw.
      */
-    async mergeEntitiesToHandle(handleName, entities) {
-        const idMap = {};
+    _requireHandle(handleName) {
         const handle = this.handles.get(handleName);
-        if (handle instanceof _handle_js__WEBPACK_IMPORTED_MODULE_0__["Collection"]) {
-            const handleEntities = await handle.toList();
-            handleEntities.forEach(entity => idMap[entity.id] = entity);
-            for (const entity of entities) {
-                if (!idMap[this.idFor(entity)]) {
-                    await handle.store(entity);
-                }
-            }
+        if (!handle) {
+            throw new Error(`Could not find handle [${handleName}]`);
         }
-        else {
-            throw new Error('Collection required');
-        }
-    }
-    /**
-     * Append entities from Array to named handle.
-     */
-    async appendEntitiesToHandle(handleName, entities) {
-        const handle = this.handles.get(handleName);
-        if (handle) {
-            if (handle instanceof _handle_js__WEBPACK_IMPORTED_MODULE_0__["Collection"] || handle instanceof _handle_js__WEBPACK_IMPORTED_MODULE_0__["BigCollection"]) {
-                await Promise.all(entities.map(entity => handle.store(entity)));
-            }
-            else {
-                throw new Error('Collection required');
-            }
-        }
-    }
-    /**
-     * Create an entity from each rawData, and append to named handle.
-     */
-    async appendRawDataToHandle(handleName, rawDataArray) {
-        const handle = this.handles.get(handleName);
-        if (handle && handle.entityClass) {
-            if (handle instanceof _handle_js__WEBPACK_IMPORTED_MODULE_0__["Collection"] || handle instanceof _handle_js__WEBPACK_IMPORTED_MODULE_0__["BigCollection"]) {
-                const entityClass = handle.entityClass;
-                await Promise.all(rawDataArray.map(raw => handle.store(new entityClass(raw))));
-            }
-            else {
-                throw new Error('Collection required');
-            }
-        }
-    }
-    /**
-     * Modify value of named handle. A new entity is created
-     * from `rawData` (`new [EntityClass](rawData)`).
-     */
-    async updateSingleton(handleName, rawData) {
-        const handle = this.handles.get(handleName);
-        if (handle && handle.entityClass) {
-            if (handle instanceof _handle_js__WEBPACK_IMPORTED_MODULE_0__["Singleton"]) {
-                const entity = new handle.entityClass(rawData);
-                await handle.set(entity);
-                return entity;
-            }
-            else {
-                throw new Error('Singleton required');
-            }
-        }
-        return undefined;
-    }
-    /**
-     * Modify or insert `entity` into named handle.
-     * Modification is done by removing the old entity and reinserting the new one.
-     */
-    async updateCollection(handleName, entity) {
-        // Set the entity into the right place in the set. If we find it
-        // already present replace it, otherwise, add it.
-        // TODO(dstockwell): Replace this with happy entity mutation approach.
-        const handle = this.handles.get(handleName);
-        if (handle) {
-            if (handle instanceof _handle_js__WEBPACK_IMPORTED_MODULE_0__["Collection"] || handle instanceof _handle_js__WEBPACK_IMPORTED_MODULE_0__["BigCollection"]) {
-                await handle.remove(entity);
-                await handle.store(entity);
-            }
-            else {
-                throw new Error('Collection required');
-            }
-        }
-    }
-    // TODO(sjmiles): experimental: high-level handle set
-    // if handleName is an Singleton, then
-    // - value can be a POJO or an Entity, value is `set`
-    // if handleName is a Collection, then
-    // - values must be an array of POJO
-    // ^ needs more cases!
-    async set(handleName, value) {
-        const handle = this.handles.get(handleName);
-        if (handle) {
-            // TODO(sjmiles): cannot test class of `handle` because I have no
-            // references to those classes, i.e. `handle is Singleton`, throws
-            // because Singleton is undefined.
-            if (handle.type['isEntity']) {
-                const entity = value.entityClass ? value : new (handle.entityClass)(value);
-                return await handle['set'](entity);
-            }
-            else if (handle.type['isCollection']) {
-                if (Array.isArray(value)) {
-                    await this.clearHandle(name);
-                    await this.appendRawDataToHandle(name, value);
-                }
-            }
-        }
+        return handle;
     }
     /**
      * Return array of Entities dereferenced from array of Share-Type Entities
      */
     async derefShares(shares) {
-        let entities = [];
-        this.startBusy();
-        try {
+        return this.await(async (p) => {
             const derefPromises = shares.map(async (share) => share.ref.dereference());
-            entities = await Promise.all(derefPromises);
-        }
-        finally {
-            this.doneBusy();
-        }
-        return entities;
+            return await Promise.all(derefPromises);
+        });
     }
     /**
      * Returns array of Entities found in BOXED data `box` that are owned by `userid`
@@ -9453,10 +9384,8 @@ class UiParticleBase extends _particle_js__WEBPACK_IMPORTED_MODULE_1__["Particle
         if (!box) {
             return [];
         }
-        else {
-            const matches = box.filter(item => userid === item.fromKey);
-            return await this.derefShares(matches);
-        }
+        const matches = box.filter(item => userid === item.fromKey);
+        return await this.derefShares(matches);
     }
 }
 //# sourceMappingURL=ui-particle-base.js.map

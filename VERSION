@@ -1,5 +1,47 @@
-commit 88d07da01df20d988d3f9555452ed0ba1742c814
-Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
-Date:   Thu Oct 10 09:16:57 2019 +1100
+commit 4794cd968dfb0462a7a47a09f81ab488e41212a6
+Author: Scott J. Miles <sjmiles@google.com>
+Date:   Wed Oct 9 16:06:11 2019 -0700
 
-    Update Manifest to create NG stores (#3737)
+    Particle API cleanup: collapse handle helpers into set, add, remove, clear (#3716)
+    
+    * remove dead code, collapse all handle utilities into `set`, `add`, `remove`, `clear`
+    
+    * did `npm i`
+    
+    * s/Object/{}, add return types (Promise<void>)
+    
+    * remove unused imports
+    
+    * throw on unrecognized handle type
+    
+    * make `_set` private
+    
+    * add null check for robustness (Collection really should not ever contain null, iiuc)
+    
+    * update formatting, disallow using `set` on Collections (must `clear` and `add` instead)
+    
+    * use modern iterator syntax
+    
+    * adjust doc comments
+    
+    * s/in/of
+    
+    * fix lint errors
+    
+    * more lint improvements
+    
+    * micro-opt
+    
+    * s/updateSingleton/set in Particles/*
+    
+    * use actual SimpleParticle in loader.ts (after all)
+    
+    * add funky set test
+    
+    * isolate tests, add more
+    
+    * factor out some common code
+    
+    * add missing semi's
+    
+    * add test for bad handle names

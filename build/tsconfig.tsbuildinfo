@@ -237,10 +237,6 @@
         "version": "5d861cb1cd1506a5cc09d010e87763ba9365564a48a1c2c4943424b11fe8bcce",
         "signature": "fb1f30d1fc9e05eb8dfec9acc2379c0c4ee1bfdb0ead6f29d9405031cb4c2a69"
       },
-      "../modalities/dom/components/xen/xen-state.d.ts": {
-        "version": "f61bb0ebc59780a5d2461fc7c65d2150be526cd048fcead3167d2d4bc9db106f",
-        "signature": "f61bb0ebc59780a5d2461fc7c65d2150be526cd048fcead3167d2d4bc9db106f"
-      },
       "../src/runtime/arc-exceptions.ts": {
         "version": "20b3f0f15948f377de5e7894cbe571dbc92cf50158fc94fd1dc6f6f3e3e5b325",
         "signature": "67b97e07b7f4956602f6bf5d382ea694bd1d49d7dd07ae61266588e068882ba0"
@@ -445,13 +441,17 @@
         "version": "86ce7b9192e71b15024531b512d64dc971e42ba1856684193f470edfa4ccbb0e",
         "signature": "d99246f827c6aba914a38aa5c47531e2938d2b0a6b1c9225831918d378cf14e4"
       },
+      "../src/runtime/handle.ts": {
+        "version": "b902640a7ec31924ef1038c4bb365c40acbc2d844af7fb51cc678972a4af72c8",
+        "signature": "c4c53553444b506fda6179705dacb536c1737d517acb1cfb519e1118ebd20015"
+      },
       "../src/runtime/reference.ts": {
         "version": "4232bdd729f2eed1d123aea2d0be47735a182b8cb992b0a5f8d4a21a4ecbffff",
         "signature": "fe3ceae45b6db319ae3f0551edac0555329db0be6c8c5dfb92347105fc23aee1"
       },
-      "../src/runtime/handle.ts": {
-        "version": "b902640a7ec31924ef1038c4bb365c40acbc2d844af7fb51cc678972a4af72c8",
-        "signature": "c4c53553444b506fda6179705dacb536c1737d517acb1cfb519e1118ebd20015"
+      "../modalities/dom/components/xen/xen-state.d.ts": {
+        "version": "f61bb0ebc59780a5d2461fc7c65d2150be526cd048fcead3167d2d4bc9db106f",
+        "signature": "f61bb0ebc59780a5d2461fc7c65d2150be526cd048fcead3167d2d4bc9db106f"
       },
       "../src/runtime/dom-particle-base.ts": {
         "version": "7a2a4375f0c9625a6d6a5386adcb4b178436062ddeb0a35276cac9efa3a08474",
@@ -469,8 +469,16 @@
         "version": "b3741211fc69ed15d7a9b3a9ad483049b2b7fdae2a9cd3c3619e18f224c39f5d",
         "signature": "91eb49952d74ed32935a8e7cadd8aa7c610bdfa9bbf7f41aab4fca638a6f5e5d"
       },
+      "../src/runtime/ui-particle-base.ts": {
+        "version": "3dc9cc168493936776d8161a2d93af0483a6f4273853c61e0b979331ad4ffa3a",
+        "signature": "ea2c42e01399152237e6e690f382c26057529214f6c289c885070943989fb04d"
+      },
+      "../src/runtime/ui-particle.ts": {
+        "version": "030e1d43c020aca38f9309772d88b0dd4e90d08a48e085bb4a9da82704dfd578",
+        "signature": "00ebc835f5a0ad79a982ce1be3cbb6e64ea9b97b2535916cdd1228aa45dcfd00"
+      },
       "../src/runtime/loader.ts": {
-        "version": "336c059010e6e5ac0e60a739ab69c955975836021be0d32ec69ec730c0134c5e",
+        "version": "e541f35ba1dd35fa6b7f36f237fa2ca909bc6035cb8e63cec745b7c561afa742",
         "signature": "aada06877d833c5c090730084c8d2c6fdfd9f593e61ca60e7419a687621e44e2"
       },
       "../src/runtime/testing/stub-loader.ts": {
@@ -1412,14 +1420,6 @@
       "../src/platform/image-node.ts": {
         "version": "e8b07ace52fd2e50e33f9b9b61b275d42e4f1373dde1a0edbec52a051b134b6d",
         "signature": "9615d2d878c06c0c35f6b3f4d2a619d3b5568d91f90f3d8844beb86d62bd3fa0"
-      },
-      "../src/runtime/ui-particle-base.ts": {
-        "version": "e4aed467988b3fda941c0cc30916e6bb8974539243f72727afbe1f0c99ece31e",
-        "signature": "5ce845cfe658f8dc9bc5d6ee8f988dfa09446671ab4b71de6c7af59227e6a668"
-      },
-      "../src/runtime/ui-particle.ts": {
-        "version": "10f4d4b6abbbbd2c4250708647ff67e53ee672c7e923b6cd5e7bd5c90e64aa86",
-        "signature": "00ebc835f5a0ad79a982ce1be3cbb6e64ea9b97b2535916cdd1228aa45dcfd00"
       },
       "../src/runtime/ui-transformation-particle.ts": {
         "version": "2b4f46eec76cf6a66c30a68eb2bf150f1a5d5fd73dc8c9214dce8f8fd17c4ed5",
@@ -2416,8 +2416,12 @@
         "version": "798bdd0dec922d3d8d08399e551aaa7dff2454d8c50ca95b1dea90cad3e41eed",
         "signature": "8bc1d39a3b8ec61064f9969316a088e314895e7ffd094468dcc0b238f33cb4a6"
       },
+      "../src/runtime/tests/particle-api-more-test.ts": {
+        "version": "87871c30b56546a02d2b4a237ac9b1de93f2bd91e4605db9d6b72131e2d4cd38",
+        "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
+      },
       "../src/runtime/tests/particle-api-test.ts": {
-        "version": "e0e97e9314b9f7dae7aad27fba67bb75f492449b57d02a10cd537d51c337be9a",
+        "version": "554096a7dd38b5d27f7b0d9410cea4e6748ffbbb5c18b03cc365f8ab1d5697b7",
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "../src/runtime/tests/particle-execution-context-test.ts": {
@@ -3146,10 +3150,6 @@
         "../node_modules/@types/node/util.d.ts",
         "../node_modules/@types/node/ts3.1/util.d.ts"
       ],
-      "../modalities/dom/components/xen/xen-state.d.ts": [
-        "../node_modules/@types/node/util.d.ts",
-        "../node_modules/@types/node/ts3.1/util.d.ts"
-      ],
       "../src/runtime/arc-exceptions.ts": [
         "../src/runtime/hot.ts",
         "../node_modules/@types/node/util.d.ts",
@@ -3651,17 +3651,6 @@
         "../node_modules/@types/node/util.d.ts",
         "../node_modules/@types/node/ts3.1/util.d.ts"
       ],
-      "../src/runtime/reference.ts": [
-        "../src/platform/assert-web.ts",
-        "../src/runtime/handle.ts",
-        "../src/runtime/particle-execution-context.ts",
-        "../src/runtime/type.ts",
-        "../src/runtime/entity.ts",
-        "../src/runtime/storage-proxy.ts",
-        "../src/runtime/symbols.ts",
-        "../node_modules/@types/node/util.d.ts",
-        "../node_modules/@types/node/ts3.1/util.d.ts"
-      ],
       "../src/runtime/handle.ts": [
         "../src/platform/assert-web.ts",
         "../src/runtime/arc-exceptions.ts",
@@ -3676,6 +3665,21 @@
         "../src/runtime/symbols.ts",
         "../src/runtime/storageNG/handle.ts",
         "../src/runtime/crdt/crdt.ts",
+        "../node_modules/@types/node/util.d.ts",
+        "../node_modules/@types/node/ts3.1/util.d.ts"
+      ],
+      "../src/runtime/reference.ts": [
+        "../src/platform/assert-web.ts",
+        "../src/runtime/handle.ts",
+        "../src/runtime/particle-execution-context.ts",
+        "../src/runtime/type.ts",
+        "../src/runtime/entity.ts",
+        "../src/runtime/storage-proxy.ts",
+        "../src/runtime/symbols.ts",
+        "../node_modules/@types/node/util.d.ts",
+        "../node_modules/@types/node/ts3.1/util.d.ts"
+      ],
+      "../modalities/dom/components/xen/xen-state.d.ts": [
         "../node_modules/@types/node/util.d.ts",
         "../node_modules/@types/node/ts3.1/util.d.ts"
       ],
@@ -3716,19 +3720,35 @@
         "../node_modules/@types/node/util.d.ts",
         "../node_modules/@types/node/ts3.1/util.d.ts"
       ],
+      "../src/runtime/ui-particle-base.ts": [
+        "../src/runtime/entity.ts",
+        "../src/runtime/handle.ts",
+        "../src/runtime/particle.ts",
+        "../node_modules/@types/node/util.d.ts",
+        "../node_modules/@types/node/ts3.1/util.d.ts"
+      ],
+      "../src/runtime/ui-particle.ts": [
+        "../modalities/dom/components/xen/xen-state.d.ts",
+        "../src/runtime/ui-particle-base.ts",
+        "../src/runtime/handle.ts",
+        "../src/runtime/hot.ts",
+        "../node_modules/@types/node/util.d.ts",
+        "../node_modules/@types/node/ts3.1/util.d.ts"
+      ],
       "../src/runtime/loader.ts": [
         "../src/platform/assert-web.ts",
         "../src/platform/fetch-web.ts",
         "../src/platform/fs-web.d.ts",
         "../src/platform/vm-web.d.ts",
         "../src/runtime/converters/jsonldToManifest.ts",
-        "../src/runtime/dom-particle.ts",
-        "../src/runtime/multiplexer-dom-particle.ts",
         "../src/runtime/particle-execution-context.ts",
+        "../src/runtime/reference.ts",
         "../src/runtime/particle-spec.ts",
         "../src/runtime/particle.ts",
-        "../src/runtime/reference.ts",
         "../src/runtime/transformation-dom-particle.ts",
+        "../src/runtime/dom-particle.ts",
+        "../src/runtime/multiplexer-dom-particle.ts",
+        "../src/runtime/ui-particle.ts",
         "../node_modules/@types/node/util.d.ts",
         "../node_modules/@types/node/ts3.1/util.d.ts"
       ],
@@ -5746,21 +5766,6 @@
         "../node_modules/@types/node/util.d.ts",
         "../node_modules/@types/node/ts3.1/util.d.ts"
       ],
-      "../src/runtime/ui-particle-base.ts": [
-        "../src/runtime/entity.ts",
-        "../src/runtime/handle.ts",
-        "../src/runtime/particle.ts",
-        "../node_modules/@types/node/util.d.ts",
-        "../node_modules/@types/node/ts3.1/util.d.ts"
-      ],
-      "../src/runtime/ui-particle.ts": [
-        "../modalities/dom/components/xen/xen-state.d.ts",
-        "../src/runtime/ui-particle-base.ts",
-        "../src/runtime/handle.ts",
-        "../src/runtime/hot.ts",
-        "../node_modules/@types/node/util.d.ts",
-        "../node_modules/@types/node/ts3.1/util.d.ts"
-      ],
       "../src/runtime/ui-transformation-particle.ts": [
         "../src/runtime/ui-particle.ts",
         "../src/runtime/entity.ts",
@@ -7656,6 +7661,16 @@
         "../node_modules/@types/node/util.d.ts",
         "../node_modules/@types/node/ts3.1/util.d.ts"
       ],
+      "../src/runtime/tests/particle-api-more-test.ts": [
+        "../src/platform/chai-web.d.ts",
+        "../src/runtime/testing/fake-slot-composer.ts",
+        "../src/runtime/testing/stub-loader.ts",
+        "../src/runtime/manifest.ts",
+        "../src/runtime/runtime.ts",
+        "../src/runtime/storage/storage-provider-base.ts",
+        "../node_modules/@types/node/util.d.ts",
+        "../node_modules/@types/node/ts3.1/util.d.ts"
+      ],
       "../src/runtime/tests/particle-api-test.ts": [
         "../src/platform/chai-web.d.ts",
         "../src/runtime/testing/fake-slot-composer.ts",
@@ -8621,10 +8636,6 @@
         "../node_modules/@types/node/util.d.ts",
         "../node_modules/@types/node/ts3.1/util.d.ts"
       ],
-      "../modalities/dom/components/xen/xen-state.d.ts": [
-        "../node_modules/@types/node/util.d.ts",
-        "../node_modules/@types/node/ts3.1/util.d.ts"
-      ],
       "../src/runtime/arc-exceptions.ts": [
         "../src/runtime/hot.ts"
       ],
@@ -8930,14 +8941,6 @@
         "../src/runtime/arc-exceptions.ts",
         "../src/runtime/store.ts"
       ],
-      "../src/runtime/reference.ts": [
-        "../src/runtime/entity.ts",
-        "../src/runtime/type.ts",
-        "../src/runtime/handle.ts",
-        "../src/runtime/storage-proxy.ts",
-        "../src/runtime/symbols.ts",
-        "../src/runtime/particle-execution-context.ts"
-      ],
       "../src/runtime/handle.ts": [
         "../src/runtime/type.ts",
         "../src/runtime/storageNG/handle.ts",
@@ -8950,6 +8953,18 @@
         "../src/runtime/id.ts",
         "../src/runtime/particle-spec.ts",
         "../src/runtime/reference.ts"
+      ],
+      "../src/runtime/reference.ts": [
+        "../src/runtime/entity.ts",
+        "../src/runtime/type.ts",
+        "../src/runtime/handle.ts",
+        "../src/runtime/storage-proxy.ts",
+        "../src/runtime/symbols.ts",
+        "../src/runtime/particle-execution-context.ts"
+      ],
+      "../modalities/dom/components/xen/xen-state.d.ts": [
+        "../node_modules/@types/node/util.d.ts",
+        "../node_modules/@types/node/ts3.1/util.d.ts"
       ],
       "../src/runtime/dom-particle-base.ts": [
         "../src/runtime/entity.ts",
@@ -8972,6 +8987,15 @@
         "../src/runtime/type.ts",
         "../src/runtime/slot-consumer.ts",
         "../src/runtime/transformation-dom-particle.ts"
+      ],
+      "../src/runtime/ui-particle-base.ts": [
+        "../src/runtime/entity.ts",
+        "../src/runtime/particle.ts"
+      ],
+      "../src/runtime/ui-particle.ts": [
+        "../src/runtime/ui-particle-base.ts",
+        "../src/runtime/handle.ts",
+        "../src/runtime/hot.ts"
       ],
       "../src/runtime/loader.ts": [
         "../src/runtime/particle-execution-context.ts",
@@ -9990,15 +10014,6 @@
       ],
       "../src/platform/image-node.ts": [
         "../src/platform/image-web.ts"
-      ],
-      "../src/runtime/ui-particle-base.ts": [
-        "../src/runtime/entity.ts",
-        "../src/runtime/particle.ts"
-      ],
-      "../src/runtime/ui-particle.ts": [
-        "../src/runtime/ui-particle-base.ts",
-        "../src/runtime/handle.ts",
-        "../src/runtime/hot.ts"
       ],
       "../src/runtime/ui-transformation-particle.ts": [
         "../src/runtime/ui-particle.ts"
@@ -11611,7 +11626,6 @@
       "../src/platform/fs-web.d.ts",
       "../src/platform/vm-web.d.ts",
       "../src/runtime/converters/jsonldToManifest.ts",
-      "../modalities/dom/components/xen/xen-state.d.ts",
       "../src/runtime/arc-exceptions.ts",
       "../src/runtime/relevance.ts",
       "../src/runtime/storage/crdt-collection-model.ts",
@@ -11663,12 +11677,15 @@
       "../src/runtime/particle.ts",
       "../src/runtime/storage-proxy.ts",
       "../src/runtime/symbols.ts",
-      "../src/runtime/reference.ts",
       "../src/runtime/handle.ts",
+      "../src/runtime/reference.ts",
+      "../modalities/dom/components/xen/xen-state.d.ts",
       "../src/runtime/dom-particle-base.ts",
       "../src/runtime/dom-particle.ts",
       "../src/runtime/transformation-dom-particle.ts",
       "../src/runtime/multiplexer-dom-particle.ts",
+      "../src/runtime/ui-particle-base.ts",
+      "../src/runtime/ui-particle.ts",
       "../src/runtime/loader.ts",
       "../src/runtime/testing/stub-loader.ts",
       "../src/runtime/fake-pec-factory.ts",
@@ -11905,8 +11922,6 @@
       "../src/platform/fs-node.ts",
       "../src/platform/image-web.ts",
       "../src/platform/image-node.ts",
-      "../src/runtime/ui-particle-base.ts",
-      "../src/runtime/ui-particle.ts",
       "../src/runtime/ui-transformation-particle.ts",
       "../src/runtime/ui-multiplexer-particle.ts",
       "../src/platform/loader-platform.ts",
@@ -12156,6 +12171,7 @@
       "../src/runtime/tests/manifest-test.ts",
       "../src/runtime/tests/multiplexer-test.ts",
       "../src/runtime/tests/mutex-test.ts",
+      "../src/runtime/tests/particle-api-more-test.ts",
       "../src/runtime/tests/particle-api-test.ts",
       "../src/runtime/tests/particle-execution-context-test.ts",
       "../src/runtime/tests/particle-interface-loading-test.ts",

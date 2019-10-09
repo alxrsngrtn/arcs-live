@@ -28,12 +28,6 @@ export declare class UiParticleBase extends Particle {
      */
     readonly template: string;
     /**
-     * Override to return a String defining primary markup for the given slot name.
-     */
-    /**
-     * Override to return a String defining the name of the template for the given slot name.
-     */
-    /**
      * Override to return false if the Particle isn't ready to `render()`
      */
     shouldRender(...args: any[]): boolean;
@@ -43,7 +37,6 @@ export declare class UiParticleBase extends Particle {
      * Override to return a dictionary to map into the template.
      */
     render(...args: any[]): RenderModel;
-    protected _getStateArgs(): any[];
     fireEvent(slotName: string, { handler, data }: {
         handler: any;
         data: any;
@@ -53,32 +46,31 @@ export declare class UiParticleBase extends Particle {
         model: {};
     }): Promise<boolean | undefined>;
     /**
+     * Invoke async function `task` with Particle busy-guard.
+     */
+    await(task: (p: this) => Promise<any>): Promise<any>;
+    /**
+     * Set a singleton value. Value can be an Entity or a POJO.
+     */
+    set(handleName: string, value: Entity | {}): Promise<void>;
+    /**
+     * Add to a collection. Value can be an Entity or a POJO (or an Array of such values).
+     */
+    add(handleName: string, value: Entity | {} | [Entity] | [{}]): Promise<void>;
+    private _requireEntity;
+    /**
+     * Remove from a collection. Value must be an Entity or an array of Entities.
+     */
+    remove(handleName: string, value: Entity | [Entity]): Promise<void>;
+    private _remove;
+    /**
      * Remove all entities from named handle.
      */
-    clearHandle(handleName: string): Promise<void>;
+    clear(handleName: string): Promise<void>;
     /**
-     * Merge entities from Array into named handle.
+     * Return the named handle or throw.
      */
-    mergeEntitiesToHandle(handleName: string, entities: Entity[]): Promise<void>;
-    /**
-     * Append entities from Array to named handle.
-     */
-    appendEntitiesToHandle(handleName: string, entities: Entity[]): Promise<void>;
-    /**
-     * Create an entity from each rawData, and append to named handle.
-     */
-    appendRawDataToHandle(handleName: string, rawDataArray: any): Promise<void>;
-    /**
-     * Modify value of named handle. A new entity is created
-     * from `rawData` (`new [EntityClass](rawData)`).
-     */
-    updateSingleton(handleName: string, rawData: any): Promise<Entity>;
-    /**
-     * Modify or insert `entity` into named handle.
-     * Modification is done by removing the old entity and reinserting the new one.
-     */
-    updateCollection(handleName: string, entity: Entity): Promise<void>;
-    set(handleName: any, value: any): Promise<any>;
+    private _requireHandle;
     /**
      * Return array of Entities dereferenced from array of Share-Type Entities
      */
