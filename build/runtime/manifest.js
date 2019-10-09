@@ -26,6 +26,12 @@ import { StorageProviderFactory } from './storage/storage-provider-factory.js';
 import { BigCollectionType, CollectionType, EntityType, InterfaceType, ReferenceType, SlotType, Type, TypeVariable } from './type.js';
 import { ClaimIsTag } from './particle-claim.js';
 import { StorageStub } from './storage-stub.js';
+import { Flags } from './flags.js';
+import { Store } from './storageNG/store.js';
+import { StorageKey } from './storageNG/storage-key.js';
+import { Exists } from './storageNG/drivers/driver-factory.js';
+import { StorageKeyParser } from './storageNG/storage-key-parser.js';
+import { VolatileStorageKey } from './storageNG/drivers/volatile.js';
 export class ManifestError extends Error {
     constructor(location, message) {
         super(message);
@@ -108,6 +114,9 @@ export class Manifest {
         return this._id;
     }
     get storageProviderFactory() {
+        if (Flags.useNewStorageStack) {
+            throw new Error('Not present in the new storage stack.');
+        }
         if (this._storageProviderFactory == undefined) {
             this._storageProviderFactory = new StorageProviderFactory(this.id);
         }
@@ -172,7 +181,22 @@ export class Manifest {
         if (opts.source) {
             this.storeManifestUrls.set(opts.id, this.fileName);
         }
-        const store = new StorageStub(opts.type, opts.id, opts.name, opts.storageKey, this.storageProviderFactory, opts.originalId, opts.claims, opts.description, opts.version, opts.source, opts.referenceMode, opts.model);
+        let store;
+        if (Flags.useNewStorageStack) {
+            let storageKey = opts.storageKey;
+            if (typeof storageKey === 'string') {
+                storageKey = StorageKeyParser.parse(storageKey);
+            }
+            // TODO: Need to handle all of the additional options (claims, source,
+            // description, etc.)
+            store = new Store(storageKey, Exists.ShouldCreate, opts.type, opts.id, opts.name);
+        }
+        else {
+            if (opts.storageKey instanceof StorageKey) {
+                throw new Error(`Can't use new-style storage keys with the old storage stack.`);
+            }
+            store = new StorageStub(opts.type, opts.id, opts.name, opts.storageKey, this.storageProviderFactory, opts.originalId, opts.claims, opts.description, opts.version, opts.source, opts.referenceMode, opts.model);
+        }
         return this._addStore(store, opts.tags);
     }
     _find(manifestFinder) {
@@ -257,8 +281,8 @@ export class Manifest {
     findRecipesByVerb(verb) {
         return [...this._findAll(manifest => manifest._recipes.filter(recipe => recipe.verbs.includes(verb)))];
     }
-    generateID() {
-        return this._idGenerator.newChildId(this.id);
+    generateID(subcomponent) {
+        return this._idGenerator.newChildId(this.id, subcomponent);
     }
     static async load(fileName, loader, options = {}) {
         let { registry } = options;
@@ -981,6 +1005,14 @@ ${e.message}
         }
         return null;
     }
+    createVolatileStorageKey() {
+        if (Flags.useNewStorageStack) {
+            return new VolatileStorageKey(this.id, this.generateID('volatile').toString());
+        }
+        else {
+            return this.storageProviderFactory._storageForKey('volatile').constructKey('volatile');
+        }
+    }
     static async _processStore(manifest, item, loader) {
         const name = item.name;
         let id = item.id;
@@ -1105,12 +1137,11 @@ ${e.message}
             model = entities.map(value => ({ id: value.id, value }));
         }
         const version = item.version || 0;
-        const storageKey = manifest.storageProviderFactory._storageForKey('volatile').constructKey('volatile');
         return manifest.newStore({
             type,
             name,
             id,
-            storageKey,
+            storageKey: manifest.createVolatileStorageKey(),
             tags,
             originalId,
             claims,

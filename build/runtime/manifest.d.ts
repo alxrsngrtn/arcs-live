@@ -20,6 +20,7 @@ import { EntityType, InterfaceType, Type } from './type.js';
 import { Dictionary } from './hot.js';
 import { ClaimIsTag } from './particle-claim.js';
 import { UnifiedStore } from './storageNG/unified-store.js';
+import { StorageKey } from './storageNG/storage-key.js';
 export declare class ManifestError extends Error {
     location: AstNode.SourceLocation;
     key: string;
@@ -83,7 +84,7 @@ export declare class Manifest {
         type: Type;
         name: string;
         id: string;
-        storageKey: string;
+        storageKey: string | StorageKey;
         tags: string[];
         claims?: ClaimIsTag[];
         originalId?: string;
@@ -109,7 +110,7 @@ export declare class Manifest {
     }): UnifiedStore[];
     findInterfaceByName(name: string): InterfaceInfo;
     findRecipesByVerb(verb: string): Recipe[];
-    generateID(): Id;
+    generateID(subcomponent?: string): Id;
     static load(fileName: string, loader: Loader, options?: ManifestLoadOptions): Promise<Manifest>;
     static getErrors(manifest: Manifest): ManifestError[];
     static parse(content: string, options?: ManifestParseOptions): Promise<Manifest>;
@@ -124,6 +125,7 @@ export declare class Manifest {
         schema?: Schema;
         iface?: InterfaceInfo;
     } | null;
+    private createVolatileStorageKey;
     private static _processStore;
     private _newRecipe;
     toString(options?: {
