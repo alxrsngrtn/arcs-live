@@ -24433,6 +24433,27 @@ class StorageKey {
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
+class VolatileStorageKey extends StorageKey {
+    constructor(arcId, unique) {
+        super('volatile');
+        this.arcId = arcId;
+        this.unique = unique;
+    }
+    toString() {
+        return `${this.protocol}://${this.arcId}/${this.unique}`;
+    }
+    childWithComponent(component) {
+        return new VolatileStorageKey(this.arcId, `${this.unique}/${component}`);
+    }
+    static fromString(key) {
+        const match = key.match(/^volatile:\/\/([^/]+)\/(.*)$/);
+        if (!match) {
+            throw new Error(`Not a valid VolatileStorageKey: ${key}.`);
+        }
+        const [_, arcId, unique] = match;
+        return new VolatileStorageKey(ArcId.fromString(arcId), unique);
+    }
+}
 class VolatileMemory {
     constructor() {
         this.entries = new Map();
@@ -25585,6 +25606,25 @@ Store.constructors = new Map([
 
 /**
  * @license
+ * Copyright 2019 Google LLC.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+/** Arcs runtime flags. */
+class Flags {
+    /** Resets flags. To be called in test teardown methods. */
+    static reset() {
+        Flags.useNewStorageStack = false;
+    }
+}
+/** Initialize flags to their default value */
+Flags.reset();
+
+/**
+ * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
  * This code may only be used under the BSD style license found at
  * http://polymer.github.io/LICENSE.txt
@@ -26150,16 +26190,22 @@ ${this.activeRecipe.toString()}`;
         // TODO(sjmiles): use `volatile` for volatile stores
         const hasVolatileTag = (tags) => tags && tags.includes('volatile');
         if (storageKey == undefined || hasVolatileTag(tags)) {
-            storageKey = 'volatile';
+            storageKey = Flags.useNewStorageStack ? new VolatileStorageKey(this.id, id) : 'volatile';
         }
         let store;
-        if (typeof storageKey === 'string') {
+        if (Flags.useNewStorageStack) {
+            if (typeof storageKey === 'string') {
+                throw new Error(`Can't use string storage keys with the new storage stack.`);
+            }
+            store = new Store(storageKey, Exists.ShouldCreate, type, id, name);
+        }
+        else {
+            if (typeof storageKey !== 'string') {
+                throw new Error(`Can't use new-style storage keys with the old storage stack.`);
+            }
             store = await this.storageProviderFactory.construct(id, type, storageKey);
             assert(store, `failed to create store with id [${id}]`);
             store.name = name;
-        }
-        else {
-            store = new Store(storageKey, Exists.ShouldCreate, type, id, name);
         }
         await this._registerStore(store, tags);
         return store;

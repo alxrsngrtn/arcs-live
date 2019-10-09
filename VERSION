@@ -1,11 +1,8 @@
-commit 2b9e6fdf8b71e7e5adc2a140b0e8c519ab23da14
+commit 6e3e6db19b47a3cbd102ef7590e6bfa0f32998ae
 Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
-Date:   Wed Oct 9 10:31:22 2019 +1100
+Date:   Wed Oct 9 10:44:27 2019 +1100
 
-    Updates Javaharness instructions (#3723)
+    Added new flag for the storage migration. (#3724)
     
-    * Update javaharness instructions
-    
-    Also added .bazelproject file to make it easier to get started.
-    
-    * Add troubleshooting section
+    Updated Arc class to use Flags to control store creation. Many other
+    parts of the codebase will need to be gradually migrated as well.

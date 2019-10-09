@@ -481,8 +481,12 @@
         "version": "d0110559a993f1b1469e6fb885e2516ba8358b3da0d8c61cdf960cda0fce082e",
         "signature": "f2d8b054448cb4886900f4baa77e8b41c7d00a7a3bd25a90752e325aab5e14c3"
       },
+      "../src/runtime/flags.ts": {
+        "version": "a206e93b154b5761e6641c7394366eab6db2e95b1b2f487bb4ef4134adbe9be4",
+        "signature": "7ea5a9f8f985e39bc935af3f45837e7e910cd78fb280186a14c0833ff488138c"
+      },
       "../src/runtime/arc.ts": {
-        "version": "2184f9d9430fef8bd6194f83148221417a3dcc965149bf35aa43b7d28391bae5",
+        "version": "7427b05c47e80474ab42a746621b549370369ffc330e4cabeb3c7846d27844e1",
         "signature": "f5a76c9d0f56d9aea76b7b9af419daaf2bd80e4ad350672331b144aafec7a76f"
       },
       "../src/runtime/api-channel.ts": {
@@ -2357,7 +2361,7 @@
         "signature": "8bc1d39a3b8ec61064f9969316a088e314895e7ffd094468dcc0b238f33cb4a6"
       },
       "../src/runtime/tests/arc-test.ts": {
-        "version": "0968b6f261328859411b2f8806c1440a0aee818d3aa23723639f53f50ec0673b",
+        "version": "28628f9e94fbc8eec9653c68c36f46164488b4ec3344c38106d4529093226311",
         "signature": "600636836c17982e77369e742e2b185b3a695f0407d06b57f41cbf45b0a11d8b"
       },
       "../src/runtime/tests/bytes-test.ts": {
@@ -3743,6 +3747,10 @@
         "../node_modules/@types/node/util.d.ts",
         "../node_modules/@types/node/ts3.1/util.d.ts"
       ],
+      "../src/runtime/flags.ts": [
+        "../node_modules/@types/node/util.d.ts",
+        "../node_modules/@types/node/ts3.1/util.d.ts"
+      ],
       "../src/runtime/arc.ts": [
         "../src/platform/assert-web.ts",
         "../src/runtime/arc-inspector.ts",
@@ -3775,6 +3783,8 @@
         "../src/runtime/storageNG/store.ts",
         "../src/runtime/storage/key-base.ts",
         "../src/runtime/storageNG/unified-store.ts",
+        "../src/runtime/flags.ts",
+        "../src/runtime/crdt/crdt.ts",
         "../node_modules/@types/node/util.d.ts",
         "../node_modules/@types/node/ts3.1/util.d.ts"
       ],
@@ -7490,6 +7500,12 @@
         "../src/runtime/storageNG/drivers/driver-factory.ts",
         "../src/runtime/storageNG/drivers/volatile.ts",
         "../src/runtime/storageNG/unified-store.ts",
+        "../src/runtime/flags.ts",
+        "../src/runtime/storageNG/storage-key.ts",
+        "../src/runtime/storageNG/store.ts",
+        "../src/runtime/crdt/crdt.ts",
+        "../src/runtime/storageNG/direct-store.ts",
+        "../src/runtime/storage/volatile-storage.ts",
         "../node_modules/@types/node/util.d.ts",
         "../node_modules/@types/node/ts3.1/util.d.ts"
       ],
@@ -11645,6 +11661,7 @@
       "../src/runtime/loader.ts",
       "../src/runtime/testing/stub-loader.ts",
       "../src/runtime/fake-pec-factory.ts",
+      "../src/runtime/flags.ts",
       "../src/runtime/arc.ts",
       "../src/runtime/api-channel.ts",
       "../src/runtime/wasm.ts",

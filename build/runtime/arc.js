@@ -22,9 +22,10 @@ import { StorageProviderFactory } from './storage/storage-provider-factory.js';
 import { ArcType, CollectionType, EntityType, InterfaceType, RelationType, Type, TypeVariable } from './type.js';
 import { Mutex } from './mutex.js';
 import { Runtime } from './runtime.js';
-import { VolatileMemory, VolatileStorageDriverProvider } from './storageNG/drivers/volatile.js';
+import { VolatileMemory, VolatileStorageDriverProvider, VolatileStorageKey } from './storageNG/drivers/volatile.js';
 import { DriverFactory, Exists } from './storageNG/drivers/driver-factory.js';
 import { Store } from './storageNG/store.js';
+import { Flags } from './flags.js';
 export class Arc {
     constructor({ id, context, pecFactories, slotComposer, loader, storageKey, storageProviderFactory, speculative, innerArc, stub, inspectorFactory }) {
         this._activeRecipe = new Recipe();
@@ -583,16 +584,22 @@ ${this.activeRecipe.toString()}`;
         // TODO(sjmiles): use `volatile` for volatile stores
         const hasVolatileTag = (tags) => tags && tags.includes('volatile');
         if (storageKey == undefined || hasVolatileTag(tags)) {
-            storageKey = 'volatile';
+            storageKey = Flags.useNewStorageStack ? new VolatileStorageKey(this.id, id) : 'volatile';
         }
         let store;
-        if (typeof storageKey === 'string') {
+        if (Flags.useNewStorageStack) {
+            if (typeof storageKey === 'string') {
+                throw new Error(`Can't use string storage keys with the new storage stack.`);
+            }
+            store = new Store(storageKey, Exists.ShouldCreate, type, id, name);
+        }
+        else {
+            if (typeof storageKey !== 'string') {
+                throw new Error(`Can't use new-style storage keys with the old storage stack.`);
+            }
             store = await this.storageProviderFactory.construct(id, type, storageKey);
             assert(store, `failed to create store with id [${id}]`);
             store.name = name;
-        }
-        else {
-            store = new Store(storageKey, Exists.ShouldCreate, type, id, name);
         }
         await this._registerStore(store, tags);
         return store;
