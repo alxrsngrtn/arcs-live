@@ -1,5 +1,5 @@
-commit 7a3dbed8188bb88b6ba24da4d042dee820ecc325
-Author: Ray Cromwell <cromwellian@gmail.com>
-Date:   Wed Oct 9 22:32:43 2019 -0700
+commit 8954ddb561d1333a6ed5e8761bc0e9db0e67ea7c
+Author: Piotr Swigon <piotr.swigon@gmail.com>
+Date:   Thu Oct 10 16:36:48 2019 -0700
 
-    Fix BUILD files for import (#3747)
+    Log warnings for Particle Specs using external schemas (#3706)

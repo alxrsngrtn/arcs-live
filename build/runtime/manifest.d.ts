@@ -21,9 +21,17 @@ import { Dictionary } from './hot.js';
 import { ClaimIsTag } from './particle-claim.js';
 import { UnifiedStore } from './storageNG/unified-store.js';
 import { StorageKey } from './storageNG/storage-key.js';
+export declare enum ErrorSeverity {
+    Error = "error",
+    Warning = "warning"
+}
 export declare class ManifestError extends Error {
     location: AstNode.SourceLocation;
     key: string;
+    severity: ErrorSeverity;
+    constructor(location: AstNode.SourceLocation, message: string);
+}
+export declare class ManifestWarning extends ManifestError {
     constructor(location: AstNode.SourceLocation, message: string);
 }
 declare type ManifestFinder<a> = (manifest: Manifest) => a;
@@ -53,7 +61,7 @@ export declare class Manifest {
     private _meta;
     private _resources;
     private storeManifestUrls;
-    private errors;
+    readonly errors: ManifestError[];
     constructor({ id }: {
         id: Id | string;
     });

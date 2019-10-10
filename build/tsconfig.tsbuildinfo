@@ -574,8 +574,8 @@
         "signature": "8ef9453dcbfa29ffef1fd28d215625bdb2730644a74ff977494d36c9c2f4f86f"
       },
       "../src/runtime/manifest.ts": {
-        "version": "b48a46e1f17a3ed2f97e5b6b22f28201c6aac8617f4920005b9a52170050139a",
-        "signature": "66da5eb9b769dd05e544093ec36b65473848ec14bb04df7da094a105088a52bd"
+        "version": "0622281401d3b0facfb587cea81b2005c7a781b9a278c8aacca0b1545561f6cb",
+        "signature": "6118fbf1453ecf90293a5e41f042e9df59962208e8200e2e01bd6ab681425183"
       },
       "../src/platform/atob-web.ts": {
         "version": "83bd58cde323a7612560e333b3542a3ab39d1f645c1e1e22e54f4a66622b9e7c",
@@ -2405,7 +2405,7 @@
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "../src/runtime/tests/manifest-test.ts": {
-        "version": "a97a791a637ca2baf4ab391aebedeabfef95d4b3284e5ee5f17e1894cd038361",
+        "version": "df1a40c27c7eb9bceab7175c1722bbc4cfa0a9e5432bb3649af5af1ea99950b8",
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "../src/runtime/tests/multiplexer-test.ts": {
@@ -2461,7 +2461,7 @@
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "../src/runtime/tests/runtime-test.ts": {
-        "version": "fb0167a977461ad590b29c4e6e75c2715eed16a17f4f9acaf003ebddb12a7ffb",
+        "version": "4d8223512ccba81b9cfa8c96e873f806369d9e0deda94576e2084f25e36fa2b1",
         "signature": "8bc1d39a3b8ec61064f9969316a088e314895e7ffd094468dcc0b238f33cb4a6"
       },
       "../src/runtime/tests/schema-test.ts": {

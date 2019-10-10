@@ -2757,6 +2757,17 @@ resource SomeName
             });
         });
     });
+    it('warns about using external schemas', async () => {
+        const manifest = await Manifest.parse(`
+schema Thing
+  Text value
+
+particle A
+  in Thing thing
+    `);
+        assert.lengthOf(manifest.errors, 1);
+        assert.equal(manifest.errors[0].key, 'externalSchemas');
+    });
 });
 describe('Manifest storage migration', () => {
     async function parseStoreFromManifest() {
