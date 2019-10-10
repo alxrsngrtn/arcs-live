@@ -1,47 +1,7 @@
-commit 4794cd968dfb0462a7a47a09f81ab488e41212a6
-Author: Scott J. Miles <sjmiles@google.com>
-Date:   Wed Oct 9 16:06:11 2019 -0700
+commit d934a1821b3358466e18a5fa1b8589773391d5ea
+Author: ianull <ianchang@google.com>
+Date:   Wed Oct 9 17:09:50 2019 -0700
 
-    Particle API cleanup: collapse handle helpers into set, add, remove, clear (#3716)
+    Insure pipes-shell existence at compilation (#3739)
     
-    * remove dead code, collapse all handle utilities into `set`, `add`, `remove`, `clear`
-    
-    * did `npm i`
-    
-    * s/Object/{}, add return types (Promise<void>)
-    
-    * remove unused imports
-    
-    * throw on unrecognized handle type
-    
-    * make `_set` private
-    
-    * add null check for robustness (Collection really should not ever contain null, iiuc)
-    
-    * update formatting, disallow using `set` on Collections (must `clear` and `add` instead)
-    
-    * use modern iterator syntax
-    
-    * adjust doc comments
-    
-    * s/in/of
-    
-    * fix lint errors
-    
-    * more lint improvements
-    
-    * micro-opt
-    
-    * s/updateSingleton/set in Particles/*
-    
-    * use actual SimpleParticle in loader.ts (after all)
-    
-    * add funky set test
-    
-    * isolate tests, add more
-    
-    * factor out some common code
-    
-    * add missing semi's
-    
-    * add test for bad handle names
+    Build would fail if pipes-shell has not been webpacked and deployed.
