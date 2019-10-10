@@ -14,6 +14,9 @@ import { RamDiskStorageKey, RamDiskStorageDriverProvider } from '../drivers/ramd
 import { Exists, DriverFactory } from '../drivers/driver-factory.js';
 import { Runtime } from '../../runtime.js';
 import { CountType } from '../../type.js';
+function createStore(storageKey, exists) {
+    return new Store({ storageKey, exists, type: new CountType(), id: 'an-id' });
+}
 describe('RamDisk + Store Integration', async () => {
     beforeEach(() => {
         RamDiskStorageDriverProvider.register();
@@ -24,7 +27,7 @@ describe('RamDisk + Store Integration', async () => {
     it('will store a sequence of model and operation updates as models', async () => {
         const runtime = new Runtime();
         const storageKey = new RamDiskStorageKey('unique');
-        const store = new Store(storageKey, Exists.ShouldCreate, new CountType(), 'an-id');
+        const store = createStore(storageKey, Exists.ShouldCreate);
         const activeStore = await store.activate();
         const count = new CRDTCount();
         count.applyOperation({ type: CountOpTypes.MultiIncrement, actor: 'me', value: 42, version: { from: 0, to: 27 } });
@@ -42,9 +45,9 @@ describe('RamDisk + Store Integration', async () => {
     it('will store operation updates from multiple sources', async () => {
         const runtime = new Runtime();
         const storageKey = new RamDiskStorageKey('unique');
-        const store1 = new Store(storageKey, Exists.ShouldCreate, new CountType(), 'an-id');
+        const store1 = createStore(storageKey, Exists.ShouldCreate);
         const activeStore1 = await store1.activate();
-        const store2 = new Store(storageKey, Exists.ShouldExist, new CountType(), 'an-id');
+        const store2 = createStore(storageKey, Exists.ShouldExist);
         const activeStore2 = await store2.activate();
         const count1 = new CRDTCount();
         count1.applyOperation({ type: CountOpTypes.MultiIncrement, actor: 'me', value: 42, version: { from: 0, to: 27 } });
@@ -74,9 +77,9 @@ describe('RamDisk + Store Integration', async () => {
         // store1.onProxyMessage, DELAY, DELAY, DELAY, store1.onProxyMessage, store2.onProxyMessage, DELAY, DELAY, DELAY, store2.onProxyMessage, DELAY, DELAY, DELAY, DELAY, DELAY
         const runtime = new Runtime();
         const storageKey = new RamDiskStorageKey('unique');
-        const store1 = new Store(storageKey, Exists.ShouldCreate, new CountType(), 'an-id');
+        const store1 = createStore(storageKey, Exists.ShouldCreate);
         const activeStore1 = await store1.activate();
-        const store2 = new Store(storageKey, Exists.ShouldExist, new CountType(), 'an-id');
+        const store2 = createStore(storageKey, Exists.ShouldExist);
         const activeStore2 = await store2.activate();
         const opReply1 = activeStore1.onProxyMessage({ type: ProxyMessageType.Operations, operations: [
                 { type: CountOpTypes.Increment, actor: 'me', version: { from: 0, to: 1 } }

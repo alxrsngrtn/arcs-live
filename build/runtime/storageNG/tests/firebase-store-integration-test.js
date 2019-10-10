@@ -14,6 +14,9 @@ import { Exists, DriverFactory } from '../drivers/driver-factory.js';
 import { Runtime } from '../../runtime.js';
 import { MockFirebaseStorageDriverProvider, MockFirebaseStorageKey } from '../testing/mock-firebase.js';
 import { CountType } from '../../type.js';
+function createStore(storageKey, exists) {
+    return new Store({ storageKey, exists, type: new CountType(), id: 'an-id' });
+}
 describe('Firebase + Store Integration', async () => {
     beforeEach(() => {
         DriverFactory.clearRegistrationsForTesting();
@@ -25,7 +28,7 @@ describe('Firebase + Store Integration', async () => {
     it('will store a sequence of model and operation updates as models', async () => {
         const runtime = new Runtime();
         const storageKey = new MockFirebaseStorageKey('location');
-        const store = new Store(storageKey, Exists.ShouldCreate, new CountType(), 'an-id');
+        const store = createStore(storageKey, Exists.ShouldCreate);
         const activeStore = await store.activate();
         const count = new CRDTCount();
         count.applyOperation({ type: CountOpTypes.MultiIncrement, actor: 'me', value: 42, version: { from: 0, to: 27 } });
@@ -44,9 +47,9 @@ describe('Firebase + Store Integration', async () => {
     it('will store operation updates from multiple sources', async () => {
         const runtime = new Runtime();
         const storageKey = new MockFirebaseStorageKey('unique');
-        const store1 = new Store(storageKey, Exists.ShouldCreate, new CountType(), 'an-id');
+        const store1 = createStore(storageKey, Exists.ShouldCreate);
         const activeStore1 = await store1.activate();
-        const store2 = new Store(storageKey, Exists.ShouldExist, new CountType(), 'an-id');
+        const store2 = createStore(storageKey, Exists.ShouldExist);
         const activeStore2 = await store2.activate();
         const count1 = new CRDTCount();
         count1.applyOperation({ type: CountOpTypes.MultiIncrement, actor: 'me', value: 42, version: { from: 0, to: 27 } });
@@ -75,9 +78,9 @@ describe('Firebase + Store Integration', async () => {
     it('will store operation updates from multiple sources with some delays', async () => {
         const runtime = new Runtime();
         const storageKey = new MockFirebaseStorageKey('unique');
-        const store1 = new Store(storageKey, Exists.ShouldCreate, new CountType(), 'an-id');
+        const store1 = createStore(storageKey, Exists.ShouldCreate);
         const activeStore1 = await store1.activate();
-        const store2 = new Store(storageKey, Exists.ShouldExist, new CountType(), 'an-id');
+        const store2 = createStore(storageKey, Exists.ShouldExist);
         const activeStore2 = await store2.activate();
         void activeStore1.onProxyMessage({ type: ProxyMessageType.Operations, id: 1, operations: [
                 { type: CountOpTypes.Increment, actor: 'me', version: { from: 0, to: 1 } }
@@ -108,9 +111,9 @@ describe('Firebase + Store Integration', async () => {
     it(`doesn't deadlock given a particular timing pattern`, async () => {
         const runtime = new Runtime();
         const storageKey = new MockFirebaseStorageKey('unique');
-        const store1 = new Store(storageKey, Exists.ShouldCreate, new CountType(), 'an-id');
+        const store1 = createStore(storageKey, Exists.ShouldCreate);
         const activeStore1 = await store1.activate();
-        const store2 = new Store(storageKey, Exists.ShouldExist, new CountType(), 'an-id');
+        const store2 = createStore(storageKey, Exists.ShouldExist);
         const activeStore2 = await store2.activate();
         void activeStore1.onProxyMessage({ type: ProxyMessageType.Operations, id: 1, operations: [
                 { type: CountOpTypes.Increment, actor: 'me', version: { from: 0, to: 1 } }

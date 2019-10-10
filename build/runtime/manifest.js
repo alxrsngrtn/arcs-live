@@ -189,7 +189,7 @@ export class Manifest {
             }
             // TODO: Need to handle all of the additional options (claims, source,
             // description, etc.)
-            store = new Store(storageKey, Exists.ShouldCreate, opts.type, opts.id, opts.name);
+            store = new Store({ ...opts, storageKey, exists: Exists.ShouldCreate });
         }
         else {
             if (opts.storageKey instanceof StorageKey) {

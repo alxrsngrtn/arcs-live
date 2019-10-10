@@ -1,7 +1,8 @@
-commit f2e3a953347f004deb4214be59ed1fea52d3d694
+commit b419d0569b6c5392f1c0ae5e87f6ddbee1bac1ef
 Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
-Date:   Thu Oct 10 11:53:58 2019 +1100
+Date:   Thu Oct 10 12:48:47 2019 +1100
 
-    Added add_repo_root.sh script (#3744)
+    Convert the Store constructor to take an options arg (#3745)
     
-    Makes it easier to get the .bazelrc file set up properly.
+    This will make it easier to add additional (optional) arguments in the
+    future!

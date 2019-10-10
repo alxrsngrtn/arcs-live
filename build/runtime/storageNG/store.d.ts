@@ -29,7 +29,13 @@ export declare class Store<T extends CRDTTypeRecord> extends UnifiedStore implem
     modelConstructor: new () => CRDTModel<T>;
     private activeStore;
     static readonly constructors: Map<StorageMode, StoreConstructor>;
-    constructor(storageKey: StorageKey, exists: Exists, type: Type, id: string, name?: string);
+    constructor(opts: {
+        storageKey: StorageKey;
+        exists: Exists;
+        type: Type;
+        id: string;
+        name?: string;
+    });
     activate(): Promise<ActiveStore<T>>;
     readonly referenceMode: boolean;
 }
