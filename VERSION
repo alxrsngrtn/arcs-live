@@ -1,5 +1,7 @@
-commit 00770b367c4a0cb82e47f3dbc253d09d72460ca6
+commit f2e3a953347f004deb4214be59ed1fea52d3d694
 Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
-Date:   Thu Oct 10 11:43:18 2019 +1100
+Date:   Thu Oct 10 11:53:58 2019 +1100
 
-    Remove unused claims from StorageProviderBase (#3743)
+    Added add_repo_root.sh script (#3744)
+    
+    Makes it easier to get the .bazelrc file set up properly.
