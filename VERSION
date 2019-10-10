@@ -1,7 +1,17 @@
-commit d934a1821b3358466e18a5fa1b8589773391d5ea
-Author: ianull <ianchang@google.com>
-Date:   Wed Oct 9 17:09:50 2019 -0700
+commit 8954b53de3005092c2f13deab56adfd4255d9f19
+Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
+Date:   Thu Oct 10 11:32:49 2019 +1100
 
-    Insure pipes-shell existence at compilation (#3739)
+    Wraps webpack in bazel rules for javaharness (#3738)
     
-    Build would fail if pipes-shell has not been webpacked and deployed.
+    This greatly simplifies the javaharness workflow. Instead of having to
+    remember to webpack the various things (runtime, pipes-shell), bazel
+    will detect for you when sources change and will run the various webpack
+    scripts.
+    
+    `./tools/sigh webpack` is given its own BUILD target in
+    `//tools:sigh_webpack`, and pipes-shell's `deploy.sh` script is given a
+    target in `//shells/pipes-shell:pipes_shell_web`.
+    
+    Instructions for building javaharness have been updated, and the
+    unnecessary build.sh script and various symlinks removed.
