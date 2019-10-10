@@ -14,7 +14,6 @@ import { KeyBase } from './key-base.js';
 import { Store, BigCollectionStore, CollectionStore, SingletonStore } from '../store.js';
 import { PropagatedException } from '../arc-exceptions.js';
 import { Dictionary, Consumer } from '../hot.js';
-import { ClaimIsTag } from '../particle-claim.js';
 import { UnifiedStore, UnifiedActiveStore } from '../storageNG/unified-store.js';
 import { ProxyCallback } from '../storageNG/store.js';
 declare type Callback = Consumer<Dictionary<any>>;
@@ -102,8 +101,6 @@ export declare abstract class StorageProviderBase extends UnifiedStore implement
     name: string;
     source: string | null;
     description: string;
-    /** Trust tags claimed by this data store. */
-    claims: ClaimIsTag[];
     protected constructor(type: Type, name: string, id: string, key: string);
     enableReferenceMode(): void;
     readonly baseStore: StorageProviderBase;

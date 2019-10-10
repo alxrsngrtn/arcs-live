@@ -19206,9 +19206,6 @@ class StorageProviderBase extends UnifiedStore {
             handleStr.push(`in '${this.source}'`);
         }
         results.push(handleStr.join(' '));
-        if (this.claims && this.claims.length > 0) {
-            results.push(`  claim is ${this.claims.map(claim => claim.tag).join(' and is ')}`);
-        }
         if (this.description) {
             results.push(`  description \`${this.description}\``);
         }

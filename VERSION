@@ -1,17 +1,5 @@
-commit 8954b53de3005092c2f13deab56adfd4255d9f19
+commit 00770b367c4a0cb82e47f3dbc253d09d72460ca6
 Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
-Date:   Thu Oct 10 11:32:49 2019 +1100
+Date:   Thu Oct 10 11:43:18 2019 +1100
 
-    Wraps webpack in bazel rules for javaharness (#3738)
-    
-    This greatly simplifies the javaharness workflow. Instead of having to
-    remember to webpack the various things (runtime, pipes-shell), bazel
-    will detect for you when sources change and will run the various webpack
-    scripts.
-    
-    `./tools/sigh webpack` is given its own BUILD target in
-    `//tools:sigh_webpack`, and pipes-shell's `deploy.sh` script is given a
-    target in `//shells/pipes-shell:pipes_shell_web`.
-    
-    Instructions for building javaharness have been updated, and the
-    unnecessary build.sh script and various symlinks removed.
+    Remove unused claims from StorageProviderBase (#3743)
