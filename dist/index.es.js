@@ -19044,6 +19044,17 @@ class KeyBase {
  * Store class.
  */
 class UnifiedStore {
+    constructor(storeInfo) {
+        this.storeInfo = storeInfo;
+    }
+    // Series of StoreInfo getters to make migration easier.
+    get id() { return this.storeInfo.id; }
+    get name() { return this.storeInfo.name; }
+    get type() { return this.storeInfo.type; }
+    get originalId() { return this.storeInfo.originalId; }
+    get source() { return this.storeInfo.source; }
+    get description() { return this.storeInfo.description; }
+    get claims() { return this.storeInfo.claims; }
     /**
      * Hack to cast this UnifiedStore to the old-style class StorageStub.
      * TODO: Fix all usages of this method to handle new-style stores, and then
@@ -19074,6 +19085,44 @@ class UnifiedStore {
         if (cmp !== 0)
             return cmp;
         return 0;
+    }
+    // TODO: Make these tags live inside StoreInfo.
+    toManifestString(handleTags) {
+        const results = [];
+        const handleStr = [];
+        handleStr.push(`store`);
+        if (this.name) {
+            handleStr.push(`${this.name}`);
+        }
+        handleStr.push(`of ${this.type.toString()}`);
+        if (this.id) {
+            handleStr.push(`'${this.id}'`);
+        }
+        if (this.originalId) {
+            handleStr.push(`!!${this.originalId}`);
+        }
+        if (this.version !== undefined) {
+            handleStr.push(`@${this.version}`);
+        }
+        if (handleTags && handleTags.length) {
+            handleStr.push(`${handleTags.join(' ')}`);
+        }
+        if (this.source) {
+            handleStr.push(`in '${this.source}'`);
+        }
+        else if (this.storageKey) {
+            handleStr.push(`at '${this.storageKey}'`);
+        }
+        // TODO(shans): there's a 'this.source' in StorageProviderBase which is sometimes
+        // serialized here too - could it ever be part of StorageStub?
+        results.push(handleStr.join(' '));
+        if (this.claims.length > 0) {
+            results.push(`  claim is ${this.claims.map(claim => claim.tag).join(' and is ')}`);
+        }
+        if (this.description) {
+            results.push(`  description \`${this.description}\``);
+        }
+        return results.join('\n');
     }
 }
 
@@ -19114,7 +19163,7 @@ class ChangeEvent {
  */
 class StorageProviderBase extends UnifiedStore {
     constructor(type, name, id, key) {
-        super();
+        super({ type, name, id });
         this.unifiedStoreType = 'StorageProviderBase';
         this.legacyListeners = new Set();
         this.nextCallbackId = 0;
@@ -19122,11 +19171,7 @@ class StorageProviderBase extends UnifiedStore {
         this.referenceMode = false;
         assert(id, 'id must be provided when constructing StorageProviders');
         assert(!type.hasUnresolvedVariable, 'Storage types must be concrete');
-        this._type = type;
-        this.name = name;
         this.version = 0;
-        this.id = id;
-        this.source = null;
         this._storageKey = key;
     }
     enableReferenceMode() {
@@ -19140,9 +19185,6 @@ class StorageProviderBase extends UnifiedStore {
     }
     get storageKey() {
         return this._storageKey;
-    }
-    get type() {
-        return this._type;
     }
     reportExceptionInHost(exception) {
         // This class lives in the host, so it's safe to just rethrow the exception here.
@@ -19187,29 +19229,6 @@ class StorageProviderBase extends UnifiedStore {
             // have here. Just pass null, what could go wrong!
             await callback(null);
         }
-    }
-    toString(handleTags) {
-        const results = [];
-        const handleStr = [];
-        handleStr.push(`store`);
-        if (this.name) {
-            handleStr.push(`${this.name}`);
-        }
-        handleStr.push(`of ${this.type.toString()}`);
-        if (this.id) {
-            handleStr.push(`'${this.id}'`);
-        }
-        if (handleTags && handleTags.length) {
-            handleStr.push(`${handleTags.join(' ')}`);
-        }
-        if (this.source) {
-            handleStr.push(`in '${this.source}'`);
-        }
-        results.push(handleStr.join(' '));
-        if (this.description) {
-            results.push(`  description \`${this.description}\``);
-        }
-        return results.join('\n');
     }
     get apiChannelMappingId() {
         return this.id;
@@ -20147,20 +20166,11 @@ class StorageProviderFactory {
 // TODO(shans): Make sure that after refactor Storage objects have a lifecycle and can be directly used
 // deflated rather than requiring this stub.
 class StorageStub extends UnifiedStore {
-    constructor(type, id, name, storageKey, storageProviderFactory, originalId, 
-    /** Trust tags claimed by this data store. */
-    claims, description, version, source, referenceMode = false, model) {
-        super();
-        this.type = type;
-        this.id = id;
-        this.name = name;
+    constructor(type, id, name, storageKey, storageProviderFactory, originalId, claims, description, version, source, referenceMode = false, model) {
+        super({ type, id, name, originalId, claims, description, source });
         this.storageKey = storageKey;
         this.storageProviderFactory = storageProviderFactory;
-        this.originalId = originalId;
-        this.claims = claims;
-        this.description = description;
         this.version = version;
-        this.source = source;
         this.referenceMode = referenceMode;
         this.model = model;
         this.unifiedStoreType = 'StorageStub';
@@ -20190,10 +20200,7 @@ class StorageStub extends UnifiedStore {
             // Connected store: sync the stub's reference mode with the store.
             this.referenceMode = store.referenceMode;
         }
-        store.originalId = this.originalId;
-        store.name = this.name;
-        store.source = this.source;
-        store.description = this.description;
+        store.storeInfo = { ...this.storeInfo };
         if (this.isBackedByManifest()) {
             await store.fromLiteral({ version: this.version, model: this.model });
         }
@@ -20204,43 +20211,6 @@ class StorageStub extends UnifiedStore {
     }
     isBackedByManifest() {
         return (this.version !== undefined && !!this.model);
-    }
-    toString(handleTags) {
-        const results = [];
-        const handleStr = [];
-        handleStr.push(`store`);
-        if (this.name) {
-            handleStr.push(`${this.name}`);
-        }
-        handleStr.push(`of ${this.type.toString()}`);
-        if (this.id) {
-            handleStr.push(`'${this.id}'`);
-        }
-        if (this.originalId) {
-            handleStr.push(`!!${this.originalId}`);
-        }
-        if (this.version !== undefined) {
-            handleStr.push(`@${this.version}`);
-        }
-        if (handleTags && handleTags.length) {
-            handleStr.push(`${handleTags.join(' ')}`);
-        }
-        if (this.source) {
-            handleStr.push(`in '${this.source}'`);
-        }
-        else if (this.storageKey) {
-            handleStr.push(`at '${this.storageKey}'`);
-        }
-        // TODO(shans): there's a 'this.source' in StorageProviderBase which is sometimes
-        // serialized here too - could it ever be part of StorageStub?
-        results.push(handleStr.join(' '));
-        if (this.claims.length > 0) {
-            results.push(`  claim is ${this.claims.map(claim => claim.tag).join(' and is ')}`);
-        }
-        if (this.description) {
-            results.push(`  description \`${this.description}\``);
-        }
-        return results.join('\n');
     }
     _compareTo(other) {
         let cmp;
@@ -21359,18 +21329,12 @@ function isSingletonOperation(operation) {
 // Calling 'activate()' will generate an interactive store and return it.
 class Store extends UnifiedStore {
     constructor(opts) {
-        super();
+        super(opts);
         this.unifiedStoreType = 'Store';
         this.version = 0; // TODO(shans): Needs to become the version vector, and is also probably only available on activated storage?
         this.storageKey = opts.storageKey;
         this.exists = opts.exists;
-        this.type = opts.type;
         this.mode = opts.storageKey instanceof ReferenceModeStorageKey ? StorageMode.ReferenceMode : StorageMode.Direct;
-        this.id = opts.id;
-        this.name = opts.name || '';
-    }
-    toString(tags) {
-        throw new Error('Method not implemented.');
     }
     async activate() {
         if (this.activeStore) {
@@ -21978,8 +21942,7 @@ class Manifest {
             if (typeof storageKey === 'string') {
                 storageKey = StorageKeyParser.parse(storageKey);
             }
-            // TODO: Need to handle all of the additional options (claims, source,
-            // description, etc.)
+            // TODO: Need to handle additional options: version, model.
             store = new Store({ ...opts, storageKey, exists: Exists.ShouldCreate });
         }
         else {
@@ -22972,7 +22935,7 @@ ${e.message}
         });
         const stores = [...this.stores].sort(compareComparables);
         stores.forEach(store => {
-            results.push(store.toString(this.storeTags.get(store).map(a => `#${a}`)));
+            results.push(store.toManifestString(this.storeTags.get(store).map(a => `#${a}`)));
         });
         return results.join('\n');
     }
@@ -26448,7 +26411,7 @@ ${this.activeRecipe.toString()}`;
                     const activeStore = await newStore.activate();
                     await activeStore.cloneFrom(copiedStore);
                     this._tagStore(newStore, this.context.findStoreTags(copiedStoreRef));
-                    newStore.name = copiedStore.name && `Copy of ${copiedStore.name}`;
+                    newStore.storeInfo.name = copiedStore.name && `Copy of ${copiedStore.name}`;
                     const copiedStoreDesc = this.getStoreDescription(copiedStore);
                     if (copiedStoreDesc) {
                         this.storeDescriptions.set(newStore, copiedStoreDesc);
@@ -26533,7 +26496,7 @@ ${this.activeRecipe.toString()}`;
             }
             store = await this.storageProviderFactory.construct(id, type, storageKey);
             assert(store, `failed to create store with id [${id}]`);
-            store.name = name;
+            store.storeInfo.name = name;
         }
         await this._registerStore(store, tags);
         return store;
@@ -26657,7 +26620,7 @@ ${this.activeRecipe.toString()}`;
         const results = [];
         const stores = [...this.storesById.values()].sort(compareComparables);
         stores.forEach(store => {
-            results.push(store.toString([...this.storeTags.get(store)]));
+            results.push(store.toManifestString([...this.storeTags.get(store)]));
         });
         // TODO: include stores entities
         // TODO: include (remote) slots?

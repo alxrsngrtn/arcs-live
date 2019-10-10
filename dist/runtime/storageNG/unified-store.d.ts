@@ -14,6 +14,7 @@ import { StorageStub } from '../storage-stub.js';
 import { Store as OldStore } from '../store.js';
 import { PropagatedException } from '../arc-exceptions.js';
 import { ProxyCallback } from './store.js';
+import { ClaimIsTag } from '../particle-claim.js';
 /**
  * This is a temporary interface used to unify old-style stores (storage/StorageProviderBase) and new-style stores (storageNG/Store).
  * We should be able to remove this once we've switched across to the NG stack.
@@ -31,16 +32,19 @@ import { ProxyCallback } from './store.js';
  */
 export declare abstract class UnifiedStore implements Comparable<UnifiedStore>, OldStore {
     protected abstract unifiedStoreType: 'Store' | 'StorageStub' | 'StorageProviderBase';
-    abstract id: string;
-    abstract name: string;
-    abstract type: Type;
     abstract storageKey: string | StorageKey;
     abstract version?: number;
     abstract referenceMode: boolean;
-    abstract toString(tags?: string[]): string;
+    storeInfo: StoreInfo;
+    constructor(storeInfo: StoreInfo);
+    readonly id: string;
+    readonly name: string;
+    readonly type: Type;
+    readonly originalId: string;
+    readonly source: string;
+    readonly description: string;
+    readonly claims: ClaimIsTag[];
     abstract activate(): Promise<UnifiedActiveStore>;
-    abstract source?: string;
-    abstract description: string;
     /**
      * Hack to cast this UnifiedStore to the old-style class StorageStub.
      * TODO: Fix all usages of this method to handle new-style stores, and then
@@ -49,6 +53,7 @@ export declare abstract class UnifiedStore implements Comparable<UnifiedStore>, 
     castToStorageStub(): StorageStub;
     reportExceptionInHost(exception: PropagatedException): void;
     _compareTo(other: UnifiedStore): number;
+    toManifestString(handleTags: string[]): string;
 }
 export interface UnifiedActiveStore {
     /** The UnifiedStore instance from which this store was activated. */
@@ -59,3 +64,14 @@ export interface UnifiedActiveStore {
     on(callback: ProxyCallback<null>): number;
     off(callback: number): void;
 }
+/** Assorted properties about a store. */
+export declare type StoreInfo = {
+    readonly id: string;
+    name?: string;
+    readonly type: Type;
+    readonly originalId?: string;
+    readonly source?: string;
+    readonly description?: string;
+    /** Trust tags claimed by this data store. */
+    readonly claims?: ClaimIsTag[];
+};

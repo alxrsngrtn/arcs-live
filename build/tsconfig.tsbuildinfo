@@ -254,8 +254,8 @@
         "signature": "a3e9e8e4a62650394e3c766c15a389369ba3420a53fc0455e683bda0e38fc3d1"
       },
       "../src/runtime/store.ts": {
-        "version": "a4e693ac59c8b82d46da43d474cc664c764af514d51fb6419ebb76166d0d14fc",
-        "signature": "2a21b8a0362f11b1404744661dd580f92b7a67605b238162ba6a102701238f1b"
+        "version": "7c8eab28e55f37c15c97fba01aea4c9d7ea9947eaa2929c28273f690207a9d67",
+        "signature": "df6791388dc6cd05d44bdd1cdc03f444b2ee1fd34a0dff325a90ad7db7fcaad8"
       },
       "../src/runtime/crdt/crdt.ts": {
         "version": "c55cf57a3a6fdae2f8de94abcc23e7a5491c41fa099c135321209d564ef90bcb",
@@ -310,12 +310,12 @@
         "signature": "86afce857d796d9cce454d76331b9a95df66c97d0af5a1801ba59f2a4da53e62"
       },
       "../src/runtime/storageNG/store.ts": {
-        "version": "3f4d668c4cfd84ab8a5feae628cd639631bacd0eb0458dc5525e17989cee399b",
-        "signature": "c3f5a9d500e663753e0804340cdae15bc1bff2b9b98a6973ae992a71c826fd4e"
+        "version": "bd62910c7fbe2f60731a389245e3687c6c2605628c739dcf74471881fa258522",
+        "signature": "7d52be3baec152a7fbeb7c3b4e51ef099bc83c409865a9d8fef5fb4bf0367170"
       },
       "../src/runtime/storage/storage-provider-base.ts": {
-        "version": "e2489d54795e47a2e23fefe7efbe68d273fc200ba48384d34d5618609a9789b3",
-        "signature": "1dd41a2a7a86e651f1bfdda1da2f83b6700c285ed7a18fe035b803db29751cea"
+        "version": "d4adc00932188f3eca79bc63c2c44233af8e936265d750a556c12869cb9255ea",
+        "signature": "5b8cf84bbd44fccba3cef698caf8a7eb856e12b0986e17a5059b60e62bdde755"
       },
       "../src/runtime/runtime-cache.ts": {
         "version": "6cc69dfe4e1bdf906455cfeb90bfaa9e2af89931599e79cb14dff71aeb600e76",
@@ -386,12 +386,12 @@
         "signature": "2f38a817702e90c031039dfd5f5985c632d89a062b087dea8a750a0eef8a8fd6"
       },
       "../src/runtime/storage-stub.ts": {
-        "version": "4392ef23b74f4f18a5c48b160ee940a1ada6434b8d8db9a24f8327b561ecb4c5",
-        "signature": "1960517abd40bc7c221f4ce57fdfa18648f5c30b7872781eed3b807a1979c4bf"
+        "version": "8016d208a2e8860e3879a5a7ef1374f8b89db9c26346e6047116bb478ae40eba",
+        "signature": "7f878374357719a8f0054e502edd29ea77511bdd8d8b3d8868c48ac817abb8d1"
       },
       "../src/runtime/storageNG/unified-store.ts": {
-        "version": "33086b87c2bdb4ba55c8ff1bfd2a133e621257b20a0ade59c1813274be6c0e9d",
-        "signature": "5ae03d43f6a9f7f0c8c3b278ab9b06d440c05ec3a130288234a28ebaef286473"
+        "version": "9f7c0920829bc09aa23983a32433a49f48dac18a486c5d19b9b5d34f992d021b",
+        "signature": "77f7c35bcf6ceb0898559c06b779a0b836affce7fb83b87219fa69b2f17dedeb"
       },
       "../src/runtime/description.ts": {
         "version": "a5f8a14cfbc4054f99dc3abdcefc760dbce1deb7999cb52dba92d74c09ec0299",
@@ -494,7 +494,7 @@
         "signature": "7ea5a9f8f985e39bc935af3f45837e7e910cd78fb280186a14c0833ff488138c"
       },
       "../src/runtime/arc.ts": {
-        "version": "4f5325b9b54477094deeee791625bc5a927b9ac61c5ae65d6b8f783d5390f689",
+        "version": "501d48019a9857d1a10e11680fe09c150728ec65738a7c9a5db314db4a124ae4",
         "signature": "f5a76c9d0f56d9aea76b7b9af419daaf2bd80e4ad350672331b144aafec7a76f"
       },
       "../src/runtime/api-channel.ts": {
@@ -574,7 +574,7 @@
         "signature": "8ef9453dcbfa29ffef1fd28d215625bdb2730644a74ff977494d36c9c2f4f86f"
       },
       "../src/runtime/manifest.ts": {
-        "version": "24f37e161228f70a39d472316c7dcf84ea807d2da3cd6ffc7cfffacd6f4650d8",
+        "version": "b48a46e1f17a3ed2f97e5b6b22f28201c6aac8617f4920005b9a52170050139a",
         "signature": "66da5eb9b769dd05e544093ec36b65473848ec14bb04df7da094a105088a52bd"
       },
       "../src/platform/atob-web.ts": {
@@ -2405,7 +2405,7 @@
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "../src/runtime/tests/manifest-test.ts": {
-        "version": "0a4d75b185f43f6b7dda1e6b2d185f4aeec840b806f5fd50dda444eed9a9d501",
+        "version": "a97a791a637ca2baf4ab391aebedeabfef95d4b3284e5ee5f17e1894cd038361",
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "../src/runtime/tests/multiplexer-test.ts": {
@@ -3503,12 +3503,12 @@
         "../src/runtime/recipe/comparable.ts",
         "../src/runtime/type.ts",
         "../src/runtime/storageNG/storage-key.ts",
-        "../src/runtime/hot.ts",
         "../src/runtime/storage-stub.ts",
         "../src/platform/assert-web.ts",
         "../src/runtime/store.ts",
         "../src/runtime/arc-exceptions.ts",
         "../src/runtime/storageNG/store.ts",
+        "../src/runtime/particle-claim.ts",
         "../node_modules/@types/node/util.d.ts",
         "../node_modules/@types/node/ts3.1/util.d.ts"
       ],
@@ -8734,7 +8734,6 @@
         "../src/runtime/crdt/crdt.ts",
         "../src/runtime/storageNG/storage-key.ts",
         "../src/runtime/storageNG/drivers/driver-factory.ts",
-        "../src/runtime/type.ts",
         "../src/runtime/storageNG/unified-store.ts"
       ],
       "../src/runtime/storage/storage-provider-base.ts": [
@@ -8845,15 +8844,16 @@
       ],
       "../src/runtime/storage-stub.ts": [
         "../src/runtime/storage/storage-provider-base.ts",
-        "../src/runtime/type.ts",
         "../src/runtime/storage/storage-provider-factory.ts",
+        "../src/runtime/type.ts",
         "../src/runtime/particle-claim.ts",
         "../src/runtime/storageNG/store.ts",
         "../src/runtime/storageNG/unified-store.ts"
       ],
       "../src/runtime/storageNG/unified-store.ts": [
-        "../src/runtime/type.ts",
         "../src/runtime/storageNG/storage-key.ts",
+        "../src/runtime/type.ts",
+        "../src/runtime/particle-claim.ts",
         "../src/runtime/storage-stub.ts",
         "../src/runtime/arc-exceptions.ts",
         "../src/runtime/recipe/comparable.ts",

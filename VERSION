@@ -1,8 +1,27 @@
-commit b419d0569b6c5392f1c0ae5e87f6ddbee1bac1ef
+commit 8f94ab630c0af30e465fa5e267848772e2a1b24b
 Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
-Date:   Thu Oct 10 12:48:47 2019 +1100
+Date:   Thu Oct 10 14:07:28 2019 +1100
 
-    Convert the Store constructor to take an options arg (#3745)
+    UnifiedStore refactor: StoreInfo object, toManifestString() (#3746)
     
-    This will make it easier to add additional (optional) arguments in the
-    future!
+    * UnifiedStore refactor: StoreInfo object, toManifestString()
+    
+    Made a few changes to UnifiedStore and its subclasses:
+    
+    1. StorageStub.toString() became UnifiedStore.toManifestString():
+      * toString() shouldn't take arguments, but this one needs to have one
+      * StorageProviderBase had a different, unused, implementation of
+        toString(). Deleted.
+      * Moving it to UnifiedStore means we don't need to duplicate the logic
+        over in the new Store class.
+    
+    2. Added missing properties to UnifiedStore, to make toManifestString()
+    work. It needed things like claims, originalId, etc.
+    
+    3. Moved all of the "information about the store" properties into a new
+    StoreInfo type. This makes it easier to share and copy store properties
+    around.
+    
+    * Added TODO
+    
+    * Fixed ManifestPatch...

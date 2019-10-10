@@ -25,6 +25,17 @@ import { assert } from '../../platform/assert-web.js';
  * Store class.
  */
 export class UnifiedStore {
+    constructor(storeInfo) {
+        this.storeInfo = storeInfo;
+    }
+    // Series of StoreInfo getters to make migration easier.
+    get id() { return this.storeInfo.id; }
+    get name() { return this.storeInfo.name; }
+    get type() { return this.storeInfo.type; }
+    get originalId() { return this.storeInfo.originalId; }
+    get source() { return this.storeInfo.source; }
+    get description() { return this.storeInfo.description; }
+    get claims() { return this.storeInfo.claims; }
     /**
      * Hack to cast this UnifiedStore to the old-style class StorageStub.
      * TODO: Fix all usages of this method to handle new-style stores, and then
@@ -55,6 +66,44 @@ export class UnifiedStore {
         if (cmp !== 0)
             return cmp;
         return 0;
+    }
+    // TODO: Make these tags live inside StoreInfo.
+    toManifestString(handleTags) {
+        const results = [];
+        const handleStr = [];
+        handleStr.push(`store`);
+        if (this.name) {
+            handleStr.push(`${this.name}`);
+        }
+        handleStr.push(`of ${this.type.toString()}`);
+        if (this.id) {
+            handleStr.push(`'${this.id}'`);
+        }
+        if (this.originalId) {
+            handleStr.push(`!!${this.originalId}`);
+        }
+        if (this.version !== undefined) {
+            handleStr.push(`@${this.version}`);
+        }
+        if (handleTags && handleTags.length) {
+            handleStr.push(`${handleTags.join(' ')}`);
+        }
+        if (this.source) {
+            handleStr.push(`in '${this.source}'`);
+        }
+        else if (this.storageKey) {
+            handleStr.push(`at '${this.storageKey}'`);
+        }
+        // TODO(shans): there's a 'this.source' in StorageProviderBase which is sometimes
+        // serialized here too - could it ever be part of StorageStub?
+        results.push(handleStr.join(' '));
+        if (this.claims.length > 0) {
+            results.push(`  claim is ${this.claims.map(claim => claim.tag).join(' and is ')}`);
+        }
+        if (this.description) {
+            results.push(`  description \`${this.description}\``);
+        }
+        return results.join('\n');
     }
 }
 //# sourceMappingURL=unified-store.js.map

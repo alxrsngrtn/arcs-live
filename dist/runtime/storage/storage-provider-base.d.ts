@@ -14,7 +14,7 @@ import { KeyBase } from './key-base.js';
 import { Store, BigCollectionStore, CollectionStore, SingletonStore } from '../store.js';
 import { PropagatedException } from '../arc-exceptions.js';
 import { Dictionary, Consumer } from '../hot.js';
-import { UnifiedStore, UnifiedActiveStore } from '../storageNG/unified-store.js';
+import { UnifiedStore, UnifiedActiveStore, StoreInfo } from '../storageNG/unified-store.js';
 import { ProxyCallback } from '../storageNG/store.js';
 declare type Callback = Consumer<Dictionary<any>>;
 /**
@@ -92,20 +92,14 @@ export declare abstract class StorageProviderBase extends UnifiedStore implement
     private readonly legacyListeners;
     private nextCallbackId;
     private readonly listeners;
-    private readonly _type;
     protected readonly _storageKey: string;
     referenceMode: boolean;
     version: number | null;
-    readonly id: string;
-    originalId: string | null;
-    name: string;
-    source: string | null;
-    description: string;
+    storeInfo: StoreInfo;
     protected constructor(type: Type, name: string, id: string, key: string);
     enableReferenceMode(): void;
     readonly baseStore: StorageProviderBase;
     readonly storageKey: string;
-    readonly type: Type;
     reportExceptionInHost(exception: PropagatedException): void;
     on(callback: ProxyCallback<null>): number;
     off(callbackId: number): void;
@@ -116,7 +110,6 @@ export declare abstract class StorageProviderBase extends UnifiedStore implement
      * Propagate updates to change listeners.
      */
     protected _fire(details: ChangeEvent): Promise<void>;
-    toString(handleTags?: string[]): string;
     readonly apiChannelMappingId: string;
     dispose(): void;
     /**

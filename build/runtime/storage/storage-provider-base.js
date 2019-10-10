@@ -37,7 +37,7 @@ export class ChangeEvent {
  */
 export class StorageProviderBase extends UnifiedStore {
     constructor(type, name, id, key) {
-        super();
+        super({ type, name, id });
         this.unifiedStoreType = 'StorageProviderBase';
         this.legacyListeners = new Set();
         this.nextCallbackId = 0;
@@ -45,11 +45,7 @@ export class StorageProviderBase extends UnifiedStore {
         this.referenceMode = false;
         assert(id, 'id must be provided when constructing StorageProviders');
         assert(!type.hasUnresolvedVariable, 'Storage types must be concrete');
-        this._type = type;
-        this.name = name;
         this.version = 0;
-        this.id = id;
-        this.source = null;
         this._storageKey = key;
     }
     enableReferenceMode() {
@@ -63,9 +59,6 @@ export class StorageProviderBase extends UnifiedStore {
     }
     get storageKey() {
         return this._storageKey;
-    }
-    get type() {
-        return this._type;
     }
     reportExceptionInHost(exception) {
         // This class lives in the host, so it's safe to just rethrow the exception here.
@@ -110,29 +103,6 @@ export class StorageProviderBase extends UnifiedStore {
             // have here. Just pass null, what could go wrong!
             await callback(null);
         }
-    }
-    toString(handleTags) {
-        const results = [];
-        const handleStr = [];
-        handleStr.push(`store`);
-        if (this.name) {
-            handleStr.push(`${this.name}`);
-        }
-        handleStr.push(`of ${this.type.toString()}`);
-        if (this.id) {
-            handleStr.push(`'${this.id}'`);
-        }
-        if (handleTags && handleTags.length) {
-            handleStr.push(`${handleTags.join(' ')}`);
-        }
-        if (this.source) {
-            handleStr.push(`in '${this.source}'`);
-        }
-        results.push(handleStr.join(' '));
-        if (this.description) {
-            results.push(`  description \`${this.description}\``);
-        }
-        return results.join('\n');
     }
     get apiChannelMappingId() {
         return this.id;

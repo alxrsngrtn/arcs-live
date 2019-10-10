@@ -20,18 +20,12 @@ export { ActiveStore, ProxyMessageType, StorageMode };
 // Calling 'activate()' will generate an interactive store and return it.
 export class Store extends UnifiedStore {
     constructor(opts) {
-        super();
+        super(opts);
         this.unifiedStoreType = 'Store';
         this.version = 0; // TODO(shans): Needs to become the version vector, and is also probably only available on activated storage?
         this.storageKey = opts.storageKey;
         this.exists = opts.exists;
-        this.type = opts.type;
         this.mode = opts.storageKey instanceof ReferenceModeStorageKey ? StorageMode.ReferenceMode : StorageMode.Direct;
-        this.id = opts.id;
-        this.name = opts.name || '';
-    }
-    toString(tags) {
-        throw new Error('Method not implemented.');
     }
     async activate() {
         if (this.activeStore) {
