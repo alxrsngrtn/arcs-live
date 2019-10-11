@@ -1,9 +1,15 @@
-commit 95151707ead6ca81e28685ede8c69de1eee1dd7e
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Fri Oct 11 10:12:31 2019 -0700
+commit fade1080db092e15b057b7193b68e526a9d42b5e
+Author: yuangu-google <yuangu@google.com>
+Date:   Fri Oct 11 13:02:27 2019 -0700
 
-    support multiple particles in Arcs API (#3755)
+    Add demo for notification dismiss. (#3740)
     
-    * support multiple particles in Arcs API
+    * Add onDismiss
     
-    * address comment: update for loop, add todo
+    * Revert debug logs.
+    
+    * E2E works.
+    
+    * Resolve comments.
+    
+    * Resolve comments.
