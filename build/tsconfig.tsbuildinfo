@@ -574,7 +574,7 @@
         "signature": "8ef9453dcbfa29ffef1fd28d215625bdb2730644a74ff977494d36c9c2f4f86f"
       },
       "../src/runtime/manifest.ts": {
-        "version": "0622281401d3b0facfb587cea81b2005c7a781b9a278c8aacca0b1545561f6cb",
+        "version": "81bcd8bd22283d6406b9ff9250d625ac36ab5a7aa680e257346a466bfa3474f4",
         "signature": "6118fbf1453ecf90293a5e41f042e9df59962208e8200e2e01bd6ab681425183"
       },
       "../src/platform/atob-web.ts": {
@@ -2469,7 +2469,7 @@
         "signature": "8bc1d39a3b8ec61064f9969316a088e314895e7ffd094468dcc0b238f33cb4a6"
       },
       "../src/runtime/tests/schema-test.ts": {
-        "version": "952c308ab143afb8a0349e0cf388f520a934eb4ade048242417313abb61a9734",
+        "version": "1a4091d9056b6994d33503194d3e2d63dd2593cbfbb574d957bc3eb08f219518",
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "../src/runtime/tests/slot-consumer-test.ts": {

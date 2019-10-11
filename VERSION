@@ -1,17 +1,5 @@
-commit 1ca6c1fd2613013641da289ffd973bd966348bcd
-Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
-Date:   Fri Oct 11 10:57:13 2019 +1100
+commit b3e21ac1f79dd5a650581a298f43d8ab105df28d
+Author: Piotr Swigon <piotr.swigon@gmail.com>
+Date:   Thu Oct 10 17:09:26 2019 -0700
 
-    handleForTest helper methods (#3748)
-    
-    * handleForTest helper methods
-    
-    These new helper methods creates handles of the given type
-    (singleton/collection), and use Flags.useNewStorageStack to decide which
-    handle class to use.
-    
-    I've migrated two unit tests to use the new helper methods so you can
-    see how they are used in practice. There's lots more tests that need to
-    be migrated...
-    
-    * Resolved TODO
+    Fixes a bug with in processing annonymous schemas (#3749)
