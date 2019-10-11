@@ -2365,7 +2365,7 @@
         "signature": "8bc1d39a3b8ec61064f9969316a088e314895e7ffd094468dcc0b238f33cb4a6"
       },
       "../src/runtime/tests/arc-test.ts": {
-        "version": "28628f9e94fbc8eec9653c68c36f46164488b4ec3344c38106d4529093226311",
+        "version": "39272c6b851946e0244483cda0a62f4ac1ce6cb2c68b014134740f5227bea4cd",
         "signature": "600636836c17982e77369e742e2b185b3a695f0407d06b57f41cbf45b0a11d8b"
       },
       "../src/runtime/tests/bytes-test.ts": {
@@ -2377,7 +2377,7 @@
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "../src/runtime/tests/description-test.ts": {
-        "version": "bc85f69655ef14cfa87e6a16bd7b9c14daa52eb524dee5d178cf0c650107f5e0",
+        "version": "6cce4a91006b0c7918654e70e56d18efac4392994f7f8ec3bf8d8cc048719fa2",
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "../src/runtime/tests/entity-test.ts": {
@@ -2421,11 +2421,11 @@
         "signature": "8bc1d39a3b8ec61064f9969316a088e314895e7ffd094468dcc0b238f33cb4a6"
       },
       "../src/runtime/tests/particle-api-more-test.ts": {
-        "version": "87871c30b56546a02d2b4a237ac9b1de93f2bd91e4605db9d6b72131e2d4cd38",
+        "version": "b470b12a2233db3de21a212415bd81b1852939a4dba00fe3f0dca0539ea6c2f1",
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "../src/runtime/tests/particle-api-test.ts": {
-        "version": "01ed370d8bad171fe53a1c03b51604f540e7ff09bd3c27ce142ed6a6801c5879",
+        "version": "f2a3fffa5ed0ac4684d448393b31f16e340e8571e9290571580d4e31df00b94f",
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "../src/runtime/tests/particle-execution-context-test.ts": {
@@ -2433,7 +2433,7 @@
         "signature": "8bc1d39a3b8ec61064f9969316a088e314895e7ffd094468dcc0b238f33cb4a6"
       },
       "../src/runtime/tests/particle-interface-loading-test.ts": {
-        "version": "bded1caf2f1a4e79d1427b41ef7cd419d90ca37bef96d5ffc0d93a6d49a93bd8",
+        "version": "f7416485f56cffc7fea4dd91cea9967e1f64fb7dfff7326252cda61fe5f268d5",
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "../src/runtime/tests/particle-interface-loading-with-slots-test.ts": {
@@ -2585,7 +2585,7 @@
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "../src/tests/hotreload-integration-test.ts": {
-        "version": "c756151d0f9adb6185f36197e4790a50a8689860d07624972f073aeb76b8ff4f",
+        "version": "2b35f83f638f4eb37b358f1e63c036548952dc651653d0507def5a98f1c277e4",
         "signature": "43a5176681925d9f51b139647154e4a52c2eb1b1a64bb428595000952bcbc7f1"
       },
       "../src/tests/multiplexer-integration-test.ts": {
@@ -7518,7 +7518,6 @@
         "../src/runtime/storage/pouchdb/pouch-db-provider.ts",
         "../src/platform/chai-web.d.ts",
         "../src/runtime/arc.ts",
-        "../src/runtime/handle.ts",
         "../src/runtime/headless-slot-dom-consumer.ts",
         "../src/runtime/id.ts",
         "../src/runtime/loader.ts",
@@ -7534,13 +7533,13 @@
         "../src/runtime/recipe/recipe-resolver.ts",
         "../src/runtime/storageNG/drivers/driver-factory.ts",
         "../src/runtime/storageNG/drivers/volatile.ts",
-        "../src/runtime/storageNG/unified-store.ts",
         "../src/runtime/flags.ts",
         "../src/runtime/storageNG/storage-key.ts",
         "../src/runtime/storageNG/store.ts",
         "../src/runtime/crdt/crdt.ts",
         "../src/runtime/storageNG/direct-store.ts",
         "../src/runtime/storage/volatile-storage.ts",
+        "../src/runtime/testing/handle-for-test.ts",
         "../node_modules/@types/node/util.d.ts",
         "../node_modules/@types/node/ts3.1/util.d.ts"
       ],
@@ -7577,6 +7576,7 @@
         "../src/runtime/testing/fake-slot-composer.ts",
         "../src/runtime/type.ts",
         "../src/runtime/id.ts",
+        "../src/runtime/testing/handle-for-test.ts",
         "../node_modules/@types/node/util.d.ts",
         "../node_modules/@types/node/ts3.1/util.d.ts"
       ],
@@ -7691,7 +7691,8 @@
         "../src/runtime/testing/stub-loader.ts",
         "../src/runtime/manifest.ts",
         "../src/runtime/runtime.ts",
-        "../src/runtime/storage/storage-provider-base.ts",
+        "../src/runtime/arc.ts",
+        "../src/runtime/testing/handle-for-test.ts",
         "../node_modules/@types/node/util.d.ts",
         "../node_modules/@types/node/ts3.1/util.d.ts"
       ],
@@ -7739,6 +7740,7 @@
         "../src/runtime/id.ts",
         "../src/runtime/manifest-ast-nodes.ts",
         "../src/runtime/storage/storage-provider-base.ts",
+        "../src/runtime/testing/handle-for-test.ts",
         "../node_modules/@types/node/util.d.ts",
         "../node_modules/@types/node/ts3.1/util.d.ts"
       ],
@@ -8086,6 +8088,7 @@
         "../src/runtime/headless-slot-dom-consumer.ts",
         "../src/runtime/storage/storage-provider-base.ts",
         "../src/runtime/testing/test-util.ts",
+        "../src/runtime/testing/handle-for-test.ts",
         "../node_modules/@types/node/util.d.ts",
         "../node_modules/@types/node/ts3.1/util.d.ts"
       ],

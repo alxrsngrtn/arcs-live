@@ -17,6 +17,7 @@ import { Recipe } from '../recipe/recipe.js';
 import { EntityType, InterfaceType } from '../type.js';
 import { ParticleSpec } from '../particle-spec.js';
 import { ArcId } from '../id.js';
+import { singletonHandleForTest } from '../testing/handle-for-test.js';
 describe('particle interface loading', () => {
     it('loads interfaces into particles', async () => {
         const loader = new StubLoader({
@@ -120,9 +121,13 @@ describe('particle interface loading', () => {
         assert(recipe.normalize(), 'can\'t normalize recipe');
         assert(recipe.isResolved(), 'recipe isn\'t resolved');
         await arc.instantiate(recipe);
-        const store = arc.findStoresByType(fooType)[0];
-        await store.set({ id: 'id', rawData: { value: 'a foo' } });
-        await util.assertSingletonWillChangeTo(arc, arc.findStoresByType(barType)[0], 'value', 'a foo1');
+        const fooStore = arc.findStoresByType(fooType)[0];
+        const fooHandle = await singletonHandleForTest(arc, fooStore);
+        await fooHandle.set(new fooHandle.entityClass({ value: 'a foo' }));
+        await arc.idle;
+        const barStore = arc.findStoresByType(barType)[0];
+        const barHandle = await singletonHandleForTest(arc, barStore);
+        assert.deepEqual(await barHandle.get(), { value: 'a foo1' });
     });
     it('updates transformation particle on inner handle', async () => {
         const manifest = await Manifest.parse(`
