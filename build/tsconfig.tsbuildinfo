@@ -2337,7 +2337,7 @@
         "signature": "18ed1a63d0019c28cba80715295b3b2a0763daf0a90315d2414a70d753607613"
       },
       "../src/runtime/storageNG/tests/store-sequence-test.ts": {
-        "version": "8872901047e0d8f866e1c28c7358cc269ca01e095014576dd649710c33a04f81",
+        "version": "0094ed4ec8c9ff2743d1ab13aa4bba7e2f11375ce9809483cbf35efd87479689",
         "signature": "fd95df5d076cbfed143dc4904d376b5c6d9cb1091b630994ffe2366010afa6b3"
       },
       "../src/runtime/storageNG/tests/store-test.ts": {

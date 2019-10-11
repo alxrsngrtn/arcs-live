@@ -19,8 +19,8 @@ import { FirebaseStorageKey } from '../drivers/firebase.js';
 import { MockStorageKey, MockStorageDriverProvider } from '../testing/test-storage.js';
 import { CountType } from '../../type.js';
 let testKey;
-function createStore(exists) {
-    return new Store({ storageKey: testKey, exists, type: new CountType(), id: 'an-id' });
+function createStore(storageKey, exists) {
+    return new Store({ storageKey, exists, type: new CountType(), id: 'an-id' });
 }
 const incOp = (actor, from) => ({
     type: ProxyMessageType.Operations,
@@ -44,7 +44,7 @@ describe('Store Sequence', async () => {
         sequenceTest.setTestConstructor(async () => {
             DriverFactory.clearRegistrationsForTesting();
             DriverFactory.register(new MockStorageDriverProvider());
-            const store = createStore(Exists.ShouldCreate);
+            const store = createStore(testKey, Exists.ShouldCreate);
             const activeStore = store.activate();
             return activeStore;
         });
@@ -98,7 +98,7 @@ describe('Store Sequence', async () => {
         sequenceTest.setTestConstructor(async () => {
             DriverFactory.clearRegistrationsForTesting();
             DriverFactory.register(new MockStorageDriverProvider());
-            const store = createStore(Exists.ShouldCreate);
+            const store = createStore(testKey, Exists.ShouldCreate);
             const activeStore = store.activate();
             return activeStore;
         });
@@ -139,9 +139,9 @@ describe('Store Sequence', async () => {
             DriverFactory.clearRegistrationsForTesting();
             VolatileStorageDriverProvider.register(arc);
             const storageKey = new VolatileStorageKey(arc.id, 'unique');
-            const store1 = createStore(Exists.ShouldCreate);
+            const store1 = createStore(storageKey, Exists.ShouldCreate);
             const activeStore1 = await store1.activate();
-            const store2 = createStore(Exists.ShouldExist);
+            const store2 = createStore(storageKey, Exists.ShouldExist);
             const activeStore2 = await store2.activate();
             return { store1: activeStore1, store2: activeStore2 };
         });
@@ -181,9 +181,9 @@ describe('Store Sequence', async () => {
             DriverFactory.clearRegistrationsForTesting();
             MockFirebaseStorageDriverProvider.register();
             const storageKey = new FirebaseStorageKey('test', 'test.domain', 'testKey', 'foo');
-            const store1 = createStore(Exists.ShouldCreate);
+            const store1 = createStore(storageKey, Exists.ShouldCreate);
             const activeStore1 = await store1.activate();
-            const store2 = createStore(Exists.ShouldExist);
+            const store2 = createStore(storageKey, Exists.ShouldExist);
             const activeStore2 = await store2.activate();
             sequenceTest.setVariable(store1V, activeStore1);
             sequenceTest.setVariable(store2V, activeStore2);
@@ -223,9 +223,9 @@ describe('Store Sequence', async () => {
             DriverFactory.clearRegistrationsForTesting();
             VolatileStorageDriverProvider.register(arc);
             const storageKey = new VolatileStorageKey(arc.id, 'unique');
-            const store1 = createStore(Exists.ShouldCreate);
+            const store1 = createStore(storageKey, Exists.ShouldCreate);
             const activeStore1 = await store1.activate();
-            const store2 = createStore(Exists.ShouldExist);
+            const store2 = createStore(storageKey, Exists.ShouldExist);
             const activeStore2 = await store2.activate();
             return { store1: activeStore1, store2: activeStore2 };
         });
