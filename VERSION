@@ -1,11 +1,5 @@
-commit 94a7ce0a18ad90db86ed56e80fa6fdaade32e374
-Author: ianull <ianchang@google.com>
-Date:   Fri Oct 11 16:01:13 2019 -0700
+commit bb8d8d73fd5abcc177c3bd3b7fda7b4cd8689711
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Fri Oct 11 16:38:19 2019 -0700
 
-    Notify ALDS upon app disconnection (#3761)
-    
-    Currently the disconnection can be noticed by ALDS only when the app
-    is killed. The in-app disconnection would only unbind and destroy
-    the Arcs service implies the web content/context at the native engine is still
-    breathing there. The stale web content/context needs to be cleaned up bundling
-    with the service death.
+    distinguish between web and android pec in devtools (#3760)

@@ -218,8 +218,8 @@
         "signature": "48ee89089870cafcf1aff05b59507df345d7ae92c362b9abe5af551ef7d98327"
       },
       "../src/runtime/arc-inspector.ts": {
-        "version": "10bd16d0ada037722fc31af38a3f21621fe91b617c525545a876b3beadfa5cea",
-        "signature": "264d99c6b2978c513fd89a880e5563cf9d7a42b9e449fe8f793618f72d416b1f"
+        "version": "af56b00f105d68627aa7f31296b602c5a8cab02865ada00685baa5932a7a4144",
+        "signature": "27d6a27d38cc166413673b578765b36b796fc5438eceaf84ef3b11a9d6f6272c"
       },
       "../src/platform/fetch-web.ts": {
         "version": "2aab0e931804d0d49b26070d6e44c11a7a084e43d5a429950e0ccf8884d39541",
@@ -498,11 +498,11 @@
         "signature": "f5a76c9d0f56d9aea76b7b9af419daaf2bd80e4ad350672331b144aafec7a76f"
       },
       "../src/runtime/api-channel.ts": {
-        "version": "dbd15c32840a4e791823db3a8795d625ac728a7acbafd65bda9dac87ab104c88",
+        "version": "247810a0e61f88a7664f502316a81952a4701143c82aeed2e54c982b469e0d57",
         "signature": "c39b1d7f70b4c0897e75d1b8ecde32c8388c6381406f6df06b80300dbb1a4009"
       },
       "../src/runtime/wasm.ts": {
-        "version": "908dc0d7f3d1741f84ee7388b50a3370e10bb401012041b7090079e5c976d966",
+        "version": "488370210b7e95e71e1609da6067ed7774b4ab889e46f25f142bd51de626db61",
         "signature": "ee934e5addd1afa86c5d3f236c7b9bfd50a5f1685c9ea2c622b4c93c576fffc9"
       },
       "../src/runtime/particle-execution-context.ts": {
@@ -866,7 +866,7 @@
         "signature": "5f764000c0935ed79663b189731d23f75b262f878758de3366bc8e2389fef5e5"
       },
       "../src/devtools-connector/devtools-arc-inspector.ts": {
-        "version": "345e4aff0ecaff4629919dc76555f066022cdd7c1c1f3d00abdd6b2dd1c0a8e5",
+        "version": "bc6ca554c12bb50adbc7a857fda39751eadeba92024c482df29e5d68368e59ab",
         "signature": "914efdd9819f19afa229ed6da2f106eba0d791e2a1f9f4dad415d477e7eeec63"
       },
       "../src/devtools-connector/devtools-planner-inspector.ts": {

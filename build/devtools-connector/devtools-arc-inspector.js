@@ -76,13 +76,13 @@ class DevtoolsArcInspector {
         if (!this.arc.isSpeculative)
             this.hotCodeReloader.updateParticleSet(particles);
     }
-    pecMessage(name, pecMsgBody, pecMsgCount, stackString) {
+    pecMessage(name, pecMsgBody, pecMsgCount, pecType, pecId, stackString) {
         if (!DevtoolsConnection.isConnected)
             return;
         const stack = this._extractStackFrames(stackString);
         this.arcDevtoolsChannel.send({
             messageType: 'PecLog',
-            messageBody: { name, pecMsgBody, pecMsgCount, timestamp: Date.now(), stack },
+            messageBody: { name, pecMsgBody, pecMsgCount, pecType, pecId, timestamp: Date.now(), stack },
         });
     }
     _extractStackFrames(stackString) {

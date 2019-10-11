@@ -736,7 +736,7 @@ class APIPort {
         Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(this['before' + e.data.messageType] !== undefined);
         const count = this.messageCount++;
         if (this.inspector) {
-            this.inspector.pecMessage('on' + e.data.messageType, e.data.messageBody, count, e.data.stack);
+            this.inspector.pecMessage('on' + e.data.messageType, e.data.messageBody, count, this.supportsJavaParticle() ? /* android */ 'a' : /* web */ 'w', this._port['pecId'], e.data.stack);
         }
         this['before' + e.data.messageType](e.data.messageBody);
     }
@@ -744,7 +744,7 @@ class APIPort {
         const call = { messageType: name, messageBody: args, stack: this.attachStack ? new Error().stack : undefined };
         const count = this.messageCount++;
         if (this.inspector) {
-            this.inspector.pecMessage(name, args, count, new Error().stack || '');
+            this.inspector.pecMessage(name, args, count, this.supportsJavaParticle() ? /* android */ 'a' : /* web */ 'w', this._port['pecId'] || '', new Error().stack || '');
         }
         await this._port.postMessage(call);
     }
