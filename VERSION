@@ -1,5 +1,5 @@
-commit 8954ddb561d1333a6ed5e8761bc0e9db0e67ea7c
+commit f742b9955832d605702d21e5760d00a91e3d0362
 Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Thu Oct 10 16:36:48 2019 -0700
+Date:   Thu Oct 10 16:49:10 2019 -0700
 
-    Log warnings for Particle Specs using external schemas (#3706)
+    Install deps of devServer when running npm start (#3750)
