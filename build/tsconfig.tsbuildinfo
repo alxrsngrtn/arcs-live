@@ -2348,6 +2348,10 @@
         "version": "ba935a78dc2366d4e1fef5002a8443aa028aea96b0ad17b29cf6b9bc1b5cb20f",
         "signature": "d6fa583d8a8ecdac63bf984ab6f5a75c9cdc0d8be9f71e249ca3421f9302077b"
       },
+      "../src/runtime/testing/handle-for-test.ts": {
+        "version": "71a130f7ab2f36847f5f81bb088d35a4bf43b55c07c6e628d130e0cf514df1c1",
+        "signature": "96c947e3b05fa4a0b185669d9e356eed01e92f61696c5ba6420d638862f758da"
+      },
       "../src/runtime/testing/test/sequence-test.ts": {
         "version": "2dffc5b56af03e19a0e835accb2e9f407a4bb94e2ac19c59dcc4cc54790dcc34",
         "signature": "fd95df5d076cbfed143dc4904d376b5c6d9cb1091b630994ffe2366010afa6b3"
@@ -2421,7 +2425,7 @@
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "../src/runtime/tests/particle-api-test.ts": {
-        "version": "554096a7dd38b5d27f7b0d9410cea4e6748ffbbb5c18b03cc365f8ab1d5697b7",
+        "version": "01ed370d8bad171fe53a1c03b51604f540e7ff09bd3c27ce142ed6a6801c5879",
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "../src/runtime/tests/particle-execution-context-test.ts": {
@@ -2629,7 +2633,7 @@
         "signature": "8bc1d39a3b8ec61064f9969316a088e314895e7ffd094468dcc0b238f33cb4a6"
       },
       "../src/tests/particles/TicTacToe/moveapplier-test.ts": {
-        "version": "4b50ae8e40feaa70db7576e17703e2274471cbf3980e2098e5099819a3b9b61a",
+        "version": "61872eecb87d9cfca356c224b7965c17d28a741cfcf68c4ee8c0a5edccdae1c3",
         "signature": "8bc1d39a3b8ec61064f9969316a088e314895e7ffd094468dcc0b238f33cb4a6"
       },
       "../node_modules/@types/minimist/index.d.ts": {
@@ -7470,6 +7474,20 @@
         "../node_modules/@types/node/util.d.ts",
         "../node_modules/@types/node/ts3.1/util.d.ts"
       ],
+      "../src/runtime/testing/handle-for-test.ts": [
+        "../src/runtime/storageNG/unified-store.ts",
+        "../src/runtime/arc.ts",
+        "../src/runtime/storageNG/handle.ts",
+        "../src/runtime/storageNG/store.ts",
+        "../src/runtime/flags.ts",
+        "../src/runtime/storageNG/storage-proxy.ts",
+        "../src/runtime/handle.ts",
+        "../src/runtime/crdt/crdt-collection.ts",
+        "../src/runtime/crdt/crdt.ts",
+        "../src/runtime/crdt/crdt-singleton.ts",
+        "../node_modules/@types/node/util.d.ts",
+        "../node_modules/@types/node/ts3.1/util.d.ts"
+      ],
       "../src/runtime/testing/test/sequence-test.ts": [
         "../src/runtime/testing/sequence.ts",
         "../src/platform/chai-web.d.ts",
@@ -7689,6 +7707,7 @@
         "../src/runtime/store.ts",
         "../src/planning/speculator.ts",
         "../src/runtime/storage/storage-provider-base.ts",
+        "../src/runtime/testing/handle-for-test.ts",
         "../node_modules/@types/node/util.d.ts",
         "../node_modules/@types/node/ts3.1/util.d.ts"
       ],
@@ -8170,8 +8189,7 @@
         "../src/runtime/arc.ts",
         "../src/runtime/testing/fake-slot-composer.ts",
         "../src/runtime/id.ts",
-        "../src/runtime/storage/storage-provider-base.ts",
-        "../src/runtime/testing/test-util.ts",
+        "../src/runtime/testing/handle-for-test.ts",
         "../node_modules/@types/node/util.d.ts",
         "../node_modules/@types/node/ts3.1/util.d.ts"
       ],
@@ -11410,6 +11428,11 @@
         "../src/runtime/hot.ts",
         "../src/runtime/storageNG/unified-store.ts"
       ],
+      "../src/runtime/testing/handle-for-test.ts": [
+        "../src/runtime/arc.ts",
+        "../src/runtime/storageNG/unified-store.ts",
+        "../src/runtime/storageNG/handle.ts"
+      ],
       "../src/runtime/tests/arc-test.ts": [
         "../src/runtime/storage/firebase/firebase-provider.ts",
         "../src/runtime/storage/pouchdb/pouch-db-provider.ts"
@@ -12155,6 +12178,7 @@
       "../src/runtime/storageNG/tests/store-sequence-test.ts",
       "../src/runtime/storageNG/tests/store-test.ts",
       "../src/runtime/testing/callback-tracker.ts",
+      "../src/runtime/testing/handle-for-test.ts",
       "../src/runtime/testing/test/sequence-test.ts",
       "../src/runtime/tests/akms-test.ts",
       "../src/runtime/tests/api-channel-test.ts",

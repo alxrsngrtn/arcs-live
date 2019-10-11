@@ -1,5 +1,17 @@
-commit f742b9955832d605702d21e5760d00a91e3d0362
-Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Thu Oct 10 16:49:10 2019 -0700
+commit 1ca6c1fd2613013641da289ffd973bd966348bcd
+Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
+Date:   Fri Oct 11 10:57:13 2019 +1100
 
-    Install deps of devServer when running npm start (#3750)
+    handleForTest helper methods (#3748)
+    
+    * handleForTest helper methods
+    
+    These new helper methods creates handles of the given type
+    (singleton/collection), and use Flags.useNewStorageStack to decide which
+    handle class to use.
+    
+    I've migrated two unit tests to use the new helper methods so you can
+    see how they are used in practice. There's lots more tests that need to
+    be migrated...
+    
+    * Resolved TODO

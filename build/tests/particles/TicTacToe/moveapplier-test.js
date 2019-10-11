@@ -13,7 +13,18 @@ import { Loader } from '../../../runtime/loader.js';
 import { Arc } from '../../../runtime/arc.js';
 import { FakeSlotComposer } from '../../../runtime/testing/fake-slot-composer.js';
 import { ArcId } from '../../../runtime/id.js';
-import * as util from '../../../runtime/testing/test-util.js';
+import { singletonHandleForTest } from '../../../runtime/testing/handle-for-test.js';
+async function createTestHandles(arc) {
+    const connections = arc.activeRecipe.particles[0].connections;
+    const createTestHandle = (storeName) => singletonHandleForTest(arc, arc.findStoreById(connections[storeName].handle.id));
+    return {
+        nextMoveStore: await createTestHandle('nextMove'),
+        stateStore: await createTestHandle('state'),
+        boardResultStore: await createTestHandle('boardResult'),
+        messageResultStore: await createTestHandle('messageResult'),
+        boardStore: await createTestHandle('board'),
+    };
+}
 describe('TicTacToe MoveApplier tests', () => {
     it('updates boards with valid next moves', async () => {
         const loader = new Loader();
@@ -24,20 +35,17 @@ describe('TicTacToe MoveApplier tests', () => {
         const arc = new Arc({ slotComposer: new FakeSlotComposer(), loader, context: manifest, id: ArcId.newForTest('test'),
             storageKey: 'volatile://test^^123' });
         await arc.instantiate(recipe);
-        const nextMoveStore = arc.findStoreById(arc.activeRecipe.particles[0].connections['nextMove'].handle.id);
-        const stateStore = arc.findStoreById(arc.activeRecipe.particles[0].connections['state'].handle.id);
-        const boardResultStore = arc.findStoreById(arc.activeRecipe.particles[0].connections['boardResult'].handle.id);
-        const messageResultStore = arc.findStoreById(arc.activeRecipe.particles[0].connections['messageResult'].handle.id);
-        const boardStore = arc.findStoreById(arc.activeRecipe.particles[0].connections['board'].handle.id);
-        await stateStore.set({ id: 'startGame', rawData: { state: 0 } });
-        await boardStore.set({ id: 'startBoard', rawData: {
-                p00: 0, p01: 0, p02: 0,
-                p10: 0, p11: 0, p12: 0,
-                p20: 0, p21: 0, p22: 0
-            } });
-        await nextMoveStore.set({ id: 'id0', rawData: { x: 1, y: 1, player: 1 } });
-        await util.assertSingletonWillChangeTo(arc, boardResultStore, 'p11', 1);
-        await util.assertSingletonWillChangeTo(arc, messageResultStore, 'msg', '(null)');
+        const { nextMoveStore, stateStore, boardResultStore, messageResultStore, boardStore } = await createTestHandles(arc);
+        await stateStore.set(new stateStore.entityClass({ state: 0 }));
+        await boardStore.set(new boardStore.entityClass({
+            p00: 0, p01: 0, p02: 0,
+            p10: 0, p11: 0, p12: 0,
+            p20: 0, p21: 0, p22: 0
+        }));
+        await nextMoveStore.set(new nextMoveStore.entityClass({ x: 1, y: 1, player: 1 }));
+        await arc.idle;
+        assert.strictEqual((await boardResultStore.get()).p11, 1);
+        assert.isNull(await messageResultStore.get());
     });
     it('fails if nextMove and state has player mismatch', async () => {
         const loader = new Loader();
@@ -48,20 +56,17 @@ describe('TicTacToe MoveApplier tests', () => {
         const arc = new Arc({ slotComposer: new FakeSlotComposer(), loader, context: manifest, id: ArcId.newForTest('test'),
             storageKey: 'volatile://test^^123' });
         await arc.instantiate(recipe);
-        const nextMoveStore = arc.findStoreById(arc.activeRecipe.particles[0].connections['nextMove'].handle.id);
-        const stateStore = arc.findStoreById(arc.activeRecipe.particles[0].connections['state'].handle.id);
-        const boardResultStore = arc.findStoreById(arc.activeRecipe.particles[0].connections['boardResult'].handle.id);
-        const messageResultStore = arc.findStoreById(arc.activeRecipe.particles[0].connections['messageResult'].handle.id);
-        const boardStore = arc.findStoreById(arc.activeRecipe.particles[0].connections['board'].handle.id);
-        await stateStore.set({ id: 'startGame', rawData: { state: 1 } });
-        await boardStore.set({ id: 'startBoard', rawData: {
-                p00: 0, p01: 0, p02: 0,
-                p10: 0, p11: 0, p12: 0,
-                p20: 0, p21: 0, p22: 0
-            } });
-        await nextMoveStore.set({ id: 'id0', rawData: { x: 1, y: 1, player: 1 } });
-        await util.assertSingletonWillChangeTo(arc, boardResultStore, 'p11', '(null)');
-        await util.assertSingletonWillChangeTo(arc, messageResultStore, 'msg', 'Incorrect player ID: 1 with state 1');
+        const { nextMoveStore, stateStore, boardResultStore, messageResultStore, boardStore } = await createTestHandles(arc);
+        await stateStore.set(new stateStore.entityClass({ state: 1 }));
+        await boardStore.set(new boardStore.entityClass({
+            p00: 0, p01: 0, p02: 0,
+            p10: 0, p11: 0, p12: 0,
+            p20: 0, p21: 0, p22: 0
+        }));
+        await nextMoveStore.set(new nextMoveStore.entityClass({ x: 1, y: 1, player: 1 }));
+        await arc.idle;
+        assert.isNull(await boardResultStore.get());
+        assert.strictEqual((await messageResultStore.get()).msg, 'Incorrect player ID: 1 with state 1');
     });
 });
 //# sourceMappingURL=moveapplier-test.js.map
