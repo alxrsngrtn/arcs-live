@@ -1,7 +1,11 @@
-commit 65ea09647265f6497e85071b594d33985fb5a34b
-Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
-Date:   Fri Oct 11 17:17:13 2019 +1100
+commit 3d2dabb273f306a06dabd2a55944029467f35525
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Fri Oct 11 10:05:34 2019 -0700
 
-    Migrated a bunch of unit tests to handleForTest (#3758)
+    Update RenderNotification particle to skip standard template&model rendering (#3752)
     
-    Just picked a bunch of easy ones. There's still lots more to go...
+    * Update RenderNotification particle to skip standard template&model rendering
+    
+    * address comments
+    
+    * address comment: set clicked to false
