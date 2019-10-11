@@ -1,15 +1,11 @@
-commit fade1080db092e15b057b7193b68e526a9d42b5e
-Author: yuangu-google <yuangu@google.com>
-Date:   Fri Oct 11 13:02:27 2019 -0700
+commit 94a7ce0a18ad90db86ed56e80fa6fdaade32e374
+Author: ianull <ianchang@google.com>
+Date:   Fri Oct 11 16:01:13 2019 -0700
 
-    Add demo for notification dismiss. (#3740)
+    Notify ALDS upon app disconnection (#3761)
     
-    * Add onDismiss
-    
-    * Revert debug logs.
-    
-    * E2E works.
-    
-    * Resolve comments.
-    
-    * Resolve comments.
+    Currently the disconnection can be noticed by ALDS only when the app
+    is killed. The in-app disconnection would only unbind and destroy
+    the Arcs service implies the web content/context at the native engine is still
+    breathing there. The stale web content/context needs to be cleaned up bundling
+    with the service death.
