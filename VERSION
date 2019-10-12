@@ -1,5 +1,5 @@
-commit bb8d8d73fd5abcc177c3bd3b7fda7b4cd8689711
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Fri Oct 11 16:38:19 2019 -0700
+commit a8c17cc8e3ae2cf5d666e45c32505fe655d21eaf
+Author: Piotr Swigon <piotr.swigon@gmail.com>
+Date:   Fri Oct 11 17:02:51 2019 -0700
 
-    distinguish between web and android pec in devtools (#3760)
+    Fix invisible pec-log (#3763)
