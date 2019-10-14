@@ -1,5 +1,14 @@
-commit c48b6b87206f0751eb2c78377fccf15375c81373
-Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
-Date:   Mon Oct 14 16:41:23 2019 +1100
+commit 827c76b8d364b5779c696c6f2b2eec6a7a2a20ff
+Author: ianull <ianchang@google.com>
+Date:   Mon Oct 14 13:27:31 2019 -0700
 
-    Migrate more unit tests to handleForTest methods (#3767)
+    ALDS should be off by default for the demo app (#3769)
+    
+    With default on, the demo app would wait until the Arcs Explorer
+    at the host connects to the ALDS since the Arcs runtime at the
+    device blocks waiting for the ready signal of the Arcs Explorer
+    at its initialization path by design of explore-proxy parameter.
+    
+    The android property "debug.arcs.runtime.use_alds" has been ready
+    in place to switch the ALDS proxy dynamically, so we can deem
+    ALDS on/off as an option as of now.
