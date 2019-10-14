@@ -10,13 +10,14 @@
 import { UnifiedStore } from '../storageNG/unified-store.js';
 import { Arc } from '../arc.js';
 import { SingletonHandle, CollectionHandle } from '../storageNG/handle.js';
+import { Manifest } from '../manifest.js';
 /**
  * Creates a singleton handle for a store for testing purposes. Returns an
  * appropriate OldHandle/HandleNG type depending on the storage migration flag.
  */
-export declare function singletonHandleForTest(arc: Arc, store: UnifiedStore): Promise<SingletonHandle<any>>;
+export declare function singletonHandleForTest(arcOrManifest: Arc | Manifest, store: UnifiedStore): Promise<SingletonHandle<any>>;
 /**
  * Creates a collection handle for a store for testing purposes. Returns an
  * appropriate OldHandle/HandleNG type depending on the storage migration flag.
  */
-export declare function collectionHandleForTest(arc: Arc, store: UnifiedStore): Promise<CollectionHandle<any>>;
+export declare function collectionHandleForTest(arcOrManifest: Arc | Manifest, store: UnifiedStore): Promise<CollectionHandle<any>>;

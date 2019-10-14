@@ -80,7 +80,7 @@ export declare abstract class Entity implements Storable {
     static id(entity: Entity): string;
     static entityClass(entity: Entity): EntityClass;
     static isIdentified(entity: Entity): boolean;
-    static identify(entity: Entity, identifier: string): void;
+    static identify(entity: Entity, identifier: string): Entity;
     static createIdentity(entity: Entity, parentId: Id, idGenerator: IdGenerator): void;
     static isMutable(entity: Entity): boolean;
     static makeImmutable(entity: Entity): void;

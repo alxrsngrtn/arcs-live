@@ -22,6 +22,8 @@ import { Flags } from '../flags.js';
 import { Store } from '../storageNG/store.js';
 import { VolatileStorageKey } from '../storageNG/drivers/volatile.js';
 import { StorageStub } from '../storage-stub.js';
+import { collectionHandleForTest } from '../testing/handle-for-test.js';
+import { Entity } from '../entity.js';
 function verifyPrimitiveType(field, type) {
     const copy = { ...field };
     delete copy.location;
@@ -1283,6 +1285,7 @@ ${particleStr1}
     it('loads entities from json files', async () => {
         const manifestSource = `
         schema Thing
+          Text someProp
         store Store0 of [Thing] in 'entities.json'`;
         const entitySource = JSON.stringify([
             { someProp: 'someValue' },
@@ -1300,8 +1303,9 @@ ${particleStr1}
         assert(storageStub);
         const store = await storageStub.activate();
         assert(store);
+        const handle = await collectionHandleForTest(manifest, store.baseStore);
         const sessionId = manifest.idGeneratorForTesting.currentSessionIdForTesting;
-        assert.deepEqual(await store.toList(), [
+        assert.deepEqual((await handle.toList()).map(Entity.serialize), [
             {
                 id: `!${sessionId}:the.manifest::0`,
                 rawData: { someProp: 'someValue' },
@@ -1332,6 +1336,7 @@ Error parsing JSON from 'EntityList' (Unexpected token h in JSON at position 1)'
     it('loads entities from a resource section', async () => {
         const manifest = await Manifest.parse(`
       schema Thing
+        Text someProp
 
       resource EntityList
         start
@@ -1344,9 +1349,10 @@ Error parsing JSON from 'EntityList' (Unexpected token h in JSON at position 1)'
     `, { fileName: 'the.manifest' });
         const store = (await manifest.findStoreByName('Store0').activate());
         assert(store);
+        const handle = await collectionHandleForTest(manifest, store.baseStore);
         const sessionId = manifest.idGeneratorForTesting.currentSessionIdForTesting;
         // TODO(shans): address as part of storage refactor
-        assert.deepEqual(await store.toList(), [
+        assert.deepEqual((await handle.toList()).map(Entity.serialize), [
             {
                 id: `!${sessionId}:the.manifest::0`,
                 rawData: { someProp: 'someValue' },

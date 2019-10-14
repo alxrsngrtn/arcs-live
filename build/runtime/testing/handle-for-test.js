@@ -9,16 +9,16 @@ import { handleFor, Singleton, Collection } from '../handle.js';
  */
 // TODO: Can we correctly type the result here?
 // tslint:disable-next-line: no-any
-export async function singletonHandleForTest(arc, store) {
+export async function singletonHandleForTest(arcOrManifest, store) {
     if (Flags.useNewStorageStack) {
-        return new SingletonHandle(arc.generateID('test-handle').toString(), await createStorageProxyForTest(arc, store), arc.idGeneratorForTesting, 
+        return new SingletonHandle(arcOrManifest.generateID('test-handle').toString(), await createStorageProxyForTest(arcOrManifest, store), arcOrManifest.idGeneratorForTesting, 
         /* particle= */ null, // TODO: We don't have a particle here.
         /* canRead= */ true, 
         /* canWrite= */ true, 
         /* name?= */ null);
     }
     else {
-        const handle = handleFor(store, arc.idGeneratorForTesting);
+        const handle = handleFor(store, arcOrManifest.idGeneratorForTesting);
         if (handle instanceof Singleton) {
             // tslint:disable-next-line: no-any
             return handle;
@@ -34,16 +34,16 @@ export async function singletonHandleForTest(arc, store) {
  */
 // TODO: Can we correctly type the result here?
 // tslint:disable-next-line: no-any
-export async function collectionHandleForTest(arc, store) {
+export async function collectionHandleForTest(arcOrManifest, store) {
     if (Flags.useNewStorageStack) {
-        return new CollectionHandle(arc.generateID('test-handle').toString(), await createStorageProxyForTest(arc, store), arc.idGeneratorForTesting, 
+        return new CollectionHandle(arcOrManifest.generateID('test-handle').toString(), await createStorageProxyForTest(arcOrManifest, store), arcOrManifest.idGeneratorForTesting, 
         /* particle= */ null, // TODO: We don't have a particle here.
         /* canRead= */ true, 
         /* canWrite= */ true, 
         /* name?= */ null);
     }
     else {
-        const handle = handleFor(store, arc.idGeneratorForTesting);
+        const handle = handleFor(store, arcOrManifest.idGeneratorForTesting);
         if (handle instanceof Collection) {
             return collectionHandleWrapper(handle);
         }
@@ -52,12 +52,12 @@ export async function collectionHandleForTest(arc, store) {
         }
     }
 }
-async function createStorageProxyForTest(arc, store) {
+async function createStorageProxyForTest(arcOrManifest, store) {
     const activeStore = await store.activate();
     if (!(activeStore instanceof ActiveStore)) {
         throw new Error('Expected an ActiveStore.');
     }
-    return new StorageProxy(arc.generateID('test-proxy').toString(), activeStore, store.type);
+    return new StorageProxy(arcOrManifest.generateID('test-proxy').toString(), activeStore, store.type);
 }
 /**
  * Hacky function which converts an old-style singleton handle into the new

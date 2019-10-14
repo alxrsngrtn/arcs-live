@@ -12,6 +12,8 @@ import { HostedSlotContext } from '../runtime/slot-context.js';
 import { HeadlessSlotDomConsumer } from '../runtime/headless-slot-dom-consumer.js';
 import { checkDefined } from '../runtime/testing/preconditions.js';
 import { PlanningTestHelper } from '../planning/testing/arcs-planning-testing.js';
+import { collectionHandleForTest } from '../runtime/testing/handle-for-test.js';
+import { Entity } from '../runtime/entity.js';
 describe('Multiplexer', () => {
     it('renders polymorphic multiplexed slots', async () => {
         const helper = await PlanningTestHelper.create({
@@ -68,8 +70,8 @@ describe('Multiplexer', () => {
             .expectRenderSlot('PostMuxer', 'item', { contentTypes: ['templateName', 'model'] })
             .expectRenderSlot('ShowOne', 'item', { contentTypes: ['templateName', 'model'] })
             .expectRenderSlot('PostMuxer', 'item', { contentTypes: ['templateName', 'model'] });
-        const postsStore = helper.arc.findStoreById(helper.arc.activeRecipe.handles[0].id);
-        await postsStore.store({ id: '4', rawData: { message: 'w', renderRecipe: recipeOne, renderParticleSpec: showOneSpec } }, ['key1']);
+        const postsStore = await collectionHandleForTest(helper.arc, helper.arc.findStoreById(helper.arc.activeRecipe.handles[0].id));
+        await postsStore.add(Entity.identify(new postsStore.entityClass({ message: 'w', renderRecipe: recipeOne, renderParticleSpec: showOneSpec }), '4'));
         await helper.idle();
         assert.lengthOf(helper.slotComposer.contexts.filter(ctx => ctx instanceof HostedSlotContext), 4);
         assert.lengthOf(helper.slotComposer.consumers, 6);

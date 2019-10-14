@@ -15,6 +15,7 @@ import { Schema } from '../schema.js';
 import { FakeSlotComposer } from '../testing/fake-slot-composer.js';
 import { EntityType } from '../type.js';
 import { ArcId, IdGenerator } from '../id.js';
+import { collectionHandleForTest } from '../testing/handle-for-test.js';
 describe('entity', () => {
     it('can be created, stored, and restored', async () => {
         const schema = new Schema(['TestSchema'], { value: 'Text' });
@@ -25,11 +26,11 @@ describe('entity', () => {
         const storage = await arc.createStore(collectionType);
         const handle = handleFor(storage, IdGenerator.newSession());
         await handle.store(entity);
-        const collection = arc.findStoresByType(collectionType)[0];
+        const collection = await collectionHandleForTest(arc, arc.findStoresByType(collectionType)[0]);
         const list = await collection.toList();
         const clone = list[0];
         assert.isDefined(clone);
-        assert.deepEqual(clone.rawData, { value: 'hello world' });
+        assert.deepEqual(clone, { value: 'hello world' });
         // TODO(https://github.com/PolymerLabs/arcs/pull/2916#discussion_r277793505)
         // Test that clone/entity are not deeply equal.  Revisit once we
         // provide the full storage stack to the shell

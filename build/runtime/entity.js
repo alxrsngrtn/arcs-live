@@ -209,6 +209,7 @@ export class Entity {
     }
     static identify(entity, identifier) {
         getInternals(entity).identify(identifier);
+        return entity;
     }
     static createIdentity(entity, parentId, idGenerator) {
         getInternals(entity).createIdentity(parentId, idGenerator);

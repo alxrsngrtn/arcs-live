@@ -15,6 +15,8 @@ import { Loader } from '../loader.js';
 import { Manifest } from '../manifest.js';
 import { HostedSlotContext, ProvidedSlotContext } from '../slot-context.js';
 import { MockSlotComposer } from '../testing/mock-slot-composer.js';
+import { collectionHandleForTest } from '../testing/handle-for-test.js';
+import { Entity } from '../entity.js';
 describe('particle interface loading with slots', () => {
     async function initializeManifestAndArc(contextContainer) {
         const loader = new Loader();
@@ -38,12 +40,14 @@ describe('particle interface loading with slots', () => {
         assert(recipe.isResolved(), `recipe isn't resolved`);
         return { manifest, recipe, slotComposer, arc };
     }
+    // tslint:disable-next-line: no-any
     async function instantiateRecipeAndStore(arc, recipe, manifest) {
         await arc.instantiate(recipe);
         const inStore = arc.findStoresByType(manifest.findTypeByName('Foo').collectionOf())[0];
-        await inStore.store({ id: 'subid-1', rawData: { value: 'foo1' } }, ['key1']);
-        await inStore.store({ id: 'subid-2', rawData: { value: 'foo2' } }, ['key2']);
-        return inStore;
+        const inHandle = await collectionHandleForTest(arc, inStore);
+        await inHandle.add(Entity.identify(new inHandle.entityClass({ value: 'foo1' }), 'subid-1'));
+        await inHandle.add(Entity.identify(new inHandle.entityClass({ value: 'foo2' }), 'subid-2'));
+        return inHandle;
     }
     const expectedTemplateName = 'MultiplexSlotsParticle::annotationsSet::SingleSlotParticle::annotation::default';
     function verifyFooItems(slotConsumer, expectedValues) {
@@ -75,7 +79,7 @@ describe('particle interface loading with slots', () => {
         const slot = slotComposer.consumers[0];
         verifyFooItems(slot, { 'subid-1': 'foo1', 'subid-2': 'foo2' });
         // Add one more element.
-        await inStore.store({ id: 'subid-3', rawData: { value: 'foo3' } }, ['key3']);
+        await inStore.add(Entity.identify(new inStore.entityClass({ value: 'foo3' }), 'subid-3'));
         slotComposer
             .newExpectations()
             .expectRenderSlot('SingleSlotParticle', 'annotation', { contentTypes: ['model'] })
@@ -116,7 +120,7 @@ describe('particle interface loading with slots', () => {
         const slot = slotComposer.consumers[0];
         verifyFooItems(slot, { 'subid-1': 'foo1', 'subid-2': 'foo2' });
         // Add one more element.
-        await inStore.store({ id: 'subid-3', rawData: { value: 'foo3' } }, ['key3']);
+        await inStore.add(Entity.identify(new inStore.entityClass({ value: 'foo3' }), 'subid-3'));
         slotComposer
             .newExpectations()
             .expectRenderSlot('SingleSlotParticle', 'annotation', { contentTypes: ['model'] })
