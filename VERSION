@@ -1,9 +1,7 @@
-commit 6a32547a56501b39432c4ef30cdca7341c13eb1a
-Author: Joshua Pratt <jp10010101010000@gmail.com>
-Date:   Tue Oct 15 08:01:44 2019 +1000
+commit 8032a970b4e188ec1b40c23bb78377fb51c41ae2
+Author: galganif <4754402+galganif@users.noreply.github.com>
+Date:   Tue Oct 15 10:09:17 2019 +1100
 
-    Fix slandles (#3768)
+    creation of new handles in the pec (#3756)
     
-    * Fix for slandles
-    * Check before calling an unsafe function (fails on argument being undefined)
-    * Fix for dependent slandles (slots now depend on targetSlot name)
+    * creation of new handles and proxies in the pec

@@ -18,6 +18,7 @@ import { CRDTTypeRecord, CRDTModel } from './crdt/crdt.js';
 import { CRDTCount } from './crdt/crdt-count.js';
 import { CRDTCollection } from './crdt/crdt-collection.js';
 import { CRDTSingleton } from './crdt/crdt-singleton.js';
+import { CollectionHandle, SingletonHandle } from './storageNG/handle.js';
 export interface TypeLiteral extends Literal {
     tag: string;
     data?: any;
@@ -76,6 +77,7 @@ export declare abstract class Type {
     getEntitySchema(): Schema | null;
     toPrettyString(): string | null;
     crdtInstanceConstructor<T extends CRDTTypeRecord>(): (new () => CRDTModel<T>) | null;
+    handleConstructor<T extends CRDTTypeRecord>(): any;
 }
 export declare class CountType extends Type {
     constructor();
@@ -88,6 +90,7 @@ export declare class SingletonType<T extends Type> extends Type {
     toLiteral(): TypeLiteral;
     getContainedType(): T;
     crdtInstanceConstructor(): typeof CRDTSingleton;
+    handleConstructor<T>(): typeof SingletonHandle;
 }
 export declare class EntityType extends Type {
     readonly entitySchema: Schema;
@@ -159,6 +162,7 @@ export declare class CollectionType<T extends Type> extends Type {
     getEntitySchema(): Schema;
     toPrettyString(): string;
     crdtInstanceConstructor(): typeof CRDTCollection;
+    handleConstructor<T>(): typeof CollectionHandle;
 }
 export declare class BigCollectionType<T extends Type> extends Type {
     readonly bigCollectionType: T;

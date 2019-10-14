@@ -187,4 +187,7 @@ export class SingletonHandle extends Handle {
         await this.particle.callOnHandleSync(this /*handle*/, this.get() /*model*/, e => this.reportUserExceptionInHost(e, this.particle, 'onHandleSync'));
     }
 }
+export function handleNGFor(key, storageProxy, idGenerator, particle, canRead, canWrite, name) {
+    return new (storageProxy.type.handleConstructor())(key, storageProxy, idGenerator, particle, canRead, canWrite, name);
+}
 //# sourceMappingURL=handle.js.map

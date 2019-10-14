@@ -15,6 +15,7 @@ import { TypeVariableInfo } from './type-variable-info.js';
 import { CRDTCount } from './crdt/crdt-count.js';
 import { CRDTCollection } from './crdt/crdt-collection.js';
 import { CRDTSingleton } from './crdt/crdt-singleton.js';
+import { CollectionHandle, SingletonHandle } from './storageNG/handle.js';
 export class Type {
     constructor(tag) {
         this.tag = tag;
@@ -200,6 +201,9 @@ export class Type {
     crdtInstanceConstructor() {
         return null;
     }
+    handleConstructor() {
+        return null;
+    }
 }
 export class CountType extends Type {
     constructor() {
@@ -225,6 +229,9 @@ export class SingletonType extends Type {
     }
     crdtInstanceConstructor() {
         return CRDTSingleton;
+    }
+    handleConstructor() {
+        return SingletonHandle;
     }
 }
 export class EntityType extends Type {
@@ -436,6 +443,9 @@ export class CollectionType extends Type {
     }
     crdtInstanceConstructor() {
         return CRDTCollection;
+    }
+    handleConstructor() {
+        return CollectionHandle;
     }
 }
 export class BigCollectionType extends Type {

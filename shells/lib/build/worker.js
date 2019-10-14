@@ -91,7 +91,7 @@
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* WEBPACK VAR INJECTION */(function(global) {/* harmony import */ var _build_runtime_particle_execution_context_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(2);
-/* harmony import */ var _build_platform_loader_web_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(35);
+/* harmony import */ var _build_platform_loader_web_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(47);
 /* harmony import */ var _build_runtime_id_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(18);
 /**
  * @license
@@ -154,10 +154,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
 /* harmony import */ var _api_channel_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(4);
 /* harmony import */ var _handle_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(13);
-/* harmony import */ var _slot_proxy_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(32);
+/* harmony import */ var _slot_proxy_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(43);
 /* harmony import */ var _storage_proxy_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(15);
-/* harmony import */ var _wasm_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(33);
-/* harmony import */ var _arc_exceptions_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(14);
+/* harmony import */ var _storageNG_handle_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(29);
+/* harmony import */ var _storageNG_storage_proxy_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(30);
+/* harmony import */ var _wasm_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(44);
+/* harmony import */ var _arc_exceptions_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(14);
+/* harmony import */ var _flags_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(46);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -167,6 +170,9 @@ __webpack_require__.r(__webpack_exports__);
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
+
+
+
 
 
 
@@ -184,15 +190,30 @@ class ParticleExecutionContext {
         const pec = this;
         this.apiPort = new class extends _api_channel_js__WEBPACK_IMPORTED_MODULE_1__["PECInnerPort"] {
             onDefineHandle(identifier, type, name) {
+                if (_flags_js__WEBPACK_IMPORTED_MODULE_9__["Flags"].useNewStorageStack) {
+                    return new _storageNG_storage_proxy_js__WEBPACK_IMPORTED_MODULE_6__["StorageProxy"](identifier, pec, type);
+                }
                 return _storage_proxy_js__WEBPACK_IMPORTED_MODULE_4__["StorageProxy"].newProxy(identifier, type, this, pec, pec.scheduler, name);
             }
             onGetBackingStoreCallback(callback, type, name, id, storageKey) {
-                const proxy = _storage_proxy_js__WEBPACK_IMPORTED_MODULE_4__["StorageProxy"].newProxy(id, type, this, pec, pec.scheduler, name);
-                proxy.storageKey = storageKey;
+                let proxy;
+                if (_flags_js__WEBPACK_IMPORTED_MODULE_9__["Flags"].useNewStorageStack) {
+                    proxy = new _storageNG_storage_proxy_js__WEBPACK_IMPORTED_MODULE_6__["StorageProxy"](id, pec, type);
+                }
+                else {
+                    proxy = _storage_proxy_js__WEBPACK_IMPORTED_MODULE_4__["StorageProxy"].newProxy(id, type, this, pec, pec.scheduler, name);
+                    proxy.storageKey = storageKey;
+                }
                 return [proxy, () => callback(proxy, storageKey)];
             }
             onCreateHandleCallback(callback, type, name, id) {
-                const proxy = _storage_proxy_js__WEBPACK_IMPORTED_MODULE_4__["StorageProxy"].newProxy(id, type, this, pec, pec.scheduler, name);
+                let proxy;
+                if (_flags_js__WEBPACK_IMPORTED_MODULE_9__["Flags"].useNewStorageStack) {
+                    proxy = new _storageNG_storage_proxy_js__WEBPACK_IMPORTED_MODULE_6__["StorageProxy"](id, pec, type);
+                }
+                else {
+                    proxy = _storage_proxy_js__WEBPACK_IMPORTED_MODULE_4__["StorageProxy"].newProxy(id, type, this, pec, pec.scheduler, name);
+                }
                 return [proxy, () => callback(proxy)];
             }
             onMapHandleCallback(callback, id) {
@@ -400,7 +421,13 @@ class ParticleExecutionContext {
     }
     createHandle(particle, spec, id, name, proxy, handleMap, registerList) {
         const connSpec = spec.handleConnectionMap.get(name);
-        const handle = Object(_handle_js__WEBPACK_IMPORTED_MODULE_2__["handleFor"])(proxy, this.idGenerator, name, id, connSpec.isInput, connSpec.isOutput);
+        let handle;
+        if (proxy instanceof _storageNG_storage_proxy_js__WEBPACK_IMPORTED_MODULE_6__["StorageProxy"]) {
+            handle = Object(_storageNG_handle_js__WEBPACK_IMPORTED_MODULE_5__["handleNGFor"])(id, proxy, this.idGenerator, particle, connSpec.isInput, connSpec.isOutput, name);
+        }
+        else {
+            handle = Object(_handle_js__WEBPACK_IMPORTED_MODULE_2__["handleFor"])(proxy, this.idGenerator, name, id, connSpec.isInput, connSpec.isOutput);
+        }
         handleMap.set(name, handle);
         // Defer registration of handles with proxies until after particles have a chance to
         // configure them in setHandles.
@@ -408,12 +435,19 @@ class ParticleExecutionContext {
     }
     async assignHandle(particle, spec, id, handleMap, registerList, p) {
         await particle.callSetHandles(handleMap, err => {
-            const exc = new _arc_exceptions_js__WEBPACK_IMPORTED_MODULE_6__["UserException"](err, 'setHandles', id, spec.name);
+            const exc = new _arc_exceptions_js__WEBPACK_IMPORTED_MODULE_8__["UserException"](err, 'setHandles', id, spec.name);
             this.apiPort.ReportExceptionInHost(exc);
         });
         registerList.forEach(({ proxy, particle, handle }) => {
-            if (proxy instanceof _storage_proxy_js__WEBPACK_IMPORTED_MODULE_4__["StorageProxy"])
+            if (proxy instanceof _storage_proxy_js__WEBPACK_IMPORTED_MODULE_4__["StorageProxy"]) {
                 proxy.register(particle, handle);
+            }
+            else if (proxy instanceof _storageNG_storage_proxy_js__WEBPACK_IMPORTED_MODULE_6__["StorageProxy"]) {
+                proxy.registerHandle(handle);
+            }
+            else {
+                throw new Error('Expecting a StorageProxy');
+            }
         });
         const idx = this.pendingLoads.indexOf(p);
         this.pendingLoads.splice(idx, 1);
@@ -440,15 +474,15 @@ class ParticleExecutionContext {
             if (!buffer || buffer.byteLength === 0) {
                 throw new Error(`Failed to load wasm binary '${spec.implFile}'`);
             }
-            container = new _wasm_js__WEBPACK_IMPORTED_MODULE_5__["WasmContainer"](this.loader, this.apiPort);
+            container = new _wasm_js__WEBPACK_IMPORTED_MODULE_7__["WasmContainer"](this.loader, this.apiPort);
             await container.initialize(buffer);
             this.wasmContainers[spec.implFile] = container;
         }
         // Particle constructor expects spec to be attached to the class object (and attaches it to
         // the particle instance at that time).
-        _wasm_js__WEBPACK_IMPORTED_MODULE_5__["WasmParticle"].spec = spec;
-        const particle = new _wasm_js__WEBPACK_IMPORTED_MODULE_5__["WasmParticle"](id, container);
-        _wasm_js__WEBPACK_IMPORTED_MODULE_5__["WasmParticle"].spec = null;
+        _wasm_js__WEBPACK_IMPORTED_MODULE_7__["WasmParticle"].spec = spec;
+        const particle = new _wasm_js__WEBPACK_IMPORTED_MODULE_7__["WasmParticle"](id, container);
+        _wasm_js__WEBPACK_IMPORTED_MODULE_7__["WasmParticle"].spec = null;
         return particle;
     }
     get relevance() {
@@ -523,7 +557,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _particle_spec_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(5);
 /* harmony import */ var _type_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(8);
 /* harmony import */ var _arc_exceptions_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(14);
-/* harmony import */ var _util_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(31);
+/* harmony import */ var _util_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(35);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -1153,8 +1187,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _modality_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(6);
 /* harmony import */ var _recipe_type_checker_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(7);
 /* harmony import */ var _type_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(8);
-/* harmony import */ var _particle_check_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(29);
-/* harmony import */ var _particle_claim_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(30);
+/* harmony import */ var _particle_check_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(41);
+/* harmony import */ var _particle_claim_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(42);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -1946,6 +1980,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _crdt_crdt_count_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(28);
 /* harmony import */ var _crdt_crdt_collection_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(23);
 /* harmony import */ var _crdt_crdt_singleton_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(24);
+/* harmony import */ var _storageNG_handle_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(29);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -1955,6 +1990,7 @@ __webpack_require__.r(__webpack_exports__);
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
+
 
 
 
@@ -2148,6 +2184,9 @@ class Type {
     crdtInstanceConstructor() {
         return null;
     }
+    handleConstructor() {
+        return null;
+    }
 }
 class CountType extends Type {
     constructor() {
@@ -2173,6 +2212,9 @@ class SingletonType extends Type {
     }
     crdtInstanceConstructor() {
         return _crdt_crdt_singleton_js__WEBPACK_IMPORTED_MODULE_7__["CRDTSingleton"];
+    }
+    handleConstructor() {
+        return _storageNG_handle_js__WEBPACK_IMPORTED_MODULE_8__["SingletonHandle"];
     }
 }
 class EntityType extends Type {
@@ -2384,6 +2426,9 @@ class CollectionType extends Type {
     }
     crdtInstanceConstructor() {
         return _crdt_crdt_collection_js__WEBPACK_IMPORTED_MODULE_6__["CRDTCollection"];
+    }
+    handleConstructor() {
+        return _storageNG_handle_js__WEBPACK_IMPORTED_MODULE_8__["CollectionHandle"];
     }
 }
 class BigCollectionType extends Type {
@@ -6224,6 +6269,2059 @@ class CRDTCount {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Handle", function() { return Handle; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CollectionHandle", function() { return CollectionHandle; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SingletonHandle", function() { return SingletonHandle; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "handleNGFor", function() { return handleNGFor; });
+/* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
+/* harmony import */ var _arc_exceptions_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(14);
+/* harmony import */ var _crdt_crdt_collection_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(23);
+/* harmony import */ var _crdt_crdt_singleton_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(24);
+/* harmony import */ var _entity_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(11);
+/* harmony import */ var _id_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(18);
+/* harmony import */ var _type_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(8);
+/* harmony import */ var _storage_proxy_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(30);
+/**
+ * @license
+ * Copyright (c) 2019 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+
+
+
+
+
+
+
+
+/**
+ * Base class for Handles.
+ */
+class Handle {
+    constructor(key, storageProxy, idGenerator, particle, canRead, canWrite, name) {
+        this.key = key;
+        this.name = name;
+        this.storageProxy = storageProxy;
+        this.idGenerator = idGenerator;
+        this.particle = particle;
+        this.options = {
+            keepSynced: true,
+            notifySync: true,
+            notifyUpdate: true,
+            notifyDesync: false,
+        };
+        this.canRead = canRead;
+        this.canWrite = canWrite;
+        const type = this.storageProxy.type.getContainedType() || this.storageProxy.type;
+        if (type instanceof _type_js__WEBPACK_IMPORTED_MODULE_6__["EntityType"]) {
+            this.entityClass = type.entitySchema.entityClass();
+        }
+        this.clock = this.storageProxy.registerHandle(this);
+    }
+    //TODO: this is used by multiplexer-dom-particle.ts, it probably won't work with this kind of store.
+    get storage() {
+        return this.storageProxy;
+    }
+    get type() {
+        return this.storageProxy.type;
+    }
+    // TODO: after NG migration, this can be renamed to something like "apiChannelId()".
+    get _id() {
+        return this.storageProxy.apiChannelId;
+    }
+    createIdentityFor(entity) {
+        _entity_js__WEBPACK_IMPORTED_MODULE_4__["Entity"].createIdentity(entity, _id_js__WEBPACK_IMPORTED_MODULE_5__["Id"].fromString(this._id), this.idGenerator);
+    }
+    // `options` may contain any of:
+    // - keepSynced (bool): load full data on startup, maintain data in proxy and resync as required
+    // - notifySync (bool): if keepSynced is true, call onHandleSync when the full data is received
+    // - notifyUpdate (bool): call onHandleUpdate for every change event received
+    // - notifyDesync (bool): if keepSynced is true, call onHandleDesync when desync is detected
+    configure(options) {
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(this.canRead, 'configure can only be called on readable Handles');
+        this.options = { ...this.options, ...options };
+    }
+    reportUserExceptionInHost(exception, particle, method) {
+        this.storageProxy.reportExceptionInHost(new _arc_exceptions_js__WEBPACK_IMPORTED_MODULE_1__["UserException"](exception, method, this.key, particle.spec.name));
+    }
+    async onDesync() {
+        await this.particle.callOnHandleDesync(this, e => this.reportUserExceptionInHost(e, this.particle, 'onHandleDesync'));
+    }
+    disable(particle) {
+        this.storageProxy.deregisterHandle(this);
+        this.storageProxy = new _storage_proxy_js__WEBPACK_IMPORTED_MODULE_7__["NoOpStorageProxy"]();
+    }
+}
+/**
+ * A handle on a set of Entity data. Note that, as a set, a Collection can only
+ * contain a single version of an Entity for each given ID. Further, no order is
+ * implied by the set.
+ */
+class CollectionHandle extends Handle {
+    async get(id) {
+        const values = await this.toList();
+        return values.find(element => element.id === id);
+    }
+    async add(entity) {
+        this.clock[this.key] = (this.clock[this.key] || 0) + 1;
+        const op = {
+            type: _crdt_crdt_collection_js__WEBPACK_IMPORTED_MODULE_2__["CollectionOpTypes"].Add,
+            added: entity,
+            actor: this.key,
+            clock: this.clock,
+        };
+        return this.storageProxy.applyOp(op);
+    }
+    async addMultiple(entities) {
+        return Promise.all(entities.map(e => this.add(e))).then(array => array.every(Boolean));
+    }
+    async remove(entity) {
+        const op = {
+            type: _crdt_crdt_collection_js__WEBPACK_IMPORTED_MODULE_2__["CollectionOpTypes"].Remove,
+            removed: entity,
+            actor: this.key,
+            clock: this.clock,
+        };
+        return this.storageProxy.applyOp(op);
+    }
+    async clear() {
+        const values = await this.toList();
+        for (const value of values) {
+            const removeOp = {
+                type: _crdt_crdt_collection_js__WEBPACK_IMPORTED_MODULE_2__["CollectionOpTypes"].Remove,
+                removed: value,
+                actor: this.key,
+                clock: this.clock,
+            };
+            if (!this.storageProxy.applyOp(removeOp)) {
+                return false;
+            }
+        }
+        return true;
+    }
+    async toList() {
+        const [set, versionMap] = await this.storageProxy.getParticleView();
+        this.clock = versionMap;
+        return [...set];
+    }
+    async onUpdate(op, oldData, version) {
+        this.clock = version;
+        // FastForward cannot be expressed in terms of ordered added/removed, so pass a full model to
+        // the particle.
+        if (op.type === _crdt_crdt_collection_js__WEBPACK_IMPORTED_MODULE_2__["CollectionOpTypes"].FastForward) {
+            return this.onSync();
+        }
+        // Pass the change up to the particle.
+        const update = { originator: ('actor' in op && this.key === op.actor) };
+        if (op.type === _crdt_crdt_collection_js__WEBPACK_IMPORTED_MODULE_2__["CollectionOpTypes"].Add) {
+            update.added = op.added;
+        }
+        if (op.type === _crdt_crdt_collection_js__WEBPACK_IMPORTED_MODULE_2__["CollectionOpTypes"].Remove) {
+            update.removed = op.removed;
+        }
+        await this.particle.callOnHandleUpdate(this /*handle*/, update, e => this.reportUserExceptionInHost(e, this.particle, 'onHandleUpdate'));
+    }
+    async onSync() {
+        await this.particle.callOnHandleSync(this /*handle*/, this.toList() /*model*/, e => this.reportUserExceptionInHost(e, this.particle, 'onHandleSync'));
+    }
+}
+/**
+ * A handle on a single entity.
+ */
+class SingletonHandle extends Handle {
+    async set(entity) {
+        this.clock[this.key] = (this.clock[this.key] || 0) + 1;
+        const op = {
+            type: _crdt_crdt_singleton_js__WEBPACK_IMPORTED_MODULE_3__["SingletonOpTypes"].Set,
+            value: entity,
+            actor: this.key,
+            clock: this.clock,
+        };
+        return this.storageProxy.applyOp(op);
+    }
+    async clear() {
+        const op = {
+            type: _crdt_crdt_singleton_js__WEBPACK_IMPORTED_MODULE_3__["SingletonOpTypes"].Clear,
+            actor: this.key,
+            clock: this.clock,
+        };
+        return this.storageProxy.applyOp(op);
+    }
+    async get() {
+        const [value, versionMap] = await this.storageProxy.getParticleView();
+        this.clock = versionMap;
+        return value;
+    }
+    async onUpdate(op, oldData, version) {
+        this.clock = version;
+        // Pass the change up to the particle.
+        const update = { oldData, originator: (this.key === op.actor) };
+        if (op.type === _crdt_crdt_singleton_js__WEBPACK_IMPORTED_MODULE_3__["SingletonOpTypes"].Set) {
+            update.data = op.value;
+        }
+        // Nothing else to add (beyond oldData) for SingletonOpTypes.Clear.
+        await this.particle.callOnHandleUpdate(this /*handle*/, update, e => this.reportUserExceptionInHost(e, this.particle, 'onHandleUpdate'));
+    }
+    async onSync() {
+        await this.particle.callOnHandleSync(this /*handle*/, this.get() /*model*/, e => this.reportUserExceptionInHost(e, this.particle, 'onHandleSync'));
+    }
+}
+function handleNGFor(key, storageProxy, idGenerator, particle, canRead, canWrite, name) {
+    return new (storageProxy.type.handleConstructor())(key, storageProxy, idGenerator, particle, canRead, canWrite, name);
+}
+//# sourceMappingURL=handle.js.map
+
+/***/ }),
+/* 30 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "StorageProxy", function() { return StorageProxy; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "NoOpStorageProxy", function() { return NoOpStorageProxy; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "StorageProxyScheduler", function() { return StorageProxyScheduler; });
+/* harmony import */ var _platform_sourcemapped_stacktrace_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(16);
+/* harmony import */ var _arc_exceptions_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(14);
+/* harmony import */ var _crdt_crdt_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(22);
+/* harmony import */ var _type_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(8);
+/* harmony import */ var _store_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(31);
+/**
+ * @license
+ * Copyright (c) 2019 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+
+
+
+
+
+/**
+ * Mediates between one or more Handles and the backing store. The store can be outside the PEC or
+ * directly connected to the StorageProxy.
+ */
+class StorageProxy {
+    constructor(apiChannelId, storeProvider, type) {
+        this.handles = [];
+        this.listenerAttached = false;
+        this.keepSynced = false;
+        this.synchronized = false;
+        this.modelHasSynced = () => undefined;
+        this.apiChannelId = apiChannelId;
+        this.store = storeProvider.getStorageEndpoint(this);
+        this.crdt = new (type.crdtInstanceConstructor())();
+        this.type = type;
+        this.scheduler = new StorageProxyScheduler();
+    }
+    // TODO: remove this after migration.
+    get pec() {
+        throw new Error('StorageProxyNG does not have a pec.');
+    }
+    async idle() {
+        return this.scheduler.idle;
+    }
+    reportExceptionInHost(exception) {
+        // TODO: Encapsulate source-mapping of the stack trace once there are more users of the port.RaiseSystemException() call.
+        if (_platform_sourcemapped_stacktrace_web_js__WEBPACK_IMPORTED_MODULE_0__["mapStackTrace"]) {
+            Object(_platform_sourcemapped_stacktrace_web_js__WEBPACK_IMPORTED_MODULE_0__["mapStackTrace"])(exception.cause.stack, mappedStack => {
+                exception.cause.stack = mappedStack;
+                this.store.reportExceptionInHost(exception);
+            });
+        }
+        else {
+            this.store.reportExceptionInHost(exception);
+        }
+    }
+    registerHandle(handle) {
+        this.handles.push(handle);
+        // Attach an event listener to the backing store when the first readable handle is registered.
+        if (!this.listenerAttached) {
+            this.store.setCallback(x => this.onMessage(x));
+            this.listenerAttached = true;
+        }
+        // Change to synchronized mode as soon as we get any handle configured with keepSynced and send
+        // a request to get the full model (once).
+        // TODO: drop back to non-sync mode if all handles re-configure to !keepSynced.
+        if (handle.options.keepSynced) {
+            if (!this.keepSynced) {
+                this.requestSynchronization().catch(e => {
+                    this.reportExceptionInHost(new _arc_exceptions_js__WEBPACK_IMPORTED_MODULE_1__["SystemException"](e, handle.key, 'StorageProxy::registerHandle'));
+                });
+                this.keepSynced = true;
+            }
+            // If a handle configured for sync notifications registers after we've received the full
+            // model, notify it immediately.
+            if (handle.options.notifySync && this.synchronized) {
+                handle.onSync();
+            }
+        }
+        return this.versionCopy();
+    }
+    deregisterHandle(handleIn) {
+        this.handles = this.handles.filter(handle => handle !== handleIn);
+    }
+    versionCopy() {
+        const version = {};
+        for (const [k, v] of Object.entries(this.crdt.getData().version)) {
+            version[k] = v;
+        }
+        return version;
+    }
+    async applyOp(op) {
+        const oldData = this.crdt.getParticleView();
+        if (!this.crdt.applyOperation(op)) {
+            return false;
+        }
+        const message = {
+            type: _store_js__WEBPACK_IMPORTED_MODULE_4__["ProxyMessageType"].Operations,
+            operations: [op],
+        };
+        await this.store.onProxyMessage(message);
+        this.notifyUpdate(op, oldData);
+        return true;
+    }
+    async getParticleView() {
+        if (this.synchronized) {
+            return [this.crdt.getParticleView(), this.versionCopy()];
+        }
+        else {
+            const promise = new Promise((resolve) => {
+                this.modelHasSynced = () => {
+                    this.modelHasSynced = () => undefined;
+                    resolve([this.crdt.getParticleView(), this.versionCopy()]);
+                };
+            });
+            // Request a new model, it will come back asynchronously with a ModelUpdate message.
+            await this.requestSynchronization();
+            return promise;
+        }
+    }
+    async onMessage(message) {
+        switch (message.type) {
+            case _store_js__WEBPACK_IMPORTED_MODULE_4__["ProxyMessageType"].ModelUpdate:
+                this.crdt.merge(message.model);
+                this.synchronized = true;
+                this.modelHasSynced();
+                this.notifySync();
+                break;
+            case _store_js__WEBPACK_IMPORTED_MODULE_4__["ProxyMessageType"].Operations: {
+                // Bail if we're not in synchronized mode.
+                if (!this.keepSynced) {
+                    return false;
+                }
+                let oldData = this.crdt.getParticleView();
+                for (const op of message.operations) {
+                    if (!this.crdt.applyOperation(op)) {
+                        // If we cannot cleanly apply ops, sync the whole model.
+                        this.synchronized = false;
+                        await this.notifyDesync();
+                        return this.requestSynchronization();
+                    }
+                    this.notifyUpdate(op, oldData);
+                    oldData = this.crdt.getParticleView();
+                }
+                // If we have consumed all operations, we've caught up.
+                this.synchronized = true;
+                break;
+            }
+            case _store_js__WEBPACK_IMPORTED_MODULE_4__["ProxyMessageType"].SyncRequest:
+                await this.store.onProxyMessage({ type: _store_js__WEBPACK_IMPORTED_MODULE_4__["ProxyMessageType"].ModelUpdate, model: this.crdt.getData() });
+                break;
+            default:
+                throw new _crdt_crdt_js__WEBPACK_IMPORTED_MODULE_2__["CRDTError"](`Invalid operation provided to onMessage, message: ${message}`);
+        }
+        return true;
+    }
+    notifyUpdate(operation, oldData) {
+        const version = this.versionCopy();
+        for (const handle of this.handles) {
+            if (handle.options.notifyUpdate) {
+                this.scheduler.enqueue(handle.particle, handle, { type: HandleMessageType.Update, op: operation, oldData, version });
+            }
+            else if (handle.options.keepSynced) {
+                // keepSynced but not notifyUpdate, notify of the new model.
+                this.scheduler.enqueue(handle.particle, handle, { type: HandleMessageType.Sync });
+            }
+        }
+    }
+    notifySync() {
+        for (const handle of this.handles) {
+            if (handle.options.notifySync) {
+                this.scheduler.enqueue(handle.particle, handle, { type: HandleMessageType.Sync });
+            }
+        }
+    }
+    notifyDesync() {
+        for (const handle of this.handles) {
+            if (handle.options.notifyDesync) {
+                this.scheduler.enqueue(handle.particle, handle, { type: HandleMessageType.Desync });
+            }
+        }
+    }
+    async requestSynchronization() {
+        return this.store.onProxyMessage({ type: _store_js__WEBPACK_IMPORTED_MODULE_4__["ProxyMessageType"].SyncRequest });
+    }
+}
+class NoOpStorageProxy extends StorageProxy {
+    constructor() {
+        super(null, { getStorageEndpoint() { } }, _type_js__WEBPACK_IMPORTED_MODULE_3__["EntityType"].make([], {}));
+    }
+    async idle() {
+        return new Promise(resolve => { });
+    }
+    reportExceptionInHost(exception) { }
+    registerHandle(handle) {
+        return {};
+    }
+    deregisterHandle(handle) { }
+    versionCopy() {
+        return null;
+    }
+    async applyOp(op) {
+        return new Promise(resolve => { });
+    }
+    async getParticleView() {
+        return new Promise(resolve => { });
+    }
+    async getData() {
+        return new Promise(resolve => { });
+    }
+    async onMessage(message) {
+        return new Promise(resolve => { });
+    }
+    notifyUpdate(operation, oldData) { }
+    notifySync() { }
+    notifyDesync() { }
+    async requestSynchronization() {
+        return new Promise(resolve => { });
+    }
+}
+var HandleMessageType;
+(function (HandleMessageType) {
+    HandleMessageType[HandleMessageType["Sync"] = 0] = "Sync";
+    HandleMessageType[HandleMessageType["Desync"] = 1] = "Desync";
+    HandleMessageType[HandleMessageType["Update"] = 2] = "Update";
+})(HandleMessageType || (HandleMessageType = {}));
+class StorageProxyScheduler {
+    constructor() {
+        this._scheduled = false;
+        this._queues = new Map();
+        this._idleResolver = null;
+        this._idle = null;
+        this._scheduled = false;
+        // Particle -> {Handle -> [Queue of events]}
+        this._queues = new Map();
+    }
+    enqueue(particle, handle, args) {
+        if (!this._queues.has(particle)) {
+            this._queues.set(particle, new Map());
+        }
+        const byHandle = this._queues.get(particle);
+        if (!byHandle.has(handle)) {
+            byHandle.set(handle, []);
+        }
+        const queue = byHandle.get(handle);
+        queue.push(args);
+        this._schedule();
+    }
+    get busy() {
+        return this._queues.size > 0;
+    }
+    _updateIdle() {
+        if (this._idleResolver && !this.busy) {
+            this._idleResolver();
+            this._idle = null;
+            this._idleResolver = null;
+        }
+    }
+    get idle() {
+        if (!this.busy) {
+            return Promise.resolve();
+        }
+        if (!this._idle) {
+            this._idle = new Promise(resolve => this._idleResolver = resolve);
+        }
+        return this._idle;
+    }
+    _schedule() {
+        if (this._scheduled) {
+            return;
+        }
+        this._scheduled = true;
+        setTimeout(() => {
+            this._scheduled = false;
+            this._dispatch();
+        }, 0);
+    }
+    _dispatch() {
+        // TODO: should we process just one particle per task?
+        while (this._queues.size > 0) {
+            const particle = [...this._queues.keys()][0];
+            const byHandle = this._queues.get(particle);
+            this._queues.delete(particle);
+            for (const [handle, queue] of byHandle.entries()) {
+                for (const update of queue) {
+                    this._dispatchUpdate(handle, update).catch(e => handle.storageProxy.reportExceptionInHost(new _arc_exceptions_js__WEBPACK_IMPORTED_MODULE_1__["SystemException"](e, 'StorageProxyScheduler::_dispatch', handle.key)));
+                }
+            }
+        }
+        this._updateIdle();
+    }
+    async _dispatchUpdate(handle, update) {
+        switch (update.type) {
+            case HandleMessageType.Sync:
+                handle.onSync();
+                break;
+            case HandleMessageType.Desync:
+                await handle.onDesync();
+                break;
+            case HandleMessageType.Update:
+                handle.onUpdate(update.op, update.oldData, update.version);
+                break;
+            default:
+                console.error('Ignoring unknown update', update);
+        }
+    }
+}
+//# sourceMappingURL=storage-proxy.js.map
+
+/***/ }),
+/* 31 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Store", function() { return Store; });
+/* harmony import */ var _drivers_driver_factory_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(32);
+/* harmony import */ var _store_interface_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(33);
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "ActiveStore", function() { return _store_interface_js__WEBPACK_IMPORTED_MODULE_1__["ActiveStore"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "ProxyMessageType", function() { return _store_interface_js__WEBPACK_IMPORTED_MODULE_1__["ProxyMessageType"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "StorageMode", function() { return _store_interface_js__WEBPACK_IMPORTED_MODULE_1__["StorageMode"]; });
+
+/* harmony import */ var _direct_store_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(34);
+/* harmony import */ var _reference_mode_store_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(36);
+/* harmony import */ var _unified_store_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(39);
+/**
+ * @license
+ * Copyright (c) 2019 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+
+
+
+
+
+
+// A representation of a store. Note that initially a constructed store will be
+// inactive - it will not connect to a driver, will not accept connections from
+// StorageProxy objects, and no data will be read or written.
+//
+// Calling 'activate()' will generate an interactive store and return it.
+class Store extends _unified_store_js__WEBPACK_IMPORTED_MODULE_4__["UnifiedStore"] {
+    constructor(opts) {
+        super(opts);
+        this.unifiedStoreType = 'Store';
+        this.version = 0; // TODO(shans): Needs to become the version vector, and is also probably only available on activated storage?
+        this.storageKey = opts.storageKey;
+        this.exists = opts.exists;
+        this.mode = opts.storageKey instanceof _reference_mode_store_js__WEBPACK_IMPORTED_MODULE_3__["ReferenceModeStorageKey"] ? _store_interface_js__WEBPACK_IMPORTED_MODULE_1__["StorageMode"].ReferenceMode : _store_interface_js__WEBPACK_IMPORTED_MODULE_1__["StorageMode"].Direct;
+    }
+    async activate() {
+        if (this.activeStore) {
+            return this.activeStore;
+        }
+        if (Store.constructors.get(this.mode) == null) {
+            throw new Error(`StorageMode ${this.mode} not yet implemented`);
+        }
+        const constructor = Store.constructors.get(this.mode);
+        if (constructor == null) {
+            throw new Error(`No constructor registered for mode ${this.mode}`);
+        }
+        const activeStore = await constructor.construct({
+            storageKey: this.storageKey,
+            exists: this.exists,
+            type: this.type,
+            mode: this.mode,
+            baseStore: this,
+        });
+        this.exists = _drivers_driver_factory_js__WEBPACK_IMPORTED_MODULE_0__["Exists"].ShouldExist;
+        this.activeStore = activeStore;
+        return activeStore;
+    }
+    // TODO(shans): DELETEME once we've switched to this storage stack
+    get referenceMode() {
+        return this.mode === _store_interface_js__WEBPACK_IMPORTED_MODULE_1__["StorageMode"].ReferenceMode;
+    }
+}
+Store.constructors = new Map([
+    [_store_interface_js__WEBPACK_IMPORTED_MODULE_1__["StorageMode"].Direct, _direct_store_js__WEBPACK_IMPORTED_MODULE_2__["DirectStore"]],
+    [_store_interface_js__WEBPACK_IMPORTED_MODULE_1__["StorageMode"].ReferenceMode, _reference_mode_store_js__WEBPACK_IMPORTED_MODULE_3__["ReferenceModeStore"]]
+]);
+//# sourceMappingURL=store.js.map
+
+/***/ }),
+/* 32 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Exists", function() { return Exists; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Driver", function() { return Driver; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "DriverFactory", function() { return DriverFactory; });
+/**
+ * @license
+ * Copyright (c) 2019 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+var Exists;
+(function (Exists) {
+    Exists[Exists["ShouldExist"] = 0] = "ShouldExist";
+    Exists[Exists["ShouldCreate"] = 1] = "ShouldCreate";
+    Exists[Exists["MayExist"] = 2] = "MayExist";
+})(Exists || (Exists = {}));
+// Interface that drivers must support.
+//
+// Note the threading of a version number here; each model provided
+// by the driver to the Store (using the receiver) is paired with a version,
+// as is each model sent from the Store to the driver (using Driver.send()).
+//
+// This threading is used to track whether driver state has changed while
+// the Store is processing a particular model. send() should always fail
+// if the version isn't exactly 1 greater than the current internal version.
+class Driver {
+    constructor(storageKey, exists) {
+        this.storageKey = storageKey;
+        this.exists = exists;
+    }
+}
+class DriverFactory {
+    static clearRegistrationsForTesting() {
+        this.providers = new Set();
+    }
+    static async driverInstance(storageKey, exists) {
+        for (const provider of this.providers) {
+            if (provider.willSupport(storageKey)) {
+                return provider.driver(storageKey, exists);
+            }
+        }
+        return null;
+    }
+    static register(storageDriverProvider) {
+        this.providers.add(storageDriverProvider);
+    }
+    static unregister(storageDriverProvider) {
+        this.providers.delete(storageDriverProvider);
+    }
+    static willSupport(storageKey) {
+        for (const provider of this.providers) {
+            if (provider.willSupport(storageKey)) {
+                return true;
+            }
+        }
+        return false;
+    }
+}
+DriverFactory.providers = new Set();
+//# sourceMappingURL=driver-factory.js.map
+
+/***/ }),
+/* 33 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "StorageMode", function() { return StorageMode; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ProxyMessageType", function() { return ProxyMessageType; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ActiveStore", function() { return ActiveStore; });
+/**
+ * @license
+ * Copyright (c) 2019 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+/**
+ * This file exists to break a circular dependency between Store and the ActiveStore implementations.
+ * Source code outside of the storageNG directory should not import this file directly; instead use
+ * store.ts, which re-exports all the useful symbols.
+ */
+var StorageMode;
+(function (StorageMode) {
+    StorageMode[StorageMode["Direct"] = 0] = "Direct";
+    StorageMode[StorageMode["Backing"] = 1] = "Backing";
+    StorageMode[StorageMode["ReferenceMode"] = 2] = "ReferenceMode";
+})(StorageMode || (StorageMode = {}));
+var ProxyMessageType;
+(function (ProxyMessageType) {
+    ProxyMessageType[ProxyMessageType["SyncRequest"] = 0] = "SyncRequest";
+    ProxyMessageType[ProxyMessageType["ModelUpdate"] = 1] = "ModelUpdate";
+    ProxyMessageType[ProxyMessageType["Operations"] = 2] = "Operations";
+})(ProxyMessageType || (ProxyMessageType = {}));
+// A representation of an active store. Subclasses of this class provide specific
+// behaviour as controlled by the provided StorageMode.
+class ActiveStore {
+    // TODO: Lots of these params can be pulled from baseStore.
+    constructor(options) {
+        this.storageKey = options.storageKey;
+        this.exists = options.exists;
+        this.type = options.type;
+        this.mode = options.mode;
+        this.baseStore = options.baseStore;
+    }
+    async idle() {
+        return Promise.resolve();
+    }
+    // tslint:disable-next-line no-any
+    async toLiteral() {
+        throw new Error('Method not implemented.');
+    }
+    async cloneFrom(store) {
+        throw new Error('Method not implemented.');
+    }
+    async modelForSynchronization() {
+        return this.toLiteral();
+    }
+    getStorageEndpoint() {
+        const store = this;
+        let id;
+        return {
+            async onProxyMessage(message) {
+                message.id = id;
+                return store.onProxyMessage(message);
+            },
+            setCallback(callback) {
+                id = store.on(callback);
+            },
+            reportExceptionInHost(exception) {
+                store.reportExceptionInHost(exception);
+            }
+        };
+    }
+}
+//# sourceMappingURL=store-interface.js.map
+
+/***/ }),
+/* 34 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "DirectStoreState", function() { return DirectStoreState; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "DirectStore", function() { return DirectStore; });
+/* harmony import */ var _crdt_crdt_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(22);
+/* harmony import */ var _drivers_driver_factory_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(32);
+/* harmony import */ var _store_interface_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(33);
+/* harmony import */ var _util_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(35);
+/**
+ * @license
+ * Copyright (c) 2019 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+
+
+
+
+var DirectStoreState;
+(function (DirectStoreState) {
+    DirectStoreState["Idle"] = "Idle";
+    DirectStoreState["AwaitingResponse"] = "AwaitingResponse";
+    DirectStoreState["AwaitingResponseDirty"] = "AwaitingResponseDirty";
+    DirectStoreState["AwaitingDriverModel"] = "AwaitingDriverModel";
+})(DirectStoreState || (DirectStoreState = {}));
+class DirectStore extends _store_interface_js__WEBPACK_IMPORTED_MODULE_2__["ActiveStore"] {
+    /*
+     * This class should only ever be constructed via the static construct method
+     */
+    constructor(options) {
+        super(options);
+        this.callbacks = new Map();
+        this.nextCallbackID = 1;
+        this.version = 0;
+        this.pendingException = null;
+        this.pendingResolves = [];
+        this.pendingRejects = [];
+        this.pendingDriverModels = [];
+        this.state = DirectStoreState.Idle;
+    }
+    async idle() {
+        if (this.pendingException) {
+            return Promise.reject(this.pendingException);
+        }
+        if (this.state === DirectStoreState.Idle) {
+            return Promise.resolve();
+        }
+        return new Promise((resolve, reject) => {
+            this.pendingResolves.push(resolve);
+            this.pendingRejects.push(reject);
+        });
+    }
+    setState(state) {
+        this.state = state;
+        if (state === DirectStoreState.Idle) {
+            // If we are already idle, this won't notify external parties.
+            this.notifyIdle();
+        }
+    }
+    notifyIdle() {
+        if (this.pendingException) {
+            // this is termination.
+            this.pendingRejects.forEach(reject => reject(this.pendingException));
+        }
+        else {
+            this.pendingResolves.forEach(resolve => resolve());
+            this.pendingResolves = [];
+        }
+    }
+    static async construct(options) {
+        const me = new DirectStore(options);
+        me.localModel = new (options.type.crdtInstanceConstructor())();
+        me.driver = await _drivers_driver_factory_js__WEBPACK_IMPORTED_MODULE_1__["DriverFactory"].driverInstance(options.storageKey, options.exists);
+        if (me.driver == null) {
+            throw new _crdt_crdt_js__WEBPACK_IMPORTED_MODULE_0__["CRDTError"](`No driver exists to support storage key ${options.storageKey}`);
+        }
+        me.driver.registerReceiver(me.onReceive.bind(me));
+        return me;
+    }
+    // The driver will invoke this method when it has an updated remote model
+    async onReceive(model, version) {
+        this.pendingDriverModels.push({ model, version });
+        if (this.state === DirectStoreState.AwaitingResponse || this.state === DirectStoreState.AwaitingResponseDirty) {
+            return;
+        }
+        this.applyPendingDriverModels();
+    }
+    deliverCallbacks(thisChange, messageFromDriver, channel) {
+        if (thisChange.changeType === _crdt_crdt_js__WEBPACK_IMPORTED_MODULE_0__["ChangeType"].Operations && thisChange.operations.length > 0) {
+            this.callbacks.forEach((cb, id) => {
+                if (messageFromDriver || channel !== id) {
+                    void cb({ type: _store_interface_js__WEBPACK_IMPORTED_MODULE_2__["ProxyMessageType"].Operations, operations: thisChange.operations, id });
+                }
+            });
+        }
+        else if (thisChange.changeType === _crdt_crdt_js__WEBPACK_IMPORTED_MODULE_0__["ChangeType"].Model) {
+            this.callbacks.forEach((cb, id) => {
+                if (messageFromDriver || channel !== id) {
+                    void cb({ type: _store_interface_js__WEBPACK_IMPORTED_MODULE_2__["ProxyMessageType"].ModelUpdate, model: thisChange.modelPostChange, id });
+                }
+            });
+        }
+    }
+    async processModelChange(modelChange, otherChange, version, channel) {
+        this.deliverCallbacks(modelChange, /* messageFromDriver= */ false, channel);
+        await this.updateStateAndAct(this.noDriverSideChanges(modelChange, otherChange, false), version, false);
+    }
+    // This function implements a state machine that controls when data is sent to the driver.
+    // You can see the state machine in all its glory at the following URL:
+    //
+    // https://github.com/PolymerLabs/arcs/wiki/Store-object-State-Machine
+    //
+    async updateStateAndAct(noDriverSideChanges, version, messageFromDriver) {
+        // Don't send to the driver if we're already in sync and there are no driver-side changes.
+        if (noDriverSideChanges) {
+            // Need to record the driver version so that we can continue to send.
+            this.setState(DirectStoreState.Idle);
+            this.version = version;
+            return;
+        }
+        switch (this.state) {
+            case DirectStoreState.AwaitingDriverModel:
+                if (!messageFromDriver) {
+                    return;
+                }
+            /* falls through */
+            case DirectStoreState.Idle:
+                // This loop implements sending -> AwaitingResponse -> AwaitingResponseDirty -> sending.
+                // Breakouts happen if:
+                //  (1) a response arrives while still AwaitingResponse. This returns the store to Idle.
+                //  (2) a negative response arrives. This means we're now waiting for driver models
+                //      (AwaitingDriverModel). Note that in this case we are likely to end up back in
+                //      this loop when a driver model arrives.
+                while (true) {
+                    this.setState(DirectStoreState.AwaitingResponse);
+                    // Work around a typescript compiler bug. Apparently typescript won't guarantee that
+                    // a Map key you've just set will exist, but is happy to assure you that a private
+                    // member variable couldn't possibly change in any function outside the local scope
+                    // when within a switch statement.
+                    this.state = DirectStoreState.AwaitingResponse;
+                    this.version = ++version;
+                    const response = await this.driver.send(this.localModel.getData(), version);
+                    if (response) {
+                        if (this.state === DirectStoreState.AwaitingResponse) {
+                            this.setState(DirectStoreState.Idle);
+                            this.applyPendingDriverModels();
+                            break;
+                        }
+                        if (this.state !== DirectStoreState.AwaitingResponseDirty) {
+                            // This shouldn't be possible as only a 'nack' should put us into
+                            // AwaitingDriverModel, and only the above code should put us back
+                            // into Idle.
+                            throw new Error('reached impossible state in store state machine');
+                        }
+                        // fallthrough to re-execute the loop.
+                    }
+                    else {
+                        this.setState(DirectStoreState.AwaitingDriverModel);
+                        this.applyPendingDriverModels();
+                        break;
+                    }
+                }
+                return;
+            case DirectStoreState.AwaitingResponse:
+                this.setState(DirectStoreState.AwaitingResponseDirty);
+                return;
+            case DirectStoreState.AwaitingResponseDirty:
+                return;
+            default:
+                throw new Error('reached impossible default state in switch statement');
+        }
+    }
+    applyPendingDriverModels() {
+        if (this.pendingDriverModels.length > 0) {
+            const models = this.pendingDriverModels;
+            this.pendingDriverModels = [];
+            let noDriverSideChanges = true;
+            let theVersion = 0;
+            for (const { model, version } of models) {
+                try {
+                    const { modelChange, otherChange } = this.localModel.merge(model);
+                    this.deliverCallbacks(modelChange, /* messageFromDriver= */ true, 0);
+                    noDriverSideChanges = noDriverSideChanges && this.noDriverSideChanges(modelChange, otherChange, true);
+                    theVersion = version;
+                }
+                catch (e) {
+                    this.pendingException = e;
+                    this.notifyIdle();
+                    return;
+                }
+            }
+            void this.updateStateAndAct(noDriverSideChanges, theVersion, true);
+        }
+    }
+    // Note that driver-side changes are stored in 'otherChange' when the merged operations/model is sent
+    // from the driver, and 'thisChange' when the merged operations/model is sent from a storageProxy.
+    // In the former case, we want to look at what has changed between what the driver sent us and what
+    // we now have. In the latter, the driver is only as up-to-date as our local model before we've
+    // applied the operations.
+    noDriverSideChanges(thisChange, otherChange, messageFromDriver) {
+        if (messageFromDriver) {
+            return otherChange.changeType === _crdt_crdt_js__WEBPACK_IMPORTED_MODULE_0__["ChangeType"].Operations && otherChange.operations.length === 0;
+        }
+        else {
+            return thisChange.changeType === _crdt_crdt_js__WEBPACK_IMPORTED_MODULE_0__["ChangeType"].Operations && thisChange.operations.length === 0;
+        }
+    }
+    // Operation or model updates from connected StorageProxies will arrive here.
+    // Additionally, StorageProxy objects may request a SyncRequest, which will
+    // result in an up-to-date model being sent back to that StorageProxy.
+    // a return value of true implies that the message was accepted, a
+    // return value of false requires that the proxy send a model sync
+    async onProxyMessage(message) {
+        if (this.pendingException) {
+            throw this.pendingException;
+        }
+        switch (message.type) {
+            case _store_interface_js__WEBPACK_IMPORTED_MODULE_2__["ProxyMessageType"].SyncRequest:
+                await this.callbacks.get(message.id)({ type: _store_interface_js__WEBPACK_IMPORTED_MODULE_2__["ProxyMessageType"].ModelUpdate, model: this.localModel.getData(), id: message.id });
+                return true;
+            case _store_interface_js__WEBPACK_IMPORTED_MODULE_2__["ProxyMessageType"].Operations: {
+                for (const operation of message.operations) {
+                    if (!this.localModel.applyOperation(operation)) {
+                        await this.callbacks.get(message.id)({ type: _store_interface_js__WEBPACK_IMPORTED_MODULE_2__["ProxyMessageType"].SyncRequest, id: message.id });
+                        return false;
+                    }
+                }
+                const change = { changeType: _crdt_crdt_js__WEBPACK_IMPORTED_MODULE_0__["ChangeType"].Operations, operations: message.operations };
+                // to make tsetse checks happy
+                Object(_util_js__WEBPACK_IMPORTED_MODULE_3__["noAwait"])(this.processModelChange(change, null, this.version, message.id));
+                return true;
+            }
+            case _store_interface_js__WEBPACK_IMPORTED_MODULE_2__["ProxyMessageType"].ModelUpdate: {
+                const { modelChange, otherChange } = this.localModel.merge(message.model);
+                // to make tsetse checks happy
+                Object(_util_js__WEBPACK_IMPORTED_MODULE_3__["noAwait"])(this.processModelChange(modelChange, otherChange, this.version, message.id));
+                return true;
+            }
+            default:
+                throw new _crdt_crdt_js__WEBPACK_IMPORTED_MODULE_0__["CRDTError"]('Invalid operation provided to onProxyMessage');
+        }
+    }
+    on(callback) {
+        const id = this.nextCallbackID++;
+        this.callbacks.set(id, callback);
+        return id;
+    }
+    off(callback) {
+        this.callbacks.delete(callback);
+    }
+    reportExceptionInHost(exception) {
+        this.pendingException = exception;
+        this.notifyIdle();
+    }
+}
+//# sourceMappingURL=direct-store.js.map
+
+/***/ }),
+/* 35 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "setDiff", function() { return setDiff; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "setDiffCustom", function() { return setDiffCustom; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "floatingPromiseToAudit", function() { return floatingPromiseToAudit; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "noAwait", function() { return noAwait; });
+/* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
+/**
+ * @license
+ * Copyright (c) 2018 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+
+/**
+ * Returns the set delta between two lists based on direct object comparison.
+ */
+function setDiff(from, to) {
+    const result = { add: [], remove: [] };
+    const items = new Set([...from, ...to]);
+    const fromSet = new Set(from);
+    const toSet = new Set(to);
+    for (const item of items) {
+        if (fromSet.has(item)) {
+            if (toSet.has(item)) {
+                continue;
+            }
+            result.remove.push(item);
+            continue;
+        }
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(toSet.has(item));
+        result.add.push(item);
+    }
+    return result;
+}
+/**
+ * Returns the set delta between two lists based on custom object comparison.
+ * `keyFn` takes type T and returns the value by which items should be compared.
+ */
+function setDiffCustom(from, to, keyFn) {
+    const result = { add: [], remove: [] };
+    const items = new Map();
+    const fromSet = new Map();
+    const toSet = new Map();
+    for (const item of from) {
+        const key = keyFn(item);
+        items.set(key, item);
+        fromSet.set(key, item);
+    }
+    for (const item of to) {
+        const key = keyFn(item);
+        items.set(key, item);
+        toSet.set(key, item);
+    }
+    for (const [key, item] of items) {
+        if (fromSet.has(key)) {
+            if (toSet.has(key)) {
+                continue;
+            }
+            result.remove.push(item);
+            continue;
+        }
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(toSet.has(key));
+        result.add.push(item);
+    }
+    return result;
+}
+/**
+ * A hack to ignore a floating promise and bypass the linter. Promises should very rarely be left floating, and when such behaviour is intended,
+ * it should be clearly marked as such. See https://tsetse.info/must-use-promises.html for details.
+ *
+ * TODO: Remove all usages of this function and then delete it.
+ */
+function floatingPromiseToAudit(promise) { }
+/**
+ * Noop function that can be used to supress the tsetse must-use-promises rule.
+ *
+ * Example Usage:
+ *   async function x() {
+ *     await doA();
+ *     noAwait(doB());
+ *   }
+ */
+function noAwait(result) { }
+//# sourceMappingURL=util.js.map
+
+/***/ }),
+/* 36 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ReferenceCollection", function() { return ReferenceCollection; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ReferenceSingleton", function() { return ReferenceSingleton; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ReferenceModeStorageKey", function() { return ReferenceModeStorageKey; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ReferenceModeStore", function() { return ReferenceModeStore; });
+/* harmony import */ var _crdt_crdt_singleton_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(24);
+/* harmony import */ var _crdt_crdt_collection_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(23);
+/* harmony import */ var _store_interface_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(33);
+/* harmony import */ var _backing_store_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(37);
+/* harmony import */ var _crdt_crdt_entity_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(21);
+/* harmony import */ var _direct_store_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(34);
+/* harmony import */ var _storage_key_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(38);
+/* harmony import */ var _type_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(8);
+/**
+ * @license
+ * Copyright (c) 2019 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+
+
+
+
+
+
+
+
+class ReferenceCollection extends _crdt_crdt_collection_js__WEBPACK_IMPORTED_MODULE_1__["CRDTCollection"] {
+}
+class ReferenceSingleton extends _crdt_crdt_singleton_js__WEBPACK_IMPORTED_MODULE_0__["CRDTSingleton"] {
+}
+var ReferenceModeUpdateSource;
+(function (ReferenceModeUpdateSource) {
+    ReferenceModeUpdateSource[ReferenceModeUpdateSource["Container"] = 0] = "Container";
+    ReferenceModeUpdateSource[ReferenceModeUpdateSource["BackingStore"] = 1] = "BackingStore";
+    ReferenceModeUpdateSource[ReferenceModeUpdateSource["StorageProxy"] = 2] = "StorageProxy";
+})(ReferenceModeUpdateSource || (ReferenceModeUpdateSource = {}));
+class ReferenceModeStorageKey extends _storage_key_js__WEBPACK_IMPORTED_MODULE_6__["StorageKey"] {
+    constructor(backingKey, storageKey) {
+        super('reference-mode');
+        this.backingKey = backingKey;
+        this.storageKey = storageKey;
+    }
+    embedKey(key) {
+        return key.toString().replace(/\{/g, '{{').replace(/\}/g, '}}');
+    }
+    toString() {
+        return `${this.protocol}://{${this.embedKey(this.backingKey)}}{${this.embedKey(this.storageKey)}}`;
+    }
+    childWithComponent(component) {
+        return new ReferenceModeStorageKey(this.backingKey, this.storageKey.childWithComponent(component));
+    }
+}
+/**
+ * ReferenceModeStores adapt between a collection (CRDTCollection or CRDTSingleton) of entities from the perspective of their public API,
+ * and a collection of references + a backing store of entity CRDTs from an internal storage perspective.
+ *
+ * ReferenceModeStores maintain a queue of incoming updates (the receiveQueue) and process them one at a time. When possible, the results
+ * of this processing are immediately sent upwards (to connected StorageProxies) and downwards (to storage). However, there are a few
+ * caveats:
+ * - incoming operations and models from StorageProxies may require several writes to storage - one for each modified entity, and one
+ *   to the container store. These are processed serially, so that a container doesn't get updated if backing store modifications fail.
+ * - updates from the container store need to be blocked on ensuring the required data is also available in the backing store.
+ *   The holdQueue ensures that these blocks are tracked and processed appropriately.
+ * - updates should always be sent in order, so a blocked send should block subsequent sends too. The pendingSends queue ensures that all
+ *   outgoing updates are sent in the correct order.
+ *
+ */
+class ReferenceModeStore extends _store_interface_js__WEBPACK_IMPORTED_MODULE_2__["ActiveStore"] {
+    constructor() {
+        super(...arguments);
+        /*
+         * Registered callbacks to Storage Proxies
+         */
+        this.callbacks = new Map();
+        this.nextCallbackID = 1;
+        /*
+         * A randomly generated key that is used for synthesized entity CRDT modifications.
+         *
+         * When entity updates are received by instances of ReferenceModeStore, they're non-CRDT blobs of data.
+         * The ReferenceModeStore needs to convert them to tracked CRDTs, which means it needs to synthesize
+         * updates. This key is used as the unique write key for those updates.
+         */
+        this.crdtKey = (Math.random() * Math.pow(2, 64)) + '';
+        /*
+         * The versions dictionary tracks the maximum write version for each entity ID, to ensure synthesized
+         * updates can be correctly applied downstream.
+         */
+        this.versions = {};
+        /*
+         * A queue of incoming updates from the backing store, container store, and connected proxies.
+         * These are dealt with atomically, to avoid transient states where an operation has only been partially
+         * processed (e.g. backing written but container update not written).
+         */
+        this.receiveQueue = [];
+        /*
+         * A queue of send Runnables. Some of these may be blocked on entities becoming available in the
+         * backing store.
+         */
+        this.pendingSends = [];
+        /*
+         * A queue of blocks to the pendingSends queue.
+         */
+        this.holdQueue = new HoldQueue();
+        /*
+         * An incrementing ID to uniquely identify each blocked send.
+         */
+        this.blockCounter = 0;
+    }
+    static async construct(options) {
+        const result = new ReferenceModeStore(options);
+        const { storageKey, type } = options;
+        result.backingStore = await _backing_store_js__WEBPACK_IMPORTED_MODULE_3__["BackingStore"].construct({
+            storageKey: storageKey.backingKey,
+            type: type.getContainedType(),
+            mode: _store_interface_js__WEBPACK_IMPORTED_MODULE_2__["StorageMode"].Backing,
+            exists: options.exists,
+            baseStore: options.baseStore,
+        });
+        let refType;
+        if (type.isCollectionType()) {
+            refType = new _type_js__WEBPACK_IMPORTED_MODULE_7__["CollectionType"](new _type_js__WEBPACK_IMPORTED_MODULE_7__["ReferenceType"](type.getContainedType()));
+        }
+        else {
+            // TODO(shans) probably need a singleton type here now.
+            refType = new _type_js__WEBPACK_IMPORTED_MODULE_7__["ReferenceType"](type.getContainedType());
+        }
+        result.containerStore = await _direct_store_js__WEBPACK_IMPORTED_MODULE_5__["DirectStore"].construct({
+            storageKey: storageKey.storageKey,
+            type,
+            mode: _store_interface_js__WEBPACK_IMPORTED_MODULE_2__["StorageMode"].Direct,
+            exists: options.exists,
+            baseStore: options.baseStore
+        });
+        result.registerStoreCallbacks();
+        return result;
+    }
+    reportExceptionInHost(exception) {
+        // TODO(shans): Figure out idle / exception store for reference mode stores.
+    }
+    on(callback) {
+        const id = this.nextCallbackID++;
+        this.callbacks.set(id, callback);
+        return id;
+    }
+    off(callback) {
+        this.callbacks.delete(callback);
+    }
+    registerStoreCallbacks() {
+        this.backingStore.on(this.onBackingStore.bind(this));
+        this.containerStore.on(this.onContainerStore.bind(this));
+    }
+    /**
+     * Messages are enqueued onto an object-wide queue and processed in order.
+     * Internally, each handler (handleContainerStore, handleBackingStore, handleProxyMessage)
+     * should not return until the response relevant to the message has been received.
+     *
+     * When handling proxy messages, this implies 2 rounds of update - first the backing
+     * store needs to be updated, and once that has completed then the container store needs
+     * to be updated.
+     */
+    async onContainerStore(message) {
+        return this.enqueue({ from: ReferenceModeUpdateSource.Container, message });
+    }
+    async onBackingStore(message, muxId) {
+        return this.enqueue({ from: ReferenceModeUpdateSource.BackingStore, message, muxId });
+    }
+    async onProxyMessage(message) {
+        return this.enqueue({ from: ReferenceModeUpdateSource.StorageProxy, message });
+    }
+    /**
+     * enqueue an incoming update onto the object-wide queue and return a promise that will be resolved
+     * when the update is processed.
+     */
+    async enqueue(entry) {
+        return new Promise((resolve, reject) => {
+            const startProcessing = this.receiveQueue.length === 0;
+            this.receiveQueue.push({ ...entry, promise: resolve });
+            if (startProcessing) {
+                void this.processQueue();
+            }
+        });
+    }
+    async processQueue() {
+        while (this.receiveQueue.length > 0) {
+            // ths.receiveQueue.length === 0 is used as a signal to start processing (see enqueue). As
+            // this method is asynchronous, we can't remove the current element until it's processed
+            // or we'll potentially get duplicate calls to processQueue.
+            const nextMessage = this.receiveQueue[0];
+            switch (nextMessage.from) {
+                case ReferenceModeUpdateSource.StorageProxy:
+                    nextMessage.promise(await this.handleProxyMessage(nextMessage.message));
+                    break;
+                case ReferenceModeUpdateSource.BackingStore:
+                    nextMessage.promise(await this.handleBackingStore(nextMessage.message, nextMessage.muxId));
+                    break;
+                case ReferenceModeUpdateSource.Container:
+                    nextMessage.promise(await this.handleContainerStore(nextMessage.message));
+                    break;
+                default:
+                    throw new Error('invalid message type');
+            }
+            this.receiveQueue.shift();
+        }
+    }
+    /**
+     * Handle an update from the container store.
+     *
+     * Operations and Models either enqueue an immediate send (if all referenced entities
+     * are available in the backing store) or enqueue a blocked send (if some referenced
+     * entities are not yet present).
+     *
+     * Note that the blocking mechanism isn't version-aware, so removes followed by
+     * adds may not correctly sync. If this turns out to be a problem then we can
+     * add version information to references and update the blocking store to gate
+     * on a version as well as presence.
+     *
+     * Sync requests are propagated upwards to the storage proxy.
+     */
+    async handleContainerStore(message) {
+        switch (message.type) {
+            case _store_interface_js__WEBPACK_IMPORTED_MODULE_2__["ProxyMessageType"].Operations: {
+                for (const operation of message.operations) {
+                    const reference = this.operationElement(operation);
+                    let getEntity;
+                    if (reference) {
+                        const entityCRDT = this.backingStore.getLocalModel(reference.id);
+                        if (!entityCRDT) {
+                            this.enqueueBlockingSend([reference], () => {
+                                const entityCRDT = this.backingStore.getLocalModel(reference.id);
+                                const getEntity = () => this.entityFromModel(entityCRDT.getData(), reference.id);
+                                const upstreamOp = this.updateOp(operation, getEntity);
+                                void this.send({ type: _store_interface_js__WEBPACK_IMPORTED_MODULE_2__["ProxyMessageType"].Operations, operations: [upstreamOp] });
+                            });
+                            break;
+                        }
+                        getEntity = () => this.entityFromModel(entityCRDT.getData(), reference.id);
+                    }
+                    else {
+                        getEntity = () => null;
+                    }
+                    this.enqueueSend(() => {
+                        const upstreamOp = this.updateOp(operation, getEntity);
+                        void this.send({ type: _store_interface_js__WEBPACK_IMPORTED_MODULE_2__["ProxyMessageType"].Operations, operations: [upstreamOp] });
+                    });
+                }
+                break;
+            }
+            case _store_interface_js__WEBPACK_IMPORTED_MODULE_2__["ProxyMessageType"].ModelUpdate: {
+                const data = message.model;
+                const { pendingIds, model } = this.constructPendingIdsAndModel(data);
+                const send = () => void this.send({ type: _store_interface_js__WEBPACK_IMPORTED_MODULE_2__["ProxyMessageType"].ModelUpdate, model: model() });
+                if (pendingIds.length === 0) {
+                    this.enqueueSend(send);
+                }
+                else {
+                    this.enqueueBlockingSend(pendingIds, send);
+                }
+                break;
+            }
+            case _store_interface_js__WEBPACK_IMPORTED_MODULE_2__["ProxyMessageType"].SyncRequest: {
+                this.enqueueSend(() => {
+                    void this.send({ type: _store_interface_js__WEBPACK_IMPORTED_MODULE_2__["ProxyMessageType"].SyncRequest });
+                });
+                break;
+            }
+            default: {
+                throw new Error('Unexpected ProxyMessageType');
+            }
+        }
+        return true;
+    }
+    /**
+     * Handle an update from the backing store.
+     *
+     * Model and Operation updates are routed directly to the holdQueue, where they may unblock
+     * pending sends but will not have any other action.
+     *
+     * Syncs should never occur as operation/model updates to the backing store are generated
+     * by this ReferenceModeStore object and hence should never be out-of-order.
+     */
+    async handleBackingStore(message, muxId) {
+        switch (message.type) {
+            case _store_interface_js__WEBPACK_IMPORTED_MODULE_2__["ProxyMessageType"].ModelUpdate:
+                this.holdQueue.processID(muxId, message.model.version);
+                break;
+            case _store_interface_js__WEBPACK_IMPORTED_MODULE_2__["ProxyMessageType"].Operations:
+                this.holdQueue.processID(muxId, message.operations[message.operations.length - 1].clock);
+                break;
+            case _store_interface_js__WEBPACK_IMPORTED_MODULE_2__["ProxyMessageType"].SyncRequest:
+                throw new Error('Unexpected SyncRequest from backing store');
+            default:
+                throw new Error('Unexpected ProxyMessageType');
+        }
+        return true;
+    }
+    /**
+     * Handle an update from an upstream StorageProxy.
+     *
+     * Model and Operation updates apply first to the backing store, then to the container store.
+     * Backing store updates should never fail as updates are locally generated.
+     * For Operations:
+     * - If the container store update succeeds, then the update is mirrored to non-sending StorageProxies.
+     * - If the container store update fails, then a `false` return value ensures that the upstream proxy
+     *   will request a sync.
+     * Model updates should not fail.
+     *
+     * Sync requests are handled by directly constructing and sending a model
+     */
+    async handleProxyMessage(message) {
+        switch (message.type) {
+            case _store_interface_js__WEBPACK_IMPORTED_MODULE_2__["ProxyMessageType"].Operations: {
+                const operations = message.operations;
+                for (const operation of operations) {
+                    const entity = this.operationElement(operation);
+                    let reference = null;
+                    if (entity) {
+                        await this.updateBackingStore(entity);
+                        const version = this.backingStore.getLocalModel(entity.id).getData().version;
+                        reference = { id: entity.id, storageKey: this.backingStore.storageKey, version };
+                    }
+                    const containerMessage = this.updateOp(operation, () => reference);
+                    const response = await this.containerStore.onProxyMessage({ type: _store_interface_js__WEBPACK_IMPORTED_MODULE_2__["ProxyMessageType"].Operations, operations: [containerMessage], id: 1 });
+                    if (response) {
+                        this.enqueueSend(() => void this.sendExcept(message, message.id));
+                    }
+                    else {
+                        return false;
+                    }
+                }
+                break;
+            }
+            case _store_interface_js__WEBPACK_IMPORTED_MODULE_2__["ProxyMessageType"].ModelUpdate: {
+                const { version, values } = message.model;
+                const newValues = {};
+                const backingStoreReceipts = [];
+                Object.entries(values).forEach(([id, { value, version }]) => {
+                    backingStoreReceipts.push(this.updateBackingStore(value).then(success => {
+                        if (success) {
+                            const entityVersion = this.backingStore.getLocalModel(id).getData().version;
+                            newValues[id] = { value: { id, storageKey: this.backingStore.storageKey, version: entityVersion }, version };
+                        }
+                        return success;
+                    }));
+                });
+                await Promise.all(backingStoreReceipts);
+                const model = { version, values: newValues };
+                await this.containerStore.onProxyMessage({ type: _store_interface_js__WEBPACK_IMPORTED_MODULE_2__["ProxyMessageType"].ModelUpdate, model, id: 1 });
+                this.enqueueSend(() => this.sendExcept(message, message.id));
+                break;
+            }
+            case _store_interface_js__WEBPACK_IMPORTED_MODULE_2__["ProxyMessageType"].SyncRequest: {
+                const { pendingIds, model } = this.constructPendingIdsAndModel(this.containerStore.localModel.getData());
+                const send = () => void this.callbacks.get(message.id)({ type: _store_interface_js__WEBPACK_IMPORTED_MODULE_2__["ProxyMessageType"].ModelUpdate, model: model(), id: message.id });
+                if (pendingIds.length === 0) {
+                    this.enqueueSend(send);
+                }
+                else {
+                    this.enqueueBlockingSend(pendingIds, send);
+                }
+                break;
+            }
+            default:
+                throw new Error('Unexpected ProxyMessageType');
+        }
+        return true;
+    }
+    /**
+     * Enqueues a sending function on the send queue. If the send queue is empty then
+     * the function is immediately invoked.
+     */
+    enqueueSend(runnable) {
+        if (this.pendingSends.length === 0) {
+            runnable();
+        }
+        else {
+            this.pendingSends.push({ fn: runnable });
+        }
+    }
+    /**
+     * Enqueues a send function on the send queue, deferring execution until the
+     * provided id list is available in the backing store.
+     */
+    enqueueBlockingSend(entities, runnable) {
+        const block = (this.blockCounter++) + '';
+        this.pendingSends.push({ fn: runnable, block });
+        this.holdQueue.enqueue(entities, () => this.processPendingSends(block));
+    }
+    /**
+     * Process any sends in the pending send queue, including sends blocked on the
+     * provided block. This should only be called by the holdQueue.
+     */
+    processPendingSends(block) {
+        while (this.pendingSends.length > 0) {
+            if (this.pendingSends[0].block == null || this.pendingSends[0].block === block) {
+                const send = this.pendingSends.shift();
+                send.fn();
+            }
+        }
+    }
+    /**
+     * Convert the provided entity to a CRDT Model of the entity. This requires synthesizing
+     * a version map for the CRDT model, which is also provided as an output.
+     */
+    entityToModel(entity) {
+        if (this.versions[entity.id] == undefined) {
+            this.versions[entity.id] = {};
+        }
+        const entityVersion = this.versions[entity.id];
+        const model = this.newBackingInstance().getData();
+        let maxVersion = 0;
+        for (const key of Object.keys(entity)) {
+            if (key === 'id') {
+                continue;
+            }
+            if (entityVersion[key] == undefined) {
+                entityVersion[key] = 0;
+            }
+            const version = { [this.crdtKey]: ++entityVersion[key] };
+            maxVersion = Math.max(maxVersion, entityVersion[key]);
+            if (model.singletons[key]) {
+                model.singletons[key].values = { [entity[key].id]: { value: entity[key], version } };
+                model.singletons[key].version = version;
+            }
+            else if (model.collections[key]) {
+                model.collections[key].values = {};
+                for (const value of entity[key]) {
+                    model.collections[key].values[value.id] = { value, version };
+                }
+                model.collections[key].version = version;
+            }
+            else {
+                throw new Error(`key ${key} not found for model ${model}`);
+            }
+        }
+        model.version = { [this.crdtKey]: maxVersion };
+        return model;
+    }
+    /**
+     * Convert the provided CRDT model into an entity.
+     */
+    entityFromModel(model, id) {
+        const entity = { id };
+        const singletons = {};
+        for (const field of Object.keys(model.singletons)) {
+            singletons[field] = new _crdt_crdt_singleton_js__WEBPACK_IMPORTED_MODULE_0__["CRDTSingleton"]();
+        }
+        const collections = {};
+        for (const field of Object.keys(model.collections)) {
+            collections[field] = new _crdt_crdt_collection_js__WEBPACK_IMPORTED_MODULE_1__["CRDTCollection"]();
+        }
+        const entityCRDT = new _crdt_crdt_entity_js__WEBPACK_IMPORTED_MODULE_4__["CRDTEntity"](singletons, collections);
+        entityCRDT.merge(model);
+        const data = entityCRDT.getParticleView();
+        for (const [key, value] of Object.entries(data.singletons)) {
+            entity[key] = value;
+        }
+        for (const [key, value] of Object.entries(data.collections)) {
+            entity[key] = value;
+        }
+        return entity;
+    }
+    cloneMap(map) {
+        const result = {};
+        Object.entries(map).forEach(([key, value]) => result[key] = value);
+        return result;
+    }
+    /**
+     * Returns a function that can construct a CRDTModel of a Container of Entities based off the
+     * provided Container of References. Any referenced IDs that are not yet available in the backing
+     * store are returned in the pendingIds list. The returned function should not be invoked until
+     * all references in pendingIds have valid backing in the backing store.
+     */
+    constructPendingIdsAndModel(data) {
+        const pendingIds = [];
+        for (const id of Object.keys(data.values)) {
+            const version = data.values[id].value.version;
+            if (Object.keys(version).length === 0) {
+                // This object is requested at an empty version, which means that it's new and can be directly constructed
+                // rather than waiting for an update.
+                continue;
+            }
+            const backingModel = this.backingStore.getLocalModel(id);
+            if ((backingModel == null) || !versionIsLarger(backingModel.getData().version, version)) {
+                pendingIds.push({ id, version });
+            }
+        }
+        const fn = () => {
+            const model = { values: {}, version: this.cloneMap(data.version) };
+            for (const id of Object.keys(data.values)) {
+                const version = data.values[id].value.version;
+                const entity = Object.keys(version).length === 0 ? this.newBackingInstance() : this.backingStore.getLocalModel(id);
+                model.values[id] = { value: this.entityFromModel(entity.getData(), id), version: data.values[id].version };
+            }
+            return model;
+        };
+        return { pendingIds, model: fn };
+    }
+    /**
+     * Add appropriate ids and send the provided message on all registered StorageProxy callbacks.
+     */
+    async send(message) {
+        for (const key of this.callbacks.keys()) {
+            void this.callbacks.get(key)({ ...message, id: key });
+        }
+    }
+    /**
+     * Add appropriate ids and send the provided message on all registered StorageProxy callbacks,
+     * except for the callback identified by the provided callback ID.
+     */
+    async sendExcept(message, notTo) {
+        for (const key of this.callbacks.keys()) {
+            if (key === notTo) {
+                continue;
+            }
+            void this.callbacks.get(key)({ ...message, id: key });
+        }
+    }
+    /**
+     * Write the provided entity to the backing store.
+     */
+    async updateBackingStore(entity) {
+        const model = this.entityToModel(entity);
+        return this.backingStore.onProxyMessage({ type: _store_interface_js__WEBPACK_IMPORTED_MODULE_2__["ProxyMessageType"].ModelUpdate, model, id: 1 }, entity.id);
+    }
+    newBackingInstance() {
+        const instanceConstructor = this.type.getContainedType().crdtInstanceConstructor();
+        return new instanceConstructor();
+    }
+    /**
+     * Apply the an add, remove, set or clear method to the provided operation
+     * based on the operation type.
+     */
+    processOp(onAdd, onRemove, onSet, onClear, operation) {
+        if (isCollectionOperation(operation)) {
+            switch (operation.type) {
+                case _crdt_crdt_collection_js__WEBPACK_IMPORTED_MODULE_1__["CollectionOpTypes"].Add:
+                    return onAdd(operation);
+                case _crdt_crdt_collection_js__WEBPACK_IMPORTED_MODULE_1__["CollectionOpTypes"].Remove:
+                    return onRemove(operation);
+                default:
+                    throw new Error('unexpected operation type');
+            }
+        }
+        else if (isSingletonOperation(operation)) {
+            switch (operation.type) {
+                case _crdt_crdt_singleton_js__WEBPACK_IMPORTED_MODULE_0__["SingletonOpTypes"].Set:
+                    return onSet(operation);
+                case _crdt_crdt_singleton_js__WEBPACK_IMPORTED_MODULE_0__["SingletonOpTypes"].Clear:
+                    return onClear(operation);
+                default:
+                    throw new Error('unexpected operation type');
+            }
+        }
+        throw new Error('unexpected operation type');
+    }
+    /**
+     * Return the element referenced by the provided operation, or null if the operation is a clear operation.
+     */
+    operationElement(operation) {
+        return this.processOp(addOp => addOp.added, removeOp => removeOp.removed, setOp => setOp.value, clearOp => null, operation);
+    }
+    /**
+     * Update the provided operation's element using the provided producer.
+     */
+    updateOp(operation, getValue) {
+        const add = addOp => ({ ...addOp, added: getValue() });
+        const remove = removeOp => ({ ...removeOp, removed: getValue() });
+        const set = setOp => ({ ...setOp, value: getValue() });
+        const clear = clearOp => clearOp;
+        return this.processOp(add, remove, set, clear, operation);
+    }
+}
+function versionIsLarger(larger, smaller) {
+    for (const key in Object.keys(smaller)) {
+        if (larger[key] < smaller[key]) {
+            return false;
+        }
+    }
+    return true;
+}
+class HoldQueue {
+    constructor() {
+        this.queue = {};
+    }
+    enqueue(entities, onRelease) {
+        const ids = {};
+        for (const { id, version } of entities) {
+            ids[id] = version;
+        }
+        const holdRecord = { ids, onRelease };
+        for (const entity of entities) {
+            if (!this.queue[entity.id]) {
+                this.queue[entity.id] = [];
+            }
+            this.queue[entity.id].push(holdRecord);
+        }
+    }
+    processID(id, version) {
+        const records = this.queue[id];
+        if (!records) {
+            return;
+        }
+        for (const record of records) {
+            if (versionIsLarger(version, record.ids[id])) {
+                delete record.ids[id];
+                if (Object.keys(record.ids).length === 0) {
+                    record.onRelease();
+                }
+            }
+        }
+        this.queue[id] = [];
+    }
+}
+function isCollectionOperation(operation) {
+    return Boolean(operation['added'] || operation['removed']);
+}
+function isSingletonOperation(operation) {
+    return !isCollectionOperation(operation);
+}
+//# sourceMappingURL=reference-mode-store.js.map
+
+/***/ }),
+/* 37 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "BackingStore", function() { return BackingStore; });
+/* harmony import */ var _direct_store_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(34);
+/**
+ * @license
+ * Copyright (c) 2019 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+
+/**
+ * A store that allows multiple CRDT models to be stored as sub-keys of a single storageKey location.
+ */
+class BackingStore {
+    constructor(options) {
+        this.stores = {};
+        this.callbacks = new Map();
+        this.nextCallbackId = 1;
+        this.storageKey = options.storageKey;
+        this.options = options;
+    }
+    on(callback) {
+        this.callbacks.set(this.nextCallbackId, callback);
+        return this.nextCallbackId++;
+    }
+    off(callback) {
+        this.callbacks.delete(callback);
+    }
+    getLocalModel(muxId) {
+        const store = this.stores[muxId];
+        if (store == null) {
+            this.stores[muxId] = { type: 'pending', promise: this.setupStore(muxId) };
+            return null;
+        }
+        if (store.type === 'pending') {
+            return null;
+        }
+        else {
+            return store.store.localModel;
+        }
+    }
+    async setupStore(muxId) {
+        const store = await _direct_store_js__WEBPACK_IMPORTED_MODULE_0__["DirectStore"].construct({ ...this.options, storageKey: this.storageKey.childWithComponent(muxId) });
+        const id = store.on(msg => this.processStoreCallback(muxId, msg));
+        const record = { store, id, type: 'record' };
+        this.stores[muxId] = record;
+        return record;
+    }
+    async onProxyMessage(message, muxId) {
+        let storeRecord = this.stores[muxId];
+        if (storeRecord == null) {
+            storeRecord = await this.setupStore(muxId);
+        }
+        if (storeRecord.type === 'pending') {
+            storeRecord = await storeRecord.promise;
+        }
+        const { store, id } = storeRecord;
+        message.id = id;
+        return store.onProxyMessage(message);
+    }
+    static async construct(options) {
+        return new BackingStore(options);
+    }
+    async idle() {
+        const stores = [];
+        for (const store of Object.values(this.stores)) {
+            if (store.type === 'record') {
+                stores.push(store.store);
+            }
+        }
+        await Promise.all(stores.map(store => store.idle()));
+    }
+    async processStoreCallback(muxId, message) {
+        return Promise.all([...this.callbacks.values()].map(callback => callback(message, muxId))).then(a => a.reduce((a, b) => a && b));
+    }
+}
+//# sourceMappingURL=backing-store.js.map
+
+/***/ }),
+/* 38 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "StorageKey", function() { return StorageKey; });
+/**
+ * @license
+ * Copyright 2019 Google LLC.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+class StorageKey {
+    constructor(protocol) {
+        this.protocol = protocol;
+    }
+    childKeyForArcInfo() {
+        return this.childWithComponent('arc-info');
+    }
+    childKeyForHandle(id) {
+        return this.childWithComponent(`handle/${id}`);
+    }
+}
+//# sourceMappingURL=storage-key.js.map
+
+/***/ }),
+/* 39 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "UnifiedStore", function() { return UnifiedStore; });
+/* harmony import */ var _recipe_comparable_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(40);
+/* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(3);
+/**
+ * @license
+ * Copyright (c) 2019 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+
+
+/**
+ * This is a temporary interface used to unify old-style stores (storage/StorageProviderBase) and new-style stores (storageNG/Store).
+ * We should be able to remove this once we've switched across to the NG stack.
+ *
+ * Note that for old-style stores, StorageStubs are used *sometimes* to represent storage which isn't activated. For new-style stores,
+ * Store itself represents an inactive store, and needs to be activated using activate(). This will present some integration
+ * challenges :)
+ *
+ * Note also that old-style stores use strings for Storage Keys, while NG storage uses storageNG/StorageKey subclasses. This provides
+ * a simple test for determining whether a store is old or new.
+ *
+ * Common functionality between old- and new-style stores goes in this class.
+ * Once the old-style stores are deleted, this class can be merged into the new
+ * Store class.
+ */
+class UnifiedStore {
+    constructor(storeInfo) {
+        this.storeInfo = storeInfo;
+    }
+    // Series of StoreInfo getters to make migration easier.
+    get id() { return this.storeInfo.id; }
+    get name() { return this.storeInfo.name; }
+    get type() { return this.storeInfo.type; }
+    get originalId() { return this.storeInfo.originalId; }
+    get source() { return this.storeInfo.source; }
+    get description() { return this.storeInfo.description; }
+    get claims() { return this.storeInfo.claims; }
+    /**
+     * Hack to cast this UnifiedStore to the old-style class StorageStub.
+     * TODO: Fix all usages of this method to handle new-style stores, and then
+     * delete.
+     */
+    castToStorageStub() {
+        // Can't use instanceof; causes circular dependencies.
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_1__["assert"])(this.unifiedStoreType === 'StorageStub', 'Not a StorageStub!');
+        return this;
+    }
+    // TODO: Delete this method when the old-style storage is deleted.
+    reportExceptionInHost(exception) {
+        // This class lives in the host, so it's safe to just rethrow the exception.
+        throw exception;
+    }
+    _compareTo(other) {
+        let cmp;
+        cmp = Object(_recipe_comparable_js__WEBPACK_IMPORTED_MODULE_0__["compareStrings"])(this.name, other.name);
+        if (cmp !== 0)
+            return cmp;
+        cmp = Object(_recipe_comparable_js__WEBPACK_IMPORTED_MODULE_0__["compareNumbers"])(this.version, other.version);
+        if (cmp !== 0)
+            return cmp;
+        cmp = Object(_recipe_comparable_js__WEBPACK_IMPORTED_MODULE_0__["compareStrings"])(this.source, other.source);
+        if (cmp !== 0)
+            return cmp;
+        cmp = Object(_recipe_comparable_js__WEBPACK_IMPORTED_MODULE_0__["compareStrings"])(this.id, other.id);
+        if (cmp !== 0)
+            return cmp;
+        return 0;
+    }
+    // TODO: Make these tags live inside StoreInfo.
+    toManifestString(handleTags) {
+        const results = [];
+        const handleStr = [];
+        handleStr.push(`store`);
+        if (this.name) {
+            handleStr.push(`${this.name}`);
+        }
+        handleStr.push(`of ${this.type.toString()}`);
+        if (this.id) {
+            handleStr.push(`'${this.id}'`);
+        }
+        if (this.originalId) {
+            handleStr.push(`!!${this.originalId}`);
+        }
+        if (this.version !== undefined) {
+            handleStr.push(`@${this.version}`);
+        }
+        if (handleTags && handleTags.length) {
+            handleStr.push(`${handleTags.join(' ')}`);
+        }
+        if (this.source) {
+            handleStr.push(`in '${this.source}'`);
+        }
+        else if (this.storageKey) {
+            handleStr.push(`at '${this.storageKey}'`);
+        }
+        // TODO(shans): there's a 'this.source' in StorageProviderBase which is sometimes
+        // serialized here too - could it ever be part of StorageStub?
+        results.push(handleStr.join(' '));
+        if (this.claims.length > 0) {
+            results.push(`  claim is ${this.claims.map(claim => claim.tag).join(' and is ')}`);
+        }
+        if (this.description) {
+            results.push(`  description \`${this.description}\``);
+        }
+        return results.join('\n');
+    }
+}
+//# sourceMappingURL=unified-store.js.map
+
+/***/ }),
+/* 40 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "compareNulls", function() { return compareNulls; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "compareStrings", function() { return compareStrings; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "compareNumbers", function() { return compareNumbers; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "compareBools", function() { return compareBools; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "compareArrays", function() { return compareArrays; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "compareObjects", function() { return compareObjects; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "compareComparables", function() { return compareComparables; });
+/* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
+/**
+ * @license
+ * Copyright (c) 2017 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+
+function compareNulls(o1, o2) {
+    if (o1 === o2)
+        return 0;
+    if (o1 === null)
+        return -1;
+    return 1;
+}
+function compareStrings(s1, s2) {
+    if (s1 == null || s2 == null)
+        return compareNulls(s1, s2);
+    return s1.localeCompare(s2);
+}
+function compareNumbers(n1, n2) {
+    if (n1 == null || n2 == null)
+        return compareNulls(n1, n2);
+    return n1 - n2;
+}
+function compareBools(b1, b2) {
+    if (b1 == null || b2 == null)
+        return compareNulls(b1, b2);
+    return Number(b1) - Number(b2);
+}
+function compareArrays(a1, a2, compare) {
+    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(a1 != null);
+    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(a2 != null);
+    if (a1.length !== a2.length)
+        return compareNumbers(a1.length, a2.length);
+    for (let i = 0; i < a1.length; i++) {
+        let result;
+        if ((result = compare(a1[i], a2[i])) !== 0)
+            return result;
+    }
+    return 0;
+}
+function compareObjects(o1, o2, compare) {
+    const keys = Object.keys(o1);
+    let result;
+    if ((result = compareNumbers(keys.length, Object.keys(o2).length)) !== 0)
+        return result;
+    for (const key of keys) {
+        if ((result = compare(o1[key], o2[key])) !== 0)
+            return result;
+    }
+    return 0;
+}
+function compareComparables(o1, o2) {
+    if (o1 == null || o2 == null)
+        return compareNulls(o1, o2);
+    return o1._compareTo(o2);
+}
+//# sourceMappingURL=comparable.js.map
+
+/***/ }),
+/* 41 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CheckType", function() { return CheckType; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Check", function() { return Check; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CheckBooleanExpression", function() { return CheckBooleanExpression; });
@@ -6390,7 +8488,7 @@ function createCheck(checkTarget, astNode, handleConnectionMap) {
 //# sourceMappingURL=particle-check.js.map
 
 /***/ }),
-/* 30 */
+/* 42 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -6472,100 +8570,7 @@ function createParticleClaim(handle, astNode, handleConnectionMap) {
 //# sourceMappingURL=particle-claim.js.map
 
 /***/ }),
-/* 31 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "setDiff", function() { return setDiff; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "setDiffCustom", function() { return setDiffCustom; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "floatingPromiseToAudit", function() { return floatingPromiseToAudit; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "noAwait", function() { return noAwait; });
-/* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
-/**
- * @license
- * Copyright (c) 2018 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-
-/**
- * Returns the set delta between two lists based on direct object comparison.
- */
-function setDiff(from, to) {
-    const result = { add: [], remove: [] };
-    const items = new Set([...from, ...to]);
-    const fromSet = new Set(from);
-    const toSet = new Set(to);
-    for (const item of items) {
-        if (fromSet.has(item)) {
-            if (toSet.has(item)) {
-                continue;
-            }
-            result.remove.push(item);
-            continue;
-        }
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(toSet.has(item));
-        result.add.push(item);
-    }
-    return result;
-}
-/**
- * Returns the set delta between two lists based on custom object comparison.
- * `keyFn` takes type T and returns the value by which items should be compared.
- */
-function setDiffCustom(from, to, keyFn) {
-    const result = { add: [], remove: [] };
-    const items = new Map();
-    const fromSet = new Map();
-    const toSet = new Map();
-    for (const item of from) {
-        const key = keyFn(item);
-        items.set(key, item);
-        fromSet.set(key, item);
-    }
-    for (const item of to) {
-        const key = keyFn(item);
-        items.set(key, item);
-        toSet.set(key, item);
-    }
-    for (const [key, item] of items) {
-        if (fromSet.has(key)) {
-            if (toSet.has(key)) {
-                continue;
-            }
-            result.remove.push(item);
-            continue;
-        }
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(toSet.has(key));
-        result.add.push(item);
-    }
-    return result;
-}
-/**
- * A hack to ignore a floating promise and bypass the linter. Promises should very rarely be left floating, and when such behaviour is intended,
- * it should be clearly marked as such. See https://tsetse.info/must-use-promises.html for details.
- *
- * TODO: Remove all usages of this function and then delete it.
- */
-function floatingPromiseToAudit(promise) { }
-/**
- * Noop function that can be used to supress the tsetse must-use-promises rule.
- *
- * Example Usage:
- *   async function x() {
- *     await doA();
- *     noAwait(doB());
- *   }
- */
-function noAwait(result) { }
-//# sourceMappingURL=util.js.map
-
-/***/ }),
-/* 32 */
+/* 43 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -6639,7 +8644,7 @@ class SlotProxy {
 //# sourceMappingURL=slot-proxy.js.map
 
 /***/ }),
-/* 33 */
+/* 44 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -6652,7 +8657,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _entity_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(11);
 /* harmony import */ var _reference_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(12);
 /* harmony import */ var _type_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(8);
-/* harmony import */ var _particle_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(34);
+/* harmony import */ var _particle_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(45);
 /* harmony import */ var _handle_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(13);
 /* harmony import */ var _arc_exceptions_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(14);
 /**
@@ -7388,7 +9393,7 @@ class WasmParticle extends _particle_js__WEBPACK_IMPORTED_MODULE_4__["Particle"]
 //# sourceMappingURL=wasm.js.map
 
 /***/ }),
-/* 34 */
+/* 45 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -7659,14 +9664,41 @@ class Particle {
 //# sourceMappingURL=particle.js.map
 
 /***/ }),
-/* 35 */
+/* 46 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Flags", function() { return Flags; });
+/**
+ * @license
+ * Copyright 2019 Google LLC.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+/** Arcs runtime flags. */
+class Flags {
+    /** Resets flags. To be called in test teardown methods. */
+    static reset() {
+        Flags.useNewStorageStack = false;
+    }
+}
+/** Initialize flags to their default value */
+Flags.reset();
+//# sourceMappingURL=flags.js.map
+
+/***/ }),
+/* 47 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "PlatformLoader", function() { return PlatformLoader; });
-/* harmony import */ var _loader_platform_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(36);
-/* harmony import */ var _runtime_log_factory_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(51);
+/* harmony import */ var _loader_platform_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(48);
+/* harmony import */ var _runtime_log_factory_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(63);
 /**
  * @license
  * Copyright 2019 Google LLC.
@@ -7755,19 +9787,19 @@ class PlatformLoader extends _loader_platform_js__WEBPACK_IMPORTED_MODULE_0__["P
 //# sourceMappingURL=loader-web.js.map
 
 /***/ }),
-/* 36 */
+/* 48 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "PlatformLoaderBase", function() { return PlatformLoaderBase; });
-/* harmony import */ var _runtime_loader_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(37);
-/* harmony import */ var _runtime_particle_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(34);
-/* harmony import */ var _runtime_dom_particle_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(43);
-/* harmony import */ var _runtime_multiplexer_dom_particle_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(46);
-/* harmony import */ var _runtime_transformation_dom_particle_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(42);
-/* harmony import */ var _runtime_ui_particle_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(47);
-/* harmony import */ var _runtime_ui_multiplexer_particle_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(49);
+/* harmony import */ var _runtime_loader_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(49);
+/* harmony import */ var _runtime_particle_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(45);
+/* harmony import */ var _runtime_dom_particle_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(55);
+/* harmony import */ var _runtime_multiplexer_dom_particle_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(58);
+/* harmony import */ var _runtime_transformation_dom_particle_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(54);
+/* harmony import */ var _runtime_ui_particle_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(59);
+/* harmony import */ var _runtime_ui_multiplexer_particle_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(61);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -7845,23 +9877,23 @@ class PlatformLoaderBase extends _runtime_loader_js__WEBPACK_IMPORTED_MODULE_0__
 //# sourceMappingURL=loader-platform.js.map
 
 /***/ }),
-/* 37 */
+/* 49 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Loader", function() { return Loader; });
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
-/* harmony import */ var _platform_fetch_web_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(38);
-/* harmony import */ var _platform_fs_web_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(39);
-/* harmony import */ var _platform_vm_web_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(40);
-/* harmony import */ var _converters_jsonldToManifest_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(41);
+/* harmony import */ var _platform_fetch_web_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(50);
+/* harmony import */ var _platform_fs_web_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(51);
+/* harmony import */ var _platform_vm_web_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(52);
+/* harmony import */ var _converters_jsonldToManifest_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(53);
 /* harmony import */ var _reference_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(12);
-/* harmony import */ var _particle_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(34);
-/* harmony import */ var _transformation_dom_particle_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(42);
-/* harmony import */ var _dom_particle_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(43);
-/* harmony import */ var _multiplexer_dom_particle_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(46);
-/* harmony import */ var _ui_particle_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(47);
+/* harmony import */ var _particle_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(45);
+/* harmony import */ var _transformation_dom_particle_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(54);
+/* harmony import */ var _dom_particle_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(55);
+/* harmony import */ var _multiplexer_dom_particle_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(58);
+/* harmony import */ var _ui_particle_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(59);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -8025,7 +10057,7 @@ class Loader {
 //# sourceMappingURL=loader.js.map
 
 /***/ }),
-/* 38 */
+/* 50 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -8049,7 +10081,7 @@ const localFetch = fetch;
 //# sourceMappingURL=fetch-web.js.map
 
 /***/ }),
-/* 39 */
+/* 51 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -8069,7 +10101,7 @@ const fs = {};
 
 
 /***/ }),
-/* 40 */
+/* 52 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -8089,7 +10121,7 @@ const vm = {};
 
 
 /***/ }),
-/* 41 */
+/* 53 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -8204,13 +10236,13 @@ class JsonldToManifest {
 //# sourceMappingURL=jsonldToManifest.js.map
 
 /***/ }),
-/* 42 */
+/* 54 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "TransformationDomParticle", function() { return TransformationDomParticle; });
-/* harmony import */ var _dom_particle_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(43);
+/* harmony import */ var _dom_particle_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(55);
 /* harmony import */ var _entity_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(11);
 /**
  * @license
@@ -8260,14 +10292,14 @@ class TransformationDomParticle extends _dom_particle_js__WEBPACK_IMPORTED_MODUL
 //# sourceMappingURL=transformation-dom-particle.js.map
 
 /***/ }),
-/* 43 */
+/* 55 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "DomParticle", function() { return DomParticle; });
-/* harmony import */ var _modalities_dom_components_xen_xen_state_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(44);
-/* harmony import */ var _dom_particle_base_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(45);
+/* harmony import */ var _modalities_dom_components_xen_xen_state_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(56);
+/* harmony import */ var _dom_particle_base_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(57);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -8440,7 +10472,7 @@ class DomParticle extends Object(_modalities_dom_components_xen_xen_state_js__WE
 //# sourceMappingURL=dom-particle.js.map
 
 /***/ }),
-/* 44 */
+/* 56 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -8593,14 +10625,14 @@ const XenStateMixin = Base => class extends Base {
 
 
 /***/ }),
-/* 45 */
+/* 57 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "DomParticleBase", function() { return DomParticleBase; });
 /* harmony import */ var _handle_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(13);
-/* harmony import */ var _particle_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(34);
+/* harmony import */ var _particle_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(45);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -8880,7 +10912,7 @@ class DomParticleBase extends _particle_js__WEBPACK_IMPORTED_MODULE_1__["Particl
 //# sourceMappingURL=dom-particle-base.js.map
 
 /***/ }),
-/* 46 */
+/* 58 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -8888,7 +10920,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "MultiplexerDomParticle", function() { return MultiplexerDomParticle; });
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
 /* harmony import */ var _particle_spec_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(5);
-/* harmony import */ var _transformation_dom_particle_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(42);
+/* harmony import */ var _transformation_dom_particle_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(54);
 /* harmony import */ var _entity_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(11);
 /**
  * @license
@@ -9073,14 +11105,14 @@ class MultiplexerDomParticle extends _transformation_dom_particle_js__WEBPACK_IM
 //# sourceMappingURL=multiplexer-dom-particle.js.map
 
 /***/ }),
-/* 47 */
+/* 59 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "UiParticle", function() { return UiParticle; });
-/* harmony import */ var _modalities_dom_components_xen_xen_state_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(44);
-/* harmony import */ var _ui_particle_base_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(48);
+/* harmony import */ var _modalities_dom_components_xen_xen_state_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(56);
+/* harmony import */ var _ui_particle_base_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(60);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -9225,7 +11257,7 @@ class UiParticle extends Object(_modalities_dom_components_xen_xen_state_js__WEB
 //# sourceMappingURL=ui-particle.js.map
 
 /***/ }),
-/* 48 */
+/* 60 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -9233,7 +11265,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "UiParticleBase", function() { return UiParticleBase; });
 /* harmony import */ var _entity_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(11);
 /* harmony import */ var _handle_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(13);
-/* harmony import */ var _particle_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(34);
+/* harmony import */ var _particle_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(45);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -9413,14 +11445,14 @@ class UiParticleBase extends _particle_js__WEBPACK_IMPORTED_MODULE_2__["Particle
 //# sourceMappingURL=ui-particle-base.js.map
 
 /***/ }),
-/* 49 */
+/* 61 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "UiMultiplexerParticle", function() { return UiMultiplexerParticle; });
 /* harmony import */ var _particle_spec_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(5);
-/* harmony import */ var _ui_transformation_particle_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(50);
+/* harmony import */ var _ui_transformation_particle_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(62);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -9583,13 +11615,13 @@ class UiMultiplexerParticle extends _ui_transformation_particle_js__WEBPACK_IMPO
 //# sourceMappingURL=ui-multiplexer-particle.js.map
 
 /***/ }),
-/* 50 */
+/* 62 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "UiTransformationParticle", function() { return UiTransformationParticle; });
-/* harmony import */ var _ui_particle_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(47);
+/* harmony import */ var _ui_particle_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(59);
 /* harmony import */ var _entity_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(11);
 /**
  * @license
@@ -9628,13 +11660,13 @@ class UiTransformationParticle extends _ui_particle_js__WEBPACK_IMPORTED_MODULE_
 //# sourceMappingURL=ui-transformation-particle.js.map
 
 /***/ }),
-/* 51 */
+/* 63 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "logsFactory", function() { return logsFactory; });
-/* harmony import */ var _platform_log_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(52);
+/* harmony import */ var _platform_log_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(64);
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "logFactory", function() { return _platform_log_web_js__WEBPACK_IMPORTED_MODULE_0__["logFactory"]; });
 
 /**
@@ -9656,7 +11688,7 @@ const logsFactory = (preamble, color) => ({
 //# sourceMappingURL=log-factory.js.map
 
 /***/ }),
-/* 52 */
+/* 64 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";

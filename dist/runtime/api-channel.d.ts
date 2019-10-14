@@ -110,7 +110,7 @@ export declare abstract class PECInnerPort extends APIPort {
     constructor(messagePort: MessagePort);
     abstract onStop(): any;
     abstract onDefineHandle(identifier: string, type: Type, name: string): any;
-    abstract onInstantiateParticle(id: string, spec: ParticleSpec, proxies: Map<string, StorageProxy>): any;
+    abstract onInstantiateParticle(id: string, spec: ParticleSpec, proxies: Map<string, StorageProxy | StorageProxyNG<CRDTTypeRecord>>): any;
     abstract onReinstantiateParticle(id: string, spec: ParticleSpec, proxies: Map<string, StorageProxy>): any;
     abstract onReloadParticles(ids: string[]): any;
     abstract onUIEvent(particle: Particle, slotName: string, event: {}): any;
@@ -145,11 +145,11 @@ export declare abstract class PECInnerPort extends APIPort {
     ProxyMessage(handle: StorageProxyNG<CRDTTypeRecord>, message: ProxyMessage<CRDTTypeRecord>, callback: Consumer<Promise<boolean>>): void;
     Idle(version: number, relevance: Map<Particle, number[]>): void;
     GetBackingStore(callback: (proxy: StorageProxy, key: string) => void, storageKey: string, type: Type): void;
-    abstract onGetBackingStoreCallback(callback: (proxy: StorageProxy, key: string) => void, type: Type, name: string, id: string, storageKey: string): any;
+    abstract onGetBackingStoreCallback(callback: (proxy: StorageProxy | StorageProxyNG<CRDTTypeRecord>, key: string) => void, type: Type, name: string, id: string, storageKey: string): any;
     ConstructInnerArc(callback: Consumer<string>, particle: Particle): void;
     abstract onConstructArcCallback(callback: Consumer<string>, arc: string): any;
     ArcCreateHandle(callback: Consumer<StorageProxy>, arc: {}, type: Type, name: string): void;
-    abstract onCreateHandleCallback(callback: Consumer<StorageProxy>, type: Type, name: string, id: string): any;
+    abstract onCreateHandleCallback(callback: Consumer<StorageProxy | StorageProxyNG<CRDTTypeRecord>>, type: Type, name: string, id: string): any;
     ArcMapHandle(callback: Consumer<string>, arc: {}, handle: Handle): void;
     abstract onMapHandleCallback(callback: Consumer<string>, id: string): any;
     ServiceRequest(particle: Particle, content: {}, callback: Function): void;

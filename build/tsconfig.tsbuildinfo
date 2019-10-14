@@ -278,8 +278,8 @@
         "signature": "4de19dc3da115f1a9469359b6227ebf89ec59c73934a848233e9dce3cf09a3f5"
       },
       "../src/runtime/storageNG/handle.ts": {
-        "version": "3a3820ea3ab1bf85895d7de5ff35ab8a4b2dd310596323eecaba9861448a25a3",
-        "signature": "1fbb0cebcfb95f1ec7765e3b94fb4d333ee7c12923b9ff39abf7b9d76787bc34"
+        "version": "b6235c47378c7a403e91a9da75ec02ed3b134128db9d6b7194ff4df63b2bfd54",
+        "signature": "7fc2de974417a51468a76268e713b444fb7e63e81c55b2c7dd7587f9b2cb6a9f"
       },
       "../src/runtime/storageNG/storage-proxy.ts": {
         "version": "61923904985351f0e34248998f5b826cfd754b7d5f32f1c37f0830a9bcbada11",
@@ -498,15 +498,15 @@
         "signature": "f5a76c9d0f56d9aea76b7b9af419daaf2bd80e4ad350672331b144aafec7a76f"
       },
       "../src/runtime/api-channel.ts": {
-        "version": "247810a0e61f88a7664f502316a81952a4701143c82aeed2e54c982b469e0d57",
-        "signature": "c39b1d7f70b4c0897e75d1b8ecde32c8388c6381406f6df06b80300dbb1a4009"
+        "version": "eb12a52864075af07c178a9df56208e7aea9509814e32f2244005bf5d17a4c68",
+        "signature": "2752bbc6edbb8e7e1a7107fda5d2df2a32a4d944525b31351aeafc9c3666cb49"
       },
       "../src/runtime/wasm.ts": {
         "version": "488370210b7e95e71e1609da6067ed7774b4ab889e46f25f142bd51de626db61",
         "signature": "ee934e5addd1afa86c5d3f236c7b9bfd50a5f1685c9ea2c622b4c93c576fffc9"
       },
       "../src/runtime/particle-execution-context.ts": {
-        "version": "da4449bd7f0d0a15c7f07cdff3368304d0e7e31d611f790070ea78b90c6d68de",
+        "version": "3999441b4febeb73634238f6df2d65b57fb233405ec744c9ebce45bff962861c",
         "signature": "c152a7fbfea2150cfb3893377f93e665d7646cf26648594a3ef9701eaf3dfd20"
       },
       "../src/runtime/entity.ts": {
@@ -522,8 +522,8 @@
         "signature": "50f22c6414d93bc2b5f52da8ecccca67927c7b89aabb4e86903900a576ab1356"
       },
       "../src/runtime/type.ts": {
-        "version": "a03e71b049e0df163357514151df531d6c19434ca3c037ce580a9d895b98e1d1",
-        "signature": "20df5968514f727cf40579be87b83e1edb6ed2de377108d6fe08c102ba9489a0"
+        "version": "f122549bf7079c7bb2225675deb72f03f9888421aaadec348ba402e0faa393b2",
+        "signature": "b2e4496b0115ed995b1b73b24c2de960440341123c4dbef2980de9f2bf79ad91"
       },
       "../src/runtime/recipe/type-checker.ts": {
         "version": "0d29294f4265accd54bc7718d8b0855000fb1647f4846d8c186fad7b9b467d98",
@@ -2309,7 +2309,7 @@
         "signature": "fd95df5d076cbfed143dc4904d376b5c6d9cb1091b630994ffe2366010afa6b3"
       },
       "../src/runtime/storageNG/tests/handle-test.ts": {
-        "version": "8fb6008842a3c51a4706bb3db0984c8c2db66790162f876955b616bd160e05af",
+        "version": "d3770c42f8aaac710c4eb2e0cada6aaaee6b36fb8c2bd68b26ec41bbd4664de5",
         "signature": "fd95df5d076cbfed143dc4904d376b5c6d9cb1091b630994ffe2366010afa6b3"
       },
       "../src/runtime/storageNG/tests/ramdisk-backing-store-integration-test.ts": {
@@ -3870,6 +3870,7 @@
         "../src/runtime/slot-proxy.ts",
         "../src/runtime/slot-consumer.ts",
         "../src/runtime/storage-proxy.ts",
+        "../src/runtime/storageNG/handle.ts",
         "../src/runtime/storageNG/storage-proxy.ts",
         "../src/runtime/crdt/crdt.ts",
         "../src/runtime/storageNG/store.ts",
@@ -3878,6 +3879,7 @@
         "../src/runtime/message-channel.ts",
         "../src/runtime/wasm.ts",
         "../src/runtime/store.ts",
+        "../src/runtime/flags.ts",
         "../node_modules/@types/node/util.d.ts",
         "../node_modules/@types/node/ts3.1/util.d.ts"
       ],
@@ -3927,6 +3929,7 @@
         "../src/runtime/crdt/crdt-count.ts",
         "../src/runtime/crdt/crdt-collection.ts",
         "../src/runtime/crdt/crdt-singleton.ts",
+        "../src/runtime/storageNG/handle.ts",
         "../node_modules/@types/node/util.d.ts",
         "../node_modules/@types/node/ts3.1/util.d.ts"
       ],
@@ -9081,10 +9084,10 @@
         "../src/runtime/recipe/handle.ts",
         "../src/runtime/arc-exceptions.ts",
         "../src/runtime/storage-proxy.ts",
+        "../src/runtime/storageNG/storage-proxy.ts",
         "../src/runtime/particle.ts",
         "../src/runtime/hot.ts",
         "../src/runtime/storage/crdt-collection-model.ts",
-        "../src/runtime/storageNG/storage-proxy.ts",
         "../src/runtime/handle.ts"
       ],
       "../src/runtime/wasm.ts": [
@@ -9142,6 +9145,7 @@
         "../src/runtime/schema.ts",
         "../src/runtime/crdt/crdt-count.ts",
         "../src/runtime/crdt/crdt-singleton.ts",
+        "../src/runtime/storageNG/handle.ts",
         "../src/runtime/type-variable-info.ts",
         "../src/runtime/interface-info.ts",
         "../src/runtime/slot-info.ts",

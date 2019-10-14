@@ -77,3 +77,4 @@ export declare class SingletonHandle<T extends Referenceable> extends Handle<CRD
     onUpdate(op: SingletonOperation<T>, oldData: T, version: VersionMap): Promise<void>;
     onSync(): Promise<void>;
 }
+export declare function handleNGFor<T extends CRDTTypeRecord>(key: string, storageProxy: StorageProxy<T>, idGenerator: IdGenerator, particle: Particle, canRead: boolean, canWrite: boolean, name?: string): Handle<T>;

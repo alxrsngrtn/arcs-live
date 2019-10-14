@@ -12,8 +12,11 @@ import { PECInnerPort } from './api-channel.js';
 import { handleFor } from './handle.js';
 import { SlotProxy } from './slot-proxy.js';
 import { StorageProxy, StorageProxyScheduler } from './storage-proxy.js';
+import { handleNGFor } from './storageNG/handle.js';
+import { StorageProxy as StorageProxyNG } from './storageNG/storage-proxy.js';
 import { WasmContainer, WasmParticle } from './wasm.js';
 import { UserException } from './arc-exceptions.js';
+import { Flags } from './flags.js';
 export class ParticleExecutionContext {
     constructor(port, pecId, idGenerator, loader) {
         this.particles = new Map();
@@ -24,15 +27,30 @@ export class ParticleExecutionContext {
         const pec = this;
         this.apiPort = new class extends PECInnerPort {
             onDefineHandle(identifier, type, name) {
+                if (Flags.useNewStorageStack) {
+                    return new StorageProxyNG(identifier, pec, type);
+                }
                 return StorageProxy.newProxy(identifier, type, this, pec, pec.scheduler, name);
             }
             onGetBackingStoreCallback(callback, type, name, id, storageKey) {
-                const proxy = StorageProxy.newProxy(id, type, this, pec, pec.scheduler, name);
-                proxy.storageKey = storageKey;
+                let proxy;
+                if (Flags.useNewStorageStack) {
+                    proxy = new StorageProxyNG(id, pec, type);
+                }
+                else {
+                    proxy = StorageProxy.newProxy(id, type, this, pec, pec.scheduler, name);
+                    proxy.storageKey = storageKey;
+                }
                 return [proxy, () => callback(proxy, storageKey)];
             }
             onCreateHandleCallback(callback, type, name, id) {
-                const proxy = StorageProxy.newProxy(id, type, this, pec, pec.scheduler, name);
+                let proxy;
+                if (Flags.useNewStorageStack) {
+                    proxy = new StorageProxyNG(id, pec, type);
+                }
+                else {
+                    proxy = StorageProxy.newProxy(id, type, this, pec, pec.scheduler, name);
+                }
                 return [proxy, () => callback(proxy)];
             }
             onMapHandleCallback(callback, id) {
@@ -240,7 +258,13 @@ export class ParticleExecutionContext {
     }
     createHandle(particle, spec, id, name, proxy, handleMap, registerList) {
         const connSpec = spec.handleConnectionMap.get(name);
-        const handle = handleFor(proxy, this.idGenerator, name, id, connSpec.isInput, connSpec.isOutput);
+        let handle;
+        if (proxy instanceof StorageProxyNG) {
+            handle = handleNGFor(id, proxy, this.idGenerator, particle, connSpec.isInput, connSpec.isOutput, name);
+        }
+        else {
+            handle = handleFor(proxy, this.idGenerator, name, id, connSpec.isInput, connSpec.isOutput);
+        }
         handleMap.set(name, handle);
         // Defer registration of handles with proxies until after particles have a chance to
         // configure them in setHandles.
@@ -252,8 +276,15 @@ export class ParticleExecutionContext {
             this.apiPort.ReportExceptionInHost(exc);
         });
         registerList.forEach(({ proxy, particle, handle }) => {
-            if (proxy instanceof StorageProxy)
+            if (proxy instanceof StorageProxy) {
                 proxy.register(particle, handle);
+            }
+            else if (proxy instanceof StorageProxyNG) {
+                proxy.registerHandle(handle);
+            }
+            else {
+                throw new Error('Expecting a StorageProxy');
+            }
         });
         const idx = this.pendingLoads.indexOf(p);
         this.pendingLoads.splice(idx, 1);
