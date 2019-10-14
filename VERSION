@@ -1,5 +1,8 @@
-commit d93d0c98ad56f221d6309450de3d3e724e2f1e6e
-Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
-Date:   Mon Oct 14 14:49:14 2019 +1100
+commit bf22df04cc82f460a6c221df7c4b9b1315be9657
+Author: Jason Feinstein <jwf@google.com>
+Date:   Sun Oct 13 20:51:04 2019 -0700
 
-    Wasm C++: unit tests for the storage API (#3765)
+    Set up src_kt directory, get the ball rolling with Crdts in Kotlin. (#3764)
+    
+    * Create CrdtCount and the base CRDT classes/interfaces.
+    * Make src_kt_runtests build everything as well as run tests. Ensures that non-pure kotlin fails.
