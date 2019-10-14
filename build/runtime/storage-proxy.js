@@ -447,7 +447,7 @@ export class SingletonProxy extends StorageProxy {
         return Promise.resolve();
     }
     async clear(particleId) {
-        if (this.model == null) {
+        if (this.synchronized === SyncState.full && this.model == null) {
             return Promise.resolve();
         }
         const barrier = this.generateBarrier();

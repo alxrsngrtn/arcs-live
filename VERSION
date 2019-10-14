@@ -1,5 +1,5 @@
-commit a8c17cc8e3ae2cf5d666e45c32505fe655d21eaf
-Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Fri Oct 11 17:02:51 2019 -0700
+commit d93d0c98ad56f221d6309450de3d3e724e2f1e6e
+Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
+Date:   Mon Oct 14 14:49:14 2019 +1100
 
-    Fix invisible pec-log (#3763)
+    Wasm C++: unit tests for the storage API (#3765)

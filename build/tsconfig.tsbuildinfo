@@ -366,7 +366,7 @@
         "signature": "66844e73c24dca86bd3eb2a8dc6216d6fd7f6f5ea06e9b05c06758da4bfe5288"
       },
       "../src/runtime/storage/volatile-storage.ts": {
-        "version": "239e479d95844d0c0f37e6a6e5b66ca3aa1fd88e819610ba3148e665ad72bb8b",
+        "version": "3af9300d248ccf9d9c3335ef387e03639f2175d745ac1eba4772cad0d1d579e8",
         "signature": "b46535ffd04b9a6cf80aa5092fdd675e497f8f01ed62ab2e2b8bdd8fa9fd7a9e"
       },
       "../src/runtime/synthetic-types.ts": {
@@ -434,7 +434,7 @@
         "signature": "ea11760a3d83b6957c9a8b157adb99a154916d9fa6b3b03f1decd74896f06222"
       },
       "../src/runtime/storage-proxy.ts": {
-        "version": "70f4b83557beeec836f8da4881313ce364bac728378819e7870ce9ab78b76559",
+        "version": "5209e71a8ebbcfb7678e46ab5ffbe6d61924c98e7452b3d0b5f5c5a76288ba49",
         "signature": "a0d95acea436f414bd7b684ccd854793f7349abcc93915f915f17fe0136271ab"
       },
       "../src/runtime/symbols.ts": {
@@ -2733,7 +2733,7 @@
         "signature": "8bc1d39a3b8ec61064f9969316a088e314895e7ffd094468dcc0b238f33cb4a6"
       },
       "../src/wasm/cpp/tests/wasm-cpp-test.ts": {
-        "version": "ca2f5f770e0a88ac35ffb2813b89b9522c0abdf805073917553a17952db22145",
+        "version": "5922e34ae8f613baf14873cfad76a682ca122d089740247dd396108a32cde67d",
         "signature": "97ae39ce2411e60af41db50e11b3048c2b48322f144dcadb5272343ec368356a"
       },
       "../node_modules/@types/core-js/index.d.ts": {
