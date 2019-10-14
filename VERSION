@@ -1,7 +1,9 @@
-commit 2b3c3d70be89cbd06ad3458e78555188feb5f1eb
-Author: Jason Feinstein <jwf@google.com>
-Date:   Mon Oct 14 14:26:54 2019 -0700
+commit 6a32547a56501b39432c4ef30cdca7341c13eb1a
+Author: Joshua Pratt <jp10010101010000@gmail.com>
+Date:   Tue Oct 15 08:01:44 2019 +1000
 
-    Make VersionMap into a proper class. (#3766)
+    Fix slandles (#3768)
     
-    Implements additional functionality for VersionMap, including: domination testing, equality testing, and merging.
+    * Fix for slandles
+    * Check before calling an unsafe function (fails on argument being undefined)
+    * Fix for dependent slandles (slots now depend on targetSlot name)

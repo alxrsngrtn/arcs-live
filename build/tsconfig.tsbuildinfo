@@ -210,7 +210,7 @@
         "signature": "c0590035b74904e19a3a17cc1320600e146883313f895abc76e698548978c467"
       },
       "../src/runtime/recipe/handle-connection.ts": {
-        "version": "4587d3b9c2b0042294bbe7b224ca09655494752c063e40cd9250a74d71a655e6",
+        "version": "66a3f7a7b4b194d3849d33dc7119d5778efcd58b81508e1d267a6c59bb6cd0da",
         "signature": "0f5b3d55c7475fcb3d44c4fb6f71c0e361e99ed2b67b27a737725b855e3b55a4"
       },
       "../src/runtime/recipe/particle.ts": {
@@ -2221,7 +2221,7 @@
         "signature": "aff514b5ca3f500524542842c93fa7ade3927c4166596d8d37b3ad1fa3d1d014"
       },
       "../src/runtime/ui-slot-composer.ts": {
-        "version": "7d74b19bb543f819aab6391d0e2c62d47519155652c9b6996290643f698c8fe5",
+        "version": "eeca2eff1c24784511a35d39a3c96d18d488518129bde964e48134640d048caa",
         "signature": "ac2cd9d39c0f3a85b0cf9ae7a2c24066b6c4c707e201187cb23f749c4b0230fa"
       },
       "../src/runtime/webassembly.d.ts": {
