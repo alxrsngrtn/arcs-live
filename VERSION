@@ -1,10 +1,5 @@
-commit a36ac85e5cb46027a780cb82494488e5f59120c0
-Author: ianull <ianchang@google.com>
-Date:   Tue Oct 15 10:24:05 2019 -0700
+commit 5dec9227def37797cd74167ec8a20fa35a06ecb0
+Author: yuangu-google <yuangu@google.com>
+Date:   Tue Oct 15 15:49:12 2019 -0700
 
-    Decouples AutoValue deps from J2CL libs (#3771)
-    
-    Needs standalone build rules of AutoValue libraries and plugins
-    for eaiser ports and clearer deps down the road.
-    
-    Use "//javaharness:autovalue" for all AutoValue deps.
+    Rename javaharness classes to same style. (#3784)
