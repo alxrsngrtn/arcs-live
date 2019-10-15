@@ -1,7 +1,8 @@
-commit 2064fd3eed923c483e71ebdb99355b2a4c0b8d5f
-Author: Jason Feinstein <jwf@google.com>
-Date:   Mon Oct 14 21:26:00 2019 -0700
+commit c175d764285bb6fef34af23f3605479736baae7a
+Author: ianull <ianchang@google.com>
+Date:   Tue Oct 15 10:23:20 2019 -0700
 
-    Create CrdtSet. (#3776)
+    Doc update: add the debugging and property desc (#3773)
     
-    Implements CRDTCollection from Typescript as CrdtSet in Kotlin. This name change keeps the api contract as expected when dealing with Sets in Java/Kotlin.
+    Add debugging and inspection instructions and description of
+    default Arcs properties.
