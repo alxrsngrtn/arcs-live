@@ -8,9 +8,8 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { assert } from '../../platform/chai-web.js';
-import { handleFor } from '../handle.js';
 import { manifestTestSetup } from '../testing/manifest-integration-test-setup.js';
-import { IdGenerator } from '../id.js';
+import { singletonHandleForTest } from '../testing/handle-for-test.js';
 describe('runtime manifest integration', () => {
     it('can produce a recipe that can be instantiated in an arc', async () => {
         const { arc, recipe } = await manifestTestSetup();
@@ -18,7 +17,7 @@ describe('runtime manifest integration', () => {
         await arc.idle;
         const type = recipe.handles[0].type;
         const [store] = arc.findStoresByType(type);
-        const handle = handleFor(store, IdGenerator.newSession());
+        const handle = await singletonHandleForTest(arc, store);
         // TODO: This should not be necessary.
         type.maybeEnsureResolved();
         const result = await handle.get();

@@ -17,6 +17,7 @@ import { IdGenerator } from './id.js';
 import { SYMBOL_INTERNALS } from './symbols.js';
 import { Handle as HandleNG } from './storageNG/handle.js';
 import { CRDTTypeRecord } from './crdt/crdt.js';
+import { StorageProxy as StorageProxyNG } from './storageNG/storage-proxy.js';
 export declare type Handle = HandleOld | HandleNG<CRDTTypeRecord>;
 /**
  * An interface representing anything storable in a Handle. Concretely, this is the {@link Entity}
@@ -197,4 +198,14 @@ export declare class BigCollection extends HandleOld {
     readonly storage: Readonly<BigCollectionStore>;
 }
 export declare function handleFor(storage: Store, idGenerator: IdGenerator, name?: string, particleId?: string, canRead?: boolean, canWrite?: boolean): HandleOld;
+/** Creates either a new- or old-style Handle for the given storage proxy. */
+export declare function unifiedHandleFor(opts: {
+    proxy: Store | StorageProxyNG<CRDTTypeRecord>;
+    idGenerator: IdGenerator;
+    name?: string;
+    particleId?: string;
+    particle?: Particle;
+    canRead?: boolean;
+    canWrite?: boolean;
+}): Handle;
 export {};

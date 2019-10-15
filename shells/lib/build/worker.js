@@ -156,11 +156,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _handle_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(13);
 /* harmony import */ var _slot_proxy_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(43);
 /* harmony import */ var _storage_proxy_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(15);
-/* harmony import */ var _storageNG_handle_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(29);
-/* harmony import */ var _storageNG_storage_proxy_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(30);
-/* harmony import */ var _wasm_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(44);
-/* harmony import */ var _arc_exceptions_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(14);
-/* harmony import */ var _flags_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(46);
+/* harmony import */ var _storageNG_storage_proxy_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(25);
+/* harmony import */ var _wasm_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(44);
+/* harmony import */ var _arc_exceptions_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(14);
+/* harmony import */ var _flags_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(46);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -170,7 +169,6 @@ __webpack_require__.r(__webpack_exports__);
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-
 
 
 
@@ -190,15 +188,15 @@ class ParticleExecutionContext {
         const pec = this;
         this.apiPort = new class extends _api_channel_js__WEBPACK_IMPORTED_MODULE_1__["PECInnerPort"] {
             onDefineHandle(identifier, type, name) {
-                if (_flags_js__WEBPACK_IMPORTED_MODULE_9__["Flags"].useNewStorageStack) {
-                    return new _storageNG_storage_proxy_js__WEBPACK_IMPORTED_MODULE_6__["StorageProxy"](identifier, pec, type);
+                if (_flags_js__WEBPACK_IMPORTED_MODULE_8__["Flags"].useNewStorageStack) {
+                    return new _storageNG_storage_proxy_js__WEBPACK_IMPORTED_MODULE_5__["StorageProxy"](identifier, pec, type);
                 }
                 return _storage_proxy_js__WEBPACK_IMPORTED_MODULE_4__["StorageProxy"].newProxy(identifier, type, this, pec, pec.scheduler, name);
             }
             onGetBackingStoreCallback(callback, type, name, id, storageKey) {
                 let proxy;
-                if (_flags_js__WEBPACK_IMPORTED_MODULE_9__["Flags"].useNewStorageStack) {
-                    proxy = new _storageNG_storage_proxy_js__WEBPACK_IMPORTED_MODULE_6__["StorageProxy"](id, pec, type);
+                if (_flags_js__WEBPACK_IMPORTED_MODULE_8__["Flags"].useNewStorageStack) {
+                    proxy = new _storageNG_storage_proxy_js__WEBPACK_IMPORTED_MODULE_5__["StorageProxy"](id, pec, type);
                 }
                 else {
                     proxy = _storage_proxy_js__WEBPACK_IMPORTED_MODULE_4__["StorageProxy"].newProxy(id, type, this, pec, pec.scheduler, name);
@@ -208,8 +206,8 @@ class ParticleExecutionContext {
             }
             onCreateHandleCallback(callback, type, name, id) {
                 let proxy;
-                if (_flags_js__WEBPACK_IMPORTED_MODULE_9__["Flags"].useNewStorageStack) {
-                    proxy = new _storageNG_storage_proxy_js__WEBPACK_IMPORTED_MODULE_6__["StorageProxy"](id, pec, type);
+                if (_flags_js__WEBPACK_IMPORTED_MODULE_8__["Flags"].useNewStorageStack) {
+                    proxy = new _storageNG_storage_proxy_js__WEBPACK_IMPORTED_MODULE_5__["StorageProxy"](id, pec, type);
                 }
                 else {
                     proxy = _storage_proxy_js__WEBPACK_IMPORTED_MODULE_4__["StorageProxy"].newProxy(id, type, this, pec, pec.scheduler, name);
@@ -303,7 +301,7 @@ class ParticleExecutionContext {
         return {
             async createHandle(type, name, hostParticle) {
                 return new Promise((resolve, reject) => pec.apiPort.ArcCreateHandle(proxy => {
-                    const handle = Object(_handle_js__WEBPACK_IMPORTED_MODULE_2__["handleFor"])(proxy, pec.idGenerator, name, particleId);
+                    const handle = Object(_handle_js__WEBPACK_IMPORTED_MODULE_2__["unifiedHandleFor"])({ proxy, idGenerator: pec.idGenerator, name, particleId });
                     resolve(handle);
                     if (hostParticle) {
                         proxy.register(hostParticle, handle);
@@ -421,13 +419,15 @@ class ParticleExecutionContext {
     }
     createHandle(particle, spec, id, name, proxy, handleMap, registerList) {
         const connSpec = spec.handleConnectionMap.get(name);
-        let handle;
-        if (proxy instanceof _storageNG_storage_proxy_js__WEBPACK_IMPORTED_MODULE_6__["StorageProxy"]) {
-            handle = Object(_storageNG_handle_js__WEBPACK_IMPORTED_MODULE_5__["handleNGFor"])(id, proxy, this.idGenerator, particle, connSpec.isInput, connSpec.isOutput, name);
-        }
-        else {
-            handle = Object(_handle_js__WEBPACK_IMPORTED_MODULE_2__["handleFor"])(proxy, this.idGenerator, name, id, connSpec.isInput, connSpec.isOutput);
-        }
+        const handle = Object(_handle_js__WEBPACK_IMPORTED_MODULE_2__["unifiedHandleFor"])({
+            proxy,
+            idGenerator: this.idGenerator,
+            name,
+            particleId: id,
+            particle,
+            canRead: connSpec.isInput,
+            canWrite: connSpec.isOutput,
+        });
         handleMap.set(name, handle);
         // Defer registration of handles with proxies until after particles have a chance to
         // configure them in setHandles.
@@ -435,14 +435,14 @@ class ParticleExecutionContext {
     }
     async assignHandle(particle, spec, id, handleMap, registerList, p) {
         await particle.callSetHandles(handleMap, err => {
-            const exc = new _arc_exceptions_js__WEBPACK_IMPORTED_MODULE_8__["UserException"](err, 'setHandles', id, spec.name);
+            const exc = new _arc_exceptions_js__WEBPACK_IMPORTED_MODULE_7__["UserException"](err, 'setHandles', id, spec.name);
             this.apiPort.ReportExceptionInHost(exc);
         });
         registerList.forEach(({ proxy, particle, handle }) => {
             if (proxy instanceof _storage_proxy_js__WEBPACK_IMPORTED_MODULE_4__["StorageProxy"]) {
                 proxy.register(particle, handle);
             }
-            else if (proxy instanceof _storageNG_storage_proxy_js__WEBPACK_IMPORTED_MODULE_6__["StorageProxy"]) {
+            else if (proxy instanceof _storageNG_storage_proxy_js__WEBPACK_IMPORTED_MODULE_5__["StorageProxy"]) {
                 proxy.registerHandle(handle);
             }
             else {
@@ -474,15 +474,15 @@ class ParticleExecutionContext {
             if (!buffer || buffer.byteLength === 0) {
                 throw new Error(`Failed to load wasm binary '${spec.implFile}'`);
             }
-            container = new _wasm_js__WEBPACK_IMPORTED_MODULE_7__["WasmContainer"](this.loader, this.apiPort);
+            container = new _wasm_js__WEBPACK_IMPORTED_MODULE_6__["WasmContainer"](this.loader, this.apiPort);
             await container.initialize(buffer);
             this.wasmContainers[spec.implFile] = container;
         }
         // Particle constructor expects spec to be attached to the class object (and attaches it to
         // the particle instance at that time).
-        _wasm_js__WEBPACK_IMPORTED_MODULE_7__["WasmParticle"].spec = spec;
-        const particle = new _wasm_js__WEBPACK_IMPORTED_MODULE_7__["WasmParticle"](id, container);
-        _wasm_js__WEBPACK_IMPORTED_MODULE_7__["WasmParticle"].spec = null;
+        _wasm_js__WEBPACK_IMPORTED_MODULE_6__["WasmParticle"].spec = spec;
+        const particle = new _wasm_js__WEBPACK_IMPORTED_MODULE_6__["WasmParticle"](id, container);
+        _wasm_js__WEBPACK_IMPORTED_MODULE_6__["WasmParticle"].spec = null;
         return particle;
     }
     get relevance() {
@@ -557,7 +557,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _particle_spec_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(5);
 /* harmony import */ var _type_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(8);
 /* harmony import */ var _arc_exceptions_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(14);
-/* harmony import */ var _util_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(35);
+/* harmony import */ var _util_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(30);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -1974,13 +1974,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "HandleType", function() { return HandleType; });
 /* harmony import */ var _interface_info_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(9);
 /* harmony import */ var _schema_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(10);
-/* harmony import */ var _slot_info_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(25);
-/* harmony import */ var _synthetic_types_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(26);
-/* harmony import */ var _type_variable_info_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(27);
-/* harmony import */ var _crdt_crdt_count_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(28);
-/* harmony import */ var _crdt_crdt_collection_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(23);
+/* harmony import */ var _slot_info_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(37);
+/* harmony import */ var _synthetic_types_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(38);
+/* harmony import */ var _type_variable_info_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(39);
+/* harmony import */ var _crdt_crdt_count_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(40);
+/* harmony import */ var _crdt_crdt_collection_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(22);
 /* harmony import */ var _crdt_crdt_singleton_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(24);
-/* harmony import */ var _storageNG_handle_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(29);
+/* harmony import */ var _storageNG_handle_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(21);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -3106,7 +3106,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Schema", function() { return Schema; });
 /* harmony import */ var _entity_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(11);
 /* harmony import */ var _type_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(8);
-/* harmony import */ var _crdt_crdt_entity_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(21);
+/* harmony import */ var _crdt_crdt_entity_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(33);
 /* harmony import */ var _crdt_crdt_singleton_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(24);
 /**
  * @license
@@ -3715,6 +3715,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _type_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(8);
 /* harmony import */ var _entity_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(11);
 /* harmony import */ var _symbols_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(20);
+/* harmony import */ var _storageNG_handle_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(21);
 /**
  * @license
  * Copyright (c) 2018 Google Inc. All rights reserved.
@@ -3729,6 +3730,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+
 var ReferenceMode;
 (function (ReferenceMode) {
     ReferenceMode[ReferenceMode["Unstored"] = 0] = "Unstored";
@@ -3738,6 +3740,7 @@ class Reference {
     constructor(data, type, context) {
         this.entity = null;
         this.storageProxy = null;
+        // tslint:disable-next-line: no-any
         this.handle = null;
         this.id = data.id;
         this.storageKey = data.storageKey;
@@ -3750,7 +3753,8 @@ class Reference {
     async ensureStorageProxy() {
         if (this.storageProxy == null) {
             this.storageProxy = await this.context.getStorageProxy(this.storageKey, this.type.referredType);
-            this.handle = Object(_handle_js__WEBPACK_IMPORTED_MODULE_1__["handleFor"])(this.storageProxy, this.context.idGenerator);
+            // tslint:disable-next-line: no-any
+            this.handle = Object(_handle_js__WEBPACK_IMPORTED_MODULE_1__["unifiedHandleFor"])({ proxy: this.storageProxy, idGenerator: this.context.idGenerator });
             if (this.storageKey) {
                 Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(this.storageKey === this.storageProxy.storageKey);
             }
@@ -3784,7 +3788,12 @@ class ClientReference extends Reference {
     }
     async storeReference(entity) {
         await this.ensureStorageProxy();
-        await this.handle.store(entity);
+        if (this.handle instanceof _storageNG_handle_js__WEBPACK_IMPORTED_MODULE_5__["CollectionHandle"]) {
+            await this.handle.add(entity);
+        }
+        else {
+            await this.handle.store(entity);
+        }
         this.mode = ReferenceMode.Stored;
     }
     async dereference() {
@@ -3817,6 +3826,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Singleton", function() { return Singleton; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "BigCollection", function() { return BigCollection; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "handleFor", function() { return handleFor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "unifiedHandleFor", function() { return unifiedHandleFor; });
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
 /* harmony import */ var _arc_exceptions_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(14);
 /* harmony import */ var _particle_spec_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(5);
@@ -3826,6 +3836,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _entity_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(11);
 /* harmony import */ var _id_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(18);
 /* harmony import */ var _symbols_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(20);
+/* harmony import */ var _storageNG_handle_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(21);
+/* harmony import */ var _storageNG_storage_proxy_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(25);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -3835,6 +3847,8 @@ __webpack_require__.r(__webpack_exports__);
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
+
+
 
 
 
@@ -4259,6 +4273,18 @@ function handleFor(storage, idGenerator, name = null, particleId = '', canRead =
         handle.entityClass = schema.entityClass(storage.pec);
     }
     return handle;
+}
+/** Creates either a new- or old-style Handle for the given storage proxy. */
+function unifiedHandleFor(opts) {
+    const defaultOpts = { particleId: '', canRead: true, canWrite: true };
+    opts = { ...defaultOpts, ...opts };
+    if (opts.proxy instanceof _storageNG_storage_proxy_js__WEBPACK_IMPORTED_MODULE_10__["StorageProxy"]) {
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(opts.particleId.length, 'NG Handles require a particle ID');
+        return Object(_storageNG_handle_js__WEBPACK_IMPORTED_MODULE_9__["handleNGFor"])(opts.particleId, opts.proxy, opts.idGenerator, opts.particle, opts.canRead, opts.canWrite, opts.name);
+    }
+    else {
+        return handleFor(opts.proxy, opts.idGenerator, opts.name, opts.particleId, opts.canRead, opts.canWrite);
+    }
 }
 //# sourceMappingURL=handle.js.map
 
@@ -5340,11 +5366,18 @@ const SYMBOL_INTERNALS = Symbol('internals');
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "EntityOpTypes", function() { return EntityOpTypes; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CRDTEntity", function() { return CRDTEntity; });
-/* harmony import */ var _crdt_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(22);
-/* harmony import */ var _crdt_collection_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(23);
-/* harmony import */ var _crdt_singleton_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(24);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Handle", function() { return Handle; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CollectionHandle", function() { return CollectionHandle; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SingletonHandle", function() { return SingletonHandle; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "handleNGFor", function() { return handleNGFor; });
+/* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
+/* harmony import */ var _arc_exceptions_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(14);
+/* harmony import */ var _crdt_crdt_collection_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(22);
+/* harmony import */ var _crdt_crdt_singleton_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(24);
+/* harmony import */ var _entity_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(11);
+/* harmony import */ var _id_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(18);
+/* harmony import */ var _type_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(8);
+/* harmony import */ var _storage_proxy_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(25);
 /**
  * @license
  * Copyright (c) 2019 Google Inc. All rights reserved.
@@ -5357,156 +5390,187 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-var EntityOpTypes;
-(function (EntityOpTypes) {
-    EntityOpTypes[EntityOpTypes["Set"] = 0] = "Set";
-    EntityOpTypes[EntityOpTypes["Clear"] = 1] = "Clear";
-    EntityOpTypes[EntityOpTypes["Add"] = 2] = "Add";
-    EntityOpTypes[EntityOpTypes["Remove"] = 3] = "Remove";
-})(EntityOpTypes || (EntityOpTypes = {}));
-class CRDTEntity {
-    constructor(singletons, collections) {
-        this.model = { singletons, collections, version: {} };
-    }
-    merge(other) {
-        const singletonChanges = {};
-        const collectionChanges = {};
-        let allOps = true;
-        for (const singleton of Object.keys(this.model.singletons)) {
-            singletonChanges[singleton] = this.model.singletons[singleton].merge(other.singletons[singleton]);
-            if (singletonChanges[singleton].modelChange.changeType === _crdt_js__WEBPACK_IMPORTED_MODULE_0__["ChangeType"].Model ||
-                singletonChanges[singleton].otherChange.changeType === _crdt_js__WEBPACK_IMPORTED_MODULE_0__["ChangeType"].Model) {
-                allOps = false;
-            }
-        }
-        for (const collection of Object.keys(this.model.collections)) {
-            collectionChanges[collection] = this.model.collections[collection].merge(other.collections[collection]);
-            if (collectionChanges[collection].modelChange.changeType === _crdt_js__WEBPACK_IMPORTED_MODULE_0__["ChangeType"].Model ||
-                collectionChanges[collection].otherChange.changeType === _crdt_js__WEBPACK_IMPORTED_MODULE_0__["ChangeType"].Model) {
-                allOps = false;
-            }
-        }
-        for (const versionKey of Object.keys(other.version)) {
-            this.model.version[versionKey] = Math.max(this.model.version[versionKey] || 0, other.version[versionKey]);
-        }
-        if (allOps) {
-            const modelOps = [];
-            const otherOps = [];
-            for (const singleton of Object.keys(singletonChanges)) {
-                for (const operation of singletonChanges[singleton].modelChange.operations) {
-                    let op;
-                    if (operation.type === _crdt_singleton_js__WEBPACK_IMPORTED_MODULE_2__["SingletonOpTypes"].Set) {
-                        op = { ...operation, type: EntityOpTypes.Set, field: singleton };
-                    }
-                    else {
-                        op = { ...operation, type: EntityOpTypes.Clear, field: singleton };
-                    }
-                    modelOps.push(op);
-                }
-                for (const operation of singletonChanges[singleton].otherChange.operations) {
-                    let op;
-                    if (operation.type === _crdt_singleton_js__WEBPACK_IMPORTED_MODULE_2__["SingletonOpTypes"].Set) {
-                        op = { ...operation, type: EntityOpTypes.Set, field: singleton };
-                    }
-                    else {
-                        op = { ...operation, type: EntityOpTypes.Clear, field: singleton };
-                    }
-                    otherOps.push(op);
-                }
-            }
-            for (const collection of Object.keys(collectionChanges)) {
-                for (const operation of collectionChanges[collection].modelChange.operations) {
-                    let op;
-                    if (operation.type === _crdt_collection_js__WEBPACK_IMPORTED_MODULE_1__["CollectionOpTypes"].Add) {
-                        op = { ...operation, type: EntityOpTypes.Add, field: collection };
-                    }
-                    else {
-                        op = { ...operation, type: EntityOpTypes.Remove, field: collection };
-                    }
-                    modelOps.push(op);
-                }
-                for (const operation of collectionChanges[collection].otherChange.operations) {
-                    let op;
-                    if (operation.type === _crdt_collection_js__WEBPACK_IMPORTED_MODULE_1__["CollectionOpTypes"].Add) {
-                        op = { ...operation, type: EntityOpTypes.Add, field: collection };
-                    }
-                    else {
-                        op = { ...operation, type: EntityOpTypes.Remove, field: collection };
-                    }
-                    otherOps.push(op);
-                }
-            }
-            return { modelChange: { changeType: _crdt_js__WEBPACK_IMPORTED_MODULE_0__["ChangeType"].Operations, operations: modelOps },
-                otherChange: { changeType: _crdt_js__WEBPACK_IMPORTED_MODULE_0__["ChangeType"].Operations, operations: otherOps } };
-        }
-        else {
-            // need to map this.model to get the data out.
-            const change = { changeType: _crdt_js__WEBPACK_IMPORTED_MODULE_0__["ChangeType"].Model, modelPostChange: this.getData() };
-            return { modelChange: change, otherChange: change };
-        }
-    }
-    applyOperation(op) {
-        if (op.type === EntityOpTypes.Set || op.type === EntityOpTypes.Clear) {
-            if (!this.model.singletons[op.field]) {
-                if (this.model.collections[op.field]) {
-                    throw new Error(`Can't apply ${op.type === EntityOpTypes.Set ? 'Set' : 'Clear'} operation to collection field ${op.field}`);
-                }
-                throw new Error(`Invalid field: ${op.field} does not exist`);
-            }
-        }
-        else {
-            if (!this.model.collections[op.field]) {
-                if (this.model.singletons[op.field]) {
-                    throw new Error(`Can't apply ${op.type === EntityOpTypes.Add ? 'Add' : 'Remove'} operation to singleton field ${op.field}`);
-                }
-                throw new Error(`Invalid field: ${op.field} does not exist`);
-            }
-        }
-        const apply = () => {
-            switch (op.type) {
-                case EntityOpTypes.Set:
-                    return this.model.singletons[op.field].applyOperation({ ...op, type: _crdt_singleton_js__WEBPACK_IMPORTED_MODULE_2__["SingletonOpTypes"].Set });
-                case EntityOpTypes.Clear:
-                    return this.model.singletons[op.field].applyOperation({ ...op, type: _crdt_singleton_js__WEBPACK_IMPORTED_MODULE_2__["SingletonOpTypes"].Clear });
-                case EntityOpTypes.Add:
-                    return this.model.collections[op.field].applyOperation({ ...op, type: _crdt_collection_js__WEBPACK_IMPORTED_MODULE_1__["CollectionOpTypes"].Add });
-                case EntityOpTypes.Remove:
-                    return this.model.collections[op.field].applyOperation({ ...op, type: _crdt_collection_js__WEBPACK_IMPORTED_MODULE_1__["CollectionOpTypes"].Remove });
-                default:
-                    throw new Error(`Unexpected op ${op} for Entity CRDT`);
-            }
+
+
+
+
+
+/**
+ * Base class for Handles.
+ */
+class Handle {
+    constructor(key, storageProxy, idGenerator, particle, canRead, canWrite, name) {
+        this.key = key;
+        this.name = name;
+        this.storageProxy = storageProxy;
+        this.idGenerator = idGenerator;
+        this.particle = particle;
+        this.options = {
+            keepSynced: true,
+            notifySync: true,
+            notifyUpdate: true,
+            notifyDesync: false,
         };
-        if (apply()) {
-            for (const versionKey of Object.keys(op.clock)) {
-                this.model.version[versionKey] = Math.max(this.model.version[versionKey] || 0, op.clock[versionKey]);
-            }
-            return true;
+        this.canRead = canRead;
+        this.canWrite = canWrite;
+        const type = this.storageProxy.type.getContainedType() || this.storageProxy.type;
+        if (type instanceof _type_js__WEBPACK_IMPORTED_MODULE_6__["EntityType"]) {
+            this.entityClass = type.entitySchema.entityClass();
         }
-        return false;
+        this.clock = this.storageProxy.registerHandle(this);
     }
-    getData() {
-        const singletons = {};
-        const collections = {};
-        Object.keys(this.model.singletons).forEach(singleton => {
-            singletons[singleton] = this.model.singletons[singleton].getData();
-        });
-        Object.keys(this.model.collections).forEach(collection => {
-            collections[collection] = this.model.collections[collection].getData();
-        });
-        return { singletons, collections, version: this.model.version };
+    //TODO: this is used by multiplexer-dom-particle.ts, it probably won't work with this kind of store.
+    get storage() {
+        return this.storageProxy;
     }
-    getParticleView() {
-        const result = { singletons: {}, collections: {} };
-        for (const key of Object.keys(this.model.singletons)) {
-            result.singletons[key] = this.model.singletons[key].getParticleView();
-        }
-        for (const key of Object.keys(this.model.collections)) {
-            result.collections[key] = this.model.collections[key].getParticleView();
-        }
-        return result;
+    get type() {
+        return this.storageProxy.type;
+    }
+    // TODO: after NG migration, this can be renamed to something like "apiChannelId()".
+    get _id() {
+        return this.storageProxy.apiChannelId;
+    }
+    createIdentityFor(entity) {
+        _entity_js__WEBPACK_IMPORTED_MODULE_4__["Entity"].createIdentity(entity, _id_js__WEBPACK_IMPORTED_MODULE_5__["Id"].fromString(this._id), this.idGenerator);
+    }
+    // `options` may contain any of:
+    // - keepSynced (bool): load full data on startup, maintain data in proxy and resync as required
+    // - notifySync (bool): if keepSynced is true, call onHandleSync when the full data is received
+    // - notifyUpdate (bool): call onHandleUpdate for every change event received
+    // - notifyDesync (bool): if keepSynced is true, call onHandleDesync when desync is detected
+    configure(options) {
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(this.canRead, 'configure can only be called on readable Handles');
+        this.options = { ...this.options, ...options };
+    }
+    reportUserExceptionInHost(exception, particle, method) {
+        this.storageProxy.reportExceptionInHost(new _arc_exceptions_js__WEBPACK_IMPORTED_MODULE_1__["UserException"](exception, method, this.key, particle.spec.name));
+    }
+    async onDesync() {
+        await this.particle.callOnHandleDesync(this, e => this.reportUserExceptionInHost(e, this.particle, 'onHandleDesync'));
+    }
+    disable(particle) {
+        this.storageProxy.deregisterHandle(this);
+        this.storageProxy = new _storage_proxy_js__WEBPACK_IMPORTED_MODULE_7__["NoOpStorageProxy"]();
     }
 }
-//# sourceMappingURL=crdt-entity.js.map
+/**
+ * A handle on a set of Entity data. Note that, as a set, a Collection can only
+ * contain a single version of an Entity for each given ID. Further, no order is
+ * implied by the set.
+ */
+class CollectionHandle extends Handle {
+    async get(id) {
+        const values = await this.toList();
+        return values.find(element => element.id === id);
+    }
+    async add(entity) {
+        this.clock[this.key] = (this.clock[this.key] || 0) + 1;
+        const op = {
+            type: _crdt_crdt_collection_js__WEBPACK_IMPORTED_MODULE_2__["CollectionOpTypes"].Add,
+            added: entity,
+            actor: this.key,
+            clock: this.clock,
+        };
+        return this.storageProxy.applyOp(op);
+    }
+    async addMultiple(entities) {
+        return Promise.all(entities.map(e => this.add(e))).then(array => array.every(Boolean));
+    }
+    async remove(entity) {
+        const op = {
+            type: _crdt_crdt_collection_js__WEBPACK_IMPORTED_MODULE_2__["CollectionOpTypes"].Remove,
+            removed: entity,
+            actor: this.key,
+            clock: this.clock,
+        };
+        return this.storageProxy.applyOp(op);
+    }
+    async clear() {
+        const values = await this.toList();
+        for (const value of values) {
+            const removeOp = {
+                type: _crdt_crdt_collection_js__WEBPACK_IMPORTED_MODULE_2__["CollectionOpTypes"].Remove,
+                removed: value,
+                actor: this.key,
+                clock: this.clock,
+            };
+            if (!this.storageProxy.applyOp(removeOp)) {
+                return false;
+            }
+        }
+        return true;
+    }
+    async toList() {
+        const [set, versionMap] = await this.storageProxy.getParticleView();
+        this.clock = versionMap;
+        return [...set];
+    }
+    async onUpdate(op, oldData, version) {
+        this.clock = version;
+        // FastForward cannot be expressed in terms of ordered added/removed, so pass a full model to
+        // the particle.
+        if (op.type === _crdt_crdt_collection_js__WEBPACK_IMPORTED_MODULE_2__["CollectionOpTypes"].FastForward) {
+            return this.onSync();
+        }
+        // Pass the change up to the particle.
+        const update = { originator: ('actor' in op && this.key === op.actor) };
+        if (op.type === _crdt_crdt_collection_js__WEBPACK_IMPORTED_MODULE_2__["CollectionOpTypes"].Add) {
+            update.added = op.added;
+        }
+        if (op.type === _crdt_crdt_collection_js__WEBPACK_IMPORTED_MODULE_2__["CollectionOpTypes"].Remove) {
+            update.removed = op.removed;
+        }
+        await this.particle.callOnHandleUpdate(this /*handle*/, update, e => this.reportUserExceptionInHost(e, this.particle, 'onHandleUpdate'));
+    }
+    async onSync() {
+        await this.particle.callOnHandleSync(this /*handle*/, this.toList() /*model*/, e => this.reportUserExceptionInHost(e, this.particle, 'onHandleSync'));
+    }
+}
+/**
+ * A handle on a single entity.
+ */
+class SingletonHandle extends Handle {
+    async set(entity) {
+        this.clock[this.key] = (this.clock[this.key] || 0) + 1;
+        const op = {
+            type: _crdt_crdt_singleton_js__WEBPACK_IMPORTED_MODULE_3__["SingletonOpTypes"].Set,
+            value: entity,
+            actor: this.key,
+            clock: this.clock,
+        };
+        return this.storageProxy.applyOp(op);
+    }
+    async clear() {
+        const op = {
+            type: _crdt_crdt_singleton_js__WEBPACK_IMPORTED_MODULE_3__["SingletonOpTypes"].Clear,
+            actor: this.key,
+            clock: this.clock,
+        };
+        return this.storageProxy.applyOp(op);
+    }
+    async get() {
+        const [value, versionMap] = await this.storageProxy.getParticleView();
+        this.clock = versionMap;
+        return value;
+    }
+    async onUpdate(op, oldData, version) {
+        this.clock = version;
+        // Pass the change up to the particle.
+        const update = { oldData, originator: (this.key === op.actor) };
+        if (op.type === _crdt_crdt_singleton_js__WEBPACK_IMPORTED_MODULE_3__["SingletonOpTypes"].Set) {
+            update.data = op.value;
+        }
+        // Nothing else to add (beyond oldData) for SingletonOpTypes.Clear.
+        await this.particle.callOnHandleUpdate(this /*handle*/, update, e => this.reportUserExceptionInHost(e, this.particle, 'onHandleUpdate'));
+    }
+    async onSync() {
+        await this.particle.callOnHandleSync(this /*handle*/, this.get() /*model*/, e => this.reportUserExceptionInHost(e, this.particle, 'onHandleSync'));
+    }
+}
+function handleNGFor(key, storageProxy, idGenerator, particle, canRead, canWrite, name) {
+    return new (storageProxy.type.handleConstructor())(key, storageProxy, idGenerator, particle, canRead, canWrite, name);
+}
+//# sourceMappingURL=handle.js.map
 
 /***/ }),
 /* 22 */
@@ -5514,43 +5578,10 @@ class CRDTEntity {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CRDTError", function() { return CRDTError; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ChangeType", function() { return ChangeType; });
-/**
- * @license
- * Copyright (c) 2019 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-class CRDTError extends Error {
-}
-// A CRDT Change represents a delta between model states. Where possible,
-// this delta should be expressed as a sequence of operations; in which case
-// changeType will be ChangeType.Operations.
-// Sometimes it isn't possible to express a delta as operations. In this case,
-// changeType will be ChangeType.Model, and a full post-merge model will be supplied.
-// A CRDT Change is parameterized by the operations that can be represented, and the data representation
-// of the model.
-var ChangeType;
-(function (ChangeType) {
-    ChangeType[ChangeType["Operations"] = 0] = "Operations";
-    ChangeType[ChangeType["Model"] = 1] = "Model";
-})(ChangeType || (ChangeType = {}));
-//# sourceMappingURL=crdt.js.map
-
-/***/ }),
-/* 23 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CollectionOpTypes", function() { return CollectionOpTypes; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CRDTCollection", function() { return CRDTCollection; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "simplifyFastForwardOp", function() { return simplifyFastForwardOp; });
-/* harmony import */ var _crdt_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(22);
+/* harmony import */ var _crdt_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(23);
 /**
  * @license
  * Copyright (c) 2019 Google Inc. All rights reserved.
@@ -5794,6 +5825,39 @@ function getSingleActorIncrement(oldVersion, newVersion) {
 //# sourceMappingURL=crdt-collection.js.map
 
 /***/ }),
+/* 23 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CRDTError", function() { return CRDTError; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ChangeType", function() { return ChangeType; });
+/**
+ * @license
+ * Copyright (c) 2019 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+class CRDTError extends Error {
+}
+// A CRDT Change represents a delta between model states. Where possible,
+// this delta should be expressed as a sequence of operations; in which case
+// changeType will be ChangeType.Operations.
+// Sometimes it isn't possible to express a delta as operations. In this case,
+// changeType will be ChangeType.Model, and a full post-merge model will be supplied.
+// A CRDT Change is parameterized by the operations that can be represented, and the data representation
+// of the model.
+var ChangeType;
+(function (ChangeType) {
+    ChangeType[ChangeType["Operations"] = 0] = "Operations";
+    ChangeType[ChangeType["Model"] = 1] = "Model";
+})(ChangeType || (ChangeType = {}));
+//# sourceMappingURL=crdt.js.map
+
+/***/ }),
 /* 24 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -5801,8 +5865,8 @@ function getSingleActorIncrement(oldVersion, newVersion) {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SingletonOpTypes", function() { return SingletonOpTypes; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CRDTSingleton", function() { return CRDTSingleton; });
-/* harmony import */ var _crdt_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(22);
-/* harmony import */ var _crdt_collection_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(23);
+/* harmony import */ var _crdt_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(23);
+/* harmony import */ var _crdt_collection_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(22);
 /**
  * @license
  * Copyright (c) 2019 Google Inc. All rights reserved.
@@ -5892,603 +5956,14 @@ class CRDTSingleton {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SlotInfo", function() { return SlotInfo; });
-/**
- * @license
- * Copyright (c) 2017 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-class SlotInfo {
-    constructor(formFactor, handle) {
-        this.formFactor = formFactor;
-        this.handle = handle;
-    }
-    toLiteral() {
-        return this;
-    }
-    static fromLiteral({ formFactor, handle }) {
-        return new SlotInfo(formFactor, handle);
-    }
-}
-//# sourceMappingURL=slot-info.js.map
-
-/***/ }),
-/* 26 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ArcInfo", function() { return ArcInfo; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ArcHandle", function() { return ArcHandle; });
-/**
- * @license
- * Copyright (c) 2018 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-// Equivalent to an Entity with Schema { serialization Text }
-class ArcInfo {
-    constructor(arcId, serialization) {
-        this.id = arcId.toString();
-        // TODO: remove the import-removal hack when import statements no longer appear
-        // in serialized manifests, or deal with them correctly if they end up staying
-        this.serialization = serialization.replace(/\bimport .*\n/g, '');
-    }
-    // Retrieves the serialized string from a stored instance of ArcInfo.
-    static extractSerialization(data) {
-        return data.serialization.replace(/\bimport .*\n/g, '');
-    }
-}
-class ArcHandle {
-    constructor(id, storageKey, type, tags) {
-        this.id = id;
-        this.storageKey = storageKey;
-        this.type = type;
-        this.tags = tags;
-    }
-}
-//# sourceMappingURL=synthetic-types.js.map
-
-/***/ }),
-/* 27 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "TypeVariableInfo", function() { return TypeVariableInfo; });
-/* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
-/* harmony import */ var _schema_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(10);
-/* harmony import */ var _type_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(8);
-/**
- * @license
- * Copyright (c) 2017 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-
-
-
-class TypeVariableInfo {
-    constructor(name, canWriteSuperset, canReadSubset) {
-        this.name = name;
-        this._canWriteSuperset = canWriteSuperset;
-        this._canReadSubset = canReadSubset;
-        this._resolution = null;
-    }
-    /**
-     * Merge both the read subset (upper bound) and write superset (lower bound) constraints
-     * of two variables together. Use this when two separate type variables need to resolve
-     * to the same value.
-     */
-    maybeMergeConstraints(variable) {
-        if (!this.maybeMergeCanReadSubset(variable.canReadSubset)) {
-            return false;
-        }
-        return this.maybeMergeCanWriteSuperset(variable.canWriteSuperset);
-    }
-    /**
-     * Merge a type variable's read subset (upper bound) constraints into this variable.
-     * This is used to accumulate read constraints when resolving a handle's type.
-     */
-    maybeMergeCanReadSubset(constraint) {
-        if (constraint == null) {
-            return true;
-        }
-        if (this.canReadSubset == null) {
-            this.canReadSubset = constraint;
-            return true;
-        }
-        if (this.canReadSubset instanceof _type_js__WEBPACK_IMPORTED_MODULE_2__["SlotType"] && constraint instanceof _type_js__WEBPACK_IMPORTED_MODULE_2__["SlotType"]) {
-            // TODO: formFactor compatibility, etc.
-            return true;
-        }
-        if (this.canReadSubset instanceof _type_js__WEBPACK_IMPORTED_MODULE_2__["EntityType"] && constraint instanceof _type_js__WEBPACK_IMPORTED_MODULE_2__["EntityType"]) {
-            const mergedSchema = _schema_js__WEBPACK_IMPORTED_MODULE_1__["Schema"].intersect(this.canReadSubset.entitySchema, constraint.entitySchema);
-            if (!mergedSchema) {
-                return false;
-            }
-            this.canReadSubset = new _type_js__WEBPACK_IMPORTED_MODULE_2__["EntityType"](mergedSchema);
-            return true;
-        }
-        return false;
-    }
-    /**
-     * merge a type variable's write superset (lower bound) constraints into this variable.
-     * This is used to accumulate write constraints when resolving a handle's type.
-     */
-    maybeMergeCanWriteSuperset(constraint) {
-        if (constraint == null) {
-            return true;
-        }
-        if (this.canWriteSuperset == null) {
-            this.canWriteSuperset = constraint;
-            return true;
-        }
-        if (this.canWriteSuperset instanceof _type_js__WEBPACK_IMPORTED_MODULE_2__["SlotType"] && constraint instanceof _type_js__WEBPACK_IMPORTED_MODULE_2__["SlotType"]) {
-            // TODO: formFactor compatibility, etc.
-            return true;
-        }
-        if (this.canWriteSuperset instanceof _type_js__WEBPACK_IMPORTED_MODULE_2__["EntityType"] && constraint instanceof _type_js__WEBPACK_IMPORTED_MODULE_2__["EntityType"]) {
-            const mergedSchema = _schema_js__WEBPACK_IMPORTED_MODULE_1__["Schema"].union(this.canWriteSuperset.entitySchema, constraint.entitySchema);
-            if (!mergedSchema) {
-                return false;
-            }
-            this.canWriteSuperset = new _type_js__WEBPACK_IMPORTED_MODULE_2__["EntityType"](mergedSchema);
-            return true;
-        }
-        return false;
-    }
-    isSatisfiedBy(type) {
-        const constraint = this._canWriteSuperset;
-        if (!constraint) {
-            return true;
-        }
-        if (!(constraint instanceof _type_js__WEBPACK_IMPORTED_MODULE_2__["EntityType"]) || !(type instanceof _type_js__WEBPACK_IMPORTED_MODULE_2__["EntityType"])) {
-            throw new Error(`constraint checking not implemented for ${this} and ${type}`);
-        }
-        return type.getEntitySchema().isMoreSpecificThan(constraint.getEntitySchema());
-    }
-    get resolution() {
-        if (this._resolution) {
-            return this._resolution.resolvedType();
-        }
-        return null;
-    }
-    isValidResolutionCandidate(value) {
-        const elementType = value.resolvedType().getContainedType();
-        if (elementType instanceof _type_js__WEBPACK_IMPORTED_MODULE_2__["TypeVariable"] && elementType.variable === this) {
-            return { result: false, detail: 'variable cannot resolve to collection of itself' };
-        }
-        return { result: true };
-    }
-    set resolution(value) {
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(!this._resolution);
-        const isValid = this.isValidResolutionCandidate(value);
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(isValid.result, isValid.detail);
-        let probe = value;
-        while (probe) {
-            if (!(probe instanceof _type_js__WEBPACK_IMPORTED_MODULE_2__["TypeVariable"])) {
-                break;
-            }
-            if (probe.variable === this) {
-                return;
-            }
-            probe = probe.variable.resolution;
-        }
-        this._resolution = value;
-        this._canWriteSuperset = null;
-        this._canReadSubset = null;
-    }
-    get canWriteSuperset() {
-        if (this._resolution) {
-            Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(!this._canWriteSuperset);
-            if (this._resolution instanceof _type_js__WEBPACK_IMPORTED_MODULE_2__["TypeVariable"]) {
-                return this._resolution.variable.canWriteSuperset;
-            }
-            return null;
-        }
-        return this._canWriteSuperset;
-    }
-    set canWriteSuperset(value) {
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(!this._resolution);
-        this._canWriteSuperset = value;
-    }
-    get canReadSubset() {
-        if (this._resolution) {
-            Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(!this._canReadSubset);
-            if (this._resolution instanceof _type_js__WEBPACK_IMPORTED_MODULE_2__["TypeVariable"]) {
-                return this._resolution.variable.canReadSubset;
-            }
-            return null;
-        }
-        return this._canReadSubset;
-    }
-    set canReadSubset(value) {
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(!this._resolution);
-        this._canReadSubset = value;
-    }
-    get hasConstraint() {
-        return this._canReadSubset !== null || this._canWriteSuperset !== null;
-    }
-    canEnsureResolved() {
-        if (this._resolution) {
-            return this._resolution.canEnsureResolved();
-        }
-        if (this._canWriteSuperset || this._canReadSubset) {
-            return true;
-        }
-        return false;
-    }
-    maybeEnsureResolved() {
-        if (this._resolution) {
-            return this._resolution.maybeEnsureResolved();
-        }
-        if (this._canWriteSuperset) {
-            this.resolution = this._canWriteSuperset;
-            return true;
-        }
-        if (this._canReadSubset) {
-            this.resolution = this._canReadSubset;
-            return true;
-        }
-        return false;
-    }
-    toLiteral() {
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(this.resolution == null);
-        return this.toLiteralIgnoringResolutions();
-    }
-    toLiteralIgnoringResolutions() {
-        return {
-            name: this.name,
-            canWriteSuperset: this._canWriteSuperset && this._canWriteSuperset.toLiteral(),
-            canReadSubset: this._canReadSubset && this._canReadSubset.toLiteral()
-        };
-    }
-    static fromLiteral(data) {
-        return new TypeVariableInfo(data.name, data.canWriteSuperset ? _type_js__WEBPACK_IMPORTED_MODULE_2__["Type"].fromLiteral(data.canWriteSuperset) : null, data.canReadSubset ? _type_js__WEBPACK_IMPORTED_MODULE_2__["Type"].fromLiteral(data.canReadSubset) : null);
-    }
-    isResolved() {
-        return this._resolution && this._resolution.isResolved();
-    }
-}
-//# sourceMappingURL=type-variable-info.js.map
-
-/***/ }),
-/* 28 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CountOpTypes", function() { return CountOpTypes; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CRDTCount", function() { return CRDTCount; });
-/* harmony import */ var _crdt_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(22);
-/**
- * @license
- * Copyright (c) 2019 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-
-var CountOpTypes;
-(function (CountOpTypes) {
-    CountOpTypes[CountOpTypes["Increment"] = 0] = "Increment";
-    CountOpTypes[CountOpTypes["MultiIncrement"] = 1] = "MultiIncrement";
-})(CountOpTypes || (CountOpTypes = {}));
-class CRDTCount {
-    constructor() {
-        this.model = { values: {}, version: {} };
-    }
-    merge(other) {
-        const otherChanges = [];
-        const thisChanges = [];
-        for (const key of Object.keys(other.values)) {
-            const thisValue = this.model.values[key] || 0;
-            const otherValue = other.values[key] || 0;
-            const thisVersion = this.model.version[key] || 0;
-            const otherVersion = other.version[key] || 0;
-            if (thisValue > otherValue) {
-                if (otherVersion >= thisVersion) {
-                    throw new _crdt_js__WEBPACK_IMPORTED_MODULE_0__["CRDTError"]('Divergent versions encountered when merging CRDTCount models');
-                }
-                otherChanges.push({ type: CountOpTypes.MultiIncrement, value: thisValue - otherValue, actor: key,
-                    version: { from: otherVersion, to: thisVersion } });
-            }
-            else if (otherValue > thisValue) {
-                if (thisVersion >= otherVersion) {
-                    throw new _crdt_js__WEBPACK_IMPORTED_MODULE_0__["CRDTError"]('Divergent versions encountered when merging CRDTCount models');
-                }
-                thisChanges.push({ type: CountOpTypes.MultiIncrement, value: otherValue - thisValue, actor: key,
-                    version: { from: thisVersion, to: otherVersion } });
-                this.model.values[key] = otherValue;
-                this.model.version[key] = otherVersion;
-            }
-        }
-        for (const key of Object.keys(this.model.values)) {
-            if (other.values[key]) {
-                continue;
-            }
-            if (other.version[key]) {
-                throw new _crdt_js__WEBPACK_IMPORTED_MODULE_0__["CRDTError"](`CRDTCount model has version but no value for key ${key}`);
-            }
-            otherChanges.push({ type: CountOpTypes.MultiIncrement, value: this.model.values[key], actor: key,
-                version: { from: 0, to: this.model.version[key] } });
-        }
-        return { modelChange: { changeType: _crdt_js__WEBPACK_IMPORTED_MODULE_0__["ChangeType"].Operations, operations: thisChanges }, otherChange: { changeType: _crdt_js__WEBPACK_IMPORTED_MODULE_0__["ChangeType"].Operations, operations: otherChanges } };
-    }
-    applyOperation(op) {
-        let value;
-        if (op.version.from !== (this.model.version[op.actor] || 0)) {
-            return false;
-        }
-        if (op.version.to <= op.version.from) {
-            return false;
-        }
-        if (op.type === CountOpTypes.MultiIncrement) {
-            if (op.value < 0) {
-                return false;
-            }
-            value = (this.model.values[op.actor] || 0) + op.value;
-        }
-        else {
-            value = (this.model.values[op.actor] || 0) + 1;
-        }
-        this.model.values[op.actor] = value;
-        this.model.version[op.actor] = op.version.to;
-        return true;
-    }
-    cloneMap(map) {
-        const result = {};
-        Object.keys(map).forEach(key => result[key] = map[key]);
-        return result;
-    }
-    getData() {
-        return { values: this.cloneMap(this.model.values), version: this.cloneMap(this.model.version) };
-    }
-    getParticleView() {
-        return Object.values(this.model.values).reduce((prev, current) => prev + current, 0);
-    }
-}
-//# sourceMappingURL=crdt-count.js.map
-
-/***/ }),
-/* 29 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Handle", function() { return Handle; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CollectionHandle", function() { return CollectionHandle; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SingletonHandle", function() { return SingletonHandle; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "handleNGFor", function() { return handleNGFor; });
-/* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
-/* harmony import */ var _arc_exceptions_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(14);
-/* harmony import */ var _crdt_crdt_collection_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(23);
-/* harmony import */ var _crdt_crdt_singleton_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(24);
-/* harmony import */ var _entity_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(11);
-/* harmony import */ var _id_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(18);
-/* harmony import */ var _type_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(8);
-/* harmony import */ var _storage_proxy_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(30);
-/**
- * @license
- * Copyright (c) 2019 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-
-
-
-
-
-
-
-
-/**
- * Base class for Handles.
- */
-class Handle {
-    constructor(key, storageProxy, idGenerator, particle, canRead, canWrite, name) {
-        this.key = key;
-        this.name = name;
-        this.storageProxy = storageProxy;
-        this.idGenerator = idGenerator;
-        this.particle = particle;
-        this.options = {
-            keepSynced: true,
-            notifySync: true,
-            notifyUpdate: true,
-            notifyDesync: false,
-        };
-        this.canRead = canRead;
-        this.canWrite = canWrite;
-        const type = this.storageProxy.type.getContainedType() || this.storageProxy.type;
-        if (type instanceof _type_js__WEBPACK_IMPORTED_MODULE_6__["EntityType"]) {
-            this.entityClass = type.entitySchema.entityClass();
-        }
-        this.clock = this.storageProxy.registerHandle(this);
-    }
-    //TODO: this is used by multiplexer-dom-particle.ts, it probably won't work with this kind of store.
-    get storage() {
-        return this.storageProxy;
-    }
-    get type() {
-        return this.storageProxy.type;
-    }
-    // TODO: after NG migration, this can be renamed to something like "apiChannelId()".
-    get _id() {
-        return this.storageProxy.apiChannelId;
-    }
-    createIdentityFor(entity) {
-        _entity_js__WEBPACK_IMPORTED_MODULE_4__["Entity"].createIdentity(entity, _id_js__WEBPACK_IMPORTED_MODULE_5__["Id"].fromString(this._id), this.idGenerator);
-    }
-    // `options` may contain any of:
-    // - keepSynced (bool): load full data on startup, maintain data in proxy and resync as required
-    // - notifySync (bool): if keepSynced is true, call onHandleSync when the full data is received
-    // - notifyUpdate (bool): call onHandleUpdate for every change event received
-    // - notifyDesync (bool): if keepSynced is true, call onHandleDesync when desync is detected
-    configure(options) {
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(this.canRead, 'configure can only be called on readable Handles');
-        this.options = { ...this.options, ...options };
-    }
-    reportUserExceptionInHost(exception, particle, method) {
-        this.storageProxy.reportExceptionInHost(new _arc_exceptions_js__WEBPACK_IMPORTED_MODULE_1__["UserException"](exception, method, this.key, particle.spec.name));
-    }
-    async onDesync() {
-        await this.particle.callOnHandleDesync(this, e => this.reportUserExceptionInHost(e, this.particle, 'onHandleDesync'));
-    }
-    disable(particle) {
-        this.storageProxy.deregisterHandle(this);
-        this.storageProxy = new _storage_proxy_js__WEBPACK_IMPORTED_MODULE_7__["NoOpStorageProxy"]();
-    }
-}
-/**
- * A handle on a set of Entity data. Note that, as a set, a Collection can only
- * contain a single version of an Entity for each given ID. Further, no order is
- * implied by the set.
- */
-class CollectionHandle extends Handle {
-    async get(id) {
-        const values = await this.toList();
-        return values.find(element => element.id === id);
-    }
-    async add(entity) {
-        this.clock[this.key] = (this.clock[this.key] || 0) + 1;
-        const op = {
-            type: _crdt_crdt_collection_js__WEBPACK_IMPORTED_MODULE_2__["CollectionOpTypes"].Add,
-            added: entity,
-            actor: this.key,
-            clock: this.clock,
-        };
-        return this.storageProxy.applyOp(op);
-    }
-    async addMultiple(entities) {
-        return Promise.all(entities.map(e => this.add(e))).then(array => array.every(Boolean));
-    }
-    async remove(entity) {
-        const op = {
-            type: _crdt_crdt_collection_js__WEBPACK_IMPORTED_MODULE_2__["CollectionOpTypes"].Remove,
-            removed: entity,
-            actor: this.key,
-            clock: this.clock,
-        };
-        return this.storageProxy.applyOp(op);
-    }
-    async clear() {
-        const values = await this.toList();
-        for (const value of values) {
-            const removeOp = {
-                type: _crdt_crdt_collection_js__WEBPACK_IMPORTED_MODULE_2__["CollectionOpTypes"].Remove,
-                removed: value,
-                actor: this.key,
-                clock: this.clock,
-            };
-            if (!this.storageProxy.applyOp(removeOp)) {
-                return false;
-            }
-        }
-        return true;
-    }
-    async toList() {
-        const [set, versionMap] = await this.storageProxy.getParticleView();
-        this.clock = versionMap;
-        return [...set];
-    }
-    async onUpdate(op, oldData, version) {
-        this.clock = version;
-        // FastForward cannot be expressed in terms of ordered added/removed, so pass a full model to
-        // the particle.
-        if (op.type === _crdt_crdt_collection_js__WEBPACK_IMPORTED_MODULE_2__["CollectionOpTypes"].FastForward) {
-            return this.onSync();
-        }
-        // Pass the change up to the particle.
-        const update = { originator: ('actor' in op && this.key === op.actor) };
-        if (op.type === _crdt_crdt_collection_js__WEBPACK_IMPORTED_MODULE_2__["CollectionOpTypes"].Add) {
-            update.added = op.added;
-        }
-        if (op.type === _crdt_crdt_collection_js__WEBPACK_IMPORTED_MODULE_2__["CollectionOpTypes"].Remove) {
-            update.removed = op.removed;
-        }
-        await this.particle.callOnHandleUpdate(this /*handle*/, update, e => this.reportUserExceptionInHost(e, this.particle, 'onHandleUpdate'));
-    }
-    async onSync() {
-        await this.particle.callOnHandleSync(this /*handle*/, this.toList() /*model*/, e => this.reportUserExceptionInHost(e, this.particle, 'onHandleSync'));
-    }
-}
-/**
- * A handle on a single entity.
- */
-class SingletonHandle extends Handle {
-    async set(entity) {
-        this.clock[this.key] = (this.clock[this.key] || 0) + 1;
-        const op = {
-            type: _crdt_crdt_singleton_js__WEBPACK_IMPORTED_MODULE_3__["SingletonOpTypes"].Set,
-            value: entity,
-            actor: this.key,
-            clock: this.clock,
-        };
-        return this.storageProxy.applyOp(op);
-    }
-    async clear() {
-        const op = {
-            type: _crdt_crdt_singleton_js__WEBPACK_IMPORTED_MODULE_3__["SingletonOpTypes"].Clear,
-            actor: this.key,
-            clock: this.clock,
-        };
-        return this.storageProxy.applyOp(op);
-    }
-    async get() {
-        const [value, versionMap] = await this.storageProxy.getParticleView();
-        this.clock = versionMap;
-        return value;
-    }
-    async onUpdate(op, oldData, version) {
-        this.clock = version;
-        // Pass the change up to the particle.
-        const update = { oldData, originator: (this.key === op.actor) };
-        if (op.type === _crdt_crdt_singleton_js__WEBPACK_IMPORTED_MODULE_3__["SingletonOpTypes"].Set) {
-            update.data = op.value;
-        }
-        // Nothing else to add (beyond oldData) for SingletonOpTypes.Clear.
-        await this.particle.callOnHandleUpdate(this /*handle*/, update, e => this.reportUserExceptionInHost(e, this.particle, 'onHandleUpdate'));
-    }
-    async onSync() {
-        await this.particle.callOnHandleSync(this /*handle*/, this.get() /*model*/, e => this.reportUserExceptionInHost(e, this.particle, 'onHandleSync'));
-    }
-}
-function handleNGFor(key, storageProxy, idGenerator, particle, canRead, canWrite, name) {
-    return new (storageProxy.type.handleConstructor())(key, storageProxy, idGenerator, particle, canRead, canWrite, name);
-}
-//# sourceMappingURL=handle.js.map
-
-/***/ }),
-/* 30 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "StorageProxy", function() { return StorageProxy; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "NoOpStorageProxy", function() { return NoOpStorageProxy; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "StorageProxyScheduler", function() { return StorageProxyScheduler; });
 /* harmony import */ var _platform_sourcemapped_stacktrace_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(16);
 /* harmony import */ var _arc_exceptions_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(14);
-/* harmony import */ var _crdt_crdt_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(22);
+/* harmony import */ var _crdt_crdt_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(23);
 /* harmony import */ var _type_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(8);
-/* harmony import */ var _store_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(31);
+/* harmony import */ var _store_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(26);
 /**
  * @license
  * Copyright (c) 2019 Google Inc. All rights reserved.
@@ -6793,23 +6268,23 @@ class StorageProxyScheduler {
 //# sourceMappingURL=storage-proxy.js.map
 
 /***/ }),
-/* 31 */
+/* 26 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Store", function() { return Store; });
-/* harmony import */ var _drivers_driver_factory_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(32);
-/* harmony import */ var _store_interface_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(33);
+/* harmony import */ var _drivers_driver_factory_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(27);
+/* harmony import */ var _store_interface_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(28);
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "ActiveStore", function() { return _store_interface_js__WEBPACK_IMPORTED_MODULE_1__["ActiveStore"]; });
 
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "ProxyMessageType", function() { return _store_interface_js__WEBPACK_IMPORTED_MODULE_1__["ProxyMessageType"]; });
 
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "StorageMode", function() { return _store_interface_js__WEBPACK_IMPORTED_MODULE_1__["StorageMode"]; });
 
-/* harmony import */ var _direct_store_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(34);
-/* harmony import */ var _reference_mode_store_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(36);
-/* harmony import */ var _unified_store_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(39);
+/* harmony import */ var _direct_store_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(29);
+/* harmony import */ var _reference_mode_store_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(31);
+/* harmony import */ var _unified_store_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(35);
 /**
  * @license
  * Copyright (c) 2019 Google Inc. All rights reserved.
@@ -6873,7 +6348,7 @@ Store.constructors = new Map([
 //# sourceMappingURL=store.js.map
 
 /***/ }),
-/* 32 */
+/* 27 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -6942,7 +6417,7 @@ DriverFactory.providers = new Set();
 //# sourceMappingURL=driver-factory.js.map
 
 /***/ }),
-/* 33 */
+/* 28 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -7020,17 +6495,17 @@ class ActiveStore {
 //# sourceMappingURL=store-interface.js.map
 
 /***/ }),
-/* 34 */
+/* 29 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "DirectStoreState", function() { return DirectStoreState; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "DirectStore", function() { return DirectStore; });
-/* harmony import */ var _crdt_crdt_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(22);
-/* harmony import */ var _drivers_driver_factory_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(32);
-/* harmony import */ var _store_interface_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(33);
-/* harmony import */ var _util_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(35);
+/* harmony import */ var _crdt_crdt_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(23);
+/* harmony import */ var _drivers_driver_factory_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(27);
+/* harmony import */ var _store_interface_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(28);
+/* harmony import */ var _util_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(30);
 /**
  * @license
  * Copyright (c) 2019 Google Inc. All rights reserved.
@@ -7284,7 +6759,7 @@ class DirectStore extends _store_interface_js__WEBPACK_IMPORTED_MODULE_2__["Acti
 //# sourceMappingURL=direct-store.js.map
 
 /***/ }),
-/* 35 */
+/* 30 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -7377,7 +6852,7 @@ function noAwait(result) { }
 //# sourceMappingURL=util.js.map
 
 /***/ }),
-/* 36 */
+/* 31 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -7387,12 +6862,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ReferenceModeStorageKey", function() { return ReferenceModeStorageKey; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ReferenceModeStore", function() { return ReferenceModeStore; });
 /* harmony import */ var _crdt_crdt_singleton_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(24);
-/* harmony import */ var _crdt_crdt_collection_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(23);
-/* harmony import */ var _store_interface_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(33);
-/* harmony import */ var _backing_store_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(37);
-/* harmony import */ var _crdt_crdt_entity_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(21);
-/* harmony import */ var _direct_store_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(34);
-/* harmony import */ var _storage_key_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(38);
+/* harmony import */ var _crdt_crdt_collection_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(22);
+/* harmony import */ var _store_interface_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(28);
+/* harmony import */ var _backing_store_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(32);
+/* harmony import */ var _crdt_crdt_entity_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(33);
+/* harmony import */ var _direct_store_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(29);
+/* harmony import */ var _storage_key_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(34);
 /* harmony import */ var _type_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(8);
 /**
  * @license
@@ -8007,13 +7482,13 @@ function isSingletonOperation(operation) {
 //# sourceMappingURL=reference-mode-store.js.map
 
 /***/ }),
-/* 37 */
+/* 32 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "BackingStore", function() { return BackingStore; });
-/* harmony import */ var _direct_store_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(34);
+/* harmony import */ var _direct_store_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(29);
 /**
  * @license
  * Copyright (c) 2019 Google Inc. All rights reserved.
@@ -8093,7 +7568,181 @@ class BackingStore {
 //# sourceMappingURL=backing-store.js.map
 
 /***/ }),
-/* 38 */
+/* 33 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "EntityOpTypes", function() { return EntityOpTypes; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CRDTEntity", function() { return CRDTEntity; });
+/* harmony import */ var _crdt_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(23);
+/* harmony import */ var _crdt_collection_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(22);
+/* harmony import */ var _crdt_singleton_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(24);
+/**
+ * @license
+ * Copyright (c) 2019 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+
+
+
+var EntityOpTypes;
+(function (EntityOpTypes) {
+    EntityOpTypes[EntityOpTypes["Set"] = 0] = "Set";
+    EntityOpTypes[EntityOpTypes["Clear"] = 1] = "Clear";
+    EntityOpTypes[EntityOpTypes["Add"] = 2] = "Add";
+    EntityOpTypes[EntityOpTypes["Remove"] = 3] = "Remove";
+})(EntityOpTypes || (EntityOpTypes = {}));
+class CRDTEntity {
+    constructor(singletons, collections) {
+        this.model = { singletons, collections, version: {} };
+    }
+    merge(other) {
+        const singletonChanges = {};
+        const collectionChanges = {};
+        let allOps = true;
+        for (const singleton of Object.keys(this.model.singletons)) {
+            singletonChanges[singleton] = this.model.singletons[singleton].merge(other.singletons[singleton]);
+            if (singletonChanges[singleton].modelChange.changeType === _crdt_js__WEBPACK_IMPORTED_MODULE_0__["ChangeType"].Model ||
+                singletonChanges[singleton].otherChange.changeType === _crdt_js__WEBPACK_IMPORTED_MODULE_0__["ChangeType"].Model) {
+                allOps = false;
+            }
+        }
+        for (const collection of Object.keys(this.model.collections)) {
+            collectionChanges[collection] = this.model.collections[collection].merge(other.collections[collection]);
+            if (collectionChanges[collection].modelChange.changeType === _crdt_js__WEBPACK_IMPORTED_MODULE_0__["ChangeType"].Model ||
+                collectionChanges[collection].otherChange.changeType === _crdt_js__WEBPACK_IMPORTED_MODULE_0__["ChangeType"].Model) {
+                allOps = false;
+            }
+        }
+        for (const versionKey of Object.keys(other.version)) {
+            this.model.version[versionKey] = Math.max(this.model.version[versionKey] || 0, other.version[versionKey]);
+        }
+        if (allOps) {
+            const modelOps = [];
+            const otherOps = [];
+            for (const singleton of Object.keys(singletonChanges)) {
+                for (const operation of singletonChanges[singleton].modelChange.operations) {
+                    let op;
+                    if (operation.type === _crdt_singleton_js__WEBPACK_IMPORTED_MODULE_2__["SingletonOpTypes"].Set) {
+                        op = { ...operation, type: EntityOpTypes.Set, field: singleton };
+                    }
+                    else {
+                        op = { ...operation, type: EntityOpTypes.Clear, field: singleton };
+                    }
+                    modelOps.push(op);
+                }
+                for (const operation of singletonChanges[singleton].otherChange.operations) {
+                    let op;
+                    if (operation.type === _crdt_singleton_js__WEBPACK_IMPORTED_MODULE_2__["SingletonOpTypes"].Set) {
+                        op = { ...operation, type: EntityOpTypes.Set, field: singleton };
+                    }
+                    else {
+                        op = { ...operation, type: EntityOpTypes.Clear, field: singleton };
+                    }
+                    otherOps.push(op);
+                }
+            }
+            for (const collection of Object.keys(collectionChanges)) {
+                for (const operation of collectionChanges[collection].modelChange.operations) {
+                    let op;
+                    if (operation.type === _crdt_collection_js__WEBPACK_IMPORTED_MODULE_1__["CollectionOpTypes"].Add) {
+                        op = { ...operation, type: EntityOpTypes.Add, field: collection };
+                    }
+                    else {
+                        op = { ...operation, type: EntityOpTypes.Remove, field: collection };
+                    }
+                    modelOps.push(op);
+                }
+                for (const operation of collectionChanges[collection].otherChange.operations) {
+                    let op;
+                    if (operation.type === _crdt_collection_js__WEBPACK_IMPORTED_MODULE_1__["CollectionOpTypes"].Add) {
+                        op = { ...operation, type: EntityOpTypes.Add, field: collection };
+                    }
+                    else {
+                        op = { ...operation, type: EntityOpTypes.Remove, field: collection };
+                    }
+                    otherOps.push(op);
+                }
+            }
+            return { modelChange: { changeType: _crdt_js__WEBPACK_IMPORTED_MODULE_0__["ChangeType"].Operations, operations: modelOps },
+                otherChange: { changeType: _crdt_js__WEBPACK_IMPORTED_MODULE_0__["ChangeType"].Operations, operations: otherOps } };
+        }
+        else {
+            // need to map this.model to get the data out.
+            const change = { changeType: _crdt_js__WEBPACK_IMPORTED_MODULE_0__["ChangeType"].Model, modelPostChange: this.getData() };
+            return { modelChange: change, otherChange: change };
+        }
+    }
+    applyOperation(op) {
+        if (op.type === EntityOpTypes.Set || op.type === EntityOpTypes.Clear) {
+            if (!this.model.singletons[op.field]) {
+                if (this.model.collections[op.field]) {
+                    throw new Error(`Can't apply ${op.type === EntityOpTypes.Set ? 'Set' : 'Clear'} operation to collection field ${op.field}`);
+                }
+                throw new Error(`Invalid field: ${op.field} does not exist`);
+            }
+        }
+        else {
+            if (!this.model.collections[op.field]) {
+                if (this.model.singletons[op.field]) {
+                    throw new Error(`Can't apply ${op.type === EntityOpTypes.Add ? 'Add' : 'Remove'} operation to singleton field ${op.field}`);
+                }
+                throw new Error(`Invalid field: ${op.field} does not exist`);
+            }
+        }
+        const apply = () => {
+            switch (op.type) {
+                case EntityOpTypes.Set:
+                    return this.model.singletons[op.field].applyOperation({ ...op, type: _crdt_singleton_js__WEBPACK_IMPORTED_MODULE_2__["SingletonOpTypes"].Set });
+                case EntityOpTypes.Clear:
+                    return this.model.singletons[op.field].applyOperation({ ...op, type: _crdt_singleton_js__WEBPACK_IMPORTED_MODULE_2__["SingletonOpTypes"].Clear });
+                case EntityOpTypes.Add:
+                    return this.model.collections[op.field].applyOperation({ ...op, type: _crdt_collection_js__WEBPACK_IMPORTED_MODULE_1__["CollectionOpTypes"].Add });
+                case EntityOpTypes.Remove:
+                    return this.model.collections[op.field].applyOperation({ ...op, type: _crdt_collection_js__WEBPACK_IMPORTED_MODULE_1__["CollectionOpTypes"].Remove });
+                default:
+                    throw new Error(`Unexpected op ${op} for Entity CRDT`);
+            }
+        };
+        if (apply()) {
+            for (const versionKey of Object.keys(op.clock)) {
+                this.model.version[versionKey] = Math.max(this.model.version[versionKey] || 0, op.clock[versionKey]);
+            }
+            return true;
+        }
+        return false;
+    }
+    getData() {
+        const singletons = {};
+        const collections = {};
+        Object.keys(this.model.singletons).forEach(singleton => {
+            singletons[singleton] = this.model.singletons[singleton].getData();
+        });
+        Object.keys(this.model.collections).forEach(collection => {
+            collections[collection] = this.model.collections[collection].getData();
+        });
+        return { singletons, collections, version: this.model.version };
+    }
+    getParticleView() {
+        const result = { singletons: {}, collections: {} };
+        for (const key of Object.keys(this.model.singletons)) {
+            result.singletons[key] = this.model.singletons[key].getParticleView();
+        }
+        for (const key of Object.keys(this.model.collections)) {
+            result.collections[key] = this.model.collections[key].getParticleView();
+        }
+        return result;
+    }
+}
+//# sourceMappingURL=crdt-entity.js.map
+
+/***/ }),
+/* 34 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -8122,13 +7771,13 @@ class StorageKey {
 //# sourceMappingURL=storage-key.js.map
 
 /***/ }),
-/* 39 */
+/* 35 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "UnifiedStore", function() { return UnifiedStore; });
-/* harmony import */ var _recipe_comparable_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(40);
+/* harmony import */ var _recipe_comparable_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(36);
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(3);
 /**
  * @license
@@ -8241,7 +7890,7 @@ class UnifiedStore {
 //# sourceMappingURL=unified-store.js.map
 
 /***/ }),
-/* 40 */
+/* 36 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -8315,6 +7964,383 @@ function compareComparables(o1, o2) {
     return o1._compareTo(o2);
 }
 //# sourceMappingURL=comparable.js.map
+
+/***/ }),
+/* 37 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SlotInfo", function() { return SlotInfo; });
+/**
+ * @license
+ * Copyright (c) 2017 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+class SlotInfo {
+    constructor(formFactor, handle) {
+        this.formFactor = formFactor;
+        this.handle = handle;
+    }
+    toLiteral() {
+        return this;
+    }
+    static fromLiteral({ formFactor, handle }) {
+        return new SlotInfo(formFactor, handle);
+    }
+}
+//# sourceMappingURL=slot-info.js.map
+
+/***/ }),
+/* 38 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ArcInfo", function() { return ArcInfo; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ArcHandle", function() { return ArcHandle; });
+/**
+ * @license
+ * Copyright (c) 2018 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+// Equivalent to an Entity with Schema { serialization Text }
+class ArcInfo {
+    constructor(arcId, serialization) {
+        this.id = arcId.toString();
+        // TODO: remove the import-removal hack when import statements no longer appear
+        // in serialized manifests, or deal with them correctly if they end up staying
+        this.serialization = serialization.replace(/\bimport .*\n/g, '');
+    }
+    // Retrieves the serialized string from a stored instance of ArcInfo.
+    static extractSerialization(data) {
+        return data.serialization.replace(/\bimport .*\n/g, '');
+    }
+}
+class ArcHandle {
+    constructor(id, storageKey, type, tags) {
+        this.id = id;
+        this.storageKey = storageKey;
+        this.type = type;
+        this.tags = tags;
+    }
+}
+//# sourceMappingURL=synthetic-types.js.map
+
+/***/ }),
+/* 39 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "TypeVariableInfo", function() { return TypeVariableInfo; });
+/* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
+/* harmony import */ var _schema_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(10);
+/* harmony import */ var _type_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(8);
+/**
+ * @license
+ * Copyright (c) 2017 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+
+
+
+class TypeVariableInfo {
+    constructor(name, canWriteSuperset, canReadSubset) {
+        this.name = name;
+        this._canWriteSuperset = canWriteSuperset;
+        this._canReadSubset = canReadSubset;
+        this._resolution = null;
+    }
+    /**
+     * Merge both the read subset (upper bound) and write superset (lower bound) constraints
+     * of two variables together. Use this when two separate type variables need to resolve
+     * to the same value.
+     */
+    maybeMergeConstraints(variable) {
+        if (!this.maybeMergeCanReadSubset(variable.canReadSubset)) {
+            return false;
+        }
+        return this.maybeMergeCanWriteSuperset(variable.canWriteSuperset);
+    }
+    /**
+     * Merge a type variable's read subset (upper bound) constraints into this variable.
+     * This is used to accumulate read constraints when resolving a handle's type.
+     */
+    maybeMergeCanReadSubset(constraint) {
+        if (constraint == null) {
+            return true;
+        }
+        if (this.canReadSubset == null) {
+            this.canReadSubset = constraint;
+            return true;
+        }
+        if (this.canReadSubset instanceof _type_js__WEBPACK_IMPORTED_MODULE_2__["SlotType"] && constraint instanceof _type_js__WEBPACK_IMPORTED_MODULE_2__["SlotType"]) {
+            // TODO: formFactor compatibility, etc.
+            return true;
+        }
+        if (this.canReadSubset instanceof _type_js__WEBPACK_IMPORTED_MODULE_2__["EntityType"] && constraint instanceof _type_js__WEBPACK_IMPORTED_MODULE_2__["EntityType"]) {
+            const mergedSchema = _schema_js__WEBPACK_IMPORTED_MODULE_1__["Schema"].intersect(this.canReadSubset.entitySchema, constraint.entitySchema);
+            if (!mergedSchema) {
+                return false;
+            }
+            this.canReadSubset = new _type_js__WEBPACK_IMPORTED_MODULE_2__["EntityType"](mergedSchema);
+            return true;
+        }
+        return false;
+    }
+    /**
+     * merge a type variable's write superset (lower bound) constraints into this variable.
+     * This is used to accumulate write constraints when resolving a handle's type.
+     */
+    maybeMergeCanWriteSuperset(constraint) {
+        if (constraint == null) {
+            return true;
+        }
+        if (this.canWriteSuperset == null) {
+            this.canWriteSuperset = constraint;
+            return true;
+        }
+        if (this.canWriteSuperset instanceof _type_js__WEBPACK_IMPORTED_MODULE_2__["SlotType"] && constraint instanceof _type_js__WEBPACK_IMPORTED_MODULE_2__["SlotType"]) {
+            // TODO: formFactor compatibility, etc.
+            return true;
+        }
+        if (this.canWriteSuperset instanceof _type_js__WEBPACK_IMPORTED_MODULE_2__["EntityType"] && constraint instanceof _type_js__WEBPACK_IMPORTED_MODULE_2__["EntityType"]) {
+            const mergedSchema = _schema_js__WEBPACK_IMPORTED_MODULE_1__["Schema"].union(this.canWriteSuperset.entitySchema, constraint.entitySchema);
+            if (!mergedSchema) {
+                return false;
+            }
+            this.canWriteSuperset = new _type_js__WEBPACK_IMPORTED_MODULE_2__["EntityType"](mergedSchema);
+            return true;
+        }
+        return false;
+    }
+    isSatisfiedBy(type) {
+        const constraint = this._canWriteSuperset;
+        if (!constraint) {
+            return true;
+        }
+        if (!(constraint instanceof _type_js__WEBPACK_IMPORTED_MODULE_2__["EntityType"]) || !(type instanceof _type_js__WEBPACK_IMPORTED_MODULE_2__["EntityType"])) {
+            throw new Error(`constraint checking not implemented for ${this} and ${type}`);
+        }
+        return type.getEntitySchema().isMoreSpecificThan(constraint.getEntitySchema());
+    }
+    get resolution() {
+        if (this._resolution) {
+            return this._resolution.resolvedType();
+        }
+        return null;
+    }
+    isValidResolutionCandidate(value) {
+        const elementType = value.resolvedType().getContainedType();
+        if (elementType instanceof _type_js__WEBPACK_IMPORTED_MODULE_2__["TypeVariable"] && elementType.variable === this) {
+            return { result: false, detail: 'variable cannot resolve to collection of itself' };
+        }
+        return { result: true };
+    }
+    set resolution(value) {
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(!this._resolution);
+        const isValid = this.isValidResolutionCandidate(value);
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(isValid.result, isValid.detail);
+        let probe = value;
+        while (probe) {
+            if (!(probe instanceof _type_js__WEBPACK_IMPORTED_MODULE_2__["TypeVariable"])) {
+                break;
+            }
+            if (probe.variable === this) {
+                return;
+            }
+            probe = probe.variable.resolution;
+        }
+        this._resolution = value;
+        this._canWriteSuperset = null;
+        this._canReadSubset = null;
+    }
+    get canWriteSuperset() {
+        if (this._resolution) {
+            Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(!this._canWriteSuperset);
+            if (this._resolution instanceof _type_js__WEBPACK_IMPORTED_MODULE_2__["TypeVariable"]) {
+                return this._resolution.variable.canWriteSuperset;
+            }
+            return null;
+        }
+        return this._canWriteSuperset;
+    }
+    set canWriteSuperset(value) {
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(!this._resolution);
+        this._canWriteSuperset = value;
+    }
+    get canReadSubset() {
+        if (this._resolution) {
+            Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(!this._canReadSubset);
+            if (this._resolution instanceof _type_js__WEBPACK_IMPORTED_MODULE_2__["TypeVariable"]) {
+                return this._resolution.variable.canReadSubset;
+            }
+            return null;
+        }
+        return this._canReadSubset;
+    }
+    set canReadSubset(value) {
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(!this._resolution);
+        this._canReadSubset = value;
+    }
+    get hasConstraint() {
+        return this._canReadSubset !== null || this._canWriteSuperset !== null;
+    }
+    canEnsureResolved() {
+        if (this._resolution) {
+            return this._resolution.canEnsureResolved();
+        }
+        if (this._canWriteSuperset || this._canReadSubset) {
+            return true;
+        }
+        return false;
+    }
+    maybeEnsureResolved() {
+        if (this._resolution) {
+            return this._resolution.maybeEnsureResolved();
+        }
+        if (this._canWriteSuperset) {
+            this.resolution = this._canWriteSuperset;
+            return true;
+        }
+        if (this._canReadSubset) {
+            this.resolution = this._canReadSubset;
+            return true;
+        }
+        return false;
+    }
+    toLiteral() {
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(this.resolution == null);
+        return this.toLiteralIgnoringResolutions();
+    }
+    toLiteralIgnoringResolutions() {
+        return {
+            name: this.name,
+            canWriteSuperset: this._canWriteSuperset && this._canWriteSuperset.toLiteral(),
+            canReadSubset: this._canReadSubset && this._canReadSubset.toLiteral()
+        };
+    }
+    static fromLiteral(data) {
+        return new TypeVariableInfo(data.name, data.canWriteSuperset ? _type_js__WEBPACK_IMPORTED_MODULE_2__["Type"].fromLiteral(data.canWriteSuperset) : null, data.canReadSubset ? _type_js__WEBPACK_IMPORTED_MODULE_2__["Type"].fromLiteral(data.canReadSubset) : null);
+    }
+    isResolved() {
+        return this._resolution && this._resolution.isResolved();
+    }
+}
+//# sourceMappingURL=type-variable-info.js.map
+
+/***/ }),
+/* 40 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CountOpTypes", function() { return CountOpTypes; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CRDTCount", function() { return CRDTCount; });
+/* harmony import */ var _crdt_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(23);
+/**
+ * @license
+ * Copyright (c) 2019 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+
+var CountOpTypes;
+(function (CountOpTypes) {
+    CountOpTypes[CountOpTypes["Increment"] = 0] = "Increment";
+    CountOpTypes[CountOpTypes["MultiIncrement"] = 1] = "MultiIncrement";
+})(CountOpTypes || (CountOpTypes = {}));
+class CRDTCount {
+    constructor() {
+        this.model = { values: {}, version: {} };
+    }
+    merge(other) {
+        const otherChanges = [];
+        const thisChanges = [];
+        for (const key of Object.keys(other.values)) {
+            const thisValue = this.model.values[key] || 0;
+            const otherValue = other.values[key] || 0;
+            const thisVersion = this.model.version[key] || 0;
+            const otherVersion = other.version[key] || 0;
+            if (thisValue > otherValue) {
+                if (otherVersion >= thisVersion) {
+                    throw new _crdt_js__WEBPACK_IMPORTED_MODULE_0__["CRDTError"]('Divergent versions encountered when merging CRDTCount models');
+                }
+                otherChanges.push({ type: CountOpTypes.MultiIncrement, value: thisValue - otherValue, actor: key,
+                    version: { from: otherVersion, to: thisVersion } });
+            }
+            else if (otherValue > thisValue) {
+                if (thisVersion >= otherVersion) {
+                    throw new _crdt_js__WEBPACK_IMPORTED_MODULE_0__["CRDTError"]('Divergent versions encountered when merging CRDTCount models');
+                }
+                thisChanges.push({ type: CountOpTypes.MultiIncrement, value: otherValue - thisValue, actor: key,
+                    version: { from: thisVersion, to: otherVersion } });
+                this.model.values[key] = otherValue;
+                this.model.version[key] = otherVersion;
+            }
+        }
+        for (const key of Object.keys(this.model.values)) {
+            if (other.values[key]) {
+                continue;
+            }
+            if (other.version[key]) {
+                throw new _crdt_js__WEBPACK_IMPORTED_MODULE_0__["CRDTError"](`CRDTCount model has version but no value for key ${key}`);
+            }
+            otherChanges.push({ type: CountOpTypes.MultiIncrement, value: this.model.values[key], actor: key,
+                version: { from: 0, to: this.model.version[key] } });
+        }
+        return { modelChange: { changeType: _crdt_js__WEBPACK_IMPORTED_MODULE_0__["ChangeType"].Operations, operations: thisChanges }, otherChange: { changeType: _crdt_js__WEBPACK_IMPORTED_MODULE_0__["ChangeType"].Operations, operations: otherChanges } };
+    }
+    applyOperation(op) {
+        let value;
+        if (op.version.from !== (this.model.version[op.actor] || 0)) {
+            return false;
+        }
+        if (op.version.to <= op.version.from) {
+            return false;
+        }
+        if (op.type === CountOpTypes.MultiIncrement) {
+            if (op.value < 0) {
+                return false;
+            }
+            value = (this.model.values[op.actor] || 0) + op.value;
+        }
+        else {
+            value = (this.model.values[op.actor] || 0) + 1;
+        }
+        this.model.values[op.actor] = value;
+        this.model.version[op.actor] = op.version.to;
+        return true;
+    }
+    cloneMap(map) {
+        const result = {};
+        Object.keys(map).forEach(key => result[key] = map[key]);
+        return result;
+    }
+    getData() {
+        return { values: this.cloneMap(this.model.values), version: this.cloneMap(this.model.version) };
+    }
+    getParticleView() {
+        return Object.values(this.model.values).reduce((prev, current) => prev + current, 0);
+    }
+}
+//# sourceMappingURL=crdt-count.js.map
 
 /***/ }),
 /* 41 */

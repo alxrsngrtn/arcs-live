@@ -9,10 +9,9 @@
  */
 import { assert } from '../platform/assert-web.js';
 import { PECInnerPort } from './api-channel.js';
-import { handleFor } from './handle.js';
+import { unifiedHandleFor } from './handle.js';
 import { SlotProxy } from './slot-proxy.js';
 import { StorageProxy, StorageProxyScheduler } from './storage-proxy.js';
-import { handleNGFor } from './storageNG/handle.js';
 import { StorageProxy as StorageProxyNG } from './storageNG/storage-proxy.js';
 import { WasmContainer, WasmParticle } from './wasm.js';
 import { UserException } from './arc-exceptions.js';
@@ -140,7 +139,7 @@ export class ParticleExecutionContext {
         return {
             async createHandle(type, name, hostParticle) {
                 return new Promise((resolve, reject) => pec.apiPort.ArcCreateHandle(proxy => {
-                    const handle = handleFor(proxy, pec.idGenerator, name, particleId);
+                    const handle = unifiedHandleFor({ proxy, idGenerator: pec.idGenerator, name, particleId });
                     resolve(handle);
                     if (hostParticle) {
                         proxy.register(hostParticle, handle);
@@ -258,13 +257,15 @@ export class ParticleExecutionContext {
     }
     createHandle(particle, spec, id, name, proxy, handleMap, registerList) {
         const connSpec = spec.handleConnectionMap.get(name);
-        let handle;
-        if (proxy instanceof StorageProxyNG) {
-            handle = handleNGFor(id, proxy, this.idGenerator, particle, connSpec.isInput, connSpec.isOutput, name);
-        }
-        else {
-            handle = handleFor(proxy, this.idGenerator, name, id, connSpec.isInput, connSpec.isOutput);
-        }
+        const handle = unifiedHandleFor({
+            proxy,
+            idGenerator: this.idGenerator,
+            name,
+            particleId: id,
+            particle,
+            canRead: connSpec.isInput,
+            canWrite: connSpec.isOutput,
+        });
         handleMap.set(name, handle);
         // Defer registration of handles with proxies until after particles have a chance to
         // configure them in setHandles.

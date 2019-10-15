@@ -9,12 +9,11 @@
  */
 import { assert } from '../../platform/chai-web.js';
 import { Arc } from '../arc.js';
-import { handleFor } from '../handle.js';
 import { Loader } from '../loader.js';
 import { Schema } from '../schema.js';
 import { FakeSlotComposer } from '../testing/fake-slot-composer.js';
 import { EntityType } from '../type.js';
-import { ArcId, IdGenerator } from '../id.js';
+import { ArcId } from '../id.js';
 import { collectionHandleForTest } from '../testing/handle-for-test.js';
 describe('entity', () => {
     it('can be created, stored, and restored', async () => {
@@ -24,8 +23,8 @@ describe('entity', () => {
         assert.isDefined(entity);
         const collectionType = new EntityType(schema).collectionOf();
         const storage = await arc.createStore(collectionType);
-        const handle = handleFor(storage, IdGenerator.newSession());
-        await handle.store(entity);
+        const handle = await collectionHandleForTest(arc, storage);
+        await handle.add(entity);
         const collection = await collectionHandleForTest(arc, arc.findStoresByType(collectionType)[0]);
         const list = await collection.toList();
         const clone = list[0];

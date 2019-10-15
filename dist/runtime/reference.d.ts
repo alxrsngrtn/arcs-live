@@ -13,6 +13,7 @@ import { ReferenceType } from './type.js';
 import { Entity } from './entity.js';
 import { SerializedEntity } from './storage-proxy.js';
 import { SYMBOL_INTERNALS } from './symbols.js';
+import { CollectionHandle } from './storageNG/handle.js';
 export declare class Reference implements Storable {
     entity: Entity | null;
     type: ReferenceType;
@@ -20,7 +21,7 @@ export declare class Reference implements Storable {
     private storageKey;
     private readonly context;
     private storageProxy;
-    protected handle: Collection | null;
+    protected handle: Collection | CollectionHandle<any> | null;
     [SYMBOL_INTERNALS]: {
         serialize: () => SerializedEntity;
     };

@@ -8,10 +8,11 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { assert } from '../platform/assert-web.js';
-import { handleFor } from './handle.js';
+import { unifiedHandleFor } from './handle.js';
 import { ReferenceType } from './type.js';
 import { Entity } from './entity.js';
 import { SYMBOL_INTERNALS } from './symbols.js';
+import { CollectionHandle } from './storageNG/handle.js';
 var ReferenceMode;
 (function (ReferenceMode) {
     ReferenceMode[ReferenceMode["Unstored"] = 0] = "Unstored";
@@ -21,6 +22,7 @@ export class Reference {
     constructor(data, type, context) {
         this.entity = null;
         this.storageProxy = null;
+        // tslint:disable-next-line: no-any
         this.handle = null;
         this.id = data.id;
         this.storageKey = data.storageKey;
@@ -33,7 +35,8 @@ export class Reference {
     async ensureStorageProxy() {
         if (this.storageProxy == null) {
             this.storageProxy = await this.context.getStorageProxy(this.storageKey, this.type.referredType);
-            this.handle = handleFor(this.storageProxy, this.context.idGenerator);
+            // tslint:disable-next-line: no-any
+            this.handle = unifiedHandleFor({ proxy: this.storageProxy, idGenerator: this.context.idGenerator });
             if (this.storageKey) {
                 assert(this.storageKey === this.storageProxy.storageKey);
             }
@@ -67,7 +70,12 @@ export class ClientReference extends Reference {
     }
     async storeReference(entity) {
         await this.ensureStorageProxy();
-        await this.handle.store(entity);
+        if (this.handle instanceof CollectionHandle) {
+            await this.handle.add(entity);
+        }
+        else {
+            await this.handle.store(entity);
+        }
         this.mode = ReferenceMode.Stored;
     }
     async dereference() {

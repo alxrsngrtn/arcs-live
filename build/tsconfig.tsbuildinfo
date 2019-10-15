@@ -442,12 +442,12 @@
         "signature": "d99246f827c6aba914a38aa5c47531e2938d2b0a6b1c9225831918d378cf14e4"
       },
       "../src/runtime/handle.ts": {
-        "version": "b902640a7ec31924ef1038c4bb365c40acbc2d844af7fb51cc678972a4af72c8",
-        "signature": "c4c53553444b506fda6179705dacb536c1737d517acb1cfb519e1118ebd20015"
+        "version": "10270d9efaa9c097098faf20a53371443641e2e7312e9d1b434cb8638056d1fa",
+        "signature": "11c88ff3740d83ca50c6840ab7a4bf97757db9087c477b3e1d86757c6d73c4b7"
       },
       "../src/runtime/reference.ts": {
-        "version": "4232bdd729f2eed1d123aea2d0be47735a182b8cb992b0a5f8d4a21a4ecbffff",
-        "signature": "fe3ceae45b6db319ae3f0551edac0555329db0be6c8c5dfb92347105fc23aee1"
+        "version": "6784e79599d41e1345b897bb695d0684816bb90e7834f37aae8b5e4af8650188",
+        "signature": "71a6fd8fa6a0dc868c027a8aede92f8713bd94525a1c9319cd8f8df427fc5f77"
       },
       "../modalities/dom/components/xen/xen-state.d.ts": {
         "version": "f61bb0ebc59780a5d2461fc7c65d2150be526cd048fcead3167d2d4bc9db106f",
@@ -506,7 +506,7 @@
         "signature": "ee934e5addd1afa86c5d3f236c7b9bfd50a5f1685c9ea2c622b4c93c576fffc9"
       },
       "../src/runtime/particle-execution-context.ts": {
-        "version": "3999441b4febeb73634238f6df2d65b57fb233405ec744c9ebce45bff962861c",
+        "version": "19075571dfadf26fea142cd8be695b2303037fe0ea17a380781e7e6089a4cc2a",
         "signature": "c152a7fbfea2150cfb3893377f93e665d7646cf26648594a3ef9701eaf3dfd20"
       },
       "../src/runtime/entity.ts": {
@@ -2373,7 +2373,7 @@
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "../src/runtime/tests/data-layer-test.ts": {
-        "version": "8b95d658c92ca36d668d99e8860115a8029e3b5513a3efec112846ae30b56a86",
+        "version": "79dfa6ead9f52547570d5d843bb6d36ca77858f6594554f4c295081b14b56199",
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "../src/runtime/tests/description-test.ts": {
@@ -2461,7 +2461,7 @@
         "signature": "8bc1d39a3b8ec61064f9969316a088e314895e7ffd094468dcc0b238f33cb4a6"
       },
       "../src/runtime/tests/runtime-manifest-integration-test.ts": {
-        "version": "875b1e6f63471d26db28c93dab3c61d1dc1225744eaa571d8a2477f34cde7aa5",
+        "version": "8bb886417893667a144ff6adaa0e0e80273304a38f3fdbf023403e18376740e1",
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "../src/runtime/tests/runtime-test.ts": {
@@ -3673,6 +3673,7 @@
         "../src/runtime/symbols.ts",
         "../src/runtime/storageNG/handle.ts",
         "../src/runtime/crdt/crdt.ts",
+        "../src/runtime/storageNG/storage-proxy.ts",
         "../node_modules/@types/node/util.d.ts",
         "../node_modules/@types/node/ts3.1/util.d.ts"
       ],
@@ -3684,6 +3685,7 @@
         "../src/runtime/entity.ts",
         "../src/runtime/storage-proxy.ts",
         "../src/runtime/symbols.ts",
+        "../src/runtime/storageNG/handle.ts",
         "../node_modules/@types/node/util.d.ts",
         "../node_modules/@types/node/ts3.1/util.d.ts"
       ],
@@ -7556,7 +7558,6 @@
       "../src/runtime/tests/data-layer-test.ts": [
         "../src/platform/chai-web.d.ts",
         "../src/runtime/arc.ts",
-        "../src/runtime/handle.ts",
         "../src/runtime/loader.ts",
         "../src/runtime/schema.ts",
         "../src/runtime/testing/fake-slot-composer.ts",
@@ -7815,9 +7816,8 @@
       ],
       "../src/runtime/tests/runtime-manifest-integration-test.ts": [
         "../src/platform/chai-web.d.ts",
-        "../src/runtime/handle.ts",
         "../src/runtime/testing/manifest-integration-test-setup.ts",
-        "../src/runtime/id.ts",
+        "../src/runtime/testing/handle-for-test.ts",
         "../node_modules/@types/node/util.d.ts",
         "../node_modules/@types/node/ts3.1/util.d.ts"
       ],
@@ -8988,12 +8988,14 @@
         "../src/runtime/particle.ts",
         "../src/runtime/id.ts",
         "../src/runtime/particle-spec.ts",
-        "../src/runtime/reference.ts"
+        "../src/runtime/reference.ts",
+        "../src/runtime/storageNG/storage-proxy.ts"
       ],
       "../src/runtime/reference.ts": [
         "../src/runtime/entity.ts",
         "../src/runtime/type.ts",
         "../src/runtime/handle.ts",
+        "../src/runtime/storageNG/handle.ts",
         "../src/runtime/storage-proxy.ts",
         "../src/runtime/symbols.ts",
         "../src/runtime/particle-execution-context.ts"

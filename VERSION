@@ -1,7 +1,7 @@
-commit 8032a970b4e188ec1b40c23bb78377fb51c41ae2
-Author: galganif <4754402+galganif@users.noreply.github.com>
-Date:   Tue Oct 15 10:09:17 2019 +1100
+commit 2064fd3eed923c483e71ebdb99355b2a4c0b8d5f
+Author: Jason Feinstein <jwf@google.com>
+Date:   Mon Oct 14 21:26:00 2019 -0700
 
-    creation of new handles in the pec (#3756)
+    Create CrdtSet. (#3776)
     
-    * creation of new handles and proxies in the pec
+    Implements CRDTCollection from Typescript as CrdtSet in Kotlin. This name change keeps the api contract as expected when dealing with Sets in Java/Kotlin.

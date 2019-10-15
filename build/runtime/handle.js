@@ -16,6 +16,8 @@ import { BigCollectionType, CollectionType, EntityType, InterfaceType, Reference
 import { Entity } from './entity.js';
 import { Id } from './id.js';
 import { SYMBOL_INTERNALS } from './symbols.js';
+import { handleNGFor } from './storageNG/handle.js';
+import { StorageProxy as StorageProxyNG } from './storageNG/storage-proxy.js';
 // TODO: This won't be needed once runtime is transferred between contexts.
 function cloneData(data) {
     return data;
@@ -431,5 +433,17 @@ export function handleFor(storage, idGenerator, name = null, particleId = '', ca
         handle.entityClass = schema.entityClass(storage.pec);
     }
     return handle;
+}
+/** Creates either a new- or old-style Handle for the given storage proxy. */
+export function unifiedHandleFor(opts) {
+    const defaultOpts = { particleId: '', canRead: true, canWrite: true };
+    opts = { ...defaultOpts, ...opts };
+    if (opts.proxy instanceof StorageProxyNG) {
+        assert(opts.particleId.length, 'NG Handles require a particle ID');
+        return handleNGFor(opts.particleId, opts.proxy, opts.idGenerator, opts.particle, opts.canRead, opts.canWrite, opts.name);
+    }
+    else {
+        return handleFor(opts.proxy, opts.idGenerator, opts.name, opts.particleId, opts.canRead, opts.canWrite);
+    }
 }
 //# sourceMappingURL=handle.js.map

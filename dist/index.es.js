@@ -1448,891 +1448,6 @@ const SYMBOL_INTERNALS = Symbol('internals');
 
 /**
  * @license
- * Copyright (c) 2017 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-// TODO: This won't be needed once runtime is transferred between contexts.
-function cloneData(data) {
-    return data;
-    //return JSON.parse(JSON.stringify(data));
-}
-function restore(entry, entityClass) {
-    assert(entityClass, 'Handles need entity classes for deserialization');
-    const { id, rawData } = entry;
-    const entity = new entityClass(cloneData(rawData));
-    if (entry.id) {
-        Entity.identify(entity, entry.id);
-    }
-    // TODO some relation magic, somewhere, at some point.
-    return entity;
-}
-/**
- * Base class for Collections and Singletons.
- */
-class HandleOld {
-    // TODO type particleId, marked as string, but called with number
-    constructor(storage, idGenerator, name, particleId, canRead, canWrite) {
-        assert(!(storage instanceof HandleOld));
-        this._storage = storage;
-        this.idGenerator = idGenerator;
-        this.name = name || this.storage.name;
-        this.canRead = canRead;
-        this.canWrite = canWrite;
-        this._particleId = particleId;
-        this.options = {
-            keepSynced: true,
-            notifySync: true,
-            notifyUpdate: true,
-            notifyDesync: false,
-        };
-    }
-    reportUserExceptionInHost(exception, particle, method) {
-        this.storage.reportExceptionInHost(new UserException(exception, method, this._particleId, particle.spec.name));
-    }
-    reportSystemExceptionInHost(exception, method) {
-        this.storage.reportExceptionInHost(new SystemException(exception, method, this._particleId));
-    }
-    // `options` may contain any of:
-    // - keepSynced (bool): load full data on startup, maintain data in proxy and resync as required
-    // - notifySync (bool): if keepSynced is true, call onHandleSync when the full data is received
-    // - notifyUpdate (bool): call onHandleUpdate for every change event received
-    // - notifyDesync (bool): if keepSynced is true, call onHandleDesync when desync is detected
-    configure(options) {
-        assert(this.canRead, 'configure can only be called on readable Handles');
-        try {
-            const keys = Object.keys(this.options);
-            const badKeys = Object.keys(options).filter(o => !keys.includes(o));
-            if (badKeys.length > 0) {
-                throw new Error(`Invalid option in Handle.configure(): ${badKeys}`);
-            }
-            Object.assign(this.options, options);
-        }
-        catch (e) {
-            this.reportSystemExceptionInHost(e, 'Handle::configure');
-            throw e;
-        }
-    }
-    _serialize(entity) {
-        assert(entity, `can't serialize a null entity`);
-        if (entity instanceof Entity) {
-            if (!Entity.isIdentified(entity)) {
-                this.createIdentityFor(entity);
-            }
-        }
-        return entity[SYMBOL_INTERNALS].serialize();
-    }
-    createIdentityFor(entity) {
-        Entity.createIdentity(entity, Id.fromString(this._id), this.idGenerator);
-    }
-    get type() {
-        return this.storage.type;
-    }
-    get _id() {
-        return this.storage.id;
-    }
-    get storage() {
-        return this._storage;
-    }
-    toManifestString() {
-        return `'${this._id}'`;
-    }
-    generateKey() {
-        return this.idGenerator.newChildId(Id.fromString(this._id), 'key').toString();
-    }
-    /**
-     * Disables this handle so that it is no longer able to make changes or receive updates from the
-     * storage proxy
-     */
-    disable(particle) {
-        if (this.storage instanceof StorageProxy) {
-            this.storage.deregister(particle, this);
-        }
-        // Set this handle's storage to a no-operation storage proxy so any actions that need to be
-        // taken by this handle in the future (due to some async operations) will do nothing and finish quietly
-        this._storage = StorageProxy.newNoOpProxy(this.storage.id, this.storage.type);
-    }
-}
-/**
- * A handle on a set of Entity data. Note that, as a set, a Collection can only
- * contain a single version of an Entity for each given ID. Further, no order is
- * implied by the set. A particle's manifest dictates the types of handles that
- * need to be connected to that particle, and the current recipe identifies
- * which handles are connected.
- */
-class Collection extends HandleOld {
-    async _notify(kind, particle, details) {
-        assert(this.canRead, '_notify should not be called for non-readable handles');
-        switch (kind) {
-            case 'sync':
-                await particle.callOnHandleSync(this, this._restore(details), e => this.reportUserExceptionInHost(e, particle, 'onHandleSync'));
-                return;
-            case 'update': {
-                // tslint:disable-next-line: no-any
-                const update = {};
-                if ('add' in details) {
-                    update.added = this._restore(details.add);
-                }
-                if ('remove' in details) {
-                    update.removed = this._restore(details.remove);
-                }
-                update.originator = details.originatorId === this._particleId;
-                await particle.callOnHandleUpdate(this, update, e => this.reportUserExceptionInHost(e, particle, 'onHandleUpdate'));
-                return;
-            }
-            case 'desync':
-                await particle.callOnHandleDesync(this, e => this.reportUserExceptionInHost(e, particle, 'onHandleUpdate'));
-                return;
-            default:
-                throw new Error('unsupported');
-        }
-    }
-    /**
-     * Returns the Entity specified by id contained by the handle, or null if this id is not
-     * contained by the handle.
-     * @throws {Error} if this handle is not configured as a readable handle (i.e. 'in' or 'inout')
-     * in the particle's manifest.
-     */
-    async get(id) {
-        if (!this.canRead) {
-            throw new Error('Handle not readable');
-        }
-        return this._restore([await this.storage.get(id)])[0];
-    }
-    /**
-     * @returns a list of the Entities contained by the handle.
-     * @throws {Error} if this handle is not configured as a readable handle (i.e. 'in' or 'inout')
-     * in the particle's manifest.
-     */
-    async toList() {
-        if (!this.canRead) {
-            throw new Error('Handle not readable');
-        }
-        return this._restore(await this.storage.toList());
-    }
-    _restore(list) {
-        if (list == null) {
-            return null;
-        }
-        const containedType = this.type.getContainedType();
-        if (containedType instanceof EntityType) {
-            return list.map(e => restore(e, this.entityClass));
-        }
-        if (containedType instanceof ReferenceType) {
-            return list.map(r => new Reference(r, containedType, this.storage.pec));
-        }
-        throw new Error(`Don't know how to deliver handle data of type ${this.type}`);
-    }
-    /**
-     * Stores a new entity into the Handle.
-     * @throws {Error} if this handle is not configured as a writeable handle (i.e. 'out' or 'inout')
-     * in the particle's manifest.
-     */
-    async store(entity) {
-        if (!this.canWrite) {
-            throw new Error('Handle not writeable');
-        }
-        const serialization = this._serialize(entity);
-        const keys = [this.generateKey()];
-        return this.storage.store(serialization, keys, this._particleId);
-    }
-    /**
-     * Removes all known entities from the Handle.
-     * @throws {Error} if this handle is not configured as a writeable handle (i.e. 'out' or 'inout')
-     * in the particle's manifest.
-     */
-    async clear() {
-        if (!this.canWrite) {
-            throw new Error('Handle not writeable');
-        }
-        if (this.storage.clear) {
-            return this.storage.clear(this._particleId);
-        }
-        else {
-            throw new Error('clear not implemented by storage');
-        }
-    }
-    /**
-     * Removes an entity from the Handle.
-     * @throws {Error} if this handle is not configured as a writeable handle (i.e. 'out' or 'inout')
-     * in the particle's manifest.
-     */
-    async remove(entity) {
-        if (!this.canWrite) {
-            throw new Error('Handle not writeable');
-        }
-        const serialization = this._serialize(entity);
-        // Remove the keys that exist at storage/proxy.
-        const keys = [];
-        await this.storage.remove(serialization.id, keys, this._particleId);
-    }
-    get storage() {
-        return this._storage;
-    }
-}
-/**
- * A handle on a single entity. A particle's manifest dictates
- * the types of handles that need to be connected to that particle, and
- * the current recipe identifies which handles are connected.
- */
-class Singleton extends HandleOld {
-    // Called by StorageProxy.
-    async _notify(kind, particle, details) {
-        assert(this.canRead, '_notify should not be called for non-readable handles');
-        switch (kind) {
-            case 'sync':
-                await particle.callOnHandleSync(this, this._restore(details), e => this.reportUserExceptionInHost(e, particle, 'onHandleSync'));
-                return;
-            case 'update': {
-                const data = this._restore(details.data);
-                const oldData = this._restore(details.oldData);
-                await particle.callOnHandleUpdate(this, { data, oldData }, e => this.reportUserExceptionInHost(e, particle, 'onHandleUpdate'));
-                return;
-            }
-            case 'desync':
-                await particle.callOnHandleDesync(this, e => this.reportUserExceptionInHost(e, particle, 'onHandleDesync'));
-                return;
-            default:
-                throw new Error('unsupported');
-        }
-    }
-    /**
-     * @returns the Entity contained by the Singleton, or undefined if the Singleton is cleared.
-     * @throws {Error} if this Singleton is not configured as a readable handle (i.e. 'in' or 'inout')
-     * in the particle's manifest.
-     */
-    async get() {
-        if (!this.canRead) {
-            throw new Error('Handle not readable');
-        }
-        const model = await this.storage.get();
-        return this._restore(model);
-    }
-    _restore(model) {
-        if (model == null) {
-            return null;
-        }
-        if (this.type instanceof EntityType) {
-            return restore(model, this.entityClass);
-        }
-        if (this.type instanceof InterfaceType) {
-            return ParticleSpec.fromLiteral(model);
-        }
-        if (this.type instanceof ReferenceType) {
-            return new Reference(model, this.type, this.storage.pec);
-        }
-        throw new Error(`Don't know how to deliver handle data of type ${this.type}`);
-    }
-    /**
-     * Stores a new entity into the Singleton, replacing any existing entity.
-     * @throws {Error} if this Singleton is not configured as a writeable handle (i.e. 'out' or 'inout')
-     * in the particle's manifest.
-     */
-    async set(entity) {
-        try {
-            if (!this.canWrite) {
-                throw new Error('Handle not writeable');
-            }
-            const serialization = this._serialize(entity);
-            return this.storage.set(serialization, this._particleId);
-        }
-        catch (e) {
-            this.reportSystemExceptionInHost(e, 'Handle::set');
-            throw e;
-        }
-    }
-    /**
-     * Clears any entity currently in the Singleton.
-     * @throws {Error} if this Singleton is not configured as a writeable handle (i.e. 'out' or 'inout')
-     * in the particle's manifest.
-     */
-    async clear() {
-        if (!this.canWrite) {
-            throw new Error('Handle not writeable');
-        }
-        return this.storage.clear(this._particleId);
-    }
-    get storage() {
-        return this._storage;
-    }
-}
-/**
- * Provides paginated read access to a BigCollection. Conforms to the javascript iterator protocol
- * but is not marked as iterable because next() is async, which is currently not supported by
- * implicit iteration in Javascript.
- */
-class Cursor {
-    constructor(parent, cursorId) {
-        this._parent = parent;
-        this._cursorId = cursorId;
-    }
-    /**
-     * Returns {value: [items], done: false} while there are items still available, or {done: true}
-     * when the cursor has completed reading the collection.
-     */
-    async next() {
-        const data = await this._parent.storage.cursorNext(this._cursorId);
-        if (!data.done) {
-            data.value = data.value.map(a => restore(a, this._parent.entityClass));
-        }
-        return data;
-    }
-    /**
-     * Terminates the streamed read. This must be called if a cursor is no longer needed but has not
-     * yet completed streaming (i.e. next() hasn't returned {done: true}).
-     */
-    close() {
-        this._parent.storage.cursorClose(this._cursorId);
-    }
-}
-/**
- * A handle on a large set of Entity data. Similar to Collection, except the complete set of
- * entities is not available directly; use stream() to read the full set. Particles wanting to
- * operate on BigCollections should do so in the setHandles() call, since BigCollections do not
- * trigger onHandleSync() or onHandleUpdate().
- */
-class BigCollection extends HandleOld {
-    configure(options) {
-        throw new Error('BigCollections do not support sync/update configuration');
-    }
-    async _notify(kind, particle, details) {
-        assert(this.canRead, '_notify should not be called for non-readable handles');
-        assert(kind === 'sync', 'BigCollection._notify only supports sync events');
-        await particle.callOnHandleSync(this, [], e => this.reportUserExceptionInHost(e, particle, 'onHandleSync'));
-    }
-    /**
-     * Stores a new entity into the Handle.
-     * @throws {Error} if this handle is not configured as a writeable handle (i.e. 'out' or 'inout')
-     * in the particle's manifest.
-     */
-    async store(entity) {
-        if (!this.canWrite) {
-            throw new Error('Handle not writeable');
-        }
-        const serialization = this._serialize(entity);
-        const keys = [this.generateKey()];
-        return this.storage.store(serialization, keys, this._particleId);
-    }
-    /**
-     * Removes an entity from the Handle.
-     * @throws {Error} if this handle is not configured as a writeable handle (i.e. 'out' or 'inout')
-     * in the particle's manifest.
-     */
-    async remove(entity) {
-        if (!this.canWrite) {
-            throw new Error('Handle not writeable');
-        }
-        const serialization = this._serialize(entity);
-        await this.storage.remove(serialization.id, [], this._particleId);
-    }
-    /**
-     * @returns a Cursor instance that iterates over the full set of entities, reading `pageSize`
-     * entities at a time. The cursor views a snapshot of the collection, locked to the version
-     * at which the cursor is created.
-     *
-     * By default items are returned in order of original insertion into the collection (with the
-     * caveat that items removed during a streamed read may be returned at the end). Set `forward`
-     * to false to return items in reverse insertion order.
-     *
-     * @throws {Error} if this Singleton is not configured as a readable handle (i.e. 'in' or 'inout')
-     * in the particle's manifest.
-     */
-    async stream({ pageSize, forward = true }) {
-        if (!this.canRead) {
-            throw new Error('Handle not readable');
-        }
-        if (isNaN(pageSize) || pageSize < 1) {
-            throw new Error('Streamed reads require a positive pageSize');
-        }
-        const cursorId = await this.storage.stream(pageSize, forward);
-        return new Cursor(this, cursorId);
-    }
-    get storage() {
-        return this._storage;
-    }
-}
-function handleFor(storage, idGenerator, name = null, particleId = '', canRead = true, canWrite = true) {
-    let handle;
-    if (storage.type instanceof CollectionType) {
-        handle = new Collection(storage, idGenerator, name, particleId, canRead, canWrite);
-    }
-    else if (storage.type instanceof BigCollectionType) {
-        handle = new BigCollection(storage, idGenerator, name, particleId, canRead, canWrite);
-    }
-    else {
-        handle = new Singleton(storage, idGenerator, name, particleId, canRead, canWrite);
-    }
-    const schema = storage.type.getEntitySchema();
-    if (schema) {
-        handle.entityClass = schema.entityClass(storage.pec);
-    }
-    return handle;
-}
-
-/**
- * @license
- * Copyright (c) 2018 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-var ReferenceMode;
-(function (ReferenceMode) {
-    ReferenceMode[ReferenceMode["Unstored"] = 0] = "Unstored";
-    ReferenceMode[ReferenceMode["Stored"] = 1] = "Stored";
-})(ReferenceMode || (ReferenceMode = {}));
-class Reference {
-    constructor(data, type, context) {
-        this.entity = null;
-        this.storageProxy = null;
-        this.handle = null;
-        this.id = data.id;
-        this.storageKey = data.storageKey;
-        this.context = context;
-        this.type = type;
-        this[SYMBOL_INTERNALS] = {
-            serialize: () => ({ id: this.id, rawData: this.dataClone() })
-        };
-    }
-    async ensureStorageProxy() {
-        if (this.storageProxy == null) {
-            this.storageProxy = await this.context.getStorageProxy(this.storageKey, this.type.referredType);
-            this.handle = handleFor(this.storageProxy, this.context.idGenerator);
-            if (this.storageKey) {
-                assert(this.storageKey === this.storageProxy.storageKey);
-            }
-            else {
-                this.storageKey = this.storageProxy.storageKey;
-            }
-        }
-    }
-    async dereference() {
-        assert(this.context, 'Must have context to dereference');
-        if (this.entity) {
-            return this.entity;
-        }
-        await this.ensureStorageProxy();
-        this.entity = await this.handle.get(this.id);
-        return this.entity;
-    }
-    dataClone() {
-        return { storageKey: this.storageKey, id: this.id };
-    }
-}
-/** A subclass of Reference that clients can create. */
-class ClientReference extends Reference {
-    /** Use the newClientReference factory method instead. */
-    constructor(entity, context) {
-        // TODO(shans): start carrying storageKey information around on Entity objects
-        super({ id: Entity.id(entity), storageKey: null }, new ReferenceType(Entity.entityClass(entity).type), context);
-        this.mode = ReferenceMode.Unstored;
-        this.entity = entity;
-        this.stored = this.storeReference(entity);
-    }
-    async storeReference(entity) {
-        await this.ensureStorageProxy();
-        await this.handle.store(entity);
-        this.mode = ReferenceMode.Stored;
-    }
-    async dereference() {
-        if (this.mode === ReferenceMode.Unstored) {
-            return null;
-        }
-        return super.dereference();
-    }
-    isIdentified() {
-        return Entity.isIdentified(this.entity);
-    }
-    static newClientReference(context) {
-        return class extends ClientReference {
-            constructor(entity) {
-                super(entity, context);
-            }
-        };
-    }
-}
-
-/**
- * @license
- * Copyright (c) 2017 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-// This class holds extra entity-related fields used by the runtime. Instances of this are stored
-// in their parent Entity via a Symbol-based key. This allows Entities to hold whatever field names
-// their Schemas describe without any possibility of names clashing. For example, an Entity can have
-// an 'id' field that is distinct (in both value and type) from the id field here. Access to this
-// class should be via the static helpers in Entity.
-class EntityInternals {
-    constructor(entity, entityClass, schema, context, userIDComponent) {
-        // TODO: Only the Arc that "owns" this Entity should be allowed to mutate it.
-        this.mutable = true;
-        this.entity = entity;
-        this.entityClass = entityClass;
-        this.schema = schema;
-        this.context = context;
-        this.userIDComponent = userIDComponent;
-    }
-    getId() {
-        if (this.id === undefined) {
-            throw new Error('no id');
-        }
-        return this.id;
-    }
-    getEntityClass() {
-        return this.entityClass;
-    }
-    isIdentified() {
-        return this.id !== undefined;
-    }
-    identify(identifier) {
-        assert(!this.isIdentified(), 'identify() called on already identified entity');
-        this.id = identifier;
-        const components = identifier.split(':');
-        const uid = components.lastIndexOf('uid');
-        this.userIDComponent = uid > 0 ? components.slice(uid + 1).join(':') : '';
-    }
-    createIdentity(parentId, idGenerator) {
-        assert(!this.isIdentified(), 'createIdentity() called on already identified entity');
-        let id;
-        if (this.userIDComponent) {
-            // TODO: Stop creating IDs by manually concatenating strings.
-            id = `${parentId.toString()}:uid:${this.userIDComponent}`;
-        }
-        else {
-            id = idGenerator.newChildId(parentId).toString();
-        }
-        this.id = id;
-    }
-    isMutable() {
-        return this.mutable;
-    }
-    /**
-     * Prevents further mutation of this Entity instance. Note that calling this method only affects
-     * this particular Entity instance; the entity it represents (in a data store somewhere) can
-     * still be mutated by others. Also note that this doesn't necessarily offer any security against
-     * malicious developers.
-     */
-    makeImmutable() {
-        this.mutable = false;
-    }
-    /**
-     * Mutates the entity. Supply either the new data for the entity, which replaces the existing
-     * entity's data entirely, or a mutation function. The supplied mutation function will be called
-     * with a mutable copy of the entity's data. The mutations performed by that function will be
-     * reflected in the original entity instance (i.e. mutations applied in place).
-     */
-    mutate(mutation) {
-        if (!this.mutable) {
-            throw new Error('Entity is immutable.');
-        }
-        let newData;
-        // Using typeof instead of instanceof here, because apparently sometimes lambdas aren't an instance of Function... :-/
-        if (typeof mutation === 'function') {
-            newData = this.dataClone();
-            mutation(newData);
-        }
-        else {
-            newData = mutation;
-        }
-        // Note that this does *not* trigger the error in the Entity's Proxy 'set' trap, because we're
-        // applying the field updates directly to the original Entity instance (this.entity), not the
-        // Proxied version returned by the Entity constructor. Not confusing at all!
-        sanitizeAndApply(this.entity, newData, this.schema, this.context);
-        // TODO: Send mutations to data store.
-    }
-    toLiteral() {
-        return JSON.parse(JSON.stringify(this.entity));
-    }
-    dataClone() {
-        const clone = {};
-        const fieldTypes = this.schema.fields;
-        for (const name of Object.keys(fieldTypes)) {
-            if (this.entity[name] !== undefined) {
-                if (fieldTypes[name] && fieldTypes[name].kind === 'schema-reference') {
-                    if (this.entity[name]) {
-                        clone[name] = this.entity[name].dataClone();
-                    }
-                }
-                else if (fieldTypes[name] && fieldTypes[name].kind === 'schema-collection') {
-                    if (this.entity[name]) {
-                        clone[name] = [...this.entity[name]].map(a => a.dataClone());
-                    }
-                }
-                else {
-                    clone[name] = this.entity[name];
-                }
-            }
-        }
-        return clone;
-    }
-    serialize() {
-        return { id: this.id, rawData: this.dataClone() };
-    }
-    debugLog() {
-        // Here be dragons! Create a copy of the entity class but with an enumerable version of this
-        // internals object so it will appear in the log output, with a few tweaks for better display.
-        const original = this.entity;
-        const copy = new EntityInternals(null, this.entityClass, this.schema, this.context, this.userIDComponent);
-        copy.id = this.id;
-        // Force 'entity' to show as '[Circular]'. The 'any' is required because 'entity' is readonly.
-        // tslint:disable-next-line: no-any
-        copy.entity = copy;
-        // Set up a class that looks the same as the real entity, copy the schema fields in, add an
-        // enumerable version of the copied internals, and use console.dir to show the full object.
-        // Node displays the name set up with defineProperty below, but Chrome uses the name of the
-        // class variable defined here, so we'll call that entity.
-        const entity = class extends Entity {
-            constructor() {
-                super();
-                Object.assign(this, original);
-                this[SYMBOL_INTERNALS] = copy;
-            }
-        };
-        Object.defineProperty(entity, 'name', { value: original.constructor.name });
-        console.dir(new entity(), { depth: null });
-    }
-}
-class Entity {
-    toString() {
-        const fields = Object.entries(this).map(([name, value]) => `${name}: ${JSON.stringify(value)}`);
-        return `${this.constructor.name} { ${fields.join(', ')} }`;
-    }
-    // Dynamically constructs a new JS class for the entity type represented by the given schema.
-    // This creates a new class which extends the Entity base class and implements the required
-    // static properties, then returns a Proxy wrapping that to guard against incorrect field writes.
-    static createEntityClass(schema, context) {
-        const clazz = class extends Entity {
-            constructor(data, userIDComponent) {
-                super();
-                assert(data, `can't construct entity with null data`);
-                assert(!userIDComponent || userIDComponent.indexOf(':') === -1, `user IDs must not contain the ':' character`);
-                // We want the SYMBOL_INTERNALS property to be non-enumerable so any copies made of this
-                // entity (e.g. via Object.assign) pick up only the plain data fields from the schema, and
-                // not the EntityInternals object (which should be unique to this instance).
-                Object.defineProperty(this, SYMBOL_INTERNALS, {
-                    value: new EntityInternals(this, clazz, schema, context, userIDComponent),
-                    enumerable: false
-                });
-                sanitizeAndApply(this, data, schema, context);
-                // We don't want a 'get' trap here because JS accesses various fields as part of routine
-                // system behaviour, and making sure we special case all of them is going to be brittle.
-                // For example: when returning an object from an async function, JS needs to check if the
-                // object is a 'thenable' (so it knows whether to wrap it in a Promise or not), and it does
-                // this by checking for the existence of a 'then' method. Not trapping 'get' is ok because
-                // callers who try to read fields that aren't in the schema will just get 'undefined', which
-                // is idiomatic for JS anyway.
-                return new Proxy(this, {
-                    set: (target, name, value) => {
-                        throw new Error(`Tried to modify entity field '${name}'. Use the mutate method instead.`);
-                    }
-                });
-            }
-            static get type() {
-                // TODO: should the entity's key just be its type?
-                // Should it just be called type in that case?
-                return new EntityType(schema);
-            }
-            static get key() {
-                return { tag: 'entity', schema };
-            }
-            static get schema() {
-                return schema;
-            }
-        };
-        // Override the name property to use the name of the entity given in the schema.
-        Object.defineProperty(clazz, 'name', { value: schema.name });
-        return clazz;
-    }
-    static id(entity) {
-        return getInternals(entity).getId();
-    }
-    static entityClass(entity) {
-        return getInternals(entity).getEntityClass();
-    }
-    static isIdentified(entity) {
-        return getInternals(entity).isIdentified();
-    }
-    static identify(entity, identifier) {
-        getInternals(entity).identify(identifier);
-        return entity;
-    }
-    static createIdentity(entity, parentId, idGenerator) {
-        getInternals(entity).createIdentity(parentId, idGenerator);
-    }
-    static isMutable(entity) {
-        return getInternals(entity).isMutable();
-    }
-    static makeImmutable(entity) {
-        getInternals(entity).makeImmutable();
-    }
-    static mutate(entity, mutation) {
-        getInternals(entity).mutate(mutation);
-    }
-    static toLiteral(entity) {
-        return getInternals(entity).toLiteral();
-    }
-    static dataClone(entity) {
-        return getInternals(entity).dataClone();
-    }
-    static serialize(entity) {
-        return getInternals(entity).serialize();
-    }
-    // Because the internals object is non-enumerable, console.log(entity) in Node only shows the
-    // schema-based fields; use this function to log a more complete record of the entity in tests.
-    // Chrome's console.log already shows the internals object so that's usually sufficient for
-    // debugging, but this function can still be useful for logging a snapshot of an entity that
-    // is later modified.
-    static debugLog(entity) {
-        getInternals(entity).debugLog();
-    }
-}
-function getInternals(entity) {
-    const internals = entity[SYMBOL_INTERNALS];
-    assert(internals !== undefined, 'SYMBOL_INTERNALS lookup on non-entity');
-    return internals;
-}
-function sanitizeAndApply(target, data, schema, context) {
-    for (const [name, value] of Object.entries(data)) {
-        const sanitizedValue = sanitizeEntry(schema.fields[name], value, name, context);
-        validateFieldAndTypes(name, sanitizedValue, schema);
-        target[name] = sanitizedValue;
-    }
-}
-function convertToJsType(primitiveType, schemaName) {
-    switch (primitiveType.type) {
-        case 'Text':
-            return 'string';
-        case 'URL':
-            return 'string';
-        case 'Number':
-            return 'number';
-        case 'Boolean':
-            return 'boolean';
-        case 'Bytes':
-            return 'Uint8Array';
-        default:
-            throw new Error(`Unknown field type ${primitiveType.type} in schema ${schemaName}`);
-    }
-}
-// tslint:disable-next-line: no-any
-function validateFieldAndTypes(name, value, schema, fieldType) {
-    fieldType = fieldType || schema.fields[name];
-    if (fieldType === undefined) {
-        throw new Error(`Can't set field ${name}; not in schema ${schema.name}`);
-    }
-    if (value === undefined || value === null) {
-        return;
-    }
-    switch (fieldType.kind) {
-        case 'schema-primitive': {
-            const valueType = value.constructor.name === 'Uint8Array' ? 'Uint8Array' : typeof (value);
-            if (valueType !== convertToJsType(fieldType, schema.name)) {
-                throw new TypeError(`Type mismatch setting field ${name} (type ${fieldType.type}); ` +
-                    `value '${value}' is type ${typeof (value)}`);
-            }
-            break;
-        }
-        case 'schema-union':
-            // Value must be a primitive that matches one of the union types.
-            for (const innerType of fieldType.types) {
-                if (typeof (value) === convertToJsType(innerType, schema.name)) {
-                    return;
-                }
-            }
-            throw new TypeError(`Type mismatch setting field ${name} (union [${fieldType.types}]); ` +
-                `value '${value}' is type ${typeof (value)}`);
-        case 'schema-tuple':
-            // Value must be an array whose contents match each of the tuple types.
-            if (!Array.isArray(value)) {
-                throw new TypeError(`Cannot set tuple ${name} with non-array value '${value}'`);
-            }
-            if (value.length !== fieldType.types.length) {
-                throw new TypeError(`Length mismatch setting tuple ${name} ` +
-                    `[${fieldType.types}] with value '${value}'`);
-            }
-            fieldType.types.map((innerType, i) => {
-                if (value[i] !== undefined && value[i] !== null &&
-                    typeof (value[i]) !== convertToJsType(innerType, schema.name)) {
-                    throw new TypeError(`Type mismatch setting field ${name} (tuple [${fieldType.types}]); ` +
-                        `value '${value}' has type ${typeof (value[i])} at index ${i}`);
-                }
-            });
-            break;
-        case 'schema-reference':
-            if (!(value instanceof Reference)) {
-                throw new TypeError(`Cannot set reference ${name} with non-reference '${value}'`);
-            }
-            if (!TypeChecker.compareTypes({ type: value.type }, { type: new ReferenceType(fieldType.schema.model) })) {
-                throw new TypeError(`Cannot set reference ${name} with value '${value}' of mismatched type`);
-            }
-            break;
-        case 'schema-collection':
-            // WTF?! value instanceof Set is returning false sometimes here because the Set in
-            // this environment (a native code constructor) isn't equal to the Set that the value
-            // has been constructed with (another native code constructor)...
-            if (value.constructor.name !== 'Set') {
-                throw new TypeError(`Cannot set collection ${name} with non-Set '${value}'`);
-            }
-            for (const element of value) {
-                validateFieldAndTypes(name, element, schema, fieldType.schema);
-            }
-            break;
-        default:
-            throw new Error(`Unknown kind '${fieldType.kind}' for field ${name} in schema ${schema.name}`);
-    }
-}
-function sanitizeEntry(type, value, name, context) {
-    if (!type) {
-        // If there isn't a field type for this, the proxy will pick up
-        // that fact and report a meaningful error.
-        return value;
-    }
-    if (type.kind === 'schema-reference' && value) {
-        if (value instanceof Reference) {
-            // Setting value as Reference (Particle side). This will enforce that the type provided for
-            // the handle matches the type of the reference.
-            return value;
-        }
-        else if (value.id && value.storageKey) {
-            // Setting value from raw data (Channel side).
-            // TODO(shans): This can't enforce type safety here as there isn't any type data available.
-            // Maybe this is OK because there's type checking on the other side of the channel?
-            return new Reference(value, new ReferenceType(type.schema.model), context);
-        }
-        else {
-            throw new TypeError(`Cannot set reference ${name} with non-reference '${value}'`);
-        }
-    }
-    else if (type.kind === 'schema-collection' && value) {
-        // WTF?! value instanceof Set is returning false sometimes here because the Set in
-        // this environment (a native code constructor) isn't equal to the Set that the value
-        // has been constructed with (another native code constructor)...
-        if (value.constructor.name === 'Set') {
-            return value;
-        }
-        else if (value.length && value instanceof Object) {
-            return new Set(value.map(v => sanitizeEntry(type.schema, v, name, context)));
-        }
-        else {
-            throw new TypeError(`Cannot set collection ${name} with non-collection '${value}'`);
-        }
-    }
-    else {
-        return value;
-    }
-}
-
-/**
- * @license
  * Copyright (c) 2019 Google Inc. All rights reserved.
  * This code may only be used under the BSD style license found at
  * http://polymer.github.io/LICENSE.txt
@@ -2674,623 +1789,6 @@ class CRDTSingleton {
         return true;
     }
 }
-
-/**
- * @license
- * Copyright (c) 2019 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-var EntityOpTypes;
-(function (EntityOpTypes) {
-    EntityOpTypes[EntityOpTypes["Set"] = 0] = "Set";
-    EntityOpTypes[EntityOpTypes["Clear"] = 1] = "Clear";
-    EntityOpTypes[EntityOpTypes["Add"] = 2] = "Add";
-    EntityOpTypes[EntityOpTypes["Remove"] = 3] = "Remove";
-})(EntityOpTypes || (EntityOpTypes = {}));
-class CRDTEntity {
-    constructor(singletons, collections) {
-        this.model = { singletons, collections, version: {} };
-    }
-    merge(other) {
-        const singletonChanges = {};
-        const collectionChanges = {};
-        let allOps = true;
-        for (const singleton of Object.keys(this.model.singletons)) {
-            singletonChanges[singleton] = this.model.singletons[singleton].merge(other.singletons[singleton]);
-            if (singletonChanges[singleton].modelChange.changeType === ChangeType.Model ||
-                singletonChanges[singleton].otherChange.changeType === ChangeType.Model) {
-                allOps = false;
-            }
-        }
-        for (const collection of Object.keys(this.model.collections)) {
-            collectionChanges[collection] = this.model.collections[collection].merge(other.collections[collection]);
-            if (collectionChanges[collection].modelChange.changeType === ChangeType.Model ||
-                collectionChanges[collection].otherChange.changeType === ChangeType.Model) {
-                allOps = false;
-            }
-        }
-        for (const versionKey of Object.keys(other.version)) {
-            this.model.version[versionKey] = Math.max(this.model.version[versionKey] || 0, other.version[versionKey]);
-        }
-        if (allOps) {
-            const modelOps = [];
-            const otherOps = [];
-            for (const singleton of Object.keys(singletonChanges)) {
-                for (const operation of singletonChanges[singleton].modelChange.operations) {
-                    let op;
-                    if (operation.type === SingletonOpTypes.Set) {
-                        op = { ...operation, type: EntityOpTypes.Set, field: singleton };
-                    }
-                    else {
-                        op = { ...operation, type: EntityOpTypes.Clear, field: singleton };
-                    }
-                    modelOps.push(op);
-                }
-                for (const operation of singletonChanges[singleton].otherChange.operations) {
-                    let op;
-                    if (operation.type === SingletonOpTypes.Set) {
-                        op = { ...operation, type: EntityOpTypes.Set, field: singleton };
-                    }
-                    else {
-                        op = { ...operation, type: EntityOpTypes.Clear, field: singleton };
-                    }
-                    otherOps.push(op);
-                }
-            }
-            for (const collection of Object.keys(collectionChanges)) {
-                for (const operation of collectionChanges[collection].modelChange.operations) {
-                    let op;
-                    if (operation.type === CollectionOpTypes.Add) {
-                        op = { ...operation, type: EntityOpTypes.Add, field: collection };
-                    }
-                    else {
-                        op = { ...operation, type: EntityOpTypes.Remove, field: collection };
-                    }
-                    modelOps.push(op);
-                }
-                for (const operation of collectionChanges[collection].otherChange.operations) {
-                    let op;
-                    if (operation.type === CollectionOpTypes.Add) {
-                        op = { ...operation, type: EntityOpTypes.Add, field: collection };
-                    }
-                    else {
-                        op = { ...operation, type: EntityOpTypes.Remove, field: collection };
-                    }
-                    otherOps.push(op);
-                }
-            }
-            return { modelChange: { changeType: ChangeType.Operations, operations: modelOps },
-                otherChange: { changeType: ChangeType.Operations, operations: otherOps } };
-        }
-        else {
-            // need to map this.model to get the data out.
-            const change = { changeType: ChangeType.Model, modelPostChange: this.getData() };
-            return { modelChange: change, otherChange: change };
-        }
-    }
-    applyOperation(op) {
-        if (op.type === EntityOpTypes.Set || op.type === EntityOpTypes.Clear) {
-            if (!this.model.singletons[op.field]) {
-                if (this.model.collections[op.field]) {
-                    throw new Error(`Can't apply ${op.type === EntityOpTypes.Set ? 'Set' : 'Clear'} operation to collection field ${op.field}`);
-                }
-                throw new Error(`Invalid field: ${op.field} does not exist`);
-            }
-        }
-        else {
-            if (!this.model.collections[op.field]) {
-                if (this.model.singletons[op.field]) {
-                    throw new Error(`Can't apply ${op.type === EntityOpTypes.Add ? 'Add' : 'Remove'} operation to singleton field ${op.field}`);
-                }
-                throw new Error(`Invalid field: ${op.field} does not exist`);
-            }
-        }
-        const apply = () => {
-            switch (op.type) {
-                case EntityOpTypes.Set:
-                    return this.model.singletons[op.field].applyOperation({ ...op, type: SingletonOpTypes.Set });
-                case EntityOpTypes.Clear:
-                    return this.model.singletons[op.field].applyOperation({ ...op, type: SingletonOpTypes.Clear });
-                case EntityOpTypes.Add:
-                    return this.model.collections[op.field].applyOperation({ ...op, type: CollectionOpTypes.Add });
-                case EntityOpTypes.Remove:
-                    return this.model.collections[op.field].applyOperation({ ...op, type: CollectionOpTypes.Remove });
-                default:
-                    throw new Error(`Unexpected op ${op} for Entity CRDT`);
-            }
-        };
-        if (apply()) {
-            for (const versionKey of Object.keys(op.clock)) {
-                this.model.version[versionKey] = Math.max(this.model.version[versionKey] || 0, op.clock[versionKey]);
-            }
-            return true;
-        }
-        return false;
-    }
-    getData() {
-        const singletons = {};
-        const collections = {};
-        Object.keys(this.model.singletons).forEach(singleton => {
-            singletons[singleton] = this.model.singletons[singleton].getData();
-        });
-        Object.keys(this.model.collections).forEach(collection => {
-            collections[collection] = this.model.collections[collection].getData();
-        });
-        return { singletons, collections, version: this.model.version };
-    }
-    getParticleView() {
-        const result = { singletons: {}, collections: {} };
-        for (const key of Object.keys(this.model.singletons)) {
-            result.singletons[key] = this.model.singletons[key].getParticleView();
-        }
-        for (const key of Object.keys(this.model.collections)) {
-            result.collections[key] = this.model.collections[key].getParticleView();
-        }
-        return result;
-    }
-}
-
-/**
- * @license
- * Copyright (c) 2017 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-class Schema {
-    // For convenience, primitive field types can be specified as {name: 'Type'}
-    // in `fields`; the constructor will convert these to the correct schema form.
-    // tslint:disable-next-line: no-any
-    constructor(names, fields, description) {
-        this.description = {};
-        this.names = names;
-        this.fields = {};
-        for (const [name, field] of Object.entries(fields)) {
-            if (typeof (field) === 'string') {
-                this.fields[name] = { kind: 'schema-primitive', type: field };
-            }
-            else {
-                this.fields[name] = field;
-            }
-        }
-        if (description) {
-            description.description.forEach(desc => this.description[desc.name] = desc.pattern || desc.patterns[0]);
-        }
-    }
-    toLiteral() {
-        const fields = {};
-        const updateField = field => {
-            if (field.kind === 'schema-reference') {
-                const schema = field.schema;
-                return { kind: 'schema-reference', schema: { kind: schema.kind, model: schema.model.toLiteral() } };
-            }
-            else if (field.kind === 'schema-collection') {
-                return { kind: 'schema-collection', schema: updateField(field.schema) };
-            }
-            else {
-                return field;
-            }
-        };
-        for (const key of Object.keys(this.fields)) {
-            fields[key] = updateField(this.fields[key]);
-        }
-        return { names: this.names, fields, description: this.description };
-    }
-    static fromLiteral(data = { fields: {}, names: [], description: {} }) {
-        const fields = {};
-        const updateField = field => {
-            if (field.kind === 'schema-reference') {
-                const schema = field.schema;
-                return { kind: 'schema-reference', schema: { kind: schema.kind, model: Type.fromLiteral(schema.model) } };
-            }
-            else if (field.kind === 'schema-collection') {
-                return { kind: 'schema-collection', schema: updateField(field.schema) };
-            }
-            else {
-                return field;
-            }
-        };
-        for (const key of Object.keys(data.fields)) {
-            fields[key] = updateField(data.fields[key]);
-        }
-        const result = new Schema(data.names, fields);
-        result.description = data.description || {};
-        return result;
-    }
-    // TODO: This should only be an ident used in manifest parsing.
-    get name() {
-        return this.names[0];
-    }
-    static typesEqual(fieldType1, fieldType2) {
-        // TODO: structural check instead of stringification.
-        return Schema._typeString(fieldType1) === Schema._typeString(fieldType2);
-    }
-    static _typeString(type) {
-        switch (type.kind) {
-            case 'schema-primitive':
-                return type.type;
-            case 'schema-union':
-                return `(${type.types.map(t => t.type).join(' or ')})`;
-            case 'schema-tuple':
-                return `(${type.types.map(t => t.type).join(', ')})`;
-            case 'schema-reference':
-                return `Reference<${Schema._typeString(type.schema)}>`;
-            case 'type-name':
-            case 'schema-inline':
-                return type.model.entitySchema.toInlineSchemaString();
-            case 'schema-collection':
-                return `[${Schema._typeString(type.schema)}]`;
-            default:
-                throw new Error(`Unknown type kind ${type.kind} in schema ${this.name}`);
-        }
-    }
-    static union(schema1, schema2) {
-        const names = [...new Set([...schema1.names, ...schema2.names])];
-        const fields = {};
-        for (const [field, type] of [...Object.entries(schema1.fields), ...Object.entries(schema2.fields)]) {
-            if (fields[field]) {
-                if (!Schema.typesEqual(fields[field], type)) {
-                    return null;
-                }
-            }
-            else {
-                fields[field] = type;
-            }
-        }
-        return new Schema(names, fields);
-    }
-    static intersect(schema1, schema2) {
-        const names = [...schema1.names].filter(name => schema2.names.includes(name));
-        const fields = {};
-        for (const [field, type] of Object.entries(schema1.fields)) {
-            const otherType = schema2.fields[field];
-            if (otherType && Schema.typesEqual(type, otherType)) {
-                fields[field] = type;
-            }
-        }
-        return new Schema(names, fields);
-    }
-    equals(otherSchema) {
-        return this === otherSchema || (this.name === otherSchema.name
-            // TODO: Check equality without calling contains.
-            && this.isMoreSpecificThan(otherSchema)
-            && otherSchema.isMoreSpecificThan(this));
-    }
-    isMoreSpecificThan(otherSchema) {
-        const names = new Set(this.names);
-        for (const name of otherSchema.names) {
-            if (!names.has(name)) {
-                return false;
-            }
-        }
-        const fields = {};
-        for (const [name, type] of Object.entries(this.fields)) {
-            fields[name] = type;
-        }
-        for (const [name, type] of Object.entries(otherSchema.fields)) {
-            if (fields[name] == undefined) {
-                return false;
-            }
-            if (!Schema.typesEqual(fields[name], type)) {
-                return false;
-            }
-        }
-        return true;
-    }
-    get type() {
-        return new EntityType(this);
-    }
-    entityClass(context = null) {
-        return Entity.createEntityClass(this, context);
-    }
-    crdtConstructor() {
-        const singletons = {};
-        const collections = {};
-        // TODO(shans) do this properly
-        for (const [field, { type }] of Object.entries(this.fields)) {
-            if (type === 'Text') {
-                singletons[field] = new CRDTSingleton();
-            }
-            else if (type === 'Number') {
-                singletons[field] = new CRDTSingleton();
-            }
-            else {
-                throw new Error(`Big Scary Exception: entity field ${field} of type ${type} doesn't yet have a CRDT mapping implemented`);
-            }
-        }
-        return class EntityCRDT extends CRDTEntity {
-            constructor() {
-                super(singletons, collections);
-            }
-        };
-    }
-    toInlineSchemaString(options) {
-        const names = this.names.join(' ') || '*';
-        const fields = Object.entries(this.fields).map(([name, type]) => `${Schema._typeString(type)} ${name}`).join(', ');
-        return `${names} {${fields.length > 0 && options && options.hideFields ? '...' : fields}}`;
-    }
-    toManifestString() {
-        const results = [];
-        results.push(`schema ${this.names.join(' ')}`);
-        results.push(...Object.entries(this.fields).map(([name, type]) => `  ${Schema._typeString(type)} ${name}`));
-        if (Object.keys(this.description).length > 0) {
-            results.push(`  description \`${this.description.pattern}\``);
-            for (const name of Object.keys(this.description)) {
-                if (name !== 'pattern') {
-                    results.push(`    ${name} \`${this.description[name]}\``);
-                }
-            }
-        }
-        return results.join('\n');
-    }
-}
-
-/**
- * @license
- * Copyright (c) 2017 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-class SlotInfo {
-    constructor(formFactor, handle) {
-        this.formFactor = formFactor;
-        this.handle = handle;
-    }
-    toLiteral() {
-        return this;
-    }
-    static fromLiteral({ formFactor, handle }) {
-        return new SlotInfo(formFactor, handle);
-    }
-}
-
-/**
- * @license
- * Copyright (c) 2018 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-// Equivalent to an Entity with Schema { serialization Text }
-class ArcInfo {
-    constructor(arcId, serialization) {
-        this.id = arcId.toString();
-        // TODO: remove the import-removal hack when import statements no longer appear
-        // in serialized manifests, or deal with them correctly if they end up staying
-        this.serialization = serialization.replace(/\bimport .*\n/g, '');
-    }
-    // Retrieves the serialized string from a stored instance of ArcInfo.
-    static extractSerialization(data) {
-        return data.serialization.replace(/\bimport .*\n/g, '');
-    }
-}
-class ArcHandle {
-    constructor(id, storageKey, type, tags) {
-        this.id = id;
-        this.storageKey = storageKey;
-        this.type = type;
-        this.tags = tags;
-    }
-}
-
-/**
- * @license
- * Copyright (c) 2017 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-class TypeVariableInfo {
-    constructor(name, canWriteSuperset, canReadSubset) {
-        this.name = name;
-        this._canWriteSuperset = canWriteSuperset;
-        this._canReadSubset = canReadSubset;
-        this._resolution = null;
-    }
-    /**
-     * Merge both the read subset (upper bound) and write superset (lower bound) constraints
-     * of two variables together. Use this when two separate type variables need to resolve
-     * to the same value.
-     */
-    maybeMergeConstraints(variable) {
-        if (!this.maybeMergeCanReadSubset(variable.canReadSubset)) {
-            return false;
-        }
-        return this.maybeMergeCanWriteSuperset(variable.canWriteSuperset);
-    }
-    /**
-     * Merge a type variable's read subset (upper bound) constraints into this variable.
-     * This is used to accumulate read constraints when resolving a handle's type.
-     */
-    maybeMergeCanReadSubset(constraint) {
-        if (constraint == null) {
-            return true;
-        }
-        if (this.canReadSubset == null) {
-            this.canReadSubset = constraint;
-            return true;
-        }
-        if (this.canReadSubset instanceof SlotType && constraint instanceof SlotType) {
-            // TODO: formFactor compatibility, etc.
-            return true;
-        }
-        if (this.canReadSubset instanceof EntityType && constraint instanceof EntityType) {
-            const mergedSchema = Schema.intersect(this.canReadSubset.entitySchema, constraint.entitySchema);
-            if (!mergedSchema) {
-                return false;
-            }
-            this.canReadSubset = new EntityType(mergedSchema);
-            return true;
-        }
-        return false;
-    }
-    /**
-     * merge a type variable's write superset (lower bound) constraints into this variable.
-     * This is used to accumulate write constraints when resolving a handle's type.
-     */
-    maybeMergeCanWriteSuperset(constraint) {
-        if (constraint == null) {
-            return true;
-        }
-        if (this.canWriteSuperset == null) {
-            this.canWriteSuperset = constraint;
-            return true;
-        }
-        if (this.canWriteSuperset instanceof SlotType && constraint instanceof SlotType) {
-            // TODO: formFactor compatibility, etc.
-            return true;
-        }
-        if (this.canWriteSuperset instanceof EntityType && constraint instanceof EntityType) {
-            const mergedSchema = Schema.union(this.canWriteSuperset.entitySchema, constraint.entitySchema);
-            if (!mergedSchema) {
-                return false;
-            }
-            this.canWriteSuperset = new EntityType(mergedSchema);
-            return true;
-        }
-        return false;
-    }
-    isSatisfiedBy(type) {
-        const constraint = this._canWriteSuperset;
-        if (!constraint) {
-            return true;
-        }
-        if (!(constraint instanceof EntityType) || !(type instanceof EntityType)) {
-            throw new Error(`constraint checking not implemented for ${this} and ${type}`);
-        }
-        return type.getEntitySchema().isMoreSpecificThan(constraint.getEntitySchema());
-    }
-    get resolution() {
-        if (this._resolution) {
-            return this._resolution.resolvedType();
-        }
-        return null;
-    }
-    isValidResolutionCandidate(value) {
-        const elementType = value.resolvedType().getContainedType();
-        if (elementType instanceof TypeVariable && elementType.variable === this) {
-            return { result: false, detail: 'variable cannot resolve to collection of itself' };
-        }
-        return { result: true };
-    }
-    set resolution(value) {
-        assert(!this._resolution);
-        const isValid = this.isValidResolutionCandidate(value);
-        assert(isValid.result, isValid.detail);
-        let probe = value;
-        while (probe) {
-            if (!(probe instanceof TypeVariable)) {
-                break;
-            }
-            if (probe.variable === this) {
-                return;
-            }
-            probe = probe.variable.resolution;
-        }
-        this._resolution = value;
-        this._canWriteSuperset = null;
-        this._canReadSubset = null;
-    }
-    get canWriteSuperset() {
-        if (this._resolution) {
-            assert(!this._canWriteSuperset);
-            if (this._resolution instanceof TypeVariable) {
-                return this._resolution.variable.canWriteSuperset;
-            }
-            return null;
-        }
-        return this._canWriteSuperset;
-    }
-    set canWriteSuperset(value) {
-        assert(!this._resolution);
-        this._canWriteSuperset = value;
-    }
-    get canReadSubset() {
-        if (this._resolution) {
-            assert(!this._canReadSubset);
-            if (this._resolution instanceof TypeVariable) {
-                return this._resolution.variable.canReadSubset;
-            }
-            return null;
-        }
-        return this._canReadSubset;
-    }
-    set canReadSubset(value) {
-        assert(!this._resolution);
-        this._canReadSubset = value;
-    }
-    get hasConstraint() {
-        return this._canReadSubset !== null || this._canWriteSuperset !== null;
-    }
-    canEnsureResolved() {
-        if (this._resolution) {
-            return this._resolution.canEnsureResolved();
-        }
-        if (this._canWriteSuperset || this._canReadSubset) {
-            return true;
-        }
-        return false;
-    }
-    maybeEnsureResolved() {
-        if (this._resolution) {
-            return this._resolution.maybeEnsureResolved();
-        }
-        if (this._canWriteSuperset) {
-            this.resolution = this._canWriteSuperset;
-            return true;
-        }
-        if (this._canReadSubset) {
-            this.resolution = this._canReadSubset;
-            return true;
-        }
-        return false;
-    }
-    toLiteral() {
-        assert(this.resolution == null);
-        return this.toLiteralIgnoringResolutions();
-    }
-    toLiteralIgnoringResolutions() {
-        return {
-            name: this.name,
-            canWriteSuperset: this._canWriteSuperset && this._canWriteSuperset.toLiteral(),
-            canReadSubset: this._canReadSubset && this._canReadSubset.toLiteral()
-        };
-    }
-    static fromLiteral(data) {
-        return new TypeVariableInfo(data.name, data.canWriteSuperset ? Type.fromLiteral(data.canWriteSuperset) : null, data.canReadSubset ? Type.fromLiteral(data.canReadSubset) : null);
-    }
-    isResolved() {
-        return this._resolution && this._resolution.isResolved();
-    }
-}
-
-/**
- * @license
- * Copyright (c) 2019 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-var CountOpTypes;
-(function (CountOpTypes) {
-    CountOpTypes[CountOpTypes["Increment"] = 0] = "Increment";
-    CountOpTypes[CountOpTypes["MultiIncrement"] = 1] = "MultiIncrement";
-})(CountOpTypes || (CountOpTypes = {}));
 
 /**
  * @license
@@ -3798,6 +2296,165 @@ class BackingStore {
     }
     async processStoreCallback(muxId, message) {
         return Promise.all([...this.callbacks.values()].map(callback => callback(message, muxId))).then(a => a.reduce((a, b) => a && b));
+    }
+}
+
+/**
+ * @license
+ * Copyright (c) 2019 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+var EntityOpTypes;
+(function (EntityOpTypes) {
+    EntityOpTypes[EntityOpTypes["Set"] = 0] = "Set";
+    EntityOpTypes[EntityOpTypes["Clear"] = 1] = "Clear";
+    EntityOpTypes[EntityOpTypes["Add"] = 2] = "Add";
+    EntityOpTypes[EntityOpTypes["Remove"] = 3] = "Remove";
+})(EntityOpTypes || (EntityOpTypes = {}));
+class CRDTEntity {
+    constructor(singletons, collections) {
+        this.model = { singletons, collections, version: {} };
+    }
+    merge(other) {
+        const singletonChanges = {};
+        const collectionChanges = {};
+        let allOps = true;
+        for (const singleton of Object.keys(this.model.singletons)) {
+            singletonChanges[singleton] = this.model.singletons[singleton].merge(other.singletons[singleton]);
+            if (singletonChanges[singleton].modelChange.changeType === ChangeType.Model ||
+                singletonChanges[singleton].otherChange.changeType === ChangeType.Model) {
+                allOps = false;
+            }
+        }
+        for (const collection of Object.keys(this.model.collections)) {
+            collectionChanges[collection] = this.model.collections[collection].merge(other.collections[collection]);
+            if (collectionChanges[collection].modelChange.changeType === ChangeType.Model ||
+                collectionChanges[collection].otherChange.changeType === ChangeType.Model) {
+                allOps = false;
+            }
+        }
+        for (const versionKey of Object.keys(other.version)) {
+            this.model.version[versionKey] = Math.max(this.model.version[versionKey] || 0, other.version[versionKey]);
+        }
+        if (allOps) {
+            const modelOps = [];
+            const otherOps = [];
+            for (const singleton of Object.keys(singletonChanges)) {
+                for (const operation of singletonChanges[singleton].modelChange.operations) {
+                    let op;
+                    if (operation.type === SingletonOpTypes.Set) {
+                        op = { ...operation, type: EntityOpTypes.Set, field: singleton };
+                    }
+                    else {
+                        op = { ...operation, type: EntityOpTypes.Clear, field: singleton };
+                    }
+                    modelOps.push(op);
+                }
+                for (const operation of singletonChanges[singleton].otherChange.operations) {
+                    let op;
+                    if (operation.type === SingletonOpTypes.Set) {
+                        op = { ...operation, type: EntityOpTypes.Set, field: singleton };
+                    }
+                    else {
+                        op = { ...operation, type: EntityOpTypes.Clear, field: singleton };
+                    }
+                    otherOps.push(op);
+                }
+            }
+            for (const collection of Object.keys(collectionChanges)) {
+                for (const operation of collectionChanges[collection].modelChange.operations) {
+                    let op;
+                    if (operation.type === CollectionOpTypes.Add) {
+                        op = { ...operation, type: EntityOpTypes.Add, field: collection };
+                    }
+                    else {
+                        op = { ...operation, type: EntityOpTypes.Remove, field: collection };
+                    }
+                    modelOps.push(op);
+                }
+                for (const operation of collectionChanges[collection].otherChange.operations) {
+                    let op;
+                    if (operation.type === CollectionOpTypes.Add) {
+                        op = { ...operation, type: EntityOpTypes.Add, field: collection };
+                    }
+                    else {
+                        op = { ...operation, type: EntityOpTypes.Remove, field: collection };
+                    }
+                    otherOps.push(op);
+                }
+            }
+            return { modelChange: { changeType: ChangeType.Operations, operations: modelOps },
+                otherChange: { changeType: ChangeType.Operations, operations: otherOps } };
+        }
+        else {
+            // need to map this.model to get the data out.
+            const change = { changeType: ChangeType.Model, modelPostChange: this.getData() };
+            return { modelChange: change, otherChange: change };
+        }
+    }
+    applyOperation(op) {
+        if (op.type === EntityOpTypes.Set || op.type === EntityOpTypes.Clear) {
+            if (!this.model.singletons[op.field]) {
+                if (this.model.collections[op.field]) {
+                    throw new Error(`Can't apply ${op.type === EntityOpTypes.Set ? 'Set' : 'Clear'} operation to collection field ${op.field}`);
+                }
+                throw new Error(`Invalid field: ${op.field} does not exist`);
+            }
+        }
+        else {
+            if (!this.model.collections[op.field]) {
+                if (this.model.singletons[op.field]) {
+                    throw new Error(`Can't apply ${op.type === EntityOpTypes.Add ? 'Add' : 'Remove'} operation to singleton field ${op.field}`);
+                }
+                throw new Error(`Invalid field: ${op.field} does not exist`);
+            }
+        }
+        const apply = () => {
+            switch (op.type) {
+                case EntityOpTypes.Set:
+                    return this.model.singletons[op.field].applyOperation({ ...op, type: SingletonOpTypes.Set });
+                case EntityOpTypes.Clear:
+                    return this.model.singletons[op.field].applyOperation({ ...op, type: SingletonOpTypes.Clear });
+                case EntityOpTypes.Add:
+                    return this.model.collections[op.field].applyOperation({ ...op, type: CollectionOpTypes.Add });
+                case EntityOpTypes.Remove:
+                    return this.model.collections[op.field].applyOperation({ ...op, type: CollectionOpTypes.Remove });
+                default:
+                    throw new Error(`Unexpected op ${op} for Entity CRDT`);
+            }
+        };
+        if (apply()) {
+            for (const versionKey of Object.keys(op.clock)) {
+                this.model.version[versionKey] = Math.max(this.model.version[versionKey] || 0, op.clock[versionKey]);
+            }
+            return true;
+        }
+        return false;
+    }
+    getData() {
+        const singletons = {};
+        const collections = {};
+        Object.keys(this.model.singletons).forEach(singleton => {
+            singletons[singleton] = this.model.singletons[singleton].getData();
+        });
+        Object.keys(this.model.collections).forEach(collection => {
+            collections[collection] = this.model.collections[collection].getData();
+        });
+        return { singletons, collections, version: this.model.version };
+    }
+    getParticleView() {
+        const result = { singletons: {}, collections: {} };
+        for (const key of Object.keys(this.model.singletons)) {
+            result.singletons[key] = this.model.singletons[key].getParticleView();
+        }
+        for (const key of Object.keys(this.model.collections)) {
+            result.collections[key] = this.model.collections[key].getParticleView();
+        }
+        return result;
     }
 }
 
@@ -5067,6 +3724,1368 @@ class CollectionHandle extends Handle {
 function handleNGFor(key, storageProxy, idGenerator, particle, canRead, canWrite, name) {
     return new (storageProxy.type.handleConstructor())(key, storageProxy, idGenerator, particle, canRead, canWrite, name);
 }
+
+/**
+ * @license
+ * Copyright (c) 2017 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+// TODO: This won't be needed once runtime is transferred between contexts.
+function cloneData(data) {
+    return data;
+    //return JSON.parse(JSON.stringify(data));
+}
+function restore(entry, entityClass) {
+    assert(entityClass, 'Handles need entity classes for deserialization');
+    const { id, rawData } = entry;
+    const entity = new entityClass(cloneData(rawData));
+    if (entry.id) {
+        Entity.identify(entity, entry.id);
+    }
+    // TODO some relation magic, somewhere, at some point.
+    return entity;
+}
+/**
+ * Base class for Collections and Singletons.
+ */
+class HandleOld {
+    // TODO type particleId, marked as string, but called with number
+    constructor(storage, idGenerator, name, particleId, canRead, canWrite) {
+        assert(!(storage instanceof HandleOld));
+        this._storage = storage;
+        this.idGenerator = idGenerator;
+        this.name = name || this.storage.name;
+        this.canRead = canRead;
+        this.canWrite = canWrite;
+        this._particleId = particleId;
+        this.options = {
+            keepSynced: true,
+            notifySync: true,
+            notifyUpdate: true,
+            notifyDesync: false,
+        };
+    }
+    reportUserExceptionInHost(exception, particle, method) {
+        this.storage.reportExceptionInHost(new UserException(exception, method, this._particleId, particle.spec.name));
+    }
+    reportSystemExceptionInHost(exception, method) {
+        this.storage.reportExceptionInHost(new SystemException(exception, method, this._particleId));
+    }
+    // `options` may contain any of:
+    // - keepSynced (bool): load full data on startup, maintain data in proxy and resync as required
+    // - notifySync (bool): if keepSynced is true, call onHandleSync when the full data is received
+    // - notifyUpdate (bool): call onHandleUpdate for every change event received
+    // - notifyDesync (bool): if keepSynced is true, call onHandleDesync when desync is detected
+    configure(options) {
+        assert(this.canRead, 'configure can only be called on readable Handles');
+        try {
+            const keys = Object.keys(this.options);
+            const badKeys = Object.keys(options).filter(o => !keys.includes(o));
+            if (badKeys.length > 0) {
+                throw new Error(`Invalid option in Handle.configure(): ${badKeys}`);
+            }
+            Object.assign(this.options, options);
+        }
+        catch (e) {
+            this.reportSystemExceptionInHost(e, 'Handle::configure');
+            throw e;
+        }
+    }
+    _serialize(entity) {
+        assert(entity, `can't serialize a null entity`);
+        if (entity instanceof Entity) {
+            if (!Entity.isIdentified(entity)) {
+                this.createIdentityFor(entity);
+            }
+        }
+        return entity[SYMBOL_INTERNALS].serialize();
+    }
+    createIdentityFor(entity) {
+        Entity.createIdentity(entity, Id.fromString(this._id), this.idGenerator);
+    }
+    get type() {
+        return this.storage.type;
+    }
+    get _id() {
+        return this.storage.id;
+    }
+    get storage() {
+        return this._storage;
+    }
+    toManifestString() {
+        return `'${this._id}'`;
+    }
+    generateKey() {
+        return this.idGenerator.newChildId(Id.fromString(this._id), 'key').toString();
+    }
+    /**
+     * Disables this handle so that it is no longer able to make changes or receive updates from the
+     * storage proxy
+     */
+    disable(particle) {
+        if (this.storage instanceof StorageProxy) {
+            this.storage.deregister(particle, this);
+        }
+        // Set this handle's storage to a no-operation storage proxy so any actions that need to be
+        // taken by this handle in the future (due to some async operations) will do nothing and finish quietly
+        this._storage = StorageProxy.newNoOpProxy(this.storage.id, this.storage.type);
+    }
+}
+/**
+ * A handle on a set of Entity data. Note that, as a set, a Collection can only
+ * contain a single version of an Entity for each given ID. Further, no order is
+ * implied by the set. A particle's manifest dictates the types of handles that
+ * need to be connected to that particle, and the current recipe identifies
+ * which handles are connected.
+ */
+class Collection extends HandleOld {
+    async _notify(kind, particle, details) {
+        assert(this.canRead, '_notify should not be called for non-readable handles');
+        switch (kind) {
+            case 'sync':
+                await particle.callOnHandleSync(this, this._restore(details), e => this.reportUserExceptionInHost(e, particle, 'onHandleSync'));
+                return;
+            case 'update': {
+                // tslint:disable-next-line: no-any
+                const update = {};
+                if ('add' in details) {
+                    update.added = this._restore(details.add);
+                }
+                if ('remove' in details) {
+                    update.removed = this._restore(details.remove);
+                }
+                update.originator = details.originatorId === this._particleId;
+                await particle.callOnHandleUpdate(this, update, e => this.reportUserExceptionInHost(e, particle, 'onHandleUpdate'));
+                return;
+            }
+            case 'desync':
+                await particle.callOnHandleDesync(this, e => this.reportUserExceptionInHost(e, particle, 'onHandleUpdate'));
+                return;
+            default:
+                throw new Error('unsupported');
+        }
+    }
+    /**
+     * Returns the Entity specified by id contained by the handle, or null if this id is not
+     * contained by the handle.
+     * @throws {Error} if this handle is not configured as a readable handle (i.e. 'in' or 'inout')
+     * in the particle's manifest.
+     */
+    async get(id) {
+        if (!this.canRead) {
+            throw new Error('Handle not readable');
+        }
+        return this._restore([await this.storage.get(id)])[0];
+    }
+    /**
+     * @returns a list of the Entities contained by the handle.
+     * @throws {Error} if this handle is not configured as a readable handle (i.e. 'in' or 'inout')
+     * in the particle's manifest.
+     */
+    async toList() {
+        if (!this.canRead) {
+            throw new Error('Handle not readable');
+        }
+        return this._restore(await this.storage.toList());
+    }
+    _restore(list) {
+        if (list == null) {
+            return null;
+        }
+        const containedType = this.type.getContainedType();
+        if (containedType instanceof EntityType) {
+            return list.map(e => restore(e, this.entityClass));
+        }
+        if (containedType instanceof ReferenceType) {
+            return list.map(r => new Reference(r, containedType, this.storage.pec));
+        }
+        throw new Error(`Don't know how to deliver handle data of type ${this.type}`);
+    }
+    /**
+     * Stores a new entity into the Handle.
+     * @throws {Error} if this handle is not configured as a writeable handle (i.e. 'out' or 'inout')
+     * in the particle's manifest.
+     */
+    async store(entity) {
+        if (!this.canWrite) {
+            throw new Error('Handle not writeable');
+        }
+        const serialization = this._serialize(entity);
+        const keys = [this.generateKey()];
+        return this.storage.store(serialization, keys, this._particleId);
+    }
+    /**
+     * Removes all known entities from the Handle.
+     * @throws {Error} if this handle is not configured as a writeable handle (i.e. 'out' or 'inout')
+     * in the particle's manifest.
+     */
+    async clear() {
+        if (!this.canWrite) {
+            throw new Error('Handle not writeable');
+        }
+        if (this.storage.clear) {
+            return this.storage.clear(this._particleId);
+        }
+        else {
+            throw new Error('clear not implemented by storage');
+        }
+    }
+    /**
+     * Removes an entity from the Handle.
+     * @throws {Error} if this handle is not configured as a writeable handle (i.e. 'out' or 'inout')
+     * in the particle's manifest.
+     */
+    async remove(entity) {
+        if (!this.canWrite) {
+            throw new Error('Handle not writeable');
+        }
+        const serialization = this._serialize(entity);
+        // Remove the keys that exist at storage/proxy.
+        const keys = [];
+        await this.storage.remove(serialization.id, keys, this._particleId);
+    }
+    get storage() {
+        return this._storage;
+    }
+}
+/**
+ * A handle on a single entity. A particle's manifest dictates
+ * the types of handles that need to be connected to that particle, and
+ * the current recipe identifies which handles are connected.
+ */
+class Singleton extends HandleOld {
+    // Called by StorageProxy.
+    async _notify(kind, particle, details) {
+        assert(this.canRead, '_notify should not be called for non-readable handles');
+        switch (kind) {
+            case 'sync':
+                await particle.callOnHandleSync(this, this._restore(details), e => this.reportUserExceptionInHost(e, particle, 'onHandleSync'));
+                return;
+            case 'update': {
+                const data = this._restore(details.data);
+                const oldData = this._restore(details.oldData);
+                await particle.callOnHandleUpdate(this, { data, oldData }, e => this.reportUserExceptionInHost(e, particle, 'onHandleUpdate'));
+                return;
+            }
+            case 'desync':
+                await particle.callOnHandleDesync(this, e => this.reportUserExceptionInHost(e, particle, 'onHandleDesync'));
+                return;
+            default:
+                throw new Error('unsupported');
+        }
+    }
+    /**
+     * @returns the Entity contained by the Singleton, or undefined if the Singleton is cleared.
+     * @throws {Error} if this Singleton is not configured as a readable handle (i.e. 'in' or 'inout')
+     * in the particle's manifest.
+     */
+    async get() {
+        if (!this.canRead) {
+            throw new Error('Handle not readable');
+        }
+        const model = await this.storage.get();
+        return this._restore(model);
+    }
+    _restore(model) {
+        if (model == null) {
+            return null;
+        }
+        if (this.type instanceof EntityType) {
+            return restore(model, this.entityClass);
+        }
+        if (this.type instanceof InterfaceType) {
+            return ParticleSpec.fromLiteral(model);
+        }
+        if (this.type instanceof ReferenceType) {
+            return new Reference(model, this.type, this.storage.pec);
+        }
+        throw new Error(`Don't know how to deliver handle data of type ${this.type}`);
+    }
+    /**
+     * Stores a new entity into the Singleton, replacing any existing entity.
+     * @throws {Error} if this Singleton is not configured as a writeable handle (i.e. 'out' or 'inout')
+     * in the particle's manifest.
+     */
+    async set(entity) {
+        try {
+            if (!this.canWrite) {
+                throw new Error('Handle not writeable');
+            }
+            const serialization = this._serialize(entity);
+            return this.storage.set(serialization, this._particleId);
+        }
+        catch (e) {
+            this.reportSystemExceptionInHost(e, 'Handle::set');
+            throw e;
+        }
+    }
+    /**
+     * Clears any entity currently in the Singleton.
+     * @throws {Error} if this Singleton is not configured as a writeable handle (i.e. 'out' or 'inout')
+     * in the particle's manifest.
+     */
+    async clear() {
+        if (!this.canWrite) {
+            throw new Error('Handle not writeable');
+        }
+        return this.storage.clear(this._particleId);
+    }
+    get storage() {
+        return this._storage;
+    }
+}
+/**
+ * Provides paginated read access to a BigCollection. Conforms to the javascript iterator protocol
+ * but is not marked as iterable because next() is async, which is currently not supported by
+ * implicit iteration in Javascript.
+ */
+class Cursor {
+    constructor(parent, cursorId) {
+        this._parent = parent;
+        this._cursorId = cursorId;
+    }
+    /**
+     * Returns {value: [items], done: false} while there are items still available, or {done: true}
+     * when the cursor has completed reading the collection.
+     */
+    async next() {
+        const data = await this._parent.storage.cursorNext(this._cursorId);
+        if (!data.done) {
+            data.value = data.value.map(a => restore(a, this._parent.entityClass));
+        }
+        return data;
+    }
+    /**
+     * Terminates the streamed read. This must be called if a cursor is no longer needed but has not
+     * yet completed streaming (i.e. next() hasn't returned {done: true}).
+     */
+    close() {
+        this._parent.storage.cursorClose(this._cursorId);
+    }
+}
+/**
+ * A handle on a large set of Entity data. Similar to Collection, except the complete set of
+ * entities is not available directly; use stream() to read the full set. Particles wanting to
+ * operate on BigCollections should do so in the setHandles() call, since BigCollections do not
+ * trigger onHandleSync() or onHandleUpdate().
+ */
+class BigCollection extends HandleOld {
+    configure(options) {
+        throw new Error('BigCollections do not support sync/update configuration');
+    }
+    async _notify(kind, particle, details) {
+        assert(this.canRead, '_notify should not be called for non-readable handles');
+        assert(kind === 'sync', 'BigCollection._notify only supports sync events');
+        await particle.callOnHandleSync(this, [], e => this.reportUserExceptionInHost(e, particle, 'onHandleSync'));
+    }
+    /**
+     * Stores a new entity into the Handle.
+     * @throws {Error} if this handle is not configured as a writeable handle (i.e. 'out' or 'inout')
+     * in the particle's manifest.
+     */
+    async store(entity) {
+        if (!this.canWrite) {
+            throw new Error('Handle not writeable');
+        }
+        const serialization = this._serialize(entity);
+        const keys = [this.generateKey()];
+        return this.storage.store(serialization, keys, this._particleId);
+    }
+    /**
+     * Removes an entity from the Handle.
+     * @throws {Error} if this handle is not configured as a writeable handle (i.e. 'out' or 'inout')
+     * in the particle's manifest.
+     */
+    async remove(entity) {
+        if (!this.canWrite) {
+            throw new Error('Handle not writeable');
+        }
+        const serialization = this._serialize(entity);
+        await this.storage.remove(serialization.id, [], this._particleId);
+    }
+    /**
+     * @returns a Cursor instance that iterates over the full set of entities, reading `pageSize`
+     * entities at a time. The cursor views a snapshot of the collection, locked to the version
+     * at which the cursor is created.
+     *
+     * By default items are returned in order of original insertion into the collection (with the
+     * caveat that items removed during a streamed read may be returned at the end). Set `forward`
+     * to false to return items in reverse insertion order.
+     *
+     * @throws {Error} if this Singleton is not configured as a readable handle (i.e. 'in' or 'inout')
+     * in the particle's manifest.
+     */
+    async stream({ pageSize, forward = true }) {
+        if (!this.canRead) {
+            throw new Error('Handle not readable');
+        }
+        if (isNaN(pageSize) || pageSize < 1) {
+            throw new Error('Streamed reads require a positive pageSize');
+        }
+        const cursorId = await this.storage.stream(pageSize, forward);
+        return new Cursor(this, cursorId);
+    }
+    get storage() {
+        return this._storage;
+    }
+}
+function handleFor(storage, idGenerator, name = null, particleId = '', canRead = true, canWrite = true) {
+    let handle;
+    if (storage.type instanceof CollectionType) {
+        handle = new Collection(storage, idGenerator, name, particleId, canRead, canWrite);
+    }
+    else if (storage.type instanceof BigCollectionType) {
+        handle = new BigCollection(storage, idGenerator, name, particleId, canRead, canWrite);
+    }
+    else {
+        handle = new Singleton(storage, idGenerator, name, particleId, canRead, canWrite);
+    }
+    const schema = storage.type.getEntitySchema();
+    if (schema) {
+        handle.entityClass = schema.entityClass(storage.pec);
+    }
+    return handle;
+}
+/** Creates either a new- or old-style Handle for the given storage proxy. */
+function unifiedHandleFor(opts) {
+    const defaultOpts = { particleId: '', canRead: true, canWrite: true };
+    opts = { ...defaultOpts, ...opts };
+    if (opts.proxy instanceof StorageProxy$1) {
+        assert(opts.particleId.length, 'NG Handles require a particle ID');
+        return handleNGFor(opts.particleId, opts.proxy, opts.idGenerator, opts.particle, opts.canRead, opts.canWrite, opts.name);
+    }
+    else {
+        return handleFor(opts.proxy, opts.idGenerator, opts.name, opts.particleId, opts.canRead, opts.canWrite);
+    }
+}
+
+/**
+ * @license
+ * Copyright (c) 2018 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+var ReferenceMode;
+(function (ReferenceMode) {
+    ReferenceMode[ReferenceMode["Unstored"] = 0] = "Unstored";
+    ReferenceMode[ReferenceMode["Stored"] = 1] = "Stored";
+})(ReferenceMode || (ReferenceMode = {}));
+class Reference {
+    constructor(data, type, context) {
+        this.entity = null;
+        this.storageProxy = null;
+        // tslint:disable-next-line: no-any
+        this.handle = null;
+        this.id = data.id;
+        this.storageKey = data.storageKey;
+        this.context = context;
+        this.type = type;
+        this[SYMBOL_INTERNALS] = {
+            serialize: () => ({ id: this.id, rawData: this.dataClone() })
+        };
+    }
+    async ensureStorageProxy() {
+        if (this.storageProxy == null) {
+            this.storageProxy = await this.context.getStorageProxy(this.storageKey, this.type.referredType);
+            // tslint:disable-next-line: no-any
+            this.handle = unifiedHandleFor({ proxy: this.storageProxy, idGenerator: this.context.idGenerator });
+            if (this.storageKey) {
+                assert(this.storageKey === this.storageProxy.storageKey);
+            }
+            else {
+                this.storageKey = this.storageProxy.storageKey;
+            }
+        }
+    }
+    async dereference() {
+        assert(this.context, 'Must have context to dereference');
+        if (this.entity) {
+            return this.entity;
+        }
+        await this.ensureStorageProxy();
+        this.entity = await this.handle.get(this.id);
+        return this.entity;
+    }
+    dataClone() {
+        return { storageKey: this.storageKey, id: this.id };
+    }
+}
+/** A subclass of Reference that clients can create. */
+class ClientReference extends Reference {
+    /** Use the newClientReference factory method instead. */
+    constructor(entity, context) {
+        // TODO(shans): start carrying storageKey information around on Entity objects
+        super({ id: Entity.id(entity), storageKey: null }, new ReferenceType(Entity.entityClass(entity).type), context);
+        this.mode = ReferenceMode.Unstored;
+        this.entity = entity;
+        this.stored = this.storeReference(entity);
+    }
+    async storeReference(entity) {
+        await this.ensureStorageProxy();
+        if (this.handle instanceof CollectionHandle) {
+            await this.handle.add(entity);
+        }
+        else {
+            await this.handle.store(entity);
+        }
+        this.mode = ReferenceMode.Stored;
+    }
+    async dereference() {
+        if (this.mode === ReferenceMode.Unstored) {
+            return null;
+        }
+        return super.dereference();
+    }
+    isIdentified() {
+        return Entity.isIdentified(this.entity);
+    }
+    static newClientReference(context) {
+        return class extends ClientReference {
+            constructor(entity) {
+                super(entity, context);
+            }
+        };
+    }
+}
+
+/**
+ * @license
+ * Copyright (c) 2017 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+// This class holds extra entity-related fields used by the runtime. Instances of this are stored
+// in their parent Entity via a Symbol-based key. This allows Entities to hold whatever field names
+// their Schemas describe without any possibility of names clashing. For example, an Entity can have
+// an 'id' field that is distinct (in both value and type) from the id field here. Access to this
+// class should be via the static helpers in Entity.
+class EntityInternals {
+    constructor(entity, entityClass, schema, context, userIDComponent) {
+        // TODO: Only the Arc that "owns" this Entity should be allowed to mutate it.
+        this.mutable = true;
+        this.entity = entity;
+        this.entityClass = entityClass;
+        this.schema = schema;
+        this.context = context;
+        this.userIDComponent = userIDComponent;
+    }
+    getId() {
+        if (this.id === undefined) {
+            throw new Error('no id');
+        }
+        return this.id;
+    }
+    getEntityClass() {
+        return this.entityClass;
+    }
+    isIdentified() {
+        return this.id !== undefined;
+    }
+    identify(identifier) {
+        assert(!this.isIdentified(), 'identify() called on already identified entity');
+        this.id = identifier;
+        const components = identifier.split(':');
+        const uid = components.lastIndexOf('uid');
+        this.userIDComponent = uid > 0 ? components.slice(uid + 1).join(':') : '';
+    }
+    createIdentity(parentId, idGenerator) {
+        assert(!this.isIdentified(), 'createIdentity() called on already identified entity');
+        let id;
+        if (this.userIDComponent) {
+            // TODO: Stop creating IDs by manually concatenating strings.
+            id = `${parentId.toString()}:uid:${this.userIDComponent}`;
+        }
+        else {
+            id = idGenerator.newChildId(parentId).toString();
+        }
+        this.id = id;
+    }
+    isMutable() {
+        return this.mutable;
+    }
+    /**
+     * Prevents further mutation of this Entity instance. Note that calling this method only affects
+     * this particular Entity instance; the entity it represents (in a data store somewhere) can
+     * still be mutated by others. Also note that this doesn't necessarily offer any security against
+     * malicious developers.
+     */
+    makeImmutable() {
+        this.mutable = false;
+    }
+    /**
+     * Mutates the entity. Supply either the new data for the entity, which replaces the existing
+     * entity's data entirely, or a mutation function. The supplied mutation function will be called
+     * with a mutable copy of the entity's data. The mutations performed by that function will be
+     * reflected in the original entity instance (i.e. mutations applied in place).
+     */
+    mutate(mutation) {
+        if (!this.mutable) {
+            throw new Error('Entity is immutable.');
+        }
+        let newData;
+        // Using typeof instead of instanceof here, because apparently sometimes lambdas aren't an instance of Function... :-/
+        if (typeof mutation === 'function') {
+            newData = this.dataClone();
+            mutation(newData);
+        }
+        else {
+            newData = mutation;
+        }
+        // Note that this does *not* trigger the error in the Entity's Proxy 'set' trap, because we're
+        // applying the field updates directly to the original Entity instance (this.entity), not the
+        // Proxied version returned by the Entity constructor. Not confusing at all!
+        sanitizeAndApply(this.entity, newData, this.schema, this.context);
+        // TODO: Send mutations to data store.
+    }
+    toLiteral() {
+        return JSON.parse(JSON.stringify(this.entity));
+    }
+    dataClone() {
+        const clone = {};
+        const fieldTypes = this.schema.fields;
+        for (const name of Object.keys(fieldTypes)) {
+            if (this.entity[name] !== undefined) {
+                if (fieldTypes[name] && fieldTypes[name].kind === 'schema-reference') {
+                    if (this.entity[name]) {
+                        clone[name] = this.entity[name].dataClone();
+                    }
+                }
+                else if (fieldTypes[name] && fieldTypes[name].kind === 'schema-collection') {
+                    if (this.entity[name]) {
+                        clone[name] = [...this.entity[name]].map(a => a.dataClone());
+                    }
+                }
+                else {
+                    clone[name] = this.entity[name];
+                }
+            }
+        }
+        return clone;
+    }
+    serialize() {
+        return { id: this.id, rawData: this.dataClone() };
+    }
+    debugLog() {
+        // Here be dragons! Create a copy of the entity class but with an enumerable version of this
+        // internals object so it will appear in the log output, with a few tweaks for better display.
+        const original = this.entity;
+        const copy = new EntityInternals(null, this.entityClass, this.schema, this.context, this.userIDComponent);
+        copy.id = this.id;
+        // Force 'entity' to show as '[Circular]'. The 'any' is required because 'entity' is readonly.
+        // tslint:disable-next-line: no-any
+        copy.entity = copy;
+        // Set up a class that looks the same as the real entity, copy the schema fields in, add an
+        // enumerable version of the copied internals, and use console.dir to show the full object.
+        // Node displays the name set up with defineProperty below, but Chrome uses the name of the
+        // class variable defined here, so we'll call that entity.
+        const entity = class extends Entity {
+            constructor() {
+                super();
+                Object.assign(this, original);
+                this[SYMBOL_INTERNALS] = copy;
+            }
+        };
+        Object.defineProperty(entity, 'name', { value: original.constructor.name });
+        console.dir(new entity(), { depth: null });
+    }
+}
+class Entity {
+    toString() {
+        const fields = Object.entries(this).map(([name, value]) => `${name}: ${JSON.stringify(value)}`);
+        return `${this.constructor.name} { ${fields.join(', ')} }`;
+    }
+    // Dynamically constructs a new JS class for the entity type represented by the given schema.
+    // This creates a new class which extends the Entity base class and implements the required
+    // static properties, then returns a Proxy wrapping that to guard against incorrect field writes.
+    static createEntityClass(schema, context) {
+        const clazz = class extends Entity {
+            constructor(data, userIDComponent) {
+                super();
+                assert(data, `can't construct entity with null data`);
+                assert(!userIDComponent || userIDComponent.indexOf(':') === -1, `user IDs must not contain the ':' character`);
+                // We want the SYMBOL_INTERNALS property to be non-enumerable so any copies made of this
+                // entity (e.g. via Object.assign) pick up only the plain data fields from the schema, and
+                // not the EntityInternals object (which should be unique to this instance).
+                Object.defineProperty(this, SYMBOL_INTERNALS, {
+                    value: new EntityInternals(this, clazz, schema, context, userIDComponent),
+                    enumerable: false
+                });
+                sanitizeAndApply(this, data, schema, context);
+                // We don't want a 'get' trap here because JS accesses various fields as part of routine
+                // system behaviour, and making sure we special case all of them is going to be brittle.
+                // For example: when returning an object from an async function, JS needs to check if the
+                // object is a 'thenable' (so it knows whether to wrap it in a Promise or not), and it does
+                // this by checking for the existence of a 'then' method. Not trapping 'get' is ok because
+                // callers who try to read fields that aren't in the schema will just get 'undefined', which
+                // is idiomatic for JS anyway.
+                return new Proxy(this, {
+                    set: (target, name, value) => {
+                        throw new Error(`Tried to modify entity field '${name}'. Use the mutate method instead.`);
+                    }
+                });
+            }
+            static get type() {
+                // TODO: should the entity's key just be its type?
+                // Should it just be called type in that case?
+                return new EntityType(schema);
+            }
+            static get key() {
+                return { tag: 'entity', schema };
+            }
+            static get schema() {
+                return schema;
+            }
+        };
+        // Override the name property to use the name of the entity given in the schema.
+        Object.defineProperty(clazz, 'name', { value: schema.name });
+        return clazz;
+    }
+    static id(entity) {
+        return getInternals(entity).getId();
+    }
+    static entityClass(entity) {
+        return getInternals(entity).getEntityClass();
+    }
+    static isIdentified(entity) {
+        return getInternals(entity).isIdentified();
+    }
+    static identify(entity, identifier) {
+        getInternals(entity).identify(identifier);
+        return entity;
+    }
+    static createIdentity(entity, parentId, idGenerator) {
+        getInternals(entity).createIdentity(parentId, idGenerator);
+    }
+    static isMutable(entity) {
+        return getInternals(entity).isMutable();
+    }
+    static makeImmutable(entity) {
+        getInternals(entity).makeImmutable();
+    }
+    static mutate(entity, mutation) {
+        getInternals(entity).mutate(mutation);
+    }
+    static toLiteral(entity) {
+        return getInternals(entity).toLiteral();
+    }
+    static dataClone(entity) {
+        return getInternals(entity).dataClone();
+    }
+    static serialize(entity) {
+        return getInternals(entity).serialize();
+    }
+    // Because the internals object is non-enumerable, console.log(entity) in Node only shows the
+    // schema-based fields; use this function to log a more complete record of the entity in tests.
+    // Chrome's console.log already shows the internals object so that's usually sufficient for
+    // debugging, but this function can still be useful for logging a snapshot of an entity that
+    // is later modified.
+    static debugLog(entity) {
+        getInternals(entity).debugLog();
+    }
+}
+function getInternals(entity) {
+    const internals = entity[SYMBOL_INTERNALS];
+    assert(internals !== undefined, 'SYMBOL_INTERNALS lookup on non-entity');
+    return internals;
+}
+function sanitizeAndApply(target, data, schema, context) {
+    for (const [name, value] of Object.entries(data)) {
+        const sanitizedValue = sanitizeEntry(schema.fields[name], value, name, context);
+        validateFieldAndTypes(name, sanitizedValue, schema);
+        target[name] = sanitizedValue;
+    }
+}
+function convertToJsType(primitiveType, schemaName) {
+    switch (primitiveType.type) {
+        case 'Text':
+            return 'string';
+        case 'URL':
+            return 'string';
+        case 'Number':
+            return 'number';
+        case 'Boolean':
+            return 'boolean';
+        case 'Bytes':
+            return 'Uint8Array';
+        default:
+            throw new Error(`Unknown field type ${primitiveType.type} in schema ${schemaName}`);
+    }
+}
+// tslint:disable-next-line: no-any
+function validateFieldAndTypes(name, value, schema, fieldType) {
+    fieldType = fieldType || schema.fields[name];
+    if (fieldType === undefined) {
+        throw new Error(`Can't set field ${name}; not in schema ${schema.name}`);
+    }
+    if (value === undefined || value === null) {
+        return;
+    }
+    switch (fieldType.kind) {
+        case 'schema-primitive': {
+            const valueType = value.constructor.name === 'Uint8Array' ? 'Uint8Array' : typeof (value);
+            if (valueType !== convertToJsType(fieldType, schema.name)) {
+                throw new TypeError(`Type mismatch setting field ${name} (type ${fieldType.type}); ` +
+                    `value '${value}' is type ${typeof (value)}`);
+            }
+            break;
+        }
+        case 'schema-union':
+            // Value must be a primitive that matches one of the union types.
+            for (const innerType of fieldType.types) {
+                if (typeof (value) === convertToJsType(innerType, schema.name)) {
+                    return;
+                }
+            }
+            throw new TypeError(`Type mismatch setting field ${name} (union [${fieldType.types}]); ` +
+                `value '${value}' is type ${typeof (value)}`);
+        case 'schema-tuple':
+            // Value must be an array whose contents match each of the tuple types.
+            if (!Array.isArray(value)) {
+                throw new TypeError(`Cannot set tuple ${name} with non-array value '${value}'`);
+            }
+            if (value.length !== fieldType.types.length) {
+                throw new TypeError(`Length mismatch setting tuple ${name} ` +
+                    `[${fieldType.types}] with value '${value}'`);
+            }
+            fieldType.types.map((innerType, i) => {
+                if (value[i] !== undefined && value[i] !== null &&
+                    typeof (value[i]) !== convertToJsType(innerType, schema.name)) {
+                    throw new TypeError(`Type mismatch setting field ${name} (tuple [${fieldType.types}]); ` +
+                        `value '${value}' has type ${typeof (value[i])} at index ${i}`);
+                }
+            });
+            break;
+        case 'schema-reference':
+            if (!(value instanceof Reference)) {
+                throw new TypeError(`Cannot set reference ${name} with non-reference '${value}'`);
+            }
+            if (!TypeChecker.compareTypes({ type: value.type }, { type: new ReferenceType(fieldType.schema.model) })) {
+                throw new TypeError(`Cannot set reference ${name} with value '${value}' of mismatched type`);
+            }
+            break;
+        case 'schema-collection':
+            // WTF?! value instanceof Set is returning false sometimes here because the Set in
+            // this environment (a native code constructor) isn't equal to the Set that the value
+            // has been constructed with (another native code constructor)...
+            if (value.constructor.name !== 'Set') {
+                throw new TypeError(`Cannot set collection ${name} with non-Set '${value}'`);
+            }
+            for (const element of value) {
+                validateFieldAndTypes(name, element, schema, fieldType.schema);
+            }
+            break;
+        default:
+            throw new Error(`Unknown kind '${fieldType.kind}' for field ${name} in schema ${schema.name}`);
+    }
+}
+function sanitizeEntry(type, value, name, context) {
+    if (!type) {
+        // If there isn't a field type for this, the proxy will pick up
+        // that fact and report a meaningful error.
+        return value;
+    }
+    if (type.kind === 'schema-reference' && value) {
+        if (value instanceof Reference) {
+            // Setting value as Reference (Particle side). This will enforce that the type provided for
+            // the handle matches the type of the reference.
+            return value;
+        }
+        else if (value.id && value.storageKey) {
+            // Setting value from raw data (Channel side).
+            // TODO(shans): This can't enforce type safety here as there isn't any type data available.
+            // Maybe this is OK because there's type checking on the other side of the channel?
+            return new Reference(value, new ReferenceType(type.schema.model), context);
+        }
+        else {
+            throw new TypeError(`Cannot set reference ${name} with non-reference '${value}'`);
+        }
+    }
+    else if (type.kind === 'schema-collection' && value) {
+        // WTF?! value instanceof Set is returning false sometimes here because the Set in
+        // this environment (a native code constructor) isn't equal to the Set that the value
+        // has been constructed with (another native code constructor)...
+        if (value.constructor.name === 'Set') {
+            return value;
+        }
+        else if (value.length && value instanceof Object) {
+            return new Set(value.map(v => sanitizeEntry(type.schema, v, name, context)));
+        }
+        else {
+            throw new TypeError(`Cannot set collection ${name} with non-collection '${value}'`);
+        }
+    }
+    else {
+        return value;
+    }
+}
+
+/**
+ * @license
+ * Copyright (c) 2017 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+class Schema {
+    // For convenience, primitive field types can be specified as {name: 'Type'}
+    // in `fields`; the constructor will convert these to the correct schema form.
+    // tslint:disable-next-line: no-any
+    constructor(names, fields, description) {
+        this.description = {};
+        this.names = names;
+        this.fields = {};
+        for (const [name, field] of Object.entries(fields)) {
+            if (typeof (field) === 'string') {
+                this.fields[name] = { kind: 'schema-primitive', type: field };
+            }
+            else {
+                this.fields[name] = field;
+            }
+        }
+        if (description) {
+            description.description.forEach(desc => this.description[desc.name] = desc.pattern || desc.patterns[0]);
+        }
+    }
+    toLiteral() {
+        const fields = {};
+        const updateField = field => {
+            if (field.kind === 'schema-reference') {
+                const schema = field.schema;
+                return { kind: 'schema-reference', schema: { kind: schema.kind, model: schema.model.toLiteral() } };
+            }
+            else if (field.kind === 'schema-collection') {
+                return { kind: 'schema-collection', schema: updateField(field.schema) };
+            }
+            else {
+                return field;
+            }
+        };
+        for (const key of Object.keys(this.fields)) {
+            fields[key] = updateField(this.fields[key]);
+        }
+        return { names: this.names, fields, description: this.description };
+    }
+    static fromLiteral(data = { fields: {}, names: [], description: {} }) {
+        const fields = {};
+        const updateField = field => {
+            if (field.kind === 'schema-reference') {
+                const schema = field.schema;
+                return { kind: 'schema-reference', schema: { kind: schema.kind, model: Type.fromLiteral(schema.model) } };
+            }
+            else if (field.kind === 'schema-collection') {
+                return { kind: 'schema-collection', schema: updateField(field.schema) };
+            }
+            else {
+                return field;
+            }
+        };
+        for (const key of Object.keys(data.fields)) {
+            fields[key] = updateField(data.fields[key]);
+        }
+        const result = new Schema(data.names, fields);
+        result.description = data.description || {};
+        return result;
+    }
+    // TODO: This should only be an ident used in manifest parsing.
+    get name() {
+        return this.names[0];
+    }
+    static typesEqual(fieldType1, fieldType2) {
+        // TODO: structural check instead of stringification.
+        return Schema._typeString(fieldType1) === Schema._typeString(fieldType2);
+    }
+    static _typeString(type) {
+        switch (type.kind) {
+            case 'schema-primitive':
+                return type.type;
+            case 'schema-union':
+                return `(${type.types.map(t => t.type).join(' or ')})`;
+            case 'schema-tuple':
+                return `(${type.types.map(t => t.type).join(', ')})`;
+            case 'schema-reference':
+                return `Reference<${Schema._typeString(type.schema)}>`;
+            case 'type-name':
+            case 'schema-inline':
+                return type.model.entitySchema.toInlineSchemaString();
+            case 'schema-collection':
+                return `[${Schema._typeString(type.schema)}]`;
+            default:
+                throw new Error(`Unknown type kind ${type.kind} in schema ${this.name}`);
+        }
+    }
+    static union(schema1, schema2) {
+        const names = [...new Set([...schema1.names, ...schema2.names])];
+        const fields = {};
+        for (const [field, type] of [...Object.entries(schema1.fields), ...Object.entries(schema2.fields)]) {
+            if (fields[field]) {
+                if (!Schema.typesEqual(fields[field], type)) {
+                    return null;
+                }
+            }
+            else {
+                fields[field] = type;
+            }
+        }
+        return new Schema(names, fields);
+    }
+    static intersect(schema1, schema2) {
+        const names = [...schema1.names].filter(name => schema2.names.includes(name));
+        const fields = {};
+        for (const [field, type] of Object.entries(schema1.fields)) {
+            const otherType = schema2.fields[field];
+            if (otherType && Schema.typesEqual(type, otherType)) {
+                fields[field] = type;
+            }
+        }
+        return new Schema(names, fields);
+    }
+    equals(otherSchema) {
+        return this === otherSchema || (this.name === otherSchema.name
+            // TODO: Check equality without calling contains.
+            && this.isMoreSpecificThan(otherSchema)
+            && otherSchema.isMoreSpecificThan(this));
+    }
+    isMoreSpecificThan(otherSchema) {
+        const names = new Set(this.names);
+        for (const name of otherSchema.names) {
+            if (!names.has(name)) {
+                return false;
+            }
+        }
+        const fields = {};
+        for (const [name, type] of Object.entries(this.fields)) {
+            fields[name] = type;
+        }
+        for (const [name, type] of Object.entries(otherSchema.fields)) {
+            if (fields[name] == undefined) {
+                return false;
+            }
+            if (!Schema.typesEqual(fields[name], type)) {
+                return false;
+            }
+        }
+        return true;
+    }
+    get type() {
+        return new EntityType(this);
+    }
+    entityClass(context = null) {
+        return Entity.createEntityClass(this, context);
+    }
+    crdtConstructor() {
+        const singletons = {};
+        const collections = {};
+        // TODO(shans) do this properly
+        for (const [field, { type }] of Object.entries(this.fields)) {
+            if (type === 'Text') {
+                singletons[field] = new CRDTSingleton();
+            }
+            else if (type === 'Number') {
+                singletons[field] = new CRDTSingleton();
+            }
+            else {
+                throw new Error(`Big Scary Exception: entity field ${field} of type ${type} doesn't yet have a CRDT mapping implemented`);
+            }
+        }
+        return class EntityCRDT extends CRDTEntity {
+            constructor() {
+                super(singletons, collections);
+            }
+        };
+    }
+    toInlineSchemaString(options) {
+        const names = this.names.join(' ') || '*';
+        const fields = Object.entries(this.fields).map(([name, type]) => `${Schema._typeString(type)} ${name}`).join(', ');
+        return `${names} {${fields.length > 0 && options && options.hideFields ? '...' : fields}}`;
+    }
+    toManifestString() {
+        const results = [];
+        results.push(`schema ${this.names.join(' ')}`);
+        results.push(...Object.entries(this.fields).map(([name, type]) => `  ${Schema._typeString(type)} ${name}`));
+        if (Object.keys(this.description).length > 0) {
+            results.push(`  description \`${this.description.pattern}\``);
+            for (const name of Object.keys(this.description)) {
+                if (name !== 'pattern') {
+                    results.push(`    ${name} \`${this.description[name]}\``);
+                }
+            }
+        }
+        return results.join('\n');
+    }
+}
+
+/**
+ * @license
+ * Copyright (c) 2017 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+class SlotInfo {
+    constructor(formFactor, handle) {
+        this.formFactor = formFactor;
+        this.handle = handle;
+    }
+    toLiteral() {
+        return this;
+    }
+    static fromLiteral({ formFactor, handle }) {
+        return new SlotInfo(formFactor, handle);
+    }
+}
+
+/**
+ * @license
+ * Copyright (c) 2018 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+// Equivalent to an Entity with Schema { serialization Text }
+class ArcInfo {
+    constructor(arcId, serialization) {
+        this.id = arcId.toString();
+        // TODO: remove the import-removal hack when import statements no longer appear
+        // in serialized manifests, or deal with them correctly if they end up staying
+        this.serialization = serialization.replace(/\bimport .*\n/g, '');
+    }
+    // Retrieves the serialized string from a stored instance of ArcInfo.
+    static extractSerialization(data) {
+        return data.serialization.replace(/\bimport .*\n/g, '');
+    }
+}
+class ArcHandle {
+    constructor(id, storageKey, type, tags) {
+        this.id = id;
+        this.storageKey = storageKey;
+        this.type = type;
+        this.tags = tags;
+    }
+}
+
+/**
+ * @license
+ * Copyright (c) 2017 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+class TypeVariableInfo {
+    constructor(name, canWriteSuperset, canReadSubset) {
+        this.name = name;
+        this._canWriteSuperset = canWriteSuperset;
+        this._canReadSubset = canReadSubset;
+        this._resolution = null;
+    }
+    /**
+     * Merge both the read subset (upper bound) and write superset (lower bound) constraints
+     * of two variables together. Use this when two separate type variables need to resolve
+     * to the same value.
+     */
+    maybeMergeConstraints(variable) {
+        if (!this.maybeMergeCanReadSubset(variable.canReadSubset)) {
+            return false;
+        }
+        return this.maybeMergeCanWriteSuperset(variable.canWriteSuperset);
+    }
+    /**
+     * Merge a type variable's read subset (upper bound) constraints into this variable.
+     * This is used to accumulate read constraints when resolving a handle's type.
+     */
+    maybeMergeCanReadSubset(constraint) {
+        if (constraint == null) {
+            return true;
+        }
+        if (this.canReadSubset == null) {
+            this.canReadSubset = constraint;
+            return true;
+        }
+        if (this.canReadSubset instanceof SlotType && constraint instanceof SlotType) {
+            // TODO: formFactor compatibility, etc.
+            return true;
+        }
+        if (this.canReadSubset instanceof EntityType && constraint instanceof EntityType) {
+            const mergedSchema = Schema.intersect(this.canReadSubset.entitySchema, constraint.entitySchema);
+            if (!mergedSchema) {
+                return false;
+            }
+            this.canReadSubset = new EntityType(mergedSchema);
+            return true;
+        }
+        return false;
+    }
+    /**
+     * merge a type variable's write superset (lower bound) constraints into this variable.
+     * This is used to accumulate write constraints when resolving a handle's type.
+     */
+    maybeMergeCanWriteSuperset(constraint) {
+        if (constraint == null) {
+            return true;
+        }
+        if (this.canWriteSuperset == null) {
+            this.canWriteSuperset = constraint;
+            return true;
+        }
+        if (this.canWriteSuperset instanceof SlotType && constraint instanceof SlotType) {
+            // TODO: formFactor compatibility, etc.
+            return true;
+        }
+        if (this.canWriteSuperset instanceof EntityType && constraint instanceof EntityType) {
+            const mergedSchema = Schema.union(this.canWriteSuperset.entitySchema, constraint.entitySchema);
+            if (!mergedSchema) {
+                return false;
+            }
+            this.canWriteSuperset = new EntityType(mergedSchema);
+            return true;
+        }
+        return false;
+    }
+    isSatisfiedBy(type) {
+        const constraint = this._canWriteSuperset;
+        if (!constraint) {
+            return true;
+        }
+        if (!(constraint instanceof EntityType) || !(type instanceof EntityType)) {
+            throw new Error(`constraint checking not implemented for ${this} and ${type}`);
+        }
+        return type.getEntitySchema().isMoreSpecificThan(constraint.getEntitySchema());
+    }
+    get resolution() {
+        if (this._resolution) {
+            return this._resolution.resolvedType();
+        }
+        return null;
+    }
+    isValidResolutionCandidate(value) {
+        const elementType = value.resolvedType().getContainedType();
+        if (elementType instanceof TypeVariable && elementType.variable === this) {
+            return { result: false, detail: 'variable cannot resolve to collection of itself' };
+        }
+        return { result: true };
+    }
+    set resolution(value) {
+        assert(!this._resolution);
+        const isValid = this.isValidResolutionCandidate(value);
+        assert(isValid.result, isValid.detail);
+        let probe = value;
+        while (probe) {
+            if (!(probe instanceof TypeVariable)) {
+                break;
+            }
+            if (probe.variable === this) {
+                return;
+            }
+            probe = probe.variable.resolution;
+        }
+        this._resolution = value;
+        this._canWriteSuperset = null;
+        this._canReadSubset = null;
+    }
+    get canWriteSuperset() {
+        if (this._resolution) {
+            assert(!this._canWriteSuperset);
+            if (this._resolution instanceof TypeVariable) {
+                return this._resolution.variable.canWriteSuperset;
+            }
+            return null;
+        }
+        return this._canWriteSuperset;
+    }
+    set canWriteSuperset(value) {
+        assert(!this._resolution);
+        this._canWriteSuperset = value;
+    }
+    get canReadSubset() {
+        if (this._resolution) {
+            assert(!this._canReadSubset);
+            if (this._resolution instanceof TypeVariable) {
+                return this._resolution.variable.canReadSubset;
+            }
+            return null;
+        }
+        return this._canReadSubset;
+    }
+    set canReadSubset(value) {
+        assert(!this._resolution);
+        this._canReadSubset = value;
+    }
+    get hasConstraint() {
+        return this._canReadSubset !== null || this._canWriteSuperset !== null;
+    }
+    canEnsureResolved() {
+        if (this._resolution) {
+            return this._resolution.canEnsureResolved();
+        }
+        if (this._canWriteSuperset || this._canReadSubset) {
+            return true;
+        }
+        return false;
+    }
+    maybeEnsureResolved() {
+        if (this._resolution) {
+            return this._resolution.maybeEnsureResolved();
+        }
+        if (this._canWriteSuperset) {
+            this.resolution = this._canWriteSuperset;
+            return true;
+        }
+        if (this._canReadSubset) {
+            this.resolution = this._canReadSubset;
+            return true;
+        }
+        return false;
+    }
+    toLiteral() {
+        assert(this.resolution == null);
+        return this.toLiteralIgnoringResolutions();
+    }
+    toLiteralIgnoringResolutions() {
+        return {
+            name: this.name,
+            canWriteSuperset: this._canWriteSuperset && this._canWriteSuperset.toLiteral(),
+            canReadSubset: this._canReadSubset && this._canReadSubset.toLiteral()
+        };
+    }
+    static fromLiteral(data) {
+        return new TypeVariableInfo(data.name, data.canWriteSuperset ? Type.fromLiteral(data.canWriteSuperset) : null, data.canReadSubset ? Type.fromLiteral(data.canReadSubset) : null);
+    }
+    isResolved() {
+        return this._resolution && this._resolution.isResolved();
+    }
+}
+
+/**
+ * @license
+ * Copyright (c) 2019 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+var CountOpTypes;
+(function (CountOpTypes) {
+    CountOpTypes[CountOpTypes["Increment"] = 0] = "Increment";
+    CountOpTypes[CountOpTypes["MultiIncrement"] = 1] = "MultiIncrement";
+})(CountOpTypes || (CountOpTypes = {}));
 
 /**
  * @license
@@ -25257,7 +25276,7 @@ class ParticleExecutionContext {
         return {
             async createHandle(type, name, hostParticle) {
                 return new Promise((resolve, reject) => pec.apiPort.ArcCreateHandle(proxy => {
-                    const handle = handleFor(proxy, pec.idGenerator, name, particleId);
+                    const handle = unifiedHandleFor({ proxy, idGenerator: pec.idGenerator, name, particleId });
                     resolve(handle);
                     if (hostParticle) {
                         proxy.register(hostParticle, handle);
@@ -25375,13 +25394,15 @@ class ParticleExecutionContext {
     }
     createHandle(particle, spec, id, name, proxy, handleMap, registerList) {
         const connSpec = spec.handleConnectionMap.get(name);
-        let handle;
-        if (proxy instanceof StorageProxy$1) {
-            handle = handleNGFor(id, proxy, this.idGenerator, particle, connSpec.isInput, connSpec.isOutput, name);
-        }
-        else {
-            handle = handleFor(proxy, this.idGenerator, name, id, connSpec.isInput, connSpec.isOutput);
-        }
+        const handle = unifiedHandleFor({
+            proxy,
+            idGenerator: this.idGenerator,
+            name,
+            particleId: id,
+            particle,
+            canRead: connSpec.isInput,
+            canWrite: connSpec.isOutput,
+        });
         handleMap.set(name, handle);
         // Defer registration of handles with proxies until after particles have a chance to
         // configure them in setHandles.
