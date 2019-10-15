@@ -1,8 +1,10 @@
-commit c175d764285bb6fef34af23f3605479736baae7a
+commit a36ac85e5cb46027a780cb82494488e5f59120c0
 Author: ianull <ianchang@google.com>
-Date:   Tue Oct 15 10:23:20 2019 -0700
+Date:   Tue Oct 15 10:24:05 2019 -0700
 
-    Doc update: add the debugging and property desc (#3773)
+    Decouples AutoValue deps from J2CL libs (#3771)
     
-    Add debugging and inspection instructions and description of
-    default Arcs properties.
+    Needs standalone build rules of AutoValue libraries and plugins
+    for eaiser ports and clearer deps down the road.
+    
+    Use "//javaharness:autovalue" for all AutoValue deps.
