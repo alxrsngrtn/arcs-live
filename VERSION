@@ -1,5 +1,7 @@
-commit 5dec9227def37797cd74167ec8a20fa35a06ecb0
-Author: yuangu-google <yuangu@google.com>
-Date:   Tue Oct 15 15:49:12 2019 -0700
+commit 1251f2689f369ff022e3277b5b8657acc5feb266
+Author: Jason Feinstein <jwf@google.com>
+Date:   Tue Oct 15 17:09:48 2019 -0700
 
-    Rename javaharness classes to same style. (#3784)
+    Create CrdtSingleton. (#3787)
+    
+    Adds implementation and tests for CrdtSingleton.
