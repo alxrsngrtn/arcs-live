@@ -1,7 +1,5 @@
-commit 1251f2689f369ff022e3277b5b8657acc5feb266
-Author: Jason Feinstein <jwf@google.com>
-Date:   Tue Oct 15 17:09:48 2019 -0700
+commit f2db61af3ae09a6370ab8ca1ee12f02ea7968806
+Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
+Date:   Wed Oct 16 14:06:02 2019 +1100
 
-    Create CrdtSingleton. (#3787)
-    
-    Adds implementation and tests for CrdtSingleton.
+    Migrates a couple more tests from CollectionStorageProvider (#3788)

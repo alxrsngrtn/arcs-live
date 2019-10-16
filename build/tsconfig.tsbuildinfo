@@ -2365,7 +2365,7 @@
         "signature": "8bc1d39a3b8ec61064f9969316a088e314895e7ffd094468dcc0b238f33cb4a6"
       },
       "../src/runtime/tests/arc-test.ts": {
-        "version": "39272c6b851946e0244483cda0a62f4ac1ce6cb2c68b014134740f5227bea4cd",
+        "version": "5bd160aa165c992bed7c80885461b7a0db368494000ae708cb111af9653930be",
         "signature": "600636836c17982e77369e742e2b185b3a695f0407d06b57f41cbf45b0a11d8b"
       },
       "../src/runtime/tests/bytes-test.ts": {
@@ -2457,7 +2457,7 @@
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "../src/runtime/tests/reference-test.ts": {
-        "version": "5115e47d83808fd36f7fbf848cac63533cc1be4c8fbfd73d123b010784b1d06c",
+        "version": "3d8b9b2d5a2860675212bc6ac998f75f81d88c758b97f7a4f698dab142d23d43",
         "signature": "8bc1d39a3b8ec61064f9969316a088e314895e7ffd094468dcc0b238f33cb4a6"
       },
       "../src/runtime/tests/runtime-manifest-integration-test.ts": {
@@ -7811,6 +7811,8 @@
         "../src/runtime/testing/test-util.ts",
         "../src/runtime/type.ts",
         "../src/runtime/id.ts",
+        "../src/runtime/testing/handle-for-test.ts",
+        "../src/runtime/entity.ts",
         "../node_modules/@types/node/util.d.ts",
         "../node_modules/@types/node/ts3.1/util.d.ts"
       ],
