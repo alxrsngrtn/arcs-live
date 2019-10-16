@@ -122,6 +122,7 @@ export declare class EntityType extends Type {
             };
         };
     };
+    handleConstructor<T>(): typeof SingletonHandle;
 }
 export declare class TypeVariable extends Type {
     readonly variable: TypeVariableInfo;

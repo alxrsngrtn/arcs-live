@@ -1,5 +1,9 @@
-commit 0eba39d88ad8fe0b6110cbf952fa8c5b0a257bc3
+commit 8c3a16f69a8e64f255b21efe80c308ff8f7e8dd2
 Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
-Date:   Wed Oct 16 15:37:11 2019 +1100
+Date:   Wed Oct 16 15:37:26 2019 +1100
 
-    Removes a few usages of castToStorageStub (#3777)
+    Use SingletonHandle impl for Entities in new storage stack. (#3791)
+    
+    This fixes a test that fails when the new storage flag is enabled. We
+    don't have an EntityHandle class yet, so we'll use SingletonHandle
+    instead.

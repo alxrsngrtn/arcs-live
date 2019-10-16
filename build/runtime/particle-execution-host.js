@@ -172,14 +172,18 @@ class PECOuterPortImpl extends PECOuterPort {
         handle.cursorClose(cursorId);
     }
     async onRegister(store, messagesCallback, idCallback) {
-        const id = store.on(async (data) => {
+        // Need an ActiveStore here to listen to changes. Calling .activate() should
+        // generally be a no-op.
+        const id = (await store.activate()).on(async (data) => {
             this.SimpleCallback(messagesCallback, data);
             return Promise.resolve(true);
         });
         this.SimpleCallback(idCallback, id);
     }
     async onProxyMessage(store, message, callback) {
-        const res = await store.onProxyMessage(message);
+        // Need an ActiveStore here in order to forward messages. Calling
+        // .activate() should generally be a no-op.
+        const res = await (await store.activate()).onProxyMessage(message);
         this.SimpleCallback(callback, res);
     }
     onIdle(version, relevance) {

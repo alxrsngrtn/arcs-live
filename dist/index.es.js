@@ -3721,6 +3721,47 @@ class CollectionHandle extends Handle {
         await this.particle.callOnHandleSync(this /*handle*/, this.toList() /*model*/, e => this.reportUserExceptionInHost(e, this.particle, 'onHandleSync'));
     }
 }
+/**
+ * A handle on a single entity.
+ */
+class SingletonHandle extends Handle {
+    async set(entity) {
+        this.clock[this.key] = (this.clock[this.key] || 0) + 1;
+        const op = {
+            type: SingletonOpTypes.Set,
+            value: entity,
+            actor: this.key,
+            clock: this.clock,
+        };
+        return this.storageProxy.applyOp(op);
+    }
+    async clear() {
+        const op = {
+            type: SingletonOpTypes.Clear,
+            actor: this.key,
+            clock: this.clock,
+        };
+        return this.storageProxy.applyOp(op);
+    }
+    async get() {
+        const [value, versionMap] = await this.storageProxy.getParticleView();
+        this.clock = versionMap;
+        return value;
+    }
+    async onUpdate(op, oldData, version) {
+        this.clock = version;
+        // Pass the change up to the particle.
+        const update = { oldData, originator: (this.key === op.actor) };
+        if (op.type === SingletonOpTypes.Set) {
+            update.data = op.value;
+        }
+        // Nothing else to add (beyond oldData) for SingletonOpTypes.Clear.
+        await this.particle.callOnHandleUpdate(this /*handle*/, update, e => this.reportUserExceptionInHost(e, this.particle, 'onHandleUpdate'));
+    }
+    async onSync() {
+        await this.particle.callOnHandleSync(this /*handle*/, this.get() /*model*/, e => this.reportUserExceptionInHost(e, this.particle, 'onHandleSync'));
+    }
+}
 function handleNGFor(key, storageProxy, idGenerator, particle, canRead, canWrite, name) {
     return new (storageProxy.type.handleConstructor())(key, storageProxy, idGenerator, particle, canRead, canWrite, name);
 }
@@ -5338,6 +5379,11 @@ class EntityType extends Type {
     }
     crdtInstanceConstructor() {
         return this.entitySchema.crdtConstructor();
+    }
+    handleConstructor() {
+        // Currently using SingletonHandle as the implementation for Entity handles.
+        // TODO: Make an EntityHandle class that uses the proper Entity CRDT.
+        return SingletonHandle;
     }
 }
 class TypeVariable extends Type {
@@ -26311,14 +26357,18 @@ class PECOuterPortImpl extends PECOuterPort {
         handle.cursorClose(cursorId);
     }
     async onRegister(store, messagesCallback, idCallback) {
-        const id = store.on(async (data) => {
+        // Need an ActiveStore here to listen to changes. Calling .activate() should
+        // generally be a no-op.
+        const id = (await store.activate()).on(async (data) => {
             this.SimpleCallback(messagesCallback, data);
             return Promise.resolve(true);
         });
         this.SimpleCallback(idCallback, id);
     }
     async onProxyMessage(store, message, callback) {
-        const res = await store.onProxyMessage(message);
+        // Need an ActiveStore here in order to forward messages. Calling
+        // .activate() should generally be a no-op.
+        const res = await (await store.activate()).onProxyMessage(message);
         this.SimpleCallback(callback, res);
     }
     onIdle(version, relevance) {

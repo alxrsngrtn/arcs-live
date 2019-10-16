@@ -2271,6 +2271,11 @@ class EntityType extends Type {
     crdtInstanceConstructor() {
         return this.entitySchema.crdtConstructor();
     }
+    handleConstructor() {
+        // Currently using SingletonHandle as the implementation for Entity handles.
+        // TODO: Make an EntityHandle class that uses the proper Entity CRDT.
+        return _storageNG_handle_js__WEBPACK_IMPORTED_MODULE_8__["SingletonHandle"];
+    }
 }
 class TypeVariable extends Type {
     constructor(variable) {
