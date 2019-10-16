@@ -133,7 +133,11 @@ export declare class Manifest {
         schema?: Schema;
         iface?: InterfaceInfo;
     } | null;
-    private createVolatileStorageKey;
+    /**
+     * Creates a new storage key for data local to the manifest itself (e.g.
+     * from embedded JSON data, or an external JSON file).
+     */
+    private createLocalDataStorageKey;
     private static _processStore;
     private _newRecipe;
     toString(options?: {

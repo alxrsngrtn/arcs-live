@@ -1,5 +1,5 @@
-commit f2db61af3ae09a6370ab8ca1ee12f02ea7968806
+commit 0eba39d88ad8fe0b6110cbf952fa8c5b0a257bc3
 Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
-Date:   Wed Oct 16 14:06:02 2019 +1100
+Date:   Wed Oct 16 15:37:11 2019 +1100
 
-    Migrates a couple more tests from CollectionStorageProvider (#3788)
+    Removes a few usages of castToStorageStub (#3777)

@@ -494,7 +494,7 @@
         "signature": "7ea5a9f8f985e39bc935af3f45837e7e910cd78fb280186a14c0833ff488138c"
       },
       "../src/runtime/arc.ts": {
-        "version": "501d48019a9857d1a10e11680fe09c150728ec65738a7c9a5db314db4a124ae4",
+        "version": "4bc3cf38631b74ce5e3c2a4eace6191624487eb4a0da12835a8d54ffbd12f898",
         "signature": "f5a76c9d0f56d9aea76b7b9af419daaf2bd80e4ad350672331b144aafec7a76f"
       },
       "../src/runtime/api-channel.ts": {
@@ -574,8 +574,8 @@
         "signature": "8ef9453dcbfa29ffef1fd28d215625bdb2730644a74ff977494d36c9c2f4f86f"
       },
       "../src/runtime/manifest.ts": {
-        "version": "81bcd8bd22283d6406b9ff9250d625ac36ab5a7aa680e257346a466bfa3474f4",
-        "signature": "6118fbf1453ecf90293a5e41f042e9df59962208e8200e2e01bd6ab681425183"
+        "version": "4b6a2613c874f4a4b26700516c47ced8dfc0de31f400e44c20cd8f58041ebb71",
+        "signature": "03919a914a92ba0f11267146939ddea8ecdfcbac1f29cc601b1512a2ae6c9a66"
       },
       "../src/platform/atob-web.ts": {
         "version": "83bd58cde323a7612560e333b3542a3ab39d1f645c1e1e22e54f4a66622b9e7c",
@@ -2409,7 +2409,7 @@
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "../src/runtime/tests/manifest-test.ts": {
-        "version": "3f6218c2e3c0477e3dafea44551c7848c2a07dde148241e619496917f0f116ee",
+        "version": "28be9cf69a514b52a0ec58eea491a9a3a8bf830afbb417bc156342d7be88d27f",
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "../src/runtime/tests/multiplexer-test.ts": {
@@ -4052,6 +4052,7 @@
         "../src/runtime/storageNG/drivers/driver-factory.ts",
         "../src/runtime/storageNG/storage-key-parser.ts",
         "../src/runtime/storageNG/drivers/volatile.ts",
+        "../src/runtime/storageNG/drivers/ramdisk.ts",
         "../node_modules/@types/node/util.d.ts",
         "../node_modules/@types/node/ts3.1/util.d.ts"
       ],
@@ -7665,10 +7666,10 @@
         "../src/runtime/particle-spec.ts",
         "../src/runtime/flags.ts",
         "../src/runtime/storageNG/store.ts",
-        "../src/runtime/storageNG/drivers/volatile.ts",
         "../src/runtime/storage-stub.ts",
         "../src/runtime/testing/handle-for-test.ts",
         "../src/runtime/entity.ts",
+        "../src/runtime/storageNG/drivers/ramdisk.ts",
         "../node_modules/@types/node/util.d.ts",
         "../node_modules/@types/node/ts3.1/util.d.ts"
       ],

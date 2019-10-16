@@ -23251,9 +23251,13 @@ ${e.message}
         }
         return null;
     }
-    createVolatileStorageKey() {
+    /**
+     * Creates a new storage key for data local to the manifest itself (e.g.
+     * from embedded JSON data, or an external JSON file).
+     */
+    createLocalDataStorageKey() {
         if (Flags.useNewStorageStack) {
-            return new VolatileStorageKey(this.id, this.generateID('volatile').toString());
+            return new RamDiskStorageKey(this.generateID('local-data').toString());
         }
         else {
             return this.storageProviderFactory._storageForKey('volatile').constructKey('volatile');
@@ -23387,7 +23391,7 @@ ${e.message}
             type,
             name,
             id,
-            storageKey: manifest.createVolatileStorageKey(),
+            storageKey: manifest.createLocalDataStorageKey(),
             tags,
             originalId,
             claims,
@@ -26947,14 +26951,14 @@ ${this.activeRecipe.toString()}`;
                 }
                 else if (['copy', 'map'].includes(recipeHandle.fate)) {
                     const copiedStoreRef = this.context.findStoreById(recipeHandle.id);
-                    const copiedStore = await copiedStoreRef.castToStorageStub().inflate(this.storageProviderFactory);
-                    assert(copiedStore, `Cannot find store ${recipeHandle.id}`);
-                    assert(copiedStore.version !== null, `Copied store ${recipeHandle.id} doesn't have version.`);
+                    const copiedActiveStore = await copiedStoreRef.activate();
+                    assert(copiedActiveStore, `Cannot find store ${recipeHandle.id}`);
+                    assert(copiedStoreRef.version !== null, `Copied store ${recipeHandle.id} doesn't have version.`);
                     const activeStore = await newStore.activate();
-                    await activeStore.cloneFrom(copiedStore);
+                    await activeStore.cloneFrom(copiedActiveStore);
                     this._tagStore(newStore, this.context.findStoreTags(copiedStoreRef));
-                    newStore.storeInfo.name = copiedStore.name && `Copy of ${copiedStore.name}`;
-                    const copiedStoreDesc = this.getStoreDescription(copiedStore);
+                    newStore.storeInfo.name = copiedStoreRef.name && `Copy of ${copiedStoreRef.name}`;
+                    const copiedStoreDesc = this.getStoreDescription(copiedStoreRef);
                     if (copiedStoreDesc) {
                         this.storeDescriptions.set(newStore, copiedStoreDesc);
                     }

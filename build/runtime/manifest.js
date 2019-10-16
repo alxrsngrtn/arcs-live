@@ -31,7 +31,7 @@ import { Store } from './storageNG/store.js';
 import { StorageKey } from './storageNG/storage-key.js';
 import { Exists } from './storageNG/drivers/driver-factory.js';
 import { StorageKeyParser } from './storageNG/storage-key-parser.js';
-import { VolatileStorageKey } from './storageNG/drivers/volatile.js';
+import { RamDiskStorageKey } from './storageNG/drivers/ramdisk.js';
 export var ErrorSeverity;
 (function (ErrorSeverity) {
     ErrorSeverity["Error"] = "error";
@@ -1026,9 +1026,13 @@ ${e.message}
         }
         return null;
     }
-    createVolatileStorageKey() {
+    /**
+     * Creates a new storage key for data local to the manifest itself (e.g.
+     * from embedded JSON data, or an external JSON file).
+     */
+    createLocalDataStorageKey() {
         if (Flags.useNewStorageStack) {
-            return new VolatileStorageKey(this.id, this.generateID('volatile').toString());
+            return new RamDiskStorageKey(this.generateID('local-data').toString());
         }
         else {
             return this.storageProviderFactory._storageForKey('volatile').constructKey('volatile');
@@ -1162,7 +1166,7 @@ ${e.message}
             type,
             name,
             id,
-            storageKey: manifest.createVolatileStorageKey(),
+            storageKey: manifest.createLocalDataStorageKey(),
             tags,
             originalId,
             claims,

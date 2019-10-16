@@ -20,10 +20,10 @@ import { CheckHasTag, CheckBooleanExpression, CheckIsFromStore } from '../partic
 import { ProvideSlotConnectionSpec } from '../particle-spec.js';
 import { Flags } from '../flags.js';
 import { Store } from '../storageNG/store.js';
-import { VolatileStorageKey } from '../storageNG/drivers/volatile.js';
 import { StorageStub } from '../storage-stub.js';
 import { collectionHandleForTest } from '../testing/handle-for-test.js';
 import { Entity } from '../entity.js';
+import { RamDiskStorageKey } from '../storageNG/drivers/ramdisk.js';
 function verifyPrimitiveType(field, type) {
     const copy = { ...field };
     delete copy.location;
@@ -2451,7 +2451,7 @@ resource SomeName
           [{"nobId": "12345"}]
       `);
             assert.lengthOf(manifest.stores, 1);
-            const store = manifest.stores[0].castToStorageStub();
+            const store = manifest.stores[0];
             assert.lengthOf(store.claims, 2);
             assert.strictEqual(store.claims[0].tag, 'property1');
             assert.strictEqual(store.claims[1].tag, 'property2');
@@ -2794,7 +2794,7 @@ resource NobIdJson
         const store = await parseStoreFromManifest();
         assert.instanceOf(store, Store);
         assert.strictEqual(store.name, 'NobId');
-        assert.instanceOf(store.storageKey, VolatileStorageKey);
+        assert.instanceOf(store.storageKey, RamDiskStorageKey);
         const schema = store.type.getEntitySchema();
         assert.sameMembers(schema.names, ['NobIdStore']);
     });
