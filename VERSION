@@ -1,5 +1,5 @@
-commit b178b5db8bb2ac0aca4a8d5241a7796c61ab925c
-Author: yuangu-google <yuangu@google.com>
-Date:   Tue Oct 15 22:31:38 2019 -0700
+commit 0bc16be356ff832ca00de0468638075ea066bd6c
+Author: Ray Cromwell <cromwellian@gmail.com>
+Date:   Wed Oct 16 10:24:05 2019 -0700
 
-    Unify names: PEC->Pec. (#3790)
+    Upgrade bazel to 1.0.0 (#3795)
