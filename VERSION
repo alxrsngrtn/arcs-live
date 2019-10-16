@@ -1,5 +1,8 @@
-commit 0bc16be356ff832ca00de0468638075ea066bd6c
-Author: Ray Cromwell <cromwellian@gmail.com>
-Date:   Wed Oct 16 10:24:05 2019 -0700
+commit d3ad78ba21cfc87e00644d324a3bc4309dc7ba70
+Author: ianull <ianchang@google.com>
+Date:   Wed Oct 16 11:27:24 2019 -0700
 
-    Upgrade bazel to 1.0.0 (#3795)
+    Table is not shown properly in GH (#3797)
+    
+    An extra line break is required before the table header.
+    GH needs it but some markdown viewers don't.
