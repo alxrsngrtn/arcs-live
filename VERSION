@@ -1,5 +1,5 @@
-commit b9d56755269e37726e2426876f9773513a93d5f9
+commit d2e21813e6c86af365ad9e29401be07070c0220c
 Author: yuangu-google <yuangu@google.com>
-Date:   Thu Oct 17 12:29:41 2019 -0700
+Date:   Thu Oct 17 14:17:48 2019 -0700
 
-    Fix error in JS. (#3813)
+    Restrict class access to package only. (#3816)
