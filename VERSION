@@ -1,5 +1,5 @@
-commit a17a703d5f3ff1e7ce32d572172ae5befdb0d3e8
-Author: Joshua Pratt <jp10010101010000@gmail.com>
-Date:   Thu Oct 17 11:53:19 2019 +1100
+commit 3670cb5a87e7a42250cac5ba871ea1fe3395923e
+Author: yuangu-google <yuangu@google.com>
+Date:   Wed Oct 16 19:34:35 2019 -0700
 
-    Add CRDT removal test (#3794)
+    Remove particle loading. (#3805)
