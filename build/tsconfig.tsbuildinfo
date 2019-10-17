@@ -2253,7 +2253,7 @@
         "signature": "f7da0f8f9dfe8c0fc06a51cb8d840e54e1b4b8f0c64985075c4a81a7158fb84f"
       },
       "../src/runtime/crdt/tests/crdt-collection-test.ts": {
-        "version": "baf98a1c5eed49b884dda18bb2282b948699a20f86125f033c2b39760db16e71",
+        "version": "5ec6069258b9907489878e49883eab1073021abeaf8999e11f3ef877c6daa5bc",
         "signature": "8bc1d39a3b8ec61064f9969316a088e314895e7ffd094468dcc0b238f33cb4a6"
       },
       "../src/runtime/crdt/tests/crdt-count-test.ts": {

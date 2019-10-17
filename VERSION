@@ -1,9 +1,5 @@
-commit cfe72162de02a135f70314c46e55f0f6c26f00e5
+commit a17a703d5f3ff1e7ce32d572172ae5befdb0d3e8
 Author: Joshua Pratt <jp10010101010000@gmail.com>
-Date:   Thu Oct 17 11:32:57 2019 +1100
+Date:   Thu Oct 17 11:53:19 2019 +1100
 
-    Aus recipe particle connection (#3793)
-    
-    * Introduce new recipe connection syntax
-    * Convert tests for recipe particle connection syntax (and use old syntax flag where necessary)
-    * Explicitly set up tests for new syntax to use the new syntax, so that we can change the default for the flag (in flags.ts)
+    Add CRDT removal test (#3794)
