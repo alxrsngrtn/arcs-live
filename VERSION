@@ -1,5 +1,5 @@
-commit d2e21813e6c86af365ad9e29401be07070c0220c
+commit db095eeffe74a4d052d0b25e60976a2de726d353
 Author: yuangu-google <yuangu@google.com>
-Date:   Thu Oct 17 14:17:48 2019 -0700
+Date:   Thu Oct 17 14:57:25 2019 -0700
 
-    Restrict class access to package only. (#3816)
+    Merge harness controller and environment. (#3814)
