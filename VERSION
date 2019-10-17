@@ -1,5 +1,5 @@
-commit 43f7be7d96bf133d6f1e944de67bd7cea68f90d3
-Author: yuangu-google <yuangu@google.com>
-Date:   Wed Oct 16 20:55:10 2019 -0700
+commit 7d92b8daeb58875264298524246d27af164d75ac
+Author: Piotr Swigon <piotr.swigon@gmail.com>
+Date:   Wed Oct 16 21:49:41 2019 -0700
 
-    Renaming tests. (#3806)
+    Removes the hackathon app (#3809)
