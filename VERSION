@@ -1,11 +1,5 @@
-commit 22f44bbb7027be81fa90b83027235f61aa1ce9fe
+commit b9d56755269e37726e2426876f9773513a93d5f9
 Author: yuangu-google <yuangu@google.com>
-Date:   Thu Oct 17 12:10:53 2019 -0700
+Date:   Thu Oct 17 12:29:41 2019 -0700
 
-    Merge PecInnerPort and PEC into their impls. And merge DeviceClient i… (#3807)
-    
-    * Merge PecInnerPort and PEC into their impls. And merge DeviceClient into HarnessController.
-    
-    * Resolve comments.
-    
-    * Resolve comments.
+    Fix error in JS. (#3813)
