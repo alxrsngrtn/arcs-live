@@ -13,8 +13,8 @@ import { UnifiedStore } from './storageNG/unified-store.js';
 // TODO(shans): Make sure that after refactor Storage objects have a lifecycle and can be directly used
 // deflated rather than requiring this stub.
 export class StorageStub extends UnifiedStore {
-    constructor(type, id, name, storageKey, storageProviderFactory, originalId, claims, description, version, source, referenceMode = false, model) {
-        super({ type, id, name, originalId, claims, description, source });
+    constructor(type, id, name, storageKey, storageProviderFactory, originalId, claims, description, version, source, origin, referenceMode = false, model) {
+        super({ type, id, name, originalId, claims, description, source, origin });
         this.storageKey = storageKey;
         this.storageProviderFactory = storageProviderFactory;
         this.version = version;

@@ -207,7 +207,7 @@ export class Manifest {
             if (opts.storageKey instanceof StorageKey) {
                 throw new Error(`Can't use new-style storage keys with the old storage stack.`);
             }
-            store = new StorageStub(opts.type, opts.id, opts.name, opts.storageKey, this.storageProviderFactory, opts.originalId, opts.claims, opts.description, opts.version, opts.source, opts.referenceMode, opts.model);
+            store = new StorageStub(opts.type, opts.id, opts.name, opts.storageKey, this.storageProviderFactory, opts.originalId, opts.claims, opts.description, opts.version, opts.source, opts.origin, opts.referenceMode, opts.model);
         }
         return this._addStore(store, opts.tags);
     }
@@ -1067,6 +1067,7 @@ ${e.message}
                 claims,
                 description: item.description,
                 version: item.version,
+                origin: item.origin,
             });
         }
         let json;
@@ -1173,6 +1174,7 @@ ${e.message}
             description: item.description,
             version,
             source: item.source,
+            origin: item.origin,
             referenceMode,
             model,
         });
@@ -1206,7 +1208,7 @@ ${e.message}
         });
         const stores = [...this.stores].sort(compareComparables);
         stores.forEach(store => {
-            results.push(store.toManifestString(this.storeTags.get(store).map(a => `#${a}`)));
+            results.push(store.toManifestString({ handleTags: this.storeTags.get(store) }));
         });
         return results.join('\n');
     }

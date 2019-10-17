@@ -3190,28 +3190,35 @@ class UnifiedStore {
         return 0;
     }
     // TODO: Make these tags live inside StoreInfo.
-    toManifestString(handleTags) {
+    toManifestString(opts) {
+        opts = opts || {};
+        const info = { ...this.storeInfo, ...opts.overrides };
         const results = [];
         const handleStr = [];
         handleStr.push(`store`);
-        if (this.name) {
-            handleStr.push(`${this.name}`);
+        if (info.name) {
+            handleStr.push(`${info.name}`);
         }
-        handleStr.push(`of ${this.type.toString()}`);
-        if (this.id) {
-            handleStr.push(`'${this.id}'`);
+        handleStr.push(`of ${info.type.toString()}`);
+        if (info.id) {
+            handleStr.push(`'${info.id}'`);
         }
-        if (this.originalId) {
-            handleStr.push(`!!${this.originalId}`);
+        if (info.originalId) {
+            handleStr.push(`!!${info.originalId}`);
         }
-        if (this.version !== undefined) {
+        if (this.version != null) {
             handleStr.push(`@${this.version}`);
         }
-        if (handleTags && handleTags.length) {
-            handleStr.push(`${handleTags.join(' ')}`);
+        if (opts.handleTags && opts.handleTags.length) {
+            handleStr.push(`${opts.handleTags.map(tag => `#${tag}`).join(' ')}`);
         }
-        if (this.source) {
-            handleStr.push(`in '${this.source}'`);
+        if (info.source) {
+            if (info.origin === 'file') {
+                handleStr.push(`in '${info.source}'`);
+            }
+            else {
+                handleStr.push(`in ${info.source}`);
+            }
         }
         else if (this.storageKey) {
             handleStr.push(`at '${this.storageKey}'`);
@@ -3219,11 +3226,11 @@ class UnifiedStore {
         // TODO(shans): there's a 'this.source' in StorageProviderBase which is sometimes
         // serialized here too - could it ever be part of StorageStub?
         results.push(handleStr.join(' '));
-        if (this.claims.length > 0) {
-            results.push(`  claim is ${this.claims.map(claim => claim.tag).join(' and is ')}`);
+        if (info.claims && info.claims.length > 0) {
+            results.push(`  claim is ${info.claims.map(claim => claim.tag).join(' and is ')}`);
         }
-        if (this.description) {
-            results.push(`  description \`${this.description}\``);
+        if (info.description) {
+            results.push(`  description \`${info.description}\``);
         }
         return results.join('\n');
     }
@@ -21807,8 +21814,8 @@ class StorageProviderFactory {
 // TODO(shans): Make sure that after refactor Storage objects have a lifecycle and can be directly used
 // deflated rather than requiring this stub.
 class StorageStub extends UnifiedStore {
-    constructor(type, id, name, storageKey, storageProviderFactory, originalId, claims, description, version, source, referenceMode = false, model) {
-        super({ type, id, name, originalId, claims, description, source });
+    constructor(type, id, name, storageKey, storageProviderFactory, originalId, claims, description, version, source, origin, referenceMode = false, model) {
+        super({ type, id, name, originalId, claims, description, source, origin });
         this.storageKey = storageKey;
         this.storageProviderFactory = storageProviderFactory;
         this.version = version;
@@ -22478,7 +22485,7 @@ class Manifest {
             if (opts.storageKey instanceof StorageKey) {
                 throw new Error(`Can't use new-style storage keys with the old storage stack.`);
             }
-            store = new StorageStub(opts.type, opts.id, opts.name, opts.storageKey, this.storageProviderFactory, opts.originalId, opts.claims, opts.description, opts.version, opts.source, opts.referenceMode, opts.model);
+            store = new StorageStub(opts.type, opts.id, opts.name, opts.storageKey, this.storageProviderFactory, opts.originalId, opts.claims, opts.description, opts.version, opts.source, opts.origin, opts.referenceMode, opts.model);
         }
         return this._addStore(store, opts.tags);
     }
@@ -23338,6 +23345,7 @@ ${e.message}
                 claims,
                 description: item.description,
                 version: item.version,
+                origin: item.origin,
             });
         }
         let json;
@@ -23444,6 +23452,7 @@ ${e.message}
             description: item.description,
             version,
             source: item.source,
+            origin: item.origin,
             referenceMode,
             model,
         });
@@ -23477,7 +23486,7 @@ ${e.message}
         });
         const stores = [...this.stores].sort(compareComparables);
         stores.forEach(store => {
-            results.push(store.toManifestString(this.storeTags.get(store).map(a => `#${a}`)));
+            results.push(store.toManifestString({ handleTags: this.storeTags.get(store) }));
         });
         return results.join('\n');
     }
@@ -26652,7 +26661,7 @@ class Arc {
         particleInnerArcs.push(innerArc);
         return innerArc;
     }
-    async _serializeStore(store, context, id) {
+    async _serializeStore(store, context, name) {
         const type = store.type.getContainedType() || store.type;
         if (type instanceof InterfaceType) {
             context.interfaces += type.interfaceInfo.toString() + '\n';
@@ -26665,7 +26674,7 @@ class Arc {
             key = store.storageKey;
         }
         const tags = this.storeTags.get(store) || new Set();
-        const handleTags = [...tags].map(a => `#${a}`).join(' ');
+        const handleTags = [...tags];
         const actualHandle = this.activeRecipe.findHandle(store.id);
         const originalId = actualHandle ? actualHandle.originalId : null;
         let combinedId = `'${store.id}'`;
@@ -26675,7 +26684,7 @@ class Arc {
         switch (key.protocol) {
             case 'firebase':
             case 'pouchdb':
-                context.handles += `store ${id} of ${store.type.toString()} ${combinedId} @${store.version === null ? 0 : store.version} ${handleTags} at '${store.storageKey}'\n`;
+                context.handles += context.handles += store.toManifestString({ handleTags, overrides: { name } }) + '\n';
                 break;
             case 'volatile': {
                 // TODO(sjmiles): emit empty data for stores marked `volatile`: shell will supply data
@@ -26709,7 +26718,7 @@ class Arc {
                 if (store.referenceMode && serializedData.length > 0) {
                     const storageKey = serializedData[0].storageKey;
                     if (!context.dataResources.has(storageKey)) {
-                        const storeId = `${id}_Data`;
+                        const storeId = `${name}_Data`;
                         context.dataResources.set(storageKey, storeId);
                         // TODO: can't just reach into the store for the backing Store like this, should be an
                         // accessor that loads-on-demand in the storage objects.
@@ -26723,11 +26732,12 @@ class Arc {
                 }
                 const indent = '  ';
                 const data = JSON.stringify(serializedData);
-                context.resources += `resource ${id}Resource\n`
+                const resourceName = `${name}Resource`;
+                context.resources += `resource ${resourceName}\n`
                     + indent + 'start\n'
                     + data.split('\n').map(line => indent + line).join('\n')
                     + '\n';
-                context.handles += `store ${id} of ${store.type.toString()} ${combinedId} @${store.version || 0} ${handleTags} in ${id}Resource\n`;
+                context.handles += store.toManifestString({ handleTags, overrides: { name, source: resourceName, origin: 'resource' } }) + '\n';
                 break;
             }
             default:
@@ -27216,7 +27226,7 @@ ${this.activeRecipe.toString()}`;
         const results = [];
         const stores = [...this.storesById.values()].sort(compareComparables);
         stores.forEach(store => {
-            results.push(store.toManifestString([...this.storeTags.get(store)]));
+            results.push(store.toManifestString({ handleTags: [...this.storeTags.get(store)] }));
         });
         // TODO: include stores entities
         // TODO: include (remote) slots?

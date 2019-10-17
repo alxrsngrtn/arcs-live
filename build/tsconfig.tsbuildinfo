@@ -386,12 +386,12 @@
         "signature": "2f38a817702e90c031039dfd5f5985c632d89a062b087dea8a750a0eef8a8fd6"
       },
       "../src/runtime/storage-stub.ts": {
-        "version": "8016d208a2e8860e3879a5a7ef1374f8b89db9c26346e6047116bb478ae40eba",
-        "signature": "7f878374357719a8f0054e502edd29ea77511bdd8d8b3d8868c48ac817abb8d1"
+        "version": "b593426fa15bd86ee144980f74c9bd825e56b2aaed7a7c8c2ddc061ab489d627",
+        "signature": "884a7ec908c0cc351c7d0e0bceb956ca9cad3c1226342eb39e69c7fdcc6aae94"
       },
       "../src/runtime/storageNG/unified-store.ts": {
-        "version": "9f7c0920829bc09aa23983a32433a49f48dac18a486c5d19b9b5d34f992d021b",
-        "signature": "77f7c35bcf6ceb0898559c06b779a0b836affce7fb83b87219fa69b2f17dedeb"
+        "version": "d0cd33ab53c9f8b1f36400ada9e39254669a60a52ca4f36a89983ababb19e253",
+        "signature": "fa109603a5786943656f4e7f2b0322607ba77569cf82047c6b6211ad8a492ade"
       },
       "../src/runtime/description.ts": {
         "version": "a5f8a14cfbc4054f99dc3abdcefc760dbce1deb7999cb52dba92d74c09ec0299",
@@ -494,7 +494,7 @@
         "signature": "7ea5a9f8f985e39bc935af3f45837e7e910cd78fb280186a14c0833ff488138c"
       },
       "../src/runtime/arc.ts": {
-        "version": "4bc3cf38631b74ce5e3c2a4eace6191624487eb4a0da12835a8d54ffbd12f898",
+        "version": "e600667e5c144305f6b1c93e54fef474534777dc620d78254bd4e318aa17c97c",
         "signature": "f5a76c9d0f56d9aea76b7b9af419daaf2bd80e4ad350672331b144aafec7a76f"
       },
       "../src/runtime/api-channel.ts": {
@@ -542,8 +542,8 @@
         "signature": "75bc5f22059210323a192a97ea60f029862fe72a4f9e10e3b6dc71c02539198b"
       },
       "../src/runtime/manifest-ast-nodes.ts": {
-        "version": "5bce8b3673bd1861c3b7663becc4dfa0fe981becd688760284ed2d0c8c8af0f2",
-        "signature": "168e09b0a14e046fb8cc66b723b366c60164a468f1383efa7cfcfb41c954fb86"
+        "version": "691be72bde37610d6a3348fccba3985ef8ba871caee575bd5867a579a99cc73e",
+        "signature": "ff612668ff48f0bfd44dca4d950e4dbecdda150272ffb6a6219f048a1b9afab1"
       },
       "../src/gen/runtime/manifest-parser.ts": {
         "version": "57000ea46de6d3eba64edb3c96404174ee408b2cee35acce020908a972fd47a8",
@@ -574,8 +574,8 @@
         "signature": "8ef9453dcbfa29ffef1fd28d215625bdb2730644a74ff977494d36c9c2f4f86f"
       },
       "../src/runtime/manifest.ts": {
-        "version": "4b6a2613c874f4a4b26700516c47ced8dfc0de31f400e44c20cd8f58041ebb71",
-        "signature": "03919a914a92ba0f11267146939ddea8ecdfcbac1f29cc601b1512a2ae6c9a66"
+        "version": "ffd7cf9c8a56a80b0774b6c8185155b9a6e9628bb83eb66c89563a65c5b7a7b8",
+        "signature": "47e532d26c2dd6f0df1bdf4076ef32c9f9efcd24c7850a92b31ed2ada266c538"
       },
       "../src/platform/atob-web.ts": {
         "version": "83bd58cde323a7612560e333b3542a3ab39d1f645c1e1e22e54f4a66622b9e7c",
@@ -2409,7 +2409,7 @@
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "../src/runtime/tests/manifest-test.ts": {
-        "version": "28be9cf69a514b52a0ec58eea491a9a3a8bf830afbb417bc156342d7be88d27f",
+        "version": "bcdc195c1311a2bb75a74dd9d08f0309ffee0df81d88e204eab826bcf1cf86f4",
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "../src/runtime/tests/multiplexer-test.ts": {

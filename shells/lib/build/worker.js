@@ -7854,28 +7854,35 @@ class UnifiedStore {
         return 0;
     }
     // TODO: Make these tags live inside StoreInfo.
-    toManifestString(handleTags) {
+    toManifestString(opts) {
+        opts = opts || {};
+        const info = { ...this.storeInfo, ...opts.overrides };
         const results = [];
         const handleStr = [];
         handleStr.push(`store`);
-        if (this.name) {
-            handleStr.push(`${this.name}`);
+        if (info.name) {
+            handleStr.push(`${info.name}`);
         }
-        handleStr.push(`of ${this.type.toString()}`);
-        if (this.id) {
-            handleStr.push(`'${this.id}'`);
+        handleStr.push(`of ${info.type.toString()}`);
+        if (info.id) {
+            handleStr.push(`'${info.id}'`);
         }
-        if (this.originalId) {
-            handleStr.push(`!!${this.originalId}`);
+        if (info.originalId) {
+            handleStr.push(`!!${info.originalId}`);
         }
-        if (this.version !== undefined) {
+        if (this.version != null) {
             handleStr.push(`@${this.version}`);
         }
-        if (handleTags && handleTags.length) {
-            handleStr.push(`${handleTags.join(' ')}`);
+        if (opts.handleTags && opts.handleTags.length) {
+            handleStr.push(`${opts.handleTags.map(tag => `#${tag}`).join(' ')}`);
         }
-        if (this.source) {
-            handleStr.push(`in '${this.source}'`);
+        if (info.source) {
+            if (info.origin === 'file') {
+                handleStr.push(`in '${info.source}'`);
+            }
+            else {
+                handleStr.push(`in ${info.source}`);
+            }
         }
         else if (this.storageKey) {
             handleStr.push(`at '${this.storageKey}'`);
@@ -7883,11 +7890,11 @@ class UnifiedStore {
         // TODO(shans): there's a 'this.source' in StorageProviderBase which is sometimes
         // serialized here too - could it ever be part of StorageStub?
         results.push(handleStr.join(' '));
-        if (this.claims.length > 0) {
-            results.push(`  claim is ${this.claims.map(claim => claim.tag).join(' and is ')}`);
+        if (info.claims && info.claims.length > 0) {
+            results.push(`  claim is ${info.claims.map(claim => claim.tag).join(' and is ')}`);
         }
-        if (this.description) {
-            results.push(`  description \`${this.description}\``);
+        if (info.description) {
+            results.push(`  description \`${info.description}\``);
         }
         return results.join('\n');
     }

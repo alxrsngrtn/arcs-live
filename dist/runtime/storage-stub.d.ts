@@ -10,7 +10,7 @@ export declare class StorageStub extends UnifiedStore {
     referenceMode: boolean;
     readonly model?: {}[];
     protected unifiedStoreType: 'StorageStub';
-    constructor(type: Type, id: string, name: string, storageKey: string, storageProviderFactory: StorageProviderFactory, originalId: string, claims: ClaimIsTag[], description: string, version?: number, source?: string, referenceMode?: boolean, model?: {}[]);
+    constructor(type: Type, id: string, name: string, storageKey: string, storageProviderFactory: StorageProviderFactory, originalId: string, claims: ClaimIsTag[], description: string, version?: number, source?: string, origin?: 'file' | 'resource' | 'storage', referenceMode?: boolean, model?: {}[]);
     on(callback: ProxyCallback<null>): number;
     off(callback: number): void;
     activate(): Promise<UnifiedActiveStore>;

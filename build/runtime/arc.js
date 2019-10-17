@@ -159,7 +159,7 @@ export class Arc {
         particleInnerArcs.push(innerArc);
         return innerArc;
     }
-    async _serializeStore(store, context, id) {
+    async _serializeStore(store, context, name) {
         const type = store.type.getContainedType() || store.type;
         if (type instanceof InterfaceType) {
             context.interfaces += type.interfaceInfo.toString() + '\n';
@@ -172,7 +172,7 @@ export class Arc {
             key = store.storageKey;
         }
         const tags = this.storeTags.get(store) || new Set();
-        const handleTags = [...tags].map(a => `#${a}`).join(' ');
+        const handleTags = [...tags];
         const actualHandle = this.activeRecipe.findHandle(store.id);
         const originalId = actualHandle ? actualHandle.originalId : null;
         let combinedId = `'${store.id}'`;
@@ -182,7 +182,7 @@ export class Arc {
         switch (key.protocol) {
             case 'firebase':
             case 'pouchdb':
-                context.handles += `store ${id} of ${store.type.toString()} ${combinedId} @${store.version === null ? 0 : store.version} ${handleTags} at '${store.storageKey}'\n`;
+                context.handles += context.handles += store.toManifestString({ handleTags, overrides: { name } }) + '\n';
                 break;
             case 'volatile': {
                 // TODO(sjmiles): emit empty data for stores marked `volatile`: shell will supply data
@@ -216,7 +216,7 @@ export class Arc {
                 if (store.referenceMode && serializedData.length > 0) {
                     const storageKey = serializedData[0].storageKey;
                     if (!context.dataResources.has(storageKey)) {
-                        const storeId = `${id}_Data`;
+                        const storeId = `${name}_Data`;
                         context.dataResources.set(storageKey, storeId);
                         // TODO: can't just reach into the store for the backing Store like this, should be an
                         // accessor that loads-on-demand in the storage objects.
@@ -230,11 +230,12 @@ export class Arc {
                 }
                 const indent = '  ';
                 const data = JSON.stringify(serializedData);
-                context.resources += `resource ${id}Resource\n`
+                const resourceName = `${name}Resource`;
+                context.resources += `resource ${resourceName}\n`
                     + indent + 'start\n'
                     + data.split('\n').map(line => indent + line).join('\n')
                     + '\n';
-                context.handles += `store ${id} of ${store.type.toString()} ${combinedId} @${store.version || 0} ${handleTags} in ${id}Resource\n`;
+                context.handles += store.toManifestString({ handleTags, overrides: { name, source: resourceName, origin: 'resource' } }) + '\n';
                 break;
             }
             default:
@@ -723,7 +724,7 @@ ${this.activeRecipe.toString()}`;
         const results = [];
         const stores = [...this.storesById.values()].sort(compareComparables);
         stores.forEach(store => {
-            results.push(store.toManifestString([...this.storeTags.get(store)]));
+            results.push(store.toManifestString({ handleTags: [...this.storeTags.get(store)] }));
         });
         // TODO: include stores entities
         // TODO: include (remote) slots?

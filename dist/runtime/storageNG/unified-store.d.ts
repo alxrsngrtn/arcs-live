@@ -53,7 +53,10 @@ export declare abstract class UnifiedStore implements Comparable<UnifiedStore>, 
     castToStorageStub(): StorageStub;
     reportExceptionInHost(exception: PropagatedException): void;
     _compareTo(other: UnifiedStore): number;
-    toManifestString(handleTags: string[]): string;
+    toManifestString(opts?: {
+        handleTags?: string[];
+        overrides?: Partial<StoreInfo>;
+    }): string;
 }
 export interface UnifiedActiveStore {
     /** The UnifiedStore instance from which this store was activated. */
@@ -71,6 +74,7 @@ export declare type StoreInfo = {
     readonly type: Type;
     readonly originalId?: string;
     readonly source?: string;
+    readonly origin?: 'file' | 'resource' | 'storage';
     readonly description?: string;
     /** Trust tags claimed by this data store. */
     readonly claims?: ClaimIsTag[];

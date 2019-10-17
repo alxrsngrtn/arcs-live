@@ -1,5 +1,14 @@
-commit 1c97a0564952dfcac2fa47726f1a15848a2aab21
-Author: yuangu-google <yuangu@google.com>
-Date:   Wed Oct 16 17:07:18 2019 -0700
+commit e6f86d77ca7b94e1f4d5b161ae22fe0d7bb99f37
+Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
+Date:   Thu Oct 17 11:21:25 2019 +1100
 
-    Simplify demo dagger modules. (#3804)
+    Consolidate store serialisation code. (#3792)
+    
+    * Consolidate store serialisation code.
+    
+    Now all serialisation of Stores goes through the
+    UnifiedStore.toManifestString function, rather than being so hodge-podge.
+    
+    * toManifestString adds the # to each tag
+    
+    * Fix bug causing wdio failure

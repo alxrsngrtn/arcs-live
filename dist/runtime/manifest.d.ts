@@ -99,6 +99,7 @@ export declare class Manifest {
         description?: string;
         version?: number;
         source?: string;
+        origin?: 'file' | 'resource' | 'storage';
         referenceMode?: boolean;
         model?: {}[];
     }): UnifiedStore;
