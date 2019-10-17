@@ -1,5 +1,5 @@
-commit ff196303011ad291e41b623372050e701e3f9a83
-Author: Ray Cromwell <cromwellian@gmail.com>
-Date:   Wed Oct 16 16:51:30 2019 -0700
+commit 1c97a0564952dfcac2fa47726f1a15848a2aab21
+Author: yuangu-google <yuangu@google.com>
+Date:   Wed Oct 16 17:07:18 2019 -0700
 
-    Fix non-hermetic emscripten wrapper (#3801)
+    Simplify demo dagger modules. (#3804)
