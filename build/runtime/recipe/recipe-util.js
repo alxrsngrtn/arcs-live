@@ -10,64 +10,23 @@
 import { assert } from '../../platform/assert-web.js';
 import { InterfaceType } from '../type.js';
 import { Recipe } from './recipe.js';
-export function directionToArrow(direction) {
-    // Use switch for totality checking.
+export function reverseDirection(direction) {
     switch (direction) {
-        case 'out':
-            return '->';
         case 'in':
-            return '<-';
-        case 'inout':
-            return '<->';
-        case '`consume':
-            return 'consume';
-        case '`provide':
-            return 'provide';
-        case 'host':
-            return '='; // TODO(cypher1): Check this
-        case 'any':
-            return '=';
-        default:
-            throw new Error(`Bad direction ${direction}`);
-    }
-}
-export function arrowToDirection(arrow) {
-    // Use switch for totality checking.
-    switch (arrow) {
-        case '->':
             return 'out';
-        case '<-':
+        case 'out':
             return 'in';
-        case '<->':
+        case 'inout':
             return 'inout';
-        case 'consume':
-            return '`consume';
-        case 'provide':
+        case '`consume':
             return '`provide';
-        case '=':
+        case '`provide':
+            return '`consume';
+        case 'any':
             return 'any';
         default:
             // Catch nulls and unsafe values from javascript.
-            throw new Error(`Bad arrow ${arrow}`);
-    }
-}
-export function reverseArrow(arrow) {
-    switch (arrow) {
-        case '->':
-            return '<-';
-        case '<-':
-            return '->';
-        case '<->':
-            return '<->';
-        case 'consume':
-            return 'provide';
-        case 'provide':
-            return 'consume';
-        case '=':
-            return '=';
-        default:
-            // Catch nulls and unsafe values from javascript.
-            throw new Error(`Bad arrow ${arrow}`);
+            throw new Error(`Bad direction ${direction}`);
     }
 }
 export function connectionMatchesHandleDirection(connectionDirection, handleDirection) {
@@ -131,8 +90,8 @@ export class RecipeUtil {
                     hMap.get(handle.handle).localName = handle.localName;
                 }
                 const connection = pMap[key].addConnectionName(name);
-                // NOTE: for now, 'any' on the connection and '=' on the shape means 'accept anything'.
-                connection.direction = arrowToDirection(handle.direction || '=');
+                // NOTE: for now, 'any' on the connection and shape means 'accept anything'.
+                connection.direction = handle.direction || 'any';
                 hMap.get(handle.handle).tags = tags;
                 connection.connectToHandle(hMap.get(handle.handle));
                 hcMap[key + ':' + name] = pMap[key].connections[name];

@@ -290,7 +290,7 @@ export declare type RecipeItem = RecipeParticle | RecipeHandle | RequireHandleSe
 export interface RecipeParticleConnection extends BaseNode {
     kind: 'handle-connection';
     param: string;
-    dir: DirectionArrow;
+    dir: Direction;
     target: ParticleConnectionTargetComponents;
     dependentConnections: RecipeParticleConnection[];
 }
@@ -323,7 +323,7 @@ export interface RecipeSlotConnectionRef extends BaseNode {
 }
 export interface RecipeConnection extends BaseNode {
     kind: 'connection';
-    direction: DirectionArrow;
+    direction: Direction;
     from: ConnectionTarget;
     to: ConnectionTarget;
 }
@@ -510,6 +510,8 @@ export declare type eolWhiteSpace = string;
 export declare type eol = string;
 export declare type Direction = 'in' | 'out' | 'inout' | 'host' | '`consume' | '`provide' | 'any';
 export declare type DirectionArrow = '<-' | '->' | '<->' | 'consume' | 'provide' | '=';
+export declare function arrowToDirection(arrow: DirectionArrow): Direction;
+export declare function directionToArrow(dir: Direction): string;
 export declare type SlotDirection = 'provide' | 'consume';
 export declare type Fate = 'use' | 'create' | 'map' | 'copy' | '?' | '`slot';
 export declare type ParticleHandleConnectionType = TypeVariable | CollectionType | BigCollectionType | ReferenceType | SlotType | SchemaInline | TypeName;

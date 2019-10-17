@@ -9,15 +9,13 @@
  */
 import { ParticleSpec, HandleConnectionSpec } from '../particle-spec.js';
 import { HandleConnection } from './handle-connection.js';
-import { Direction, DirectionArrow } from '../manifest-ast-nodes.js';
+import { Direction } from '../manifest-ast-nodes.js';
 import { Handle } from './handle.js';
 import { Particle } from './particle.js';
 import { Recipe, RecipeComponent } from './recipe.js';
 import { Id } from '../id.js';
 import { Dictionary } from '../hot.js';
-export declare function directionToArrow(direction: Direction): DirectionArrow;
-export declare function arrowToDirection(arrow: DirectionArrow): Direction;
-export declare function reverseArrow(arrow: DirectionArrow): DirectionArrow;
+export declare function reverseDirection(direction: Direction): Direction;
 export declare function connectionMatchesHandleDirection(connectionDirection: Direction, handleDirection: Direction): boolean;
 export declare function acceptedDirections(direction: Direction): Direction[];
 declare class Shape {
@@ -34,7 +32,7 @@ export declare type HandleRepr = {
     localName?: string;
     handle: string;
     tags?: string[];
-    direction?: DirectionArrow;
+    direction?: Direction;
 };
 declare type RecipeUtilComponent = RecipeComponent | HandleConnectionSpec;
 declare type Match = {

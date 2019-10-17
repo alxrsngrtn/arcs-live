@@ -169,9 +169,13 @@
         "version": "8c33b6d944aea7736b767ed39787fb60623435a7cfcbb874fc5865f1edf8a341",
         "signature": "3343b37a02fb1d5d29e95c4cf938a395120f1a62789b455bfacba67c4b7154c7"
       },
+      "../src/runtime/flags.ts": {
+        "version": "cd1b0d43ea21dbd6e0baa7bb398b9b330402726305d4723b23792e942db3f89b",
+        "signature": "df079a4b78833e935996aba1706f82ca276f4ed1e1abea87727593699223bd48"
+      },
       "../src/runtime/recipe/connection-constraint.ts": {
-        "version": "aa1937bbe1600ccffdfd39fe7c6db5ff3e3a79e603327f66824f0b8c97e0a8f2",
-        "signature": "1a1ef5efedef97c133116d62ff98017637866ac8447b4a0ba41a6e7dd1d4f0fe"
+        "version": "2a55fb2510fc4e07d21130a5899e493e9205f911927094967b21ed03fa6268f0",
+        "signature": "f0ce78d0bda005a2a98fb3754507480780f16d5beb2194a40640da53937e5d2e"
       },
       "../src/runtime/recipe/search.ts": {
         "version": "f8dad8e58a2e0ac8ee2dfd6889c2c8f757990837e281fa5803b150747f9f9215",
@@ -186,8 +190,8 @@
         "signature": "1545aea4be1c7f8a3c63dac6e27be104d97d9c8370f5cb81990bf9f4b783be3e"
       },
       "../src/runtime/recipe/recipe.ts": {
-        "version": "5cb1eabd63e151f33db6dc001dba2945469515f2563afe1fd11e89ae9a9bb973",
-        "signature": "cd7f260b1b7a45dc3a3ed399a41b74142d428f09b042a40875a9ad1b2ca75804"
+        "version": "779458730fb365238cd2c557baf1095894ffd4085db709284d800e12f7609a34",
+        "signature": "30faac5ab576acd7b9cce2f46d22b74ab8ab2827c1c847045b7d7a3a1bde12b5"
       },
       "../src/runtime/recipe/slot.ts": {
         "version": "fd46441d0ed13ad977f9d94fa82922ed7c77e310de6472e507c8fc269e249acd",
@@ -206,11 +210,11 @@
         "signature": "16796312ddb3bfbfe86f426298d62335dcd6c9bbb0d5c9d46d491113bc1e4a74"
       },
       "../src/runtime/recipe/recipe-util.ts": {
-        "version": "dde22bb16865aa909b05898429c92e415b54ae7a71b4c62f8d2f37101434f559",
-        "signature": "c0590035b74904e19a3a17cc1320600e146883313f895abc76e698548978c467"
+        "version": "7a90967b91b85ec333d37b045bcb9b825527a4e1b5b9a538143fa0175218ed45",
+        "signature": "9267c1cce7fcdfb8727fac3277b90ace79cc5a898c4f214a2eedfca1b90c439f"
       },
       "../src/runtime/recipe/handle-connection.ts": {
-        "version": "66a3f7a7b4b194d3849d33dc7119d5778efcd58b81508e1d267a6c59bb6cd0da",
+        "version": "99b215616d5923cdbd17305858c5e913c29f6554809ac7df466f50d81a92b8ba",
         "signature": "0f5b3d55c7475fcb3d44c4fb6f71c0e361e99ed2b67b27a737725b855e3b55a4"
       },
       "../src/runtime/recipe/particle.ts": {
@@ -489,10 +493,6 @@
         "version": "d0110559a993f1b1469e6fb885e2516ba8358b3da0d8c61cdf960cda0fce082e",
         "signature": "f2d8b054448cb4886900f4baa77e8b41c7d00a7a3bd25a90752e325aab5e14c3"
       },
-      "../src/runtime/flags.ts": {
-        "version": "a206e93b154b5761e6641c7394366eab6db2e95b1b2f487bb4ef4134adbe9be4",
-        "signature": "7ea5a9f8f985e39bc935af3f45837e7e910cd78fb280186a14c0833ff488138c"
-      },
       "../src/runtime/arc.ts": {
         "version": "e600667e5c144305f6b1c93e54fef474534777dc620d78254bd4e318aa17c97c",
         "signature": "f5a76c9d0f56d9aea76b7b9af419daaf2bd80e4ad350672331b144aafec7a76f"
@@ -542,11 +542,11 @@
         "signature": "75bc5f22059210323a192a97ea60f029862fe72a4f9e10e3b6dc71c02539198b"
       },
       "../src/runtime/manifest-ast-nodes.ts": {
-        "version": "691be72bde37610d6a3348fccba3985ef8ba871caee575bd5867a579a99cc73e",
-        "signature": "ff612668ff48f0bfd44dca4d950e4dbecdda150272ffb6a6219f048a1b9afab1"
+        "version": "7bc97a2007f98c1be86a19ff804921cbd9efad53649359adb828e0d0b82e0c4c",
+        "signature": "d16077cafde6d152f7f898d77cdbb24fb1d1c2615409b1c20cd792431dfe532e"
       },
       "../src/gen/runtime/manifest-parser.ts": {
-        "version": "57000ea46de6d3eba64edb3c96404174ee408b2cee35acce020908a972fd47a8",
+        "version": "6593169105cdf209e559a303c838cea1f8cb6eb3c04bbd90b5b45424ec5fd9ba",
         "signature": "ff2c763c7895327196fd3eb358dcc775b25f27bdae513079cc287433af262427"
       },
       "../src/runtime/manifest-meta.ts": {
@@ -574,7 +574,7 @@
         "signature": "8ef9453dcbfa29ffef1fd28d215625bdb2730644a74ff977494d36c9c2f4f86f"
       },
       "../src/runtime/manifest.ts": {
-        "version": "ffd7cf9c8a56a80b0774b6c8185155b9a6e9628bb83eb66c89563a65c5b7a7b8",
+        "version": "55fca671591c09644d218d65451f771f90dc0cc7b9d1f2afd6e8bd69e6252ec7",
         "signature": "47e532d26c2dd6f0df1bdf4076ef32c9f9efcd24c7850a92b31ed2ada266c538"
       },
       "../src/platform/atob-web.ts": {
@@ -746,7 +746,7 @@
         "signature": "c08aa4583a92c6e3d83ae1d122c449e8b08c0102ea261254c9f7d980caea6a14"
       },
       "../src/planning/strategies/convert-constraints-to-connections.ts": {
-        "version": "246aba3550ca2292a1a7439bee01a4493c1ef5c68d2611fc009905ded31a2fc3",
+        "version": "3370a27a98da3096fbacb62069ba0517ab1703c51b45745bee4ba941c05b45e2",
         "signature": "95a9de353cd1aa8f2d1b88f2f0e1d7237ca260b459e7ea2b738460b2b83b8101"
       },
       "../src/planning/strategies/create-handle-group.ts": {
@@ -1242,7 +1242,7 @@
         "signature": "8bc1d39a3b8ec61064f9969316a088e314895e7ffd094468dcc0b238f33cb4a6"
       },
       "../src/planning/strategies/tests/convert-constraints-to-connections-test.ts": {
-        "version": "f8c4d4ef9f11615cdb6127239e4ebc3a01be857415d66b34645ab6f91ee31c8e",
+        "version": "af2ef35b6da875b014eb5389c6c0b10a2d006ef439a155e2a37d7047344f13f3",
         "signature": "8e609bb71c20b858c77f0e9f90bb1319db8477b13f9f965f1a1e18524bf50881"
       },
       "../src/planning/strategies/tests/create-description-handle-test.ts": {
@@ -1282,7 +1282,7 @@
         "signature": "8bc1d39a3b8ec61064f9969316a088e314895e7ffd094468dcc0b238f33cb4a6"
       },
       "../src/planning/strategies/tests/match-recipe-by-verb-test.ts": {
-        "version": "fd0b5714568f1efa447611ce692d0207caf091f9536fa53d6327cb26af153be4",
+        "version": "1879127b17e3f1cb7a80bd7dfc584f5e155beca93344ce2df07f2f4d518e4540",
         "signature": "8bc1d39a3b8ec61064f9969316a088e314895e7ffd094468dcc0b238f33cb4a6"
       },
       "../src/planning/strategies/tests/resolve-recipe-test.ts": {
@@ -1310,7 +1310,7 @@
         "signature": "70ec31185ba202997da2613e9400fff44ef0abf3c22f4794f67d658fe0c909b2"
       },
       "../src/planning/tests/planner-test.ts": {
-        "version": "f160eebafda19be51fd2a000f89238bef6d904ec2893847bef8807e9df6e28a7",
+        "version": "d0cca64cae8857347a224bdfa3a5c1a7996fc75361cd671496b34a0887649e50",
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "../src/runtime/testing/manifest-integration-test-setup.ts": {
@@ -1322,7 +1322,7 @@
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "../src/planning/tests/recipe-index-test.ts": {
-        "version": "3720822afecff02da61f5952445b9b21e32b672e87f537cf27e2c753552c6b50",
+        "version": "9c592f3cdb35ab15cf72dabe69f064d811b9a1f7421522606bb52ae8d4043789",
         "signature": "8bc1d39a3b8ec61064f9969316a088e314895e7ffd094468dcc0b238f33cb4a6"
       },
       "../src/planning/tests/simple-planner-test.ts": {
@@ -2409,7 +2409,7 @@
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "../src/runtime/tests/manifest-test.ts": {
-        "version": "bcdc195c1311a2bb75a74dd9d08f0309ffee0df81d88e204eab826bcf1cf86f4",
+        "version": "8e0873e3d5250d69753a9ab3ac716d85e8381854e5ab0904d30c10e14f0ffeab",
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "../src/runtime/tests/multiplexer-test.ts": {
@@ -2449,7 +2449,7 @@
         "signature": "8bc1d39a3b8ec61064f9969316a088e314895e7ffd094468dcc0b238f33cb4a6"
       },
       "../src/runtime/tests/recipe-test.ts": {
-        "version": "d200ad3c3a95f596d4d57a919e1aa4f7ab560579de19c434ecbf0f6aef34a469",
+        "version": "f9eb5c3c770d1cf391b455a4fbbbcbedf71768596c240d6db160bf1f7c51267e",
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "../src/runtime/tests/recipe-util-test.ts": {
@@ -2996,6 +2996,10 @@
         "../node_modules/@types/node/util.d.ts",
         "../node_modules/@types/node/ts3.1/util.d.ts"
       ],
+      "../src/runtime/flags.ts": [
+        "../node_modules/@types/node/util.d.ts",
+        "../node_modules/@types/node/ts3.1/util.d.ts"
+      ],
       "../src/runtime/recipe/connection-constraint.ts": [
         "../src/platform/assert-web.ts",
         "../src/runtime/particle-spec.ts",
@@ -3004,6 +3008,7 @@
         "../src/runtime/recipe/comparable.ts",
         "../src/runtime/recipe/recipe.ts",
         "../src/runtime/recipe/particle.ts",
+        "../src/runtime/flags.ts",
         "../node_modules/@types/node/util.d.ts",
         "../node_modules/@types/node/ts3.1/util.d.ts"
       ],
@@ -3116,6 +3121,7 @@
         "../src/runtime/recipe/type-checker.ts",
         "../src/runtime/recipe/comparable.ts",
         "../src/runtime/manifest-ast-nodes.ts",
+        "../src/runtime/flags.ts",
         "../node_modules/@types/node/util.d.ts",
         "../node_modules/@types/node/ts3.1/util.d.ts"
       ],
@@ -3774,10 +3780,6 @@
         "../src/runtime/particle-execution-context.ts",
         "../src/runtime/testing/stub-loader.ts",
         "../src/runtime/id.ts",
-        "../node_modules/@types/node/util.d.ts",
-        "../node_modules/@types/node/ts3.1/util.d.ts"
-      ],
-      "../src/runtime/flags.ts": [
         "../node_modules/@types/node/util.d.ts",
         "../node_modules/@types/node/ts3.1/util.d.ts"
       ],
@@ -5449,6 +5451,7 @@
         "../src/planning/strategies/convert-constraints-to-connections.ts",
         "../src/runtime/recipe/connection-constraint.ts",
         "../src/runtime/id.ts",
+        "../src/runtime/flags.ts",
         "../node_modules/@types/node/util.d.ts",
         "../node_modules/@types/node/ts3.1/util.d.ts"
       ],
@@ -5543,6 +5546,7 @@
         "../src/planning/strategies/convert-constraints-to-connections.ts",
         "../src/planning/strategies/match-recipe-by-verb.ts",
         "../src/planning/testing/strategy-test-helper.ts",
+        "../src/runtime/flags.ts",
         "../node_modules/@types/node/util.d.ts",
         "../node_modules/@types/node/ts3.1/util.d.ts"
       ],
@@ -5611,6 +5615,7 @@
         "../src/runtime/testing/test-util.ts",
         "../src/planning/testing/strategy-test-helper.ts",
         "../src/runtime/id.ts",
+        "../src/runtime/flags.ts",
         "../node_modules/@types/node/util.d.ts",
         "../node_modules/@types/node/ts3.1/util.d.ts"
       ],
@@ -5639,6 +5644,7 @@
         "../src/runtime/testing/preconditions.ts",
         "../src/planning/recipe-index.ts",
         "../src/runtime/id.ts",
+        "../src/runtime/flags.ts",
         "../node_modules/@types/node/util.d.ts",
         "../node_modules/@types/node/ts3.1/util.d.ts"
       ],
@@ -7790,6 +7796,7 @@
         "../src/runtime/manifest.ts",
         "../src/runtime/modality.ts",
         "../src/runtime/type.ts",
+        "../src/runtime/flags.ts",
         "../node_modules/@types/node/util.d.ts",
         "../node_modules/@types/node/ts3.1/util.d.ts"
       ],
@@ -11661,6 +11668,7 @@
       "../src/runtime/type-variable-info.ts",
       "../src/platform/digest-web.ts",
       "../src/runtime/recipe/comparable.ts",
+      "../src/runtime/flags.ts",
       "../src/runtime/recipe/connection-constraint.ts",
       "../src/runtime/recipe/search.ts",
       "../src/runtime/recipe/slot-connection.ts",
@@ -11741,7 +11749,6 @@
       "../src/runtime/loader.ts",
       "../src/runtime/testing/stub-loader.ts",
       "../src/runtime/fake-pec-factory.ts",
-      "../src/runtime/flags.ts",
       "../src/runtime/arc.ts",
       "../src/runtime/api-channel.ts",
       "../src/runtime/wasm.ts",

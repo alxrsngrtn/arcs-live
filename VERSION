@@ -1,14 +1,9 @@
-commit e6f86d77ca7b94e1f4d5b161ae22fe0d7bb99f37
-Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
-Date:   Thu Oct 17 11:21:25 2019 +1100
+commit cfe72162de02a135f70314c46e55f0f6c26f00e5
+Author: Joshua Pratt <jp10010101010000@gmail.com>
+Date:   Thu Oct 17 11:32:57 2019 +1100
 
-    Consolidate store serialisation code. (#3792)
+    Aus recipe particle connection (#3793)
     
-    * Consolidate store serialisation code.
-    
-    Now all serialisation of Stores goes through the
-    UnifiedStore.toManifestString function, rather than being so hodge-podge.
-    
-    * toManifestString adds the # to each tag
-    
-    * Fix bug causing wdio failure
+    * Introduce new recipe connection syntax
+    * Convert tests for recipe particle connection syntax (and use old syntax flag where necessary)
+    * Explicitly set up tests for new syntax to use the new syntax, so that we can change the default for the flag (in flags.ts)

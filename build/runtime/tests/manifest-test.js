@@ -1408,7 +1408,7 @@ Expected a verb (e.g. &Verb) or an uppercase identifier (e.g. Foo) but "?" found
         }
         catch (e) {
             console.error(e.message);
-            assert.match(e.message, /'->' \(out\) not compatible with 'in' param of 'TestParticle'/);
+            assert.match(e.message, /'out' not compatible with 'in' param of 'TestParticle'/);
         }
     });
     it('errors when the manifest references a missing particle param', async () => {

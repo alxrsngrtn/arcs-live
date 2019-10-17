@@ -10,6 +10,9 @@
 /** Arcs runtime flags. */
 export declare class Flags {
     static useNewStorageStack: boolean;
+    static usePreSlandlesSyntax: boolean;
     /** Resets flags. To be called in test teardown methods. */
     static reset(): void;
+    static withPostSlandlesSyntax(f: any): () => Promise<any>;
+    static withPreSlandlesSyntax(f: any): () => Promise<any>;
 }

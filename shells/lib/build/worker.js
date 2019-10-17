@@ -9722,6 +9722,35 @@ class Flags {
     /** Resets flags. To be called in test teardown methods. */
     static reset() {
         Flags.useNewStorageStack = false;
+        Flags.usePreSlandlesSyntax = true;
+    }
+    // For testing new syntax.
+    static withPostSlandlesSyntax(f) {
+        return async () => {
+            Flags.usePreSlandlesSyntax = false;
+            let res;
+            try {
+                res = await f();
+            }
+            finally {
+                Flags.reset();
+            }
+            return res;
+        };
+    }
+    // For testing old syntax.
+    static withPreSlandlesSyntax(f) {
+        return async () => {
+            Flags.usePreSlandlesSyntax = true;
+            let res;
+            try {
+                res = await f();
+            }
+            finally {
+                Flags.reset();
+            }
+            return res;
+        };
     }
 }
 /** Initialize flags to their default value */

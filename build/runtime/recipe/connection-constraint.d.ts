@@ -8,7 +8,7 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { ParticleSpec } from '../particle-spec.js';
-import { DirectionArrow } from '../manifest-ast-nodes.js';
+import { Direction } from '../manifest-ast-nodes.js';
 import { Handle } from './handle.js';
 import { Comparable } from './comparable.js';
 import { Recipe, RecipeComponent, CloneMap, ToStringOptions } from './recipe.js';
@@ -51,9 +51,9 @@ export declare class TagEndPoint extends EndPoint {
 export declare class ConnectionConstraint implements Comparable<ConnectionConstraint> {
     from: EndPoint;
     to: EndPoint;
-    direction: DirectionArrow;
+    direction: Direction;
     type: 'constraint' | 'obligation';
-    constructor(fromConnection: EndPoint, toConnection: EndPoint, direction: DirectionArrow, type: 'constraint' | 'obligation');
+    constructor(fromConnection: EndPoint, toConnection: EndPoint, direction: Direction, type: 'constraint' | 'obligation');
     _copyInto(recipe: Recipe, cloneMap: CloneMap): ConnectionConstraint;
     _compareTo(other: ConnectionConstraint): number;
     toString(nameMap?: ReadonlyMap<RecipeComponent, string>, options?: ToStringOptions): string;

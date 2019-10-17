@@ -9,9 +9,11 @@
  */
 import { assert } from '../../platform/assert-web.js';
 import { SlotConnection } from './slot-connection.js';
-import { directionToArrow, acceptedDirections } from './recipe-util.js';
+import { acceptedDirections } from './recipe-util.js';
 import { TypeChecker } from './type-checker.js';
 import { compareArrays, compareComparables, compareStrings } from './comparable.js';
+import { directionToArrow } from '../manifest-ast-nodes.js';
+import { Flags } from '../flags.js';
 export class HandleConnection {
     constructor(name, particle) {
         this._tags = [];
@@ -245,8 +247,14 @@ export class HandleConnection {
     }
     toString(nameMap, options) {
         const result = [];
-        result.push(this.name || '*');
-        result.push(directionToArrow(this.direction));
+        if (Flags.usePreSlandlesSyntax) {
+            result.push(`${this.name || '*'}`); // TODO: Remove post slandles syntax
+            result.push(directionToArrow(this.direction));
+        }
+        else {
+            result.push(`${this.name || '*'}:`);
+            result.push(this.direction);
+        }
         if (this.handle) {
             if (this.handle.immediateValue) {
                 result.push(this.handle.immediateValue.name);

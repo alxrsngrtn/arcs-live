@@ -22,4 +22,46 @@ export function slandleType(arg) {
     }
     return undefined;
 }
+export function arrowToDirection(arrow) {
+    // TODO(jopra): Remove after syntax unification.
+    // Use switch for totality checking.
+    switch (arrow) {
+        case '->':
+            return 'out';
+        case '<-':
+            return 'in';
+        case '<->':
+            return 'inout';
+        case 'consume':
+            return '`consume';
+        case 'provide':
+            return '`provide';
+        case '=':
+            return 'any';
+        default:
+            // Catch nulls and unsafe values from javascript.
+            throw new Error(`Bad arrow ${arrow}`);
+    }
+}
+export function directionToArrow(dir) {
+    // TODO(jopra): Remove after syntax unification.
+    switch (dir) {
+        case 'in':
+            return '<-';
+        case 'out':
+            return '->';
+        case 'inout':
+            return '<->';
+        case 'host':
+            return '=';
+        case '`consume':
+            return 'consume';
+        case '`provide':
+            return 'provide';
+        case 'any':
+            return '=';
+        default:
+            throw new Error(`Unexpected direction ${dir}`);
+    }
+}
 //# sourceMappingURL=manifest-ast-nodes.js.map
