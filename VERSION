@@ -1,5 +1,9 @@
-commit db095eeffe74a4d052d0b25e60976a2de726d353
-Author: yuangu-google <yuangu@google.com>
-Date:   Thu Oct 17 14:57:25 2019 -0700
+commit 680434396d6f2ce355f165e49cd0697a961e095d
+Author: Joshua Pratt <jp10010101010000@gmail.com>
+Date:   Fri Oct 18 09:26:15 2019 +1100
 
-    Merge harness controller and environment. (#3814)
+    Generalize Flags.with methods (#3808)
+    
+    * Generalize with(Pre|Post)SlandlesSyntax functions for use with other flags, make flag defaults easier to specify
+    
+    * Remove trivially inferred types

@@ -8,11 +8,15 @@
  * http://polymer.github.io/PATENTS.txt
  */
 /** Arcs runtime flags. */
-export declare class Flags {
+declare class FlagDefaults {
     static useNewStorageStack: boolean;
     static usePreSlandlesSyntax: boolean;
+}
+export declare class Flags extends FlagDefaults {
     /** Resets flags. To be called in test teardown methods. */
     static reset(): void;
-    static withPostSlandlesSyntax(f: any): () => Promise<any>;
-    static withPreSlandlesSyntax(f: any): () => Promise<any>;
+    static withPreSlandlesSyntax<T>(f: () => Promise<T>): () => Promise<T>;
+    static withPostSlandlesSyntax<T>(f: () => Promise<T>): () => Promise<T>;
+    static withFlags<T>(args: Partial<typeof FlagDefaults>, f: () => Promise<T>): () => Promise<T>;
 }
+export {};

@@ -9718,30 +9718,25 @@ __webpack_require__.r(__webpack_exports__);
  * http://polymer.github.io/PATENTS.txt
  */
 /** Arcs runtime flags. */
-class Flags {
+class FlagDefaults {
+}
+FlagDefaults.useNewStorageStack = false;
+FlagDefaults.usePreSlandlesSyntax = true;
+class Flags extends FlagDefaults {
     /** Resets flags. To be called in test teardown methods. */
     static reset() {
-        Flags.useNewStorageStack = false;
-        Flags.usePreSlandlesSyntax = true;
+        Object.assign(Flags, FlagDefaults);
     }
-    // For testing new syntax.
-    static withPostSlandlesSyntax(f) {
-        return async () => {
-            Flags.usePreSlandlesSyntax = false;
-            let res;
-            try {
-                res = await f();
-            }
-            finally {
-                Flags.reset();
-            }
-            return res;
-        };
-    }
-    // For testing old syntax.
     static withPreSlandlesSyntax(f) {
+        return Flags.withFlags({ usePreSlandlesSyntax: true }, f);
+    }
+    static withPostSlandlesSyntax(f) {
+        return Flags.withFlags({ usePreSlandlesSyntax: false }, f);
+    }
+    // For testing with a different set of flags to the default.
+    static withFlags(args, f) {
         return async () => {
-            Flags.usePreSlandlesSyntax = true;
+            Object.assign(Flags, args);
             let res;
             try {
                 res = await f();
