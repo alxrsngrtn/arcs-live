@@ -1,5 +1,11 @@
-commit 7d92b8daeb58875264298524246d27af164d75ac
-Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Wed Oct 16 21:49:41 2019 -0700
+commit 22f44bbb7027be81fa90b83027235f61aa1ce9fe
+Author: yuangu-google <yuangu@google.com>
+Date:   Thu Oct 17 12:10:53 2019 -0700
 
-    Removes the hackathon app (#3809)
+    Merge PecInnerPort and PEC into their impls. And merge DeviceClient i… (#3807)
+    
+    * Merge PecInnerPort and PEC into their impls. And merge DeviceClient into HarnessController.
+    
+    * Resolve comments.
+    
+    * Resolve comments.
