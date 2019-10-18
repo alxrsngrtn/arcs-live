@@ -1,9 +1,5 @@
-commit ef14b5e6d4db71de24a8abfa6e3082047290bf7f
-Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
-Date:   Fri Oct 18 15:02:12 2019 +1100
+commit c6065eb2fda437cb1520f1f48b28b754470800e4
+Author: Piotr Swigon <piotr.swigon@gmail.com>
+Date:   Thu Oct 17 21:43:02 2019 -0700
 
-    Fix for Kotlin generated schemas (#3825)
-    
-    For a file Foo.arcs, the generated code used to be output to Foo.kt. However, this could easily cause conflicts with an existing source file Foo.kt. Now, we instead call it Foo_GeneratedSchemas.kt, which no self-respecting developer would ever use. This should avoid conflicts.
-    
-    Developers won't actually see this; they will still consume the generated code via the build rule's name, e.g. ":foo_schema".
+    Move Kotlin Tutorials to UpperCase.wasm targets (#3820)
