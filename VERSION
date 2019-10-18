@@ -1,7 +1,9 @@
-commit 18191abfa0703acae09a0da5f736c0de2aab39f4
-Author: Jason Feinstein <jwf@google.com>
-Date:   Fri Oct 18 13:20:03 2019 -0700
+commit 4fe950908d85ec1cb81f6e24e3f595341a4b5c28
+Author: Joshua Pratt <jp10010101010000@gmail.com>
+Date:   Sat Oct 19 09:21:11 2019 +1100
 
-    Create utils package, with binary tools like BitVector and Base64. … (#3822)
+    Unified recipe slot connections (#3828)
     
-    Unfortunately Kotlin doesn't include its own implementation of a base64 encoder/decoder, so in order to not need to require Java's standard library on top of Kotlin's - I wrote one.
+    * Unification syntax for RecipeParticleSlotConnections
+    * Enforce usage of new syntax in tests for new syntax
+    * Update tests

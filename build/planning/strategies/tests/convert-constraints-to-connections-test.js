@@ -28,9 +28,9 @@ describe('ConvertConstraintsToConnections', () => {
     it('SLANDLES SYNTAX fills out an empty constraint', Flags.withPostSlandlesSyntax(async () => {
         const manifest = await Manifest.parse(`
       particle A
-        inout S {} b
+        b: inout S {}
       particle C
-        inout S {} d
+        d: inout S {}
 
       recipe
         A.b: out C.d`);
@@ -72,9 +72,9 @@ describe('ConvertConstraintsToConnections', () => {
         const manifest = await Manifest.parse(`
       schema S
       particle A
-        in S b
+        b: in S
       particle C
-        in S d
+        d: in S
 
       recipe
         A.b: out C.d`);
@@ -119,11 +119,11 @@ describe('ConvertConstraintsToConnections', () => {
         const parseManifest = async (constraint1, constraint2) => await Manifest.parse(`
       schema S
       particle A
-        in S b
+        b: in S
       particle C
-        in S d
+        d: in S
       particle E
-        out S f
+        f: out S
 
       recipe
         ${constraint1}
@@ -188,9 +188,9 @@ describe('ConvertConstraintsToConnections', () => {
         const manifest = await Manifest.parse(`
       schema S
       particle A
-        inout S b
+        b: inout S
       particle C
-        inout S d
+        d: inout S
 
       recipe
         A.b: out C.d
@@ -235,9 +235,9 @@ describe('ConvertConstraintsToConnections', () => {
         const manifest = await Manifest.parse(`
       schema S
       particle A
-        inout S b
+        b: inout S
       particle C
-        inout S d
+        d: inout S
 
       recipe
         A.b: out C.d
@@ -282,9 +282,9 @@ describe('ConvertConstraintsToConnections', () => {
         const manifest = await Manifest.parse(`
       schema S
       particle A
-        inout S b
+        b: inout S
       particle C
-        inout S d
+        d: inout S
 
       recipe
         A.b: out C.d
@@ -331,9 +331,9 @@ describe('ConvertConstraintsToConnections', () => {
         const manifest = await Manifest.parse(`
       schema S
       particle A
-        inout S b
+        b: inout S
       particle C
-        inout S d
+        d: inout S
 
       recipe
         A.b: out C.d
@@ -384,9 +384,9 @@ describe('ConvertConstraintsToConnections', () => {
         const manifest = await Manifest.parse(`
       schema S
       particle A
-        inout S b
+        b: inout S
       particle C
-        inout S d
+        d: inout S
 
       recipe
         A.b: out C.d
@@ -437,9 +437,9 @@ describe('ConvertConstraintsToConnections', () => {
         const manifest = await Manifest.parse(`
       schema S
       particle A
-        inout S b
+        b: inout S
       particle C
-        inout S d
+        d: inout S
 
       recipe
         A.b: out C.d
@@ -492,15 +492,15 @@ describe('ConvertConstraintsToConnections', () => {
         const manifest = await Manifest.parse(`
       schema S
       particle A in 'A.js'
-        out S b
+        b: out S
         modality vr
         consume root
       particle C in 'C.js'
-        in S d
+        d: in S
         modality vr
         consume root
       particle E in 'E.js'
-        in S f
+        f: in S
         consume root
 
       recipe
@@ -554,9 +554,9 @@ describe('ConvertConstraintsToConnections', () => {
     it('SLANDLES SYNTAX connects to handles', Flags.withPostSlandlesSyntax(async () => {
         const manifest = await Manifest.parse(`
       particle A
-        out S {} o
+        o: out S {}
       particle B
-        in S {} i
+        i: in S {}
       recipe
         ? as h
         A.o: out h
@@ -599,9 +599,9 @@ describe('ConvertConstraintsToConnections', () => {
     it('SLANDLES SYNTAX connects existing particles to handles', Flags.withPostSlandlesSyntax(async () => {
         const manifest = await Manifest.parse(`
       particle A
-        out S {} o
+        o: out S {}
       particle B
-        in S {} i
+        i: in S {}
       recipe
         ? as h
         A.o: out h
@@ -648,15 +648,15 @@ describe('ConvertConstraintsToConnections', () => {
     it(`SLANDLES SYNTAX doesn't attempt to duplicate existing handles to particles`, Flags.withPostSlandlesSyntax(async () => {
         const manifest = await Manifest.parse(`
       particle A
-        out S {} o
+        o: out S {}
       particle B
-        in S {} i
+        i: in S {}
       recipe
         ? as h
-        A.o -> h
-        h -> B.i
+        A.o: out h
+        h: out B.i
         A
-          o -> h
+          o: out h
         B
     `);
         const generated = [{ result: manifest.recipes[0], score: 1, derivation: [], hash: '0', valid: true }];
@@ -699,9 +699,9 @@ describe('ConvertConstraintsToConnections', () => {
     it(`SLANDLES SYNTAX duplicates particles to get handle connections right`, Flags.withPostSlandlesSyntax(async () => {
         const manifest = await Manifest.parse(`
       particle A
-        out S {} o
+        o: out S {}
       particle B
-        in S {} i
+        i: in S {}
       recipe
         ? as h
         ? as j
@@ -758,9 +758,9 @@ describe('ConvertConstraintsToConnections', () => {
     it('SLANDLES SYNTAX connects to tags', Flags.withPostSlandlesSyntax(async () => {
         const manifest = await Manifest.parse(`
     particle A
-      out S {} o
+      o: out S {}
     particle B
-      out S {} i
+      i: out S {}
     recipe
       ? #hashtag
       A.o: out #hashtag
@@ -805,9 +805,9 @@ describe('ConvertConstraintsToConnections', () => {
     it('SLANDLE SYNTAX connects existing particles to tags', Flags.withPostSlandlesSyntax(async () => {
         const manifest = await Manifest.parse(`
     particle A
-      out S {} o
+      o: out S {}
     particle B
-      out S {} i
+      i: out S {}
     recipe
       ? #hashtag
       A.o: out #hashtag
@@ -856,9 +856,9 @@ describe('ConvertConstraintsToConnections', () => {
     it(`SLANDLES SYNTAX doesn't attempt to duplicate existing connections to tags`, Flags.withPostSlandlesSyntax(async () => {
         const manifest = await Manifest.parse(`
     particle A
-      out S {} o
+      o: out S {}
     particle B
-      out S {} i
+      i: out S {}
     recipe
       ? #hashtag as handle0
       A.o: out #hashtag
@@ -909,9 +909,9 @@ describe('ConvertConstraintsToConnections', () => {
     it(`SLANDLES SYNTAX connects particles together when there's only one possible connection`, Flags.withPostSlandlesSyntax(async () => {
         const manifest = await Manifest.parse(`
     particle A
-      out S {} o
+      o: out S {}
     particle B
-      in S {} i
+      i: in S {}
     recipe
       A: out B
     `);
@@ -948,11 +948,11 @@ describe('ConvertConstraintsToConnections', () => {
     it(`SLANDLES SYNTAX connects particles together when there's extra things that can't connect`, Flags.withPostSlandlesSyntax(async () => {
         const manifest = await Manifest.parse(`
     particle A
-      out S {} o
-      in S {} i
+      o: out S {}
+      i: in S {}
     particle B
-      in S {} i
-      in T {} i2
+      i: in S {}
+      i2: in T {}
     recipe
       A: out B
     `);
@@ -991,11 +991,11 @@ describe('ConvertConstraintsToConnections', () => {
     it(`SLANDLES SYNTAX connects particles together with multiple connections`, Flags.withPostSlandlesSyntax(async () => {
         const manifest = await Manifest.parse(`
     particle A
-      out S {} o
-      in T {} i
+      o: out S {}
+      i: in T {}
     particle B
-      in S {} i
-      out T {} o
+      i: in S {}
+      o: out T {}
     recipe
       A: inout B
     `);
