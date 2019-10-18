@@ -1,5 +1,22 @@
-commit 9a202c619edd64f5d720a2e2b122bbc38dcc662d
-Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
-Date:   Fri Oct 18 16:52:42 2019 +1100
+commit 2b9acd8153be81258c46e74d48f62040d678f62a
+Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
+Date:   Fri Oct 18 18:40:44 2019 +1100
 
-    Bi-directional map utility class (#3826)
+    Big BUILD rule cleanup (#3829)
+    
+    * Split up build_defs.bzl into multiple files.
+    
+    * Cleaned up Kotlin build rules a lot.
+    
+    * Deleted the Android stuff. It was unused, and the existing design was incompatible with how we're expecting particles to be designed.
+    * Renamed all of the kotlin wasm rule names to no longer use the _wasm suffix. It's not needed, and was adding a lot of extra work all over the place to convert target names.
+    * Removed arcs_manifest rule. We need to use the name for something else (bundling manifests), and it didn't do anything.
+    * Removed unnecessary _lib targets for all the particles. They didn't do anything; we can just generate binaries directly.
+    
+    * Ran buildifier on everything
+    
+    * Make arcs_kt_schema accept multiple srcs
+    
+    * Rename arcs_kt_particle to arcs_kt_binary
+    
+    * Moved new .bzl files into internal/ subdir
