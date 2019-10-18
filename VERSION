@@ -1,9 +1,9 @@
-commit 4fe950908d85ec1cb81f6e24e3f595341a4b5c28
-Author: Joshua Pratt <jp10010101010000@gmail.com>
-Date:   Sat Oct 19 09:21:11 2019 +1100
+commit 9c98b59b9d7993d32b151a509bc7016bab3bf672
+Author: Jason Feinstein <jwf@google.com>
+Date:   Fri Oct 18 15:43:39 2019 -0700
 
-    Unified recipe slot connections (#3828)
+    Create CrdtEntityDescriptor, FieldValueInterpreter, etc. (#3811)
     
-    * Unification syntax for RecipeParticleSlotConnections
-    * Enforce usage of new syntax in tests for new syntax
-    * Update tests
+    These classes will be used by `CrdtEntity` (still a stub) to support entity definitions.
+    
+    A rough sketch for how to use the field value interpreters with CrdtEntity is in the kdoc for CrdtEntity. It's very rough, however.
