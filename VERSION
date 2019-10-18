@@ -1,9 +1,29 @@
-commit 680434396d6f2ce355f165e49cd0697a961e095d
-Author: Joshua Pratt <jp10010101010000@gmail.com>
-Date:   Fri Oct 18 09:26:15 2019 +1100
+commit 7d06826f6567d53ffcf50d9dbb64dd3655dde992
+Author: yuangu-google <yuangu@google.com>
+Date:   Thu Oct 17 17:20:32 2019 -0700
 
-    Generalize Flags.with methods (#3808)
+    Refactor Arcs Android API. (#3770)
     
-    * Generalize with(Pre|Post)SlandlesSyntax functions for use with other flags, make flag defaults easier to specify
+    * Little refactor.
     
-    * Remove trivially inferred types
+    * Rebase
+    
+    * Remove debug logs.
+    
+    * Further simplify interface.
+    
+    * Fix lifecycle and context reference.
+    
+    * Resolve comments.
+    
+    * Fix tests.
+    
+    * Update comments.
+    
+    * Rebase.
+    
+    * Renaming.
+    
+    * Rebase.
+    
+    * Resolve comments.
