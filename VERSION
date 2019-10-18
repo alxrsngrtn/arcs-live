@@ -1,22 +1,7 @@
-commit 2b9acd8153be81258c46e74d48f62040d678f62a
-Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
-Date:   Fri Oct 18 18:40:44 2019 +1100
+commit 18191abfa0703acae09a0da5f736c0de2aab39f4
+Author: Jason Feinstein <jwf@google.com>
+Date:   Fri Oct 18 13:20:03 2019 -0700
 
-    Big BUILD rule cleanup (#3829)
+    Create utils package, with binary tools like BitVector and Base64. … (#3822)
     
-    * Split up build_defs.bzl into multiple files.
-    
-    * Cleaned up Kotlin build rules a lot.
-    
-    * Deleted the Android stuff. It was unused, and the existing design was incompatible with how we're expecting particles to be designed.
-    * Renamed all of the kotlin wasm rule names to no longer use the _wasm suffix. It's not needed, and was adding a lot of extra work all over the place to convert target names.
-    * Removed arcs_manifest rule. We need to use the name for something else (bundling manifests), and it didn't do anything.
-    * Removed unnecessary _lib targets for all the particles. They didn't do anything; we can just generate binaries directly.
-    
-    * Ran buildifier on everything
-    
-    * Make arcs_kt_schema accept multiple srcs
-    
-    * Rename arcs_kt_particle to arcs_kt_binary
-    
-    * Moved new .bzl files into internal/ subdir
+    Unfortunately Kotlin doesn't include its own implementation of a base64 encoder/decoder, so in order to not need to require Java's standard library on top of Kotlin's - I wrote one.
