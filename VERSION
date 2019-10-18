@@ -1,11 +1,9 @@
-commit 6828f5e90b85614f6ef22767cf438191fc5cda77
-Author: Joshua Pratt <jp10010101010000@gmail.com>
-Date:   Fri Oct 18 13:37:19 2019 +1100
+commit ef14b5e6d4db71de24a8abfa6e3082047290bf7f
+Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
+Date:   Fri Oct 18 15:02:12 2019 +1100
 
-    Post slandles particle handle connection (#3818)
+    Fix for Kotlin generated schemas (#3825)
     
-    * Handle slandles checks and claims
+    For a file Foo.arcs, the generated code used to be output to Foo.kt. However, this could easily cause conflicts with an existing source file Foo.kt. Now, we instead call it Foo_GeneratedSchemas.kt, which no self-respecting developer would ever use. This should avoid conflicts.
     
-    * Particle Handle Syntax
-    
-    * Use async functions to avoid duplicating Flags.with function
+    Developers won't actually see this; they will still consume the generated code via the build rule's name, e.g. ":foo_schema".
