@@ -1,29 +1,11 @@
-commit 7d06826f6567d53ffcf50d9dbb64dd3655dde992
-Author: yuangu-google <yuangu@google.com>
-Date:   Thu Oct 17 17:20:32 2019 -0700
+commit 6828f5e90b85614f6ef22767cf438191fc5cda77
+Author: Joshua Pratt <jp10010101010000@gmail.com>
+Date:   Fri Oct 18 13:37:19 2019 +1100
 
-    Refactor Arcs Android API. (#3770)
+    Post slandles particle handle connection (#3818)
     
-    * Little refactor.
+    * Handle slandles checks and claims
     
-    * Rebase
+    * Particle Handle Syntax
     
-    * Remove debug logs.
-    
-    * Further simplify interface.
-    
-    * Fix lifecycle and context reference.
-    
-    * Resolve comments.
-    
-    * Fix tests.
-    
-    * Update comments.
-    
-    * Rebase.
-    
-    * Renaming.
-    
-    * Rebase.
-    
-    * Resolve comments.
+    * Use async functions to avoid duplicating Flags.with function

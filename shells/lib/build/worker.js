@@ -154,12 +154,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
 /* harmony import */ var _api_channel_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(4);
 /* harmony import */ var _handle_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(13);
-/* harmony import */ var _slot_proxy_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(43);
+/* harmony import */ var _slot_proxy_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(44);
 /* harmony import */ var _storage_proxy_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(15);
 /* harmony import */ var _storageNG_storage_proxy_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(25);
-/* harmony import */ var _wasm_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(44);
+/* harmony import */ var _wasm_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(45);
 /* harmony import */ var _arc_exceptions_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(14);
-/* harmony import */ var _flags_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(46);
+/* harmony import */ var _flags_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(43);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -1189,6 +1189,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _type_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(8);
 /* harmony import */ var _particle_check_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(41);
 /* harmony import */ var _particle_claim_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(42);
+/* harmony import */ var _flags_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(43);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -1198,6 +1199,7 @@ __webpack_require__.r(__webpack_exports__);
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
+
 
 
 
@@ -1457,7 +1459,13 @@ class ParticleSpec {
         const indent = '  ';
         const writeConnection = (connection, indent) => {
             const tags = connection.tags.map((tag) => ` #${tag}`).join('');
-            results.push(`${indent}${connection.direction}${connection.isOptional ? '?' : ''} ${connection.type.toString()} ${connection.name}${tags}`);
+            if (_flags_js__WEBPACK_IMPORTED_MODULE_6__["Flags"].usePreSlandlesSyntax) {
+                // TODO: Remove post slandles syntax
+                results.push(`${indent}${connection.direction}${connection.isOptional ? '?' : ''} ${connection.type.toString()} ${connection.name}${tags}`);
+            }
+            else {
+                results.push(`${indent}${connection.name}: ${connection.direction}${connection.isOptional ? '?' : ''} ${connection.type.toString()}${tags}`);
+            }
             for (const dependent of connection.dependentConnections) {
                 writeConnection(dependent, indent + '  ');
             }
@@ -1544,7 +1552,13 @@ class ParticleSpec {
                         if (!handle) {
                             throw new Error(`Can't make a check on unknown handle ${handleName}.`);
                         }
-                        if (!handle.isInput) {
+                        if (handle.direction === '`consume' || handle.direction === '`provide') {
+                            // Do slandles versions of slots checks and claims.
+                            if (handle.direction === '`consume') {
+                                throw new Error(`Can't make a check on handle ${handleName}. Can only make checks on input and provided handles.`);
+                            }
+                        }
+                        else if (!handle.isInput) {
                             throw new Error(`Can't make a check on handle ${handleName} (not an input handle).`);
                         }
                         if (handle.check) {
@@ -8613,6 +8627,57 @@ function createParticleClaim(handle, astNode, handleConnectionMap) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Flags", function() { return Flags; });
+/**
+ * @license
+ * Copyright 2019 Google LLC.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+/** Arcs runtime flags. */
+class FlagDefaults {
+}
+FlagDefaults.useNewStorageStack = false;
+FlagDefaults.usePreSlandlesSyntax = true;
+class Flags extends FlagDefaults {
+    /** Resets flags. To be called in test teardown methods. */
+    static reset() {
+        Object.assign(Flags, FlagDefaults);
+    }
+    static withPreSlandlesSyntax(f) {
+        return Flags.withFlags({ usePreSlandlesSyntax: true }, f);
+    }
+    static withPostSlandlesSyntax(f) {
+        return Flags.withFlags({ usePreSlandlesSyntax: false }, f);
+    }
+    // For testing with a different set of flags to the default.
+    static withFlags(args, f) {
+        return async () => {
+            Object.assign(Flags, args);
+            let res;
+            try {
+                res = await f();
+            }
+            finally {
+                Flags.reset();
+            }
+            return res;
+        };
+    }
+}
+/** Initialize flags to their default value */
+Flags.reset();
+//# sourceMappingURL=flags.js.map
+
+/***/ }),
+/* 44 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SlotProxy", function() { return SlotProxy; });
 /**
  * @license
@@ -8682,7 +8747,7 @@ class SlotProxy {
 //# sourceMappingURL=slot-proxy.js.map
 
 /***/ }),
-/* 44 */
+/* 45 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -8695,7 +8760,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _entity_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(11);
 /* harmony import */ var _reference_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(12);
 /* harmony import */ var _type_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(8);
-/* harmony import */ var _particle_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(45);
+/* harmony import */ var _particle_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(46);
 /* harmony import */ var _handle_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(13);
 /* harmony import */ var _arc_exceptions_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(14);
 /**
@@ -9431,7 +9496,7 @@ class WasmParticle extends _particle_js__WEBPACK_IMPORTED_MODULE_4__["Particle"]
 //# sourceMappingURL=wasm.js.map
 
 /***/ }),
-/* 45 */
+/* 46 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -9702,57 +9767,6 @@ class Particle {
 //# sourceMappingURL=particle.js.map
 
 /***/ }),
-/* 46 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Flags", function() { return Flags; });
-/**
- * @license
- * Copyright 2019 Google LLC.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-/** Arcs runtime flags. */
-class FlagDefaults {
-}
-FlagDefaults.useNewStorageStack = false;
-FlagDefaults.usePreSlandlesSyntax = true;
-class Flags extends FlagDefaults {
-    /** Resets flags. To be called in test teardown methods. */
-    static reset() {
-        Object.assign(Flags, FlagDefaults);
-    }
-    static withPreSlandlesSyntax(f) {
-        return Flags.withFlags({ usePreSlandlesSyntax: true }, f);
-    }
-    static withPostSlandlesSyntax(f) {
-        return Flags.withFlags({ usePreSlandlesSyntax: false }, f);
-    }
-    // For testing with a different set of flags to the default.
-    static withFlags(args, f) {
-        return async () => {
-            Object.assign(Flags, args);
-            let res;
-            try {
-                res = await f();
-            }
-            finally {
-                Flags.reset();
-            }
-            return res;
-        };
-    }
-}
-/** Initialize flags to their default value */
-Flags.reset();
-//# sourceMappingURL=flags.js.map
-
-/***/ }),
 /* 47 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -9856,7 +9870,7 @@ class PlatformLoader extends _loader_platform_js__WEBPACK_IMPORTED_MODULE_0__["P
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "PlatformLoaderBase", function() { return PlatformLoaderBase; });
 /* harmony import */ var _runtime_loader_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(49);
-/* harmony import */ var _runtime_particle_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(45);
+/* harmony import */ var _runtime_particle_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(46);
 /* harmony import */ var _runtime_dom_particle_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(55);
 /* harmony import */ var _runtime_multiplexer_dom_particle_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(58);
 /* harmony import */ var _runtime_transformation_dom_particle_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(54);
@@ -9951,7 +9965,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _platform_vm_web_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(52);
 /* harmony import */ var _converters_jsonldToManifest_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(53);
 /* harmony import */ var _reference_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(12);
-/* harmony import */ var _particle_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(45);
+/* harmony import */ var _particle_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(46);
 /* harmony import */ var _transformation_dom_particle_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(54);
 /* harmony import */ var _dom_particle_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(55);
 /* harmony import */ var _multiplexer_dom_particle_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(58);
@@ -10694,7 +10708,7 @@ const XenStateMixin = Base => class extends Base {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "DomParticleBase", function() { return DomParticleBase; });
 /* harmony import */ var _handle_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(13);
-/* harmony import */ var _particle_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(45);
+/* harmony import */ var _particle_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(46);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -11327,7 +11341,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "UiParticleBase", function() { return UiParticleBase; });
 /* harmony import */ var _entity_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(11);
 /* harmony import */ var _handle_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(13);
-/* harmony import */ var _particle_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(45);
+/* harmony import */ var _particle_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(46);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.

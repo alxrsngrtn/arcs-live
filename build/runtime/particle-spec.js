@@ -13,6 +13,7 @@ import { TypeChecker } from './recipe/type-checker.js';
 import { InterfaceType, SlotType, Type } from './type.js';
 import { createCheck } from './particle-check.js';
 import { createParticleClaim } from './particle-claim.js';
+import { Flags } from './flags.js';
 function asType(t) {
     return (t instanceof Type) ? t : Type.fromLiteral(t);
 }
@@ -266,7 +267,13 @@ export class ParticleSpec {
         const indent = '  ';
         const writeConnection = (connection, indent) => {
             const tags = connection.tags.map((tag) => ` #${tag}`).join('');
-            results.push(`${indent}${connection.direction}${connection.isOptional ? '?' : ''} ${connection.type.toString()} ${connection.name}${tags}`);
+            if (Flags.usePreSlandlesSyntax) {
+                // TODO: Remove post slandles syntax
+                results.push(`${indent}${connection.direction}${connection.isOptional ? '?' : ''} ${connection.type.toString()} ${connection.name}${tags}`);
+            }
+            else {
+                results.push(`${indent}${connection.name}: ${connection.direction}${connection.isOptional ? '?' : ''} ${connection.type.toString()}${tags}`);
+            }
             for (const dependent of connection.dependentConnections) {
                 writeConnection(dependent, indent + '  ');
             }
@@ -353,7 +360,13 @@ export class ParticleSpec {
                         if (!handle) {
                             throw new Error(`Can't make a check on unknown handle ${handleName}.`);
                         }
-                        if (!handle.isInput) {
+                        if (handle.direction === '`consume' || handle.direction === '`provide') {
+                            // Do slandles versions of slots checks and claims.
+                            if (handle.direction === '`consume') {
+                                throw new Error(`Can't make a check on handle ${handleName}. Can only make checks on input and provided handles.`);
+                            }
+                        }
+                        else if (!handle.isInput) {
                             throw new Error(`Can't make a check on handle ${handleName} (not an input handle).`);
                         }
                         if (handle.check) {

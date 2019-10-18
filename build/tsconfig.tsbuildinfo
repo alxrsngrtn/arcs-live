@@ -182,7 +182,7 @@
         "signature": "b7ba4f64cdea87655b0d7c357b39e9f2ca63090d6b12e49eabe8f14f869ac198"
       },
       "../src/runtime/recipe/slot-connection.ts": {
-        "version": "1cfed5c8a923c7bcd6e3f56a066c14af4b355de7feeaad1a2dfa955eab7daeda",
+        "version": "df460ceace8318aee0f906887e02ec8f76e38b43557f3df43e52ac5cd32126e4",
         "signature": "55f5349ef1be5c124bbde7a6f885aaf0f1c47d8e22dd945a36bb14fc55f43710"
       },
       "../src/runtime/recipe/walker.ts": {
@@ -534,7 +534,7 @@
         "signature": "5f81ab9527a7fce014911edd1abd6e86326348360a48f3344bb9eabb33b7753e"
       },
       "../src/runtime/particle-spec.ts": {
-        "version": "852ddb3f8a3a44cb68016b4e1a7e03dfaf184bfafbd2767c54713a8d7a69b398",
+        "version": "a08b0079fae76fd0f69794844971c43fecf4b58a6a9ffb9146996e3d5af9eea5",
         "signature": "fed6d96abcedd4c828945e67e59023b905dffeae5a63c6d2f15163b0b72b3e8b"
       },
       "../src/runtime/particle-claim.ts": {
@@ -542,11 +542,11 @@
         "signature": "75bc5f22059210323a192a97ea60f029862fe72a4f9e10e3b6dc71c02539198b"
       },
       "../src/runtime/manifest-ast-nodes.ts": {
-        "version": "7bc97a2007f98c1be86a19ff804921cbd9efad53649359adb828e0d0b82e0c4c",
-        "signature": "d16077cafde6d152f7f898d77cdbb24fb1d1c2615409b1c20cd792431dfe532e"
+        "version": "e1d2272ffe1b004a5cad74a59645782379b026e34fc25dc5156e2621534a0d05",
+        "signature": "862db35009689b459860ad515bf886dec11b2df7ea5e0df241db3376d0f7fe08"
       },
       "../src/gen/runtime/manifest-parser.ts": {
-        "version": "6593169105cdf209e559a303c838cea1f8cb6eb3c04bbd90b5b45424ec5fd9ba",
+        "version": "dc9a7c05665448975d366397633b250f104d4c8ee7364910451f444fb5a0a450",
         "signature": "ff2c763c7895327196fd3eb358dcc775b25f27bdae513079cc287433af262427"
       },
       "../src/runtime/manifest-meta.ts": {
@@ -2405,11 +2405,11 @@
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "../src/runtime/tests/manifest-parser-test.ts": {
-        "version": "cafc380f7ec36d4dc35aaff8866107d7ea19bd4dcc95db0bcca2432a2615b51e",
+        "version": "914d463afcba4b4c23b32aa748b690ddb58002b33ed06bd0486013bbfab1d577",
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "../src/runtime/tests/manifest-test.ts": {
-        "version": "8e0873e3d5250d69753a9ab3ac716d85e8381854e5ab0904d30c10e14f0ffeab",
+        "version": "1efe7db9911e69549a8b7a49e1c31e2001b0f2a087d4b0c3522d47405d297d04",
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "../src/runtime/tests/multiplexer-test.ts": {
@@ -3026,6 +3026,7 @@
         "../src/runtime/recipe/comparable.ts",
         "../src/runtime/hot.ts",
         "../src/runtime/particle-spec.ts",
+        "../src/runtime/flags.ts",
         "../node_modules/@types/node/util.d.ts",
         "../node_modules/@types/node/ts3.1/util.d.ts"
       ],
@@ -3960,6 +3961,7 @@
         "../src/runtime/hot.ts",
         "../src/runtime/particle-check.ts",
         "../src/runtime/particle-claim.ts",
+        "../src/runtime/flags.ts",
         "../node_modules/@types/node/util.d.ts",
         "../node_modules/@types/node/ts3.1/util.d.ts"
       ],
@@ -7653,6 +7655,7 @@
       "../src/runtime/tests/manifest-parser-test.ts": [
         "../src/gen/runtime/manifest-parser.ts",
         "../src/platform/chai-web.d.ts",
+        "../src/runtime/flags.ts",
         "../node_modules/@types/node/util.d.ts",
         "../node_modules/@types/node/ts3.1/util.d.ts"
       ],

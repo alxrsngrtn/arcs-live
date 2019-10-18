@@ -80,7 +80,45 @@ describe('manifest', () => {
         assert.strictEqual('many-ses', type.collectionOf().toPrettyString());
         verify(await Manifest.parse(manifest.toString(), {}));
     });
-    it('can parse a manifest containing a particle specification', async () => {
+    it('SLANDLES SYNTAX can parse a manifest containing a particle specification', Flags.withPostSlandlesSyntax(async () => {
+        const schemaStr = `
+schema Product
+schema Person
+    `;
+        const particleStr0 = `particle TestParticle in 'testParticle.js'
+  list: in [Product {}]
+  person: out Person {}
+  modality dom
+  modality domTouch
+  must consume root #master #main
+    formFactor big
+    must provide action #large
+      formFactor big
+      handle list
+    provide preamble
+      formFactor medium
+    provide annotation
+  consume other
+    provide set of myProvidedSetCell
+  consume set of mySetCell
+  description \`hello world \${list}\`
+    list \`my special list\``;
+        const particleStr1 = `particle NoArgsParticle in 'noArgsParticle.js'
+  modality dom`;
+        const manifest = await Manifest.parse(`
+${schemaStr}
+${particleStr0}
+${particleStr1}
+    `);
+        const verify = (manifest) => {
+            assert.lengthOf(manifest.particles, 2);
+            assert.strictEqual(particleStr0, manifest.particles[0].toString());
+            assert.strictEqual(particleStr1, manifest.particles[1].toString());
+        };
+        verify(manifest);
+        verify(await Manifest.parse(manifest.toString(), {}));
+    }));
+    it('can parse a manifest containing a particle specification', Flags.withPreSlandlesSyntax(async () => {
         const schemaStr = `
 schema Product
 schema Person
@@ -117,22 +155,22 @@ ${particleStr1}
         };
         verify(manifest);
         verify(await Manifest.parse(manifest.toString(), {}));
-    });
-    it('SLANDLES can parse a manifest containing a particle specification', async () => {
+    }));
+    it('SLANDLES can parse a manifest containing a particle specification', Flags.withPostSlandlesSyntax(async () => {
         const schemaStr = `
 schema Product
 schema Person
     `;
         const particleStr0 = `particle TestParticle in 'testParticle.js'
-  in [Product {}] list
-  out Person {} person
-  \`consume Slot {formFactor:big} root #master #main
-    \`provide Slot {formFactor:big, handle:list} action #large
-    \`provide Slot {formFactor:medium} preamble
-    \`provide Slot annotation
-  \`consume Slot other
-    \`provide [Slot] myProvidedSetCell
-  \`consume [Slot] mySetCell
+  list: in [Product {}]
+  person: out Person {}
+  root: \`consume Slot {formFactor:big} #master #main
+    action: \`provide Slot {formFactor:big, handle:list} #large
+    preamble: \`provide Slot {formFactor:medium}
+    annotation: \`provide Slot
+  other: \`consume Slot
+    myProvidedSetCell: \`provide [Slot]
+  mySetCell: \`consume [Slot]
   modality dom
   modality domTouch
   description \`hello world \${list}\`
@@ -151,7 +189,7 @@ ${particleStr1}
         };
         verify(manifest);
         verify(await Manifest.parse(manifest.toString(), {}));
-    });
+    }));
     it('can parse a manifest containing a particle with an argument list', async () => {
         const manifest = await Manifest.parse(`
     particle TestParticle in 'a.js'
@@ -196,7 +234,18 @@ ${particleStr1}
         assert.lengthOf(manifest.particles, 1);
         assert.lengthOf(manifest.particles[0].handleConnections, 4);
     });
-    it('can round-trip particles with dependent handles', async () => {
+    it('SLANDLES SYNTAX can round-trip particles with dependent handles', Flags.withPostSlandlesSyntax(async () => {
+        const manifestString = `particle TestParticle in 'a.js'
+  input: in [Product {}]
+    output: out [Product {}]
+  modality dom
+  consume thing
+    provide otherThing`;
+        const manifest = await Manifest.parse(manifestString);
+        assert.lengthOf(manifest.particles, 1);
+        assert.strictEqual(manifestString, manifest.particles[0].toString());
+    }));
+    it('can round-trip particles with dependent handles', Flags.withPreSlandlesSyntax(async () => {
         const manifestString = `particle TestParticle in 'a.js'
   in [Product {}] input
     out [Product {}] output
@@ -206,18 +255,18 @@ ${particleStr1}
         const manifest = await Manifest.parse(manifestString);
         assert.lengthOf(manifest.particles, 1);
         assert.strictEqual(manifestString, manifest.particles[0].toString());
-    });
-    it('SLANDLES can round-trip particles with dependent handles', async () => {
+    }));
+    it('SLANDLES can round-trip particles with dependent handles', Flags.withPostSlandlesSyntax(async () => {
         const manifestString = `particle TestParticle in 'a.js'
-  in [Product {}] input
-    out [Product {}] output
-  \`consume? Slot thing
-    \`provide? Slot otherThing
+  input: in [Product {}]
+    output: out [Product {}]
+  thing: \`consume? Slot
+    otherThing: \`provide? Slot
   modality dom`;
         const manifest = await Manifest.parse(manifestString);
         assert.lengthOf(manifest.particles, 1);
         assert.strictEqual(manifestString, manifest.particles[0].toString());
-    });
+    }));
     it('can parse a manifest containing a schema', async () => {
         const manifest = await Manifest.parse(`
       schema Bar
@@ -1739,7 +1788,28 @@ resource SomeName
         assert(recipe.normalize());
         assert(recipe.isResolved());
     });
-    it('can resolve a particle with a schema reference', async () => {
+    it('SLANDLES SYNTAX can resolve a particle with a schema reference', Flags.withPostSlandlesSyntax(async () => {
+        const manifest = await Manifest.parse(`
+      schema Foo
+        Text far
+      particle P
+        bar: in Bar {Reference<Foo> foo}
+      recipe
+        create as h0
+        P
+          bar: any h0
+    `);
+        const [recipe] = manifest.recipes;
+        assert(recipe.normalize());
+        assert(recipe.isResolved());
+        const schema = checkDefined(recipe.particles[0].connections.bar.type.getEntitySchema());
+        const innerSchema = schema.fields.foo.schema.model.getEntitySchema();
+        verifyPrimitiveType(innerSchema.fields.far, 'Text');
+        assert.strictEqual(manifest.particles[0].toString(), `particle P in 'null'
+  bar: in Bar {Reference<Foo {Text far}> foo}
+  modality dom`);
+    }));
+    it('can resolve a particle with a schema reference', Flags.withPreSlandlesSyntax(async () => {
         const manifest = await Manifest.parse(`
       schema Foo
         Text far
@@ -1759,8 +1829,28 @@ resource SomeName
         assert.strictEqual(manifest.particles[0].toString(), `particle P in 'null'
   in Bar {Reference<Foo {Text far}> foo} bar
   modality dom`);
-    });
-    it('can resolve a particle with an inline schema reference', async () => {
+    }));
+    it('SLANDLES SYNTAX can resolve a particle with an inline schema reference', Flags.withPostSlandlesSyntax(async () => {
+        const manifest = await Manifest.parse(`
+      schema Foo
+      particle P
+        bar: in Bar {Reference<Foo {Text far}> foo}
+      recipe
+        create as h0
+        P
+          bar: any h0
+    `);
+        const [recipe] = manifest.recipes;
+        assert(recipe.normalize());
+        assert(recipe.isResolved());
+        const schema = recipe.particles[0].connections.bar.type.getEntitySchema();
+        const innerSchema = schema.fields.foo.schema.model.getEntitySchema();
+        verifyPrimitiveType(innerSchema.fields.far, 'Text');
+        assert.strictEqual(manifest.particles[0].toString(), `particle P in 'null'
+  bar: in Bar {Reference<Foo {Text far}> foo}
+  modality dom`);
+    }));
+    it('can resolve a particle with an inline schema reference', Flags.withPreSlandlesSyntax(async () => {
         const manifest = await Manifest.parse(`
       schema Foo
       particle P
@@ -1779,8 +1869,29 @@ resource SomeName
         assert.strictEqual(manifest.particles[0].toString(), `particle P in 'null'
   in Bar {Reference<Foo {Text far}> foo} bar
   modality dom`);
-    });
-    it('can resolve a particle with a collection of schema references', async () => {
+    }));
+    it('SLANDLES SYNTAX can resolve a particle with a collection of schema references', Flags.withPostSlandlesSyntax(async () => {
+        const manifest = await Manifest.parse(`
+      schema Foo
+        Text far
+      particle P
+        bar: in Bar {[Reference<Foo>] foo}
+      recipe
+        create as h0
+        P
+          bar: any h0
+    `);
+        const [recipe] = manifest.recipes;
+        assert(recipe.normalize());
+        assert(recipe.isResolved());
+        const schema = recipe.particles[0].connections.bar.type.getEntitySchema();
+        const innerSchema = schema.fields.foo.schema.schema.model.getEntitySchema();
+        verifyPrimitiveType(innerSchema.fields.far, 'Text');
+        assert.strictEqual(manifest.particles[0].toString(), `particle P in 'null'
+  bar: in Bar {[Reference<Foo {Text far}>] foo}
+  modality dom`);
+    }));
+    it('can resolve a particle with a collection of schema references', Flags.withPreSlandlesSyntax(async () => {
         const manifest = await Manifest.parse(`
       schema Foo
         Text far
@@ -1800,8 +1911,27 @@ resource SomeName
         assert.strictEqual(manifest.particles[0].toString(), `particle P in 'null'
   in Bar {[Reference<Foo {Text far}>] foo} bar
   modality dom`);
-    });
-    it('can resolve a particle with a collection of inline schema references', async () => {
+    }));
+    it('SLANDLES SYNTAX can resolve a particle with a collection of inline schema references', Flags.withPostSlandlesSyntax(async () => {
+        const manifest = await Manifest.parse(`
+      particle P
+        bar: in Bar {[Reference<Foo {Text far}>] foo}
+      recipe
+        create as h0
+        P
+          bar: any h0
+    `);
+        const [recipe] = manifest.recipes;
+        assert(recipe.normalize());
+        assert(recipe.isResolved());
+        const schema = recipe.particles[0].connections.bar.type.getEntitySchema();
+        const innerSchema = schema.fields.foo.schema.schema.model.getEntitySchema();
+        verifyPrimitiveType(innerSchema.fields.far, 'Text');
+        assert.strictEqual(manifest.particles[0].toString(), `particle P in 'null'
+  bar: in Bar {[Reference<Foo {Text far}>] foo}
+  modality dom`);
+    }));
+    it('can resolve a particle with a collection of inline schema references', Flags.withPreSlandlesSyntax(async () => {
         const manifest = await Manifest.parse(`
       particle P
         in Bar {[Reference<Foo {Text far}>] foo} bar
@@ -1819,7 +1949,7 @@ resource SomeName
         assert.strictEqual(manifest.particles[0].toString(), `particle P in 'null'
   in Bar {[Reference<Foo {Text far}>] foo} bar
   modality dom`);
-    });
+    }));
     it('can resolve inline schemas against out of line schemas', async () => {
         const manifest = await Manifest.parse(`
       schema T
@@ -2080,7 +2210,18 @@ resource SomeName
         assert.strictEqual(connections[3].name, 'dogsled');
         assert.deepEqual(connections[3].tags, ['multidog', 'winter', 'sled']);
     });
-    it('can round-trip particles with tags', async () => {
+    it('SLANDLES SYNTAX can round-trip particles with tags', Flags.withPostSlandlesSyntax(async () => {
+        const manifestString = `particle TestParticle in 'a.js'
+  input: in [Product {}]
+    output: out [Product {}]
+  modality dom
+  consume thing #main #tagname
+    provide otherThing #testtag`;
+        const manifest = await Manifest.parse(manifestString);
+        assert.lengthOf(manifest.particles, 1);
+        assert.strictEqual(manifestString, manifest.particles[0].toString());
+    }));
+    it('can round-trip particles with tags', Flags.withPreSlandlesSyntax(async () => {
         const manifestString = `particle TestParticle in 'a.js'
   in [Product {}] input
     out [Product {}] output
@@ -2090,8 +2231,22 @@ resource SomeName
         const manifest = await Manifest.parse(manifestString);
         assert.lengthOf(manifest.particles, 1);
         assert.strictEqual(manifestString, manifest.particles[0].toString());
-    });
-    it('can round-trip particles with fields', async () => {
+    }));
+    it('SLANDLES SYNTAX can round-trip particles with fields', Flags.withPostSlandlesSyntax(async () => {
+        const manifestString = `particle TestParticle in 'a.js'
+  input: in [Product {}]
+    output: out [Product {}]
+  thingy: in ~a
+  modality dom
+  must consume thing #main #tagname
+    formFactor big
+    must provide otherThing #testtag
+      handle thingy`;
+        const manifest = await Manifest.parse(manifestString);
+        assert.lengthOf(manifest.particles, 1);
+        assert.strictEqual(manifestString, manifest.particles[0].toString());
+    }));
+    it('can round-trip particles with fields', Flags.withPreSlandlesSyntax(async () => {
         const manifestString = `particle TestParticle in 'a.js'
   in [Product {}] input
     out [Product {}] output
@@ -2104,52 +2259,41 @@ resource SomeName
         const manifest = await Manifest.parse(manifestString);
         assert.lengthOf(manifest.particles, 1);
         assert.strictEqual(manifestString, manifest.particles[0].toString());
-    });
-    it('SLANDLES can round-trip particles with tags', async () => {
+    }));
+    it('SLANDLES can round-trip particles with tags', Flags.withPostSlandlesSyntax(async () => {
         const manifestString = `particle TestParticle in 'a.js'
-  in [Product {}] input
-    out [Product {}] output
-  \`consume Slot {formFactor:big} thing #main #tagname
-    \`provide Slot {handle:thingy} otherThing #testtag
+  input: in [Product {}]
+    output: out [Product {}]
+  thing: \`consume Slot {formFactor:big} #main #tagname
+    otherThing: \`provide Slot {handle:thingy} #testtag
   modality dom`;
         const manifest = await Manifest.parse(manifestString);
         assert.lengthOf(manifest.particles, 1);
         assert.strictEqual(manifestString, manifest.particles[0].toString());
-    });
-    it('SLANDLES can round-trip particles with fields', async () => {
+    }));
+    it('SLANDLES can round-trip particles with fields', Flags.withPostSlandlesSyntax(async () => {
         const manifestString = `particle TestParticle in 'a.js'
-  in [Product {}] input
-    out [Product {}] output
-  in ~a thingy
-  \`consume Slot {formFactor:big} thing #main #tagname
-    \`provide Slot {handle:thingy} otherThing #testtag
+  input: in [Product {}]
+    output: out [Product {}]
+  thingy: in ~a
+  thing: \`consume Slot {formFactor:big} #main #tagname
+    otherThing: \`provide Slot {handle:thingy} #testtag
   modality dom`;
         const manifest = await Manifest.parse(manifestString);
         assert.lengthOf(manifest.particles, 1);
         assert.strictEqual(manifestString, manifest.particles[0].toString());
-    });
-    it('SLANDLES can round-trip particles with tags', async () => {
+    }));
+    it('SLANDLES can round-trip particles with fields', Flags.withPostSlandlesSyntax(async () => {
         const manifestString = `particle TestParticle in 'a.js'
-  in [Product {}] input
-    out [Product {}] output
-  \`consume Slot thing #main #tagname
-    \`provide Slot otherThing #testtag
+  input: in [Product {}]
+    output: out [Product {}]
+  thing: \`consume Slot {formFactor:big}
+    otherThing: \`provide Slot {handle:thingy}
   modality dom`;
         const manifest = await Manifest.parse(manifestString);
         assert.lengthOf(manifest.particles, 1);
         assert.strictEqual(manifestString, manifest.particles[0].toString());
-    });
-    it('SLANDLES can round-trip particles with fields', async () => {
-        const manifestString = `particle TestParticle in 'a.js'
-  in [Product {}] input
-    out [Product {}] output
-  \`consume Slot {formFactor:big} thing
-    \`provide Slot {handle:thingy} otherThing
-  modality dom`;
-        const manifest = await Manifest.parse(manifestString);
-        assert.lengthOf(manifest.particles, 1);
-        assert.strictEqual(manifestString, manifest.particles[0].toString());
-    });
+    }));
     it('can parse recipes with an implicit create handle', async () => {
         const manifest = await Manifest.parse(`
       particle A
@@ -2166,7 +2310,33 @@ resource SomeName
         const recipe = manifest.recipes[0];
         assert.strictEqual(recipe.particles[0].connections.a.handle, recipe.particles[1].connections.b.handle);
     });
-    it('can parse recipes with a require section', async () => {
+    it('SLANDLES SYNTAX can parse recipes with a require section', Flags.withPostSlandlesSyntax(async () => {
+        const manifest = await Manifest.parse(`
+      particle P1
+        a: out S {}
+        consume root
+          provide details
+      particle P2
+        b: in S {}
+          consume details
+
+      recipe
+        require
+          handle as h0
+          slot as s0
+          P1
+            *: out h0
+            consume root
+              provide details as s0
+          P2
+            *: in h0
+            consume details
+        P1
+    `);
+        const recipe = manifest.recipes[0];
+        assert(recipe.requires.length === 1, 'could not parse require section');
+    }));
+    it('can parse recipes with a require section', Flags.withPreSlandlesSyntax(async () => {
         const manifest = await Manifest.parse(`
       particle P1
         out S {} a
@@ -2191,7 +2361,7 @@ resource SomeName
     `);
         const recipe = manifest.recipes[0];
         assert(recipe.requires.length === 1, 'could not parse require section');
-    });
+    }));
     it('recipe resolution checks the require sections', async () => {
         const manifest = await Manifest.parse(`
 
@@ -2464,7 +2634,30 @@ resource SomeName
           check input is property1 or is property2 and is property3
       `), `You cannot combine 'and' and 'or' operations in a single check expression.`);
         });
-        it('can round-trip particles with checks and claims', async () => {
+        it('SLANDLES can round-trip particles with checks and claims', Flags.withPostSlandlesSyntax(async () => {
+            const manifestString = `particle TestParticle in 'a.js'
+  input1: in T {}
+  input2: in T {}
+  input3: in T {}
+  input4: in T {}
+  output1: out T {}
+  output2: out T {}
+  output3: out T {}
+  parentSlot: \`consume Slot
+    childSlot: \`provide Slot
+  claim output1 is trusted
+  claim output2 derives from input2 and derives from input2
+  claim output3 is not dangerous
+  check input1 is trusted or is from handle input2
+  check input2 is not extraTrusted
+  check input3 is from store MyStore
+  check input4 is not from store 'my-store-id'
+  check childSlot is not somewhatTrusted
+  modality dom`;
+            const manifest = await Manifest.parse(manifestString);
+            assert.strictEqual(manifest.toString(), manifestString);
+        }));
+        it('can round-trip particles with checks and claims', Flags.withPreSlandlesSyntax(async () => {
             const manifestString = `particle TestParticle in 'a.js'
   in T {} input1
   in T {} input2
@@ -2486,7 +2679,7 @@ resource SomeName
     provide childSlot`;
             const manifest = await Manifest.parse(manifestString);
             assert.strictEqual(manifest.toString(), manifestString);
-        });
+        }));
         it('fails for unknown handle names', async () => {
             assertThrowsAsync(async () => await Manifest.parse(`
         particle A

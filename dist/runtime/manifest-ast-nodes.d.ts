@@ -511,7 +511,7 @@ export declare type eol = string;
 export declare type Direction = 'in' | 'out' | 'inout' | 'host' | '`consume' | '`provide' | 'any';
 export declare type DirectionArrow = '<-' | '->' | '<->' | 'consume' | 'provide' | '=';
 export declare function arrowToDirection(arrow: DirectionArrow): Direction;
-export declare function directionToArrow(dir: Direction): string;
+export declare function directionToArrow(dir: Direction): DirectionArrow;
 export declare type SlotDirection = 'provide' | 'consume';
 export declare type Fate = 'use' | 'create' | 'map' | 'copy' | '?' | '`slot';
 export declare type ParticleHandleConnectionType = TypeVariable | CollectionType | BigCollectionType | ReferenceType | SlotType | SchemaInline | TypeName;
