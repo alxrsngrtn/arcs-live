@@ -1,5 +1,5 @@
-commit c6065eb2fda437cb1520f1f48b28b754470800e4
-Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Thu Oct 17 21:43:02 2019 -0700
+commit 9a202c619edd64f5d720a2e2b122bbc38dcc662d
+Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
+Date:   Fri Oct 18 16:52:42 2019 +1100
 
-    Move Kotlin Tutorials to UpperCase.wasm targets (#3820)
+    Bi-directional map utility class (#3826)

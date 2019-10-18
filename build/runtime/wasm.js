@@ -14,6 +14,7 @@ import { ReferenceType } from './type.js';
 import { Particle } from './particle.js';
 import { Singleton, Collection } from './handle.js';
 import { UserException } from './arc-exceptions.js';
+import { BiMap } from './bimap.js';
 // Encodes/decodes the wire format for transferring entities over the wasm boundary.
 // Note that entities must have an id before serializing for use in a wasm particle.
 //
@@ -462,8 +463,7 @@ export class WasmContainer {
 export class WasmParticle extends Particle {
     constructor(id, container) {
         super();
-        this.handleMap = new Map();
-        this.revHandleMap = new Map();
+        this.handleMap = new BiMap();
         this.converters = new Map();
         this.id = id;
         this.container = container;
@@ -500,13 +500,12 @@ export class WasmParticle extends Particle {
                 throw new Error(`Wasm particle failed to connect handle '${name}'`);
             }
             this.handleMap.set(handle, wasmHandle);
-            this.revHandleMap.set(wasmHandle, handle);
             this.converters.set(handle, new EntityPackager(handle));
         }
         this.exports._init(this.innerParticle);
     }
     async onHandleSync(handle, model) {
-        const wasmHandle = this.handleMap.get(handle);
+        const wasmHandle = this.handleMap.getL(handle);
         if (!model) {
             this.exports._syncHandle(this.innerParticle, wasmHandle, 0);
             return;
@@ -531,7 +530,7 @@ export class WasmParticle extends Particle {
         if (update.originator) {
             return;
         }
-        const wasmHandle = this.handleMap.get(handle);
+        const wasmHandle = this.handleMap.getL(handle);
         const converter = this.converters.get(handle);
         if (!converter) {
             throw new Error('cannot find handle ' + handle.name);
@@ -618,7 +617,7 @@ export class WasmParticle extends Particle {
         this.container.free(p);
     }
     getHandle(wasmHandle) {
-        const handle = this.revHandleMap.get(wasmHandle);
+        const handle = this.handleMap.getR(wasmHandle);
         if (!handle) {
             const err = new Error(`wasm particle '${this.spec.name}' attempted to write to unconnected handle`);
             const userException = new UserException(err, 'WasmParticle::getHandle', this.id, this.spec.name);

@@ -65,7 +65,6 @@ export declare class WasmParticle extends Particle {
     private exports;
     private innerParticle;
     private handleMap;
-    private revHandleMap;
     private converters;
     constructor(id: string, container: WasmContainer);
     renderOutput(): void;

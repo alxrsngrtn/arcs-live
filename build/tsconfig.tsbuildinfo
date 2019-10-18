@@ -501,9 +501,13 @@
         "version": "71a28513d8bf33e0d40da5618c6fa87ed5cd74e4b9aee7e960188183eff567e9",
         "signature": "6fed45ef60b7afe58b7e14e84f6a09f826a5fad87cd98b1be37b245ed8d42507"
       },
+      "../src/runtime/bimap.ts": {
+        "version": "4ea68f15eecc1ed8295ce03350a14f625818d1cf137e38686781de48dc4e97e6",
+        "signature": "6420107fe36d8b724e5a0940cb27dede6859620715eae6d0702d4f648d655002"
+      },
       "../src/runtime/wasm.ts": {
-        "version": "488370210b7e95e71e1609da6067ed7774b4ab889e46f25f142bd51de626db61",
-        "signature": "ee934e5addd1afa86c5d3f236c7b9bfd50a5f1685c9ea2c622b4c93c576fffc9"
+        "version": "163942c15d416ddb583d5ac0db2b2321dc8be5b1f0cb374ebc564475ed46a182",
+        "signature": "94fc716c07c95035c798583fa9f241ddb7a4ec78518ce7ac14dc93fc57a85a19"
       },
       "../src/runtime/particle-execution-context.ts": {
         "version": "19075571dfadf26fea142cd8be695b2303037fe0ea17a380781e7e6089a4cc2a",
@@ -2368,6 +2372,10 @@
         "version": "5bd160aa165c992bed7c80885461b7a0db368494000ae708cb111af9653930be",
         "signature": "600636836c17982e77369e742e2b185b3a695f0407d06b57f41cbf45b0a11d8b"
       },
+      "../src/runtime/tests/bimap-test.ts": {
+        "version": "5962d247329ac2691e7b8af527fafc460efbf9fea55ae68f130cda3cfd5805ba",
+        "signature": "fd95df5d076cbfed143dc4904d376b5c6d9cb1091b630994ffe2366010afa6b3"
+      },
       "../src/runtime/tests/bytes-test.ts": {
         "version": "3c3d7a488176c14a892a9c2d2754fc86cab5440a1f49e48047bd41ddfc3912f6",
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
@@ -3846,6 +3854,10 @@
         "../node_modules/@types/node/util.d.ts",
         "../node_modules/@types/node/ts3.1/util.d.ts"
       ],
+      "../src/runtime/bimap.ts": [
+        "../node_modules/@types/node/util.d.ts",
+        "../node_modules/@types/node/ts3.1/util.d.ts"
+      ],
       "../src/runtime/wasm.ts": [
         "../src/platform/assert-web.ts",
         "../src/runtime/schema.ts",
@@ -3860,6 +3872,7 @@
         "../src/runtime/api-channel.ts",
         "../src/runtime/arc-exceptions.ts",
         "../src/runtime/particle-execution-context.ts",
+        "../src/runtime/bimap.ts",
         "../node_modules/@types/node/util.d.ts",
         "../node_modules/@types/node/ts3.1/util.d.ts"
       ],
@@ -7555,6 +7568,12 @@
         "../src/runtime/storageNG/direct-store.ts",
         "../src/runtime/storage/volatile-storage.ts",
         "../src/runtime/testing/handle-for-test.ts",
+        "../node_modules/@types/node/util.d.ts",
+        "../node_modules/@types/node/ts3.1/util.d.ts"
+      ],
+      "../src/runtime/tests/bimap-test.ts": [
+        "../src/platform/chai-web.d.ts",
+        "../src/runtime/bimap.ts",
         "../node_modules/@types/node/util.d.ts",
         "../node_modules/@types/node/ts3.1/util.d.ts"
       ],
@@ -11754,6 +11773,7 @@
       "../src/runtime/fake-pec-factory.ts",
       "../src/runtime/arc.ts",
       "../src/runtime/api-channel.ts",
+      "../src/runtime/bimap.ts",
       "../src/runtime/wasm.ts",
       "../src/runtime/particle-execution-context.ts",
       "../src/runtime/entity.ts",
@@ -12221,6 +12241,7 @@
       "../src/runtime/tests/akms-test.ts",
       "../src/runtime/tests/api-channel-test.ts",
       "../src/runtime/tests/arc-test.ts",
+      "../src/runtime/tests/bimap-test.ts",
       "../src/runtime/tests/bytes-test.ts",
       "../src/runtime/tests/data-layer-test.ts",
       "../src/runtime/tests/description-test.ts",

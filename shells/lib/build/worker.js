@@ -91,7 +91,7 @@
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* WEBPACK VAR INJECTION */(function(global) {/* harmony import */ var _build_runtime_particle_execution_context_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(2);
-/* harmony import */ var _build_platform_loader_web_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(47);
+/* harmony import */ var _build_platform_loader_web_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(48);
 /* harmony import */ var _build_runtime_id_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(18);
 /**
  * @license
@@ -8763,6 +8763,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _particle_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(46);
 /* harmony import */ var _handle_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(13);
 /* harmony import */ var _arc_exceptions_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(14);
+/* harmony import */ var _bimap_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(47);
 /**
  * @license
  * Copyright (c) 2019 Google Inc. All rights reserved.
@@ -8772,6 +8773,7 @@ __webpack_require__.r(__webpack_exports__);
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
+
 
 
 
@@ -9227,8 +9229,7 @@ class WasmContainer {
 class WasmParticle extends _particle_js__WEBPACK_IMPORTED_MODULE_4__["Particle"] {
     constructor(id, container) {
         super();
-        this.handleMap = new Map();
-        this.revHandleMap = new Map();
+        this.handleMap = new _bimap_js__WEBPACK_IMPORTED_MODULE_7__["BiMap"]();
         this.converters = new Map();
         this.id = id;
         this.container = container;
@@ -9265,13 +9266,12 @@ class WasmParticle extends _particle_js__WEBPACK_IMPORTED_MODULE_4__["Particle"]
                 throw new Error(`Wasm particle failed to connect handle '${name}'`);
             }
             this.handleMap.set(handle, wasmHandle);
-            this.revHandleMap.set(wasmHandle, handle);
             this.converters.set(handle, new EntityPackager(handle));
         }
         this.exports._init(this.innerParticle);
     }
     async onHandleSync(handle, model) {
-        const wasmHandle = this.handleMap.get(handle);
+        const wasmHandle = this.handleMap.getL(handle);
         if (!model) {
             this.exports._syncHandle(this.innerParticle, wasmHandle, 0);
             return;
@@ -9296,7 +9296,7 @@ class WasmParticle extends _particle_js__WEBPACK_IMPORTED_MODULE_4__["Particle"]
         if (update.originator) {
             return;
         }
-        const wasmHandle = this.handleMap.get(handle);
+        const wasmHandle = this.handleMap.getL(handle);
         const converter = this.converters.get(handle);
         if (!converter) {
             throw new Error('cannot find handle ' + handle.name);
@@ -9383,7 +9383,7 @@ class WasmParticle extends _particle_js__WEBPACK_IMPORTED_MODULE_4__["Particle"]
         this.container.free(p);
     }
     getHandle(wasmHandle) {
-        const handle = this.revHandleMap.get(wasmHandle);
+        const handle = this.handleMap.getR(wasmHandle);
         if (!handle) {
             const err = new Error(`wasm particle '${this.spec.name}' attempted to write to unconnected handle`);
             const userException = new _arc_exceptions_js__WEBPACK_IMPORTED_MODULE_6__["UserException"](err, 'WasmParticle::getHandle', this.id, this.spec.name);
@@ -9772,9 +9772,86 @@ class Particle {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "BiMap", function() { return BiMap; });
+/**
+ * @license
+ * Copyright (c) 2019 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+class BiMap {
+    constructor(iterable) {
+        this.left2right = new Map();
+        this.right2left = new Map();
+        if (iterable) {
+            for (const [left, right] of iterable) {
+                this.set(left, right);
+            }
+        }
+    }
+    get size() { return this.left2right.size; }
+    set(left, right) {
+        if (this.hasL(left)) {
+            this.right2left.delete(this.getL(left));
+        }
+        if (this.hasR(right)) {
+            this.left2right.delete(this.getR(right));
+        }
+        this.left2right.set(left, right);
+        this.right2left.set(right, left);
+        return this;
+    }
+    hasL(left) {
+        return this.left2right.has(left);
+    }
+    hasR(right) {
+        return this.right2left.has(right);
+    }
+    getL(left) {
+        return this.left2right.get(left);
+    }
+    getR(right) {
+        return this.right2left.get(right);
+    }
+    deleteL(left) {
+        this.right2left.delete(this.getL(left));
+        return this.left2right.delete(left);
+    }
+    deleteR(right) {
+        this.left2right.delete(this.getR(right));
+        return this.right2left.delete(right);
+    }
+    clear() {
+        this.left2right.clear();
+        this.right2left.clear();
+    }
+    entries() {
+        return this.left2right.entries();
+    }
+    lefts() {
+        return this.left2right.keys();
+    }
+    rights() {
+        return this.right2left.keys();
+    }
+    forEach(callback) {
+        this.left2right.forEach((value, key) => callback(key, value, this));
+    }
+}
+//# sourceMappingURL=bimap.js.map
+
+/***/ }),
+/* 48 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "PlatformLoader", function() { return PlatformLoader; });
-/* harmony import */ var _loader_platform_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(48);
-/* harmony import */ var _runtime_log_factory_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(63);
+/* harmony import */ var _loader_platform_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(49);
+/* harmony import */ var _runtime_log_factory_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(64);
 /**
  * @license
  * Copyright 2019 Google LLC.
@@ -9863,19 +9940,19 @@ class PlatformLoader extends _loader_platform_js__WEBPACK_IMPORTED_MODULE_0__["P
 //# sourceMappingURL=loader-web.js.map
 
 /***/ }),
-/* 48 */
+/* 49 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "PlatformLoaderBase", function() { return PlatformLoaderBase; });
-/* harmony import */ var _runtime_loader_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(49);
+/* harmony import */ var _runtime_loader_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(50);
 /* harmony import */ var _runtime_particle_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(46);
-/* harmony import */ var _runtime_dom_particle_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(55);
-/* harmony import */ var _runtime_multiplexer_dom_particle_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(58);
-/* harmony import */ var _runtime_transformation_dom_particle_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(54);
-/* harmony import */ var _runtime_ui_particle_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(59);
-/* harmony import */ var _runtime_ui_multiplexer_particle_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(61);
+/* harmony import */ var _runtime_dom_particle_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(56);
+/* harmony import */ var _runtime_multiplexer_dom_particle_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(59);
+/* harmony import */ var _runtime_transformation_dom_particle_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(55);
+/* harmony import */ var _runtime_ui_particle_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(60);
+/* harmony import */ var _runtime_ui_multiplexer_particle_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(62);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -9953,23 +10030,23 @@ class PlatformLoaderBase extends _runtime_loader_js__WEBPACK_IMPORTED_MODULE_0__
 //# sourceMappingURL=loader-platform.js.map
 
 /***/ }),
-/* 49 */
+/* 50 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Loader", function() { return Loader; });
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
-/* harmony import */ var _platform_fetch_web_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(50);
-/* harmony import */ var _platform_fs_web_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(51);
-/* harmony import */ var _platform_vm_web_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(52);
-/* harmony import */ var _converters_jsonldToManifest_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(53);
+/* harmony import */ var _platform_fetch_web_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(51);
+/* harmony import */ var _platform_fs_web_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(52);
+/* harmony import */ var _platform_vm_web_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(53);
+/* harmony import */ var _converters_jsonldToManifest_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(54);
 /* harmony import */ var _reference_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(12);
 /* harmony import */ var _particle_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(46);
-/* harmony import */ var _transformation_dom_particle_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(54);
-/* harmony import */ var _dom_particle_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(55);
-/* harmony import */ var _multiplexer_dom_particle_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(58);
-/* harmony import */ var _ui_particle_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(59);
+/* harmony import */ var _transformation_dom_particle_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(55);
+/* harmony import */ var _dom_particle_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(56);
+/* harmony import */ var _multiplexer_dom_particle_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(59);
+/* harmony import */ var _ui_particle_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(60);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -10133,7 +10210,7 @@ class Loader {
 //# sourceMappingURL=loader.js.map
 
 /***/ }),
-/* 50 */
+/* 51 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -10157,7 +10234,7 @@ const localFetch = fetch;
 //# sourceMappingURL=fetch-web.js.map
 
 /***/ }),
-/* 51 */
+/* 52 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -10177,7 +10254,7 @@ const fs = {};
 
 
 /***/ }),
-/* 52 */
+/* 53 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -10197,7 +10274,7 @@ const vm = {};
 
 
 /***/ }),
-/* 53 */
+/* 54 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -10312,13 +10389,13 @@ class JsonldToManifest {
 //# sourceMappingURL=jsonldToManifest.js.map
 
 /***/ }),
-/* 54 */
+/* 55 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "TransformationDomParticle", function() { return TransformationDomParticle; });
-/* harmony import */ var _dom_particle_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(55);
+/* harmony import */ var _dom_particle_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(56);
 /* harmony import */ var _entity_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(11);
 /**
  * @license
@@ -10368,14 +10445,14 @@ class TransformationDomParticle extends _dom_particle_js__WEBPACK_IMPORTED_MODUL
 //# sourceMappingURL=transformation-dom-particle.js.map
 
 /***/ }),
-/* 55 */
+/* 56 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "DomParticle", function() { return DomParticle; });
-/* harmony import */ var _modalities_dom_components_xen_xen_state_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(56);
-/* harmony import */ var _dom_particle_base_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(57);
+/* harmony import */ var _modalities_dom_components_xen_xen_state_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(57);
+/* harmony import */ var _dom_particle_base_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(58);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -10548,7 +10625,7 @@ class DomParticle extends Object(_modalities_dom_components_xen_xen_state_js__WE
 //# sourceMappingURL=dom-particle.js.map
 
 /***/ }),
-/* 56 */
+/* 57 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -10701,7 +10778,7 @@ const XenStateMixin = Base => class extends Base {
 
 
 /***/ }),
-/* 57 */
+/* 58 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -10988,7 +11065,7 @@ class DomParticleBase extends _particle_js__WEBPACK_IMPORTED_MODULE_1__["Particl
 //# sourceMappingURL=dom-particle-base.js.map
 
 /***/ }),
-/* 58 */
+/* 59 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -10996,7 +11073,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "MultiplexerDomParticle", function() { return MultiplexerDomParticle; });
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
 /* harmony import */ var _particle_spec_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(5);
-/* harmony import */ var _transformation_dom_particle_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(54);
+/* harmony import */ var _transformation_dom_particle_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(55);
 /* harmony import */ var _entity_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(11);
 /**
  * @license
@@ -11181,14 +11258,14 @@ class MultiplexerDomParticle extends _transformation_dom_particle_js__WEBPACK_IM
 //# sourceMappingURL=multiplexer-dom-particle.js.map
 
 /***/ }),
-/* 59 */
+/* 60 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "UiParticle", function() { return UiParticle; });
-/* harmony import */ var _modalities_dom_components_xen_xen_state_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(56);
-/* harmony import */ var _ui_particle_base_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(60);
+/* harmony import */ var _modalities_dom_components_xen_xen_state_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(57);
+/* harmony import */ var _ui_particle_base_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(61);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -11333,7 +11410,7 @@ class UiParticle extends Object(_modalities_dom_components_xen_xen_state_js__WEB
 //# sourceMappingURL=ui-particle.js.map
 
 /***/ }),
-/* 60 */
+/* 61 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -11521,14 +11598,14 @@ class UiParticleBase extends _particle_js__WEBPACK_IMPORTED_MODULE_2__["Particle
 //# sourceMappingURL=ui-particle-base.js.map
 
 /***/ }),
-/* 61 */
+/* 62 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "UiMultiplexerParticle", function() { return UiMultiplexerParticle; });
 /* harmony import */ var _particle_spec_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(5);
-/* harmony import */ var _ui_transformation_particle_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(62);
+/* harmony import */ var _ui_transformation_particle_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(63);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -11691,13 +11768,13 @@ class UiMultiplexerParticle extends _ui_transformation_particle_js__WEBPACK_IMPO
 //# sourceMappingURL=ui-multiplexer-particle.js.map
 
 /***/ }),
-/* 62 */
+/* 63 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "UiTransformationParticle", function() { return UiTransformationParticle; });
-/* harmony import */ var _ui_particle_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(59);
+/* harmony import */ var _ui_particle_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(60);
 /* harmony import */ var _entity_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(11);
 /**
  * @license
@@ -11736,13 +11813,13 @@ class UiTransformationParticle extends _ui_particle_js__WEBPACK_IMPORTED_MODULE_
 //# sourceMappingURL=ui-transformation-particle.js.map
 
 /***/ }),
-/* 63 */
+/* 64 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "logsFactory", function() { return logsFactory; });
-/* harmony import */ var _platform_log_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(64);
+/* harmony import */ var _platform_log_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(65);
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "logFactory", function() { return _platform_log_web_js__WEBPACK_IMPORTED_MODULE_0__["logFactory"]; });
 
 /**
@@ -11764,7 +11841,7 @@ const logsFactory = (preamble, color) => ({
 //# sourceMappingURL=log-factory.js.map
 
 /***/ }),
-/* 64 */
+/* 65 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
