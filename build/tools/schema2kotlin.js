@@ -93,5 +93,11 @@ data class ${name}(
 }
 `;
     }
+    addAliases(aliases) {
+        const lines = Object.entries(aliases)
+            .map(([rhs, ids]) => [...ids].map((id) => `typealias ${id} = ${rhs}`))
+            .reduce((acc, val) => acc.concat(val), []); // equivalent to .flat()
+        return lines.join('\n');
+    }
 }
 //# sourceMappingURL=schema2kotlin.js.map

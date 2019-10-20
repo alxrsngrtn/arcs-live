@@ -192,5 +192,13 @@ struct std::hash<arcs::${name}> {
 };
 `;
     }
+    addAliases(aliases) {
+        const lines = Object.entries(aliases)
+            .map(([rhs, ids]) => [...ids].map((id) => `using ${id} = ${rhs};`))
+            .reduce((acc, val) => acc.concat(val), []); // equivalent to .flat()
+        return `namespace arcs {
+${lines.join('\n')}
+}`;
+    }
 }
 //# sourceMappingURL=schema2cpp.js.map

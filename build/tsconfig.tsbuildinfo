@@ -518,7 +518,7 @@
         "signature": "31397ccd869e47d3b0bfd15c9fe52de6bd9938c7a4c342aac8c419b326f19739"
       },
       "../src/runtime/schema.ts": {
-        "version": "8e2859c61622a14ecbda927dfc56d19d487afc7ac9b382efca738a8127b0baac",
+        "version": "540852da8f8ff73f04278705393629663b0bcb25edb8156ee8417fd4ca4c9430",
         "signature": "0d34a813d16ab16eca25e02e330243fd0e23f0204d55fcb50569623cb46384a0"
       },
       "../src/runtime/crdt/crdt-count.ts": {
@@ -2665,16 +2665,16 @@
         "signature": "fd95df5d076cbfed143dc4904d376b5c6d9cb1091b630994ffe2366010afa6b3"
       },
       "../src/tools/schema2base.ts": {
-        "version": "91475dafa2037ec59d15c2ff20849cb7b21cf2630f9d0149295fa16864f61549",
-        "signature": "989fa9dda3d76b91e35018ca7ec535028076ae2bf57f57d071c60f91ae43c5f9"
+        "version": "8f7079b52361c6a931e8ca00e50a5f7b4dc92a3a2c7da4c0619acf7072a58e36",
+        "signature": "089ba227026a7434fcbe1a605ef037d098420abed2e2a938b8b6b2e8b0f77137"
       },
       "../src/tools/schema2cpp.ts": {
-        "version": "4f4977124a0e3a1ecb80d7b8adde1d2d3bc70799939bd0c2831b42a6ab6ae9a7",
-        "signature": "2399853c21d04efd6ace178ab5736d5ad95a9e1674dc8cee3944fd706556b8a2"
+        "version": "c1fd1ea0dcf21666466d740ef5556eb066debc546157eff6ff03e9df2845e6a9",
+        "signature": "56649cfb6b29153d2bfca30d815271bbfb5c3459d1b7780e97bd9758a377e3f9"
       },
       "../src/tools/schema2kotlin.ts": {
-        "version": "762a7ecb392219fe2ef3d806a6e746af2a7c691fc016766d399c68b309247795",
-        "signature": "f88411a821e09edd5e5f268d2563bdba5387c320ea692afaa6e80d8049499a14"
+        "version": "a3b06e076db31ca5dcd70cb61cd44a3019c70c0cd3b90dc497fd5ed97086fb2b",
+        "signature": "a31526cb5ff3c9385b28ad5f9524786aa0b14e75e74a3b583f50474079898269"
       },
       "../src/tools/schema2packager.ts": {
         "version": "1d30235412c9b028954e563b73ded9d8307e07d3883da3283cbecf3f8c4a8c84",
@@ -2734,6 +2734,18 @@
       },
       "../src/tools/tests/bundle-test.ts": {
         "version": "ff2ee4a03e9f1c5a154f594edc7563371d7e944ab2580749f455dd13424b88a0",
+        "signature": "fd95df5d076cbfed143dc4904d376b5c6d9cb1091b630994ffe2366010afa6b3"
+      },
+      "../src/tools/tests/schema2base-test.ts": {
+        "version": "6f7464247e27932ba327cbcaeb123b48653c8722f897b4b34992fa93e40f38ae",
+        "signature": "fd95df5d076cbfed143dc4904d376b5c6d9cb1091b630994ffe2366010afa6b3"
+      },
+      "../src/tools/tests/schema2cpp-test.ts": {
+        "version": "94d49a4a599eb75f8a438f6a68fbf876066b0576967092c846870fa2c2322d57",
+        "signature": "fd95df5d076cbfed143dc4904d376b5c6d9cb1091b630994ffe2366010afa6b3"
+      },
+      "../src/tools/tests/schema2kotlin-test.ts": {
+        "version": "d8c657c8a0e4fbd33ec59c20db00f2228cbcd4f0e61a0ee0579146503a0d30bb",
         "signature": "fd95df5d076cbfed143dc4904d376b5c6d9cb1091b630994ffe2366010afa6b3"
       },
       "../src/tracelib/tests/trace-test.ts": {
@@ -3917,14 +3929,12 @@
         "../node_modules/@types/node/ts3.1/util.d.ts"
       ],
       "../src/runtime/schema.ts": [
-        "../src/platform/assert-web.ts",
         "../src/runtime/entity.ts",
         "../src/runtime/particle-execution-context.ts",
         "../src/runtime/type.ts",
         "../src/runtime/hot.ts",
         "../src/runtime/crdt/crdt-entity.ts",
         "../src/runtime/crdt/crdt-collection.ts",
-        "../src/runtime/handle.ts",
         "../src/runtime/crdt/crdt-singleton.ts",
         "../node_modules/@types/node/util.d.ts",
         "../node_modules/@types/node/ts3.1/util.d.ts"
@@ -8273,6 +8283,7 @@
         "../node_modules/@types/minimist/index.d.ts",
         "../src/runtime/schema.ts",
         "../src/runtime/hot.ts",
+        "../src/runtime/manifest.ts",
         "../node_modules/@types/node/util.d.ts",
         "../node_modules/@types/node/ts3.1/util.d.ts"
       ],
@@ -8386,6 +8397,28 @@
         "../node_modules/@types/jszip/index.d.ts",
         "../src/tools/bundle.ts",
         "../src/platform/chai-web.d.ts",
+        "../node_modules/@types/node/util.d.ts",
+        "../node_modules/@types/node/ts3.1/util.d.ts"
+      ],
+      "../src/tools/tests/schema2base-test.ts": [
+        "../src/platform/chai-web.d.ts",
+        "../src/tools/schema2base.ts",
+        "../src/runtime/schema.ts",
+        "../src/runtime/manifest.ts",
+        "../node_modules/@types/node/util.d.ts",
+        "../node_modules/@types/node/ts3.1/util.d.ts"
+      ],
+      "../src/tools/tests/schema2cpp-test.ts": [
+        "../src/platform/chai-web.d.ts",
+        "../src/tools/schema2cpp.ts",
+        "../src/runtime/manifest.ts",
+        "../node_modules/@types/node/util.d.ts",
+        "../node_modules/@types/node/ts3.1/util.d.ts"
+      ],
+      "../src/tools/tests/schema2kotlin-test.ts": [
+        "../src/platform/chai-web.d.ts",
+        "../src/tools/schema2kotlin.ts",
+        "../src/runtime/manifest.ts",
         "../node_modules/@types/node/util.d.ts",
         "../node_modules/@types/node/ts3.1/util.d.ts"
       ],
@@ -11522,7 +11555,9 @@
         "../node_modules/@types/node/ts3.1/util.d.ts"
       ],
       "../src/tools/schema2base.ts": [
+        "../src/runtime/hot.ts",
         "../node_modules/@types/minimist/index.d.ts",
+        "../src/runtime/manifest.ts",
         "../src/runtime/schema.ts"
       ],
       "../src/tools/schema2cpp.ts": [
@@ -12333,6 +12368,9 @@
       "../src/tools/dev_server/hot-reload-server.ts",
       "../src/tools/dev_server/dev-server.ts",
       "../src/tools/tests/bundle-test.ts",
+      "../src/tools/tests/schema2base-test.ts",
+      "../src/tools/tests/schema2cpp-test.ts",
+      "../src/tools/tests/schema2kotlin-test.ts",
       "../src/tracelib/tests/trace-test.ts",
       "../src/wasm/cpp/tests/wasm-cpp-test.ts",
       "../node_modules/@types/core-js/index.d.ts",

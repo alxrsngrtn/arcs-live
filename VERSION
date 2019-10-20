@@ -1,9 +1,105 @@
-commit 9c98b59b9d7993d32b151a509bc7016bab3bf672
-Author: Jason Feinstein <jwf@google.com>
-Date:   Fri Oct 18 15:43:39 2019 -0700
+commit d52394ba5efa6db971a378e1d98e6466e00628bc
+Author: Alex Rosengarten <alxr@google.com>
+Date:   Sun Oct 20 15:15:40 2019 -0700
 
-    Create CrdtEntityDescriptor, FieldValueInterpreter, etc. (#3811)
+    Schema2*: Support 0 or >1 schema names (#3785)
     
-    These classes will be used by `CrdtEntity` (still a stub) to support entity definitions.
+    * call init in proper place
     
-    A rough sketch for how to use the field value interpreters with CrdtEntity is in the kdoc for CrdtEntity. It's very rough, however.
+    * extracted functions for schema collection
+    
+    * quick and dirty name mangling, anon schemas
+    
+    * created schema2base mock
+    
+    * first iteration of working test
+    
+    * fix: get field dict values
+    
+    * refined tests and name mangling
+    
+    * added todo: asking question
+    
+    * naive implemenation of multiple schema names
+    
+    * Adding aliasing for multi-named schemas
+    
+    * containment check
+    
+    * If there is a conflict in schema name, default to particle_connection name
+    
+    * Idea: mangling aliases
+    
+    * added type aliasing unit tests
+    
+    * updated comment
+    
+    * extracted out function for file-io-free testing
+    
+    * updated tests to not need file-io
+    
+    * simplified the kotlin tests
+    
+    * added simple cpp alias test
+    
+    * cpp: added semicolon
+    
+    * started test for non-inline schemas
+    
+    * adding aliases feature, needs rethinking
+    
+    * base + basetests ok
+    
+    * kotlin + cpp tests working
+    
+    * using `src` in string
+    
+    * adding quotes around `src`
+    
+    * partial fix: alias for references
+    - also adding namespace in cpp alias
+    
+    * integration tests fix 1/n
+    - creating dummy particle to generate entities
+    - swapping old entites for new ones
+    - pending problem: how to handle references?
+    
+    * added back: collect references before other schemas
+    
+    * Got wasm cpp integration tests working!
+    
+    * Dummy --> Test
+    
+    * autoformat
+    
+    * using better asserts
+    - also fixed cpp tests, which didnt have `arcs::` namespace
+    
+    * example has particle_connection types
+    
+    * new approach: particle_schema generation
+    
+    * updated cpp wasm tests with new naming system
+    
+    * Fixed kotlin wasm particles 1/2
+    
+    * updated kotlin entities 2/2
+    
+    * Added custom type `Aliases`
+    
+    * got aliases working with a sensible algorithm
+    - am now eliminating ambiguous alias candidates, keeping remaining ones.
+    
+    * added namespace
+    
+    * updated tests
+    
+    * added namespaces back to tests (cpp)
+    
+    * updating cpp: adjusting example.cc
+    - adding namespace
+    - manual copy
+    
+    * updated entities of new storage tests
+    
+    * fixed new entity generation
