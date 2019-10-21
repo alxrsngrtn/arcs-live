@@ -1,11 +1,5 @@
-commit c1c49e38520587fc035e130553e8af8dd5c84473
-Author: Jason Feinstein <jwf@google.com>
-Date:   Sun Oct 20 20:27:24 2019 -0700
+commit d45de44b8ab942de1551d9e12881e186fb381b48
+Author: Joshua Pratt <jp10010101010000@gmail.com>
+Date:   Mon Oct 21 15:31:39 2019 +1100
 
-    Extract interfaces from CrdtSet.Data and CrdtSingleton.Data (#3831)
-    
-    * Extract interfaces from CrdtSet.Data and CrdtSingleton.Data
-    
-    This will help keep things tidy when implementing CrdtEntity, since it's a bunch of sets (collections) and singletons.
-    
-    * typo fix
+    Fix for untyped (and out of date) direction unioning (#3832)
