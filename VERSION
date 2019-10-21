@@ -1,5 +1,11 @@
-commit a42755a69168ef45bd3608878e7f1043f133fc3a
+commit a2182cb373052297335f0d1e108433bedb0aa7dd
 Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
-Date:   Mon Oct 21 15:52:31 2019 +1100
+Date:   Mon Oct 21 16:13:21 2019 +1100
 
-    Deletes particles/Native/Java (#3834)
+    Defines arcs_manifest build rule (#3833)
+    
+    Bundles .arcs manifest files and particle impls together into a
+    filegroup. This will let us include them easily in android assets.
+    
+    In an upcoming PR: add a test to check that all dependencies are
+    included.
