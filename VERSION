@@ -1,11 +1,27 @@
-commit a2182cb373052297335f0d1e108433bedb0aa7dd
-Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
-Date:   Mon Oct 21 16:13:21 2019 +1100
+commit cf04be89625ae54090db3d831e2f21373a344174
+Author: Ray Cromwell <cromwellian@gmail.com>
+Date:   Mon Oct 21 01:54:40 2019 -0700
 
-    Defines arcs_manifest build rule (#3833)
+    Remove repo_root requirement, make build more hermetic, cacheable (#3670)
     
-    Bundles .arcs manifest files and particle impls together into a
-    filegroup. This will let us include them easily in android assets.
+    * Remove repo_root requirement
     
-    In an upcoming PR: add a test to check that all dependencies are
-    included.
+    * add todo
+    
+    * add schemas as deps to test harness
+    
+    * fix integration test path
+    
+    * fix build dir
+    
+    * revert changes
+    
+    * add sigh_command macro
+    
+    * run buildifier
+    
+    * Remove extraneous file
+    
+    * propagate visibility
+    
+    * remove todo

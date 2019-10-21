@@ -2593,7 +2593,7 @@
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "../src/tests/hotreload-integration-test.ts": {
-        "version": "2b35f83f638f4eb37b358f1e63c036548952dc651653d0507def5a98f1c277e4",
+        "version": "78a6cc257bd5fb045183dad95b60271e6e4e838eb03b81caa45e97739753e687",
         "signature": "43a5176681925d9f51b139647154e4a52c2eb1b1a64bb428595000952bcbc7f1"
       },
       "../src/tests/multiplexer-integration-test.ts": {
@@ -2753,7 +2753,7 @@
         "signature": "8bc1d39a3b8ec61064f9969316a088e314895e7ffd094468dcc0b238f33cb4a6"
       },
       "../src/wasm/cpp/tests/wasm-cpp-test.ts": {
-        "version": "5922e34ae8f613baf14873cfad76a682ca122d089740247dd396108a32cde67d",
+        "version": "8a0793e76f8de9fdc41fd692914a4889e307def79b102e7378ec1403c50f1fa7",
         "signature": "97ae39ce2411e60af41db50e11b3048c2b48322f144dcadb5272343ec368356a"
       },
       "../node_modules/@types/core-js/index.d.ts": {
