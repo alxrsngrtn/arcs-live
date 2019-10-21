@@ -1,105 +1,11 @@
-commit d52394ba5efa6db971a378e1d98e6466e00628bc
-Author: Alex Rosengarten <alxr@google.com>
-Date:   Sun Oct 20 15:15:40 2019 -0700
+commit c1c49e38520587fc035e130553e8af8dd5c84473
+Author: Jason Feinstein <jwf@google.com>
+Date:   Sun Oct 20 20:27:24 2019 -0700
 
-    Schema2*: Support 0 or >1 schema names (#3785)
+    Extract interfaces from CrdtSet.Data and CrdtSingleton.Data (#3831)
     
-    * call init in proper place
+    * Extract interfaces from CrdtSet.Data and CrdtSingleton.Data
     
-    * extracted functions for schema collection
+    This will help keep things tidy when implementing CrdtEntity, since it's a bunch of sets (collections) and singletons.
     
-    * quick and dirty name mangling, anon schemas
-    
-    * created schema2base mock
-    
-    * first iteration of working test
-    
-    * fix: get field dict values
-    
-    * refined tests and name mangling
-    
-    * added todo: asking question
-    
-    * naive implemenation of multiple schema names
-    
-    * Adding aliasing for multi-named schemas
-    
-    * containment check
-    
-    * If there is a conflict in schema name, default to particle_connection name
-    
-    * Idea: mangling aliases
-    
-    * added type aliasing unit tests
-    
-    * updated comment
-    
-    * extracted out function for file-io-free testing
-    
-    * updated tests to not need file-io
-    
-    * simplified the kotlin tests
-    
-    * added simple cpp alias test
-    
-    * cpp: added semicolon
-    
-    * started test for non-inline schemas
-    
-    * adding aliases feature, needs rethinking
-    
-    * base + basetests ok
-    
-    * kotlin + cpp tests working
-    
-    * using `src` in string
-    
-    * adding quotes around `src`
-    
-    * partial fix: alias for references
-    - also adding namespace in cpp alias
-    
-    * integration tests fix 1/n
-    - creating dummy particle to generate entities
-    - swapping old entites for new ones
-    - pending problem: how to handle references?
-    
-    * added back: collect references before other schemas
-    
-    * Got wasm cpp integration tests working!
-    
-    * Dummy --> Test
-    
-    * autoformat
-    
-    * using better asserts
-    - also fixed cpp tests, which didnt have `arcs::` namespace
-    
-    * example has particle_connection types
-    
-    * new approach: particle_schema generation
-    
-    * updated cpp wasm tests with new naming system
-    
-    * Fixed kotlin wasm particles 1/2
-    
-    * updated kotlin entities 2/2
-    
-    * Added custom type `Aliases`
-    
-    * got aliases working with a sensible algorithm
-    - am now eliminating ambiguous alias candidates, keeping remaining ones.
-    
-    * added namespace
-    
-    * updated tests
-    
-    * added namespaces back to tests (cpp)
-    
-    * updating cpp: adjusting example.cc
-    - adding namespace
-    - manual copy
-    
-    * updated entities of new storage tests
-    
-    * fixed new entity generation
+    * typo fix
