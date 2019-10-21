@@ -8,11 +8,20 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { Loader } from '../runtime/loader.js';
+interface UrlMap {
+    [macro: string]: string | {
+        root: string;
+        path?: string;
+        buildDir: string;
+        buildOutputRegex: RegExp;
+    };
+}
 export declare class PlatformLoaderBase extends Loader {
-    _urlMap: any;
-    constructor(urlMap: any);
+    readonly _urlMap: UrlMap;
+    constructor(urlMap: UrlMap);
     loadResource(name: string): Promise<string>;
-    resolve(path: string): any;
+    resolve(path: string): string;
     mapParticleUrl(path: string): any;
     unwrapParticle(particleWrapper: any, log?: any): any;
 }
+export {};

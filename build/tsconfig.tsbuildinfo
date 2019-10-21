@@ -1434,8 +1434,8 @@
         "signature": "2ebd638663af28dfcc5ed5b677489f3725329e1e214f2c802b8b80d9850d81ae"
       },
       "../src/platform/loader-platform.ts": {
-        "version": "f3bcc8cfbe5278670f4311b7a533c1d69422f1c7168188ca6c7be7ea3e08fe91",
-        "signature": "f786c21eb557ace5f7871a3b2655e4b959bca160fa34d2b81210a16e0e18ebf7"
+        "version": "314696cf0a2780e183f3748a1a6a38f3276a020b33d1532490ff20b3db9b660c",
+        "signature": "276bcb07c7aa55adc42ddf20ac76b3db4f347d10f7073b31c2450d8da171976a"
       },
       "../src/platform/loader-node.ts": {
         "version": "2c9791245555f13276255671949e4682699a9f66800c764b0a1c95c3e6132ec6",
@@ -1466,7 +1466,7 @@
         "signature": "4adb9d9051b01ed14f59e27c77023e8168dc20df65249fdb9a660f11b1d33055"
       },
       "../src/platform/pec-industry-web.ts": {
-        "version": "cc1740ea38de169206292026b6b44a61840f088923c293312c9f7dca5e948bdc",
+        "version": "060ccc621a482c2c8f831e8925bff140dca36d97e6a2907e5a3eb10415ae0486",
         "signature": "92676e58c4eb58a7594bd8a9ac1229809ddf3691de8f7a2dff275ecfb697e14c"
       },
       "../src/platform/pouchdb-node.ts": {
@@ -2215,6 +2215,10 @@
       "../src/platform/vm-node.ts": {
         "version": "560fa4e7183ec2c24b136859a8f96df15c960982b6f7ec31191f04a10fa7cc13",
         "signature": "3001077f61829ff5fe57805d78cc3556d41d0014e2f3701fa08f56d8cda8f60f"
+      },
+      "../src/platform/tests/loader-platform-test.ts": {
+        "version": "ae2061603c7b407c15657df6a6bc8241ed47d545262c9220a8feb6e5ceda3acf",
+        "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "../src/runtime/keymgmt/base64.ts": {
         "version": "f920e15366681d35b1afaf754c8f26a5c1c42a7c68fc0561b892f6b5fb84f1ad",
@@ -7197,6 +7201,12 @@
       ],
       "../src/platform/vm-node.ts": [
         "../node_modules/@types/node/vm.d.ts",
+        "../node_modules/@types/node/util.d.ts",
+        "../node_modules/@types/node/ts3.1/util.d.ts"
+      ],
+      "../src/platform/tests/loader-platform-test.ts": [
+        "../src/platform/chai-web.d.ts",
+        "../src/platform/loader-platform.ts",
         "../node_modules/@types/node/util.d.ts",
         "../node_modules/@types/node/ts3.1/util.d.ts"
       ],
@@ -12238,6 +12248,7 @@
       "../src/platform/tf-node.ts",
       "../src/platform/tf-web.ts",
       "../src/platform/vm-node.ts",
+      "../src/platform/tests/loader-platform-test.ts",
       "../src/runtime/keymgmt/base64.ts",
       "../src/runtime/bytes.ts",
       "../src/runtime/ui-slot-composer.ts",

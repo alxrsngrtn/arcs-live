@@ -1,27 +1,5 @@
-commit cf04be89625ae54090db3d831e2f21373a344174
-Author: Ray Cromwell <cromwellian@gmail.com>
-Date:   Mon Oct 21 01:54:40 2019 -0700
+commit 0088516efc700603ebd3a233abca1b3c5148a3f7
+Author: Piotr Swigon <piotr.swigon@gmail.com>
+Date:   Mon Oct 21 10:46:52 2019 -0700
 
-    Remove repo_root requirement, make build more hermetic, cacheable (#3670)
-    
-    * Remove repo_root requirement
-    
-    * add todo
-    
-    * add schemas as deps to test harness
-    
-    * fix integration test path
-    
-    * fix build dir
-    
-    * revert changes
-    
-    * add sigh_command macro
-    
-    * run buildifier
-    
-    * Remove extraneous file
-    
-    * propagate visibility
-    
-    * remove todo
+    Make loader configurable to load wasm modules from build directory (#3830)

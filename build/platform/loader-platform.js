@@ -18,19 +18,26 @@ const html = (strings, ...values) => (strings[0] + values.map((v, i) => v + stri
 export class PlatformLoaderBase extends Loader {
     constructor(urlMap) {
         super();
-        this._urlMap = urlMap || [];
+        this._urlMap = urlMap || {};
     }
     async loadResource(name) {
         const path = this.resolve(name);
         return super.loadResource(path);
     }
     resolve(path) {
-        let url = this._urlMap[path];
-        if (!url && path) {
-            // TODO(sjmiles): inefficient!
-            const macro = Object.keys(this._urlMap).sort((a, b) => b.length - a.length).find(k => path.slice(0, k.length) === k);
-            if (macro) {
-                url = this._urlMap[macro] + path.slice(macro.length);
+        let url = null;
+        // TODO(sjmiles): inefficient!
+        const macro = Object.keys(this._urlMap).sort((a, b) => b.length - a.length).find(k => path.slice(0, k.length) === k);
+        if (macro) {
+            const config = this._urlMap[macro];
+            if (typeof config === 'string') {
+                url = config + path.slice(macro.length);
+            }
+            else {
+                url = config.root
+                    + (path.match(config.buildOutputRegex) ? config.buildDir : '')
+                    + (config.path || '')
+                    + path.slice(macro.length);
             }
         }
         url = this.normalizeDots(url || path);
@@ -40,16 +47,16 @@ export class PlatformLoaderBase extends Loader {
         if (!path) {
             return undefined;
         }
-        const parts = path.split('/');
+        const resolved = this.resolve(path);
+        const parts = resolved.split('/');
         const suffix = parts.pop();
         const folder = parts.join('/');
-        const resolved = this.resolve(folder);
         if (!suffix.endsWith('.wasm')) {
             const name = suffix.split('.').shift();
-            this._urlMap[name] = resolved;
+            this._urlMap[name] = folder;
         }
-        this._urlMap['$here'] = resolved;
-        this._urlMap['$module'] = resolved;
+        this._urlMap['$here'] = folder;
+        this._urlMap['$module'] = folder;
     }
     unwrapParticle(particleWrapper, log) {
         return particleWrapper({

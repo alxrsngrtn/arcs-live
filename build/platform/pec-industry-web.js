@@ -30,8 +30,7 @@ const pecIndustry = loader => {
 const _expandUrls = urlMap => {
     const remap = {};
     const { origin, pathname } = window.location;
-    Object.keys(urlMap).forEach(k => {
-        let path = urlMap[k];
+    const transform = (path) => {
         // leading slash without a protocol is considered absolute
         if (path[0] === '/') {
             // reroute root in absolute path
@@ -42,7 +41,13 @@ const _expandUrls = urlMap => {
             // remap local path to absolute path
             path = `${origin}${pathname.split('/').slice(0, -1).join('/')}/${path}`;
         }
-        remap[k] = path;
+        return path;
+    };
+    Object.keys(urlMap).forEach(k => {
+        const config = urlMap[k];
+        remap[k] = typeof config === 'string'
+            ? transform(config)
+            : { ...config, root: transform(config.root) };
     });
     return remap;
 };
