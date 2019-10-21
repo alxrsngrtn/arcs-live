@@ -1,5 +1,5 @@
-commit d45de44b8ab942de1551d9e12881e186fb381b48
-Author: Joshua Pratt <jp10010101010000@gmail.com>
-Date:   Mon Oct 21 15:31:39 2019 +1100
+commit a42755a69168ef45bd3608878e7f1043f133fc3a
+Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
+Date:   Mon Oct 21 15:52:31 2019 +1100
 
-    Fix for untyped (and out of date) direction unioning (#3832)
+    Deletes particles/Native/Java (#3834)
