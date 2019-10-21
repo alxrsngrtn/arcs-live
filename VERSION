@@ -1,5 +1,5 @@
-commit 0088516efc700603ebd3a233abca1b3c5148a3f7
+commit fba632599bcd287ef945bbe26c9bc81c15d7585c
 Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Mon Oct 21 10:46:52 2019 -0700
+Date:   Mon Oct 21 15:43:12 2019 -0700
 
-    Make loader configurable to load wasm modules from build directory (#3830)
+    A sprinkle of more idiomatic Kotlin in Particle.kt (#3796)
