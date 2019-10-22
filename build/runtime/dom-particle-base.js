@@ -197,14 +197,12 @@ export class DomParticleBase extends Particle {
      */
     async appendRawDataToHandle(handleName, rawDataArray) {
         const handle = this.handles.get(handleName);
-        if (handle && handle.entityClass) {
-            if (handle instanceof Collection || handle instanceof BigCollection) {
-                const entityClass = handle.entityClass;
-                await Promise.all(rawDataArray.map(raw => handle.store(new entityClass(raw))));
-            }
-            else {
-                throw new Error('Collection required');
-            }
+        if (handle instanceof Collection || handle instanceof BigCollection) {
+            const entityClass = handle.entityClass;
+            await Promise.all(rawDataArray.map(raw => handle.store(new entityClass(raw))));
+        }
+        else {
+            throw new Error('Collection required');
         }
     }
     /**
@@ -213,7 +211,7 @@ export class DomParticleBase extends Particle {
      */
     async updateSingleton(handleName, rawData) {
         const handle = this.handles.get(handleName);
-        if (handle && handle.entityClass) {
+        if (handle) {
             if (handle instanceof Singleton) {
                 const entity = new handle.entityClass(rawData);
                 await handle.set(entity);

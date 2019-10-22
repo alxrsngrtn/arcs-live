@@ -1,13 +1,8 @@
-commit f52e073fbd2fe2bafebc0a763e5db97ecf81acde
-Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
-Date:   Tue Oct 22 14:04:10 2019 +1100
+commit 6f22bcec21ae3247d5be4116986c25db581ce447
+Author: shans <shane.stephens@gmail.com>
+Date:   Tue Oct 22 14:35:34 2019 +1100
 
-    Move src_kt into the main repo WORKSPACE (#3835)
+    Entity id bug (#3836)
     
-    The sources are still all in src_kt (we should probably move them one
-    day). And src_kt_runtests.sh is still there, but it isn't used anymore
-    for running tests on travis.
-    
-    Getting closer to the goal of having everything be in the root
-    WORKSPACE, and being able to run `bazel test ...` on Travis to test the
-    whole repo.
+    Add serialization/deserialization to NG handles, but only for Entity collections/singletons.
+    This patch incorporates contributions from both @csilvestrini and @shans

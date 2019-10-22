@@ -8,6 +8,7 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { ChangeType, CRDTError } from './crdt.js';
+import { assert } from '../../platform/assert-web.js';
 export var CollectionOpTypes;
 (function (CollectionOpTypes) {
     CollectionOpTypes[CollectionOpTypes["Add"] = 0] = "Add";
@@ -96,6 +97,7 @@ export class CRDTCollection {
         return new Set(Object.values(this.model.values).map(entry => entry.value));
     }
     add(value, key, version) {
+        this.checkValue(value);
         // Only accept an add if it is immediately consecutive to the clock for that actor.
         const expectedClockValue = (this.model.version[key] || 0) + 1;
         if (!(expectedClockValue === version[key] || 0)) {
@@ -107,6 +109,7 @@ export class CRDTCollection {
         return true;
     }
     remove(value, key, version) {
+        this.checkValue(value);
         if (!this.model.values[value.id]) {
             return false;
         }
@@ -137,6 +140,7 @@ export class CRDTCollection {
             return true;
         }
         for (const [value, version] of op.added) {
+            this.checkValue(value);
             const existingValue = this.model.values[value.id];
             if (existingValue) {
                 existingValue.version = mergeVersions(existingValue.version, version);
@@ -146,6 +150,7 @@ export class CRDTCollection {
             }
         }
         for (const value of op.removed) {
+            this.checkValue(value);
             const existingValue = this.model.values[value.id];
             if (existingValue && dominates(op.newClock, existingValue.version)) {
                 delete this.model.values[value.id];
@@ -153,6 +158,9 @@ export class CRDTCollection {
         }
         this.model.version = mergeVersions(currentClock, op.newClock);
         return true;
+    }
+    checkValue(value) {
+        assert(value.id && value.id.length, `CRDT value must have an ID.`);
     }
 }
 function mergeVersions(version1, version2) {

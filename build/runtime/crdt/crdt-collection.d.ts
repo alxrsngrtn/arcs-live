@@ -64,6 +64,7 @@ export declare class CRDTCollection<T extends Referenceable> implements Collecti
     private add;
     private remove;
     private fastForward;
+    private checkValue;
 }
 /**
  * Converts a simple fast-forward operation into a sequence of regular ops.

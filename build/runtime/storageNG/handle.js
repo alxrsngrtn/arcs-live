@@ -15,6 +15,7 @@ import { Entity } from '../entity.js';
 import { Id } from '../id.js';
 import { EntityType } from '../type.js';
 import { NoOpStorageProxy } from './storage-proxy.js';
+import { SYMBOL_INTERNALS } from '../symbols.js';
 /**
  * Base class for Handles.
  */
@@ -33,10 +34,6 @@ export class Handle {
         };
         this.canRead = canRead;
         this.canWrite = canWrite;
-        const type = this.storageProxy.type.getContainedType() || this.storageProxy.type;
-        if (type instanceof EntityType) {
-            this.entityClass = type.entitySchema.entityClass();
-        }
         this.clock = this.storageProxy.registerHandle(this);
     }
     //TODO: this is used by multiplexer-dom-particle.ts, it probably won't work with this kind of store.
@@ -74,20 +71,57 @@ export class Handle {
     }
 }
 /**
+ * This handle class allows particles to manipulate collections and singletons of Entities
+ * before the Entity Mutation API (and CRDT stack) is live. Once entity mutation is
+ * available then this class will be deprecated and removed, and CollectionHandle / SingletonHandle
+ * will become wrappers that reconstruct collections from a collection of references and
+ * multiple entity stacks.
+ */
+export class PreEntityMutationHandle extends Handle {
+    constructor(key, storageProxy, idGenerator, particle, canRead, canWrite, name) {
+        super(key, storageProxy, idGenerator, particle, canRead, canWrite, name);
+        const type = this.storageProxy.type.getContainedType() || this.storageProxy.type;
+        if (type instanceof EntityType) {
+            this.entityClass = type.entitySchema.entityClass();
+        }
+        else {
+            throw new Error(`can't construct handle for entity mutation if type is not an entity type`);
+        }
+    }
+    serialize(entity) {
+        const serialization = entity[SYMBOL_INTERNALS].serialize();
+        return serialization;
+    }
+    ensureEntityHasId(entity) {
+        if (!Entity.isIdentified(entity)) {
+            this.createIdentityFor(entity);
+        }
+    }
+    deserialize(value) {
+        const { id, rawData } = value;
+        const entity = new this.entityClass(rawData);
+        Entity.identify(entity, id);
+        return entity;
+    }
+}
+/**
  * A handle on a set of Entity data. Note that, as a set, a Collection can only
  * contain a single version of an Entity for each given ID. Further, no order is
  * implied by the set.
  */
-export class CollectionHandle extends Handle {
+// TODO(shanestephens): we can't guarantee the safety of this stack (except by the Type instance matching) - do we need the T
+// parameter here?
+export class CollectionHandle extends PreEntityMutationHandle {
     async get(id) {
-        const values = await this.toList();
-        return values.find(element => element.id === id);
+        const values = await this.toCRDTList();
+        return this.deserialize(values.find(element => element.id === id));
     }
     async add(entity) {
+        this.ensureEntityHasId(entity);
         this.clock[this.key] = (this.clock[this.key] || 0) + 1;
         const op = {
             type: CollectionOpTypes.Add,
-            added: entity,
+            added: this.serialize(entity),
             actor: this.key,
             clock: this.clock,
         };
@@ -99,14 +133,14 @@ export class CollectionHandle extends Handle {
     async remove(entity) {
         const op = {
             type: CollectionOpTypes.Remove,
-            removed: entity,
+            removed: this.serialize(entity),
             actor: this.key,
             clock: this.clock,
         };
         return this.storageProxy.applyOp(op);
     }
     async clear() {
-        const values = await this.toList();
+        const values = await this.toCRDTList();
         for (const value of values) {
             const removeOp = {
                 type: CollectionOpTypes.Remove,
@@ -121,6 +155,10 @@ export class CollectionHandle extends Handle {
         return true;
     }
     async toList() {
+        const list = await this.toCRDTList();
+        return list.map(entry => this.deserialize(entry));
+    }
+    async toCRDTList() {
         const [set, versionMap] = await this.storageProxy.getParticleView();
         this.clock = versionMap;
         return [...set];
@@ -135,10 +173,10 @@ export class CollectionHandle extends Handle {
         // Pass the change up to the particle.
         const update = { originator: ('actor' in op && this.key === op.actor) };
         if (op.type === CollectionOpTypes.Add) {
-            update.added = op.added;
+            update.added = this.deserialize(op.added);
         }
         if (op.type === CollectionOpTypes.Remove) {
-            update.removed = op.removed;
+            update.removed = this.deserialize(op.removed);
         }
         await this.particle.callOnHandleUpdate(this /*handle*/, update, e => this.reportUserExceptionInHost(e, this.particle, 'onHandleUpdate'));
     }
@@ -149,12 +187,13 @@ export class CollectionHandle extends Handle {
 /**
  * A handle on a single entity.
  */
-export class SingletonHandle extends Handle {
+export class SingletonHandle extends PreEntityMutationHandle {
     async set(entity) {
+        this.ensureEntityHasId(entity);
         this.clock[this.key] = (this.clock[this.key] || 0) + 1;
         const op = {
             type: SingletonOpTypes.Set,
-            value: entity,
+            value: this.serialize(entity),
             actor: this.key,
             clock: this.clock,
         };
@@ -171,14 +210,14 @@ export class SingletonHandle extends Handle {
     async get() {
         const [value, versionMap] = await this.storageProxy.getParticleView();
         this.clock = versionMap;
-        return value;
+        return value == null ? null : this.deserialize(value);
     }
     async onUpdate(op, oldData, version) {
         this.clock = version;
         // Pass the change up to the particle.
         const update = { oldData, originator: (this.key === op.actor) };
         if (op.type === SingletonOpTypes.Set) {
-            update.data = op.value;
+            update.data = this.deserialize(op.value);
         }
         // Nothing else to add (beyond oldData) for SingletonOpTypes.Clear.
         await this.particle.callOnHandleUpdate(this /*handle*/, update, e => this.reportUserExceptionInHost(e, this.particle, 'onHandleUpdate'));

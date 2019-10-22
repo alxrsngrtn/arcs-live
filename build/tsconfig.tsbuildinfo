@@ -274,16 +274,24 @@
         "signature": "72c40c6f2e61d63e346ed8715847bd9b379f195ed653d6524d0b5f0bd0cc729a"
       },
       "../src/runtime/crdt/crdt-collection.ts": {
-        "version": "6f23fc5471b8b9f421e00ae0287627918bd2d8f2ce892bc6eb7c55cf1e47a7fe",
-        "signature": "56f86180345fdee1e9188557a6a33761d89bf226303ec4df831098269a6bcfbb"
+        "version": "71f458e350ffd09e445ac6ef4e74d9993cb9e7fb3b3e4c7a5d361bde3914548b",
+        "signature": "b3b71c745602c1e3810471c0708dbd4330461face39a8f6cfba3f1a10ed0868b"
       },
       "../src/runtime/crdt/crdt-singleton.ts": {
         "version": "e2a6e8fcc5fe6aa1cc6c634f0de68b7895f22ceab3a3bfb224363a0b12f16cb8",
         "signature": "4de19dc3da115f1a9469359b6227ebf89ec59c73934a848233e9dce3cf09a3f5"
       },
+      "../src/runtime/symbols.ts": {
+        "version": "86ce7b9192e71b15024531b512d64dc971e42ba1856684193f470edfa4ccbb0e",
+        "signature": "d99246f827c6aba914a38aa5c47531e2938d2b0a6b1c9225831918d378cf14e4"
+      },
+      "../src/runtime/storage-proxy.ts": {
+        "version": "5209e71a8ebbcfb7678e46ab5ffbe6d61924c98e7452b3d0b5f5c5a76288ba49",
+        "signature": "a0d95acea436f414bd7b684ccd854793f7349abcc93915f915f17fe0136271ab"
+      },
       "../src/runtime/storageNG/handle.ts": {
-        "version": "b6235c47378c7a403e91a9da75ec02ed3b134128db9d6b7194ff4df63b2bfd54",
-        "signature": "7fc2de974417a51468a76268e713b444fb7e63e81c55b2c7dd7587f9b2cb6a9f"
+        "version": "36a4aaa9f33a9621a868f5f98b6c6fb784887373a6e35099f10d829198b9c38e",
+        "signature": "bd9be7babd0f28fd089fa6beef2e6d079d58a76d5b02fee8638ba98279d83bbe"
       },
       "../src/runtime/storageNG/storage-proxy.ts": {
         "version": "61923904985351f0e34248998f5b826cfd754b7d5f32f1c37f0830a9bcbada11",
@@ -434,16 +442,8 @@
         "signature": "86874e4389dafbe12250f44f6ee48b07da634c7e761a5f887e56f426b3a4a826"
       },
       "../src/runtime/particle.ts": {
-        "version": "2ac234f344d0d91910b858a09badea067303a13db8084201ea249196e80ab36a",
+        "version": "6cea793f6ba95d2a8d0ffc8035859ccf5651809413a6c741add696615a87db82",
         "signature": "ea11760a3d83b6957c9a8b157adb99a154916d9fa6b3b03f1decd74896f06222"
-      },
-      "../src/runtime/storage-proxy.ts": {
-        "version": "5209e71a8ebbcfb7678e46ab5ffbe6d61924c98e7452b3d0b5f5c5a76288ba49",
-        "signature": "a0d95acea436f414bd7b684ccd854793f7349abcc93915f915f17fe0136271ab"
-      },
-      "../src/runtime/symbols.ts": {
-        "version": "86ce7b9192e71b15024531b512d64dc971e42ba1856684193f470edfa4ccbb0e",
-        "signature": "d99246f827c6aba914a38aa5c47531e2938d2b0a6b1c9225831918d378cf14e4"
       },
       "../src/runtime/handle.ts": {
         "version": "10270d9efaa9c097098faf20a53371443641e2e7312e9d1b434cb8638056d1fa",
@@ -458,7 +458,7 @@
         "signature": "f61bb0ebc59780a5d2461fc7c65d2150be526cd048fcead3167d2d4bc9db106f"
       },
       "../src/runtime/dom-particle-base.ts": {
-        "version": "7a2a4375f0c9625a6d6a5386adcb4b178436062ddeb0a35276cac9efa3a08474",
+        "version": "508bce8a494aade9f631c51d293bf09b9fe1b090aea1c286895988c329690a5c",
         "signature": "bf1f9815ff16f44295f505f392ad42099cfa92f1544546334997d75bfe8e816b"
       },
       "../src/runtime/dom-particle.ts": {
@@ -506,7 +506,7 @@
         "signature": "6420107fe36d8b724e5a0940cb27dede6859620715eae6d0702d4f648d655002"
       },
       "../src/runtime/wasm.ts": {
-        "version": "163942c15d416ddb583d5ac0db2b2321dc8be5b1f0cb374ebc564475ed46a182",
+        "version": "da156f6d9f77ad7970bdf892cbe6f8b45c50e99e3323a4c098b045b5e9e2953b",
         "signature": "94fc716c07c95035c798583fa9f241ddb7a4ec78518ce7ac14dc93fc57a85a19"
       },
       "../src/runtime/particle-execution-context.ts": {
@@ -2261,7 +2261,7 @@
         "signature": "f7da0f8f9dfe8c0fc06a51cb8d840e54e1b4b8f0c64985075c4a81a7158fb84f"
       },
       "../src/runtime/crdt/tests/crdt-collection-test.ts": {
-        "version": "5ec6069258b9907489878e49883eab1073021abeaf8999e11f3ef877c6daa5bc",
+        "version": "9271c93a5379e1ba2ab6da1ea4e8c15c7325bdacda81bb952778767d2494d677",
         "signature": "8bc1d39a3b8ec61064f9969316a088e314895e7ffd094468dcc0b238f33cb4a6"
       },
       "../src/runtime/crdt/tests/crdt-count-test.ts": {
@@ -2317,7 +2317,7 @@
         "signature": "fd95df5d076cbfed143dc4904d376b5c6d9cb1091b630994ffe2366010afa6b3"
       },
       "../src/runtime/storageNG/tests/handle-test.ts": {
-        "version": "d3770c42f8aaac710c4eb2e0cada6aaaee6b36fb8c2bd68b26ec41bbd4664de5",
+        "version": "64ac60f390d2dd79b49811a9215f6e07eaf90dc78ce36bbe0afcf71fcb76e4aa",
         "signature": "fd95df5d076cbfed143dc4904d376b5c6d9cb1091b630994ffe2366010afa6b3"
       },
       "../src/runtime/storageNG/tests/ramdisk-backing-store-integration-test.ts": {
@@ -2357,7 +2357,7 @@
         "signature": "d6fa583d8a8ecdac63bf984ab6f5a75c9cdc0d8be9f71e249ca3421f9302077b"
       },
       "../src/runtime/testing/handle-for-test.ts": {
-        "version": "37d48a7a0d2afaf03dd899391c9cc4b3de81653a06d0ad2e2013c17af2ab3129",
+        "version": "0ef50d5d432d71a526d56031bb492a7664533776f56a2c796f05f509fffda11e",
         "signature": "97117436eee532d6a8b48fce3835dfb87d83159028bdb04f818b473fab00bc0c"
       },
       "../src/runtime/testing/test/sequence-test.ts": {
@@ -3236,6 +3236,8 @@
       "../src/runtime/crdt/crdt-collection.ts": [
         "../src/runtime/crdt/crdt.ts",
         "../src/runtime/hot.ts",
+        "../src/platform/assert-web.ts",
+        "../src/runtime/entity.ts",
         "../node_modules/@types/node/util.d.ts",
         "../node_modules/@types/node/ts3.1/util.d.ts"
       ],
@@ -3243,6 +3245,27 @@
         "../src/runtime/crdt/crdt.ts",
         "../src/runtime/crdt/crdt-collection.ts",
         "../src/runtime/hot.ts",
+        "../node_modules/@types/node/util.d.ts",
+        "../node_modules/@types/node/ts3.1/util.d.ts"
+      ],
+      "../src/runtime/symbols.ts": [
+        "../node_modules/@types/node/util.d.ts",
+        "../node_modules/@types/node/ts3.1/util.d.ts"
+      ],
+      "../src/runtime/storage-proxy.ts": [
+        "../src/platform/assert-web.ts",
+        "../src/platform/sourcemapped-stacktrace-web.ts",
+        "../src/runtime/api-channel.ts",
+        "../src/runtime/arc-exceptions.ts",
+        "../src/runtime/handle.ts",
+        "../src/runtime/hot.ts",
+        "../src/runtime/particle-execution-context.ts",
+        "../src/runtime/particle.ts",
+        "../src/runtime/storage/crdt-collection-model.ts",
+        "../src/runtime/type.ts",
+        "../src/runtime/entity.ts",
+        "../src/runtime/store.ts",
+        "../src/runtime/id.ts",
         "../node_modules/@types/node/util.d.ts",
         "../node_modules/@types/node/ts3.1/util.d.ts"
       ],
@@ -3257,6 +3280,9 @@
         "../src/runtime/id.ts",
         "../src/runtime/type.ts",
         "../src/runtime/storageNG/storage-proxy.ts",
+        "../src/runtime/handle.ts",
+        "../src/runtime/symbols.ts",
+        "../src/runtime/storage-proxy.ts",
         "../node_modules/@types/node/util.d.ts",
         "../node_modules/@types/node/ts3.1/util.d.ts"
       ],
@@ -3666,27 +3692,7 @@
         "../src/runtime/slot-proxy.ts",
         "../src/runtime/slot-consumer.ts",
         "../src/runtime/entity.ts",
-        "../node_modules/@types/node/util.d.ts",
-        "../node_modules/@types/node/ts3.1/util.d.ts"
-      ],
-      "../src/runtime/storage-proxy.ts": [
-        "../src/platform/assert-web.ts",
-        "../src/platform/sourcemapped-stacktrace-web.ts",
-        "../src/runtime/api-channel.ts",
-        "../src/runtime/arc-exceptions.ts",
-        "../src/runtime/handle.ts",
-        "../src/runtime/hot.ts",
-        "../src/runtime/particle-execution-context.ts",
-        "../src/runtime/particle.ts",
-        "../src/runtime/storage/crdt-collection-model.ts",
-        "../src/runtime/type.ts",
-        "../src/runtime/entity.ts",
-        "../src/runtime/store.ts",
-        "../src/runtime/id.ts",
-        "../node_modules/@types/node/util.d.ts",
-        "../node_modules/@types/node/ts3.1/util.d.ts"
-      ],
-      "../src/runtime/symbols.ts": [
+        "../src/runtime/storageNG/handle.ts",
         "../node_modules/@types/node/util.d.ts",
         "../node_modules/@types/node/ts3.1/util.d.ts"
       ],
@@ -3730,6 +3736,7 @@
         "../src/runtime/particle.ts",
         "../src/runtime/slot-proxy.ts",
         "../src/runtime/slot-consumer.ts",
+        "../src/runtime/storageNG/handle.ts",
         "../node_modules/@types/node/util.d.ts",
         "../node_modules/@types/node/ts3.1/util.d.ts"
       ],
@@ -7420,6 +7427,11 @@
         "../src/runtime/storageNG/storage-proxy.ts",
         "../src/runtime/storageNG/store.ts",
         "../src/runtime/storageNG/testing/test-storage.ts",
+        "../src/runtime/symbols.ts",
+        "../src/runtime/storage-proxy.ts",
+        "../src/runtime/loader.ts",
+        "../src/runtime/manifest.ts",
+        "../src/runtime/entity.ts",
         "../node_modules/@types/node/util.d.ts",
         "../node_modules/@types/node/ts3.1/util.d.ts"
       ],
@@ -7538,6 +7550,8 @@
         "../src/runtime/crdt/crdt.ts",
         "../src/runtime/crdt/crdt-singleton.ts",
         "../src/runtime/manifest.ts",
+        "../src/runtime/storage-proxy.ts",
+        "../src/runtime/entity.ts",
         "../node_modules/@types/node/util.d.ts",
         "../node_modules/@types/node/ts3.1/util.d.ts"
       ],
@@ -8781,13 +8795,25 @@
         "../src/runtime/crdt/crdt-collection.ts",
         "../src/runtime/hot.ts"
       ],
+      "../src/runtime/storage-proxy.ts": [
+        "../src/runtime/entity.ts",
+        "../src/runtime/type.ts",
+        "../src/runtime/api-channel.ts",
+        "../src/runtime/particle-execution-context.ts",
+        "../src/runtime/particle.ts",
+        "../src/runtime/handle.ts",
+        "../src/runtime/storage/crdt-collection-model.ts",
+        "../src/runtime/arc-exceptions.ts",
+        "../src/runtime/store.ts"
+      ],
       "../src/runtime/storageNG/handle.ts": [
         "../src/runtime/crdt/crdt.ts",
         "../src/runtime/storageNG/storage-proxy.ts",
         "../src/runtime/particle.ts",
-        "../src/runtime/entity.ts",
         "../src/runtime/type.ts",
+        "../src/runtime/entity.ts",
         "../src/runtime/id.ts",
+        "../src/runtime/storage-proxy.ts",
         "../src/runtime/crdt/crdt-collection.ts",
         "../src/runtime/crdt/crdt-singleton.ts"
       ],
@@ -9041,17 +9067,6 @@
         "../src/runtime/hot.ts",
         "../src/runtime/entity.ts",
         "../src/runtime/slot-consumer.ts"
-      ],
-      "../src/runtime/storage-proxy.ts": [
-        "../src/runtime/entity.ts",
-        "../src/runtime/type.ts",
-        "../src/runtime/api-channel.ts",
-        "../src/runtime/particle-execution-context.ts",
-        "../src/runtime/particle.ts",
-        "../src/runtime/handle.ts",
-        "../src/runtime/storage/crdt-collection-model.ts",
-        "../src/runtime/arc-exceptions.ts",
-        "../src/runtime/store.ts"
       ],
       "../src/runtime/handle.ts": [
         "../src/runtime/type.ts",
@@ -11764,6 +11779,8 @@
       "../src/platform/sourcemapped-stacktrace-web.ts",
       "../src/runtime/crdt/crdt-collection.ts",
       "../src/runtime/crdt/crdt-singleton.ts",
+      "../src/runtime/symbols.ts",
+      "../src/runtime/storage-proxy.ts",
       "../src/runtime/storageNG/handle.ts",
       "../src/runtime/storageNG/storage-proxy.ts",
       "../src/runtime/storageNG/store-interface.ts",
@@ -11803,8 +11820,6 @@
       "../src/runtime/slot-consumer.ts",
       "../src/runtime/slot-proxy.ts",
       "../src/runtime/particle.ts",
-      "../src/runtime/storage-proxy.ts",
-      "../src/runtime/symbols.ts",
       "../src/runtime/handle.ts",
       "../src/runtime/reference.ts",
       "../modalities/dom/components/xen/xen-state.d.ts",
