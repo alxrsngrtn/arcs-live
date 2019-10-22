@@ -662,7 +662,7 @@
         "signature": "aa657cc3c9324f71d7c84ac68f4e20b1eedea2e1e8b93efd81051208cf69c5f6"
       },
       "../src/dataflow/analysis/tests/analysis-test.ts": {
-        "version": "bb4f2bbe94fa7d660828debc9277643953564e6a761d666fcd531c0da8ab8019",
+        "version": "e68e15f4af7f01213e9f17021011a74283e1d891a97d9e32763ad31219eafc25",
         "signature": "8e609bb71c20b858c77f0e9f90bb1319db8477b13f9f965f1a1e18524bf50881"
       },
       "../src/dataflow/analysis/tests/deep-set-test.ts": {
@@ -4250,6 +4250,7 @@
         "../src/runtime/testing/test-util.ts",
         "../src/dataflow/analysis/graph-internals.ts",
         "../src/dataflow/analysis/flow-graph.ts",
+        "../src/runtime/flags.ts",
         "../node_modules/@types/node/util.d.ts",
         "../node_modules/@types/node/ts3.1/util.d.ts"
       ],

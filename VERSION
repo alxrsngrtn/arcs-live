@@ -1,15 +1,5 @@
-commit 15e87b41b6d1b4dd5d18c8e356d2611110dde939
+commit 032c2d007ee1407c60fe7d7407c34f6e715f1fcc
 Author: Joshua Pratt <jp10010101010000@gmail.com>
-Date:   Tue Oct 22 14:36:57 2019 +1100
+Date:   Tue Oct 22 16:11:57 2019 +1100
 
-    Unified syntax and tests for particle slot connections (#3847)
-    
-    * Storage serialization fix (fix typo)
-    
-    * Switch slandles to use back tick direction arrows so that slots can use non-backticked temporarily
-    
-    * Introduce unified ParticleSlotConnection syntax and improve errors message
-    
-    * Update tests for new syntax
-    
-    * Post slandles unification tests
+    Convert analysis tests to explicitly use pre/post slandles syntax (#3852)
