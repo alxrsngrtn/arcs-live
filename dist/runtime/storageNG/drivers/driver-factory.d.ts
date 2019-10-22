@@ -22,8 +22,9 @@ export declare abstract class Driver<Data> {
     storageKey: StorageKey;
     exists: Exists;
     constructor(storageKey: StorageKey, exists: Exists);
-    abstract registerReceiver(receiver: ReceiveMethod<Data>): void;
+    abstract registerReceiver(receiver: ReceiveMethod<Data>, token?: string): void;
     abstract send(model: Data, version: number): Promise<boolean>;
+    abstract getToken(): string | null;
     abstract write(key: StorageKey, value: any): Promise<void>;
     abstract read(key: StorageKey): Promise<any>;
 }

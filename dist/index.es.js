@@ -23124,6 +23124,14 @@ class VolatileStorageKey extends StorageKey {
 class VolatileMemory {
     constructor() {
         this.entries = new Map();
+        // Tokens can't just be an incrementing number as VolatileMemory is the basis for RamDiskMemory too;
+        // if we were to use numbers here then a RamDisk could be reaped, restarted, and end up with the
+        // same token as a previous iteration.
+        // When we want to support RamDisk fast-forwarding (e.g. by keeping a rotating window of recent
+        // operations) then we'll need tokens to be a combination of a per-instance random value and a
+        // per-operation updating number. For now, just a random value that is updated with each write
+        // is sufficient.
+        this.token = Math.random() + '';
     }
 }
 class VolatileDriver extends Driver {
@@ -23157,6 +23165,7 @@ class VolatileDriver extends Driver {
                     else {
                         this.data = { data: null, version: 0, drivers: [] };
                         this.memory.entries.set(keyAsString, this.data);
+                        this.memory.token = Math.random() + '';
                     }
                     break;
                 }
@@ -23165,13 +23174,14 @@ class VolatileDriver extends Driver {
         }
         this.data.drivers.push(this);
     }
-    registerReceiver(receiver) {
+    registerReceiver(receiver, token) {
         this.receiver = receiver;
-        if (this.pendingModel) {
+        if (this.pendingModel && token !== this.memory.token) {
             receiver(this.pendingModel, this.pendingVersion);
-            this.pendingModel = null;
         }
+        this.pendingModel = null;
     }
+    getToken() { return this.memory.token; }
     async send(model, version) {
         // This needs to contain an "empty" await, otherwise there's
         // a synchronous send / onReceive loop that can be established
@@ -23319,13 +23329,21 @@ class FirebaseDriver extends Driver {
         }
         this.reference = reference;
     }
-    registerReceiver(receiver) {
+    registerReceiver(receiver, token) {
         this.receiver = receiver;
+        if (token) {
+            this.seenVersion = Number(token);
+        }
         if (this.pendingModel !== null) {
             assert(this.pendingModel);
-            receiver(this.pendingModel, this.pendingVersion);
+            if (this.pendingVersion > this.seenVersion) {
+                receiver(this.pendingModel, this.pendingVersion);
+                this.seenVersion = this.pendingVersion;
+            }
             this.pendingModel = null;
-            this.seenVersion = this.pendingVersion;
+        }
+        else {
+            assert(this.seenVersion === 0);
         }
         this.reference.on('value', dataSnapshot => this.remoteStateChanged(dataSnapshot));
     }
@@ -23367,6 +23385,9 @@ class FirebaseDriver extends Driver {
     }
     async read(key) {
         throw new Error('Method not implemented.');
+    }
+    getToken() {
+        return this.seenVersion + '';
     }
 }
 class FirebaseStorageDriverProvider {

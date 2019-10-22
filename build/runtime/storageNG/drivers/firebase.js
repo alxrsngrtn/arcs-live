@@ -102,13 +102,21 @@ export class FirebaseDriver extends Driver {
         }
         this.reference = reference;
     }
-    registerReceiver(receiver) {
+    registerReceiver(receiver, token) {
         this.receiver = receiver;
+        if (token) {
+            this.seenVersion = Number(token);
+        }
         if (this.pendingModel !== null) {
             assert(this.pendingModel);
-            receiver(this.pendingModel, this.pendingVersion);
+            if (this.pendingVersion > this.seenVersion) {
+                receiver(this.pendingModel, this.pendingVersion);
+                this.seenVersion = this.pendingVersion;
+            }
             this.pendingModel = null;
-            this.seenVersion = this.pendingVersion;
+        }
+        else {
+            assert(this.seenVersion === 0);
         }
         this.reference.on('value', dataSnapshot => this.remoteStateChanged(dataSnapshot));
     }
@@ -150,6 +158,9 @@ export class FirebaseDriver extends Driver {
     }
     async read(key) {
         throw new Error('Method not implemented.');
+    }
+    getToken() {
+        return this.seenVersion + '';
     }
 }
 export class FirebaseStorageDriverProvider {

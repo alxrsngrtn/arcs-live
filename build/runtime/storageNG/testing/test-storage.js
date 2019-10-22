@@ -29,6 +29,9 @@ export class MockDriver extends Driver {
     registerReceiver(receiver) {
         this.receiver = receiver;
     }
+    getToken() {
+        return null;
+    }
     async send(model) {
         return true;
     }

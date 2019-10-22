@@ -30,6 +30,7 @@ export declare class MockDriver<Data> extends Driver<Data> {
     read(key: StorageKey): Promise<void>;
     write(key: StorageKey, value: {}): Promise<void>;
     registerReceiver(receiver: ReceiveMethod<Data>): void;
+    getToken(): any;
     send(model: Data): Promise<boolean>;
 }
 export declare class MockStore<T extends CRDTTypeRecord> extends ActiveStore<T> {

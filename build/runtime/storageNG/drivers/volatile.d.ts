@@ -26,6 +26,7 @@ export declare class VolatileStorageKey extends StorageKey {
 }
 export declare class VolatileMemory {
     entries: Map<string, VolatileEntry<unknown>>;
+    token: string;
 }
 export declare class VolatileDriver<Data> extends Driver<Data> {
     private memory;
@@ -34,7 +35,8 @@ export declare class VolatileDriver<Data> extends Driver<Data> {
     private receiver;
     private data;
     constructor(storageKey: StorageKey, exists: Exists, memory: VolatileMemory);
-    registerReceiver(receiver: ReceiveMethod<Data>): void;
+    registerReceiver(receiver: ReceiveMethod<Data>, token?: string): void;
+    getToken(): string;
     send(model: Data, version: number): Promise<boolean>;
     write(key: StorageKey, value: Data): Promise<void>;
     read(key: StorageKey): Promise<Data>;

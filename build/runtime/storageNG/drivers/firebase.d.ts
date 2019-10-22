@@ -40,11 +40,12 @@ export declare class FirebaseDriver<Data> extends Driver<Data> {
     private pendingModel;
     private pendingVersion;
     init(): Promise<void>;
-    registerReceiver(receiver: ReceiveMethod<Data>): void;
+    registerReceiver(receiver: ReceiveMethod<Data>, token?: string): void;
     send(model: Data, version: number): Promise<any>;
     remoteStateChanged(dataSnapshot: firebase.database.DataSnapshot): void;
     write(key: StorageKey, value: Data): Promise<void>;
     read(key: StorageKey): Promise<void>;
+    getToken(): string;
 }
 export declare class FirebaseStorageDriverProvider implements StorageDriverProvider {
     willSupport(storageKey: StorageKey): boolean;

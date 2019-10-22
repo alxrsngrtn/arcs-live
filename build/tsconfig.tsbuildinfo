@@ -266,8 +266,8 @@
         "signature": "3b5f0271525b93678f631cb72cd1f4a694594b28006f68e55055b58e5b4cb794"
       },
       "../src/runtime/storageNG/drivers/driver-factory.ts": {
-        "version": "a3143bf6dd36623bb78133180055eb23e904ba5035b03e5cb8bbbd7bb0da91f5",
-        "signature": "7665deb48be3d6fd7673b14049781883cffbb28fdd4e07217a0e5e7197cb1fd1"
+        "version": "90a077a1fd6d7b808466ef8e1c43aa0db39c2d217f34b43ac4c38c6bacae3723",
+        "signature": "7be61c30ee4c75e06b5c8848963cf28869be9fa3fcd193cf481000b11b8bb2c5"
       },
       "../src/platform/sourcemapped-stacktrace-web.ts": {
         "version": "e19a315be620369989c5caa5df3dd4b7a571565d4a2fb0e5db9bde1d4eaba78e",
@@ -370,8 +370,8 @@
         "signature": "90c1a68b23e12258f5e09d7b5fb773e771892fe9ee7533ce4cec349471c226f5"
       },
       "../src/runtime/storageNG/drivers/volatile.ts": {
-        "version": "0bc3d27901748abc7f88232620306a26ca5989a8d1de3b2500a6c4da48fe533d",
-        "signature": "af120c39fff2ad72a48d2b3b4a240ce8a4427a6ad47de56681d972da74bba906"
+        "version": "cfa45dde739d7b31bf8d1d171cabfdb57f354ea6ca1c9bac549feeeb1dea03dc",
+        "signature": "8564faa6ea989a407e9d9bd68fc9adbca34334519fdbf42b21a1ca8b5ff45045"
       },
       "../src/runtime/runtime.ts": {
         "version": "f3255c932025c8c31caca9d4f1bc207b96040a966ebcae64a43400b8b7926d4c",
@@ -566,8 +566,8 @@
         "signature": "e373b8f98d6b4d4f5216530816b61d7cbd661706f2bb4ec1b371a0de08d39009"
       },
       "../src/runtime/storageNG/drivers/firebase.ts": {
-        "version": "5d77cd04e07cd6572cef2a4991b72306fed129bfaebbf981d2e63e403fe2f8f5",
-        "signature": "f439c9002b77da798e7b074a5c34ff1729c6c43898fe899465d92f0161cdcb69"
+        "version": "330efce9f72b49c1df6b15ac4fcc1dfae3f77a738fcdf96b7178920bd376bc14",
+        "signature": "a0314b0c71feceb81e4ea800629972f50ddd67472b39df06001646f835e412ca"
       },
       "../src/runtime/storageNG/drivers/ramdisk.ts": {
         "version": "acbd37be40623dacb3e812254cb0ab3233c6531954459d457e2632855bf17efb",
@@ -2309,8 +2309,8 @@
         "signature": "fd95df5d076cbfed143dc4904d376b5c6d9cb1091b630994ffe2366010afa6b3"
       },
       "../src/runtime/storageNG/testing/test-storage.ts": {
-        "version": "cc6fbd72c2fe017bf17e6d72a8e17a4af6b2689ce4005ae3a6d2bd86537960a1",
-        "signature": "1ef0e2bee9f030e565c277a560d826ac209c6747149c2dd7509c7761b2aa8ff6"
+        "version": "0fd631ea55bb1602aa3696781bed65a54ed2ad89e18c8426349447409c96658a",
+        "signature": "9cfc0b4692a9297201067b342b24288aedcb1a875c7f75155dff5030a022036f"
       },
       "../src/runtime/storageNG/tests/firebase-store-integration-test.ts": {
         "version": "158cae12584c9c631cd5b56d6481605e5ffd4743f548dcfad754a78184fd90f9",
