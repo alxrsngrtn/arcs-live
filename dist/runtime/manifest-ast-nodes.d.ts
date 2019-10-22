@@ -509,7 +509,7 @@ export declare type whiteSpace = string;
 export declare type eolWhiteSpace = string;
 export declare type eol = string;
 export declare type Direction = 'in' | 'out' | 'inout' | 'host' | '`consume' | '`provide' | 'any';
-export declare type DirectionArrow = '<-' | '->' | '<->' | 'consume' | 'provide' | '=';
+export declare type DirectionArrow = '<-' | '->' | '<->' | '`consume' | '`provide' | '=';
 export declare function arrowToDirection(arrow: DirectionArrow): Direction;
 export declare function directionToArrow(dir: Direction): DirectionArrow;
 export declare type SlotDirection = 'provide' | 'consume';

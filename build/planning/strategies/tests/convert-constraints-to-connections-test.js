@@ -494,14 +494,14 @@ describe('ConvertConstraintsToConnections', () => {
       particle A in 'A.js'
         b: out S
         modality vr
-        consume root
+        root: consume
       particle C in 'C.js'
         d: in S
         modality vr
-        consume root
+        root: consume
       particle E in 'E.js'
         f: in S
-        consume root
+        root: consume
 
       recipe
         A.b: out C.d
@@ -802,7 +802,7 @@ describe('ConvertConstraintsToConnections', () => {
   B as particle1
     i -> handle1`);
     }));
-    it('SLANDLE SYNTAX connects existing particles to tags', Flags.withPostSlandlesSyntax(async () => {
+    it('SLANDLES SYNTAX connects existing particles to tags', Flags.withPostSlandlesSyntax(async () => {
         const manifest = await Manifest.parse(`
     particle A
       o: out S {}

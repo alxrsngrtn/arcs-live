@@ -90,17 +90,17 @@ schema Person
   person: out Person {}
   modality dom
   modality domTouch
-  must consume root #master #main
+  root: consume Slot #master #main
     formFactor big
-    must provide action #large
+    action: provide Slot #large
       formFactor big
       handle list
-    provide preamble
+    preamble: provide Slot
       formFactor medium
-    provide annotation
-  consume other
-    provide set of myProvidedSetCell
-  consume set of mySetCell
+    annotation: provide Slot
+  other: consume Slot
+    myProvidedSetCell: provide [Slot]
+  mySetCell: consume [Slot]
   description \`hello world \${list}\`
     list \`my special list\``;
         const particleStr1 = `particle NoArgsParticle in 'noArgsParticle.js'
@@ -239,8 +239,8 @@ ${particleStr1}
   input: in [Product {}]
     output: out [Product {}]
   modality dom
-  consume thing
-    provide otherThing`;
+  thing: consume Slot
+    otherThing: provide? Slot`;
         const manifest = await Manifest.parse(manifestString);
         assert.lengthOf(manifest.particles, 1);
         assert.strictEqual(manifestString, manifest.particles[0].toString());
@@ -590,32 +590,32 @@ ${particleStr1}
         verify(manifest);
         verify(await Manifest.parse(manifest.toString()));
     });
-    it('SLANDLES can parse a manifest containing a recipe with slots', async () => {
+    it('SLANDLES can parse a manifest containing a recipe with slots', Flags.withPostSlandlesSyntax(async () => {
         const manifest = await Manifest.parse(`
       schema Thing
       particle SomeParticle in 'some-particle.js'
-        in Thing someParam
-        \`consume Slot {formFactor: big} mySlot
-          \`provide Slot {handle: someParam} otherSlot
-          \`provide Slot {formFactor: small} oneMoreSlot
+        someParam: in Thing
+        mySlot: \`consume Slot {formFactor: big}
+          otherSlot: \`provide Slot {handle: someParam}
+          oneMoreSlot: \`provide Slot {formFactor: small}
 
       particle OtherParticle
-        out Thing aParam
-        \`consume Slot mySlot
-        \`consume Slot oneMoreSlot
+        aParam: out Thing
+        mySlot: \`consume Slot
+        oneMoreSlot: \`consume Slot
 
       recipe SomeRecipe
         ? #someHandle1 as myHandle
         \`slot 'slotIDs:A' #someSlot as slot0
         SomeParticle
-          someParam <- myHandle
-          mySlot consume slot0
-          otherSlot provide slot2
-          oneMoreSlot provide slot1
+          someParam: in myHandle
+          mySlot: \`consume slot0
+          otherSlot: \`provide slot2
+          oneMoreSlot: \`provide slot1
         OtherParticle
-          aParam -> myHandle
-          mySlot consume slot0
-          oneMoreSlot consume slot1
+          aParam: out myHandle
+          mySlot: \`consume slot0
+          oneMoreSlot: \`consume slot1
     `);
         const verify = (manifest) => {
             const recipe = manifest.recipes[0];
@@ -630,7 +630,7 @@ ${particleStr1}
         };
         verify(manifest);
         verify(await Manifest.parse(manifest.toString()));
-    });
+    }));
     it('unnamed consume slots', async () => {
         const manifest = await Manifest.parse(`
       particle SomeParticle &work in 'some-particle.js'
@@ -682,57 +682,57 @@ ${particleStr1}
         assert.lengthOf(recipe.slotConnections, 2);
         assert.isEmpty(recipe.slots);
     });
-    it('SLANDLES unnamed consume slots', async () => {
+    it('SLANDLES unnamed consume slots', Flags.withPostSlandlesSyntax(async () => {
         const manifest = await Manifest.parse(`
       particle SomeParticle &work in 'some-particle.js'
-        \`consume Slot slotA
+        slotA: \`consume Slot
       particle SomeParticle1 &rest in 'some-particle.js'
-        \`consume Slot slotC
+        slotC: \`consume Slot
 
       recipe
         SomeParticle
-          slotA consume
+          slotA: \`consume
         SomeParticle1
-          slotC consume
+          slotC: \`consume
     `);
         const recipe = manifest.recipes[0];
         assert.lengthOf(recipe.handleConnections, 2);
         assert.isEmpty(recipe.handles);
-    });
-    it('SLANDLES unnamed consume set slots', async () => {
+    }));
+    it('SLANDLES unnamed consume set slots', Flags.withPostSlandlesSyntax(async () => {
         const manifest = await Manifest.parse(`
       particle SomeParticle &work in 'some-particle.js'
-        \`consume [Slot] slotA
+        slotA: \`consume [Slot]
       particle SomeParticle1 &rest in 'some-particle.js'
-        \`consume [Slot] slotC
+        slotC: \`consume [Slot]
 
       recipe
         SomeParticle
-          slotA consume
+          slotA: \`consume
         SomeParticle1
-          slotC consume
+          slotC: \`consume
     `);
         const recipe = manifest.recipes[0];
         assert.lengthOf(recipe.handleConnections, 2);
         assert.isEmpty(recipe.handles);
-    });
-    it('SLANDLES unnamed consume set slots', async () => {
+    }));
+    it('SLANDLES unnamed consume set slots', Flags.withPostSlandlesSyntax(async () => {
         const manifest = await Manifest.parse(`
       particle SomeParticle &work in 'some-particle.js'
-        \`consume [Slot] slotA
+        slotA: \`consume [Slot]
       particle SomeParticle1 &rest in 'some-particle.js'
-        \`consume [Slot] slotC
+        slotC: \`consume [Slot]
 
       recipe
         SomeParticle
-          slotA consume
+          slotA: \`consume
         SomeParticle1
-          slotC consume
+          slotC: \`consume
     `);
         const recipe = manifest.recipes[0];
         assert.lengthOf(recipe.handleConnections, 2);
         assert.isEmpty(recipe.handles);
-    });
+    }));
     it('resolves in context with multiple consumed slots', async () => {
         const parseRecipe = async (arg) => {
             const recipe = (await Manifest.parse(`
@@ -754,17 +754,17 @@ ${particleStr1}
         await parseRecipe({ label: '3', isRequiredSlotA: false, isRequiredSlotB: true, expectedIsResolved: false });
         await parseRecipe({ label: '4', isRequiredSlotA: true, isRequiredSlotB: true, expectedIsResolved: false });
     });
-    it('SLANDLES resolves in context with multiple consumed slots', async () => {
+    it('SLANDLES resolves in context with multiple consumed slots', Flags.withPostSlandlesSyntax(async () => {
         const parseRecipe = async (arg) => {
             const recipe = (await Manifest.parse(`
         particle SomeParticle in 'some-particle.js'
-          \`consume${arg.isRequiredSlotA ? '' : '?'} Slot slotA
-          \`consume${arg.isRequiredSlotB ? '' : '?'} Slot slotB
+          slotA: \`consume${arg.isRequiredSlotA ? '' : '?'} Slot
+          slotB: \`consume${arg.isRequiredSlotB ? '' : '?'} Slot
 
         recipe
           \`slot 'slota-0' as s0
           SomeParticle
-            slotA consume s0
+            slotA: \`consume s0
       `)).recipes[0];
             const options = { errors: new Map(), details: '', showUnresolved: true };
             assert.isTrue(recipe.normalize(options), 'normalizes');
@@ -774,18 +774,18 @@ ${particleStr1}
         await parseRecipe({ label: '2', isRequiredSlotA: true, isRequiredSlotB: false, expectedIsResolved: true });
         await parseRecipe({ label: '3', isRequiredSlotA: false, isRequiredSlotB: true, expectedIsResolved: false });
         await parseRecipe({ label: '4', isRequiredSlotA: true, isRequiredSlotB: true, expectedIsResolved: false });
-    });
-    it('SLANDLES resolves & consumes in context with multiple set slots', async () => {
+    }));
+    it('SLANDLES resolves & consumes in context with multiple set slots', Flags.withPostSlandlesSyntax(async () => {
         const parseRecipe = async (arg) => {
             const recipe = (await Manifest.parse(`
         particle SomeParticle in 'some-particle.js'
-          \`consume${arg.isRequiredSlotA ? '' : '?'} [Slot] slotA
-          \`consume${arg.isRequiredSlotB ? '' : '?'} [Slot] slotB
+          slotA: \`consume${arg.isRequiredSlotA ? '' : '?'} [Slot]
+          slotB: \`consume${arg.isRequiredSlotB ? '' : '?'} [Slot]
 
         recipe
           \`slot 'slota-0' as s0
           SomeParticle
-            slotA consume s0
+            slotA: \`consume s0
       `)).recipes[0];
             const options = { errors: new Map(), details: '', showUnresolved: true };
             assert.isTrue(recipe.normalize(options), `should normalizes ${JSON.stringify([...options.errors.values()])} ${JSON.stringify(options.details)}`);
@@ -795,22 +795,22 @@ ${particleStr1}
         await parseRecipe({ label: '2', isRequiredSlotA: true, isRequiredSlotB: false, expectedIsResolved: true });
         await parseRecipe({ label: '3', isRequiredSlotA: false, isRequiredSlotB: true, expectedIsResolved: false });
         await parseRecipe({ label: '4', isRequiredSlotA: true, isRequiredSlotB: true, expectedIsResolved: false });
-    });
-    it('SLANDLES resolves with dependent slandles', async () => {
+    }));
+    it('SLANDLES resolves with dependent slandles', Flags.withPostSlandlesSyntax(async () => {
         const manifest = await Manifest.parse(`
       particle Parent in 'parent.js'
-        \`consume Slot root
-          \`provide Slot mySlot
+        root: \`consume Slot
+          mySlot: \`provide Slot
 
       particle Child in 'child.js'
-        \`consume Slot childSlot
+        childSlot: \`consume Slot
 
       recipe SlandleRenderSlotsRecipe
         Parent
-          root consume root
-            mySlot provide shared
+          root: \`consume root
+            mySlot: \`provide shared
         Child
-          childSlot consume shared
+          childSlot: \`consume shared
     `);
         // verify particle spec
         assert.lengthOf(manifest.particles, 2);
@@ -819,21 +819,21 @@ ${particleStr1}
         recipe.normalize();
         assert.lengthOf(recipe.handles, 2);
         assert.isTrue(recipe.isResolved());
-    });
-    it('SLANDLES doesn\'t resolve mismatching dependencies dependent slandles', async () => {
+    }));
+    it('SLANDLES doesn\'t resolve mismatching dependencies dependent slandles', Flags.withPostSlandlesSyntax(async () => {
         const manifest = await Manifest.parse(`
       particle Parent in 'parent.js'
-        \`consume Slot root
-          \`provide Slot mySlot
+        root: \`consume Slot
+          mySlot: \`provide Slot
 
       particle Child in 'child.js'
-        \`consume Slot childSlot
+        childSlot: \`consume Slot
 
       recipe SlandleRenderSlotsRecipe
         Parent
-          root consume root
+          root: \`consume root
         Child
-          childSlot consume shared
+          childSlot: \`consume shared
     `);
         // verify particle spec
         assert.lengthOf(manifest.particles, 2);
@@ -842,7 +842,7 @@ ${particleStr1}
         recipe.normalize();
         assert.lengthOf(recipe.handles, 2);
         assert.isFalse(recipe.isResolved());
-    });
+    }));
     it('recipe slots with tags', async () => {
         const manifest = await Manifest.parse(`
       particle SomeParticle in 'some-particle.js'
@@ -874,16 +874,16 @@ ${particleStr1}
         assert.deepEqual(['aa', 'hello'], slotConn.tags);
         assert.lengthOf(Object.keys(slotConn.providedSlots), 1);
     });
-    it('SLANDLES recipe slots with tags', async () => {
+    it('SLANDLES recipe slots with tags', Flags.withPostSlandlesSyntax(async () => {
         const manifest = await Manifest.parse(`
       particle SomeParticle in 'some-particle.js'
-        \`consume Slot slotA #aaa
-          \`provide Slot slotB #bbb
+        slotA: \`consume Slot #aaa
+          slotB: \`provide Slot #bbb
       recipe
         \`slot 'slot-id0' #aa #aaa as s0
         SomeParticle
-          slotA consume s0 #aa #hello
-          slotB provide
+          slotA: \`consume s0 #aa #hello
+          slotB: \`provide
     `);
         // verify particle spec
         assert.lengthOf(manifest.particles, 1);
@@ -902,7 +902,7 @@ ${particleStr1}
         assert.deepEqual(recipeSlot.tags, ['aa', 'aaa']);
         const slotConn = checkDefined(recipe.particles[0].connections['slotA']);
         assert.deepEqual(['aa', 'hello'], slotConn.tags);
-    });
+    }));
     it('recipe slots with different names', async () => {
         const manifest = await Manifest.parse(`
       particle ParticleA in 'some-particle.js'
@@ -926,20 +926,20 @@ ${particleStr1}
         recipe.normalize();
         assert.isTrue(recipe.isResolved());
     });
-    it('SLANDLES recipe slots with different names', async () => {
+    it('SLANDLES recipe slots with different names', Flags.withPostSlandlesSyntax(async () => {
         const manifest = await Manifest.parse(`
       particle ParticleA in 'some-particle.js'
-        \`consume Slot slotA
+        slotA: \`consume Slot
       particle ParticleB in 'some-particle.js'
-        \`consume Slot slotB1
-          \`provide Slot slotB2
+        slotB1: \`consume Slot
+          slotB2: \`provide Slot
       recipe
         \`slot 'slot-id0' as s0
         ParticleA
-          slotA consume mySlot
+          slotA: \`consume mySlot
         ParticleB
-          slotB1 consume s0
-          slotB2 provide mySlot
+          slotB1: \`consume s0
+          slotB2: \`provide mySlot
     `);
         assert.lengthOf(manifest.particles, 2);
         assert.lengthOf(manifest.recipes, 1);
@@ -949,21 +949,21 @@ ${particleStr1}
         const options = { errors: new Map(), details: '', showUnresolved: true };
         assert.isTrue(recipe.normalize(options), 'normalizes');
         assert.isTrue(recipe.isResolved(options), `Expected recipe to be resolved.\n\t ${JSON.stringify([...options.errors])}`);
-    });
-    it('SLANDLES recipe set slots with different names (passing a single slot to a set slot)', async () => {
+    }));
+    it('SLANDLES recipe set slots with different names (passing a single slot to a set slot)', Flags.withPostSlandlesSyntax(async () => {
         const manifest = await Manifest.parse(`
       particle ParticleA in 'some-particle.js'
-        \`consume [Slot] slotA
+        slotA: \`consume [Slot]
       particle ParticleB in 'some-particle.js'
-        \`consume Slot slotB1
-          \`provide Slot slotB2
+        slotB1: \`consume Slot
+          slotB2: \`provide Slot
       recipe
         \`slot 'slot-id0' as s0
         ParticleA
-          slotA consume mySlot
+          slotA: \`consume mySlot
         ParticleB
-          slotB1 consume s0
-          slotB2 provide mySlot
+          slotB1: \`consume s0
+          slotB2: \`provide mySlot
     `);
         assert.lengthOf(manifest.particles, 2);
         assert.lengthOf(manifest.recipes, 1);
@@ -971,21 +971,21 @@ ${particleStr1}
         assert.lengthOf(recipe.handles, 2);
         assert.strictEqual(checkDefined(recipe.particles.find(p => p.name === 'ParticleA')).connections['slotA'].handle, checkDefined(recipe.particles.find(p => p.name === 'ParticleB')).connections['slotB2'].handle);
         assert.isFalse(recipe.normalize(), 'does not normalize');
-    });
-    it('SLANDLES recipe set slots with different names (passing a slot as a set slot)', async () => {
+    }));
+    it('SLANDLES recipe set slots with different names (passing a slot as a set slot)', Flags.withPostSlandlesSyntax(async () => {
         const manifest = await Manifest.parse(`
       particle ParticleA in 'some-particle.js'
-        \`consume [Slot] slotA
+        slotA: \`consume [Slot]
       particle ParticleB in 'some-particle.js'
-        \`consume Slot slotB1
-          \`provide [Slot] slotB2
+        slotB1: \`consume Slot
+          slotB2: \`provide [Slot]
       recipe
         \`slot 'slot-id0' as s0
         ParticleA
-          slotA consume mySlot
+          slotA: \`consume mySlot
         ParticleB
-          slotB1 consume s0
-          slotB2 provide mySlot
+          slotB1: \`consume s0
+          slotB2: \`provide mySlot
     `);
         assert.lengthOf(manifest.particles, 2);
         assert.lengthOf(manifest.recipes, 1);
@@ -995,21 +995,21 @@ ${particleStr1}
         const options = { errors: new Map(), details: '', showUnresolved: true };
         assert.isTrue(recipe.normalize(options), 'normalizes');
         assert.isTrue(recipe.isResolved(options), `Expected recipe to be resolved.\n\t ${JSON.stringify([...options.errors])}`);
-    });
-    it('SLANDLES recipe set slots with different names (passing set slots)', async () => {
+    }));
+    it('SLANDLES recipe set slots with different names (passing set slots)', Flags.withPostSlandlesSyntax(async () => {
         const manifest = await Manifest.parse(`
       particle ParticleA in 'some-particle.js'
-        \`consume [Slot] slotA
+        slotA: \`consume [Slot]
       particle ParticleB in 'some-particle.js'
-        \`consume [Slot] slotB1
-          \`provide [Slot] slotB2
+        slotB1: \`consume [Slot]
+          slotB2: \`provide [Slot]
       recipe
         \`slot 'slot-id0' as s0
         ParticleA
-          slotA consume mySlot
+          slotA: \`consume mySlot
         ParticleB
-          slotB1 consume s0
-          slotB2 provide mySlot
+          slotB1: \`consume s0
+          slotB2: \`provide mySlot
     `);
         assert.lengthOf(manifest.particles, 2);
         assert.lengthOf(manifest.recipes, 1);
@@ -1019,21 +1019,21 @@ ${particleStr1}
         const options = { errors: new Map(), details: '', showUnresolved: true };
         assert.isTrue(recipe.normalize(options), 'normalizes');
         assert.isTrue(recipe.isResolved(options), `Expected recipe to be resolved.\n\t ${JSON.stringify([...options.errors])}`);
-    });
-    it('SLANDLES recipe set slots with different names (passing a single slot to a set slot)', async () => {
+    }));
+    it('SLANDLES recipe set slots with different names (passing a single slot to a set slot)', Flags.withPostSlandlesSyntax(async () => {
         const manifest = await Manifest.parse(`
       particle ParticleA in 'some-particle.js'
-        \`consume [Slot] slotA
+        slotA: \`consume [Slot]
       particle ParticleB in 'some-particle.js'
-        \`consume Slot slotB1
-          \`provide Slot slotB2
+        slotB1: \`consume Slot
+          slotB2: \`provide Slot
       recipe
         \`slot 'slot-id0' as s0
         ParticleA
-          slotA consume mySlot
+          slotA: \`consume mySlot
         ParticleB
-          slotB1 consume s0
-          slotB2 provide mySlot
+          slotB1: \`consume s0
+          slotB2: \`provide mySlot
     `);
         assert.lengthOf(manifest.particles, 2);
         assert.lengthOf(manifest.recipes, 1);
@@ -1041,21 +1041,21 @@ ${particleStr1}
         assert.lengthOf(recipe.handles, 2);
         assert.strictEqual(checkDefined(recipe.particles.find(p => p.name === 'ParticleA')).connections['slotA'].handle, checkDefined(recipe.particles.find(p => p.name === 'ParticleB')).connections['slotB2'].handle);
         assert.isFalse(recipe.normalize(), 'does not normalize');
-    });
-    it('SLANDLES recipe set slots with different names (passing a slot as a set slot)', async () => {
+    }));
+    it('SLANDLES recipe set slots with different names (passing a slot as a set slot)', Flags.withPostSlandlesSyntax(async () => {
         const manifest = await Manifest.parse(`
       particle ParticleA in 'some-particle.js'
-        \`consume [Slot] slotA
+        slotA: \`consume [Slot]
       particle ParticleB in 'some-particle.js'
-        \`consume Slot slotB1
-          \`provide [Slot] slotB2
+        slotB1: \`consume Slot
+          slotB2: \`provide [Slot]
       recipe
         \`slot 'slot-id0' as s0
         ParticleA
-          slotA consume mySlot
+          slotA: \`consume mySlot
         ParticleB
-          slotB1 consume s0
-          slotB2 provide mySlot
+          slotB1: \`consume s0
+          slotB2: \`provide mySlot
     `);
         assert.lengthOf(manifest.particles, 2);
         assert.lengthOf(manifest.recipes, 1);
@@ -1065,21 +1065,21 @@ ${particleStr1}
         const options = { errors: new Map(), details: '', showUnresolved: true };
         assert.isTrue(recipe.normalize(options), 'normalizes');
         assert.isTrue(recipe.isResolved(options), `Expected recipe to be resolved.\n\t ${JSON.stringify([...options.errors])}`);
-    });
-    it('SLANDLES recipe set slots with different names (passing set slots)', async () => {
+    }));
+    it('SLANDLES recipe set slots with different names (passing set slots)', Flags.withPostSlandlesSyntax(async () => {
         const manifest = await Manifest.parse(`
       particle ParticleA in 'some-particle.js'
-        \`consume [Slot] slotA
+        slotA: \`consume [Slot]
       particle ParticleB in 'some-particle.js'
-        \`consume [Slot] slotB1
-          \`provide [Slot] slotB2
+        slotB1: \`consume [Slot]
+          slotB2: \`provide [Slot]
       recipe
         \`slot 'slot-id0' as s0
         ParticleA
-          slotA consume mySlot
+          slotA: \`consume mySlot
         ParticleB
-          slotB1 consume s0
-          slotB2 provide mySlot
+          slotB1: \`consume s0
+          slotB2: \`provide mySlot
     `);
         assert.lengthOf(manifest.particles, 2);
         assert.lengthOf(manifest.recipes, 1);
@@ -1089,7 +1089,7 @@ ${particleStr1}
         const options = { errors: new Map(), details: '', showUnresolved: true };
         assert.isTrue(recipe.normalize(options), 'normalizes');
         assert.isTrue(recipe.isResolved(options), `Expected recipe to be resolved.\n\t ${JSON.stringify([...options.errors])}`);
-    });
+    }));
     it('recipe provided slot with no local name', async () => {
         const manifest = await Manifest.parse(`
       particle ParticleA in 'some-particle.js'
@@ -1109,15 +1109,15 @@ ${particleStr1}
         recipe.normalize();
         assert.isFalse(recipe.isResolved());
     });
-    it('SLANDLES recipe provided slot with no local name', async () => {
+    it('SLANDLES recipe provided slot with no local name', Flags.withPostSlandlesSyntax(async () => {
         const manifest = await Manifest.parse(`
       particle ParticleA in 'some-particle.js'
-        \`consume Slot slotA1
-          \`provide Slot slotA2
+        slotA1: \`consume Slot
+          slotA2: \`provide Slot
       recipe
         ParticleA
-          slotA1 consume
-          slotA2 provide
+          slotA1: \`consume
+          slotA2: \`provide
     `);
         // Check that the manifest was parsed in the way we expect.
         assert.lengthOf(manifest.particles, 1);
@@ -1135,16 +1135,16 @@ ${particleStr1}
         // consuming slotA2).
         recipe.normalize();
         assert.isFalse(recipe.isResolved());
-    });
-    it('SLANDLES recipe provided set slots with no local name', async () => {
+    }));
+    it('SLANDLES recipe provided set slots with no local name', Flags.withPostSlandlesSyntax(async () => {
         const manifest = await Manifest.parse(`
       particle ParticleA in 'some-particle.js'
-        \`consume [Slot] slotA1
-          \`provide [Slot] slotA2
+        slotA1: \`consume [Slot]
+          slotA2: \`provide [Slot]
       recipe
         ParticleA
-          slotA1 consume
-          slotA2 provide
+          slotA1: \`consume
+          slotA2: \`provide
     `);
         // Check that the manifest was parsed in the way we expect.
         assert.lengthOf(manifest.particles, 1);
@@ -1162,16 +1162,16 @@ ${particleStr1}
         // consuming slotA2).
         recipe.normalize();
         assert.isFalse(recipe.isResolved());
-    });
-    it('SLANDLES recipe provided set slots with no local name', async () => {
+    }));
+    it('SLANDLES recipe provided set slots with no local name', Flags.withPostSlandlesSyntax(async () => {
         const manifest = await Manifest.parse(`
       particle ParticleA in 'some-particle.js'
-        \`consume [Slot] slotA1
-          \`provide [Slot] slotA2
+        slotA1: \`consume [Slot]
+          slotA2: \`provide [Slot]
       recipe
         ParticleA
-          slotA1 consume
-          slotA2 provide
+          slotA1: \`consume
+          slotA2: \`provide
     `);
         // Check that the manifest was parsed in the way we expect.
         assert.lengthOf(manifest.particles, 1);
@@ -1189,7 +1189,7 @@ ${particleStr1}
         // consuming slotA2).
         recipe.normalize();
         assert.isFalse(recipe.isResolved());
-    });
+    }));
     it('incomplete aliasing', async () => {
         const recipe = (await Manifest.parse(`
       particle P1 in 'some-particle.js'
@@ -1215,19 +1215,19 @@ ${particleStr1}
         assert.lengthOf(slotB.consumeConnections, 1);
         assert.strictEqual(slotB.sourceConnection, slotConnA);
     });
-    it('SLANDLES incomplete aliasing', async () => {
+    it('SLANDLES incomplete aliasing', Flags.withPostSlandlesSyntax(async () => {
         const recipe = (await Manifest.parse(`
       particle P1 in 'some-particle.js'
-        \`consume Slot slotA
-          \`provide Slot slotB
+        slotA: \`consume Slot
+          slotB: \`provide Slot
       particle P2 in 'some-particle.js'
-        \`consume Slot slotB
+        slotB: \`consume Slot
       recipe
         P1
-          slotA consume
-          slotB provide s1
+          slotA: \`consume
+          slotB: \`provide s1
         P2
-          slotB consume s1
+          slotB: \`consume s1
     `)).recipes[0];
         recipe.normalize();
         assert.lengthOf(recipe.handleConnections, 3);
@@ -1242,7 +1242,7 @@ ${particleStr1}
         assert.lengthOf(directions, 2);
         assert.include(directions, '`provide');
         assert.include(directions, '`consume');
-    });
+    }));
     it('parses local slots with IDs', async () => {
         const recipe = (await Manifest.parse(`
       particle P1 in 'some-particle.js'
@@ -1262,25 +1262,25 @@ ${particleStr1}
         recipe.normalize();
         assert.lengthOf(recipe.slots, 2);
     });
-    it('SLANDLES parses local slots with IDs', async () => {
+    it('SLANDLES parses local slots with IDs', Flags.withPostSlandlesSyntax(async () => {
         const recipe = (await Manifest.parse(`
       particle P1 in 'some-particle.js'
-        \`consume Slot slotA
-          \`provide Slot slotB
+        slotA: \`consume Slot
+          slotB: \`provide Slot
       particle P2 in 'some-particle.js'
-        \`consume Slot slotB
+        slotB: \`consume Slot
       recipe
         \`slot 'rootslot-0' as slot0
         \`slot 'local-slot-0' as slot1
         P1
-          slotA consume slot0
-          slotB provide slot1
+          slotA: \`consume slot0
+          slotB: \`provide slot1
         P2
-          slotB consume slot1
+          slotB: \`consume slot1
     `)).recipes[0];
         recipe.normalize();
         assert.lengthOf(recipe.handles, 2);
-    });
+    }));
     it('relies on the loader to combine paths', async () => {
         const registry = {};
         const loader = new class extends StubLoader {
@@ -1494,13 +1494,13 @@ Expected a verb (e.g. &Verb) or an uppercase identifier (e.g. Foo) but "?" found
             assert.match(e.message, /Consumed slot 'other' is not defined by 'TestParticle'/);
         }
     });
-    it('SLANDLES errors when the manifest references a missing consumed slot', async () => {
+    it('SLANDLES errors when the manifest references a missing consumed slot', Flags.withPostSlandlesSyntax(async () => {
         const manifest = `
         particle TestParticle in 'tp.js'
-          \`consume Slot root
+          root: \`consume Slot
         recipe
           TestParticle
-            other consume`;
+            other: \`consume`;
         try {
             await Manifest.parse(manifest);
             assert.fail();
@@ -1508,7 +1508,7 @@ Expected a verb (e.g. &Verb) or an uppercase identifier (e.g. Foo) but "?" found
         catch (e) {
             assert.match(e.message, /param 'other' is not defined by 'TestParticle'/);
         }
-    });
+    }));
     it('errors when the manifest references a missing provided slot', async () => {
         const manifest = `
         particle TestParticle in 'tp.js'
@@ -1526,15 +1526,15 @@ Expected a verb (e.g. &Verb) or an uppercase identifier (e.g. Foo) but "?" found
             assert.match(e.message, /Provided slot 'noAction' is not defined by 'TestParticle'/);
         }
     });
-    it('SLANDLES errors when the manifest references a missing provided slot', async () => {
+    it('SLANDLES errors when the manifest references a missing provided slot', Flags.withPostSlandlesSyntax(async () => {
         const manifest = `
         particle TestParticle in 'tp.js'
-          \`consume Slot root
-            \`provide Slot action
+          root: \`consume Slot
+            action: \`provide Slot
         recipe
           TestParticle
-            root consume
-            noAction provide`;
+            root: \`consume
+            noAction: \`provide`;
         try {
             await Manifest.parse(manifest);
             assert.fail();
@@ -1542,7 +1542,7 @@ Expected a verb (e.g. &Verb) or an uppercase identifier (e.g. Foo) but "?" found
         catch (e) {
             assert.match(e.message, /param 'noAction' is not defined by 'TestParticle'/);
         }
-    });
+    }));
     it('errors when the manifest uses invalid connection constraints', async () => {
         // nonexistent fromParticle
         const manifestFrom = `
@@ -2171,12 +2171,12 @@ resource SomeName
         assert(slotConnection.providedSlots.provideSlot);
         assert.strictEqual(slotConnection.providedSlots.provideSlot.sourceConnection, slotConnection);
     });
-    it('SLANDLES can parse a recipe with slot constraints on verbs', async () => {
+    it('SLANDLES can parse a recipe with slot constraints on verbs', Flags.withPostSlandlesSyntax(async () => {
         const manifest = await Manifest.parse(`
       recipe
         \`slot as provideSlot
         &verb
-          foo consume provideSlot
+          foo: \`consume provideSlot
     `);
         const recipe = manifest.recipes[0];
         assert.strictEqual(recipe.particles[0].primaryVerb, 'verb');
@@ -2186,7 +2186,7 @@ resource SomeName
         assert.lengthOf(recipe.handles, 1);
         assert.lengthOf(recipe.handles[0].connections, 1);
         assert.strictEqual(recipe.handles[0].connections[0], slotConnection);
-    });
+    }));
     it('can parse particle arguments with tags', async () => {
         const manifest = await Manifest.parse(`
       schema Dog
@@ -2215,8 +2215,8 @@ resource SomeName
   input: in [Product {}]
     output: out [Product {}]
   modality dom
-  consume thing #main #tagname
-    provide otherThing #testtag`;
+  thing: consume Slot #main #tagname
+    otherThing: provide Slot #testtag`;
         const manifest = await Manifest.parse(manifestString);
         assert.lengthOf(manifest.particles, 1);
         assert.strictEqual(manifestString, manifest.particles[0].toString());
@@ -2238,9 +2238,9 @@ resource SomeName
     output: out [Product {}]
   thingy: in ~a
   modality dom
-  must consume thing #main #tagname
+  thing: consume Slot #main #tagname
     formFactor big
-    must provide otherThing #testtag
+    otherThing: provide Slot #testtag
       handle thingy`;
         const manifest = await Manifest.parse(manifestString);
         assert.lengthOf(manifest.particles, 1);
@@ -2314,11 +2314,11 @@ resource SomeName
         const manifest = await Manifest.parse(`
       particle P1
         a: out S {}
-        consume root
-          provide details
+        root: consume
+          details: provide
       particle P2
         b: in S {}
-          consume details
+          details: consume
 
       recipe
         require

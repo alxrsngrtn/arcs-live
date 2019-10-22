@@ -32,9 +32,9 @@ export function arrowToDirection(arrow) {
             return 'in';
         case '<->':
             return 'inout';
-        case 'consume':
+        case '`consume':
             return '`consume';
-        case 'provide':
+        case '`provide':
             return '`provide';
         case '=':
             return 'any';
@@ -55,9 +55,9 @@ export function directionToArrow(dir) {
         case 'host':
             return '=';
         case '`consume':
-            return 'consume';
+            return '`consume';
         case '`provide':
-            return 'provide';
+            return '`provide';
         case 'any':
             return '=';
         default:

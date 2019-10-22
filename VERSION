@@ -1,8 +1,15 @@
-commit 6f22bcec21ae3247d5be4116986c25db581ce447
-Author: shans <shane.stephens@gmail.com>
-Date:   Tue Oct 22 14:35:34 2019 +1100
+commit 15e87b41b6d1b4dd5d18c8e356d2611110dde939
+Author: Joshua Pratt <jp10010101010000@gmail.com>
+Date:   Tue Oct 22 14:36:57 2019 +1100
 
-    Entity id bug (#3836)
+    Unified syntax and tests for particle slot connections (#3847)
     
-    Add serialization/deserialization to NG handles, but only for Entity collections/singletons.
-    This patch incorporates contributions from both @csilvestrini and @shans
+    * Storage serialization fix (fix typo)
+    
+    * Switch slandles to use back tick direction arrows so that slots can use non-backticked temporarily
+    
+    * Introduce unified ParticleSlotConnection syntax and improve errors message
+    
+    * Update tests for new syntax
+    
+    * Post slandles unification tests
