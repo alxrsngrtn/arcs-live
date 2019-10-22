@@ -1,5 +1,24 @@
-commit 032c2d007ee1407c60fe7d7407c34f6e715f1fcc
-Author: Joshua Pratt <jp10010101010000@gmail.com>
-Date:   Tue Oct 22 16:11:57 2019 +1100
+commit 2ad61eb039cf2ab3b1c828c5456611185002f4bd
+Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
+Date:   Tue Oct 22 16:43:36 2019 +1100
 
-    Convert analysis tests to explicitly use pre/post slandles syntax (#3852)
+    Fix bug in //:all_srcs glob (#3856)
+    
+    Globs can only reach into subdirectories when those subdirectories do
+    not contain a BUILD file of their own.
+    
+    The :all_srcs filegroup was designed to copy over all of the important
+    src files into bazel runfiles so that things like `sigh build` can work.
+    However, there are some folder (notably the tools folders) that include
+    BUILD files, so those sources weren't being copied.
+    
+    I've added deps for //src/tools and //tools so those now get included.
+    
+    There are other folders that have BUILD files (e.g. //src/wasm) which
+    are still not being included, but I don't think that's an issue (for
+    now).
+    
+    This isn't an ideal situation; I think we're going to continue to be
+    bitten by this as we continue to add more BUILD files. Having a proper
+    bazel-driven compilation for our TypeScript code would solve a lot of
+    problems...
