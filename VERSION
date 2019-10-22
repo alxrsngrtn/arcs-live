@@ -1,11 +1,13 @@
-commit b131ef3b81cc9dcefd508baed3898d45d414c03b
+commit f52e073fbd2fe2bafebc0a763e5db97ecf81acde
 Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
-Date:   Tue Oct 22 13:20:46 2019 +1100
+Date:   Tue Oct 22 14:04:10 2019 +1100
 
-    Tidy up javaharness WORKSPACE rules (#3837)
+    Move src_kt into the main repo WORKSPACE (#3835)
     
-    Migrated from maven_jar to maven_install, and removed some unused j2cl
-    deps.
+    The sources are still all in src_kt (we should probably move them one
+    day). And src_kt_runtests.sh is still there, but it isn't used anymore
+    for running tests on travis.
     
-    In a follow-up PR I'll combine the src_kt/WORKSAPCE file with the main
-    WORKSPACE file to make things even simpler.
+    Getting closer to the goal of having everything be in the root
+    WORKSPACE, and being able to run `bazel test ...` on Travis to test the
+    whole repo.
