@@ -1,5 +1,5 @@
-commit 4ef5a0f9b86a7b4924b96eb2c50176112a238ad1
-Author: Sarah Heimlich <heimlich@google.com>
-Date:   Mon Oct 21 16:33:17 2019 -0700
+commit dce74430a1fcd18662f57cc5ce2ca22436158fd6
+Author: Joshua Pratt <jp10010101010000@gmail.com>
+Date:   Tue Oct 22 11:17:03 2019 +1100
 
-    Update Particle.kt so particles do not have to implement onHandleUpdate and onHandleSync. Removed renderSlot now that UIBroker is implemented. Updated naming of TestParticle so the correct file is being executed. (#3843)
+    Storage serialization fix (fix typo) (#3846)

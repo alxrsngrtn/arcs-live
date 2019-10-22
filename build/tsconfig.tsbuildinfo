@@ -494,7 +494,7 @@
         "signature": "f2d8b054448cb4886900f4baa77e8b41c7d00a7a3bd25a90752e325aab5e14c3"
       },
       "../src/runtime/arc.ts": {
-        "version": "e600667e5c144305f6b1c93e54fef474534777dc620d78254bd4e318aa17c97c",
+        "version": "cd5a16eed917192092ff379c969f8635cf75a47c81651bdccfcdf651a0bf1d05",
         "signature": "f5a76c9d0f56d9aea76b7b9af419daaf2bd80e4ad350672331b144aafec7a76f"
       },
       "../src/runtime/api-channel.ts": {
