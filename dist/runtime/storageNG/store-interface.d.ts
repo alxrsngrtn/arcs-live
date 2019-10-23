@@ -8,7 +8,7 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { PropagatedException } from '../arc-exceptions.js';
-import { CRDTTypeRecord } from '../crdt/crdt.js';
+import { CRDTData, CRDTTypeRecord } from '../crdt/crdt.js';
 import { Type } from '../type.js';
 import { Exists } from './drivers/driver-factory.js';
 import { StorageKey } from './storage-key.js';
@@ -78,6 +78,7 @@ export declare abstract class ActiveStore<T extends CRDTTypeRecord> implements S
     toLiteral(): Promise<any>;
     cloneFrom(store: UnifiedActiveStore): Promise<void>;
     modelForSynchronization(): Promise<{}>;
+    abstract getLocalData(): Promise<CRDTData>;
     abstract on(callback: ProxyCallback<T>): number;
     abstract off(callback: number): void;
     abstract onProxyMessage(message: ProxyMessage<T>): Promise<boolean>;

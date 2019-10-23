@@ -61,6 +61,9 @@ export class MockStore extends ActiveStore {
     reportExceptionInHost(exception) {
         this.lastCapturedException = exception;
     }
+    async getLocalData() {
+        throw new Error('unimplemented');
+    }
 }
 export class MockStorageKey extends StorageKey {
     constructor() {

@@ -6519,6 +6519,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "StorageMode", function() { return StorageMode; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ProxyMessageType", function() { return ProxyMessageType; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ActiveStore", function() { return ActiveStore; });
+/* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
 /**
  * @license
  * Copyright (c) 2019 Google Inc. All rights reserved.
@@ -6528,6 +6529,7 @@ __webpack_require__.r(__webpack_exports__);
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
+
 /**
  * This file exists to break a circular dependency between Store and the ActiveStore implementations.
  * Source code outside of the storageNG directory should not import this file directly; instead use
@@ -6564,7 +6566,13 @@ class ActiveStore {
         throw new Error('Method not implemented.');
     }
     async cloneFrom(store) {
-        throw new Error('Method not implemented.');
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(store instanceof ActiveStore);
+        const activeStore = store;
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(this.mode === activeStore.mode);
+        await this.onProxyMessage({
+            type: ProxyMessageType.ModelUpdate,
+            model: await activeStore.getLocalData()
+        });
     }
     async modelForSynchronization() {
         return this.toLiteral();
@@ -6634,6 +6642,9 @@ class DirectStore extends _store_interface_js__WEBPACK_IMPORTED_MODULE_2__["Acti
         this.pendingRejects = [];
         this.pendingDriverModels = [];
         this.state = DirectStoreState.Idle;
+    }
+    async getLocalData() {
+        return this.localModel.getData();
     }
     async idle() {
         if (this.pendingException) {
@@ -7104,6 +7115,15 @@ class ReferenceModeStore extends _store_interface_js__WEBPACK_IMPORTED_MODULE_2_
     registerStoreCallbacks() {
         this.backingStore.on(this.onBackingStore.bind(this));
         this.containerStore.on(this.onContainerStore.bind(this));
+    }
+    async getLocalData() {
+        const { pendingIds, model } = this.constructPendingIdsAndModel(this.containerStore.localModel.getData());
+        if (pendingIds.length === 0) {
+            return model();
+        }
+        else {
+            return new Promise(resolve => this.enqueueBlockingSend(pendingIds, () => resolve(model())));
+        }
     }
     /**
      * Messages are enqueued onto an object-wide queue and processed in order.

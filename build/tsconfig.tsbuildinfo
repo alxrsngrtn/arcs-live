@@ -298,16 +298,16 @@
         "signature": "a358531560d4e2a49cc34077433efde00649050354de88202c168bce927375f5"
       },
       "../src/runtime/storageNG/store-interface.ts": {
-        "version": "5581398dc7ce4ca0c93d5675d297359042158c70b3f42dc9474bd1eb2f1f05ce",
-        "signature": "b73d797aa681f997755cf33da4aed1777df28e081fafd048da0071259898df76"
+        "version": "66e334199e6116cf5c179b8ae6b5e8b8394500842de25c4d8a82ccdd59cda905",
+        "signature": "e6214127cb0f589031fca92596c12566c6d4e85d22967b444565e5f0678016f2"
       },
       "../src/runtime/util.ts": {
         "version": "d5aa2916c7fb7e6c0d5acd30c508be1572470ec9082cd24076b7c960065dc2dc",
         "signature": "961a2cb40c20210dc4a8e8257fad16693c468c7f15d9f128417abcdb7d5b79c1"
       },
       "../src/runtime/storageNG/direct-store.ts": {
-        "version": "c9373845a7b39f11dfb664c0ae0d133cd01dde1e373fc24a85a874c3c112e13d",
-        "signature": "04cf37d35a14ac624a1a6e556f6814f1d5942095bb55de2f3c5d2502bfe77a4d"
+        "version": "c48d346c72a1501d15b4d3dad34009ac0843c84c9be66819575206b63c169956",
+        "signature": "6b658ebe14ba54a1d359e6cd87d97e55451bafbd6d3a70dc2b2e3ee6602f7a4d"
       },
       "../src/runtime/storageNG/backing-store.ts": {
         "version": "736da72741c9d9bce43f14e6bb1e4c36ed0d2357d8b481501c7ad32258beb478",
@@ -318,8 +318,8 @@
         "signature": "362ce6c9e7048d0c4a97f29c27b27de7ee17135bff0ff20885eadaaa0cc569ed"
       },
       "../src/runtime/storageNG/reference-mode-store.ts": {
-        "version": "3b4bf9766e197b141b2cf1957803ae5cfc769f4113137515a51c0215c1071c18",
-        "signature": "86afce857d796d9cce454d76331b9a95df66c97d0af5a1801ba59f2a4da53e62"
+        "version": "ff7e6a71e2b2486f18e353b9012c6494b2466ca400eee120bccb8977fa03cc05",
+        "signature": "e7d8618e1b218e4b44d3025b645400975981d9f106e91e10fe7a33ffece5d6f0"
       },
       "../src/runtime/storageNG/store.ts": {
         "version": "bd62910c7fbe2f60731a389245e3687c6c2605628c739dcf74471881fa258522",
@@ -2309,8 +2309,8 @@
         "signature": "fd95df5d076cbfed143dc4904d376b5c6d9cb1091b630994ffe2366010afa6b3"
       },
       "../src/runtime/storageNG/testing/test-storage.ts": {
-        "version": "0fd631ea55bb1602aa3696781bed65a54ed2ad89e18c8426349447409c96658a",
-        "signature": "9cfc0b4692a9297201067b342b24288aedcb1a875c7f75155dff5030a022036f"
+        "version": "32a616964ae0185d3055f2f8caf1f73e252ac0bad5ab56f9014e0f33dfbd3b1d",
+        "signature": "03b3c599818e2d38e21094beaf28ff044a0bea356782a459b5d7ff497fc77009"
       },
       "../src/runtime/storageNG/tests/firebase-store-integration-test.ts": {
         "version": "158cae12584c9c631cd5b56d6481605e5ffd4743f548dcfad754a78184fd90f9",
@@ -2329,7 +2329,7 @@
         "signature": "fd95df5d076cbfed143dc4904d376b5c6d9cb1091b630994ffe2366010afa6b3"
       },
       "../src/runtime/storageNG/tests/reference-mode-store-test.ts": {
-        "version": "608590378b234b6714f11cf8954fa96ea70eb189b38ca9bb5b9d2b756e743514",
+        "version": "0a236a18dc0b8c7f23d5b47cfac6fccbf7ae59b5c2b1ac6e1cd3db874fe5e7e9",
         "signature": "fd95df5d076cbfed143dc4904d376b5c6d9cb1091b630994ffe2366010afa6b3"
       },
       "../src/runtime/storageNG/tests/storage-key-test.ts": {
@@ -2349,7 +2349,7 @@
         "signature": "fd95df5d076cbfed143dc4904d376b5c6d9cb1091b630994ffe2366010afa6b3"
       },
       "../src/runtime/storageNG/tests/store-test.ts": {
-        "version": "dbf927817d5f3f97ed10d8e89c5bb760d7a78bbfe5da9e0d8ad5b4d276ecf62c",
+        "version": "e0fabd7a7985c379fe7236d032aae8c73b919cb5e75eb0d8b8984a45d438f508",
         "signature": "fd95df5d076cbfed143dc4904d376b5c6d9cb1091b630994ffe2366010afa6b3"
       },
       "../src/runtime/testing/callback-tracker.ts": {
@@ -3303,6 +3303,7 @@
         "../node_modules/@types/node/ts3.1/util.d.ts"
       ],
       "../src/runtime/storageNG/store-interface.ts": [
+        "../src/platform/assert-web.ts",
         "../src/runtime/arc-exceptions.ts",
         "../src/runtime/crdt/crdt.ts",
         "../src/runtime/type.ts",

@@ -1,11 +1,5 @@
-commit f93963983d96938f45d687ffb95aab5544c255e7
-Author: Ray Cromwell <cromwellian@gmail.com>
-Date:   Tue Oct 22 21:39:19 2019 -0700
+commit 2c4535fe13e38306a0bba51ce3a68c91b8d7c412
+Author: galganif <4754402+galganif@users.noreply.github.com>
+Date:   Wed Oct 23 16:32:57 2019 +1100
 
-    Align GH deps with G3 deps (#3867)
-    
-    * run buildifier
-    
-    * run buildifier
-    
-    * Move flogger backend to runtime_deps
+    implement cloneFrom for Active Store (#3861)

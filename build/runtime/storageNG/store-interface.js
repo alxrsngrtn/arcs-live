@@ -7,6 +7,7 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
+import { assert } from '../../platform/assert-web.js';
 /**
  * This file exists to break a circular dependency between Store and the ActiveStore implementations.
  * Source code outside of the storageNG directory should not import this file directly; instead use
@@ -43,7 +44,13 @@ export class ActiveStore {
         throw new Error('Method not implemented.');
     }
     async cloneFrom(store) {
-        throw new Error('Method not implemented.');
+        assert(store instanceof ActiveStore);
+        const activeStore = store;
+        assert(this.mode === activeStore.mode);
+        await this.onProxyMessage({
+            type: ProxyMessageType.ModelUpdate,
+            model: await activeStore.getLocalData()
+        });
     }
     async modelForSynchronization() {
         return this.toLiteral();

@@ -14,7 +14,7 @@ import { BackingStore } from './backing-store.js';
 import { CRDTEntityTypeRecord } from '../crdt/crdt-entity.js';
 import { DirectStore } from './direct-store.js';
 import { StorageKey } from './storage-key.js';
-import { VersionMap } from '../crdt/crdt.js';
+import { CRDTData, VersionMap } from '../crdt/crdt.js';
 import { Dictionary } from '../hot.js';
 import { PropagatedException } from '../arc-exceptions.js';
 export declare type Reference = {
@@ -68,6 +68,7 @@ export declare class ReferenceModeStore<Entity extends Referenceable, S extends 
     on(callback: ProxyCallback<Container>): number;
     off(callback: number): void;
     private registerStoreCallbacks;
+    getLocalData(): Promise<CRDTData>;
     /**
      * Messages are enqueued onto an object-wide queue and processed in order.
      * Internally, each handler (handleContainerStore, handleBackingStore, handleProxyMessage)

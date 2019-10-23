@@ -33,6 +33,9 @@ export class DirectStore extends ActiveStore {
         this.pendingDriverModels = [];
         this.state = DirectStoreState.Idle;
     }
+    async getLocalData() {
+        return this.localModel.getData();
+    }
     async idle() {
         if (this.pendingException) {
             return Promise.reject(this.pendingException);
