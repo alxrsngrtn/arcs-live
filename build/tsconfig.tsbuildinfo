@@ -153,8 +153,12 @@
         "version": "7b27a8c416dfd03133566b1863f2eab64718807912c0050fda88ef1edc4896c5",
         "signature": "edc8104acc921b34de3bba6cd5837d06b595db3441cbf4617b399dd1d9dacef2"
       },
+      "../src/runtime/flags.ts": {
+        "version": "248eac346fb1b971a5f2984e88cd2810c11c75c7df1ea7f7cb0eb71ce562cff8",
+        "signature": "8afd6fa32f3e5fa46f3d0b7fa7a063fb94ddf0464df7febb930632dd11ee42ad"
+      },
       "../src/runtime/interface-info.ts": {
-        "version": "35a4270805ade90b2004efea75b21ef39c3793b63b94e335bfd828a50548e40b",
+        "version": "2324e2fa2f5ca8b9852757987d7be7f467fa7414315627f2a9c7d0bf9913bf0f",
         "signature": "f3a8eb8225764908b3beaa422b458c2291a753b108130759eb8b6d09246681bf"
       },
       "../src/runtime/type-variable-info.ts": {
@@ -168,10 +172,6 @@
       "../src/runtime/recipe/comparable.ts": {
         "version": "8c33b6d944aea7736b767ed39787fb60623435a7cfcbb874fc5865f1edf8a341",
         "signature": "3343b37a02fb1d5d29e95c4cf938a395120f1a62789b455bfacba67c4b7154c7"
-      },
-      "../src/runtime/flags.ts": {
-        "version": "248eac346fb1b971a5f2984e88cd2810c11c75c7df1ea7f7cb0eb71ce562cff8",
-        "signature": "8afd6fa32f3e5fa46f3d0b7fa7a063fb94ddf0464df7febb930632dd11ee42ad"
       },
       "../src/runtime/recipe/connection-constraint.ts": {
         "version": "2a55fb2510fc4e07d21130a5899e493e9205f911927094967b21ed03fa6268f0",
@@ -550,7 +550,7 @@
         "signature": "399fc4ce5f5ca985208ab0ab51bc79a5b23a2705d93470376b29a019d8a4ae48"
       },
       "../src/gen/runtime/manifest-parser.ts": {
-        "version": "d1b07294dba9a74d2addad595afac56b16d16e0d4e4b605812f67e5650e9d160",
+        "version": "6ebaca1fe565b9f7bc4597a686d360886319b69e317b6a8d88e47858b08716af",
         "signature": "ff2c763c7895327196fd3eb358dcc775b25f27bdae513079cc287433af262427"
       },
       "../src/runtime/manifest-meta.ts": {
@@ -2405,7 +2405,7 @@
         "signature": "8bc1d39a3b8ec61064f9969316a088e314895e7ffd094468dcc0b238f33cb4a6"
       },
       "../src/runtime/tests/interface-info-test.ts": {
-        "version": "14e62acb6b06db2a1b001a20ef3baee0091165699ddbcfdd752b44752b3aedb1",
+        "version": "4e16f8e16661ef810dec30dc7c4dde6d1a032ec154b95b269bfe23ded506b9ce",
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "../src/runtime/tests/json-id-to-manifest-test.ts": {
@@ -2421,7 +2421,7 @@
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "../src/runtime/tests/manifest-test.ts": {
-        "version": "2fe1edad7d9864f266226a5e244f2cb0e76b97bda0721fa418f7c54241295e6c",
+        "version": "268dadfdc6fcb080718778974572dd4c7f822a423a7a108b670f80fc38eb2387",
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "../src/runtime/tests/multiplexer-test.ts": {
@@ -2509,7 +2509,7 @@
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "../src/runtime/tests/type-test.ts": {
-        "version": "985a1be25f1104dfae84c382cb7ed9c9e13d3810274b4c3454caf830df2135b3",
+        "version": "adc585063ef683c0a2dd21dfd24f2c4d402b1bf0dcf0387276455bdc06ebff52",
         "signature": "8bc1d39a3b8ec61064f9969316a088e314895e7ffd094468dcc0b238f33cb4a6"
       },
       "../src/runtime/tests/volatile-storage-test.ts": {
@@ -2993,6 +2993,10 @@
         "../node_modules/@types/node/util.d.ts",
         "../node_modules/@types/node/ts3.1/util.d.ts"
       ],
+      "../src/runtime/flags.ts": [
+        "../node_modules/@types/node/util.d.ts",
+        "../node_modules/@types/node/ts3.1/util.d.ts"
+      ],
       "../src/runtime/interface-info.ts": [
         "../src/platform/assert-web.ts",
         "../src/runtime/hot.ts",
@@ -3000,6 +3004,7 @@
         "../src/runtime/type.ts",
         "../src/runtime/particle-spec.ts",
         "../src/runtime/manifest-ast-nodes.ts",
+        "../src/runtime/flags.ts",
         "../node_modules/@types/node/util.d.ts",
         "../node_modules/@types/node/ts3.1/util.d.ts"
       ],
@@ -3017,10 +3022,6 @@
       "../src/runtime/recipe/comparable.ts": [
         "../src/platform/assert-web.ts",
         "../src/runtime/hot.ts",
-        "../node_modules/@types/node/util.d.ts",
-        "../node_modules/@types/node/ts3.1/util.d.ts"
-      ],
-      "../src/runtime/flags.ts": [
         "../node_modules/@types/node/util.d.ts",
         "../node_modules/@types/node/ts3.1/util.d.ts"
       ],
@@ -7691,6 +7692,7 @@
         "../src/runtime/recipe/type-checker.ts",
         "../src/runtime/type.ts",
         "../src/runtime/manifest-ast-nodes.ts",
+        "../src/runtime/flags.ts",
         "../node_modules/@types/node/util.d.ts",
         "../node_modules/@types/node/ts3.1/util.d.ts"
       ],
@@ -11754,11 +11756,11 @@
       "../src/platform/assert-web.ts",
       "../src/runtime/modality.ts",
       "../src/runtime/hot.ts",
+      "../src/runtime/flags.ts",
       "../src/runtime/interface-info.ts",
       "../src/runtime/type-variable-info.ts",
       "../src/platform/digest-web.ts",
       "../src/runtime/recipe/comparable.ts",
-      "../src/runtime/flags.ts",
       "../src/runtime/recipe/connection-constraint.ts",
       "../src/runtime/recipe/search.ts",
       "../src/runtime/recipe/slot-connection.ts",

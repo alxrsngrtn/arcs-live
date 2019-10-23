@@ -1,5 +1,11 @@
-commit c532698309745dc48fe96bfe5137aac018a6056a
-Author: shans <shane.stephens@gmail.com>
-Date:   Wed Oct 23 16:51:57 2019 +1100
+commit 7f635ed46206e989515699e6278ac6c35cd66d22
+Author: Joshua Pratt <jp10010101010000@gmail.com>
+Date:   Wed Oct 23 17:39:16 2019 +1100
 
-    plumb version tokens through as represented thing in stores. (#3859)
+    Unified interface syntax (#3868)
+    
+    * Introduce unified interface syntax
+    
+    * Update and add tests
+    
+    * Fix lint
