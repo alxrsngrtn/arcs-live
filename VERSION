@@ -1,11 +1,9 @@
-commit 7f635ed46206e989515699e6278ac6c35cd66d22
-Author: Joshua Pratt <jp10010101010000@gmail.com>
-Date:   Wed Oct 23 17:39:16 2019 +1100
+commit f6c57bb110a8f7341c3e02787a3b11c88389cc6b
+Author: Ray Cromwell <cromwellian@gmail.com>
+Date:   Tue Oct 22 23:47:12 2019 -0700
 
-    Unified interface syntax (#3868)
+    Add fake android target for g3 android targets (#3869)
     
-    * Introduce unified interface syntax
+    * Add fake android target for g3 android targets
     
-    * Update and add tests
-    
-    * Fix lint
+    * use actual alias
