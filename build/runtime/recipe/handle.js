@@ -13,6 +13,7 @@ import { Slot } from './slot.js';
 import { SlotConnection } from './slot-connection.js';
 import { TypeChecker } from './type-checker.js';
 import { compareArrays, compareComparables, compareStrings } from './comparable.js';
+import { Flags } from '../flags.js';
 export class Handle {
     constructor(recipe) {
         this._id = null;
@@ -287,15 +288,28 @@ export class Handle {
         }
         // TODO: type? maybe output in a comment
         const result = [];
-        result.push(this.fate);
-        if (this.id) {
-            result.push(`'${this.id}'`);
-        }
-        result.push(...this.tags.map(a => `#${a}`));
         const name = (nameMap && nameMap.get(this)) || this.localName;
-        if (name) {
-            result.push(`as ${name}`);
+        if (Flags.usePreSlandlesSyntax) {
+            result.push(this.fate);
+            if (this.id) {
+                result.push(`'${this.id}'`);
+            }
+            result.push(...this.tags.map(a => `#${a}`));
+            if (name) {
+                result.push(`as ${name}`);
+            }
         }
+        else {
+            if (name) {
+                result.push(`${name}:`);
+            }
+            result.push(this.fate);
+            if (this.id) {
+                result.push(`'${this.id}'`);
+            }
+            result.push(...this.tags.map(a => `#${a}`));
+        }
+        // Debug information etc.
         if (this.type) {
             result.push('//');
             if (this.type.isResolved()) {

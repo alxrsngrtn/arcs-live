@@ -1268,7 +1268,7 @@ describe('FlowGraph validation', () => {
         input: in MyEntity
         check input is trusted
       recipe R
-        use MyStore as s
+        s: use MyStore
         P
           input: in s
     `);
@@ -1748,7 +1748,7 @@ describe('FlowGraph validation', () => {
           input: in MyEntity
           check input is from store MyStore
         recipe R
-          use MyStore as s
+          s: use MyStore
           P
             input: in s
       `);
@@ -1784,7 +1784,7 @@ describe('FlowGraph validation', () => {
           input: in MyEntity
           check input is from store 'my-store-id'
         recipe R
-          use MyStore as s
+          s: use MyStore
           P
             input: in s
       `);
@@ -1820,7 +1820,7 @@ describe('FlowGraph validation', () => {
           input: in MyEntity
           check input is not from store 'my-store-id'
         recipe R
-          use MyStore as s
+          s: use MyStore
           P
             input: in h
       `);
@@ -1858,7 +1858,7 @@ describe('FlowGraph validation', () => {
           input: in MyEntity
           check input is not from store 'my-store-id'
         recipe R
-          use MyStore as s
+          s: use MyStore
           P
             input: in s
       `);
@@ -1935,7 +1935,7 @@ describe('FlowGraph validation', () => {
           input: in MyEntity
           check input is from store 'my-store-id'
         recipe R
-          use SomeOtherStore as s
+          s: use SomeOtherStore
           P
             input: in s
       `), 'Store with id my-store-id is not connected by a handle.');
@@ -1972,8 +1972,8 @@ describe('FlowGraph validation', () => {
           input2: in MyEntity
           check input1 is from store MyStore
         recipe R
-          use SomeOtherStore as s1
-          use MyStore as s2
+          s1: use SomeOtherStore
+          s2: use MyStore
           P
             input1: in s1
             input2: in s2

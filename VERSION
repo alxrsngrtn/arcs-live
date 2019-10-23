@@ -1,5 +1,13 @@
-commit 5a6807c5532598f5a1150ae5eba306cd50f743c7
+commit fdab39a8bd2933a2c1813c27e0e5380a8a9241c2
 Author: Joshua Pratt <jp10010101010000@gmail.com>
-Date:   Wed Oct 23 12:55:58 2019 +1100
+Date:   Wed Oct 23 13:29:48 2019 +1100
 
-    Bump chromedriver version for chrome 77 compatability (#3863)
+    Convert RecipeHandle definitions to unified syntax (#3858)
+    
+    * Introduce unified ParticleSlotConnection syntax and improve errors message
+    
+    * Update tests for new syntax
+    
+    * Unified Recipe Handle syntax
+    
+    * Ensure tests pass when default is flipped

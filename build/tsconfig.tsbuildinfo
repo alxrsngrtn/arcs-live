@@ -206,7 +206,7 @@
         "signature": "b7fa49726506f2bc542e75950bd559b4b7631f6bb4944bc89e889b190c96ec6c"
       },
       "../src/runtime/recipe/handle.ts": {
-        "version": "bdc9bc47b3e4779b2efa6b2c7f0600a074ca43e502fe8e7e174e38ae1116c4a6",
+        "version": "ac8ba76a0042612c18dc14ded0ee0f6bda95ef0bdd6caf1cb0bf140d64dc6ac2",
         "signature": "16796312ddb3bfbfe86f426298d62335dcd6c9bbb0d5c9d46d491113bc1e4a74"
       },
       "../src/runtime/recipe/recipe-util.ts": {
@@ -550,7 +550,7 @@
         "signature": "f2a4cadcd1682a6c16ee382dd7f75d1073ca14a0ee832587fcccbafd0b09c6d5"
       },
       "../src/gen/runtime/manifest-parser.ts": {
-        "version": "3c0aae6b6a382570980df00bee39bdec91d19b0d0ed2493f51684abe6c826c2e",
+        "version": "09511ecdc1460c320d0c5864838ac1fe27fc7001ae14331c9f9dc901a878788a",
         "signature": "ff2c763c7895327196fd3eb358dcc775b25f27bdae513079cc287433af262427"
       },
       "../src/runtime/manifest-meta.ts": {
@@ -662,7 +662,7 @@
         "signature": "aa657cc3c9324f71d7c84ac68f4e20b1eedea2e1e8b93efd81051208cf69c5f6"
       },
       "../src/dataflow/analysis/tests/analysis-test.ts": {
-        "version": "c10a80f9982594a51afaea779bcb1430a2b9e50362df8f38e12afa3b6df2e2d6",
+        "version": "83b7569807e05f9970f9fe2a74e3b21868e33428596e902d111695f88d54496c",
         "signature": "8e609bb71c20b858c77f0e9f90bb1319db8477b13f9f965f1a1e18524bf50881"
       },
       "../src/dataflow/analysis/tests/deep-set-test.ts": {
@@ -1246,7 +1246,7 @@
         "signature": "8bc1d39a3b8ec61064f9969316a088e314895e7ffd094468dcc0b238f33cb4a6"
       },
       "../src/planning/strategies/tests/convert-constraints-to-connections-test.ts": {
-        "version": "e23c70d6be670dc65a106607da417a46812b48260fb6f4dd5d6283a021009e55",
+        "version": "b3f7190b2b055d4a0b8afb0736f9a0a73dd3c8b65ab4e91002126ffd3d23b0ab",
         "signature": "8e609bb71c20b858c77f0e9f90bb1319db8477b13f9f965f1a1e18524bf50881"
       },
       "../src/planning/strategies/tests/create-description-handle-test.ts": {
@@ -1286,7 +1286,7 @@
         "signature": "8bc1d39a3b8ec61064f9969316a088e314895e7ffd094468dcc0b238f33cb4a6"
       },
       "../src/planning/strategies/tests/match-recipe-by-verb-test.ts": {
-        "version": "e9b6dc53f27a739e04f8ba564baa4e00a9359a97c17c2c000d3614751635ae1e",
+        "version": "f8d4b2f39254cdd0c37eee3dfcaba3414c30d7d80f08d3f6f0e4e97bf7587fcb",
         "signature": "8bc1d39a3b8ec61064f9969316a088e314895e7ffd094468dcc0b238f33cb4a6"
       },
       "../src/planning/strategies/tests/resolve-recipe-test.ts": {
@@ -1314,7 +1314,7 @@
         "signature": "70ec31185ba202997da2613e9400fff44ef0abf3c22f4794f67d658fe0c909b2"
       },
       "../src/planning/tests/planner-test.ts": {
-        "version": "63245cd0c9e8b03aa5f7c773adb2eb12f3458ae48592cb5842284f5144be53bf",
+        "version": "a7254ae8afbbec7936dbd15606cbefa78e0dc874c22ec02b90cce4f36760c558",
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "../src/runtime/testing/manifest-integration-test-setup.ts": {
@@ -1326,7 +1326,7 @@
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "../src/planning/tests/recipe-index-test.ts": {
-        "version": "f0ed7c6a9294e0b0c360e5864908c2148f9b9ccd43c0b1e27b44edbeca1f07f7",
+        "version": "76001e194f659b68d71a917b416249467bff5f0906f897475e8ef9855680e3c2",
         "signature": "8bc1d39a3b8ec61064f9969316a088e314895e7ffd094468dcc0b238f33cb4a6"
       },
       "../src/planning/tests/simple-planner-test.ts": {
@@ -2421,11 +2421,11 @@
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "../src/runtime/tests/manifest-test.ts": {
-        "version": "8289afef2d73c3552ffd6a5973031de3af5c9b93cbe26c3a35e80805f9d661b3",
+        "version": "9dc85ff0c9830f1cc6b05a30bc7d6e4ed52c94e42e83da3800fc9065c29dd257",
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "../src/runtime/tests/multiplexer-test.ts": {
-        "version": "968608c50953c4135e89a2fd336b7256db9db8d8f84c7adef7af1f1ffa3eda5d",
+        "version": "976d04d22c2e35f58240cbb1ee431326ca11e4ee9f3c319d130c59100e04f296",
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "../src/runtime/tests/mutex-test.ts": {
@@ -2461,7 +2461,7 @@
         "signature": "8bc1d39a3b8ec61064f9969316a088e314895e7ffd094468dcc0b238f33cb4a6"
       },
       "../src/runtime/tests/recipe-test.ts": {
-        "version": "58f1658a4f6743c5eea9439fb60f424634e606255fb1d205d5af929b2ef661c7",
+        "version": "3a8d96c7836d40ffd306cdc942db373c1fcbc6c65500ff25b7443a12d18b9032",
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "../src/runtime/tests/recipe-util-test.ts": {
@@ -3118,6 +3118,7 @@
         "../src/runtime/manifest-ast-nodes.ts",
         "../src/runtime/particle-claim.ts",
         "../src/runtime/storageNG/storage-key.ts",
+        "../src/runtime/flags.ts",
         "../node_modules/@types/node/util.d.ts",
         "../node_modules/@types/node/ts3.1/util.d.ts"
       ],
