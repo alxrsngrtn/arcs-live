@@ -45,8 +45,11 @@ export class StorageProviderBase extends UnifiedStore {
         this.referenceMode = false;
         assert(id, 'id must be provided when constructing StorageProviders');
         assert(!type.hasUnresolvedVariable, 'Storage types must be concrete');
-        this.version = 0;
+        this._version = 0;
         this._storageKey = key;
+    }
+    get versionToken() {
+        return this._version == null ? null : this._version + '';
     }
     enableReferenceMode() {
         this.referenceMode = true;

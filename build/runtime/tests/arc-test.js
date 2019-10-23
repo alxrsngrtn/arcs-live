@@ -554,16 +554,16 @@ describe('Arc new storage', () => {
             recipe.normalize();
             await arc.instantiate(recipe);
             await util.assertSingletonWillChangeTo(arc, barStore, 'value', 'a Foo1');
-            assert.strictEqual(fooStore.version, 1);
-            assert.strictEqual(barStore.version, 1);
+            assert.strictEqual(fooStore.versionToken, '1');
+            assert.strictEqual(barStore.versionToken, '1');
             fooStoreCallbacks.verify();
             const serialization = await arc.serialize();
             arc.dispose();
             const newArc = await Arc.deserialize({ serialization, loader, fileName: '', slotComposer: new FakeSlotComposer(), context: undefined });
             fooStore = newArc.findStoreById(fooStore.id);
             barStore = newArc.findStoreById(barStore.id);
-            assert.strictEqual(fooStore.version, 1);
-            assert.strictEqual(barStore.version, 1);
+            assert.strictEqual(fooStore.versionToken, '1');
+            assert.strictEqual(barStore.versionToken, '1');
             assert.lengthOf(newArc.findStoresByType(Bar.type, { tags: ['tag1'] }), 1);
         });
         it('deserializing a serialized arc with a Transformation produces that arc', async () => {

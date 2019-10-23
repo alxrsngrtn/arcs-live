@@ -6403,7 +6403,7 @@ class Store extends _unified_store_js__WEBPACK_IMPORTED_MODULE_4__["UnifiedStore
     constructor(opts) {
         super(opts);
         this.unifiedStoreType = 'Store';
-        this.version = 0; // TODO(shans): Needs to become the version vector, and is also probably only available on activated storage?
+        this.versionToken = null;
         this.storageKey = opts.storageKey;
         this.exists = opts.exists;
         this.mode = opts.storageKey instanceof _reference_mode_store_js__WEBPACK_IMPORTED_MODULE_3__["ReferenceModeStorageKey"] ? _store_interface_js__WEBPACK_IMPORTED_MODULE_1__["StorageMode"].ReferenceMode : _store_interface_js__WEBPACK_IMPORTED_MODULE_1__["StorageMode"].Direct;
@@ -7951,7 +7951,7 @@ class UnifiedStore {
         cmp = Object(_recipe_comparable_js__WEBPACK_IMPORTED_MODULE_0__["compareStrings"])(this.name, other.name);
         if (cmp !== 0)
             return cmp;
-        cmp = Object(_recipe_comparable_js__WEBPACK_IMPORTED_MODULE_0__["compareNumbers"])(this.version, other.version);
+        cmp = Object(_recipe_comparable_js__WEBPACK_IMPORTED_MODULE_0__["compareStrings"])(this.versionToken, other.versionToken);
         if (cmp !== 0)
             return cmp;
         cmp = Object(_recipe_comparable_js__WEBPACK_IMPORTED_MODULE_0__["compareStrings"])(this.source, other.source);
@@ -7979,8 +7979,8 @@ class UnifiedStore {
         if (info.originalId) {
             handleStr.push(`!!${info.originalId}`);
         }
-        if (this.version != null) {
-            handleStr.push(`@${this.version}`);
+        if (this.versionToken != null) {
+            handleStr.push(`@${this.versionToken}`);
         }
         if (opts.handleTags && opts.handleTags.length) {
             handleStr.push(`${opts.handleTags.map(tag => `#${tag}`).join(' ')}`);

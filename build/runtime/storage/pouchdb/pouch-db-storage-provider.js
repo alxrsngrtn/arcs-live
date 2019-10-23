@@ -49,7 +49,7 @@ export class PouchDbStorageProvider extends StorageProviderBase {
      * the local and remove versions.
      */
     bumpVersion(otherVersion = 0) {
-        this.version = Math.max(this.version, otherVersion) + 1;
+        this._version = Math.max(this._version, otherVersion) + 1;
     }
 }
 //# sourceMappingURL=pouch-db-storage-provider.js.map

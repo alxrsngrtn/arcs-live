@@ -36,7 +36,7 @@ export class PouchDbCollection extends PouchDbStorageProvider {
             // should throw something?
             console.warn('error init', err);
         });
-        assert(this.version !== null);
+        assert(this._version !== null);
     }
     /** @inheritDoc */
     backingType() {
@@ -57,20 +57,20 @@ export class PouchDbCollection extends PouchDbStorageProvider {
         const doc = await this.upsert(async (doc) => {
             doc.referenceMode = this.referenceMode;
             doc.model = updatedCrdtModel.toLiteral();
-            doc.version = Math.max(this.version, doc.version) + 1;
+            doc.version = Math.max(this._version, doc.version) + 1;
             return doc;
         });
         // fire?
         const updatedCrdtModelLiteral = doc.model;
         const dataToFire = updatedCrdtModelLiteral.length === 0 ? null : updatedCrdtModelLiteral[0].value;
-        await this._fire(new ChangeEvent({ data: dataToFire, version: this.version }));
+        await this._fire(new ChangeEvent({ data: dataToFire, version: this._version }));
     }
     /** @inheritDoc */
     async modelForSynchronization() {
         await this.initialized;
         // TODO(lindner): should this change for reference mode??
         const retval = {
-            version: this.version,
+            version: this._version,
             model: await this._toList()
         };
         return retval;
@@ -79,7 +79,7 @@ export class PouchDbCollection extends PouchDbStorageProvider {
     async toLiteral() {
         await this.initialized;
         return {
-            version: this.version,
+            version: this._version,
             model: (await this.getModel()).toLiteral()
         };
     }
@@ -203,7 +203,7 @@ export class PouchDbCollection extends PouchDbStorageProvider {
             });
         }
         // Notify Listeners
-        await this._fire(new ChangeEvent({ add: [item], version: this.version, originatorId }));
+        await this._fire(new ChangeEvent({ add: [item], version: this._version, originatorId }));
     }
     async removeMultiple(items, originatorId) {
         await this.initialized;
@@ -225,7 +225,7 @@ export class PouchDbCollection extends PouchDbStorageProvider {
             doc.model = crdtmodel.toLiteral();
             return doc;
         });
-        await this._fire(new ChangeEvent({ remove: items, version: this.version, originatorId }));
+        await this._fire(new ChangeEvent({ remove: items, version: this._version, originatorId }));
     }
     /**
      * Remove ids from a collection for specific keys.
@@ -244,7 +244,7 @@ export class PouchDbCollection extends PouchDbStorageProvider {
             if (value !== null) {
                 const effective = crdtmodel.remove(id, keys);
                 // TODO(lindner): isolate side effects...
-                await this._fire(new ChangeEvent({ remove: [{ value, keys, effective }], version: this.version, originatorId }));
+                await this._fire(new ChangeEvent({ remove: [{ value, keys, effective }], version: this._version, originatorId }));
             }
             doc.model = crdtmodel.toLiteral();
             return doc;
@@ -287,7 +287,7 @@ export class PouchDbCollection extends PouchDbStorageProvider {
         try {
             // Update local state..
             const doc = await upsert(this.db, this.pouchDbKey.location, mutatorFn, defaultDoc);
-            this.version = doc.version;
+            this._version = doc.version;
             this.referenceMode = doc.referenceMode;
             return doc;
         }

@@ -1,5 +1,5 @@
-commit 2c4535fe13e38306a0bba51ce3a68c91b8d7c412
-Author: galganif <4754402+galganif@users.noreply.github.com>
-Date:   Wed Oct 23 16:32:57 2019 +1100
+commit c532698309745dc48fe96bfe5137aac018a6056a
+Author: shans <shane.stephens@gmail.com>
+Date:   Wed Oct 23 16:51:57 2019 +1100
 
-    implement cloneFrom for Active Store (#3861)
+    plumb version tokens through as represented thing in stores. (#3859)

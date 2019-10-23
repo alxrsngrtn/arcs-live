@@ -1165,7 +1165,7 @@ ${e.message}
         else {
             model = entities.map(value => ({ id: value.id, value }));
         }
-        const version = item.version || 0;
+        const version = item.version || null;
         return manifest.newStore({
             type,
             name,

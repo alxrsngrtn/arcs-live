@@ -13,11 +13,11 @@ import { UnifiedStore } from './storageNG/unified-store.js';
 // TODO(shans): Make sure that after refactor Storage objects have a lifecycle and can be directly used
 // deflated rather than requiring this stub.
 export class StorageStub extends UnifiedStore {
-    constructor(type, id, name, storageKey, storageProviderFactory, originalId, claims, description, version, source, origin, referenceMode = false, model) {
+    constructor(type, id, name, storageKey, storageProviderFactory, originalId, claims, description, versionToken, source, origin, referenceMode = false, model) {
         super({ type, id, name, originalId, claims, description, source, origin });
         this.storageKey = storageKey;
         this.storageProviderFactory = storageProviderFactory;
-        this.version = version;
+        this.versionToken = versionToken;
         this.referenceMode = referenceMode;
         this.model = model;
         this.unifiedStoreType = 'StorageStub';
@@ -49,7 +49,8 @@ export class StorageStub extends UnifiedStore {
         }
         store.storeInfo = { ...this.storeInfo };
         if (this.isBackedByManifest()) {
-            await store.fromLiteral({ version: this.version, model: this.model });
+            const version = this.versionToken == null ? null : Number(this.versionToken);
+            await store.fromLiteral({ version, model: this.model });
         }
         return store;
     }
@@ -57,7 +58,7 @@ export class StorageStub extends UnifiedStore {
         return undefined; // Fake to match StorageProviderBase;
     }
     isBackedByManifest() {
-        return (this.version !== undefined && !!this.model);
+        return (this.versionToken !== undefined && !!this.model);
     }
     _compareTo(other) {
         let cmp;

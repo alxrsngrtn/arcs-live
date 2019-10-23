@@ -177,7 +177,7 @@ export class VolatileCollection extends VolatileStorageProvider {
         super(type, name, id, key);
         this._model = new CrdtCollectionModel();
         this.storageEngine = storageEngine;
-        assert(this.version !== null);
+        assert(this._version !== null);
     }
     backingType() {
         return this.type.getContainedType();
@@ -200,14 +200,14 @@ export class VolatileCollection extends VolatileStorageProvider {
     }
     async modelForSynchronization() {
         const model = await this._toList();
-        return { version: this.version, model };
+        return { version: this._version, model };
     }
     // Returns {version, model: [{id, value, keys: []}]}
     async toLiteral() {
-        return { version: this.version, model: this._model.toLiteral() };
+        return { version: this._version, model: this._model.toLiteral() };
     }
     fromLiteral({ version, model }) {
-        this.version = version;
+        this._version = version;
         this._model = new CrdtCollectionModel(model);
     }
     async _toList() {
@@ -242,7 +242,7 @@ export class VolatileCollection extends VolatileStorageProvider {
     async storeMultiple(values, keys, originatorId = null) {
         assert(!this.referenceMode, 'storeMultiple not implemented for referenceMode stores');
         values.map(value => this._model.add(value.id, value, keys));
-        this.version++;
+        this._version++;
     }
     async get(id) {
         if (this.referenceMode) {
@@ -273,8 +273,8 @@ export class VolatileCollection extends VolatileStorageProvider {
         else {
             item.effective = this._model.add(value.id, value, keys);
         }
-        this.version++;
-        await this._fire(new ChangeEvent({ add: [item], version: this.version, originatorId }));
+        this._version++;
+        await this._fire(new ChangeEvent({ add: [item], version: this._version, originatorId }));
     }
     async removeMultiple(items, originatorId = null) {
         if (items.length === 0) {
@@ -291,8 +291,8 @@ export class VolatileCollection extends VolatileStorageProvider {
             }
             return res;
         });
-        this.version++;
-        await this._fire(new ChangeEvent({ remove, version: this.version, originatorId }));
+        this._version++;
+        await this._fire(new ChangeEvent({ remove, version: this._version, originatorId }));
     }
     async remove(id, keys = [], originatorId = null) {
         if (keys.length === 0) {
@@ -301,8 +301,8 @@ export class VolatileCollection extends VolatileStorageProvider {
         const value = this._model.getValue(id);
         if (value !== null) {
             const effective = this._model.remove(id, keys);
-            this.version++;
-            await this._fire(new ChangeEvent({ remove: [{ value, keys, effective }], version: this.version, originatorId }));
+            this._version++;
+            await this._fire(new ChangeEvent({ remove: [{ value, keys, effective }], version: this._version, originatorId }));
         }
     }
     clearItemsForTesting() {
@@ -350,7 +350,7 @@ export class VolatileSingleton extends VolatileStorageProvider {
             await this.ensureBackingStore();
             const result = await this.backingStore.get(value.id);
             return {
-                version: this.version,
+                version: this._version,
                 model: [{ id: value.id, value: result }]
             };
         }
@@ -360,7 +360,7 @@ export class VolatileSingleton extends VolatileStorageProvider {
         const value = this._stored;
         // TODO: what should keys be set to?
         const model = (value != null) ? [{ id: value.id, value, keys: [] }] : [];
-        return { version: this.version, model };
+        return { version: this._version, model };
     }
     fromLiteral({ version, model }) {
         const value = model.length === 0 ? null : model[0].value;
@@ -369,7 +369,7 @@ export class VolatileSingleton extends VolatileStorageProvider {
         }
         assert(value !== undefined);
         this._stored = value;
-        this.version = version;
+        this._version = version;
     }
     traceInfo() {
         return { stored: this._stored !== null };
@@ -410,9 +410,9 @@ export class VolatileSingleton extends VolatileStorageProvider {
             }
             this._stored = value;
         }
-        this.version++;
+        this._version++;
         const data = this.referenceMode ? value : this._stored;
-        await this._fire(new ChangeEvent({ data, version: this.version, originatorId, barrier }));
+        await this._fire(new ChangeEvent({ data, version: this._version, originatorId, barrier }));
     }
     async clear(originatorId = null, barrier = null) {
         await this.set(null, originatorId, barrier);
@@ -459,23 +459,23 @@ class VolatileBigCollection extends VolatileStorageProvider {
     }
     async store(value, keys, originatorId) {
         assert(keys != null && keys.length > 0, 'keys required');
-        this.version++;
+        this._version++;
         if (!this.items.has(value.id)) {
             this.items.set(value.id, { index: null, value: null, keys: {} });
         }
         const data = this.items.get(value.id);
-        data.index = this.version;
+        data.index = this._version;
         data.value = value;
-        keys.forEach(k => data.keys[k] = this.version);
+        keys.forEach(k => data.keys[k] = this._version);
     }
     async remove(id, keys, originatorId) {
-        this.version++;
+        this._version++;
         this.items.delete(id);
     }
     async stream(pageSize, forward = true) {
         assert(!isNaN(pageSize) && pageSize > 0);
         this.cursorIndex++;
-        const cursor = new VolatileCursor(this.version, this.items.values(), pageSize, forward);
+        const cursor = new VolatileCursor(this._version, this.items.values(), pageSize, forward);
         this.cursors.set(this.cursorIndex, cursor);
         return this.cursorIndex;
     }
@@ -513,10 +513,10 @@ class VolatileBigCollection extends VolatileStorageProvider {
         for (const [id, { index, value, keys }] of this.items.entries()) {
             model.push({ id, index, value, keys: Object.keys(keys) });
         }
-        return { version: this.version, model };
+        return { version: this._version, model };
     }
     fromLiteral({ version, model }) {
-        this.version = version;
+        this._version = version;
         this.items.clear();
         for (const { id, index, value, keys } of model) {
             const adjustedKeys = {};

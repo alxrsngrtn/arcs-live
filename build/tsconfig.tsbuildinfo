@@ -322,12 +322,12 @@
         "signature": "e7d8618e1b218e4b44d3025b645400975981d9f106e91e10fe7a33ffece5d6f0"
       },
       "../src/runtime/storageNG/store.ts": {
-        "version": "bd62910c7fbe2f60731a389245e3687c6c2605628c739dcf74471881fa258522",
-        "signature": "7d52be3baec152a7fbeb7c3b4e51ef099bc83c409865a9d8fef5fb4bf0367170"
+        "version": "1b7d53860c2d0d1b3fb3ad813e0ee29142fbdc0561252da026466caccf0c3379",
+        "signature": "43c8bc323ef83f12a5b71919ccd4a1fee82180e5abaf00207325145495df6135"
       },
       "../src/runtime/storage/storage-provider-base.ts": {
-        "version": "d4adc00932188f3eca79bc63c2c44233af8e936265d750a556c12869cb9255ea",
-        "signature": "5b8cf84bbd44fccba3cef698caf8a7eb856e12b0986e17a5059b60e62bdde755"
+        "version": "1a0a7026b8a65fb7b35e0e30064dc6994f9483064765052452a86b377836faa0",
+        "signature": "40f6ce11c5157d9667c8dcc2f4367c6e5c6aaec84a949597ec0ceaaecbc29859"
       },
       "../src/runtime/runtime-cache.ts": {
         "version": "6cc69dfe4e1bdf906455cfeb90bfaa9e2af89931599e79cb14dff71aeb600e76",
@@ -378,7 +378,7 @@
         "signature": "66844e73c24dca86bd3eb2a8dc6216d6fd7f6f5ea06e9b05c06758da4bfe5288"
       },
       "../src/runtime/storage/volatile-storage.ts": {
-        "version": "3af9300d248ccf9d9c3335ef387e03639f2175d745ac1eba4772cad0d1d579e8",
+        "version": "58bc63e61bea31509c3a64bd2b0879ab943dbd97950db5c7e26fb4105e79d440",
         "signature": "b46535ffd04b9a6cf80aa5092fdd675e497f8f01ed62ab2e2b8bdd8fa9fd7a9e"
       },
       "../src/runtime/synthetic-types.ts": {
@@ -398,12 +398,12 @@
         "signature": "2f38a817702e90c031039dfd5f5985c632d89a062b087dea8a750a0eef8a8fd6"
       },
       "../src/runtime/storage-stub.ts": {
-        "version": "b593426fa15bd86ee144980f74c9bd825e56b2aaed7a7c8c2ddc061ab489d627",
-        "signature": "884a7ec908c0cc351c7d0e0bceb956ca9cad3c1226342eb39e69c7fdcc6aae94"
+        "version": "759cceba5acc2ddf3cd524c168e13979ea07a8188ad127ccec5d0ac60a859ee5",
+        "signature": "c24c80fb524520ae169e711b9466a030a2124aa864cce5c49670ca49a6367d81"
       },
       "../src/runtime/storageNG/unified-store.ts": {
-        "version": "d0cd33ab53c9f8b1f36400ada9e39254669a60a52ca4f36a89983ababb19e253",
-        "signature": "fa109603a5786943656f4e7f2b0322607ba77569cf82047c6b6211ad8a492ade"
+        "version": "818d44a00e84d24336a68577f6e20541dd0b86656a2789d88e461295cb2d4cff",
+        "signature": "026d89274daa8acdfddfe54cd0210ae2ff1a4439b4902681fe02400801406824"
       },
       "../src/runtime/description.ts": {
         "version": "a5f8a14cfbc4054f99dc3abdcefc760dbce1deb7999cb52dba92d74c09ec0299",
@@ -494,7 +494,7 @@
         "signature": "f2d8b054448cb4886900f4baa77e8b41c7d00a7a3bd25a90752e325aab5e14c3"
       },
       "../src/runtime/arc.ts": {
-        "version": "cd5a16eed917192092ff379c969f8635cf75a47c81651bdccfcdf651a0bf1d05",
+        "version": "7b03d1b9c87132231bae5a468c98a7a624dd91a38ad8c9d9cc0b8476b09ba581",
         "signature": "f5a76c9d0f56d9aea76b7b9af419daaf2bd80e4ad350672331b144aafec7a76f"
       },
       "../src/runtime/api-channel.ts": {
@@ -546,11 +546,11 @@
         "signature": "75bc5f22059210323a192a97ea60f029862fe72a4f9e10e3b6dc71c02539198b"
       },
       "../src/runtime/manifest-ast-nodes.ts": {
-        "version": "2f5978909ad6d1e0705212b2d10e0e0bb4ae47320459b0ccdb428a24ef5bde30",
-        "signature": "f2a4cadcd1682a6c16ee382dd7f75d1073ca14a0ee832587fcccbafd0b09c6d5"
+        "version": "dddf9868b011aa24b9fc1950f533300342c84859f9ab8c7cee9c2a39e9287c22",
+        "signature": "399fc4ce5f5ca985208ab0ab51bc79a5b23a2705d93470376b29a019d8a4ae48"
       },
       "../src/gen/runtime/manifest-parser.ts": {
-        "version": "8e846c05d5e1b9cc2557ef5c678d02ed58348ebe2f96d03fab36c5213554ee2c",
+        "version": "d1b07294dba9a74d2addad595afac56b16d16e0d4e4b605812f67e5650e9d160",
         "signature": "ff2c763c7895327196fd3eb358dcc775b25f27bdae513079cc287433af262427"
       },
       "../src/runtime/manifest-meta.ts": {
@@ -578,8 +578,8 @@
         "signature": "8ef9453dcbfa29ffef1fd28d215625bdb2730644a74ff977494d36c9c2f4f86f"
       },
       "../src/runtime/manifest.ts": {
-        "version": "528928142e06f60a0f051560b504f1cbd6e6ae3435fc9f8c74e8cbb7f0275468",
-        "signature": "47e532d26c2dd6f0df1bdf4076ef32c9f9efcd24c7850a92b31ed2ada266c538"
+        "version": "398d98d050e23970ce9de3a88926e4555554b797b1faa72e1aeb0080d57d7b5b",
+        "signature": "d116e98720d85bf72490d907c30d22c39719ebcf6c35d20985ba2f9fdd4e2660"
       },
       "../src/platform/atob-web.ts": {
         "version": "83bd58cde323a7612560e333b3542a3ab39d1f645c1e1e22e54f4a66622b9e7c",
@@ -590,7 +590,7 @@
         "signature": "083f28c7a4149cbfb4a4c8103ca0de7d50efaf8592e86eb20d6b895cbbbf8fb7"
       },
       "../src/runtime/storage/firebase/firebase-storage.ts": {
-        "version": "9df4348722a2e9c952f47452e3d60783a6d637d19b50ec77922a3ed1a0a7a8c2",
+        "version": "041ecb5e28fa613092faa4354b9b2687ca91baa2ed1d2ff0853eb1b98c2548f0",
         "signature": "9763c3ddc07b877bd19ae2e5f005d4657b6aad86f2bd5b8e7b8f0f410988a636"
       },
       "../src/runtime/storage/firebase/firebase-provider.ts": {
@@ -1170,7 +1170,7 @@
         "signature": "f450d5250a5ed5d29a051357c469504f06ad8c679eb7c88cf2a3b708ad98e6eb"
       },
       "../src/runtime/storage/pouchdb/pouch-db-collection.ts": {
-        "version": "6e472aa3fed5ae6e34411fffaa81ffd63fea1561278c05d5e9e31a11defbeedc",
+        "version": "610281d7bc4313fb798e846ead4d428676f0e3d55623fcb1fb950a1fe87678b1",
         "signature": "2aad7d396d89b7862cc37513f40af2b0f2349116de50cb049a63f012abdb1c81"
       },
       "../src/runtime/storage/pouchdb/pouch-db-key.ts": {
@@ -1178,7 +1178,7 @@
         "signature": "0fdbcca0e4278464ea47d8e074965b22aae92af4dbdaa7ece69bfae4f0f9043a"
       },
       "../src/runtime/storage/pouchdb/pouch-db-storage-provider.ts": {
-        "version": "646fc91987228b89109bd4c5e5d93e2db010138243fb43ebdd2c7717a5464d80",
+        "version": "181b889e5193b6811bea6aa35f7eb0d1a2720f56b7ee98befb4dd467f1c3c7be",
         "signature": "3e8fbc6d9aa205dd21b165c214fb8891e0224af5cb66cc4db1f36f57536e41ab"
       },
       "../src/runtime/storage/pouchdb/pouch-db-big-collection.ts": {
@@ -1186,7 +1186,7 @@
         "signature": "4c918af21ea0baab4d5d816e2be8fba976a27b71c2440c2529233e1016e084dc"
       },
       "../src/runtime/storage/pouchdb/pouch-db-singleton.ts": {
-        "version": "0aba201e9311e94a3e9d832a8d49d8b7a22b60ef73fe196c9d27450bf8e4d9cf",
+        "version": "762517b61a61392e358de33e0b85202b68806134beb88b3a6afea77e575b0e8d",
         "signature": "45c856c6562a83146499a713606045019f32a12814e5a84aff3b84ef26afe221"
       },
       "../src/runtime/storage/pouchdb/pouch-db-storage.ts": {
@@ -2281,7 +2281,7 @@
         "signature": "fd95df5d076cbfed143dc4904d376b5c6d9cb1091b630994ffe2366010afa6b3"
       },
       "../src/runtime/manual_tests/firebase-test.ts": {
-        "version": "daaa0cdf1cb56d0a62c38929c334ff6606ac1573b0ad99482c4fcd328d259cdf",
+        "version": "f6c5ca5cb76a0020e0ead9cf4573600a260c6b0abff25def7ab1726d29f68920",
         "signature": "a90deb8990f6c2529c493943b6ef82b1212b3e1aae9c096af86b97605eb190c3"
       },
       "../src/runtime/manual_tests/loader-test.ts": {
@@ -2373,7 +2373,7 @@
         "signature": "8bc1d39a3b8ec61064f9969316a088e314895e7ffd094468dcc0b238f33cb4a6"
       },
       "../src/runtime/tests/arc-test.ts": {
-        "version": "5bd160aa165c992bed7c80885461b7a0db368494000ae708cb111af9653930be",
+        "version": "e88b4278673915c7c34c775a997d3bd85b42add0e599f7d4b25f8b9f7ec43b78",
         "signature": "600636836c17982e77369e742e2b185b3a695f0407d06b57f41cbf45b0a11d8b"
       },
       "../src/runtime/tests/bimap-test.ts": {
@@ -2397,7 +2397,7 @@
         "signature": "8e609bb71c20b858c77f0e9f90bb1319db8477b13f9f965f1a1e18524bf50881"
       },
       "../src/runtime/tests/handle-test.ts": {
-        "version": "9ad35d15457dfffbab3bcfc4146131f50bc58fa31f3a8c7333fdd039f3e9b31e",
+        "version": "dc4fd5e46ac9a2542f9f780a60b7db9e8af0015cffa9c4413846489ad36365f0",
         "signature": "8e609bb71c20b858c77f0e9f90bb1319db8477b13f9f965f1a1e18524bf50881"
       },
       "../src/runtime/tests/id-test.ts": {

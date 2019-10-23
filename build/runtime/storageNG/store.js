@@ -22,7 +22,7 @@ export class Store extends UnifiedStore {
     constructor(opts) {
         super(opts);
         this.unifiedStoreType = 'Store';
-        this.version = 0; // TODO(shans): Needs to become the version vector, and is also probably only available on activated storage?
+        this.versionToken = null;
         this.storageKey = opts.storageKey;
         this.exists = opts.exists;
         this.mode = opts.storageKey instanceof ReferenceModeStorageKey ? StorageMode.ReferenceMode : StorageMode.Direct;

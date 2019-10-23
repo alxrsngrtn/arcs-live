@@ -1230,7 +1230,7 @@ function peg$parse(input, options) {
     const peg$c296 = /^[0-9]/;
     const peg$c297 = peg$classExpectation([["0", "9"]], false, false);
     const peg$c298 = function (version) {
-        return Number(version.join(''));
+        return version.join('');
     };
     const peg$c299 = peg$otherExpectation("indentation");
     const peg$c300 = " ";

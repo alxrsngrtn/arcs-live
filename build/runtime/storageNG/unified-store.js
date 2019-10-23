@@ -7,7 +7,7 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-import { compareStrings, compareNumbers } from '../recipe/comparable.js';
+import { compareStrings } from '../recipe/comparable.js';
 import { assert } from '../../platform/assert-web.js';
 /**
  * This is a temporary interface used to unify old-style stores (storage/StorageProviderBase) and new-style stores (storageNG/Store).
@@ -56,7 +56,7 @@ export class UnifiedStore {
         cmp = compareStrings(this.name, other.name);
         if (cmp !== 0)
             return cmp;
-        cmp = compareNumbers(this.version, other.version);
+        cmp = compareStrings(this.versionToken, other.versionToken);
         if (cmp !== 0)
             return cmp;
         cmp = compareStrings(this.source, other.source);
@@ -84,8 +84,8 @@ export class UnifiedStore {
         if (info.originalId) {
             handleStr.push(`!!${info.originalId}`);
         }
-        if (this.version != null) {
-            handleStr.push(`@${this.version}`);
+        if (this.versionToken != null) {
+            handleStr.push(`@${this.versionToken}`);
         }
         if (opts.handleTags && opts.handleTags.length) {
             handleStr.push(`${opts.handleTags.map(tag => `#${tag}`).join(' ')}`);

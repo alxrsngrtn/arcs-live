@@ -94,8 +94,9 @@ export declare abstract class StorageProviderBase extends UnifiedStore implement
     private readonly listeners;
     protected readonly _storageKey: string;
     referenceMode: boolean;
-    version: number | null;
+    _version: number | null;
     storeInfo: StoreInfo;
+    readonly versionToken: string | null;
     protected constructor(type: Type, name: string, id: string, key: string);
     enableReferenceMode(): void;
     readonly baseStore: StorageProviderBase;

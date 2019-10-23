@@ -3203,7 +3203,7 @@ class UnifiedStore {
         cmp = compareStrings(this.name, other.name);
         if (cmp !== 0)
             return cmp;
-        cmp = compareNumbers(this.version, other.version);
+        cmp = compareStrings(this.versionToken, other.versionToken);
         if (cmp !== 0)
             return cmp;
         cmp = compareStrings(this.source, other.source);
@@ -3231,8 +3231,8 @@ class UnifiedStore {
         if (info.originalId) {
             handleStr.push(`!!${info.originalId}`);
         }
-        if (this.version != null) {
-            handleStr.push(`@${this.version}`);
+        if (this.versionToken != null) {
+            handleStr.push(`@${this.versionToken}`);
         }
         if (opts.handleTags && opts.handleTags.length) {
             handleStr.push(`${opts.handleTags.map(tag => `#${tag}`).join(' ')}`);
@@ -3279,7 +3279,7 @@ class Store extends UnifiedStore {
     constructor(opts) {
         super(opts);
         this.unifiedStoreType = 'Store';
-        this.version = 0; // TODO(shans): Needs to become the version vector, and is also probably only available on activated storage?
+        this.versionToken = null;
         this.storageKey = opts.storageKey;
         this.exists = opts.exists;
         this.mode = opts.storageKey instanceof ReferenceModeStorageKey ? StorageMode.ReferenceMode : StorageMode.Direct;
@@ -8713,7 +8713,7 @@ function peg$parse(input, options) {
     const peg$c296 = /^[0-9]/;
     const peg$c297 = peg$classExpectation([["0", "9"]], false, false);
     const peg$c298 = function (version) {
-        return Number(version.join(''));
+        return version.join('');
     };
     const peg$c299 = peg$otherExpectation("indentation");
     const peg$c300 = " ";
@@ -22345,8 +22345,11 @@ class StorageProviderBase extends UnifiedStore {
         this.referenceMode = false;
         assert(id, 'id must be provided when constructing StorageProviders');
         assert(!type.hasUnresolvedVariable, 'Storage types must be concrete');
-        this.version = 0;
+        this._version = 0;
         this._storageKey = key;
+    }
+    get versionToken() {
+        return this._version == null ? null : this._version + '';
     }
     enableReferenceMode() {
         this.referenceMode = true;
@@ -22584,7 +22587,7 @@ class VolatileCollection extends VolatileStorageProvider {
         super(type, name, id, key);
         this._model = new CrdtCollectionModel();
         this.storageEngine = storageEngine;
-        assert(this.version !== null);
+        assert(this._version !== null);
     }
     backingType() {
         return this.type.getContainedType();
@@ -22607,14 +22610,14 @@ class VolatileCollection extends VolatileStorageProvider {
     }
     async modelForSynchronization() {
         const model = await this._toList();
-        return { version: this.version, model };
+        return { version: this._version, model };
     }
     // Returns {version, model: [{id, value, keys: []}]}
     async toLiteral() {
-        return { version: this.version, model: this._model.toLiteral() };
+        return { version: this._version, model: this._model.toLiteral() };
     }
     fromLiteral({ version, model }) {
-        this.version = version;
+        this._version = version;
         this._model = new CrdtCollectionModel(model);
     }
     async _toList() {
@@ -22649,7 +22652,7 @@ class VolatileCollection extends VolatileStorageProvider {
     async storeMultiple(values, keys, originatorId = null) {
         assert(!this.referenceMode, 'storeMultiple not implemented for referenceMode stores');
         values.map(value => this._model.add(value.id, value, keys));
-        this.version++;
+        this._version++;
     }
     async get(id) {
         if (this.referenceMode) {
@@ -22680,8 +22683,8 @@ class VolatileCollection extends VolatileStorageProvider {
         else {
             item.effective = this._model.add(value.id, value, keys);
         }
-        this.version++;
-        await this._fire(new ChangeEvent({ add: [item], version: this.version, originatorId }));
+        this._version++;
+        await this._fire(new ChangeEvent({ add: [item], version: this._version, originatorId }));
     }
     async removeMultiple(items, originatorId = null) {
         if (items.length === 0) {
@@ -22698,8 +22701,8 @@ class VolatileCollection extends VolatileStorageProvider {
             }
             return res;
         });
-        this.version++;
-        await this._fire(new ChangeEvent({ remove, version: this.version, originatorId }));
+        this._version++;
+        await this._fire(new ChangeEvent({ remove, version: this._version, originatorId }));
     }
     async remove(id, keys = [], originatorId = null) {
         if (keys.length === 0) {
@@ -22708,8 +22711,8 @@ class VolatileCollection extends VolatileStorageProvider {
         const value = this._model.getValue(id);
         if (value !== null) {
             const effective = this._model.remove(id, keys);
-            this.version++;
-            await this._fire(new ChangeEvent({ remove: [{ value, keys, effective }], version: this.version, originatorId }));
+            this._version++;
+            await this._fire(new ChangeEvent({ remove: [{ value, keys, effective }], version: this._version, originatorId }));
         }
     }
     clearItemsForTesting() {
@@ -22757,7 +22760,7 @@ class VolatileSingleton extends VolatileStorageProvider {
             await this.ensureBackingStore();
             const result = await this.backingStore.get(value.id);
             return {
-                version: this.version,
+                version: this._version,
                 model: [{ id: value.id, value: result }]
             };
         }
@@ -22767,7 +22770,7 @@ class VolatileSingleton extends VolatileStorageProvider {
         const value = this._stored;
         // TODO: what should keys be set to?
         const model = (value != null) ? [{ id: value.id, value, keys: [] }] : [];
-        return { version: this.version, model };
+        return { version: this._version, model };
     }
     fromLiteral({ version, model }) {
         const value = model.length === 0 ? null : model[0].value;
@@ -22776,7 +22779,7 @@ class VolatileSingleton extends VolatileStorageProvider {
         }
         assert(value !== undefined);
         this._stored = value;
-        this.version = version;
+        this._version = version;
     }
     traceInfo() {
         return { stored: this._stored !== null };
@@ -22817,9 +22820,9 @@ class VolatileSingleton extends VolatileStorageProvider {
             }
             this._stored = value;
         }
-        this.version++;
+        this._version++;
         const data = this.referenceMode ? value : this._stored;
-        await this._fire(new ChangeEvent({ data, version: this.version, originatorId, barrier }));
+        await this._fire(new ChangeEvent({ data, version: this._version, originatorId, barrier }));
     }
     async clear(originatorId = null, barrier = null) {
         await this.set(null, originatorId, barrier);
@@ -22866,23 +22869,23 @@ class VolatileBigCollection extends VolatileStorageProvider {
     }
     async store(value, keys, originatorId) {
         assert(keys != null && keys.length > 0, 'keys required');
-        this.version++;
+        this._version++;
         if (!this.items.has(value.id)) {
             this.items.set(value.id, { index: null, value: null, keys: {} });
         }
         const data = this.items.get(value.id);
-        data.index = this.version;
+        data.index = this._version;
         data.value = value;
-        keys.forEach(k => data.keys[k] = this.version);
+        keys.forEach(k => data.keys[k] = this._version);
     }
     async remove(id, keys, originatorId) {
-        this.version++;
+        this._version++;
         this.items.delete(id);
     }
     async stream(pageSize, forward = true) {
         assert(!isNaN(pageSize) && pageSize > 0);
         this.cursorIndex++;
-        const cursor = new VolatileCursor(this.version, this.items.values(), pageSize, forward);
+        const cursor = new VolatileCursor(this._version, this.items.values(), pageSize, forward);
         this.cursors.set(this.cursorIndex, cursor);
         return this.cursorIndex;
     }
@@ -22920,10 +22923,10 @@ class VolatileBigCollection extends VolatileStorageProvider {
         for (const [id, { index, value, keys }] of this.items.entries()) {
             model.push({ id, index, value, keys: Object.keys(keys) });
         }
-        return { version: this.version, model };
+        return { version: this._version, model };
     }
     fromLiteral({ version, model }) {
-        this.version = version;
+        this._version = version;
         this.items.clear();
         for (const { id, index, value, keys } of model) {
             const adjustedKeys = {};
@@ -23283,11 +23286,11 @@ class StorageProviderFactory {
 // TODO(shans): Make sure that after refactor Storage objects have a lifecycle and can be directly used
 // deflated rather than requiring this stub.
 class StorageStub extends UnifiedStore {
-    constructor(type, id, name, storageKey, storageProviderFactory, originalId, claims, description, version, source, origin, referenceMode = false, model) {
+    constructor(type, id, name, storageKey, storageProviderFactory, originalId, claims, description, versionToken, source, origin, referenceMode = false, model) {
         super({ type, id, name, originalId, claims, description, source, origin });
         this.storageKey = storageKey;
         this.storageProviderFactory = storageProviderFactory;
-        this.version = version;
+        this.versionToken = versionToken;
         this.referenceMode = referenceMode;
         this.model = model;
         this.unifiedStoreType = 'StorageStub';
@@ -23319,7 +23322,8 @@ class StorageStub extends UnifiedStore {
         }
         store.storeInfo = { ...this.storeInfo };
         if (this.isBackedByManifest()) {
-            await store.fromLiteral({ version: this.version, model: this.model });
+            const version = this.versionToken == null ? null : Number(this.versionToken);
+            await store.fromLiteral({ version, model: this.model });
         }
         return store;
     }
@@ -23327,7 +23331,7 @@ class StorageStub extends UnifiedStore {
         return undefined; // Fake to match StorageProviderBase;
     }
     isBackedByManifest() {
-        return (this.version !== undefined && !!this.model);
+        return (this.versionToken !== undefined && !!this.model);
     }
     _compareTo(other) {
         let cmp;
@@ -24914,7 +24918,7 @@ ${e.message}
         else {
             model = entities.map(value => ({ id: value.id, value }));
         }
-        const version = item.version || 0;
+        const version = item.version || null;
         return manifest.newStore({
             type,
             name,
@@ -28555,7 +28559,6 @@ ${this.activeRecipe.toString()}`;
                     const copiedStoreRef = this.context.findStoreById(recipeHandle.id);
                     const copiedActiveStore = await copiedStoreRef.activate();
                     assert(copiedActiveStore, `Cannot find store ${recipeHandle.id}`);
-                    assert(copiedStoreRef.version !== null, `Copied store ${recipeHandle.id} doesn't have version.`);
                     const activeStore = await newStore.activate();
                     await activeStore.cloneFrom(copiedActiveStore);
                     this._tagStore(newStore, this.context.findStoreTags(copiedStoreRef));
@@ -28754,10 +28757,10 @@ ${this.activeRecipe.toString()}`;
     getVersionByStore({ includeArc = true, includeContext = false }) {
         const versionById = {};
         if (includeArc) {
-            this.storesById.forEach((handle, id) => versionById[id] = handle.version);
+            this.storesById.forEach((handle, id) => versionById[id] = handle.versionToken);
         }
         if (includeContext) {
-            this._context.allStores.forEach(handle => versionById[handle.id] = handle.version);
+            this._context.allStores.forEach(handle => versionById[handle.id] = handle.versionToken);
         }
         return versionById;
     }

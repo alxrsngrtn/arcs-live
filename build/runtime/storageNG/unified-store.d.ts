@@ -33,7 +33,7 @@ import { ClaimIsTag } from '../particle-claim.js';
 export declare abstract class UnifiedStore implements Comparable<UnifiedStore>, OldStore {
     protected abstract unifiedStoreType: 'Store' | 'StorageStub' | 'StorageProviderBase';
     abstract storageKey: string | StorageKey;
-    abstract version?: number;
+    abstract versionToken: string;
     abstract referenceMode: boolean;
     storeInfo: StoreInfo;
     constructor(storeInfo: StoreInfo);

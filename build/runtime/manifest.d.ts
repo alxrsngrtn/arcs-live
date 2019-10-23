@@ -97,7 +97,7 @@ export declare class Manifest {
         claims?: ClaimIsTag[];
         originalId?: string;
         description?: string;
-        version?: number;
+        version?: string;
         source?: string;
         origin?: 'file' | 'resource' | 'storage';
         referenceMode?: boolean;
