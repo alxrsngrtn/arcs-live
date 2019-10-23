@@ -1,11 +1,11 @@
-commit 71eaed43fdd95eb8e72021b6820fa09eb1192f3d
-Author: Joshua Pratt <jp10010101010000@gmail.com>
-Date:   Wed Oct 23 14:43:44 2019 +1100
+commit f93963983d96938f45d687ffb95aab5544c255e7
+Author: Ray Cromwell <cromwellian@gmail.com>
+Date:   Tue Oct 22 21:39:19 2019 -0700
 
-    Convert Particle Slot Fields to unified syntax (#3864)
+    Align GH deps with G3 deps (#3867)
     
-    * Introduce unified ParticleSlotConnection syntax and improve errors message
+    * run buildifier
     
-    * Update tests for new syntax
+    * run buildifier
     
-    * Unified Slot field syntax
+    * Move flogger backend to runtime_deps
