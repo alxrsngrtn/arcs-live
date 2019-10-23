@@ -1,15 +1,11 @@
-commit ae8e1d2c8d97673b2f225c3516b2c330c80e59a8
-Author: Jason Feinstein <jwf@google.com>
-Date:   Tue Oct 22 19:42:47 2019 -0700
+commit 71eaed43fdd95eb8e72021b6820fa09eb1192f3d
+Author: Joshua Pratt <jp10010101010000@gmail.com>
+Date:   Wed Oct 23 14:43:44 2019 +1100
 
-    Create `storage` package and the VolatileDriver. (#3857)
+    Convert Particle Slot Fields to unified syntax (#3864)
     
-    * Adds:
-      * `Driver`, `DriverProvider` interfaces
-      * `DriverFactory` implementation.
-      * `StorageKey` abstract class.
-      * `StorageKeyParser` singleton (with tests)
-      * `VolatileDriver` and associated other Volatile-related stuff.
-      * A bunch of stubs.
-    * Introduces some extra logic to translate the JVM maven dependencies to JS maven dependencies.
-    * Had to disable js-simultaneous builds for now (due to a bug in bazel's kotlin rules)
+    * Introduce unified ParticleSlotConnection syntax and improve errors message
+    
+    * Update tests for new syntax
+    
+    * Unified Slot field syntax
