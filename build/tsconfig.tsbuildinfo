@@ -194,7 +194,7 @@
         "signature": "30faac5ab576acd7b9cce2f46d22b74ab8ab2827c1c847045b7d7a3a1bde12b5"
       },
       "../src/runtime/recipe/slot.ts": {
-        "version": "fd46441d0ed13ad977f9d94fa82922ed7c77e310de6472e507c8fc269e249acd",
+        "version": "a46fd80cb98eedc73a956e62d55b6fe77bb9287869db4ede8bfe1729c0ce544a",
         "signature": "f238eb00375ccbf9eeb8e96a54e29a7cacbbb4ab7e966d7f8a5fa0ff8ccd58a0"
       },
       "../src/runtime/slot-info.ts": {
@@ -550,7 +550,7 @@
         "signature": "f2a4cadcd1682a6c16ee382dd7f75d1073ca14a0ee832587fcccbafd0b09c6d5"
       },
       "../src/gen/runtime/manifest-parser.ts": {
-        "version": "fd2cd73891f57b3b2b7e34210b08b18f366449cd88bf997a1f887337e39728ed",
+        "version": "3c0aae6b6a382570980df00bee39bdec91d19b0d0ed2493f51684abe6c826c2e",
         "signature": "ff2c763c7895327196fd3eb358dcc775b25f27bdae513079cc287433af262427"
       },
       "../src/runtime/manifest-meta.ts": {
@@ -578,7 +578,7 @@
         "signature": "8ef9453dcbfa29ffef1fd28d215625bdb2730644a74ff977494d36c9c2f4f86f"
       },
       "../src/runtime/manifest.ts": {
-        "version": "55fca671591c09644d218d65451f771f90dc0cc7b9d1f2afd6e8bd69e6252ec7",
+        "version": "528928142e06f60a0f051560b504f1cbd6e6ae3435fc9f8c74e8cbb7f0275468",
         "signature": "47e532d26c2dd6f0df1bdf4076ef32c9f9efcd24c7850a92b31ed2ada266c538"
       },
       "../src/platform/atob-web.ts": {
@@ -662,7 +662,7 @@
         "signature": "aa657cc3c9324f71d7c84ac68f4e20b1eedea2e1e8b93efd81051208cf69c5f6"
       },
       "../src/dataflow/analysis/tests/analysis-test.ts": {
-        "version": "e68e15f4af7f01213e9f17021011a74283e1d891a97d9e32763ad31219eafc25",
+        "version": "c10a80f9982594a51afaea779bcb1430a2b9e50362df8f38e12afa3b6df2e2d6",
         "signature": "8e609bb71c20b858c77f0e9f90bb1319db8477b13f9f965f1a1e18524bf50881"
       },
       "../src/dataflow/analysis/tests/deep-set-test.ts": {
@@ -1314,7 +1314,7 @@
         "signature": "70ec31185ba202997da2613e9400fff44ef0abf3c22f4794f67d658fe0c909b2"
       },
       "../src/planning/tests/planner-test.ts": {
-        "version": "3a0b6f88b7ed162dd21e5ffe5f1d4d196648510b5b544267f5fa0dd876c9e082",
+        "version": "63245cd0c9e8b03aa5f7c773adb2eb12f3458ae48592cb5842284f5144be53bf",
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "../src/runtime/testing/manifest-integration-test-setup.ts": {
@@ -2421,7 +2421,7 @@
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "../src/runtime/tests/manifest-test.ts": {
-        "version": "75dbb1756a87192c924b08963b6f57133c1d2333cced949189fcc39610ab12fa",
+        "version": "8289afef2d73c3552ffd6a5973031de3af5c9b93cbe26c3a35e80805f9d661b3",
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "../src/runtime/tests/multiplexer-test.ts": {
@@ -3090,6 +3090,7 @@
         "../src/runtime/recipe/recipe.ts",
         "../src/runtime/recipe/slot-connection.ts",
         "../src/runtime/recipe/comparable.ts",
+        "../src/runtime/flags.ts",
         "../node_modules/@types/node/util.d.ts",
         "../node_modules/@types/node/ts3.1/util.d.ts"
       ],

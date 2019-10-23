@@ -1,18 +1,5 @@
-commit c1219ed1f8ff24f94b5b85df5c4541ec742dbd73
-Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
-Date:   Tue Oct 22 17:15:25 2019 +1100
+commit 5a6807c5532598f5a1150ae5eba306cd50f743c7
+Author: Joshua Pratt <jp10010101010000@gmail.com>
+Date:   Wed Oct 23 12:55:58 2019 +1100
 
-    Add `run` subcommand for sigh (#3855)
-    
-    * Add `run` subcommand for sigh
-    
-    This lets you add new scripts with less boilerplate (just add a new line
-    to the `scripts` variable). Scripts can be run via:
-    
-    ```
-    ./tools/sigh run <script name> <rest of args>
-    ```
-    
-    (I'm going to be adding additional scripts to be invoked by bazel soon, so this makes that slightly easier.)
-    
-    * Fix bug: !scriptPath
+    Bump chromedriver version for chrome 77 compatability (#3863)

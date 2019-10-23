@@ -10,6 +10,7 @@
 import { assert } from '../../platform/assert-web.js';
 import { SlotConnection } from './slot-connection.js';
 import { compareArrays, compareComparables, compareStrings } from './comparable.js';
+import { Flags } from '../flags.js';
 export class Slot {
     constructor(recipe, name) {
         this._id = undefined;
@@ -139,14 +140,27 @@ export class Slot {
     }
     toString(options = {}, nameMap) {
         const result = [];
-        result.push('slot');
-        if (this.id) {
-            result.push(`'${this.id}'`);
+        const name = (nameMap && nameMap.get(this)) || this.localName;
+        if (Flags.usePreSlandlesSyntax) {
+            result.push('slot');
+            if (this.id) {
+                result.push(`'${this.id}'`);
+            }
+            if (this.tags.length > 0) {
+                result.push(this.tags.map(tag => `#${tag}`).join(' '));
+            }
+            result.push(`as ${name}`);
         }
-        if (this.tags.length > 0) {
-            result.push(this.tags.map(tag => `#${tag}`).join(' '));
+        else {
+            result.push(`${name}:`);
+            result.push('slot');
+            if (this.id) {
+                result.push(`'${this.id}'`);
+            }
+            if (this.tags.length > 0) {
+                result.push(this.tags.map(tag => `#${tag}`).join(' '));
+            }
         }
-        result.push(`as ${(nameMap && nameMap.get(this)) || this.localName}`);
         const includeUnresolved = options.showUnresolved && !this.isResolved(options);
         if (includeUnresolved) {
             result.push(`// unresolved slot: ${options.details}`);

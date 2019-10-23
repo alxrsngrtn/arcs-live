@@ -12,7 +12,7 @@ import {parse} from '../../gen/runtime/manifest-parser.js';
 import {assert} from '../../platform/chai-web.js';
 import {fs} from '../../platform/fs-web.js';
 import {path} from '../../platform/path-web.js';
-import {Manifest} from '../manifest.js';
+import {Manifest, ErrorSeverity} from '../manifest.js';
 import {Schema} from '../schema.js';
 import {checkDefined, checkNotNull} from '../testing/preconditions.js';
 import {StubLoader} from '../testing/stub-loader.js';
@@ -613,6 +613,56 @@ ${particleStr1}
     verify(manifest);
     verify(await Manifest.parse(manifest.toString()));
   });
+  it('SLANDLES SYNTAX can parse a manifest containing a recipe with slots', Flags.withPostSlandlesSyntax(async () => {
+    const manifest = await Manifest.parse(`
+      schema Thing
+      particle SomeParticle in 'some-particle.js'
+        someParam: in Thing
+        mySlot: consume Slot
+          formFactor big
+          otherSlot: provide Slot
+            handle someParam
+          oneMoreSlot: provide Slot
+            formFactor small
+
+      particle OtherParticle
+        aParam: out Thing
+        mySlot: consume Slot
+        oneMoreSlot: consume Slot
+
+      recipe SomeRecipe
+        ? #someHandle1 as myHandle
+        slot0: slot 'slotIDs:A' #someSlot
+        SomeParticle
+          someParam: in myHandle
+          mySlot: consume slot0
+            otherSlot: provide slot2
+            oneMoreSlot: provide slot1
+        OtherParticle
+          aParam: out myHandle
+          mySlot: consume slot0
+          oneMoreSlot: consume slot1
+    `);
+    const verify = (manifest: Manifest) => {
+      const recipe = manifest.recipes[0];
+      assert(recipe);
+      recipe.normalize();
+
+      assert.lengthOf(recipe.particles, 2);
+      assert.lengthOf(recipe.handles, 1);
+      assert.lengthOf(recipe.handleConnections, 2);
+      assert.lengthOf(recipe.slots, 3);
+      assert.lengthOf(recipe.slotConnections, 3);
+      assert.lengthOf(recipe.particles[0].getSlotConnectionNames(), 2);
+      assert.lengthOf(recipe.particles[1].getSlotConnectionNames(), 1);
+      const mySlot = recipe.particles[1].getSlotConnectionByName('mySlot');
+      assert.isDefined(mySlot.targetSlot);
+      assert.lengthOf(Object.keys(mySlot.providedSlots), 2);
+      assert.strictEqual(mySlot.providedSlots['oneMoreSlot'], recipe.particles[0].getSlotConnectionByName('oneMoreSlot').targetSlot);
+    };
+    verify(manifest);
+    verify(await Manifest.parse(manifest.toString()));
+  }));
   it('SLANDLES can parse a manifest containing a recipe with slots', Flags.withPostSlandlesSyntax(async () => {
     const manifest = await Manifest.parse(`
       schema Thing
@@ -1791,6 +1841,15 @@ resource SomeName
     assert(manifest.findInterfaceByName('Bar'));
     assert(manifest.recipes[0].normalize());
   });
+  it('can parse a manifest containing a warning', async () => {
+    const manifest = await Manifest.parse(`
+      schema Foo
+        Text value
+      particle Particle
+        in Foo foo`);
+    assert.equal(manifest.errors[0].severity, ErrorSeverity.Warning);
+    assert.lengthOf(manifest.allParticles, 1);
+  });
   it('can parse interfaces using new-style body syntax', async () => {
     const manifest = await Manifest.parse(`
       schema Foo
@@ -2452,7 +2511,7 @@ resource SomeName
       recipe
         require
           handle as h0
-          slot as s0
+          s0: slot
           P1
             *: out h0
             root: consume
@@ -2789,6 +2848,14 @@ resource SomeName
 
       assert.include(manifest.toString(), '  claim is property1 and is property2');
     });
+
+    it(`SLANDLES SYNTAX doesn't allow mixing 'and' and 'or' operations without nesting`, Flags.withPostSlandlesSyntax(async () => {
+      assertThrowsAsync(async () => await Manifest.parse(`
+        particle A
+          input: in T {}
+          check input is property1 or is property2 and is property3
+      `), `You cannot combine 'and' and 'or' operations in a single check expression.`);
+    }));
 
     it(`doesn't allow mixing 'and' and 'or' operations without nesting`, async () => {
       assertThrowsAsync(async () => await Manifest.parse(`
