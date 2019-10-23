@@ -1,5 +1,11 @@
-commit 067287f4568658b9c2ba19f98018c32005613bbf
-Author: Ray Cromwell <cromwellian@gmail.com>
-Date:   Wed Oct 23 14:41:52 2019 -0700
+commit 1455ab6d7c4ba76307ec333800337d98a53dbc83
+Author: Joshua Pratt <jp10010101010000@gmail.com>
+Date:   Thu Oct 24 09:41:21 2019 +1100
 
-    Fix manifest checker (#3874)
+    Port sequence tests for unified syntax (#3865)
+    
+    * Introduce unified ParticleSlotConnection syntax and improve errors message
+    
+    * Update tests for new syntax
+    
+    * Port strategy sequence tests to unified syntax

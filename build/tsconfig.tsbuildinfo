@@ -1306,7 +1306,7 @@
         "signature": "8bc1d39a3b8ec61064f9969316a088e314895e7ffd094468dcc0b238f33cb4a6"
       },
       "../src/planning/strategies/tests/strategy-sequence-test.ts": {
-        "version": "d8b6f8fef024b435bb8301909c29b727437ea2b835e248f49d335ba106d6fa2d",
+        "version": "79425db285677b7fa2374a8108e637bacaf678732c7d3e2a1b8f5b41b861d28b",
         "signature": "8e609bb71c20b858c77f0e9f90bb1319db8477b13f9f965f1a1e18524bf50881"
       },
       "../src/planning/testing/arcs-planning-testing.ts": {
@@ -5640,6 +5640,7 @@
         "../src/planning/strategies/match-recipe-by-verb.ts",
         "../src/planning/strategies/resolve-recipe.ts",
         "../src/planning/testing/strategy-test-helper.ts",
+        "../src/runtime/flags.ts",
         "../node_modules/@types/node/util.d.ts",
         "../node_modules/@types/node/ts3.1/util.d.ts"
       ],
