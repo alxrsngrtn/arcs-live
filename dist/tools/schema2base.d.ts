@@ -5,6 +5,7 @@ import { Manifest } from '../runtime/manifest.js';
 export declare type Aliases = Dictionary<Set<string>>;
 export declare abstract class Schema2Base {
     readonly opts: minimist.ParsedArgs;
+    private readonly scope;
     constructor(opts: minimist.ParsedArgs);
     call(): Promise<void>;
     /** Collect schemas from particle connections and build map of aliases. */
@@ -18,4 +19,5 @@ export declare abstract class Schema2Base {
     abstract fileFooter(): string;
     abstract entityClass(name: string, schema: Schema): string;
     abstract addAliases(aliases: Aliases): string;
+    abstract addScope(namespace: string): any;
 }

@@ -47,6 +47,11 @@ export class Schema2Cpp extends Schema2Base {
     fileFooter() {
         return '\n#endif\n';
     }
+    addScope(namespace = 'arcs') {
+        const nss = namespace.trim().split('.');
+        this.nsTop = nss.map(n => `namespace ${n} {`).join('\n');
+        this.nsBottom = nss.reverse().map(n => `}  // namespace ${n}`).join('\n');
+    }
     entityClass(name, schema) {
         const fields = [];
         const api = [];
@@ -85,7 +90,7 @@ export class Schema2Cpp extends Schema2Base {
         }
         return `\
 
-namespace arcs {
+${this.nsTop}
 
 class ${name} {
 public:
@@ -181,7 +186,7 @@ inline std::string internal::Accessor::encode_entity(const ${name}& entity) {
   return encoder.result();
 }
 
-}  // namespace arcs
+${this.nsBottom}
 
 // For STL unordered associative containers. Entities will need to be std::move()-inserted.
 template<>
@@ -196,9 +201,11 @@ struct std::hash<arcs::${name}> {
         const lines = Object.entries(aliases)
             .map(([rhs, ids]) => [...ids].map((id) => `using ${id} = ${rhs};`))
             .reduce((acc, val) => acc.concat(val), []); // equivalent to .flat()
-        return `namespace arcs {
+        return `${this.nsTop}
+
 ${lines.join('\n')}
-}`;
+
+${this.nsBottom}`;
     }
 }
 //# sourceMappingURL=schema2cpp.js.map

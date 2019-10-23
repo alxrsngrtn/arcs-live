@@ -10,9 +10,12 @@
 import { Aliases, Schema2Base } from './schema2base.js';
 import { Schema } from '../runtime/schema.js';
 export declare class Schema2Cpp extends Schema2Base {
+    nsTop: string;
+    nsBottom: string;
     outputName(baseName: string): string;
     fileHeader(outName: string): string;
     fileFooter(): string;
+    addScope(namespace?: string): void;
     entityClass(name: string, schema: Schema): string;
     addAliases(aliases: Aliases): string;
 }

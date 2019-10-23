@@ -34,7 +34,7 @@ export class Schema2Kotlin extends Schema2Base {
     }
     fileHeader(outName) {
         return `\
-package arcs
+package ${this.pkgName}
 
 //
 // GENERATED CODE -- DO NOT EDIT
@@ -92,6 +92,9 @@ data class ${name}(
   }
 }
 `;
+    }
+    addScope(namespace = 'arcs') {
+        this.pkgName = namespace;
     }
     addAliases(aliases) {
         const lines = Object.entries(aliases)

@@ -1,9 +1,5 @@
-commit f6c57bb110a8f7341c3e02787a3b11c88389cc6b
+commit 067287f4568658b9c2ba19f98018c32005613bbf
 Author: Ray Cromwell <cromwellian@gmail.com>
-Date:   Tue Oct 22 23:47:12 2019 -0700
+Date:   Wed Oct 23 14:41:52 2019 -0700
 
-    Add fake android target for g3 android targets (#3869)
-    
-    * Add fake android target for g3 android targets
-    
-    * use actual alias
+    Fix manifest checker (#3874)

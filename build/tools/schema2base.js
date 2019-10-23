@@ -14,6 +14,7 @@ export class Schema2Base {
     constructor(opts) {
         this.opts = opts;
         Utils.init('../..');
+        this.scope = opts.package;
     }
     async call() {
         fs.mkdirSync(this.opts.outdir, { recursive: true });
@@ -29,17 +30,18 @@ export class Schema2Base {
     /** Collect schemas from particle connections and build map of aliases. */
     processManifest(manifest) {
         const aliases = {};
-        const updateTheseAliases = (aliases_) => (rhs, alias) => {
-            if (aliases_[rhs] !== undefined) {
-                aliases_[rhs].add(alias);
+        const updateAliases = (rhs, alias) => {
+            if (aliases[rhs] !== undefined) {
+                aliases[rhs].add(alias);
             }
             else {
-                aliases_[rhs] = new Set([alias]);
+                aliases[rhs] = new Set([alias]);
             }
         };
-        const updateAliases = updateTheseAliases(aliases);
         const schemas = {};
         const refSchemas = {};
+        // Try to get one of the following keys from the manifest metadata
+        this.addScope(this.scope);
         for (const particle of manifest.allParticles) {
             const namespaceByParticle = (other) => `${particle.name}_${other}`;
             for (const connection of particle.connections) {
