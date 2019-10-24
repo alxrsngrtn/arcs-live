@@ -1,17 +1,7 @@
-commit 9852c5c50f47f3db3175974c88478cd92a22359e
-Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
-Date:   Thu Oct 24 19:05:12 2019 +1100
+commit 99b18d3d4dedb6771bfdd4acf8ace395bc0d1c73
+Author: yuangu-google <yuangu@google.com>
+Date:   Thu Oct 24 11:34:30 2019 -0700
 
-    Fix for run_in_repo on Windows (#3880)
+    Destroy Webview instead of loading an empty page to release resource (#3885)
     
-    Replaced call to ctx.actions.run with ctx.actions.run_shell.
-    
-    Windows was trying to execute the script as a win32 binary, which was
-    failing with the following error:
-    
-    ```
-    Action failed to execute: java.io.IOException: ERROR: src/main/native/windows/process.cc(199): CreateProcessW("C:\temp\7qgjmpto\execroot\__main__\bazel-out\x64_windows-fastbuild\bin\particles\Tutorial\Kotlin\3_JsonStore\JsonStore_genrule.sh"): %1 is not a valid Win32 application.
-    ```
-    
-    Advice from https://github.com/bazelbuild/bazel/issues/3589 is to use
-    ctx.actions.run_shell instead.
+    correctly.
