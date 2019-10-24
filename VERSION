@@ -1,8 +1,9 @@
-commit 33283a77edcc61957d1b61d2978eb19a9da2827c
+commit 51ebfd99672a37dc4e3843fc7500278d1a49f613
 Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
-Date:   Thu Oct 24 14:18:13 2019 +1100
+Date:   Thu Oct 24 16:07:37 2019 +1100
 
-    Adds a --quiet option to sigh (#3878)
+    Adds arcs_manifest_bundle rule (#3875)
     
-    This suppresses the verbose sigh logging. Flag used to keep our bazel
-    builds quieter.
+    This bundles up a set of arcs_manifest deps into a single filegroup, and
+    generates a root manifest which imports all of the manifest files in the
+    deps.
