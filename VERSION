@@ -1,7 +1,13 @@
-commit 99b18d3d4dedb6771bfdd4acf8ace395bc0d1c73
-Author: yuangu-google <yuangu@google.com>
-Date:   Thu Oct 24 11:34:30 2019 -0700
+commit 7ae1eba7a3c6ec35126e8d6f4b80134c25a2503c
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Thu Oct 24 13:14:35 2019 -0700
 
-    Destroy Webview instead of loading an empty page to release resource (#3885)
+    spawn recipes on startup accorging to @trigger annotations (#3851)
     
-    correctly.
+    * spawn recipes on startup accorging to @trigger annotations
+    
+    * address comments: move startup triggering logic to ArcsShellApi
+    
+    * restore classic-ingestion-arc sharing functionality
+    
+    * revert classic-ingestion-arc using the trigger annotation - as it will not work in ui broker shell
