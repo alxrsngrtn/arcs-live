@@ -38,6 +38,7 @@ async function createReferenceModeStore() {
         type: collectionType,
         mode: null,
         baseStore,
+        versionToken: null
     });
 }
 describe('Reference Mode Store', async () => {

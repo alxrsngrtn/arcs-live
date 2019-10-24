@@ -55,6 +55,7 @@ export declare type StoreConstructorOptions<T extends CRDTTypeRecord> = {
     type: Type;
     mode: StorageMode;
     baseStore: Store<T>;
+    versionToken: string;
 };
 export declare type StoreConstructor = {
     construct<T extends CRDTTypeRecord>(options: StoreConstructorOptions<T>): Promise<ActiveStore<T>>;
@@ -73,6 +74,7 @@ export declare abstract class ActiveStore<T extends CRDTTypeRecord> implements S
     readonly type: Type;
     readonly mode: StorageMode;
     readonly baseStore: Store<T>;
+    readonly versionToken: string;
     constructor(options: StoreConstructorOptions<T>);
     idle(): Promise<void>;
     toLiteral(): Promise<any>;

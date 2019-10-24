@@ -18,7 +18,7 @@ export declare class Store<T extends CRDTTypeRecord> extends UnifiedStore implem
     readonly storageKey: StorageKey;
     exists: Exists;
     readonly mode: StorageMode;
-    readonly versionToken: string;
+    parsedVersionToken: string;
     modelConstructor: new () => CRDTModel<T>;
     private activeStore;
     static readonly constructors: Map<StorageMode, StoreConstructor>;
@@ -26,6 +26,7 @@ export declare class Store<T extends CRDTTypeRecord> extends UnifiedStore implem
         storageKey: StorageKey;
         exists: Exists;
     });
+    readonly versionToken: string;
     activate(): Promise<ActiveStore<T>>;
     readonly referenceMode: boolean;
 }

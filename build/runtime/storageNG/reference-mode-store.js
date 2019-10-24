@@ -106,6 +106,7 @@ export class ReferenceModeStore extends ActiveStore {
             mode: StorageMode.Backing,
             exists: options.exists,
             baseStore: options.baseStore,
+            versionToken: null
         });
         let refType;
         if (type.isCollectionType()) {
@@ -120,13 +121,20 @@ export class ReferenceModeStore extends ActiveStore {
             type,
             mode: StorageMode.Direct,
             exists: options.exists,
-            baseStore: options.baseStore
+            baseStore: options.baseStore,
+            versionToken: options.versionToken
         });
         result.registerStoreCallbacks();
         return result;
     }
     reportExceptionInHost(exception) {
         // TODO(shans): Figure out idle / exception store for reference mode stores.
+    }
+    // For referenceMode stores, the version tracked is just the version
+    // of the container, because any updates to Entities must necessarily be
+    // stored as version updates to the references in the container.
+    get versionToken() {
+        return this.containerStore.versionToken;
     }
     on(callback) {
         const id = this.nextCallbackID++;
@@ -207,12 +215,7 @@ export class ReferenceModeStore extends ActiveStore {
      *
      * Operations and Models either enqueue an immediate send (if all referenced entities
      * are available in the backing store) or enqueue a blocked send (if some referenced
-     * entities are not yet present).
-     *
-     * Note that the blocking mechanism isn't version-aware, so removes followed by
-     * adds may not correctly sync. If this turns out to be a problem then we can
-     * add version information to references and update the blocking store to gate
-     * on a version as well as presence.
+     * entities are not yet present or are at the incorrect version).
      *
      * Sync requests are propagated upwards to the storage proxy.
      */

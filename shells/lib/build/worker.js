@@ -6471,10 +6471,19 @@ class Store extends _unified_store_js__WEBPACK_IMPORTED_MODULE_4__["UnifiedStore
     constructor(opts) {
         super(opts);
         this.unifiedStoreType = 'Store';
-        this.versionToken = null;
+        // The last known version of this store that was stored in the serialized
+        // representation.
+        this.parsedVersionToken = null;
         this.storageKey = opts.storageKey;
         this.exists = opts.exists;
         this.mode = opts.storageKey instanceof _reference_mode_store_js__WEBPACK_IMPORTED_MODULE_3__["ReferenceModeStorageKey"] ? _store_interface_js__WEBPACK_IMPORTED_MODULE_1__["StorageMode"].ReferenceMode : _store_interface_js__WEBPACK_IMPORTED_MODULE_1__["StorageMode"].Direct;
+        this.parsedVersionToken = opts.versionToken;
+    }
+    get versionToken() {
+        if (this.activeStore) {
+            return this.activeStore.versionToken;
+        }
+        return this.parsedVersionToken;
     }
     async activate() {
         if (this.activeStore) {
@@ -6493,6 +6502,7 @@ class Store extends _unified_store_js__WEBPACK_IMPORTED_MODULE_4__["UnifiedStore
             type: this.type,
             mode: this.mode,
             baseStore: this,
+            versionToken: this.parsedVersionToken
         });
         this.exists = _drivers_driver_factory_js__WEBPACK_IMPORTED_MODULE_0__["Exists"].ShouldExist;
         this.activeStore = activeStore;
@@ -6726,6 +6736,9 @@ class DirectStore extends _store_interface_js__WEBPACK_IMPORTED_MODULE_2__["Acti
             this.pendingRejects.push(reject);
         });
     }
+    get versionToken() {
+        return this.driver.getToken();
+    }
     setState(state) {
         this.state = state;
         if (state === DirectStoreState.Idle) {
@@ -6750,7 +6763,7 @@ class DirectStore extends _store_interface_js__WEBPACK_IMPORTED_MODULE_2__["Acti
         if (me.driver == null) {
             throw new _crdt_crdt_js__WEBPACK_IMPORTED_MODULE_0__["CRDTError"](`No driver exists to support storage key ${options.storageKey}`);
         }
-        me.driver.registerReceiver(me.onReceive.bind(me));
+        me.driver.registerReceiver(me.onReceive.bind(me), options.versionToken);
         return me;
     }
     // The driver will invoke this method when it has an updated remote model
@@ -7150,6 +7163,7 @@ class ReferenceModeStore extends _store_interface_js__WEBPACK_IMPORTED_MODULE_2_
             mode: _store_interface_js__WEBPACK_IMPORTED_MODULE_2__["StorageMode"].Backing,
             exists: options.exists,
             baseStore: options.baseStore,
+            versionToken: null
         });
         let refType;
         if (type.isCollectionType()) {
@@ -7164,13 +7178,20 @@ class ReferenceModeStore extends _store_interface_js__WEBPACK_IMPORTED_MODULE_2_
             type,
             mode: _store_interface_js__WEBPACK_IMPORTED_MODULE_2__["StorageMode"].Direct,
             exists: options.exists,
-            baseStore: options.baseStore
+            baseStore: options.baseStore,
+            versionToken: options.versionToken
         });
         result.registerStoreCallbacks();
         return result;
     }
     reportExceptionInHost(exception) {
         // TODO(shans): Figure out idle / exception store for reference mode stores.
+    }
+    // For referenceMode stores, the version tracked is just the version
+    // of the container, because any updates to Entities must necessarily be
+    // stored as version updates to the references in the container.
+    get versionToken() {
+        return this.containerStore.versionToken;
     }
     on(callback) {
         const id = this.nextCallbackID++;
@@ -7251,12 +7272,7 @@ class ReferenceModeStore extends _store_interface_js__WEBPACK_IMPORTED_MODULE_2_
      *
      * Operations and Models either enqueue an immediate send (if all referenced entities
      * are available in the backing store) or enqueue a blocked send (if some referenced
-     * entities are not yet present).
-     *
-     * Note that the blocking mechanism isn't version-aware, so removes followed by
-     * adds may not correctly sync. If this turns out to be a problem then we can
-     * add version information to references and update the blocking store to gate
-     * on a version as well as presence.
+     * entities are not yet present or are at the incorrect version).
      *
      * Sync requests are propagated upwards to the storage proxy.
      */

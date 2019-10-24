@@ -44,6 +44,7 @@ export class MockStore extends ActiveStore {
             type: new CountType(),
             mode: StorageMode.Direct,
             baseStore: null,
+            versionToken: null
         });
         this.lastCapturedMessage = null;
         this.lastCapturedException = null;

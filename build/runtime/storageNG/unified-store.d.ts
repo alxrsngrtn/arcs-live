@@ -78,4 +78,5 @@ export declare type StoreInfo = {
     readonly description?: string;
     /** Trust tags claimed by this data store. */
     readonly claims?: ClaimIsTag[];
+    readonly versionToken?: string;
 };

@@ -1,11 +1,5 @@
-commit 84db3be38f9e978c0b94f6db6c89ab6f587d523a
-Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
-Date:   Thu Oct 24 12:30:27 2019 +1100
+commit 4347fe22ad888cf12489da276f6e651411c4d68a
+Author: shans <shane.stephens@gmail.com>
+Date:   Thu Oct 24 13:28:32 2019 +1100
 
-    Adds missing android_library rule (#3877)
-    
-    Fixes javaharness build, broken in #3871. BUILD files import
-    android_library and android_binary from //tools/build_defs/android, but
-    there are no files there in our git repo.
-    
-    Now just re-exports them from @build_bazel_rules_android
+    Complete plumbing of version token into and out of storageNG objects. (#3876)

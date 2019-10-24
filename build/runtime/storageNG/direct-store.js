@@ -48,6 +48,9 @@ export class DirectStore extends ActiveStore {
             this.pendingRejects.push(reject);
         });
     }
+    get versionToken() {
+        return this.driver.getToken();
+    }
     setState(state) {
         this.state = state;
         if (state === DirectStoreState.Idle) {
@@ -72,7 +75,7 @@ export class DirectStore extends ActiveStore {
         if (me.driver == null) {
             throw new CRDTError(`No driver exists to support storage key ${options.storageKey}`);
         }
-        me.driver.registerReceiver(me.onReceive.bind(me));
+        me.driver.registerReceiver(me.onReceive.bind(me), options.versionToken);
         return me;
     }
     // The driver will invoke this method when it has an updated remote model

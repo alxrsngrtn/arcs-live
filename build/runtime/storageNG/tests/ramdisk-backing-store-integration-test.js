@@ -40,6 +40,7 @@ describe('RamDisk + Backing Store Integration', async () => {
             type: new CountType(),
             mode: StorageMode.Backing,
             baseStore,
+            versionToken: null
         });
         const count1 = new CRDTCount();
         count1.applyOperation({ type: CountOpTypes.Increment, actor: 'me', version: { from: 0, to: 1 } });

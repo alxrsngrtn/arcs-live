@@ -22,10 +22,19 @@ export class Store extends UnifiedStore {
     constructor(opts) {
         super(opts);
         this.unifiedStoreType = 'Store';
-        this.versionToken = null;
+        // The last known version of this store that was stored in the serialized
+        // representation.
+        this.parsedVersionToken = null;
         this.storageKey = opts.storageKey;
         this.exists = opts.exists;
         this.mode = opts.storageKey instanceof ReferenceModeStorageKey ? StorageMode.ReferenceMode : StorageMode.Direct;
+        this.parsedVersionToken = opts.versionToken;
+    }
+    get versionToken() {
+        if (this.activeStore) {
+            return this.activeStore.versionToken;
+        }
+        return this.parsedVersionToken;
     }
     async activate() {
         if (this.activeStore) {
@@ -44,6 +53,7 @@ export class Store extends UnifiedStore {
             type: this.type,
             mode: this.mode,
             baseStore: this,
+            versionToken: this.parsedVersionToken
         });
         this.exists = Exists.ShouldExist;
         this.activeStore = activeStore;

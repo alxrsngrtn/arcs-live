@@ -65,6 +65,7 @@ export declare class ReferenceModeStore<Entity extends Referenceable, S extends 
         storageKey: ReferenceModeStorageKey;
     }): Promise<ReferenceModeStore<Entity, S, C, ReferenceContainer, Container>>;
     reportExceptionInHost(exception: PropagatedException): void;
+    readonly versionToken: string;
     on(callback: ProxyCallback<Container>): number;
     off(callback: number): void;
     private registerStoreCallbacks;
@@ -92,12 +93,7 @@ export declare class ReferenceModeStore<Entity extends Referenceable, S extends 
      *
      * Operations and Models either enqueue an immediate send (if all referenced entities
      * are available in the backing store) or enqueue a blocked send (if some referenced
-     * entities are not yet present).
-     *
-     * Note that the blocking mechanism isn't version-aware, so removes followed by
-     * adds may not correctly sync. If this turns out to be a problem then we can
-     * add version information to references and update the blocking store to gate
-     * on a version as well as presence.
+     * entities are not yet present or are at the incorrect version).
      *
      * Sync requests are propagated upwards to the storage proxy.
      */

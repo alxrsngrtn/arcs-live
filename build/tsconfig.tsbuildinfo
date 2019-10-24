@@ -298,16 +298,16 @@
         "signature": "a358531560d4e2a49cc34077433efde00649050354de88202c168bce927375f5"
       },
       "../src/runtime/storageNG/store-interface.ts": {
-        "version": "66e334199e6116cf5c179b8ae6b5e8b8394500842de25c4d8a82ccdd59cda905",
-        "signature": "e6214127cb0f589031fca92596c12566c6d4e85d22967b444565e5f0678016f2"
+        "version": "b7eb91e5f8f8efda26ee4d5904fd0b4f545452c4cd2fc5068f4277f4d8bdad10",
+        "signature": "33450ba4647d7cdce9d149fff7975abd2f67341b7d8e5224890c479365f0692e"
       },
       "../src/runtime/util.ts": {
         "version": "d5aa2916c7fb7e6c0d5acd30c508be1572470ec9082cd24076b7c960065dc2dc",
         "signature": "961a2cb40c20210dc4a8e8257fad16693c468c7f15d9f128417abcdb7d5b79c1"
       },
       "../src/runtime/storageNG/direct-store.ts": {
-        "version": "c48d346c72a1501d15b4d3dad34009ac0843c84c9be66819575206b63c169956",
-        "signature": "6b658ebe14ba54a1d359e6cd87d97e55451bafbd6d3a70dc2b2e3ee6602f7a4d"
+        "version": "ea5ab47e452d2da69b1facb318ae42657644fe6913260b24c0b5e8b1825a912d",
+        "signature": "a594ba1f3231a8e352438c4b3a4bdb5ce84ea8149b6bffde0e7834ff29e1133a"
       },
       "../src/runtime/storageNG/backing-store.ts": {
         "version": "736da72741c9d9bce43f14e6bb1e4c36ed0d2357d8b481501c7ad32258beb478",
@@ -318,12 +318,12 @@
         "signature": "362ce6c9e7048d0c4a97f29c27b27de7ee17135bff0ff20885eadaaa0cc569ed"
       },
       "../src/runtime/storageNG/reference-mode-store.ts": {
-        "version": "ff7e6a71e2b2486f18e353b9012c6494b2466ca400eee120bccb8977fa03cc05",
-        "signature": "e7d8618e1b218e4b44d3025b645400975981d9f106e91e10fe7a33ffece5d6f0"
+        "version": "badaec3060a9cfc58fe84b4073e9b690882f03c20ec70c89a3a51e2dcf75e955",
+        "signature": "1ca62b6b123b854966e4b93d00827867130eb29ea0d6334e62a200e768a36dff"
       },
       "../src/runtime/storageNG/store.ts": {
-        "version": "1b7d53860c2d0d1b3fb3ad813e0ee29142fbdc0561252da026466caccf0c3379",
-        "signature": "43c8bc323ef83f12a5b71919ccd4a1fee82180e5abaf00207325145495df6135"
+        "version": "66551a7ab7636c0768635d59600cd63d2ccc3b11679457d709c34723750115a9",
+        "signature": "317d14c022e63c65b7ad1a1f85644a1a82cdcb1bb6d82e285d9dddb6366f64c3"
       },
       "../src/runtime/storage/storage-provider-base.ts": {
         "version": "1a0a7026b8a65fb7b35e0e30064dc6994f9483064765052452a86b377836faa0",
@@ -402,8 +402,8 @@
         "signature": "c24c80fb524520ae169e711b9466a030a2124aa864cce5c49670ca49a6367d81"
       },
       "../src/runtime/storageNG/unified-store.ts": {
-        "version": "818d44a00e84d24336a68577f6e20541dd0b86656a2789d88e461295cb2d4cff",
-        "signature": "026d89274daa8acdfddfe54cd0210ae2ff1a4439b4902681fe02400801406824"
+        "version": "8565b1744597aebb5210b495cb35f91c543489e61ef66cf5af7815f3196353f9",
+        "signature": "2ed48c4527a7462d27d379953665af9413d54387139dbd1ddea1c9c847eccd4c"
       },
       "../src/runtime/description.ts": {
         "version": "a5f8a14cfbc4054f99dc3abdcefc760dbce1deb7999cb52dba92d74c09ec0299",
@@ -2309,7 +2309,7 @@
         "signature": "fd95df5d076cbfed143dc4904d376b5c6d9cb1091b630994ffe2366010afa6b3"
       },
       "../src/runtime/storageNG/testing/test-storage.ts": {
-        "version": "32a616964ae0185d3055f2f8caf1f73e252ac0bad5ab56f9014e0f33dfbd3b1d",
+        "version": "79ead31821de99a9714e24980200a1a4529021c96128ff2f8ce1addbcfb0877d",
         "signature": "03b3c599818e2d38e21094beaf28ff044a0bea356782a459b5d7ff497fc77009"
       },
       "../src/runtime/storageNG/tests/firebase-store-integration-test.ts": {
@@ -2321,7 +2321,7 @@
         "signature": "fd95df5d076cbfed143dc4904d376b5c6d9cb1091b630994ffe2366010afa6b3"
       },
       "../src/runtime/storageNG/tests/ramdisk-backing-store-integration-test.ts": {
-        "version": "e67241b65faa59f3736430ddd0efb17259ccdfe08078ca63ae06efc1715c79c7",
+        "version": "90fb47a82eb627c6d8e92ec9dcc58cfcb88a7073c58a2b87598d41aa5cb84ee7",
         "signature": "fd95df5d076cbfed143dc4904d376b5c6d9cb1091b630994ffe2366010afa6b3"
       },
       "../src/runtime/storageNG/tests/ramdisk-store-integration-test.ts": {
@@ -2329,7 +2329,7 @@
         "signature": "fd95df5d076cbfed143dc4904d376b5c6d9cb1091b630994ffe2366010afa6b3"
       },
       "../src/runtime/storageNG/tests/reference-mode-store-test.ts": {
-        "version": "0a236a18dc0b8c7f23d5b47cfac6fccbf7ae59b5c2b1ac6e1cd3db874fe5e7e9",
+        "version": "e75cfd2794e1cbf8cc87c5b7c17d49db45c345acf230be43a7453f92411b756f",
         "signature": "fd95df5d076cbfed143dc4904d376b5c6d9cb1091b630994ffe2366010afa6b3"
       },
       "../src/runtime/storageNG/tests/storage-key-test.ts": {
@@ -3328,12 +3328,9 @@
       "../src/runtime/storageNG/direct-store.ts": [
         "../src/runtime/arc-exceptions.ts",
         "../src/runtime/crdt/crdt.ts",
-        "../src/runtime/type.ts",
         "../src/runtime/storageNG/drivers/driver-factory.ts",
-        "../src/runtime/storageNG/storage-key.ts",
         "../src/runtime/storageNG/store-interface.ts",
         "../src/runtime/util.ts",
-        "../src/runtime/storageNG/store.ts",
         "../node_modules/@types/node/util.d.ts",
         "../node_modules/@types/node/ts3.1/util.d.ts"
       ],

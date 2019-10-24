@@ -2093,6 +2093,9 @@ class DirectStore extends ActiveStore {
             this.pendingRejects.push(reject);
         });
     }
+    get versionToken() {
+        return this.driver.getToken();
+    }
     setState(state) {
         this.state = state;
         if (state === DirectStoreState.Idle) {
@@ -2117,7 +2120,7 @@ class DirectStore extends ActiveStore {
         if (me.driver == null) {
             throw new CRDTError(`No driver exists to support storage key ${options.storageKey}`);
         }
-        me.driver.registerReceiver(me.onReceive.bind(me));
+        me.driver.registerReceiver(me.onReceive.bind(me), options.versionToken);
         return me;
     }
     // The driver will invoke this method when it has an updated remote model
@@ -2649,6 +2652,7 @@ class ReferenceModeStore extends ActiveStore {
             mode: StorageMode.Backing,
             exists: options.exists,
             baseStore: options.baseStore,
+            versionToken: null
         });
         let refType;
         if (type.isCollectionType()) {
@@ -2663,13 +2667,20 @@ class ReferenceModeStore extends ActiveStore {
             type,
             mode: StorageMode.Direct,
             exists: options.exists,
-            baseStore: options.baseStore
+            baseStore: options.baseStore,
+            versionToken: options.versionToken
         });
         result.registerStoreCallbacks();
         return result;
     }
     reportExceptionInHost(exception) {
         // TODO(shans): Figure out idle / exception store for reference mode stores.
+    }
+    // For referenceMode stores, the version tracked is just the version
+    // of the container, because any updates to Entities must necessarily be
+    // stored as version updates to the references in the container.
+    get versionToken() {
+        return this.containerStore.versionToken;
     }
     on(callback) {
         const id = this.nextCallbackID++;
@@ -2750,12 +2761,7 @@ class ReferenceModeStore extends ActiveStore {
      *
      * Operations and Models either enqueue an immediate send (if all referenced entities
      * are available in the backing store) or enqueue a blocked send (if some referenced
-     * entities are not yet present).
-     *
-     * Note that the blocking mechanism isn't version-aware, so removes followed by
-     * adds may not correctly sync. If this turns out to be a problem then we can
-     * add version information to references and update the blocking store to gate
-     * on a version as well as presence.
+     * entities are not yet present or are at the incorrect version).
      *
      * Sync requests are propagated upwards to the storage proxy.
      */
@@ -3337,10 +3343,19 @@ class Store extends UnifiedStore {
     constructor(opts) {
         super(opts);
         this.unifiedStoreType = 'Store';
-        this.versionToken = null;
+        // The last known version of this store that was stored in the serialized
+        // representation.
+        this.parsedVersionToken = null;
         this.storageKey = opts.storageKey;
         this.exists = opts.exists;
         this.mode = opts.storageKey instanceof ReferenceModeStorageKey ? StorageMode.ReferenceMode : StorageMode.Direct;
+        this.parsedVersionToken = opts.versionToken;
+    }
+    get versionToken() {
+        if (this.activeStore) {
+            return this.activeStore.versionToken;
+        }
+        return this.parsedVersionToken;
     }
     async activate() {
         if (this.activeStore) {
@@ -3359,6 +3374,7 @@ class Store extends UnifiedStore {
             type: this.type,
             mode: this.mode,
             baseStore: this,
+            versionToken: this.parsedVersionToken
         });
         this.exists = Exists.ShouldExist;
         this.activeStore = activeStore;
