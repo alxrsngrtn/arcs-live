@@ -1,13 +1,5 @@
-commit 7ae1eba7a3c6ec35126e8d6f4b80134c25a2503c
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Thu Oct 24 13:14:35 2019 -0700
+commit 0a6c07c96ce69071567b58754257a04d9fa7c9ce
+Author: yuangu-google <yuangu@google.com>
+Date:   Thu Oct 24 15:12:45 2019 -0700
 
-    spawn recipes on startup accorging to @trigger annotations (#3851)
-    
-    * spawn recipes on startup accorging to @trigger annotations
-    
-    * address comments: move startup triggering logic to ArcsShellApi
-    
-    * restore classic-ingestion-arc sharing functionality
-    
-    * revert classic-ingestion-arc using the trigger annotation - as it will not work in ui broker shell
+    Fix threading and initialization issues in AndroidArcsEnvironment.java. (#3888)
