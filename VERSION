@@ -1,9 +1,17 @@
-commit 037072f5955212a071e090400d230f43f4ca74cc
-Author: Ray Cromwell <cromwellian@gmail.com>
-Date:   Wed Oct 23 23:01:05 2019 -0700
+commit 9852c5c50f47f3db3175974c88478cd92a22359e
+Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
+Date:   Thu Oct 24 19:05:12 2019 +1100
 
-    Alias kotlin (#3882)
+    Fix for run_in_repo on Windows (#3880)
     
-    * Add aliases for kt_js and kt_native
+    Replaced call to ctx.actions.run with ctx.actions.run_shell.
     
-    * move to appropriate directory
+    Windows was trying to execute the script as a win32 binary, which was
+    failing with the following error:
+    
+    ```
+    Action failed to execute: java.io.IOException: ERROR: src/main/native/windows/process.cc(199): CreateProcessW("C:\temp\7qgjmpto\execroot\__main__\bazel-out\x64_windows-fastbuild\bin\particles\Tutorial\Kotlin\3_JsonStore\JsonStore_genrule.sh"): %1 is not a valid Win32 application.
+    ```
+    
+    Advice from https://github.com/bazelbuild/bazel/issues/3589 is to use
+    ctx.actions.run_shell instead.
