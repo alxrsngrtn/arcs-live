@@ -1,5 +1,8 @@
-commit 4347fe22ad888cf12489da276f6e651411c4d68a
-Author: shans <shane.stephens@gmail.com>
-Date:   Thu Oct 24 13:28:32 2019 +1100
+commit 33283a77edcc61957d1b61d2978eb19a9da2827c
+Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
+Date:   Thu Oct 24 14:18:13 2019 +1100
 
-    Complete plumbing of version token into and out of storageNG objects. (#3876)
+    Adds a --quiet option to sigh (#3878)
+    
+    This suppresses the verbose sigh logging. Flag used to keep our bazel
+    builds quieter.
