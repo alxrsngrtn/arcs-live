@@ -1,15 +1,5 @@
-commit 6c72e65535742e3bdf6a113b22b071c9d00e1e32
-Author: Ray Cromwell <cromwellian@gmail.com>
-Date:   Thu Oct 24 21:19:35 2019 -0700
+commit 8220a30e702245b612bef7af50313c020b8caf75
+Author: yuangu-google <yuangu@google.com>
+Date:   Thu Oct 24 23:10:58 2019 -0700
 
-    Move builddefs to third_party/java/arcs/build_defs (#3892)
-    
-    * Add aliases for kt_js and kt_native
-    
-    * move to appropriate directory
-    
-    * move build_defs to a g3 location
-    
-    * add mising files
-    
-    * fix src_kt references
+    Update assets path. (#3891)
