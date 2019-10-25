@@ -2672,20 +2672,24 @@
         "version": "97dadd1913ede3dfece56f606b841b7af35d72c145489757976945cb116d4e6d",
         "signature": "fd95df5d076cbfed143dc4904d376b5c6d9cb1091b630994ffe2366010afa6b3"
       },
+      "../src/tools/schema2graph.ts": {
+        "version": "76e04e31b9383316adf3790c674790ef2f3a44624ecf5f4e3455fc88afca1d8b",
+        "signature": "1f982927581ef3701fbce0cceb9803297ca39c6890df78295af37cc9945801dd"
+      },
       "../src/tools/schema2base.ts": {
-        "version": "7fc3e0797c23f37b850fd76e7f096b949b1f07a972214ea1e5021290100ddcb5",
-        "signature": "b0426ae3e37e3c5e1a7fb768c5b82463d9237f2ed2dc719bb639a7d3a2d99fdb"
+        "version": "6f170911d3b3c0e16c634090e6d3f34b68fa4d90e2b1802ae10cd5aa8e6124ad",
+        "signature": "e15623b4ccebc40e83dc88b55d3b5a0db0a9506b8b4c02805a5b00426b16357d"
       },
       "../src/tools/schema2cpp.ts": {
-        "version": "27d1f3660a38874d986ed2ea6133f8552bcc1037923d50e57c995e6a83c9c54c",
-        "signature": "627c57ba3b4433efbf7dd4e551db99f72c0165c26850a6f6b1bffedc0af505e7"
+        "version": "f6867ec32074818107cf42270b0344249075bdf8831891a7047cc6b46237901b",
+        "signature": "83ab8b3321d362bae33fceaeeec77280d5c39ff040d6517f45f04e715a036daa"
       },
       "../src/tools/schema2kotlin.ts": {
-        "version": "ada8f42845173cd7c80427c66fbdfb8509f5469a57a0ba5f99a949da08210556",
-        "signature": "cdaa9a5424b959fca6e89e38adc81a87cec4ca220a8676704685189c254ceefd"
+        "version": "461dced52165e5f704fc1791c91ff1c725e0b3967fc3ae5235677be9ec4cb69e",
+        "signature": "5b4ab1b3ee04aa06b7ed036714edd3ff58e3134f5f506943be302ec9b2000f41"
       },
       "../src/tools/schema2packager.ts": {
-        "version": "f42969e0c158d2b92af6d95eea32cf72c01959e13bd70e62e5b0d68d08760cab",
+        "version": "ee9af152799f45ed0bb76a1aa246ae5428f12d75adc26cdce52bc9f9ca974f71",
         "signature": "8e609bb71c20b858c77f0e9f90bb1319db8477b13f9f965f1a1e18524bf50881"
       },
       "../node_modules/@types/range-parser/index.d.ts": {
@@ -2745,16 +2749,20 @@
         "signature": "fd95df5d076cbfed143dc4904d376b5c6d9cb1091b630994ffe2366010afa6b3"
       },
       "../src/tools/tests/schema2base-test.ts": {
-        "version": "5d5addd6c1dfb6dece305d90101d8782daab3144fa1e3ca980a7c19618856b06",
-        "signature": "fd95df5d076cbfed143dc4904d376b5c6d9cb1091b630994ffe2366010afa6b3"
+        "version": "5019f5cbcdfcee3bd8e7fa9267c4ff94c62fba1c7827cffe8b4bc42e6a4da795",
+        "signature": "8e609bb71c20b858c77f0e9f90bb1319db8477b13f9f965f1a1e18524bf50881"
       },
       "../src/tools/tests/schema2cpp-test.ts": {
-        "version": "867850883a08130afb0785880e6823ba70040d3345fa2e9df080ee50737ba4ad",
-        "signature": "fd95df5d076cbfed143dc4904d376b5c6d9cb1091b630994ffe2366010afa6b3"
+        "version": "518cd6b491b29b297e212d28f95c4b7b3ad71c16633fe5dfeeb9f658a70f4302",
+        "signature": "8e609bb71c20b858c77f0e9f90bb1319db8477b13f9f965f1a1e18524bf50881"
+      },
+      "../src/tools/tests/schema2graph-test.ts": {
+        "version": "01ddac98fcb6a076101e818693610cc9765a3e09cab05087a9f1006694428ed6",
+        "signature": "8e609bb71c20b858c77f0e9f90bb1319db8477b13f9f965f1a1e18524bf50881"
       },
       "../src/tools/tests/schema2kotlin-test.ts": {
-        "version": "e872e7d3c34c0b7025041b0897d84488d6aa701a980a96434a47a23cfce2fbb6",
-        "signature": "fd95df5d076cbfed143dc4904d376b5c6d9cb1091b630994ffe2366010afa6b3"
+        "version": "cf33b429a191269bd2d68a2ad812883861a880c6fc640325144ce6fac80a57bf",
+        "signature": "8e609bb71c20b858c77f0e9f90bb1319db8477b13f9f965f1a1e18524bf50881"
       },
       "../src/tracelib/tests/trace-test.ts": {
         "version": "4f9a1664a48b2b5d572408bd9f1cf6b1ea7a2ae940a4fd03fab855c4dd199941",
@@ -8328,25 +8336,31 @@
         "../node_modules/@types/node/util.d.ts",
         "../node_modules/@types/node/ts3.1/util.d.ts"
       ],
+      "../src/tools/schema2graph.ts": [
+        "../src/runtime/schema.ts",
+        "../src/runtime/particle-spec.ts",
+        "../src/runtime/hot.ts",
+        "../node_modules/@types/node/util.d.ts",
+        "../node_modules/@types/node/ts3.1/util.d.ts"
+      ],
       "../src/tools/schema2base.ts": [
         "../node_modules/@types/node/fs.d.ts",
         "../node_modules/@types/node/path.d.ts",
         "../node_modules/@types/minimist/index.d.ts",
-        "../src/runtime/schema.ts",
-        "../src/runtime/hot.ts",
         "../src/runtime/manifest.ts",
+        "../src/tools/schema2graph.ts",
         "../node_modules/@types/node/util.d.ts",
         "../node_modules/@types/node/ts3.1/util.d.ts"
       ],
       "../src/tools/schema2cpp.ts": [
         "../src/tools/schema2base.ts",
-        "../src/runtime/schema.ts",
+        "../src/tools/schema2graph.ts",
         "../node_modules/@types/node/util.d.ts",
         "../node_modules/@types/node/ts3.1/util.d.ts"
       ],
       "../src/tools/schema2kotlin.ts": [
         "../src/tools/schema2base.ts",
-        "../src/runtime/schema.ts",
+        "../src/tools/schema2graph.ts",
         "../node_modules/@types/node/util.d.ts",
         "../node_modules/@types/node/ts3.1/util.d.ts"
       ],
@@ -8453,23 +8467,33 @@
       ],
       "../src/tools/tests/schema2base-test.ts": [
         "../src/platform/chai-web.d.ts",
-        "../src/tools/schema2base.ts",
-        "../src/runtime/schema.ts",
         "../src/runtime/manifest.ts",
+        "../src/runtime/schema.ts",
+        "../src/runtime/hot.ts",
+        "../src/tools/schema2base.ts",
+        "../src/tools/schema2graph.ts",
         "../node_modules/@types/node/util.d.ts",
         "../node_modules/@types/node/ts3.1/util.d.ts"
       ],
       "../src/tools/tests/schema2cpp-test.ts": [
         "../src/platform/chai-web.d.ts",
-        "../src/tools/schema2cpp.ts",
         "../src/runtime/manifest.ts",
+        "../src/tools/schema2cpp.ts",
+        "../node_modules/@types/node/util.d.ts",
+        "../node_modules/@types/node/ts3.1/util.d.ts"
+      ],
+      "../src/tools/tests/schema2graph-test.ts": [
+        "../src/platform/chai-web.d.ts",
+        "../src/runtime/manifest.ts",
+        "../src/runtime/hot.ts",
+        "../src/tools/schema2graph.ts",
         "../node_modules/@types/node/util.d.ts",
         "../node_modules/@types/node/ts3.1/util.d.ts"
       ],
       "../src/tools/tests/schema2kotlin-test.ts": [
         "../src/platform/chai-web.d.ts",
-        "../src/tools/schema2kotlin.ts",
         "../src/runtime/manifest.ts",
+        "../src/tools/schema2kotlin.ts",
         "../node_modules/@types/node/util.d.ts",
         "../node_modules/@types/node/ts3.1/util.d.ts"
       ],
@@ -11608,18 +11632,22 @@
         "../node_modules/@types/node/util.d.ts",
         "../node_modules/@types/node/ts3.1/util.d.ts"
       ],
-      "../src/tools/schema2base.ts": [
+      "../src/tools/schema2graph.ts": [
+        "../src/runtime/schema.ts",
         "../src/runtime/hot.ts",
+        "../src/runtime/particle-spec.ts"
+      ],
+      "../src/tools/schema2base.ts": [
         "../node_modules/@types/minimist/index.d.ts",
         "../src/runtime/manifest.ts",
-        "../src/runtime/schema.ts"
+        "../src/tools/schema2graph.ts"
       ],
       "../src/tools/schema2cpp.ts": [
-        "../src/runtime/schema.ts",
+        "../src/tools/schema2graph.ts",
         "../src/tools/schema2base.ts"
       ],
       "../src/tools/schema2kotlin.ts": [
-        "../src/runtime/schema.ts",
+        "../src/tools/schema2graph.ts",
         "../src/tools/schema2base.ts"
       ],
       "../node_modules/@types/range-parser/index.d.ts": [
@@ -12406,6 +12434,7 @@
       "../src/tools/bundle.ts",
       "../src/tools/bundle-cli.ts",
       "../src/tools/manifest-checker.ts",
+      "../src/tools/schema2graph.ts",
       "../src/tools/schema2base.ts",
       "../src/tools/schema2cpp.ts",
       "../src/tools/schema2kotlin.ts",
@@ -12426,6 +12455,7 @@
       "../src/tools/tests/bundle-test.ts",
       "../src/tools/tests/schema2base-test.ts",
       "../src/tools/tests/schema2cpp-test.ts",
+      "../src/tools/tests/schema2graph-test.ts",
       "../src/tools/tests/schema2kotlin-test.ts",
       "../src/tracelib/tests/trace-test.ts",
       "../src/wasm/cpp/tests/wasm-cpp-test.ts",

@@ -1,23 +1,20 @@
 import minimist from 'minimist';
-import { Schema } from '../runtime/schema.js';
-import { Dictionary } from '../runtime/hot.js';
 import { Manifest } from '../runtime/manifest.js';
-export declare type Aliases = Dictionary<Set<string>>;
+import { SchemaNode } from './schema2graph.js';
+export interface ClassGenerator {
+    processField(field: string, typeChar: string, inherited: boolean, refName: string): any;
+    generate(fieldCount: number): string;
+}
 export declare abstract class Schema2Base {
     readonly opts: minimist.ParsedArgs;
-    private readonly scope;
+    scope: string;
     constructor(opts: minimist.ParsedArgs);
     call(): Promise<void>;
-    /** Collect schemas from particle connections and build map of aliases. */
-    processManifest(manifest: Manifest): [Aliases, Dictionary<Schema>, Dictionary<Schema>];
     private processFile;
-    protected processSchema(schema: Schema, processField: (field: string, typeChar: string, refName: string) => void): number;
+    processManifest(manifest: Manifest): string[];
     private typeSummary;
-    private inlineSchemaName;
-    abstract outputName(baseName: string): string;
-    abstract fileHeader(outName: string): string;
-    abstract fileFooter(): string;
-    abstract entityClass(name: string, schema: Schema): string;
-    abstract addAliases(aliases: Aliases): string;
-    abstract addScope(namespace: string): any;
+    outputName(baseName: string): string;
+    fileHeader(outName: string): string;
+    fileFooter(): string;
+    abstract getClassGenerator(node: SchemaNode): ClassGenerator;
 }

@@ -1,5 +1,5 @@
-commit 61d018c6ba5dfafcba63f6917301d31ed46242f5
-Author: shans <shane.stephens@gmail.com>
-Date:   Fri Oct 25 13:36:32 2019 +1100
+commit 63193facc8f0db6cd2dfe8da9cf4c94b2cdfab74
+Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
+Date:   Fri Oct 25 14:33:13 2019 +1100
 
-    Serialization round-tripping of the NG storage stack. (#3881)
+    Rework schema2packager with a type lattice for type inheritance/slicing (#3883)

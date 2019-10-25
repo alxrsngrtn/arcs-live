@@ -31,7 +31,7 @@ const typeMap = {
     'R': { type: name => `Ref<${name}>`, returnByRef: false, setByRef: true, useCompare: false },
 };
 export class Schema2Cpp extends Schema2Base {
-    // test-CPP.file_name.arcs -> test-cpp-file-name.h
+    // test-CPP.file_Name.arcs -> test-cpp-file-name.h
     outputName(baseName) {
         return baseName.toLowerCase().replace(/\.arcs$/, '').replace(/[._]/g, '-') + '.h';
     }
@@ -47,60 +47,91 @@ export class Schema2Cpp extends Schema2Base {
     fileFooter() {
         return '\n#endif\n';
     }
-    addScope(namespace = 'arcs') {
-        const nss = namespace.trim().split('.');
-        this.nsTop = nss.map(n => `namespace ${n} {`).join('\n');
-        this.nsBottom = nss.reverse().map(n => `}  // namespace ${n}`).join('\n');
+    getClassGenerator(node) {
+        return new CppGenerator(node, this.scope.replace('.', '::'));
     }
-    entityClass(name, schema) {
-        const fields = [];
-        const api = [];
-        const clone = [];
-        const hash = [];
-        const equals = [];
-        const less = [];
-        const decode = [];
-        const encode = [];
-        const toString = [];
-        const fieldCount = this.processSchema(schema, (field, typeChar, refName) => {
-            const typeInfo = typeMap[typeChar];
-            const type = typeInfo.type(refName);
-            const [r1, r2] = typeInfo.returnByRef ? ['const ', '&'] : ['', ''];
-            const [s1, s2] = typeInfo.setByRef ? ['const ', '&'] : ['', ''];
-            const fixed = (keywords.includes(field) ? '_' : '') + field;
-            const valid = `${field}_valid_`;
-            fields.push(`${type} ${field}_ = ${type}();`, `bool ${valid} = false;`, ``);
-            api.push(`${r1}${type}${r2} ${fixed}() const { return ${field}_; }`, `void set_${field}(${s1}${type}${s2} value) { ${field}_ = value; ${valid} = true; }`, `void clear_${field}() { ${field}_ = ${type}(); ${valid} = false; }`, `bool has_${field}() const { return ${valid}; }`, ``);
-            clone.push(`clone.${field}_ = entity.${field}_;`, `clone.${valid} = entity.${valid};`);
-            hash.push(`if (entity.${valid})`, `  internal::hash_combine(h, entity.${field}_);`);
-            equals.push(`(a.${valid} ? (b.${valid} && a.${field}_ == b.${field}_) : !b.${valid})`);
-            less.push(`if (a.${valid} != b.${valid}) {`, `  return !a.${valid};`);
-            if (typeInfo.useCompare) {
-                less.push(`} else {`, `  cmp = a.${field}_.compare(b.${field}_);`, `  if (cmp != 0) return cmp < 0;`, `}`);
-            }
-            else {
-                less.push(`} else if (a.${field}_ != b.${field}_) {`, `  return a.${field}_ < b.${field}_;`, `}`);
-            }
-            decode.push(`} else if (name == "${field}") {`, `  decoder.validate("${typeChar}");`, `  decoder.decode(entity->${field}_);`, `  entity->${valid} = true;`);
-            encode.push(`if (entity.${valid})`, `  encoder.encode("${field}:${typeChar}", entity.${field}_);`);
-            toString.push(`if (entity.${valid})`, `  printer.add("${field}: ", entity.${field}_);`);
-        });
+}
+class CppGenerator {
+    constructor(node, namespace) {
+        this.node = node;
+        this.namespace = namespace;
+        this.fields = [];
+        this.api = [];
+        this.clone = [];
+        this.hash = [];
+        this.equals = [];
+        this.less = [];
+        this.decode = [];
+        this.encode = [];
+        this.toString = [];
+    }
+    processField(field, typeChar, inherited, refName) {
+        const typeInfo = typeMap[typeChar];
+        const type = typeInfo.type(refName);
+        const [r1, r2] = typeInfo.returnByRef ? ['const ', '&'] : ['', ''];
+        const [s1, s2] = typeInfo.setByRef ? ['const ', '&'] : ['', ''];
+        const fixed = (keywords.includes(field) ? '_' : '') + field;
+        const valid = `${field}_valid_`;
+        // Fields inherited from a base class don't need member declarations or API methods in this one.
+        if (!inherited) {
+            this.fields.push(`${type} ${field}_ = ${type}();`, `bool ${valid} = false;`, ``);
+            this.api.push(`${r1}${type}${r2} ${fixed}() const { return ${field}_; }`, `void set_${field}(${s1}${type}${s2} value) { ${field}_ = value; ${valid} = true; }`, `void clear_${field}() { ${field}_ = ${type}(); ${valid} = false; }`, `bool has_${field}() const { return ${valid}; }`, ``);
+        }
+        this.clone.push(`clone.${field}_ = entity.${field}_;`, `clone.${valid} = entity.${valid};`);
+        this.hash.push(`if (entity.${valid})`, `  internal::hash_combine(h, entity.${field}_);`);
+        this.equals.push(`(a.${valid} ? (b.${valid} && a.${field}_ == b.${field}_) : !b.${valid})`);
+        this.less.push(`if (a.${valid} != b.${valid}) {`, `  return !a.${valid};`);
+        if (typeInfo.useCompare) {
+            this.less.push(`} else {`, `  cmp = a.${field}_.compare(b.${field}_);`, `  if (cmp != 0) return cmp < 0;`, `}`);
+        }
+        else {
+            this.less.push(`} else if (a.${field}_ != b.${field}_) {`, `  return a.${field}_ < b.${field}_;`, `}`);
+        }
+        this.decode.push(`} else if (name == "${field}") {`, `  decoder.validate("${typeChar}");`, `  decoder.decode(entity->${field}_);`, `  entity->${valid} = true;`);
+        this.encode.push(`if (entity.${valid})`, `  encoder.encode("${field}:${typeChar}", entity.${field}_);`);
+        this.toString.push(`if (entity.${valid})`, `  printer.add("${field}: ", entity.${field}_);`);
+    }
+    generate(fieldCount) {
+        const { name, aliases, parents, children, sharesParent } = this.node;
+        let bases = '';
+        if (parents.length) {
+            // Add base classes. Use virtual inheritance if we know this schema shares a parent
+            // with another schema, and it also has descendant schemas. Note this means some
+            // false positives are possible, but that's not really a problem.
+            const spec = (sharesParent && children.length) ? 'virtual public' : 'public';
+            bases = ` : ${spec} ` + parents.map(p => p.name).join(`, ${spec} `);
+        }
+        else {
+            // This class doesn't have any parents so it needs an id field (which
+            // will subsequently be inherited by any children of this class).
+            this.fields.push('std::string _internal_id_;');
+        }
+        // Use a virtual destructor for all schemas that participate in inheritance chains.
+        let dtor = '';
+        if (parents.length || children.length) {
+            dtor = `virtual ~${name}() {}\n`;
+        }
+        let usingDecls = '';
+        if (aliases.length) {
+            usingDecls = '\n' + aliases.map(a => `using ${a} = ${name};`).join('\n') + '\n';
+        }
+        // Schemas with no fields will always be equal.
         if (fieldCount === 0) {
-            equals.push('true');
+            this.equals.push('true');
         }
         return `\
 
-${this.nsTop}
+namespace ${this.namespace} {
 
-class ${name} {
+class ${name}${bases} {
 public:
   // Entities must be copied with arcs::clone_entity(), which will exclude the internal id.
   // Move operations are ok (and will include the internal id).
   ${name}() = default;
   ${name}(${name}&&) = default;
   ${name}& operator=(${name}&&) = default;
-
-  ${api.join('\n  ')}
+  ${dtor}
+  ${this.api.join('\n  ')}
   // Equality ops compare internal ids and all data fields.
   // Use arcs::fields_equal() to compare only the data fields.
   bool operator==(const ${name}& other) const;
@@ -110,11 +141,11 @@ public:
   friend bool operator<(const ${name}& a, const ${name}& b) {
     int cmp = a._internal_id_.compare(b._internal_id_);
     if (cmp != 0) return cmp < 0;
-    ${less.join('\n    ')};
+    ${this.less.join('\n    ')};
     return false;
   }
 
-private:
+protected:
   // Ref<T> instances require a Handle pointer; entity classes can ignore it.
   ${name}(Handle* handle) {}
 
@@ -122,19 +153,18 @@ private:
   ${name}(const ${name}&) = default;
   ${name}& operator=(const ${name}&) = default;
 
-  ${fields.join('\n  ')}
-  std::string _internal_id_;
+  ${this.fields.join('\n  ')}
   static const int _FIELD_COUNT = ${fieldCount};
 
   friend class Singleton<${name}>;
   friend class Collection<${name}>;
   friend class internal::Accessor;
 };
-
+${usingDecls}
 template<>
 inline ${name} internal::Accessor::clone_entity(const ${name}& entity) {
   ${name} clone;
-  ${clone.join('\n  ')}
+  ${this.clone.join('\n  ')}
   return clone;
 }
 
@@ -142,13 +172,13 @@ template<>
 inline size_t internal::Accessor::hash_entity(const ${name}& entity) {
   size_t h = 0;
   internal::hash_combine(h, entity._internal_id_);
-  ${hash.join('\n  ')}
+  ${this.hash.join('\n  ')}
   return h;
 }
 
 template<>
 inline bool internal::Accessor::fields_equal(const ${name}& a, const ${name}& b) {
-  return ${equals.join(' && \n         ')};
+  return ${this.equals.join(' && \n         ')};
 }
 
 inline bool ${name}::operator==(const ${name}& other) const {
@@ -159,7 +189,7 @@ template<>
 inline std::string internal::Accessor::entity_to_str(const ${name}& entity, const char* join) {
   internal::StringPrinter printer;
   printer.addId(entity._internal_id_);
-  ${toString.join('\n  ')}
+  ${this.toString.join('\n  ')}
   return printer.result(join);
 }
 
@@ -172,7 +202,7 @@ inline void internal::Accessor::decode_entity(${name}* entity, const char* str) 
   for (int i = 0; !decoder.done() && i < ${name}::_FIELD_COUNT; i++) {
     std::string name = decoder.upTo(':');
     if (0) {
-    ${decode.join('\n    ')}
+    ${this.decode.join('\n    ')}
     }
     decoder.validate("|");
   }
@@ -182,11 +212,11 @@ template<>
 inline std::string internal::Accessor::encode_entity(const ${name}& entity) {
   internal::StringEncoder encoder;
   encoder.encode("", entity._internal_id_);
-  ${encode.join('\n  ')}
+  ${this.encode.join('\n  ')}
   return encoder.result();
 }
 
-${this.nsBottom}
+}  // namespace ${this.namespace}
 
 // For STL unordered associative containers. Entities will need to be std::move()-inserted.
 template<>
@@ -196,16 +226,6 @@ struct std::hash<arcs::${name}> {
   }
 };
 `;
-    }
-    addAliases(aliases) {
-        const lines = Object.entries(aliases)
-            .map(([rhs, ids]) => [...ids].map((id) => `using ${id} = ${rhs};`))
-            .reduce((acc, val) => acc.concat(val), []); // equivalent to .flat()
-        return `${this.nsTop}
-
-${lines.join('\n')}
-
-${this.nsBottom}`;
     }
 }
 //# sourceMappingURL=schema2cpp.js.map

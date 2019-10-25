@@ -7,14 +7,10 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-import { Aliases, Schema2Base } from './schema2base.js';
-import { Schema } from '../runtime/schema.js';
+import { Schema2Base, ClassGenerator } from './schema2base.js';
+import { SchemaNode } from './schema2graph.js';
 export declare class Schema2Kotlin extends Schema2Base {
-    pkgName: string;
     outputName(baseName: string): string;
     fileHeader(outName: string): string;
-    fileFooter(): string;
-    entityClass(name: string, schema: Schema): string;
-    addScope(namespace?: string): void;
-    addAliases(aliases: Aliases): string;
+    getClassGenerator(node: SchemaNode): ClassGenerator;
 }
