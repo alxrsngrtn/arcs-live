@@ -20,7 +20,7 @@ export declare class PouchDbBigCollection extends PouchDbStorageProvider impleme
     cursorNext(cursorId: number): Promise<void>;
     cursorClose(cursorId: number): Promise<void>;
     cursorVersion(cursorId: number): void;
-    toLiteral(): Promise<{
+    serializeContents(): Promise<{
         version: number;
         model: SerializedModelEntry[];
     }>;

@@ -64,6 +64,7 @@ export declare class ReferenceModeStore<Entity extends Referenceable, S extends 
     static construct<Entity extends Referenceable, S extends Dictionary<Referenceable>, C extends Dictionary<Referenceable>, ReferenceContainer extends CRDTSingletonTypeRecord<Reference> | CRDTCollectionTypeRecord<Reference>, Container extends CRDTSingletonTypeRecord<Entity> | CRDTCollectionTypeRecord<Entity>>(options: StoreConstructorOptions<Container> & {
         storageKey: ReferenceModeStorageKey;
     }): Promise<ReferenceModeStore<Entity, S, C, ReferenceContainer, Container>>;
+    serializeContents(): Promise<Container['data']>;
     reportExceptionInHost(exception: PropagatedException): void;
     readonly versionToken: string;
     on(callback: ProxyCallback<Container>): number;

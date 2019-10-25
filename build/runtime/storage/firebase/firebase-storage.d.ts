@@ -116,7 +116,7 @@ declare class FirebaseVariable extends FirebaseStorageProvider implements Single
         version: number;
         model: {};
     }>;
-    toLiteral(): Promise<{
+    serializeContents(): Promise<{
         version: number;
         model: SerializedModelEntry[];
     }>;
@@ -185,7 +185,7 @@ declare class FirebaseCollection extends FirebaseStorageProvider implements Coll
     getMultiple(ids: string[]): Promise<ModelValue[]>;
     storeMultiple(values: any, keys: string[], originatorId?: any): Promise<void>;
     cloneFrom(handle: any): Promise<void>;
-    toLiteral(): Promise<{
+    serializeContents(): Promise<{
         version: number;
         model: SerializedModelEntry[];
     }>;
@@ -253,7 +253,7 @@ declare class FirebaseBigCollection extends FirebaseStorageProvider implements B
     _persistChangesImpl(): Promise<void>;
     readonly _hasLocalChanges: boolean;
     cloneFrom(handle: any): Promise<void>;
-    toLiteral(): Promise<{
+    serializeContents(): Promise<{
         version: number;
         model: SerializedModelEntry[];
     }>;
@@ -284,7 +284,7 @@ declare class FirebaseBackingStore extends FirebaseStorageProvider implements Co
     ensureBackingStore(): Promise<FirebaseBackingStore>;
     on(callback: any): number;
     off(callback: any): void;
-    toLiteral(): Promise<{
+    serializeContents(): Promise<{
         version: number;
         model: SerializedModelEntry[];
     }>;

@@ -189,7 +189,7 @@ export class VolatileCollection extends VolatileStorageProvider {
     }
     async cloneFrom(handle) {
         this.referenceMode = handle.referenceMode;
-        const literal = await handle.toLiteral();
+        const literal = await handle.serializeContents();
         if (this.referenceMode && literal.model.length > 0) {
             await Promise.all([this.ensureBackingStore(), handle.ensureBackingStore()]);
             literal.model = literal.model.map(({ id, value }) => ({ id, value: { id: value.id, storageKey: this.backingStore.storageKey } }));
@@ -203,7 +203,7 @@ export class VolatileCollection extends VolatileStorageProvider {
         return { version: this._version, model };
     }
     // Returns {version, model: [{id, value, keys: []}]}
-    async toLiteral() {
+    async serializeContents() {
         return { version: this._version, model: this._model.toLiteral() };
     }
     fromLiteral({ version, model }) {
@@ -212,7 +212,7 @@ export class VolatileCollection extends VolatileStorageProvider {
     }
     async _toList() {
         if (this.referenceMode) {
-            const items = (await this.toLiteral()).model;
+            const items = (await this.serializeContents()).model;
             if (items.length === 0) {
                 return [];
             }
@@ -229,7 +229,7 @@ export class VolatileCollection extends VolatileStorageProvider {
             }
             return output;
         }
-        const literal = await this.toLiteral();
+        const literal = await this.serializeContents();
         return literal.model;
     }
     async toList() {
@@ -335,7 +335,7 @@ export class VolatileSingleton extends VolatileStorageProvider {
         if (handle.referenceMode && handle.localModified) {
             await handle._persistChanges();
         }
-        const literal = await handle.toLiteral();
+        const literal = await handle.serializeContents();
         if (this.referenceMode && literal.model.length > 0) {
             await Promise.all([this.ensureBackingStore(), handle.ensureBackingStore()]);
             literal.model = literal.model.map(({ id, value }) => ({ id, value: { id: value.id, storageKey: this.backingStore.storageKey } }));
@@ -356,7 +356,7 @@ export class VolatileSingleton extends VolatileStorageProvider {
         }
         return super.modelForSynchronization();
     }
-    async toLiteral() {
+    async serializeContents() {
         const value = this._stored;
         // TODO: what should keys be set to?
         const model = (value != null) ? [{ id: value.id, value, keys: [] }] : [];
@@ -508,7 +508,7 @@ class VolatileBigCollection extends VolatileStorageProvider {
         }
     }
     // Returns {version, model: [{id, index, value, keys: []}]}
-    async toLiteral() {
+    async serializeContents() {
         const model = [];
         for (const [id, { index, value, keys }] of this.items.entries()) {
             model.push({ id, index, value, keys: Object.keys(keys) });

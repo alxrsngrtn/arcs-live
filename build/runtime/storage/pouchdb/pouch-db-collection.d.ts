@@ -47,7 +47,7 @@ export declare class PouchDbCollection extends PouchDbStorageProvider implements
         model: SerializedModelEntry[];
     }>;
     /** @inheritDoc */
-    toLiteral(): Promise<{
+    serializeContents(): Promise<{
         version: number;
         model: SerializedModelEntry[];
     }>;

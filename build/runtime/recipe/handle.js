@@ -171,6 +171,10 @@ export class Handle {
         this._originalId = storage.originalId;
         this._type = undefined;
         this._mappedType = storage.type;
+        if (this._mappedType.isSingleton) {
+            // TODO(shans): Extend notion of singleton types through recipes and remove this conversion.
+            this._mappedType = this._mappedType.getContainedType();
+        }
         this._storageKey = storage.storageKey;
         this.claims = storage.claims;
     }

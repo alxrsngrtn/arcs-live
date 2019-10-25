@@ -30,6 +30,7 @@ export declare class DirectStore<T extends CRDTTypeRecord> extends ActiveStore<T
     private state;
     private constructor();
     getLocalData(): Promise<CRDTData>;
+    serializeContents(): Promise<T['data']>;
     idle(): Promise<void>;
     readonly versionToken: string;
     private setState;

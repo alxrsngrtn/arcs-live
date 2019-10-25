@@ -13,8 +13,9 @@ import { StorageKey } from './storage-key.js';
 import { StorageStub } from '../storage-stub.js';
 import { Store as OldStore } from '../store.js';
 import { PropagatedException } from '../arc-exceptions.js';
-import { ProxyCallback } from './store.js';
+import { ProxyCallback, StorageCommunicationEndpointProvider } from './store.js';
 import { ClaimIsTag } from '../particle-claim.js';
+import { CRDTTypeRecord } from '../crdt/crdt.js';
 /**
  * This is a temporary interface used to unify old-style stores (storage/StorageProviderBase) and new-style stores (storageNG/Store).
  * We should be able to remove this once we've switched across to the NG stack.
@@ -58,10 +59,10 @@ export declare abstract class UnifiedStore implements Comparable<UnifiedStore>, 
         overrides?: Partial<StoreInfo>;
     }): string;
 }
-export interface UnifiedActiveStore {
+export interface UnifiedActiveStore extends StorageCommunicationEndpointProvider<CRDTTypeRecord> {
     /** The UnifiedStore instance from which this store was activated. */
     readonly baseStore: UnifiedStore;
-    toLiteral(): Promise<any>;
+    serializeContents(): Promise<any>;
     cloneFrom(store: UnifiedActiveStore): Promise<void>;
     modelForSynchronization(): Promise<{}>;
     on(callback: ProxyCallback<null>): number;
@@ -79,4 +80,5 @@ export declare type StoreInfo = {
     /** Trust tags claimed by this data store. */
     readonly claims?: ClaimIsTag[];
     readonly versionToken?: string;
+    readonly model?: {};
 };

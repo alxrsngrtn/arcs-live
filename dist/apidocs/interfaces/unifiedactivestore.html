@@ -70,7 +70,12 @@
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<span class="target">UnifiedActiveStore</span>
+						<a href="storagecommunicationendpointprovider.html" class="tsd-signature-type">StorageCommunicationEndpointProvider</a><span class="tsd-signature-symbol">&lt;</span><a href="crdttyperecord.html" class="tsd-signature-type">CRDTTypeRecord</a><span class="tsd-signature-symbol">&gt;</span>
+						<ul class="tsd-hierarchy">
+							<li>
+								<span class="target">UnifiedActiveStore</span>
+							</li>
+						</ul>
 					</li>
 				</ul>
 			</section>
@@ -115,10 +120,11 @@
 							<h3>Methods</h3>
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="unifiedactivestore.html#clonefrom" class="tsd-kind-icon">clone<wbr>From</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-interface tsd-is-inherited"><a href="unifiedactivestore.html#getstorageendpoint" class="tsd-kind-icon">get<wbr>Storage<wbr>Endpoint</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="unifiedactivestore.html#modelforsynchronization" class="tsd-kind-icon">model<wbr>For<wbr>Synchronization</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="unifiedactivestore.html#off" class="tsd-kind-icon">off</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="unifiedactivestore.html#on" class="tsd-kind-icon">on</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="unifiedactivestore.html#toliteral" class="tsd-kind-icon">to<wbr>Literal</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="unifiedactivestore.html#serializecontents" class="tsd-kind-icon">serialize<wbr>Contents</a></li>
 							</ul>
 						</section>
 					</div>
@@ -132,7 +138,7 @@
 					<div class="tsd-signature tsd-kind-icon">base<wbr>Store<span class="tsd-signature-symbol">:</span> <a href="../classes/unifiedstore.html" class="tsd-signature-type">UnifiedStore</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/64d07fe/src/runtime/storageNG/unified-store.ts#L140">src/runtime/storageNG/unified-store.ts:140</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/61d018c/src/runtime/storageNG/unified-store.ts#L141">src/runtime/storageNG/unified-store.ts:141</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -154,7 +160,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/64d07fe/src/runtime/storageNG/unified-store.ts#L149">src/runtime/storageNG/unified-store.ts:149</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/61d018c/src/runtime/storageNG/unified-store.ts#L150">src/runtime/storageNG/unified-store.ts:150</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -164,6 +170,30 @@
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
+					<a name="getstorageendpoint" class="tsd-anchor"></a>
+					<h3>get<wbr>Storage<wbr>Endpoint</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
+						<li class="tsd-signature tsd-kind-icon">get<wbr>Storage<wbr>Endpoint<span class="tsd-signature-symbol">(</span>storageProxy<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">StorageProxy</span><span class="tsd-signature-symbol">&lt;</span><a href="crdttyperecord.html" class="tsd-signature-type">CRDTTypeRecord</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="storagecommunicationendpoint.html" class="tsd-signature-type">StorageCommunicationEndpoint</a><span class="tsd-signature-symbol">&lt;</span><a href="crdttyperecord.html" class="tsd-signature-type">CRDTTypeRecord</a><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from <a href="storagecommunicationendpointprovider.html">StorageCommunicationEndpointProvider</a>.<a href="storagecommunicationendpointprovider.html#getstorageendpoint">getStorageEndpoint</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/61d018c/src/runtime/storageNG/store-interface.ts#L66">src/runtime/storageNG/store-interface.ts:66</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>storageProxy: <span class="tsd-signature-type">StorageProxy</span><span class="tsd-signature-symbol">&lt;</span><a href="crdttyperecord.html" class="tsd-signature-type">CRDTTypeRecord</a><span class="tsd-signature-symbol">&gt;</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="storagecommunicationendpoint.html" class="tsd-signature-type">StorageCommunicationEndpoint</a><span class="tsd-signature-symbol">&lt;</span><a href="crdttyperecord.html" class="tsd-signature-type">CRDTTypeRecord</a><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -177,7 +207,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/64d07fe/src/runtime/storageNG/unified-store.ts#L150">src/runtime/storageNG/unified-store.ts:150</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/61d018c/src/runtime/storageNG/unified-store.ts#L151">src/runtime/storageNG/unified-store.ts:151</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">__type</span><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -194,7 +224,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/64d07fe/src/runtime/storageNG/unified-store.ts#L154">src/runtime/storageNG/unified-store.ts:154</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/61d018c/src/runtime/storageNG/unified-store.ts#L155">src/runtime/storageNG/unified-store.ts:155</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -217,7 +247,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/64d07fe/src/runtime/storageNG/unified-store.ts#L153">src/runtime/storageNG/unified-store.ts:153</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/61d018c/src/runtime/storageNG/unified-store.ts#L154">src/runtime/storageNG/unified-store.ts:154</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -231,16 +261,16 @@
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface">
-					<a name="toliteral" class="tsd-anchor"></a>
-					<h3>to<wbr>Literal</h3>
+					<a name="serializecontents" class="tsd-anchor"></a>
+					<h3>serialize<wbr>Contents</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
-						<li class="tsd-signature tsd-kind-icon">to<wbr>Literal<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">serialize<wbr>Contents<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/64d07fe/src/runtime/storageNG/unified-store.ts#L147">src/runtime/storageNG/unified-store.ts:147</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/61d018c/src/runtime/storageNG/unified-store.ts#L148">src/runtime/storageNG/unified-store.ts:148</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -270,6 +300,9 @@
 							<li class=" tsd-kind-method tsd-parent-kind-interface">
 								<a href="unifiedactivestore.html#clonefrom" class="tsd-kind-icon">clone<wbr>From</a>
 							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
+								<a href="unifiedactivestore.html#getstorageendpoint" class="tsd-kind-icon">get<wbr>Storage<wbr>Endpoint</a>
+							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-interface">
 								<a href="unifiedactivestore.html#modelforsynchronization" class="tsd-kind-icon">model<wbr>For<wbr>Synchronization</a>
 							</li>
@@ -280,7 +313,7 @@
 								<a href="unifiedactivestore.html#on" class="tsd-kind-icon">on</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-interface">
-								<a href="unifiedactivestore.html#toliteral" class="tsd-kind-icon">to<wbr>Literal</a>
+								<a href="unifiedactivestore.html#serializecontents" class="tsd-kind-icon">serialize<wbr>Contents</a>
 							</li>
 						</ul>
 					</li>

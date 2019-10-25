@@ -17,6 +17,7 @@ export declare class Flags extends FlagDefaults {
     static reset(): void;
     static withPreSlandlesSyntax<T>(f: () => Promise<T>): () => Promise<T>;
     static withPostSlandlesSyntax<T>(f: () => Promise<T>): () => Promise<T>;
+    static withNewStorageStack<T>(f: () => Promise<T>): () => Promise<T>;
     static withFlags<T>(args: Partial<typeof FlagDefaults>, f: () => Promise<T>): () => Promise<T>;
 }
 export {};

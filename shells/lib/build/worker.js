@@ -2064,6 +2064,8 @@ class Type {
                 return new ArcType();
             case 'Handle':
                 return new HandleType();
+            case 'Singleton':
+                return new SingletonType(Type.fromLiteral(literal.data));
             default:
                 throw new Error(`fromLiteral: unknown type ${literal}`);
         }
@@ -2151,6 +2153,9 @@ class Type {
         return false;
     }
     get isReference() {
+        return false;
+    }
+    get isSingleton() {
         return false;
     }
     collectionOf() {
@@ -2244,7 +2249,7 @@ class SingletonType extends Type {
         this.innerType = type;
     }
     toLiteral() {
-        return { tag: 'Singleton' };
+        return { tag: 'Singleton', data: this.innerType.toLiteral() };
     }
     getContainedType() {
         return this.innerType;
@@ -2254,6 +2259,12 @@ class SingletonType extends Type {
     }
     handleConstructor() {
         return _storageNG_handle_js__WEBPACK_IMPORTED_MODULE_8__["SingletonHandle"];
+    }
+    get isSingleton() {
+        return true;
+    }
+    toString(options = undefined) {
+        return `![${this.innerType.toString(options)}]`;
     }
 }
 class EntityType extends Type {
@@ -2313,7 +2324,7 @@ class EntityType extends Type {
     handleConstructor() {
         // Currently using SingletonHandle as the implementation for Entity handles.
         // TODO: Make an EntityHandle class that uses the proper Entity CRDT.
-        return _storageNG_handle_js__WEBPACK_IMPORTED_MODULE_8__["SingletonHandle"];
+        throw new Error(`Entity handle not yet implemented - you probably want to use a SingletonType`);
     }
 }
 class TypeVariable extends Type {
@@ -3189,6 +3200,9 @@ class Flags extends FlagDefaults {
     }
     static withPostSlandlesSyntax(f) {
         return Flags.withFlags({ usePreSlandlesSyntax: false }, f);
+    }
+    static withNewStorageStack(f) {
+        return Flags.withFlags({ useNewStorageStack: true }, f);
     }
     // For testing with a different set of flags to the default.
     static withFlags(args, f) {
@@ -5672,10 +5686,14 @@ class CollectionHandle extends PreEntityMutationHandle {
         if (op.type === _crdt_crdt_collection_js__WEBPACK_IMPORTED_MODULE_2__["CollectionOpTypes"].Remove) {
             update.removed = this.deserialize(op.removed);
         }
-        await this.particle.callOnHandleUpdate(this /*handle*/, update, e => this.reportUserExceptionInHost(e, this.particle, 'onHandleUpdate'));
+        if (this.particle) {
+            await this.particle.callOnHandleUpdate(this /*handle*/, update, e => this.reportUserExceptionInHost(e, this.particle, 'onHandleUpdate'));
+        }
     }
     async onSync() {
-        await this.particle.callOnHandleSync(this /*handle*/, this.toList() /*model*/, e => this.reportUserExceptionInHost(e, this.particle, 'onHandleSync'));
+        if (this.particle) {
+            await this.particle.callOnHandleSync(this /*handle*/, this.toList() /*model*/, e => this.reportUserExceptionInHost(e, this.particle, 'onHandleSync'));
+        }
     }
 }
 /**
@@ -5714,10 +5732,14 @@ class SingletonHandle extends PreEntityMutationHandle {
             update.data = this.deserialize(op.value);
         }
         // Nothing else to add (beyond oldData) for SingletonOpTypes.Clear.
-        await this.particle.callOnHandleUpdate(this /*handle*/, update, e => this.reportUserExceptionInHost(e, this.particle, 'onHandleUpdate'));
+        if (this.particle) {
+            await this.particle.callOnHandleUpdate(this /*handle*/, update, e => this.reportUserExceptionInHost(e, this.particle, 'onHandleUpdate'));
+        }
     }
     async onSync() {
-        await this.particle.callOnHandleSync(this /*handle*/, this.get() /*model*/, e => this.reportUserExceptionInHost(e, this.particle, 'onHandleSync'));
+        if (this.particle) {
+            await this.particle.callOnHandleSync(this /*handle*/, this.get() /*model*/, e => this.reportUserExceptionInHost(e, this.particle, 'onHandleSync'));
+        }
     }
 }
 function handleNGFor(key, storageProxy, idGenerator, particle, canRead, canWrite, name) {
@@ -6478,6 +6500,7 @@ class Store extends _unified_store_js__WEBPACK_IMPORTED_MODULE_4__["UnifiedStore
         this.exists = opts.exists;
         this.mode = opts.storageKey instanceof _reference_mode_store_js__WEBPACK_IMPORTED_MODULE_3__["ReferenceModeStorageKey"] ? _store_interface_js__WEBPACK_IMPORTED_MODULE_1__["StorageMode"].ReferenceMode : _store_interface_js__WEBPACK_IMPORTED_MODULE_1__["StorageMode"].Direct;
         this.parsedVersionToken = opts.versionToken;
+        this.model = opts.model;
     }
     get versionToken() {
         if (this.activeStore) {
@@ -6502,7 +6525,8 @@ class Store extends _unified_store_js__WEBPACK_IMPORTED_MODULE_4__["UnifiedStore
             type: this.type,
             mode: this.mode,
             baseStore: this,
-            versionToken: this.parsedVersionToken
+            versionToken: this.parsedVersionToken,
+            model: this.model
         });
         this.exists = _drivers_driver_factory_js__WEBPACK_IMPORTED_MODULE_0__["Exists"].ShouldExist;
         this.activeStore = activeStore;
@@ -6639,10 +6663,6 @@ class ActiveStore {
     async idle() {
         return Promise.resolve();
     }
-    // tslint:disable-next-line no-any
-    async toLiteral() {
-        throw new Error('Method not implemented.');
-    }
     async cloneFrom(store) {
         Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(store instanceof ActiveStore);
         const activeStore = store;
@@ -6653,7 +6673,7 @@ class ActiveStore {
         });
     }
     async modelForSynchronization() {
-        return this.toLiteral();
+        return this.serializeContents();
     }
     getStorageEndpoint() {
         const store = this;
@@ -6724,6 +6744,10 @@ class DirectStore extends _store_interface_js__WEBPACK_IMPORTED_MODULE_2__["Acti
     async getLocalData() {
         return this.localModel.getData();
     }
+    async serializeContents() {
+        await this.idle();
+        return this.localModel.getData();
+    }
     async idle() {
         if (this.pendingException) {
             return Promise.reject(this.pendingException);
@@ -6759,6 +6783,9 @@ class DirectStore extends _store_interface_js__WEBPACK_IMPORTED_MODULE_2__["Acti
     static async construct(options) {
         const me = new DirectStore(options);
         me.localModel = new (options.type.crdtInstanceConstructor())();
+        if (options.model) {
+            me.localModel.merge(options.model);
+        }
         me.driver = await _drivers_driver_factory_js__WEBPACK_IMPORTED_MODULE_1__["DriverFactory"].driverInstance(options.storageKey, options.exists);
         if (me.driver == null) {
             throw new _crdt_crdt_js__WEBPACK_IMPORTED_MODULE_0__["CRDTError"](`No driver exists to support storage key ${options.storageKey}`);
@@ -7183,6 +7210,16 @@ class ReferenceModeStore extends _store_interface_js__WEBPACK_IMPORTED_MODULE_2_
         });
         result.registerStoreCallbacks();
         return result;
+    }
+    async serializeContents() {
+        const data = await this.containerStore.serializeContents();
+        const { pendingIds, model } = this.constructPendingIdsAndModel(data);
+        if (pendingIds.length === 0) {
+            return model();
+        }
+        return new Promise((resolve, reject) => {
+            this.enqueueBlockingSend(pendingIds, () => resolve(model()));
+        });
     }
     reportExceptionInHost(exception) {
         // TODO(shans): Figure out idle / exception store for reference mode stores.

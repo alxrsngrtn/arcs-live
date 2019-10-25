@@ -29,6 +29,7 @@ export class Store extends UnifiedStore {
         this.exists = opts.exists;
         this.mode = opts.storageKey instanceof ReferenceModeStorageKey ? StorageMode.ReferenceMode : StorageMode.Direct;
         this.parsedVersionToken = opts.versionToken;
+        this.model = opts.model;
     }
     get versionToken() {
         if (this.activeStore) {
@@ -53,7 +54,8 @@ export class Store extends UnifiedStore {
             type: this.type,
             mode: this.mode,
             baseStore: this,
-            versionToken: this.parsedVersionToken
+            versionToken: this.parsedVersionToken,
+            model: this.model
         });
         this.exists = Exists.ShouldExist;
         this.activeStore = activeStore;

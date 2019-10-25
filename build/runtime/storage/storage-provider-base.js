@@ -48,6 +48,9 @@ export class StorageProviderBase extends UnifiedStore {
         this._version = 0;
         this._storageKey = key;
     }
+    getStorageEndpoint(storageProxy) {
+        throw new Error('storage endpoints should not be extracted from old storage stack');
+    }
     get versionToken() {
         return this._version == null ? null : this._version + '';
     }
@@ -116,7 +119,7 @@ export class StorageProviderBase extends UnifiedStore {
      * Called by Particle Execution Host to synchronize it's proxy.
      */
     async modelForSynchronization() {
-        return this.toLiteral();
+        return this.serializeContents();
     }
 }
 //# sourceMappingURL=storage-provider-base.js.map

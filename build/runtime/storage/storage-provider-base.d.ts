@@ -15,7 +15,8 @@ import { Store, BigCollectionStore, CollectionStore, SingletonStore } from '../s
 import { PropagatedException } from '../arc-exceptions.js';
 import { Dictionary, Consumer } from '../hot.js';
 import { UnifiedStore, UnifiedActiveStore, StoreInfo } from '../storageNG/unified-store.js';
-import { ProxyCallback } from '../storageNG/store.js';
+import { ProxyCallback, StorageCommunicationEndpoint } from '../storageNG/store.js';
+import { CRDTTypeRecord } from '../crdt/crdt.js';
 declare type Callback = Consumer<Dictionary<any>>;
 /**
  * Methods that must be implemented by a Singleton Storage Provider
@@ -88,6 +89,7 @@ export declare class ChangeEvent {
  * Docs TBD
  */
 export declare abstract class StorageProviderBase extends UnifiedStore implements Store, UnifiedActiveStore {
+    getStorageEndpoint(storageProxy: any): StorageCommunicationEndpoint<CRDTTypeRecord>;
     protected unifiedStoreType: 'StorageProviderBase';
     private readonly legacyListeners;
     private nextCallbackId;
@@ -116,7 +118,7 @@ export declare abstract class StorageProviderBase extends UnifiedStore implement
     /**
      * @returns an object notation of this storage provider.
      */
-    abstract toLiteral(): Promise<{
+    abstract serializeContents(): Promise<{
         version: number;
         model: SerializedModelEntry[];
     }>;

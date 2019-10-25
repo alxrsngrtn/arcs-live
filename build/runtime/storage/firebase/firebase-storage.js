@@ -468,7 +468,7 @@ class FirebaseVariable extends FirebaseStorageProvider {
     }
     async cloneFrom(handle) {
         this.referenceMode = handle.referenceMode;
-        const literal = await handle.toLiteral();
+        const literal = await handle.serializeContents();
         const data = literal.model[0].value;
         if (this.referenceMode && literal.model.length > 0) {
             await Promise.all([this.ensureBackingStore(), handle.ensureBackingStore()]);
@@ -499,7 +499,7 @@ class FirebaseVariable extends FirebaseStorageProvider {
         }
         return super.modelForSynchronization();
     }
-    async toLiteral() {
+    async serializeContents() {
         await this.initialized;
         // fixme: think about if there are local mutations...
         const value = this.value;
@@ -917,7 +917,7 @@ class FirebaseCollection extends FirebaseStorageProvider {
     async _toList() {
         await this.initialized;
         if (this.referenceMode) {
-            const items = (await this.toLiteral()).model;
+            const items = (await this.serializeContents()).model;
             if (items.length === 0) {
                 return [];
             }
@@ -933,7 +933,7 @@ class FirebaseCollection extends FirebaseStorageProvider {
             };
             return await Promise.all(items.map(retrieveItem));
         }
-        return (await this.toLiteral()).model;
+        return (await this.serializeContents()).model;
     }
     async modelForSynchronization() {
         const model = await this._toList();
@@ -963,7 +963,7 @@ class FirebaseCollection extends FirebaseStorageProvider {
     }
     async cloneFrom(handle) {
         this.referenceMode = handle.referenceMode;
-        const literal = await handle.toLiteral();
+        const literal = await handle.serializeContents();
         if (this.referenceMode && literal.model.length > 0) {
             await Promise.all([this.ensureBackingStore(), handle.ensureBackingStore()]);
             if (this.backingStore !== handle.backingStore) {
@@ -981,7 +981,7 @@ class FirebaseCollection extends FirebaseStorageProvider {
         }
         await this._persistChanges();
     }
-    async toLiteral() {
+    async serializeContents() {
         await this.initialized;
         // TODO: think about what to do here, do we really need toLiteral for a firebase store?
         // if yes, how should it represent local modifications?
@@ -1280,7 +1280,7 @@ class FirebaseBigCollection extends FirebaseStorageProvider {
     async cloneFrom(handle) {
         throw new Error('FirebaseBigCollection does not yet implement cloneFrom');
     }
-    async toLiteral() {
+    async serializeContents() {
         throw new Error('FirebaseBigCollection does not yet implement toLiteral');
     }
     fromLiteral({ version, model }) {
@@ -1396,7 +1396,7 @@ class FirebaseBackingStore extends FirebaseStorageProvider {
     off(callback) {
         throw new Error('FirebaseBackingStore does not implement off');
     }
-    async toLiteral() {
+    async serializeContents() {
         throw new Error('FirebaseBackingStore does not implement toLiteral');
     }
     async cloneFrom(store) {

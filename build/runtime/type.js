@@ -42,6 +42,8 @@ export class Type {
                 return new ArcType();
             case 'Handle':
                 return new HandleType();
+            case 'Singleton':
+                return new SingletonType(Type.fromLiteral(literal.data));
             default:
                 throw new Error(`fromLiteral: unknown type ${literal}`);
         }
@@ -129,6 +131,9 @@ export class Type {
         return false;
     }
     get isReference() {
+        return false;
+    }
+    get isSingleton() {
         return false;
     }
     collectionOf() {
@@ -222,7 +227,7 @@ export class SingletonType extends Type {
         this.innerType = type;
     }
     toLiteral() {
-        return { tag: 'Singleton' };
+        return { tag: 'Singleton', data: this.innerType.toLiteral() };
     }
     getContainedType() {
         return this.innerType;
@@ -232,6 +237,12 @@ export class SingletonType extends Type {
     }
     handleConstructor() {
         return SingletonHandle;
+    }
+    get isSingleton() {
+        return true;
+    }
+    toString(options = undefined) {
+        return `![${this.innerType.toString(options)}]`;
     }
 }
 export class EntityType extends Type {
@@ -291,7 +302,7 @@ export class EntityType extends Type {
     handleConstructor() {
         // Currently using SingletonHandle as the implementation for Entity handles.
         // TODO: Make an EntityHandle class that uses the proper Entity CRDT.
-        return SingletonHandle;
+        throw new Error(`Entity handle not yet implemented - you probably want to use a SingletonType`);
     }
 }
 export class TypeVariable extends Type {

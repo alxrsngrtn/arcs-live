@@ -65,6 +65,9 @@ export class MockStore extends ActiveStore {
     async getLocalData() {
         throw new Error('unimplemented');
     }
+    async serializeContents() {
+        throw new Error('unimplemented');
+    }
 }
 export class MockStorageKey extends StorageKey {
     constructor() {

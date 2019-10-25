@@ -1,5 +1,5 @@
-commit 64d07fe2bb8950274119f09f8afe73b4692464b5
-Author: Scott J. Miles <sjmiles@google.com>
-Date:   Thu Oct 24 18:23:11 2019 -0700
+commit 61d018c6ba5dfafcba63f6917301d31ed46242f5
+Author: shans <shane.stephens@gmail.com>
+Date:   Fri Oct 25 13:36:32 2019 +1100
 
-    bazel build before running tests, so we can include wasm tests (#3890)
+    Serialization round-tripping of the NG storage stack. (#3881)

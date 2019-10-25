@@ -127,6 +127,16 @@ export class ReferenceModeStore extends ActiveStore {
         result.registerStoreCallbacks();
         return result;
     }
+    async serializeContents() {
+        const data = await this.containerStore.serializeContents();
+        const { pendingIds, model } = this.constructPendingIdsAndModel(data);
+        if (pendingIds.length === 0) {
+            return model();
+        }
+        return new Promise((resolve, reject) => {
+            this.enqueueBlockingSend(pendingIds, () => resolve(model()));
+        });
+    }
     reportExceptionInHost(exception) {
         // TODO(shans): Figure out idle / exception store for reference mode stores.
     }

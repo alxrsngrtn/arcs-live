@@ -23,7 +23,7 @@ import { Search } from './recipe/search.js';
 import { TypeChecker } from './recipe/type-checker.js';
 import { Schema } from './schema.js';
 import { StorageProviderFactory } from './storage/storage-provider-factory.js';
-import { BigCollectionType, CollectionType, EntityType, InterfaceType, ReferenceType, SlotType, Type, TypeVariable } from './type.js';
+import { BigCollectionType, CollectionType, EntityType, InterfaceType, ReferenceType, SlotType, Type, TypeVariable, SingletonType } from './type.js';
 import { ClaimIsTag } from './particle-claim.js';
 import { StorageStub } from './storage-stub.js';
 import { Flags } from './flags.js';
@@ -200,7 +200,6 @@ export class Manifest {
             if (typeof storageKey === 'string') {
                 storageKey = StorageKeyParser.parse(storageKey);
             }
-            // TODO: Need to handle additional options: version, model.
             store = new Store({ ...opts, storageKey, exists: Exists.ShouldCreate });
         }
         else {
@@ -546,6 +545,9 @@ ${e.message}
                         return;
                     case 'reference-type':
                         node.model = new ReferenceType(node.type.model);
+                        return;
+                    case 'singleton-type':
+                        node.model = new SingletonType(node.type.model);
                         return;
                     default:
                         return;
@@ -1096,6 +1098,11 @@ ${e.message}
         }
         catch (e) {
             throw new ManifestError(item.location, `Error parsing JSON from '${source}' (${e.message})'`);
+        }
+        if (Flags.useNewStorageStack) {
+            return manifest.newStore({ type, name, id, storageKey: manifest.createLocalDataStorageKey(),
+                tags, originalId, claims, description: item.description, version: item.version || null,
+                source: item.source, origin: item.origin, referenceMode: false, model: entities });
         }
         // TODO: clean this up
         let unitType = null;

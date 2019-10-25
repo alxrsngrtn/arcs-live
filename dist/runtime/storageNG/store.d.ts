@@ -20,6 +20,7 @@ export declare class Store<T extends CRDTTypeRecord> extends UnifiedStore implem
     readonly mode: StorageMode;
     parsedVersionToken: string;
     modelConstructor: new () => CRDTModel<T>;
+    model: T['data'] | null;
     private activeStore;
     static readonly constructors: Map<StorageMode, StoreConstructor>;
     constructor(opts: StoreInfo & {

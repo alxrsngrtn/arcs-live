@@ -178,10 +178,14 @@ export class CollectionHandle extends PreEntityMutationHandle {
         if (op.type === CollectionOpTypes.Remove) {
             update.removed = this.deserialize(op.removed);
         }
-        await this.particle.callOnHandleUpdate(this /*handle*/, update, e => this.reportUserExceptionInHost(e, this.particle, 'onHandleUpdate'));
+        if (this.particle) {
+            await this.particle.callOnHandleUpdate(this /*handle*/, update, e => this.reportUserExceptionInHost(e, this.particle, 'onHandleUpdate'));
+        }
     }
     async onSync() {
-        await this.particle.callOnHandleSync(this /*handle*/, this.toList() /*model*/, e => this.reportUserExceptionInHost(e, this.particle, 'onHandleSync'));
+        if (this.particle) {
+            await this.particle.callOnHandleSync(this /*handle*/, this.toList() /*model*/, e => this.reportUserExceptionInHost(e, this.particle, 'onHandleSync'));
+        }
     }
 }
 /**
@@ -220,10 +224,14 @@ export class SingletonHandle extends PreEntityMutationHandle {
             update.data = this.deserialize(op.value);
         }
         // Nothing else to add (beyond oldData) for SingletonOpTypes.Clear.
-        await this.particle.callOnHandleUpdate(this /*handle*/, update, e => this.reportUserExceptionInHost(e, this.particle, 'onHandleUpdate'));
+        if (this.particle) {
+            await this.particle.callOnHandleUpdate(this /*handle*/, update, e => this.reportUserExceptionInHost(e, this.particle, 'onHandleUpdate'));
+        }
     }
     async onSync() {
-        await this.particle.callOnHandleSync(this /*handle*/, this.get() /*model*/, e => this.reportUserExceptionInHost(e, this.particle, 'onHandleSync'));
+        if (this.particle) {
+            await this.particle.callOnHandleSync(this /*handle*/, this.get() /*model*/, e => this.reportUserExceptionInHost(e, this.particle, 'onHandleSync'));
+        }
     }
 }
 export function handleNGFor(key, storageProxy, idGenerator, particle, canRead, canWrite, name) {

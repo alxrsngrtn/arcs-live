@@ -53,7 +53,7 @@ declare class SyntheticCollection extends StorageProviderBase implements Collect
     constructor(type: Type, id: string, key: string, targetStore: SingletonStorageProvider, storageFactory: StorageProviderFactory);
     private process;
     toList(): Promise<ModelValue[]>;
-    toLiteral(): Promise<{
+    serializeContents(): Promise<{
         version: number;
         model: SerializedModelEntry[];
     }>;

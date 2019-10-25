@@ -61,7 +61,7 @@ export declare class VolatileCollection extends VolatileStorageProvider implemen
         version: number;
         model: SerializedModelEntry[];
     }>;
-    toLiteral(): Promise<{
+    serializeContents(): Promise<{
         version: number;
         model: SerializedModelEntry[];
     }>;
@@ -96,7 +96,7 @@ export declare class VolatileSingleton extends VolatileStorageProvider implement
         version: number;
         model: {};
     }>;
-    toLiteral(): Promise<{
+    serializeContents(): Promise<{
         version: number;
         model: SerializedModelEntry[];
     }>;
@@ -131,7 +131,7 @@ declare class VolatileBigCollection extends VolatileStorageProvider implements B
     cursorClose(cursorId: number): Promise<void>;
     cursorVersion(cursorId: number): number;
     cloneFrom(handle: any): Promise<void>;
-    toLiteral(): Promise<{
+    serializeContents(): Promise<{
         version: number;
         model: any[];
     }>;

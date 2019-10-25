@@ -23,6 +23,9 @@ export class Flags extends FlagDefaults {
     static withPostSlandlesSyntax(f) {
         return Flags.withFlags({ usePreSlandlesSyntax: false }, f);
     }
+    static withNewStorageStack(f) {
+        return Flags.withFlags({ useNewStorageStack: true }, f);
+    }
     // For testing with a different set of flags to the default.
     static withFlags(args, f) {
         return async () => {

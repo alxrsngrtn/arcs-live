@@ -55,7 +55,7 @@ export declare class PouchDbSingleton extends PouchDbStorageProvider implements 
      * Returns the state of this singleton based as an object of the form
      * {version, model: [{id, value}]}
      */
-    toLiteral(): Promise<{
+    serializeContents(): Promise<{
         version: number;
         model: SerializedModelEntry[];
     }>;

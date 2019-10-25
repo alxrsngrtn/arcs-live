@@ -39,7 +39,7 @@ export class PouchDbBigCollection extends PouchDbStorageProvider {
     cursorVersion(cursorId) {
         throw new Error('NotImplemented');
     }
-    async toLiteral() {
+    async serializeContents() {
         throw new Error('NotImplemented');
     }
     async cloneFrom() {

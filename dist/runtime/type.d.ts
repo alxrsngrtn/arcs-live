@@ -46,6 +46,7 @@ export declare abstract class Type {
     getContainedType(): Type | null;
     isTypeContainer(): boolean;
     readonly isReference: boolean;
+    readonly isSingleton: boolean;
     collectionOf(): CollectionType<this>;
     bigCollectionOf(): BigCollectionType<this>;
     resolvedType(): Type;
@@ -91,6 +92,8 @@ export declare class SingletonType<T extends Type> extends Type {
     getContainedType(): T;
     crdtInstanceConstructor(): typeof CRDTSingleton;
     handleConstructor<T>(): typeof SingletonHandle;
+    readonly isSingleton: boolean;
+    toString(options?: any): string;
 }
 export declare class EntityType extends Type {
     readonly entitySchema: Schema;
@@ -122,7 +125,7 @@ export declare class EntityType extends Type {
             };
         };
     };
-    handleConstructor<T>(): typeof SingletonHandle;
+    handleConstructor<T>(): void;
 }
 export declare class TypeVariable extends Type {
     readonly variable: TypeVariableInfo;

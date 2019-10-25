@@ -153,7 +153,7 @@ class SyntheticCollection extends StorageProviderBase {
         await this.initialized;
         return this.model;
     }
-    async toLiteral() {
+    async serializeContents() {
         throw new Error('unimplemented');
     }
     async cloneFrom() {

@@ -46,7 +46,7 @@ export class PouchDbCollection extends PouchDbStorageProvider {
     async cloneFrom(handle) {
         await this.initialized;
         this.referenceMode = handle.referenceMode;
-        const literal = await handle.toLiteral();
+        const literal = await handle.serializeContents();
         if (this.referenceMode && literal.model.length > 0) {
             const [backingStore, handleBackingStore] = await Promise.all([this.ensureBackingStore(), handle.ensureBackingStore()]);
             literal.model = literal.model.map(({ id, value }) => ({ id, value: { id: value.id, storageKey: backingStore.storageKey } }));
@@ -76,7 +76,7 @@ export class PouchDbCollection extends PouchDbStorageProvider {
         return retval;
     }
     /** @inheritDoc */
-    async toLiteral() {
+    async serializeContents() {
         await this.initialized;
         return {
             version: this._version,

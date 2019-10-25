@@ -42,6 +42,7 @@ export declare class MockStore<T extends CRDTTypeRecord> extends ActiveStore<T> 
     onProxyMessage(message: ProxyMessage<T>): Promise<boolean>;
     reportExceptionInHost(exception: PropagatedException): void;
     getLocalData(): Promise<CRDTData>;
+    serializeContents(): Promise<T['data']>;
 }
 export declare class MockStorageKey extends StorageKey {
     constructor();

@@ -156,6 +156,7 @@
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited"><a href="pouchdbsingleton.html#ensurebackingstore" class="tsd-kind-icon">ensure<wbr>Backing<wbr>Store</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="pouchdbsingleton.html#fromliteral" class="tsd-kind-icon">from<wbr>Literal</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="pouchdbsingleton.html#get" class="tsd-kind-icon">get</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="pouchdbsingleton.html#getstorageendpoint" class="tsd-kind-icon">get<wbr>Storage<wbr>Endpoint</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="pouchdbsingleton.html#legacyoff" class="tsd-kind-icon">legacy<wbr>Off</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="pouchdbsingleton.html#legacyon" class="tsd-kind-icon">legacy<wbr>On</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="pouchdbsingleton.html#modelforsynchronization" class="tsd-kind-icon">model<wbr>For<wbr>Synchronization</a></li>
@@ -163,8 +164,8 @@
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="pouchdbsingleton.html#on" class="tsd-kind-icon">on</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="pouchdbsingleton.html#onremotestatesynced" class="tsd-kind-icon">on<wbr>Remote<wbr>State<wbr>Synced</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited"><a href="pouchdbsingleton.html#reportexceptioninhost" class="tsd-kind-icon">report<wbr>Exception<wbr>InHost</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="pouchdbsingleton.html#serializecontents" class="tsd-kind-icon">serialize<wbr>Contents</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="pouchdbsingleton.html#set" class="tsd-kind-icon">set</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="pouchdbsingleton.html#toliteral" class="tsd-kind-icon">to<wbr>Literal</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="pouchdbsingleton.html#tomanifeststring" class="tsd-kind-icon">to<wbr>Manifest<wbr>String</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="pouchdbsingleton.html#upsert" class="tsd-kind-icon">upsert</a></li>
 							</ul>
@@ -185,7 +186,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="pouchdbstorageprovider.html">PouchDbStorageProvider</a>.<a href="pouchdbstorageprovider.html#constructor">constructor</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/64d07fe/src/runtime/storage/pouchdb/pouch-db-singleton.ts#L39">src/runtime/storage/pouchdb/pouch-db-singleton.ts:39</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/61d018c/src/runtime/storage/pouchdb/pouch-db-singleton.ts#L39">src/runtime/storage/pouchdb/pouch-db-singleton.ts:39</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -254,7 +255,7 @@
 						<p>Implementation of <a href="../interfaces/singletonstorageprovider.html">SingletonStorageProvider</a>.<a href="../interfaces/singletonstorageprovider.html#_storagekey">_storageKey</a></p>
 						<p>Inherited from <a href="storageproviderbase.html">StorageProviderBase</a>.<a href="storageproviderbase.html#_storagekey">_storageKey</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/64d07fe/src/runtime/storage/storage-provider-base.ts#L113">src/runtime/storage/storage-provider-base.ts:113</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/61d018c/src/runtime/storage/storage-provider-base.ts#L117">src/runtime/storage/storage-provider-base.ts:117</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -266,7 +267,7 @@
 						<p>Implementation of <a href="../interfaces/singletonstorageprovider.html">SingletonStorageProvider</a>.<a href="../interfaces/singletonstorageprovider.html#_version">_version</a></p>
 						<p>Inherited from <a href="storageproviderbase.html">StorageProviderBase</a>.<a href="storageproviderbase.html#_version">_version</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/64d07fe/src/runtime/storage/storage-provider-base.ts#L116">src/runtime/storage/storage-provider-base.ts:116</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/61d018c/src/runtime/storage/storage-provider-base.ts#L120">src/runtime/storage/storage-provider-base.ts:120</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -279,7 +280,7 @@
 						<p>Inherited from <a href="pouchdbstorageprovider.html">PouchDbStorageProvider</a>.<a href="pouchdbstorageprovider.html#backingstore">backingStore</a></p>
 						<p>Overrides <a href="storageproviderbase.html">StorageProviderBase</a>.<a href="storageproviderbase.html#backingstore">backingStore</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/64d07fe/src/runtime/storage/pouchdb/pouch-db-storage-provider.ts#L28">src/runtime/storage/pouchdb/pouch-db-storage-provider.ts:28</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/61d018c/src/runtime/storage/pouchdb/pouch-db-storage-provider.ts#L28">src/runtime/storage/pouchdb/pouch-db-storage-provider.ts:28</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -290,7 +291,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="pouchdbstorageprovider.html">PouchDbStorageProvider</a>.<a href="pouchdbstorageprovider.html#initialized">initialized</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/64d07fe/src/runtime/storage/pouchdb/pouch-db-storage-provider.ts#L36">src/runtime/storage/pouchdb/pouch-db-storage-provider.ts:36</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/61d018c/src/runtime/storage/pouchdb/pouch-db-storage-provider.ts#L36">src/runtime/storage/pouchdb/pouch-db-storage-provider.ts:36</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -300,7 +301,7 @@
 					<div class="tsd-signature tsd-kind-icon">local<wbr>Key<wbr>Id<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> =&nbsp;0</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/64d07fe/src/runtime/storage/pouchdb/pouch-db-singleton.ts#L39">src/runtime/storage/pouchdb/pouch-db-singleton.ts:39</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/61d018c/src/runtime/storage/pouchdb/pouch-db-singleton.ts#L39">src/runtime/storage/pouchdb/pouch-db-singleton.ts:39</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -311,7 +312,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="pouchdbstorageprovider.html">PouchDbStorageProvider</a>.<a href="pouchdbstorageprovider.html#pouchdbkey">pouchDbKey</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/64d07fe/src/runtime/storage/pouchdb/pouch-db-storage-provider.ts#L32">src/runtime/storage/pouchdb/pouch-db-storage-provider.ts:32</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/61d018c/src/runtime/storage/pouchdb/pouch-db-storage-provider.ts#L32">src/runtime/storage/pouchdb/pouch-db-storage-provider.ts:32</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -329,7 +330,7 @@
 						<p>Inherited from <a href="storageproviderbase.html">StorageProviderBase</a>.<a href="storageproviderbase.html#referencemode">referenceMode</a></p>
 						<p>Overrides <a href="unifiedstore.html">UnifiedStore</a>.<a href="unifiedstore.html#referencemode">referenceMode</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/64d07fe/src/runtime/storage/storage-provider-base.ts#L114">src/runtime/storage/storage-provider-base.ts:114</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/61d018c/src/runtime/storage/storage-provider-base.ts#L118">src/runtime/storage/storage-provider-base.ts:118</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -340,7 +341,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="pouchdbstorageprovider.html">PouchDbStorageProvider</a>.<a href="pouchdbstorageprovider.html#resolveinitialized">resolveInitialized</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/64d07fe/src/runtime/storage/pouchdb/pouch-db-storage-provider.ts#L37">src/runtime/storage/pouchdb/pouch-db-storage-provider.ts:37</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/61d018c/src/runtime/storage/pouchdb/pouch-db-storage-provider.ts#L37">src/runtime/storage/pouchdb/pouch-db-storage-provider.ts:37</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -351,7 +352,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="pouchdbstorageprovider.html">PouchDbStorageProvider</a>.<a href="pouchdbstorageprovider.html#storageengine">storageEngine</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/64d07fe/src/runtime/storage/pouchdb/pouch-db-storage-provider.ts#L25">src/runtime/storage/pouchdb/pouch-db-storage-provider.ts:25</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/61d018c/src/runtime/storage/pouchdb/pouch-db-storage-provider.ts#L25">src/runtime/storage/pouchdb/pouch-db-storage-provider.ts:25</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -369,7 +370,7 @@
 						<p>Inherited from <a href="storageproviderbase.html">StorageProviderBase</a>.<a href="storageproviderbase.html#storeinfo">storeInfo</a></p>
 						<p>Overrides <a href="unifiedstore.html">UnifiedStore</a>.<a href="unifiedstore.html#storeinfo">storeInfo</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/64d07fe/src/runtime/storage/storage-provider-base.ts#L117">src/runtime/storage/storage-provider-base.ts:117</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/61d018c/src/runtime/storage/storage-provider-base.ts#L121">src/runtime/storage/storage-provider-base.ts:121</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -382,7 +383,7 @@
 						<p>Inherited from <a href="storageproviderbase.html">StorageProviderBase</a>.<a href="storageproviderbase.html#unifiedstoretype">unifiedStoreType</a></p>
 						<p>Overrides <a href="unifiedstore.html">UnifiedStore</a>.<a href="unifiedstore.html#unifiedstoretype">unifiedStoreType</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/64d07fe/src/runtime/storage/storage-provider-base.ts#L107">src/runtime/storage/storage-provider-base.ts:107</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/61d018c/src/runtime/storage/storage-provider-base.ts#L111">src/runtime/storage/storage-provider-base.ts:111</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -400,7 +401,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="storageproviderbase.html">StorageProviderBase</a>.<a href="storageproviderbase.html#apichannelmappingid">apiChannelMappingId</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/64d07fe/src/runtime/storage/storage-provider-base.ts#L197">src/runtime/storage/storage-provider-base.ts:197</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/61d018c/src/runtime/storage/storage-provider-base.ts#L201">src/runtime/storage/storage-provider-base.ts:201</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
@@ -418,7 +419,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="storageproviderbase.html">StorageProviderBase</a>.<a href="storageproviderbase.html#basestore">baseStore</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/64d07fe/src/runtime/storage/storage-provider-base.ts#L138">src/runtime/storage/storage-provider-base.ts:138</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/61d018c/src/runtime/storage/storage-provider-base.ts#L142">src/runtime/storage/storage-provider-base.ts:142</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <a href="storageproviderbase.html" class="tsd-signature-type">StorageProviderBase</a></h4>
@@ -436,7 +437,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="unifiedstore.html">UnifiedStore</a>.<a href="unifiedstore.html#claims">claims</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/64d07fe/src/runtime/storageNG/unified-store.ts#L59">src/runtime/storageNG/unified-store.ts:59</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/61d018c/src/runtime/storageNG/unified-store.ts#L60">src/runtime/storageNG/unified-store.ts:60</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <a href="claimistag.html" class="tsd-signature-type">ClaimIsTag</a><span class="tsd-signature-symbol">[]</span></h4>
@@ -454,7 +455,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="pouchdbstorageprovider.html">PouchDbStorageProvider</a>.<a href="pouchdbstorageprovider.html#db">db</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/64d07fe/src/runtime/storage/pouchdb/pouch-db-storage-provider.ts#L71">src/runtime/storage/pouchdb/pouch-db-storage-provider.ts:71</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/61d018c/src/runtime/storage/pouchdb/pouch-db-storage-provider.ts#L71">src/runtime/storage/pouchdb/pouch-db-storage-provider.ts:71</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -477,7 +478,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="unifiedstore.html">UnifiedStore</a>.<a href="unifiedstore.html#description">description</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/64d07fe/src/runtime/storageNG/unified-store.ts#L58">src/runtime/storageNG/unified-store.ts:58</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/61d018c/src/runtime/storageNG/unified-store.ts#L59">src/runtime/storageNG/unified-store.ts:59</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
@@ -495,7 +496,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="unifiedstore.html">UnifiedStore</a>.<a href="unifiedstore.html#id">id</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/64d07fe/src/runtime/storageNG/unified-store.ts#L53">src/runtime/storageNG/unified-store.ts:53</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/61d018c/src/runtime/storageNG/unified-store.ts#L54">src/runtime/storageNG/unified-store.ts:54</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
@@ -513,7 +514,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="unifiedstore.html">UnifiedStore</a>.<a href="unifiedstore.html#name">name</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/64d07fe/src/runtime/storageNG/unified-store.ts#L54">src/runtime/storageNG/unified-store.ts:54</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/61d018c/src/runtime/storageNG/unified-store.ts#L55">src/runtime/storageNG/unified-store.ts:55</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
@@ -531,7 +532,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="unifiedstore.html">UnifiedStore</a>.<a href="unifiedstore.html#originalid">originalId</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/64d07fe/src/runtime/storageNG/unified-store.ts#L56">src/runtime/storageNG/unified-store.ts:56</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/61d018c/src/runtime/storageNG/unified-store.ts#L57">src/runtime/storageNG/unified-store.ts:57</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
@@ -549,7 +550,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="unifiedstore.html">UnifiedStore</a>.<a href="unifiedstore.html#source">source</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/64d07fe/src/runtime/storageNG/unified-store.ts#L57">src/runtime/storageNG/unified-store.ts:57</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/61d018c/src/runtime/storageNG/unified-store.ts#L58">src/runtime/storageNG/unified-store.ts:58</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
@@ -568,7 +569,7 @@
 								<p>Inherited from <a href="storageproviderbase.html">StorageProviderBase</a>.<a href="storageproviderbase.html#storagekey">storageKey</a></p>
 								<p>Overrides <a href="unifiedstore.html">UnifiedStore</a>.<a href="unifiedstore.html#storagekey">storageKey</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/64d07fe/src/runtime/storage/storage-provider-base.ts#L142">src/runtime/storage/storage-provider-base.ts:142</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/61d018c/src/runtime/storage/storage-provider-base.ts#L146">src/runtime/storage/storage-provider-base.ts:146</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
@@ -586,7 +587,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="unifiedstore.html">UnifiedStore</a>.<a href="unifiedstore.html#type">type</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/64d07fe/src/runtime/storageNG/unified-store.ts#L55">src/runtime/storageNG/unified-store.ts:55</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/61d018c/src/runtime/storageNG/unified-store.ts#L56">src/runtime/storageNG/unified-store.ts:56</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <a href="type.html" class="tsd-signature-type">Type</a></h4>
@@ -605,7 +606,7 @@
 								<p>Inherited from <a href="storageproviderbase.html">StorageProviderBase</a>.<a href="storageproviderbase.html#versiontoken">versionToken</a></p>
 								<p>Overrides <a href="unifiedstore.html">UnifiedStore</a>.<a href="unifiedstore.html#versiontoken">versionToken</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/64d07fe/src/runtime/storage/storage-provider-base.ts#L119">src/runtime/storage/storage-provider-base.ts:119</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/61d018c/src/runtime/storage/storage-provider-base.ts#L123">src/runtime/storage/storage-provider-base.ts:123</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span>
@@ -630,7 +631,7 @@
 								<p>Implementation of <a href="../interfaces/singletonstorageprovider.html">SingletonStorageProvider</a>.<a href="../interfaces/singletonstorageprovider.html#_compareto">_compareTo</a></p>
 								<p>Inherited from <a href="unifiedstore.html">UnifiedStore</a>.<a href="unifiedstore.html#_compareto">_compareTo</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/64d07fe/src/runtime/storageNG/unified-store.ts#L80">src/runtime/storageNG/unified-store.ts:80</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/61d018c/src/runtime/storageNG/unified-store.ts#L81">src/runtime/storageNG/unified-store.ts:81</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -655,7 +656,7 @@
 								<p>Implementation of <a href="../interfaces/singletonstorageprovider.html">SingletonStorageProvider</a>.<a href="../interfaces/singletonstorageprovider.html#_fire">_fire</a></p>
 								<p>Inherited from <a href="storageproviderbase.html">StorageProviderBase</a>.<a href="storageproviderbase.html#_fire">_fire</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/64d07fe/src/runtime/storage/storage-provider-base.ts#L182">src/runtime/storage/storage-provider-base.ts:182</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/61d018c/src/runtime/storage/storage-provider-base.ts#L186">src/runtime/storage/storage-provider-base.ts:186</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -686,7 +687,7 @@
 								<p>Inherited from <a href="storageproviderbase.html">StorageProviderBase</a>.<a href="storageproviderbase.html#activate">activate</a></p>
 								<p>Overrides <a href="unifiedstore.html">UnifiedStore</a>.<a href="unifiedstore.html#activate">activate</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/64d07fe/src/runtime/storage/storage-provider-base.ts#L173">src/runtime/storage/storage-provider-base.ts:173</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/61d018c/src/runtime/storage/storage-provider-base.ts#L177">src/runtime/storage/storage-provider-base.ts:177</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/unifiedactivestore.html" class="tsd-signature-type">UnifiedActiveStore</a><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -704,7 +705,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="pouchdbstorageprovider.html">PouchDbStorageProvider</a>.<a href="pouchdbstorageprovider.html#backingtype">backingType</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/64d07fe/src/runtime/storage/pouchdb/pouch-db-singleton.ts#L66">src/runtime/storage/pouchdb/pouch-db-singleton.ts:66</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/61d018c/src/runtime/storage/pouchdb/pouch-db-singleton.ts#L66">src/runtime/storage/pouchdb/pouch-db-singleton.ts:66</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -728,7 +729,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="pouchdbstorageprovider.html">PouchDbStorageProvider</a>.<a href="pouchdbstorageprovider.html#bumpversion">bumpVersion</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/64d07fe/src/runtime/storage/pouchdb/pouch-db-storage-provider.ts#L84">src/runtime/storage/pouchdb/pouch-db-storage-provider.ts:84</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/61d018c/src/runtime/storage/pouchdb/pouch-db-storage-provider.ts#L84">src/runtime/storage/pouchdb/pouch-db-storage-provider.ts:84</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -759,7 +760,7 @@
 								<p>Implementation of <a href="../interfaces/singletonstorageprovider.html">SingletonStorageProvider</a>.<a href="../interfaces/singletonstorageprovider.html#casttostoragestub">castToStorageStub</a></p>
 								<p>Inherited from <a href="unifiedstore.html">UnifiedStore</a>.<a href="unifiedstore.html#casttostoragestub">castToStorageStub</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/64d07fe/src/runtime/storageNG/unified-store.ts#L68">src/runtime/storageNG/unified-store.ts:68</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/61d018c/src/runtime/storageNG/unified-store.ts#L69">src/runtime/storageNG/unified-store.ts:69</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -784,7 +785,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/singletonstorageprovider.html">SingletonStorageProvider</a>.<a href="../interfaces/singletonstorageprovider.html#clear">clear</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/64d07fe/src/runtime/storage/pouchdb/pouch-db-singleton.ts#L273">src/runtime/storage/pouchdb/pouch-db-singleton.ts:273</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/61d018c/src/runtime/storage/pouchdb/pouch-db-singleton.ts#L273">src/runtime/storage/pouchdb/pouch-db-singleton.ts:273</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -821,7 +822,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/64d07fe/src/runtime/storage/pouchdb/pouch-db-singleton.ts#L70">src/runtime/storage/pouchdb/pouch-db-singleton.ts:70</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/61d018c/src/runtime/storage/pouchdb/pouch-db-singleton.ts#L70">src/runtime/storage/pouchdb/pouch-db-singleton.ts:70</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="pouchdbsingleton.html" class="tsd-signature-type">PouchDbSingleton</a><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -839,7 +840,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="storageproviderbase.html">StorageProviderBase</a>.<a href="storageproviderbase.html#clonefrom">cloneFrom</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/64d07fe/src/runtime/storage/pouchdb/pouch-db-singleton.ts#L76">src/runtime/storage/pouchdb/pouch-db-singleton.ts:76</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/61d018c/src/runtime/storage/pouchdb/pouch-db-singleton.ts#L76">src/runtime/storage/pouchdb/pouch-db-singleton.ts:76</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -864,7 +865,7 @@
 								<p>Implementation of <a href="../interfaces/singletonstorageprovider.html">SingletonStorageProvider</a>.<a href="../interfaces/singletonstorageprovider.html#dispose">dispose</a></p>
 								<p>Inherited from <a href="storageproviderbase.html">StorageProviderBase</a>.<a href="storageproviderbase.html#dispose">dispose</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/64d07fe/src/runtime/storage/storage-provider-base.ts#L202">src/runtime/storage/storage-provider-base.ts:202</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/61d018c/src/runtime/storage/storage-provider-base.ts#L206">src/runtime/storage/storage-provider-base.ts:206</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -883,7 +884,7 @@
 								<p>Implementation of <a href="../interfaces/singletonstorageprovider.html">SingletonStorageProvider</a>.<a href="../interfaces/singletonstorageprovider.html#enablereferencemode">enableReferenceMode</a></p>
 								<p>Inherited from <a href="storageproviderbase.html">StorageProviderBase</a>.<a href="storageproviderbase.html#enablereferencemode">enableReferenceMode</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/64d07fe/src/runtime/storage/storage-provider-base.ts#L131">src/runtime/storage/storage-provider-base.ts:131</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/61d018c/src/runtime/storage/storage-provider-base.ts#L135">src/runtime/storage/storage-provider-base.ts:135</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -903,7 +904,7 @@
 								<p>Inherited from <a href="pouchdbstorageprovider.html">PouchDbStorageProvider</a>.<a href="pouchdbstorageprovider.html#ensurebackingstore">ensureBackingStore</a></p>
 								<p>Overrides <a href="storageproviderbase.html">StorageProviderBase</a>.<a href="storageproviderbase.html#ensurebackingstore">ensureBackingStore</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/64d07fe/src/runtime/storage/pouchdb/pouch-db-storage-provider.ts#L51">src/runtime/storage/pouchdb/pouch-db-storage-provider.ts:51</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/61d018c/src/runtime/storage/pouchdb/pouch-db-storage-provider.ts#L51">src/runtime/storage/pouchdb/pouch-db-storage-provider.ts:51</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="pouchdbcollection.html" class="tsd-signature-type">PouchDbCollection</a><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -920,7 +921,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/64d07fe/src/runtime/storage/pouchdb/pouch-db-singleton.ts#L158">src/runtime/storage/pouchdb/pouch-db-singleton.ts:158</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/61d018c/src/runtime/storage/pouchdb/pouch-db-singleton.ts#L158">src/runtime/storage/pouchdb/pouch-db-singleton.ts:158</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -957,13 +958,38 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/singletonstorageprovider.html">SingletonStorageProvider</a>.<a href="../interfaces/singletonstorageprovider.html#get">get</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/64d07fe/src/runtime/storage/pouchdb/pouch-db-singleton.ts#L182">src/runtime/storage/pouchdb/pouch-db-singleton.ts:182</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/61d018c/src/runtime/storage/pouchdb/pouch-db-singleton.ts#L182">src/runtime/storage/pouchdb/pouch-db-singleton.ts:182</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 							</div>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/modelvalue.html" class="tsd-signature-type">ModelValue</a><span class="tsd-signature-symbol">&gt;</span></h4>
 							<p>a promise containing the singleton value or null if it does not exist.</p>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+					<a name="getstorageendpoint" class="tsd-anchor"></a>
+					<h3>get<wbr>Storage<wbr>Endpoint</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+						<li class="tsd-signature tsd-kind-icon">get<wbr>Storage<wbr>Endpoint<span class="tsd-signature-symbol">(</span>storageProxy<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/storagecommunicationendpoint.html" class="tsd-signature-type">StorageCommunicationEndpoint</a><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/crdttyperecord.html" class="tsd-signature-type">CRDTTypeRecord</a><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Implementation of <a href="../interfaces/singletonstorageprovider.html">SingletonStorageProvider</a>.<a href="../interfaces/singletonstorageprovider.html#getstorageendpoint">getStorageEndpoint</a></p>
+								<p>Inherited from <a href="storageproviderbase.html">StorageProviderBase</a>.<a href="storageproviderbase.html#getstorageendpoint">getStorageEndpoint</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/61d018c/src/runtime/storage/storage-provider-base.ts#L107">src/runtime/storage/storage-provider-base.ts:107</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>storageProxy: <span class="tsd-signature-type">any</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="../interfaces/storagecommunicationendpoint.html" class="tsd-signature-type">StorageCommunicationEndpoint</a><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/crdttyperecord.html" class="tsd-signature-type">CRDTTypeRecord</a><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -979,7 +1005,7 @@
 								<p>Implementation of <a href="../interfaces/singletonstorageprovider.html">SingletonStorageProvider</a>.<a href="../interfaces/singletonstorageprovider.html#legacyoff">legacyOff</a></p>
 								<p>Inherited from <a href="storageproviderbase.html">StorageProviderBase</a>.<a href="storageproviderbase.html#legacyoff">legacyOff</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/64d07fe/src/runtime/storage/storage-provider-base.ts#L169">src/runtime/storage/storage-provider-base.ts:169</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/61d018c/src/runtime/storage/storage-provider-base.ts#L173">src/runtime/storage/storage-provider-base.ts:173</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1004,7 +1030,7 @@
 								<p>Implementation of <a href="../interfaces/singletonstorageprovider.html">SingletonStorageProvider</a>.<a href="../interfaces/singletonstorageprovider.html#legacyon">legacyOn</a></p>
 								<p>Inherited from <a href="storageproviderbase.html">StorageProviderBase</a>.<a href="storageproviderbase.html#legacyon">legacyOn</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/64d07fe/src/runtime/storage/storage-provider-base.ts#L163">src/runtime/storage/storage-provider-base.ts:163</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/61d018c/src/runtime/storage/storage-provider-base.ts#L167">src/runtime/storage/storage-provider-base.ts:167</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1029,7 +1055,7 @@
 								<p>Implementation of <a href="../interfaces/singletonstorageprovider.html">SingletonStorageProvider</a>.<a href="../interfaces/singletonstorageprovider.html#modelforsynchronization">modelForSynchronization</a></p>
 								<p>Overrides <a href="storageproviderbase.html">StorageProviderBase</a>.<a href="storageproviderbase.html#modelforsynchronization">modelForSynchronization</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/64d07fe/src/runtime/storage/pouchdb/pouch-db-singleton.ts#L112">src/runtime/storage/pouchdb/pouch-db-singleton.ts:112</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/61d018c/src/runtime/storage/pouchdb/pouch-db-singleton.ts#L112">src/runtime/storage/pouchdb/pouch-db-singleton.ts:112</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1054,7 +1080,7 @@
 								<p>Implementation of <a href="../interfaces/singletonstorageprovider.html">SingletonStorageProvider</a>.<a href="../interfaces/singletonstorageprovider.html#off">off</a></p>
 								<p>Inherited from <a href="storageproviderbase.html">StorageProviderBase</a>.<a href="storageproviderbase.html#off">off</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/64d07fe/src/runtime/storage/storage-provider-base.ts#L157">src/runtime/storage/storage-provider-base.ts:157</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/61d018c/src/runtime/storage/storage-provider-base.ts#L161">src/runtime/storage/storage-provider-base.ts:161</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1079,7 +1105,7 @@
 								<p>Implementation of <a href="../interfaces/singletonstorageprovider.html">SingletonStorageProvider</a>.<a href="../interfaces/singletonstorageprovider.html#on">on</a></p>
 								<p>Inherited from <a href="storageproviderbase.html">StorageProviderBase</a>.<a href="storageproviderbase.html#on">on</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/64d07fe/src/runtime/storage/storage-provider-base.ts#L151">src/runtime/storage/storage-provider-base.ts:151</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/61d018c/src/runtime/storage/storage-provider-base.ts#L155">src/runtime/storage/storage-provider-base.ts:155</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1103,7 +1129,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="pouchdbstorageprovider.html">PouchDbStorageProvider</a>.<a href="pouchdbstorageprovider.html#onremotestatesynced">onRemoteStateSynced</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/64d07fe/src/runtime/storage/pouchdb/pouch-db-singleton.ts#L280">src/runtime/storage/pouchdb/pouch-db-singleton.ts:280</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/61d018c/src/runtime/storage/pouchdb/pouch-db-singleton.ts#L280">src/runtime/storage/pouchdb/pouch-db-singleton.ts:280</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1134,7 +1160,7 @@
 								<p>Inherited from <a href="storageproviderbase.html">StorageProviderBase</a>.<a href="storageproviderbase.html#reportexceptioninhost">reportExceptionInHost</a></p>
 								<p>Overrides <a href="unifiedstore.html">UnifiedStore</a>.<a href="unifiedstore.html#reportexceptioninhost">reportExceptionInHost</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/64d07fe/src/runtime/storage/storage-provider-base.ts#L146">src/runtime/storage/storage-provider-base.ts:146</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/61d018c/src/runtime/storage/storage-provider-base.ts#L150">src/runtime/storage/storage-provider-base.ts:150</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1144,6 +1170,31 @@
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
+					<a name="serializecontents" class="tsd-anchor"></a>
+					<h3>serialize<wbr>Contents</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
+						<li class="tsd-signature tsd-kind-icon">serialize<wbr>Contents<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">object</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Implementation of <a href="../interfaces/singletonstorageprovider.html">SingletonStorageProvider</a>.<a href="../interfaces/singletonstorageprovider.html#serializecontents">serializeContents</a></p>
+								<p>Overrides <a href="storageproviderbase.html">StorageProviderBase</a>.<a href="storageproviderbase.html#serializecontents">serializeContents</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/61d018c/src/runtime/storage/pouchdb/pouch-db-singleton.ts#L133">src/runtime/storage/pouchdb/pouch-db-singleton.ts:133</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Returns the state of this singleton based as an object of the form
+									{version, model: [{id, value}]}</p>
+								</div>
+							</div>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">object</span><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -1157,7 +1208,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/64d07fe/src/runtime/storage/pouchdb/pouch-db-singleton.ts#L211">src/runtime/storage/pouchdb/pouch-db-singleton.ts:211</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/61d018c/src/runtime/storage/pouchdb/pouch-db-singleton.ts#L211">src/runtime/storage/pouchdb/pouch-db-singleton.ts:211</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1190,31 +1241,6 @@
 						</li>
 					</ul>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
-					<a name="toliteral" class="tsd-anchor"></a>
-					<h3>to<wbr>Literal</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
-						<li class="tsd-signature tsd-kind-icon">to<wbr>Literal<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">object</span><span class="tsd-signature-symbol">&gt;</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<p>Implementation of <a href="../interfaces/singletonstorageprovider.html">SingletonStorageProvider</a>.<a href="../interfaces/singletonstorageprovider.html#toliteral">toLiteral</a></p>
-								<p>Overrides <a href="storageproviderbase.html">StorageProviderBase</a>.<a href="storageproviderbase.html#toliteral">toLiteral</a></p>
-								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/64d07fe/src/runtime/storage/pouchdb/pouch-db-singleton.ts#L133">src/runtime/storage/pouchdb/pouch-db-singleton.ts:133</a></li>
-								</ul>
-							</aside>
-							<div class="tsd-comment tsd-typography">
-								<div class="lead">
-									<p>Returns the state of this singleton based as an object of the form
-									{version, model: [{id, value}]}</p>
-								</div>
-							</div>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">object</span><span class="tsd-signature-symbol">&gt;</span></h4>
-						</li>
-					</ul>
-				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
 					<a name="tomanifeststring" class="tsd-anchor"></a>
 					<h3>to<wbr>Manifest<wbr>String</h3>
@@ -1226,7 +1252,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="unifiedstore.html">UnifiedStore</a>.<a href="unifiedstore.html#tomanifeststring">toManifestString</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/64d07fe/src/runtime/storageNG/unified-store.ts#L94">src/runtime/storageNG/unified-store.ts:94</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/61d018c/src/runtime/storageNG/unified-store.ts#L95">src/runtime/storageNG/unified-store.ts:95</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1257,7 +1283,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/64d07fe/src/runtime/storage/pouchdb/pouch-db-singleton.ts#L309">src/runtime/storage/pouchdb/pouch-db-singleton.ts:309</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/61d018c/src/runtime/storage/pouchdb/pouch-db-singleton.ts#L309">src/runtime/storage/pouchdb/pouch-db-singleton.ts:309</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1407,6 +1433,9 @@
 								<a href="pouchdbsingleton.html#get" class="tsd-kind-icon">get</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+								<a href="pouchdbsingleton.html#getstorageendpoint" class="tsd-kind-icon">get<wbr>Storage<wbr>Endpoint</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
 								<a href="pouchdbsingleton.html#legacyoff" class="tsd-kind-icon">legacy<wbr>Off</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
@@ -1427,11 +1456,11 @@
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited">
 								<a href="pouchdbsingleton.html#reportexceptioninhost" class="tsd-kind-icon">report<wbr>Exception<wbr>InHost</a>
 							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
+								<a href="pouchdbsingleton.html#serializecontents" class="tsd-kind-icon">serialize<wbr>Contents</a>
+							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="pouchdbsingleton.html#set" class="tsd-kind-icon">set</a>
-							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
-								<a href="pouchdbsingleton.html#toliteral" class="tsd-kind-icon">to<wbr>Literal</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
 								<a href="pouchdbsingleton.html#tomanifeststring" class="tsd-kind-icon">to<wbr>Manifest<wbr>String</a>

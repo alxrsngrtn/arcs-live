@@ -56,6 +56,7 @@ export declare type StoreConstructorOptions<T extends CRDTTypeRecord> = {
     mode: StorageMode;
     baseStore: Store<T>;
     versionToken: string;
+    model?: T['data'];
 };
 export declare type StoreConstructor = {
     construct<T extends CRDTTypeRecord>(options: StoreConstructorOptions<T>): Promise<ActiveStore<T>>;
@@ -77,7 +78,7 @@ export declare abstract class ActiveStore<T extends CRDTTypeRecord> implements S
     readonly versionToken: string;
     constructor(options: StoreConstructorOptions<T>);
     idle(): Promise<void>;
-    toLiteral(): Promise<any>;
+    abstract serializeContents(): Promise<T['data']>;
     cloneFrom(store: UnifiedActiveStore): Promise<void>;
     modelForSynchronization(): Promise<{}>;
     abstract getLocalData(): Promise<CRDTData>;

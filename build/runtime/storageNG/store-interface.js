@@ -39,10 +39,6 @@ export class ActiveStore {
     async idle() {
         return Promise.resolve();
     }
-    // tslint:disable-next-line no-any
-    async toLiteral() {
-        throw new Error('Method not implemented.');
-    }
     async cloneFrom(store) {
         assert(store instanceof ActiveStore);
         const activeStore = store;
@@ -53,7 +49,7 @@ export class ActiveStore {
         });
     }
     async modelForSynchronization() {
-        return this.toLiteral();
+        return this.serializeContents();
     }
     getStorageEndpoint() {
         const store = this;
