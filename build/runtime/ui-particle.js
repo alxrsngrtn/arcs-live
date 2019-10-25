@@ -9,13 +9,16 @@
  */
 import { XenStateMixin } from '../../modalities/dom/components/xen/xen-state.js';
 import { UiParticleBase } from './ui-particle-base.js';
+// create actual class via mixin
+// tslint:disable-next-line: variable-name
+const UiStatefulParticle = XenStateMixin(UiParticleBase);
 /**
  * Particle that interoperates with DOM and uses a simple state system
  * to handle updates.
  */
-// TODO(sjmiles): seems like this is really `UiStatefulParticle` but it's
-// used so often, I went with the simpler name
-export class UiParticle extends XenStateMixin(UiParticleBase) {
+// TODO(sjmiles): this is really `UiStatefulParticle` but it's
+// used so often, we went with the simpler name
+export class UiParticle extends UiStatefulParticle {
     /**
      * Override if necessary, to do things when props change.
      * Avoid if possible, use `update` instead.
@@ -136,7 +139,7 @@ export class UiParticle extends XenStateMixin(UiParticleBase) {
             state[subkey] = null;
         };
         // TODO(sjmiles): rewrite Xen debounce so caller has idle control
-        super._debounce(key, idleThenFunc, delay);
+        this._debounce(key, idleThenFunc, delay);
     }
 }
 //# sourceMappingURL=ui-particle.js.map

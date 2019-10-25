@@ -30264,13 +30264,16 @@ class UiParticleBase extends Particle$1 {
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
+// create actual class via mixin
+// tslint:disable-next-line: variable-name
+const UiStatefulParticle = XenStateMixin(UiParticleBase);
 /**
  * Particle that interoperates with DOM and uses a simple state system
  * to handle updates.
  */
-// TODO(sjmiles): seems like this is really `UiStatefulParticle` but it's
-// used so often, I went with the simpler name
-class UiParticle extends XenStateMixin(UiParticleBase) {
+// TODO(sjmiles): this is really `UiStatefulParticle` but it's
+// used so often, we went with the simpler name
+class UiParticle extends UiStatefulParticle {
     /**
      * Override if necessary, to do things when props change.
      * Avoid if possible, use `update` instead.
@@ -30391,7 +30394,7 @@ class UiParticle extends XenStateMixin(UiParticleBase) {
             state[subkey] = null;
         };
         // TODO(sjmiles): rewrite Xen debounce so caller has idle control
-        super._debounce(key, idleThenFunc, delay);
+        this._debounce(key, idleThenFunc, delay);
     }
 }
 

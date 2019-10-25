@@ -478,8 +478,8 @@
         "signature": "ea2c42e01399152237e6e690f382c26057529214f6c289c885070943989fb04d"
       },
       "../src/runtime/ui-particle.ts": {
-        "version": "030e1d43c020aca38f9309772d88b0dd4e90d08a48e085bb4a9da82704dfd578",
-        "signature": "00ebc835f5a0ad79a982ce1be3cbb6e64ea9b97b2535916cdd1228aa45dcfd00"
+        "version": "f26ec22fb0ff31cf96980bcf1fbc33184abacbf78e0e2aff91580cfc52e60fe9",
+        "signature": "380eb258c218019b0f2b5732d4502159532e669d4df30b334e7a3f78a727243c"
       },
       "../src/runtime/loader.ts": {
         "version": "e541f35ba1dd35fa6b7f36f237fa2ca909bc6035cb8e63cec745b7c561afa742",
@@ -9176,8 +9176,8 @@
       ],
       "../src/runtime/ui-particle.ts": [
         "../src/runtime/ui-particle-base.ts",
-        "../src/runtime/handle.ts",
-        "../src/runtime/hot.ts"
+        "../src/runtime/hot.ts",
+        "../src/runtime/handle.ts"
       ],
       "../src/runtime/loader.ts": [
         "../src/runtime/particle-execution-context.ts",

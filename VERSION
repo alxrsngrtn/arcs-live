@@ -1,5 +1,5 @@
-commit 8220a30e702245b612bef7af50313c020b8caf75
-Author: yuangu-google <yuangu@google.com>
-Date:   Thu Oct 24 23:10:58 2019 -0700
+commit 5d801e0a919272e0dd523413c62834c83b19a2f5
+Author: Scott J. Miles <sjmiles@google.com>
+Date:   Fri Oct 25 01:32:23 2019 -0700
 
-    Update assets path. (#3891)
+    better type-structure for ui-particle (#3893)

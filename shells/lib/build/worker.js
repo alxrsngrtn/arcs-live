@@ -11448,13 +11448,16 @@ __webpack_require__.r(__webpack_exports__);
  */
 
 
+// create actual class via mixin
+// tslint:disable-next-line: variable-name
+const UiStatefulParticle = Object(_modalities_dom_components_xen_xen_state_js__WEBPACK_IMPORTED_MODULE_0__["XenStateMixin"])(_ui_particle_base_js__WEBPACK_IMPORTED_MODULE_1__["UiParticleBase"]);
 /**
  * Particle that interoperates with DOM and uses a simple state system
  * to handle updates.
  */
-// TODO(sjmiles): seems like this is really `UiStatefulParticle` but it's
-// used so often, I went with the simpler name
-class UiParticle extends Object(_modalities_dom_components_xen_xen_state_js__WEBPACK_IMPORTED_MODULE_0__["XenStateMixin"])(_ui_particle_base_js__WEBPACK_IMPORTED_MODULE_1__["UiParticleBase"]) {
+// TODO(sjmiles): this is really `UiStatefulParticle` but it's
+// used so often, we went with the simpler name
+class UiParticle extends UiStatefulParticle {
     /**
      * Override if necessary, to do things when props change.
      * Avoid if possible, use `update` instead.
@@ -11575,7 +11578,7 @@ class UiParticle extends Object(_modalities_dom_components_xen_xen_state_js__WEB
             state[subkey] = null;
         };
         // TODO(sjmiles): rewrite Xen debounce so caller has idle control
-        super._debounce(key, idleThenFunc, delay);
+        this._debounce(key, idleThenFunc, delay);
     }
 }
 //# sourceMappingURL=ui-particle.js.map
