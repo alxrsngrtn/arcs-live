@@ -1,5 +1,5 @@
-commit e83ee357a7ef692a9a2b575e6f93f1971e47308b
-Author: Alex Rosengarten <alxr@google.com>
-Date:   Thu Oct 24 17:17:48 2019 -0700
+commit 64d07fe2bb8950274119f09f8afe73b4692464b5
+Author: Scott J. Miles <sjmiles@google.com>
+Date:   Thu Oct 24 18:23:11 2019 -0700
 
-    Added SSL Cert update for Macs (#3889)
+    bazel build before running tests, so we can include wasm tests (#3890)
