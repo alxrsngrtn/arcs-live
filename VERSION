@@ -1,5 +1,15 @@
-commit 63193facc8f0db6cd2dfe8da9cf4c94b2cdfab74
-Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
-Date:   Fri Oct 25 14:33:13 2019 +1100
+commit 6c72e65535742e3bdf6a113b22b071c9d00e1e32
+Author: Ray Cromwell <cromwellian@gmail.com>
+Date:   Thu Oct 24 21:19:35 2019 -0700
 
-    Rework schema2packager with a type lattice for type inheritance/slicing (#3883)
+    Move builddefs to third_party/java/arcs/build_defs (#3892)
+    
+    * Add aliases for kt_js and kt_native
+    
+    * move to appropriate directory
+    
+    * move build_defs to a g3 location
+    
+    * add mising files
+    
+    * fix src_kt references
