@@ -1,5 +1,5 @@
-commit 5d801e0a919272e0dd523413c62834c83b19a2f5
-Author: Scott J. Miles <sjmiles@google.com>
-Date:   Fri Oct 25 01:32:23 2019 -0700
+commit b259381f2fdf6a7800321b92ecabe13b3b51145c
+Author: Sarah Heimlich <heimlich@google.com>
+Date:   Fri Oct 25 11:42:44 2019 -0700
 
-    better type-structure for ui-particle (#3893)
+    Added JS tutorial 3 text (#3884)
