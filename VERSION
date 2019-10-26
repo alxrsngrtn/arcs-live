@@ -1,11 +1,5 @@
-commit d535c69b2474bfa0bc39c662547943d733107451
-Author: Scott J. Miles <sjmiles@google.com>
-Date:   Fri Oct 25 16:36:33 2019 -0700
+commit dbc4039150bc808981c520cd7e7542e7b92f0115
+Author: Piotr Swigon <piotr.swigon@gmail.com>
+Date:   Fri Oct 25 17:53:29 2019 -0700
 
-    pipes-shell: implement `parse` verb (#3899)
-    
-    * pipes-shell: implement `parse` verb
-    
-    * Remove extra semi
-    
-    * Add missing else
+    Adds a 'wasm' tag to kt_native_binary target (#3896)
