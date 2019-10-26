@@ -38416,7 +38416,21 @@ const parse$1 = async (content, options) => {
     fileName: `./${id}`,
     loader: env.loader
   };
-  if (options) {
+  return _parse(content, localOptions, options);
+};
+
+const parseFile = async (path, options) => {
+  const localOptions = {
+    id: path,
+    fileName: path,
+    loader: env.loader
+  };
+  const content = await env.loader.loadResource(path);
+  return _parse(content, localOptions, options);
+};
+
+const _parse = async (content, localOptions, options) => {
+  if (localOptions && options) {
     Object.assign(localOptions, options);
   }
   return Manifest.parse(content, localOptions);
@@ -38479,6 +38493,7 @@ const Utils = {
   init: init$1,
   env,
   parse: parse$1,
+  parseFile,
   resolve,
   spawn
 };

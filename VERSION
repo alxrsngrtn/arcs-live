@@ -1,5 +1,11 @@
-commit e910c30ca5733b207e9469d92447e8f976853b7a
-Author: Sarah Heimlich <heimlich@google.com>
-Date:   Fri Oct 25 13:56:07 2019 -0700
+commit d535c69b2474bfa0bc39c662547943d733107451
+Author: Scott J. Miles <sjmiles@google.com>
+Date:   Fri Oct 25 16:36:33 2019 -0700
 
-    Reorder Javascript tutorials. (#3898)
+    pipes-shell: implement `parse` verb (#3899)
+    
+    * pipes-shell: implement `parse` verb
+    
+    * Remove extra semi
+    
+    * Add missing else
