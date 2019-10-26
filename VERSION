@@ -1,5 +1,5 @@
-commit 7a7a8812cd52d875d4fbf79a65fdb8e1cb64c9fc
+commit fe7e432915a92b0931642b94556ef71ea116db86
 Author: Ray Cromwell <cromwellian@gmail.com>
-Date:   Fri Oct 25 18:26:39 2019 -0700
+Date:   Fri Oct 25 19:52:25 2019 -0700
 
-    There can be only one - Highlander (#3903)
+    Move to using third_party/bazel_rules path (g3 sync) (#3905)
