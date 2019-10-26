@@ -705,9 +705,13 @@
         "version": "a98e5906b6498fa40caef4eec0293e935e884dc5fc8be55932bcc5409cb2b387",
         "signature": "6e844dfb124654a420421a44ec92d702e511bf1a3e10b3bc7a4170cbbcb89f9a"
       },
-      "../src/platform/log-web.d.ts": {
-        "version": "8e0f16b2bf340d4dfaf159bc3466741a6f4ebd2c8ee3831858cddad2ad00a00f",
-        "signature": "8e0f16b2bf340d4dfaf159bc3466741a6f4ebd2c8ee3831858cddad2ad00a00f"
+      "../src/platform/log-web.ts": {
+        "version": "1cec31645e41d18316dcdf738bc75a31cd32c6e12320b88e70ab8adb2ddbef8b",
+        "signature": "3b5bc2fcfa5b17b5c14ac6e98bd72d2dcfeac005794d95f651ea375dc64a4c48"
+      },
+      "../src/platform/logs-factory.ts": {
+        "version": "6a5593ee7e5a3bda912f2eaf354c2e4df78d5daf9af0b10b1c02c91f277a00b7",
+        "signature": "9fbde779766d6e9def1c5d2edb8d082036f1c297a8423a91a648e9891febdbe6"
       },
       "../src/planning/plan/suggest-filter.ts": {
         "version": "3af10cb2400583fb80050ae5449f8f5413ce6b79e8d15451a86be8922e7d626f",
@@ -718,7 +722,7 @@
         "signature": "51eb22f8bbbf6febec347af27933b3ffd94b0dc50ddbcaa27cd657da47297a7d"
       },
       "../src/planning/plan/planning-result.ts": {
-        "version": "c8a5956219a749b51936a4ab84a6d1a592c64a6093daa6f6eb2d48a074524b40",
+        "version": "bac3f8978f8df0b89c2d98061ae3b8c792db745e1e3a2cdd89c6c921be1e9aed",
         "signature": "1a7f02d59f2866475a6915101e5d24fc9c0fabd9021835a7f2b63bb07d660ef2"
       },
       "../src/planning/speculator.ts": {
@@ -837,12 +841,8 @@
         "version": "187e74a50717c6c6cad76a54d0b5719d53a70110885aa243c983e2ebf3c80251",
         "signature": "431f206bc3f7c68929aaeb1272d3418633566820bcda729226781828870d7571"
       },
-      "../src/runtime/log-factory.ts": {
-        "version": "2df8927cb79daab33b6e8d99f91f761b47983ca499c8687146e28897e942de6d",
-        "signature": "47be54db29c1c84434f6ac472b1ad457ffc1d69784b1ec483a3804b8cb7dc2b1"
-      },
       "../src/planning/planner.ts": {
-        "version": "76c4c380d84f2e0918c55dcb142271c5a63d7adb6c787ff1ce82719d0775e4b0",
+        "version": "77f07de8e85a185fcc0123aadfbb13fb7c29de6fc390b2f09487aa9d36facd8a",
         "signature": "2ae8da58b68c98f0a4a740cc1fa5cc81e566d02b1e6eb4bdbf175e46ed738b06"
       },
       "../src/devtools-connector/arc-planner-invoker.ts": {
@@ -890,7 +890,7 @@
         "signature": "8bc1d39a3b8ec61064f9969316a088e314895e7ffd094468dcc0b238f33cb4a6"
       },
       "../src/planning/plan/plan-producer.ts": {
-        "version": "2fb6c776ef8343ac09589d12bd1b6d2713a786e1a31795b6d3a0c89d13c936a2",
+        "version": "01f90e534a3b31c80c6b479cd1cb44c8c0d9b490d910c9a0fad1d313ddd0ebd0",
         "signature": "91a4b2218570abc924cb14d6b1ae7b2a13cf71adaa26bd30d6d53b7f8892e078"
       },
       "../src/planning/plan/replan-queue.ts": {
@@ -1442,8 +1442,12 @@
         "signature": "e7ba1e6a6d3bc1a2b76b1cadb46a215e27796ca2661f0ae508ba2f837531c266"
       },
       "../src/platform/loader-web.ts": {
-        "version": "163e01fa56bf9346a5d1774dbe5ed95df66e947d3a812f37123e6520179d177f",
-        "signature": "e5e51abed42c8a2054dea476ec0fa34eba9467f9d160796d4f9fc667970071c6"
+        "version": "81156fdda3c6e1a5195fbf7fbbc00a0c6aef89e567fc844f7d6c6da4005f5bfe",
+        "signature": "37a31fb7ba97159fd1906af5f21df561684afa0d7e1c9eb0cb3ef6b8038b5299"
+      },
+      "../src/platform/log-node.ts": {
+        "version": "b2bb195934df83ebcd0ad467011058d1d926c75cc4b349f0079d1db76ae22c3a",
+        "signature": "4105f0213a959099860f51c6c03569e69e9e589e3e5daec5918982a832fcf1d0"
       },
       "../node_modules/@types/mocha/index.d.ts": {
         "version": "c4c03cf65951d980ba618ae9601d10438730803fc9c8a1f7b34af8739981e205",
@@ -2229,7 +2233,7 @@
         "signature": "aff514b5ca3f500524542842c93fa7ade3927c4166596d8d37b3ad1fa3d1d014"
       },
       "../src/runtime/ui-slot-composer.ts": {
-        "version": "eeca2eff1c24784511a35d39a3c96d18d488518129bde964e48134640d048caa",
+        "version": "031627b0a6484826100725f9f1ef8f8d4993bd4b547e701e7b417ff583f8a5a7",
         "signature": "ac2cd9d39c0f3a85b0cf9ae7a2c24066b6c4c707e201187cb23f749c4b0230fa"
       },
       "../src/runtime/webassembly.d.ts": {
@@ -2549,7 +2553,7 @@
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "../src/services/clock-service.ts": {
-        "version": "b9982edf4d6a533aa3d0745740d44f3bd267041132d783330713bb6419aef8bc",
+        "version": "e30e69f75829b01860fe210645637cb636dae0862f742d25e876439e08f1bef5",
         "signature": "43a5176681925d9f51b139647154e4a52c2eb1b1a64bb428595000952bcbc7f1"
       },
       "../src/services/magenta-service.ts": {
@@ -2557,7 +2561,7 @@
         "signature": "0d62a4c9462bc58743921b47313a52df94841b7eb1fdc8ba2db7382105b9959e"
       },
       "../src/services/ml5-service.ts": {
-        "version": "0298a2b37843534da2a14fe3d064c1fe53fc59d2f6dde669a28883fcacd88eb3",
+        "version": "1c4972d30e7b78ac423dfab8c1413a59d42e48f33346973e169c04ec0de7c154",
         "signature": "8e609bb71c20b858c77f0e9f90bb1319db8477b13f9f965f1a1e18524bf50881"
       },
       "../src/services/mobilenet.ts": {
@@ -2569,15 +2573,15 @@
         "signature": "43a5176681925d9f51b139647154e4a52c2eb1b1a64bb428595000952bcbc7f1"
       },
       "../src/services/reference-manager.ts": {
-        "version": "7288cfbed8cf76ca62d51c2419d75bb382cde913de961f3301511cc0ffe123ed",
+        "version": "f23a9b9f996b9918b6a5f2dd9eb892f290e31817367e2f5eb10e273946766cf4",
         "signature": "3766289aa6d414362785c636f11b5ecd3afb010fedd809ea036f698dfa68eacb"
       },
       "../src/services/tfjs-service.ts": {
-        "version": "2d41f910616cbe45ee2288d54d5150ec61863c400e6811f854c213bd55ca73f6",
+        "version": "ccf02176e21ffde658f1ba3bd249570bad8883bbdee4da6b6ef2f05d565e43c1",
         "signature": "46ebb8f80dbfc12df1ffc44a9af1584d167ecb8af65ca533d4c342958b4a37a2"
       },
       "../src/services/tfjs-mobilenet-service.ts": {
-        "version": "7fcfe7d41353132b1809ee8eb3284b85430cd5fb1e79faaf570026fb64539f09",
+        "version": "76eb9fc90132346194a449207c7637f0703a6085eff9b0f9c4effc1fe1abd127",
         "signature": "43a5176681925d9f51b139647154e4a52c2eb1b1a64bb428595000952bcbc7f1"
       },
       "../src/services/tests/clock-test.ts": {
@@ -4330,7 +4334,13 @@
         "../node_modules/@types/node/util.d.ts",
         "../node_modules/@types/node/ts3.1/util.d.ts"
       ],
-      "../src/platform/log-web.d.ts": [
+      "../src/platform/log-web.ts": [
+        "../node_modules/@types/node/util.d.ts",
+        "../node_modules/@types/node/ts3.1/util.d.ts"
+      ],
+      "../src/platform/logs-factory.ts": [
+        "../src/runtime/hot.ts",
+        "../src/platform/log-web.ts",
         "../node_modules/@types/node/util.d.ts",
         "../node_modules/@types/node/ts3.1/util.d.ts"
       ],
@@ -4360,7 +4370,7 @@
       ],
       "../src/planning/plan/planning-result.ts": [
         "../src/platform/assert-web.ts",
-        "../src/platform/log-web.d.ts",
+        "../src/platform/logs-factory.ts",
         "../src/runtime/arc.ts",
         "../src/runtime/hot.ts",
         "../src/runtime/recipe/recipe-util.ts",
@@ -4674,11 +4684,6 @@
         "../node_modules/@types/node/util.d.ts",
         "../node_modules/@types/node/ts3.1/util.d.ts"
       ],
-      "../src/runtime/log-factory.ts": [
-        "../src/platform/log-web.d.ts",
-        "../node_modules/@types/node/util.d.ts",
-        "../node_modules/@types/node/ts3.1/util.d.ts"
-      ],
       "../src/planning/planner.ts": [
         "../src/runtime/hot.ts",
         "../src/platform/assert-web.ts",
@@ -4717,7 +4722,7 @@
         "../src/runtime/runtime.ts",
         "../src/runtime/relevance.ts",
         "../src/planning/planner-inspector.ts",
-        "../src/runtime/log-factory.ts",
+        "../src/platform/logs-factory.ts",
         "../node_modules/@types/node/util.d.ts",
         "../node_modules/@types/node/ts3.1/util.d.ts"
       ],
@@ -4835,9 +4840,8 @@
       "../src/planning/plan/plan-producer.ts": [
         "../src/platform/assert-web.ts",
         "../src/platform/date-web.ts",
-        "../src/platform/log-web.d.ts",
+        "../src/platform/logs-factory.ts",
         "../src/runtime/arc.ts",
-        "../src/runtime/hot.ts",
         "../src/runtime/storage/storage-provider-base.ts",
         "../src/planning/planner.ts",
         "../src/planning/recipe-index.ts",
@@ -5875,8 +5879,12 @@
       ],
       "../src/platform/loader-web.ts": [
         "../src/platform/loader-platform.ts",
-        "../src/runtime/log-factory.ts",
+        "../src/platform/logs-factory.ts",
         "../src/runtime/particle-spec.ts",
+        "../node_modules/@types/node/util.d.ts",
+        "../node_modules/@types/node/ts3.1/util.d.ts"
+      ],
+      "../src/platform/log-node.ts": [
         "../node_modules/@types/node/util.d.ts",
         "../node_modules/@types/node/ts3.1/util.d.ts"
       ],
@@ -7254,7 +7262,7 @@
         "../src/runtime/recipe/particle.ts",
         "../src/runtime/slot-consumer.ts",
         "../src/runtime/slot-context.ts",
-        "../src/runtime/log-factory.ts",
+        "../src/platform/logs-factory.ts",
         "../node_modules/@types/node/util.d.ts",
         "../node_modules/@types/node/ts3.1/util.d.ts"
       ],
@@ -8085,7 +8093,7 @@
         "../node_modules/@types/node/ts3.1/util.d.ts"
       ],
       "../src/services/clock-service.ts": [
-        "../src/platform/log-web.d.ts",
+        "../src/platform/logs-factory.ts",
         "../src/runtime/services.ts",
         "../src/common/time/instant.ts",
         "../src/common/time/timeunit.ts",
@@ -8099,9 +8107,9 @@
         "../node_modules/@types/node/ts3.1/util.d.ts"
       ],
       "../src/services/ml5-service.ts": [
-        "../src/platform/log-web.d.ts",
         "../src/runtime/services.ts",
         "../src/platform/image-web.ts",
+        "../src/platform/logs-factory.ts",
         "../node_modules/@types/node/util.d.ts",
         "../node_modules/@types/node/ts3.1/util.d.ts"
       ],
@@ -8117,13 +8125,12 @@
         "../node_modules/@types/node/ts3.1/util.d.ts"
       ],
       "../src/services/reference-manager.ts": [
-        "../src/platform/log-web.d.ts",
         "../node_modules/@types/node/util.d.ts",
         "../node_modules/@types/node/ts3.1/util.d.ts"
       ],
       "../src/services/tfjs-service.ts": [
         "../src/services/reference-manager.ts",
-        "../src/platform/log-web.d.ts",
+        "../src/platform/logs-factory.ts",
         "../src/runtime/services.ts",
         "../src/platform/image-web.ts",
         "../node_modules/@tensorflow/tfjs/dist/index.d.ts",
@@ -8133,7 +8140,7 @@
       ],
       "../src/services/tfjs-mobilenet-service.ts": [
         "../src/services/reference-manager.ts",
-        "../src/platform/log-web.d.ts",
+        "../src/platform/logs-factory.ts",
         "../src/runtime/services.ts",
         "../src/platform/image-web.ts",
         "../src/services/tfjs-service.ts",
@@ -9440,9 +9447,8 @@
       "../src/tracelib/trace.ts": [
         "../src/runtime/hot.ts"
       ],
-      "../src/platform/log-web.d.ts": [
-        "../node_modules/@types/node/util.d.ts",
-        "../node_modules/@types/node/ts3.1/util.d.ts"
+      "../src/platform/logs-factory.ts": [
+        "../src/runtime/hot.ts"
       ],
       "../src/planning/plan/suggestion.ts": [
         "../src/runtime/hot.ts",
@@ -9603,9 +9609,6 @@
         "../src/planning/plan/planning-result.ts",
         "../src/planning/plan/suggestion.ts",
         "../src/planning/plan/plan-consumer.ts"
-      ],
-      "../src/runtime/log-factory.ts": [
-        "../src/platform/log-web.d.ts"
       ],
       "../src/planning/planner.ts": [
         "../src/runtime/recipe/walker.ts",
@@ -11942,7 +11945,8 @@
       "../src/platform/date-web.ts",
       "../src/platform/deviceinfo-web.ts",
       "../src/tracelib/trace.ts",
-      "../src/platform/log-web.d.ts",
+      "../src/platform/log-web.ts",
+      "../src/platform/logs-factory.ts",
       "../src/planning/plan/suggest-filter.ts",
       "../src/planning/plan/suggestion.ts",
       "../src/planning/plan/planning-result.ts",
@@ -11975,7 +11979,6 @@
       "../src/planning/suggestion-composer.ts",
       "../src/planning/plan/plan-consumer.ts",
       "../src/planning/planner-inspector.ts",
-      "../src/runtime/log-factory.ts",
       "../src/planning/planner.ts",
       "../src/devtools-connector/arc-planner-invoker.ts",
       "../src/devtools-connector/arc-stores-fetcher.ts",
@@ -12127,6 +12130,7 @@
       "../src/platform/loader-platform.ts",
       "../src/platform/loader-node.ts",
       "../src/platform/loader-web.ts",
+      "../src/platform/log-node.ts",
       "../node_modules/@types/mocha/index.d.ts",
       "../src/platform/mocha-node.ts",
       "../src/platform/path-node.ts",

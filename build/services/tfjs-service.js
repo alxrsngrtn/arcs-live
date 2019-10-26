@@ -8,12 +8,12 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { ReferenceManager as rmgr } from './reference-manager.js';
-import { logFactory } from '../platform/log-web.js';
+import { logsFactory } from '../platform/logs-factory.js';
 import { Services } from '../runtime/services.js';
 import { loadImage } from '../platform/image-web.js';
 // for actual code
 import { requireTf } from '../platform/tf-web.js';
-const log = logFactory('tfjs-service');
+const { log } = logsFactory('tfjs-service');
 /**
  * Load a graph model given a URL to the model definition.
  *

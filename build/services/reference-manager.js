@@ -7,9 +7,6 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-import { logFactory } from '../platform/log-web.js';
-const log = logFactory('reference-mgr');
-// TODO(sjmiles): demonstrate simple concept for tracking objects across the PEC
 /**
  * Allows developer to reference + use resource without passing them between the `Services` bus.
  * @see src/service.ts

@@ -33680,17 +33680,47 @@ init();
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-
-// TODO(wkorman): Incorporate debug levels. Consider outputting
-// preamble in the specified color via ANSI escape codes. Consider
-// sharing with similar log factory logic in `xen.js`. See `log-web.js`.
-const _logFactory = (preamble, color, log='log') => {
-  return console[log].bind(console, `(${preamble})`);
+// TODO(wkorman): Consider outputting preamble in the specified color via ANSI escape codes.
+const logFactory = (preamble, color, log = 'log') => {
+    return console[log].bind(console, `(${preamble})`);
 };
 
-const factory = global.logLevel < 1 ? () => () => {} : _logFactory;
-
-const logFactory = (...args) => factory(...args);
+/**
+ * @license
+ * Copyright 2019 Google LLC.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+const getGlobal = () => {
+    if (typeof self !== 'undefined') {
+        return self;
+    }
+    if (typeof window !== 'undefined') {
+        return window;
+    }
+    if (typeof global !== 'undefined') {
+        return global;
+    }
+    throw new Error('unable to locate global object');
+};
+const getLogLevel = () => {
+    // acquire global scope
+    const g = getGlobal();
+    // use specified logLevel otherwise 0
+    return ('logLevel' in g) ? g['logLevel'] : 0;
+};
+console.log(`log-factory: binding logFactory to level [${getLogLevel()}]`);
+const stubFactory = () => () => { };
+const logsFactory = (preamble, color = '') => {
+    const level = getLogLevel();
+    const logs = {};
+    ['log', 'warn', 'error', 'group', 'groupCollapsed', 'groupEnd'].
+        forEach(log => logs[log] = (level > 0 ? logFactory(preamble, color, log) : stubFactory));
+    return logs;
+};
 
 /**
  * @license
@@ -33916,7 +33946,7 @@ class Suggestion {
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-const error = logFactory('PlanningResult', '#ff0090', 'error');
+const { error } = logsFactory('PlanningResult', '#ff0090');
 class PlanningResult {
     constructor(envOptions, store) {
         this.suggestions = [];
@@ -36117,21 +36147,6 @@ class Relevance {
         return -1;
     }
 }
-
-/**
- * @license
- * Copyright 2019 Google LLC.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-const logsFactory = (preamble, color) => ({
-    log: logFactory(preamble, color, 'log'),
-    warn: logFactory(preamble, color, 'warn'),
-    error: logFactory(preamble, color, 'error')
-});
 
 /**
  * @license
@@ -38750,8 +38765,7 @@ const Const = {
  * http://polymer.github.io/PATENTS.txt
  */
 
-const log$3 = logFactory('UserArcs', '#4f0433');
-const warn$2 = logFactory('UserArcs', '#4f0433', 'warn');
+const {log: log$3, warn: warn$2} = logsFactory('UserArcs', '#4f0433');
 
 class UserArcs {
   constructor(storage, userid) {
@@ -38830,9 +38844,7 @@ class UserArcs {
  * http://polymer.github.io/PATENTS.txt
  */
 
-const log$4 = logFactory('SingleUserContext', '#f2ce14');
-const warn$3 = logFactory('SingleUserContext', '#f2ce14', 'warn');
-const error$2 = logFactory('SingleUserContext', '#f2ce14', 'error');
+const {log: log$4, warn: warn$3, error: error$2} = logsFactory('SingleUserContext', '#f2ce14');
 
 // SoloContext (?)
 const SingleUserContext = class {
@@ -39122,8 +39134,7 @@ const SingleUserContext = class {
  * http://polymer.github.io/PATENTS.txt
  */
 
-const log$5 = logFactory('UserContext', '#4f0433');
-const warn$4 = logFactory('UserContext', '#4f0433', 'warn');
+const {log: log$5, warn: warn$4} = logsFactory('UserContext', '#4f0433');
 
 class UserContext {
   constructor() {
@@ -39588,8 +39599,7 @@ class Speculator {
  * http://polymer.github.io/PATENTS.txt
  */
 const defaultTimeoutMs = 5000;
-const log$6 = logFactory('PlanProducer', '#ff0090', 'log');
-const error$3 = logFactory('PlanProducer', '#ff0090', 'error');
+const { log: log$6 } = logsFactory('PlanProducer', '#ff0090');
 var Trigger;
 (function (Trigger) {
     Trigger["Init"] = "init";
@@ -40072,8 +40082,7 @@ class DevtoolsPlannerInspector {
  * http://polymer.github.io/PATENTS.txt
  */
 
-const log$7 = logFactory('UserPlanner', '#4f0433');
-const warn$5 = logFactory('UserPlanner', '#4f0433', 'warn');
+const {log: log$7, warn: warn$5} = logsFactory('UserPlanner', '#4f0433');
 
 class UserPlanner {
   constructor(userid, hostFactory, options) {

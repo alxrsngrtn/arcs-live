@@ -7,10 +7,8 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-import { logFactory } from '../platform/log-web.js';
-export { logFactory };
-export declare const logsFactory: (preamble: any, color: any) => {
-    log: (...args: any) => void;
-    warn: (...args: any) => void;
-    error: (...args: any) => void;
+
+export const logFactory = (preamble, color, log = 'log') => {
+  const style = `background: ${color || 'gray'}; color: white; padding: 1px 6px 2px 7px; border-radius: 6px;`;
+  return console[log].bind(console, `%c${preamble}`, style);
 };

@@ -16,5 +16,5 @@ export declare class PlatformLoader extends PlatformLoaderBase {
     loadParticleClass(spec: ParticleSpec): Promise<any>;
     requireParticle(unresolvedPath: string, blobUrl?: any): Promise<any>;
     loadWrappedParticle(url: string, path?: string): any;
-    provisionLogger(fileName: string): (...args: any) => void;
+    provisionLogger(fileName: string): Function;
 }

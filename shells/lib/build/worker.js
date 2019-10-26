@@ -10017,7 +10017,7 @@ class BiMap {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "PlatformLoader", function() { return PlatformLoader; });
 /* harmony import */ var _loader_platform_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(49);
-/* harmony import */ var _runtime_log_factory_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(64);
+/* harmony import */ var _logs_factory_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(64);
 /**
  * @license
  * Copyright 2019 Google LLC.
@@ -10029,7 +10029,7 @@ __webpack_require__.r(__webpack_exports__);
  */
 
 
-const { log, warn, error } = Object(_runtime_log_factory_js__WEBPACK_IMPORTED_MODULE_1__["logsFactory"])('loader-web', 'green');
+const { log, warn, error } = Object(_logs_factory_js__WEBPACK_IMPORTED_MODULE_1__["logsFactory"])('loader-web', 'green');
 class PlatformLoader extends _loader_platform_js__WEBPACK_IMPORTED_MODULE_0__["PlatformLoaderBase"] {
     flushCaches() {
         // punt object urls?
@@ -10100,7 +10100,7 @@ class PlatformLoader extends _loader_platform_js__WEBPACK_IMPORTED_MODULE_0__["P
         return result;
     }
     provisionLogger(fileName) {
-        return Object(_runtime_log_factory_js__WEBPACK_IMPORTED_MODULE_1__["logsFactory"])(fileName.split('/').pop(), '#1faa00').log;
+        return Object(_logs_factory_js__WEBPACK_IMPORTED_MODULE_1__["logsFactory"])(fileName.split('/').pop(), '#1faa00').log;
     }
 }
 //# sourceMappingURL=loader-web.js.map
@@ -11992,10 +11992,8 @@ class UiTransformationParticle extends _ui_particle_js__WEBPACK_IMPORTED_MODULE_
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "logsFactory", function() { return logsFactory; });
-/* harmony import */ var _platform_log_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(65);
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "logFactory", function() { return _platform_log_web_js__WEBPACK_IMPORTED_MODULE_0__["logFactory"]; });
-
+/* WEBPACK VAR INJECTION */(function(global) {/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "logsFactory", function() { return logsFactory; });
+/* harmony import */ var _log_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(65);
 /**
  * @license
  * Copyright 2019 Google LLC.
@@ -12006,13 +12004,35 @@ __webpack_require__.r(__webpack_exports__);
  * http://polymer.github.io/PATENTS.txt
  */
 
-
-const logsFactory = (preamble, color) => ({
-    log: Object(_platform_log_web_js__WEBPACK_IMPORTED_MODULE_0__["logFactory"])(preamble, color, 'log'),
-    warn: Object(_platform_log_web_js__WEBPACK_IMPORTED_MODULE_0__["logFactory"])(preamble, color, 'warn'),
-    error: Object(_platform_log_web_js__WEBPACK_IMPORTED_MODULE_0__["logFactory"])(preamble, color, 'error')
-});
-//# sourceMappingURL=log-factory.js.map
+const getGlobal = () => {
+    if (typeof self !== 'undefined') {
+        return self;
+    }
+    if (typeof window !== 'undefined') {
+        return window;
+    }
+    if (typeof global !== 'undefined') {
+        return global;
+    }
+    throw new Error('unable to locate global object');
+};
+const getLogLevel = () => {
+    // acquire global scope
+    const g = getGlobal();
+    // use specified logLevel otherwise 0
+    return ('logLevel' in g) ? g['logLevel'] : 0;
+};
+console.log(`log-factory: binding logFactory to level [${getLogLevel()}]`);
+const stubFactory = () => () => { };
+const logsFactory = (preamble, color = '') => {
+    const level = getLogLevel();
+    const logs = {};
+    ['log', 'warn', 'error', 'group', 'groupCollapsed', 'groupEnd'].
+        forEach(log => logs[log] = (level > 0 ? Object(_log_web_js__WEBPACK_IMPORTED_MODULE_0__["logFactory"])(preamble, color, log) : stubFactory));
+    return logs;
+};
+//# sourceMappingURL=logs-factory.js.map
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(1)))
 
 /***/ }),
 /* 65 */
@@ -12020,7 +12040,7 @@ const logsFactory = (preamble, color) => ({
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* WEBPACK VAR INJECTION */(function(global) {/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "logFactory", function() { return logFactory; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "logFactory", function() { return logFactory; });
 /**
  * @license
  * Copyright 2019 Google LLC.
@@ -12030,29 +12050,11 @@ __webpack_require__.r(__webpack_exports__);
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-const _factory = (preamble, color, log = 'log') =>
-  console[log].bind(
-    console,
-    `%c${preamble}`,
-    `background: ${color || 'gray'}; color: white; padding: 1px 6px 2px 7px; border-radius: 6px;`
-  );
-
-// don't spam the console for workers
-if (typeof window !== 'undefined' && window.logLevel !== undefined) {
-  console.log(`log-web: binding logFactory to level [${window.logLevel}]`);
-}
-
-const logFactory = (...args) => {
-  // could be running in worker
-  const g = (typeof window !== 'undefined') ? window : global;
-  // use specified logLevel otherwise 0
-  const logLevel = ('logLevel' in g) ? g['logLevel'] : 0;
-  // modulate factory based on logLevel
-  const factory = logLevel > 0 ? _factory : () => () => {};
-  return factory(...args);
+const logFactory = (preamble, color, log = 'log') => {
+    const style = `background: ${color || 'gray'}; color: white; padding: 1px 6px 2px 7px; border-radius: 6px;`;
+    return console[log].bind(console, `%c${preamble}`, style);
 };
-
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(1)))
+//# sourceMappingURL=log-web.js.map
 
 /***/ })
 /******/ ]);

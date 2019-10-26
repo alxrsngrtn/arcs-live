@@ -38,7 +38,7 @@ import { Strategizer } from './strategizer.js';
 import { Description } from '../runtime/description.js';
 import { Runtime } from '../runtime/runtime.js';
 import { Relevance } from '../runtime/relevance.js';
-import { logsFactory } from '../runtime/log-factory.js';
+import { logsFactory } from '../platform/logs-factory.js';
 const { log } = logsFactory('planner', 'olive');
 const suggestionByHash = () => Runtime.getRuntime().getCacheService().getOrCreateCache('suggestionByHash');
 export class Planner {

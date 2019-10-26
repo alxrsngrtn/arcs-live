@@ -7,24 +7,8 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-const _factory = (preamble, color, log = 'log') =>
-  console[log].bind(
-    console,
-    `%c${preamble}`,
-    `background: ${color || 'gray'}; color: white; padding: 1px 6px 2px 7px; border-radius: 6px;`
-  );
-
-// don't spam the console for workers
-if (typeof window !== 'undefined' && window.logLevel !== undefined) {
-  console.log(`log-web: binding logFactory to level [${window.logLevel}]`);
-}
-
-export const logFactory = (...args) => {
-  // could be running in worker
-  const g = (typeof window !== 'undefined') ? window : global;
-  // use specified logLevel otherwise 0
-  const logLevel = ('logLevel' in g) ? g['logLevel'] : 0;
-  // modulate factory based on logLevel
-  const factory = logLevel > 0 ? _factory : () => () => {};
-  return factory(...args);
+export const logFactory = (preamble, color, log = 'log') => {
+    const style = `background: ${color || 'gray'}; color: white; padding: 1px 6px 2px 7px; border-radius: 6px;`;
+    return console[log].bind(console, `%c${preamble}`, style);
 };
+//# sourceMappingURL=log-web.js.map

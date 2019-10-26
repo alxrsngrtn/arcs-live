@@ -11,7 +11,7 @@ import { assert } from '../platform/assert-web.js';
 import { Description } from './description.js';
 import { ModalityHandler } from './modality-handler.js';
 import { ProvidedSlotContext } from './slot-context.js';
-import { logsFactory } from './log-factory.js';
+import { logsFactory } from '../platform/logs-factory.js';
 const { log, warn } = logsFactory('UiSlotComposer', 'brown');
 export class UiSlotComposer {
     /**

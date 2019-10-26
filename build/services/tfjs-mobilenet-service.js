@@ -8,13 +8,13 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { ReferenceManager } from './reference-manager.js';
-import { logFactory } from '../platform/log-web.js';
+import { logsFactory } from '../platform/logs-factory.js';
 import { Services } from '../runtime/services.js';
 import { loadImage } from '../platform/image-web.js';
 import { requireMobilenet } from './mobilenet.js';
 // for actual code
 import { requireTf } from '../platform/tf-web.js';
-const log = logFactory('tfjs-mobilenet-service');
+const { log } = logsFactory('tfjs-mobilenet-service');
 /**
  * Load the `MobileNet` image classifier.
  *

@@ -9,15 +9,14 @@
  */
 import { assert } from '../../platform/assert-web.js';
 import { now } from '../../platform/date-web.js';
-import { logFactory } from '../../platform/log-web.js';
+import { logsFactory } from '../../platform/logs-factory.js';
 import { Planner } from '../planner.js';
 import { RecipeIndex } from '../recipe-index.js';
 import { Speculator } from '../speculator.js';
 import { InitSearch } from '../strategies/init-search.js';
 import { PlanningResult } from './planning-result.js';
 const defaultTimeoutMs = 5000;
-const log = logFactory('PlanProducer', '#ff0090', 'log');
-const error = logFactory('PlanProducer', '#ff0090', 'error');
+const { log } = logsFactory('PlanProducer', '#ff0090');
 export var Trigger;
 (function (Trigger) {
     Trigger["Init"] = "init";

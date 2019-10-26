@@ -8,10 +8,10 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { assert } from '../../platform/assert-web.js';
-import { logFactory } from '../../platform/log-web.js';
+import { logsFactory } from '../../platform/logs-factory.js';
 import { RecipeUtil } from '../../runtime/recipe/recipe-util.js';
 import { Suggestion } from './suggestion.js';
-const error = logFactory('PlanningResult', '#ff0090', 'error');
+const { error } = logsFactory('PlanningResult', '#ff0090');
 export class PlanningResult {
     constructor(envOptions, store) {
         this.suggestions = [];

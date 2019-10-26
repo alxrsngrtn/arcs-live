@@ -1,5 +1,9 @@
-commit dbc4039150bc808981c520cd7e7542e7b92f0115
-Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Fri Oct 25 17:53:29 2019 -0700
+commit aa08c75944bf9153c103846c626a87ec8798ee1d
+Author: Scott J. Miles <sjmiles@google.com>
+Date:   Fri Oct 25 17:58:47 2019 -0700
 
-    Adds a 'wasm' tag to kt_native_binary target (#3896)
+    refactor and unify platform/logs-factory (#3895)
+    
+    * refactor/unify platform/logs-factory
+    
+    * fix decl

@@ -8,7 +8,7 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { PlatformLoaderBase } from './loader-platform.js';
-import { logsFactory } from '../runtime/log-factory.js';
+import { logsFactory } from './logs-factory.js';
 const { log, warn, error } = logsFactory('loader-web', 'green');
 export class PlatformLoader extends PlatformLoaderBase {
     flushCaches() {

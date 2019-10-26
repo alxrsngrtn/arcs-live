@@ -7,10 +7,5 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-import { logFactory } from '../platform/log-web.js';
-export { logFactory };
-export declare const logsFactory: (preamble: any, color: any) => {
-    log: (...args: any) => void;
-    warn: (...args: any) => void;
-    error: (...args: any) => void;
-};
+import { Dictionary } from '../runtime/hot.js';
+export declare const logsFactory: (preamble: string, color?: string) => Dictionary<Function>;
