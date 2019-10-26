@@ -1,9 +1,5 @@
-commit cba57b6d3503c60ad07c5b252f37521af38329f7
+commit 7a7a8812cd52d875d4fbf79a65fdb8e1cb64c9fc
 Author: Ray Cromwell <cromwellian@gmail.com>
-Date:   Fri Oct 25 18:24:08 2019 -0700
+Date:   Fri Oct 25 18:26:39 2019 -0700
 
-    disable kt_js when not bazel, move to third_party deps for kotlinx (#3902)
-    
-    * disable kt_js when not bazel, move to third_party deps for kotlinx
-    
-    * buildifier
+    There can be only one - Highlander (#3903)
