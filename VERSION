@@ -1,5 +1,17 @@
-commit c9a365fb8941a45938891e186c23064e4509e76d
-Author: Jason Feinstein <jwf@google.com>
-Date:   Fri Oct 25 23:30:48 2019 -0700
+commit 3ea6abb0a0a171d0b1d81773f3a36da636da91d8
+Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
+Date:   Mon Oct 28 10:05:20 2019 +1100
 
-    Implement a new kt_js_import rule to fix the issue in bazel's. (#3906)
+    Preserves directory structure in arc_manifest_bundle (#3894)
+    
+    Updated arc_manifest_bundle build rule to be a proper rule instead of a
+    macro. This allows us to use more advanced bazel functions to
+    reconstruct the expected directory structure for Android assets folders.
+    
+    Also removed the generate_root_manifest.sh script, since it's no longer
+    needed.
+    
+    Added a manifest bundle as an example to the javaharness. I'll replace
+    it soon with the actual manifests needed by javaharness.
+    
+    For #3819
