@@ -1,5 +1,8 @@
-commit d660ed21dbee5ab1369ea788e719484bd8d7db73
-Author: Sarah Heimlich <heimlich@google.com>
-Date:   Mon Oct 28 10:09:44 2019 -0700
+commit 9a75a9dfea5d53fbf127703790d4bb34de070b99
+Author: ianull <ianchang@google.com>
+Date:   Mon Oct 28 13:28:11 2019 -0700
 
-    Kotlin Tutorial 2 text. (#3886)
+    Arcs never gets ready (#3908)
+    
+    The ready listeners registered at ArcsShellApi.init() are removed
+    when the AndroidArcsEnvironment initializes.
