@@ -1,7 +1,5 @@
-commit 10e46b6decc1b9376a4ba62c94656fccbcb69d19
-Author: Jason Feinstein <jwf@google.com>
-Date:   Sun Oct 27 20:12:57 2019 -0700
+commit d660ed21dbee5ab1369ea788e719484bd8d7db73
+Author: Sarah Heimlich <heimlich@google.com>
+Date:   Mon Oct 28 10:09:44 2019 -0700
 
-    Kotlin Types (#3879)
-    
-    Create Type and the Types needed for Storage.
+    Kotlin Tutorial 2 text. (#3886)
