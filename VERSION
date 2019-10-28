@@ -1,17 +1,7 @@
-commit 3ea6abb0a0a171d0b1d81773f3a36da636da91d8
-Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
-Date:   Mon Oct 28 10:05:20 2019 +1100
+commit 10e46b6decc1b9376a4ba62c94656fccbcb69d19
+Author: Jason Feinstein <jwf@google.com>
+Date:   Sun Oct 27 20:12:57 2019 -0700
 
-    Preserves directory structure in arc_manifest_bundle (#3894)
+    Kotlin Types (#3879)
     
-    Updated arc_manifest_bundle build rule to be a proper rule instead of a
-    macro. This allows us to use more advanced bazel functions to
-    reconstruct the expected directory structure for Android assets folders.
-    
-    Also removed the generate_root_manifest.sh script, since it's no longer
-    needed.
-    
-    Added a manifest bundle as an example to the javaharness. I'll replace
-    it soon with the actual manifests needed by javaharness.
-    
-    For #3819
+    Create Type and the Types needed for Storage.
